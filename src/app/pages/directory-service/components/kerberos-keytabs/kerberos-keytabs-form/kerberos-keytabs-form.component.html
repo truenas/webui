@@ -1,4 +1,12 @@
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="isEditMode()"
+  [addTitle]="'Add Kerberos Keytab' | translate"
+  [editTitle]="'Edit Kerberos Keytab' | translate"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <tn-form-section>
     <tn-form-field [label]="helptext.name | translate" [required]="true">
       <tn-input
@@ -10,13 +18,25 @@
       ></tn-input>
     </tn-form-field>
 
-    <ix-file-input
-      formControlName="file"
+    <tn-form-field
       [label]="helptext.keytab | translate"
       [tooltip]="helptext.keytabTooltip | translate"
-      [multiple]="false"
       [required]="true"
-      [acceptedFiles]="'binary'"
-    ></ix-file-input>
+    >
+      <!--
+        `tnTestIdType`/`[tnTestId]` on the host rather than `[testId]`: the container declares the
+        `file-input` prefix, and pinning the id here keeps `ix-file-input`'s `input-file` intact.
+      -->
+      <tn-file-input
+        formControlName="file"
+        accept="binary"
+        tnTestIdType="input"
+        [tnTestId]="'file'"
+        [showFileName]="true"
+        [buttonLabel]="'Choose File' | translate"
+        [noFileText]="'No file chosen' | translate"
+        [ariaLabel]="helptext.keytab | translate"
+      ></tn-file-input>
+    </tn-form-field>
   </tn-form-section>
-</form>
+</ix-form>

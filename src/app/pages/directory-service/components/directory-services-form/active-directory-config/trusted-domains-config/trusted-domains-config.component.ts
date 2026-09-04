@@ -7,11 +7,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { FormBuilder, FormControl, FormGroup } from '@ngneat/reactive-forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  InputType,
+  TnCheckboxComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent,
+  TnFormSectionComponent, TnInputComponent, TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
-import { Observable, of } from 'rxjs';
 import { ActiveDirectorySchemaMode, IdmapBackend } from 'app/enums/directory-services.enum';
 import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
 import { helptextIdmap } from 'app/helptext/directory-service/idmap';
@@ -19,13 +20,8 @@ import { helptextLdap } from 'app/helptext/directory-service/ldap';
 import {
   ActiveDirectoryIdmap, DomainIdmap, domainIdmapTypeOptions, LdapIdmap, Rfc2307Idmap, RidIdmap,
 } from 'app/interfaces/active-directory-config.interface';
-import { Option } from 'app/interfaces/option.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
+import { translateOptions } from 'app/modules/translate/translate.helper';
 
 type Controls<T> = {
   [K in keyof T]: FormControl<T[K]>;
@@ -59,21 +55,20 @@ interface AllTrustedDomainsIdmapFieldsInterface {
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxSelectComponent,
-    IxCheckboxComponent,
-    IxListComponent,
-    IxListItemComponent,
     TranslateModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnCheckboxComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnFormListComponent,
+    TnFormListItemComponent,
   ],
 })
 export class TrustedDomainsConfigComponent implements OnInit {
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
 
   protected readonly helptextAd = helptextActiveDirectory;
   protected readonly helptext = helptextIdmap.idmap;
@@ -85,19 +80,41 @@ export class TrustedDomainsConfigComponent implements OnInit {
   readonly trustedDomains = input.required<DomainIdmap[]>();
 
   protected readonly IdmapBackend = IdmapBackend;
+  protected readonly InputType = InputType;
 
-  protected readonly schemaModeOptions$ = of([
+  // Labels are the enum values themselves, so there is nothing to translate.
+  protected readonly schemaModeOptions: TnSelectOption<ActiveDirectorySchemaMode>[] = [
     { label: ActiveDirectorySchemaMode.Rfc2307, value: ActiveDirectorySchemaMode.Rfc2307 },
     { label: ActiveDirectorySchemaMode.Sfu, value: ActiveDirectorySchemaMode.Sfu },
     { label: ActiveDirectorySchemaMode.Sfu20, value: ActiveDirectorySchemaMode.Sfu20 },
-  ]);
+  ];
 
   protected readonly form = this.fb.group({
     enable_trusted_domains: [false],
     trustedDomains: this.fb.array<AllTrustedDomainsIdmapFieldsInterface>([]),
   });
 
-  protected readonly trustedDomainIdmapOptions$: Observable<Option[]> = of(domainIdmapTypeOptions);
+  protected readonly trustedDomainIdmapOptions = translateOptions(this.translate, domainIdmapTypeOptions);
+
+  private readonly rawIdmapBackendLabels = new Map(
+    domainIdmapTypeOptions.map((option) => [option.value, option.label]),
+  );
+
+  /**
+   * `ix-select` keyed an option's `data-test` off the RAW (untranslated) label, while the template
+   * rendered a translated one. `tn-select` derives the id from the label it is given, so keying it
+   * off the pre-translated list would make every option id follow the UI language. Map back to the
+   * raw marker — through lodash kebab, which the library's own normalizer does not reproduce at a
+   * letter/digit boundary (`RFC2307` → `rfc-2307`) — to keep the ids byte-identical.
+   */
+  protected readonly idmapBackendOptionTestId = (option: TnSelectOption<IdmapBackend>): string => {
+    return normalizeTestIdString(this.rawIdmapBackendLabels.get(option.value) ?? option.label);
+  };
+
+  /** Same letter/digit kebab gap as {@link idmapBackendOptionTestId}: `SFU20` → `sfu-20`. */
+  protected readonly schemaModeOptionTestId = (option: TnSelectOption<ActiveDirectorySchemaMode>): string => {
+    return normalizeTestIdString(option.label);
+  };
 
   protected get trustedDomainsArray(): FormArray {
     return this.form.controls.trustedDomains;
