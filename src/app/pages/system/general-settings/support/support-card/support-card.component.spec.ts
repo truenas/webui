@@ -52,9 +52,13 @@ function makeLicense(supportExpiresAt: string | null): License {
     model: 'M40',
     expires_at: expiresAtDate,
     features: [
-      { name: LicenseFeature.Apps, start_date: null, expires_at: null },
+      {
+        name: LicenseFeature.Apps, start_date: null, expires_at: null, source: 'enterprise', type: null,
+      },
       ...(expiresAtDate
-        ? [{ name: LicenseFeature.Support, start_date: null, expires_at: expiresAtDate }]
+        ? [{
+            name: LicenseFeature.Support, start_date: null, expires_at: expiresAtDate, source: 'enterprise', type: null,
+          }]
         : []),
     ],
     serials: ['AA-00001'],
