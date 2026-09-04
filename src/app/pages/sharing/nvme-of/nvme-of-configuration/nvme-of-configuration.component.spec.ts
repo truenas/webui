@@ -48,7 +48,6 @@ describe('NvmeOfConfigurationComponent', () => {
       }),
       provideMockStore({
         selectors: [
-          { selector: selectEntitlements, value: {} },
           {
             selector: selectIsHaLicensed,
             value: true,
