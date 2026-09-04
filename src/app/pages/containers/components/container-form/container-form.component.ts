@@ -5,8 +5,6 @@ import {
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import {
   FormArray,
-  FormControl,
-  FormGroup,
   NonNullableFormBuilder,
   ReactiveFormsModule,
   Validators,
@@ -228,12 +226,7 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
     idmap_slice: [null as number | null],
     capabilities_policy: [ContainerCapabilitiesPolicy.Default],
     environment_variables: new FormArray<ContainerEnvVariablesFormGroup>([]),
-    use_default_network: [true],
     usb_devices: [[] as string[]],
-    disks: this.formBuilder.array<FormGroup<{
-      source: FormControl<string>;
-      destination?: FormControl<string>;
-    }>>([]),
   });
 
   private hasSetupValidators = false;
@@ -316,7 +309,6 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
       idmap_type: ContainerIdmapType.Default,
       idmap_slice: null,
       capabilities_policy: ContainerCapabilitiesPolicy.Default,
-      use_default_network: true,
       usb_devices: [],
     });
   }
@@ -396,22 +388,6 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
       .subscribe((image: ContainerImageWithId) => {
         this.form.controls.image.setValue(image.id);
       });
-  }
-
-  protected addDisk(): void {
-    const control = this.formBuilder.group({
-      source: ['', Validators.required],
-      destination: ['', Validators.required],
-    }) as FormGroup<{
-      source: FormControl<string>;
-      destination?: FormControl<string>;
-    }>;
-
-    this.form.controls.disks.push(control);
-  }
-
-  protected removeDisk(index: number): void {
-    this.form.controls.disks.removeAt(index);
   }
 
   protected handleSubmit = (): SubmitResult<boolean, Container> => {

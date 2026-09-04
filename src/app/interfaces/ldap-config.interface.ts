@@ -57,5 +57,3 @@ export interface LdapConfig {
   // Should be hidden under advanced options, can be left null and backend will pick the standard value
   auxiliary_parameters: string | null;
 }
-
-export type LdapConfigUpdate = Partial<LdapConfig>;

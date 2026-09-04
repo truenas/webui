@@ -4,12 +4,18 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { TnCalendarComponent, TnIconButtonComponent } from '@truenas/ui-components';
 import {
-  isBefore, isSameMonth, startOfMonth,
+  endOfMonth, isAfter, isBefore, startOfMonth,
 } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
 import { SchedulerDateExamplesComponent } from 'app/modules/scheduler/components/scheduler-modal/scheduler-date-examples/scheduler-date-examples.component';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
+
+interface SchedulePreview {
+  cron: CronSchedulePreview;
+  /** Where counting starts, as a wall clock in the system time zone. */
+  startDate: Date;
+}
 
 @Component({
   selector: 'ix-scheduler-preview-column',
@@ -37,51 +43,54 @@ export class SchedulerPreviewColumnComponent {
   private readonly activeDate = signal<Date>(new Date());
 
   /**
-   * `new Date()` is not a signal read, here or in `startDate` below, so "now" is memoized
-   * until `activeDate` — or, for `startDate`, `timezone` — next changes, rather than tracking
-   * the wall clock. That is fine for a modal: it cannot outlive a month rollover by long
-   * enough to matter, and navigating the calendar — the only way to reach a stale month —
-   * invalidates it anyway.
-   */
-  private readonly isPastMonth = computed(() => isBefore(this.activeDate(), startOfMonth(new Date())));
-
-  /**
-   * Where the preview starts counting from: right now while the month on screen is still
-   * running, otherwise the first of whichever month is being viewed.
+   * Where the preview starts counting from, as a wall clock in the system time zone — the
+   * zone the schedule actually runs in, and the one the example times are shown in.
    *
-   * The month this lands in has to be the month the calendar is showing — `markedDates`
-   * places run days within it. Near a month boundary the system time zone and the browser
-   * disagree about which month "now" is in, and either one can be the month on screen, so
-   * try both clocks before falling back to the first of the month. Falling back too eagerly
-   * would rewind into a month already half over and mark days that have already passed.
+   * The calendar pages in the browser's months, so the month on screen is the frame and
+   * where "now" falls within it decides where counting starts. The two clocks disagree
+   * about the date most of the day and about the *month* on the first and last day of one,
+   * which is what made this worth spelling out: counting from the system clock while the
+   * browser had already rolled over left the whole month on screen blank (NAS-142970).
+   *
+   * Null means there is nothing left to preview in the month on screen, because the system
+   * time zone is already past the end of it — a month the user paged back to, and equally
+   * the tail of the browser's current month once the system time zone has rolled over.
+   *
+   * `new Date()` is not a signal read, so "now" is memoized until `activeDate` — or
+   * `timezone` — next changes, rather than tracking the wall clock. That is fine for a
+   * modal: it cannot outlive a month rollover by long enough to matter, and navigating the
+   * calendar — the only way to reach a stale month — invalidates it anyway.
    */
-  protected readonly startDate = computed(() => {
+  protected readonly startDate = computed<Date | null>(() => {
     const activeDate = this.activeDate();
-    const now = new Date();
-    const zonedNow = toZonedTime(now, this.timezone());
+    const zonedNow = toZonedTime(new Date(), this.timezone());
 
-    if (isSameMonth(zonedNow, activeDate)) {
-      return zonedNow;
+    if (isBefore(zonedNow, startOfMonth(activeDate))) {
+      return startOfMonth(activeDate);
     }
 
-    if (isSameMonth(now, activeDate)) {
-      return now;
+    if (isAfter(zonedNow, endOfMonth(activeDate))) {
+      return null;
     }
 
-    return startOfMonth(activeDate);
+    return zonedNow;
   });
 
-  protected readonly cronPreview = computed<CronSchedulePreview | null>(() => {
-    if (this.isPastMonth()) {
+  protected readonly preview = computed<SchedulePreview | null>(() => {
+    const startDate = this.startDate();
+    if (!startDate) {
       return null;
     }
 
     try {
-      return new CronSchedulePreview({
-        crontab: this.crontab(),
-        startTime: this.startTime(),
-        endTime: this.endTime(),
-      });
+      return {
+        startDate,
+        cron: new CronSchedulePreview({
+          crontab: this.crontab(),
+          startTime: this.startTime(),
+          endTime: this.endTime(),
+        }),
+      };
     } catch (error: unknown) {
       // Reachable: the scheduler modal withholds `crontab` while the form is *editing*
       // invalid input, but its initial value is round-tripped straight from the task's saved
@@ -95,14 +104,14 @@ export class SchedulerPreviewColumnComponent {
 
   /** The days of the month on screen that the task is scheduled to run on. */
   protected readonly markedDates = computed<Date[]>(() => {
-    const cronPreview = this.cronPreview();
-    if (!cronPreview) {
+    const preview = this.preview();
+    if (!preview) {
       return [];
     }
 
-    const startDate = this.startDate();
+    const { cron, startDate } = preview;
 
-    return [...cronPreview.getNextDaysInMonthWithRuns(startDate)]
+    return [...cron.getNextDaysInMonthWithRuns(startDate)]
       .map((day) => new Date(startDate.getFullYear(), startDate.getMonth(), day));
   });
 

@@ -25,12 +25,11 @@ import {
   FormBuilder, ValidationErrors, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
+import { TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent } from '@truenas/ui-components';
 import {
   Observable, Subscription, combineLatest, map, of, switchMap,
 } from 'rxjs';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { SimpleWidget } from 'app/pages/dashboard/types/simple-widget.interface';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetCategory, widgetCategoryLabels } from 'app/pages/dashboard/types/widget-category.enum';
@@ -47,7 +46,7 @@ import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
     TnFormFieldComponent,
     TnSelectComponent,
     TranslateModule,

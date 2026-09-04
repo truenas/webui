@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy, output, input, signal, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, output, input, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnCellDefDirective, TnHeaderCellDefDirective, TnTableColumnDirective,
@@ -38,7 +38,6 @@ export class UserListComponent {
 
   readonly toggleShowMobileDetails = output<boolean>();
   readonly userSelected = output<User>();
-  protected readonly currentBatch = signal<User[]>([]);
   readonly dataProvider = input.required<UsersDataProvider>();
 
   protected readonly displayedColumns = ['username', 'full_name', 'builtin', 'roles'];

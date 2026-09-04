@@ -1,9 +1,9 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnFormSectionComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
@@ -11,7 +11,6 @@ import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -25,7 +24,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     TnDialogShellComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
     UnusedDiskSelectComponent,
     FormActionsComponent,
     TnButtonComponent,
@@ -46,7 +45,7 @@ export class BootPoolReplaceDialog implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   unusedDisks: DetailsDisk[] = [];
-  protected isFormLoading = false;
+  protected isFormLoading = signal(false);
   protected helptextSystemBootenv = helptextSystemBootenv;
 
   form = this.fb.nonNullable.group({
@@ -83,7 +82,7 @@ export class BootPoolReplaceDialog implements OnInit {
     const oldDisk = this.pk;
     const { dev: newDisk } = this.form.getRawValue();
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.dialogService.jobDialog(
       this.api.job('boot.replace', [oldDisk, newDisk]),
       { title: this.translate.instant('Replacing Boot Pool Disk') },
@@ -94,7 +93,7 @@ export class BootPoolReplaceDialog implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.dialogRef.close(true);
         this.snackbar.success(this.translate.instant('Boot Pool Disk Replaced'));
       });

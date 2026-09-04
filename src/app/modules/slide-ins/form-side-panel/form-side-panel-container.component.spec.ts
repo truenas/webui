@@ -113,6 +113,9 @@ describe('FormSidePanelContainerComponent footer menu', () => {
 
     fixture = TestBed.createComponent(FormSidePanelContainerComponent);
     fixture.componentRef.setInput('portal', new ComponentPortal(MenuTestFormComponent));
+    // A panel without a title has no accessible name, which the library warns about in
+    // dev mode; production callers always pass one.
+    fixture.componentRef.setInput('title', 'Footer Menu Form');
     fixture.componentRef.setInput('open', true);
     fixture.detectChanges();
   });
@@ -239,6 +242,9 @@ describe('FormSidePanelContainerComponent footer actions', () => {
 
     fixture = TestBed.createComponent(FormSidePanelContainerComponent);
     fixture.componentRef.setInput('portal', new ComponentPortal(ActionsTestFormComponent));
+    // A panel without a title has no accessible name, which the library warns about in
+    // dev mode; production callers always pass one.
+    fixture.componentRef.setInput('title', 'Footer Actions Form');
     fixture.componentRef.setInput('open', true);
     fixture.detectChanges();
   });
@@ -398,6 +404,9 @@ describe('FormSidePanelContainerComponent footer Save', () => {
 
     fixture = TestBed.createComponent(FormSidePanelContainerComponent);
     fixture.componentRef.setInput('portal', new ComponentPortal(SaveTestFormComponent));
+    // A panel without a title has no accessible name, which the library warns about in
+    // dev mode; production callers always pass one.
+    fixture.componentRef.setInput('title', 'Footer Save Form');
     fixture.componentRef.setInput('open', true);
     fixture.detectChanges();
   };
@@ -527,6 +536,9 @@ describe('FormSidePanelContainerComponent footer Save with a real <ix-form>', ()
 
     fixture = TestBed.createComponent(FormSidePanelContainerComponent);
     fixture.componentRef.setInput('portal', new ComponentPortal(HostedIxFormComponent));
+    // A panel without a title has no accessible name, which the library warns about in
+    // dev mode; production callers always pass one.
+    fixture.componentRef.setInput('title', 'Hosted Form');
     fixture.componentRef.setInput('open', true);
     fixture.detectChanges();
   });

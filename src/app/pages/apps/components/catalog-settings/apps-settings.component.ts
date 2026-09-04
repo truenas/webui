@@ -1,8 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal,
+  ChangeDetectionStrategy, Component, inject, OnInit, signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -16,23 +15,44 @@ import {
 import {
   combineLatest,
   filter,
-  finalize,
   forkJoin,
   take,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextApps } from 'app/helptext/apps/apps';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
+
+// Built here rather than inline in the component, and left with an inferred return type — see
+// the `V` type parameter on IxFormHostForm for why.
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createAppsSettingsForm(formBuilder: FormBuilder) {
+  return formBuilder.nonNullable.group({
+    preferred_trains: [[] as string[], Validators.required],
+    nvidia: [false],
+    enable_image_updates: [true],
+    address_pools: new FormArray<FormGroup<{
+      base: FormControl<string>;
+      size: FormControl<number | null>;
+    }>>([]),
+    registry_mirrors: new FormArray<FormGroup<{
+      url: FormControl<string>;
+      insecure: FormControl<boolean>;
+    }>>([]),
+  });
+}
+
+type AppsSettingsFormValue = ReturnType<ReturnType<typeof createAppsSettingsForm>['getRawValue']>;
 
 @Component({
   selector: 'ix-apps-settings',
@@ -41,6 +61,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
+    IxFormComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     IxIpInputWithNetmaskComponent,
@@ -56,38 +77,19 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
     DockerStore,
   ],
 })
-export class AppsSettingsComponent extends SidePanelForm implements OnInit {
+export class AppsSettingsComponent extends IxFormHostForm<boolean, AppsSettingsFormValue> implements OnInit {
   private dockerStore = inject(DockerStore);
   private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
-  private errorHandler = inject(FormErrorHandlerService);
   private fb = inject(FormBuilder);
-  private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private urlValidationService = inject(UrlValidationService);
-  private destroyRef = inject(DestroyRef);
 
   protected readonly InputType = InputType;
-  readonly isFormLoading = signal(false);
   protected showNvidiaCheckbox = signal(false);
   readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
 
-  protected readonly form = this.fb.nonNullable.group({
-    preferred_trains: [[] as string[], Validators.required],
-    nvidia: [false],
-    enable_image_updates: [true],
-    address_pools: new FormArray<FormGroup<{
-      base: FormControl<string>;
-      size: FormControl<number | null>;
-    }>>([]),
-    registry_mirrors: new FormArray<FormGroup<{
-      url: FormControl<string>;
-      insecure: FormControl<boolean>;
-    }>>([]),
-  });
-
-  /** Public signal hosts can read to disable a Save action while invalid or loading. */
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+  protected readonly form = createAppsSettingsForm(this.fb);
 
   protected allTrains$ = this.api.call('catalog.trains').pipe(
     singleArrayToOptions(),
@@ -99,30 +101,30 @@ export class AppsSettingsComponent extends SidePanelForm implements OnInit {
     registry_mirrors: helptextApps.settingsForm.registryMirrors.generalTooltip,
   };
 
-  get mirrorsCount(): number {
-    return this.form.controls.registry_mirrors.length;
-  }
-
   constructor() {
     super();
     this.dockerStore.initialize();
   }
 
   ngOnInit(): void {
-    this.setupForm();
+    this.loadConfig();
   }
 
-  setupForm(): void {
-    this.isFormLoading.set(true);
-    combineLatest([
-      this.api.call('catalog.config'),
-      this.dockerStore.dockerConfig$.pipe(filter(Boolean), take(1)),
-      this.api.call('system.advanced.nvidia_present'),
-      this.api.call('system.advanced.config'),
-    ])
-      .pipe(finalize(() => this.isFormLoading.set(false)), takeUntilDestroyed(this.destroyRef))
-      .subscribe(([catalogConfig, dockerConfig, hasNvidiaCard, advancedConfig]) => {
+  private loadConfig(): void {
+    this.loadFormConfig(
+      combineLatest([
+        this.api.call('catalog.config'),
+        this.dockerStore.dockerConfig$.pipe(filter(Boolean), take(1)),
+        this.api.call('system.advanced.nvidia_present'),
+        this.api.call('system.advanced.config'),
+      ]),
+      ([catalogConfig, dockerConfig, hasNvidiaCard, advancedConfig]) => {
         this.showNvidiaCheckbox.set(hasNvidiaCard || advancedConfig.nvidia);
+
+        // `patch` replays on retry, so rebuild the rows instead of appending to the ones a
+        // previous attempt already pushed.
+        this.form.controls.address_pools.clear();
+        this.form.controls.registry_mirrors.clear();
 
         dockerConfig.address_pools.forEach(() => {
           this.addAddressPool();
@@ -142,7 +144,8 @@ export class AppsSettingsComponent extends SidePanelForm implements OnInit {
           address_pools: dockerConfig.address_pools,
           registry_mirrors: dockerConfig.registry_mirrors || [],
         });
-      });
+      },
+    );
   }
 
   protected addAddressPool(): void {
@@ -174,41 +177,25 @@ export class AppsSettingsComponent extends SidePanelForm implements OnInit {
     this.form.controls.registry_mirrors.removeAt(index);
   }
 
-  protected onSubmit(): void {
-    if (!this.canSubmit()) {
-      return;
-    }
-
-    const values = this.form.getRawValue();
-
-    this.isFormLoading.set(true);
-    forkJoin([
-      this.api.call('catalog.update', [{ preferred_trains: values.preferred_trains }]),
+  protected handleSubmit = ({ allValues }: FormSubmitEvent<AppsSettingsFormValue>): SubmitResult => ({
+    request$: forkJoin([
+      this.api.call('catalog.update', [{ preferred_trains: allValues.preferred_trains }]),
       this.api.job('docker.update', [{
-        enable_image_updates: values.enable_image_updates,
-        address_pools: values.address_pools,
-        registry_mirrors: values.registry_mirrors,
+        enable_image_updates: allValues.enable_image_updates,
+        address_pools: allValues.address_pools,
+        registry_mirrors: allValues.registry_mirrors,
       }]),
       ...(this.showNvidiaCheckbox()
-        ? [this.api.call('system.advanced.update', [{ nvidia: values.nvidia }])]
+        ? [this.api.call('system.advanced.update', [{ nvidia: allValues.nvidia }])]
         : []),
-    ])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.isFormLoading.set(false);
-          if (this.showNvidiaCheckbox()) {
-            this.store$.dispatch(advancedConfigUpdated());
-          }
-          this.snackbar.success(this.translate.instant('Settings saved'));
-          this.close(true);
-        },
-        error: (error: unknown) => {
-          this.isFormLoading.set(false);
-          this.errorHandler.handleValidationErrors(error, this.form);
-        },
-      });
-  }
+    ]),
+    successMessage: this.translate.instant('Settings saved'),
+    onSuccess: () => {
+      if (this.showNvidiaCheckbox()) {
+        this.store$.dispatch(advancedConfigUpdated());
+      }
+    },
+  });
 
   protected readonly helptext = helptextApps;
 }

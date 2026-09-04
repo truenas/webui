@@ -4,9 +4,7 @@ import {
   ContainerCapabilitiesPolicy,
   ContainerDeviceType,
   ContainerIdmapType,
-  ContainerNetworkType,
   ContainerNicDeviceType,
-  ContainerRemote,
   ContainerStatus,
   ContainerType,
 } from 'app/enums/container.enum';
@@ -117,14 +115,6 @@ export interface ContainerGpuDevice {
   pci_address: string;
 }
 
-export interface AvailableGpu {
-  pci_slot: string;
-  gpu_type: string;
-  description: string;
-  available: boolean;
-  error: string | null;
-}
-
 export type ContainerDevice
   = | ContainerFilesystemDevice
     | ContainerUsbDevice
@@ -169,19 +159,6 @@ export interface ContainerGlobalConfig {
   v4_network: string | null;
   v6_network: string | null;
   preferred_pool: string | null;
-}
-
-export interface ContainerNetwork {
-  type: ContainerNetworkType;
-  managed: boolean;
-  ipv4_address: string;
-  ipv4_nat: boolean;
-  ipv6_address: string;
-  ipv6_nat: boolean;
-}
-
-export interface ContainerImageParams {
-  remote: ContainerRemote;
 }
 
 export interface ContainerImageRegistryResponse {

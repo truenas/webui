@@ -187,11 +187,6 @@ export type AppUpgradeParams = [
   params?: AppUpgrade,
 ];
 
-export interface ChartContainerImage {
-  id: string;
-  update_available: boolean;
-}
-
 export interface ChartSchemaEnum {
   value: string;
   description: string;
@@ -305,7 +300,6 @@ export type AppDeleteParams = [
   {
     remove_images?: boolean;
     remove_ix_volumes?: boolean;
-    force_remove_ix_volumes?: boolean;
   },
 ];
 

@@ -204,7 +204,6 @@ export class AppInfoCardComponent {
       this.api.job('app.delete', [name, {
         remove_images: options.removeImages,
         remove_ix_volumes: options.removeVolumes,
-        force_remove_ix_volumes: options.forceRemoveVolumes,
       }]),
       { title: this.translate.instant(helptextApps.apps.deleting) },
     )

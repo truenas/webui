@@ -1,7 +1,6 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal,
+  ChangeDetectionStrategy, Component, inject, input, OnInit,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -16,11 +15,25 @@ import { jsonToYaml } from 'app/helpers/json-to-yaml.helper';
 import { App, AppCreate } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+
+// Built here rather than inline in the component, and left with an inferred return type — see
+// the `V` type parameter on IxFormHostForm for why.
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createCustomAppForm(formBuilder: FormBuilder) {
+  return formBuilder.group({
+    release_name: ['', Validators.required],
+    custom_compose_config_string: ['\n\n', Validators.required],
+  });
+}
+
+type CustomAppFormValue = ReturnType<ReturnType<typeof createCustomAppForm>['getRawValue']>;
 
 @Component({
   selector: 'ix-custom-app-form',
@@ -28,6 +41,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./custom-app-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    IxFormComponent,
     ReactiveFormsModule,
     TranslateModule,
     TnFormFieldComponent,
@@ -36,25 +50,20 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxCodeEditorComponent,
   ],
 })
-export class CustomAppFormComponent extends SidePanelForm implements OnInit {
+export class CustomAppFormComponent extends IxFormHostForm<boolean, CustomAppFormValue> implements OnInit {
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
-  private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);
   private appService = inject(ApplicationsService);
   private router = inject(Router);
-  private destroyRef = inject(DestroyRef);
 
   /** Provided by the `<tn-side-panel>` host in edit mode. */
   readonly app = input<App | undefined>(undefined);
 
   readonly requiredRoles = [Role.AppsWrite];
   protected readonly CodeEditorLanguage = CodeEditorLanguage;
-  protected readonly form = this.fb.group({
-    release_name: ['', Validators.required],
-    custom_compose_config_string: ['\n\n', Validators.required],
-  });
+  protected readonly form = createCustomAppForm(this.fb);
 
   protected get isNew(): boolean {
     return !this.existingApp;
@@ -62,34 +71,37 @@ export class CustomAppFormComponent extends SidePanelForm implements OnInit {
 
   protected existingApp: App | undefined;
 
-  readonly isLoading = signal(false);
-
-  /** Public signal hosts can read to disable a Save action while invalid or loading. */
-  readonly canSubmit = this.trackCanSubmit(this.isLoading);
-
   protected forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
 
   ngOnInit(): void {
     this.existingApp = this.app();
 
     if (this.existingApp?.id) {
-      this.handleExistingApp(this.existingApp);
+      this.loadExistingApp(this.existingApp.id);
     }
 
     if (!this.existingApp) {
-      this.setNewApp();
+      this.addForbiddenAppNamesValidator();
     }
   }
 
-  private setNewApp(): void {
-    this.addForbiddenAppNamesValidator();
-  }
-
-  private setAppForEdit(app: App): void {
-    this.form.patchValue({
-      release_name: app.id,
-      custom_compose_config_string: jsonToYaml(app.config),
-    });
+  /**
+   * The custom app's YAML config isn't on the app record the opener passes in, so edit mode
+   * re-reads the app before patching. Routed through `loadFormConfig` so the panel shows its
+   * loader, Save stays disabled until the real config is on screen, and a failed read offers a
+   * retry instead of silently saving the empty defaults.
+   */
+  private loadExistingApp(appId: string): void {
+    this.loadFormConfig(
+      this.appService.getApp(appId).pipe(filter((apps) => apps.length > 0)),
+      ([app]) => {
+        this.existingApp = app;
+        this.form.patchValue({
+          release_name: app.id,
+          custom_compose_config_string: jsonToYaml(app.config),
+        });
+      },
+    );
   }
 
   private addForbiddenAppNamesValidator(): void {
@@ -97,75 +109,43 @@ export class CustomAppFormComponent extends SidePanelForm implements OnInit {
     this.form.controls.release_name.updateValueAndValidity();
   }
 
-  protected onSubmit(): void {
-    if (!this.canSubmit()) {
-      return;
-    }
+  /**
+   * Both paths run behind the job dialog, which reports progress and the outcome itself and is
+   * followed by a navigation to the app — hence `suppressSuccessSnackbar` and a null message.
+   */
+  protected handleSubmit = ({ allValues }: FormSubmitEvent<CustomAppFormValue>): SubmitResult => {
+    const job$ = this.isNew
+      ? this.api.job(
+          'app.create',
+          [{
+            custom_app: true,
+            app_name: allValues.release_name,
+            custom_compose_config_string: allValues.custom_compose_config_string,
+          } as AppCreate],
+        )
+      : this.api.job('app.update', [
+          allValues.release_name,
+          { custom_compose_config_string: allValues.custom_compose_config_string },
+        ]);
 
-    this.isLoading.set(true);
-    const data = this.form.value;
-
-    const appCreate$ = this.api.job(
-      'app.create',
-      [{
-        custom_app: true,
-        app_name: data.release_name,
-        custom_compose_config_string: data.custom_compose_config_string,
-      } as AppCreate],
-    );
-
-    const appUpdate$ = this.api.job('app.update', [
-      data.release_name,
-      { custom_compose_config_string: data.custom_compose_config_string },
-    ]);
-
-    const job$ = this.isNew ? appCreate$ : appUpdate$;
-
-    this.dialogService.jobDialog(
-      job$,
-      {
+    return {
+      request$: this.dialogService.jobDialog(job$, {
         title: this.translate.instant('Custom App'),
         canMinimize: false,
         description: this.isNew
           ? this.translate.instant('Creating custom app')
           : this.translate.instant('Updating custom app'),
-      },
-    ).afterClosed().pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.close(true);
-        if (this.existingApp) {
-          this.router.navigate(['/apps', 'installed', this.existingApp.metadata.train, this.existingApp.name]);
-        } else {
-          this.router.navigate(['/apps', 'installed']);
-        }
-      },
-      error: (error: unknown) => {
-        this.isLoading.set(false);
-        this.errorHandler.showErrorModal(error);
-      },
-    });
-  }
+      }).afterClosed(),
+      successMessage: null,
+      onSuccess: () => this.navigateToApp(),
+    };
+  };
 
-  private handleExistingApp(existingApp: App): void {
-    this.isLoading.set(true);
-
-    this.appService.getApp(existingApp.id).pipe(
-      filter((apps) => apps.length > 0),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: ([app]) => {
-        this.existingApp = app;
-        this.setAppForEdit(app);
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-        this.close(false);
-      },
-      complete: () => {
-        this.isLoading.set(false);
-      },
-    });
+  private navigateToApp(): void {
+    if (this.existingApp) {
+      this.router.navigate(['/apps', 'installed', this.existingApp.metadata.train, this.existingApp.name]);
+    } else {
+      this.router.navigate(['/apps', 'installed']);
+    }
   }
 }

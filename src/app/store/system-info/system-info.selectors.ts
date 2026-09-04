@@ -34,11 +34,6 @@ export const selectIsEnterprise = createSelector(
   (productType) => productType === ProductType.Enterprise,
 );
 
-export const selectBuildYear = createSelector(
-  selectSystemInfoState,
-  (state) => state.buildYear,
-);
-
 export const selectCopyrightHtml = createSelector(
   selectProductType,
   (productType) => getCopyrightHtml(productType || undefined),

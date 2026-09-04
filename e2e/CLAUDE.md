@@ -165,6 +165,17 @@ markers that a decision was deliberate, and `docs/status.md` carries a one-line
 gloss of each one the code still cites. **Do not add new ones** — put the reason
 in the comment, where it cannot drift away from the code it explains.
 
+`docs/04-environment-architecture.md` covers the appliance side — where the box
+under test comes from, how state tainting is contained, and how external
+services and HA fit in. Its `E` numbers are cited the same way. Draft, but
+reconciled with the pipeline as built: read it before designing anything that
+provisions or reshapes an appliance.
+
+`docs/05-ci.md` is the pipeline as it actually runs: what the lab runner has
+to provide, the measured timings, and the failure behind every rule in
+`.github/workflows/e2e.yml` and `e2e/ci/appliance.sh`. Check it before
+touching either file.
+
 ## Talking to middleware
 
 Everything goes through `@truenas/api-client` 3.x, which types the whole

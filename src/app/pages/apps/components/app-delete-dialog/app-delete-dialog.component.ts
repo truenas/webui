@@ -37,7 +37,6 @@ export class AppDeleteDialog {
   form = this.formBuilder.nonNullable.group({
     removeVolumes: [false],
     removeImages: [true],
-    forceRemoveVolumes: [false],
     confirmAppName: ['', [Validators.required, this.validators.confirmValidator(
       this.data.name,
       this.translate.instant('Enter application name to continue.'),

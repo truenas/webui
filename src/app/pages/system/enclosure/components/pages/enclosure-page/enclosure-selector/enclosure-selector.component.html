@@ -1,18 +1,19 @@
-@for (enclosure of enclosures(); track enclosure.id; let i = $index) {
+@for (link of selectorLinks(); track link.enclosure.id; let i = $index) {
   <a
     class="enclosure"
-    [class.active]="enclosure.id === selectedEnclosure()"
-    [ixTest]="['select-enclosure', enclosure.model]"
-    [routerLink]="['/system', 'viewenclosure', enclosure.id]"
+    tnTestIdType="link"
+    [class.active]="link.enclosure.id === selectedEnclosure()"
+    [tnTestId]="link.testId"
+    [routerLink]="['/system', 'viewenclosure', link.enclosure.id]"
   >
     <ix-enclosure-side
       class="enclosure-image"
-      [enclosure]="enclosure"
+      [enclosure]="link.enclosure"
       [enableMouseEvents]="false"
       [slotTintFn]="diskStatusTint"
     ></ix-enclosure-side>
     <div class="enclosure-label">
-      {{ enclosure.label || enclosure.model }} ({{ i + 1 }})
+      {{ link.enclosure.label || link.enclosure.model }} ({{ i + 1 }})
     </div>
   </a>
 }

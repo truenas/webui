@@ -68,6 +68,22 @@ describe('DataMigrationStatusDialogComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
 
+  describe('stats', () => {
+    it('splits each pair into its own unbreakable part, so a long value wraps instead of overlapping', () => {
+      build({ ...baseJob, stats: { ...baseStats } });
+
+      const parts = spectator.queryAll('.stat-value .stat-part').map((part) => part.textContent.trim());
+
+      expect(parts).toEqual(['4.77 MiB /', '9.54 MiB', '5 /', '10', '0']);
+
+      // The separator between the parts must survive Angular's whitespace
+      // removal, or the pair renders as "4.77 MiB /9.54 MiB".
+      const values = spectator.queryAll('.stat-value').map((value) => value.textContent.trim());
+
+      expect(values).toEqual(['4.77 MiB / 9.54 MiB', '5 / 10', '0']);
+    });
+  });
+
   describe('progress math', () => {
     it('renders progressPercent as 50 when half the items are done', () => {
       build({ ...baseJob, stats: { ...baseStats } });
