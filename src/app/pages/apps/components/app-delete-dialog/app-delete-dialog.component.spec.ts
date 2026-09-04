@@ -58,29 +58,6 @@ describe('AppDeleteDialogComponent', () => {
       confirmAppName: 'ix-test-app',
       removeImages: true,
       removeVolumes: true,
-      forceRemoveVolumes: false,
-    });
-  });
-
-  it('shows force remove volumes checkbox when Remove iXVolumes is selected', async () => {
-    expect(await form.getLabels()).not.toContain('Force-remove iXVolumes');
-
-    const confirmInput = await loader.getHarness(IxInputHarness);
-    await confirmInput.setValue('ix-test-app');
-
-    await form.fillForm({
-      'Remove iXVolumes': true,
-      'Force-remove iXVolumes': true,
-    });
-
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
-    await deleteButton.click();
-
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
-      confirmAppName: 'ix-test-app',
-      removeImages: true,
-      removeVolumes: true,
-      forceRemoveVolumes: true,
     });
   });
 

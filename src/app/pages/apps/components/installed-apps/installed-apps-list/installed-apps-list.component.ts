@@ -432,7 +432,6 @@ export class InstalledAppsListComponent implements OnInit {
       {
         remove_images: options.removeImages,
         remove_ix_volumes: options.removeVolumes,
-        force_remove_ix_volumes: options.forceRemoveVolumes,
       },
     ]);
 
