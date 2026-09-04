@@ -22,7 +22,6 @@ import {
   AddSpnDialog,
 } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('ServiceNfsComponent', () => {
   let spectator: Spectator<ServiceNfsComponent>;
@@ -76,10 +75,6 @@ describe('ServiceNfsComponent', () => {
       ]),
       provideMockStore({
         selectors: [
-          {
-            selector: selectIsEnterprise,
-            value: false,
-          },
         ],
       }),
       mockProvider(SlideIn),

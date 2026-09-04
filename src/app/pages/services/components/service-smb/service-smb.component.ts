@@ -6,7 +6,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { combineLatest, of } from 'rxjs';
+import { combineLatest, of, take } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
@@ -222,15 +222,19 @@ export class ServiceSmbComponent implements OnInit {
       },
     });
 
-    this.api.call('smb.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (config) => {
+    // Waits for a real entitlement answer so a server-side-enabled Spotlight is never dropped
+    // merely because `smb.config` resolved before entitlements did.
+    combineLatest([
+      this.api.call('smb.config'),
+      this.entitlements.entitled$(EntitlementFeature.TrueSearch).pipe(take(1)),
+    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: ([config, hasTrueSearch]) => {
         const searchProtocolEnabled = config.search_protocols.includes(smbSearchSpotlight);
         config.bindip.forEach(() => this.addBindIp());
         this.form.patchValue({
           ...config,
-          // `smb.config` is async, so gate the loaded value too: a stale `true` must not be
-          // restored (and later submitted) on a system that is not entitled to TrueSearch.
-          spotlight_search: searchProtocolEnabled && this.isSpotlightEnabled(),
+          // A stale `true` must not be restored (and later submitted) without the entitlement.
+          spotlight_search: searchProtocolEnabled && hasTrueSearch,
           bindip: config.bindip.map((ip) => ({ bindIp: ip })),
         });
         this.isSmb1Enabled.set(config.minimum_protocol === SmbMinProtocol.Smb1);

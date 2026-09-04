@@ -66,9 +66,9 @@ describe('HardwareDiskEncryptionComponent', () => {
     store$ = spectator.inject(MockStore);
   });
 
-  describe('no SED support', () => {
+  describe('denied the SED entitlement', () => {
     beforeEach(() => {
-      // Non-enterprise with no per-disk and no global SED password => hasSedSupport() is false.
+      // SED denied => hasSedSupport() is false.
       store$.overrideSelector(selectEntitlements, {
         [EntitlementFeature.Sed]: {
           entitled: false,
@@ -85,7 +85,7 @@ describe('HardwareDiskEncryptionComponent', () => {
     });
   });
 
-  describe('with SED support', () => {
+  describe('entitled to SED', () => {
     beforeEach(() => {
       store$.overrideSelector(selectEntitlements, {});
       store$.refreshState();

@@ -145,7 +145,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
 
   /**
    * Returns an observable that emits the default encryption type based on
-   * available SED-capable disks and Enterprise license status.
+   * available SED-capable disks and the SED entitlement.
    */
   private getDefaultEncryptionType$(): Observable<EncryptionType> {
     return combineLatest([this.hasSedCapableDisks$, this.hasSedEntitlement$]).pipe(
@@ -172,7 +172,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   }
 
   private initSedDefaults(): void {
-    // Set SED as default if SED-capable disks detected and Enterprise license
+    // Set SED as default if SED-capable disks detected and the system is entitled to SED
     if (this.isAddingVdevs()) {
       return;
     }
