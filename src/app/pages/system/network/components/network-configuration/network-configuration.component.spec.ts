@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
@@ -20,6 +20,8 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NetworkConfigurationComponent } from 'app/pages/system/network/components/network-configuration/network-configuration.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('NetworkConfigurationComponent', () => {
   let spectator: Spectator<NetworkConfigurationComponent>;
@@ -202,5 +204,39 @@ describe('NetworkConfigurationComponent', () => {
         }),
       ],
     );
+  });
+
+  describe('HA hostname fields', () => {
+    /**
+     * These are gated on `failover.licensed` alone. Product type used to wrap that check, so
+     * an HA pair on non-appliance hardware — a licensed Mini, or any system where product type
+     * now reports COMMUNITY_EDITION — never reached it and lost both fields.
+     */
+    it('shows the HA hostname fields on an HA-licensed system that is not appliance hardware', async () => {
+      const store$ = spectator.inject(MockStore);
+      store$.overrideSelector(selectIsHaLicensed, true);
+      store$.overrideSelector(selectIsEnterprise, false);
+      store$.refreshState();
+
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
+
+      const form = await loader.getHarness(IxFormHarness);
+      expect(await form.getLabels()).toContain('Hostname (TrueNAS Controller 2)');
+    });
+
+    it('hides the HA hostname fields when the system is not HA licensed', async () => {
+      const store$ = spectator.inject(MockStore);
+      store$.overrideSelector(selectIsHaLicensed, false);
+      store$.refreshState();
+
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
+
+      const form = await loader.getHarness(IxFormHarness);
+      expect(await form.getLabels()).not.toContain('Hostname (TrueNAS Controller 2)');
+    });
   });
 });

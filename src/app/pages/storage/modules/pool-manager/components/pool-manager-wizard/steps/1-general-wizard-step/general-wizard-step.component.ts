@@ -4,12 +4,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperNext } from '@angular/material/stepper';
-import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   combineLatest, map, Observable,
 } from 'rxjs';
 import { startWith, take } from 'rxjs/operators';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -26,8 +26,7 @@ import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/co
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { EntitlementsService } from 'app/services/entitlements.service';
 
 @Component({
   selector: 'ix-general-wizard-step',
@@ -54,7 +53,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   private dialog = inject(DialogService);
   private translate = inject(TranslateService);
   private store = inject(PoolManagerStore);
-  private store$ = inject<Store<AppState>>(Store);
+  private entitlements = inject(EntitlementsService);
   private cdr = inject(ChangeDetectorRef);
   private poolWizardNameValidationService = inject(PoolWizardNameValidationService);
   private destroyRef = inject(DestroyRef);
@@ -88,20 +87,20 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   private readonly oldNameForbiddenValidator = forbiddenAsyncValues(this.poolNames$);
 
   hasSedCapableDisks$ = this.store.hasSedCapableDisks$;
-  isEnterprise$ = this.store$.select(selectIsEnterprise);
+  hasSedEntitlement$ = this.entitlements.entitled$(EntitlementFeature.Sed);
   isSedPasswordSet$ = this.api.call('system.advanced.sed_global_password_is_set');
 
   encryptionTypeOptions$: Observable<Option<EncryptionType>[]> = combineLatest([
     this.hasSedCapableDisks$,
-    this.isEnterprise$,
+    this.hasSedEntitlement$,
   ]).pipe(
-    map(([hasSedDisks, isEnterprise]) => {
+    map(([hasSedDisks, hasSedEntitlement]) => {
       const options: Option<EncryptionType>[] = [
         { label: this.translate.instant(helptextPoolCreation.encryptionTypeNone), value: EncryptionType.None },
         { label: this.translate.instant(helptextPoolCreation.encryptionTypeSoftware), value: EncryptionType.Software },
       ];
 
-      if (hasSedDisks && isEnterprise) {
+      if (hasSedDisks && hasSedEntitlement) {
         options.push({
           label: this.translate.instant(helptextPoolCreation.encryptionTypeSed),
           value: EncryptionType.Sed,
@@ -146,13 +145,13 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
 
   /**
    * Returns an observable that emits the default encryption type based on
-   * available SED-capable disks and Enterprise license status.
+   * available SED-capable disks and the SED entitlement.
    */
   private getDefaultEncryptionType$(): Observable<EncryptionType> {
-    return combineLatest([this.hasSedCapableDisks$, this.isEnterprise$]).pipe(
+    return combineLatest([this.hasSedCapableDisks$, this.hasSedEntitlement$]).pipe(
       take(1),
-      map(([hasSedDisks, isEnterprise]) => {
-        return (hasSedDisks && isEnterprise) ? EncryptionType.Sed : EncryptionType.None;
+      map(([hasSedDisks, hasSedEntitlement]) => {
+        return (hasSedDisks && hasSedEntitlement) ? EncryptionType.Sed : EncryptionType.None;
       }),
     );
   }
@@ -173,7 +172,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   }
 
   private initSedDefaults(): void {
-    // Set SED as default if SED-capable disks detected and Enterprise license
+    // Set SED as default if SED-capable disks detected and the system is entitled to SED
     if (this.isAddingVdevs()) {
       return;
     }

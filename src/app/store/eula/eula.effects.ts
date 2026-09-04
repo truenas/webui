@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, Observable } from 'rxjs';
 import {
@@ -13,9 +12,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Injectable()
 export class EulaEffects {
@@ -24,12 +21,11 @@ export class EulaEffects {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
-  private store$ = inject<Store<AppState>>(Store);
   private authService = inject(AuthService);
 
+  /** Middleware arms the EULA on enterprise license upload; `is_eula_accepted` is the only gate needed. */
   checkEula$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
-    filterAsync(() => this.store$.select(selectIsEnterprise).pipe(filter(Boolean))),
     filterAsync(() => this.authService.hasRole([Role.FullAdmin])),
     mergeMap(() => {
       return this.api.call('truenas.is_eula_accepted').pipe(

@@ -6,6 +6,8 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NvmeOfGlobalConfig } from 'app/interfaces/nvme-of.interface';
@@ -18,9 +20,9 @@ import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectServices } from 'app/store/services/services.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('NvmeOfConfigurationComponent', () => {
   let spectator: Spectator<NvmeOfConfigurationComponent>;
@@ -51,8 +53,9 @@ describe('NvmeOfConfigurationComponent', () => {
             value: true,
           },
           {
-            selector: selectIsEnterprise,
-            value: true,
+            // Loaded map with no gated keys, i.e. entitled to everything.
+            selector: selectEntitlements,
+            value: {},
           },
           {
             selector: selectServices,
@@ -156,8 +159,15 @@ describe('NvmeOfConfigurationComponent', () => {
     });
   });
 
-  it('hides Implementation field on non-enterprise systems', async () => {
-    spectator.inject(MockStore).overrideSelector(selectIsEnterprise, false);
+  it('hides the Implementation field when the system is not entitled to NVMEOF_SPDK', async () => {
+    spectator.inject(MockStore).overrideSelector(selectEntitlements, {
+      [EntitlementFeature.NvmeOfSpdk]: {
+        entitled: false,
+        reason: EntitlementReason.KeyMissing,
+        message: 'SPDK is limited to enterprise licensed systems only.',
+      },
+    });
+    spectator.inject(MockStore).refreshState();
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
@@ -170,8 +180,15 @@ describe('NvmeOfConfigurationComponent', () => {
     });
   });
 
-  it('does not include kernel in payload when saving on non-enterprise systems', async () => {
-    spectator.inject(MockStore).overrideSelector(selectIsEnterprise, false);
+  it('omits kernel from the payload when the system is not entitled to NVMEOF_SPDK', async () => {
+    spectator.inject(MockStore).overrideSelector(selectEntitlements, {
+      [EntitlementFeature.NvmeOfSpdk]: {
+        entitled: false,
+        reason: EntitlementReason.KeyMissing,
+        message: 'SPDK is limited to enterprise licensed systems only.',
+      },
+    });
+    spectator.inject(MockStore).refreshState();
     spectator.inject(NvmeOfService).isRdmaCapable.mockReturnValue(of(true));
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);

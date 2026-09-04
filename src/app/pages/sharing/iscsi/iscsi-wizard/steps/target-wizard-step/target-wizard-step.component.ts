@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of, switchMap } from 'rxjs';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextIscsi } from 'app/helptext/sharing';
@@ -11,8 +12,8 @@ import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { LicenseService } from 'app/services/license.service';
 
 @Component({
   selector: 'ix-target-wizard-step',
@@ -28,7 +29,7 @@ import { LicenseService } from 'app/services/license.service';
 export class TargetWizardStepComponent {
   private iscsiService = inject(IscsiService);
   private translate = inject(TranslateService);
-  private license = inject(LicenseService);
+  private entitlements = inject(EntitlementsService);
   formatter = inject(IxFormatterService);
 
   form = input.required<IscsiWizardComponent['form']['controls']['target']>();
@@ -48,7 +49,8 @@ export class TargetWizardStepComponent {
     { label: this.translate.instant('Fibre Channel'), value: IscsiTargetMode.Fc },
   ]);
 
-  readonly hasFibreChannel = toSignal(this.license.hasFibreChannel$);
+  // Entitlement alone by design (NAS-143012): `fc.capable` is not consulted here.
+  readonly hasFibreChannel = toSignal(this.entitlements.entitled$(EntitlementFeature.FibreChannel));
 
   get isNewTarget(): boolean {
     return this.form().enabled && this.form().value.target === newOption;

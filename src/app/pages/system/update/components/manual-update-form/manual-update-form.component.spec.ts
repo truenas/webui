@@ -15,6 +15,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/components/manual-update-form/manual-update-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -53,8 +54,8 @@ describe('ManualUpdateFormComponent', () => {
         })),
       }),
       mockWindow({
-        localStorage: {
-          getItem: () => ProductType.Enterprise,
+        sessionStorage: {
+          setItem: jest.fn(),
         },
       }),
       provideMockStore({
@@ -63,7 +64,7 @@ describe('ManualUpdateFormComponent', () => {
             systemInfo: {
               version: 'TrueNAS-SCALE-22.12',
             } as SystemInfo,
-            productType: ProductType.Enterprise,
+            productType: ProductType.CommunityEdition,
             isIxHardware: false,
             buildYear: 2024,
           },
@@ -109,9 +110,18 @@ describe('ManualUpdateFormComponent', () => {
   it('hides filelocation select if is HA system', async () => {
     spectator.component.isHaLicensed = true;
     const select = await loader.getHarnessOrNull(IxSelectHarness.with({ label: helptext.filelocation.label }));
+    const rebootCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Restart After Update' }));
 
     expect(spectator.component.isHaLicensed).toBe(true);
     expect(select).toBeNull();
+    expect(rebootCheckbox).toBeNull();
+  });
+
+  it('shows the Restart After Update checkbox on any non-HA system, regardless of product type', async () => {
+    const rebootCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Restart After Update' }));
+
+    expect(rebootCheckbox).not.toBeNull();
+    expect(await rebootCheckbox.getValue()).toBe(false);
   });
 
   /**

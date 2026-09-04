@@ -6,13 +6,13 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { combineLatest, of } from 'rxjs';
+import { combineLatest, of, take } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enum';
 import { SmbMinProtocol, smbMinProtocolLabels } from 'app/enums/smb-min-protocol.enum';
-import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
@@ -34,11 +34,10 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 interface BindIp {
   bindIp: string;
@@ -78,7 +77,7 @@ export class ServiceSmbComponent implements OnInit {
   private translate = inject(TranslateService);
   private validatorsService = inject(IxValidatorsService);
   private snackbar = inject(SnackbarService);
-  private truenasConnectService = inject(TruenasConnectService);
+  private entitlements = inject(EntitlementsService);
   private store$ = inject(Store);
   private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
@@ -88,29 +87,23 @@ export class ServiceSmbComponent implements OnInit {
   protected isSmb1Enabled = signal(false);
   protected readonly minimumProtocolOptions$ = of(mapToOptions(smbMinProtocolLabels, this.translate));
 
-  protected isEnterprise = toSignal(this.store$.select(selectIsEnterprise), { initialValue: false });
   protected isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed), { initialValue: false });
 
-  protected isTruenasConnectConfigured = computed(() => {
-    const config = this.truenasConnectService.config();
-    return config?.status === TruenasConnectStatus.Configured;
-  });
+  private readonly hasTrueSearch = this.entitlements.entitled(EntitlementFeature.TrueSearch);
 
-  protected isSpotlightEnabled = computed(() => {
-    return this.isEnterprise() || this.isTruenasConnectConfigured();
-  });
+  // Entitlement alone by design (NAS-143012): unlike the WebShare toggle, Spotlight does not also
+  // require TrueNAS Connect.
+  protected isSpotlightEnabled = computed(() => Boolean(this.hasTrueSearch()));
 
-  protected shouldShowTruenasConnectNotice = computed(() => {
-    return !this.isEnterprise() && !this.isTruenasConnectConfigured();
-  });
+  /** `=== false` so the licensing notice is not shown while entitlements are still loading. */
+  protected shouldShowSpotlightNotice = computed(() => this.hasTrueSearch() === false);
 
   protected isStatefulFailoverEnabled = computed(() => {
     return this.isHaLicensed() && !this.hasIncompatibleShares() && !this.isSmb1Enabled();
   });
 
   /**
-   * Reactively enable/disable the Spotlight checkbox based on TrueNAS Connect configuration
-   * and Enterprise status. On non-Enterprise systems, Spotlight requires TrueNAS Connect.
+   * Reactively enable/disable the Spotlight checkbox on the TRUESEARCH entitlement.
    *
    * Reactively enable/disable the Stateful Failover checkbox based on HA license,
    * incompatible shares, and SMB1 status.
@@ -125,6 +118,7 @@ export class ServiceSmbComponent implements OnInit {
       if (isEnabled) {
         this.form.controls.spotlight_search.enable();
       } else {
+        this.form.controls.spotlight_search.setValue(false, { emitEvent: false });
         this.form.controls.spotlight_search.disable();
       }
     });
@@ -228,13 +222,19 @@ export class ServiceSmbComponent implements OnInit {
       },
     });
 
-    this.api.call('smb.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (config) => {
+    // Waits for a real entitlement answer so a server-side-enabled Spotlight is never dropped
+    // merely because `smb.config` resolved before entitlements did.
+    combineLatest([
+      this.api.call('smb.config'),
+      this.entitlements.entitled$(EntitlementFeature.TrueSearch).pipe(take(1)),
+    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: ([config, hasTrueSearch]) => {
         const searchProtocolEnabled = config.search_protocols.includes(smbSearchSpotlight);
         config.bindip.forEach(() => this.addBindIp());
         this.form.patchValue({
           ...config,
-          spotlight_search: searchProtocolEnabled,
+          // A stale `true` must not be restored (and later submitted) without the entitlement.
+          spotlight_search: searchProtocolEnabled && hasTrueSearch,
           bindip: config.bindip.map((ip) => ({ bindIp: ip })),
         });
         this.isSmb1Enabled.set(config.minimum_protocol === SmbMinProtocol.Smb1);
@@ -261,17 +261,6 @@ export class ServiceSmbComponent implements OnInit {
     this.isBasicMode = !this.isBasicMode;
   }
 
-  protected openTruenasConnectModal(): void {
-    this.truenasConnectService.openStatusModal();
-  }
-
-  protected onTruenasConnectLinkKeydown(event: KeyboardEvent): void {
-    if (event.key !== 'Enter' && event.key !== ' ') {
-      return;
-    }
-    event.preventDefault(); // Prevents page scroll on Space
-    this.openTruenasConnectModal();
-  }
 
   protected onSubmit(): void {
     const { spotlight_search: spotlightSearch, ...formValues } = this.form.getRawValue();

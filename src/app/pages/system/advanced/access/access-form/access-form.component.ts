@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -9,6 +9,7 @@ import {
   filter, finalize, forkJoin, Observable, of, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -20,6 +21,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated, generalConfigUpdated, loginBannerUpdated } from 'app/store/system-config/system-config.actions';
@@ -27,7 +29,6 @@ import {
   waitForAdvancedConfig,
   waitForGeneralConfig,
 } from 'app/store/system-config/system-config.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-access-form',
@@ -62,7 +63,8 @@ export class AccessFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.AuthSessionsWrite];
 
   protected isLoading = signal(false);
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  private entitlements = inject(EntitlementsService);
+  protected readonly hasDirectoryServices = this.entitlements.entitled(EntitlementFeature.DirectoryServices);
 
   form = this.fb.nonNullable.group({
     ds_auth: [false],
@@ -94,7 +96,7 @@ export class AccessFormComponent implements OnInit {
       ).subscribe(() => {
         const bannerChanged = this.form.controls.login_banner.dirty;
 
-        if (bannerChanged || this.isEnterprise) {
+        if (bannerChanged || this.hasDirectoryServices()) {
           const requests$ = [];
           this.isLoading.set(true);
 
@@ -102,7 +104,7 @@ export class AccessFormComponent implements OnInit {
             requests$.push(this.updateLoginBanner());
           }
 
-          if (this.isEnterprise) {
+          if (this.hasDirectoryServices()) {
             requests$.push(this.updateEnterpriseDsAuth());
           }
 

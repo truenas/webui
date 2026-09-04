@@ -3,9 +3,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -19,7 +21,7 @@ import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 
 describe('GeneralWizardStepComponent', () => {
   let spectator: Spectator<GeneralWizardStepComponent>;
@@ -59,7 +61,7 @@ describe('GeneralWizardStepComponent', () => {
       }),
       provideMockStore({
         selectors: [
-          { selector: selectIsEnterprise, value: true },
+          { selector: selectEntitlements, value: {} },
         ],
       }),
     ],
@@ -244,7 +246,7 @@ describe('GeneralWizardStepComponent with existing SED password', () => {
       }),
       provideMockStore({
         selectors: [
-          { selector: selectIsEnterprise, value: true },
+          { selector: selectEntitlements, value: {} },
         ],
       }),
     ],
@@ -261,5 +263,78 @@ describe('GeneralWizardStepComponent with existing SED password', () => {
     const warningMessage = spectator.query('ix-warning');
     expect(warningMessage).toBeTruthy();
     expect(warningMessage).toHaveText('The Global SED Password is a system-wide setting. A password is already configured. Entering a new password here will update it for all pools using SED encryption.');
+  });
+});
+
+describe('GeneralWizardStepComponent SED option and the SED entitlement', () => {
+  let spectator: Spectator<GeneralWizardStepComponent>;
+  let loader: HarnessLoader;
+
+  const startOver$ = new Subject<void>();
+
+  const createSedCapable = createComponentFactory({
+    component: GeneralWizardStepComponent,
+    imports: [
+      ReactiveFormsModule,
+      PoolWarningsComponent,
+    ],
+    providers: [
+      mockProvider(CdkStepper),
+      mockApi([
+        mockCall('pool.query', []),
+        mockCall('pool.validate_name', true),
+        mockCall('system.advanced.sed_global_password_is_set', false),
+      ]),
+      mockProvider(PoolWizardNameValidationService, {
+        validatePoolName: () => of(null),
+      }),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
+      mockProvider(PoolManagerStore, {
+        startOver$,
+        hasSedCapableDisks$: of(true),
+        encryptionType$: of(EncryptionType.None),
+        setGeneralOptions: jest.fn(),
+        setEncryptionOptions: jest.fn(),
+        setDiskWarningOptions: jest.fn(),
+      }),
+      mockProvider(DiskStore, {
+        selectableDisks$: of([]),
+      }),
+      provideMockStore({
+        selectors: [
+          { selector: selectEntitlements, value: {} },
+        ],
+      }),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createSedCapable();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('offers SED encryption when SED disks are present and the system is entitled to SED', async () => {
+    const encryptionRadio = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Encryption' }));
+
+    expect(await encryptionRadio.getOptionLabels()).toContain('Self Encrypting Drives (SED)');
+  });
+
+  it('offers no SED encryption option when the system is not entitled to SED', async () => {
+    spectator.inject(MockStore).overrideSelector(selectEntitlements, {
+      [EntitlementFeature.Sed]: {
+        entitled: false,
+        reason: EntitlementReason.NoLicense,
+        message: 'This system is not licensed to use the SED feature.',
+      },
+    });
+    spectator.inject(MockStore).refreshState();
+    spectator = createSedCapable();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+    const encryptionRadio = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Encryption' }));
+
+    expect(await encryptionRadio.getOptionLabels()).not.toContain('Self Encrypting Drives (SED)');
   });
 });

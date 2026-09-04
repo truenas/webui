@@ -7,7 +7,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
@@ -25,6 +25,7 @@ import {
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -70,12 +71,12 @@ import { SmbUsersWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-use
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-smb-form',
@@ -110,6 +111,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
   private matDialog = inject(MatDialog);
+  private entitlements = inject(EntitlementsService);
   private dialogService = inject(DialogService);
   private datasetService = inject(DatasetService);
   private translate = inject(TranslateService);
@@ -139,7 +141,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     'For the best experience, we recommend choosing a modern SMB share purpose instead of the legacy option.',
   );
 
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   protected SmbPresetType = SmbSharePurpose;
   protected isAdvancedMode = false;
@@ -383,7 +384,11 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.existingSmbShare = this.slideInRef.getData()?.existingSmbShare;
     this.defaultSmbShare = this.slideInRef.getData()?.defaultSmbShare;
     this.setupExplorerRootNodes();
-    this.purposeOptions$ = of(this.buildPurposeOptions());
+    // Derived rather than snapshotted: `entitled$` defers until the answer is real, so the
+    // list cannot freeze with Veeam wrongly filtered out because entitlements had not loaded.
+    this.purposeOptions$ = this.entitlements.entitled$(EntitlementFeature.SmbVeeam).pipe(
+      map((hasVeeamRepository) => this.buildPurposeOptions(hasVeeamRepository)),
+    );
   }
 
   get shouldShowNamingSchema(): boolean {
@@ -861,7 +866,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     );
   }
 
-  private buildPurposeOptions(): SelectOption<SmbSharePurpose>[] {
+  private buildPurposeOptions(hasVeeamRepository: boolean): SelectOption<SmbSharePurpose>[] {
     let options = mapToOptionsWithHoverTooltips(
       smbSharePurposeLabels,
       smbSharePurposeTooltips,
@@ -872,7 +877,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       options = options.filter((option) => option.value !== SmbSharePurpose.LegacyShare);
     }
 
-    if (!this.isEnterprise()) {
+    if (!hasVeeamRepository) {
       options = options.filter((option) => option.value !== SmbSharePurpose.VeeamRepositoryShare);
     }
 

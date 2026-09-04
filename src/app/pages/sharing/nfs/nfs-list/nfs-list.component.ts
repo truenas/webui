@@ -2,19 +2,19 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
-import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import { filter, tap } from 'rxjs';
+import { filter, take, tap } from 'rxjs';
 import { nfsCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { shared } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
@@ -46,10 +46,9 @@ import { storageTierColumn } from 'app/pages/sharing/components/storage-tier-cel
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { nfsListElements } from 'app/pages/sharing/nfs/nfs-list/nfs-list.elements';
 import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
-import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-nfs-list',
@@ -82,12 +81,12 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 export class NfsListComponent implements OnInit {
   private loader = inject(LoaderService);
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private slideIn = inject(SlideIn);
   private cdr = inject(ChangeDetectorRef);
-  private store$ = inject<Store<AppState>>(Store);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
   private poolStoreService = inject(poolStore);
@@ -100,7 +99,6 @@ export class NfsListComponent implements OnInit {
 
   searchQuery = signal('');
   dataProvider: AsyncDataProvider<NfsShare>;
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   nfsShares: NfsShare[] = [];
   /** null = pools not yet loaded; string[] once pool.query completes */
@@ -149,7 +147,7 @@ export class NfsListComponent implements OnInit {
     yesNoColumn({
       title: this.translate.instant('Expose Snapshots'),
       propertyName: 'expose_snapshots',
-      hidden: !this.isEnterprise(),
+      hidden: true,
     }),
     storageTierColumn({
       title: this.translate.instant('Storage Tier'),
@@ -201,6 +199,19 @@ export class NfsListComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    // Resolved once entitlements are known rather than read at construction, when the
+    // column set is built, so the column cannot stay hidden after a direct navigation.
+    this.entitlements.entitled$(EntitlementFeature.NfsSnapshot).pipe(
+      take(1),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((hasNfsSnapshots) => {
+      const column = this.columns.find((col) => col.propertyName === 'expose_snapshots');
+      if (column) {
+        column.hidden = !hasNfsSnapshots;
+        this.columns = [...this.columns];
+        this.cdr.markForCheck();
+      }
+    });
     const shares$ = this.api.call('sharing.nfs.query').pipe(
       tap((shares) => this.nfsShares = shares),
       takeUntilDestroyed(this.destroyRef),

@@ -32,7 +32,7 @@
           [label]="'Enabled' | translate"
         ></ix-checkbox>
 
-        @if (isEnterprise()) {
+        @if (hasNfsSnapshots()) {
           <ix-checkbox
             formControlName="expose_snapshots"
             [label]="'Expose Snapshots' | translate"

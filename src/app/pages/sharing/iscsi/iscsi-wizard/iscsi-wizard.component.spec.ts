@@ -10,8 +10,8 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { IscsiExtentType, IscsiExtentUsefor } from 'app/enums/iscsi.enum';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -70,7 +70,6 @@ describe('IscsiWizardComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockApi([
-        mockCall('fc.capable', true),
         mockCall('iscsi.global.sessions', [] as IscsiGlobalSession[]),
         mockCall('iscsi.extent.query', []),
         mockCall('iscsi.target.query', []),
@@ -106,6 +105,7 @@ describe('IscsiWizardComponent', () => {
         mockCall('fcport.create'),
         mockCall('fc.fc_host.update'),
       ]),
+      mockEntitlements(),
       provideMockStore({
         selectors: [
           {
@@ -121,9 +121,6 @@ describe('IscsiWizardComponent', () => {
             selector: selectSystemInfo,
             value: {
               version: 'TrueNAS-SCALE-22.12',
-              license: {
-                features: [{ name: LicenseFeature.FibreChannel, start_date: null, expires_at: null }],
-              },
             } as SystemInfo,
           },
         ],
@@ -173,13 +170,13 @@ describe('IscsiWizardComponent', () => {
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(8, 'pool.dataset.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(7, 'pool.dataset.create', [{
       name: 'new_pool/test-name',
       type: 'VOLUME',
       volsize: 1073741824,
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(9, 'iscsi.extent.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(8, 'iscsi.extent.create', [{
       blocksize: 512,
       disk: 'zvol/my+pool/test_zvol',
       insecure_tpc: true,
@@ -191,17 +188,17 @@ describe('IscsiWizardComponent', () => {
       xen: false,
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(10, 'iscsi.portal.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(9, 'iscsi.portal.create', [{
       comment: 'test-name',
       listen: [{ ip: '::' }],
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(11, 'iscsi.initiator.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(10, 'iscsi.initiator.create', [{
       comment: 'test-name',
       initiators: ['initiator1', 'initiator2'],
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(12, 'iscsi.target.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(11, 'iscsi.target.create', [{
       name: 'test-name',
       mode: 'ISCSI',
       groups: [{
@@ -212,7 +209,7 @@ describe('IscsiWizardComponent', () => {
       }],
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(13, 'iscsi.targetextent.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(12, 'iscsi.targetextent.create', [{
       extent: 11,
       target: 15,
     }]);
@@ -254,13 +251,13 @@ describe('IscsiWizardComponent', () => {
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(8, 'pool.dataset.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(7, 'pool.dataset.create', [{
       name: 'new_pool/test-name',
       type: 'VOLUME',
       volsize: 1073741824,
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(9, 'iscsi.extent.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(8, 'iscsi.extent.create', [{
       blocksize: 512,
       disk: 'zvol/my+pool/test_zvol',
       insecure_tpc: true,
@@ -272,17 +269,17 @@ describe('IscsiWizardComponent', () => {
       xen: false,
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(10, 'iscsi.portal.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(9, 'iscsi.portal.create', [{
       comment: 'test-name',
       listen: [{ ip: '::' }],
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(11, 'iscsi.initiator.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(10, 'iscsi.initiator.create', [{
       comment: 'test-name',
       initiators: ['initiator1', 'initiator2'],
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(12, 'iscsi.target.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(11, 'iscsi.target.create', [{
       name: 'test-name',
       mode: 'ISCSI',
       groups: [{
@@ -293,7 +290,7 @@ describe('IscsiWizardComponent', () => {
       }],
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(13, 'iscsi.targetextent.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(12, 'iscsi.targetextent.create', [{
       extent: 11,
       target: 15,
     }]);

@@ -8,6 +8,8 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -24,6 +26,7 @@ import {
   PoolManagerHarness,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/pool-manager.harness';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 import { selectHasEnclosureSupport, selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('PoolManagerComponent – create pool', () => {
@@ -332,6 +335,8 @@ describe('PoolManagerComponent – create pool with SED encryption', () => {
           selectors: [
             { selector: selectHasEnclosureSupport, value: true },
             { selector: selectIsEnterprise, value: true },
+            // Loaded map with no gated keys, i.e. entitled to SED.
+            { selector: selectEntitlements, value: {} },
           ],
         }),
         mockAuth(),
@@ -387,6 +392,8 @@ describe('PoolManagerComponent – create pool with SED encryption', () => {
           selectors: [
             { selector: selectHasEnclosureSupport, value: true },
             { selector: selectIsEnterprise, value: true },
+            // Loaded map with no gated keys, i.e. entitled to SED.
+            { selector: selectEntitlements, value: {} },
           ],
         }),
         mockAuth(),
@@ -429,6 +436,16 @@ describe('PoolManagerComponent – create pool with SED encryption', () => {
           selectors: [
             { selector: selectHasEnclosureSupport, value: true },
             { selector: selectIsEnterprise, value: false },
+            {
+              selector: selectEntitlements,
+              value: {
+                [EntitlementFeature.Sed]: {
+                  entitled: false,
+                  reason: EntitlementReason.NoLicense,
+                  message: 'This system is not licensed to use the SED feature.',
+                },
+              },
+            },
           ],
         }),
         mockAuth(),
@@ -482,6 +499,8 @@ describe('PoolManagerComponent – create pool with SED encryption', () => {
           selectors: [
             { selector: selectHasEnclosureSupport, value: true },
             { selector: selectIsEnterprise, value: true },
+            // Loaded map with no gated keys, i.e. entitled to SED.
+            { selector: selectEntitlements, value: {} },
           ],
         }),
         mockAuth(),

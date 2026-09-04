@@ -117,6 +117,7 @@ import {
   DsUncachedGroup, DsUncachedUser, LoggedInUser,
 } from 'app/interfaces/ds-cache.interface';
 import { DashboardEnclosure, Enclosure, SetDriveBayLightStatus } from 'app/interfaces/enclosure.interface';
+import { EntitlementsInfo } from 'app/interfaces/entitlement.interface';
 import {
   FailoverConfig,
   FailoverUpdate,
@@ -876,6 +877,7 @@ export interface ApiCallDirectory {
 
   // TrueNAS
   'truenas.accept_eula': { params: void; response: void };
+  'truenas.entitlements.info': { params: void; response: EntitlementsInfo };
   'truenas.get_eula': { params: void; response: string };
   'truenas.is_eula_accepted': { params: void; response: boolean };
   'truenas.is_production': { params: void; response: boolean };

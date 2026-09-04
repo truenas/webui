@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, OnInit, signal, inject,
   DestroyRef,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -14,6 +14,7 @@ import {
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { helptextPrivilege } from 'app/helptext/account/priviledge';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
@@ -32,10 +33,10 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-privilege-form',
@@ -64,6 +65,7 @@ export class PrivilegeFormComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private errorHandler = inject(FormErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
   private dialog = inject(DialogService);
@@ -92,7 +94,7 @@ export class PrivilegeFormComponent implements OnInit {
   });
 
   protected readonly helptext = helptextPrivilege;
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly hasDirectoryServices = this.entitlements.entitled(EntitlementFeature.DirectoryServices);
   protected existingPrivilege: Privilege | undefined;
 
   get isNew(): boolean {
@@ -223,8 +225,8 @@ export class PrivilegeFormComponent implements OnInit {
       return;
     }
 
-    // Hide button in non-enterprise mode
-    if (!this.isEnterprise()) {
+    // Hide button when the system is not entitled to directory-services authentication
+    if (!this.hasDirectoryServices()) {
       this.showDsAuthButton.set(false);
       return;
     }

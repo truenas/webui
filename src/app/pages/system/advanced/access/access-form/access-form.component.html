@@ -7,7 +7,7 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
-        @if (isEnterprise()) {
+        @if (hasDirectoryServices()) {
           <ix-checkbox
             formControlName="ds_auth"
             [label]="'Allow Directory Service users to access WebUI' | translate"

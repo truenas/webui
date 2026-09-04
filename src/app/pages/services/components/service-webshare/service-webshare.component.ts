@@ -5,9 +5,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WebSharePasskey, webSharePasskeyLabels } from 'app/enums/webshare-passkey.enum';
@@ -25,6 +27,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 
 @Component({
   selector: 'ix-service-webshare',
@@ -56,6 +59,7 @@ export class ServiceWebshareComponent implements OnInit {
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
   private truenasConnectService = inject(TruenasConnectService);
+  private entitlements = inject(EntitlementsService);
   slideInRef = inject(SlideInRef<undefined, boolean>);
 
   protected isFormLoading = signal(false);
@@ -77,17 +81,42 @@ export class ServiceWebshareComponent implements OnInit {
     () => this.truenasConnectService.config()?.status === TruenasConnectStatus.Configured,
   );
 
+  /**
+   * A Connect connection is not a substitute for the entitlement: the two are separate
+   * conditions and TrueSearch needs both. Reads `undefined` until entitlements load, which
+   * leaves the control locked rather than briefly offering a feature that may be denied.
+   */
+  protected readonly isTrueSearchEntitled = this.entitlements.entitled(EntitlementFeature.TrueSearch);
+
+  protected readonly canUseTrueSearch = computed(
+    () => Boolean(this.isTrueSearchEntitled()) && this.isTruenasConnectConfigured(),
+  );
+
+  /**
+   * Names the condition that is actually missing. Checked against `false` rather than
+   * falsiness so the licensing hint is not shown while entitlements are still loading.
+   */
+  protected readonly trueSearchHint = computed(() => {
+    if (this.isTrueSearchEntitled() === false) {
+      return T('TrueSearch is not included in this system\'s license.');
+    }
+    if (!this.isTruenasConnectConfigured()) {
+      return T('TrueSearch requires TrueNAS Connect to be configured.');
+    }
+    return '';
+  });
+
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
 
-    // Keep the TrueSearch control enabled only while TrueNAS Connect is configured. When
-    // Connect is disabled we force the toggle off and lock it so it can neither be enabled
+    // Keep the TrueSearch control enabled only while it is both entitled and Connect is
+    // configured. Otherwise we force the toggle off and lock it so it can neither be enabled
     // in the UI nor submitted as `true`.
     effect(() => {
       const searchControl = this.form.controls.search;
-      if (this.isTruenasConnectConfigured()) {
+      if (this.canUseTrueSearch()) {
         searchControl.enable({ emitEvent: false });
       } else {
         searchControl.setValue(false, { emitEvent: false });
@@ -103,8 +132,8 @@ export class ServiceWebshareComponent implements OnInit {
         this.form.patchValue({
           // `webshare.config` is async, so it can resolve after the guard effect has already
           // locked the control off. Gate the loaded value too, otherwise a stale `search: true`
-          // from the backend would be restored while Connect is disabled and then submitted.
-          search: config.search && this.isTruenasConnectConfigured(),
+          // from the backend would be restored while unavailable and then submitted.
+          search: config.search && this.canUseTrueSearch(),
           passkey: config.passkey,
         });
         this.isFormLoading.set(false);

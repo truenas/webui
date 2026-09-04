@@ -120,7 +120,7 @@
     }
   }
 
-  @if (!isEnterprise()) {
+  @if (!hasEnterpriseLicense()) {
     <mat-list-item class="fingerprint-row">
       <span class="label">{{ 'System Thumbprint' | translate }}:</span>
       <span class="value fingerprint-actions">

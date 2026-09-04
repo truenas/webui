@@ -14,7 +14,7 @@
           [tooltip]="helptext.baseNqnTooltip | translate"
         ></ix-input>
 
-        @if (isEnterprise()) {
+        @if (hasSpdk()) {
           <div [matTooltip]="form.controls.kernel.disabled ? (helptext.implementationDisabledTooltip | translate) : ''">
             <ix-radio-group
               formControlName="kernel"

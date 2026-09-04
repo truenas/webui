@@ -5,6 +5,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { LicenseService } from 'app/services/license.service';
 
 jest.mock('app/../assets/ui-searchable-elements.json', () => [
@@ -29,11 +30,8 @@ describe('UiSearchProvider with mocked uiElements', () => {
           mockProvider(LicenseService, {
             hasFailover$: of(true),
             hasEnclosure$: of(true),
-            hasVms$: of(true),
-            hasApps$: of(true),
-            hasFibreChannel$: of(true),
-            hasKmip$: of(true),
           }),
+          mockProvider(EntitlementsService, { entitled$: () => of(true) }),
         ],
       });
     });
@@ -73,11 +71,8 @@ describe('UiSearchProvider with mocked uiElements', () => {
           mockProvider(LicenseService, {
             hasFailover$: of(true),
             hasEnclosure$: of(true),
-            hasVms$: of(true),
-            hasApps$: of(true),
-            hasFibreChannel$: of(true),
-            hasKmip$: of(true),
           }),
+          mockProvider(EntitlementsService, { entitled$: () => of(true) }),
         ],
       });
     });
@@ -107,11 +102,8 @@ describe('UiSearchProvider with mocked uiElements', () => {
           mockProvider(LicenseService, {
             hasFailover$: of(true),
             hasEnclosure$: of(true),
-            hasVms$: of(true),
-            hasApps$: of(true),
-            hasFibreChannel$: of(true),
-            hasKmip$: of(true),
           }),
+          mockProvider(EntitlementsService, { entitled$: () => of(true) }),
         ],
       });
     });

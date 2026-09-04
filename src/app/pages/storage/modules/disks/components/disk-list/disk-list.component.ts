@@ -16,6 +16,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -48,7 +49,7 @@ import { ResetSedDialog } from 'app/pages/storage/modules/disks/components/disk-
 import { sedStatusColumn } from 'app/pages/storage/modules/disks/components/disk-list/sed-status-cell/sed-status-cell.component';
 import { UnlockSedDialog } from 'app/pages/storage/modules/disks/components/disk-list/unlock-sed-dialog/unlock-sed-dialog.component';
 import { DiskWipeDialog } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
-import { LicenseService } from 'app/services/license.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
 interface DiskUi extends Disk {
@@ -88,7 +89,7 @@ export class DiskListComponent implements OnInit {
   private slideIn = inject(SlideIn);
   protected emptyService = inject(EmptyService);
   private cdr = inject(ChangeDetectorRef);
-  private licenseService = inject(LicenseService);
+  private entitlements = inject(EntitlementsService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DiskWrite];
@@ -236,7 +237,9 @@ export class DiskListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.licenseService.hasSed$.pipe(
+    // `entitled$` waits for a real answer, so `sed_status` is never silently omitted because
+    // entitlements had not loaded yet.
+    this.entitlements.entitled$(EntitlementFeature.Sed).pipe(
       take(1),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((hasSed) => {
