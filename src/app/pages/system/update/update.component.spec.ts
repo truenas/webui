@@ -14,6 +14,7 @@ import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { UpdateCode } from 'app/enums/system-update.enum';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -85,6 +86,7 @@ describe('UpdateComponent', () => {
         mockCall('update.config', updateConfig),
       ]),
       mockAuth(),
+      mockEntitlements(),
       provideMockStore({
         initialState: {
           jobs: jobsInitialState,
@@ -213,6 +215,16 @@ describe('UpdateComponent', () => {
       const changelogElement = spectator.query('.changelog');
       expect(changelogElement).toBeTruthy();
       expect(changelogElement).toHaveText('Important changes');
+    });
+
+    it('exposes hardware, HA, license and support flags to release-notes markdown', () => {
+      const component = spectator.component as unknown as { releaseNotesContext: () => Record<string, boolean> };
+      expect(component.releaseNotesContext()).toEqual({
+        isHaLicensed: false,
+        isEnterprise: false,
+        hasLicense: false,
+        hasSupport: true,
+      });
     });
 
     it('shows release notes url', () => {
