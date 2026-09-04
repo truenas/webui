@@ -2,10 +2,9 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective, tnIconMarker } from '@truenas/ui-components';
 import { filter, take, tap } from 'rxjs';
@@ -15,7 +14,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { Role } from 'app/enums/role.enum';
 import {
-  VmBootloader, VmDeviceType, VmDisplayType, VmState, vmTimeNames,
+  VmDeviceType, VmDisplayType, VmState, vmTimeNames,
 } from 'app/enums/vm.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
@@ -50,8 +49,6 @@ import { VirtualMachineDetailsRowComponent } from 'app/pages/vm/vm-list/vm-detai
 import { vmListElements } from 'app/pages/vm/vm-list.elements';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { VmService } from 'app/services/vm.service';
-import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-vm-list',
@@ -89,7 +86,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 })
 export class VmListComponent implements OnInit {
   private slideIn = inject(SlideIn);
-  private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
@@ -101,7 +97,6 @@ export class VmListComponent implements OnInit {
   protected readonly requiredRoles = [Role.VmWrite];
   protected readonly searchableElements = vmListElements;
 
-  private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   vmMachines: VirtualMachine[] = [];
   searchQuery = signal('');
   dataProvider: AsyncDataProvider<VirtualMachine>;
@@ -273,9 +268,6 @@ export class VmListComponent implements OnInit {
     if (!devices || devices.length === 0) {
       return false;
     }
-    if (this.isEnterprise() && vm.bootloader === VmBootloader.UefiCsm) {
-      return false;
-    }
 
     const displayDevices = devices.filter((device) => device.attributes.dtype === VmDeviceType.Display);
     if (displayDevices.length === 0) {
@@ -298,9 +290,6 @@ export class VmListComponent implements OnInit {
     const devices = vm.devices as VmDisplayDevice[];
     if (!devices || devices.length === 0) {
       return Number.MAX_SAFE_INTEGER - 1; // No devices should sort near the end
-    }
-    if (this.isEnterprise() && vm.bootloader === VmBootloader.UefiCsm) {
-      return Number.MAX_SAFE_INTEGER - 2; // Enterprise limitations should sort near the end
     }
 
     const displayDevices = devices.filter((device) => device.attributes.dtype === VmDeviceType.Display);
