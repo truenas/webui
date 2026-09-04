@@ -10,7 +10,8 @@
         @if (hasDirectoryServices()) {
           <ix-checkbox
             formControlName="ds_auth"
-            [label]="'Allow Directory Service users to access WebUI' | translate"
+            [label]="'Allow Directory Service users UI / API access' | translate"
+            [tooltip]="dsAuthTooltip | translate"
           ></ix-checkbox>
         }
         <ix-textarea
