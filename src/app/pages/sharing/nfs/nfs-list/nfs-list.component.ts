@@ -9,7 +9,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import { filter, tap } from 'rxjs';
+import { filter, take, tap } from 'rxjs';
 import { nfsCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -99,7 +99,6 @@ export class NfsListComponent implements OnInit {
 
   searchQuery = signal('');
   dataProvider: AsyncDataProvider<NfsShare>;
-  protected readonly hasNfsSnapshots = this.entitlements.entitled(EntitlementFeature.NfsSnapshot);
 
   nfsShares: NfsShare[] = [];
   /** null = pools not yet loaded; string[] once pool.query completes */
@@ -148,7 +147,7 @@ export class NfsListComponent implements OnInit {
     yesNoColumn({
       title: this.translate.instant('Expose Snapshots'),
       propertyName: 'expose_snapshots',
-      hidden: !this.hasNfsSnapshots(),
+      hidden: true,
     }),
     storageTierColumn({
       title: this.translate.instant('Storage Tier'),
@@ -200,6 +199,18 @@ export class NfsListComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    // Resolved once entitlements are known rather than read at construction, when the
+    // column set is built, so the column cannot stay hidden after a direct navigation.
+    this.entitlements.entitled$(EntitlementFeature.NfsSnapshot).pipe(
+      take(1),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((hasNfsSnapshots) => {
+      const column = this.columns.find((col) => col.propertyName === 'expose_snapshots');
+      if (column) {
+        column.hidden = !hasNfsSnapshots;
+        this.columns = [...this.columns];
+      }
+    });
     const shares$ = this.api.call('sharing.nfs.query').pipe(
       tap((shares) => this.nfsShares = shares),
       takeUntilDestroyed(this.destroyRef),
