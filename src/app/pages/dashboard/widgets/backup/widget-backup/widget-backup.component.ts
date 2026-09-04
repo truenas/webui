@@ -38,6 +38,11 @@ interface BackupRow {
   timestamp: ApiTimestamp;
   state: DisplayableState;
   direction: Direction;
+  enabled: boolean;
+}
+
+function isTaskEnabled(task: { enabled?: boolean }): boolean {
+  return task.enabled !== false;
 }
 
 @Component({
@@ -86,7 +91,7 @@ export class WidgetBackupComponent implements OnInit {
   }
 
   get failedCount(): number {
-    return this.backups.filter((backup) => this.failedStates.includes(backup.state)).length;
+    return this.backups.filter((backup) => this.isFailedTask(backup)).length;
   }
 
   get replicationTasks(): BackupRow[] {
@@ -145,24 +150,28 @@ export class WidgetBackupComponent implements OnInit {
             direction: task.direction,
             state: task.state.state,
             timestamp: task.state.datetime,
+            enabled: isTaskEnabled(task),
           })),
           ...rsyncTasks.map((task) => ({
             type: BackupType.Rsync,
             direction: task.direction,
             state: task.job?.state || (task.locked ? TaskState.Locked : TaskState.Pending),
             timestamp: task.job?.time_finished,
+            enabled: isTaskEnabled(task),
           })),
           ...cloudSyncTasks.map((task) => ({
             type: BackupType.CloudSync,
             direction: task.direction,
             state: task.job?.state || (task.locked ? TaskState.Locked : TaskState.Pending),
             timestamp: task.job?.time_finished,
+            enabled: isTaskEnabled(task),
           })),
           ...cloudBackupTasks.map((task) => ({
             type: BackupType.CloudBackup,
             direction: Direction.Push,
             state: task.job?.state || (task.locked ? TaskState.Locked : TaskState.Pending),
             timestamp: task.job?.time_finished,
+            enabled: isTaskEnabled(task),
           })),
         ];
         this.cdr.markForCheck();
@@ -206,15 +215,23 @@ export class WidgetBackupComponent implements OnInit {
       totalSend: tasks.filter((backup) => this.isSendTask(backup)).length,
       totalReceive: tasks.filter((backup) => !this.isSendTask(backup)).length,
       failedSend: tasks
-        .filter((backup) => this.failedStates.includes(backup.state) && this.isSendTask(backup)).length,
+        .filter((backup) => this.isFailedTask(backup) && this.isSendTask(backup)).length,
       failedReceive: tasks
-        .filter((backup) => this.failedStates.includes(backup.state) && !this.isSendTask(backup)).length,
+        .filter((backup) => this.isFailedTask(backup) && !this.isSendTask(backup)).length,
       lastWeekSend: successfulTasks
         .filter((backup) => this.isSendTask(backup) && this.isThisWeek(backup.timestamp)).length,
       lastWeekReceive: successfulTasks
         .filter((backup) => !this.isSendTask(backup) && this.isThisWeek(backup.timestamp)).length,
       lastSuccessfulTask,
     };
+  }
+
+  /**
+   * A disabled task is never going to run again, so a failure it recorded before it was
+   * disabled is history rather than something the administrator needs to act on.
+   */
+  private isFailedTask(backup: BackupRow): boolean {
+    return backup.enabled && this.failedStates.includes(backup.state);
   }
 
   private isSendTask(backup: BackupRow): boolean {
