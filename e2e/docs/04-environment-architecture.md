@@ -597,13 +597,19 @@ and a third supersedes the pending one, so under load some PR runs never
 happen. That is acceptable for an informational check and not for a gate
 (**D1**).
 
-**Artifacts.** JUnit XML leaves the runner today. Traces, video and screenshots
-(**R7.1**) do not yet, for the reason given in the workflow: a trace records
-the appliance password as typed, and this is a public repository. The
-precondition for publishing them — a credential worthless once published — now
-holds, since the password is per claim and the appliance is destroyed at
-release. Turning the upload on is a deliberate step. **R7.2**'s middleware log
-collection has no path under `hostfwd`; it needs an API route or bridge mode.
+**Artifacts.** JUnit XML leaves the runner on every run, and traces, video and
+screenshots (**R7.1**) for failed tests. Publishing a trace is safe only
+because the credential it records is per claim and the appliance it belonged
+to is destroyed at release; that is the rule, and it holds here. **R7.2**'s
+middleware log collection has no path under `hostfwd`; it needs an API route
+or bridge mode.
+
+**When it runs.** Nightly, and on every push to master that touches the UI or
+the suite — those are the runs that test merged code, since the suite drives
+the UI built from the checkout. Pull requests run it only when they change the
+suite or the pipeline; any other branch opts in with `workflow_dispatch`. Not
+every PR, deliberately: one runner, one appliance, and the concurrency caveat
+above.
 
 ### The public-repository constraint
 
