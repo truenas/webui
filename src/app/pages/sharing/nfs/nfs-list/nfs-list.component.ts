@@ -209,6 +209,7 @@ export class NfsListComponent implements OnInit {
       if (column) {
         column.hidden = !hasNfsSnapshots;
         this.columns = [...this.columns];
+        this.cdr.markForCheck();
       }
     });
     const shares$ = this.api.call('sharing.nfs.query').pipe(

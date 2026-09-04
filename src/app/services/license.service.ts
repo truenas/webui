@@ -4,7 +4,6 @@ import { shareReplay } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
@@ -16,7 +15,6 @@ import {
 })
 export class LicenseService {
   private store$ = inject<Store<AppState>>(Store);
-  private api = inject(ApiService);
   private truenasConnectService = inject(TruenasConnectService);
 
   /** Seeded by `failover.licensed` at sign-in, then kept in step with the `HA` entitlement. */

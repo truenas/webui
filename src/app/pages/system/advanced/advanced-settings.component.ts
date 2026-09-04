@@ -74,8 +74,9 @@ export class AdvancedSettingsComponent {
   protected readonly isSystemLicensed = toSignal(this.api.call('system.security.info.fips_available'));
   protected readonly Role = Role;
   protected readonly searchableElements = advancedSettingsElements;
-  protected readonly showSedCard = computed(() => Boolean(this.hasSedEntitlement()));
   private readonly hasSedEntitlement = this.entitlements.entitled(EntitlementFeature.Sed);
+  // Entitlement alone by design (NAS-143012): an already-set SED password is not a bypass.
+  protected readonly showSedCard = computed(() => Boolean(this.hasSedEntitlement()));
   protected readonly hasFailover$ = this.license.hasFailover$;
 
   constructor() {

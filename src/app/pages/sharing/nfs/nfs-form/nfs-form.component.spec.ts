@@ -195,7 +195,6 @@ describe('NfsFormComponent', () => {
 
       mockStore$.overrideSelector(selectEntitlements, {});
       mockStore$.refreshState();
-      mockStore$.refreshState();
 
       await form.fillForm({
         'Expose Snapshots': true,

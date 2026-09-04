@@ -16,8 +16,10 @@ export const entitlementsReducer = createReducer(
   on(entitlementsLoaded, (state, { entitlements }) => ({ ...state, entitlements })),
   /**
    * An empty map reads as "nothing is restricted", so a failed fetch is permissive rather than
-   * a blackout of every licensed surface. Keeps a previously loaded map so a failed refresh
-   * never downgrades a good answer.
+   * a blackout of every licensed surface. This follows the middleware contract for the endpoint
+   * (an absent key means not gated) and is deliberate (NAS-143012): every middleware this UI
+   * ships with implements `truenas.entitlements.info`. Keeps a previously loaded map so a
+   * failed refresh never downgrades a good answer.
    */
   on(entitlementsLoadFailed, (state) => ({ ...state, entitlements: state.entitlements ?? {} })),
 );

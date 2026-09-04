@@ -77,7 +77,6 @@ describe('HardwareDiskEncryptionComponent', () => {
         },
       });
       store$.refreshState();
-      store$.refreshState();
       spectator.detectChanges();
     });
 
@@ -89,7 +88,6 @@ describe('HardwareDiskEncryptionComponent', () => {
   describe('with SED support', () => {
     beforeEach(() => {
       store$.overrideSelector(selectEntitlements, {});
-      store$.refreshState();
       store$.refreshState();
       spectator.detectChanges();
     });
