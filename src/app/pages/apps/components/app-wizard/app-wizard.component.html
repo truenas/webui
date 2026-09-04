@@ -15,7 +15,14 @@
           [autocompleteOptions]="searchOptions"
         ></ix-input>
       </div>
-      <form [formGroup]="form" (submit)="onSubmit()">
+      <ix-form
+        [formGroup]="form"
+        [isEditMode]="!isNew"
+        [requiredRoles]="requiredRoles"
+        [submitHandler]="handleSubmit"
+        [extraDisabled]="isLoading"
+        [suppressSuccessSnackbar]="true"
+      >
         <ix-dynamic-wizard
           [dynamicSection]="dynamicSection"
           [dynamicForm]="form"
@@ -33,10 +40,10 @@
             color="primary"
             testId="save"
             [label]="isNew ? ('Install' | translate) : ('Update' | translate)"
-            [disabled]="form.invalid || isLoading"
+            [disabled]="!canSubmit()"
           ></tn-button>
         </div>
-      </form>
+      </ix-form>
     </div>
 
     @if (appsLoaded) {
