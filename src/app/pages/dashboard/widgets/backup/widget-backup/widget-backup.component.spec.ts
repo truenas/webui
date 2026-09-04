@@ -323,6 +323,143 @@ describe('WidgetBackupComponent', () => {
     });
   });
 
+  describe('disabled tasks', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        props: {
+          size: SlotSize.Full,
+        },
+        providers: [
+          mockProvider(WidgetResourcesService, {
+            backups$: of([
+              [
+                {
+                  id: 1,
+                  direction: Direction.Push,
+                  enabled: false,
+                  state: {
+                    state: TaskState.Error,
+                    datetime: { $date: currentDatetime.getTime() - 50000 },
+                  },
+                },
+                {
+                  // `enabled` is optional on ReplicationTask, so a task that does not report it stays counted.
+                  id: 2,
+                  direction: Direction.Push,
+                  state: {
+                    state: TaskState.Error,
+                    datetime: { $date: currentDatetime.getTime() - 50000 },
+                  },
+                },
+              ] as ReplicationTask[],
+              [
+                {
+                  id: 1,
+                  direction: Direction.Pull,
+                  enabled: true,
+                  job: {
+                    state: JobState.Success,
+                    time_finished: { $date: currentDatetime.getTime() - 50000 },
+                  },
+                },
+                {
+                  id: 2,
+                  direction: Direction.Pull,
+                  enabled: false,
+                  job: {
+                    state: JobState.Failed,
+                    time_finished: { $date: currentDatetime.getTime() - 50000 },
+                  },
+                },
+              ] as RsyncTask[],
+              [
+                {
+                  id: 1,
+                  direction: Direction.Push,
+                  enabled: false,
+                  job: {
+                    state: JobState.Failed,
+                    time_finished: { $date: currentDatetime.getTime() - 50000 },
+                  },
+                },
+              ] as CloudSyncTask[],
+              [
+                {
+                  id: 1,
+                  enabled: false,
+                  job: {
+                    state: JobState.Failed,
+                    time_finished: { $date: currentDatetime.getTime() - 50000 },
+                  },
+                },
+              ] as CloudBackup[],
+            ]),
+          }),
+        ],
+      });
+
+      widgetBackup = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, WidgetBackupHarness);
+    });
+
+    it('does not count failures of disabled tasks', async () => {
+      const header = await widgetBackup.getHeader();
+      expect(header.icon).toBe('alert');
+      expect(header.message).toBe('1 of 6 tasks failed');
+    });
+
+    it('still lists disabled tasks in the tile totals', async () => {
+      const tiles = await widgetBackup.getTiles();
+
+      expect(tiles['Cloud Sync'].firstColumn).toEqual(['1 send task', '0 receive tasks', 'Total failed: 0']);
+      expect(tiles.Replication.firstColumn).toEqual(['2 send tasks', '0 receive tasks', 'Total failed: 1']);
+      expect(tiles.Rsync.firstColumn).toEqual(['0 send tasks', '2 receive tasks', 'Total failed: 0']);
+      expect(tiles['TrueCloud Backup'].firstColumn).toEqual(['1 send task', '0 receive tasks', 'Total failed: 0']);
+    });
+  });
+
+  describe('when every task is disabled', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        props: {
+          size: SlotSize.Full,
+        },
+        providers: [
+          mockProvider(WidgetResourcesService, {
+            backups$: of([
+              [],
+              [
+                {
+                  id: 1,
+                  direction: Direction.Pull,
+                  enabled: false,
+                  job: {
+                    state: JobState.Failed,
+                    time_finished: { $date: currentDatetime.getTime() - 50000 },
+                  },
+                },
+              ] as RsyncTask[],
+              [],
+              [],
+            ]),
+          }),
+        ],
+      });
+
+      widgetBackup = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, WidgetBackupHarness);
+    });
+
+    it('still shows the task instead of the empty state', async () => {
+      expect(await widgetBackup.getEmptyCardMessage()).toBeNull();
+
+      const tiles = await widgetBackup.getTiles();
+      expect(tiles.Rsync.firstColumn).toEqual(['0 send tasks', '1 receive task', 'Total failed: 0']);
+
+      const header = await widgetBackup.getHeader();
+      expect(header.icon).toBe('check-circle');
+      expect(header.message).toBeFalsy();
+    });
+  });
+
   describe('fifth mockup variation', () => {
     beforeEach(async () => {
       spectator = createComponent({
