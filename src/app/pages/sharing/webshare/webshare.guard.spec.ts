@@ -5,15 +5,15 @@ import {
 import { mockProvider } from '@ngneat/spectator/jest';
 import { firstValueFrom, Observable, of } from 'rxjs';
 import { webShareGuard } from 'app/pages/sharing/webshare/webshare.guard';
-import { LicenseService } from 'app/services/license.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 
 describe('webShareGuard', () => {
   function setup(shouldShowWebshare: boolean): Promise<boolean | UrlTree> {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        mockProvider(LicenseService, {
-          shouldShowWebshare$: of(shouldShowWebshare),
+        mockProvider(EntitlementsService, {
+          entitled$: () => of(shouldShowWebshare),
         }),
       ],
     });

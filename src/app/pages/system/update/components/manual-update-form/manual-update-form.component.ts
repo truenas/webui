@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   Validators, ReactiveFormsModule, NonNullableFormBuilder, FormControl, FormGroup,
 } from '@angular/forms';
@@ -44,7 +44,7 @@ import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { updateRebootAfterManualUpdate } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
-import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-manual-update-form',
@@ -100,7 +100,6 @@ export class ManualUpdateFormComponent implements OnInit {
   fileLocationOptions$: Observable<Option[]>;
 
   isHaLicensed = false;
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   ngOnInit(): void {
     this.checkHaLicenseAndUpdateStatus();
@@ -144,16 +143,13 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   private checkHaLicenseAndUpdateStatus(): void {
-    this.store$.select(selectIsEnterprise).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isEnterprise) => {
-      if (isEnterprise) {
-        this.store$.select(selectIsHaLicensed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHaLicensed) => {
-          this.isHaLicensed = isHaLicensed;
-          this.checkForUpdateRunning();
+    // The `HA` entitlement alone decides HA; product type must not pre-gate it.
+    this.store$.select(selectIsHaLicensed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHaLicensed) => {
+      this.isHaLicensed = isHaLicensed;
+      this.checkForUpdateRunning();
 
-          if (this.isHaLicensed) {
-            this.form.removeControl('filelocation');
-          }
-        });
+      if (this.isHaLicensed) {
+        this.form.removeControl('filelocation');
       }
     });
   }

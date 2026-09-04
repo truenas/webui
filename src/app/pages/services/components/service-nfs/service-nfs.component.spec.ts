@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -22,7 +22,6 @@ import {
   AddSpnDialog,
 } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('ServiceNfsComponent', () => {
   let spectator: Spectator<ServiceNfsComponent>;
@@ -35,6 +34,10 @@ describe('ServiceNfsComponent', () => {
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn((): undefined => undefined),
   };
+
+  // Varied per scenario by a nested `beforeAll`, which runs before the outer `beforeEach`
+  // that builds the component. `createRoutingFactory` cannot re-create inside a test.
+  let rdmaCapableProtocols: RdmaProtocolName[] = [RdmaProtocolName.Nfs];
 
   const createComponent = createRoutingFactory({
     component: ServiceNfsComponent,
@@ -63,7 +66,7 @@ describe('ServiceNfsComponent', () => {
           '192.168.1.119': '192.168.1.119',
         }),
         mockCall('nfs.update'),
-        mockCall('rdma.capable_protocols', [RdmaProtocolName.Nfs]),
+        mockCall('rdma.capable_protocols', () => rdmaCapableProtocols),
         mockCall('directoryservices.status', {
           status: DirectoryServiceStatus.Healthy,
           type: DirectoryServiceType.ActiveDirectory,
@@ -72,10 +75,6 @@ describe('ServiceNfsComponent', () => {
       ]),
       provideMockStore({
         selectors: [
-          {
-            selector: selectIsEnterprise,
-            value: false,
-          },
         ],
       }),
       mockProvider(SlideIn),
@@ -173,17 +172,27 @@ describe('ServiceNfsComponent', () => {
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AddSpnDialog);
   });
 
-  it('disables RDMA field unless it is an enterprise system with RDMA capable NIC', async () => {
+  it('enables the RDMA field when NFS is an RDMA capable protocol', async () => {
     expect(await form.getDisabledState()).toMatchObject({
-      'Enable NFS over RDMA': true,
+      'Enable NFS over RDMA': false,
+    });
+  });
+
+  describe('when NFS is not an RDMA capable protocol', () => {
+    // An empty list is how both "no capable NIC" and "not entitled" reach the UI:
+    // `rdma.capable_protocols` already accounts for the RDMA entitlement.
+    beforeAll(() => {
+      rdmaCapableProtocols = [];
     });
 
-    const mockStore$ = spectator.inject(MockStore);
-    mockStore$.overrideSelector(selectIsEnterprise, true);
-    spectator.detectChanges();
+    afterAll(() => {
+      rdmaCapableProtocols = [RdmaProtocolName.Nfs];
+    });
 
-    expect(await form.getDisabledState()).toMatchObject({
-      'Enable NFS over RDMA': true,
+    it('disables the RDMA field', async () => {
+      expect(await form.getDisabledState()).toMatchObject({
+        'Enable NFS over RDMA': true,
+      });
     });
   });
 });

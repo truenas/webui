@@ -33,7 +33,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 /**
  * Additional options available in UI.
@@ -267,13 +266,12 @@ export class NetworkConfigurationComponent implements OnInit {
       },
     );
 
-    this.store$.select(selectIsEnterprise).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isEnterprise) => {
-      if (isEnterprise) {
-        this.store$.select(selectIsHaLicensed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHaLicensed) => {
-          this.hostnameB.hidden = !isHaLicensed;
-          this.hostnameVirtual.hidden = !isHaLicensed;
-        });
-      }
+    // The `HA` entitlement alone decides these. Product type used to wrap this check, which
+    // is redundant — an HA licence implies HA — and wrong now that product type follows
+    // hardware: an HA pair on non-appliance hardware would never reach the inner check.
+    this.store$.select(selectIsHaLicensed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHaLicensed) => {
+      this.hostnameB.hidden = !isHaLicensed;
+      this.hostnameVirtual.hidden = !isHaLicensed;
     });
   }
 

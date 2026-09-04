@@ -15,6 +15,9 @@ import { userStateKey } from 'app/pages/credentials/users/store/user.selectors';
 import { SnapshotEffects } from 'app/pages/datasets/modules/snapshots/store/snapshot.effects';
 import { snapshotReducer, SnapshotsState } from 'app/pages/datasets/modules/snapshots/store/snapshot.reducer';
 import { snapshotStateKey } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
+import { EntitlementsEffects } from 'app/store/entitlements/entitlements.effects';
+import { entitlementsReducer, EntitlementsState } from 'app/store/entitlements/entitlements.reducer';
+import { entitlementsStateKey } from 'app/store/entitlements/entitlements.selectors';
 import { EulaEffects } from 'app/store/eula/eula.effects';
 import { HaInfoEffects } from 'app/store/ha-info/ha-info.effects';
 import { haInfoReducer, HaInfoState } from 'app/store/ha-info/ha-info.reducer';
@@ -47,6 +50,7 @@ export interface AppState {
   [preferencesStateKey]: PreferencesState;
   [systemInfoStateKey]: SystemInfoState;
   [haInfoStateKey]: HaInfoState;
+  [entitlementsStateKey]: EntitlementsState;
   [servicesStateKey]: ServicesState;
   [networkInterfacesKey]: NetworkInterfacesState;
   [rebootInfoStateKey]: RebootInfoState;
@@ -63,6 +67,7 @@ export const rootReducers: ActionReducerMap<AppState> = {
   [preferencesStateKey]: preferencesReducer,
   [systemInfoStateKey]: systemInfoReducer,
   [haInfoStateKey]: haInfoReducer,
+  [entitlementsStateKey]: entitlementsReducer,
   [servicesStateKey]: servicesReducer,
   [networkInterfacesKey]: networkInterfacesReducer,
   [rebootInfoStateKey]: rebootInfoReducer,
@@ -78,6 +83,7 @@ export const rootEffects = [
   PreferencesEffects,
   SystemInfoEffects,
   HaInfoEffects,
+  EntitlementsEffects,
   EulaEffects,
   ServicesEffects,
   NetworkInterfacesEffects,

@@ -1,9 +1,11 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
-import { firstValueFrom, ReplaySubject, of, throwError } from 'rxjs';
+import { firstValueFrom, ReplaySubject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
@@ -11,7 +13,7 @@ import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-reasons.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
-import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
+import { entitlementsLoaded } from 'app/store/entitlements/entitlements.actions';
 import {
   failoverLicensedStatusLoaded,
   haSettingsUpdated,
@@ -45,7 +47,6 @@ describe('HaInfoEffects', () => {
         ],
       }),
       mockApi([
-        mockCall('failover.licensed', true),
         mockCall('failover.disabled.reasons', []),
       ]),
       { provide: WINDOW, useValue: mockWindow },
@@ -63,60 +64,54 @@ describe('HaInfoEffects', () => {
     jest.clearAllMocks();
   });
 
-  describe('loadFailoverLicensedStatus', () => {
-    it('should load failover licensed status when adminUiInitialized', async () => {
-      actions$.next(adminUiInitialized());
+  describe('syncHaLicenseFromEntitlements', () => {
+    const haEntitled = { [EntitlementFeature.Ha]: { entitled: true, reason: EntitlementReason.Entitled, message: '' } };
+    const haDenied = {
+      [EntitlementFeature.Ha]: { entitled: false, reason: EntitlementReason.WrongLicenseType, message: '' },
+    };
 
-      const action = await firstValueFrom(spectator.service.loadFailoverLicensedStatus);
+    it('marks HA licensed when the HA entitlement is granted and state disagrees', async () => {
+      actions$.next(entitlementsLoaded({ entitlements: haEntitled }));
+
+      const action = await firstValueFrom(spectator.service.syncHaLicenseFromEntitlements);
       expect(action).toEqual(failoverLicensedStatusLoaded({ isHaLicensed: true }));
-      expect(api.call).toHaveBeenCalledWith('failover.licensed');
     });
 
-    it('should handle API error when loading failover licensed status', () => {
-      jest.spyOn(console, 'error').mockImplementation();
-      const error = new Error('API Error');
-      jest.spyOn(api, 'call').mockReturnValue(throwError(() => error));
-
-      actions$.next(adminUiInitialized());
-
-      spectator.service.loadFailoverLicensedStatus.subscribe({
-        error: (err: unknown) => {
-          expect(err).toEqual(error);
-        },
-      });
-    });
-
-    it('should skip API call when license status is already loaded as true', () => {
+    it('marks HA unlicensed when the HA entitlement is denied, even if sign-in said otherwise', async () => {
       store$.overrideSelector(selectHaInfoState, { isHaLicensed: true, haStatus: null });
       store$.refreshState();
 
-      actions$.next(adminUiInitialized());
+      actions$.next(entitlementsLoaded({ entitlements: haDenied }));
+
+      const action = await firstValueFrom(spectator.service.syncHaLicenseFromEntitlements);
+      expect(action).toEqual(failoverLicensedStatusLoaded({ isHaLicensed: false }));
+    });
+
+    it('keeps the sign-in value when the engine does not report an HA key', () => {
+      store$.overrideSelector(selectHaInfoState, { isHaLicensed: true, haStatus: null });
+      store$.refreshState();
+      actions$.next(entitlementsLoaded({ entitlements: {} }));
 
       let emitted = false;
-      const subscription = spectator.service.loadFailoverLicensedStatus.subscribe(() => {
+      const subscription = spectator.service.syncHaLicenseFromEntitlements.subscribe(() => {
         emitted = true;
       });
 
-      // Effect should not emit because license status is already loaded
       expect(emitted).toBe(false);
-      expect(api.call).not.toHaveBeenCalledWith('failover.licensed');
       subscription.unsubscribe();
     });
 
-    it('should skip API call when license status is already loaded as false', () => {
-      store$.overrideSelector(selectHaInfoState, { isHaLicensed: false, haStatus: null });
+    it('does nothing when the entitlement matches the current state', () => {
+      store$.overrideSelector(selectHaInfoState, { isHaLicensed: true, haStatus: null });
       store$.refreshState();
-
-      actions$.next(adminUiInitialized());
+      actions$.next(entitlementsLoaded({ entitlements: haEntitled }));
 
       let emitted = false;
-      const subscription = spectator.service.loadFailoverLicensedStatus.subscribe(() => {
+      const subscription = spectator.service.syncHaLicenseFromEntitlements.subscribe(() => {
         emitted = true;
       });
 
-      // Effect should not emit because license status is already loaded (even as false)
       expect(emitted).toBe(false);
-      expect(api.call).not.toHaveBeenCalledWith('failover.licensed');
       subscription.unsubscribe();
     });
   });

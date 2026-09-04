@@ -1,91 +1,28 @@
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { combineLatest, shareReplay } from 'rxjs';
+import { shareReplay } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
-import { selectNotNull } from 'app/helpers/operators/select-not-null.helper';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectHasEnclosureSupport,
-  selectHasLicenseFeature,
-  selectIsEnterprise,
-  selectProductType,
 } from 'app/store/system-info/system-info.selectors';
-
-// Hoist parameterized selector instances so consumers share memoization across
-// subscriptions (each call to `selectHasLicenseFeature` builds a new selector).
-const selectHasAppsFeature = selectHasLicenseFeature(LicenseFeature.Apps);
-const selectHasVmsFeature = selectHasLicenseFeature(LicenseFeature.Vms);
-const selectHasSedFeature = selectHasLicenseFeature(LicenseFeature.Sed);
-const selectHasDedupFeature = selectHasLicenseFeature(LicenseFeature.Dedup);
-const selectHasFibreChannelFeature = selectHasLicenseFeature(LicenseFeature.FibreChannel);
 
 @Injectable({
   providedIn: 'root',
 })
 export class LicenseService {
   private store$ = inject<Store<AppState>>(Store);
-  private api = inject(ApiService);
   private truenasConnectService = inject(TruenasConnectService);
 
+  /** Seeded by `failover.licensed` at sign-in, then kept in step with the `HA` entitlement. */
   hasFailover$ = this.store$.select(selectIsHaLicensed);
+
+  /** Not an entitlement — iX hardware detection. */
   hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
 
-  hasFibreChannel$ = combineLatest([
-    this.store$.select(selectHasFibreChannelFeature),
-    this.api.call('fc.capable'),
-  ]).pipe(
-    map(([hasFibreChannel, isFcCapable]) => hasFibreChannel && isFcCapable),
-    shareReplay({ bufferSize: 1, refCount: false }),
-  );
-
-  hasVms$ = combineLatest([
-    this.store$.select(selectHasVmsFeature),
-    this.store$.select(selectIsEnterprise),
-  ]).pipe(
-    map(([hasVms, isEnterprise]) => !isEnterprise || hasVms),
-  );
-
-  hasApps$ = combineLatest([
-    this.store$.select(selectHasAppsFeature),
-    this.store$.select(selectIsEnterprise),
-  ]).pipe(
-    map(([hasApps, isEnterprise]) => !isEnterprise || hasApps),
-  );
-
-  hasDedup$ = combineLatest([
-    this.store$.select(selectHasDedupFeature),
-    this.store$.select(selectIsEnterprise),
-  ]).pipe(
-    map(([hasDedup, isEnterprise]) => !isEnterprise || hasDedup),
-  );
-
-  readonly hasKmip$ = this.store$.select(selectIsEnterprise);
-
-  readonly hasSed$ = this.store$.select(selectHasSedFeature);
-
-  readonly shouldShowContainers$ = combineLatest([
-    this.store$.select(selectIsEnterprise),
-    this.store$.select(selectHasAppsFeature),
-  ]).pipe(
-    map(([isEnterprise, hasApps]) => !isEnterprise || hasApps),
-  );
-
-  /**
-   * WebShare (a TrueNAS Connect feature) is not offered on Enterprise systems.
-   * Deliberately waits for the product type to load instead of using `selectIsEnterprise`
-   * (which reads `false` while the product type is still null), so consumers — the shares
-   * dashboard card and the webshare route guard — never act on a transient "not Enterprise".
-   */
-  readonly shouldShowWebshare$ = this.store$.pipe(
-    selectNotNull(selectProductType),
-    map((productType) => productType !== ProductType.Enterprise),
-  );
 
   /**
    * Check if the system is configured with TrueNAS Connect.

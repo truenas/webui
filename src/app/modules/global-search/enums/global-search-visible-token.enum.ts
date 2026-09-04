@@ -6,4 +6,6 @@ export enum GlobalSearchVisibleToken {
   FibreChannel = 'FIBRECHANNEL',
   Dedup = 'DEDUP',
   Kmip = 'KMIP',
+  // Sed visibility: gated on the `SED` entitlement.
+  Sed = 'SED',
 }

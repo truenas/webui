@@ -47,7 +47,6 @@ import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
 import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
 
@@ -97,7 +96,6 @@ export class TopbarComponent implements OnInit {
   updateIsDone: Subscription;
 
   updateDialog: MatDialogRef<UpdateDialog>;
-  private readonly isEnterprise = toSignal(this.appStore$.select(selectIsEnterprise));
   isHaLicensed = false;
   updateIsRunning = false;
   systemWillRestart = false;
@@ -146,12 +144,11 @@ export class TopbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.isEnterprise()) {
-      this.store$.select(selectIsHaLicensed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHaLicensed) => {
-        this.isHaLicensed = isHaLicensed;
-        this.cdr.markForCheck();
-      });
-    }
+    // The `HA` entitlement alone decides HA; product type must not pre-gate it.
+    this.store$.select(selectIsHaLicensed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHaLicensed) => {
+      this.isHaLicensed = isHaLicensed;
+      this.cdr.markForCheck();
+    });
 
     this.store$.select(selectUpdateJobs).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((jobs) => {
       const job = jobs[0];

@@ -3,17 +3,19 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnIconHarness } from '@truenas/ui-components';
-import { MockComponent } from 'ng-mocks';
+import { MockComponent, ngMocks } from 'ng-mocks';
 import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { UpdateCode } from 'app/enums/system-update.enum';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -30,6 +32,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SaveConfigDialog,
 } from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
+import { DynamicMarkdownComponent } from 'app/pages/system/update/components/dynamic-markdown/dynamic-markdown.component';
 import {
   UpdateProfileCard,
 } from 'app/pages/system/update/components/update-profile-card/update-profile-card.component';
@@ -61,6 +64,10 @@ describe('UpdateComponent', () => {
 
   const createComponent = createComponentFactory({
     component: UpdateComponent,
+    overrideComponents: [[
+      UpdateComponent,
+      { remove: { imports: [DynamicMarkdownComponent] }, add: { imports: [MockComponent(DynamicMarkdownComponent)] } },
+    ]],
     imports: [
       MockComponent(UpdateProfileCard),
     ],
@@ -85,6 +92,7 @@ describe('UpdateComponent', () => {
         mockCall('update.config', updateConfig),
       ]),
       mockAuth(),
+      mockEntitlements(),
       provideMockStore({
         initialState: {
           jobs: jobsInitialState,
@@ -213,6 +221,32 @@ describe('UpdateComponent', () => {
       const changelogElement = spectator.query('.changelog');
       expect(changelogElement).toBeTruthy();
       expect(changelogElement).toHaveText('Important changes');
+    });
+
+    it('exposes hardware, HA, license and support flags to release-notes markdown', () => {
+      spectator.inject(MockApiService).mockCall('update.status', {
+        code: UpdateCode.Normal,
+        error: null,
+        status: {
+          current_version: { matches_profile: true, profile: 'DEVELOPER' },
+          new_version: {
+            version: '22.12.4',
+            manifest: { changelog: 'Important changes' },
+            release_notes_url: 'http://truenas.com/release-notes/22.12.4',
+            release_notes: '# Release notes',
+          },
+        },
+      } as UpdateStatus);
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      const markdown = spectator.debugElement.query(By.directive(DynamicMarkdownComponent));
+      expect(ngMocks.input(markdown, 'context')).toEqual({
+        isHaLicensed: false,
+        isEnterprise: false,
+        hasLicense: false,
+        hasSupport: true,
+      });
     });
 
     it('shows release notes url', () => {

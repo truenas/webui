@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize, forkJoin, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -23,11 +24,11 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectService } from 'app/store/services/services.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-nvme-of-configuration',
@@ -54,6 +55,7 @@ export class NvmeOfConfigurationComponent implements OnInit {
   slideInRef = inject<SlideInRef<void, boolean>>(SlideInRef);
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
@@ -64,7 +66,7 @@ export class NvmeOfConfigurationComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
   protected isLoading = signal(false);
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly hasSpdk = this.entitlements.entitled(EntitlementFeature.NvmeOfSpdk);
   protected readonly service = toSignal(this.store$.select(selectService(ServiceName.NvmeOf)));
 
   protected form = this.formBuilder.nonNullable.group({
@@ -129,7 +131,7 @@ export class NvmeOfConfigurationComponent implements OnInit {
     this.isLoading.set(true);
 
     const { kernel, ...rest } = this.form.value;
-    const payload = this.isEnterprise() ? { ...rest, kernel } : rest;
+    const payload = this.hasSpdk() ? { ...rest, kernel } : rest;
 
     this.api.call('nvmet.global.update', [payload]).pipe(
       this.errorHandler.withErrorHandler(),

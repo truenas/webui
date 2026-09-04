@@ -10,6 +10,8 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -18,7 +20,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 import { DiskFormComponent } from './disk-form.component';
 
 describe('DiskFormComponent', () => {
@@ -59,8 +61,14 @@ describe('DiskFormComponent', () => {
       mockAuth(),
       provideMockStore({
         selectors: [{
-          selector: selectIsEnterprise,
-          value: false,
+          selector: selectEntitlements,
+          value: {
+            [EntitlementFeature.Sed]: {
+              entitled: false,
+              reason: EntitlementReason.NoLicense,
+              message: 'This system is not licensed to use the SED feature.',
+            },
+          },
         }],
       }),
     ],
@@ -75,7 +83,13 @@ describe('DiskFormComponent', () => {
 
   describe('community edition', () => {
     beforeEach(() => {
-      store$.overrideSelector(selectIsEnterprise, false);
+      store$.overrideSelector(selectEntitlements, {
+        [EntitlementFeature.Sed]: {
+          entitled: false,
+          reason: EntitlementReason.NoLicense,
+          message: 'This system is not licensed to use the SED feature.',
+        },
+      });
       store$.refreshState();
     });
 
@@ -123,7 +137,7 @@ describe('DiskFormComponent', () => {
 
   describe('enterprise', () => {
     beforeEach(async () => {
-      store$.overrideSelector(selectIsEnterprise, true);
+      store$.overrideSelector(selectEntitlements, {});
       store$.refreshState();
 
       // recreate the component after overriding to enterprise view
