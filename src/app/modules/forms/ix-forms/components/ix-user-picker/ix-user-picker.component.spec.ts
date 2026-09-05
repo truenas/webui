@@ -92,6 +92,18 @@ describe('IxUserPickerComponent', () => {
       expect(formControl.value).toBeNull();
     });
 
+    it('does not add a blank option when the control value is an empty string', fakeAsync(() => {
+      formControl.setValue('');
+      spectator.component.ngOnInit();
+      spectator.setHostInput('provider', new SimpleComboboxProvider([{ label: 'root', value: 'root' }]));
+      tick(300);
+      spectator.typeInElement('', 'input');
+      tick(300);
+
+      expect(spectator.component.options().map((option) => option.label)).toEqual(['Add New', 'root']);
+      expect(spectator.component.selectedOption()).toBeNull();
+    }));
+
     it('shows values autocomplete when type start', fakeAsync(() => {
       spectator.component.ngOnInit();
       const provider = [

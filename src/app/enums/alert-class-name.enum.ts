@@ -108,6 +108,7 @@ export enum AlertClassName {
   SmbAuditShareDisabled = 'SMBAuditShareDisabled',
   SmbUserMissingHash = 'SMBUserMissingHash',
   SmbVeeamFastClone = 'SMBVeeamFastClone',
+  S3BucketDatasetMissing = 'S3BucketDatasetMissing',
   FcHardwareAdded = 'FCHardwareAdded',
   FcHardwareReplaced = 'FCHardwareReplaced',
 
