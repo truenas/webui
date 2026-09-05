@@ -81,8 +81,8 @@ export class S3GrantsListComponent {
     const { xid, name } = group.getRawValue();
     const initialOptions = xid !== null && name ? [{ label: name, value: xid }] : [];
     providers = {
-      user: new UserComboboxProvider(this.userService, { valueField: 'uid', initialOptions }),
-      group: new GroupComboboxProvider(this.userService, { valueField: 'gid', initialOptions }),
+      user: new UserComboboxProvider(this.userService, { valueField: 'uid', initialOptions, hideBuiltin: true }),
+      group: new GroupComboboxProvider(this.userService, { valueField: 'gid', initialOptions, hideBuiltin: true }),
     };
     this.providers.set(group, providers);
 

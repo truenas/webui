@@ -141,11 +141,12 @@ export class UserService {
    *
    * @param search - Username or pattern to search for
    * @param offset - Pagination offset for results
+   * @param extraFilters - Additional query filters, e.g. `['builtin', '=', false]`
    * @returns Observable of users matching the search pattern
    */
-  userQueryDsCache(search = '', offset = 0): Observable<User[]> {
+  userQueryDsCache(search = '', offset = 0, extraFilters: QueryFilter<User>[] = []): Observable<User[]> {
     const trimmedSearch = search.trim();
-    const queryArgs: QueryFilter<User>[] = [];
+    const queryArgs: QueryFilter<User>[] = [...extraFilters];
 
     if (trimmedSearch) {
       queryArgs.push(['username', '~', `(?i).*${trimmedSearch.replaceAll('\\', '\\\\')}`]);
