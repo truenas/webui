@@ -1,0 +1,46 @@
+<ix-list
+  [label]="label()"
+  [tooltip]="tooltip()"
+  [empty]="formArray().controls.length === 0"
+  [formArray]="formArray()"
+  (add)="addGrant()"
+>
+  @for (group of formArray().controls; track group; let i = $index) {
+    <ix-list-item [label]="label()" (delete)="removeGrant(i)">
+      <div class="grant" [formGroup]="group">
+        <ix-select
+          formControlName="principal_type"
+          [label]="'Principal' | translate"
+          [options]="principalTypeOptions$"
+          [required]="true"
+        ></ix-select>
+
+        @switch (group.controls.principal_type.value) {
+          @case (S3PrincipalType.User) {
+            <ix-combobox
+              formControlName="xid"
+              [label]="'User' | translate"
+              [provider]="providersFor(group).user"
+              [required]="true"
+            ></ix-combobox>
+          }
+          @case (S3PrincipalType.Group) {
+            <ix-combobox
+              formControlName="xid"
+              [label]="'Group' | translate"
+              [provider]="providersFor(group).group"
+              [required]="true"
+            ></ix-combobox>
+          }
+        }
+
+        <ix-select
+          formControlName="access"
+          [label]="'Access' | translate"
+          [options]="accessOptions$"
+          [required]="true"
+        ></ix-select>
+      </div>
+    </ix-list-item>
+  }
+</ix-list>

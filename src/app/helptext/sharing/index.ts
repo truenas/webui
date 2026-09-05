@@ -2,6 +2,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export * from './iscsi/iscsi';
 export * from './nfs/nfs';
+export * from './s3/s3';
 export * from './smb/smb';
 
 export const shared = {
