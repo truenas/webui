@@ -1,0 +1,135 @@
+<ix-modal-header
+  title="S3"
+  [requiredRoles]="requiredRoles"
+  [loading]="isFormLoading()"
+></ix-modal-header>
+
+<mat-card class="card">
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset [title]="'Listeners' | translate">
+        <ix-list
+          formArrayName="listeners"
+          [empty]="form.controls.listeners.controls.length === 0"
+          [label]="'Listen Addresses' | translate"
+          [tooltip]="helptext.listenersTooltip | translate"
+          [formArray]="form.controls.listeners"
+          (add)="addListener()"
+        >
+          @for (listener of form.controls.listeners.controls; track listener; let i = $index) {
+            <ix-list-item
+              [label]="'Listen Address' | translate"
+              (delete)="removeListener(i)"
+            >
+              <div class="listener" [formGroup]="listener">
+                <ix-select
+                  formControlName="address"
+                  [label]="'Address' | translate"
+                  [options]="addressOptions$"
+                  [required]="true"
+                ></ix-select>
+
+                <ix-input
+                  formControlName="port"
+                  type="number"
+                  [label]="'Port' | translate"
+                  [required]="true"
+                ></ix-input>
+
+                <ix-checkbox
+                  formControlName="tls"
+                  [label]="'TLS' | translate"
+                  [tooltip]="helptext.listenerTlsTooltip | translate"
+                ></ix-checkbox>
+              </div>
+            </ix-list-item>
+          }
+        </ix-list>
+
+        <ix-with-manage-certificates-link>
+          <ix-select
+            formControlName="certificate"
+            [label]="'Certificate' | translate"
+            [tooltip]="helptext.certificateTooltip | translate"
+            [options]="certificates$"
+            [emptyLabel]="'Use UI certificate' | translate"
+          ></ix-select>
+        </ix-with-manage-certificates-link>
+      </ix-fieldset>
+
+      <ix-fieldset [title]="'Other Options' | translate">
+        <ix-input
+          formControlName="servers"
+          type="number"
+          [label]="'Servers' | translate"
+          [tooltip]="helptext.serversTooltip | translate"
+          [required]="true"
+        ></ix-input>
+
+        <ix-input
+          formControlName="region"
+          [label]="'Region' | translate"
+          [tooltip]="helptext.regionTooltip | translate"
+        ></ix-input>
+
+        <ix-select
+          formControlName="log_level"
+          [label]="'Log Level' | translate"
+          [tooltip]="helptext.logLevelTooltip | translate"
+          [options]="logLevelOptions$"
+          [required]="true"
+        ></ix-select>
+      </ix-fieldset>
+
+      <ix-fieldset [title]="'Global Grants' | translate">
+        <ix-s3-grants-list
+          [formArray]="form.controls.global_grants"
+          [label]="'Global Grants' | translate"
+          [tooltip]="helptext.globalGrantsTooltip | translate"
+        ></ix-s3-grants-list>
+      </ix-fieldset>
+
+      @if (isLicensed()) {
+        <ix-fieldset [title]="'Auditing' | translate">
+          <ix-select
+            formControlName="default_audit_mode"
+            [label]="'Default Audit' | translate"
+            [tooltip]="helptext.defaultAuditTooltip | translate"
+            [options]="auditModeOptions$"
+            [required]="true"
+          ></ix-select>
+
+          @if (form.controls.default_audit_mode.value === S3AuditMode.Selected) {
+            <ix-select
+              formControlName="default_audit_actions"
+              [label]="'Audited Actions' | translate"
+              [options]="auditActionOptions$"
+              [multiple]="true"
+            ></ix-select>
+          }
+
+          <ix-select
+            formControlName="default_audit_overflow"
+            [label]="'Default Audit Overflow' | translate"
+            [tooltip]="helptext.auditOverflowTooltip | translate"
+            [options]="auditOverflowOptions$"
+            [required]="true"
+          ></ix-select>
+        </ix-fieldset>
+      }
+
+      <ix-form-actions>
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isFormLoading()"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

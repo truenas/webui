@@ -183,7 +183,8 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
         this.selectedOption.set(selectedOptionFromLabel);
         this.value = selectedOptionFromLabel.value;
         this.onChange(this.value);
-      } else if (this.value !== null) {
+      } else if (this.value !== null && this.value !== '') {
+        // An empty control value is "nothing selected", not a custom value to keep as an option.
         const selectedOptionFromValue = this.options().find((option) => option.value === this.value);
         if (selectedOptionFromValue) {
           this.selectedOption.set({ ...selectedOptionFromValue });

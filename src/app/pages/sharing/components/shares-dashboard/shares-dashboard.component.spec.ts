@@ -7,6 +7,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
 import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
 import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboard/nvme-of-card/nvme-of-card.component';
+import { S3CardComponent } from 'app/pages/sharing/components/shares-dashboard/s3-card/s3-card.component';
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
 import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
 import { WebShareCardComponent } from 'app/pages/sharing/components/shares-dashboard/webshare-card/webshare-card.component';
@@ -36,6 +37,7 @@ describe('SharesDashboardComponent', () => {
         NfsCardComponent,
         IscsiCardComponent,
         NvmeOfCardComponent,
+        S3CardComponent,
         WebShareCardComponent,
       ),
     ],
@@ -58,6 +60,7 @@ describe('SharesDashboardComponent', () => {
     expect(spectator.query(NfsCardComponent)).toExist();
     expect(spectator.query(IscsiCardComponent)).toExist();
     expect(spectator.query(NvmeOfCardComponent)).toExist();
+    expect(spectator.query(S3CardComponent)).toExist();
     expect(spectator.query(WebShareCardComponent)).toExist();
   });
 

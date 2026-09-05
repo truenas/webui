@@ -47,6 +47,12 @@ export const credentialsRoutes: Routes = [{
       data: { title: T('Certificates'), breadcrumb: T('Certificates') },
     },
     {
+      path: 's3-access-keys',
+      loadComponent: () => import('app/pages/credentials/s3-access-keys/s3-access-key-list/s3-access-key-list.component')
+        .then((module) => module.S3AccessKeyListComponent),
+      data: { title: T('S3 Access Keys'), breadcrumb: T('S3 Access Keys') },
+    },
+    {
       path: 'two-factor',
       loadComponent: () => import('app/pages/two-factor-auth/two-factor.component').then((module) => module.TwoFactorComponent),
       data: { title: T('Two Factor Auth'), breadcrumb: T('Two Factor Auth') },

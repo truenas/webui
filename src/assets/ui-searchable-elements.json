@@ -1286,7 +1286,9 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "SED"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -1309,7 +1311,9 @@
     "requiredRoles": [
       "SYSTEM_ADVANCED_WRITE"
     ],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "SED"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -1328,7 +1332,9 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "SED"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -2875,6 +2881,53 @@
     ],
     "routerLink": null,
     "anchor": "smb-list",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "S3",
+      "Add S3 Bucket"
+    ],
+    "synonyms": [
+      "Create S3 Bucket",
+      "New S3 Bucket",
+      "Create Bucket",
+      "Add Bucket",
+      "New Bucket"
+    ],
+    "requiredRoles": [
+      "SHARING_S3_WRITE",
+      "SHARING_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "s3"
+    ],
+    "routerLink": null,
+    "anchor": "add-s3-bucket",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "S3"
+    ],
+    "synonyms": [
+      "S3 Buckets",
+      "Object Storage"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "s3"
+    ],
+    "routerLink": null,
+    "anchor": "s3-bucket-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4901,6 +4954,51 @@
     ],
     "routerLink": null,
     "anchor": "add-user",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "S3 Access Keys",
+      "Add S3 Access Key"
+    ],
+    "synonyms": [
+      "Create S3 Access Key",
+      "New S3 Access Key"
+    ],
+    "requiredRoles": [
+      "SHARING_S3_WRITE",
+      "SHARING_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "s3-access-keys"
+    ],
+    "routerLink": null,
+    "anchor": "add-s3-access-key",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "S3 Access Keys"
+    ],
+    "synonyms": [
+      "Access Keys",
+      "S3 Credentials",
+      "S3 Keys"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "s3-access-keys"
+    ],
+    "routerLink": null,
+    "anchor": "s3-access-key-list",
     "triggerAnchor": null,
     "section": "ui"
   },
