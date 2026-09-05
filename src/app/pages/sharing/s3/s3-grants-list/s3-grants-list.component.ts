@@ -9,19 +9,18 @@ import {
   S3PrincipalType, s3AccessLabels, s3PrincipalTypeLabels,
 } from 'app/enums/s3.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
-import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { createS3GrantFormGroup, S3GrantFormGroup } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
-import { UserService } from 'app/services/user.service';
+import { S3PrincipalComboboxProvider } from 'app/pages/sharing/s3/s3-grants-list/s3-principal-combobox-provider';
 
 interface GrantProviders {
-  user: UserComboboxProvider;
-  group: GroupComboboxProvider;
+  user: S3PrincipalComboboxProvider;
+  group: S3PrincipalComboboxProvider;
 }
 
 /**
@@ -44,7 +43,7 @@ interface GrantProviders {
 })
 export class S3GrantsListComponent {
   private translate = inject(TranslateService);
-  private userService = inject(UserService);
+  private api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
 
   readonly formArray = input.required<FormArray<S3GrantFormGroup>>();
@@ -81,8 +80,8 @@ export class S3GrantsListComponent {
     const { xid, name } = group.getRawValue();
     const initialOptions = xid !== null && name ? [{ label: name, value: xid }] : [];
     providers = {
-      user: new UserComboboxProvider(this.userService, { valueField: 'uid', initialOptions, hideBuiltin: true }),
-      group: new GroupComboboxProvider(this.userService, { valueField: 'gid', initialOptions, hideBuiltin: true }),
+      user: new S3PrincipalComboboxProvider(this.api, S3PrincipalType.User, initialOptions),
+      group: new S3PrincipalComboboxProvider(this.api, S3PrincipalType.Group, initialOptions),
     };
     this.providers.set(group, providers);
 

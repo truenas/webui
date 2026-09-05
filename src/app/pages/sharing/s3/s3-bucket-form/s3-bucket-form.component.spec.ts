@@ -12,7 +12,9 @@ import {
   S3Access, S3MultipartEtag, S3PermissionsModel, S3PrincipalType, S3Versioning,
 } from 'app/enums/s3.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { Group } from 'app/interfaces/group.interface';
 import { S3Bucket } from 'app/interfaces/s3.interface';
+import { User } from 'app/interfaces/user.interface';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -20,7 +22,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { DatasetService } from 'app/services/dataset/dataset.service';
-import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -68,26 +69,20 @@ describe('S3BucketFormComponent', () => {
     imports: [ReactiveFormsModule],
     providers: [
       mockApi([
+        mockCall('user.query', [
+          { username: 'alice', uid: 1000 },
+          { username: 'bob', uid: 1001 },
+        ] as User[]),
         mockCall('sharing.s3.create'),
         mockCall('sharing.s3.update'),
         mockCall('sharing.s3.audit_choices', { GetObject: 'GetObject', PutObject: 'PutObject' }),
         mockCall('pool.filesystem_choices', ['tank', 'tank/buckets', 'tank/buckets/photos']),
+        mockCall('group.query', [{ group: 'staff', gid: 1001 }] as Group[]),
       ]),
       mockAuth(),
       mockProvider(SnackbarService),
       mockProvider(DatasetService, {
         getDatasetNodeProvider: () => () => of([]),
-      }),
-      mockProvider(UserService, {
-        userQueryDsCache: () => of([
-          { username: 'alice', uid: 1000 },
-          { username: 'bob', uid: 1001 },
-        ]),
-        groupQueryDsCache: () => of([
-          { group: 'staff', gid: 1001 },
-        ]),
-        getUserByNameCached: (username: string) => of({ username } as { username: string }),
-        getGroupByNameCached: (groupName: string) => of({ group: groupName }),
       }),
       mockProvider(SlideInRef, slideInRef),
       provideMockStore({

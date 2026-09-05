@@ -39,7 +39,7 @@ import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-ex
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
+import { IxUserPickerComponent } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -49,6 +49,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { createS3GrantFormGroup, S3GrantFormGroup, toS3Grants } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
 import { S3GrantsListComponent } from 'app/pages/sharing/s3/s3-grants-list/s3-grants-list.component';
+import { createS3UserPickerProvider } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -68,7 +69,7 @@ export const s3BucketNamePattern = /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/;
     IxFieldsetComponent,
     IxInputComponent,
     IxExplorerComponent,
-    IxUserComboboxComponent,
+    IxUserPickerComponent,
     IxCheckboxComponent,
     IxSelectComponent,
     IxChipsComponent,
@@ -107,6 +108,7 @@ export class S3BucketFormComponent implements OnInit {
   private readonly existingDatasets = signal<string[]>([]);
 
   readonly treeNodeProvider = this.datasetService.getDatasetNodeProvider();
+  protected readonly ownerProvider = createS3UserPickerProvider();
 
   protected readonly permissionsModelOptions$ = of(mapToOptions(s3PermissionsModelLabels, this.translate));
   protected readonly versioningOptions$ = of(mapToOptions(s3VersioningLabels, this.translate));

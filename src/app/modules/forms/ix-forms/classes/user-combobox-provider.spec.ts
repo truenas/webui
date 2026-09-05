@@ -34,7 +34,7 @@ describe('UserComboboxProvider', () => {
         { label: 'user2', value: 'user2' },
         { label: 'user3', value: 'user3' },
       ]);
-      expect(userService.userQueryDsCache).toHaveBeenCalledWith('test', 0, []);
+      expect(userService.userQueryDsCache).toHaveBeenCalledWith('test', 0);
     });
 
     it('supports custom value field', async () => {
@@ -52,7 +52,7 @@ describe('UserComboboxProvider', () => {
     it('handles pagination correctly', async () => {
       await lastValueFrom(provider.nextPage('test'));
 
-      expect(userService.userQueryDsCache).toHaveBeenCalledWith('test', 50, []);
+      expect(userService.userQueryDsCache).toHaveBeenCalledWith('test', 50);
     });
 
     it('resets page on fetch', async () => {
@@ -62,7 +62,7 @@ describe('UserComboboxProvider', () => {
       // Then fetch should reset page to 0
       await lastValueFrom(provider.fetch('test'));
 
-      expect(userService.userQueryDsCache).toHaveBeenLastCalledWith('test', 0, []);
+      expect(userService.userQueryDsCache).toHaveBeenLastCalledWith('test', 0);
     });
   });
 
@@ -154,15 +154,6 @@ describe('UserComboboxProvider', () => {
         { label: 'nobody', value: 65534 }, // From initialOptions
         { label: 'user1', value: 1000 }, // From query (nobody excluded by uid match)
       ]);
-    });
-  });
-
-  describe('hideBuiltin option', () => {
-    it('filters out built-in users', async () => {
-      provider = new UserComboboxProvider(userService, { hideBuiltin: true });
-      await lastValueFrom(provider.fetch('test'));
-
-      expect(userService.userQueryDsCache).toHaveBeenCalledWith('test', 0, [['builtin', '=', false]]);
     });
   });
 });
