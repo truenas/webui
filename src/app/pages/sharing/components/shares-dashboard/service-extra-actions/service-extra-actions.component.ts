@@ -100,7 +100,7 @@ export class ServiceExtraActionsComponent {
         this.slideIn.open(ServiceWebshareComponent);
         break;
       case ServiceName.S3:
-        this.slideIn.open(ServiceS3Component, { wide: true });
+        this.slideIn.open(ServiceS3Component);
         break;
       default:
         break;
