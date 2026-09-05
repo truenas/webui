@@ -197,7 +197,7 @@ export class S3AccessKeyListComponent implements OnInit {
     this.dialog.confirm({
       title: this.translate.instant('Rotate secret for "{name}"?', { name: key.name }),
       message: this.translate.instant(
-        'A new secret access key is generated under the same access key ID and shown once. Clients using the current secret will stop working.',
+        'A new secret access key is generated under the same access key ID and shown once.<br><br>Clients using the current secret will stop working.',
       ),
       buttonText: this.translate.instant('Rotate'),
       buttonColor: 'warn',
