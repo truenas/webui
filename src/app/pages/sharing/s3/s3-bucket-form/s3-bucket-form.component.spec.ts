@@ -71,6 +71,7 @@ describe('S3BucketFormComponent', () => {
         mockCall('sharing.s3.create'),
         mockCall('sharing.s3.update'),
         mockCall('sharing.s3.audit_choices', { GetObject: 'GetObject', PutObject: 'PutObject' }),
+        mockCall('pool.filesystem_choices', ['tank', 'tank/buckets', 'tank/buckets/photos']),
       ]),
       mockAuth(),
       mockProvider(SnackbarService),
@@ -137,9 +138,26 @@ describe('S3BucketFormComponent', () => {
       });
     });
 
-    it('creates a bucket under the chosen parent dataset', async () => {
+    it('rejects a bucket whose dataset already exists under the parent', async () => {
       await form.fillForm({
         Name: 'photos',
+        'Parent Dataset': 'tank/buckets',
+        Owner: 'alice',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.form.controls.name.errors).toMatchObject({
+        customValidator: { message: 'A dataset with this name already exists under the selected parent dataset.' },
+      });
+
+      await form.fillForm({ Name: 'videos' });
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+
+    it('creates a bucket under the chosen parent dataset', async () => {
+      await form.fillForm({
+        Name: 'videos',
         'Parent Dataset': 'tank/buckets',
         Owner: 'alice',
       });
@@ -148,8 +166,8 @@ describe('S3BucketFormComponent', () => {
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [{
-        name: 'photos',
-        dataset: 'tank/buckets/photos',
+        name: 'videos',
+        dataset: 'tank/buckets/videos',
         owner: 'alice',
         enabled: true,
         permissions_model: S3PermissionsModel.BucketOwnerEnforced,
