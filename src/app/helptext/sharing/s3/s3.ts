@@ -35,8 +35,8 @@ export const helptextSharingS3 = {
   listenerTlsTooltip: T('Serve this address over TLS with the certificate below.'),
   certificateTooltip: T('Certificate served by the TLS listeners. Leave empty to use the UI certificate, so a \
  renewal or a change there reaches the S3 service too.'),
-  serversTooltip: T('Threads serving the listen addresses, at most eight and no more than the system has CPUs. \
- Each thread carries its own connection pool and buffering, so more of them cost memory.'),
+  serversTooltip: T('Number of servers handling the listen addresses, at most eight and no more than the system \
+ has CPUs. Each server carries its own connection pool and buffering, so more of them cost memory.'),
   regionTooltip: T('Region name echoed to clients. Leave empty to accept whatever a client signs for.'),
   logLevelTooltip: T('Least serious log record the S3 service keeps. <b>Info</b> adds one record per request.'),
   defaultAuditTooltip: T('Actions audited on every bucket that does not set its own audit mask.'),
