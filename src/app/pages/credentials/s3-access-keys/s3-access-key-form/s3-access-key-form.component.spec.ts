@@ -5,11 +5,11 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { parseISO } from 'date-fns';
-import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { S3AccessKeyStatus } from 'app/enums/s3.enum';
 import { S3AccessKey } from 'app/interfaces/s3.interface';
+import { User } from 'app/interfaces/user.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -19,7 +19,6 @@ import {
   S3AccessKeyCredentialsDialogComponent,
 } from 'app/pages/credentials/s3-access-keys/s3-access-key-credentials-dialog/s3-access-key-credentials-dialog.component';
 import { S3AccessKeyFormComponent } from 'app/pages/credentials/s3-access-keys/s3-access-key-form/s3-access-key-form.component';
-import { UserService } from 'app/services/user.service';
 
 describe('S3AccessKeyFormComponent', () => {
   let spectator: Spectator<S3AccessKeyFormComponent>;
@@ -56,6 +55,10 @@ describe('S3AccessKeyFormComponent', () => {
     imports: [ReactiveFormsModule],
     providers: [
       mockApi([
+        mockCall('user.query', [
+          { username: 'alice', uid: 1000 },
+          { username: 'bob', uid: 1001 },
+        ] as User[]),
         mockCall('s3.accesskey.create', createdKey),
         mockCall('s3.accesskey.update', createdKey),
       ]),
@@ -65,10 +68,6 @@ describe('S3AccessKeyFormComponent', () => {
       mockProvider(LocaleService, {
         timezone: 'UTC',
         getDateFromString: (date: string) => parseISO(date),
-      }),
-      mockProvider(UserService, {
-        userQueryDsCache: () => of([{ username: 'alice' }]),
-        getUserByNameCached: (username: string) => of({ username } as { username: string }),
       }),
       mockProvider(SlideInRef, slideInRef),
     ],

@@ -17,7 +17,7 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxDatepickerComponent } from 'app/modules/forms/ix-forms/components/ix-date-picker/ix-date-picker.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
+import { IxUserPickerComponent } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -27,6 +27,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   S3AccessKeyCredentialsDialogComponent,
 } from 'app/pages/credentials/s3-access-keys/s3-access-key-credentials-dialog/s3-access-key-credentials-dialog.component';
+import { createS3UserPickerProvider } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 
 @Component({
   selector: 'ix-s3-access-key-form',
@@ -39,7 +40,7 @@ import {
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
-    IxUserComboboxComponent,
+    IxUserPickerComponent,
     IxCheckboxComponent,
     IxDatepickerComponent,
     FormActionsComponent,
@@ -62,6 +63,7 @@ export class S3AccessKeyFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingS3Write, Role.SharingWrite];
   protected readonly helptext = helptextSharingS3;
   protected readonly minDateToday = new Date();
+  protected readonly userProvider = createS3UserPickerProvider();
 
   protected readonly existingKey = this.slideInRef.getData();
   protected readonly isNew = !this.existingKey;

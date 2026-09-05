@@ -13,10 +13,6 @@ interface GroupComboboxOptions {
   queryType?: ComboboxQueryType;
   localOnly?: boolean;
   excludedIds?: number[];
-  /**
-   * Leave out built-in system groups. Not applied to SMB queries.
-   */
-  hideBuiltin?: boolean;
 }
 
 export class GroupComboboxProvider implements IxComboboxProvider {
@@ -27,7 +23,6 @@ export class GroupComboboxProvider implements IxComboboxProvider {
   private queryType: ComboboxQueryType;
   private localOnly: boolean;
   private excludedIds: number[];
-  private hideBuiltin: boolean;
 
   constructor(
     protected userService: UserService,
@@ -38,7 +33,6 @@ export class GroupComboboxProvider implements IxComboboxProvider {
     this.queryType = options.queryType ?? ComboboxQueryType.Default;
     this.localOnly = options.localOnly ?? false;
     this.excludedIds = options.excludedIds ?? [];
-    this.hideBuiltin = options.hideBuiltin ?? false;
   }
 
   fetch(filterValue: string): Observable<Option[]> {
@@ -63,7 +57,7 @@ export class GroupComboboxProvider implements IxComboboxProvider {
       if (this.localOnly) {
         extraFilters.push(['local', '=', true], ['immutable', '=', false]);
       }
-      groups$ = this.userService.groupQueryDsCache(filterValue, this.hideBuiltin, offset, extraFilters);
+      groups$ = this.userService.groupQueryDsCache(filterValue, false, offset, extraFilters);
     }
 
     return groups$.pipe(

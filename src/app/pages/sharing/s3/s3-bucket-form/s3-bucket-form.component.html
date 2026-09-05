@@ -32,14 +32,13 @@
           ></ix-input>
         }
 
-        <ix-user-combobox
+        <ix-user-picker
           formControlName="owner"
           [label]="'Owner' | translate"
           [tooltip]="helptext.ownerTooltip | translate"
           [required]="true"
-          [hideBuiltin]="true"
-          [allowCustomValue]="false"
-        ></ix-user-combobox>
+          [provider]="ownerProvider"
+        ></ix-user-picker>
 
         <ix-checkbox
           formControlName="enabled"

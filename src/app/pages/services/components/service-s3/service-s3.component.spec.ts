@@ -12,6 +12,7 @@ import {
 } from 'app/enums/s3.enum';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { S3Config } from 'app/interfaces/s3.interface';
+import { User } from 'app/interfaces/user.interface';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -19,7 +20,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { UserService } from 'app/services/user.service';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('ServiceS3Component', () => {
@@ -53,13 +53,11 @@ describe('ServiceS3Component', () => {
         mockCall('s3.update', config),
         mockCall('s3.bindip_choices', { '0.0.0.0': '0.0.0.0', '192.168.1.10': '192.168.1.10' }),
         mockCall('sharing.s3.audit_choices', { GetObject: 'GetObject' }),
+        mockCall('user.query', [{ username: 'alice', uid: 1000 }] as User[]),
+        mockCall('group.query', []),
       ]),
       mockProvider(SystemGeneralService, {
         getCertificates: () => of([{ id: 5, name: 's3-cert' }] as Certificate[]),
-      }),
-      mockProvider(UserService, {
-        userQueryDsCache: () => of([{ username: 'alice', uid: 1000 }]),
-        groupQueryDsCache: () => of([]),
       }),
       mockProvider(SlideInRef, {
         close: jest.fn(),

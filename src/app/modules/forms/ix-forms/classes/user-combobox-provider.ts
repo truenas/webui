@@ -2,7 +2,6 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ComboboxQueryType } from 'app/enums/combobox.enum';
 import { Option } from 'app/interfaces/option.interface';
-import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxComboboxProvider } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { UserService } from 'app/services/user.service';
@@ -11,10 +10,6 @@ interface UserComboboxOptions {
   valueField?: keyof Pick<User, 'username' | 'uid' | 'id'>;
   initialOptions?: Option[];
   queryType?: ComboboxQueryType;
-  /**
-   * Leave out built-in system accounts. Not applied to SMB queries.
-   */
-  hideBuiltin?: boolean;
 }
 
 export class UserComboboxProvider implements IxComboboxProvider {
@@ -23,7 +18,6 @@ export class UserComboboxProvider implements IxComboboxProvider {
   protected valueField: keyof Pick<User, 'username' | 'uid' | 'id'>;
   private initialOptions: Option[];
   protected queryType: ComboboxQueryType;
-  private hideBuiltin: boolean;
 
   constructor(
     protected userService: UserService,
@@ -32,7 +26,6 @@ export class UserComboboxProvider implements IxComboboxProvider {
     this.valueField = options.valueField ?? 'username';
     this.initialOptions = options.initialOptions ?? [];
     this.queryType = options.queryType ?? ComboboxQueryType.Default;
-    this.hideBuiltin = options.hideBuiltin ?? false;
   }
 
   fetch(filterValue: string): Observable<Option[]> {
@@ -47,16 +40,11 @@ export class UserComboboxProvider implements IxComboboxProvider {
 
   private queryUsers(filterValue: string): Observable<Option[]> {
     const offset = this.page * this.pageSize;
+    const queryMethod = this.queryType === ComboboxQueryType.Smb
+      ? this.userService.smbUserQueryDsCache.bind(this.userService)
+      : this.userService.userQueryDsCache.bind(this.userService);
 
-    let users$: Observable<User[]>;
-    if (this.queryType === ComboboxQueryType.Smb) {
-      users$ = this.userService.smbUserQueryDsCache(filterValue, offset);
-    } else {
-      const extraFilters: QueryFilter<User>[] = this.hideBuiltin ? [['builtin', '=', false]] : [];
-      users$ = this.userService.userQueryDsCache(filterValue, offset, extraFilters);
-    }
-
-    return users$.pipe(
+    return queryMethod(filterValue, offset).pipe(
       map((users) => this.userQueryResToOptions(users)),
       map((options) => [...this.initialOptions, ...this.excludeInitialOptions(options)]),
     );
