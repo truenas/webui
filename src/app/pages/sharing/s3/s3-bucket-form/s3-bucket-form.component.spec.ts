@@ -123,6 +123,20 @@ describe('S3BucketFormComponent', () => {
       expect(advancedLabels).not.toContain('Audit');
     });
 
+    it('rejects the /mnt root as a parent dataset', async () => {
+      await form.fillForm({
+        Name: 'photos',
+        'Parent Dataset': '/mnt',
+        Owner: 'alice',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.form.controls.parent_dataset.errors).toMatchObject({
+        customValidator: { message: 'Select a pool or dataset. The /mnt directory itself is not a dataset.' },
+      });
+    });
+
     it('creates a bucket under the chosen parent dataset', async () => {
       await form.fillForm({
         Name: 'photos',
