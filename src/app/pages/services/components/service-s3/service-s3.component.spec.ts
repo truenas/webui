@@ -87,7 +87,7 @@ describe('ServiceS3Component', () => {
       Port: '9000',
       TLS: true,
       Certificate: 's3-cert',
-      'Server Threads': '2',
+      Servers: '2',
       Region: 'us-east-1',
       'Log Level': 'Notice',
     });
@@ -102,7 +102,7 @@ describe('ServiceS3Component', () => {
 
   it('saves updated config', async () => {
     await form.fillForm({
-      'Server Threads': 4,
+      Servers: 4,
       Region: '',
       'Log Level': 'Info',
     });
