@@ -109,6 +109,14 @@ export const nvmeOfEmptyConfig = {
 <p>Compared to iSCSI, NVMe-oF offers significantly lower latency and higher throughput.</p>`),
 } as EmptyConfig;
 
+export const s3CardEmptyConfig = {
+  type: EmptyType.NoPageData,
+  icon: tnIconMarker('bucket-outline', 'mdi'),
+  large: true,
+  message: T(`<p>Object storage served over the S3 protocol, with each bucket backed by its own dataset.</p>
+<p>Choose S3 for backup targets, applications and tools that speak the S3 API.</p>`),
+} as EmptyConfig;
+
 export const installedAppsEmptyConfig = {
   type: EmptyType.NoPageData,
   title: T('No Applications Installed'),

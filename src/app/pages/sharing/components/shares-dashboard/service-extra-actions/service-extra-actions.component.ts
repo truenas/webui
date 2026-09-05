@@ -19,6 +19,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
+import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
 import {
@@ -98,9 +99,18 @@ export class ServiceExtraActionsComponent {
       case ServiceName.WebShare:
         this.slideIn.open(ServiceWebshareComponent);
         break;
+      case ServiceName.S3:
+        this.slideIn.open(ServiceS3Component, { wide: true });
+        break;
       default:
         break;
     }
+  }
+
+  readonly hasAccessKeys = computed<boolean>(() => this.service().service === ServiceName.S3);
+
+  viewAccessKeys(): void {
+    this.router.navigate(['/credentials', 's3-access-keys']);
   }
 
   // TODO: Outside of scope for this component.

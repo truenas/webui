@@ -1,0 +1,73 @@
+<mat-card>
+  <mat-toolbar-row>
+    <div class="toolbar-row-title">
+      <a
+        [ixTest]="['s3-bucket', 'open-in-new']"
+        [routerLink]="['/sharing', 's3']"
+        [matTooltip]="'Open S3 list in full page' | translate"
+      >
+        <h3 class="card-title">
+          {{ 'Object Storage (S3) Buckets' | translate }}
+          <tn-icon
+            name="open-in-new"
+            library="mdi"
+            class="title-icon"
+            [attr.aria-label]="'Open S3 list in full page' | translate"
+          ></tn-icon>
+          <ix-card-alert-badge [menuPath]="cardMenuPath" />
+        </h3>
+      </a>
+
+      <ix-service-state-button
+        [service]="(service$ | async) || undefined"
+        [count]="+(dataProvider.currentPageCount$ | async)"
+      ></ix-service-state-button>
+    </div>
+
+    <div class="actions">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        [ixTest]="['s3-bucket', 'add']"
+        [attr.aria-label]="'Add S3 Bucket' | translate"
+        (click)="openForm()"
+      >
+        {{ 'Add' | translate }}
+      </button>
+
+      <ix-service-extra-actions
+        [service]="service$ | async"
+        [requiredRoles]="requiredRoles"
+      ></ix-service-extra-actions>
+    </div>
+  </mat-toolbar-row>
+
+  @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
+    <ix-empty [conf]="emptyConfig"></ix-empty>
+  } @else {
+    <ix-table
+      class="table"
+      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
+      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    >
+      <thead
+        ix-table-head
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+      ></thead>
+      <tbody
+        ix-table-body
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+        [isLoading]="!!(dataProvider.isLoading$ | async)"
+      ></tbody>
+    </ix-table>
+  }
+
+  <ix-table-pager-show-more
+    [pageSize]="4"
+    [dataProvider]="dataProvider"
+    [ixTestOverride]="['s3']"
+    [routerLink]="['/sharing', 's3']"
+  ></ix-table-pager-show-more>
+</mat-card>

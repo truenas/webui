@@ -1781,6 +1781,21 @@ export const smartAlertRegistry: SmartAlertConfig = {
       ],
     },
 
+    [AlertClassName.S3BucketDatasetMissing]: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['sharing', 's3'],
+      contextualHelp: T('An S3 bucket is unavailable because its dataset no longer exists. Restore the dataset, or delete and recreate the bucket.'),
+      actions: [
+        {
+          label: T('Go to S3 buckets'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('bucket-outline', 'mdi'),
+          route: ['/sharing', 's3'],
+          primary: true,
+        },
+      ],
+    },
+
     [AlertClassName.Ntlmv1Authentication]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['sharing', 'smb'],
