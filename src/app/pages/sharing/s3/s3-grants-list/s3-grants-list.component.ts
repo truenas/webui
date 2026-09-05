@@ -77,11 +77,14 @@ export class S3GrantsListComponent {
       return providers;
     }
 
-    const { xid, name } = group.getRawValue();
-    const initialOptions = xid !== null && name ? [{ label: name, value: xid }] : [];
+    // Seed only the picker for the grant's own principal type, so a group name never shows up
+    // in the user list after the type is switched.
+    const { principal_type: currentType, xid, name } = group.getRawValue();
+    const seed = xid !== null && name ? [{ label: name, value: xid }] : [];
+    const seedFor = (type: S3PrincipalType): typeof seed => (currentType === type ? seed : []);
     providers = {
-      user: new S3PrincipalComboboxProvider(this.api, S3PrincipalType.User, initialOptions),
-      group: new S3PrincipalComboboxProvider(this.api, S3PrincipalType.Group, initialOptions),
+      user: new S3PrincipalComboboxProvider(this.api, S3PrincipalType.User, seedFor(S3PrincipalType.User)),
+      group: new S3PrincipalComboboxProvider(this.api, S3PrincipalType.Group, seedFor(S3PrincipalType.Group)),
     };
     this.providers.set(group, providers);
 

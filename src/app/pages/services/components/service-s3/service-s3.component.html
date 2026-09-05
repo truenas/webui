@@ -89,7 +89,7 @@
         ></ix-s3-grants-list>
       </ix-fieldset>
 
-      @if (isEnterprise()) {
+      @if (isLicensed()) {
         <ix-fieldset [title]="'Auditing' | translate">
           <ix-select
             formControlName="default_audit_mode"

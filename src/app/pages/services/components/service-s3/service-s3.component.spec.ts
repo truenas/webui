@@ -20,7 +20,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectLicense } from 'app/store/system-info/system-info.selectors';
 
 describe('ServiceS3Component', () => {
   let spectator: Spectator<ServiceS3Component>;
@@ -65,7 +65,7 @@ describe('ServiceS3Component', () => {
       }),
       mockProvider(SnackbarService),
       provideMockStore({
-        selectors: [{ selector: selectIsEnterprise, value: false }],
+        selectors: [{ selector: selectLicense, value: null }],
       }),
     ],
   });

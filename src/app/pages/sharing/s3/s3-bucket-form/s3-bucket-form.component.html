@@ -129,7 +129,7 @@
           ></ix-select>
         </ix-fieldset>
 
-        @if (isEnterprise()) {
+        @if (isLicensed()) {
           <ix-fieldset [title]="'Auditing' | translate">
             <ix-select
               formControlName="audit_mode"
