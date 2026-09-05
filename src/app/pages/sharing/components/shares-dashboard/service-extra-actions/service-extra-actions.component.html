@@ -37,6 +37,16 @@
         </button>
       }
 
+      @if (hasAccessKeys()) {
+        <button
+          mat-menu-item
+          [ixTest]="[service().service, 'actions-menu', 'access-keys']"
+          (click)="viewAccessKeys()"
+        >
+          {{ 'Access Keys' | translate }}
+        </button>
+      }
+
       @if (hasLogs()) {
         <button
           mat-menu-item

@@ -11,6 +11,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
+import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
@@ -94,6 +95,9 @@ export class ServiceActionsCellComponent {
         break;
       case ServiceName.WebShare:
         this.slideIn.open(ServiceWebshareComponent);
+        break;
+      case ServiceName.S3:
+        this.slideIn.open(ServiceS3Component, { wide: true });
         break;
       default:
         break;

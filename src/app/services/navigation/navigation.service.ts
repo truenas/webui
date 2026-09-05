@@ -64,6 +64,7 @@ export class NavigationService {
         { name: T('Directory Services'), state: 'directory-services' },
         { name: T('Backup Credentials'), state: 'backup-credentials' },
         { name: T('Certificates'), state: 'certificates' },
+        { name: T('S3 Access Keys'), state: 's3-access-keys' },
         {
           name: 'KMIP',
           state: 'kmip',
