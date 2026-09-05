@@ -41,6 +41,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -86,6 +87,7 @@ export class S3BucketFormComponent implements OnInit {
   private formErrorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private datasetService = inject(DatasetService);
+  private validatorsService = inject(IxValidatorsService);
   private store$ = inject(Store<AppState>);
   private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<S3Bucket | undefined, boolean>>(SlideInRef);
@@ -119,7 +121,15 @@ export class S3BucketFormComponent implements OnInit {
       Validators.maxLength(63),
       Validators.pattern(s3BucketNamePattern),
     ]],
-    parent_dataset: ['', Validators.required],
+    // The explorer offers the /mnt root as a node. A dataset name never starts with a slash, so
+    // that is the one selection to refuse.
+    parent_dataset: ['', [
+      Validators.required,
+      this.validatorsService.customValidator(
+        (control) => !String(control.value ?? '').startsWith('/'),
+        this.translate.instant('Select a pool or dataset. The /mnt directory itself is not a dataset.'),
+      ),
+    ]],
     owner: ['', Validators.required],
     enabled: [true],
     // The middleware defaults to S3, but Bucket Owner Enforced is the model that works without any
