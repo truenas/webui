@@ -240,6 +240,16 @@ import {
 } from 'app/interfaces/reporting.interface';
 import { ResilverConfig, ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
+import {
+  S3AccessKey,
+  S3AccessKeyCreate,
+  S3AccessKeyUpdate,
+  S3Bucket,
+  S3BucketCreate,
+  S3BucketUpdate,
+  S3Config,
+  S3ConfigUpdate,
+} from 'app/interfaces/s3.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
 import { SmbConfig, SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
@@ -776,6 +786,15 @@ export interface ApiCallDirectory {
   'rsynctask.query': { params: QueryParams<RsyncTask>; response: RsyncTask[] };
   'rsynctask.update': { params: [id: number, params: Partial<RsyncTaskUpdate>]; response: RsyncTask };
 
+  // S3
+  's3.config': { params: void; response: S3Config };
+  's3.update': { params: [S3ConfigUpdate]; response: S3Config };
+  's3.bindip_choices': { params: void; response: Choices };
+  's3.accesskey.query': { params: QueryParams<S3AccessKey>; response: S3AccessKey[] };
+  's3.accesskey.create': { params: [S3AccessKeyCreate]; response: S3AccessKey };
+  's3.accesskey.update': { params: [id: number, update: S3AccessKeyUpdate]; response: S3AccessKey };
+  's3.accesskey.delete': { params: [id: number]; response: boolean };
+
   // Service
   'service.query': { params: QueryParams<Service>; response: Service[] };
   'service.update': { params: [number | ServiceName, Partial<Service>]; response: number };
@@ -785,6 +804,11 @@ export interface ApiCallDirectory {
   'sharing.nfs.delete': { params: [id: number]; response: boolean };
   'sharing.nfs.query': { params: QueryParams<NfsShare>; response: NfsShare[] };
   'sharing.nfs.update': { params: [id: number, update: Partial<NfsShareUpdate>]; response: NfsShare };
+  'sharing.s3.audit_choices': { params: void; response: Choices };
+  'sharing.s3.create': { params: [S3BucketCreate]; response: S3Bucket };
+  'sharing.s3.delete': { params: [id: number]; response: boolean };
+  'sharing.s3.query': { params: QueryParams<S3Bucket>; response: S3Bucket[] };
+  'sharing.s3.update': { params: [id: number, update: S3BucketUpdate]; response: S3Bucket };
   'sharing.smb.create': { params: [Partial<SmbShare>]; response: SmbShare };
   'sharing.smb.delete': { params: [id: number]; response: boolean };
   'sharing.smb.getacl': { params: [{ share_name: string }]; response: SmbSharesec };

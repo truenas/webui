@@ -1,0 +1,107 @@
+<ix-form
+  [formGroup]="form"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
+  <tn-form-section [heading]="'Listeners' | translate">
+    <ix-list
+      formArrayName="listeners"
+      [empty]="form.controls.listeners.controls.length === 0"
+      [label]="'Listen Addresses' | translate"
+      [tooltip]="helptext.listenersTooltip | translate"
+      [formArray]="form.controls.listeners"
+      (add)="addListener()"
+    >
+      @for (listener of form.controls.listeners.controls; track listener; let i = $index) {
+        <ix-list-item
+          [label]="'Listen Address' | translate"
+          (delete)="removeListener(i)"
+        >
+          <div class="listener" [formGroup]="listener">
+            <tn-form-field [label]="'Address' | translate" [required]="true">
+              <tn-select formControlName="address" [options]="addressOptions()"></tn-select>
+            </tn-form-field>
+
+            <tn-form-field [label]="'Port' | translate" [required]="true">
+              <tn-input formControlName="port" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+            </tn-form-field>
+
+            <tn-form-field [tooltip]="helptext.listenerTlsTooltip | translate">
+              <tn-checkbox formControlName="tls" [label]="'TLS' | translate"></tn-checkbox>
+            </tn-form-field>
+          </div>
+        </ix-list-item>
+      }
+    </ix-list>
+
+    <ix-with-manage-certificates-link>
+      <tn-form-field
+        [label]="'Certificate' | translate"
+        [tooltip]="helptext.certificateTooltip | translate"
+      >
+        <tn-select formControlName="certificate" [options]="certificateOptions()"></tn-select>
+      </tn-form-field>
+    </ix-with-manage-certificates-link>
+  </tn-form-section>
+
+  <tn-form-section [heading]="'Other Options' | translate">
+    <tn-form-field
+      [label]="'Servers' | translate"
+      [tooltip]="helptext.serversTooltip | translate"
+      [required]="true"
+    >
+      <tn-input formControlName="servers" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+    </tn-form-field>
+
+    <tn-form-field [label]="'Region' | translate" [tooltip]="helptext.regionTooltip | translate">
+      <tn-input formControlName="region"></tn-input>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Log Level' | translate"
+      [tooltip]="helptext.logLevelTooltip | translate"
+      [required]="true"
+    >
+      <tn-select formControlName="log_level" [options]="logLevelOptions"></tn-select>
+    </tn-form-field>
+  </tn-form-section>
+
+  <tn-form-section [heading]="'Global Grants' | translate">
+    <ix-s3-grants-list
+      [formArray]="form.controls.global_grants"
+      [label]="'Global Grants' | translate"
+      [tooltip]="helptext.globalGrantsTooltip | translate"
+    ></ix-s3-grants-list>
+  </tn-form-section>
+
+  @if (isLicensed()) {
+    <tn-form-section [heading]="'Auditing' | translate">
+      <tn-form-field
+        [label]="'Default Audit' | translate"
+        [tooltip]="helptext.defaultAuditTooltip | translate"
+        [required]="true"
+      >
+        <tn-select formControlName="default_audit_mode" [options]="auditModeOptions"></tn-select>
+      </tn-form-field>
+
+      @if (form.controls.default_audit_mode.value === S3AuditMode.Selected) {
+        <tn-form-field [label]="'Audited Actions' | translate">
+          <tn-select
+            formControlName="default_audit_actions"
+            [options]="auditActionOptions()"
+            [multiple]="true"
+          ></tn-select>
+        </tn-form-field>
+      }
+
+      <tn-form-field
+        [label]="'Default Audit Overflow' | translate"
+        [tooltip]="helptext.auditOverflowTooltip | translate"
+        [required]="true"
+      >
+        <tn-select formControlName="default_audit_overflow" [options]="auditOverflowOptions"></tn-select>
+      </tn-form-field>
+    </tn-form-section>
+  }
+</ix-form>

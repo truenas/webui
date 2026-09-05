@@ -1,0 +1,11 @@
+@import '../card-flush-table';
+@import '../card-service-toggle';
+
+@include card-flush-table;
+@include card-service-toggle;
+
+.card-title-link {
+  color: inherit;
+  display: inline-flex;
+  text-decoration: none;
+}

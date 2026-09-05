@@ -1,0 +1,130 @@
+<tn-card
+  padding="small"
+  [padContent]="false"
+  [headerStatus]="serviceStatus()"
+  [headerMenu]="serviceMenu()"
+  [headerMenuTriggerTestId]="headerMenuTriggerTestId()"
+>
+  <a
+    tnCardHeader
+    class="card-title-link"
+    [ixTest]="['s3-bucket', 'open-in-new']"
+    [routerLink]="['/sharing', 's3']"
+    [tnTooltip]="'Open S3 list in full page' | translate"
+  >
+    <h3 class="tn-card__title">
+      {{ 'Object Storage (S3) Buckets' | translate }}
+      <tn-icon
+        name="open-in-new"
+        library="mdi"
+        class="title-icon"
+        [attr.aria-label]="'Open S3 list in full page' | translate"
+      ></tn-icon>
+      <ix-card-alert-badge [menuPath]="cardMenuPath" />
+    </h3>
+  </a>
+
+  <ng-template tnCardHeaderActions>
+    @if (service(); as service) {
+      <tn-slide-toggle
+        *ixRequiresRoles="requiredRoles"
+        [checked]="actionsMenu.isServiceRunning(service)"
+        [testId]="actionsMenu.serviceControlTestId(service)"
+        [ariaLabel]="'Toggle service' | translate"
+        (change)="actionsMenu.toggleServiceState(service)"
+      ></tn-slide-toggle>
+    }
+  </ng-template>
+
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      variant="filled"
+      testId="s3-bucket-add"
+      [label]="'Add' | translate"
+      (onClick)="openForm()"
+    ></tn-button>
+  </ng-template>
+
+  @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
+    <tn-empty
+      icon="bucket-outline"
+      iconLibrary="mdi"
+      iconSize="56px"
+      [title]="'Object storage served over the S3 protocol, with each bucket backed by its own dataset. Choose S3 for backup targets, applications and tools that speak the S3 API.' | translate"
+    ></tn-empty>
+  } @else {
+    <tn-table
+      class="table"
+      [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+      [displayedColumns]="displayedColumns"
+      [trackBy]="trackByBucketId"
+      [loading]="!!(dataProvider.isLoading$ | async)"
+      (sortChange)="onSortChange($event)"
+    >
+      <ng-container [tnColumnDef]="'name'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            [ixTest]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTooltip]="row.name || ''"
+          >{{ row.name }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'dataset'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Dataset' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            [ixTest]="[('Dataset' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTooltip]="row.dataset || ''"
+          >{{ row.dataset }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'owner'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Owner' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span [ixTest]="[('Owner' | translate), uniqueRowTag(row), 'row-text']">{{ row.owner }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'enabled'" [sortable]="true" [width]="'70px'">
+        <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-toggle-cell
+            #enabledToggle
+            [title]="'Enabled' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [ariaLabel]="ariaLabel(row)"
+            [checked]="!!row.enabled"
+            [disabled]="isToggleDisabled(row)"
+            [tooltip]="getEnabledTooltip(row)"
+            [requiredRoles]="requiredRoles"
+            (toggled)="onChangeEnabledState(row, enabledToggle)"
+          ></ix-table-toggle-cell>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
+        <ng-template tnHeaderCellDef></ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-actions-cell
+            [actions]="actions"
+            [row]="row"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [ariaLabel]="ariaLabel(row)"
+          ></ix-table-actions-cell>
+        </ng-template>
+      </ng-container>
+    </tn-table>
+  }
+
+  <ix-table-pager-show-more
+    [pageSize]="4"
+    [dataProvider]="dataProvider"
+    [ixTestOverride]="['s3']"
+    [routerLink]="['/sharing', 's3']"
+  ></ix-table-pager-show-more>
+</tn-card>
