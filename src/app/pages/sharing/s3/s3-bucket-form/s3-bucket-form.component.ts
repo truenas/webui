@@ -101,6 +101,11 @@ export class S3BucketFormComponent implements OnInit {
   protected readonly isAdvancedMode = signal(false);
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
+  /**
+   * Every dataset on the system. The bucket's dataset is created on submit and must not exist yet.
+   */
+  private readonly existingDatasets = signal<string[]>([]);
+
   readonly treeNodeProvider = this.datasetService.getDatasetNodeProvider();
 
   protected readonly permissionsModelOptions$ = of(mapToOptions(s3PermissionsModelLabels, this.translate));
@@ -120,6 +125,12 @@ export class S3BucketFormComponent implements OnInit {
       Validators.minLength(3),
       Validators.maxLength(63),
       Validators.pattern(s3BucketNamePattern),
+      this.validatorsService.customValidator(
+        (control) => !this.isNew || !this.existingDatasets().includes(
+          `${String(control.parent?.get('parent_dataset')?.value ?? '')}/${String(control.value ?? '')}`,
+        ),
+        this.translate.instant('A dataset with this name already exists under the selected parent dataset.'),
+      ),
     ]],
     // The explorer offers the /mnt root as a node. A dataset name never starts with a slash, so
     // that is the one selection to refuse.
@@ -188,8 +199,22 @@ export class S3BucketFormComponent implements OnInit {
   ngOnInit(): void {
     if (this.existingBucket) {
       this.setBucketForEdit(this.existingBucket);
+    } else {
+      this.setupExistingDatasetCheck();
     }
     this.setupObjectLockDependency();
+  }
+
+  private setupExistingDatasetCheck(): void {
+    this.api.call('pool.filesystem_choices').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((datasets) => {
+      this.existingDatasets.set(datasets);
+      this.form.controls.name.updateValueAndValidity();
+    });
+
+    // The check spans two fields, so a parent change has to re-run the name's validators.
+    this.form.controls.parent_dataset.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.form.controls.name.updateValueAndValidity();
+    });
   }
 
   protected toggleAdvancedMode(): void {
