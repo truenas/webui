@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, input, viewChild, inject,
+  AfterViewInit, ChangeDetectionStrategy, Component, computed, input, viewChild, inject,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
@@ -47,10 +47,16 @@ export class IxGroupComboboxComponent implements AfterViewInit, ControlValueAcce
   readonly required = input<boolean>(false);
   readonly allowCustomValue = input<boolean>(true);
   readonly debounceTime = input<number>(defaultDebounceTimeMs);
+  /**
+   * Leave out built-in system accounts from the suggestions.
+   */
+  readonly hideBuiltin = input(false);
 
   private readonly ixCombobox = viewChild.required(IxComboboxComponent);
 
-  protected readonly groupProvider = new GroupComboboxProvider(this.userService);
+  protected readonly groupProvider = computed(() => new GroupComboboxProvider(this.userService, {
+    hideBuiltin: this.hideBuiltin(),
+  }));
 
   constructor() {
     this.controlDirective.valueAccessor = this;

@@ -168,4 +168,13 @@ describe('GroupComboboxProvider', () => {
       ]);
     });
   });
+
+  describe('hideBuiltin option', () => {
+    it('asks for non-built-in groups only', async () => {
+      provider = new GroupComboboxProvider(userService, { hideBuiltin: true });
+      await lastValueFrom(provider.fetch('test'));
+
+      expect(userService.groupQueryDsCache).toHaveBeenCalledWith('test', true, 0, []);
+    });
+  });
 });

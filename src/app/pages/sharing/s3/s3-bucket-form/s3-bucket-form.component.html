@@ -37,6 +37,8 @@
           [label]="'Owner' | translate"
           [tooltip]="helptext.ownerTooltip | translate"
           [required]="true"
+          [hideBuiltin]="true"
+          [allowCustomValue]="false"
         ></ix-user-combobox>
 
         <ix-checkbox
