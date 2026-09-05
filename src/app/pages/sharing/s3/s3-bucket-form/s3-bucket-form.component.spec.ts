@@ -25,7 +25,7 @@ import { DatasetService } from 'app/services/dataset/dataset.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectLicense } from 'app/store/system-info/system-info.selectors';
 
 describe('S3BucketFormComponent', () => {
   let spectator: Spectator<S3BucketFormComponent>;
@@ -88,7 +88,7 @@ describe('S3BucketFormComponent', () => {
       provideMockStore({
         selectors: [
           { selector: selectServices, value: [] },
-          { selector: selectIsEnterprise, value: false },
+          { selector: selectLicense, value: null },
         ],
       }),
     ],

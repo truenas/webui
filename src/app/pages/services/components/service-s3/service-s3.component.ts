@@ -10,7 +10,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, map, of,
+  combineLatest, map, of, shareReplay,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -49,7 +49,7 @@ import { S3GrantsListComponent } from 'app/pages/sharing/s3/s3-grants-list/s3-gr
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectLicense } from 'app/store/system-info/system-info.selectors';
 
 type ListenerFormGroup = FormGroup<{
   address: FormControl<string>;
@@ -99,7 +99,10 @@ export class ServiceS3Component implements OnInit {
   protected readonly requiredRoles = [Role.SharingS3Write, Role.SharingWrite];
   protected readonly helptext = helptextSharingS3;
   protected readonly isFormLoading = signal(false);
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  /**
+   * Auditing needs a license. Mirrors the middleware check (`system.license` is set).
+   */
+  protected readonly isLicensed = toSignal(this.store$.select(selectLicense).pipe(map((license) => !!license)));
   protected readonly S3AuditMode = S3AuditMode;
 
   form = this.fb.group({
@@ -113,6 +116,11 @@ export class ServiceS3Component implements OnInit {
     default_audit_actions: [[] as string[]],
     default_audit_overflow: [S3AuditOverflow.Drop],
   });
+
+  /**
+   * Loaded once and shared between the form population and the listener address options.
+   */
+  private readonly config$ = this.api.call('s3.config').pipe(shareReplay({ bufferSize: 1, refCount: false }));
 
   protected readonly certificates$ = this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions());
   protected readonly logLevelOptions$ = of(mapToOptions(s3LogLevelLabels, this.translate));
@@ -132,7 +140,7 @@ export class ServiceS3Component implements OnInit {
    */
   protected readonly addressOptions$ = combineLatest([
     this.api.call('s3.bindip_choices').pipe(choicesToOptions()),
-    this.api.call('s3.config'),
+    this.config$,
   ]).pipe(
     map(([options, config]) => {
       return [
@@ -150,7 +158,7 @@ export class ServiceS3Component implements OnInit {
 
   ngOnInit(): void {
     this.isFormLoading.set(true);
-    this.api.call('s3.config').pipe(
+    this.config$.pipe(
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
@@ -183,7 +191,7 @@ export class ServiceS3Component implements OnInit {
       region: values.region,
       log_level: values.log_level,
       global_grants: toS3Grants(this.form.controls.global_grants.controls),
-      ...(this.isEnterprise()
+      ...(this.isLicensed()
         ? {
             default_audit: this.formToAuditMask(values.default_audit_mode, values.default_audit_actions),
             default_audit_overflow: values.default_audit_overflow,

@@ -9,7 +9,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { map, Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import {
@@ -53,7 +53,7 @@ import { createS3UserPickerProvider } from 'app/pages/sharing/s3/utils/s3-user-p
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectLicense } from 'app/store/system-info/system-info.selectors';
 
 export const s3BucketNamePattern = /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/;
 
@@ -100,7 +100,11 @@ export class S3BucketFormComponent implements OnInit {
   protected readonly isNew = !this.existingBucket;
   protected readonly isLoading = signal(false);
   protected readonly isAdvancedMode = signal(false);
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  /**
+   * Auditing needs a license. Mirrors the middleware check (`system.license` is set) rather than
+   * the product type, which is not a licensing signal.
+   */
+  protected readonly isLicensed = toSignal(this.store$.select(selectLicense).pipe(map((license) => !!license)));
 
   /**
    * Every dataset on the system. The bucket's dataset is created on submit and must not exist yet.
@@ -305,7 +309,7 @@ export class S3BucketFormComponent implements OnInit {
       object_lock_default_days: hasDefaultRule ? values.object_lock_default_days : null,
     };
 
-    if (this.isEnterprise()) {
+    if (this.isLicensed()) {
       payload.audit = this.formToAuditMask(values.audit_mode, values.audit_actions);
       payload.audit_overflow = values.audit_overflow;
     }
