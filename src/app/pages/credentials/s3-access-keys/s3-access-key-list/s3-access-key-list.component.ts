@@ -200,6 +200,7 @@ export class S3AccessKeyListComponent implements OnInit {
         'A new secret access key is generated under the same access key ID and shown once. Clients using the current secret will stop working.',
       ),
       buttonText: this.translate.instant('Rotate'),
+      buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('s3.accesskey.update', [key.id, { rotate: true }]).pipe(this.loader.withLoader())),
