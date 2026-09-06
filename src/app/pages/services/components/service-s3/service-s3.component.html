@@ -23,19 +23,18 @@
           [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Listen Address' | translate }"
           (delete)="removeListener(i)"
         >
-          <div class="listener">
-            <tn-form-field [label]="'Address' | translate" [required]="true">
-              <tn-select formControlName="address" [options]="addressOptions()"></tn-select>
-            </tn-form-field>
+          <!-- No wrapper: tn-form-list-item spaces its direct children, so the fields sit on it. -->
+          <tn-form-field [label]="'Address' | translate" [required]="true">
+            <tn-select formControlName="address" [options]="addressOptions()"></tn-select>
+          </tn-form-field>
 
-            <tn-form-field [label]="'Port' | translate" [required]="true">
-              <tn-input formControlName="port" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
-            </tn-form-field>
+          <tn-form-field [label]="'Port' | translate" [required]="true">
+            <tn-input formControlName="port" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+          </tn-form-field>
 
-            <tn-form-field [tooltip]="helptext.listenerTlsTooltip | translate">
-              <tn-checkbox formControlName="tls" [label]="'TLS' | translate"></tn-checkbox>
-            </tn-form-field>
-          </div>
+          <tn-form-field [tooltip]="helptext.listenerTlsTooltip | translate">
+            <tn-checkbox formControlName="tls" [label]="'TLS' | translate"></tn-checkbox>
+          </tn-form-field>
         </tn-form-list-item>
       }
     </tn-form-list>
