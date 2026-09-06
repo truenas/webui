@@ -68,7 +68,9 @@ export class S3GrantsListComponent {
 
   /**
    * Rows may be pushed by the parent (e.g. when loading an existing bucket), so each row is wired up
-   * the first time it is rendered rather than when it is added.
+   * the first time it is rendered rather than when it is added. The template resolves this for every
+   * row, not only those showing a picker, so the `principal_type` subscription below exists for an
+   * `EVERYONE` row as well and can re-enable `xid` when the type changes.
    */
   protected providersFor(group: S3GrantFormGroup): GrantProviders {
     let providers = this.providers.get(group);

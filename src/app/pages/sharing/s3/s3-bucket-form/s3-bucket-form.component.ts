@@ -163,7 +163,15 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     snapshot_versions_max: [64, [Validators.required, Validators.min(1)]],
     object_lock: [false],
     object_lock_default_mode: [null as S3ObjectLockMode | null],
-    object_lock_default_days: [null as number | null, [Validators.min(1), Validators.max(36500)]],
+    object_lock_default_days: [null as number | null, [
+      Validators.min(1),
+      Validators.max(36500),
+      // A default retention rule needs both a mode and a period.
+      this.validatorsService.validateOnCondition(
+        (control) => !!control.parent?.get('object_lock_default_mode')?.value,
+        Validators.required,
+      ),
+    ]],
     multipart_etag: [S3MultipartEtag.Composite],
     audit_mode: [S3AuditMode.Inherit],
     audit_actions: [[] as string[]],
@@ -266,6 +274,10 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     this.syncObjectLockAvailability();
     this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.syncObjectLockAvailability();
+    });
+    // The days requirement depends on the mode, so a mode change has to re-run its validators.
+    this.form.controls.object_lock_default_mode.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.form.controls.object_lock_default_days.updateValueAndValidity();
     });
   }
 

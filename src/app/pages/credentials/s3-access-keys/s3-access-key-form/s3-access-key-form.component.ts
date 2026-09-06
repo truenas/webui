@@ -75,6 +75,22 @@ export class S3AccessKeyFormComponent extends SidePanelForm implements OnInit {
     if (accessKey) {
       this.setKeyForEdit(accessKey);
     }
+    this.requireExpiryUnlessNonExpiring();
+  }
+
+  /** Unchecking "Non-expiring" is a request for an expiry, so the date becomes mandatory. */
+  private requireExpiryUnlessNonExpiring(): void {
+    const expiresAt = this.form.controls.expires_at;
+    const sync = (nonExpiring: boolean): void => {
+      if (nonExpiring) {
+        expiresAt.clearValidators();
+      } else {
+        expiresAt.setValidators(Validators.required);
+      }
+      expiresAt.updateValueAndValidity();
+    };
+    sync(this.form.controls.nonExpiring.value);
+    this.form.controls.nonExpiring.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(sync);
   }
 
   protected onSubmit(): void {

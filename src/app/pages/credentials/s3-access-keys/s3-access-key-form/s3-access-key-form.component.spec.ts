@@ -102,6 +102,19 @@ describe('S3AccessKeyFormComponent', () => {
     });
   });
 
+  describe('expiry', () => {
+    it('requires a date once Non-expiring is unchecked', async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
+
+      await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Non-expiring' }))).uncheck();
+
+      expect(spectator.component.form.controls.expires_at.errors).toMatchObject({ required: true });
+      expect(spectator.component.canSubmit()).toBe(false);
+    });
+  });
+
   describe('editing an access key', () => {
     beforeEach(async () => {
       spectator = createComponent({ props: { accessKey: existingKey } });

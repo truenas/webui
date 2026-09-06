@@ -56,4 +56,28 @@ describe('S3AccessKeyCredentialsDialogComponent', () => {
     expect(spectator.inject(Clipboard).copy).toHaveBeenCalledWith('supersecretvalue');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Secret access key copied to clipboard');
   });
+
+  describe('for a key whose account is gone', () => {
+    const createOrphanComponent = createComponentFactory({
+      component: S3AccessKeyCredentialsDialogComponent,
+      providers: [
+        mockProvider(DialogRef),
+        {
+          provide: DIALOG_DATA,
+          useValue: {
+            name: 'orphan', username: null, access_key: 'AKIA', secret: null,
+          } as S3AccessKey,
+        },
+        mockProvider(SnackbarService),
+        mockProvider(Clipboard),
+      ],
+    });
+
+    it('does not print a null account', () => {
+      spectator = createOrphanComponent();
+
+      expect(spectator.query('p')).toHaveText('The account it belonged to no longer exists.');
+      expect(spectator.query('p')).not.toHaveText('null');
+    });
+  });
 });

@@ -8,7 +8,8 @@
   <a
     tnCardHeader
     class="card-title-link"
-    [ixTest]="['s3-bucket', 'open-in-new']"
+    tnTestIdType="link"
+    [tnTestId]="['s3-bucket', 'open-in-new']"
     [routerLink]="['/sharing', 's3']"
     [tnTooltip]="'Open S3 list in full page' | translate"
   >
@@ -67,7 +68,8 @@
         <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+            tnTestIdType="text"
+            [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.name || ''"
           >{{ row.name }}</span>
         </ng-template>
@@ -77,7 +79,8 @@
         <ng-template tnHeaderCellDef>{{ 'Dataset' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Dataset' | translate), uniqueRowTag(row), 'row-text']"
+            tnTestIdType="text"
+            [tnTestId]="[('Dataset' | translate), uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.dataset || ''"
           >{{ row.dataset }}</span>
         </ng-template>
@@ -86,7 +89,10 @@
       <ng-container [tnColumnDef]="'owner'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Owner' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span [ixTest]="[('Owner' | translate), uniqueRowTag(row), 'row-text']">{{ row.owner }}</span>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Owner' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ row.owner }}</span>
         </ng-template>
       </ng-container>
 

@@ -28,7 +28,6 @@ export const helptextSharingS3 = {
   objectLockDefaultDaysTooltip: T('Retention period of the default object lock rule in days.'),
   auditTooltip: T('Which S3 actions on this bucket are recorded in the audit log.'),
   auditOverflowTooltip: T('What an audited request gets when no audit record slot is free.'),
-  auditLicenseHint: T('Auditing the S3 service requires an Enterprise license.'),
 
   listenersTooltip: T('Where the S3 service listens. Leave empty to listen on every address on port 9000 in\
  plaintext. Changing it restarts the service.'),

@@ -4,7 +4,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
+  TnButtonHarness, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -31,9 +31,6 @@ describe('S3CardComponent', () => {
   let spectator: Spectator<S3CardComponent>;
   let loader: HarnessLoader;
   let table: TnTableHarness;
-
-  // The "⋮" row-action trigger test id, derived from the row's uniqueRowTag.
-  const rowMenuTrigger = '[data-test="button-card-s3-bucket-photos-more-action"]';
 
   const buckets = [
     {
@@ -93,7 +90,8 @@ describe('S3CardComponent', () => {
   });
 
   async function openRowMenu(): Promise<TnMenuHarness> {
-    spectator.click(rowMenuTrigger);
+    const trigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'dots-vertical', ancestor: 'tn-table' }));
+    await trigger.click();
     return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
   }
 

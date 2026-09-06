@@ -20,6 +20,7 @@ import {
   TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
   TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
@@ -36,7 +37,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
@@ -70,7 +70,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TnCardFooterActionsDirective,
     TnSlideToggleComponent,
     RequiresRolesDirective,
-    TestDirective,
+    TnTestIdDirective,
     TnIconComponent,
     TnTooltipDirective,
     TnTableComponent,

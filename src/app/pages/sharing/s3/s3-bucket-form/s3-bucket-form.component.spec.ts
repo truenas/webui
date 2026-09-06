@@ -234,6 +234,39 @@ describe('S3BucketFormComponent', () => {
       expect(await (await getSelect('access')).getDisplayText()).toBe('Read / Write');
     });
 
+    it('lets an EVERYONE grant be switched to a user grant', async () => {
+      spectator = createComponent({
+        props: {
+          bucket: {
+            ...existingBucket,
+            grants: [{
+              principal_type: S3PrincipalType.Everyone, xid: null, name: '', access: S3Access.ReadOnly,
+            }],
+          },
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await clickAdvancedOptions();
+
+      const xid = spectator.component.form.controls.grants.at(0).controls.xid;
+      expect(xid.disabled).toBe(true);
+
+      await (await getSelect('principal_type')).selectOption('User');
+
+      expect(xid.enabled).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
+    });
+
+    it('requires retention days once a default retention mode is chosen', async () => {
+      await clickAdvancedOptions();
+      await (await getSelect('versioning')).selectOption('Enabled');
+      await (await getCheckbox('object_lock')).check();
+      await (await getSelect('object_lock_default_mode')).selectOption('Governance');
+
+      expect(spectator.component.form.controls.object_lock_default_days.errors).toMatchObject({ required: true });
+      expect(spectator.component.canSubmit()).toBe(false);
+    });
+
     it('updates the bucket without sending the dataset', async () => {
       await form.fillForm({ Owner: 'bob' });
       await (await getCheckbox('enabled')).uncheck();
