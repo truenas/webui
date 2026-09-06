@@ -35,7 +35,8 @@ export class S3PrincipalComboboxProvider implements IxComboboxProvider {
 
   private query(search: string): Observable<Option[]> {
     const trimmed = search?.trim() ?? '';
-    const escaped = trimmed.replaceAll('\\', '\\\\');
+    // The middleware treats the filter as a pattern, so a typed metacharacter must match literally.
+    const escaped = trimmed.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const options = { offset: this.page * this.pageSize, limit: this.pageSize };
 
     let options$: Observable<Option[]>;

@@ -281,7 +281,7 @@ describe('S3BucketFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(true);
     });
 
-    it('does not let a hidden snapshot listing limit block Save', async () => {
+    it('does not let a hidden snapshot listing limit block Save, and sends the stored limit instead', async () => {
       await clickAdvancedOptions();
       // The CDK harness cannot type an empty string, so an out-of-range value stands in for a blank one.
       await (await getInput('snapshot_versions_max')).setValue('0');
@@ -291,6 +291,29 @@ describe('S3BucketFormComponent', () => {
 
       expect(spectator.component.form.controls.snapshot_versions_max.errors).toBeNull();
       expect(spectator.component.canSubmit()).toBe(true);
+
+      spectator.component.submit();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.update', [7, expect.objectContaining({
+        versioning: S3Versioning.Off,
+        snapshot_versions_max: 64,
+      })]);
+    });
+
+    it('keeps the Basic toggle disabled while an advanced field is invalid', async () => {
+      await clickAdvancedOptions();
+      const [toggle] = spectator.component.footerActions;
+      expect(toggle.disabled()).toBe(false);
+
+      await (await getInput('snapshot_versions_max')).setValue('0');
+      expect(toggle.disabled()).toBe(true);
+
+      await (await getInput('snapshot_versions_max')).setValue('5');
+      expect(toggle.disabled()).toBe(false);
+
+      const grants = await loader.getHarness(TnFormListHarness.with({ label: 'Grants' }));
+      await grants.add();
+      expect(toggle.disabled()).toBe(true);
     });
 
     it('does not let a hidden out-of-range retention period block Save', async () => {

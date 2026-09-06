@@ -11,7 +11,9 @@ import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
   TnSelectComponent, type TnSelectOption,
 } from '@truenas/ui-components';
-import { map, merge, Observable } from 'rxjs';
+import {
+  map, merge, Observable, startWith,
+} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import {
   S3AuditMode,
@@ -42,7 +44,7 @@ import {
 import { IxUserPickerComponent } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import {
-  advancedModeFooterAction, SidePanelFooterAction,
+  advancedModeOptionLabels, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { createS3GrantFormGroup, S3GrantFormGroup, toS3Grants } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
@@ -212,8 +214,36 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     return this.canUseObjectLock() ? '' : this.translate.instant(this.helptext.objectLockTooltip);
   });
 
-  /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). */
-  private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode);
+  /** Controls that only render in advanced mode. */
+  private readonly advancedControls = [
+    'permissions_model', 'grants', 'versioning', 'snapshot_versions', 'snapshot_versions_max', 'object_lock',
+    'object_lock_default_mode', 'object_lock_default_days', 'multipart_etag', 'audit_mode', 'audit_actions',
+    'audit_overflow',
+  ] as const;
+
+  private readonly formStatus = toSignal(this.form.statusChanges.pipe(startWith(this.form.status)));
+
+  /**
+   * Whether any advanced field currently fails validation. Save is gated on the whole form, so
+   * switching to basic mode with one of these invalid would leave Save disabled with nothing on
+   * screen to fix; the toggle stays disabled until the field is corrected instead.
+   */
+  protected readonly hasInvalidAdvancedField = computed(() => {
+    this.formStatus();
+    return this.advancedControls.some((name) => this.form.controls[name].invalid);
+  });
+
+  /**
+   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). Same shape as
+   * `advancedModeFooterAction`, plus the guard above.
+   */
+  private readonly advancedToggle = computed<SidePanelFooterAction[]>(() => [{
+    label: this.isAdvancedMode() ? advancedModeOptionLabels.basic : advancedModeOptionLabels.advanced,
+    ariaLabel: this.isAdvancedMode() ? advancedModeOptionLabels.showBasic : advancedModeOptionLabels.showAdvanced,
+    testId: 'toggle-advanced-options',
+    disabled: () => this.isAdvancedMode() && this.hasInvalidAdvancedField(),
+    onClick: () => this.isAdvancedMode.update((isAdvanced) => !isAdvanced),
+  }]);
 
   get footerActions(): SidePanelFooterAction[] {
     return this.advancedToggle();
@@ -322,7 +352,11 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
       grants: toS3Grants(this.form.controls.grants.controls),
       versioning: values.versioning,
       snapshot_versions: values.versioning === S3Versioning.Off ? [] : values.snapshot_versions,
-      snapshot_versions_max: values.snapshot_versions_max,
+      // The listing limit only applies with versioning; without it the field is hidden and its
+      // validators are off, so send the value the bucket already has rather than whatever was left behind.
+      snapshot_versions_max: values.versioning === S3Versioning.Off
+        ? (this.bucket()?.snapshot_versions_max ?? 64)
+        : values.snapshot_versions_max,
       multipart_etag: values.multipart_etag,
       object_lock: objectLock,
       object_lock_default_mode: hasDefaultRule ? values.object_lock_default_mode : null,
