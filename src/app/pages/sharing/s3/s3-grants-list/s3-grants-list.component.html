@@ -1,12 +1,19 @@
-<ix-list
+<tn-form-list
+  [control]="formArray()"
+  [empty]="formArray().controls.length === 0"
   [label]="label()"
   [tooltip]="tooltip()"
-  [empty]="formArray().controls.length === 0"
-  [formArray]="formArray()"
+  [addLabel]="'Add' | translate"
+  [emptyMessage]="'No items have been added yet.' | translate"
   (add)="addGrant()"
 >
   @for (group of formArray().controls; track group; let i = $index) {
-    <ix-list-item [label]="label()" (delete)="removeGrant(i)">
+    <tn-form-list-item
+      testId="remove-from-list"
+      [label]="label()"
+      [removeAriaLabel]="'Remove {label} item' | translate: { label: label() }"
+      (delete)="removeGrant(i)"
+    >
       <div class="grant" [formGroup]="group">
         <tn-form-field [label]="'Principal' | translate" [required]="true">
           <tn-select formControlName="principal_type" [options]="principalTypeOptions"></tn-select>
@@ -35,6 +42,6 @@
           <tn-select formControlName="access" [options]="accessOptions"></tn-select>
         </tn-form-field>
       </div>
-    </ix-list-item>
+    </tn-form-list-item>
   }
-</ix-list>
+</tn-form-list>

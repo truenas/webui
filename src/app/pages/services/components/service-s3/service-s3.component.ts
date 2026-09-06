@@ -8,8 +8,8 @@ import {
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
-  TnSelectComponent, type TnSelectOption,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent,
+  TnFormSectionComponent, TnInputComponent, TnSelectComponent, type TnSelectOption,
 } from '@truenas/ui-components';
 import {
   combineLatest, map, shareReplay,
@@ -32,8 +32,6 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
@@ -76,7 +74,6 @@ type S3ServiceFormValue = ReturnType<ReturnType<typeof createS3ServiceForm>['get
 @Component({
   selector: 'ix-service-s3',
   templateUrl: './service-s3.component.html',
-  styleUrls: ['./service-s3.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
@@ -86,8 +83,8 @@ type S3ServiceFormValue = ReturnType<ReturnType<typeof createS3ServiceForm>['get
     TnInputComponent,
     TnSelectComponent,
     TnCheckboxComponent,
-    IxListComponent,
-    IxListItemComponent,
+    TnFormListComponent,
+    TnFormListItemComponent,
     WithManageCertificatesLinkComponent,
     S3GrantsListComponent,
     TranslateModule,

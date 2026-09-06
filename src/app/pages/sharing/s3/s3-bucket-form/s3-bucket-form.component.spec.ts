@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnInputHarness, TnSelectHarness,
+  TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnFormListHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -17,7 +17,6 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { S3Bucket } from 'app/interfaces/s3.interface';
 import { User } from 'app/interfaces/user.interface';
-import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -199,8 +198,8 @@ describe('S3BucketFormComponent', () => {
 
       await clickAdvancedOptions();
 
-      const grants = await loader.getHarness(IxListHarness.with({ label: 'Grants' }));
-      await grants.pressAddButton();
+      const grants = await loader.getHarness(TnFormListHarness.with({ label: 'Grants' }));
+      await grants.add();
       await (await getSelect('principal_type')).selectOption('Everyone');
       await (await getSelect('access')).selectOption('Read Only');
 

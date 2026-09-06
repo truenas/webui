@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnCheckboxHarness, TnDialog, TnInputHarness, TnSelectHarness,
+  TnCheckboxHarness, TnDialog, TnFormListHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -16,7 +16,6 @@ import { Certificate } from 'app/interfaces/certificate.interface';
 import { S3Config } from 'app/interfaces/s3.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
-import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
@@ -112,8 +111,8 @@ describe('ServiceS3Component', () => {
     await (await getInput('region')).setValue('eu-west-1');
     await (await getSelect('log_level')).selectOption('Info');
 
-    const listeners = await loader.getHarness(IxListHarness.with({ label: 'Listen Addresses' }));
-    await listeners.pressAddButton();
+    const listeners = await loader.getHarness(TnFormListHarness.with({ label: 'Listen Addresses' }));
+    await listeners.add();
     const [, newAddress] = await getAllSelects('address');
     await newAddress.selectOption('0.0.0.0');
     const [, newPort] = await getAllInputs('port');

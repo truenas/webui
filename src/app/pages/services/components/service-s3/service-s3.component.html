@@ -5,20 +5,25 @@
   (closed)="closed.emit($event)"
 >
   <tn-form-section [heading]="'Listeners' | translate">
-    <ix-list
+    <tn-form-list
       formArrayName="listeners"
+      [control]="form.controls.listeners"
       [empty]="form.controls.listeners.controls.length === 0"
       [label]="'Listen Addresses' | translate"
       [tooltip]="helptext.listenersTooltip | translate"
-      [formArray]="form.controls.listeners"
+      [addLabel]="'Add' | translate"
+      [emptyMessage]="'No items have been added yet.' | translate"
       (add)="addListener()"
     >
       @for (listener of form.controls.listeners.controls; track listener; let i = $index) {
-        <ix-list-item
+        <tn-form-list-item
+          testId="remove-from-list"
+          [formGroupName]="i"
           [label]="'Listen Address' | translate"
+          [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Listen Address' | translate }"
           (delete)="removeListener(i)"
         >
-          <div class="listener" [formGroup]="listener">
+          <div class="listener">
             <tn-form-field [label]="'Address' | translate" [required]="true">
               <tn-select formControlName="address" [options]="addressOptions()"></tn-select>
             </tn-form-field>
@@ -31,9 +36,9 @@
               <tn-checkbox formControlName="tls" [label]="'TLS' | translate"></tn-checkbox>
             </tn-form-field>
           </div>
-        </ix-list-item>
+        </tn-form-list-item>
       }
-    </ix-list>
+    </tn-form-list>
 
     <ix-with-manage-certificates-link>
       <tn-form-field

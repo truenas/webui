@@ -4,14 +4,14 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
+import {
+  TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import {
   S3PrincipalType, s3AccessLabels, s3PrincipalTypeLabels,
 } from 'app/enums/s3.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { createS3GrantFormGroup, S3GrantFormGroup } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
@@ -29,12 +29,11 @@ interface GrantProviders {
 @Component({
   selector: 'ix-s3-grants-list',
   templateUrl: './s3-grants-list.component.html',
-  styleUrls: ['./s3-grants-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxListComponent,
-    IxListItemComponent,
+    TnFormListComponent,
+    TnFormListItemComponent,
     TnFormFieldComponent,
     TnSelectComponent,
     IxComboboxComponent,
