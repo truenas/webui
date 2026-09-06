@@ -1,12 +1,13 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, input,
+  ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormArray, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnSelectComponent,
 } from '@truenas/ui-components';
+import { startWith, switchMap } from 'rxjs';
 import {
   S3PrincipalType, s3AccessLabels, s3PrincipalTypeLabels,
 } from 'app/enums/s3.enum';
@@ -48,6 +49,21 @@ export class S3GrantsListComponent {
   readonly formArray = input.required<FormArray<S3GrantFormGroup>>();
   readonly label = input<TranslatedString>(this.translate.instant('Grants'));
   readonly tooltip = input<TranslatedString>();
+
+  /**
+   * The parent pushes rows into the array after this view first renders (a config form loads its
+   * grants asynchronously) while the `formArray` input reference never changes, which under OnPush
+   * would leave the `@for` stale. Reading the rows through a signal fed by the array's own
+   * `valueChanges` marks this view whenever a row is added or removed.
+   */
+  private readonly arrayChanged = toSignal(
+    toObservable(this.formArray).pipe(switchMap((array) => array.valueChanges.pipe(startWith(null)))),
+  );
+
+  protected readonly rows = computed(() => {
+    this.arrayChanged();
+    return [...this.formArray().controls];
+  });
 
   protected readonly S3PrincipalType = S3PrincipalType;
   protected readonly principalTypeOptions = mapToOptions(s3PrincipalTypeLabels, this.translate);

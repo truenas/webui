@@ -267,6 +267,20 @@ describe('S3BucketFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(false);
     });
 
+    it('stops requiring retention days once object lock is turned off again', async () => {
+      await clickAdvancedOptions();
+      await (await getSelect('versioning')).selectOption('Enabled');
+      await (await getCheckbox('object_lock')).check();
+      await (await getSelect('object_lock_default_mode')).selectOption('Governance');
+      expect(spectator.component.canSubmit()).toBe(false);
+
+      // Turning versioning off clears object lock programmatically; the hidden days field must not block Save.
+      await (await getSelect('versioning')).selectOption('Off');
+
+      expect(spectator.component.form.controls.object_lock_default_days.errors).toBeNull();
+      expect(spectator.component.canSubmit()).toBe(true);
+    });
+
     it('updates the bucket without sending the dataset', async () => {
       await form.fillForm({ Owner: 'bob' });
       await (await getCheckbox('enabled')).uncheck();

@@ -126,7 +126,6 @@ export class S3AccessKeyFormComponent extends SidePanelForm implements OnInit {
       error: (error: unknown) => {
         this.isLoading.set(false);
         this.formErrorHandler.handleValidationErrors(error, this.form);
-        this.loader.close();
       },
     });
   }

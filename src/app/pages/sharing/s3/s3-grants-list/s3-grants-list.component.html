@@ -1,13 +1,13 @@
 <tn-form-list
   [control]="formArray()"
-  [empty]="formArray().controls.length === 0"
+  [empty]="rows().length === 0"
   [label]="label()"
   [tooltip]="tooltip()"
   [addLabel]="'Add' | translate"
   [emptyMessage]="'No items have been added yet.' | translate"
   (add)="addGrant()"
 >
-  @for (group of formArray().controls; track group; let i = $index) {
+  @for (group of rows(); track group; let i = $index) {
     <tn-form-list-item
       testId="remove-from-list"
       [label]="label()"

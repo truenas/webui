@@ -249,7 +249,7 @@ export class S3BucketListComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  protected onChangeEnabledState(row: S3Bucket): void {
+  protected onChangeEnabledState(row: S3Bucket, toggle: TableToggleCellComponent): void {
     this.api.call('sharing.s3.update', [row.id, { enabled: !row.enabled }]).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
@@ -257,7 +257,8 @@ export class S3BucketListComponent implements OnInit {
         this.dataProvider.load();
       },
       error: (error: unknown) => {
-        this.dataProvider.load();
+        // A reload re-emits the unchanged row, so the optimistic flip has to be undone on the cell itself.
+        toggle.revert();
         this.errorHandler.showErrorModal(error);
       },
     });

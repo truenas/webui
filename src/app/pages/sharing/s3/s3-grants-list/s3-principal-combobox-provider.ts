@@ -57,11 +57,17 @@ export class S3PrincipalComboboxProvider implements IxComboboxProvider {
       );
     }
 
+    // The combobox appends pages, so the seed belongs to the first page only.
     return options$.pipe(
-      map((fetched) => [
-        ...this.initialOptions,
-        ...fetched.filter((option) => !this.initialOptions.some((initial) => initial.value === option.value)),
-      ]),
+      map((fetched) => {
+        if (this.page > 0) {
+          return fetched;
+        }
+        return [
+          ...this.initialOptions,
+          ...fetched.filter((option) => !this.initialOptions.some((initial) => initial.value === option.value)),
+        ];
+      }),
     );
   }
 }

@@ -3,9 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnCardComponent, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
+  TnButtonHarness, TnCardComponent, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness,
+  TnTableHarness,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { S3PermissionsModel } from 'app/enums/s3.enum';
@@ -15,8 +16,10 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { S3BucketListComponent } from 'app/pages/sharing/s3/s3-bucket-list/s3-bucket-list.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('S3BucketListComponent', () => {
@@ -41,6 +44,7 @@ describe('S3BucketListComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(EmptyService),
+      mockProvider(ErrorHandlerService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         confirmDelete: jest.fn(() => of(undefined)),
@@ -115,5 +119,20 @@ describe('S3BucketListComponent', () => {
       message: expect.any(String),
       call: expect.any(Function),
     });
+  });
+
+  it('reverts the toggle when the update fails', async () => {
+    const toggle = await loader.getHarness(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
+    expect(await toggle.isChecked()).toBe(true);
+    // The failure arrives after the flip has been applied, as a real API error would.
+    const update$ = new Subject<S3Bucket>();
+    jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(update$ as never);
+
+    await toggle.uncheck();
+    expect(await toggle.isChecked()).toBe(false);
+    update$.error(new Error('nope'));
+
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+    expect(await toggle.isChecked()).toBe(true);
   });
 });

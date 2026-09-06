@@ -11,7 +11,7 @@ import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
   TnSelectComponent, type TnSelectOption,
 } from '@truenas/ui-components';
-import { map, Observable } from 'rxjs';
+import { map, merge, Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import {
   S3AuditMode,
@@ -166,9 +166,11 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     object_lock_default_days: [null as number | null, [
       Validators.min(1),
       Validators.max(36500),
-      // A default retention rule needs both a mode and a period.
+      // A default retention rule needs both a mode and a period, and only exists while object lock is on:
+      // the payload ignores the mode otherwise, and the field is not on screen to be fixed.
       this.validatorsService.validateOnCondition(
-        (control) => !!control.parent?.get('object_lock_default_mode')?.value,
+        (control) => !!control.parent?.get('object_lock')?.value
+          && !!control.parent?.get('object_lock_default_mode')?.value,
         Validators.required,
       ),
     ]],
@@ -275,8 +277,11 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.syncObjectLockAvailability();
     });
-    // The days requirement depends on the mode, so a mode change has to re-run its validators.
-    this.form.controls.object_lock_default_mode.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+    // The days requirement depends on object lock and the mode, so either changing re-runs its validators.
+    merge(
+      this.form.controls.object_lock.valueChanges,
+      this.form.controls.object_lock_default_mode.valueChanges,
+    ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.form.controls.object_lock_default_days.updateValueAndValidity();
     });
   }
@@ -290,6 +295,8 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     } else if (control.enabled) {
       control.setValue(false, { emitEvent: false });
       control.disable({ emitEvent: false });
+      // Cleared silently above, so the days validator has to be re-run by hand for the same reason.
+      this.form.controls.object_lock_default_days.updateValueAndValidity();
     }
   }
 
