@@ -8,14 +8,14 @@
     <tn-form-list
       formArrayName="listeners"
       [control]="form.controls.listeners"
-      [empty]="form.controls.listeners.controls.length === 0"
+      [empty]="listenerRows().length === 0"
       [label]="'Listen Addresses' | translate"
       [tooltip]="helptext.listenersTooltip | translate"
       [addLabel]="'Add' | translate"
       [emptyMessage]="'No items have been added yet.' | translate"
       (add)="addListener()"
     >
-      @for (listener of form.controls.listeners.controls; track listener; let i = $index) {
+      @for (listener of listenerRows(); track listener; let i = $index) {
         <tn-form-list-item
           testId="remove-from-list"
           [formGroupName]="i"

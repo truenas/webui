@@ -24,11 +24,9 @@ import {
   TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { BehaviorSubject } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
-import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
 import { helptextSharingS3 } from 'app/helptext/sharing';
 import { S3Bucket } from 'app/interfaces/s3.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
@@ -101,7 +99,6 @@ export class S3CardComponent implements OnInit {
   protected actionsMenu = inject(ServiceActionsMenuService);
   private snackbar = inject(SnackbarService);
 
-  loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
   requiredRoles = [Role.SharingS3Write, Role.SharingWrite];
   service$ = this.store$.select(selectService(ServiceName.S3));
   protected service = toSignal(this.service$);
@@ -209,7 +206,6 @@ export class S3CardComponent implements OnInit {
     const enabled = !row.enabled;
 
     this.api.call('sharing.s3.update', [row.id, { enabled }]).pipe(
-      accumulateLoadingState(row.id, this.loadingMap$),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {

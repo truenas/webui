@@ -281,6 +281,31 @@ describe('S3BucketFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(true);
     });
 
+    it('does not let a hidden snapshot listing limit block Save', async () => {
+      await clickAdvancedOptions();
+      // The CDK harness cannot type an empty string, so an out-of-range value stands in for a blank one.
+      await (await getInput('snapshot_versions_max')).setValue('0');
+      expect(spectator.component.canSubmit()).toBe(false);
+
+      await (await getSelect('versioning')).selectOption('Off');
+
+      expect(spectator.component.form.controls.snapshot_versions_max.errors).toBeNull();
+      expect(spectator.component.canSubmit()).toBe(true);
+    });
+
+    it('does not let a hidden out-of-range retention period block Save', async () => {
+      await clickAdvancedOptions();
+      await (await getCheckbox('object_lock')).check();
+      await (await getSelect('object_lock_default_mode')).selectOption('Governance');
+      await (await getInput('object_lock_default_days')).setValue('0');
+      expect(spectator.component.canSubmit()).toBe(false);
+
+      await (await getCheckbox('object_lock')).uncheck();
+
+      expect(spectator.component.form.controls.object_lock_default_days.errors).toBeNull();
+      expect(spectator.component.canSubmit()).toBe(true);
+    });
+
     it('updates the bucket without sending the dataset', async () => {
       await form.fillForm({ Owner: 'bob' });
       await (await getCheckbox('enabled')).uncheck();

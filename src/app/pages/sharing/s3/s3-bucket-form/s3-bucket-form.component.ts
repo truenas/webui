@@ -160,18 +160,23 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     grants: this.fb.array<S3GrantFormGroup>([]),
     versioning: [S3Versioning.Off],
     snapshot_versions: [[] as string[]],
-    snapshot_versions_max: [64, [Validators.required, Validators.min(1)]],
+    // Every validator on a field that is only rendered in some state is gated on that state: a
+    // stale error on a hidden control would disable Save with nothing on screen to fix.
+    snapshot_versions_max: [64, [
+      this.validatorsService.validateOnCondition(
+        (control) => control.parent?.get('versioning')?.value !== S3Versioning.Off,
+        Validators.compose([Validators.required, Validators.min(1)]),
+      ),
+    ]],
     object_lock: [false],
     object_lock_default_mode: [null as S3ObjectLockMode | null],
     object_lock_default_days: [null as number | null, [
-      Validators.min(1),
-      Validators.max(36500),
       // A default retention rule needs both a mode and a period, and only exists while object lock is on:
-      // the payload ignores the mode otherwise, and the field is not on screen to be fixed.
+      // the payload ignores the mode otherwise.
       this.validatorsService.validateOnCondition(
         (control) => !!control.parent?.get('object_lock')?.value
           && !!control.parent?.get('object_lock_default_mode')?.value,
-        Validators.required,
+        Validators.compose([Validators.required, Validators.min(1), Validators.max(36500)]),
       ),
     ]],
     multipart_etag: [S3MultipartEtag.Composite],
@@ -277,12 +282,15 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.syncObjectLockAvailability();
     });
-    // The days requirement depends on object lock and the mode, so either changing re-runs its validators.
+    // The gated validators above read sibling controls, so the switches they depend on re-run them.
     merge(
       this.form.controls.object_lock.valueChanges,
       this.form.controls.object_lock_default_mode.valueChanges,
     ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.form.controls.object_lock_default_days.updateValueAndValidity();
+    });
+    this.form.controls.versioning.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.form.controls.snapshot_versions_max.updateValueAndValidity();
     });
   }
 

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, inject,
+  ChangeDetectionStrategy, Component, OnInit, computed, inject,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -12,7 +12,7 @@ import {
   TnFormSectionComponent, TnInputComponent, TnSelectComponent, type TnSelectOption,
 } from '@truenas/ui-components';
 import {
-  combineLatest, map, shareReplay,
+  combineLatest, map, shareReplay, startWith,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import {
@@ -108,6 +108,18 @@ export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormVal
   protected readonly isLicensed = toSignal(this.store$.select(selectLicense).pipe(map((license) => !!license)));
 
   protected readonly form = createS3ServiceForm(this.fb);
+
+  /**
+   * Listener rows are pushed after first render (once `s3.config` resolves) into an array whose
+   * reference never changes, so under OnPush the `@for` reads them through a signal fed by the
+   * array's own `valueChanges` rather than off the array directly.
+   */
+  private readonly listenersChanged = toSignal(this.form.controls.listeners.valueChanges.pipe(startWith(null)));
+
+  protected readonly listenerRows = computed(() => {
+    this.listenersChanged();
+    return [...this.form.controls.listeners.controls];
+  });
 
   /**
    * Loaded once and shared between the form population and the listener address options.
