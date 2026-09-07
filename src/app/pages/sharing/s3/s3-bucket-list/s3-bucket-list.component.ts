@@ -138,16 +138,17 @@ export class S3BucketListComponent implements OnInit {
     column({
       title: this.translate.instant('Permissions Model'),
       propertyName: 'permissions_model',
+      sortBy: (row) => this.permissionsModelLabel(row),
     }),
     column({
       title: this.translate.instant('Versioning'),
       propertyName: 'versioning',
-      hidden: true,
+      // Sort on the label the cell shows, not the raw enum, so the order matches the visible text.
+      sortBy: (row) => this.versioningLabel(row),
     }),
     column({
       title: this.translate.instant('Object Lock'),
       propertyName: 'object_lock',
-      hidden: true,
     }),
     column({
       title: this.translate.instant('Enabled'),

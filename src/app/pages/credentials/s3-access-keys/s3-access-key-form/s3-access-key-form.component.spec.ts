@@ -2,7 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnCheckboxHarness, TnDialog, TnInputHarness } from '@truenas/ui-components';
+import {
+  TnCheckboxHarness, TnDateInputHarness, TnDialog, TnInputHarness,
+} from '@truenas/ui-components';
 import { parseISO } from 'date-fns';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -85,6 +87,7 @@ describe('S3AccessKeyFormComponent', () => {
       await (await getInput('name')).setValue('backup-key');
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({ User: 'alice' });
+      await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Non-expiring' }))).check();
 
       spectator.component.submit();
 
@@ -103,15 +106,36 @@ describe('S3AccessKeyFormComponent', () => {
   });
 
   describe('expiry', () => {
-    it('requires a date once Non-expiring is unchecked', async () => {
+    it('creates an expiring key with the chosen date by default', async () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await spectator.fixture.whenStable();
 
-      await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Non-expiring' }))).uncheck();
+      await (await getInput('name')).setValue('backup-key');
+      await (await loader.getHarness(IxFormHarness)).fillForm({ User: 'alice' });
+      // The picker stores the chosen day at local midnight, so it is set and asserted in local time.
+      await (await loader.getHarness(TnDateInputHarness)).setValue(new Date(2030, 0, 15));
 
+      spectator.component.submit();
+
+      const api = spectator.inject(ApiService) as unknown as { call: jest.Mock };
+      const [, [payload]] = api.call.mock.calls.find(([method]) => method === 's3.accesskey.create');
+      const expiresAt = new Date((payload as { expires_at: { $date: number } }).expires_at.$date);
+      expect([expiresAt.getFullYear(), expiresAt.getMonth() + 1, expiresAt.getDate()]).toEqual([2030, 1, 15]);
+    });
+
+    it('asks for an expiry date by default and requires it until Non-expiring is checked', async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
+
+      const nonExpiring = await loader.getHarness(TnCheckboxHarness.with({ label: 'Non-expiring' }));
+      expect(await nonExpiring.isChecked()).toBe(false);
       expect(spectator.component.form.controls.expires_at.errors).toMatchObject({ required: true });
       expect(spectator.component.canSubmit()).toBe(false);
+
+      await nonExpiring.check();
+      expect(spectator.component.form.controls.expires_at.errors).toBeNull();
     });
   });
 

@@ -5,13 +5,14 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnFormListHarness, TnInputHarness, TnSelectHarness,
+  TnCheckboxHarness, TnChipInputHarness, TnDialog, TnFormFieldHarness, TnFormListHarness, TnInputHarness,
+  TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  S3Access, S3MultipartEtag, S3PermissionsModel, S3PrincipalType, S3Versioning,
+  S3Access, S3MultipartEtag, S3ObjectLockMode, S3PermissionsModel, S3PrincipalType, S3Versioning,
 } from 'app/enums/s3.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Group } from 'app/interfaces/group.interface';
@@ -118,16 +119,88 @@ describe('S3BucketFormComponent', () => {
       jest.spyOn(store$, 'dispatch');
     });
 
-    it('shows only basic fields until Advanced Options is pressed', async () => {
+    it('shows object lock with the basic fields and the rest only after Advanced Options is pressed', async () => {
+      expect(await loader.hasHarness(TnCheckboxHarness.with({ label: 'Enable Object Lock' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Permissions Model' }))).toBe(false);
+      expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Versioning' }))).toBe(false);
 
       await clickAdvancedOptions();
 
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Permissions Model' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Versioning' }))).toBe(true);
-      expect(await loader.hasHarness(TnCheckboxHarness.with({ label: 'Enable Object Lock' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Multipart ETag' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Audit' }))).toBe(false);
+    });
+
+    it('turns versioning on and defaults to Compliance retention when object lock is enabled', async () => {
+      await clickAdvancedOptions();
+      expect(await (await getSelect('versioning')).getDisplayText()).toBe('Off');
+
+      await (await getCheckbox('object_lock')).check();
+
+      const versioning = await getSelect('versioning');
+      expect(await versioning.getDisplayText()).toBe('Enabled');
+      expect(await versioning.isDisabled()).toBe(true);
+      expect(await (await getSelect('object_lock_default_mode')).getDisplayText()).toBe('Compliance');
+
+      await (await getCheckbox('object_lock')).uncheck();
+      const released = await getSelect('versioning');
+      expect(await released.isDisabled()).toBe(false);
+      expect(await released.getDisplayText()).toBe('Off');
+    });
+
+    it('creates a bucket with object lock, versioning and the Compliance default rule', async () => {
+      await (await getInput('name')).setValue('backups');
+      await form.fillForm({
+        'Parent Dataset': 'tank',
+        Owner: 'alice',
+      });
+      await (await getCheckbox('object_lock')).check();
+      await (await getInput('object_lock_default_days')).setValue('30');
+
+      spectator.component.submit();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+        versioning: S3Versioning.Enabled,
+        object_lock: true,
+        object_lock_default_mode: S3ObjectLockMode.Compliance,
+        object_lock_default_days: 30,
+      })]);
+    });
+
+    it('keeps a "no default rule" chosen in this session when object lock is re-checked', async () => {
+      await (await getCheckbox('object_lock')).check();
+      await (await getSelect('object_lock_default_mode')).selectOption('No default rule');
+      await (await getCheckbox('object_lock')).uncheck();
+      await (await getCheckbox('object_lock')).check();
+
+      expect(spectator.component.form.controls.object_lock_default_mode.value).toBeNull();
+    });
+
+    it('does not leave versioning on after object lock is checked and unchecked in basic mode', async () => {
+      await (await getInput('name')).setValue('plain');
+      await form.fillForm({
+        'Parent Dataset': 'tank',
+        Owner: 'alice',
+      });
+      await (await getCheckbox('object_lock')).check();
+      await (await getCheckbox('object_lock')).uncheck();
+
+      spectator.component.submit();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+        versioning: S3Versioning.Off,
+        object_lock: false,
+      })]);
+    });
+
+    it('does not offer object lock with the Multiprotocol permissions model', async () => {
+      await clickAdvancedOptions();
+      await (await getSelect('permissions_model')).selectOption('Multiprotocol');
+
+      const objectLock = await getCheckbox('object_lock');
+      expect(await objectLock.isDisabled()).toBe(true);
+      expect(await objectLock.isChecked()).toBe(false);
     });
 
     it('rejects the /mnt root as a parent dataset', async () => {
@@ -230,8 +303,24 @@ describe('S3BucketFormComponent', () => {
       expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
       expect(await (await getSelect('permissions_model')).getDisplayText()).toBe('S3 Only');
       expect(await (await getSelect('versioning')).getDisplayText()).toBe('Enabled');
+      const snapshotVersions = await loader.getHarness(
+        TnChipInputHarness.with({ testId: 'chip-input-snapshot-versions' }),
+      );
+      expect(await snapshotVersions.getChips()).toEqual(['auto-*']);
       expect(await (await getSelect('principal_type')).getDisplayText()).toBe('Group');
       expect(await (await getSelect('access')).getDisplayText()).toBe('Read / Write');
+    });
+
+    it('keeps a stored "no default rule" when object lock is unchecked and re-checked', async () => {
+      spectator = createComponent({
+        props: { bucket: { ...existingBucket, object_lock: true, object_lock_default_mode: null } },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      await (await getCheckbox('object_lock')).uncheck();
+      await (await getCheckbox('object_lock')).check();
+
+      expect(spectator.component.form.controls.object_lock_default_mode.value).toBeNull();
     });
 
     it('lets an EVERYONE grant be switched to a user grant', async () => {
@@ -257,25 +346,18 @@ describe('S3BucketFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(false);
     });
 
-    it('requires retention days once a default retention mode is chosen', async () => {
-      await clickAdvancedOptions();
-      await (await getSelect('versioning')).selectOption('Enabled');
+    it('requires retention days once object lock is on with a default retention mode', async () => {
       await (await getCheckbox('object_lock')).check();
-      await (await getSelect('object_lock_default_mode')).selectOption('Governance');
 
       expect(spectator.component.form.controls.object_lock_default_days.errors).toMatchObject({ required: true });
       expect(spectator.component.canSubmit()).toBe(false);
     });
 
     it('stops requiring retention days once object lock is turned off again', async () => {
-      await clickAdvancedOptions();
-      await (await getSelect('versioning')).selectOption('Enabled');
       await (await getCheckbox('object_lock')).check();
-      await (await getSelect('object_lock_default_mode')).selectOption('Governance');
       expect(spectator.component.canSubmit()).toBe(false);
 
-      // Turning versioning off clears object lock programmatically; the hidden days field must not block Save.
-      await (await getSelect('versioning')).selectOption('Off');
+      await (await getCheckbox('object_lock')).uncheck();
 
       expect(spectator.component.form.controls.object_lock_default_days.errors).toBeNull();
       expect(spectator.component.canSubmit()).toBe(true);
@@ -317,7 +399,6 @@ describe('S3BucketFormComponent', () => {
     });
 
     it('does not let a hidden out-of-range retention period block Save', async () => {
-      await clickAdvancedOptions();
       await (await getCheckbox('object_lock')).check();
       await (await getSelect('object_lock_default_mode')).selectOption('Governance');
       await (await getInput('object_lock_default_days')).setValue('0');
