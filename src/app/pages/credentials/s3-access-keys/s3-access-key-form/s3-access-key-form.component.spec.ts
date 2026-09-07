@@ -85,6 +85,7 @@ describe('S3AccessKeyFormComponent', () => {
       await (await getInput('name')).setValue('backup-key');
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({ User: 'alice' });
+      await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Non-expiring' }))).check();
 
       spectator.component.submit();
 
@@ -103,15 +104,18 @@ describe('S3AccessKeyFormComponent', () => {
   });
 
   describe('expiry', () => {
-    it('requires a date once Non-expiring is unchecked', async () => {
+    it('asks for an expiry date by default and requires it until Non-expiring is checked', async () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await spectator.fixture.whenStable();
 
-      await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Non-expiring' }))).uncheck();
-
+      const nonExpiring = await loader.getHarness(TnCheckboxHarness.with({ label: 'Non-expiring' }));
+      expect(await nonExpiring.isChecked()).toBe(false);
       expect(spectator.component.form.controls.expires_at.errors).toMatchObject({ required: true });
       expect(spectator.component.canSubmit()).toBe(false);
+
+      await nonExpiring.check();
+      expect(spectator.component.form.controls.expires_at.errors).toBeNull();
     });
   });
 

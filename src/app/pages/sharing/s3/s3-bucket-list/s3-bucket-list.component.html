@@ -94,7 +94,7 @@
         </ng-template>
       </ng-container>
 
-      <ng-container [tnColumnDef]="'versioning'">
+      <ng-container [tnColumnDef]="'versioning'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Versioning' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
@@ -104,7 +104,7 @@
         </ng-template>
       </ng-container>
 
-      <ng-container [tnColumnDef]="'object_lock'">
+      <ng-container [tnColumnDef]="'object_lock'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Object Lock' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span

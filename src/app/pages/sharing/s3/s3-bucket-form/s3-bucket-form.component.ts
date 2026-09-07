@@ -110,7 +110,7 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
   readonly treeNodeProvider = this.datasetService.getDatasetNodeProvider();
   protected readonly ownerProvider = createS3UserPickerProvider();
 
-  protected readonly permissionsModelOptions = mapToOptions(s3PermissionsModelLabels, this.translate);
+  private readonly permissionsModelBaseOptions = mapToOptions(s3PermissionsModelLabels, this.translate);
   protected readonly versioningOptions = mapToOptions(s3VersioningLabels, this.translate);
   protected readonly multipartEtagOptions = mapToOptions(s3MultipartEtagLabels, this.translate);
   protected readonly objectLockModeOptions: TnSelectOption<S3ObjectLockMode | null>[] = [
@@ -205,20 +205,37 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     return this.translate.instant('Bucket dataset: {dataset}', { dataset: `${parent}/${name}` });
   });
 
+  /**
+   * Object lock is a primary option (backup targets), so it drives versioning rather than depending
+   * on it: checking it switches versioning on and keeps it there. The one thing that rules it out is
+   * the Multiprotocol permissions model, under which another protocol could rewrite a locked object.
+   */
   protected readonly canUseObjectLock = computed(() => {
-    const { versioning, permissions_model: permissionsModel } = this.formValue();
-    return versioning === S3Versioning.Enabled && permissionsModel !== S3PermissionsModel.Multiprotocol;
+    return this.formValue().permissions_model !== S3PermissionsModel.Multiprotocol;
   });
 
   protected readonly objectLockHint = computed(() => {
-    return this.canUseObjectLock() ? '' : this.translate.instant(this.helptext.objectLockTooltip);
+    return this.canUseObjectLock() ? '' : this.translate.instant(this.helptext.objectLockMultiprotocolHint);
+  });
+
+  protected readonly isObjectLockOn = computed(() => !!this.formValue().object_lock);
+
+  /** Multiprotocol cannot be picked while object lock is on, for the same reason. */
+  protected readonly permissionsModelOptions = computed<TnSelectOption<S3PermissionsModel>[]>(() => {
+    return this.permissionsModelBaseOptions.map((option) => ({
+      ...option,
+      disabled: this.isObjectLockOn() && option.value === S3PermissionsModel.Multiprotocol,
+    }));
+  });
+
+  protected readonly versioningHint = computed(() => {
+    return this.isObjectLockOn() ? this.translate.instant(this.helptext.versioningLockedHint) : '';
   });
 
   /** Controls that only render in advanced mode. */
   private readonly advancedControls = [
-    'permissions_model', 'grants', 'versioning', 'snapshot_versions', 'snapshot_versions_max', 'object_lock',
-    'object_lock_default_mode', 'object_lock_default_days', 'multipart_etag', 'audit_mode', 'audit_actions',
-    'audit_overflow',
+    'permissions_model', 'grants', 'versioning', 'snapshot_versions', 'snapshot_versions_max', 'multipart_etag',
+    'audit_mode', 'audit_actions', 'audit_overflow',
   ] as const;
 
   private readonly formStatus = toSignal(this.form.statusChanges.pipe(startWith(this.form.status)));
@@ -309,8 +326,17 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
 
   private setupObjectLockDependency(): void {
     this.syncObjectLockAvailability();
+    this.syncVersioningLock(this.form.controls.object_lock.value);
     this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.syncObjectLockAvailability();
+    });
+    // Wired after the edit data is patched, so a stored "no default rule" is kept; only a user
+    // turning object lock on gets the Compliance default.
+    this.form.controls.object_lock.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((objectLock) => {
+      if (objectLock && this.form.controls.object_lock_default_mode.value === null) {
+        this.form.controls.object_lock_default_mode.setValue(S3ObjectLockMode.Compliance);
+      }
+      this.syncVersioningLock(objectLock);
     });
     // The gated validators above read sibling controls, so the switches they depend on re-run them.
     merge(
@@ -324,6 +350,19 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     });
   }
 
+  /** Object lock requires versioning, so the select is set to Enabled and held there while it is on. */
+  private syncVersioningLock(objectLock: boolean): void {
+    const versioning = this.form.controls.versioning;
+    if (objectLock) {
+      if (versioning.value !== S3Versioning.Enabled) {
+        versioning.setValue(S3Versioning.Enabled);
+      }
+      versioning.disable({ emitEvent: false });
+    } else if (versioning.disabled) {
+      versioning.enable({ emitEvent: false });
+    }
+  }
+
   private syncObjectLockAvailability(): void {
     const control = this.form.controls.object_lock;
     if (this.canUseObjectLock()) {
@@ -333,7 +372,8 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     } else if (control.enabled) {
       control.setValue(false, { emitEvent: false });
       control.disable({ emitEvent: false });
-      // Cleared silently above, so the days validator has to be re-run by hand for the same reason.
+      // Cleared silently above, so the dependants have to be updated by hand for the same reason.
+      this.syncVersioningLock(false);
       this.form.controls.object_lock_default_days.updateValueAndValidity();
     }
   }

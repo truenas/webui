@@ -63,7 +63,8 @@ export class S3AccessKeyFormComponent extends SidePanelForm implements OnInit {
     name: ['', Validators.required],
     username: ['', Validators.required],
     enabled: [true],
-    nonExpiring: [true],
+    // Keys expire unless the admin opts out, so a new key asks for a date up front.
+    nonExpiring: [false],
     expires_at: [null as Date | null],
   });
 

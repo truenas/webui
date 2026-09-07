@@ -142,12 +142,10 @@ export class S3BucketListComponent implements OnInit {
     column({
       title: this.translate.instant('Versioning'),
       propertyName: 'versioning',
-      hidden: true,
     }),
     column({
       title: this.translate.instant('Object Lock'),
       propertyName: 'object_lock',
-      hidden: true,
     }),
     column({
       title: this.translate.instant('Enabled'),

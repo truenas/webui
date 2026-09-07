@@ -118,16 +118,41 @@ describe('S3BucketFormComponent', () => {
       jest.spyOn(store$, 'dispatch');
     });
 
-    it('shows only basic fields until Advanced Options is pressed', async () => {
+    it('shows object lock with the basic fields and the rest only after Advanced Options is pressed', async () => {
+      expect(await loader.hasHarness(TnCheckboxHarness.with({ label: 'Enable Object Lock' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Permissions Model' }))).toBe(false);
+      expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Versioning' }))).toBe(false);
 
       await clickAdvancedOptions();
 
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Permissions Model' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Versioning' }))).toBe(true);
-      expect(await loader.hasHarness(TnCheckboxHarness.with({ label: 'Enable Object Lock' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Multipart ETag' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Audit' }))).toBe(false);
+    });
+
+    it('turns versioning on and defaults to Compliance retention when object lock is enabled', async () => {
+      await clickAdvancedOptions();
+      expect(await (await getSelect('versioning')).getDisplayText()).toBe('Off');
+
+      await (await getCheckbox('object_lock')).check();
+
+      const versioning = await getSelect('versioning');
+      expect(await versioning.getDisplayText()).toBe('Enabled');
+      expect(await versioning.isDisabled()).toBe(true);
+      expect(await (await getSelect('object_lock_default_mode')).getDisplayText()).toBe('Compliance');
+
+      await (await getCheckbox('object_lock')).uncheck();
+      expect(await (await getSelect('versioning')).isDisabled()).toBe(false);
+    });
+
+    it('does not offer object lock with the Multiprotocol permissions model', async () => {
+      await clickAdvancedOptions();
+      await (await getSelect('permissions_model')).selectOption('Multiprotocol');
+
+      const objectLock = await getCheckbox('object_lock');
+      expect(await objectLock.isDisabled()).toBe(true);
+      expect(await objectLock.isChecked()).toBe(false);
     });
 
     it('rejects the /mnt root as a parent dataset', async () => {
@@ -257,25 +282,18 @@ describe('S3BucketFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(false);
     });
 
-    it('requires retention days once a default retention mode is chosen', async () => {
-      await clickAdvancedOptions();
-      await (await getSelect('versioning')).selectOption('Enabled');
+    it('requires retention days once object lock is on with a default retention mode', async () => {
       await (await getCheckbox('object_lock')).check();
-      await (await getSelect('object_lock_default_mode')).selectOption('Governance');
 
       expect(spectator.component.form.controls.object_lock_default_days.errors).toMatchObject({ required: true });
       expect(spectator.component.canSubmit()).toBe(false);
     });
 
     it('stops requiring retention days once object lock is turned off again', async () => {
-      await clickAdvancedOptions();
-      await (await getSelect('versioning')).selectOption('Enabled');
       await (await getCheckbox('object_lock')).check();
-      await (await getSelect('object_lock_default_mode')).selectOption('Governance');
       expect(spectator.component.canSubmit()).toBe(false);
 
-      // Turning versioning off clears object lock programmatically; the hidden days field must not block Save.
-      await (await getSelect('versioning')).selectOption('Off');
+      await (await getCheckbox('object_lock')).uncheck();
 
       expect(spectator.component.form.controls.object_lock_default_days.errors).toBeNull();
       expect(spectator.component.canSubmit()).toBe(true);
@@ -317,7 +335,6 @@ describe('S3BucketFormComponent', () => {
     });
 
     it('does not let a hidden out-of-range retention period block Save', async () => {
-      await clickAdvancedOptions();
       await (await getCheckbox('object_lock')).check();
       await (await getSelect('object_lock_default_mode')).selectOption('Governance');
       await (await getInput('object_lock_default_days')).setValue('0');

@@ -44,6 +44,35 @@
     </tn-form-field>
   </tn-form-section>
 
+  <tn-form-section [heading]="'Object Lock' | translate">
+    <tn-form-field [tooltip]="helptext.objectLockTooltip | translate" [hint]="objectLockHint()">
+      <tn-checkbox formControlName="object_lock" [label]="'Enable Object Lock' | translate"></tn-checkbox>
+    </tn-form-field>
+
+    @if (form.controls.object_lock.value) {
+      <tn-form-field
+        [label]="'Default Retention Mode' | translate"
+        [tooltip]="helptext.objectLockDefaultModeTooltip | translate"
+      >
+        <tn-select formControlName="object_lock_default_mode" [options]="objectLockModeOptions"></tn-select>
+      </tn-form-field>
+
+      @if (form.controls.object_lock_default_mode.value) {
+        <tn-form-field
+          [label]="'Default Retention Days' | translate"
+          [tooltip]="helptext.objectLockDefaultDaysTooltip | translate"
+          [required]="true"
+        >
+          <tn-input
+            formControlName="object_lock_default_days"
+            [inputType]="InputType.Number"
+            [allowDecimals]="false"
+          ></tn-input>
+        </tn-form-field>
+      }
+    }
+  </tn-form-section>
+
   @if (isAdvancedMode()) {
     <tn-form-section [heading]="'Access' | translate">
       <tn-form-field
@@ -51,7 +80,7 @@
         [tooltip]="helptext.permissionsModelTooltip | translate"
         [required]="true"
       >
-        <tn-select formControlName="permissions_model" [options]="permissionsModelOptions"></tn-select>
+        <tn-select formControlName="permissions_model" [options]="permissionsModelOptions()"></tn-select>
       </tn-form-field>
 
       <ix-s3-grants-list
@@ -65,6 +94,7 @@
       <tn-form-field
         [label]="'Versioning' | translate"
         [tooltip]="helptext.versioningTooltip | translate"
+        [hint]="versioningHint()"
         [required]="true"
       >
         <tn-select formControlName="versioning" [options]="versioningOptions"></tn-select>
@@ -88,35 +118,6 @@
             [allowDecimals]="false"
           ></tn-input>
         </tn-form-field>
-      }
-    </tn-form-section>
-
-    <tn-form-section [heading]="'Object Lock' | translate">
-      <tn-form-field [tooltip]="helptext.objectLockTooltip | translate" [hint]="objectLockHint()">
-        <tn-checkbox formControlName="object_lock" [label]="'Enable Object Lock' | translate"></tn-checkbox>
-      </tn-form-field>
-
-      @if (form.controls.object_lock.value) {
-        <tn-form-field
-          [label]="'Default Retention Mode' | translate"
-          [tooltip]="helptext.objectLockDefaultModeTooltip | translate"
-        >
-          <tn-select formControlName="object_lock_default_mode" [options]="objectLockModeOptions"></tn-select>
-        </tn-form-field>
-
-        @if (form.controls.object_lock_default_mode.value) {
-          <tn-form-field
-            [label]="'Default Retention Days' | translate"
-            [tooltip]="helptext.objectLockDefaultDaysTooltip | translate"
-            [required]="true"
-          >
-            <tn-input
-              formControlName="object_lock_default_days"
-              [inputType]="InputType.Number"
-              [allowDecimals]="false"
-            ></tn-input>
-          </tn-form-field>
-        }
       }
     </tn-form-section>
 
