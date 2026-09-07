@@ -101,6 +101,12 @@ export class SnapshotListComponent implements OnInit {
   searchQuery = signal('');
   dataProvider = new ArrayDataProvider<ZfsSnapshot>();
   snapshots: ZfsSnapshot[] = [];
+  /**
+   * The names in `snapshots`, kept alongside it so `onSelectionChange` can prune in
+   * constant time per selected row. A dataset can hold tens of thousands of snapshots,
+   * and that runs on every tick of a checkbox.
+   */
+  private snapshotNames = new Set<string>();
   protected readonly showExtraColumns = signal(false);
   // Drives the slide toggle through a ControlValueAccessor rather than a plain
   // `[checked]` binding: tn-slide-toggle latches its own visual state internally,
@@ -129,6 +135,13 @@ export class SnapshotListComponent implements OnInit {
   });
 
   protected readonly trackBySnapshotId = (_: number, row: ZfsSnapshot): string => row.name;
+
+  /**
+   * Selection identity. A snapshot's `name` carries both its dataset and its own name, so
+   * it is unique across the whole list — which is what lets tn-table hold the selection
+   * across a page turn and across a reload that rebuilt every row object.
+   */
+  protected readonly snapshotSelectionKey = (row: ZfsSnapshot): string => row.name;
 
   /**
    * `used`/`created`/`referenced` are display-only columns whose values live under `properties`,
@@ -198,20 +211,14 @@ export class SnapshotListComponent implements OnInit {
     this.store$.select(selectSnapshots).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((snapshots) => {
-      // The store hands back fresh row objects on every emission, so any prior
-      // selection now points at stale references that no longer map to visible
-      // rows. Clear it before swapping in the new set so the batch-operations
-      // toolbar can't act on a phantom selection.
-      //
-      // Reconciling the prior selection by `name` (to preserve an in-progress
-      // batch across a background reload) isn't achievable here: tn-table clears
-      // its own selection whenever the `dataSource` reference changes, so any rows
-      // we re-selected would be wiped by that internal effect on the next tick.
-      // Preserving intent would need key-based selection support in tn-table.
-      this.table()?.selection.clear();
-      this.selectedSnapshots.set([]);
       this.snapshots = [...snapshots];
-      this.onListFiltered(this.searchQuery());
+      this.snapshotNames = new Set(this.snapshots.map((snapshot) => snapshot.name));
+      // A reload is not something the user asked for — a periodic snapshot task firing is
+      // enough to trigger one — so it must not cost them their place or the batch they are
+      // half way through building. `keepPage` holds the page, and tn-table re-points the
+      // selection (keyed by `name`, see snapshotSelectionKey) at the fresh row objects the
+      // store just handed back instead of dropping it.
+      this.onListFiltered(this.searchQuery(), { keepPage: true });
       this.cdr.markForCheck();
     });
   }
@@ -285,14 +292,19 @@ export class SnapshotListComponent implements OnInit {
       .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.table()?.selection.clear();
+        // clearSelection(), not selection.clear(): the latter only drops the rows on screen
+        // and would leave selections made on other pages to come back on the next reload.
+        this.table()?.clearSelection();
         this.selectedSnapshots.set([]);
         this.cdr.markForCheck();
       });
   }
 
   protected onSelectionChange(snapshots: ZfsSnapshot[]): void {
-    this.selectedSnapshots.set(snapshots);
+    // The table only ever sees one page, so a snapshot destroyed elsewhere while it was
+    // selected stays in its keyed selection. Drop anything the store no longer lists
+    // before a batch action can be pointed at it.
+    this.selectedSnapshots.set(snapshots.filter((snapshot) => this.snapshotNames.has(snapshot.name)));
   }
 
   protected onSortChange(event: TnSortEvent): void {
@@ -301,7 +313,11 @@ export class SnapshotListComponent implements OnInit {
     );
   }
 
-  protected onListFiltered(query: string): void {
+  /**
+   * @param options `keepPage` re-runs the same query without moving the user — see
+   * `BaseDataProvider.setFilter`. A query the user typed always starts at page 1.
+   */
+  protected onListFiltered(query: string, { keepPage = false }: { keepPage?: boolean } = {}): void {
     this.searchQuery.set(query);
     const datasetParam = this.route.snapshot.paramMap.get('dataset');
 
@@ -311,13 +327,13 @@ export class SnapshotListComponent implements OnInit {
         query,
         columnKeys: ['dataset'],
         exact: true,
-      });
+      }, { keepPage });
 
       if (this.dataProvider.totalRows === 0) {
-        this.dataProvider.setFilter(this.buildSearchFilter(query));
+        this.dataProvider.setFilter(this.buildSearchFilter(query), { keepPage });
       }
     } else {
-      this.dataProvider.setFilter(this.buildSearchFilter(query));
+      this.dataProvider.setFilter(this.buildSearchFilter(query), { keepPage });
     }
   }
 
