@@ -69,7 +69,7 @@ export class AccessFormComponent implements OnInit {
 
   protected isLoading = signal(false);
   private entitlements = inject(EntitlementsService);
-  protected readonly hasDirectoryServices = this.entitlements.entitled(EntitlementFeature.DirectoryServices);
+  protected readonly hasDirectoryServices = this.entitlements.entitled(EntitlementFeature.DirectoryServicesAuth);
 
   form = this.fb.nonNullable.group({
     ds_auth: [false],
