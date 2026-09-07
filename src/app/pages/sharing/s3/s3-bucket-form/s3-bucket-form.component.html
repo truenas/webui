@@ -85,11 +85,16 @@
       </tn-form-field>
 
       @if (form.controls.versioning.value !== S3Versioning.Off) {
-        <ix-chips
-          formControlName="snapshot_versions"
+        <tn-form-field
           [label]="'Snapshot Versions' | translate"
           [tooltip]="helptext.snapshotVersionsTooltip | translate"
-        ></ix-chips>
+        >
+          <tn-chip-input
+            testId="snapshot-versions"
+            formControlName="snapshot_versions"
+            [allowCustomValue]="true"
+          ></tn-chip-input>
+        </tn-form-field>
 
         <tn-form-field
           [label]="'Snapshot Versions Listed' | translate"

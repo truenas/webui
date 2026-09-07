@@ -5,7 +5,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnFormListHarness, TnInputHarness, TnSelectHarness,
+  TnCheckboxHarness, TnChipInputHarness, TnDialog, TnFormFieldHarness, TnFormListHarness, TnInputHarness,
+  TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -302,6 +303,10 @@ describe('S3BucketFormComponent', () => {
       expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
       expect(await (await getSelect('permissions_model')).getDisplayText()).toBe('S3 Only');
       expect(await (await getSelect('versioning')).getDisplayText()).toBe('Enabled');
+      const snapshotVersions = await loader.getHarness(
+        TnChipInputHarness.with({ testId: 'chip-input-snapshot-versions' }),
+      );
+      expect(await snapshotVersions.getChips()).toEqual(['auto-*']);
       expect(await (await getSelect('principal_type')).getDisplayText()).toBe('Group');
       expect(await (await getSelect('access')).getDisplayText()).toBe('Read / Write');
     });

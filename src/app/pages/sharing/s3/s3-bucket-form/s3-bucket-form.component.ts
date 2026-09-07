@@ -8,8 +8,8 @@ import {
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
-  TnSelectComponent, type TnSelectOption,
+  InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnSelectComponent, type TnSelectOption,
 } from '@truenas/ui-components';
 import {
   map, merge, Observable, startWith,
@@ -35,7 +35,6 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSharingS3 } from 'app/helptext/sharing';
 import { S3AuditMask, S3Bucket, S3BucketCreate } from 'app/interfaces/s3.interface';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
@@ -69,10 +68,10 @@ export const s3BucketNamePattern = /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/;
     TnFormFieldComponent,
     TnInputComponent,
     TnCheckboxComponent,
+    TnChipInputComponent,
     TnSelectComponent,
     IxExplorerComponent,
     IxUserPickerComponent,
-    IxChipsComponent,
     S3GrantsListComponent,
     TranslateModule,
   ],
