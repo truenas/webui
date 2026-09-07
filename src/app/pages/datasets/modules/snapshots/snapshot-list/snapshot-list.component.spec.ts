@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -14,6 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideToggleHarness } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -294,5 +296,82 @@ describe('SnapshotListComponent', () => {
       columnKeys: ['dataset'],
       exact: true,
     });
+  });
+});
+
+
+describe('SnapshotListComponent — paging', () => {
+  // Enough snapshots for three pages at the default page size of 50.
+  const manySnapshots: ZfsSnapshot[] = Array.from({ length: 120 }, (_, index) => ({
+    id: String(index),
+    name: `test-dataset@snap-${String(index).padStart(3, '0')}`,
+    dataset: 'test-dataset',
+    snapshot_name: `snap-${String(index).padStart(3, '0')}`,
+  } as ZfsSnapshot));
+
+  let spectator: Spectator<SnapshotListComponent>;
+  let loader: HarnessLoader;
+  let pager: IxTablePagerComponent<ZfsSnapshot>;
+
+  const createComponent = createComponentFactory({
+    component: SnapshotListComponent,
+    imports: [
+      MockComponent(PageHeaderComponent),
+      BasicSearchComponent,
+      ReactiveFormsModule,
+      IxTableDetailsRowDirective,
+    ],
+    providers: [
+      mockAuth(),
+      mockApi([mockCall('pool.snapshot.query', manySnapshots)]),
+      mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
+      mockProvider(SlideIn, { open: jest.fn() }),
+      provideMockStore({
+        selectors: [
+          { selector: selectSnapshotState, value: snapshotsInitialState },
+          { selector: selectSnapshots, value: manySnapshots },
+          { selector: selectSnapshotsTotal, value: manySnapshots.length },
+          { selector: selectPreferences, value: { showSnapshotExtraColumns: false } },
+          { selector: selectGeneralConfig, value: { timezone: 'Europe/Kiev' } },
+        ],
+      }),
+      {
+        provide: ActivatedRoute,
+        useValue: { snapshot: { paramMap: { get: (): string | null => null } } },
+      },
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    pager = spectator.query(IxTablePagerComponent);
+    pager.goToPage(2);
+    spectator.detectChanges();
+  });
+
+  it('stays on the page the user is reading when a row there is ticked', async () => {
+    const checkbox = await loader.getHarness(MatCheckboxHarness.with({ ancestor: 'tbody' }));
+    await checkbox.check();
+    spectator.detectChanges();
+
+    expect(pager.currentPage()).toBe(2);
+    expect(spectator.component.dataProvider.pagination.pageNumber).toBe(2);
+    expect(await checkbox.isChecked()).toBe(true);
+    expect(spectator.component.selectedSnapshots).toHaveLength(1);
+  });
+
+  it('stays on the page the user is reading when they select the whole page', async () => {
+    const header = await loader.getHarness(MatCheckboxHarness.with({ ancestor: 'thead' }));
+    await header.check();
+    spectator.detectChanges();
+
+    expect(pager.currentPage()).toBe(2);
+    expect(spectator.component.selectedSnapshots).toHaveLength(50);
+
+    // The rows the user just selected must also render as checked. Before the fix the
+    // table had already jumped to page 1, so they were looking at 50 unticked boxes.
+    const boxes = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: 'tbody' }));
+    expect(await Promise.all(boxes.map((box) => box.isChecked()))).not.toContain(false);
   });
 });

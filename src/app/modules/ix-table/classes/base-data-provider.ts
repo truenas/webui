@@ -79,6 +79,20 @@ export class BaseDataProvider<T> implements DataProvider<T> {
     this.setRows(filteredRows);
   }
 
+  /**
+   * Re-emits the current page so the table re-renders, leaving the filter, the sort and
+   * the pagination alone.
+   *
+   * A checkbox column keeps its state ON the row (`row.selected`) and mutates it in
+   * place, so nothing in the table's OnPush tree learns about it. Re-running the filter
+   * does force the re-render, but `setFilter` also resets to the first page — which is
+   * why ticking a checkbox on page 2 used to snap the user back to page 1 (NAS-143108).
+   */
+  refreshCurrentPage(): void {
+    this.currentPage$.next([]);
+    this.updateCurrentPage(this.allRows);
+  }
+
   protected resetPaginationToFirstPage(): void {
     if (this.pagination.pageNumber !== null) {
       this.pagination.pageNumber = 1;

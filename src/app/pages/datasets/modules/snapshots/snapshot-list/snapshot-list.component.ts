@@ -151,8 +151,9 @@ export class SnapshotListComponent implements OnInit {
         if (snapshotToSelect) {
           snapshotToSelect.selected = checked;
         }
-        this.dataProvider.setRows([]);
-        this.onListFiltered(this.searchQuery());
+        // Only re-render. Re-running the filter would reset the pagination and drop the
+        // user back on page 1 the moment they ticked a box on any later page.
+        this.dataProvider.refreshCurrentPage();
       },
       onColumnCheck: (checked) => {
         this.dataProvider.currentPage$.pipe(
@@ -160,8 +161,7 @@ export class SnapshotListComponent implements OnInit {
           takeUntilDestroyed(this.destroyRef),
         ).subscribe((snapshots) => {
           snapshots.forEach((snapshot) => snapshot.selected = checked);
-          this.dataProvider.setRows([]);
-          this.onListFiltered(this.searchQuery());
+          this.dataProvider.refreshCurrentPage();
         });
       },
       cssClass: 'checkboxs-column',
