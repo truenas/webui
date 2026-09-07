@@ -1,0 +1,149 @@
+<tn-card [padContent]="false" [title]="'S3 Buckets' | translate">
+  <ng-template tnCardHeaderActions>
+    <div class="actions">
+      <ix-basic-search
+        [query]="searchQuery()"
+        (queryChange)="onListFiltered($event)"
+      ></ix-basic-search>
+
+      <!-- A real anchor keeps link semantics (middle-click, screen-reader role). -->
+      <a
+        class="access-keys-link"
+        tnTestIdType="link"
+        [tnTestId]="'s3-access-keys'"
+        [routerLink]="['/credentials', 's3-access-keys']"
+      >{{ 'Access Keys' | translate }}</a>
+
+      <ix-table-column-picker
+        [columns]="columns()"
+        [columnPreferencesKey]="'s3BucketList'"
+        (columnsChange)="onColumnsChange($event)"
+      ></ix-table-column-picker>
+
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        [testId]="'add-s3-bucket'"
+        [ixUiSearch]="searchableElements.elements.createS3Bucket"
+        [label]="'Add' | translate"
+        (onClick)="doAdd()"
+      ></tn-button>
+    </div>
+  </ng-template>
+
+  @if (emptyType() === EmptyType.NoPageData && !currentPageCount()) {
+    <tn-empty
+      icon="bucket-outline"
+      iconLibrary="mdi"
+      iconSize="56px"
+      [title]="'Object storage served over the S3 protocol, with each bucket backed by its own dataset. Choose S3 for backup targets, applications and tools that speak the S3 API.' | translate"
+    ></tn-empty>
+  } @else {
+    <tn-table
+      class="table"
+      [testId]="'table-table'"
+      [ixUiSearch]="searchableElements.elements.s3"
+      [dataSource]="rows()"
+      [displayedColumns]="displayedColumns()"
+      [trackBy]="trackByBucketId"
+      [loading]="isLoading()"
+      [emptyMessage]="emptyService.titleForType(emptyType())"
+      [emptyDescription]="emptyService.descriptionForType(emptyType())"
+      [emptyIcon]="emptyService.iconForType(emptyType())"
+      (sortChange)="onSortChange($event)"
+    >
+      <ng-container [tnColumnDef]="'name'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTooltip]="row.name || ''"
+          >{{ row.name }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'dataset'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Dataset' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Dataset' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTooltip]="row.dataset || ''"
+          >{{ row.dataset }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'owner'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Owner' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Owner' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ row.owner }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'permissions_model'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Permissions Model' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Permissions Model' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ permissionsModelLabel(row) }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'versioning'">
+        <ng-template tnHeaderCellDef>{{ 'Versioning' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Versioning' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ versioningLabel(row) }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'object_lock'">
+        <ng-template tnHeaderCellDef>{{ 'Object Lock' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Object Lock' | translate), uniqueRowTag(row), 'row-yesno']"
+          >{{ !!row.object_lock | yesNo | translate }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'enabled'" [sortable]="true" [width]="'70px'">
+        <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-toggle-cell
+            #enabledToggle
+            [title]="'Enabled' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [ariaLabel]="ariaLabel(row)"
+            [checked]="!!row.enabled"
+            [disabled]="isToggleDisabled(row)"
+            [tooltip]="getEnabledTooltip(row)"
+            [requiredRoles]="requiredRoles"
+            (toggled)="onChangeEnabledState(row, enabledToggle)"
+          ></ix-table-toggle-cell>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
+        <ng-template tnHeaderCellDef></ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-actions-cell
+            [actions]="actions"
+            [row]="row"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [ariaLabel]="ariaLabel(row)"
+          ></ix-table-actions-cell>
+        </ng-template>
+      </ng-container>
+    </tn-table>
+
+    <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
+  }
+</tn-card>
