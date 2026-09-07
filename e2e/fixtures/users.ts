@@ -64,3 +64,37 @@ export async function ensureUserAbsent(client: E2eApiClient, username: string): 
     client.api.call('user.delete', [existing.id]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
+
+/**
+ * Creates a plain local user if absent, for S3 to run as.
+ *
+ * The S3 bucket owner and access-key user pickers list non-builtin accounts
+ * only, so a test that needs "some user" cannot fall back on root. The account
+ * is a precondition, not the thing under test, so it is made over the API and
+ * never through the user form.
+ *
+ * Password-disabled, on purpose: nothing signs in as it, and a password would be
+ * one more secret to keep out of logs. S3 clients authenticate with an access
+ * key, which the journey mints separately.
+ */
+export async function ensureUserPresent(client: E2eApiClient, username: string): Promise<void> {
+  const [existing] = await firstValueFrom(
+    client.api
+      .query('user.query', [['username', '=', username]])
+      .pipe(timeout(readTimeoutMs)),
+  );
+
+  if (existing) {
+    return;
+  }
+
+  await firstValueFrom(
+    client.api.call('user.create', [{
+      username,
+      full_name: `E2E ${username}`,
+      group_create: true,
+      password_disabled: true,
+      smb: false,
+    }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}

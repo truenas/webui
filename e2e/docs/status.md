@@ -27,11 +27,21 @@ jobs restart services over the socket the event stream depends on.
 parameter is the one place the choice is made; unset, the client defaults to
 v25.10.0 and most of what the fixtures call looks unavailable.
 
-Three tests. **Green on the 3.x client against a freshly installed v27 nightly,
-in CI, 2026-09-02** — the first real run after the client move, and it passed
-first time once the appliance was right. The move to 3.x is no longer unproven.
+Three tests were **green on the 3.x client against a freshly installed v27
+nightly, in CI, 2026-09-02** — the first real run after the client move, and it
+passed first time once the appliance was right. The move to 3.x is no longer
+unproven.
 
-The framework is done and the coverage is not. Two journeys against 19 top-level
+Two more since (2026-09-07), in `tests/s3.e2e.ts`: an S3 bucket with object lock
+created from the Shares dashboard, and an S3 access key minted under
+Credentials. Written against the templates and type-checked; not yet run against
+an appliance, so treat the first run as the real review. They need a pool (any,
+or they build a one-disk one and export it) and the S3 service. The generated
+client has no `sharing.s3.*` / `s3.accesskey.*` yet — `support/api/s3-directory.ts`
+declares the four methods the fixtures read, and is to be deleted when the client
+ships them.
+
+The framework is done and the coverage is not. Four journeys against 19 top-level
 feature areas. What the work bought is that the next twenty tests are cheap: the
 target seam, auth, fixtures, unconditional teardown, selector discipline and
 failure legibility are all built and proven against three different appliances.
@@ -54,7 +64,8 @@ a number. See `05-ci.md`.
 ## Next steps
 
 1. **Widen coverage.** Dataset ACL and manual snapshot are the two uncovered
-   stories worth taking next. Deleting things through the UI is blocked: no
+   stories worth taking next. The S3 pair only creates; editing a bucket,
+   rotating a key and the Advanced Options of the bucket form are open. Deleting things through the UI is blocked: no
    per-row test id on `tn-table`, so no list-driven journey can be automated
    compliantly. Fixing that once unblocks every future one.
 2. **CI is running.** `.github/workflows/e2e.yml` installs a nested TrueNAS VM

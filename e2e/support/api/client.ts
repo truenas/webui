@@ -12,6 +12,7 @@ import {
 } from '@truenas/api-client';
 import { filter, firstValueFrom, take, timeout } from 'rxjs';
 import type { TargetConfig } from '../config';
+import type { S3CallDirectoryDelta } from './s3-directory';
 
 /**
  * The API surface the suite is written against.
@@ -28,8 +29,13 @@ import type { TargetConfig } from '../config';
  * the response shapes fixtures ask for with
  * `CallResponse<E2eApiDirectory, 'some.method'>`, which is how they name a shape
  * the package declares without exporting.
+ *
+ * The S3 methods are merged in from `s3-directory.ts` because the generated v27
+ * directory predates them — see that file. Everything else is the package's own.
  */
-export type E2eApiDirectory = ApiDirectoryV27_0_0;
+export type E2eApiDirectory = Omit<ApiDirectoryV27_0_0, 'call'> & {
+  call: ApiDirectoryV27_0_0['call'] & S3CallDirectoryDelta;
+};
 
 /** A connected client typed against {@link E2eApiDirectory}. */
 export type E2eApiClient = TrueNasApiClient<E2eApiDirectory>;

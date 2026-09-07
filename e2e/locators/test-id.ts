@@ -1,3 +1,5 @@
+import { kebabCase } from 'lodash-es';
+
 /**
  * The library's `data-test` segment normalizer, replicated.
  *
@@ -41,7 +43,9 @@
  * `[optionTestIdKey]="optionTestIdByKebabLabel"` use **lodash** `kebabCase`
  * instead, which splits letters from digits: `RAIDZ2` becomes `raidz-2` there
  * and `raidz2` here. Derive option ids from the extractor the control actually
- * declares — see the `layoutRaidz2` note in `locators/storage.ts`.
+ * declares — see the `layoutRaidz2` note in `locators/storage.ts`, and
+ * {@link legacyKebabTestSegment} below for interpolating a runtime value into
+ * one of those ids.
  */
 export function kebabTestSegment(part: string | number): string {
   return String(part)
@@ -51,4 +55,31 @@ export function kebabTestSegment(part: string | number): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '');
+}
+
+/**
+ * webui's *legacy* normalizer, for the ids that still go through it.
+ *
+ * Not a copy: it is lodash `kebabCase` itself, from `lodash-es` — the same
+ * import webui's `[ixTest]` directive and its `normalizeTestIdString` helper
+ * use, so there is no third implementation to keep in step (see the "Not the
+ * only normalizer" note above). The ESM build, because Playwright loads the
+ * suite as ES modules and a named import from the CommonJS `lodash` fails there.
+ *
+ * Where it applies:
+ *
+ * - `ix-user-picker`, `ix-combobox` and every other `[ixTest]` control — their
+ *   options are `option-<control>-<label>` with the label run through this.
+ * - Table row tags built with `toUniqueRowTag` (`tn-table/utils.ts`), which
+ *   pre-normalizes the whole tag this way before the library sees it — so a
+ *   key named `e2e-s3-key` in the access key list renders as
+ *   `text-name-s-3-access-key-e-2-e-s-3-key-row-text`. Cards that build the tag
+ *   with `convertStringToId` alone (the shares dashboard) do not split digits.
+ *
+ * The two agree on anything with no letter/digit boundary, which is why most
+ * locators can use {@link kebabTestSegment} without caring. Reach for this one
+ * when the value is dynamic and the emitting side is one of the above.
+ */
+export function legacyKebabTestSegment(part: string | number): string {
+  return kebabCase(String(part));
 }
