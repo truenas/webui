@@ -108,8 +108,9 @@ export class DiskListComponent implements OnInit {
         if (diskToSelect) {
           diskToSelect.selected = checked;
         }
-        this.dataProvider.setRows([]);
-        this.onListFiltered(this.searchQuery());
+        // Only re-render. Re-running the filter would reset the pagination and drop the
+        // user back on page 1 the moment they ticked a box on any later page.
+        this.dataProvider.refreshCurrentPage();
       },
       onColumnCheck: (checked) => {
         this.dataProvider.currentPage$.pipe(
@@ -117,8 +118,7 @@ export class DiskListComponent implements OnInit {
           takeUntilDestroyed(this.destroyRef),
         ).subscribe((disks) => {
           disks.forEach((disk) => disk.selected = checked);
-          this.dataProvider.setRows([]);
-          this.onListFiltered(this.searchQuery());
+          this.dataProvider.refreshCurrentPage();
         });
       },
     }),
