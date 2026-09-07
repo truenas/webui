@@ -73,8 +73,19 @@ export class BaseDataProvider<T> implements DataProvider<T> {
     this.sortingOrPaginationUpdate.emit();
   }
 
-  setFilter(filter: TableFilter<T>): void {
-    this.resetPaginationToFirstPage();
+  /**
+   * Applies a filter and, by default, sends the user back to the first page — the right
+   * move when the QUERY changed, since the rows they were reading are no longer the ones
+   * the table holds.
+   *
+   * Pass `keepPage` when the same query is being re-run against refreshed rows, e.g. a
+   * background reload the user did not ask for. Resetting there reads as the table losing
+   * their place mid-task, which is what NAS-143108 reported.
+   */
+  setFilter(filter: TableFilter<T>, { keepPage = false }: { keepPage?: boolean } = {}): void {
+    if (!keepPage) {
+      this.resetPaginationToFirstPage();
+    }
     const filteredRows = filterTableRows(filter);
     this.setRows(filteredRows);
   }
