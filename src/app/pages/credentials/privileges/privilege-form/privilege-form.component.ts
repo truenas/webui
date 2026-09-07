@@ -184,6 +184,7 @@ export class PrivilegeFormComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((generalConfig) => {
       this.dsAuthEnabled.set(generalConfig.ds_auth);
+      this.refreshDsAuthButtonVisibility();
     });
 
     // Load directory services status once on init (cache it)
@@ -191,6 +192,7 @@ export class PrivilegeFormComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((status) => {
       this.dsStatus.set(status);
+      this.refreshDsAuthButtonVisibility();
     });
 
     // Watch for DS groups being added and show inline button if needed
@@ -209,6 +211,17 @@ export class PrivilegeFormComponent implements OnInit {
       ),
       ds_groups: existingPrivilege.ds_groups.map((group) => group.group),
     });
+  }
+
+  /**
+   * Re-evaluates the prompt against the groups already in the form. Editing an existing privilege
+   * patches `ds_groups` during `ngOnInit`, long before `directoryservices.status` and the general
+   * config resolve, so the only `valueChanges` emission runs while both are still unknown. Without
+   * this, the prompt stays hidden for every privilege that already has directory service groups —
+   * exactly the case where it is needed.
+   */
+  private refreshDsAuthButtonVisibility(): void {
+    this.updateDsAuthButtonVisibility(this.form.controls.ds_groups.value);
   }
 
   /**

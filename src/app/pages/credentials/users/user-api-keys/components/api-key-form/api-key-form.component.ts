@@ -104,9 +104,19 @@ export class ApiKeyFormComponent implements OnInit {
     reset: [false],
   });
 
+  /**
+   * Local users are narrowed to those that actually have a role, but directory service users are
+   * matched on `local` instead: group membership is not available from nss_winbind during
+   * getpwall/getgrall, so `roles` in `user.query` output is always empty for them and cannot be
+   * treated as authoritative. Their roles come from the privileges of their directory service groups.
+   *
+   * The picker pages this query (50 per page, filtered by the typed username), so a directory
+   * service with thousands of users is never enumerated in one go.
+   */
   protected readonly userQueryParams = new ParamsBuilder<User>()
     .filter('roles', '!=', [])
-    .setOptions({ select: ['username', 'id', 'uid'], order_by: ['username'] })
+    .orFilter('local', '=', false)
+    .setOptions({ select: ['username', 'id', 'uid', 'local'], order_by: ['username'] })
     .getParams();
 
   protected readonly userPickerProvider = new UserPickerProvider({

@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -61,6 +62,10 @@ export class AccessFormComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AuthSessionsWrite];
+
+  protected readonly dsAuthTooltip = T('When enabled, users provided by the configured directory service can sign in to the\
+ web interface and authenticate against the API, including with API keys. Access is still granted through the\
+ privileges assigned to their directory service groups.');
 
   protected isLoading = signal(false);
   private entitlements = inject(EntitlementsService);

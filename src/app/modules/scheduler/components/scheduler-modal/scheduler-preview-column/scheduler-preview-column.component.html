@@ -24,11 +24,13 @@
     <strong>{{ 'System Time Zone:' | translate }}</strong> {{ timezone() }}
   </div>
 
-  @if (cronPreview && !isPastMonth) {
+  <!-- Null for a month the system time zone has already left behind, and for a crontab
+       that fails to parse, so it doubles as the "nothing to preview" guard for both. -->
+  @if (preview; as preview) {
     <ix-scheduler-date-examples
       class="schedule-example-section"
-      [cronPreview]="cronPreview"
-      [startDate]="startDate"
+      [cronPreview]="preview.cron"
+      [startDate]="preview.startDate"
     ></ix-scheduler-date-examples>
   }
 </div>
