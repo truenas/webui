@@ -10,7 +10,8 @@
         @if (hasDirectoryServices()) {
           <ix-checkbox
             formControlName="ds_auth"
-            [label]="'Allow Directory Service users to access WebUI' | translate"
+            [label]="'Allow Directory Service users UI / API access' | translate"
+            [tooltip]="'When enabled, users provided by the configured directory service can sign in to the web interface and authenticate against the API, including with API keys. Access is still granted through the privileges assigned to their directory service groups.' | translate"
           ></ix-checkbox>
         }
         <ix-textarea
