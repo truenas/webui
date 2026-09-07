@@ -114,20 +114,19 @@ export class S3BucketListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Permissions Model'),
       propertyName: 'permissions_model',
-      getValue: (row) => this.translate.instant(
-        s3PermissionsModelLabels.get(row.permissions_model) || row.permissions_model,
-      ),
+      getValue: (row) => this.permissionsModelLabel(row),
+      sortBy: (row) => this.permissionsModelLabel(row),
     }),
     textColumn({
       title: this.translate.instant('Versioning'),
       propertyName: 'versioning',
-      hidden: true,
-      getValue: (row) => this.translate.instant(s3VersioningLabels.get(row.versioning) || row.versioning),
+      getValue: (row) => this.versioningLabel(row),
+      // Sort on the label the cell shows, not the raw enum, so the order matches the visible text.
+      sortBy: (row) => this.versioningLabel(row),
     }),
     yesNoColumn({
       title: this.translate.instant('Object Lock'),
       propertyName: 'object_lock',
-      hidden: true,
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
@@ -158,6 +157,14 @@ export class S3BucketListComponent implements OnInit {
     uniqueRowTag: (row) => 's3-bucket-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('S3 Bucket')],
   });
+
+  private permissionsModelLabel(row: S3Bucket): string {
+    return this.translate.instant(s3PermissionsModelLabels.get(row.permissions_model) || row.permissions_model);
+  }
+
+  private versioningLabel(row: S3Bucket): string {
+    return this.translate.instant(s3VersioningLabels.get(row.versioning) || row.versioning);
+  }
 
   ngOnInit(): void {
     const buckets$ = this.api.call('sharing.s3.query').pipe(
