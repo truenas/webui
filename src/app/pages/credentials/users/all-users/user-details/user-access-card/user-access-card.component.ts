@@ -108,8 +108,11 @@ export class UserAccessCardComponent {
   });
 
   protected canAddApiKeys = computed(() => {
-    // TODO: Matches condition in api-key-form, but may not be correct.
-    return this.user().roles.length && this.user().local;
+    // Matches the user picker in api-key-form. `roles` is always empty for directory service users
+    // (group membership is not available from nss_winbind during getpwall/getgrall), so it cannot be
+    // used to decide whether they may hold an API key — their privileges come from their groups.
+    const user = this.user();
+    return !user.local || user.roles.length > 0;
   });
 
   protected shouldShowLockButton = computed(() => {

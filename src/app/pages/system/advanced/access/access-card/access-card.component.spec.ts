@@ -112,7 +112,7 @@ describe('AccessCardComponent', () => {
 
   it('shows whether DS users are allowed access to WebUI', async () => {
     const allowed = (await loader.getAllHarnesses(MatListItemHarness))[0];
-    expect(await allowed.getFullText()).toBe('Allow Directory Service users to access WebUI: Yes');
+    expect(await allowed.getFullText()).toBe('Allow Directory Service users UI / API access: Yes');
   });
 
   it('shows current login banner', async () => {

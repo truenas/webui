@@ -86,7 +86,7 @@ describe('AccessFormComponent', () => {
 
     expect(values).toEqual({
       'Login Banner': 'test',
-      'Allow Directory Service users to access WebUI': true,
+      'Allow Directory Service users UI / API access': true,
     });
   });
 
@@ -97,7 +97,7 @@ describe('AccessFormComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Login Banner': '',
-      'Allow Directory Service users to access WebUI': false,
+      'Allow Directory Service users UI / API access': false,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

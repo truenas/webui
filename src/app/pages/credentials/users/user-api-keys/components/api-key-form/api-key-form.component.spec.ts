@@ -12,6 +12,7 @@ import { ApiKey } from 'app/interfaces/api-key.interface';
 import {
   DialogService,
 } from 'app/modules/dialog/dialog.service';
+import { UserPickerProvider } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker-provider';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -179,6 +180,42 @@ describe('ApiKeyFormComponent', () => {
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialog, {
       data: 'generated-key',
+    });
+  });
+
+  describe('user picker query', () => {
+    it('offers directory service users alongside privileged local users, one constrained page at a time', async () => {
+      await setupTest();
+      const provider = (spectator.component as unknown as { userPickerProvider: UserPickerProvider })
+        .userPickerProvider;
+
+      provider.fetch('').subscribe();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.query', [
+        [['OR', [['roles', '!=', []], ['local', '=', false]]]],
+        {
+          select: ['username', 'id', 'uid', 'local'],
+          order_by: ['username'],
+          offset: 0,
+          limit: 50,
+        },
+      ]);
+    });
+
+    it('narrows the query by the typed username instead of listing everyone', async () => {
+      await setupTest();
+      const provider = (spectator.component as unknown as { userPickerProvider: UserPickerProvider })
+        .userPickerProvider;
+
+      provider.fetch('AD01\\jsmith').subscribe();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.query', [
+        [
+          ['username', '~', '(?i).*AD01\\\\jsmith'],
+          ['OR', [['roles', '!=', []], ['local', '=', false]]],
+        ],
+        expect.objectContaining({ offset: 0, limit: 50 }),
+      ]);
     });
   });
 
