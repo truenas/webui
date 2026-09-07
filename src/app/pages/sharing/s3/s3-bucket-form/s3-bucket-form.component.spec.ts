@@ -167,6 +167,15 @@ describe('S3BucketFormComponent', () => {
       })]);
     });
 
+    it('keeps a "no default rule" chosen in this session when object lock is re-checked', async () => {
+      await (await getCheckbox('object_lock')).check();
+      await (await getSelect('object_lock_default_mode')).selectOption('No default rule');
+      await (await getCheckbox('object_lock')).uncheck();
+      await (await getCheckbox('object_lock')).check();
+
+      expect(spectator.component.form.controls.object_lock_default_mode.value).toBeNull();
+    });
+
     it('does not leave versioning on after object lock is checked and unchecked in basic mode', async () => {
       await (await getInput('name')).setValue('plain');
       await form.fillForm({

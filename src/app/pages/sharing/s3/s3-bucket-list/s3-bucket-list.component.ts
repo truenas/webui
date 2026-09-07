@@ -138,6 +138,7 @@ export class S3BucketListComponent implements OnInit {
     column({
       title: this.translate.instant('Permissions Model'),
       propertyName: 'permissions_model',
+      sortBy: (row) => this.permissionsModelLabel(row),
     }),
     column({
       title: this.translate.instant('Versioning'),

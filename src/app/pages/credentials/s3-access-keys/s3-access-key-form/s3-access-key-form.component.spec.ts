@@ -113,15 +113,15 @@ describe('S3AccessKeyFormComponent', () => {
 
       await (await getInput('name')).setValue('backup-key');
       await (await loader.getHarness(IxFormHarness)).fillForm({ User: 'alice' });
-      const expiry = new Date('2030-01-15T00:00:00Z');
-      await (await loader.getHarness(TnDateInputHarness)).setValue(expiry);
+      // The picker stores the chosen day at local midnight, so it is set and asserted in local time.
+      await (await loader.getHarness(TnDateInputHarness)).setValue(new Date(2030, 0, 15));
 
       spectator.component.submit();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('s3.accesskey.create', [expect.objectContaining({
-        name: 'backup-key',
-        expires_at: { $date: expect.any(Number) },
-      })]);
+      const api = spectator.inject(ApiService) as unknown as { call: jest.Mock };
+      const [, [payload]] = api.call.mock.calls.find(([method]) => method === 's3.accesskey.create');
+      const expiresAt = new Date((payload as { expires_at: { $date: number } }).expires_at.$date);
+      expect([expiresAt.getFullYear(), expiresAt.getMonth() + 1, expiresAt.getDate()]).toEqual([2030, 1, 15]);
     });
 
     it('asks for an expiry date by default and requires it until Non-expiring is checked', async () => {
