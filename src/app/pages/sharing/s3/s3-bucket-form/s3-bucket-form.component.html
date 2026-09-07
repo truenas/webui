@@ -74,22 +74,6 @@
   </tn-form-section>
 
   @if (isAdvancedMode()) {
-    <tn-form-section [heading]="'Access' | translate">
-      <tn-form-field
-        [label]="'Permissions Model' | translate"
-        [tooltip]="helptext.permissionsModelTooltip | translate"
-        [required]="true"
-      >
-        <tn-select formControlName="permissions_model" [options]="permissionsModelOptions()"></tn-select>
-      </tn-form-field>
-
-      <ix-s3-grants-list
-        [formArray]="form.controls.grants"
-        [label]="'Grants' | translate"
-        [tooltip]="helptext.grantsTooltip | translate"
-      ></ix-s3-grants-list>
-    </tn-form-section>
-
     <tn-form-section [heading]="'Versioning' | translate">
       <tn-form-field
         [label]="'Versioning' | translate"
@@ -119,6 +103,22 @@
           ></tn-input>
         </tn-form-field>
       }
+    </tn-form-section>
+
+    <tn-form-section [heading]="'Access' | translate">
+      <tn-form-field
+        [label]="'Permissions Model' | translate"
+        [tooltip]="helptext.permissionsModelTooltip | translate"
+        [required]="true"
+      >
+        <tn-select formControlName="permissions_model" [options]="permissionsModelOptions()"></tn-select>
+      </tn-form-field>
+
+      <ix-s3-grants-list
+        [formArray]="form.controls.grants"
+        [label]="'Grants' | translate"
+        [tooltip]="helptext.grantsTooltip | translate"
+      ></ix-s3-grants-list>
     </tn-form-section>
 
     <tn-form-section [heading]="'Other Options' | translate">
