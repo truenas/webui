@@ -1,7 +1,6 @@
 @import 'scss-imports/variables';
 
-:host,
-:host-context(mat-dialog-container .ix-form-container) :host {
+:host {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
