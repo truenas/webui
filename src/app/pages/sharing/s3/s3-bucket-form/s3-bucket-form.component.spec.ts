@@ -9,13 +9,15 @@ import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  S3Access, S3MultipartEtag, S3PermissionsModel, S3PrincipalType, S3Versioning,
+  S3Access, S3MultipartEtag, S3ObjectLockMode, S3PermissionsModel, S3PrincipalType, S3Versioning,
 } from 'app/enums/s3.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { S3Bucket } from 'app/interfaces/s3.interface';
 import { User } from 'app/interfaces/user.interface';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
+import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -94,6 +96,21 @@ describe('S3BucketFormComponent', () => {
     ],
   });
 
+  const clickAdvancedOptions = async (): Promise<void> => {
+    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+    await advancedButton.click();
+  };
+
+  const getSaveButton = (): Promise<MatButtonHarness> => loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+
+  const getSelect = async (label: string): Promise<IxSelectHarness> => {
+    return await form.getControl(label) as IxSelectHarness;
+  };
+
+  const getCheckbox = async (label: string): Promise<IxCheckboxHarness> => {
+    return await form.getControl(label) as IxCheckboxHarness;
+  };
+
   describe('creating a bucket', () => {
     beforeEach(async () => {
       spectator = createComponent();
@@ -104,19 +121,131 @@ describe('S3BucketFormComponent', () => {
       jest.spyOn(store$, 'dispatch');
     });
 
-    it('shows only basic fields until Advanced Options is pressed', async () => {
+    it('shows object lock with the basic fields and the rest only after Advanced Options is pressed', async () => {
       const labels = await form.getLabels();
-      expect(labels).toEqual(['Name', 'Parent Dataset', 'Owner', 'Enabled']);
+      expect(labels).toEqual(['Name', 'Parent Dataset', 'Owner', 'Enabled', 'Enable Object Lock']);
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
-      await advancedButton.click();
+      await clickAdvancedOptions();
 
       const advancedLabels = await form.getLabels();
       expect(advancedLabels).toContain('Permissions Model');
       expect(advancedLabels).toContain('Versioning');
-      expect(advancedLabels).toContain('Enable Object Lock');
       expect(advancedLabels).toContain('Multipart ETag');
       expect(advancedLabels).not.toContain('Audit');
+    });
+
+    it('turns versioning on and defaults to Compliance retention when object lock is enabled', async () => {
+      await clickAdvancedOptions();
+      expect(await (await getSelect('Versioning')).getValue()).toBe('Off');
+
+      await form.fillForm({ 'Enable Object Lock': true });
+
+      const versioning = await getSelect('Versioning');
+      expect(await versioning.getValue()).toBe('Enabled');
+      expect(await versioning.isDisabled()).toBe(true);
+      expect(await (await getSelect('Default Retention Mode')).getValue()).toBe('Compliance');
+
+      await form.fillForm({ 'Enable Object Lock': false });
+      const released = await getSelect('Versioning');
+      expect(await released.isDisabled()).toBe(false);
+      expect(await released.getValue()).toBe('Off');
+    });
+
+    it('creates a bucket with object lock, versioning and the Compliance default rule', async () => {
+      await form.fillForm({
+        Name: 'backups',
+        'Parent Dataset': 'tank',
+        Owner: 'alice',
+        'Enable Object Lock': true,
+      });
+      await form.fillForm({ 'Default Retention Days': 30 });
+
+      await (await getSaveButton()).click();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+        versioning: S3Versioning.Enabled,
+        object_lock: true,
+        object_lock_default_mode: S3ObjectLockMode.Compliance,
+        object_lock_default_days: 30,
+      })]);
+    });
+
+    it('keeps a "no default rule" chosen in this session when object lock is re-checked', async () => {
+      await form.fillForm({ 'Enable Object Lock': true });
+      await form.fillForm({ 'Default Retention Mode': 'No default rule' });
+      await form.fillForm({ 'Enable Object Lock': false });
+      await form.fillForm({ 'Enable Object Lock': true });
+
+      expect(spectator.component.form.controls.object_lock_default_mode.value).toBeNull();
+    });
+
+    it('does not leave versioning on after object lock is checked and unchecked in basic mode', async () => {
+      await form.fillForm({
+        Name: 'plain',
+        'Parent Dataset': 'tank',
+        Owner: 'alice',
+      });
+      await form.fillForm({ 'Enable Object Lock': true });
+      await form.fillForm({ 'Enable Object Lock': false });
+
+      await (await getSaveButton()).click();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+        versioning: S3Versioning.Off,
+        object_lock: false,
+      })]);
+    });
+
+    it('does not offer object lock with the Multiprotocol permissions model', async () => {
+      await clickAdvancedOptions();
+      await form.fillForm({ 'Permissions Model': 'Multiprotocol' });
+
+      const objectLock = await getCheckbox('Enable Object Lock');
+      expect(await objectLock.isDisabled()).toBe(true);
+      expect(await objectLock.getValue()).toBe(false);
+    });
+
+    it('requires retention days once object lock is on with a default retention mode', async () => {
+      await form.fillForm({
+        Name: 'backups',
+        'Parent Dataset': 'tank',
+        Owner: 'alice',
+        'Enable Object Lock': true,
+      });
+
+      expect(spectator.component.form.controls.object_lock_default_days.errors).toMatchObject({ required: true });
+      expect(await (await getSaveButton()).isDisabled()).toBe(true);
+    });
+
+    it('stops requiring retention days once object lock is turned off again', async () => {
+      await form.fillForm({
+        Name: 'backups',
+        'Parent Dataset': 'tank',
+        Owner: 'alice',
+        'Enable Object Lock': true,
+      });
+      expect(await (await getSaveButton()).isDisabled()).toBe(true);
+
+      await form.fillForm({ 'Enable Object Lock': false });
+
+      expect(spectator.component.form.controls.object_lock_default_days.disabled).toBe(true);
+      expect(await (await getSaveButton()).isDisabled()).toBe(false);
+    });
+
+    it('does not let a hidden out-of-range retention period block Save', async () => {
+      await form.fillForm({
+        Name: 'backups',
+        'Parent Dataset': 'tank',
+        Owner: 'alice',
+        'Enable Object Lock': true,
+      });
+      await form.fillForm({ 'Default Retention Mode': 'Governance' });
+      await form.fillForm({ 'Default Retention Days': 0 });
+      expect(await (await getSaveButton()).isDisabled()).toBe(true);
+
+      await form.fillForm({ 'Default Retention Mode': 'No default rule' });
+
+      expect(await (await getSaveButton()).isDisabled()).toBe(false);
     });
 
     it('rejects the /mnt root as a parent dataset', async () => {
@@ -265,6 +394,28 @@ describe('S3BucketFormComponent', () => {
         object_lock_default_days: null,
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+    });
+  });
+
+  describe('editing a bucket stored with object lock and no default rule', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({ ...existingBucket, object_lock: true, object_lock_default_mode: null }),
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('keeps the stored "no default rule" when object lock is unchecked and re-checked', async () => {
+      await form.fillForm({ 'Enable Object Lock': false });
+      await form.fillForm({ 'Enable Object Lock': true });
+
+      expect(spectator.component.form.controls.object_lock_default_mode.value).toBeNull();
     });
   });
 });

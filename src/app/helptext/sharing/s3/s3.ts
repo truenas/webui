@@ -16,15 +16,21 @@ export const helptextSharingS3 = {
   grantsTooltip: T('Who may access the bucket and how, beyond its owner. A <b>Deny</b> grant refuses every \
  operation for the principal and outranks the owner.'),
   globalGrantsTooltip: T('Grants that apply to every bucket. A <b>Deny</b> here suspends the principal everywhere.'),
-  versioningTooltip: T('Keep previous versions of objects. Object lock requires versioning to be Enabled.'),
+  versioningTooltip: T('Keep previous versions of objects. Object lock keeps versioning enabled.'),
+  versioningLockedHint: T('Kept enabled while object lock is on.'),
   snapshotVersionsTooltip: T('Patterns over the names of the bucket dataset\'s ZFS snapshots, with <i>*</i> and \
  <i>?</i> as the only wildcards. Every matching snapshot serves each object\'s state as a read-only version.'),
   snapshotVersionsMaxTooltip: T('How many of the newest matching snapshots one version listing consults.'),
   multipartEtagTooltip: T('<b>Composite</b> is the standard S3 construction and costs an MD5 pass over every \
  part. <b>Minted</b> skips that pass and gives the object an opaque token. Choose Minted only where nothing \
  writing the bucket reads its ETags, such as a backup target with its own checksums.'),
-  objectLockTooltip: T('Requires versioning to be Enabled and a permissions model other than Multiprotocol.'),
-  objectLockDefaultModeTooltip: T('Retention mode of the default object lock rule. Leave empty for no default rule.'),
+  objectLockTooltip: T('Protect objects from being overwritten or deleted for a retention period, as backup \
+ targets expect. Turns on versioning, which object lock requires.'),
+  objectLockMultiprotocolHint: T('Not available with the Multiprotocol permissions model: another protocol could \
+ rewrite a locked object.'),
+  objectLockDefaultModeTooltip: T('Retention mode applied to new objects. <b>Compliance</b> cannot be shortened or \
+ removed by anyone for the retention period. <b>Governance</b> can be overridden by users with the special \
+ permission. Leave empty for no default rule.'),
   objectLockDefaultDaysTooltip: T('Retention period of the default object lock rule in days.'),
   auditTooltip: T('Which S3 actions on this bucket are recorded in the audit log.'),
   auditOverflowTooltip: T('What an audited request gets when no audit record slot is free.'),

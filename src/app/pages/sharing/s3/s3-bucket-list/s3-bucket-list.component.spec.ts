@@ -7,7 +7,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { S3PermissionsModel } from 'app/enums/s3.enum';
+import { S3PermissionsModel, S3Versioning } from 'app/enums/s3.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { S3Bucket } from 'app/interfaces/s3.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -36,6 +36,8 @@ describe('S3BucketListComponent', () => {
       dataset: 'tank/buckets/backups',
       owner: 'bob',
       permissions_model: S3PermissionsModel.BucketOwnerEnforced,
+      versioning: S3Versioning.Enabled,
+      object_lock: true,
       enabled: true,
       locked: false,
     },
@@ -78,8 +80,8 @@ describe('S3BucketListComponent', () => {
   it('shows table rows', async () => {
     const cells = await table.getCellTexts();
     expect(cells).toEqual([
-      ['Name', 'Dataset', 'Owner', 'Permissions Model', 'Enabled', ''],
-      ['backups', 'tank/buckets/backups', 'bob', 'Bucket Owner Enforced', '', ''],
+      ['Name', 'Dataset', 'Owner', 'Permissions Model', 'Versioning', 'Object Lock', 'Enabled', ''],
+      ['backups', 'tank/buckets/backups', 'bob', 'Bucket Owner Enforced', 'Enabled', 'Yes', '', ''],
     ]);
   });
 

@@ -73,8 +73,9 @@ export class S3AccessKeyFormComponent implements OnInit {
     name: ['', Validators.required],
     username: ['', Validators.required],
     enabled: [true],
-    nonExpiring: [true],
-    expires_at: [null as Date | null],
+    // Keys expire unless the admin opts out, so a new key asks for a date up front.
+    nonExpiring: [false],
+    expires_at: [null as Date | null, Validators.required],
   });
 
   get title(): string {
@@ -91,6 +92,25 @@ export class S3AccessKeyFormComponent implements OnInit {
     if (this.existingKey) {
       this.setKeyForEdit(this.existingKey);
     }
+    this.setupExpiryDependency();
+  }
+
+  /**
+   * The date is only shown, and only required, while the key expires. The control is disabled rather
+   * than left with a cleared validator: the picker's `[required]` attaches Angular's own validator
+   * while it is rendered, and a disabled control is excluded from validity regardless.
+   */
+  private setupExpiryDependency(): void {
+    const expiresAt = this.form.controls.expires_at;
+    const sync = (nonExpiring: boolean): void => {
+      if (nonExpiring) {
+        expiresAt.disable();
+      } else {
+        expiresAt.enable();
+      }
+    };
+    sync(this.form.controls.nonExpiring.value);
+    this.form.controls.nonExpiring.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(sync);
   }
 
   protected onSubmit(): void {
