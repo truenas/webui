@@ -247,7 +247,10 @@ export class SnapshotListComponent implements OnInit {
       }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
-      this.onListFiltered(this.searchQuery());
+      // A reload is not something the user asked for — the page subscribes to
+      // pool.snapshot.query, so a periodic snapshot task firing anywhere is enough to
+      // trigger one — and it must not cost them the page they are reading.
+      this.onListFiltered(this.searchQuery(), { keepPage: true });
       this.cdr.markForCheck();
     });
   }
@@ -320,7 +323,11 @@ export class SnapshotListComponent implements OnInit {
       });
   }
 
-  protected onListFiltered(query: string): void {
+  /**
+   * @param options `keepPage` re-runs the same query without moving the user — see
+   * `BaseDataProvider.setFilter`. A query the user typed always starts at page 1.
+   */
+  protected onListFiltered(query: string, { keepPage = false }: { keepPage?: boolean } = {}): void {
     this.searchQuery.set(query);
     const datasetParam = this.route.snapshot.paramMap.get('dataset');
 
@@ -330,13 +337,13 @@ export class SnapshotListComponent implements OnInit {
         query,
         columnKeys: ['dataset'],
         exact: true,
-      });
+      }, { keepPage });
 
       if (this.dataProvider.totalRows === 0) {
-        this.dataProvider.setFilter(this.buildSearchFilter(query));
+        this.dataProvider.setFilter(this.buildSearchFilter(query), { keepPage });
       }
     } else {
-      this.dataProvider.setFilter(this.buildSearchFilter(query));
+      this.dataProvider.setFilter(this.buildSearchFilter(query), { keepPage });
     }
   }
 

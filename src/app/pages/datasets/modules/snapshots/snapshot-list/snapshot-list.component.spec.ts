@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -172,7 +172,7 @@ describe('SnapshotListComponent', () => {
       query: 'test-dataset',
       columnKeys: ['dataset'],
       exact: true,
-    });
+    }, { keepPage: false });
   });
 
   it('should fallback to name-based filtering when dataset exact match fails', () => {
@@ -205,12 +205,12 @@ describe('SnapshotListComponent', () => {
       query: 'test-dataset',
       columnKeys: ['dataset'],
       exact: true,
-    });
+    }, { keepPage: false });
     expect(setFilterSpy).toHaveBeenNthCalledWith(2, {
       list: component.snapshots,
       query: 'test-dataset',
       columnKeys: ['name'],
-    });
+    }, { keepPage: false });
   });
 
   it('filters only by name when the extra columns are hidden', () => {
@@ -226,7 +226,7 @@ describe('SnapshotListComponent', () => {
       list: component.snapshots,
       query: '1.49',
       columnKeys: ['name'],
-    });
+    }, { keepPage: false });
   });
 
   it('also filters by the extra columns (used/referenced/created) when they are visible', async () => {
@@ -295,7 +295,7 @@ describe('SnapshotListComponent', () => {
       query: 'dozer/boom',
       columnKeys: ['dataset'],
       exact: true,
-    });
+    }, { keepPage: false });
   });
 });
 
@@ -359,6 +359,20 @@ describe('SnapshotListComponent — paging', () => {
     expect(spectator.component.dataProvider.pagination.pageNumber).toBe(2);
     expect(await checkbox.isChecked()).toBe(true);
     expect(spectator.component.selectedSnapshots).toHaveLength(1);
+  });
+
+  it('stays on the page the user is reading when the store reloads underneath them', () => {
+    const store$ = spectator.inject(MockStore);
+
+    // The page subscribes to pool.snapshot.query, so a periodic snapshot task firing
+    // anywhere on the system re-emits here. Nobody asked for it, and it used to re-run the
+    // search filter, which resets the pagination.
+    store$.overrideSelector(selectSnapshots, manySnapshots.map((snapshot) => ({ ...snapshot })));
+    store$.refreshState();
+    spectator.detectChanges();
+
+    expect(pager.currentPage()).toBe(2);
+    expect(spectator.component.dataProvider.pagination.pageNumber).toBe(2);
   });
 
   it('stays on the page the user is reading when they select the whole page', async () => {
