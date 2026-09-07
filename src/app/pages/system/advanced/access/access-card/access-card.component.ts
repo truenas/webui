@@ -87,7 +87,7 @@ export class AccessCardComponent implements OnInit {
 
   protected readonly searchableElements = accessCardElements;
   protected readonly requiredRoles = [Role.AuthSessionsWrite];
-  protected readonly hasDirectoryServices = this.entitlements.entitled(EntitlementFeature.DirectoryServices);
+  protected readonly hasDirectoryServices = this.entitlements.entitled(EntitlementFeature.DirectoryServicesAuth);
 
   readonly generalConfig$ = this.store$.pipe(
     waitForGeneralConfig,
