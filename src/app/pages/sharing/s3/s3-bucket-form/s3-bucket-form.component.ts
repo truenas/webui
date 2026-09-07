@@ -330,10 +330,11 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.syncObjectLockAvailability();
     });
-    // Wired after the edit data is patched, so a stored "no default rule" is kept; only a user
-    // turning object lock on gets the Compliance default.
+    // Compliance is the default for a bucket that gains object lock here. A bucket that already had
+    // object lock with no default rule keeps that choice, even across an uncheck and re-check.
+    const hadObjectLock = !!this.bucket()?.object_lock;
     this.form.controls.object_lock.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((objectLock) => {
-      if (objectLock && this.form.controls.object_lock_default_mode.value === null) {
+      if (objectLock && !hadObjectLock && this.form.controls.object_lock_default_mode.value === null) {
         this.form.controls.object_lock_default_mode.setValue(S3ObjectLockMode.Compliance);
       }
       this.syncVersioningLock(objectLock);
@@ -350,16 +351,28 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     });
   }
 
-  /** Object lock requires versioning, so the select is set to Enabled and held there while it is on. */
+  /** What versioning was set to before object lock forced it on, restored when object lock is released. */
+  private versioningBeforeLock: S3Versioning | null = null;
+
+  /**
+   * Object lock requires versioning, so the select is set to Enabled and held there while it is on.
+   * Releasing it puts the previous choice back, so a check-then-uncheck in basic mode (where the
+   * select is not even rendered) is a no-op rather than a silent switch to versioning.
+   */
   private syncVersioningLock(objectLock: boolean): void {
     const versioning = this.form.controls.versioning;
     if (objectLock) {
       if (versioning.value !== S3Versioning.Enabled) {
+        this.versioningBeforeLock = versioning.value;
         versioning.setValue(S3Versioning.Enabled);
       }
       versioning.disable({ emitEvent: false });
     } else if (versioning.disabled) {
       versioning.enable({ emitEvent: false });
+      if (this.versioningBeforeLock !== null) {
+        versioning.setValue(this.versioningBeforeLock);
+        this.versioningBeforeLock = null;
+      }
     }
   }
 

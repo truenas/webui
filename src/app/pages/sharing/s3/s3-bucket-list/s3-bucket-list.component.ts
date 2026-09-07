@@ -142,6 +142,8 @@ export class S3BucketListComponent implements OnInit {
     column({
       title: this.translate.instant('Versioning'),
       propertyName: 'versioning',
+      // Sort on the label the cell shows, not the raw enum, so the order matches the visible text.
+      sortBy: (row) => this.versioningLabel(row),
     }),
     column({
       title: this.translate.instant('Object Lock'),

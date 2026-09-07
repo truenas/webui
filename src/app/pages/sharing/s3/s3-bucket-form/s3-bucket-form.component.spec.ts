@@ -11,7 +11,7 @@ import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  S3Access, S3MultipartEtag, S3PermissionsModel, S3PrincipalType, S3Versioning,
+  S3Access, S3MultipartEtag, S3ObjectLockMode, S3PermissionsModel, S3PrincipalType, S3Versioning,
 } from 'app/enums/s3.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Group } from 'app/interfaces/group.interface';
@@ -143,7 +143,45 @@ describe('S3BucketFormComponent', () => {
       expect(await (await getSelect('object_lock_default_mode')).getDisplayText()).toBe('Compliance');
 
       await (await getCheckbox('object_lock')).uncheck();
-      expect(await (await getSelect('versioning')).isDisabled()).toBe(false);
+      const released = await getSelect('versioning');
+      expect(await released.isDisabled()).toBe(false);
+      expect(await released.getDisplayText()).toBe('Off');
+    });
+
+    it('creates a bucket with object lock, versioning and the Compliance default rule', async () => {
+      await (await getInput('name')).setValue('backups');
+      await form.fillForm({
+        'Parent Dataset': 'tank',
+        Owner: 'alice',
+      });
+      await (await getCheckbox('object_lock')).check();
+      await (await getInput('object_lock_default_days')).setValue('30');
+
+      spectator.component.submit();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+        versioning: S3Versioning.Enabled,
+        object_lock: true,
+        object_lock_default_mode: S3ObjectLockMode.Compliance,
+        object_lock_default_days: 30,
+      })]);
+    });
+
+    it('does not leave versioning on after object lock is checked and unchecked in basic mode', async () => {
+      await (await getInput('name')).setValue('plain');
+      await form.fillForm({
+        'Parent Dataset': 'tank',
+        Owner: 'alice',
+      });
+      await (await getCheckbox('object_lock')).check();
+      await (await getCheckbox('object_lock')).uncheck();
+
+      spectator.component.submit();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+        versioning: S3Versioning.Off,
+        object_lock: false,
+      })]);
     });
 
     it('does not offer object lock with the Multiprotocol permissions model', async () => {
@@ -257,6 +295,18 @@ describe('S3BucketFormComponent', () => {
       expect(await (await getSelect('versioning')).getDisplayText()).toBe('Enabled');
       expect(await (await getSelect('principal_type')).getDisplayText()).toBe('Group');
       expect(await (await getSelect('access')).getDisplayText()).toBe('Read / Write');
+    });
+
+    it('keeps a stored "no default rule" when object lock is unchecked and re-checked', async () => {
+      spectator = createComponent({
+        props: { bucket: { ...existingBucket, object_lock: true, object_lock_default_mode: null } },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      await (await getCheckbox('object_lock')).uncheck();
+      await (await getCheckbox('object_lock')).check();
+
+      expect(spectator.component.form.controls.object_lock_default_mode.value).toBeNull();
     });
 
     it('lets an EVERYONE grant be switched to a user grant', async () => {

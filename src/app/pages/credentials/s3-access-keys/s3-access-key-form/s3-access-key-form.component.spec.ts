@@ -2,7 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnCheckboxHarness, TnDialog, TnInputHarness } from '@truenas/ui-components';
+import {
+  TnCheckboxHarness, TnDateInputHarness, TnDialog, TnInputHarness,
+} from '@truenas/ui-components';
 import { parseISO } from 'date-fns';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -104,6 +106,24 @@ describe('S3AccessKeyFormComponent', () => {
   });
 
   describe('expiry', () => {
+    it('creates an expiring key with the chosen date by default', async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
+
+      await (await getInput('name')).setValue('backup-key');
+      await (await loader.getHarness(IxFormHarness)).fillForm({ User: 'alice' });
+      const expiry = new Date('2030-01-15T00:00:00Z');
+      await (await loader.getHarness(TnDateInputHarness)).setValue(expiry);
+
+      spectator.component.submit();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('s3.accesskey.create', [expect.objectContaining({
+        name: 'backup-key',
+        expires_at: { $date: expect.any(Number) },
+      })]);
+    });
+
     it('asks for an expiry date by default and requires it until Non-expiring is checked', async () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
