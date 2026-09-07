@@ -84,6 +84,7 @@ describe('S3AccessKeyFormComponent', () => {
       await form.fillForm({
         Name: 'backup-key',
         User: 'alice',
+        'Non-expiring': true,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -100,6 +101,46 @@ describe('S3AccessKeyFormComponent', () => {
         S3AccessKeyCredentialsDialogComponent,
         { data: createdKey },
       );
+    });
+  });
+
+  describe('expiry', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('creates an expiring key with the chosen date by default', async () => {
+      await form.fillForm({
+        Name: 'backup-key',
+        User: 'alice',
+        'Expires On': '2030-01-15',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('s3.accesskey.create', [{
+        name: 'backup-key',
+        username: 'alice',
+        enabled: true,
+        expires_at: { $date: Date.UTC(2030, 0, 15) },
+      }]);
+    });
+
+    it('asks for an expiry date by default and requires it until Non-expiring is checked', async () => {
+      expect(await form.getValues()).toMatchObject({ 'Non-expiring': false });
+      expect(await form.getLabels()).toContain('Expires On');
+      expect(spectator.component.form.controls.expires_at.errors).toMatchObject({ required: true });
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await form.fillForm({ Name: 'backup-key', User: 'alice' });
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      await form.fillForm({ 'Non-expiring': true });
+
+      expect(await form.getLabels()).not.toContain('Expires On');
+      expect(await saveButton.isDisabled()).toBe(false);
     });
   });
 

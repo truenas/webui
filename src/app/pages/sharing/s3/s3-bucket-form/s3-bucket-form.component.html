@@ -47,28 +47,42 @@
         ></ix-checkbox>
       </ix-fieldset>
 
-      @if (isAdvancedMode()) {
-        <ix-fieldset [title]="'Access' | translate">
+      <ix-fieldset [title]="'Object Lock' | translate">
+        <ix-checkbox
+          formControlName="object_lock"
+          [label]="'Enable Object Lock' | translate"
+          [tooltip]="helptext.objectLockTooltip | translate"
+          [hint]="objectLockHint()"
+        ></ix-checkbox>
+
+        @if (form.controls.object_lock.value) {
           <ix-select
-            formControlName="permissions_model"
-            [label]="'Permissions Model' | translate"
-            [tooltip]="helptext.permissionsModelTooltip | translate"
-            [options]="permissionsModelOptions$"
-            [required]="true"
+            formControlName="object_lock_default_mode"
+            [label]="'Default Retention Mode' | translate"
+            [tooltip]="helptext.objectLockDefaultModeTooltip | translate"
+            [options]="objectLockModeOptions$"
+            [emptyLabel]="'No default rule' | translate"
           ></ix-select>
 
-          <ix-s3-grants-list
-            [formArray]="form.controls.grants"
-            [label]="'Grants' | translate"
-            [tooltip]="helptext.grantsTooltip | translate"
-          ></ix-s3-grants-list>
-        </ix-fieldset>
+          @if (form.controls.object_lock_default_mode.value) {
+            <ix-input
+              formControlName="object_lock_default_days"
+              type="number"
+              [label]="'Default Retention Days' | translate"
+              [tooltip]="helptext.objectLockDefaultDaysTooltip | translate"
+              [required]="true"
+            ></ix-input>
+          }
+        }
+      </ix-fieldset>
 
+      @if (isAdvancedMode()) {
         <ix-fieldset [title]="'Versioning' | translate">
           <ix-select
             formControlName="versioning"
             [label]="'Versioning' | translate"
             [tooltip]="helptext.versioningTooltip | translate"
+            [hint]="versioningHint()"
             [options]="versioningOptions$"
             [required]="true"
           ></ix-select>
@@ -90,33 +104,20 @@
           }
         </ix-fieldset>
 
-        <ix-fieldset [title]="'Object Lock' | translate">
-          <ix-checkbox
-            formControlName="object_lock"
-            [label]="'Enable Object Lock' | translate"
-            [tooltip]="helptext.objectLockTooltip | translate"
-            [hint]="objectLockHint()"
-          ></ix-checkbox>
+        <ix-fieldset [title]="'Access' | translate">
+          <ix-select
+            formControlName="permissions_model"
+            [label]="'Permissions Model' | translate"
+            [tooltip]="helptext.permissionsModelTooltip | translate"
+            [options]="permissionsModelOptions$"
+            [required]="true"
+          ></ix-select>
 
-          @if (form.controls.object_lock.value) {
-            <ix-select
-              formControlName="object_lock_default_mode"
-              [label]="'Default Retention Mode' | translate"
-              [tooltip]="helptext.objectLockDefaultModeTooltip | translate"
-              [options]="objectLockModeOptions$"
-              [emptyLabel]="'No default rule' | translate"
-            ></ix-select>
-
-            @if (form.controls.object_lock_default_mode.value) {
-              <ix-input
-                formControlName="object_lock_default_days"
-                type="number"
-                [label]="'Default Retention Days' | translate"
-                [tooltip]="helptext.objectLockDefaultDaysTooltip | translate"
-                [required]="true"
-              ></ix-input>
-            }
-          }
+          <ix-s3-grants-list
+            [formArray]="form.controls.grants"
+            [label]="'Grants' | translate"
+            [tooltip]="helptext.grantsTooltip | translate"
+          ></ix-s3-grants-list>
         </ix-fieldset>
 
         <ix-fieldset [title]="'Other Options' | translate">
