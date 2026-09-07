@@ -1,0 +1,401 @@
+# TrueNAS WebUI end-to-end suite.
+#
+# Deliberately smaller than the design in `e2e/docs/04-environment-architecture.md`.
+# That design shards across appliances and reverts a VM snapshot between tests,
+# and neither is available yet. This runs the shape that works today — install
+# one appliance, run the suite on it, destroy it — so the parts nobody has
+# exercised get exercised: the runner reaching the appliance, the claim/release
+# contract, credentials arriving as environment variables, and teardown
+# releasing after a failure.
+#
+# The runner is a TrueNAS box and the appliance is a nested VM on it, created
+# by `tn_guest.py` from iXsystems/api-ci-testbed through the box's own API.
+# The browser runs in Playwright's container on the same box. See
+# e2e/ci/appliance.sh for the contract and the configuration it needs.
+#
+# Sharding and snapshot restore are layered on once they exist, with a
+# measured reason. See E1, E2 and E12 in the design.
+#
+# ─── The `pull_request` trigger is same-repo only, and must stay that way ────
+#
+# `truenas/webui` is a PUBLIC repository and this job runs on a SELF-HOSTED
+# runner on the lab network with hypervisor access. An unguarded `pull_request`
+# trigger lets anyone on the internet open a fork PR and execute code on that
+# machine — GitHub's own guidance is not to pair self-hosted runners with public
+# repositories for this reason.
+#
+# The guard is the `if:` on the job below: the head repository must be this
+# repository, so a fork PR queues nothing. Never use `pull_request_target` with
+# a checkout of PR code, which would defeat it. Configure the `e2e-lab`
+# environment with required reviewers as a second line.
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: E2E
+
+on:
+  # Nightly, against whatever master is that morning. This and the master
+  # push below are the runs that test merged UI code; the suite drives the
+  # UI built from the checkout, so a run on master is a run on master's code.
+  schedule:
+    - cron: '0 3 * * *'
+  # Every merged change to the UI or the suite. Not every pull request: one
+  # runner, one appliance, ~8 minutes a run, and a concurrency group that
+  # keeps one pending run at most, so under normal PR volume most pushes
+  # would never get a run and nobody could tell which. A PR that wants a run
+  # asks for one with `workflow_dispatch` on its branch.
+  push:
+    branches: [master]
+    paths:
+      - 'src/**'
+      - 'e2e/**'
+      - '!e2e/docs/**'
+      - '!e2e/CLAUDE.md'
+      - '!e2e/README.md'
+      - 'playwright.config.ts'
+      - 'package.json'
+      - 'yarn.lock'
+      - '.github/workflows/e2e.yml'
+  # Pull requests that change the suite or the pipeline itself.
+  pull_request:
+    paths:
+      - 'e2e/**'
+      # A documentation-only pull request should not claim a lab appliance.
+      # Evaluated against every file the PR changes, not the latest push, so
+      # this only helps PRs that touch nothing but docs.
+      - '!e2e/docs/**'
+      - '!e2e/CLAUDE.md'
+      - '!e2e/README.md'
+      - 'playwright.config.ts'
+      - '.github/workflows/e2e.yml'
+  # The opt-in for any other branch: `gh workflow run e2e.yml --ref <branch>`.
+  workflow_dispatch:
+    inputs:
+      grep:
+        description: Optional Playwright --grep filter
+        type: string
+        default: ''
+      ui:
+        description: >-
+          Which UI to test. `built` builds this checkout and serves it beside
+          the appliance; `shipped` uses the UI baked into the appliance's ISO.
+        type: choice
+        default: built
+        options: [built, shipped]
+
+# Reads code, uploads artifacts. No reason to write to the repository.
+permissions:
+  contents: read
+
+# The lab is one shared resource: two runs would destroy each other's pools.
+# Queue rather than cancel — a cancelled run holds an appliance and leaks it.
+concurrency:
+  group: e2e-lab
+  cancel-in-progress: false
+
+jobs:
+  e2e:
+    # Fork PRs stop here. See the header.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, linux, truenas-lab]
+    # Gate for secrets, and the hook for required reviewers.
+    environment: e2e-lab
+    # Bounded because this holds the appliance, the runner and the concurrency
+    # group at once. Without it the job inherits GitHub's 360-minute default and
+    # a hang blocks the lab for six hours.
+    timeout-minutes: 90
+    env:
+      # Where the lab runner keeps tn_guest.py and a Python with
+      # truenas_api_client: on the runner's own dataset, not on PATH.
+      TN_GUEST: /mnt/tank/github/api-ci-testbed/jenkins/scripts/tn_guest.py
+      TN_GUEST_PYTHON: /mnt/tank/github/venv/bin/python3
+      # Lab facts that belong in the e2e-lab environment's variables and
+      # secrets rather than here: which pool holds the VMs, which ISO to
+      # install, and a credential for the box's own API.
+      TN_GUEST_POOL: ${{ vars.E2E_TN_GUEST_POOL || 'tank' }}
+      TN_GUEST_ISO: ${{ vars.E2E_TN_GUEST_ISO }}
+      TN_GUEST_HOST_USER: ${{ vars.E2E_TN_GUEST_HOST_USER || 'root' }}
+      TN_GUEST_HOST_API_KEY: ${{ secrets.TN_GUEST_HOST_API_KEY }}
+      TN_GUEST_HOST_PASSWORD: ${{ secrets.TN_GUEST_HOST_PASSWORD }}
+      # Serves the built UI. Debian-based on purpose: docker/nginx.conf runs
+      # as `www-data`, which the alpine image does not have.
+      NGINX_IMAGE: nginx:1.27
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # The lab runner is a TrueNAS box, and TrueNAS mounts /tmp noexec. Yarn
+      # packs the one git dependency (`@truenas/common-typescript`) by writing
+      # a `yarn` shim into a temp directory and running it; on noexec /tmp the
+      # shim cannot execute, PATH lookup falls through to corepack, corepack
+      # finds no pinned package manager in the clone and downloads Yarn 1, and
+      # Yarn 1 produces a different archive from Yarn 4 — so `yarn install`
+      # fails with a checksum mismatch, on this runner only. RUNNER_TEMP is on
+      # the runner's own dataset, which allows exec. Node, npm and Playwright
+      # all honour TMPDIR, so this is the whole fix. A step rather than job
+      # `env:` because the `runner` context is not available there.
+      - name: Keep temp files off noexec /tmp
+        run: echo "TMPDIR=$RUNNER_TEMP" >> "$GITHUB_ENV"
+
+      # Same Node pin and install path as every job in main.yml, so a failure
+      # here is the runner and not a difference in how the tree was prepared.
+      - uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+
+      # The browser runs in Playwright's own image rather than on the runner.
+      # The runner is a TrueNAS box: read-only root, no apt, and `playwright
+      # install --with-deps` would need sudo for system libraries anyway. The
+      # image ships Chromium and every library it needs, and its tag must match
+      # the installed @playwright/test exactly or Playwright refuses to launch,
+      # so the tag is read from node_modules rather than written down twice.
+      #
+      # Checked before claiming, so a runner without a usable Docker fails here
+      # and never holds an appliance.
+      - name: Resolve the Playwright image
+        run: |
+          set -euo pipefail
+          # The runner user may or may not be allowed at the Docker socket
+          # directly. `sudo -n` fails rather than prompting, because a prompt
+          # here would hang the job for its full timeout with the lab held.
+          if docker info > /dev/null 2>&1; then
+            docker=docker
+          elif sudo -n docker info > /dev/null 2>&1; then
+            docker="sudo -n docker"
+          else
+            echo "::error::No usable Docker: neither 'docker' nor 'sudo -n docker' can reach the daemon"
+            exit 1
+          fi
+          echo "DOCKER=$docker" >> "$GITHUB_ENV"
+          version=$(node -p "require('@playwright/test/package.json').version")
+          image="mcr.microsoft.com/playwright:v${version}-noble"
+          $docker pull --quiet "$image"
+          echo "PLAYWRIGHT_IMAGE=$image" >> "$GITHUB_ENV"
+
+      # The UI under test is the one in this checkout, not the one baked into
+      # the appliance's ISO. Same production build as main.yml's Build job —
+      # `--base-href /ui/`, so it is served where the appliance's nginx would
+      # serve it. Built before the claim so the lab is not held during the
+      # build, and so the build's memory is back before a 6GB guest starts.
+      #
+      # The web server is a stock nginx image with the repository's own
+      # `docker/nginx.conf`, the file the shipped UI is served through. Pulled
+      # here for the same fail-early reason as the Playwright image.
+      - name: Build the UI
+        if: (inputs.ui || 'built') == 'built'
+        run: |
+          set -euo pipefail
+          yarn build:prod
+          [ -f dist/index.html ] || { echo "::error::yarn build:prod produced no dist/index.html"; exit 1; }
+          $DOCKER pull --quiet "$NGINX_IMAGE"
+          echo "UI_DIST=$GITHUB_WORKSPACE/dist" >> "$GITHUB_ENV"
+
+      - name: Claim an appliance
+        run: |
+          set -euo pipefail
+          ./e2e/ci/appliance.sh claim fresh-install > "$RUNNER_TEMP/appliance.env"
+          # The appliance password is generated per claim, not a GitHub secret,
+          # so nothing masks it automatically. Register it before it can reach
+          # a log.
+          echo "::add-mask::$(sed -n 's/^TN_PASSWORD=//p' "$RUNNER_TEMP/appliance.env")"
+          cat "$RUNNER_TEMP/appliance.env" >> "$GITHUB_ENV"
+          rm -f "$RUNNER_TEMP/appliance.env"
+
+      # nginx serves the build at /ui/ and proxies /api, /_upload, /_download
+      # and the WebSocket to the appliance over plain HTTP, exactly as
+      # `docker/nginx.conf` does on the appliance itself and in the Dockerfile.
+      # The two placeholders are filled the way `docker/start.sh` fills them,
+      # plus the syslog targets, which a container has no socket for. The
+      # upstream is the appliance's forwarded port 80, reached from the
+      # container's bridge network through Docker's host gateway. It cannot
+      # share the host network: nginx binds the ports the TrueNAS host's own
+      # UI is on.
+      #
+      # Served over TLS with a throwaway self-signed certificate, and it has
+      # to be: a production build ignores the login token on a plain-HTTP
+      # origin (`AuthService.setQueryToken`), so over http the suite's setup
+      # project would wait on a sign-in page that never moves. The suite then
+      # runs as the `shipped` profile with `TN_UI_BASE_URL` overriding the
+      # address, which is what makes it tolerate a self-signed certificate —
+      # and is accurate: this is the production build at /ui/ over https,
+      # served the way the appliance serves it, just from a different box.
+      #
+      # Published on an ephemeral loopback port so a leftover container from a
+      # crashed run cannot hold the address, and named after the run so the
+      # teardown step can find it without state.
+      - name: Serve the UI
+        if: env.UI_DIST != ''
+        run: |
+          set -euo pipefail
+          name="e2e-ui-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          conf="$RUNNER_TEMP/nginx.conf"
+          openssl req -x509 -newkey rsa:2048 -nodes -days 2 -subj /CN=localhost \
+            -keyout "$RUNNER_TEMP/e2e-ui.key" -out "$RUNNER_TEMP/e2e-ui.crt" > /dev/null 2>&1
+          sed \
+            -e "s|%%HOSTNAME%%|host.docker.internal:${TN_HOST_HTTP#*:}|g" \
+            -e "s|%%VERTAG%%|$(date +%s)|g" \
+            -e "s|^\([[:space:]]*error_log\) .*|\1 /dev/stderr;|" \
+            -e "s|^\([[:space:]]*access_log\) .*|\1 off;|" \
+            -e "s|^\([[:space:]]*\)listen[[:space:]]*0\.0\.0\.0:80;|\1listen 0.0.0.0:443 ssl; ssl_certificate /etc/nginx/e2e-ui.crt; ssl_certificate_key /etc/nginx/e2e-ui.key;|" \
+            -e "/listen[[:space:]]*\[::\]:80;/d" \
+            -e "/error_page[[:space:]]*500 502 503 504/d" \
+            docker/nginx.conf > "$conf"
+          grep -q "listen 0.0.0.0:443 ssl" "$conf" || { echo "::error::docker/nginx.conf no longer has the listen line this step rewrites"; exit 1; }
+          $DOCKER run -d --rm --name "$name" \
+            --add-host host.docker.internal:host-gateway \
+            -p 127.0.0.1::443 \
+            -v "$UI_DIST:/var/www/webui:ro" \
+            -v "$conf:/etc/nginx/tn-nginx.conf:ro" \
+            -v "$RUNNER_TEMP/e2e-ui.crt:/etc/nginx/e2e-ui.crt:ro" \
+            -v "$RUNNER_TEMP/e2e-ui.key:/etc/nginx/e2e-ui.key:ro" \
+            "$NGINX_IMAGE" nginx -c /etc/nginx/tn-nginx.conf > /dev/null
+          port=$($DOCKER port "$name" 443/tcp | head -1 | sed 's/.*://')
+          [ -n "$port" ] || { echo "::error::The UI container published no port"; exit 1; }
+          url="https://localhost:${port}/ui/"
+          # Fail here, not four steps later inside a test, if the UI or its
+          # proxy to the appliance is not answering. The proxy check asks for
+          # the WebSocket endpoint over plain GET. A 5xx is nginx unable to
+          # reach the appliance — the sed above removes the inherited
+          # `error_page` handler, whose 50x page does not exist in this image
+          # and would otherwise turn that 502 into a 404. A 404 is excluded
+          # too, since nginx can produce one on its own; anything else in
+          # 1xx–4xx had to come from the appliance.
+          ready=
+          for i in $(seq 1 30); do
+            ui=$(curl -sk -o /dev/null -w '%{http_code}' "$url" || true)
+            proxy=$(curl -sk -o /dev/null -w '%{http_code}' "https://localhost:${port}/api/current" || true)
+            if [ "$ui" = 200 ] && [[ "$proxy" =~ ^[1-4] ]] && [ "$proxy" != 404 ]; then
+              ready=1
+              break
+            fi
+            sleep 2
+          done
+          if [ -z "$ready" ]; then
+            echo "::error::UI container is not serving at ${url} (ui=${ui:-none}, proxy=${proxy:-none})"
+            $DOCKER logs "$name" || true
+            exit 1
+          fi
+          echo "TN_UI_BASE_URL=$url" >> "$GITHUB_ENV"
+          echo "Serving the built UI at $url (proxy check answered $proxy), proxying to the appliance at $TN_HOST_HTTP"
+
+      - name: Run the suite
+        id: suite
+        env:
+          CI: 'true'
+          # Passed as an environment variable, never interpolated into the shell
+          # line: `${{ inputs.grep }}` there would be executed as code, on a
+          # runner with hypervisor access.
+          TN_GREP: ${{ inputs.grep }}
+        # Only the test run is containerised. Claim, release and log collection
+        # stay on the host, where tn_guest.py and its Python live.
+        #
+        # --network host: the container reaches the appliance exactly as the
+        #   host does, no port mapping and no Docker DNS in the way.
+        # --ipc host: what Playwright's own docs ask for with Chromium, which
+        #   otherwise runs out of shared memory and crashes mid-test.
+        # -u: run as the runner user so everything written under test-results
+        #   is owned by it rather than by root. HOME is set because that uid has
+        #   no home inside the image.
+        # The host's node_modules is reused: it is pure JavaScript apart from
+        # the browsers, and the image already has those at its default path.
+        # TMPDIR is deliberately not passed in — it names a host path.
+        #
+        # Variables go through --env-file, not `-e NAME=value`. $DOCKER may be
+        # `sudo -n docker`: sudo scrubs the environment, so `-e NAME` pass-
+        # through is empty, and a value on the command line lands in sudo's
+        # own log line and in /proc/<pid>/cmdline for the life of the
+        # container. The file is read by the docker client after sudo has
+        # exec'd it, lives on the runner's own dataset, and is removed after.
+        run: |
+          set -euo pipefail
+          # TN_GREP is the one value here that comes from outside the pipeline,
+          # and the env file is parsed line by line: a newline in it would end
+          # the filter early and let the rest set arbitrary variables in the
+          # container. Refuse rather than truncate, so a bad dispatch is loud.
+          case "${TN_GREP:-}" in
+            *$'\n'*|*$'\r'*) echo "::error::The grep input must be a single line"; exit 1 ;;
+          esac
+          envFile="$RUNNER_TEMP/suite.env"
+          trap 'rm -f "$envFile"' EXIT
+          printf '%s\n' \
+            "CI=$CI" \
+            "TN_GREP=${TN_GREP:-}" \
+            "TN_PROFILE=$TN_PROFILE" \
+            "TN_UI_BASE_URL=${TN_UI_BASE_URL:-}" \
+            "TN_HOST=$TN_HOST" \
+            "TN_USERNAME=$TN_USERNAME" \
+            "TN_PASSWORD=$TN_PASSWORD" \
+            "TN_DOMAIN=$TN_DOMAIN" \
+            "TN_BASELINE=$TN_BASELINE" \
+            > "$envFile"
+          $DOCKER run --rm \
+            --network host \
+            --ipc host \
+            -u "$(id -u):$(id -g)" \
+            -e HOME=/tmp \
+            -v "$GITHUB_WORKSPACE:/work" \
+            -w /work \
+            --env-file "$envFile" \
+            "$PLAYWRIGHT_IMAGE" \
+            bash -c 'if [ -n "${TN_GREP:-}" ]; then ./node_modules/.bin/playwright test --grep "$TN_GREP"; else ./node_modules/.bin/playwright test; fi'
+
+      # No middleware log collection (R7.2). The appliance sits behind hostfwd
+      # with only 80 and 443 forwarded, so there is no SSH to collect over. It
+      # needs an API route; until then the job log is what there is.
+      #
+      # Runs whenever the suite ran, pass or fail, and then insists on the
+      # file: JUnit is the run history R7.4 and R8.4 are built on, so a run
+      # that produced none must not report green. The only honest no-file
+      # case is the suite never starting, which is the `skipped` outcome.
+      - name: Upload JUnit results
+        if: always() && steps.suite.outcome != 'skipped'
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-junit
+          path: test-results/junit.xml
+          if-no-files-found: error
+          retention-days: 14
+
+      # Traces, screenshots and video for the tests that failed (R7.1). These
+      # are what make a failure triageable without a local reproduction
+      # (R6.2): the trace holds a DOM snapshot per step, the network, and the
+      # console.
+      #
+      # Artifacts on a public repository are downloadable by anyone, and a
+      # trace records action parameters verbatim — including the appliance
+      # password `signIn` types and the login token in the setup project's
+      # URL. Publishing them is safe because both are worthless by the time
+      # anyone can download this: the password is generated per claim, the
+      # token expires, and the appliance they belonged to is destroyed by the
+      # release step below. Do not upload these from a pipeline that reuses an
+      # appliance or a credential.
+      #
+      # Whenever the suite ran, not only when it failed. Playwright keeps a
+      # trace on the first retry (playwright.config.ts), and a test that fails
+      # once and passes on the retry — the flake R8.4's quarantine policy is
+      # built on triaging — leaves the step green with exactly that trace on
+      # disk. A clean run has nothing here, and `ignore` is the truthful
+      # setting for that.
+      - name: Upload failure traces
+        if: always() && steps.suite.outcome != 'skipped'
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-failure-traces
+          path: |
+            test-results/**
+            !test-results/junit.xml
+          if-no-files-found: ignore
+          retention-days: 14
+
+      # A leftover UI container would go on proxying to a destroyed appliance
+      # and sit on the daemon forever. `--rm` covers a clean exit; this covers
+      # the rest, including a container that started but never passed the
+      # readiness gate. Stateless on purpose: the name is derived, not read
+      # from something the serve step may have died before writing.
+      - name: Stop the UI
+        if: always() && env.DOCKER != ''
+        run: $DOCKER rm -f "e2e-ui-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" > /dev/null 2>&1 || true
+
+      # Unconditional: an appliance left claimed is one the next run cannot use.
+      # Reads the domain from the file `claim` wrote, so a failure between the
+      # claim and `$GITHUB_ENV` being populated still releases.
+      - name: Release the appliance
+        if: always()
+        run: ./e2e/ci/appliance.sh release "${TN_DOMAIN:-}"

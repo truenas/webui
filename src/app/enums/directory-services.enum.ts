@@ -1,4 +1,3 @@
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export enum DirectoryServiceStatus {
   Disabled = 'DISABLED',
@@ -8,25 +7,11 @@ export enum DirectoryServiceStatus {
   Healthy = 'HEALTHY',
 }
 
-export const directoryServiceStateLabels = new Map<DirectoryServiceStatus, string>([
-  [DirectoryServiceStatus.Disabled, T('Disabled')],
-  [DirectoryServiceStatus.Healthy, T('Healthy')],
-  [DirectoryServiceStatus.Faulted, T('Faulted')],
-  [DirectoryServiceStatus.Leaving, T('Leaving')],
-  [DirectoryServiceStatus.Joining, T('Joining')],
-]);
-
 export enum DirectoryServiceType {
   ActiveDirectory = 'ACTIVEDIRECTORY',
   Ipa = 'IPA',
   Ldap = 'LDAP',
 }
-
-export const directoryServiceNames = {
-  [DirectoryServiceType.ActiveDirectory]: 'Active Directory',
-  [DirectoryServiceType.Ipa]: 'IPA',
-  [DirectoryServiceType.Ldap]: 'LDAP',
-};
 
 export enum DirectoryServiceCredentialType {
   KerberosPrincipal = 'KERBEROS_PRINCIPAL',

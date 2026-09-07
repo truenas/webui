@@ -1,7 +1,10 @@
-<form
-  class="ix-form-container"
+<ix-form
   [formGroup]="form"
-  (submit)="onSubmit()"
+  [isEditMode]="!isNew"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  [suppressSuccessSnackbar]="true"
+  (closed)="closed.emit($event)"
 >
   <tn-form-section>
     <tn-form-field [label]="'Name' | translate" [required]="true">
@@ -21,4 +24,4 @@
       [required]="true"
     ></ix-code-editor>
   </tn-form-section>
-</form>
+</ix-form>

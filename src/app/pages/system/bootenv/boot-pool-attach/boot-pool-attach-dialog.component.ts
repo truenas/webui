@@ -1,9 +1,11 @@
 import { DialogRef } from '@angular/cdk/dialog';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent, TnFormSectionComponent,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
@@ -11,7 +13,6 @@ import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -25,7 +26,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   imports: [
     TnDialogShellComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
     UnusedDiskSelectComponent,
     TnCheckboxComponent,
     TnFormFieldComponent,
@@ -42,12 +43,11 @@ export class BootPoolAttachDialog implements OnInit {
   protected dialogRef = inject<DialogRef<unknown, BootPoolAttachDialog>>(DialogRef);
   private translate = inject(TranslateService);
   protected api = inject(ApiService);
-  private cdr = inject(ChangeDetectorRef);
   private snackbar = inject(SnackbarService);
   private errorHandler = inject(FormErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   protected helptextSystemBootenv = helptextSystemBootenv;
 
   form = this.fb.nonNullable.group({
@@ -56,12 +56,6 @@ export class BootPoolAttachDialog implements OnInit {
   });
 
   unusedDisks: DetailsDisk[] = [];
-
-  expand = {
-    fcName: 'expand',
-    label: this.translate.instant(helptextSystemBootenv.expandLabel),
-    tooltip: this.translate.instant(helptextSystemBootenv.expandTooltip),
-  };
 
   protected readonly Role = Role;
 
@@ -90,7 +84,7 @@ export class BootPoolAttachDialog implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
 
     const { dev, expand } = this.form.getRawValue();
     this.dialogService.jobDialog(
@@ -101,15 +95,13 @@ export class BootPoolAttachDialog implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Device «{name}» was successfully attached.', { name: dev }));
           this.dialogRef.close(true);
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.errorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
         },
       });
   }

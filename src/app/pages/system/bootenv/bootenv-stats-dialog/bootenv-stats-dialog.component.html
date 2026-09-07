@@ -1,67 +1,73 @@
 <tn-dialog-shell testId="bootenv-stats" [title]="'Stats/Settings' | translate">
-@if (state) {
-  <form
-    class="ix-form-container"
-    [formGroup]="form"
-    (submit)="onSubmit()"
-  >
-    <div class="status-item">
-      <span class="status-name"> {{ 'Boot Pool Condition' | translate }}: </span>
-      <span class="status-value">
-        {{ condition | mapValue: poolStatusLabels | translate }}
-        @if (condition === PoolStatus.Degraded) {
-          {{ 'Check Alerts for more details.' | translate }}
-        }
-      </span>
-    </div>
-    <div class="status-item">
-      <span class="status-name"> {{ 'Size' | translate }}: </span>
-      <span class="status-value">
-        {{ state?.size ? (state.size | ixFileSize) : '' }}
-      </span>
-    </div>
-    <div class="status-item">
-      <span class="status-name"> {{ 'Used' | translate }}: </span>
-      <span class="status-value">
-        {{ state?.allocated ? (state.allocated | ixFileSize) : '' }}
-      </span>
-    </div>
-    <div class="status-item">
-      <span class="status-name"> {{ 'Last Scrub Run' | translate }}: </span>
-      <span class="status-value">
-        @if (state.scan?.end_time) {
-          {{ state.scan.end_time.$date | formatDateTime }}
-        } @else {
-          {{ 'Never' | translate }}
-        }
-      </span>
-    </div>
-    <tn-form-field [label]="'Scrub interval (in days)' | translate">
-      <tn-input
-        testId="interval"
-        formControlName="interval"
-        [inputType]="InputType.Number"
-        [required]="true"
-      ></tn-input>
-    </tn-form-field>
-  </form>
-}
-<ix-form-actions tnDialogAction>
-  <tn-button
-    variant="outline"
-    testId="close"
-    [label]="'Close' | translate"
-    (onClick)="dialogRef.close()"
-  ></tn-button>
   @if (state) {
-    <tn-button
-      *ixRequiresRoles="[Role.BootEnvWrite]"
-      color="primary"
-      testId="update-interval"
-      [label]="'Update Interval' | translate"
-      [disabled]="form.invalid"
-      (onClick)="onSubmit()"
-    ></tn-button>
+    <form
+      class="ix-form-container"
+      [formGroup]="form"
+      (submit)="onSubmit()"
+    >
+      <div class="status-item">
+        <span class="status-name"> {{ 'Boot Pool Condition' | translate }}: </span>
+        <span class="status-value">
+          {{ condition | mapValue: poolStatusLabels | translate }}
+          @if (condition === PoolStatus.Degraded) {
+            {{ 'Check Alerts for more details.' | translate }}
+          }
+        </span>
+      </div>
+
+      <div class="status-item">
+        <span class="status-name"> {{ 'Size' | translate }}: </span>
+        <span class="status-value">
+          {{ state?.size ? (state.size | ixFileSize) : '' }}
+        </span>
+      </div>
+
+      <div class="status-item">
+        <span class="status-name"> {{ 'Used' | translate }}: </span>
+        <span class="status-value">
+          {{ state?.allocated ? (state.allocated | ixFileSize) : '' }}
+        </span>
+      </div>
+
+      <div class="status-item">
+        <span class="status-name"> {{ 'Last Scrub Run' | translate }}: </span>
+        <span class="status-value">
+          @if (state.scan?.end_time) {
+            {{ state.scan.end_time.$date | formatDateTime }}
+          } @else {
+            {{ 'Never' | translate }}
+          }
+        </span>
+      </div>
+
+      <tn-form-field [label]="'Scrub interval (in days)' | translate">
+        <tn-input
+          testId="interval"
+          formControlName="interval"
+          [inputType]="InputType.Number"
+          [required]="true"
+        ></tn-input>
+      </tn-form-field>
+    </form>
   }
-</ix-form-actions>
+
+  <ix-form-actions tnDialogAction>
+    <tn-button
+      variant="outline"
+      testId="close"
+      [label]="'Close' | translate"
+      (onClick)="dialogRef.close()"
+    ></tn-button>
+
+    @if (state) {
+      <tn-button
+        *ixRequiresRoles="[Role.BootEnvWrite]"
+        color="primary"
+        testId="update-interval"
+        [label]="'Update Interval' | translate"
+        [disabled]="form.invalid"
+        (onClick)="onSubmit()"
+      ></tn-button>
+    }
+  </ix-form-actions>
 </tn-dialog-shell>

@@ -10,6 +10,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -51,6 +52,7 @@ describe('CronFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockProvider(LocaleService, {
         timezone: 'America/New_York',
       }),

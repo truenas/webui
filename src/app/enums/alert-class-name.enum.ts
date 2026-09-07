@@ -3,7 +3,6 @@
  */
 export enum AlertClassName {
   // Applications
-  FailuresInAppMigration = 'FailuresInAppMigration',
   AppUpdate = 'AppUpdate',
   CatalogNotHealthy = 'CatalogNotHealthy',
   ApplicationsConfigurationFailed = 'ApplicationsConfigurationFailed',
@@ -12,23 +11,20 @@ export enum AlertClassName {
 
   // Audit
   AuditBackendSetup = 'AuditBackendSetup',
+  AuditDatabaseCorrupted = 'AuditDatabaseCorrupted',
+  TrueNasVerifyServiceChangeDetection = 'TrueNASVerifyServiceChangeDetection',
   AuditServiceHealth = 'AuditServiceHealth',
-  AuditSetup = 'AuditSetup',
 
   // Certificates
   CertificateExpired = 'CertificateExpired',
   CertificateIsExpiring = 'CertificateIsExpiring',
   CertificateIsExpiringSoon = 'CertificateIsExpiringSoon',
   CertificateParsingFailed = 'CertificateParsingFailed',
-  CertificateRevoked = 'CertificateRevoked',
   WebUiCertificateSetupFailed = 'WebUiCertificateSetupFailed',
 
   // Directory Service
-  ActiveDirectoryDomainBind = 'ActiveDirectoryDomainBind',
-  ActiveDirectoryDomainHealth = 'ActiveDirectoryDomainHealth',
-  IpaDomainBind = 'IPADomainBind',
-  IpaLegacyConfiguration = 'IPALegacyConfiguration',
-  LdapBind = 'LDAPBind',
+  DirectoryServiceBind = 'DirectoryServiceBind',
+  DirectoryServiceDnsUpdate = 'DirectoryServiceDnsUpdate',
 
   // HA
   NoCriticalFailoverInterfaceFound = 'NoCriticalFailoverInterfaceFound',
@@ -67,13 +63,16 @@ export enum AlertClassName {
   NvdimmMemoryModLifetimeWarning = 'NVDIMMMemoryModLifetimeWarning',
   OldBiosVersion = 'OldBiosVersion',
   PowerSupply = 'PowerSupply',
-  Smart = 'SMART',
+  SmartEraseCycleCount = 'SMARTEraseCycleCount',
+  SmartFailedSelfTest = 'SMARTFailedSelfTest',
+  SmartSpareBlockCount = 'SMARTSpareBlockCount',
+  SmartUncorrectedErrors = 'SMARTUncorrectedErrors',
+  DiskTemperatureTooHot = 'DiskTemperatureTooHot',
   SataDomWearCritical = 'SATADOMWearCritical',
   SataDomWearWarning = 'SATADOMWearWarning',
   Sensor = 'Sensor',
   Nvdimm = 'NVDIMM',
   MemoryErrors = 'MemoryErrors',
-  Smartd = 'Smartd',
 
   // KMIP
   KmipConnectionFailed = 'KMIPConnectionFailed',
@@ -90,10 +89,8 @@ export enum AlertClassName {
   SyslogNg = 'SyslogNg',
 
   // Sharing
-  DeprecatedServiceConfiguration = 'DeprecatedServiceConfiguration',
   DeprecatedService = 'DeprecatedService',
   IscsiPortalIp = 'ISCSIPortalIP',
-  NfsBindAddress = 'NFSBindAddress',
   NfsExportMappingInvalidNames = 'NFSexportMappingInvalidNames',
   NfsHostnameLookupFail = 'NFSHostnameLookupFail',
   NfsBlockedByExportsDir = 'NFSblockedByExportsDir',
@@ -104,6 +101,15 @@ export enum AlertClassName {
   IscsiDiscoveryAuthMixed = 'ISCSIDiscoveryAuthMixed',
   IscsiDiscoveryAuthMultipleMutualChap = 'ISCSIDiscoveryAuthMultipleMutualCHAP',
   IscsiDiscoveryAuthMultipleChap = 'ISCSIDiscoveryAuthMultipleCHAP',
+  IscsiAuthSecretInvalidChar = 'ISCSIAuthSecretInvalidChar',
+  IscsiAuthSecretWhitespace = 'ISCSIAuthSecretWhitespace',
+  NfsHostListExcessive = 'NFSHostListExcessive',
+  NfsNetworkListExcessive = 'NFSNetworkListExcessive',
+  SmbAuditShareDisabled = 'SMBAuditShareDisabled',
+  SmbUserMissingHash = 'SMBUserMissingHash',
+  SmbVeeamFastClone = 'SMBVeeamFastClone',
+  FcHardwareAdded = 'FCHardwareAdded',
+  FcHardwareReplaced = 'FCHardwareReplaced',
 
   // Storage
   QuotaCritical = 'QuotaCritical',
@@ -112,7 +118,6 @@ export enum AlertClassName {
   ZpoolCapacityWarning = 'ZpoolCapacityWarning',
   ZpoolCapacityCritical = 'ZpoolCapacityCritical',
   VolumeStatus = 'VolumeStatus',
-  PoolUsbDisks = 'PoolUSBDisks',
   QuotaWarning = 'QuotaWarning',
   ScrubPaused = 'ScrubPaused',
   TierSpecialVdevWarning = 'TierSpecialVdevWarning',
@@ -134,7 +139,16 @@ export enum AlertClassName {
   SshLoginFailures = 'SSHLoginFailures',
   KdumpNotReady = 'KdumpNotReady',
   SystemTesting = 'SystemTesting',
-  WebUiBindAddressV2 = 'WebUiBindAddressV2',
+  CurrentlyRunningVersionDoesNotMatchProfile = 'CurrentlyRunningVersionDoesNotMatchProfile',
+  GmailConfigurationDiscarded = 'GMailConfigurationDiscarded',
+  InvalidGpuPciIds = 'InvalidGpuPciIds',
+  TimezoneNotAvailable = 'TimezoneNotAvailable',
+  AllAdminAccountsExpired = 'AllAdminAccountsExpired',
+  FipsMisconfiguration = 'FIPSMisconfiguration',
+  LocalAccountExpired = 'LocalAccountExpired',
+  LocalAccountExpiring = 'LocalAccountExpiring',
+  TncDisabledAutoUnconfigured = 'TNCDisabledAutoUnconfigured',
+  TncHeartbeatConnectionFailure = 'TNCHeartbeatConnectionFailure',
   TruecommandConnectionDisabled = 'TruecommandConnectionDisabled',
   TruecommandContainerHealth = 'TruecommandContainerHealth',
   TruecommandConnectionHealth = 'TruecommandConnectionHealth',
@@ -153,10 +167,10 @@ export enum AlertClassName {
   RsyncFailed = 'RsyncFailed',
   RsyncSuccess = 'RsyncSuccess',
   ScrubNotStarted = 'ScrubNotStarted',
-  ScrubFinished = 'ScrubFinished',
   ScrubStarted = 'ScrubStarted',
   SnapshotFailed = 'SnapshotFailed',
   TaskLocked = 'TaskLocked',
+  CloudProviderRemoved = 'CloudProviderRemoved',
   TierJobError = 'TierJobError',
   TierJobComplete = 'TierJobComplete',
   VmwareLoginFailed = 'VMWareLoginFailed',

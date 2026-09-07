@@ -62,27 +62,12 @@ export const replicationTaskEmptyConfig = {
   large: true,
 } as EmptyConfig;
 
-export const smbCardEmptyConfig = {
-  type: EmptyType.NoPageData,
-  icon: tnIconMarker('smb-share', 'custom'),
-  large: true,
-  message: T('<p>Well supported by all major operating systems, allows for easy authentication and authorization.</p>\n<p>Choose SMB for easy file sharing across mixed operating systems, especially in home or office networks.</p>'),
-} as EmptyConfig;
-
 export const installedAppsEmptyConfig = {
   type: EmptyType.NoPageData,
   title: T('No Applications Installed'),
   icon: tnIconMarker('apps', 'material'),
   large: true,
   message: T('Applications you install will automatically appear here.\n<br> Click below and browse available apps to get started.'),
-} as EmptyConfig;
-
-export const containersEmptyConfig = {
-  type: EmptyType.NoPageData,
-  title: T('No containers'),
-  icon: tnIconMarker('laptop', 'mdi'),
-  large: true,
-  message: T('Containers you create will automatically appear here.'),
 } as EmptyConfig;
 
 export const noSearchResultsConfig = {

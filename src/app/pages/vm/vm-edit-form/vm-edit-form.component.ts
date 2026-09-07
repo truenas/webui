@@ -26,8 +26,6 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
@@ -51,7 +49,6 @@ import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-valid
     TnInputComponent,
     TnSelectComponent,
     TnCheckboxComponent,
-    IxInputComponent,
     TranslateModule,
     AsyncPipe,
   ],
@@ -60,7 +57,6 @@ export class VmEditFormComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  formatter = inject(IxFormatterService);
   private cpuValidator = inject(CpuValidatorService);
   private validators = inject(IxValidatorsService);
   private gpuValidator = inject(IsolatedGpuValidatorService);
@@ -102,7 +98,10 @@ export class VmEditFormComponent extends IxFormHostForm implements OnInit {
       Validators.min(256 * MiB),
       this.translate.instant(helptextVmWizard.memory_size_err),
     )],
-    min_memory: [null as number | null],
+    min_memory: [null as number | null, this.validators.withMessage(
+      Validators.min(20 * MiB),
+      this.translate.instant(helptextVmWizard.min_memory_size_err),
+    )],
     nodeset: ['', Validators.pattern(vmNodesetPattern)],
     hide_from_msr: [false],
     ensure_display_device: [false],

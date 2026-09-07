@@ -4,14 +4,9 @@ import { adapter, UsersState } from 'app/pages/credentials/users/store/user.redu
 export const userStateKey = 'users';
 export const selectUserState = createFeatureSelector<UsersState>(userStateKey);
 
-const { selectAll, selectTotal } = adapter.getSelectors();
+const { selectAll } = adapter.getSelectors();
 
 export const selectUsers = createSelector(
   selectUserState,
   selectAll,
-);
-
-export const selectUsersTotal = createSelector(
-  selectUserState,
-  selectTotal,
 );

@@ -62,11 +62,6 @@ export enum VmDisplayType {
   Vnc = 'VNC',
 }
 
-export const vmDisplayTypeLabels = new Map<VmDisplayType, string>([
-  [VmDisplayType.Spice, T('SPICE')],
-  [VmDisplayType.Vnc, T('VNC')],
-]);
-
 export enum VmNicType {
   E1000 = 'E1000',
   Virtio = 'VIRTIO',

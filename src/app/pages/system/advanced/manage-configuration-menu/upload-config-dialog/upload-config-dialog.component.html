@@ -2,10 +2,23 @@
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <div [innerHtml]="helptext.uploadConfigForm.message | translate"></div>
 
-  <ix-file-input
-    formControlName="config"
+  <tn-form-field
     [label]="'Select Configuration File' | translate"
-  ></ix-file-input>
+    [required]="true"
+  >
+    <!-- Test-id pinned on the host so the legacy `input-config` survives: `tn-file-input` would
+         otherwise compose `file-input-config` on its own container, and with no `testId` input
+         that container emits none. -->
+    <tn-file-input
+      tnTestIdType="input"
+      formControlName="config"
+      [tnTestId]="'config'"
+      [showFileName]="true"
+      [buttonLabel]="'Choose File' | translate"
+      [noFileText]="'No file chosen' | translate"
+      [ariaLabel]="'Select Configuration File' | translate"
+    ></tn-file-input>
+  </tn-form-field>
 
   </form>
 <ix-form-actions tnDialogAction>

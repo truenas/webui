@@ -5,9 +5,3 @@ export enum UpdateCode {
   HaUnavailable = 'HA_UNAVAILABLE',
   NetworkActivityDisabled = 'NETWORK_ACTIVITY_DISABLED',
 }
-
-export enum SystemUpdateOperationType {
-  Upgrade = 'upgrade',
-  Install = 'install',
-  Delete = 'delete',
-}

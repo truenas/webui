@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnDestroy, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnDestroy, OnInit, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -49,6 +49,7 @@ import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/compon
 import {
   IxDynamicWizardComponent,
 } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-wizard/ix-dynamic-wizard.component';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
@@ -73,6 +74,7 @@ import { AppSchemaService } from 'app/services/schema/app-schema.service';
   imports: [
     PageHeaderComponent,
     ReadOnlyComponent,
+    IxFormComponent,
     IxInputComponent,
     AppMetadataCardComponent,
     TnButtonComponent,
@@ -102,6 +104,8 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   private tnDialog = inject(TnDialog);
   private unsavedChangesService = inject(UnsavedChangesService);
   private destroyRef = inject(DestroyRef);
+
+  private readonly ixForm = viewChild(IxFormComponent);
 
   appId: string;
   train: string;
@@ -248,23 +252,18 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSubmit(): void {
-    const data = this.appSchemaService.serializeFormValue(this.form.getRawValue(), this.chartSchema) as ChartFormValues;
-
-    const deleteField$ = new Subject<string>();
-    deleteField$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (fieldToBeDeleted) => {
-        const keys = fieldToBeDeleted.split('.');
-        unset(data, keys);
-      },
-      complete: () => this.saveData(data),
-    });
-
-    this.getFieldsHiddenOnForm(data, deleteField$);
-    deleteField$.complete();
+  /** Whether the wrapping `<ix-form>` will accept a submit right now; drives the Install/Update button. */
+  protected canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
   }
 
-  private saveData(data: ChartFormValues): void {
+  /**
+   * Installing/updating runs behind the job dialog, which reports progress and the outcome itself
+   * and is followed by a navigation to the installed app — hence `suppressSuccessSnackbar` and a
+   * null success message.
+   */
+  protected handleSubmit = (): SubmitResult => {
+    const data = this.buildPayload();
     let job$: Observable<Job<App>>;
 
     if (this.isNew) {
@@ -287,20 +286,40 @@ export class AppWizardComponent implements OnInit, OnDestroy {
       ]);
     }
 
-    this.dialogService.jobDialog(job$, {
-      title: this.isNew
-        ? this.translate.instant(helptextApps.installing)
-        : this.translate.instant(helptextApps.updating),
-    })
-      .afterClosed()
-      .pipe(
-        this.errorHandler.withErrorHandler(),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => this.onSuccess());
+    return {
+      request$: this.dialogService.jobDialog(job$, {
+        title: this.isNew
+          ? this.translate.instant(helptextApps.installing)
+          : this.translate.instant(helptextApps.updating),
+      })
+        .afterClosed()
+        .pipe(this.errorHandler.withErrorHandler()),
+      successMessage: null,
+      onSuccess: () => this.onSuccess(),
+    };
+  };
+
+  /**
+   * Serializes the form and drops the fields the schema currently hides. `hidden$` answers
+   * synchronously, so the subject is drained and torn down before the payload is returned.
+   */
+  private buildPayload(): ChartFormValues {
+    const data = this.appSchemaService.serializeFormValue(this.form.getRawValue(), this.chartSchema) as ChartFormValues;
+
+    const deleteField$ = new Subject<string>();
+    const subscription = deleteField$.subscribe((fieldToBeDeleted) => {
+      const keys = fieldToBeDeleted.split('.');
+      unset(data, keys);
+    });
+
+    this.getFieldsHiddenOnForm(data, deleteField$);
+    deleteField$.complete();
+    subscription.unsubscribe();
+
+    return data;
   }
 
-  onSuccess(): void {
+  private onSuccess(): void {
     this.form.markAsPristine();
     this.dialogService.closeAllDialogs();
     this.router.navigate(['/apps/installed', this.train, this.appId]);

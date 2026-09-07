@@ -111,6 +111,240 @@ describe('alert-enhancement.registry route fixes (NAS-140943)', () => {
     );
   });
 
+  describe('Hardware alert coverage', () => {
+    it.each([
+      AlertClassName.SmartUncorrectedErrors,
+      AlertClassName.SmartFailedSelfTest,
+      AlertClassName.SmartSpareBlockCount,
+      AlertClassName.SmartEraseCycleCount,
+      AlertClassName.DiskTemperatureTooHot,
+      AlertClassName.DifFormatted,
+      AlertClassName.UsbStorage,
+    ])('sends %s to the disk list', (klass) => {
+      const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));
+
+      expect(enhancement?.category).toBe(SmartAlertCategory.Hardware);
+      expect(enhancement?.relatedMenuPath).toEqual(['storage', 'disks']);
+      expect(enhancement?.actions?.[0]?.route).toEqual(['/storage', 'disks']);
+    });
+
+    it.each([
+      AlertClassName.EnclosureUnhealthy,
+      AlertClassName.EnclosureHealthy,
+      AlertClassName.PowerSupply,
+      AlertClassName.Sensor,
+      AlertClassName.Nvdimm,
+      AlertClassName.NvdimmEsLifetimeCritical,
+      AlertClassName.NvdimmEsLifetimeWarning,
+      AlertClassName.NvdimmMemoryModLifetimeCritical,
+      AlertClassName.NvdimmMemoryModLifetimeWarning,
+      AlertClassName.NvdimmInvalidFirmwareVersion,
+      AlertClassName.NvdimmRecommendedFirmwareVersion,
+    ])('sends %s to the enclosure view', (klass) => {
+      const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));
+
+      expect(enhancement?.category).toBe(SmartAlertCategory.Hardware);
+      expect(enhancement?.relatedMenuPath).toEqual(['system', 'viewenclosure']);
+      expect(enhancement?.actions?.[0]?.route).toEqual(['/system', 'viewenclosure']);
+    });
+
+    it.each([
+      AlertClassName.SataDomWearCritical,
+      AlertClassName.SataDomWearWarning,
+    ])('sends %s to the boot pool', (klass) => {
+      const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));
+
+      expect(enhancement?.relatedMenuPath).toEqual(['system', 'boot']);
+      expect(enhancement?.actions?.[0]?.route).toEqual(['/system', 'boot']);
+    });
+
+    // These need physical attention and have no page in webui. Badging the wrong menu is worse
+    // than badging none — IPMISEL used to land on Network via the /ipmi/ pattern rule.
+    it.each([
+      AlertClassName.IpmiSel,
+      AlertClassName.IpmiSelSpaceLeft,
+      AlertClassName.MemoryErrors,
+      AlertClassName.MemorySizeMismatch,
+      AlertClassName.OldBiosVersion,
+    ])('categorizes %s as hardware without badging a menu', (klass) => {
+      const enhancement = getAlertEnhancement(
+        '',
+        klass,
+        'IPMI system event log is 90% full',
+        buildAlert(klass),
+      );
+
+      expect(enhancement?.category).toBe(SmartAlertCategory.Hardware);
+      expect(enhancement?.relatedMenuPath).toBeUndefined();
+      expect(enhancement?.actions?.[0]?.externalUrl).toBe('https://support.ixsystems.com');
+    });
+  });
+
+  describe('Sharing alert coverage', () => {
+    it.each([
+      AlertClassName.NfsHostListExcessive,
+      AlertClassName.NfsNetworkListExcessive,
+      AlertClassName.NfsBlockedByExportsDir,
+      AlertClassName.NfsExportMappingInvalidNames,
+      AlertClassName.NfsHostnameLookupFail,
+    ])('sends %s to the NFS shares', (klass) => {
+      const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));
+
+      expect(enhancement?.relatedMenuPath).toEqual(['sharing', 'nfs']);
+      expect(enhancement?.actions?.[0]?.route).toEqual(['/sharing', 'nfs']);
+    });
+
+    it.each([
+      AlertClassName.IscsiAuthSecretInvalidChar,
+      AlertClassName.IscsiAuthSecretWhitespace,
+      AlertClassName.IscsiDiscoveryAuthMixed,
+      AlertClassName.IscsiDiscoveryAuthMultipleChap,
+      AlertClassName.IscsiDiscoveryAuthMultipleMutualChap,
+      AlertClassName.IscsiPortalIp,
+      AlertClassName.FcHardwareAdded,
+      AlertClassName.FcHardwareReplaced,
+    ])('badges Shares for %s', (klass) => {
+      const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));
+
+      expect(enhancement?.relatedMenuPath).toEqual(['sharing', 'iscsi']);
+      expect(enhancement?.actions?.[0]?.route?.[0]).toBe('/sharing');
+    });
+
+    it('sends NTLMv1 authentication to the SMB session list', () => {
+      const enhancement = getAlertEnhancement(
+        '',
+        AlertClassName.Ntlmv1Authentication,
+        '',
+        buildAlert(AlertClassName.Ntlmv1Authentication),
+      );
+
+      expect(enhancement?.category).toBe(SmartAlertCategory.Security);
+      expect(enhancement?.actions?.[0]?.route).toEqual(['/sharing', 'smb', 'status', 'sessions']);
+    });
+  });
+
+  describe('High-availability alert coverage', () => {
+    it.each([
+      AlertClassName.FailoverFailed,
+      AlertClassName.FailoverStatusCheckFailed,
+      AlertClassName.FailoverRemoteSystemInaccessible,
+      AlertClassName.FailoverReboot,
+      AlertClassName.FencedReboot,
+    ])('sends %s to the failover settings', (klass) => {
+      const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));
+
+      expect(enhancement?.relatedMenuPath).toEqual(['system', 'advanced']);
+      expect(enhancement?.actions?.[0]?.label).toBe('Go to Failover Settings');
+    });
+
+    it.each([
+      AlertClassName.FailoverInterfaceNotFound,
+      AlertClassName.VrrpStatesDoNotAgree,
+    ])('sends %s to the network interfaces', (klass) => {
+      const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));
+
+      expect(enhancement?.relatedMenuPath).toEqual(['system', 'network']);
+      expect(enhancement?.actions?.[0]?.route).toEqual(['/system', 'network']);
+    });
+
+    it.each([
+      AlertClassName.DisksAreNotPresentOnActiveNode,
+      AlertClassName.DisksAreNotPresentOnStandbyNode,
+    ])('sends %s to the disk list', (klass) => {
+      const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));
+
+      expect(enhancement?.relatedMenuPath).toEqual(['storage', 'disks']);
+    });
+  });
+
+  // Regression: these entries pointed at ['network'] / ['/network'], which is not a route -
+  // the Network menu item lives under System, so neither the badge nor the action worked.
+  describe('Network alert routing', () => {
+    it.each([
+      AlertClassName.NoCriticalFailoverInterfaceFound,
+      AlertClassName.NetworkCardsMismatchOnActiveNode,
+      AlertClassName.NetworkCardsMismatchOnStandbyNode,
+      AlertClassName.BondMissingPorts,
+      AlertClassName.BondInactivePorts,
+      AlertClassName.BondNoActivePorts,
+    ])('routes %s under /system/network', (klass) => {
+      const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));
+
+      expect(enhancement?.relatedMenuPath).toEqual(['system', 'network']);
+      expect(enhancement?.actions?.[0]?.route).toEqual(['/system', 'network']);
+    });
+  });
+
+  describe('Account, audit and system alert coverage', () => {
+    it.each([
+      AlertClassName.AllAdminAccountsExpired,
+      AlertClassName.LocalAccountExpired,
+      AlertClassName.LocalAccountExpiring,
+      AlertClassName.AdminSession,
+      AlertClassName.AdminUserIsOverridden,
+      AlertClassName.SmbUserMissingHash,
+    ])('sends %s to the user list', (klass) => {
+      const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));
+
+      expect(enhancement?.relatedMenuPath).toEqual(['credentials', 'users']);
+    });
+
+    it.each([
+      AlertClassName.AuditBackendSetup,
+      AlertClassName.AuditServiceHealth,
+      AlertClassName.AuditDatabaseCorrupted,
+    ])('sends %s to the audit page', (klass) => {
+      const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));
+
+      expect(enhancement?.relatedMenuPath).toEqual(['system', 'audit']);
+    });
+
+    it.each([
+      AlertClassName.KdumpNotReady,
+      AlertClassName.NtpHealthCheck,
+      AlertClassName.SyslogNg,
+      AlertClassName.InvalidGpuPciIds,
+      AlertClassName.FipsMisconfiguration,
+    ])('sends %s to the advanced settings', (klass) => {
+      const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));
+
+      expect(enhancement?.relatedMenuPath).toEqual(['system', 'advanced']);
+    });
+  });
+
+  // TrueCommand and TrueNAS Connect are topbar features with no route, so their alerts link out.
+  describe('Remote service alert coverage', () => {
+    it.each([
+      [AlertClassName.TruecommandConnectionPending, 'https://portal.truenas.com'],
+      [AlertClassName.TruecommandConnectionDisabled, 'https://portal.truenas.com'],
+      [AlertClassName.TruecommandConnectionHealth, 'https://portal.truenas.com'],
+      [AlertClassName.TruecommandContainerHealth, 'https://portal.truenas.com'],
+      [AlertClassName.TncDisabledAutoUnconfigured, 'https://connect.truenas.com/'],
+      [AlertClassName.TncHeartbeatConnectionFailure, 'https://connect.truenas.com/'],
+    ])('links %s out to the service instead of badging a menu', (klass, url) => {
+      const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));
+
+      expect(enhancement?.relatedMenuPath).toBeUndefined();
+      expect(enhancement?.actions?.[0]?.type).toBe(SmartAlertActionType.ExternalLink);
+      expect(enhancement?.actions?.[0]?.externalUrl).toBe(url);
+    });
+  });
+
+  describe('UPS alert coverage', () => {
+    it.each([
+      AlertClassName.UpsBatteryLow,
+      AlertClassName.UpsReplaceBattery,
+      AlertClassName.UpsOnBattery,
+      AlertClassName.UpsOnline,
+      AlertClassName.UpsCommunicationOk,
+    ])('sends %s to the UPS service', (klass) => {
+      const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));
+
+      expect(enhancement?.relatedMenuPath).toEqual(['system', 'services']);
+      expect(enhancement?.actions?.[0]?.fragment).toBe('ups');
+    });
+  });
+
   describe('ZFS tiering alerts (NAS-142267)', () => {
     it.each([
       AlertClassName.TierSpecialVdevWarning,
@@ -155,9 +389,9 @@ describe('alert-enhancement.registry route fixes (NAS-140943)', () => {
     });
   });
 
-  describe('Scrub finished/not started alerts', () => {
+  describe('Scrub alerts', () => {
     it.each([
-      AlertClassName.ScrubFinished,
+      AlertClassName.ScrubStarted,
       AlertClassName.ScrubNotStarted,
     ])('navigates %s to /storage with the View Storage label', (klass) => {
       const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));

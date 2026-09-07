@@ -17,7 +17,6 @@ import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
@@ -29,7 +28,6 @@ import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-valid
 describe('VmEditFormComponent', () => {
   let spectator: Spectator<VmEditFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   let closedSpy: jest.Mock;
   const existingVm = {
     id: 4,
@@ -184,13 +182,11 @@ describe('VmEditFormComponent', () => {
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent({ props: { vmToEdit: existingVm } });
     closedSpy = jest.fn();
     spectator.component.closed.subscribe(closedSpy);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    // Only the two memory fields are still ix-* controls (they keep the byte formatter).
-    form = await loader.getHarness(IxFormHarness);
   });
 
   // `canSubmit()` is what enables the panel footer's Save, and it delegates through a
@@ -258,20 +254,16 @@ describe('VmEditFormComponent', () => {
     expect(await (await getCheckbox('ensure_display_device')).isChecked()).toBe(true);
     expect(await (await getSelect('gpus')).getDisplayText()).toBe('GeForce [0000:02:00.0]');
 
-    // The memory fields keep the ix-input byte formatter.
-    expect(await form.getValues()).toEqual({
-      'Memory Size': '257 MiB',
-      'Minimum Memory Size': '256 MiB',
-    });
+    // Byte counts render in a unit that states them exactly (tn-input `InputType.Size`).
+    expect(await (await getInput('memory')).getValue()).toBe('257 MiB');
+    expect(await (await getInput('min_memory')).getValue()).toBe('256 MiB');
   });
 
   it('saves updated VM when form is edited and saved', async () => {
     await (await getInput('name')).setValue('Edited');
     await (await getInput('description')).setValue('New description');
-    await form.fillForm({
-      'Memory Size': '258 mb',
-      'Minimum Memory Size': '257 mb',
-    });
+    await (await getInput('memory')).setValue('258 mb');
+    await (await getInput('min_memory')).setValue('257 mb');
 
     // Hosted in a <tn-side-panel>: the panel footer owns Save and calls submit() on the form.
     spectator.component.submit();
@@ -307,10 +299,8 @@ describe('VmEditFormComponent', () => {
     await (await getInput('description')).setValue('New description');
     await (await getSelect('cpu_model')).selectOption('EPYC');
     await (await getSelect('cpu_mode')).selectOption('Host Passthrough');
-    await form.fillForm({
-      'Memory Size': '258 mb',
-      'Minimum Memory Size': '257 mb',
-    });
+    await (await getInput('memory')).setValue('258 mb');
+    await (await getInput('min_memory')).setValue('257 mb');
 
     // Hosted in a <tn-side-panel>: the panel footer owns Save and calls submit() on the form.
     spectator.component.submit();

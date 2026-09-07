@@ -454,8 +454,4 @@ export class DirectoryServicesFormComponent extends SidePanelForm implements OnI
   get selectedConfigurationType(): DirectoryServiceType | null {
     return this.form.controls.service_type.value;
   }
-
-  protected getCredentialPrevious(): DirectoryServiceCredential {
-    return this.previousConfig()?.credential;
-  }
 }
