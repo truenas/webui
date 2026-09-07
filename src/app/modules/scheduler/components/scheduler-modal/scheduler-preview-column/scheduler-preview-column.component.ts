@@ -7,14 +7,19 @@ import { MatDialogClose } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconButtonComponent } from '@truenas/ui-components';
 import {
-  getDate, isBefore,
-  startOfMonth, differenceInCalendarMonths,
+  endOfMonth, getDate, isAfter, isBefore, startOfMonth,
 } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
 import { SchedulerDateExamplesComponent } from 'app/modules/scheduler/components/scheduler-modal/scheduler-date-examples/scheduler-date-examples.component';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+
+interface SchedulePreview {
+  cron: CronSchedulePreview;
+  /** Where counting starts, as a wall clock in the system time zone. */
+  startDate: Date;
+}
 
 @Component({
   selector: 'ix-scheduler-preview-column',
@@ -45,21 +50,14 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
    */
   highlightedCalendarDays = new Set<number>();
 
-  cronPreview: CronSchedulePreview | null;
+  /**
+   * Null means there is nothing to preview in the month on screen: the system time zone
+   * is already past the end of it, or the crontab failed to parse. The marked days and the
+   * example list are both derived from this, so they cannot disagree about the start date.
+   */
+  preview: SchedulePreview | null = null;
 
   readonly calendar: Signal<MatCalendar<Date>> = viewChild.required('calendar', { read: MatCalendar });
-
-  get startDate(): Date {
-    if (!this.calendar().activeDate || differenceInCalendarMonths(this.calendar().activeDate, new Date()) < 1) {
-      return toZonedTime(new Date(), this.timezone());
-    }
-
-    return startOfMonth(this.calendar().activeDate);
-  }
-
-  get isPastMonth(): boolean {
-    return isBefore(this.calendar().activeDate, startOfMonth(new Date()));
-  }
 
   ngOnChanges(): void {
     this.updatePreviewDates();
@@ -81,27 +79,60 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
     return '';
   };
 
+  /**
+   * Where the preview starts counting from, as a wall clock in the system time zone — the
+   * zone the schedule actually runs in, and the one the example times are shown in.
+   *
+   * The calendar pages in the browser's months, so the month on screen is the frame and
+   * where "now" falls within it decides where counting starts. The two clocks disagree
+   * about the date most of the day and about the *month* on the first and last day of one,
+   * which is what made this worth spelling out: counting from the system clock while the
+   * browser had already rolled over left the whole month on screen blank (NAS-142970).
+   *
+   * Null means there is nothing left to preview in the month on screen, because the system
+   * time zone is already past the end of it — a month the user paged back to, and equally
+   * the tail of the browser's current month once the system time zone has rolled over.
+   */
+  private getStartDate(): Date | null {
+    const activeDate = this.calendar().activeDate || new Date();
+    const zonedNow = toZonedTime(new Date(), this.timezone());
+
+    if (isBefore(zonedNow, startOfMonth(activeDate))) {
+      return startOfMonth(activeDate);
+    }
+
+    if (isAfter(zonedNow, endOfMonth(activeDate))) {
+      return null;
+    }
+
+    return zonedNow;
+  }
+
   private onCalendarUpdated(): void {
     this.updatePreviewDates();
   }
 
   private updatePreviewDates(): void {
-    if (this.isPastMonth) {
-      this.cronPreview = null;
+    const startDate = this.getStartDate();
+    if (!startDate) {
+      this.preview = null;
       this.highlightedCalendarDays = new Set();
       return;
     }
 
     try {
-      this.cronPreview = new CronSchedulePreview({
+      const cron = new CronSchedulePreview({
         crontab: this.crontab(),
         startTime: this.startTime(),
         endTime: this.endTime(),
       });
 
-      this.highlightedCalendarDays = this.cronPreview.getNextDaysInMonthWithRuns(this.startDate);
+      this.preview = { cron, startDate };
+      this.highlightedCalendarDays = cron.getNextDaysInMonthWithRuns(startDate);
     } catch (error: unknown) {
       console.error(error);
+      this.preview = null;
+      this.highlightedCalendarDays = new Set();
     }
   }
 
