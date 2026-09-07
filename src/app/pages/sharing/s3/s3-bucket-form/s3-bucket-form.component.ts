@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -9,7 +9,9 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { map, Observable, of } from 'rxjs';
+import {
+  map, merge, Observable, of,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import {
@@ -31,6 +33,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSharingS3 } from 'app/helptext/sharing';
+import { SelectOption } from 'app/interfaces/option.interface';
 import { S3AuditMask, S3Bucket, S3BucketCreate } from 'app/interfaces/s3.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -114,7 +117,7 @@ export class S3BucketFormComponent implements OnInit {
   readonly treeNodeProvider = this.datasetService.getDatasetNodeProvider();
   protected readonly ownerProvider = createS3UserPickerProvider();
 
-  protected readonly permissionsModelOptions$ = of(mapToOptions(s3PermissionsModelLabels, this.translate));
+  private readonly permissionsModelBaseOptions = mapToOptions(s3PermissionsModelLabels, this.translate);
   protected readonly versioningOptions$ = of(mapToOptions(s3VersioningLabels, this.translate));
   protected readonly multipartEtagOptions$ = of(mapToOptions(s3MultipartEtagLabels, this.translate));
   protected readonly objectLockModeOptions$ = of(mapToOptions(s3ObjectLockModeLabels, this.translate));
@@ -183,13 +186,33 @@ export class S3BucketFormComponent implements OnInit {
     return this.translate.instant('Bucket dataset: {dataset}', { dataset: `${parent}/${name}` });
   });
 
+  /**
+   * Object lock is a primary option (backup targets), so it drives versioning rather than depending
+   * on it: checking it switches versioning on and keeps it there. The one thing that rules it out is
+   * the Multiprotocol permissions model, under which another protocol could rewrite a locked object.
+   */
   protected readonly canUseObjectLock = computed(() => {
-    const { versioning, permissions_model: permissionsModel } = this.formValue();
-    return versioning === S3Versioning.Enabled && permissionsModel !== S3PermissionsModel.Multiprotocol;
+    return this.formValue().permissions_model !== S3PermissionsModel.Multiprotocol;
   });
 
   protected readonly objectLockHint = computed(() => {
-    return this.canUseObjectLock() ? '' : this.translate.instant(this.helptext.objectLockTooltip);
+    return this.canUseObjectLock() ? '' : this.translate.instant(this.helptext.objectLockMultiprotocolHint);
+  });
+
+  protected readonly isObjectLockOn = computed(() => !!this.formValue().object_lock);
+
+  /** Multiprotocol cannot be picked while object lock is on, for the same reason. */
+  protected readonly permissionsModelOptions$: Observable<SelectOption<S3PermissionsModel>[]> = toObservable(
+    this.isObjectLockOn,
+  ).pipe(
+    map((isObjectLockOn) => this.permissionsModelBaseOptions.map((option) => ({
+      ...option,
+      disabled: isObjectLockOn && option.value === S3PermissionsModel.Multiprotocol,
+    }))),
+  );
+
+  protected readonly versioningHint = computed(() => {
+    return this.isObjectLockOn() ? this.translate.instant(this.helptext.versioningLockedHint) : '';
   });
 
   get title(): string {
@@ -270,10 +293,78 @@ export class S3BucketFormComponent implements OnInit {
   }
 
   private setupObjectLockDependency(): void {
+    this.defaultModeOffered = !!this.existingBucket?.object_lock;
     this.syncObjectLockAvailability();
+    this.syncVersioningLock(this.form.controls.object_lock.value);
+    this.syncHiddenControls();
     this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.syncObjectLockAvailability();
     });
+    // Compliance is offered once, the first time object lock is turned on for a bucket that did not
+    // have it. After that a "no default rule", whether stored or picked here, survives an uncheck and
+    // re-check: it is the only way to express object lock without a default rule.
+    this.form.controls.object_lock.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((objectLock) => {
+      if (objectLock && !this.defaultModeOffered && this.form.controls.object_lock_default_mode.value === null) {
+        this.defaultModeOffered = true;
+        this.form.controls.object_lock_default_mode.setValue(S3ObjectLockMode.Compliance);
+      }
+      this.syncVersioningLock(objectLock);
+    });
+    merge(
+      this.form.controls.object_lock.valueChanges,
+      this.form.controls.object_lock_default_mode.valueChanges,
+      this.form.controls.versioning.valueChanges,
+    ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.syncHiddenControls();
+    });
+  }
+
+  /** What versioning was set to before object lock forced it on, restored when object lock is released. */
+  private versioningBeforeLock: S3Versioning | null = null;
+
+  /** Whether the Compliance default has been offered; a bucket stored with object lock starts offered. */
+  private defaultModeOffered = false;
+
+  /**
+   * Object lock requires versioning, so the select is set to Enabled and held there while it is on.
+   * Releasing it puts the previous choice back, so a check-then-uncheck in basic mode (where the
+   * select is not even rendered) is a no-op rather than a silent switch to versioning.
+   */
+  private syncVersioningLock(objectLock: boolean): void {
+    const versioning = this.form.controls.versioning;
+    if (objectLock) {
+      if (versioning.value !== S3Versioning.Enabled) {
+        this.versioningBeforeLock = versioning.value;
+        versioning.setValue(S3Versioning.Enabled);
+      }
+      versioning.disable({ emitEvent: false });
+    } else if (versioning.disabled) {
+      versioning.enable({ emitEvent: false });
+      if (this.versioningBeforeLock !== null) {
+        versioning.setValue(this.versioningBeforeLock);
+        this.versioningBeforeLock = null;
+      }
+    }
+  }
+
+  /**
+   * The retention period and the snapshot listing limit only render in some states. A hidden control
+   * is disabled rather than left to its validators: `[required]` on the rendered input attaches
+   * Angular's own validator, whose stale error would otherwise keep Save disabled with nothing on
+   * screen to fix. A disabled control is excluded from validity regardless.
+   */
+  private syncHiddenControls(): void {
+    const { versioning, object_lock: objectLock, object_lock_default_mode: defaultMode } = this.form.controls;
+    this.setEnabled(this.form.controls.snapshot_versions_max, versioning.value !== S3Versioning.Off);
+    this.setEnabled(this.form.controls.object_lock_default_days, !!objectLock.value && !!defaultMode.value);
+  }
+
+  private setEnabled(control: FormControl<unknown>, enabled: boolean): void {
+    if (enabled && control.disabled) {
+      control.enable();
+    } else if (!enabled && control.enabled) {
+      control.disable();
+    }
   }
 
   private syncObjectLockAvailability(): void {
@@ -285,6 +376,9 @@ export class S3BucketFormComponent implements OnInit {
     } else if (control.enabled) {
       control.setValue(false, { emitEvent: false });
       control.disable({ emitEvent: false });
+      // Cleared silently above, so the dependants have to be updated by hand for the same reason.
+      this.syncVersioningLock(false);
+      this.syncHiddenControls();
     }
   }
 
@@ -302,7 +396,11 @@ export class S3BucketFormComponent implements OnInit {
       grants: toS3Grants(this.form.controls.grants.controls),
       versioning: values.versioning,
       snapshot_versions: values.versioning === S3Versioning.Off ? [] : values.snapshot_versions,
-      snapshot_versions_max: values.snapshot_versions_max,
+      // The listing limit only applies with versioning; without it the field is hidden and disabled, so
+      // send the value the bucket already has rather than whatever was left behind.
+      snapshot_versions_max: values.versioning === S3Versioning.Off
+        ? (this.existingBucket?.snapshot_versions_max ?? 64)
+        : values.snapshot_versions_max,
       multipart_etag: values.multipart_etag,
       object_lock: objectLock,
       object_lock_default_mode: hasDefaultRule ? values.object_lock_default_mode : null,
