@@ -432,7 +432,8 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
    * check with the failover lookup below, which gated two unrelated things at once.
    */
   private loadFecModes(): void {
-    if (!this.existingInterface) {
+    const existingInterface = this.existingInterface;
+    if (!existingInterface) {
       return;
     }
 
@@ -440,7 +441,7 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
       filter(Boolean),
       take(1),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.loadAvailableFecModes(this.existingInterface.id));
+    ).subscribe(() => this.loadAvailableFecModes(existingInterface.id));
   }
 
   /** The `HA` entitlement alone decides HA here; product type must not pre-gate it. */

@@ -169,6 +169,9 @@ export class NfsListComponent implements OnInit {
   /**
    * The column model with the entitlement applied. Like disk-list's SED column, the
    * entitlement only decides whether the column exists here; `hidden` stays the picker's.
+   * A column dropped here is unknown to the picker, which treats a saved preference naming it as
+   * stale and restores the defaults for every column — accepted for the rare loss of an
+   * entitlement, since the alternative is offering a column that cannot be shown.
    */
   protected readonly visibleColumns = computed(() => (
     this.hasNfsSnapshots()

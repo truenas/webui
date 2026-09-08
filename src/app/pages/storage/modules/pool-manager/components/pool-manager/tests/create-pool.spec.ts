@@ -27,7 +27,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/pool-manager.harness';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
 import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
-import { selectHasEnclosureSupport, selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
 describe('PoolManagerComponent – create pool', () => {
   let spectator: Spectator<PoolManagerComponent>;
@@ -337,7 +337,6 @@ describe('PoolManagerComponent – create pool with SED encryption', () => {
         provideMockStore({
           selectors: [
             { selector: selectHasEnclosureSupport, value: true },
-            { selector: selectIsEnterprise, value: true },
             // Loaded map with no gated keys, i.e. entitled to SED.
             { selector: selectEntitlements, value: {} },
           ],
@@ -394,7 +393,6 @@ describe('PoolManagerComponent – create pool with SED encryption', () => {
         provideMockStore({
           selectors: [
             { selector: selectHasEnclosureSupport, value: true },
-            { selector: selectIsEnterprise, value: true },
             // Loaded map with no gated keys, i.e. entitled to SED.
             { selector: selectEntitlements, value: {} },
           ],
@@ -438,7 +436,6 @@ describe('PoolManagerComponent – create pool with SED encryption', () => {
         provideMockStore({
           selectors: [
             { selector: selectHasEnclosureSupport, value: true },
-            { selector: selectIsEnterprise, value: false },
             {
               selector: selectEntitlements,
               value: {
@@ -501,7 +498,6 @@ describe('PoolManagerComponent – create pool with SED encryption', () => {
         provideMockStore({
           selectors: [
             { selector: selectHasEnclosureSupport, value: true },
-            { selector: selectIsEnterprise, value: true },
             // Loaded map with no gated keys, i.e. entitled to SED.
             { selector: selectEntitlements, value: {} },
           ],

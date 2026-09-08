@@ -90,7 +90,7 @@ import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
 import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
-import { selectHasEnclosureSupport, selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
 export const commonImports = [
   ReactiveFormsModule,
@@ -148,10 +148,6 @@ export const commonProviders = [
       {
         selector: selectHasEnclosureSupport,
         value: true,
-      },
-      {
-        selector: selectIsEnterprise,
-        value: false,
       },
       {
         // SED provisioning now gates on the entitlement; denied here to mirror the non-Enterprise default.
