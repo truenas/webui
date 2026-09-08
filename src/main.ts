@@ -57,6 +57,7 @@ import { WINDOW, getWindow } from 'app/helpers/window.helper';
 import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/modules/language/translations/icu-translations-loader';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { provideWebSocketDebugState } from 'app/modules/websocket-debug-panel/providers/websocket-debug.providers';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServiceWorkerService } from 'app/services/service-worker.service';
@@ -157,6 +158,11 @@ bootstrapApplication(AppComponent, {
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);
       swService.register();
+    }),
+    provideAppInitializer(() => {
+      // Opens the typed API socket at startup, alongside the legacy one, so its
+      // session is already authenticated when the first typed consumer appears.
+      inject(TypedApiService);
     }),
     provideAppInitializer(() => {
       const spriteLoader = inject(TnSpriteLoaderService);

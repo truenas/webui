@@ -118,6 +118,7 @@
     "@shopify/eslint-plugin": "~50.0.0",
     "@smarttools/eslint-plugin-rxjs": "~1.0.22",
     "@stylistic/eslint-plugin": "~2.9.0",
+    "@truenas/api-client": "~5.0.0",
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master",
     "@truenas/ui-components": "~0.7.4",
     "@types/cheerio": "~0.22.35",
@@ -218,7 +219,6 @@
     "@angular-eslint/template-parser": "~21.2.0",
     "@mdi/js": "~7.4.47",
     "@playwright/test": "~1.56.0",
-    "@truenas/api-client": "~3.0.2",
     "@typescript-eslint/types": "~8.41.0",
     "@typescript-eslint/utils": "~8.41.0",
     "prettier": "~3.6.2"
