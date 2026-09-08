@@ -6,22 +6,6 @@
  * and the two structural selectors the auth and error-detection plumbing need
  * before any page object exists.
  */
-import { join } from 'node:path';
-
-/**
- * Where the authenticated browser state is persisted by the setup project.
- *
- * Under `e2e/` rather than the repository root so the suite keeps its artifacts
- * to itself. Gitignored — it holds a live session token.
- *
- * Absolute, derived from this module's own location rather than the process
- * working directory: both readers of this value (`playwright.config.ts`'s
- * `storageState` and `auth.setup.ts`'s `storageState({ path })`) resolve a
- * relative path against `cwd`, so a run invoked from a subdirectory would write
- * the session token to one place and look for it in another.
- */
-export const storageStatePath = join(import.meta.dirname, '..', '.auth', 'storage-state.json');
-
 /**
  * The app's root layout element. Present only once authentication has completed
  * and the shell has rendered, which makes it the reliable "we are in" signal —

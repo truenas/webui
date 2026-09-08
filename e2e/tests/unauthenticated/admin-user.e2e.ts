@@ -3,7 +3,7 @@
  *
  * This is the first test that covers a real user journey rather than proving
  * the rig. It deliberately runs without the token bypass — it lives under
- * `tests/unauthenticated/`, which has no `storageState` and no dependency on
+ * `tests/unauthenticated/`, which signs nobody in and has no dependency on
  * the setup project, because a test of authentication that authenticates by
  * side channel tests nothing (R4.2).
  *

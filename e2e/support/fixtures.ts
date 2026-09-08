@@ -11,11 +11,30 @@
  * Copying it is how a socket gets left open — forget the `afterAll` and the
  * runner hangs at the end of a green run, which reads as a hang rather than a
  * mistake.
+ *
+ * It also signs the browser in. Every test in a project that leaves
+ * `authenticate` on (the default) starts with `page` already inside the admin
+ * shell — see the `page` override below for why that is done per test rather
+ * than once through `storageState`.
  */
-import { test as base } from '@playwright/test';
+import { expect, test as base } from '@playwright/test';
 import type { E2eApiClient } from './api/client';
 import { connectAndLogin } from './api/client';
+import { buildTokenLoginUrl, generateAuthToken } from './auth/token';
 import { loadTargetConfig, type TargetConfig } from './config';
+import { adminLayout } from './constants';
+
+/** How long the app gets to redeem the token and render the shell. */
+const tokenLoginTimeoutMs = 60_000;
+
+export interface E2eTestOptions {
+  /**
+   * Whether `page` is signed in before the test starts. On by default; the
+   * `unauthenticated` project turns it off in `playwright.config.ts`, because
+   * those tests cover sign-in itself and a bypass would defeat them (R4.2).
+   */
+  authenticate: boolean;
+}
 
 export interface E2eWorkerFixtures {
   /** Resolved target configuration for this run. */
@@ -28,6 +47,12 @@ export interface E2eWorkerFixtures {
    * difference between testing the UI and testing middleware.
    */
   api: E2eApiClient;
+  /**
+   * A reusable login token for this worker — two hours, not single-use, not
+   * origin-bound (see `auth/token.ts`). Minted once per worker over the `api`
+   * fixture, so a run of any length costs one `auth.generate_token`.
+   */
+  authToken: string;
 }
 
 /**
@@ -40,7 +65,9 @@ export interface E2eWorkerFixtures {
  *
  * They are also lazy: a spec that never asks for `api` never opens a socket.
  */
-export const test = base.extend<Record<never, never>, E2eWorkerFixtures>({
+export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
+  authenticate: [true, { option: true }],
+
   config: [
     // eslint-disable-next-line no-empty-pattern
     async ({}, use) => {
@@ -61,6 +88,40 @@ export const test = base.extend<Record<never, never>, E2eWorkerFixtures>({
     },
     { scope: 'worker' },
   ],
+
+  authToken: [
+    async ({ api }, use) => {
+      await use(await generateAuthToken(api));
+    },
+    { scope: 'worker' },
+  ],
+
+  /**
+   * Signs the page in through the token URL before each authenticated test.
+   *
+   * Per test, not once via `storageState`, because of what the app does with a
+   * token once it has redeemed it. webui keeps its session token in
+   * `localStorage` and replaces it after every login with a five-minute,
+   * single-use reconnect token of its own (`auth.service.ts`). A `storageState`
+   * captured after the setup login is therefore a snapshot of *that* token, not
+   * of the two-hour one that was redeemed — so it works for exactly one test,
+   * started within five minutes, and every later test lands on the sign-in
+   * page. The suite never noticed while it had a single authenticated test; the
+   * S3 journeys were the first pair to run back to back.
+   *
+   * The token URL is the same entry the setup project validates, and a login
+   * costs a few seconds — well under the fifteen the form takes, which is the
+   * cost the token exists to avoid (R4.1).
+   */
+  page: async ({
+    page, authenticate, authToken, config,
+  }, use) => {
+    if (authenticate) {
+      await page.goto(buildTokenLoginUrl(config.uiBaseUrl, authToken));
+      await expect(page.locator(adminLayout)).toBeVisible({ timeout: tokenLoginTimeoutMs });
+    }
+    await use(page);
+  },
 });
 
 export { expect } from '@playwright/test';

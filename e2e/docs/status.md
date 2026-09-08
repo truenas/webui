@@ -105,6 +105,10 @@ a number. See `05-ci.md`.
   attributes that webui's own convention forbids unit tests from asserting on,
   so they have no coverage in the repository that emits them. NAS-142069 was one
   such attribute deleted by a migration and caught by a person, not by CI.
+- **Per-test token login** replaced `storageState` once two authenticated tests
+  ran back to back (the S3 pair). `setup` still gates the authenticated project
+  as the earliest report of a broken token login. Cost: one token per worker and
+  a few seconds per test.
 - **Fixed names** (`bob`, `e2e_tank`) mean two runs against one appliance
   collide. Fine for one-appliance-per-run; run-scoped naming is the fix.
 - **`AuthResponseType` is declared but not exported** while
@@ -154,7 +158,7 @@ comment instead.
 | R8.4 | Quarantine policy for persistently flaky tests |
 | R9.2 | One command runs the suite against a developer's own appliance |
 | T3 | Middleware client is `@truenas/api-client` (3.x; T3.1 covered the curated-subset problem that version removed) |
-| T5 | Authentication via a setup project plus `storageState` |
+| T5 | Authentication via a setup project plus `storageState` — the `storageState` half was dropped 2026-09-08: the app rotates the persisted token into a five-minute single-use one, so the snapshot carried exactly one test. Each authenticated test now signs in through the token URL in the `page` fixture |
 | T10 | Configuration through target profiles, resolved in one module |
 | D1 | PR gating — deferred; needs a measured flake rate first. The `e2e` check runs on same-repo PRs touching the suite, but it is not a required check, so a red run informs and does not block |
 | D2 | Parallel execution by sharding across appliances — deferred |
