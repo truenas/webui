@@ -1,13 +1,16 @@
 import { Dialog, DialogRef } from '@angular/cdk/dialog';
-import { HttpEventType, HttpProgressEvent, HttpResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
+import {
+  HttpEvent, HttpEventType, HttpProgressEvent, HttpResponse,
+} from '@angular/common/http';
+import { ChangeDetectionStrategy, Component, inject, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFileInputComponent, TnFormFieldComponent,
+  TnFormSectionComponent,
 } from '@truenas/ui-components';
 import {
-  catchError, of, Subject, Subscription, takeUntil, tap,
+  defer, EMPTY, filter, finalize, map, Observable, of, take, takeUntil, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -18,6 +21,9 @@ import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import {
+  IxFormComponent, SubmitResult, ixFormMinSubmitFeedbackMs,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { validateNotPoolRoot } from 'app/modules/forms/ix-forms/validators/validators';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -31,10 +37,18 @@ import { UploadService } from 'app/services/upload.service';
   styleUrls: ['./upload-iso-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
+  providers: [
+    // The submit-feedback hold exists so a `<tn-side-panel>`'s progress bar is perceptible on a
+    // fast save. The upload puts the global loader on screen for its whole duration, so holding
+    // here would only delay the close.
+    { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
+  ],
   imports: [
     TnDialogShellComponent,
     ReactiveFormsModule,
+    IxFormComponent,
     IxExplorerComponent,
+    TnFormSectionComponent,
     TnFormFieldComponent,
     TnFileInputComponent,
     FormActionsComponent,
@@ -44,7 +58,7 @@ import { UploadService } from 'app/services/upload.service';
     ExplorerCreateDatasetComponent,
   ],
 })
-export class UploadIsoDialogComponent implements OnDestroy {
+export class UploadIsoDialogComponent {
   private formBuilder = inject(FormBuilder);
   private filesystemService = inject(FilesystemService);
   private errorHandler = inject(ErrorHandlerService);
@@ -54,13 +68,26 @@ export class UploadIsoDialogComponent implements OnDestroy {
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
   private dialogService = inject(DialogService);
+  private cdkDialog = inject(Dialog);
+
+  /**
+   * The shared form wrapper owns validity tracking and the submit lifecycle (submitting state,
+   * success snackbar, close); the dialog only re-exposes its Save surface to the `tnDialogAction`
+   * footer, and supplies the transfer itself as the wrapper's request.
+   */
+  private readonly ixForm = viewChild(IxFormComponent);
 
   readonly helptext = helptextVmWizard;
 
   form = this.formBuilder.nonNullable.group({
     // Start with empty path instead of '/mnt' to avoid showing immediate validation error
-    // Users will use the file explorer to navigate to a valid dataset path
-    path: ['', [validateNotPoolRoot(this.translate.instant(this.helptext.upload_iso_pool_root_error))]],
+    // Users will use the file explorer to navigate to a valid dataset path.
+    // `validateNotPoolRoot` passes an empty value through (it leaves emptiness to the required
+    // validator), so without `required` here an empty path would upload to `/<filename>`.
+    path: [
+      '',
+      [Validators.required, validateNotPoolRoot(this.translate.instant(this.helptext.upload_iso_pool_root_error))],
+    ],
     // tn-file-input in single mode emits File | null (ix-file-input used File[]).
     files: [null as File | null, Validators.required],
   });
@@ -68,171 +95,167 @@ export class UploadIsoDialogComponent implements OnDestroy {
   readonly directoryNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   protected readonly requiredRoles = [Role.VmWrite];
 
-  private destroy$ = new Subject<void>();
-  private uploadSubscription: Subscription | null = null;
-  private loaderCloseSubscription: Subscription | null = null;
+  // Aborts the in-flight XHR. Non-null only while a transfer is actually running, which is both
+  // what makes it safe to call unconditionally and how a loader close is attributed: the user
+  // can only dismiss the loader while a transfer is running, so a close with this already
+  // cleared is one `endUpload()` performed itself.
   private cancelUpload: (() => void) | null = null;
-  private cdkDialog = inject(Dialog);
 
-  ngOnDestroy(): void {
-    // Cancel any ongoing upload and cleanup when component is destroyed
-    if (this.cancelUpload) {
-      this.cancelUpload();
-      this.cancelUpload = null;
-    }
-    if (this.uploadSubscription) {
-      this.uploadSubscription.unsubscribe();
-      this.uploadSubscription = null;
-    }
-    if (this.loaderCloseSubscription) {
-      this.loaderCloseSubscription.unsubscribe();
-      this.loaderCloseSubscription = null;
-    }
-    this.destroy$.next();
-    this.destroy$.complete();
-    // Remove confirmation handler before closing
-    this.loader.removeConfirmationBeforeClose();
-    this.loader.close();
+  // The "Cancel Upload" confirmation, while it is on screen. Non-null only between the user
+  // asking to dismiss the loader and answering, which is the window in which the upload can
+  // finish (or fail) underneath it and have to take the question away again.
+  private confirmationRef: DialogRef | null = null;
+
+  protected canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
   }
 
-  private closeAllConfirmationDialogs(): void {
-    // Force close any open confirmation dialogs (but not the upload dialog itself)
-    const openDialogs = this.cdkDialog.openDialogs;
-    openDialogs.forEach((dialog) => {
-      // Only close dialogs that are not this upload dialog
-      if (dialog !== this.dialogRef) {
-        dialog.close();
-      }
-    });
+  protected submit(): void {
+    this.ixForm()?.submit();
   }
 
-  onSubmit(): void {
+  protected handleSubmit = (): SubmitResult<string, string> => {
     const { path, files: file } = this.form.getRawValue();
     if (!file) {
-      return;
+      // Unreachable while `files` carries `Validators.required` (the wrapper won't submit an
+      // invalid form), but the payload below dereferences the file, so bail rather than assert.
+      return { request$: EMPTY, successMessage: () => null, closeWith: () => '' };
     }
+
     const uploadPath = `${path}/${file.name}`;
 
-    // Cancel any existing upload before starting new one
-    if (this.cancelUpload) {
-      this.cancelUpload();
-      this.cancelUpload = null;
-    }
-    if (this.uploadSubscription) {
-      this.uploadSubscription.unsubscribe();
-      this.uploadSubscription = null;
-    }
-    if (this.loaderCloseSubscription) {
-      this.loaderCloseSubscription.unsubscribe();
-      this.loaderCloseSubscription = null;
-    }
-
-    // Ensure loader is closed before starting new upload
-    this.loader.close();
-
-    const loaderClosed$ = this.loader.open();
-
-    const { observable: observable$, cancel } = this.uploadService.upload({
-      file,
-      method: 'filesystem.put',
-      params: [uploadPath, { mode: 493 }],
-    });
-
-    this.cancelUpload = cancel;
-
-    // Set up confirmation handler for when user tries to close the loader
-    this.loader.setConfirmationBeforeClose(() => {
-      // Prevent confirmations after upload is done
-      if (!this.cancelUpload) {
-        return of(false);
-      }
-
-      return this.dialogService.confirm({
-        title: this.translate.instant('Cancel Upload'),
-        message: this.translate.instant('Are you sure you want to cancel the upload? This will stop the current upload process.'),
-        hideCheckbox: true,
-        buttonText: this.translate.instant('Cancel Upload'),
-        cancelText: this.translate.instant('Keep Uploading'),
-        hideCancel: false,
-      });
-    });
-
-    // Handle when loader is closed (either by cancel confirmation or programmatically)
-    this.loaderCloseSubscription = loaderClosed$.pipe(
-      takeUntil(this.destroy$),
-    ).subscribe(() => {
-      // Remove the confirmation handler
-      this.loader.removeConfirmationBeforeClose();
-
-      if (this.cancelUpload) {
-        this.cancelUpload();
-        this.cancelUpload = null;
-        this.snackbar.success(this.translate.instant('Upload cancelled'));
-      }
-      if (this.uploadSubscription) {
-        this.uploadSubscription.unsubscribe();
-        this.uploadSubscription = null;
-      }
-    });
-
-    this.uploadSubscription = observable$
-      .pipe(
-        tap((event: HttpProgressEvent) => {
-          if (event instanceof HttpResponse) {
-            // Remove confirmation handler and force close any open confirmation dialogs
-            this.loader.removeConfirmationBeforeClose();
-            this.closeAllConfirmationDialogs();
-
-            // Clean up subscriptions before closing loader to avoid triggering cancellation
-            if (this.loaderCloseSubscription) {
-              this.loaderCloseSubscription.unsubscribe();
-              this.loaderCloseSubscription = null;
-            }
-
-            this.loader.close();
-            this.uploadSubscription = null;
-            this.cancelUpload = null;
-
-            // Show success message and close dialog
-            this.snackbar.success(this.translate.instant('ISO uploaded successfully'));
-            this.dialogRef.close(uploadPath);
-          }
-
-          if (event.type === HttpEventType.UploadProgress && event.total) {
-            const percentDone = Math.round(100 * event.loaded / event.total);
-            this.loader.setTitle(
-              this.translate.instant('{n}% Uploaded', { n: percentDone }),
-            );
-          }
-        }),
-        catchError((error: unknown) => {
-          // Immediately remove confirmation handler and force close any open confirmation dialogs
-          this.loader.removeConfirmationBeforeClose();
-          this.closeAllConfirmationDialogs();
-
-          // Force close the loader immediately to prevent any further interactions
-          this.loader.close();
-
-          // Clean up subscriptions
-          if (this.loaderCloseSubscription) {
-            this.loaderCloseSubscription.unsubscribe();
-            this.loaderCloseSubscription = null;
-          }
-
-          this.uploadSubscription = null;
-          this.cancelUpload = null;
-
-          // Don't show error for aborted requests or network failures that might be user-initiated
-          if (error instanceof DOMException && (error.name === 'AbortError' || error.name === 'NetworkError')) {
-            return of(null);
-          }
-
-          // Show error modal and keep dialog open for retry
+    return {
+      request$: this.uploadIso(file, uploadPath),
+      successMessage: this.translate.instant('ISO uploaded successfully'),
+      closeWith: () => uploadPath,
+      onError: (error: unknown) => {
+        // Don't report aborted requests or network failures that may be user-initiated, and keep
+        // the dialog open in every case so the upload can be retried without re-picking the file.
+        if (!(error instanceof DOMException && (error.name === 'AbortError' || error.name === 'NetworkError'))) {
           this.errorHandler.showErrorModal(error);
-          return of(error);
+        }
+        return true;
+      },
+    };
+  };
+
+  /**
+   * The transfer, as a single-emission request the `<ix-form>` wrapper can drive: it emits once
+   * the server has accepted the file and completes, errors if the upload fails, and — when the
+   * user cancels — completes WITHOUT emitting, which drops the wrapper back out of its submitting
+   * state and leaves the dialog open instead of reporting a save that did not happen.
+   *
+   * `defer` so the loader only opens (and the XHR only starts) when the wrapper subscribes.
+   */
+  private uploadIso(file: File, uploadPath: string): Observable<string> {
+    return defer(() => {
+      const loaderClosed$ = this.loader.open();
+      const { observable: upload$, cancel } = this.uploadService.upload({
+        file,
+        method: 'filesystem.put',
+        params: [uploadPath, { mode: 493 }],
+      });
+      this.cancelUpload = cancel;
+
+      this.loader.setConfirmationBeforeClose(() => {
+        // Prevent confirmations after the upload is done.
+        if (!this.cancelUpload) {
+          return of(false);
+        }
+
+        return this.askToCancelUpload();
+      });
+
+      // `loaderClosed$` is the CDK `DialogRef.closed` subject, so it fires on ANY close — the
+      // user's confirmed cancellation and the programmatic `endUpload()` alike. Only the former
+      // is a cancellation, and it is the only one that can happen while the transfer is still
+      // running, so the cleared handle rules the latter out. Without this the success path
+      // completes the chain through `takeUntil` before the value is forwarded, and a finished
+      // upload reports itself as cancelled.
+      const cancelled$ = loaderClosed$.pipe(
+        filter(() => this.cancelUpload !== null),
+        tap(() => {
+          this.abortUpload();
+          this.snackbar.success(this.translate.instant('Upload cancelled'));
         }),
-        takeUntil(this.destroy$),
-      )
-      .subscribe();
+      );
+
+      return upload$.pipe(
+        tap((event) => this.reportProgress(event)),
+        filter((event) => event instanceof HttpResponse),
+        take(1),
+        // End the transfer before the wrapper reports success, so the dialog never closes out
+        // from under a loader that is still on screen.
+        tap(() => this.endUpload()),
+        map(() => uploadPath),
+        takeUntil(cancelled$),
+        // Success, failure, cancellation and the dialog being destroyed all land here, and all
+        // four mean the loader and its confirmation must go. Destruction reaches this operator
+        // as a plain unsubscribe — `UploadService` registers no teardown on its observable, so
+        // the abort has to be issued from here or the transfer outlives the dialog.
+        finalize(() => this.abortUpload()),
+      );
+    });
+  }
+
+  /**
+   * Asks the user whether to abandon the transfer, keeping hold of the dialog it opens so
+   * `endUpload()` can dismiss exactly this confirmation. `DialogService.confirm()` opens
+   * synchronously but does not hand its `DialogRef` back, so the confirmation is picked out of
+   * the CDK stack as the one dialog that was not open a moment ago.
+   */
+  private askToCancelUpload(): Observable<boolean> {
+    const alreadyOpen = new Set(this.cdkDialog.openDialogs);
+    const confirmed$ = this.dialogService.confirm({
+      title: this.translate.instant('Cancel Upload'),
+      message: this.translate.instant('Are you sure you want to cancel the upload? This will stop the current upload process.'),
+      hideCheckbox: true,
+      buttonText: this.translate.instant('Cancel Upload'),
+      cancelText: this.translate.instant('Keep Uploading'),
+      hideCancel: false,
+    });
+    this.confirmationRef = this.cdkDialog.openDialogs.find((dialog) => !alreadyOpen.has(dialog)) ?? null;
+
+    return confirmed$.pipe(
+      finalize(() => {
+        this.confirmationRef = null;
+      }),
+    );
+  }
+
+  private reportProgress(event: HttpEvent<unknown>): void {
+    if (event.type !== HttpEventType.UploadProgress) {
+      return;
+    }
+
+    const progress = event as HttpProgressEvent;
+    if (!progress.total) {
+      return;
+    }
+
+    const percentDone = Math.round(100 * progress.loaded / progress.total);
+    this.loader.setTitle(this.translate.instant('{n}% Uploaded', { n: percentDone }));
+  }
+
+  /**
+   * Marks the transfer as over and takes the loader and its cancel confirmation off screen.
+   * Clearing the handle first is what stops the `loader.close()` below from being read back as
+   * a user cancellation. Idempotent: `LoaderService.close()` no-ops without an open loader.
+   */
+  private endUpload(): void {
+    this.cancelUpload = null;
+    this.loader.removeConfirmationBeforeClose();
+    // Only this component's own cancel confirmation: a blanket sweep of the CDK stack would
+    // also take down the error dialog the failure path opens a moment earlier, leaving a failed
+    // upload with no explanation at all.
+    this.confirmationRef?.close();
+    this.confirmationRef = null;
+    this.loader.close();
+  }
+
+  /** `endUpload()`, plus an abort of the XHR if it is still in flight. */
+  private abortUpload(): void {
+    this.cancelUpload?.();
+    this.endUpload();
   }
 }

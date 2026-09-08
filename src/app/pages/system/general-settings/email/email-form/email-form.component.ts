@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject, input, output, viewChild,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -13,8 +13,7 @@ import {
   TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnIconComponent, TnInputComponent, TnSelectComponent, InputType,
 } from '@truenas/ui-components';
-import { EMPTY, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemEmail } from 'app/helptext/system/email';
@@ -24,6 +23,7 @@ import {
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
 import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent,
   IxFormComponent,
@@ -60,7 +60,7 @@ import { selectProductType } from 'app/store/system-info/system-info.selectors';
     TranslateModule,
   ],
 })
-export class EmailFormComponent implements OnInit {
+export class EmailFormComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private formBuilder = inject(NonNullableFormBuilder);
@@ -71,11 +71,8 @@ export class EmailFormComponent implements OnInit {
   private store$ = inject(Store<AppState>);
   private destroyRef = inject(DestroyRef);
 
+  /** Pre-loaded config supplied by the `<tn-side-panel>` host; absent means load it here. */
   readonly config = input<MailConfig | undefined>(undefined);
-
-  readonly closed = output<boolean>();
-
-  private readonly ixForm = viewChild(IxFormComponent);
 
   private productType = toSignal(this.store$.select(selectProductType));
 
@@ -89,7 +86,7 @@ export class EmailFormComponent implements OnInit {
     label: T('Send Test Mail'),
     testId: 'send-test-mail',
     requiredRoles: this.requiredRolesMailWrite,
-    disabled: () => !this.isValid || this.isLoading(),
+    disabled: () => !this.isValid || this.isBusy(),
     onClick: () => this.onSendTestEmailPressed(),
   }];
 
@@ -111,9 +108,6 @@ export class EmailFormComponent implements OnInit {
     user: [''],
     pass: [''],
   });
-
-  protected isLoading = signal(false);
-  protected emailConfig: MailConfig | undefined;
 
   readonly sendMethodOptions$ = of([
     {
@@ -176,6 +170,7 @@ export class EmailFormComponent implements OnInit {
   }
 
   constructor() {
+    super();
     this.sendMethodControl.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
@@ -202,24 +197,13 @@ export class EmailFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.emailConfig = this.config();
-    if (this.emailConfig) {
-      this.initEmailForm(this.emailConfig);
-    } else {
-      this.loadEmailConfig();
-    }
-  }
-
-  canSubmit(): boolean {
-    return this.ixForm()?.canSubmit() ?? false;
-  }
-
-  submit(): void {
-    this.ixForm()?.submit();
-  }
-
-  hasUnsavedChanges(): boolean {
-    return this.ixForm()?.hasUnsavedChanges() ?? false;
+    // Either source runs through `loadFormConfig` so the base owns the loading flag, the
+    // load-failure latch (which blocks Save over defaults the user never saw) and the snapshot.
+    const preloaded = this.config();
+    this.loadFormConfig(
+      preloaded ? of(preloaded) : this.api.call('mail.config'),
+      (config) => this.initEmailForm(config),
+    );
   }
 
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => ({
@@ -250,21 +234,6 @@ export class EmailFormComponent implements OnInit {
 
   protected onLoggedIn(credentials: unknown): void {
     this.oauthCredentials.set(credentials as MailOauthConfig);
-  }
-
-  private loadEmailConfig(): void {
-    this.isLoading.set(true);
-    this.api.call('mail.config').pipe(
-      catchError((error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-        this.isLoading.set(false);
-        return EMPTY;
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((config) => {
-      this.isLoading.set(false);
-      this.initEmailForm(config);
-    });
   }
 
   private initEmailForm(emailConfig: MailConfig): void {

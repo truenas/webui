@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -8,7 +7,7 @@ import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { Observable, of, Subscription } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { InitShutdownScriptType, initShutdownScriptTypeLabels } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen, initShutdownScriptWhenLabels } from 'app/enums/init-shutdown-script-when.enum';
 import { Role } from 'app/enums/role.enum';
@@ -19,9 +18,10 @@ import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -31,6 +31,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
@@ -42,12 +43,10 @@ import { FilesystemService } from 'app/services/filesystem.service';
     ExplorerCreateDatasetComponent,
   ],
 })
-export class InitShutdownFormComponent extends SidePanelForm implements OnInit {
+export class InitShutdownFormComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
-  private errorHandler = inject(FormErrorHandlerService);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private snackbar = inject(SnackbarService);
   private filesystemService = inject(FilesystemService);
   private destroyRef = inject(DestroyRef);
 
@@ -57,14 +56,6 @@ export class InitShutdownFormComponent extends SidePanelForm implements OnInit {
   get isNew(): boolean {
     return !this.editingScript;
   }
-
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant('Add Init/Shutdown Script')
-      : this.translate.instant('Edit Init/Shutdown Script');
-  }
-
-  protected isFormLoading = signal(false);
 
   private subscriptions: Subscription[] = [];
 
@@ -77,8 +68,6 @@ export class InitShutdownFormComponent extends SidePanelForm implements OnInit {
     enabled: [true],
     timeout: [10],
   });
-
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   readonly isCommand$ = this.form.select((values) => values.type === InitShutdownScriptType.Command);
 
@@ -110,44 +99,27 @@ export class InitShutdownFormComponent extends SidePanelForm implements OnInit {
   ngOnInit(): void {
     this.editingScript = this.editScript();
 
+    // Wired before `<ix-form>` patches `editData` in its own (later) ngOnInit, so an edited
+    // script's type immediately disables whichever of command/script it doesn't use.
     this.subscriptions.push(
       this.form.controls.command.enabledWhile(this.isCommand$),
       this.form.controls.script.disabledWhile(this.isCommand$),
     );
-
-    if (this.editingScript) {
-      this.form.patchValue(this.editingScript);
-    }
   }
 
-  protected onSubmit(): void {
+  protected handleSubmit = (event: FormSubmitEvent): SubmitResult => {
+    // `form.value`, not the event's `allValues`: `command` and `script` disable each other by type,
+    // and only the enabled one belongs in the payload.
     const values = this.form.value;
+    const editingScript = this.editingScript;
 
-    this.isFormLoading.set(true);
-    let request$: Observable<unknown>;
-    if (this.editingScript) {
-      request$ = this.api.call('initshutdownscript.update', [
-        this.editingScript.id,
-        values,
-      ]);
-    } else {
-      request$ = this.api.call('initshutdownscript.create', [values]);
-    }
-
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        if (this.isNew) {
-          this.snackbar.success(this.translate.instant('Init/Shutdown Script created'));
-        } else {
-          this.snackbar.success(this.translate.instant('Init/Shutdown Script updated'));
-        }
-        this.isFormLoading.set(false);
-        this.close(true);
-      },
-      error: (error: unknown) => {
-        this.isFormLoading.set(false);
-        this.errorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+    return {
+      request$: editingScript
+        ? this.api.call('initshutdownscript.update', [editingScript.id, values])
+        : this.api.call('initshutdownscript.create', [values]),
+      successMessage: event.isEdit
+        ? this.translate.instant('Init/Shutdown Script updated')
+        : this.translate.instant('Init/Shutdown Script created'),
+    };
+  };
 }

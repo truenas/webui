@@ -3,7 +3,6 @@ import {
 } from '@angular/cdk/testing';
 import { IxButtonGroupHarness } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.harness';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxCheckboxListHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
 import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxDatepickerHarness } from 'app/modules/forms/ix-forms/components/ix-date-picker/ix-date-picker.harness';
@@ -38,7 +37,6 @@ export const supportedFormControlSelectors = [
   IxExplorerHarness,
   IxSlideToggleHarness,
   IxRadioGroupHarness,
-  IxCheckboxListHarness,
   SchedulerHarness,
   IxIpInputWithNetmaskHarness,
   IxFileInputHarness,

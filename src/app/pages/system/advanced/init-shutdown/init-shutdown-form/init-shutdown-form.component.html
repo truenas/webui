@@ -1,4 +1,12 @@
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<ix-form
+  [formGroup]="form"
+  [editData]="editScript()"
+  [addTitle]="'Add Init/Shutdown Script' | translate"
+  [editTitle]="'Edit Init/Shutdown Script' | translate"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <tn-form-section>
     <tn-form-field [label]="'Description' | translate">
       <tn-input formControlName="comment"></tn-input>
@@ -50,4 +58,4 @@
       <tn-input formControlName="timeout" [inputType]="InputType.Number"></tn-input>
     </tn-form-field>
   </tn-form-section>
-</form>
+</ix-form>

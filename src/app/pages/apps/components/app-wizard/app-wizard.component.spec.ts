@@ -16,6 +16,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ChartFormValue, App, ChartSchemaNodeConf } from 'app/interfaces/app.interface';
 import { CatalogApp, CatalogAppVersion } from 'app/interfaces/catalog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -288,6 +289,7 @@ describe('AppWizardComponent', () => {
       mockProvider(TnDialog),
     ],
     providers: [
+      ...ixFormTestingProviders(),
       provideTnFormFieldErrors(),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -361,12 +363,13 @@ describe('AppWizardComponent', () => {
       });
     });
 
-    it('editing when form is submitted', () => {
+    it('editing when form is submitted', async () => {
       spectator.component.form.patchValue({
         timezone: 'Europe/Paris',
       });
 
-      spectator.component.onSubmit();
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Update' }));
+      await saveButton.click();
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
@@ -512,7 +515,8 @@ describe('AppWizardComponent', () => {
       const version = await loader.getHarness(TnSelectHarness.with({ displayText: /Version:/ }));
       await version.selectOption('Version: 0.9.0 / Revision: 1.2.0');
 
-      spectator.component.onSubmit();
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install' }));
+      await saveButton.click();
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(

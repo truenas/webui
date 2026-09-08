@@ -3,7 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnFormFieldComponent, TnSelectComponent, TnSelectHarness } from '@truenas/ui-components';
+import {
+  TnFormFieldComponent, TnFormSectionHarness, TnSelectComponent, TnSelectHarness,
+} from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { WidgetGroupSlotFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-slot-form/widget-group-slot-form.component';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
@@ -57,6 +59,11 @@ describe('WidgetGroupSlotComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('names the section after the slot it edits', async () => {
+    const section = await loader.getHarness(TnFormSectionHarness);
+    expect(await section.getHeadingText()).toBe('Card 1 Settings');
   });
 
   it('shows entered values on the form fields', async () => {

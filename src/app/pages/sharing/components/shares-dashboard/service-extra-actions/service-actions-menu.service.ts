@@ -14,6 +14,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { normalizeTestIdParts, normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
+import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
 import {
@@ -48,6 +49,7 @@ export class ServiceActionsMenuService {
       this.buildToggleItem(service, hasControlRole),
       this.buildConfigItem(service),
       this.buildSessionsItem(service),
+      this.buildAccessKeysItem(service),
       this.buildLogsItem(service),
     ].filter((item): item is TnMenuItem => item !== null);
   }
@@ -85,6 +87,22 @@ export class ServiceActionsMenuService {
       label: this.translate.instant('{name} Sessions', { name: serviceNames.get(service.service) }),
       testId: this.menuItemTestId(service, 'sessions'),
       action: () => this.viewSessions(service.service),
+    };
+  }
+
+  /**
+   * S3 clients authenticate with access keys, which live under Credentials. Only the S3 service
+   * offers the shortcut.
+   */
+  buildAccessKeysItem(service: Service): TnMenuItem | null {
+    if (service.service !== ServiceName.S3) {
+      return null;
+    }
+    return {
+      id: 'service-access-keys',
+      label: this.translate.instant('Access Keys'),
+      testId: this.menuItemTestId(service, 'access-keys'),
+      action: () => this.router.navigate(['/credentials', 's3-access-keys']),
     };
   }
 
@@ -157,6 +175,7 @@ export class ServiceActionsMenuService {
     return [
       localConfigItem,
       this.buildSessionsItem(service),
+      this.buildAccessKeysItem(service),
       this.buildLogsItem(service),
     ].filter((item): item is TnMenuItem => item !== null);
   }
@@ -230,6 +249,9 @@ export class ServiceActionsMenuService {
         break;
       case ServiceName.WebShare:
         this.formPanel.open(ServiceWebshareComponent, { title: serviceNames.get(ServiceName.WebShare) });
+        break;
+      case ServiceName.S3:
+        this.formPanel.open(ServiceS3Component, { title: serviceNames.get(ServiceName.S3) });
         break;
       default:
         break;

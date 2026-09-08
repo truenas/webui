@@ -4,6 +4,12 @@
   display: flex;
 }
 
+// The `<ix-form>` wrapper renders the form element itself, and its host is inline by default —
+// give it a block box so the wizard column keeps its width.
+ix-form {
+  display: block;
+}
+
 .wizard-container {
   width: 80%;
 

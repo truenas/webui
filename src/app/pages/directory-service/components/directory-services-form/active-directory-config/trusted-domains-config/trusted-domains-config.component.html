@@ -8,158 +8,187 @@
       ></tn-checkbox>
     </tn-form-field>
     @if (form.controls.enable_trusted_domains.value) {
-      <ix-list
+      <tn-form-list
         formArrayName="trustedDomains"
-        [empty]="trustedDomainsArray.length === 0"
+        [control]="trustedDomainsArray"
         [label]="'Trusted Domains' | translate"
-        [formArray]="trustedDomainsArray"
+        [addLabel]="'Add' | translate"
+        [emptyMessage]="'No items have been added yet.' | translate"
         (add)="addTrustedDomain()"
       >
       @for (domain of trustedDomainsArray.controls; track domain; let i = $index) {
-        <ix-list-item
+        <tn-form-list-item
+          testId="remove-from-list"
           [label]="'Trusted Domain' | translate"
+          [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Trusted Domain' | translate }"
           [formGroupName]="i"
           (delete)="removeTrustedDomain(i)"
         >
-          <div class="trusted-domain-config">
-            <div class="columns">
-              <ix-fieldset [title]="'Basic Configuration' | translate">
-                <ix-select
-                  formControlName="idmap_backend"
-                  [required]="true"
-                  [label]="'IDMAP Backend' | translate"
-                  [options]="trustedDomainIdmapOptions$"
-                  [tooltip]="helptext.idmapBackendTooltip | translate"
-                ></ix-select>
+          <tn-form-section [heading]="'Basic Configuration' | translate">
+            <tn-form-field
+              [label]="'IDMAP Backend' | translate"
+              [tooltip]="helptext.idmapBackendTooltip | translate"
+              [required]="true"
+            >
+              <tn-select
+                formControlName="idmap_backend"
+                [options]="trustedDomainIdmapOptions"
+                [optionTestIdKey]="idmapBackendOptionTestId"
+              ></tn-select>
+            </tn-form-field>
 
-                @let idmapBackend = getIdmapTypeForItem(i);
-                @if(idmapBackend) {
-                  <ix-input
-                    formControlName="name"
-                    [label]="'Name' | translate"
+            @let idmapBackend = getIdmapTypeForItem(i);
+            @if (idmapBackend) {
+              <tn-form-field
+                [label]="'Name' | translate"
+                [tooltip]="helptext.name.tooltip | translate"
+                [required]="true"
+              >
+                <tn-input formControlName="name" [required]="true"></tn-input>
+              </tn-form-field>
+              <tn-form-field
+                [label]="'Range Low' | translate"
+                [tooltip]="helptext.rangeLowTooltip | translate"
+                [required]="true"
+              >
+                <tn-input
+                  formControlName="range_low"
+                  [inputType]="InputType.Number"
+                  [required]="true"
+                ></tn-input>
+              </tn-form-field>
+              <tn-form-field
+                [label]="'Range High' | translate"
+                [tooltip]="helptext.rangeHighTooltip | translate"
+                [required]="true"
+              >
+                <tn-input
+                  formControlName="range_high"
+                  [inputType]="InputType.Number"
+                  [required]="true"
+                ></tn-input>
+              </tn-form-field>
+              @if (idmapBackend === IdmapBackend.Ad) {
+                <tn-form-field
+                  [label]="'Schema Mode' | translate"
+                  [tooltip]="helptext.schemaModeTooltip | translate"
+                  [required]="true"
+                >
+                  <tn-select
+                    formControlName="schema_mode"
+                    [options]="schemaModeOptions"
+                    [optionTestIdKey]="schemaModeOptionTestId"
+                  ></tn-select>
+                </tn-form-field>
+                <tn-form-field [tooltip]="helptext.unixPrimaryGroupTooltip | translate">
+                  <tn-checkbox
+                    formControlName="unix_primary_group"
+                    [label]="'Unix Primary Group' | translate"
+                  ></tn-checkbox>
+                </tn-form-field>
+                <tn-form-field [tooltip]="helptext.unixNssTooltip | translate">
+                  <tn-checkbox
+                    formControlName="unix_nss_info"
+                    [label]="'Unix NSS Info' | translate"
+                  ></tn-checkbox>
+                </tn-form-field>
+              }
+              @if (idmapBackend === IdmapBackend.Rfc2307 || idmapBackend === IdmapBackend.Ldap) {
+                @if (idmapBackend === IdmapBackend.Rfc2307) {
+                  <tn-form-field
+                    [label]="'LDAP Url' | translate"
+                    [tooltip]="helptext.ldapUrlTooltip | translate"
                     [required]="true"
-                    [tooltip]="helptext.name.tooltip | translate"
-                  ></ix-input>
-                  <ix-input
-                    formControlName="range_low"
-                    [label]="'Range Low' | translate"
-                    [required]="true"
-                    [type]="'number'"
-                    [tooltip]="helptext.rangeLowTooltip | translate"
-                  ></ix-input>
-                  <ix-input
-                    formControlName="range_high"
-                    [label]="'Range High' | translate"
-                    [required]="true"
-                    [type]="'number'"
-                    [tooltip]="helptext.rangeHighTooltip | translate"
-                  ></ix-input>
-                  @if (idmapBackend === IdmapBackend.Ad) {
-                    <ix-select
-                      formControlName="schema_mode"
-                      [label]="'Schema Mode' | translate"
-                      [required]="true"
-                      [options]="schemaModeOptions$"
-                      [tooltip]="helptext.schemaModeTooltip | translate"
-                    ></ix-select>
-                    <ix-checkbox
-                      formControlName="unix_primary_group"
-                      [label]="'Unix Primary Group' | translate"
-                      [tooltip]="helptext.unixPrimaryGroupTooltip | translate"
-                    ></ix-checkbox>
-                    <ix-checkbox
-                      formControlName="unix_nss_info"
-                      [label]="'Unix NSS Info' | translate"
-                      [tooltip]="helptext.unixNssTooltip | translate"
-                    ></ix-checkbox>
-                  }
-                  @if (idmapBackend === IdmapBackend.Rfc2307 || idmapBackend === IdmapBackend.Ldap) {
-                    @if (idmapBackend === IdmapBackend.Rfc2307) {
-                      <ix-input
-                        formControlName="ldap_url"
-                        [required]="true"
-                        [label]="'LDAP Url' | translate"
-                        [tooltip]="helptext.ldapUrlTooltip | translate"
-                      ></ix-input>
-                    }
-                    @if (idmapBackend === IdmapBackend.Ldap) {
-                      <ix-input
-                        formControlName="ldap_base_dn"
-                        [label]="'LDAP Base DN' | translate"
-                        [required]="true"
-                        [tooltip]="helptext.ldapBasednTooltip | translate"
-                      ></ix-input>
-                    }
-                    <ix-input
-                      formControlName="ldap_user_dn"
-                      [required]="true"
-                      [label]="'LDAP User DN' | translate"
-                      [tooltip]="helptext.ldapUserdnTooltip | translate"
-                    ></ix-input>
-                    <ix-input
-                      formControlName="ldap_user_dn_password"
-                      [required]="true"
-                      [label]="'LDAP User DN Password' | translate"
-                      [tooltip]="helptext.ldapUserDnPasswordTooltip | translate"
-                    ></ix-input>
-                    @if (idmapBackend === IdmapBackend.Ldap) {
-                      <ix-input
-                        formControlName="ldap_url"
-                        [required]="true"
-                        [label]="'LDAP Url' | translate"
-                        [tooltip]="helptext.ldapUrlTooltip | translate"
-                      ></ix-input>
-                      <ix-checkbox
-                        formControlName="readonly"
-                        [label]="'Readonly' | translate"
-                        [tooltip]="helptext.readonlyTooltip | translate"
-                      ></ix-checkbox>
-                    }
-                    @if (idmapBackend === IdmapBackend.Rfc2307) {
-                      <ix-input
-                        formControlName="bind_path_user"
-                        [label]="'Bind Path User' | translate"
-                        [required]="true"
-                        [tooltip]="helptext.bindPathUserTooltip | translate"
-                      ></ix-input>
-                      <ix-input
-                        formControlName="bind_path_group"
-                        [label]="'Bind Path Group' | translate"
-                        [required]="true"
-                        [tooltip]="helptext.bindPathGroupTooltip | translate"
-                      ></ix-input>
-                      <ix-checkbox
-                        formControlName="user_cn"
-                        [label]="'User CN' | translate"
-                        [tooltip]="helptext.userCnTooltip | translate"
-                      ></ix-checkbox>
-                      <ix-checkbox
-                        formControlName="ldap_realm"
-                        [label]="'LDAP Realm' | translate"
-                        [tooltip]="helptext.ldapRealmTooltip | translate"
-                      ></ix-checkbox>
-                    }
-                    <ix-checkbox
-                      formControlName="validate_certificates"
-                      [label]="'Validate Certificates' | translate"
-                      [tooltip]="helptextLdap.validateCertificatesTooltip | translate"
-                    ></ix-checkbox>
-                  }
-                  @if (idmapBackend === IdmapBackend.Rid) {
-                    <ix-checkbox
-                      formControlName="sssd_compat"
-                      [label]="'SSSD Compat' | translate"
-                      [tooltip]="helptext.sssdCompatTooltip | translate"
-                    ></ix-checkbox>
-                  }
+                  >
+                    <tn-input formControlName="ldap_url" [required]="true"></tn-input>
+                  </tn-form-field>
                 }
-                
-              </ix-fieldset>
-            </div>
-          </div>
-        </ix-list-item>
+                @if (idmapBackend === IdmapBackend.Ldap) {
+                  <tn-form-field
+                    [label]="'LDAP Base DN' | translate"
+                    [tooltip]="helptext.ldapBasednTooltip | translate"
+                    [required]="true"
+                  >
+                    <tn-input formControlName="ldap_base_dn" [required]="true"></tn-input>
+                  </tn-form-field>
+                }
+                <tn-form-field
+                  [label]="'LDAP User DN' | translate"
+                  [tooltip]="helptext.ldapUserdnTooltip | translate"
+                  [required]="true"
+                >
+                  <tn-input formControlName="ldap_user_dn" [required]="true"></tn-input>
+                </tn-form-field>
+                <tn-form-field
+                  [label]="'LDAP User DN Password' | translate"
+                  [tooltip]="helptext.ldapUserDnPasswordTooltip | translate"
+                  [required]="true"
+                >
+                  <tn-input formControlName="ldap_user_dn_password" [required]="true"></tn-input>
+                </tn-form-field>
+                @if (idmapBackend === IdmapBackend.Ldap) {
+                  <tn-form-field
+                    [label]="'LDAP Url' | translate"
+                    [tooltip]="helptext.ldapUrlTooltip | translate"
+                    [required]="true"
+                  >
+                    <tn-input formControlName="ldap_url" [required]="true"></tn-input>
+                  </tn-form-field>
+                  <tn-form-field [tooltip]="helptext.readonlyTooltip | translate">
+                    <tn-checkbox
+                      formControlName="readonly"
+                      [label]="'Readonly' | translate"
+                    ></tn-checkbox>
+                  </tn-form-field>
+                }
+                @if (idmapBackend === IdmapBackend.Rfc2307) {
+                  <tn-form-field
+                    [label]="'Bind Path User' | translate"
+                    [tooltip]="helptext.bindPathUserTooltip | translate"
+                    [required]="true"
+                  >
+                    <tn-input formControlName="bind_path_user" [required]="true"></tn-input>
+                  </tn-form-field>
+                  <tn-form-field
+                    [label]="'Bind Path Group' | translate"
+                    [tooltip]="helptext.bindPathGroupTooltip | translate"
+                    [required]="true"
+                  >
+                    <tn-input formControlName="bind_path_group" [required]="true"></tn-input>
+                  </tn-form-field>
+                  <tn-form-field [tooltip]="helptext.userCnTooltip | translate">
+                    <tn-checkbox
+                      formControlName="user_cn"
+                      [label]="'User CN' | translate"
+                    ></tn-checkbox>
+                  </tn-form-field>
+                  <tn-form-field [tooltip]="helptext.ldapRealmTooltip | translate">
+                    <tn-checkbox
+                      formControlName="ldap_realm"
+                      [label]="'LDAP Realm' | translate"
+                    ></tn-checkbox>
+                  </tn-form-field>
+                }
+                <tn-form-field [tooltip]="helptextLdap.validateCertificatesTooltip | translate">
+                  <tn-checkbox
+                    formControlName="validate_certificates"
+                    [label]="'Validate Certificates' | translate"
+                  ></tn-checkbox>
+                </tn-form-field>
+              }
+              @if (idmapBackend === IdmapBackend.Rid) {
+                <tn-form-field [tooltip]="helptext.sssdCompatTooltip | translate">
+                  <tn-checkbox
+                    formControlName="sssd_compat"
+                    [label]="'SSSD Compat' | translate"
+                  ></tn-checkbox>
+                </tn-form-field>
+              }
+            }
+          </tn-form-section>
+        </tn-form-list-item>
       }
-      </ix-list>
+      </tn-form-list>
     }
 
   </tn-form-section>

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, Type, computed, OnInit, signal, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, computed, OnInit, signal, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -17,7 +17,6 @@ import { helptextSystemEmail } from 'app/helptext/system/email';
 import { MailConfig } from 'app/interfaces/mail-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { emailCardElements } from 'app/pages/system/general-settings/email/email-card/email-card.elements';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
@@ -68,10 +67,8 @@ export class EmailCardComponent implements OnInit {
       .subscribe((state) => this.emailConfigState.set(state));
   }
 
-  private readonly emailForm = EmailFormComponent as unknown as Type<SidePanelForm>;
-
   protected openEmailSettings(): void {
-    this.formPanel.open(this.emailForm, {
+    this.formPanel.open(EmailFormComponent, {
       title: this.translate.instant('Email Options'),
       inputs: { config: this.emailConfigState().value },
     })

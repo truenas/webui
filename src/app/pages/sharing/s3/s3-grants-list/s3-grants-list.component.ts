@@ -1,0 +1,126 @@
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input,
+} from '@angular/core';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { FormArray, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import { startWith, switchMap } from 'rxjs';
+import {
+  S3PrincipalType, s3AccessLabels, s3PrincipalTypeLabels,
+} from 'app/enums/s3.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { createS3GrantFormGroup, S3GrantFormGroup } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
+import { S3PrincipalComboboxProvider } from 'app/pages/sharing/s3/s3-grants-list/s3-principal-combobox-provider';
+
+interface GrantProviders {
+  user: S3PrincipalComboboxProvider;
+  group: S3PrincipalComboboxProvider;
+}
+
+/**
+ * Editor for a list of S3 grants, shared by the bucket form and the service config form.
+ * The parent owns the FormArray; this component adds and removes rows in it.
+ */
+@Component({
+  selector: 'ix-s3-grants-list',
+  templateUrl: './s3-grants-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    ReactiveFormsModule,
+    TnFormListComponent,
+    TnFormListItemComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
+    IxComboboxComponent,
+    TranslateModule,
+  ],
+})
+export class S3GrantsListComponent {
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
+
+  readonly formArray = input.required<FormArray<S3GrantFormGroup>>();
+  readonly label = input<TranslatedString>(this.translate.instant('Grants'));
+  readonly tooltip = input<TranslatedString>();
+
+  /**
+   * The parent pushes rows into the array after this view first renders (a config form loads its
+   * grants asynchronously) while the `formArray` input reference never changes, which under OnPush
+   * would leave the `@for` stale. Reading the rows through a signal fed by the array's own
+   * `valueChanges` marks this view whenever a row is added or removed.
+   */
+  private readonly arrayChanged = toSignal(
+    toObservable(this.formArray).pipe(switchMap((array) => array.valueChanges.pipe(startWith(null)))),
+  );
+
+  protected readonly rows = computed(() => {
+    this.arrayChanged();
+    return [...this.formArray().controls];
+  });
+
+  protected readonly S3PrincipalType = S3PrincipalType;
+  protected readonly principalTypeOptions = mapToOptions(s3PrincipalTypeLabels, this.translate);
+  protected readonly accessOptions = mapToOptions(s3AccessLabels, this.translate);
+
+  /**
+   * Keyed by form group rather than index, so rows keep their providers when an earlier row is removed.
+   */
+  private providers = new WeakMap<S3GrantFormGroup, GrantProviders>();
+
+  protected addGrant(): void {
+    this.formArray().push(createS3GrantFormGroup());
+  }
+
+  protected removeGrant(index: number): void {
+    this.formArray().removeAt(index);
+  }
+
+  /**
+   * Rows may be pushed by the parent (e.g. when loading an existing bucket), so each row is wired up
+   * the first time it is rendered rather than when it is added. The template resolves this for every
+   * row, not only those showing a picker, so the `principal_type` subscription below exists for an
+   * `EVERYONE` row as well and can re-enable `xid` when the type changes.
+   */
+  protected providersFor(group: S3GrantFormGroup): GrantProviders {
+    let providers = this.providers.get(group);
+    if (providers) {
+      return providers;
+    }
+
+    // Seed only the picker for the grant's own principal type, so a group name never shows up
+    // in the user list after the type is switched.
+    const { principal_type: currentType, xid, name } = group.getRawValue();
+    const seed = xid !== null && name ? [{ label: name, value: xid }] : [];
+    const seedFor = (type: S3PrincipalType): typeof seed => (currentType === type ? seed : []);
+    providers = {
+      user: new S3PrincipalComboboxProvider(this.api, S3PrincipalType.User, seedFor(S3PrincipalType.User)),
+      group: new S3PrincipalComboboxProvider(this.api, S3PrincipalType.Group, seedFor(S3PrincipalType.Group)),
+    };
+    this.providers.set(group, providers);
+
+    group.controls.principal_type.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((principalType) => {
+      const xidControl = group.controls.xid;
+      xidControl.setValue(null);
+      group.controls.name.setValue('');
+      // The picker for the principal is only rendered on the next change detection, and Angular's own
+      // `required` directive on it is detached at the same time. Disabling the control keeps the row's
+      // validity independent of that timing.
+      if (principalType === S3PrincipalType.Everyone) {
+        xidControl.disable();
+      } else {
+        xidControl.enable();
+      }
+    });
+
+    return providers;
+  }
+}

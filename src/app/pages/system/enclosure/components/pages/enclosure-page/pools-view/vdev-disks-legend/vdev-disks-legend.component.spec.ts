@@ -37,6 +37,17 @@ describe('VdevDisksLegendComponent', () => {
     expect(diskNames[2]).toHaveText('sdc');
   });
 
+  // Device names carry digits, which the library's kebab-casing does not split the way the
+  // legacy `[ixTest]` directive did — pinned so a regression in the normalization is caught.
+  it('keeps the legacy per-disk test id', () => {
+    spectator.setInput('selectedSlot', {
+      dev: 'nvme0n1',
+      pool_info: { vdev_disks: [{ dev: 'nvme0n1' }] },
+    } as DashboardEnclosureSlot);
+
+    expect(spectator.query('.disk-name')).toHaveAttribute('data-test', 'link-select-disk-nvme-0-n-1');
+  });
+
   it('renders list of disks in a VDEV using pool color', () => {
     const diskNames = spectator.queryAll('.disk-name');
     expect(diskNames[0].querySelector('.disk-circle')).toHaveStyle({ background: 'red' });

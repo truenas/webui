@@ -2,12 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { directIdMapping, User } from 'app/interfaces/user.interface';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ViewType } from 'app/pages/containers/components/all-containers/all-containers-header/map-user-group-ids-dialog/mapping.types';
 import { UserService } from 'app/services/user.service';
@@ -41,6 +41,7 @@ describe('NewMappingFormComponent', () => {
         mockCall('group.update'),
       ]),
       mockProvider(UserService, mockUserService),
+      ...ixFormTestingProviders(),
     ],
   });
 
@@ -53,6 +54,10 @@ describe('NewMappingFormComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
   });
+
+  const getInstanceIdInput = (): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: '[formControlName="instanceUidOrGid"]' }),
+  );
 
   it('shows user combobox when type is Users', () => {
     expect(spectator.query('ix-user-combobox')).toBeTruthy();
@@ -71,7 +76,7 @@ describe('NewMappingFormComponent', () => {
   });
 
   it('hides Container UID input when "Map directly" is checked', async () => {
-    const inputs = await loader.getAllHarnesses(IxInputHarness);
+    const inputs = await loader.getAllHarnesses(TnInputHarness);
     expect(inputs).toHaveLength(0);
   });
 
@@ -79,7 +84,7 @@ describe('NewMappingFormComponent', () => {
     const checkbox = await loader.getHarness(TnCheckboxHarness);
     await checkbox.uncheck();
 
-    const input = await loader.getHarness(IxInputHarness.with({ label: 'Container UID' }));
+    const input = await getInstanceIdInput();
     expect(input).toBeTruthy();
   });
 
@@ -99,7 +104,7 @@ describe('NewMappingFormComponent', () => {
     const checkbox = await loader.getHarness(TnCheckboxHarness);
     await checkbox.uncheck();
 
-    const input = await loader.getHarness(IxInputHarness.with({ label: 'Container UID' }));
+    const input = await getInstanceIdInput();
     await input.setValue('2000');
 
     const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Set' }));
@@ -157,7 +162,7 @@ describe('NewMappingFormComponent', () => {
     const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Set' }));
     expect(await submitButton.isDisabled()).toBe(true);
 
-    const input = await loader.getHarness(IxInputHarness.with({ label: 'Container UID' }));
+    const input = await getInstanceIdInput();
     await input.setValue('2000');
 
     expect(await submitButton.isDisabled()).toBe(false);

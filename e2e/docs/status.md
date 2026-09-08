@@ -71,9 +71,10 @@ a number. See `05-ci.md`.
    stands, the substrate is a TrueNAS host with zvol-backed VMs rather than
    `ixnode` on libvirt, and its next step is measuring the rollback cycle.
 
-   What is next for the pipeline, in order: rotate the nightly ISO
-   automatically, publish traces (the per-claim credential the design required
-   now holds), and enable the nightly schedule.
+   It runs nightly and on every merged UI change, drives the UI built from
+   the checkout, and publishes traces for failed tests. What is next for the
+   pipeline is measuring the rollback cycle (Q0b in the design) and deciding
+   about snapshots on that number.
 3. **Observability.** No WebSocket capture, no middleware log collection (the
    guest is behind `hostfwd`, so it needs an API route rather than SSH), no
    version recording in reports. These are what make a 3am failure diagnosable

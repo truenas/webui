@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NgControl, ReactiveFormsModule } from '@angular/forms';
-import { TnSelectComponent, TnSelectOption, TnTestIdDirective } from '@truenas/ui-components';
+import {
+  injectTnFormFieldAria, TnSelectComponent, TnSelectOption, TnTestIdDirective,
+} from '@truenas/ui-components';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
@@ -35,6 +37,15 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   readonly tooltip = input<TranslatedString>();
   readonly hint = input<TranslatedString>();
   readonly required = input<boolean>(false);
+
+  /**
+   * ARIA wiring from an enclosing `tn-form-field`, so a consumer can hand this control's label
+   * row to the field (which is what makes it line up with the `tn-input`s beside it) without the
+   * address input losing its accessible name. All-null standalone, and suppressed while this
+   * component renders its own `ix-label` — `label()` is passed in, so the field's label never
+   * competes with one written here.
+   */
+  protected readonly fieldAria = injectTnFormFieldAria(this.label);
 
   onChange: (value: string) => void = (): void => {};
   onTouched: () => void = (): void => {};

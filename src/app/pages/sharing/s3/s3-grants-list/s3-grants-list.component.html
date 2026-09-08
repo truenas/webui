@@ -1,0 +1,49 @@
+<tn-form-list
+  [control]="formArray()"
+  [empty]="rows().length === 0"
+  [label]="label()"
+  [tooltip]="tooltip()"
+  [addLabel]="'Add' | translate"
+  [emptyMessage]="'No items have been added yet.' | translate"
+  (add)="addGrant()"
+>
+  @for (group of rows(); track group; let i = $index) {
+    <!-- The row group binds on the item itself, so the fields are its direct children and get its spacing. -->
+    <tn-form-list-item
+      testId="remove-from-list"
+      [formGroup]="group"
+      [label]="label()"
+      [removeAriaLabel]="'Remove {label} item' | translate: { label: label() }"
+      (delete)="removeGrant(i)"
+    >
+      <!-- Resolved for every row, so an EVERYONE grant is wired up too and can switch to User or Group. -->
+      @let providers = providersFor(group);
+      <tn-form-field [label]="'Principal' | translate" [required]="true">
+        <tn-select formControlName="principal_type" [options]="principalTypeOptions"></tn-select>
+      </tn-form-field>
+
+      @switch (group.controls.principal_type.value) {
+        @case (S3PrincipalType.User) {
+          <ix-combobox
+            formControlName="xid"
+            [label]="'User' | translate"
+            [provider]="providers.user"
+            [required]="true"
+          ></ix-combobox>
+        }
+        @case (S3PrincipalType.Group) {
+          <ix-combobox
+            formControlName="xid"
+            [label]="'Group' | translate"
+            [provider]="providers.group"
+            [required]="true"
+          ></ix-combobox>
+        }
+      }
+
+      <tn-form-field [label]="'Access' | translate" [required]="true">
+        <tn-select formControlName="access" [options]="accessOptions"></tn-select>
+      </tn-form-field>
+    </tn-form-list-item>
+  }
+</tn-form-list>

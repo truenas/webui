@@ -8,10 +8,9 @@ import {
 } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonToggleComponent, TnButtonToggleGroupComponent, TnIconComponent,
+  TnButtonToggleComponent, TnButtonToggleGroupComponent, TnFormSectionComponent, TnIconComponent,
 } from '@truenas/ui-components';
 import { startWith, tap } from 'rxjs';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetGroupSlot } from 'app/pages/dashboard/types/widget-group-slot.interface';
@@ -33,7 +32,7 @@ import { WidgetGroupSlotFormComponent } from './widget-group-slot-form/widget-gr
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
     TnButtonToggleGroupComponent,
     TnButtonToggleComponent,
     TnIconComponent,
