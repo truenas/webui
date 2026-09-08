@@ -186,14 +186,22 @@ export async function showAdvancedBucketOptions(page: Page): Promise<void> {
  * Adds one grant to the open bucket editor, which must be in Advanced Options.
  *
  * Row controls fall back to their control names and so repeat per row — every
- * interaction here targets the last row, which is the one just added.
+ * interaction here targets the last row, which is the one just added. That is
+ * only true once the row exists: the list renders the new row a tick after
+ * Add pushes it, and a `.last()` resolved in between lands on the previous
+ * row (CI run 34267037987 did exactly that — switched the first grant to Group
+ * and typed the group name into the new row's User field). So Add is followed
+ * by waiting for the row count to grow.
  */
 export async function addBucketGrant(page: Page, grant: NewS3Grant): Promise<void> {
   const { grants } = s3BucketLocators.form;
+  const rows = page.locator(grants.principalType);
 
+  const rowsBefore = await rows.count();
   await page.locator(grants.add).click();
+  await expect(rows).toHaveCount(rowsBefore + 1);
 
-  await page.locator(grants.principalType).last().click();
+  await rows.last().click();
   await page.locator(grants.principalTypeOption(principalTypeLabels[grant.principalType])).click();
 
   // The picker is an autocomplete over a middleware query: typing narrows it,
@@ -301,9 +309,13 @@ export async function configureS3Service(page: Page, serviceId: number, settings
   const form = s3ServiceLocators.form;
   await expect(page.locator(form.servers)).toBeVisible();
 
+  // Same race as `addBucketGrant`: the row renders a tick after Add, so wait
+  // for it to exist before `.last()` can mean the row just added.
+  const listenerRows = page.locator(form.listenerAddress);
+  const rowsBefore = await listenerRows.count();
   await page.locator(form.addListener).click();
-  await expect(page.locator(form.listenerAddress).last()).toBeVisible();
-  await page.locator(form.listenerAddress).last().click();
+  await expect(listenerRows).toHaveCount(rowsBefore + 1);
+  await listenerRows.last().click();
   await page.locator(form.listenerAddressOption(settings.address)).click();
   await page.locator(form.listenerPort).last().fill(String(settings.port));
   if (settings.tls) {
