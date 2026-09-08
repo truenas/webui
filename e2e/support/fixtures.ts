@@ -17,15 +17,30 @@
  * shell — see the `page` override below for why that is done per test rather
  * than once through `storageState`.
  */
-import { expect, test as base } from '@playwright/test';
+import { expect, type Page, test as base } from '@playwright/test';
 import type { E2eApiClient } from './api/client';
 import { connectAndLogin } from './api/client';
 import { buildTokenLoginUrl, generateAuthToken } from './auth/token';
 import { loadTargetConfig, type TargetConfig } from './config';
 import { adminLayout } from './constants';
 
-/** How long the app gets to redeem the token and render the shell. */
-const tokenLoginTimeoutMs = 60_000;
+/**
+ * How many times the token login is attempted, and how long each gets to
+ * render the shell.
+ *
+ * More than once because the UI is not always there to be logged into. When a
+ * pool that holds the system dataset is exported or imported — which the
+ * suite does whenever it builds its own pool — the appliance moves the dataset
+ * and restarts what depends on it, and for a while the token URL loads nothing
+ * usable. Run 34255132927 (2026-09-08) showed the shape: the first attempt
+ * after such an export waited the full minute and saw no admin shell, and the
+ * retry that Playwright spawned a moment later signed in within seconds.
+ *
+ * Three attempts of thirty seconds rather than one of ninety: a re-navigation
+ * is what a stalled page needs, and a single long wait never re-navigates.
+ */
+const tokenLoginAttempts = 3;
+const tokenLoginAttemptTimeoutMs = 30_000;
 
 /**
  * One login token per worker, minted on first use.
@@ -47,6 +62,45 @@ function authTokenFor(client: E2eApiClient): Promise<string> {
     tokensByClient.set(client, token);
   }
   return token;
+}
+
+/**
+ * Signs `page` in through the token URL, retrying while the UI comes back.
+ *
+ * A UI that is still restarting and a token that middleware no longer knows
+ * look identical from the browser — no admin shell either way — so the last
+ * attempt discards the cached token and mints a new one. If minting itself
+ * fails, that is reported as such: it means the API session is gone too, which
+ * points at middleware having restarted rather than at the login page.
+ */
+async function signInWithToken(page: Page, client: E2eApiClient, config: TargetConfig): Promise<void> {
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= tokenLoginAttempts; attempt += 1) {
+    if (attempt === tokenLoginAttempts) {
+      tokensByClient.delete(client);
+    }
+    const token = await authTokenFor(client);
+
+    try {
+      await page.goto(buildTokenLoginUrl(config.uiBaseUrl, token));
+      await expect(page.locator(adminLayout)).toBeVisible({ timeout: tokenLoginAttemptTimeoutMs });
+      return;
+    } catch (error) {
+      // `goto` can throw outright while the web server is down, and the
+      // assertion throws when it is up but the app has not rendered; both mean
+      // "not yet", and both are worth another navigation.
+      lastError = error;
+    }
+  }
+
+  throw new Error(
+    `Token login did not reach the admin shell in ${tokenLoginAttempts} attempts of `
+    + `${tokenLoginAttemptTimeoutMs / 1000}s. A pool export or import just before this test would `
+    + 'explain a UI that is still coming back; a middleware restart would explain a token it no '
+    + `longer accepts. Last attempt: ${lastError instanceof Error ? lastError.message : String(lastError)}`,
+    { cause: lastError },
+  );
 }
 
 export interface E2eTestOptions {
@@ -140,8 +194,7 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
     page, authenticate, api, config,
   }, use) => {
     if (authenticate) {
-      await page.goto(buildTokenLoginUrl(config.uiBaseUrl, await authTokenFor(api)));
-      await expect(page.locator(adminLayout)).toBeVisible({ timeout: tokenLoginTimeoutMs });
+      await signInWithToken(page, api, config);
     }
     await use(page);
   },
