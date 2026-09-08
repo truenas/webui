@@ -7,15 +7,18 @@
  * things, and a stopped S3 service so the post-save "Start S3 Service" prompt
  * is deterministic.
  *
- * Reads of `sharing.s3.*` and `s3.accesskey.*` type-check through
- * `support/api/s3-directory.ts`, the local delta for methods the generated
- * client does not carry yet.
+ * The S3 methods arrived in `@truenas/api-client` 5.0; the entry shapes below
+ * are named off the directory the same way `fixtures/storage.ts` names its ACL
+ * entry, so they follow the generated types rather than restating them.
  */
+import type { QueryEntity } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
-import type { E2eApiClient } from '../support/api/client';
-import type { S3AccessKeyEntry, S3BucketEntry } from '../support/api/s3-directory';
+import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
+
+export type S3BucketEntry = QueryEntity<E2eApiDirectory['call'], 'sharing.s3.query'>;
+export type S3AccessKeyEntry = QueryEntity<E2eApiDirectory['call'], 's3.accesskey.query'>;
 
 /** Middleware's name for the service; the UI calls it "S3". */
 export const s3ServiceName = 'truenas_s3';

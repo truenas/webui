@@ -14,7 +14,7 @@ status and direction — keep it that way, and keep it short.**
 
 ## Where we are
 
-Running on **`@truenas/api-client` 3.x**, which types the full generated API
+Running on **`@truenas/api-client` 5.x**, which types the full generated API
 surface per version rather than a curated subset of 65 endpoints. There is no
 escape hatch: every middleware call is checked against a real signature.
 `pool.export` and `service.control` are declared as jobs and go through `runJob`
@@ -36,10 +36,10 @@ Two more since (2026-09-07), in `tests/s3.e2e.ts`: an S3 bucket with object lock
 created from the Shares dashboard, and an S3 access key minted under
 Credentials. Written against the templates and type-checked; not yet run against
 an appliance, so treat the first run as the real review. They need a pool (any,
-or they build a one-disk one and export it) and the S3 service. The generated
-client has no `sharing.s3.*` / `s3.accesskey.*` yet — `support/api/s3-directory.ts`
-declares the four methods the fixtures read, and is to be deleted when the client
-ships them.
+or they build a one-disk one and export it) and the S3 service. They also moved
+the suite to `@truenas/api-client` 5.0, the first release whose v27 directory
+carries `sharing.s3.*` and `s3.accesskey.*`; the fixtures name their entry
+shapes off it rather than restating them.
 
 The framework is done and the coverage is not. Four journeys against 19 top-level
 feature areas. What the work bought is that the next twenty tests are cheap: the
@@ -98,9 +98,9 @@ a number. See `05-ci.md`.
 
 - **TLS verification is disabled process-wide** by `playwright.config.ts`, not
   scoped to the one connection that needs it. Still no seam in
-  `@truenas/api-client@3.0.2`: `CreateClientOptions` still exposes no TLS,
-  socket-constructor or dispatcher option. See the comment there for what would
-  close it.
+  `@truenas/api-client@5.0.0`: `CreateClientOptions` gained a `version` option
+  but still exposes no TLS, socket-constructor or dispatcher option. See the
+  comment there for what would close it.
 - **Nothing guards the `data-test` contract.** Every locator depends on
   attributes that webui's own convention forbids unit tests from asserting on,
   so they have no coverage in the repository that emits them. NAS-142069 was one
@@ -110,9 +110,9 @@ a number. See `05-ci.md`.
 - **`AuthResponseType` is declared but not exported** while
   `AuthResponse.response_type` is typed as it, so `support/api/client.ts` checks
   a successful login by comparing `String(...)` against `'SUCCESS'`. Still true
-  in 3.0.2. `ServiceControlAction` has the same problem but no longer costs
-  anything: `service.control` is a job, and the job path takes the verb as a
-  literal.
+  in 5.0.0. (`ServiceControlAction`, which had the same problem, is gone from
+  5.0 altogether; `service.control` is a job whose path takes the verb as a
+  literal, so nothing here needed it.)
 
 ---
 

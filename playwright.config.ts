@@ -49,9 +49,9 @@ const target = loadTargetConfig();
  * process, including ones added later by someone who never reads this comment.
  * Scoping it to the one connection that needs it would be strictly better.
  *
- * There is no seam for that, verified against `@truenas/api-client@3.0.2`:
- * `CreateClientOptions` takes `uuid`, `hostnames`, `enabled`, `systemName` and
- * `logger` — no `WebSocketCtor`, no dispatcher, no TLS options — and the socket
+ * There is no seam for that, verified against `@truenas/api-client@5.0.0`:
+ * `CreateClientOptions` takes `uuid`, `hostnames`, `enabled`, `systemName`,
+ * `logger` and `version` — no `WebSocketCtor`, no dispatcher, no TLS options — and the socket
  * is built internally from an rxjs `WebSocketSubjectConfig` the caller never
  * sees. Version discovery's `fetch` needs the same leniency and has no seam
  * either. `NODE_EXTRA_CA_CERTS` is not an answer while the certificate is
