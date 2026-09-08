@@ -19,6 +19,7 @@ import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-fo
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServiceWebshareComponent } from './service-webshare.component';
 
@@ -286,5 +287,54 @@ describe('ServiceWebshareComponent', () => {
     tnConnectConfig.set({ status: TruenasConnectStatus.Configured } as TruenasConnectConfig);
     spectator.detectChanges();
     expect(await (await getCheckbox('search')).isDisabled()).toBe(false);
+  });
+
+  describe('when entitlements resolve after webshare.config', () => {
+    const isEntitled = signal<boolean | undefined>(undefined);
+    const entitled$ = new Subject<boolean>();
+
+    const createLateComponent = createComponentFactory({
+      component: ServiceWebshareComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockAuth(),
+        mockApi([
+          mockCall('webshare.config', mockWebShareConfig),
+          mockCall('webshare.update', mockWebShareConfig),
+        ]),
+        ...ixFormTestingProviders(),
+        mockProvider(ErrorHandlerService),
+        mockProvider(TruenasConnectService, { config: tnConnectConfig }),
+        mockProvider(EntitlementsService, {
+          entitled: () => isEntitled,
+          entitled$: () => entitled$,
+        }),
+      ],
+    });
+
+    beforeEach(() => {
+      isEntitled.set(undefined);
+      tnConnectConfig.set({ status: TruenasConnectStatus.Configured } as TruenasConnectConfig);
+      spectator = createLateComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('keeps a server-enabled TrueSearch instead of patching it off before the entitlement is known', async () => {
+      // `webshare.config` has already answered (synchronously above); the entitlement lands now.
+      entitled$.next(true);
+      isEntitled.set(true);
+      spectator.detectChanges();
+
+      const checkbox = await getCheckbox('search');
+      expect(await checkbox.isDisabled()).toBe(false);
+      expect(await checkbox.isChecked()).toBe(true);
+
+      spectator.component.submit();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'webshare.update',
+        [expect.objectContaining({ search: true })],
+      );
+    });
   });
 });

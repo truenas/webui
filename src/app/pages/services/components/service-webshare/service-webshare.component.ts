@@ -7,6 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
 } from '@truenas/ui-components';
+import { combineLatest, take } from 'rxjs';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
@@ -121,12 +122,17 @@ export class ServiceWebshareComponent extends IxFormHostForm<boolean, WebShareFo
   }
 
   ngOnInit(): void {
-    this.loadFormConfig(this.api.call('webshare.config'), (config: WebShareConfig) => {
+    // Waits for a real entitlement answer, as service-smb does: `webshare.config` can resolve
+    // before entitlements do, and `loadFormConfig` patches only once, so a server-enabled
+    // TrueSearch would otherwise be patched off and submitted as `false` on the next save.
+    this.loadFormConfig(combineLatest([
+      this.api.call('webshare.config'),
+      this.entitlements.entitled$(EntitlementFeature.TrueSearch).pipe(take(1)),
+    ]), ([config, isEntitled]: [WebShareConfig, boolean]) => {
       this.form.patchValue({
-        // `webshare.config` is async, so it can resolve after the guard effect has already
-        // locked the control off. Gate the loaded value too, otherwise a stale `search: true`
-        // from the backend would be restored while unavailable and then submitted.
-        search: config.search && this.canUseTrueSearch(),
+        // The guard effect may already have locked the control off. Gate the loaded value too,
+        // otherwise a stale `search: true` would be restored while unavailable and then submitted.
+        search: config.search && isEntitled && this.isTruenasConnectConfigured(),
         passkey: config.passkey,
       });
     });
