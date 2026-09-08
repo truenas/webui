@@ -3,12 +3,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
+import { TnButtonToggleHarness, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { directIdMapping, User } from 'app/interfaces/user.interface';
-import { IxButtonGroupHarness } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UserService } from 'app/services/user.service';
 import { MapUserGroupIdsDialogComponent } from './map-user-group-ids-dialog.component';
@@ -104,8 +103,8 @@ describe('MapUserGroupIdsDialogComponent', () => {
   });
 
   it('switches to groups when type is changed', async () => {
-    const buttonGroup = await loader.getHarness(IxButtonGroupHarness);
-    await buttonGroup.setValue('Groups');
+    const groupsToggle = await loader.getHarness(TnButtonToggleHarness.with({ label: 'Groups' }));
+    await groupsToggle.check();
 
     expect(spectator.component.typeControl.value).toBe(ViewType.Groups);
   });

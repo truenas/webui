@@ -1,0 +1,4 @@
+// `<ix-form>` owns the `<form>` element, and its host has no display of its own.
+ix-form {
+  display: block;
+}

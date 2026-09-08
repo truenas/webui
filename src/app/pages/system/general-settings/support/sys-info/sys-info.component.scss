@@ -22,3 +22,13 @@
   display: flex;
   gap: 4px;
 }
+
+// The licensed features list can be long. The row opts into tn-list-item's
+// [wrap]; this undoes the single-line ellipsis the shared card styles put on
+// .value so the whole list stays readable.
+.features-row .features-value {
+  overflow: visible;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
+}

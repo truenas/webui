@@ -1,20 +1,21 @@
 <form [formGroup]="form">
-  <ix-input
-    formControlName="title"
-    [label]="'Subject' | translate"
-    [placeholder]="tooltips.title | translate"
-    [required]="true"
-  ></ix-input>
+  <tn-form-field [label]="'Subject' | translate" [required]="true">
+    <tn-input
+      formControlName="title"
+      [placeholder]="tooltips.title | translate"
+    ></tn-input>
+  </tn-form-field>
 
   <ix-similar-issues [query]="form.controls.title.value"></ix-similar-issues>
 
-  <ix-textarea
-    formControlName="message"
-    [label]="'Message' | translate"
-    [rows]="8"
-    [placeholder]="messagePlaceholder | translate"
-    [required]="true"
-  ></ix-textarea>
+  <tn-form-field [label]="'Message' | translate" [required]="true">
+    <tn-input
+      formControlName="message"
+      [multiline]="true"
+      [rows]="8"
+      [placeholder]="messagePlaceholder | translate"
+    ></tn-input>
+  </tn-form-field>
 
   <tn-form-field
     [tooltip]="tooltips.attach_debug | translate"
@@ -41,14 +42,27 @@
   </tn-form-field>
 
   @if (form.controls.attach_images.value) {
-    <ix-file-input
-      formControlName="images"
+    <!--
+      `tn-file-input` composes its own id under a `file-input-*` prefix and has no control-name
+      fallback, so the legacy `input-images` is pinned on the host instead — see the tn-button
+      anchor precedent in the migration playbook.
+    -->
+    <tn-form-field
       class="attach-images"
       [label]="'Attach images (optional)' | translate"
       [tooltip]="'Select images you want attach to review' | translate"
-      [multiple]="true"
-      [acceptedFiles]="acceptedFiles"
-    ></ix-file-input>
+    >
+      <tn-file-input
+        tnTestIdType="input"
+        formControlName="images"
+        [tnTestId]="'images'"
+        [multiple]="true"
+        [accept]="acceptedFiles"
+        [ariaLabel]="'Attach images (optional)' | translate"
+        [buttonLabel]="'Choose File' | translate"
+        [noFileText]="'No file chosen' | translate"
+      ></tn-file-input>
+    </tn-form-field>
   }
 </form>
 

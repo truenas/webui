@@ -1,5 +1,5 @@
 import { DialogRef } from '@angular/cdk/dialog';
-import { HarnessLoader } from '@angular/cdk/testing';
+import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { NgTemplateOutlet } from '@angular/common';
 import { ReactiveFormsModule, ValidationErrors } from '@angular/forms';
@@ -7,7 +7,7 @@ import { By } from '@angular/platform-browser';
 import {
   createHostFactory, createSpyObject, mockProvider, SpectatorHost,
 } from '@ngneat/spectator/jest';
-import { TnCheckboxHarness } from '@truenas/ui-components';
+import { TnCheckboxHarness, TnFormFieldHarness, TnInputHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
@@ -18,15 +18,14 @@ import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket
 import { SimilarIssuesComponent } from 'app/modules/feedback/components/similar-issues/similar-issues.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { IxFileInputHarness } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { fillControlValues, indexFormControls } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
+import { TnFileInputTestHarness } from 'app/modules/forms/ix-forms/testing/tn-file-input.harness';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 import { NewTicketResponse } from '../../interfaces/file-ticket.interface';
 
 describe('FileTicketComponent', () => {
   let spectator: SpectatorHost<FileTicketComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   let loginToJiraButton: OauthButtonComponent;
   let feedbackService: FeedbackService;
   const dialogRef = createSpyObject(DialogRef);
@@ -57,7 +56,7 @@ describe('FileTicketComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     // The dialog projects the form's actions into the shell footer; render that template here.
     spectator = createHost(
       `<ix-file-ticket #ticket [type]="type" [dialogRef]="dialogRef" [isLoading]="isLoading"></ix-file-ticket>
@@ -71,11 +70,20 @@ describe('FileTicketComponent', () => {
       },
     );
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
     // The login button is projected into the dialog footer (host level), so query from the fixture root.
     loginToJiraButton = spectator.fixture.debugElement.query(By.directive(OauthButtonComponent))
       ?.componentInstance as OauthButtonComponent;
     feedbackService = spectator.inject(FeedbackService);
+  });
+
+  it('renders subject and message as required fields', async () => {
+    const fields = await parallel(() => ['Subject', 'Message'].map(
+      (label) => loader.getHarness(TnFormFieldHarness.with({ label })),
+    ));
+
+    expect(await parallel(() => fields.map((field) => field.isRequired()))).toEqual([true, true]);
+    const message = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="message"]' }));
+    expect(await message.isMultiline()).toBe(true);
   });
 
   it('renders login to Jira button', () => {
@@ -88,7 +96,7 @@ describe('FileTicketComponent', () => {
     const similarIssues = spectator.query(SimilarIssuesComponent)!;
     expect(similarIssues).toBeTruthy();
 
-    await form.fillForm({
+    await fillControlValues(await indexFormControls(loader), {
       Subject: 'Cannot shutdown',
     });
 
@@ -104,13 +112,11 @@ describe('FileTicketComponent', () => {
     )).check();
     await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Attach additional images' }))).check();
 
-    await form.fillForm(
-      {
-        Subject: 'Cannot shutdown',
-        Message: 'Help me',
-        'Attach images (optional)': fakeAttachments,
-      },
-    );
+    await fillControlValues(await indexFormControls(loader), {
+      Subject: 'Cannot shutdown',
+      Message: 'Help me',
+    });
+    await (await loader.getHarness(TnFileInputTestHarness)).setValue(fakeAttachments);
 
     loginToJiraButton.loggedIn.emit('jira-token');
 
@@ -132,7 +138,7 @@ describe('FileTicketComponent', () => {
 
     await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Attach additional images' }))).check();
 
-    const fileInput = await loader.getHarness(IxFileInputHarness);
+    const fileInput = await loader.getHarness(TnFileInputTestHarness);
 
     loginToJiraButton.loggedIn.emit('jira-token');
 

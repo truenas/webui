@@ -111,7 +111,7 @@ describe('AccessCardComponent', () => {
 
   it('shows whether DS users are allowed access to WebUI', () => {
     const allowed = spectator.queryAll('.details-item')[0];
-    expect(allowed.textContent.replace(/\s+/g, ' ').trim()).toBe('Allow Directory Service users to access WebUI: Yes');
+    expect(allowed.textContent.replace(/\s+/g, ' ').trim()).toBe('Allow Directory Service users UI / API access: Yes');
   });
 
   it('shows current login banner', () => {

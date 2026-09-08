@@ -8,9 +8,12 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnChipInputComponent, TnFileInputComponent, TnFormFieldComponent,
+  TnInputComponent, TnSelectComponent, TnSelectOption, TnTestIdDirective,
+} from '@truenas/ui-components';
 import * as EmailValidator from 'email-validator';
-import { finalize, of } from 'rxjs';
+import { finalize } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import {
   ticketAcceptedFiles,
@@ -24,11 +27,6 @@ import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackForm } from 'app/modules/feedback/interfaces/feedback-form';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
@@ -42,14 +40,14 @@ import { ApiService } from 'app/modules/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxInputComponent,
-    IxChipsComponent,
-    IxSelectComponent,
-    IxTextareaComponent,
-    IxFileInputComponent,
     TnButtonComponent,
     TnCheckboxComponent,
+    TnChipInputComponent,
+    TnFileInputComponent,
     TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnTestIdDirective,
     TranslateModule,
   ],
   providers: [
@@ -102,9 +100,21 @@ export class FileTicketLicensedComponent implements FeedbackForm {
   protected readonly messagePlaceholder = helptext.bug.message.label;
   protected readonly acceptedFiles = ticketAcceptedFiles;
 
-  readonly categoryOptions$ = of(mapToOptions(ticketCategoryLabels, this.translate));
-  readonly environmentOptions$ = of(mapToOptions(ticketEnvironmentLabels, this.translate));
-  readonly criticalityOptions$ = of(mapToOptions(ticketCriticalityLabels, this.translate));
+  // `tn-select` takes synchronous, already-translated options — `mapToOptions` translates as it maps.
+  protected readonly categoryOptions: TnSelectOption<TicketCategory>[] = mapToOptions(
+    ticketCategoryLabels,
+    this.translate,
+  );
+
+  protected readonly environmentOptions: TnSelectOption<TicketEnvironment>[] = mapToOptions(
+    ticketEnvironmentLabels,
+    this.translate,
+  );
+
+  protected readonly criticalityOptions: TnSelectOption<TicketCriticality>[] = mapToOptions(
+    ticketCriticalityLabels,
+    this.translate,
+  );
 
   readonly tooltips = {
     name: helptext.name.tooltip,

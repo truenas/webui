@@ -2,8 +2,10 @@
   margin-bottom: 0;
 }
 
+// Both fields are `tn-form-field`s now, so their label rows are identical and aligning the tops
+// lines the two boxes up.
 .address-pool {
-  align-items: baseline;
+  align-items: flex-start;
   column-gap: 20px;
   display: flex;
 
@@ -25,12 +27,15 @@
   column-gap: 20px;
   display: flex;
 
-  ix-input {
+  .url {
     flex-grow: 1;
   }
 
-  ix-checkbox {
-    padding-top: 40px;
+  // The URL field spends a label row (label line + its 0.5rem margin) before its
+  // input; the checkbox field has no label, so push it down by the same amount to
+  // line the two controls up.
+  .insecure {
+    padding-top: 32px;
     width: auto;
   }
 }

@@ -1,37 +1,24 @@
-import {
-  BaseHarnessFilters, ComponentHarness, HarnessPredicate, parallel,
-} from '@angular/cdk/testing';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { TnIconHarness } from '@truenas/ui-components';
-import { IxLabelHarness } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.harness';
+import { ComponentHarness, parallel } from '@angular/cdk/testing';
+import { TnIconButtonHarness, TnIconHarness } from '@truenas/ui-components';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
-import { getErrorText } from 'app/modules/forms/ix-forms/utils/harness.utils';
 
-export interface IxStarRatingFilters extends BaseHarnessFilters {
-  label?: string;
-}
-
+/**
+ * The control renders only the stars — its label, required indicator and error text belong to the
+ * wrapping `<tn-form-field>`, so {@link getLabelText} has nothing to report and `indexControlsByLabel`
+ * leaves it out of a form index. Drive it through this harness directly, and read its label/errors
+ * through `TnFormFieldHarness` / `TnFormControlHarness`.
+ */
 export class IxStarRatingHarness extends ComponentHarness implements IxFormControlHarness {
   static readonly hostSelector = 'ix-star-rating';
 
-  static with(options: IxStarRatingFilters): HarnessPredicate<IxStarRatingHarness> {
-    return new HarnessPredicate(IxStarRatingHarness, options)
-      .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
-  }
+  getButtons = this.locatorForAll(TnIconButtonHarness);
 
-  getButtons = this.locatorForAll(MatButtonHarness);
-  getErrorText = getErrorText;
-
-  async getLabelText(): Promise<string> {
-    const label = await this.locatorForOptional(IxLabelHarness)();
-    if (!label) {
-      return '';
-    }
-    return label.getLabel();
+  getLabelText(): Promise<string> {
+    return Promise.resolve('');
   }
 
   async getValue(): Promise<number> {
-    const selectedIcons = await this.locatorForAll(TnIconHarness.with({ name: 'mdi-star' }))();
+    const selectedIcons = await this.locatorForAll(TnIconHarness.with({ name: 'star' }))();
     return selectedIcons.length;
   }
 
@@ -42,8 +29,8 @@ export class IxStarRatingHarness extends ComponentHarness implements IxFormContr
 
   async isDisabled(): Promise<boolean> {
     const buttons = await this.getButtons();
-    const inputState = await parallel(() => buttons.map((control) => control.isDisabled()));
+    const buttonStates = await parallel(() => buttons.map((button) => button.isDisabled()));
 
-    return inputState.every(Boolean);
+    return buttonStates.every(Boolean);
   }
 }

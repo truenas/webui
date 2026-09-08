@@ -1,0 +1,176 @@
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="!isNew()"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
+  <tn-form-section [heading]="'Bucket' | translate">
+    <tn-form-field
+      [label]="'Name' | translate"
+      [tooltip]="helptext.nameTooltip | translate"
+      [required]="true"
+    >
+      <tn-input formControlName="name"></tn-input>
+    </tn-form-field>
+
+    @if (isNew()) {
+      <ix-explorer
+        formControlName="parent_dataset"
+        [label]="'Parent Dataset' | translate"
+        [tooltip]="helptext.parentDatasetTooltip | translate"
+        [nodeProvider]="treeNodeProvider"
+        [required]="true"
+      ></ix-explorer>
+      @if (datasetHint(); as hint) {
+        <p class="dataset-hint">{{ hint }}</p>
+      }
+    } @else {
+      <tn-form-field [label]="'Dataset' | translate">
+        <tn-input name="dataset" [formControl]="datasetControl"></tn-input>
+      </tn-form-field>
+    }
+
+    <tn-form-field
+      [label]="'Owner' | translate"
+      [tooltip]="helptext.ownerTooltip | translate"
+      [required]="true"
+    >
+      <ix-user-combobox
+        formControlName="owner"
+        [directoryOptions]="ownerDirectoryOptions"
+        [requireSelection]="true"
+        [allowCustomValue]="false"
+        [allowCreate]="true"
+        [validateExistence]="false"
+      ></ix-user-combobox>
+    </tn-form-field>
+
+    <tn-form-field [tooltip]="helptext.enabledTooltip | translate">
+      <tn-checkbox formControlName="enabled" [label]="'Enabled' | translate"></tn-checkbox>
+    </tn-form-field>
+  </tn-form-section>
+
+  <tn-form-section [heading]="'Object Lock' | translate">
+    <tn-form-field [tooltip]="helptext.objectLockTooltip | translate" [hint]="objectLockHint()">
+      <tn-checkbox formControlName="object_lock" [label]="'Enable Object Lock' | translate"></tn-checkbox>
+    </tn-form-field>
+
+    @if (form.controls.object_lock.value) {
+      <tn-form-field
+        [label]="'Default Retention Mode' | translate"
+        [tooltip]="helptext.objectLockDefaultModeTooltip | translate"
+      >
+        <tn-select formControlName="object_lock_default_mode" [options]="objectLockModeOptions"></tn-select>
+      </tn-form-field>
+
+      @if (form.controls.object_lock_default_mode.value) {
+        <tn-form-field
+          [label]="'Default Retention Days' | translate"
+          [tooltip]="helptext.objectLockDefaultDaysTooltip | translate"
+          [required]="true"
+        >
+          <tn-input
+            formControlName="object_lock_default_days"
+            [inputType]="InputType.Number"
+            [allowDecimals]="false"
+          ></tn-input>
+        </tn-form-field>
+      }
+    }
+  </tn-form-section>
+
+  @if (isAdvancedMode()) {
+    <tn-form-section [heading]="'Versioning' | translate">
+      <tn-form-field
+        [label]="'Versioning' | translate"
+        [tooltip]="helptext.versioningTooltip | translate"
+        [hint]="versioningHint()"
+        [required]="true"
+      >
+        <tn-select formControlName="versioning" [options]="versioningOptions"></tn-select>
+      </tn-form-field>
+
+      @if (form.controls.versioning.value !== S3Versioning.Off) {
+        <tn-form-field
+          [label]="'Snapshot Versions' | translate"
+          [tooltip]="helptext.snapshotVersionsTooltip | translate"
+        >
+          <tn-chip-input
+            testId="snapshot-versions"
+            formControlName="snapshot_versions"
+            [allowCustomValue]="true"
+            [addOnBlur]="true"
+          ></tn-chip-input>
+        </tn-form-field>
+
+        <tn-form-field
+          [label]="'Snapshot Versions Listed' | translate"
+          [tooltip]="helptext.snapshotVersionsMaxTooltip | translate"
+          [required]="true"
+        >
+          <tn-input
+            formControlName="snapshot_versions_max"
+            [inputType]="InputType.Number"
+            [allowDecimals]="false"
+          ></tn-input>
+        </tn-form-field>
+      }
+    </tn-form-section>
+
+    <tn-form-section [heading]="'Access' | translate">
+      <tn-form-field
+        [label]="'Permissions Model' | translate"
+        [tooltip]="helptext.permissionsModelTooltip | translate"
+        [required]="true"
+      >
+        <tn-select formControlName="permissions_model" [options]="permissionsModelOptions()"></tn-select>
+      </tn-form-field>
+
+      <ix-s3-grants-list
+        [formArray]="form.controls.grants"
+        [label]="'Grants' | translate"
+        [tooltip]="helptext.grantsTooltip | translate"
+      ></ix-s3-grants-list>
+    </tn-form-section>
+
+    <tn-form-section [heading]="'Other Options' | translate">
+      <tn-form-field
+        [label]="'Multipart ETag' | translate"
+        [tooltip]="helptext.multipartEtagTooltip | translate"
+        [required]="true"
+      >
+        <tn-select formControlName="multipart_etag" [options]="multipartEtagOptions"></tn-select>
+      </tn-form-field>
+    </tn-form-section>
+
+    @if (isLicensed()) {
+      <tn-form-section [heading]="'Auditing' | translate">
+        <tn-form-field
+          [label]="'Audit' | translate"
+          [tooltip]="helptext.auditTooltip | translate"
+          [required]="true"
+        >
+          <tn-select formControlName="audit_mode" [options]="auditModeOptions"></tn-select>
+        </tn-form-field>
+
+        @if (form.controls.audit_mode.value === S3AuditMode.Selected) {
+          <tn-form-field [label]="'Audited Actions' | translate">
+            <tn-select
+              formControlName="audit_actions"
+              [options]="auditActionOptions()"
+              [multiple]="true"
+            ></tn-select>
+          </tn-form-field>
+        }
+
+        <tn-form-field
+          [label]="'Audit Overflow' | translate"
+          [tooltip]="helptext.auditOverflowTooltip | translate"
+        >
+          <tn-select formControlName="audit_overflow" [options]="auditOverflowOptions"></tn-select>
+        </tn-form-field>
+      </tn-form-section>
+    }
+  }
+</ix-form>

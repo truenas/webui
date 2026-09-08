@@ -1,30 +1,14 @@
-@if (label() || tooltip()) {
-  <ix-label
-    [label]="label()"
-    [tooltip]="tooltip()"
-    [required]="required()"
-  ></ix-label>
-}
-
-<div class="star-rating" [attr.aria-label]="label()">
+<!-- `focusout` bubbles where `blur` does not, so one handler marks the whole group touched. -->
+<div class="star-rating" (focusout)="onTouch()">
   @for (rating of ratings(); track index; let index = $index) {
-    <div>
-      <button
-        mat-icon-button
-        type="button"
-        [disabled]="isDisabled"
-        [ixTest]="[controlDirective.name, index + 1]"
-        [attr.aria-label]="'Click to give {index} star rating.' | translate: { index: index + 1 }"
-        (click)="onValueChanged(index + 1)"
-        (blur)="onTouch()"
-      >
-        <tn-icon customSize="28px" [name]="value >= index + 1 ? tnIconMarker('star', 'mdi') : tnIconMarker('star-outline', 'mdi')"></tn-icon>
-      </button>
-    </div>
+    <tn-icon-button
+      library="mdi"
+      size="lg"
+      [name]="value >= index + 1 ? 'star' : 'star-outline'"
+      [disabled]="isDisabled"
+      [testId]="[controlDirective.name, index + 1]"
+      [ariaLabel]="'Click to give {index} star rating.' | translate: { index: index + 1 }"
+      (onClick)="onValueChanged(index + 1)"
+    ></tn-icon-button>
   }
 </div>
-
-@let control = controlDirective.control;
-@if (control) {
-  <ix-errors [control]="control" [label]="label()"></ix-errors>
-}

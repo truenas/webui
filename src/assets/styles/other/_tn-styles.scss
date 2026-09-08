@@ -128,8 +128,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   .mat-mdc-select-panel,
   .mat-mdc-select-panel-done-animating,
   .mat-expansion-panel,
-  .mat-mdc-dialog-container,
-  .mat-mdc-dialog-container .mat-mdc-dialog-surface,
   .mat-stepper-horizontal,
   .mat-stepper-vertical {
     @include variable(background, --bg2, $bg2);
@@ -348,56 +346,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
 
   /////////////////// END SpecSelectors
 
-  .mat-dialog-container {
-    max-width: 80vw;
-  }
-
-  .mat-mdc-dialog-container {
-    border-radius: var(--mdc-dialog-container-shape);
-    max-width: 800px;
-
-    :not(.mat-mdc-dialog-content) {
-      > form {
-        padding: 0 24px 24px;
-
-        .mat-mdc-dialog-content,
-        .mat-mdc-dialog-actions {
-          padding: 0 0 5px;
-        }
-      }
-    }
-
-    .mat-mdc-dialog-actions {
-      justify-content: end;
-    }
-  }
-
-  .mat-mdc-dialog-title {
-    display: flex;
-    margin: 0 0 15px;
-    padding: 24px 24px 0;
-  }
-
-  .mdc-dialog__actions {
-    min-height: inherit;
-    padding: 0 24px 20px;
-  }
-
-  .mat-mdc-dialog-content {
-    max-height: 50vh;
-    overflow-y: auto;
-
-    .more-info {
-      align-items: center;
-      cursor: pointer;
-      display: flex;
-      gap: 8px;
-      margin-top: 5px;
-      min-height: 40px;
-    }
-
-  }
-
   .mat-spinner circle {
     @include variable(stroke, --primary, $primary, !important);
   }
@@ -597,12 +545,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   // for multi-selection only
   .mat-mdc-option-pseudo-checkbox.mat-pseudo-checkbox {
     display: none;
-  }
-
-  // Bring tooltips to the front in dialogs
-  // Only container needs visible overflow - content should scroll
-  .mat-mdc-dialog-container {
-    overflow: visible !important;
   }
 
   // Fix for overscrolling problem with sidenav
@@ -812,21 +754,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     }
   }
 
-  .topbar-panel {
-    .mat-mdc-dialog-container {
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-    }
-
-    .mat-mdc-dialog-content {
-      overflow: auto !important;
-    }
-
-    .mat-mdc-dialog-actions {
-      padding-bottom: 24px;
-    }
-  }
-
   // Disabled form fields
   .form-element .mat-mdc-text-field-wrapper[disabled],
   .form-element input[type=email][disabled],
@@ -912,18 +839,6 @@ mat-form-field {
 .mdc-line-ripple::before,
 .mdc-line-ripple::after {
   border: 0 !important;
-}
-
-.manual-selection-dialog,
-.inspect-vdevs-dialog {
-  .mat-mdc-dialog-container {
-    max-width: inherit;
-  }
-}
-
-.multi-error-dialog.mat-mdc-dialog-container,
-.multi-error-dialog.mat-mdc-dialog-content {
-  overflow: auto !important;
 }
 
 // `tn-side-panel` renders its overlay inline (position: fixed; z-index: 1000) rather than

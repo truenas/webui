@@ -22,6 +22,7 @@ import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { KeyCreatedDialog } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
+import { DirectoryQueryOptions, UserDirectoryService } from 'app/services/user-directory.service';
 
 describe('ApiKeyFormComponent', () => {
   let spectator: Spectator<ApiKeyFormComponent>;
@@ -170,6 +171,45 @@ describe('ApiKeyFormComponent', () => {
     expect(closedSpy).toHaveBeenCalledWith(true);
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(KeyCreatedDialog, {
       data: 'generated-key',
+    });
+  });
+
+  describe('username field query', () => {
+    function queryUsers(search: string): void {
+      const options = (spectator.component as unknown as { userDirectoryOptions: DirectoryQueryOptions })
+        .userDirectoryOptions;
+
+      spectator.inject(UserDirectoryService).queryUsers(search, 0, options).subscribe();
+    }
+
+    it('offers directory service users alongside privileged local users, one constrained page at a time', async () => {
+      await setupTest();
+
+      queryUsers('');
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.query', [
+        [['OR', [['roles', '!=', []], ['local', '=', false]]]],
+        {
+          select: ['username', 'id', 'uid', 'local'],
+          order_by: ['username'],
+          offset: 0,
+          limit: 50,
+        },
+      ]);
+    });
+
+    it('narrows the query by the typed username instead of listing everyone', async () => {
+      await setupTest();
+
+      queryUsers('AD01\\jsmith');
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.query', [
+        [
+          ['username', '~', '(?i).*AD01\\\\jsmith'],
+          ['OR', [['roles', '!=', []], ['local', '=', false]]],
+        ],
+        expect.objectContaining({ offset: 0, limit: 50 }),
+      ]);
     });
   });
 

@@ -105,6 +105,15 @@ describe('ServiceActionsMenuService', () => {
       ]);
     });
 
+    it('adds the Access Keys item for S3', () => {
+      const items = spectator.service.buildMenuItems(
+        service({ service: ServiceName.S3, state: ServiceStatus.Stopped }),
+        true,
+      );
+
+      expect(items.map((item) => item.label)).toEqual(['Turn On Service', 'Config Service', 'Access Keys']);
+    });
+
     it('omits the toggle item when the user lacks the control role', () => {
       const items = spectator.service.buildMenuItems(
         service({ service: ServiceName.Iscsi, state: ServiceStatus.Running }),

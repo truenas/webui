@@ -1,24 +1,11 @@
 @import 'scss-imports/cssvars';
 
-.category-type-wrapper {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-}
-
+// `tn-form-section` lays its body out as a flex column with its own gap, so the fields need no
+// margin of their own — `ix-fieldset` had no such gap and the margin here supplied the spacing.
 .half-width {
   width: 50%;
 
   @media (max-width: $breakpoint-xs) {
     width: 100%;
-  }
-}
-
-tn-form-field {
-  display: block;
-  margin-bottom: 1rem;
-
-  &:last-child {
-    margin-bottom: 0;
   }
 }

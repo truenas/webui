@@ -70,6 +70,11 @@ export const sharingRoutes: Routes = [
         loadChildren: () => import('app/pages/sharing/nvme-of/nvme-of.routes').then((module) => module.nvmeOfRoutes),
       },
       {
+        path: 's3',
+        data: { title: T('S3'), breadcrumb: T('S3') },
+        loadChildren: () => import('app/pages/sharing/s3/s3.routes').then((module) => module.s3Routes),
+      },
+      {
         path: 'webshare',
         data: { title: T('WebShare'), breadcrumb: null },
         canActivate: [webShareGuard],

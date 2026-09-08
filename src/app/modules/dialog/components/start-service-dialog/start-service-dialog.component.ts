@@ -4,13 +4,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnSlideToggleComponent } from '@truenas/ui-components';
 import { Observable, forkJoin, filter } from 'rxjs';
 import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-name.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Service } from 'app/interfaces/service.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -30,7 +29,7 @@ export interface StartServiceDialogResult {
   imports: [
     TnDialogShellComponent,
     TnButtonComponent,
-    IxSlideToggleComponent,
+    TnSlideToggleComponent,
     ReactiveFormsModule,
     FormActionsComponent,
     TranslateModule,

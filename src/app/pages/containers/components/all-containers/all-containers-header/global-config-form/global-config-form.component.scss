@@ -1,3 +1,8 @@
+// `<ix-form>` owns the `<form>` element, and its host has no display of its own.
+ix-form {
+  display: block;
+}
+
 // tn-form-section's heading carries only a bottom margin, so when it follows a
 // bare field it jams against it. Add top spacing matching the section gap rhythm.
 tn-form-section {

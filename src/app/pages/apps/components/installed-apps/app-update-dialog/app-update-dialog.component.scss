@@ -2,18 +2,6 @@
   font-size: 14px;
 }
 
-:host ::ng-deep .mat-mdc-dialog-content {
-  max-width: unset;
-  overflow: auto;
-
-  .mat-mdc-form-field {
-    flex: 1;
-    margin: 0 0 0 10px;
-    min-width: 0;
-    width: unset !important;
-  }
-}
-
 .logo-container {
   align-items: center;
   display: flex;
