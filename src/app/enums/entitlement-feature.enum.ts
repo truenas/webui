@@ -11,7 +11,7 @@ export enum EntitlementFeature {
   CatalogEnterpriseTrain = 'CATALOG_ENTERPRISE_TRAIN',
   Containers = 'CONTAINERS',
   Dedup = 'DEDUP',
-  DirectoryServices = 'DIRECTORY_SERVICES',
+  DirectoryServicesAuth = 'DIRECTORY_SERVICES_AUTH',
   FibreChannel = 'FIBRECHANNEL',
   Kmip = 'KMIP',
   MissionCritical = 'MISSION_CRITICAL',

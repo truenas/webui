@@ -654,7 +654,7 @@ describe('PrivilegeFormComponent', () => {
               {
                 selector: selectEntitlements,
                 value: {
-                  [EntitlementFeature.DirectoryServices]: {
+                  [EntitlementFeature.DirectoryServicesAuth]: {
                     entitled: false,
                     reason: EntitlementReason.KeyMissing,
                     message: 'Directory services authentication for UI and API access requires an Enterprise license.',

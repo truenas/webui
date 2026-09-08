@@ -93,7 +93,7 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
   readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   protected readonly helptext = helptextPrivilege;
-  protected readonly hasDirectoryServices = this.entitlements.entitled(EntitlementFeature.DirectoryServices);
+  protected readonly hasDirectoryServices = this.entitlements.entitled(EntitlementFeature.DirectoryServicesAuth);
   protected existingPrivilege: Privilege | undefined;
 
   readonly rolesOptions$ = this.api.call('privilege.roles').pipe(
