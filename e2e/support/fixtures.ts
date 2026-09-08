@@ -46,6 +46,15 @@ const tokenLoginBudgetMs = 90_000;
 const tokenLoginAttemptTimeoutMs = 30_000;
 const tokenLoginRetryDelayMs = 5_000;
 
+/** What one wait may take: the attempt ceiling, or less when the budget is nearly spent. */
+function remainingOf(deadline: number): number {
+  const remainingMs = deadline - Date.now();
+  if (remainingMs <= 0) {
+    throw new Error('the login budget ran out before the admin shell could be awaited');
+  }
+  return Math.min(tokenLoginAttemptTimeoutMs, remainingMs);
+}
+
 /**
  * Signs `page` in through the token URL, with a token minted for this login.
  *
@@ -78,19 +87,15 @@ async function signInWithToken(page: Page, client: E2eApiClient, config: TargetC
       // the API session can be the thing that is not back yet, and that is one
       // failed attempt like any other rather than the end of the loop.
       const token = await generateAuthToken(client);
-      await page.goto(buildTokenLoginUrl(config.uiBaseUrl, token));
 
-      // Measured after the mint and the navigation, which can eat the budget
-      // on their own. Playwright reads `timeout: 0` as *no* timeout, so a spent
-      // budget has to stop the attempt here rather than be clamped to zero and
-      // wait for the per-test ceiling instead.
-      const remainingMs = deadline - Date.now();
-      if (remainingMs <= 0) {
-        throw new Error('the login budget ran out before the admin shell could be awaited');
-      }
-      await expect(page.locator(adminLayout)).toBeVisible({
-        timeout: Math.min(tokenLoginAttemptTimeoutMs, remainingMs),
-      });
+      // Both waits are bounded by what is left of the budget, measured just
+      // before each: the mint and the navigation can eat it on their own, and a
+      // navigation that connects but never finishes loading is exactly the
+      // pool-export case this loop exists for. Playwright reads `timeout: 0` as
+      // *no* timeout, so a spent budget has to stop the attempt here rather than
+      // be clamped to zero and wait for the per-test ceiling instead.
+      await page.goto(buildTokenLoginUrl(config.uiBaseUrl, token), { timeout: remainingOf(deadline) });
+      await expect(page.locator(adminLayout)).toBeVisible({ timeout: remainingOf(deadline) });
       return;
     } catch (error) {
       // `goto` can throw outright while the web server is down, and the

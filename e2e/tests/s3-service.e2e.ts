@@ -12,7 +12,8 @@
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import {
-  clearS3Listeners, ensureS3ServiceStopped, queryS3Service, readS3Config, restoreS3Config, type S3ConfigEntry,
+  ensureS3ServiceStopped, queryS3Service, readS3Config, resetS3ListenersAndCertificate, restoreS3Config,
+  type S3ConfigEntry,
 } from '../fixtures/s3';
 import { configureS3Service } from '../flows/s3';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
@@ -46,9 +47,10 @@ test.beforeEach(async ({ api, pool }) => {
   test.info().annotations.push({ type: 'pool', description: pool });
   await ensureS3ServiceStopped(api);
   original = await readS3Config(api);
-  // The form appends to the stored listeners; starting from none is what makes
-  // "exactly one listener" below a statement about this journey.
-  await clearS3Listeners(api);
+  // The form saves back whatever it loaded. Starting from no listeners and the
+  // UI certificate is what makes the assertions below statements about this
+  // journey rather than about the appliance it happened to run on.
+  await resetS3ListenersAndCertificate(api);
 });
 
 test.afterEach(async ({ api }) => {

@@ -188,16 +188,20 @@ export async function ensureS3ServiceStopped(client: E2eApiClient): Promise<void
 }
 
 /**
- * Removes every listener, so a journey that adds one starts from none.
+ * Puts the parts of the service configuration a journey leaves alone into a
+ * known state: no listeners, and the UI certificate.
  *
- * `s3.update` replaces the list rather than appending, but the service form
- * loads the stored listeners into its rows and appends to them — so a leftover
- * listener from an interrupted run, or a developer's own, would give the form
- * two rows and the journey's "exactly one" check nothing to stand on.
+ * The service form loads what is stored and saves it back, so anything the
+ * journey does not touch is ambient state — a leftover listener from an
+ * interrupted run, or a certificate a developer configured — and an assertion
+ * about the saved configuration would be about the appliance rather than the
+ * journey. `s3.update` replaces the listener list outright, but the form
+ * appends rows to the stored ones, so "exactly one listener" only means
+ * something from none.
  */
-export async function clearS3Listeners(client: E2eApiClient): Promise<void> {
+export async function resetS3ListenersAndCertificate(client: E2eApiClient): Promise<void> {
   await firstValueFrom(
-    client.api.call('s3.update', [{ listeners: [] }]).pipe(timeout(slowCallTimeoutMs)),
+    client.api.call('s3.update', [{ listeners: [], certificate: null }]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
 

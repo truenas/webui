@@ -122,6 +122,19 @@ export async function createS3AccessKey(page: Page, key: NewS3AccessKey): Promis
 
   await page.locator(form.save).click();
 
+  const shown = await readCredentialsDialog(page);
+  await expect(page.locator(s3AccessKeyLocators.rowName(key.name))).toBeVisible({ timeout: saveTimeoutMs });
+
+  return shown;
+}
+
+/**
+ * Reads the credential pair off the one-time dialog and closes it.
+ *
+ * Raised after a key is created and after its secret is rotated; the secret
+ * appears nowhere else, so this is the only place a test can take it from.
+ */
+async function readCredentialsDialog(page: Page): Promise<ShownS3Credentials> {
   const dialog = s3AccessKeyLocators.credentialsDialog;
   await expect(page.locator(dialog.secretAccessKey)).toBeVisible({ timeout: saveTimeoutMs });
 
@@ -130,8 +143,6 @@ export async function createS3AccessKey(page: Page, key: NewS3AccessKey): Promis
 
   await page.locator(dialog.close).click();
   await expect(page.locator(dialog.secretAccessKey)).toBeHidden();
-
-  await expect(page.locator(s3AccessKeyLocators.rowName(key.name))).toBeVisible({ timeout: saveTimeoutMs });
 
   return { accessKeyId, secretAccessKey };
 }
@@ -255,16 +266,7 @@ export async function rotateS3AccessKey(page: Page, name: string): Promise<Shown
   await page.locator(s3AccessKeyLocators.row.rotate(name)).click();
   await confirmDestructiveAction(page);
 
-  const dialog = s3AccessKeyLocators.credentialsDialog;
-  await expect(page.locator(dialog.secretAccessKey)).toBeVisible({ timeout: saveTimeoutMs });
-
-  const accessKeyId = await page.locator(dialog.accessKeyId).inputValue();
-  const secretAccessKey = await page.locator(dialog.secretAccessKey).inputValue();
-
-  await page.locator(dialog.close).click();
-  await expect(page.locator(dialog.secretAccessKey)).toBeHidden();
-
-  return { accessKeyId, secretAccessKey };
+  return readCredentialsDialog(page);
 }
 
 /** Deletes an access key from its row menu. */

@@ -59,7 +59,7 @@ export async function findOnlinePool(client: E2eApiClient): Promise<string | und
  * skipped by teardown in exactly those cases, and a leaked pool holds its disks
  * and starves every later run.
  */
-export async function providePool(client: E2eApiClient, onBuild: () => void): Promise<string> {
+async function providePool(client: E2eApiClient, onBuild: () => void): Promise<string> {
   const existing = await findOnlinePool(client);
   if (existing) {
     return existing;
@@ -103,7 +103,7 @@ export async function providePool(client: E2eApiClient, onBuild: () => void): Pr
  * case that builds it.) Every other pool is left alone, however the suite came
  * to use it.
  */
-export function isSuiteOwnedPool(name: string): boolean {
+function isSuiteOwnedPool(name: string): boolean {
   return name === suiteOwnedPoolName;
 }
 
