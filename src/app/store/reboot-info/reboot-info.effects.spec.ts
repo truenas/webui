@@ -1,7 +1,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { firstValueFrom, of, ReplaySubject } from 'rxjs';
+import { firstValueFrom, of, ReplaySubject, Subject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
@@ -107,6 +107,32 @@ describe('RebootInfoEffects', () => {
         thisNodeRebootInfo: fakeThisNodeRebootInfo,
         otherNodeRebootInfo: null,
       }));
+    });
+
+    it('replaces the subscription when the licensed status is corrected later', () => {
+      // Sign-in seeds HA as licensed, then the HA entitlement says otherwise: the first source
+      // must be torn down, or both keep pushing reboot info and race each other.
+      const haEvents$ = new Subject<ApiEvent<FailoverRebootInfo>>();
+      jest.spyOn(spectator.inject(ApiService), 'subscribe').mockImplementation((method) => (
+        method === 'failover.reboot.info'
+          ? haEvents$
+          : of({ fields: fakeThisNodeRebootInfo } as ApiEvent<SystemRebootInfo>)
+      ));
+      const dispatched: unknown[] = [];
+      spectator.service.subscribeToRebootInfo.subscribe((action) => dispatched.push(action));
+      // `actions$` replays the previous test's action to a new subscriber; start counting here.
+      dispatched.length = 0;
+
+      actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: true }));
+      actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: false }));
+      haEvents$.next({
+        fields: { this_node: fakeThisNodeRebootInfo, other_node: fakeOtherNodeRebootInfo },
+      } as ApiEvent<FailoverRebootInfo>);
+
+      expect(dispatched).toEqual([rebootInfoLoaded({
+        thisNodeRebootInfo: fakeThisNodeRebootInfo,
+        otherNodeRebootInfo: null,
+      })]);
     });
   });
 

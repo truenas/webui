@@ -49,7 +49,11 @@ export class EntitlementsService {
     );
   }
 
-  /** For explaining a denial. `undefined` means either not loaded or not gated. */
+  /**
+   * For explaining a denial. `undefined` means either not loaded or not gated.
+   * No production consumer yet: rendering denial reasons (upgrade/purchase hints) is deferred
+   * follow-up work to NAS-143012; the specs and `mockEntitlements` pin the shape until then.
+   */
   entitlement(feature: EntitlementFeature): Signal<EntitlementEntry | undefined> {
     return this.cached(this.entrySignals, feature, () => toSignal(
       this.store$.select(this.entrySelector(feature)),

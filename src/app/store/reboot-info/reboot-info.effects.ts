@@ -27,9 +27,12 @@ export class RebootInfoEffects {
     mergeMap((isHaLicensed) => this.fetchRebootInfo(isHaLicensed)),
   ));
 
+  // `switchMap`, like `HaInfoEffects.subscribeToHa`: the licensed status is seeded at sign-in and
+  // can be corrected once the `HA` entitlement arrives, and the earlier subscription must be
+  // torn down then, or two reboot-info sources race each other.
   subscribeToRebootInfo = createEffect(() => this.actions$.pipe(
     ofType(failoverLicensedStatusLoaded),
-    mergeMap(({ isHaLicensed }) => {
+    switchMap(({ isHaLicensed }) => {
       if (isHaLicensed) {
         return this.api.subscribe('failover.reboot.info').pipe(
           map((event) => rebootInfoLoaded({

@@ -22,7 +22,7 @@ import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
-import { selectIsEnterprise, selectProductType } from 'app/store/system-info/system-info.selectors';
+import { selectProductType } from 'app/store/system-info/system-info.selectors';
 
 describe('TargetGlobalConfigurationComponent', () => {
   let spectator: Spectator<GlobalTargetConfigurationComponent>;
@@ -82,10 +82,6 @@ describe('TargetGlobalConfigurationComponent', () => {
           {
             selector: selectProductType,
             value: null,
-          },
-          {
-            selector: selectIsEnterprise,
-            value: false,
           },
         ],
       }),

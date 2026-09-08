@@ -327,8 +327,9 @@ export class DiskListComponent {
    * follows the entitlement instead of whatever was known at field init. The entitlement
    * never touches `hidden`: that flag belongs to the picker and the user's saved preference.
    * A column dropped here is unknown to the picker, which treats a saved preference naming it as
-   * stale and restores the defaults for every column — accepted for the rare loss of an
-   * entitlement, since the alternative is offering a column that cannot be shown.
+   * stale and restores the defaults for every column; one gained later starts hidden until the
+   * user picks it, because the saved preference predates it. Both are accepted for the rare
+   * entitlement transition, since the alternative is offering a column that cannot be shown.
    */
   protected readonly visibleColumns = computed(() => (
     this.hasSedEntitlement()

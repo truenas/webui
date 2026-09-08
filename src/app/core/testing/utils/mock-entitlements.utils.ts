@@ -18,7 +18,7 @@ import { EntitlementsService } from 'app/services/entitlements.service';
 export function mockEntitlements(
   denied: EntitlementFeature[] | Partial<Record<EntitlementFeature, EntitlementReason>> = [],
 ): FactoryProvider {
-  const reasons = Array.isArray(denied)
+  const reasons: Partial<Record<EntitlementFeature, EntitlementReason>> = Array.isArray(denied)
     ? Object.fromEntries(denied.map((feature) => [feature, EntitlementReason.KeyMissing]))
     : denied;
 
@@ -27,9 +27,10 @@ export function mockEntitlements(
     entitled: (feature: EntitlementFeature) => () => !(feature in reasons),
     entitlement: (feature: EntitlementFeature) => () => {
       const reason = reasons[feature];
-      return reason
-        ? { entitled: false, reason, message: `${feature} is not available.` } as EntitlementEntry
+      const entry: EntitlementEntry | undefined = reason
+        ? { entitled: false, reason, message: `${feature} is not available.` }
         : undefined;
+      return entry;
     },
   }) as FactoryProvider;
 }

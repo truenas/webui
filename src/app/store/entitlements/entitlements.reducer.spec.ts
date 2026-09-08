@@ -22,10 +22,14 @@ describe('entitlementsReducer', () => {
     expect(state.entitlements).toEqual({ [EntitlementFeature.Kmip]: denied });
   });
 
-  it('falls back to an empty map when the first load fails, so nothing reads as gated', () => {
+  it('falls back to a map that denies only SUPPORT when the first load fails', () => {
     const state = entitlementsReducer(unloaded, entitlementsLoadFailed());
 
-    expect(state.entitlements).toEqual({});
+    expect(Object.keys(state.entitlements)).toEqual([EntitlementFeature.Support]);
+    expect(state.entitlements[EntitlementFeature.Support]).toMatchObject({
+      entitled: false,
+      reason: EntitlementReason.NoLicense,
+    });
   });
 
   it('keeps the last known good map when a refresh fails', () => {
