@@ -136,7 +136,8 @@ export class DiskListComponent {
 
   protected readonly searchQuery = signal('');
 
-  private readonly hasSedEntitlement = this.entitlements.entitled(EntitlementFeature.Sed);
+  /** Tri-state: the column picker is only mounted once this is known (see the template). */
+  protected readonly hasSedEntitlement = this.entitlements.entitled(EntitlementFeature.Sed);
 
   private disks: DiskRow[] = [];
   private unusedDisks: DetailsDisk[] = [];
@@ -323,7 +324,8 @@ export class DiskListComponent {
   /**
    * `columns` stays a writable signal because the column picker writes back to it. SED
    * visibility is layered on top rather than frozen into the column definition, so it
-   * follows the entitlement instead of whatever was known at field init.
+   * follows the entitlement instead of whatever was known at field init. The entitlement
+   * never touches `hidden`: that flag belongs to the picker and the user's saved preference.
    */
   protected readonly visibleColumns = computed(() => (
     this.hasSedEntitlement()
@@ -334,7 +336,7 @@ export class DiskListComponent {
   protected readonly displayedColumns = computed(() => toDisplayedColumns(this.visibleColumns()));
 
   protected readonly hiddenColumns = computed<TableColumn<DiskRow>[]>(
-    () => this.columns().filter((tableColumn) => tableColumn?.hidden),
+    () => this.visibleColumns().filter((tableColumn) => tableColumn?.hidden),
   );
 
   protected readonly trackByIdentifier = (_: number, row: DiskRow): string => row.identifier;
@@ -398,8 +400,12 @@ export class DiskListComponent {
     );
   }
 
+  // The picker is handed `visibleColumns()`, so its answer is merged into the model rather
+  // than replacing it: a column it was never shown (SED while not entitled) must survive.
   protected onColumnsChange(columns: TableColumn<DiskRow>[]): void {
-    this.columns.set([...columns]);
+    this.columns.update((current) => current.map((tableColumn) => (
+      columns.find((changed) => changed.propertyName === tableColumn.propertyName) ?? tableColumn
+    )));
   }
 
   protected onEmptyAction(): void {

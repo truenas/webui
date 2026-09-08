@@ -11,6 +11,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
@@ -22,7 +23,6 @@ import { mockSharingTierService } from 'app/pages/sharing/components/testing/moc
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 const shares: Partial<NfsShare>[] = [
   {
@@ -50,10 +50,6 @@ const commonProviders = [
   }),
   provideMockStore({
     selectors: [
-      {
-        selector: selectIsEnterprise,
-        value: true,
-      },
       {
         selector: selectPreferences,
         value: {},
@@ -301,6 +297,33 @@ describe('NfsListComponent', () => {
       const menu = await openRowMenu();
       const labels = await menu.getItemLabels();
       expect(labels.some((label) => label.includes('Change Storage Tier'))).toBe(false);
+    });
+  });
+
+  describe('without the NFS_SNAPSHOT entitlement', () => {
+    const createDeniedComponent = createComponentFactory({
+      component: NfsListComponent,
+      providers: [
+        ...commonProviders,
+        mockEntitlements([EntitlementFeature.NfsSnapshot]),
+        mockApi([
+          mockCall('sharing.nfs.query', shares as NfsShare[]),
+          mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
+        ]),
+        mockSharingTierService({ enabled: false }),
+      ],
+    });
+
+    beforeEach(async () => {
+      spectator = createDeniedComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(TnTableHarness);
+    });
+
+    it('leaves the Expose Snapshots column out of the table', async () => {
+      expect(await table.getHeaderTexts()).toEqual([
+        'Path', 'Description', 'Networks', 'Hosts', 'Enabled', '',
+      ]);
     });
   });
 });

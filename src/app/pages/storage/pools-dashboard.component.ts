@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, Destro
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnEmptyComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -23,7 +22,6 @@ import { UnusedResourcesComponent } from 'app/pages/storage/components/unused-re
 import { storageElements } from 'app/pages/storage/pools-dashboard.elements';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
-import { AppState } from 'app/store';
 
 @Component({
   selector: 'ix-pools-dashboard',
@@ -52,7 +50,6 @@ export class PoolsDashboardComponent implements OnInit {
   private store = inject(PoolsDashboardStore);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
-  private store$ = inject<Store<AppState>>(Store);
   private tierService = inject(SharingTierService);
   private entitlements = inject(EntitlementsService);
 

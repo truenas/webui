@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker, TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective,
@@ -11,7 +10,7 @@ import {
   TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { take, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -43,7 +42,6 @@ import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/util
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
-import { AppState } from 'app/store';
 
 @Component({
   selector: 'ix-nfs-list',
@@ -81,7 +79,6 @@ export class NfsListComponent implements OnInit {
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private formPanel = inject(FormSidePanelService);
-  private store$ = inject<Store<AppState>>(Store);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
   private poolStoreService = inject(poolStore);
@@ -103,6 +100,8 @@ export class NfsListComponent implements OnInit {
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
   protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
   protected readonly currentPageCount = toSignal(this.dataProvider.currentPageCount$);
+  /** Tri-state: the column picker is only mounted once this is known (see the template). */
+  protected readonly hasNfsSnapshots = this.entitlements.entitled(EntitlementFeature.NfsSnapshot);
 
   private nfsShares: NfsShare[] = [];
   /** null = pools not yet loaded; string[] once pool.query completes */
@@ -163,13 +162,22 @@ export class NfsListComponent implements OnInit {
     column({
       title: this.translate.instant('Expose Snapshots'),
       propertyName: 'expose_snapshots',
-      hidden: true,
     }),
     actionsColumn(),
   ]));
 
+  /**
+   * The column model with the entitlement applied. Like disk-list's SED column, the
+   * entitlement only decides whether the column exists here; `hidden` stays the picker's.
+   */
+  protected readonly visibleColumns = computed(() => (
+    this.hasNfsSnapshots()
+      ? this.columns()
+      : this.columns().filter((tableColumn) => tableColumn.propertyName !== 'expose_snapshots')
+  ));
+
   protected readonly displayedColumns = computed<string[]>(() => {
-    const columns = toDisplayedColumns(this.columns());
+    const columns = toDisplayedColumns(this.visibleColumns());
     if (this.tierService.tierEnabled()) {
       const actionsIndex = columns.indexOf('actions');
       const insertAt = actionsIndex >= 0 ? actionsIndex : columns.length;
@@ -203,16 +211,6 @@ export class NfsListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Resolved once entitlements are known rather than read at construction, when the
-    // column set is built, so the column cannot stay hidden after a direct navigation.
-    this.entitlements.entitled$(EntitlementFeature.NfsSnapshot).pipe(
-      take(1),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((hasNfsSnapshots) => {
-      this.columns.update((columns) => columns.map((tableColumn) => (
-        tableColumn.propertyName === 'expose_snapshots' ? { ...tableColumn, hidden: !hasNfsSnapshots } : tableColumn
-      )));
-    });
     this.setDefaultSort();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
@@ -263,7 +261,7 @@ export class NfsListComponent implements OnInit {
 
   protected onSortChange(event: TnSortEvent): void {
     this.dataProvider.setSorting(
-      mapTnSortToTableSort<NfsShare>(event, this.displayedColumns(), { columns: this.columns() }),
+      mapTnSortToTableSort<NfsShare>(event, this.displayedColumns(), { columns: this.visibleColumns() }),
     );
   }
 
@@ -275,8 +273,12 @@ export class NfsListComponent implements OnInit {
     });
   }
 
+  // The picker is handed `visibleColumns()`, so its answer is merged into the model rather
+  // than replacing it: a column it was never shown must survive.
   protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {
-    this.columns.set([...columns]);
+    this.columns.update((current) => current.map((tableColumn) => (
+      columns.find((changed) => changed.propertyName === tableColumn.propertyName) ?? tableColumn
+    )));
   }
 
   private refresh(): void {

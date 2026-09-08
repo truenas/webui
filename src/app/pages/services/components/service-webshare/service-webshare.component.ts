@@ -79,7 +79,9 @@ export class ServiceWebshareComponent extends IxFormHostForm<boolean, WebShareFo
 
   /**
    * A Connect connection is not a substitute for the entitlement: the two are separate
-   * conditions and TrueSearch needs both. Reads `undefined` until entitlements load, which
+   * conditions and WebShare search needs both, because WebShare itself runs through Connect.
+   * (SMB Spotlight, by contrast, needs only the entitlement — see service-smb.) Reads
+   * `undefined` until entitlements load, which
    * leaves the control locked rather than briefly offering a feature that may be denied.
    */
   protected readonly isTrueSearchEntitled = this.entitlements.entitled(EntitlementFeature.TrueSearch);

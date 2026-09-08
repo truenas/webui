@@ -127,8 +127,10 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
 
   private readonly hasTrueSearch = this.entitlements.entitled(EntitlementFeature.TrueSearch);
 
-  // Entitlement alone by design (NAS-143012): unlike the WebShare toggle, Spotlight does not also
-  // require TrueNAS Connect.
+  // Entitlement alone by design (NAS-143012). Middleware validates `search_protocols` against
+  // `truesearch.unavailable_reasons` (boot-pool placement + the TRUESEARCH entitlement) and never
+  // against TrueNAS Connect, so SMB Spotlight needs no Connect check. The WebShare `search`
+  // toggle does, because WebShare itself is a Connect feature — see service-webshare.
   protected isSpotlightEnabled = computed(() => Boolean(this.hasTrueSearch()));
 
   /** `=== false` so the licensing notice is not shown while entitlements are still loading. */
