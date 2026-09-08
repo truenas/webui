@@ -94,7 +94,7 @@ export class PrivilegeFormComponent implements OnInit {
   });
 
   protected readonly helptext = helptextPrivilege;
-  protected readonly hasDirectoryServices = this.entitlements.entitled(EntitlementFeature.DirectoryServices);
+  protected readonly hasDirectoryServices = this.entitlements.entitled(EntitlementFeature.DirectoryServicesAuth);
   protected existingPrivilege: Privilege | undefined;
 
   get isNew(): boolean {
