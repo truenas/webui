@@ -99,6 +99,7 @@ export class TargetFormComponent extends IxFormHostForm implements OnInit {
     return mode === IscsiTargetMode.Iscsi || mode === IscsiTargetMode.Both;
   }
 
+  // Entitlement alone by design (NAS-143012): `fc.capable` is not consulted here.
   hasFibreChannel = toSignal(this.entitlements.entitled$(EntitlementFeature.FibreChannel));
 
   readonly helptext = helptextIscsi;

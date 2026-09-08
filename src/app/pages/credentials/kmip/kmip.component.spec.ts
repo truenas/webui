@@ -49,7 +49,6 @@ describe('KmipComponent', () => {
         mockCall('kmip.kmip_sync_pending', false),
         mockCall('kmip.clear_sync_pending_keys'),
         mockCall('kmip.sync_keys'),
-        mockCall('system.advanced.sed_global_password_is_set', false),
         mockJob('kmip.update'),
       ]),
       mockProvider(DialogService, {
@@ -197,7 +196,6 @@ describe('KmipComponent', () => {
         message: 'This system is not licensed to use the SED feature.',
       },
     });
-    store$.refreshState();
     store$.refreshState();
     spectator.detectChanges();
 

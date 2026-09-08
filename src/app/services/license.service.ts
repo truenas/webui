@@ -44,7 +44,6 @@ export class LicenseService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  /** Previously borrowed the APPS feature. Same decision today, but keyed on what it means. */
   /**
    * Check if the system is configured with TrueNAS Connect.
    * This is used to determine if WebShare and other TrueNAS Connect features are available.

@@ -84,6 +84,7 @@ export class KmipComponent implements OnInit {
   );
 
   private readonly hasSedEntitlement = this.entitlements.entitled(EntitlementFeature.Sed);
+  // Entitlement alone by design (NAS-143012): an already-set SED password is not a bypass.
   protected readonly allowSedManage = computed(() => Boolean(this.hasSedEntitlement()));
 
   ngOnInit(): void {

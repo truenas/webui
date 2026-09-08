@@ -4,7 +4,6 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnButtonComponent, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent,
@@ -38,7 +37,6 @@ import {
 } from 'app/pages/services/components/service-config-forms.constants';
 import { AddSpnDialog } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { AppState } from 'app/store';
 
 // Built here rather than inline in the component, and left with an inferred return type — see
 // the `V` type parameter on IxFormHostForm for why.
@@ -92,7 +90,6 @@ type NfsFormValue = ReturnType<ReturnType<typeof createNfsForm>['getRawValue']>;
 export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> implements OnInit {
   private api = inject(ApiService);
   private fb = inject(NonNullableFormBuilder);
-  private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private tnDialog = inject(TnDialog);

@@ -1,6 +1,5 @@
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
-import { selectNotNull } from 'app/helpers/operators/select-not-null.helper';
 import { EntitlementEntry } from 'app/interfaces/entitlement.interface';
 import { EntitlementsState } from 'app/store/entitlements/entitlements.reducer';
 
@@ -12,8 +11,6 @@ export const selectEntitlements = createSelector(
   selectEntitlementsState,
   (state) => state?.entitlements ?? null,
 );
-
-export const waitForEntitlements = selectNotNull(selectEntitlements);
 
 /** Reach for this over `selectIsEntitled` only when a denial needs explaining. */
 export const selectEntitlement = (

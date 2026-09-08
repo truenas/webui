@@ -176,7 +176,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   }
 
   private initSedDefaults(): void {
-    // Set SED as default if SED-capable disks detected and Enterprise license
+    // Set SED as default if SED-capable disks detected and the system is entitled to SED
     if (this.isAddingVdevs()) {
       return;
     }

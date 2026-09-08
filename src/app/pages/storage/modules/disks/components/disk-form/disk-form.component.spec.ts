@@ -91,7 +91,6 @@ describe('DiskFormComponent', () => {
         },
       });
       store$.refreshState();
-      store$.refreshState();
     });
 
     it('does not show SED section', async () => {
@@ -176,7 +175,6 @@ describe('DiskFormComponent', () => {
   describe('enterprise', () => {
     beforeEach(() => {
       store$.overrideSelector(selectEntitlements, {});
-      store$.refreshState();
       store$.refreshState();
 
       // recreate the component after overriding to enterprise view

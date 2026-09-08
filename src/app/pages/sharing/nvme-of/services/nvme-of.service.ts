@@ -24,6 +24,7 @@ export class NvmeOfService {
 
   getSupportedTransports(): Observable<NvmeOfTransportType[]> {
     return combineLatest([
+      // Entitlement alone by design (NAS-143012): `fc.capable` is not consulted here.
       this.entitlements.entitled$(EntitlementFeature.FibreChannel),
       this.isRdmaCapable(),
     ])
