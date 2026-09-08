@@ -107,8 +107,10 @@ a number. See `05-ci.md`.
   such attribute deleted by a migration and caught by a person, not by CI.
 - **Per-test token login** replaced `storageState` once two authenticated tests
   ran back to back (the S3 pair). `setup` still gates the authenticated project
-  as the earliest report of a broken token login. Cost: one token per worker and
-  a few seconds per test.
+  as the earliest report of a broken token login. Each login mints its own
+  token: middleware stops honouring one once the session that redeemed it ends,
+  so a per-worker token carried exactly one test too. Cost: one authenticated
+  call and a few seconds per test.
 - **Fixed names** (`bob`, `e2e_tank`) mean two runs against one appliance
   collide. Fine for one-appliance-per-run; run-scoped naming is the fix.
 - **`AuthResponseType` is declared but not exported** while

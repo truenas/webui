@@ -28,59 +28,40 @@ import { adminLayout } from './constants';
  * How many times the token login is attempted, and how long each gets to
  * render the shell.
  *
- * More than once because the UI is not always there to be logged into. When a
- * pool that holds the system dataset is exported or imported — which the
- * suite does whenever it builds its own pool — the appliance moves the dataset
- * and restarts what depends on it, and for a while the token URL loads nothing
- * usable. Run 34255132927 (2026-09-08) showed the shape: the first attempt
- * after such an export waited the full minute and saw no admin shell, and the
- * retry that Playwright spawned a moment later signed in within seconds.
- *
- * Three attempts of thirty seconds rather than one of ninety: a re-navigation
- * is what a stalled page needs, and a single long wait never re-navigates.
+ * More than once because the UI is not always there to be logged into: when a
+ * pool holding the system dataset is exported or imported, the appliance
+ * restarts what depends on it and the token URL loads nothing usable for a
+ * while. A re-navigation is what a stalled page needs, and a single long wait
+ * never re-navigates — hence three attempts of thirty seconds rather than one
+ * of ninety.
  */
 const tokenLoginAttempts = 3;
 const tokenLoginAttemptTimeoutMs = 30_000;
 
 /**
- * One login token per worker, minted on first use.
+ * Signs `page` in through the token URL, with a token minted for this login.
  *
- * Keyed on the client rather than declared as a worker fixture the `page`
- * override depends on: Playwright builds the fixture graph from what a fixture
- * destructures, not from which branches read it, so a worker fixture named in
- * `page`'s signature would be instantiated for every test — including the
- * `unauthenticated` project, whose whole point is to keep running when token
- * login is broken (R4.2). Minting lazily inside the `authenticate` branch keeps
- * that project free of the call.
- */
-const tokensByClient = new WeakMap<E2eApiClient, Promise<string>>();
-
-function authTokenFor(client: E2eApiClient): Promise<string> {
-  let token = tokensByClient.get(client);
-  if (!token) {
-    token = generateAuthToken(client);
-    tokensByClient.set(client, token);
-  }
-  return token;
-}
-
-/**
- * Signs `page` in through the token URL, retrying while the UI comes back.
+ * Per login, not per worker, because a token only ever carries one browser
+ * session. Three CI runs on 2026-09-08 (34255132927, 34256452773 and the
+ * one before them) showed the same shape whatever else changed between tests:
+ * the first authenticated test in a worker signed in, the next one waited the
+ * full timeout on the same token and saw no shell, and the retry Playwright
+ * spawned — a fresh worker, a fresh token — was in within seconds. Middleware
+ * stops honouring the token once the session that redeemed it is gone, so
+ * reusing one across tests can never work. Minting is one authenticated call,
+ * which the rate limit exempts, so it costs nothing worth saving.
  *
- * A UI that is still restarting and a token that middleware no longer knows
- * look identical from the browser — no admin shell either way — so the last
- * attempt discards the cached token and mints a new one. If minting itself
- * fails, that is reported as such: it means the API session is gone too, which
- * points at middleware having restarted rather than at the login page.
+ * The mint is inside the `authenticate` branch rather than a fixture the
+ * `page` override depends on: Playwright builds the fixture graph from what a
+ * fixture destructures, not from which branches read it, so a token fixture in
+ * `page`'s signature would run for the `unauthenticated` project too — whose
+ * whole point is to keep running when token login is broken (R4.2).
  */
 async function signInWithToken(page: Page, client: E2eApiClient, config: TargetConfig): Promise<void> {
   let lastError: unknown;
 
   for (let attempt = 1; attempt <= tokenLoginAttempts; attempt += 1) {
-    if (attempt === tokenLoginAttempts) {
-      tokensByClient.delete(client);
-    }
-    const token = await authTokenFor(client);
+    const token = await generateAuthToken(client);
 
     try {
       await page.goto(buildTokenLoginUrl(config.uiBaseUrl, token));
@@ -96,9 +77,9 @@ async function signInWithToken(page: Page, client: E2eApiClient, config: TargetC
 
   throw new Error(
     `Token login did not reach the admin shell in ${tokenLoginAttempts} attempts of `
-    + `${tokenLoginAttemptTimeoutMs / 1000}s. A pool export or import just before this test would `
-    + 'explain a UI that is still coming back; a middleware restart would explain a token it no '
-    + `longer accepts. Last attempt: ${lastError instanceof Error ? lastError.message : String(lastError)}`,
+    + `${tokenLoginAttemptTimeoutMs / 1000}s, each with a freshly minted token. A pool export or `
+    + 'import just before this test would explain a UI that is still coming back. '
+    + `Last attempt: ${lastError instanceof Error ? lastError.message : String(lastError)}`,
     { cause: lastError },
   );
 }
@@ -123,13 +104,6 @@ export interface E2eWorkerFixtures {
    * difference between testing the UI and testing middleware.
    */
   api: E2eApiClient;
-  /**
-   * A reusable login token for this worker — two hours, not single-use, not
-   * origin-bound (see `auth/token.ts`). The same one the `page` fixture signs
-   * in with; a test that needs the raw token (a URL to hand to something else)
-   * asks for it here, and the mint happens once either way.
-   */
-  authToken: string;
 }
 
 /**
@@ -166,13 +140,6 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
     { scope: 'worker' },
   ],
 
-  authToken: [
-    async ({ api }, use) => {
-      await use(await authTokenFor(api));
-    },
-    { scope: 'worker' },
-  ],
-
   /**
    * Signs the page in through the token URL before each authenticated test.
    *
@@ -188,7 +155,8 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
    *
    * The token URL is the same entry the setup project validates, and a login
    * costs a few seconds — well under the fifteen the form takes, which is the
-   * cost the token exists to avoid (R4.1).
+   * cost the token exists to avoid (R4.1). See `signInWithToken` for why each
+   * login also gets its own token.
    */
   page: async ({
     page, authenticate, api, config,

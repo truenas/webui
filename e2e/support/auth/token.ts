@@ -14,8 +14,9 @@ import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient } from '../api/client';
 
 /**
- * Token lifetime. Comfortably longer than the ≤45 minute suite budget (R8.1)
- * so a single acquisition covers a run, without minting anything long-lived.
+ * Token lifetime. A token now serves one browser login (`support/fixtures.ts`),
+ * so the lifetime only has to outlast the gap between minting and redeeming
+ * it; this stays generous without minting anything long-lived.
  */
 export const tokenTtlSeconds = 2 * 60 * 60;
 
