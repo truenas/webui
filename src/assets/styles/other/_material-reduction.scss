@@ -915,13 +915,6 @@ body .mat-calendar-next-button::after {
   }
 }
 
-.cdk-overlay-pane.mat-mdc-dialog-panel {
-  @media(max-width: $breakpoint-xs) {
-    max-width: 95% !important;
-    width: inherit;
-  }
-}
-
 body .mat-vertical-content {
   @media(max-width: $breakpoint-sm) {
     padding: 0 8px 8px;
@@ -961,13 +954,6 @@ mat-list-item {
     max-width: fill-available;
     white-space: pre-wrap;
     overflow-wrap: break-word;
-  }
-}
-
-@media(max-width: $breakpoint-sm) {
-  .mdc-dialog__container,
-  mat-dialog-container {
-    max-width: 100% !important;
   }
 }
 

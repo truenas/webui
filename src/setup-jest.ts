@@ -13,7 +13,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
@@ -164,7 +163,6 @@ defineGlobalsInjections({
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,
-    MatDialogModule,
     MatSortModule,
     MatTooltipModule,
     MatCardModule,

@@ -1,11 +1,9 @@
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { DisplayableState, JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { ShowLogsDialog } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   TaskStateCellComponent,
@@ -23,7 +21,6 @@ describe('TaskStateCellComponent', () => {
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({ afterClosed: () => of(undefined) })) as unknown as DialogService['jobDialog'],
       }),
-      mockProvider(MatDialog, { open: jest.fn() }),
       mockProvider(ErrorHandlerService),
     ],
   });
@@ -73,7 +70,7 @@ describe('TaskStateCellComponent', () => {
 
     spectator.click('button.state-button');
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ShowLogsDialog, { data: job });
+    expect(spectator.inject(DialogService).showLogs).toHaveBeenCalledWith(job);
   });
 
   it('warns when there are no logs to show', () => {

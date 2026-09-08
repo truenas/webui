@@ -28,6 +28,10 @@ const projectOverrides = {
       {
         paths: [
           {
+            name: '@angular/material/dialog',
+            message: "Angular Material dialogs have been fully replaced by `tn-dialog` (NAS-141066). Open dialogs through `DialogService` (app/modules/dialog/dialog.service.ts), or inject `TnDialog` from '@truenas/ui-components' for a dialog DialogService does not wrap.",
+          },
+          {
             name: '@angular/common',
             importNames: ['DatePipe'],
             message: "Do not use Angular's DatePipe directly. It bypasses user datetime format preferences. Use FormatDateTimePipe from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe' or LocaleService methods instead. For fixed formats (like filenames), use date-fns directly.",
