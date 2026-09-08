@@ -28,21 +28,20 @@
     </tn-form-field>
 
     @if (!isEditMode()) {
-      <div class="image-field">
-        <tn-form-field
-          class="input"
-          [label]="'Image' | translate"
-          [required]="true"
-        >
+      <tn-form-field
+        [label]="'Image' | translate"
+        [required]="true"
+      >
+        <div class="image-field">
           <tn-input formControlName="image" [readonly]="true"></tn-input>
-        </tn-form-field>
 
-        <tn-button
-          testId="browse-images"
-          [label]="'Browse Catalog' | translate"
-          (onClick)="onBrowseCatalogImages()"
-        ></tn-button>
-      </div>
+          <tn-button
+            testId="browse-images"
+            [label]="'Browse Catalog' | translate"
+            (onClick)="onBrowseCatalogImages()"
+          ></tn-button>
+        </div>
+      </tn-form-field>
     }
 
     @if (!isEditMode() && !hasPreferredPool()) {
