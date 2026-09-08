@@ -63,7 +63,7 @@ import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
 import { AppState } from 'app/store';
-import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectHaInfoState } from 'app/store/ha-info/ha-info.selectors';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @Component({
@@ -455,7 +455,9 @@ export class InterfaceFormComponent extends SidePanelForm implements OnInit {
 
   /** The `HA` entitlement alone decides HA here; product type must not pre-gate it. */
   private loadFailoverStatus(): void {
-    this.store$.select(selectIsHaLicensed).pipe(
+    this.store$.select(selectHaInfoState).pipe(
+      filter((haInfo) => haInfo.isHaLicensed !== null),
+      map((haInfo) => haInfo.isHaLicensed),
       take(1),
       switchMap((isHaLicensed) => (isHaLicensed
         ? this.api.call('failover.node').pipe(map((failoverNode) => [true, failoverNode] as const))

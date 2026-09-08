@@ -11,7 +11,7 @@ import {
   TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { tap } from 'rxjs';
+import { take, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -103,7 +103,6 @@ export class NfsListComponent implements OnInit {
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
   protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
   protected readonly currentPageCount = toSignal(this.dataProvider.currentPageCount$);
-  protected readonly hasNfsSnapshots = this.entitlements.entitled(EntitlementFeature.NfsSnapshot);
 
   private nfsShares: NfsShare[] = [];
   /** null = pools not yet loaded; string[] once pool.query completes */
@@ -164,7 +163,7 @@ export class NfsListComponent implements OnInit {
     column({
       title: this.translate.instant('Expose Snapshots'),
       propertyName: 'expose_snapshots',
-      hidden: !this.hasNfsSnapshots(),
+      hidden: true,
     }),
     actionsColumn(),
   ]));
@@ -204,6 +203,16 @@ export class NfsListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Resolved once entitlements are known rather than read at construction, when the
+    // column set is built, so the column cannot stay hidden after a direct navigation.
+    this.entitlements.entitled$(EntitlementFeature.NfsSnapshot).pipe(
+      take(1),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((hasNfsSnapshots) => {
+      this.columns.update((columns) => columns.map((tableColumn) => (
+        tableColumn.propertyName === 'expose_snapshots' ? { ...tableColumn, hidden: !hasNfsSnapshots } : tableColumn
+      )));
+    });
     this.setDefaultSort();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());

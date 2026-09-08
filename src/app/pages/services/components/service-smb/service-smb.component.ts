@@ -10,7 +10,7 @@ import {
   TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  BehaviorSubject, catchError, debounceTime, distinctUntilChanged, of, shareReplay, switchMap, tap,
+  BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, of, shareReplay, switchMap, take, tap,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
@@ -128,6 +128,8 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
 
   private readonly hasTrueSearch = this.entitlements.entitled(EntitlementFeature.TrueSearch);
 
+  // Entitlement alone by design (NAS-143012): unlike the WebShare toggle, Spotlight does not also
+  // require TrueNAS Connect.
   protected isSpotlightEnabled = computed(() => Boolean(this.hasTrueSearch()));
 
   /** `=== false` so the licensing notice is not shown while entitlements are still loading. */
@@ -151,6 +153,7 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
       if (isEnabled) {
         this.form.controls.spotlight_search.enable();
       } else {
+        this.form.controls.spotlight_search.setValue(false, { emitEvent: false });
         this.form.controls.spotlight_search.disable();
       }
     });
@@ -299,7 +302,12 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
       },
     });
 
-    this.loadFormConfig(this.api.call('smb.config'), (config) => {
+    // Waits for a real entitlement answer so a server-side-enabled Spotlight is never dropped
+    // merely because `smb.config` resolved before entitlements did.
+    this.loadFormConfig(combineLatest([
+      this.api.call('smb.config'),
+      this.entitlements.entitled$(EntitlementFeature.TrueSearch).pipe(take(1)),
+    ]), ([config, hasTrueSearch]) => {
       const searchProtocolEnabled = config.search_protocols.includes(smbSearchSpotlight);
       // The rows are pushed, not patched, so the patch has to start from an empty array to stay
       // idempotent — `loadFormConfig` replays it on retry, and without this every bind IP would
@@ -309,7 +317,8 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
       this.configuredBindIps.set(config.bindip);
       this.form.patchValue({
         ...config,
-        spotlight_search: searchProtocolEnabled,
+        // A stale `true` must not be restored (and later submitted) without the entitlement.
+        spotlight_search: searchProtocolEnabled && hasTrueSearch,
         bindip: config.bindip.map((ip) => ({ bindIp: ip })),
       });
       this.isSmb1Enabled.set(config.minimum_protocol === SmbMinProtocol.Smb1);
