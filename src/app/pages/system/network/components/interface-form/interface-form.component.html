@@ -1,4 +1,13 @@
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="!isNew"
+  [addTitle]="'Add Interface' | translate"
+  [editTitle]="'Edit Interface' | translate"
+  [requiredRoles]="requiredRoles"
+  [extraDisabled]="isHaEnabled()"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <tn-form-section [heading]="'Interface Settings' | translate">
     @if (isNew) {
       <tn-form-field
@@ -44,17 +53,21 @@
     </tn-form-field>
 
     @if (canHaveStaticIpAddresses) {
-      <ix-list
+      <tn-form-list
         formArrayName="aliases"
+        [control]="form.controls.aliases"
         [empty]="form.controls.aliases.controls.length === 0"
         [label]="'Static IP Addresses' | translate"
-        [formArray]="form.get('aliases')"
+        [addLabel]="'Add' | translate"
+        [emptyMessage]="'No items have been added yet.' | translate"
         (add)="addStaticIpAddress()"
       >
         @for (network of form.controls.aliases.controls; track network; let i = $index) {
-          <ix-list-item
+          <tn-form-list-item
+            testId="remove-from-list"
             [formGroupName]="i"
             [label]="'Static IP Addresses' | translate"
+            [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Static IP Addresses' | translate }"
             (delete)="removeStaticIpAddress(i)"
           >
             <div class="alias">
@@ -87,9 +100,9 @@
 
               <ix-errors [control]="network"></ix-errors>
             </div>
-          </ix-list-item>
+          </tn-form-list-item>
         }
-      </ix-list>
+      </tn-form-list>
     }
 
     <tn-form-field
@@ -261,4 +274,4 @@
     }
   </tn-form-section>
 
-</form>
+</ix-form>

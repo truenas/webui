@@ -8,10 +8,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
-export interface SedConfig {
-  sedPassword: string;
-}
-
 export interface SedFormValues {
   sed_passwd: string;
   sed_passwd2: string;

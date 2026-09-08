@@ -181,20 +181,6 @@
 }
 
 .empty-state {
-  align-items: center;
-  color: var(--fg2);
   display: flex;
   flex: 1;
-  flex-direction: column;
-  justify-content: center;
-
-  .empty-icon {
-    margin-bottom: 16px;
-    opacity: 0.3;
-  }
-
-  p {
-    font-size: 14px;
-    margin: 0;
-  }
 }

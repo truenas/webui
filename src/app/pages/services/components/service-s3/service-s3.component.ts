@@ -1,0 +1,250 @@
+import {
+  ChangeDetectionStrategy, Component, OnInit, computed, inject,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators,
+} from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent,
+  TnFormSectionComponent, TnInputComponent, TnSelectComponent, type TnSelectOption,
+} from '@truenas/ui-components';
+import {
+  combineLatest, map, shareReplay, startWith,
+} from 'rxjs';
+import { Role } from 'app/enums/role.enum';
+import {
+  S3AuditMode,
+  S3AuditOverflow,
+  S3LogLevel,
+  s3AuditAll,
+  s3AuditModeLabels,
+  s3AuditOverflowLabels,
+  s3LogLevelLabels,
+} from 'app/enums/s3.enum';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { mapToOptions } from 'app/helpers/options.helper';
+import { helptextSharingS3 } from 'app/helptext/sharing';
+import { S3AuditMask, S3Config, S3Listener } from 'app/interfaces/s3.interface';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import {
+  WithManageCertificatesLinkComponent,
+} from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
+import { portRangeValidator, rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { serviceConfigSavedMessage } from 'app/pages/services/components/service-config-forms.constants';
+import { createS3GrantFormGroup, S3GrantFormGroup, toS3Grants } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
+import { S3GrantsListComponent } from 'app/pages/sharing/s3/s3-grants-list/s3-grants-list.component';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { AppState } from 'app/store';
+import { selectLicense } from 'app/store/system-info/system-info.selectors';
+
+type ListenerFormGroup = FormGroup<{
+  address: FormControl<string>;
+  port: FormControl<number>;
+  tls: FormControl<boolean>;
+}>;
+
+const defaultPort = 9000;
+
+// Built here rather than inline in the component, and left with an inferred return type — see
+// the `V` type parameter on IxFormHostForm for why.
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createS3ServiceForm(fb: NonNullableFormBuilder) {
+  return fb.group({
+    listeners: fb.array<ListenerFormGroup>([]),
+    certificate: [null as number | null],
+    servers: [1, [Validators.required, rangeValidator(1, 8)]],
+    region: [''],
+    log_level: [S3LogLevel.Notice, Validators.required],
+    global_grants: fb.array<S3GrantFormGroup>([]),
+    default_audit_mode: [S3AuditMode.None],
+    default_audit_actions: [[] as string[]],
+    default_audit_overflow: [S3AuditOverflow.Drop],
+  });
+}
+
+type S3ServiceFormValue = ReturnType<ReturnType<typeof createS3ServiceForm>['getRawValue']>;
+
+@Component({
+  selector: 'ix-service-s3',
+  templateUrl: './service-s3.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    ReactiveFormsModule,
+    IxFormComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
+    TnFormListComponent,
+    TnFormListItemComponent,
+    WithManageCertificatesLinkComponent,
+    S3GrantsListComponent,
+    TranslateModule,
+  ],
+})
+export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormValue> implements OnInit {
+  private api = inject(ApiService);
+  private fb = inject(NonNullableFormBuilder);
+  private translate = inject(TranslateService);
+  private systemGeneralService = inject(SystemGeneralService);
+  private store$ = inject(Store<AppState>);
+
+  protected readonly requiredRoles = [Role.SharingS3Write, Role.SharingWrite];
+  protected readonly helptext = helptextSharingS3;
+  protected readonly InputType = InputType;
+  protected readonly S3AuditMode = S3AuditMode;
+
+  /**
+   * Auditing needs a license. Mirrors the middleware check (`system.license` is set).
+   */
+  protected readonly isLicensed = toSignal(this.store$.select(selectLicense).pipe(map((license) => !!license)));
+
+  protected readonly form = createS3ServiceForm(this.fb);
+
+  /**
+   * Listener rows are pushed after first render (once `s3.config` resolves) into an array whose
+   * reference never changes, so under OnPush the `@for` reads them through a signal fed by the
+   * array's own `valueChanges` rather than off the array directly.
+   */
+  private readonly listenersChanged = toSignal(this.form.controls.listeners.valueChanges.pipe(startWith(null)));
+
+  protected readonly listenerRows = computed(() => {
+    this.listenersChanged();
+    return [...this.form.controls.listeners.controls];
+  });
+
+  /**
+   * Loaded once and shared between the form population and the listener address options.
+   */
+  private readonly config$ = this.api.call('s3.config').pipe(shareReplay({ bufferSize: 1, refCount: false }));
+
+  protected readonly certificateOptions = toSignal(
+    this.systemGeneralService.getCertificates().pipe(
+      map((certificates): TnSelectOption<number | null>[] => [
+        { label: this.translate.instant('Use UI certificate'), value: null },
+        ...certificates.map((certificate) => ({ label: certificate.name, value: certificate.id })),
+      ]),
+    ),
+    { initialValue: [] as TnSelectOption<number | null>[] },
+  );
+
+  protected readonly logLevelOptions = mapToOptions(s3LogLevelLabels, this.translate);
+  protected readonly auditOverflowOptions = mapToOptions(s3AuditOverflowLabels, this.translate);
+  protected readonly auditActionOptions = toSignal(
+    this.api.call('sharing.s3.audit_choices').pipe(choicesToOptions()),
+    { initialValue: [] },
+  );
+
+  /**
+   * The service default has no "inherit" to fall back on: an empty mask audits nothing.
+   */
+  protected readonly auditModeOptions = mapToOptions(s3AuditModeLabels, this.translate)
+    .filter((option) => option.value !== S3AuditMode.Inherit);
+
+  /**
+   * Addresses currently configured stay selectable even if they are no longer offered, so an
+   * existing listener is not silently dropped from the form.
+   */
+  protected readonly addressOptions = toSignal(
+    combineLatest([
+      this.api.call('s3.bindip_choices').pipe(choicesToOptions()),
+      this.config$,
+    ]).pipe(
+      map(([options, config]): TnSelectOption<string>[] => {
+        return [
+          ...new Set<string>([
+            ...config.listeners.map((listener) => listener.address),
+            ...options.map((option) => String(option.value)),
+          ]),
+        ].map((value) => ({ label: value, value }));
+      }),
+    ),
+    { initialValue: [] as TnSelectOption<string>[] },
+  );
+
+  ngOnInit(): void {
+    this.loadFormConfig(this.config$, (config) => this.patchConfig(config));
+  }
+
+  protected addListener(listener?: S3Listener): void {
+    this.form.controls.listeners.push(this.fb.group({
+      address: [listener?.address ?? '', Validators.required],
+      port: [listener?.port ?? defaultPort, [Validators.required, portRangeValidator()]],
+      tls: [listener?.tls ?? false],
+    }));
+  }
+
+  protected removeListener(index: number): void {
+    this.form.controls.listeners.removeAt(index);
+  }
+
+  protected handleSubmit = (_: FormSubmitEvent<S3ServiceFormValue>): SubmitResult => {
+    const values = this.form.getRawValue();
+    const update = {
+      listeners: values.listeners,
+      certificate: values.certificate,
+      servers: values.servers,
+      region: values.region,
+      log_level: values.log_level,
+      global_grants: toS3Grants(this.form.controls.global_grants.controls),
+      ...(this.isLicensed()
+        ? {
+            default_audit: this.formToAuditMask(values.default_audit_mode, values.default_audit_actions),
+            default_audit_overflow: values.default_audit_overflow,
+          }
+        : {}),
+    };
+
+    return {
+      request$: this.api.call('s3.update', [update]),
+      successMessage: this.translate.instant(serviceConfigSavedMessage),
+    };
+  };
+
+  /** Idempotent: `loadFormConfig` replays it on retry, so the arrays are rebuilt from scratch. */
+  private patchConfig(config: S3Config): void {
+    this.form.controls.listeners.clear();
+    this.form.controls.global_grants.clear();
+    config.listeners.forEach((listener) => this.addListener(listener));
+    config.global_grants.forEach((grant) => this.form.controls.global_grants.push(createS3GrantFormGroup(grant)));
+    const [auditMode, auditActions] = this.auditMaskToForm(config.default_audit);
+    this.form.patchValue({
+      certificate: config.certificate,
+      servers: config.servers,
+      region: config.region,
+      log_level: config.log_level,
+      default_audit_mode: auditMode,
+      default_audit_actions: auditActions,
+      default_audit_overflow: config.default_audit_overflow,
+    });
+  }
+
+  private auditMaskToForm(mask: S3AuditMask): [S3AuditMode, string[]] {
+    if (mask === s3AuditAll) {
+      return [S3AuditMode.All, []];
+    }
+    if (!mask.length) {
+      return [S3AuditMode.None, []];
+    }
+    return [S3AuditMode.Selected, mask];
+  }
+
+  private formToAuditMask(mode: S3AuditMode, actions: string[]): S3AuditMask {
+    switch (mode) {
+      case S3AuditMode.All:
+        return s3AuditAll;
+      case S3AuditMode.Selected:
+        return actions;
+      default:
+        return [];
+    }
+  }
+}

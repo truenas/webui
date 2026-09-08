@@ -9,17 +9,23 @@
   padding-bottom: 10px;
 }
 
+// The Browse Catalog button belongs to the Image field's control row, so it is
+// projected into the `<tn-form-field>` alongside the input rather than sitting
+// beside the whole field: the field's label row stays above the pair and its
+// error subscript below, and the button no longer has to guess at their heights.
 .image-field {
-  align-items: end;
+  align-items: center;
   display: flex;
   gap: 1rem;
   width: 100%;
 
-  .input {
+  tn-input {
     flex: 1;
+    min-width: 0;
   }
+}
 
-  button {
-    margin-bottom: 1.34375em;
-  }
+// `<ix-form>` owns the `<form>` element, and its host has no display of its own.
+ix-form {
+  display: block;
 }

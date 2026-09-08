@@ -18,8 +18,6 @@ export class AppCardLogoComponent {
   protected wasLogoLoaded = signal(false);
 
   private layoutService = inject(LayoutService);
-
-  protected readonly scrollTarget = this.layoutService.getContentContainer();
   protected readonly appImagePlaceholder = appImagePlaceholder;
 
   protected onLogoLoaded(event: StateChange): void {

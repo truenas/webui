@@ -22,8 +22,4 @@ export interface SelectOption<T = SelectOptionValueType> extends Option<T> {
   hoverTooltip?: string;
 }
 
-export interface ActionOption<T = BaseOptionValueType> extends Option<T> {
-  action?: () => void;
-}
-
 export const newOption = 'NEW';

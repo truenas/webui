@@ -191,6 +191,25 @@ state with `expect.poll`. If you need a dialog, wait for it — `isVisible()`
 does not wait, and probing for a dialog right after the click that opens it will
 silently miss.
 
+## CI
+
+The suite runs in GitHub Actions on a self-hosted TrueNAS runner, against a
+nested VM installed fresh for every run, driving the UI built from the change
+under test rather than the one in the appliance's ISO. `docs/05-ci.md`
+describes the pipeline, what the lab box has to provide, and what each early
+failure taught.
+It runs nightly, on every push to master that touches the UI or the suite,
+and on same-repo pull requests that touch the suite or the pipeline. Any other
+branch can ask for a run:
+
+```bash
+gh workflow run e2e.yml --ref <your-branch>
+```
+
+A pull request that only touches documentation does not trigger it; note that
+GitHub evaluates the path filter against everything the pull request changes,
+so within a PR that touches code, every push runs it.
+
 ## Troubleshooting
 
 | Symptom | Cause |

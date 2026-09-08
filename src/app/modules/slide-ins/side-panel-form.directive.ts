@@ -3,8 +3,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl } from '@angular/forms';
-import { Observable, of, startWith } from 'rxjs';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+import { startWith } from 'rxjs';
 
 /**
  * The minimal surface EVERY side-panel-hosted component exposes — close signalling and the
@@ -199,20 +198,4 @@ export abstract class SidePanelForm<R = boolean> implements SidePanelHostForm<R>
     );
     return computed(() => status() !== 'INVALID' && !isLoading());
   }
-}
-
-/**
- * Builds a `<tn-side-panel>` `[closeGuard]` for a hosted {@link SidePanelForm}: prompts the
- * unsaved-changes confirmation when the form is dirty, otherwise allows the close. Centralizes
- * the guard otherwise duplicated across every side-panel host.
- *
- * @param unsavedChanges injected {@link UnsavedChangesService}
- * @param form accessor for the hosted form (typically a `viewChild` signal), may be absent
- *   while the panel is closed
- */
-export function sidePanelFormCloseGuard(
-  unsavedChanges: UnsavedChangesService,
-  form: () => Pick<SidePanelForm, 'hasUnsavedChanges'> | undefined,
-): () => Observable<boolean> {
-  return () => (form()?.hasUnsavedChanges() ? unsavedChanges.showConfirmDialog() : of(true));
 }

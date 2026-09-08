@@ -33,6 +33,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceActionsCellComponent } from 'app/pages/services/components/service-actions-cell/service-actions-cell.component';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
+import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
@@ -104,6 +105,7 @@ export class ServicesComponent implements OnInit {
     [ServiceName.Ssh, { component: ServiceSshComponent }],
     [ServiceName.Ups, { component: ServiceUpsComponent, wide: true }],
     [ServiceName.WebShare, { component: ServiceWebshareComponent }],
+    [ServiceName.S3, { component: ServiceS3Component }],
   ]);
 
   protected get emptyConfig(): EmptyType {

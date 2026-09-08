@@ -1,54 +1,59 @@
 <tn-form-section [heading]="'Add New Mapping' | translate">
-  <form class="form" [formGroup]="form" (submit)="submit()">
-    @if (isUserType()) {
-      <ix-user-combobox
-        formControlName="hostUidOrGid"
-        [label]="'User' | translate"
-        [required]="true"
-      ></ix-user-combobox>
-    } @else {
-      <ix-group-combobox
-        formControlName="hostUidOrGid"
-        [label]="'Group' | translate"
-        [required]="true"
-      ></ix-group-combobox>
-    }
+  <ix-form [formGroup]="form" [submitHandler]="handleSubmit">
+    <div class="form-row">
+      @if (isUserType()) {
+        <ix-user-combobox
+          formControlName="hostUidOrGid"
+          [label]="'User' | translate"
+          [required]="true"
+        ></ix-user-combobox>
+      } @else {
+        <ix-group-combobox
+          formControlName="hostUidOrGid"
+          [label]="'Group' | translate"
+          [required]="true"
+        ></ix-group-combobox>
+      }
 
-    <div class="checkbox-with-tooltip">
-      <tn-checkbox
-        testId="map-directly"
-        formControlName="mapDirectly"
-        class="default-checkbox"
-        [label]="isUserType() ? ('Map to the same UID in the container' | translate) : ('Map to the same GID in the container' | translate)"
-      ></tn-checkbox>
-      <tn-icon
-        name="help_outline"
-        class="help-icon-inline"
-        tabindex="0"
-        role="button"
-        [attr.aria-label]="'Help' | translate"
-        [tnTooltip]="helptext.mapDirectlyTooltip | translate"
-        (keydown.enter)="$event.preventDefault()"
-        (keydown.space)="$event.preventDefault()"
-      ></tn-icon>
+      <div class="checkbox-with-tooltip">
+        <tn-checkbox
+          testId="map-directly"
+          formControlName="mapDirectly"
+          class="default-checkbox"
+          [label]="isUserType() ? ('Map to the same UID in the container' | translate) : ('Map to the same GID in the container' | translate)"
+        ></tn-checkbox>
+        <tn-icon
+          name="help_outline"
+          class="help-icon-inline"
+          tabindex="0"
+          role="button"
+          [attr.aria-label]="'Help' | translate"
+          [tnTooltip]="helptext.mapDirectlyTooltip | translate"
+          (keydown.enter)="$event.preventDefault()"
+          (keydown.space)="$event.preventDefault()"
+        ></tn-icon>
+      </div>
+
+      @if (!form.value.mapDirectly) {
+        <tn-form-field
+          [label]="isUserType() ? ('Container UID' | translate) : ('Container GID' | translate)"
+          [required]="true"
+        >
+          <tn-input
+            formControlName="instanceUidOrGid"
+            [inputType]="InputType.Number"
+          ></tn-input>
+        </tn-form-field>
+      }
+
+      <tn-button
+        class="set-button"
+        type="submit"
+        variant="outline"
+        testId="set-mapping"
+        [label]="'Set' | translate"
+        [disabled]="form.invalid || form.pending"
+      ></tn-button>
     </div>
-
-    @if (!form.value.mapDirectly) {
-      <ix-input
-        formControlName="instanceUidOrGid"
-        type="number"
-        [label]="isUserType() ? ('Container UID' | translate) : ('Container GID' | translate)"
-        [required]="true"
-      ></ix-input>
-    }
-
-    <tn-button
-      class="set-button"
-      type="submit"
-      variant="outline"
-      testId="set-mapping"
-      [label]="'Set' | translate"
-      [disabled]="form.invalid || form.pending"
-    ></tn-button>
-  </form>
+  </ix-form>
 </tn-form-section>

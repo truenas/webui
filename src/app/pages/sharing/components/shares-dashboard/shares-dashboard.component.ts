@@ -11,6 +11,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboard/nvme-of-card/nvme-of-card.component';
+import { S3CardComponent } from 'app/pages/sharing/components/shares-dashboard/s3-card/s3-card.component';
 import { sharesDashboardElements } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.elements';
 import { WebShareCardComponent } from 'app/pages/sharing/components/shares-dashboard/webshare-card/webshare-card.component';
 import { EntitlementsService } from 'app/services/entitlements.service';
@@ -30,6 +31,7 @@ import { SmbCardComponent } from './smb-card/smb-card.component';
     NfsCardComponent,
     IscsiCardComponent,
     NvmeOfCardComponent,
+    S3CardComponent,
     WebShareCardComponent,
     EmptyComponent,
     TranslateModule,

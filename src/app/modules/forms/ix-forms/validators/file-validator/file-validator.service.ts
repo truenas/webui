@@ -60,10 +60,15 @@ export class FileValidatorService {
     };
   }
 
+  /**
+   * Accepts either shape a file control can hold: `ix-file-input` always stored a `File[]`, while
+   * `tn-file-input` in single mode stores one `File`.
+   */
   maxSize(maxSizeInBytes: number) {
-    return (control: FormControl<File[] | null>): ValidationErrors | null => {
-      const files = control.value;
-      if (!files?.length) {
+    return (control: FormControl<File | File[] | null>): ValidationErrors | null => {
+      const value = control.value;
+      const files = value ? [value].flat() : [];
+      if (!files.length) {
         return null;
       }
 

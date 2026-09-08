@@ -3,8 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnCheckboxHarness, TnInputHarness, TnSelectHarness, TnStepperComponent,
+  TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness, TnStepperComponent,
 } from '@truenas/ui-components';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VmCpuMode } from 'app/enums/vm.enum';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
@@ -30,6 +31,7 @@ describe('CpuAndMemoryStepComponent', () => {
         }),
       ]),
       mockProvider(CpuValidatorService),
+      provideTnFormFieldErrors(),
     ],
   });
 
@@ -76,6 +78,14 @@ describe('CpuAndMemoryStepComponent', () => {
       min_memory: 536870912,
       nodeset: '2',
     });
+  });
+
+  it('rejects a minimum memory below the 20 MiB middleware allows', async () => {
+    await setInput('min_memory', '10 MiB');
+
+    const field = await loader.getHarness(TnFormFieldHarness.with({ label: 'Minimum Memory Size' }));
+    expect(await field.getErrorMessage()).toBe('Allocate at least 20 MiB.');
+    expect(spectator.component.form.controls.min_memory.valid).toBe(false);
   });
 
   it('returns summary when getSummary() is called', async () => {

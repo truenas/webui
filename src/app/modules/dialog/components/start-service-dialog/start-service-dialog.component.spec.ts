@@ -4,7 +4,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialogHarness, TnSlideToggleHarness } from '@truenas/ui-components';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -12,7 +12,6 @@ import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { StartServiceDialog } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
-import { IxSlideToggleHarness } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -71,11 +70,11 @@ describe('StartServiceDialogComponent', () => {
       'SMB Service is not currently running. Start the service now?',
     );
 
-    const enableAutomaticallyCheckbox = await loader.getHarness(
-      IxSlideToggleHarness.with({ label: 'Enable this service to start automatically.' }),
+    const enableAutomaticallyToggle = await loader.getHarness(
+      TnSlideToggleHarness.with({ label: 'Enable this service to start automatically.' }),
     );
 
-    expect(await enableAutomaticallyCheckbox.getValue()).toBe(true);
+    expect(await enableAutomaticallyToggle.isChecked()).toBe(true);
 
     const startButton = await loader.getHarness(TnButtonHarness.with({ label: 'Start' }));
     await startButton.click();
@@ -99,10 +98,10 @@ describe('StartServiceDialogComponent', () => {
       'SMB Service is not currently running. Start the service now?',
     );
 
-    const enableAutomaticallyCheckbox = await loader.getHarness(
-      IxSlideToggleHarness.with({ label: 'Enable this service to start automatically.' }),
+    const enableAutomaticallyToggle = await loader.getHarness(
+      TnSlideToggleHarness.with({ label: 'Enable this service to start automatically.' }),
     );
-    await enableAutomaticallyCheckbox.setValue(false);
+    await enableAutomaticallyToggle.uncheck();
 
     const startButton = await loader.getHarness(TnButtonHarness.with({ label: 'Start' }));
     await startButton.click();

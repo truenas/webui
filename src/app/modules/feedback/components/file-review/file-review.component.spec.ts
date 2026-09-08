@@ -6,21 +6,24 @@ import { ReactiveFormsModule } from '@angular/forms';
 import {
   createHostFactory, createSpyObject, mockProvider, SpectatorHost,
 } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { IxStarRatingComponent } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.component';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { IxStarRatingHarness } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.harness';
+import { TnFileInputTestHarness } from 'app/modules/forms/ix-forms/testing/tn-file-input.harness';
 import { EntitlementsService } from 'app/services/entitlements.service';
 
 describe('FileReviewComponent', () => {
   let spectator: SpectatorHost<FileReviewComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   let submitButton: TnButtonHarness;
   let feedbackService: FeedbackService;
   const dialogRef = createSpyObject(DialogRef);
@@ -35,6 +38,7 @@ describe('FileReviewComponent', () => {
     ],
     providers: [
       mockApi(),
+      mockWindow(),
       mockProvider(FeedbackService, {
         createReview: jest.fn(() => of()),
       }),
@@ -55,9 +59,15 @@ describe('FileReviewComponent', () => {
   beforeEach(async () => {
     spectator = createHost(hostTemplate, { hostProps: { dialogRef } });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
     submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Submit' }));
     feedbackService = spectator.inject(FeedbackService);
+  });
+
+  it('labels the rating through its form field and marks it required', async () => {
+    const ratingField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Select Rating' }));
+
+    expect(await ratingField.getLabel()).toBe('Select Rating');
+    expect(await ratingField.isRequired()).toBe(true);
   });
 
   it('uploads a new rating when form is submitted', async () => {
@@ -70,13 +80,9 @@ describe('FileReviewComponent', () => {
       TnCheckboxHarness.with({ label: 'Attach additional images' }),
     )).check();
 
-    await form.fillForm(
-      {
-        'Select Rating': 1,
-        Message: 'Git gud',
-        'Attach images (optional)': fakeAttachments,
-      },
-    );
+    await (await loader.getHarness(IxStarRatingHarness)).setValue(1);
+    await (await loader.getHarness(TnInputHarness)).setValue('Git gud');
+    await (await loader.getHarness(TnFileInputTestHarness)).setValue(fakeAttachments);
 
     await submitButton.click();
 

@@ -86,7 +86,12 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
         this.translate.instant(helptextVmWizard.memory_size_err),
       ),
     ]],
-    min_memory: [null as number | null],
+    min_memory: [null as number | null, [
+      this.validator.withMessage(
+        Validators.min(20 * MiB),
+        this.translate.instant(helptextVmWizard.min_memory_size_err),
+      ),
+    ]],
     nodeset: ['', Validators.pattern(vmNodesetPattern)],
   });
 

@@ -20,15 +20,10 @@
       </tn-form-field>
 
       <tn-form-field [label]="'Response Type' | translate" [required]="true">
-        @for (option of responseTypeOptions; track option.value) {
-          <tn-radio
-            name="response-type"
-            formControlName="responseType"
-            [value]="option.value"
-            [label]="option.label | translate"
-            [testId]="['response-type', option.value]"
-          ></tn-radio>
-        }
+        <tn-radio-group
+          formControlName="responseType"
+          [options]="responseTypeOptions"
+        ></tn-radio-group>
       </tn-form-field>
 
       @if (isErrorMode) {

@@ -1,5 +1,6 @@
 import { fakeAsync, tick, discardPeriodicTasks } from '@angular/core/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnProgressBarComponent } from '@truenas/ui-components';
 import { FakeProgressBarComponent } from './fake-progress-bar.component';
 
 describe('FakeProgressBarComponent', () => {
@@ -17,7 +18,7 @@ describe('FakeProgressBarComponent', () => {
     tick(200);
     spectator.detectChanges();
 
-    const progressBar = spectator.query('mat-progress-bar');
+    const progressBar = spectator.query(TnProgressBarComponent);
     expect(progressBar).toBeTruthy();
 
     discardPeriodicTasks();
@@ -68,7 +69,7 @@ describe('FakeProgressBarComponent', () => {
     tick(300); // Wait for animation
     spectator.detectChanges();
 
-    const progressBar = spectator.query('mat-progress-bar');
+    const progressBar = spectator.query(TnProgressBarComponent);
     expect(progressBar).toBeFalsy();
   }));
 });

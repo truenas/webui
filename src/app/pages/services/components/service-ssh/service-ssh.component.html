@@ -12,11 +12,18 @@
       <tn-input formControlName="tcpport" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
     </tn-form-field>
 
-    <ix-group-chips
-      [formControl]="form.controls.password_login_groups"
+    <tn-form-field
       [label]="'Password Login Groups' | translate"
       [tooltip]="tooltips.password_login_groups | translate"
-    ></ix-group-chips>
+    >
+      <tn-chip-input
+        formControlName="password_login_groups"
+        testId="password-login-groups"
+        [allowCustomValue]="true"
+        [options]="(groupOptions$ | async) ?? []"
+        (searchChange)="groupSearch$.next($event)"
+      ></tn-chip-input>
+    </tn-form-field>
 
     <tn-form-field [tooltip]="tooltips.passwordauth | translate">
       <tn-checkbox formControlName="passwordauth" [label]="'Allow Password Authentication' | translate"></tn-checkbox>

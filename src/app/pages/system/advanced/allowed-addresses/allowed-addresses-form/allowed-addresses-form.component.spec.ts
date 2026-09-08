@@ -5,14 +5,15 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnInputHarness } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { TnFormListHarness, TnInputHarness } from '@truenas/ui-components';
+import { EMPTY, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -28,6 +29,7 @@ describe('AllowedAddressesComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockApi([
         mockCall('system.general.update'),
         mockCall('system.general.ui_restart'),
@@ -113,10 +115,14 @@ describe('AllowedAddressesComponent', () => {
       mockedApi.mockCall('system.general.config', {
         ui_allowlist: [],
       } as SystemGeneralConfig);
-      spectator.component.ngOnInit();
+      // Re-created rather than re-running ngOnInit on the live component: `loadFormConfig` clears
+      // the address array before re-populating it, so a second load would just empty the list.
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
       expect(spectator.query(WarningComponent)).not.toExist();
 
+      await (await loader.getHarness(TnFormListHarness)).add();
       await (await getAddressInput()).setValue('192.168.1.0/24');
 
       const warning = spectator.query(WarningComponent);
@@ -214,6 +220,25 @@ describe('AllowedAddressesComponent', () => {
         { ui_allowlist: ['5.5.5.5'] },
       ]);
       expect(systemGeneralService.handleUiServiceRestart).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
+    });
+
+    it('still reports success and closes when the UI restart itself fails', async () => {
+      const systemGeneralService = spectator.inject(SystemGeneralService);
+      // `handleUiServiceRestart` reports the failure itself and catches into EMPTY, so the
+      // composed request completes WITHOUT emitting. The allowlist was still saved, so the form
+      // must not be left open with nothing on screen saying so.
+      (systemGeneralService.handleUiServiceRestart as jest.Mock) = jest.fn(() => EMPTY);
+
+      await (await getAddressInput()).setValue('7.7.7.7');
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
+
+      expect(api.call).toHaveBeenCalledWith('system.general.update', [
+        { ui_allowlist: ['7.7.7.7'] },
+      ]);
       expect(closedSpy).toHaveBeenCalledWith(true);
     });
 

@@ -113,13 +113,14 @@ export class AlertServiceComponent implements OnInit {
     map((levels) => mapToOptions(levels, this.translate)),
   );
 
-  // Drives the modal-header progress bar while a Send Test Alert call is in
-  // flight. Submit's own loading state is handled by the wrapper internally.
+  // Drives the `<ix-form>` wrapper's loading state (and, through it, the hosting side
+  // panel's progress bar) while a Send Test Alert call is in flight. Submit's own loading
+  // state is handled by the wrapper internally.
   protected readonly testAlertLoading = signal(false);
 
-  // Resolved in ngOnInit (not a field initializer): the SlideIn host exposes it via
-  // `slideInRef.getData()`, the side-panel host via the `alertServiceToEdit` input —
-  // and inputs aren't set until after construction.
+  // Resolved in ngOnInit (not a field initializer): the `<tn-side-panel>` host supplies the
+  // record through the `alertServiceToEdit` input, and inputs aren't set until after
+  // construction.
   private existingAlertService: AlertService | undefined;
 
   // Mirrors the dynamic child form's `invalid` state into a signal so the
@@ -219,7 +220,7 @@ export class AlertServiceComponent implements OnInit {
     this.renderAlertServiceForm();
 
     // Defer one tick so the freshly-rendered child form is wired before patching.
-    // Guard the callback: if the slide-in closes within the same tick the timer is
+    // Guard the callback: if the panel closes within the same tick the timer is
     // cleared, so it never fires against a torn-down child form.
     const timeoutId = setTimeout(() => {
       this.alertServiceForm.setValues(alertService.attributes);

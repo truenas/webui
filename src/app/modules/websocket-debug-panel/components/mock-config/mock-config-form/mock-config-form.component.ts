@@ -5,16 +5,18 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors,
 } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnAutocompleteComponent, TnAutocompleteOption, TnButtonComponent, TnCheckboxComponent,
-  TnFormFieldComponent, TnInputComponent, TnRadioComponent, TnSelectComponent, TnSelectOption,
+  TnFormFieldComponent, TnInputComponent, TnRadioGroupComponent, TnRadioOption, TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
 import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { generateUuid } from 'app/helpers/uuid.helper';
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
+import { translateOptions } from 'app/modules/translate/translate.helper';
 import { JobEventBuilderComponent } from 'app/modules/websocket-debug-panel/components/mock-config/job-event-builder/job-event-builder.component';
 import {
   MockConfig, MockEvent, CallErrorData,
@@ -32,7 +34,7 @@ import { PrefilledMockConfig } from 'app/modules/websocket-debug-panel/store/web
     TranslateModule,
     TnFormFieldComponent,
     TnInputComponent,
-    TnRadioComponent,
+    TnRadioGroupComponent,
     TnSelectComponent,
     TnAutocompleteComponent,
     TnCheckboxComponent,
@@ -50,15 +52,17 @@ export class MockConfigFormComponent implements OnInit {
   readonly cancelled = output();
 
   private readonly fb = inject(FormBuilder);
+  private readonly translate = inject(TranslateService);
   private readonly store = inject(Store);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly CodeEditorLanguage = CodeEditorLanguage;
   protected readonly InputType = InputType;
-  protected readonly responseTypeOptions: { label: string; value: 'success' | 'error' }[] = [
-    { label: 'Success', value: 'success' },
-    { label: 'Error', value: 'error' },
-  ];
+  // `tn-radio-group` does not translate its `[options]`, so they are translated up front.
+  protected readonly responseTypeOptions: TnRadioOption<'success' | 'error'>[] = translateOptions(this.translate, [
+    { label: T('Success'), value: 'success' as const },
+    { label: T('Error'), value: 'error' as const },
+  ]);
 
   // Common JSON-RPC error codes
   protected readonly errorCodeOptions: TnAutocompleteOption<number>[] = [

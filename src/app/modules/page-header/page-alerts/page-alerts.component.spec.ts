@@ -88,14 +88,14 @@ describe('PageAlertsComponent', () => {
 
   // A class the registry gives no groupSummary (asserted below), so these must keep
   // rendering as separate banners.
-  const noHeadlineClass = AlertClassName.Smartd;
-  const smartdAlerts = ['sda', 'sdb'].map((disk, index) => ({
-    id: `smartd-${disk}`,
-    uuid: `smartd-${disk}`,
-    key: `smartd-${disk}-key`,
+  const noHeadlineClass = AlertClassName.SmartFailedSelfTest;
+  const selfTestAlerts = ['sda', 'sdb'].map((disk, index) => ({
+    id: `self-test-${disk}`,
+    uuid: `self-test-${disk}`,
+    key: `self-test-${disk}-key`,
     klass: noHeadlineClass,
     level: AlertLevel.Warning,
-    formatted: `smartd is not running for disk ${disk}.`,
+    formatted: `Disk ${disk} failed its SMART self-test.`,
     dismissed: false,
     datetime: { $date: index + 1 },
     relatedMenuPath: ['storage'],
@@ -106,7 +106,7 @@ describe('PageAlertsComponent', () => {
     id: 'long-storage',
     uuid: 'long-storage',
     key: 'long-storage-key',
-    klass: AlertClassName.Smartd,
+    klass: AlertClassName.SmartFailedSelfTest,
     level: AlertLevel.Warning,
     formatted: 'Storage pool scrub found errors that need attention. '
       + 'Replace the failing disk and start a new scrub once it is done.',
@@ -149,7 +149,7 @@ describe('PageAlertsComponent', () => {
     storageAlert,
     apiKeyAlert,
     ...poolUpgradeAlerts,
-    ...smartdAlerts,
+    ...selfTestAlerts,
     longStorageAlert,
   ];
 
@@ -268,8 +268,8 @@ describe('PageAlertsComponent', () => {
     await setUrl('/storage');
 
     const messages = renderedMessages();
-    expect(messages).toContain('smartd is not running for disk sda.');
-    expect(messages).toContain('smartd is not running for disk sdb.');
+    expect(messages).toContain('Disk sda failed its SMART self-test.');
+    expect(messages).toContain('Disk sdb failed its SMART self-test.');
   });
 
   it('shows how many alerts a banner stands for', async () => {

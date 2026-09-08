@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCheckboxComponent } from '@truenas/ui-components';
 import { PosixPermission } from 'app/enums/posix-acl.enum';
 import { parseMode } from 'app/helpers/mode.helper';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -18,7 +18,7 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxLabelComponent,
-    MatCheckbox,
+    TnCheckboxComponent,
     ReactiveFormsModule,
     IxErrorsComponent,
     TranslateModule,

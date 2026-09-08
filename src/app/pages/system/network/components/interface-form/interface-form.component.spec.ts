@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { Store, StoreModule } from '@ngrx/store';
 import {
-  TnCheckboxHarness, TnDialog, TnInputHarness, TnRadioHarness, TnSelectHarness,
+  TnCheckboxHarness, TnDialog, TnFormListHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -29,7 +29,7 @@ import {
 import {
   IxIpInputWithNetmaskHarness,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
-import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -54,7 +54,7 @@ describe('InterfaceFormComponent', () => {
   let spectator: Spectator<InterfaceFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-  let aliasesList: IxListHarness | null;
+  let aliasesList: TnFormListHarness | null;
   const productType = ProductType.CommunityEdition;
 
   async function setSelectValue(fcName: string, ...labels: string[]): Promise<void> {
@@ -135,6 +135,7 @@ describe('InterfaceFormComponent', () => {
       }),
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockApi([
         mockCall('interface.xmit_hash_policy_choices', {
           [XmitHashPolicy.Layer2]: XmitHashPolicy.Layer2,
@@ -211,7 +212,7 @@ describe('InterfaceFormComponent', () => {
       closedSpy = jest.fn();
       spectator.component.closed.subscribe(closedSpy);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
+      aliasesList = await loader.getHarness(TnFormListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
@@ -233,7 +234,7 @@ describe('InterfaceFormComponent', () => {
       const dispatchSpy = jest.spyOn(store$, 'dispatch');
 
       await setSelectValue('type', 'Bridge');
-      await aliasesList!.pressAddButton();
+      await aliasesList!.add();
 
       await setInputValue('name', 'br0');
       await setInputValue('description', 'Bridge interface');
@@ -371,18 +372,18 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('hides Aliases when either DHCP or Autoconfigure IPv6 is enabled', async () => {
-      aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Static IP Addresses' }));
+      aliasesList = await loader.getHarnessOrNull(TnFormListHarness.with({ label: 'Static IP Addresses' }));
       expect(aliasesList).toBeTruthy();
 
       await setRadioValue('Get IP Address Automatically from DHCP');
 
-      aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Static IP Addresses' }));
+      aliasesList = await loader.getHarnessOrNull(TnFormListHarness.with({ label: 'Static IP Addresses' }));
       expect(aliasesList).toBeNull();
 
       await setRadioValue('Define Static IP Addresses');
       await setCheckbox('Autoconfigure IPv6', true);
 
-      aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Static IP Addresses' }));
+      aliasesList = await loader.getHarnessOrNull(TnFormListHarness.with({ label: 'Static IP Addresses' }));
       expect(aliasesList).toBeTruthy();
     });
 
@@ -419,7 +420,7 @@ describe('InterfaceFormComponent', () => {
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
+      aliasesList = await loader.getHarness(TnFormListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
@@ -451,7 +452,7 @@ describe('InterfaceFormComponent', () => {
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
+      aliasesList = await loader.getHarness(TnFormListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
@@ -476,7 +477,7 @@ describe('InterfaceFormComponent', () => {
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
+      aliasesList = await loader.getHarness(TnFormListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
@@ -502,7 +503,7 @@ describe('InterfaceFormComponent', () => {
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
+      aliasesList = await loader.getHarness(TnFormListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
@@ -526,7 +527,7 @@ describe('InterfaceFormComponent', () => {
       spectator.detectChanges();
 
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
+      aliasesList = await loader.getHarness(TnFormListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
@@ -572,7 +573,7 @@ describe('InterfaceFormComponent', () => {
     it('shows Failover Critical and Failover Group when failover is enabled', async () => {
       jest.spyOn(spectator.inject(TnDialog), 'open');
 
-      await aliasesList!.pressAddButton();
+      await aliasesList!.add();
       await setSelectValue('type', 'Bridge');
       await setInputValue('name', 'br0');
 

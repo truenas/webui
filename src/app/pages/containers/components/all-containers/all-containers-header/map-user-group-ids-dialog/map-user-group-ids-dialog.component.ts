@@ -6,6 +6,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
+  TnButtonToggleComponent,
+  TnButtonToggleGroupComponent,
   TnCellDefDirective,
   TnDialogShellComponent,
   TnEmptyComponent,
@@ -18,13 +20,10 @@ import {
   TnTooltipDirective,
 } from '@truenas/ui-components';
 import {
-  finalize, map, Observable, of,
+  finalize, map, Observable,
 } from 'rxjs';
 import { containersHelptext } from 'app/helptext/containers/containers';
 import { directIdMapping } from 'app/interfaces/user.interface';
-import {
-  IxButtonGroupComponent,
-} from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -60,7 +59,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnCellDefDirective,
     ReactiveFormsModule,
     NewMappingFormComponent,
-    IxButtonGroupComponent,
+    TnButtonToggleGroupComponent,
+    TnButtonToggleComponent,
   ],
 })
 export class MapUserGroupIdsDialogComponent implements OnInit {
@@ -80,7 +80,7 @@ export class MapUserGroupIdsDialogComponent implements OnInit {
 
   protected readonly typeControl = new FormControl(ViewType.Users);
 
-  protected readonly typeOptions$ = of([
+  protected readonly typeOptions = [
     {
       label: this.translate.instant('Users'),
       value: ViewType.Users,
@@ -89,7 +89,7 @@ export class MapUserGroupIdsDialogComponent implements OnInit {
       label: this.translate.instant('Groups'),
       value: ViewType.Groups,
     },
-  ]);
+  ];
 
   protected readonly idMapHintText = this.translate.instant(this.helptext.idMapHint).replace(/<br>/g, '\n');
 

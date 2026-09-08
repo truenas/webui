@@ -61,16 +61,25 @@ tn-progress-bar {
   margin-bottom: 16px;
 }
 
+// Grid, not flex: with `auto-fit` the columns drop to a second row once they
+// cannot hold `$stat-column-min` each, instead of being squeezed narrower than
+// their contents. A byte pair like "1023.99 MiB / 1023.99 GiB" is ~190px wide,
+// which no longer fits three-across as soon as the dialog hits its 90vw cap on
+// a narrow window.
+$stat-column-min: 150px;
+
 .stats-cards {
-  display: flex;
+  display: grid;
   gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax($stat-column-min, 1fr));
 }
 
 // Not a card any more - the stats read as plain columns aligned with the rest
 // of the dialog body, so the box went with the padding.
 .stat-card {
-  flex: 1;
-  min-width: 120px;
+  // Grid items default to min-width: auto, which floors the track at the
+  // content's width and lets a long value push its neighbour off the dialog.
+  min-width: 0;
 
   .stat-label {
     font-size: 12px;
@@ -78,9 +87,19 @@ tn-progress-bar {
     margin-bottom: 4px;
   }
 
+  // No `nowrap` here: it made an over-wide value overflow its column and paint
+  // on top of the next one (NAS-142255). The value wraps between its parts
+  // instead.
   .stat-value {
     font-size: 16px;
     font-weight: 500;
+  }
+
+  // Each half of an "x / y" pair stays intact, so a wrap can only happen at the
+  // `&ngsp;` separator the template keeps between the parts, never between a
+  // number and its unit.
+  .stat-part {
+    display: inline-block;
     white-space: nowrap;
   }
 }
