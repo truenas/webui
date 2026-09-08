@@ -33,7 +33,7 @@ import {
   KeychainSshCredentials,
 } from 'app/interfaces/keychain-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
+import { SshConnectionSetup, SshConnectionSetupPrivateKey } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -239,37 +239,41 @@ export class SshConnectionFormComponent extends SidePanelForm<KeychainCredential
   private prepareSetupRequest(): Observable<KeychainCredential> {
     const values = this.form.value;
 
-    const params: SshConnectionSetup = {
-      setup_type: values.setup_method,
-      connection_name: values.connection_name,
-      private_key: values.private_key === generateNewKeyValue
-        ? { generate_key: true, name: `${values.connection_name} Key` }
-        : { generate_key: false, existing_key_id: values.private_key },
-    };
+    const privateKey: SshConnectionSetupPrivateKey = values.private_key === generateNewKeyValue
+      ? { generate_key: true, name: `${values.connection_name} Key` }
+      : { generate_key: false, existing_key_id: values.private_key };
 
-    if (values.setup_method === SshConnectionsSetupMethod.Manual) {
-      params.manual_setup = {
-        host: values.host,
-        port: values.port,
-        username: values.username,
-        remote_host_key: values.remote_host_key,
-        connect_timeout: values.connect_timeout,
-      } as SshCredentials;
-    } else {
-      params.semi_automatic_setup = {
-        // tn-input has no `[parse]`; normalize the bare URL (prepend protocol) at submit,
-        // matching the legacy ix-input `stringAsUrlParsing` behavior. Safe to defer to submit:
-        // the `url` control only validates presence (conditional `Validators.required`), so the
-        // normalized value never feeds a format validator.
-        url: this.formatter.stringAsUrlParsing(values.url),
-        admin_username: values.admin_username,
-        password: values.password,
-        username: values.username,
-        otp_token: values.otp_token,
-        connect_timeout: values.connect_timeout,
-        sudo: values.sudo,
-      };
-    }
+    const params: SshConnectionSetup = values.setup_method === SshConnectionsSetupMethod.Manual
+      ? {
+          setup_type: SshConnectionsSetupMethod.Manual,
+          connection_name: values.connection_name,
+          private_key: privateKey,
+          manual_setup: {
+            host: values.host,
+            port: values.port,
+            username: values.username,
+            remote_host_key: values.remote_host_key,
+            connect_timeout: values.connect_timeout,
+          } as SshCredentials,
+        }
+      : {
+          setup_type: SshConnectionsSetupMethod.SemiAutomatic,
+          connection_name: values.connection_name,
+          private_key: privateKey,
+          semi_automatic_setup: {
+            // tn-input has no `[parse]`; normalize the bare URL (prepend protocol) at submit,
+            // matching the legacy ix-input `stringAsUrlParsing` behavior. Safe to defer to submit:
+            // the `url` control only validates presence (conditional `Validators.required`), so the
+            // normalized value never feeds a format validator.
+            url: this.formatter.stringAsUrlParsing(values.url),
+            admin_username: values.admin_username,
+            password: values.password,
+            username: values.username,
+            otp_token: values.otp_token,
+            connect_timeout: values.connect_timeout,
+            sudo: values.sudo,
+          },
+        };
 
     return this.keychainCredentialService.addSshConnection(params).pipe(
       catchError((error: unknown) => {
@@ -283,7 +287,7 @@ export class SshConnectionFormComponent extends SidePanelForm<KeychainCredential
               });
             }),
             switchMap((retry) => {
-              if (retry) {
+              if (retry && params.setup_type === SshConnectionsSetupMethod.SemiAutomatic) {
                 params.semi_automatic_setup.verify_ssl = false;
                 return this.keychainCredentialService.addSshConnection(params);
               }
