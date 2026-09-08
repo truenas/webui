@@ -24,18 +24,22 @@ import {
   toggleBucketEnabled,
 } from '../flows/s3';
 import type { E2eApiClient } from '../support/api/client';
-import { runCleanupSteps } from '../support/cleanup';
+import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 import { readTimeoutMs } from '../support/timeouts';
 
-const owner = 'bucketowner';
+/**
+ * Names distinct from `s3.e2e.ts`'s, deliberately: each file's cleanup deletes
+ * its parent dataset recursively and its accounts, which is only safe across
+ * files while `workers: 1` serialises them. Distinct names keep it safe even
+ * when it does not.
+ */
+const owner = 'managedowner';
 /** A second account, so the grant is to someone other than the owner. */
-const reader = 'bucketreader';
-const group = 'bucketgroup';
-const parentDataset = 'e2e_s3';
+const reader = 'managedreader';
+const group = 'managedgroup';
+const parentDataset = 'e2e_s3_managed';
 const bucket = 'e2e-s3-managed';
-
-const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
 
 /** How long the toggle's `sharing.s3.update` gets to land. */
 const updateTimeoutMs = 30_000;
@@ -62,8 +66,7 @@ test.beforeEach(async ({ api, pool }) => {
 });
 
 test.afterEach(async ({ api, pool }) => {
-  if (keepTestData) {
-    console.warn(`TN_KEEP_TEST_DATA=1 — leaving bucket "${bucket}", its datasets, and the accounts.`);
+  if (leavingTestData(`bucket "${bucket}", its datasets, and the accounts`)) {
     return;
   }
   await cleanUp(api, pool);

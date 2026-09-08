@@ -29,8 +29,8 @@ v25.10.0 and most of what the fixtures call looks unavailable.
 
 Three tests were **green on the 3.x client against a freshly installed v27
 nightly, in CI, 2026-09-02** — the first real run after the client move, and it
-passed first time once the appliance was right. The move to 3.x is no longer
-unproven.
+passed first time once the appliance was right. The later move to 5.x (2026-09-08)
+changed nothing the suite calls; it was proven by the same runs that proved S3.
 
 S3 followed (2026-09-07/08), in `tests/s3*.e2e.ts`: creating a bucket with
 object lock from the Shares dashboard and minting an access key under

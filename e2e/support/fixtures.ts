@@ -21,11 +21,10 @@ import { expect, type Page, test as base } from '@playwright/test';
 import type { E2eApiClient } from './api/client';
 import { connectAndLogin } from './api/client';
 import { buildTokenLoginUrl, generateAuthToken } from './auth/token';
+import { keepTestData } from './cleanup';
 import { loadTargetConfig, type TargetConfig } from './config';
 import { adminLayout } from './constants';
 import { poolLifecycle } from '../fixtures/pool';
-
-const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
 
 /**
  * The wall-clock budget for signing in, how long one attempt may wait for the
@@ -193,9 +192,11 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
   pool: [
     async ({ api }, use) => {
       const lifecycle = poolLifecycle();
-      const name = await lifecycle.provide(api);
+      // `provide` is inside the try on purpose: it records responsibility for
+      // the pool *before* starting `pool.create`, so a build that lands and
+      // then times out or loses its socket must still reach `release`.
       try {
-        await use(name);
+        await use(await lifecycle.provide(api));
       } finally {
         await lifecycle.release(api, keepTestData);
       }

@@ -14,11 +14,13 @@ import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient } from '../api/client';
 
 /**
- * Token lifetime. A token now serves one browser login (`support/fixtures.ts`),
- * so the lifetime only has to outlast the gap between minting and redeeming
- * it; this stays generous without minting anything long-lived.
+ * Token lifetime. A token serves one browser login (`support/fixtures.ts`), so
+ * this only has to outlast the gap between minting and redeeming it — seconds,
+ * plus whatever a UI still coming back after a pool export adds. Five minutes
+ * covers the login retry budget with room to spare without leaving anything
+ * long-lived behind, though middleware drops each token with its session anyway.
  */
-export const tokenTtlSeconds = 2 * 60 * 60;
+export const tokenTtlSeconds = 5 * 60;
 
 const callTimeoutMs = 15_000;
 

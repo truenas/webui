@@ -17,6 +17,7 @@ import { ensureUserAbsent, testAdmin } from '../../fixtures/users';
 import { expectSignedInAs, signIn, signOut } from '../../flows/auth';
 import { createTrueNasAdminUser } from '../../flows/users';
 import { topbarLocators } from '../../locators/topbar';
+import { leavingTestData } from '../../support/cleanup';
 import { expect, test } from '../../support/fixtures';
 
 /**
@@ -35,11 +36,9 @@ test.beforeEach(async ({ api }) => {
  * inspected after a run. Cleanup still happens in `beforeEach`, so the next run
  * is unaffected — this only changes what is left behind, never what a run finds.
  */
-const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
 
 test.afterEach(async ({ api }) => {
-  if (keepTestData) {
-    console.warn(`TN_KEEP_TEST_DATA=1 — leaving user "${testAdmin.username}" on the appliance.`);
+  if (leavingTestData(`user "${testAdmin.username}" on the appliance`)) {
     return;
   }
   await ensureUserAbsent(api, testAdmin.username);

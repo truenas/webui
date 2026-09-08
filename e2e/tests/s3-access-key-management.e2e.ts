@@ -16,15 +16,14 @@ import {
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';
 import { deleteS3AccessKey, rotateS3AccessKey } from '../flows/s3';
 import type { E2eApiClient } from '../support/api/client';
-import { runCleanupSteps } from '../support/cleanup';
+import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
-const owner = 'bucketowner';
+/** Distinct from the other S3 specs' owner; see `s3-bucket-management.e2e.ts`. */
+const owner = 'keyowner';
 const accessKey = 'e2e-s3-managed-key';
 
-const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
-
-/** The secret middleware issued at creation; only the creating call ever sees it. */
+/** The secret middleware issued at creation; the one rotation must replace. */
 let createdSecret: string | null;
 
 async function cleanUp(api: E2eApiClient): Promise<void> {
@@ -41,8 +40,7 @@ test.beforeEach(async ({ api }) => {
 });
 
 test.afterEach(async ({ api }) => {
-  if (keepTestData) {
-    console.warn(`TN_KEEP_TEST_DATA=1 — leaving access key "${accessKey}" and user "${owner}".`);
+  if (leavingTestData(`access key "${accessKey}" and user "${owner}"`)) {
     return;
   }
   await cleanUp(api);

@@ -13,6 +13,31 @@
  * the later, usually more expensive, steps.
  */
 
+/**
+ * `TN_KEEP_TEST_DATA=1` leaves what a test created on the appliance, to inspect.
+ * Opt-in on `=1`, not truthiness: `TN_KEEP_TEST_DATA=0` must not keep anything.
+ * Cleanup still runs at the *start* of each test, so this changes only what a
+ * run leaves behind, never what it finds.
+ */
+export const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
+
+/**
+ * Whether an `afterEach` should skip its cleanup, saying what it leaves.
+ *
+ *     test.afterEach(async ({ api }) => {
+ *       if (leavingTestData(`bucket "${bucket}" and user "${owner}"`)) {
+ *         return;
+ *       }
+ *       await cleanUp(api);
+ *     });
+ */
+export function leavingTestData(what: string): boolean {
+  if (keepTestData) {
+    console.warn(`TN_KEEP_TEST_DATA=1 — leaving ${what}.`);
+  }
+  return keepTestData;
+}
+
 export type CleanupStep = [what: string, run: () => Promise<unknown>];
 
 export async function runCleanupSteps(steps: CleanupStep[]): Promise<void> {

@@ -19,7 +19,7 @@ import {
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';
 import { createS3AccessKey, createS3BucketWithObjectLock } from '../flows/s3';
 import type { E2eApiClient } from '../support/api/client';
-import { runCleanupSteps } from '../support/cleanup';
+import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
 const owner = 'bucketowner';
@@ -28,8 +28,6 @@ const parentDataset = 'e2e_s3';
 const bucket = 'e2e-s3-bucket';
 const retentionDays = 30;
 const accessKey = 'e2e-s3-key';
-
-const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
 
 /** How long the S3 service gets to reach RUNNING after the start dialog. */
 const serviceStartTimeoutMs = 60_000;
@@ -67,11 +65,7 @@ test.beforeEach(async ({ api }) => {
 });
 
 test.afterEach(async ({ api }) => {
-  if (keepTestData) {
-    console.warn(
-      `TN_KEEP_TEST_DATA=1 — leaving bucket "${bucket}", the "${parentDataset}" dataset, `
-      + `the access keys and user "${owner}".`,
-    );
+  if (leavingTestData(`bucket "${bucket}", the "${parentDataset}" dataset, the access keys and user "${owner}"`)) {
     return;
   }
   await cleanUp(api);
