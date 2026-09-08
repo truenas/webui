@@ -27,6 +27,28 @@ import { adminLayout } from './constants';
 /** How long the app gets to redeem the token and render the shell. */
 const tokenLoginTimeoutMs = 60_000;
 
+/**
+ * One login token per worker, minted on first use.
+ *
+ * Keyed on the client rather than declared as a worker fixture the `page`
+ * override depends on: Playwright builds the fixture graph from what a fixture
+ * destructures, not from which branches read it, so a worker fixture named in
+ * `page`'s signature would be instantiated for every test — including the
+ * `unauthenticated` project, whose whole point is to keep running when token
+ * login is broken (R4.2). Minting lazily inside the `authenticate` branch keeps
+ * that project free of the call.
+ */
+const tokensByClient = new WeakMap<E2eApiClient, Promise<string>>();
+
+function authTokenFor(client: E2eApiClient): Promise<string> {
+  let token = tokensByClient.get(client);
+  if (!token) {
+    token = generateAuthToken(client);
+    tokensByClient.set(client, token);
+  }
+  return token;
+}
+
 export interface E2eTestOptions {
   /**
    * Whether `page` is signed in before the test starts. On by default; the
@@ -49,8 +71,9 @@ export interface E2eWorkerFixtures {
   api: E2eApiClient;
   /**
    * A reusable login token for this worker — two hours, not single-use, not
-   * origin-bound (see `auth/token.ts`). Minted once per worker over the `api`
-   * fixture, so a run of any length costs one `auth.generate_token`.
+   * origin-bound (see `auth/token.ts`). The same one the `page` fixture signs
+   * in with; a test that needs the raw token (a URL to hand to something else)
+   * asks for it here, and the mint happens once either way.
    */
   authToken: string;
 }
@@ -91,7 +114,7 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
 
   authToken: [
     async ({ api }, use) => {
-      await use(await generateAuthToken(api));
+      await use(await authTokenFor(api));
     },
     { scope: 'worker' },
   ],
@@ -114,10 +137,10 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
    * cost the token exists to avoid (R4.1).
    */
   page: async ({
-    page, authenticate, authToken, config,
+    page, authenticate, api, config,
   }, use) => {
     if (authenticate) {
-      await page.goto(buildTokenLoginUrl(config.uiBaseUrl, authToken));
+      await page.goto(buildTokenLoginUrl(config.uiBaseUrl, await authTokenFor(api)));
       await expect(page.locator(adminLayout)).toBeVisible({ timeout: tokenLoginTimeoutMs });
     }
     await use(page);

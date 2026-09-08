@@ -42,28 +42,37 @@ interface DiskInventory {
   }[];
 }
 
-export interface ProvidedPool {
-  name: string;
-  /** True when this run created it and so must export it afterwards. */
-  ownedByTest: boolean;
-}
-
 /**
- * A pool for the bucket's dataset to live under.
+ * The name of an online pool, or undefined when the appliance has none.
  *
- * Prefers one that already exists: a developer's appliance has pools and often
- * no spare disk, and exporting somebody's pool is not a precondition. Only on
- * an appliance with none — the CI case — does this build `e2e_s3_tank` from one
- * unused disk, and then the caller owes it an `ensurePoolAbsent` in teardown.
+ * A read only — the question cleanup asks, since a dataset can only be left
+ * behind under a pool that exists. `providePool` is the one that builds.
  */
-export async function providePool(client: E2eApiClient): Promise<ProvidedPool> {
+export async function findOnlinePool(client: E2eApiClient): Promise<string | undefined> {
   const pools = await firstValueFrom(
     client.api.query('pool.query', [['status', '=', 'ONLINE']]).pipe(timeout(readTimeoutMs)),
   );
 
-  const existing = pools.find((pool) => pool.name !== s3OwnedPoolName) ?? pools[0];
+  // Prefer somebody else's pool over the suite's own, so a leaked `e2e_s3_tank`
+  // does not shadow the pool a developer meant the tests to use.
+  return (pools.find((pool) => pool.name !== s3OwnedPoolName) ?? pools[0])?.name;
+}
+
+/**
+ * A pool for the bucket's dataset to live under, by name.
+ *
+ * Prefers one that already exists: a developer's appliance has pools and often
+ * no spare disk, and exporting somebody's pool is not a precondition. Only on
+ * an appliance with none — the CI case — does this build `e2e_s3_tank` from one
+ * unused disk. That pool is exported once, in `afterAll`, rather than around
+ * every test: a build-and-destroy per test is minutes of wall clock for
+ * nothing, and `ensurePoolAbsent` on the fixed name is a no-op wherever the
+ * suite did not build it.
+ */
+export async function providePool(client: E2eApiClient): Promise<string> {
+  const existing = await findOnlinePool(client);
   if (existing) {
-    return { name: existing.name, ownedByTest: existing.name === s3OwnedPoolName };
+    return existing;
   }
 
   const details = await firstValueFrom(
@@ -95,7 +104,7 @@ export async function providePool(client: E2eApiClient): Promise<ProvidedPool> {
     },
   );
 
-  return { name: s3OwnedPoolName, ownedByTest: true };
+  return s3OwnedPoolName;
 }
 
 /** Creates a plain filesystem dataset by full name (`pool/name`) if absent. */

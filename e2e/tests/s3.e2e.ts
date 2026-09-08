@@ -13,7 +13,7 @@
  */
 import {
   ensureDatasetAbsent, ensureDatasetPresent, ensureS3AccessKeysAbsent, ensureS3BucketAbsent,
-  ensureS3ServiceStopped, findS3AccessKeys, findS3Bucket, providePool, queryS3Service,
+  ensureS3ServiceStopped, findOnlinePool, findS3AccessKeys, findS3Bucket, providePool, queryS3Service,
   s3OwnedPoolName,
 } from '../fixtures/s3';
 import { ensurePoolAbsent } from '../fixtures/storage';
@@ -34,26 +34,35 @@ const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
 /** How long the S3 service gets to reach RUNNING after the start dialog. */
 const serviceStartTimeoutMs = 60_000;
 
-/** Which pool the parent dataset lives under; resolved once the API is up. */
-let pool: string;
-
 /**
  * Order matters: the service first, so nothing is serving what is about to be
  * removed; keys before the user, because a key outlives its account; the
  * bucket before its datasets, so the share is never left pointing at a dataset
- * that is gone; the pool last and only if this suite built it.
+ * that is gone.
+ *
+ * The pool is not here. On an appliance without one the bucket test builds
+ * `e2e_s3_tank`, and exporting it between tests only to build it again would
+ * cost two `pool.create`s and an export before the journey starts. It is
+ * exported once, in `afterAll`.
  *
  * Every step runs even when an earlier one throws, and the failures are
  * reported together — the same reasoning as `fresh-install.e2e.ts`.
  */
 async function cleanUp(api: E2eApiClient): Promise<void> {
+  // Read, not provided: a leftover dataset can only exist under a pool that
+  // does, and asking is what keeps this hook from building one.
+  const pool = await findOnlinePool(api);
+
   const steps: [string, () => Promise<unknown>][] = [
     ['stop the S3 service', () => ensureS3ServiceStopped(api)],
     ['remove the access keys', () => ensureS3AccessKeysAbsent(api, owner)],
     ['remove the bucket', () => ensureS3BucketAbsent(api, bucket)],
-    ['delete the parent dataset', () => ensureDatasetAbsent(api, `${pool}/${parentDataset}`)],
+    ['delete the parent dataset', async () => {
+      if (pool) {
+        await ensureDatasetAbsent(api, `${pool}/${parentDataset}`);
+      }
+    }],
     ['delete the owner', () => ensureUserAbsent(api, owner)],
-    ['export the pool this suite built', () => ensurePoolAbsent(api, s3OwnedPoolName)],
   ];
 
   const failures: string[] = [];
@@ -73,30 +82,35 @@ async function cleanUp(api: E2eApiClient): Promise<void> {
 }
 
 test.beforeEach(async ({ api }) => {
-  pool = (await providePool(api)).name;
   await cleanUp(api);
-  // `cleanUp` may have just exported the suite's own pool; ask again so the
-  // dataset below has somewhere to go.
-  pool = (await providePool(api)).name;
   await ensureUserPresent(api, owner);
 });
 
 test.afterEach(async ({ api }) => {
   if (keepTestData) {
     console.warn(
-      `TN_KEEP_TEST_DATA=1 — leaving bucket "${bucket}", dataset "${pool}/${parentDataset}", `
-      + `the access keys and user "${owner}", and pool "${s3OwnedPoolName}" if this run built it.`,
+      `TN_KEEP_TEST_DATA=1 — leaving bucket "${bucket}", the "${parentDataset}" dataset, `
+      + `the access keys and user "${owner}".`,
     );
     return;
   }
   await cleanUp(api);
 });
 
+/** Only the pool the suite built itself; a no-op on an appliance that had one. */
+test.afterAll(async ({ api }) => {
+  if (keepTestData) {
+    console.warn(`TN_KEEP_TEST_DATA=1 — leaving pool "${s3OwnedPoolName}" if this run built it.`);
+    return;
+  }
+  await ensurePoolAbsent(api, s3OwnedPoolName);
+});
+
 test('an admin publishes an S3 bucket with object lock and starts the service', async ({ page, api }) => {
+  // The only test that needs a pool, so the only one that may build it.
+  const pool = await providePool(api);
   const parent = `${pool}/${parentDataset}`;
   await ensureDatasetPresent(api, parent);
-
-  await page.goto('./');
 
   await test.step('create the bucket from the Shares dashboard', async () => {
     await createS3BucketWithObjectLock(page, {
@@ -140,8 +154,6 @@ test('an admin publishes an S3 bucket with object lock and starts the service', 
 });
 
 test('an admin mints a non-expiring S3 access key and is shown the secret once', async ({ page, api }) => {
-  await page.goto('./');
-
   const shown = await test.step('create the key under Credentials', async () => {
     return createS3AccessKey(page, { name: accessKey, username: owner });
   });

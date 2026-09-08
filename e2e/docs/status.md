@@ -157,7 +157,7 @@ comment instead.
 | R8.3 | No fixed sleeps — wait on observable conditions |
 | R8.4 | Quarantine policy for persistently flaky tests |
 | R9.2 | One command runs the suite against a developer's own appliance |
-| T3 | Middleware client is `@truenas/api-client` (3.x; T3.1 covered the curated-subset problem that version removed) |
+| T3 | Middleware client is `@truenas/api-client` (5.x since 2026-09-08, 3.x before; T3.1 covered the curated-subset problem that 3.x removed) |
 | T5 | Authentication via a setup project plus `storageState` — the `storageState` half was dropped 2026-09-08: the app rotates the persisted token into a five-minute single-use one, so the snapshot carried exactly one test. Each authenticated test now signs in through the token URL in the `page` fixture |
 | T10 | Configuration through target profiles, resolved in one module |
 | D1 | PR gating — deferred; needs a measured flake rate first. The `e2e` check runs on same-repo PRs touching the suite, but it is not a required check, so a red run informs and does not block |
