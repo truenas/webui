@@ -97,10 +97,16 @@ test.afterEach(async ({ api }) => {
   await cleanUp(api);
 });
 
-/** Only the pool the suite built itself; a no-op on an appliance that had one. */
+/** Set by the bucket test when `providePool` had to build the pool. */
+let suiteBuiltPool = false;
+
+/** Only the pool the suite built itself; one that was already there is not ours to destroy. */
 test.afterAll(async ({ api }) => {
+  if (!suiteBuiltPool) {
+    return;
+  }
   if (keepTestData) {
-    console.warn(`TN_KEEP_TEST_DATA=1 — leaving pool "${s3OwnedPoolName}" if this run built it.`);
+    console.warn(`TN_KEEP_TEST_DATA=1 — leaving pool "${s3OwnedPoolName}", which this run built.`);
     return;
   }
   await ensurePoolAbsent(api, s3OwnedPoolName);
@@ -108,7 +114,8 @@ test.afterAll(async ({ api }) => {
 
 test('an admin publishes an S3 bucket with object lock and starts the service', async ({ page, api }) => {
   // The only test that needs a pool, so the only one that may build it.
-  const pool = await providePool(api);
+  const { name: pool, built } = await providePool(api);
+  suiteBuiltPool ||= built;
   const parent = `${pool}/${parentDataset}`;
   await ensureDatasetPresent(api, parent);
 

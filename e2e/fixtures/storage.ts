@@ -34,7 +34,9 @@ interface NamedPool {
   name: string;
 }
 
-interface UnusedDisk {
+export interface UnusedDisk {
+  /** Device name, `sdb` — what `pool.create` takes in a vdev's `disks`. */
+  name: string;
   /** `DiskType` — `HDD` or `SSD`. */
   type: string;
   /** Bytes. */
@@ -83,7 +85,7 @@ interface DiskBucket {
  * dies on a 20 second action timeout instead. Assert against the source the UI
  * reads, not the one that sounds equivalent.
  */
-async function getSelectableDisks(client: E2eApiClient): Promise<UnusedDisk[]> {
+export async function getSelectableDisks(client: E2eApiClient): Promise<UnusedDisk[]> {
   // `disk.details` is typed, but only as `unknown[] | Record<string, unknown>` —
   // the dump does not describe its shape, so the narrowing has to happen here.
   const details = await firstValueFrom(

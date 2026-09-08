@@ -2,9 +2,9 @@
  * Values shared across the harness.
  *
  * Note this is NOT the locator layer (R5.3) — that lives under `locators/` and
- * holds `data-test` values per screen. What lives here is infrastructure: paths
- * and the two structural selectors the auth and error-detection plumbing need
- * before any page object exists.
+ * holds `data-test` values per screen. What lives here is infrastructure: the
+ * structural selectors the auth and error-detection plumbing need before any
+ * page object exists.
  */
 /**
  * The app's root layout element. Present only once authentication has completed

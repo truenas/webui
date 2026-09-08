@@ -13,6 +13,7 @@
  */
 import type { QueryEntity } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
+import { getSelectableDisks } from './storage';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
@@ -33,15 +34,6 @@ export const s3OwnedPoolName = 'e2e_s3_tank';
 const poolCreateTimeoutMs = 3 * 60_000;
 const serviceControlTimeoutMs = 60_000;
 
-/** Some disk names off `disk.details`, the inventory the pool wizard reads. */
-interface DiskInventory {
-  unused: {
-    name: string;
-    duplicate_serial?: string[];
-    exported_zpool?: string;
-  }[];
-}
-
 /**
  * The name of an online pool, or undefined when the appliance has none.
  *
@@ -58,32 +50,35 @@ export async function findOnlinePool(client: E2eApiClient): Promise<string | und
   return (pools.find((pool) => pool.name !== s3OwnedPoolName) ?? pools[0])?.name;
 }
 
+export interface ProvidedPool {
+  name: string;
+  /**
+   * True when this call built the pool. The caller that exports in teardown
+   * checks this rather than the name: an `e2e_s3_tank` that was already there
+   * when the run started is not the suite's to destroy.
+   */
+  built: boolean;
+}
+
 /**
- * A pool for the bucket's dataset to live under, by name.
+ * A pool for the bucket's dataset to live under.
  *
  * Prefers one that already exists: a developer's appliance has pools and often
  * no spare disk, and exporting somebody's pool is not a precondition. Only on
  * an appliance with none — the CI case — does this build `e2e_s3_tank` from one
  * unused disk. That pool is exported once, in `afterAll`, rather than around
  * every test: a build-and-destroy per test is minutes of wall clock for
- * nothing, and `ensurePoolAbsent` on the fixed name is a no-op wherever the
- * suite did not build it.
+ * nothing.
  */
-export async function providePool(client: E2eApiClient): Promise<string> {
+export async function providePool(client: E2eApiClient): Promise<ProvidedPool> {
   const existing = await findOnlinePool(client);
   if (existing) {
-    return existing;
+    return { name: existing, built: false };
   }
 
-  const details = await firstValueFrom(
-    client.api.call('disk.details', []).pipe(timeout(slowCallTimeoutMs)),
-  ) as unknown as DiskInventory;
-
-  // Same filter as the pool wizard, so the disk chosen here is one the UI would
-  // have offered too.
-  const disk = (details.unused ?? []).find((candidate) => (
-    !candidate.duplicate_serial?.length && !candidate.exported_zpool
-  ));
+  // The wizard's own view of the inventory, so the disk chosen here is one the
+  // UI would have offered too — see `getSelectableDisks` for what it excludes.
+  const [disk] = await getSelectableDisks(client);
 
   if (!disk) {
     throw new Error(
@@ -104,7 +99,7 @@ export async function providePool(client: E2eApiClient): Promise<string> {
     },
   );
 
-  return s3OwnedPoolName;
+  return { name: s3OwnedPoolName, built: true };
 }
 
 /** Creates a plain filesystem dataset by full name (`pool/name`) if absent. */

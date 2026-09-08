@@ -121,7 +121,5 @@ src/app/testing-configs/*
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-# Persisted authenticated browser state — contains a live session token
-/e2e/.auth/
 # Local E2E target configuration — never commit credentials
 /.env

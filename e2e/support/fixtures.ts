@@ -77,8 +77,17 @@ async function signInWithToken(page: Page, client: E2eApiClient, config: TargetC
       // failed attempt like any other rather than the end of the loop.
       const token = await generateAuthToken(client);
       await page.goto(buildTokenLoginUrl(config.uiBaseUrl, token));
+
+      // Measured after the mint and the navigation, which can eat the budget
+      // on their own. Playwright reads `timeout: 0` as *no* timeout, so a spent
+      // budget has to stop the attempt here rather than be clamped to zero and
+      // wait for the per-test ceiling instead.
+      const remainingMs = deadline - Date.now();
+      if (remainingMs <= 0) {
+        throw new Error('the login budget ran out before the admin shell could be awaited');
+      }
       await expect(page.locator(adminLayout)).toBeVisible({
-        timeout: Math.min(tokenLoginAttemptTimeoutMs, Math.max(0, deadline - Date.now())),
+        timeout: Math.min(tokenLoginAttemptTimeoutMs, remainingMs),
       });
       return;
     } catch (error) {
