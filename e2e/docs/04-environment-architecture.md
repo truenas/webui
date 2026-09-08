@@ -191,7 +191,7 @@ which is why they are infrastructure parameters rather than details.
 
 **Restore invalidates the suite's session, and nothing re-mints it.** The
 `page` fixture (`support/fixtures.ts`) signs each authenticated test in with a
-token minted once per worker; it is a live middleware token. A rebooted guest
+token minted for that login; it is a live middleware token. A rebooted guest
 has no memory of that session, so the WebSocket is dead and the token is gone. The harness needs per-appliance
 re-authentication after restore — which pulls **E10**'s "the harness must be
 able to expect disconnection" out of the HA future and onto the critical path

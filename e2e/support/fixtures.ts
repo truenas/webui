@@ -25,18 +25,24 @@ import { loadTargetConfig, type TargetConfig } from './config';
 import { adminLayout } from './constants';
 
 /**
- * How many times the token login is attempted, and how long each gets to
- * render the shell.
+ * The wall-clock budget for signing in, how long one attempt may wait for the
+ * shell, and the pause before trying again.
  *
- * More than once because the UI is not always there to be logged into: when a
- * pool holding the system dataset is exported or imported, the appliance
- * restarts what depends on it and the token URL loads nothing usable for a
- * while. A re-navigation is what a stalled page needs, and a single long wait
- * never re-navigates — hence three attempts of thirty seconds rather than one
- * of ninety.
+ * A budget rather than an attempt count, because the two ways an attempt fails
+ * take wildly different times. When the web server is down `page.goto` rejects
+ * in milliseconds, so three counted attempts would be over in under a second;
+ * when it is up but the app has not rendered, the assertion waits its full
+ * timeout. Attempts run until the deadline, each bounded to what is left, with
+ * a pause between them so a down server is retried rather than hammered.
+ *
+ * The UI is not always there to be logged into: when a pool holding the system
+ * dataset is exported or imported, the appliance restarts what depends on it
+ * and the token URL loads nothing usable for a while. A re-navigation is what a
+ * stalled page needs, and a single long wait never re-navigates.
  */
-const tokenLoginAttempts = 3;
+const tokenLoginBudgetMs = 90_000;
 const tokenLoginAttemptTimeoutMs = 30_000;
+const tokenLoginRetryDelayMs = 5_000;
 
 /**
  * Signs `page` in through the token URL, with a token minted for this login.
@@ -58,14 +64,22 @@ const tokenLoginAttemptTimeoutMs = 30_000;
  * whole point is to keep running when token login is broken (R4.2).
  */
 async function signInWithToken(page: Page, client: E2eApiClient, config: TargetConfig): Promise<void> {
+  const deadline = Date.now() + tokenLoginBudgetMs;
+  let attempts = 0;
   let lastError: unknown;
 
-  for (let attempt = 1; attempt <= tokenLoginAttempts; attempt += 1) {
-    const token = await generateAuthToken(client);
+  for (;;) {
+    attempts += 1;
 
     try {
+      // The mint is inside the try on purpose: while middleware is restarting,
+      // the API session can be the thing that is not back yet, and that is one
+      // failed attempt like any other rather than the end of the loop.
+      const token = await generateAuthToken(client);
       await page.goto(buildTokenLoginUrl(config.uiBaseUrl, token));
-      await expect(page.locator(adminLayout)).toBeVisible({ timeout: tokenLoginAttemptTimeoutMs });
+      await expect(page.locator(adminLayout)).toBeVisible({
+        timeout: Math.min(tokenLoginAttemptTimeoutMs, Math.max(0, deadline - Date.now())),
+      });
       return;
     } catch (error) {
       // `goto` can throw outright while the web server is down, and the
@@ -73,12 +87,19 @@ async function signInWithToken(page: Page, client: E2eApiClient, config: TargetC
       // "not yet", and both are worth another navigation.
       lastError = error;
     }
+
+    if (Date.now() + tokenLoginRetryDelayMs >= deadline) {
+      break;
+    }
+    await new Promise((resolve) => {
+      setTimeout(resolve, tokenLoginRetryDelayMs);
+    });
   }
 
   throw new Error(
-    `Token login did not reach the admin shell in ${tokenLoginAttempts} attempts of `
-    + `${tokenLoginAttemptTimeoutMs / 1000}s, each with a freshly minted token. A pool export or `
-    + 'import just before this test would explain a UI that is still coming back. '
+    `Token login did not reach the admin shell within ${tokenLoginBudgetMs / 1000}s (${attempts} `
+    + 'attempts, each with a freshly minted token). A pool export or import just before this test '
+    + 'would explain a UI that is still coming back. '
     + `Last attempt: ${lastError instanceof Error ? lastError.message : String(lastError)}`,
     { cause: lastError },
   );
