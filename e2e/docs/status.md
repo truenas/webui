@@ -117,7 +117,7 @@ a number. See `05-ci.md`.
   token: middleware stops honouring one once the session that redeemed it ends,
   so a per-worker token carried exactly one test too. Cost: one authenticated
   call and a few seconds per test.
-- **Fixed names** (`bob`, `e2e_tank`) mean two runs against one appliance
+- **Fixed names** (`bob`, `e2e_tank`, `e2e_shared_tank`, the S3 specs' owners) mean two runs against one appliance
   collide. Fine for one-appliance-per-run; run-scoped naming is the fix.
 - **`AuthResponseType` is declared but not exported** while
   `AuthResponse.response_type` is typed as it, so `support/api/client.ts` checks

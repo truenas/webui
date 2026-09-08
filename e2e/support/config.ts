@@ -34,7 +34,8 @@ const profiles: readonly ProfileName[] = ['shipped', 'branch'];
  * instructions actively told you to leave it unset. So the documented happy path
  * was a `.env` holding credentials and no target, pointed by inference at
  * whatever appliance the developer's dev server was on — where a run would
- * destroy any pool named `e2e_tank` and delete any user named `bob`. Nothing in
+ * destroy any pool named `e2e_tank` or `e2e_shared_tank` and delete any user
+ * named `bob`. Nothing in
  * the output said which machine that was.
  *
  * The convenience is worth keeping — one `yarn ui remote -i <ip>` configuring

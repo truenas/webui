@@ -35,8 +35,9 @@ interface NamedPool {
 }
 
 export interface UnusedDisk {
-  /** Device name, `sdb` — what `pool.create` takes in a vdev's `disks`. */
   name: string;
+  /** Device name, `sdb` — what the wizard's `topologyToPayload` puts in a vdev's `disks`. */
+  devname: string;
   /** `DiskType` — `HDD` or `SSD`. */
   type: string;
   /** Bytes. */

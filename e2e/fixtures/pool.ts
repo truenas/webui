@@ -81,7 +81,7 @@ async function providePool(client: E2eApiClient, onBuild: () => void): Promise<s
     client,
     () => client.api.callAndGetJobId('pool.create', [{
       name: suiteOwnedPoolName,
-      topology: { data: [{ type: 'STRIPE', disks: [disk.name] }] },
+      topology: { data: [{ type: 'STRIPE', disks: [disk.devname] }] },
     }]),
     {
       timeoutMs: poolCreateTimeoutMs,

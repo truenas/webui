@@ -120,16 +120,14 @@ export interface S3AccessKeySpec {
 }
 
 /**
- * Creates an access key over the API if absent, for journeys that start from
- * one. Matched on name *and* user, the same pair `ensureS3AccessKeysAbsent`
- * removes by, so a leftover key of that name under some other account is not
- * mistaken for the one the journey expects.
+ * Creates an access key over the API, for journeys that start from one.
  *
- * The entry returned by `create` carries the secret; the UI shows it once and
- * then only offers rotation, so a test that wants to compare secrets keeps
- * this one.
+ * Always creates, never adopts: the entry `create` returns is the only one
+ * that carries the secret, and a test comparing secrets after a rotation needs
+ * it. A key of that name still present means the caller's cleanup did not
+ * run, which is worth failing on rather than papering over.
  */
-export async function ensureS3AccessKeyPresent(
+export async function provisionS3AccessKey(
   client: E2eApiClient,
   key: S3AccessKeySpec,
 ): Promise<S3AccessKeyEntry> {
@@ -139,7 +137,9 @@ export async function ensureS3AccessKeyPresent(
       .pipe(timeout(readTimeoutMs)),
   );
   if (existing) {
-    return existing;
+    throw new Error(
+      `Access key "${key.name}" for ${key.username} already exists; the spec's cleanup should have removed it.`,
+    );
   }
 
   return firstValueFrom(

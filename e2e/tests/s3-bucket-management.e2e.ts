@@ -20,7 +20,7 @@ import {
   ensureGroupAbsent, ensureGroupPresent, ensureUserAbsent, ensureUserPresent,
 } from '../fixtures/users';
 import {
-  addBucketGrant, deleteBucketFromDashboard, openBucketEditor, saveSidePanel, showAdvancedBucketOptions,
+  addBucketGrant, deleteBucketFromDashboard, openBucketEditor, saveBucketEditor, showAdvancedBucketOptions,
   toggleBucketEnabled,
 } from '../flows/s3';
 import type { E2eApiClient } from '../support/api/client';
@@ -78,7 +78,7 @@ test('an admin grants a user and a group access to a bucket', async ({ page, api
     await showAdvancedBucketOptions(page);
     await addBucketGrant(page, { principalType: 'USER', principal: reader, access: 'READONLY' });
     await addBucketGrant(page, { principalType: 'GROUP', principal: group, access: 'READWRITE' });
-    await saveSidePanel(page);
+    await saveBucketEditor(page);
   });
 
   // The pickers show names; middleware stores ids. Whether the two line up is

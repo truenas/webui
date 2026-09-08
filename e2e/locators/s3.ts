@@ -107,6 +107,8 @@ export const s3BucketLocators = {
    * `start-service-dialog` SMB uses, hence the same id as `smbLocators.startService`.
    */
   startService: '[data-test="button-enable-service"]',
+  /** Its sibling "No", `testId="do-not-start"` in the same dialog. */
+  doNotStartService: '[data-test="button-do-not-start"]',
 
   /**
    * The Name cell of a bucket's row in the dashboard card.

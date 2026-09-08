@@ -236,10 +236,23 @@ export async function addBucketGrant(page: Page, grant: NewS3Grant): Promise<voi
   await page.locator(grants.accessOption(accessLabels[grant.access])).click();
 }
 
-/** Saves the open side panel; the panel closing is the app's own signal that the save succeeded. */
-export async function saveSidePanel(page: Page): Promise<void> {
+/**
+ * Saves the open bucket editor, declining the "Start S3 Service" prompt.
+ *
+ * Saving an edit dispatches the same service check as creating, so with the
+ * service stopped (the fixtures' precondition) the prompt follows the panel
+ * closing. Declined rather than accepted: editing a bucket is not the journey
+ * that starts the service, and the "No" is asserted so a flow change fails
+ * here rather than leaving a dialog over the next step.
+ */
+export async function saveBucketEditor(page: Page): Promise<void> {
   await page.locator(s3BucketLocators.form.save).click();
   await expect(page.locator(s3BucketLocators.form.save)).toBeHidden({ timeout: saveTimeoutMs });
+
+  const doNotStart = page.locator(s3BucketLocators.doNotStartService);
+  await expect(doNotStart).toBeVisible({ timeout: saveTimeoutMs });
+  await doNotStart.click();
+  await expect(doNotStart).toBeHidden();
 }
 
 /**

@@ -11,7 +11,7 @@
  * secret the API handed out at creation.
  */
 import {
-  ensureS3AccessKeyPresent, ensureS3AccessKeysAbsent, findS3AccessKeys,
+  ensureS3AccessKeysAbsent, findS3AccessKeys, provisionS3AccessKey,
 } from '../fixtures/s3';
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';
 import { deleteS3AccessKey, rotateS3AccessKey } from '../flows/s3';
@@ -36,7 +36,7 @@ async function cleanUp(api: E2eApiClient): Promise<void> {
 test.beforeEach(async ({ api }) => {
   await cleanUp(api);
   await ensureUserPresent(api, owner);
-  createdSecret = (await ensureS3AccessKeyPresent(api, { name: accessKey, username: owner })).secret;
+  createdSecret = (await provisionS3AccessKey(api, { name: accessKey, username: owner })).secret;
 });
 
 test.afterEach(async ({ api }) => {
@@ -53,8 +53,9 @@ test('an admin rotates an access key and is shown the new secret once', async ({
   const shown = await rotateS3AccessKey(page, accessKey);
 
   expect(shown.accessKeyId).toBe(before?.access_key);
-  expect(shown.secretAccessKey).not.toBe('');
-  expect(shown.secretAccessKey, 'rotation showed the old secret again').not.toBe(createdSecret);
+  // Compared as booleans so a failure never prints a secret into the report.
+  expect(shown.secretAccessKey.length > 0, 'the dialog showed an empty secret').toBe(true);
+  expect(shown.secretAccessKey === createdSecret, 'rotation showed the old secret again').toBe(false);
 
   const [after] = await findS3AccessKeys(api, owner);
   expect(after).toMatchObject({ name: accessKey, access_key: before?.access_key, enabled: true });
