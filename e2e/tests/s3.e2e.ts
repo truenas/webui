@@ -13,8 +13,8 @@
  */
 import {
   ensureDatasetAbsent, ensureDatasetPresent, ensureS3AccessKeysAbsent, ensureS3BucketAbsent,
-  ensureS3ServiceStopped, findOnlinePool, findS3AccessKeys, findS3Bucket, providePool, queryS3Service,
-  s3OwnedPoolName,
+  ensureS3ServiceStopped, findOnlinePool, findS3AccessKeys, findS3Bucket, isSuiteOwnedPool, providePool,
+  queryS3Service, s3OwnedPoolName,
 } from '../fixtures/s3';
 import { ensurePoolAbsent } from '../fixtures/storage';
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';
@@ -97,16 +97,20 @@ test.afterEach(async ({ api }) => {
   await cleanUp(api);
 });
 
-/** Set by the bucket test when `providePool` had to build the pool. */
-let suiteBuiltPool = false;
+/**
+ * Whether this run is responsible for `e2e_s3_tank`: set the moment the bucket
+ * test decides to build it (before the job, so an interrupted build still gets
+ * exported), or when it adopts one a previous run left behind.
+ */
+let suiteOwnsPool = false;
 
-/** Only the pool the suite built itself; one that was already there is not ours to destroy. */
+/** Only the suite's own pool. One under any other name is not ours to destroy. */
 test.afterAll(async ({ api }) => {
-  if (!suiteBuiltPool) {
+  if (!suiteOwnsPool) {
     return;
   }
   if (keepTestData) {
-    console.warn(`TN_KEEP_TEST_DATA=1 — leaving pool "${s3OwnedPoolName}", which this run built.`);
+    console.warn(`TN_KEEP_TEST_DATA=1 — leaving pool "${s3OwnedPoolName}".`);
     return;
   }
   await ensurePoolAbsent(api, s3OwnedPoolName);
@@ -114,8 +118,10 @@ test.afterAll(async ({ api }) => {
 
 test('an admin publishes an S3 bucket with object lock and starts the service', async ({ page, api }) => {
   // The only test that needs a pool, so the only one that may build it.
-  const { name: pool, built } = await providePool(api);
-  suiteBuiltPool ||= built;
+  const pool = await providePool(api, () => {
+    suiteOwnsPool = true;
+  });
+  suiteOwnsPool ||= isSuiteOwnedPool(pool);
   const parent = `${pool}/${parentDataset}`;
   await ensureDatasetPresent(api, parent);
 

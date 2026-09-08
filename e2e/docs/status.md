@@ -34,8 +34,9 @@ unproven.
 
 Two more since (2026-09-07), in `tests/s3.e2e.ts`: an S3 bucket with object lock
 created from the Shares dashboard, and an S3 access key minted under
-Credentials. Written against the templates and type-checked; not yet run against
-an appliance, so treat the first run as the real review. They need a pool (any,
+Credentials. Green in CI on 2026-09-08 (run 34257876916 onwards: 6/6, no
+retries, 2.2 minutes), once the harness signed each test in with its own token —
+see the `page` fixture. They need a pool (any,
 or they build a one-disk one and export it) and the S3 service. They also moved
 the suite to `@truenas/api-client` 5.0, the first release whose v27 directory
 carries `sharing.s3.*` and `s3.accesskey.*`; the fixtures name their entry

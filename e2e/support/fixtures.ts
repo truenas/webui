@@ -144,7 +144,14 @@ export interface E2eWorkerFixtures {
  * the scarce resource. One per worker means one for the whole run at the
  * current `workers: 1`, rather than one per spec file.
  *
- * They are also lazy: a spec that never asks for `api` never opens a socket.
+ * Both are lazy in principle, but in practice every test in the `authenticated`
+ * project opens the socket: the `page` override below names `api` so it can
+ * mint a login token. The `unauthenticated` project's `page` does not need it,
+ * yet Playwright builds the fixture graph from the destructuring pattern rather
+ * than from the branch taken, so its tests open the socket too — harmlessly,
+ * since both of those specs use `api` for their own cleanup anyway. Should a
+ * sign-in test ever need to run with middleware unreachable, the token would
+ * have to move behind a fixture that project overrides.
  */
 export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
   authenticate: [true, { option: true }],

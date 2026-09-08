@@ -46,22 +46,13 @@ export async function findOnlinePool(client: E2eApiClient): Promise<string | und
   );
 
   // Prefer somebody else's pool over the suite's own, so a leaked `e2e_s3_tank`
-  // does not shadow the pool a developer meant the tests to use.
+  // does not shadow the pool a developer meant the tests to use. When it is the
+  // only pool, it is used — and, being the suite's by name, exported afterwards.
   return (pools.find((pool) => pool.name !== s3OwnedPoolName) ?? pools[0])?.name;
 }
 
-export interface ProvidedPool {
-  name: string;
-  /**
-   * True when this call built the pool. The caller that exports in teardown
-   * checks this rather than the name: an `e2e_s3_tank` that was already there
-   * when the run started is not the suite's to destroy.
-   */
-  built: boolean;
-}
-
 /**
- * A pool for the bucket's dataset to live under.
+ * A pool for the bucket's dataset to live under, by name.
  *
  * Prefers one that already exists: a developer's appliance has pools and often
  * no spare disk, and exporting somebody's pool is not a precondition. Only on
@@ -69,11 +60,19 @@ export interface ProvidedPool {
  * unused disk. That pool is exported once, in `afterAll`, rather than around
  * every test: a build-and-destroy per test is minutes of wall clock for
  * nothing.
+ *
+ * `onBuild` fires *before* `pool.create` is started, not after it is confirmed.
+ * The caller uses it to record that this run is responsible for `e2e_s3_tank`,
+ * and it has to be told before the job because the job can land and still
+ * throw here — a timeout, a socket dropped while middleware restarts, a run
+ * interrupted between the two. A pool recorded only on confirmation would be
+ * skipped by teardown in exactly those cases, and a leaked pool holds its
+ * disks and starves every later run.
  */
-export async function providePool(client: E2eApiClient): Promise<ProvidedPool> {
+export async function providePool(client: E2eApiClient, onBuild: () => void): Promise<string> {
   const existing = await findOnlinePool(client);
   if (existing) {
-    return { name: existing, built: false };
+    return existing;
   }
 
   // The wizard's own view of the inventory, so the disk chosen here is one the
@@ -87,6 +86,7 @@ export async function providePool(client: E2eApiClient): Promise<ProvidedPool> {
     );
   }
 
+  onBuild();
   await runJob(
     client,
     () => client.api.callAndGetJobId('pool.create', [{
@@ -99,7 +99,19 @@ export async function providePool(client: E2eApiClient): Promise<ProvidedPool> {
     },
   );
 
-  return { name: s3OwnedPoolName, built: true };
+  return s3OwnedPoolName;
+}
+
+/**
+ * Whether a pool is the suite's to export: the fixed name is reserved for it.
+ *
+ * By name rather than by memory of having built it, so a pool left behind by
+ * an interrupted run — created, never exported — is reclaimed by the next run
+ * instead of being adopted as somebody else's and leaked for good. Every other
+ * pool is left alone, however the suite came to use it.
+ */
+export function isSuiteOwnedPool(name: string): boolean {
+  return name === s3OwnedPoolName;
 }
 
 /** Creates a plain filesystem dataset by full name (`pool/name`) if absent. */
