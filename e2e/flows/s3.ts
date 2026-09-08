@@ -147,7 +147,7 @@ async function readCredentialsDialog(page: Page): Promise<ShownS3Credentials> {
   return { accessKeyId, secretAccessKey };
 }
 
-/** A grant added through the bucket form's Grants list. */
+/** A grant added through the bucket form's Grants list; a new row is a User grant until changed. */
 export interface NewS3Grant {
   principalType: 'USER' | 'GROUP';
   /** Username or group name, as the picker shows it. */
@@ -212,8 +212,20 @@ export async function addBucketGrant(page: Page, grant: NewS3Grant): Promise<voi
   await page.locator(grants.add).click();
   await expect(rows).toHaveCount(rowsBefore + 1);
 
-  await rows.last().click();
-  await page.locator(grants.principalTypeOption(principalTypeLabels[grant.principalType])).click();
+  // A new row starts as a User grant. Choosing Group swaps the picker for a
+  // different component (`@switch` on the principal type in the grants list),
+  // and the swap lands a moment after the option click — text typed into the
+  // picker in between goes into the old one, which is then destroyed (CI runs
+  // 34267037987 and 34268513306 showed exactly that: an empty Group field and
+  // no option to click). So the old picker is held and the flow waits for it
+  // to leave the DOM before typing. For a User grant there is no swap to wait
+  // for, and waiting would time out — hence the branch.
+  if (grant.principalType !== 'USER') {
+    const previousPicker = await page.locator(grants.principal).last().elementHandle();
+    await rows.last().click();
+    await page.locator(grants.principalTypeOption(principalTypeLabels[grant.principalType])).click();
+    await previousPicker?.waitForElementState('hidden');
+  }
 
   // The picker is an autocomplete over a middleware query: typing narrows it,
   // clicking the option commits the value.
