@@ -69,9 +69,9 @@ describe('SpareWizardStepComponent', () => {
     expect(spectator.inject(PoolManagerStore).resetStep).toHaveBeenCalledWith(VDevType.Spare);
   });
 
-  it('emits goToLastStep when Save And Go To Review button is clicked', async () => {
+  it('emits goToLastStep when Go to Review button is clicked', async () => {
     jest.spyOn(spectator.component.goToLastStep, 'emit');
-    const reviewButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save And Go To Review' }));
+    const reviewButton = await loader.getHarness(MatButtonHarness.with({ text: 'Go to Review' }));
     await reviewButton.click();
     expect(spectator.component.goToLastStep.emit).toHaveBeenCalled();
   });
