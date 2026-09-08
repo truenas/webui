@@ -61,10 +61,15 @@ export class HaInfoEffects {
     }),
   ));
 
+  // The decision is made inside the `switchMap` so a later correction to unlicensed (the `HA`
+  // entitlement overriding the sign-in seed) tears the subscription down instead of skipping it.
   subscribeToHa = createEffect(() => this.actions$.pipe(
     ofType(failoverLicensedStatusLoaded),
-    filter(({ isHaLicensed }) => isHaLicensed),
-    switchMap(() => {
+    switchMap(({ isHaLicensed }) => {
+      if (!isHaLicensed) {
+        return EMPTY;
+      }
+
       return this.api.subscribe('failover.disabled.reasons').pipe(
         map((event) => {
           const failoverDisabledReasons = event.fields?.disabled_reasons;

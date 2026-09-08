@@ -1,7 +1,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
-import { firstValueFrom, ReplaySubject, of } from 'rxjs';
+import { firstValueFrom, of, ReplaySubject, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
@@ -219,6 +219,26 @@ describe('HaInfoEffects', () => {
       // Give it time to potentially emit
       expect(emitted).toBe(false);
       expect(api.subscribe).not.toHaveBeenCalled();
+      subscription.unsubscribe();
+    });
+
+    it('tears the HA subscription down when the licensed status is corrected to non-HA', () => {
+      const events$ = new Subject<ApiEvent<FailoverDisabledReasonEvent>>();
+      jest.spyOn(api, 'subscribe').mockReturnValue(events$);
+      const dispatched: unknown[] = [];
+      const subscription = spectator.service.subscribeToHa.subscribe((action) => dispatched.push(action));
+      dispatched.length = 0;
+
+      actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: true }));
+      actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: false }));
+      events$.next({
+        collection: 'failover.disabled.reasons',
+        fields: { disabled_reasons: [] as FailoverDisabledReason[] },
+        id: 1,
+        msg: CollectionChangeType.Changed,
+      });
+
+      expect(dispatched).toEqual([]);
       subscription.unsubscribe();
     });
 

@@ -5,7 +5,6 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnButtonToggleComponent, TnButtonToggleGroupComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -22,7 +21,6 @@ import { FeedbackService } from 'app/modules/feedback/services/feedback.service'
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { EntitlementsService } from 'app/services/entitlements.service';
-import { AppState } from 'app/store';
 
 @Component({
   selector: 'ix-feedback-dialog',
@@ -51,7 +49,6 @@ export class FeedbackDialog implements OnInit {
   private feedbackService = inject(FeedbackService);
   private entitlements = inject(EntitlementsService);
   private translate = inject(TranslateService);
-  private store$ = inject<Store<AppState>>(Store);
   protected dialogRef = inject<DialogRef<unknown, FeedbackDialog>>(DialogRef);
   private requestedType = inject<FeedbackType | null>(DIALOG_DATA, { optional: true });
   private destroyRef = inject(DestroyRef);

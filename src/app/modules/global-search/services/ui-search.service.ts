@@ -4,7 +4,7 @@ import UiElementsJson from 'app/../assets/ui-searchable-elements.json';
 import Fuse from 'fuse.js';
 import {
   BehaviorSubject,
-  Observable, combineLatest, filter, first, from, map, mergeMap, of, tap, toArray,
+  Observable, combineLatest, filter, first, from, map, mergeMap, of, startWith, tap, toArray,
 } from 'rxjs';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -48,11 +48,11 @@ export class UiSearchProvider implements GlobalSearchProvider {
           item.requiredRoles?.length ? this.authService.hasRole(item.requiredRoles) : of(true),
           this.license.hasFailover$,
           this.license.hasEnclosure$,
-          this.entitlements.entitled$(EntitlementFeature.Vms),
-          this.entitlements.entitled$(EntitlementFeature.Apps),
-          this.entitlements.entitled$(EntitlementFeature.Kmip),
-          this.entitlements.entitled$(EntitlementFeature.FibreChannel),
-          this.entitlements.entitled$(EntitlementFeature.Sed),
+          this.visibleUnlessDenied(EntitlementFeature.Vms),
+          this.visibleUnlessDenied(EntitlementFeature.Apps),
+          this.visibleUnlessDenied(EntitlementFeature.Kmip),
+          this.visibleUnlessDenied(EntitlementFeature.FibreChannel),
+          this.visibleUnlessDenied(EntitlementFeature.Sed),
           this.license.hasSystemSecurity$,
         ]).pipe(
           first(),
@@ -80,6 +80,16 @@ export class UiSearchProvider implements GlobalSearchProvider {
       }),
       toArray(),
     );
+  }
+
+  /**
+   * `entitled$` withholds its answer until entitlements load, which here would withhold the whole
+   * result set: `first()` never fires and the search returns nothing rather than an empty list.
+   * Search is a lookup, not a gate, so an unknown entitlement reads as visible; the page the
+   * result leads to still hides its own controls until the answer is real.
+   */
+  private visibleUnlessDenied(feature: EntitlementFeature): Observable<boolean> {
+    return this.entitlements.entitled$(feature).pipe(startWith(true));
   }
 
   select(element: UiSearchableElement): void {

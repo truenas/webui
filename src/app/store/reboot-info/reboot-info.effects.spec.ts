@@ -88,6 +88,27 @@ describe('RebootInfoEffects', () => {
         otherNodeRebootInfo: null,
       }));
     });
+
+    it('drops a fetch started on a stale licensed status once it is corrected', () => {
+      // The HA fetch is still in flight when the entitlement corrects the status to non-HA; its
+      // late answer must not overwrite the corrected one.
+      const haInfo$ = new Subject<FailoverRebootInfo>();
+      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => (
+        method === 'failover.reboot.info' ? haInfo$ : of(fakeThisNodeRebootInfo)
+      ));
+      const dispatched: unknown[] = [];
+      spectator.service.loadRebootInfo.subscribe((action) => dispatched.push(action));
+      dispatched.length = 0;
+
+      actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: true }));
+      actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: false }));
+      haInfo$.next({ this_node: fakeThisNodeRebootInfo, other_node: fakeOtherNodeRebootInfo });
+
+      expect(dispatched).toEqual([rebootInfoLoaded({
+        thisNodeRebootInfo: fakeThisNodeRebootInfo,
+        otherNodeRebootInfo: null,
+      })]);
+    });
   });
 
   describe('subscribeToRebootInfo', () => {
