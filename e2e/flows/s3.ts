@@ -3,7 +3,8 @@
  */
 import { expect, type Page } from '@playwright/test';
 import { goToS3AccessKeys, goToShares } from './navigation';
-import { s3AccessKeyLocators, s3BucketLocators } from '../locators/s3';
+import { confirmDestructiveAction, selectOption } from './storage';
+import { s3AccessKeyLocators, s3BucketLocators, s3ServiceLocators } from '../locators/s3';
 
 /** Saving a bucket creates its dataset and reconfigures the service; not instant. */
 const saveTimeoutMs = 90_000;
@@ -133,4 +134,167 @@ export async function createS3AccessKey(page: Page, key: NewS3AccessKey): Promis
   await expect(page.locator(s3AccessKeyLocators.rowName(key.name))).toBeVisible({ timeout: saveTimeoutMs });
 
   return { accessKeyId, secretAccessKey };
+}
+
+/** A grant added through the bucket form's Grants list. */
+export interface NewS3Grant {
+  principalType: 'USER' | 'GROUP';
+  /** Username or group name, as the picker shows it. */
+  principal: string;
+  access: 'READONLY' | 'READWRITE' | 'DENY';
+}
+
+/**
+ * Opens a bucket's editor from the dashboard card's row menu.
+ *
+ * The editor is the same side panel as creation; the Name input appearing is
+ * the signal it has loaded the bucket.
+ */
+export async function openBucketEditor(page: Page, bucket: string): Promise<void> {
+  await goToShares(page);
+  await page.locator(s3BucketLocators.dashboardRow.menu(bucket)).click();
+  await page.locator(s3BucketLocators.dashboardRow.edit(bucket)).click();
+  await expect(page.locator(s3BucketLocators.form.name)).toBeVisible();
+}
+
+/**
+ * Switches the open bucket editor to Advanced Options.
+ *
+ * The Grants list is only rendered there; its Add control appearing is what
+ * confirms the toggle went the intended way rather than blindly flipping it.
+ */
+export async function showAdvancedBucketOptions(page: Page): Promise<void> {
+  await page.locator(s3BucketLocators.form.advancedOptions).click();
+  await expect(page.locator(s3BucketLocators.form.grants.add)).toBeVisible();
+}
+
+/**
+ * Adds one grant to the open bucket editor, which must be in Advanced Options.
+ *
+ * Row controls fall back to their control names and so repeat per row — every
+ * interaction here targets the last row, which is the one just added.
+ */
+export async function addBucketGrant(page: Page, grant: NewS3Grant): Promise<void> {
+  const { grants } = s3BucketLocators.form;
+
+  await page.locator(grants.add).click();
+
+  await page.locator(grants.principalType).last().click();
+  await page.locator(grants.principalTypeOption(grant.principalType)).click();
+
+  // The picker is an autocomplete over a middleware query: typing narrows it,
+  // clicking the option commits the value.
+  await page.locator(grants.principal).last().fill(grant.principal);
+  await page.locator(grants.principalOption(grant.principal)).click();
+
+  await page.locator(grants.access).last().click();
+  await page.locator(grants.accessOption(grant.access)).click();
+}
+
+/** Saves the open side panel; the panel closing is the app's own signal that the save succeeded. */
+export async function saveSidePanel(page: Page): Promise<void> {
+  await page.locator(s3BucketLocators.form.save).click();
+  await expect(page.locator(s3BucketLocators.form.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Flips a bucket's Enabled toggle in the dashboard card.
+ *
+ * The toggle calls `sharing.s3.update` straight from the row; there is no
+ * dialog. Whether it took is a question for the API, which the test asks.
+ */
+export async function toggleBucketEnabled(page: Page, bucket: string): Promise<void> {
+  await goToShares(page);
+  await page.locator(s3BucketLocators.dashboardRow.enabledToggle(bucket)).click();
+}
+
+/**
+ * Deletes a bucket from the dashboard card's row menu.
+ *
+ * `confirmDelete` raises the standard confirm dialog with its tick box, so the
+ * destructive-action helper applies. The row disappearing is the app's signal.
+ */
+export async function deleteBucketFromDashboard(page: Page, bucket: string): Promise<void> {
+  await goToShares(page);
+  await page.locator(s3BucketLocators.dashboardRow.menu(bucket)).click();
+  await page.locator(s3BucketLocators.dashboardRow.delete(bucket)).click();
+  await confirmDestructiveAction(page);
+  await expect(page.locator(s3BucketLocators.dashboardRowName(bucket))).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Rotates an access key's secret from its row menu and reads the new pair off
+ * the dialog. The confirmation is the standard dialog with a warn-coloured
+ * button and the tick box, hence the destructive-action helper.
+ */
+export async function rotateS3AccessKey(page: Page, name: string): Promise<ShownS3Credentials> {
+  await goToS3AccessKeys(page);
+  await page.locator(s3AccessKeyLocators.row.menu(name)).click();
+  await page.locator(s3AccessKeyLocators.row.rotate(name)).click();
+  await confirmDestructiveAction(page);
+
+  const dialog = s3AccessKeyLocators.credentialsDialog;
+  await expect(page.locator(dialog.secretAccessKey)).toBeVisible({ timeout: saveTimeoutMs });
+
+  const accessKeyId = await page.locator(dialog.accessKeyId).inputValue();
+  const secretAccessKey = await page.locator(dialog.secretAccessKey).inputValue();
+
+  await page.locator(dialog.close).click();
+  await expect(page.locator(dialog.secretAccessKey)).toBeHidden();
+
+  return { accessKeyId, secretAccessKey };
+}
+
+/** Deletes an access key from its row menu. */
+export async function deleteS3AccessKey(page: Page, name: string): Promise<void> {
+  await goToS3AccessKeys(page);
+  await page.locator(s3AccessKeyLocators.row.menu(name)).click();
+  await page.locator(s3AccessKeyLocators.row.delete(name)).click();
+  await confirmDestructiveAction(page);
+  await expect(page.locator(s3AccessKeyLocators.rowName(name))).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+export interface S3ServiceSettings {
+  /** A bind address from `s3.bindip_choices`. */
+  address: string;
+  port: number;
+  tls: boolean;
+  servers: number;
+  region: string;
+  logLevel: 'ERROR' | 'WARNING' | 'NOTICE' | 'INFO' | 'DEBUG';
+}
+
+/**
+ * Configures the S3 service from the dashboard card's header menu: one
+ * listener, the server count, the region and the log level.
+ *
+ * The certificate is left on "Use UI certificate" deliberately — that is the
+ * default a TLS listener is meant to work with, and it is the choice that has
+ * no picker option id of its own (its value is `null`).
+ *
+ * The form loads its configuration after opening, so the Servers input
+ * appearing is what confirms it is ready to be driven.
+ */
+export async function configureS3Service(page: Page, serviceId: number, settings: S3ServiceSettings): Promise<void> {
+  await goToShares(page);
+  await page.locator(s3ServiceLocators.cardMenuTrigger(serviceId)).click();
+  await page.locator(s3ServiceLocators.configService).click();
+
+  const form = s3ServiceLocators.form;
+  await expect(page.locator(form.servers)).toBeVisible();
+
+  await page.locator(form.addListener).click();
+  await expect(page.locator(form.listenerAddress)).toBeVisible();
+  await selectOption(page, form.listenerAddress, form.listenerAddressOption(settings.address));
+  await page.locator(form.listenerPort).fill(String(settings.port));
+  if (settings.tls) {
+    await page.locator(form.listenerTls).click();
+  }
+
+  await page.locator(form.servers).fill(String(settings.servers));
+  await page.locator(form.region).fill(settings.region);
+  await selectOption(page, form.logLevel, form.logLevelOption(settings.logLevel));
+
+  await page.locator(form.save).click();
+  await expect(page.locator(form.save)).toBeHidden({ timeout: saveTimeoutMs });
 }

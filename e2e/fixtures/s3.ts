@@ -11,15 +11,17 @@
  * are named off the directory the same way `fixtures/storage.ts` names its ACL
  * entry, so they follow the generated types rather than restating them.
  */
-import type { QueryEntity } from '@truenas/api-client';
+import type { CallResponse, QueryEntity } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
-import { getSelectableDisks } from './storage';
+import { ensureServiceStopped, queryService, type ServiceState } from './services';
+import { ensurePoolAbsent, getSelectableDisks } from './storage';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 export type S3BucketEntry = QueryEntity<E2eApiDirectory['call'], 'sharing.s3.query'>;
 export type S3AccessKeyEntry = QueryEntity<E2eApiDirectory['call'], 's3.accesskey.query'>;
+export type S3ConfigEntry = CallResponse<E2eApiDirectory, 's3.config'>;
 
 /** Middleware's name for the service; the UI calls it "S3". */
 export const s3ServiceName = 'truenas_s3';
@@ -32,7 +34,6 @@ export const s3ServiceName = 'truenas_s3';
 export const s3OwnedPoolName = 'e2e_s3_tank';
 
 const poolCreateTimeoutMs = 3 * 60_000;
-const serviceControlTimeoutMs = 60_000;
 
 /**
  * The name of an online pool, or undefined when the appliance has none.
@@ -114,6 +115,41 @@ export function isSuiteOwnedPool(name: string): boolean {
   return name === s3OwnedPoolName;
 }
 
+/**
+ * The pool bookkeeping a spec needs, in one place: which pool the journeys got,
+ * and whether this run has to export it afterwards.
+ *
+ * Responsibility is recorded the moment a build is decided on (before the job,
+ * so an interrupted build is still exported) or when the suite's own pool is
+ * adopted from a previous run. Wire `release` to `test.afterAll`.
+ */
+export function s3PoolLifecycle(): {
+  provide: (client: E2eApiClient) => Promise<string>;
+  release: (client: E2eApiClient, keepTestData: boolean) => Promise<void>;
+} {
+  let owned = false;
+
+  return {
+    provide: async (client) => {
+      const name = await providePool(client, () => {
+        owned = true;
+      });
+      owned ||= isSuiteOwnedPool(name);
+      return name;
+    },
+    release: async (client, keepTestData) => {
+      if (!owned) {
+        return;
+      }
+      if (keepTestData) {
+        console.warn(`TN_KEEP_TEST_DATA=1 — leaving pool "${s3OwnedPoolName}".`);
+        return;
+      }
+      await ensurePoolAbsent(client, s3OwnedPoolName);
+    },
+  };
+}
+
 /** Creates a plain filesystem dataset by full name (`pool/name`) if absent. */
 export async function ensureDatasetPresent(client: E2eApiClient, name: string): Promise<void> {
   const [existing] = await firstValueFrom(
@@ -161,6 +197,31 @@ export async function findS3Bucket(client: E2eApiClient, name: string): Promise<
   return bucket;
 }
 
+export interface S3BucketSpec {
+  name: string;
+  /** Dataset the bucket's own dataset is created under. */
+  parentDataset: string;
+  owner: string;
+}
+
+/**
+ * Creates a bucket over the API if absent, for journeys that start from one —
+ * editing, toggling, deleting. Middleware creates `<parent>/<name>` with it.
+ */
+export async function ensureS3BucketPresent(client: E2eApiClient, bucket: S3BucketSpec): Promise<void> {
+  if (await findS3Bucket(client, bucket.name)) {
+    return;
+  }
+
+  await firstValueFrom(
+    client.api.call('sharing.s3.create', [{
+      name: bucket.name,
+      dataset: `${bucket.parentDataset}/${bucket.name}`,
+      owner: bucket.owner,
+    }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
 /** Removes a bucket by name, if present. Its dataset stays; see `ensureDatasetAbsent`. */
 export async function ensureS3BucketAbsent(client: E2eApiClient, name: string): Promise<void> {
   const bucket = await findS3Bucket(client, name);
@@ -176,6 +237,33 @@ export async function ensureS3BucketAbsent(client: E2eApiClient, name: string): 
 export async function findS3AccessKeys(client: E2eApiClient, username: string): Promise<S3AccessKeyEntry[]> {
   return firstValueFrom(
     client.api.query('s3.accesskey.query', [['username', '=', username]]).pipe(timeout(readTimeoutMs)),
+  );
+}
+
+export interface S3AccessKeySpec {
+  name: string;
+  username: string;
+}
+
+/**
+ * Creates an access key over the API if absent, for journeys that start from
+ * one. The returned entry carries the secret only when this call created it —
+ * middleware never shows a secret twice.
+ */
+export async function ensureS3AccessKeyPresent(
+  client: E2eApiClient,
+  key: S3AccessKeySpec,
+): Promise<S3AccessKeyEntry> {
+  const [existing] = await firstValueFrom(
+    client.api.query('s3.accesskey.query', [['name', '=', key.name]]).pipe(timeout(readTimeoutMs)),
+  );
+  if (existing) {
+    return existing;
+  }
+
+  return firstValueFrom(
+    client.api.call('s3.accesskey.create', [{ name: key.name, username: key.username }])
+      .pipe(timeout(slowCallTimeoutMs)),
   );
 }
 
@@ -196,21 +284,9 @@ export async function ensureS3AccessKeysAbsent(client: E2eApiClient, username: s
   }
 }
 
-interface ServiceState {
-  id: number;
-  state: string;
-  enable: boolean;
-}
-
 /** The S3 service row, or undefined when the query returns nothing. */
 export async function queryS3Service(client: E2eApiClient): Promise<ServiceState | undefined> {
-  const [service] = await firstValueFrom(
-    client.api
-      .query('service.query', [['service', '=', s3ServiceName]])
-      .pipe(timeout(readTimeoutMs)),
-  );
-
-  return service;
+  return queryService(client, s3ServiceName);
 }
 
 /**
@@ -219,43 +295,42 @@ export async function queryS3Service(client: E2eApiClient): Promise<ServiceState
  * Load-bearing, as for SMB: saving the first bucket raises "Start S3 Service"
  * only while the service is stopped, and the dialog's auto-start toggle
  * defaults to on. Left running, the next run silently exercises a different
- * path — no prompt at all — while still reporting green.
- *
- * An empty query is an error rather than "nothing to stop": every appliance
- * with the S3 service has the row, so no row means the query did not answer.
+ * path — no prompt at all — while still reporting green. The protocol itself
+ * lives in `fixtures/services.ts`.
  */
 export async function ensureS3ServiceStopped(client: E2eApiClient): Promise<void> {
-  const service = await queryS3Service(client);
-
-  if (!service) {
-    throw new Error(
-      `service.query returned no \`${s3ServiceName}\` row. This is a failed query rather than an `
-      + 'absent service — or an appliance without S3, which these journeys cannot run against.',
-    );
-  }
-
-  if (service.enable) {
-    await firstValueFrom(
-      client.api
-        .call('service.update', [service.id, { enable: false }])
-        .pipe(timeout(slowCallTimeoutMs)),
-    );
-  }
-
-  if (service.state !== 'RUNNING') {
-    return;
-  }
-
-  await runJob(
+  await ensureServiceStopped(
     client,
-    () => client.api.callAndGetJobId('service.control', ['STOP', s3ServiceName, { silent: false }]),
-    {
-      timeoutMs: serviceControlTimeoutMs,
-      whatItCosts: 'S3 service did not stop; the next run will not see the start-service prompt.',
-      confirm: async () => {
-        const current = await queryS3Service(client);
-        return current !== undefined && current.state !== 'RUNNING';
-      },
-    },
+    s3ServiceName,
+    'S3 service did not stop; the next run will not see the start-service prompt.',
+  );
+}
+
+/** The service configuration as middleware holds it. */
+export async function readS3Config(client: E2eApiClient): Promise<S3ConfigEntry> {
+  return firstValueFrom(client.api.call('s3.config').pipe(timeout(readTimeoutMs)));
+}
+
+/**
+ * Puts the service configuration back the way `readS3Config` found it.
+ *
+ * Only the settings the service form edits. `global_grants` is an entry shape
+ * on the way out (with a resolved `name`) and a plain grant on the way in, so
+ * it is trimmed; audit settings are licence-gated and left alone.
+ */
+export async function restoreS3Config(client: E2eApiClient, config: S3ConfigEntry): Promise<void> {
+  await firstValueFrom(
+    client.api.call('s3.update', [{
+      listeners: config.listeners ?? [],
+      servers: config.servers,
+      certificate: config.certificate ?? null,
+      region: config.region,
+      log_level: config.log_level,
+      global_grants: (config.global_grants ?? []).map((grant) => ({
+        principal_type: grant.principal_type,
+        xid: grant.xid,
+        access: grant.access,
+      })),
+    }]).pipe(timeout(slowCallTimeoutMs)),
   );
 }

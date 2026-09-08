@@ -13,13 +13,12 @@
  */
 import {
   ensureDatasetAbsent, ensureDatasetPresent, ensureS3AccessKeysAbsent, ensureS3BucketAbsent,
-  ensureS3ServiceStopped, findOnlinePool, findS3AccessKeys, findS3Bucket, isSuiteOwnedPool, providePool,
-  queryS3Service, s3OwnedPoolName,
+  ensureS3ServiceStopped, findOnlinePool, findS3AccessKeys, findS3Bucket, queryS3Service, s3PoolLifecycle,
 } from '../fixtures/s3';
-import { ensurePoolAbsent } from '../fixtures/storage';
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';
 import { createS3AccessKey, createS3BucketWithObjectLock } from '../flows/s3';
 import type { E2eApiClient } from '../support/api/client';
+import { runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
 const owner = 'bucketowner';
@@ -34,6 +33,8 @@ const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
 /** How long the S3 service gets to reach RUNNING after the start dialog. */
 const serviceStartTimeoutMs = 60_000;
 
+const s3Pool = s3PoolLifecycle();
+
 /**
  * Order matters: the service first, so nothing is serving what is about to be
  * removed; keys before the user, because a key outlives its account; the
@@ -44,16 +45,13 @@ const serviceStartTimeoutMs = 60_000;
  * `e2e_s3_tank`, and exporting it between tests only to build it again would
  * cost two `pool.create`s and an export before the journey starts. It is
  * exported once, in `afterAll`.
- *
- * Every step runs even when an earlier one throws, and the failures are
- * reported together — the same reasoning as `fresh-install.e2e.ts`.
  */
 async function cleanUp(api: E2eApiClient): Promise<void> {
   // Read, not provided: a leftover dataset can only exist under a pool that
   // does, and asking is what keeps this hook from building one.
   const pool = await findOnlinePool(api);
 
-  const steps: [string, () => Promise<unknown>][] = [
+  await runCleanupSteps([
     ['stop the S3 service', () => ensureS3ServiceStopped(api)],
     ['remove the access keys', () => ensureS3AccessKeysAbsent(api, owner)],
     ['remove the bucket', () => ensureS3BucketAbsent(api, bucket)],
@@ -63,22 +61,7 @@ async function cleanUp(api: E2eApiClient): Promise<void> {
       }
     }],
     ['delete the owner', () => ensureUserAbsent(api, owner)],
-  ];
-
-  const failures: string[] = [];
-
-  for (const [what, run] of steps) {
-    try {
-      await run();
-    } catch (error) {
-      failures.push(`${what} — ${error instanceof Error ? error.message : String(error)}`);
-    }
-  }
-
-  if (failures.length > 0) {
-    const bulleted = failures.map((failure) => `  • ${failure}`).join('\n');
-    throw new Error(`Cleanup did not complete:\n${bulleted}`);
-  }
+  ]);
 }
 
 test.beforeEach(async ({ api }) => {
@@ -97,31 +80,13 @@ test.afterEach(async ({ api }) => {
   await cleanUp(api);
 });
 
-/**
- * Whether this run is responsible for `e2e_s3_tank`: set the moment the bucket
- * test decides to build it (before the job, so an interrupted build still gets
- * exported), or when it adopts one a previous run left behind.
- */
-let suiteOwnsPool = false;
-
-/** Only the suite's own pool. One under any other name is not ours to destroy. */
 test.afterAll(async ({ api }) => {
-  if (!suiteOwnsPool) {
-    return;
-  }
-  if (keepTestData) {
-    console.warn(`TN_KEEP_TEST_DATA=1 — leaving pool "${s3OwnedPoolName}".`);
-    return;
-  }
-  await ensurePoolAbsent(api, s3OwnedPoolName);
+  await s3Pool.release(api, keepTestData);
 });
 
 test('an admin publishes an S3 bucket with object lock and starts the service', async ({ page, api }) => {
   // The only test that needs a pool, so the only one that may build it.
-  const pool = await providePool(api, () => {
-    suiteOwnsPool = true;
-  });
-  suiteOwnsPool ||= isSuiteOwnedPool(pool);
+  const pool = await s3Pool.provide(api);
   const parent = `${pool}/${parentDataset}`;
   await ensureDatasetPresent(api, parent);
 

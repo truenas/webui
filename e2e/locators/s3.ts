@@ -48,6 +48,52 @@ export const s3BucketLocators = {
     defaultRetentionDays: '[data-test="input-object-lock-default-days"]',
     /** The side panel's Save, `[testId]="'save'"` in form-side-panel-container. */
     save: '[data-test="button-save"]',
+    /** The Advanced/Basic toggle the side panel renders from the form's `footerActions`. */
+    advancedOptions: '[data-test="button-toggle-advanced-options"]',
+
+    /**
+     * The Grants list, rendered only in advanced mode. `tn-form-list` names its
+     * Add control `['add-item', label]`; each row's controls fall back to their
+     * control names, so with more than one row a selector matches every row —
+     * flows scope to the row they just added with `.last()`.
+     */
+    grants: {
+      add: '[data-test="button-add-item-grants"]',
+      principalType: '[data-test="select-principal-type"]',
+      principalTypeOption: (type: 'USER' | 'GROUP' | 'EVERYONE') => (
+        `[data-test="option-principal-type-${kebabTestSegment(type)}"]`
+      ),
+      /** `ix-combobox` behind `[ixTest]`, like the user picker — hence the legacy normalizer. */
+      principal: '[data-test="input-xid"]',
+      principalOption: (label: string) => `[data-test="option-xid-${legacyKebabTestSegment(label)}"]`,
+      access: '[data-test="select-access"]',
+      /** `S3Access` values are `READONLY` / `READWRITE` / `DENY`. */
+      accessOption: (access: 'READONLY' | 'READWRITE' | 'DENY') => (
+        `[data-test="option-access-${kebabTestSegment(access)}"]`
+      ),
+    },
+  },
+
+  /**
+   * Per-row controls in the dashboard card, all keyed on the card's row tag
+   * (`convertStringToId('card-s3-bucket-' + name)`, no digit splitting).
+   *
+   * The toggle cell composes `[title, tag, 'row-toggle']`; the actions cell
+   * names its menu trigger `[tag, 'more-action']` and each item
+   * `[tag, 'more-action', iconName, 'row-action']`, where `iconName` is the
+   * `tnIconMarker` output — `mdi-pencil`, not `pencil`.
+   */
+  dashboardRow: {
+    enabledToggle: (bucket: string) => (
+      `[data-test="toggle-enabled-card-s3-bucket-${kebabTestSegment(bucket)}-row-toggle"]`
+    ),
+    menu: (bucket: string) => `[data-test="button-card-s3-bucket-${kebabTestSegment(bucket)}-more-action"]`,
+    edit: (bucket: string) => (
+      `[data-test="button-card-s3-bucket-${kebabTestSegment(bucket)}-more-action-mdi-pencil-row-action"]`
+    ),
+    delete: (bucket: string) => (
+      `[data-test="button-card-s3-bucket-${kebabTestSegment(bucket)}-more-action-mdi-delete-row-action"]`
+    ),
   },
 
   /**
@@ -106,5 +152,60 @@ export const s3AccessKeyLocators = {
   rowName: (name: string) => {
     const rowTag = legacyKebabTestSegment(`s3-access-key-${name}`);
     return `[data-test="text-name-${rowTag}-row-text"]`;
+  },
+
+  /** The row's action menu and its items — same composition as the bucket card, on the legacy tag. */
+  row: {
+    menu: (name: string) => {
+      const rowTag = legacyKebabTestSegment(`s3-access-key-${name}`);
+      return `[data-test="button-${rowTag}-more-action"]`;
+    },
+    rotate: (name: string) => {
+      const rowTag = legacyKebabTestSegment(`s3-access-key-${name}`);
+      return `[data-test="button-${rowTag}-more-action-mdi-refresh-row-action"]`;
+    },
+    delete: (name: string) => {
+      const rowTag = legacyKebabTestSegment(`s3-access-key-${name}`);
+      return `[data-test="button-${rowTag}-more-action-mdi-delete-row-action"]`;
+    },
+  },
+} as const;
+
+/**
+ * The S3 service configuration form, reached from the dashboard card's header
+ * menu. The form itself is `service-s3.component.html`, hosted in the side
+ * panel like the bucket form.
+ */
+export const s3ServiceLocators = {
+  /**
+   * The card header's menu trigger, `button-<service.id>-actions-menu` from
+   * `ServiceActionsMenuService.cardHeaderMenuTriggerTestId` — keyed on the
+   * service's numeric id, which the test reads over the API.
+   */
+  cardMenuTrigger: (serviceId: number) => `[data-test="button-${serviceId}-actions-menu"]`,
+  /**
+   * "Config Service" in that menu. `menuItemTestId` runs `['button', 'truenas_s3',
+   * 'actions-menu', 'Config Service']` through the legacy normalizer, which splits
+   * the digit: `truenas-s-3`.
+   */
+  configService: '[data-test="button-truenas-s-3-actions-menu-config-service"]',
+
+  form: {
+    /** `tn-form-list` names its Add control `['add-item', label]`; the label is "Listen Addresses". */
+    addListener: '[data-test="button-add-item-listen-addresses"]',
+    listenerAddress: '[data-test="select-address"]',
+    /** Option keys are the bind addresses from `s3.bindip_choices`; `0.0.0.0` normalizes to `0-0-0-0`. */
+    listenerAddressOption: (address: string) => (
+      `[data-test="option-address-${kebabTestSegment(address)}"]`
+    ),
+    listenerPort: '[data-test="input-port"]',
+    listenerTls: '[data-test="checkbox-tls"]',
+    servers: '[data-test="input-servers"]',
+    region: '[data-test="input-region"]',
+    logLevel: '[data-test="select-log-level"]',
+    logLevelOption: (level: 'ERROR' | 'WARNING' | 'NOTICE' | 'INFO' | 'DEBUG') => (
+      `[data-test="option-log-level-${kebabTestSegment(level)}"]`
+    ),
+    save: '[data-test="button-save"]',
   },
 } as const;

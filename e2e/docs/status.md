@@ -32,18 +32,21 @@ nightly, in CI, 2026-09-02** — the first real run after the client move, and i
 passed first time once the appliance was right. The move to 3.x is no longer
 unproven.
 
-Two more since (2026-09-07), in `tests/s3.e2e.ts`: an S3 bucket with object lock
-created from the Shares dashboard, and an S3 access key minted under
-Credentials. Green in CI on 2026-09-08 (run 34257876916 onwards: 6/6, no
-retries, 2.2 minutes), once the harness signed each test in with its own token —
-see the `page` fixture. They need a pool (any,
-or they build a one-disk one and export it) and the S3 service. They also moved
-the suite to `@truenas/api-client` 5.0, the first release whose v27 directory
-carries `sharing.s3.*` and `s3.accesskey.*`; the fixtures name their entry
-shapes off it rather than restating them.
+S3 followed (2026-09-07/08), in `tests/s3*.e2e.ts`: creating a bucket with
+object lock from the Shares dashboard and minting an access key under
+Credentials (`s3.e2e.ts`, green in CI from run 34257876916: no retries, once the
+harness signed each test in with its own token — see the `page` fixture); then
+the service on a TLS listener (`s3-service`), grants to a real user and group,
+the row toggle and delete (`s3-bucket-management`), and rotating and deleting a
+key (`s3-access-key-management`). They need a pool (any, or they build a
+one-disk one and export it once per spec) and the S3 service. The S3 work also
+moved the suite to `@truenas/api-client` 5.0, the first release whose v27
+directory carries `sharing.s3.*` and `s3.accesskey.*`, and pulled the shared
+pieces out: `fixtures/services.ts` (one service-stop protocol for SMB and S3)
+and `support/cleanup.ts` (the run-every-step teardown).
 
-The framework is done and the coverage is not. Four journeys against 19 top-level
-feature areas. What the work bought is that the next twenty tests are cheap: the
+The framework is done and the coverage is not. Nine journeys against 19
+top-level feature areas. What the work bought is that the next twenty tests are cheap: the
 target seam, auth, fixtures, unconditional teardown, selector discipline and
 failure legibility are all built and proven against three different appliances.
 
@@ -65,8 +68,9 @@ a number. See `05-ci.md`.
 ## Next steps
 
 1. **Widen coverage.** Dataset ACL and manual snapshot are the two uncovered
-   stories worth taking next. The S3 pair only creates; editing a bucket,
-   rotating a key and the Advanced Options of the bucket form are open. Deleting things through the UI is blocked: no
+   stories worth taking next. S3 is covered as a feature — create, configure,
+   edit, toggle, rotate, delete — except auditing, which is licence-gated and
+   needs an Enterprise appliance. Deleting things through the UI is blocked: no
    per-row test id on `tn-table`, so no list-driven journey can be automated
    compliantly. Fixing that once unblocks every future one.
 2. **CI is running.** `.github/workflows/e2e.yml` installs a nested TrueNAS VM

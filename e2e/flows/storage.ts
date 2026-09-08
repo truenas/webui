@@ -16,7 +16,7 @@ const poolCreateTimeoutMs = 5 * 60_000;
 const saveTimeoutMs = 90_000;
 
 /** Picks an option from a `tn-select` by opening it and clicking the option. */
-async function selectOption(page: Page, select: string, option: string): Promise<void> {
+export async function selectOption(page: Page, select: string, option: string): Promise<void> {
   await page.locator(select).click();
   await page.locator(option).click();
 }

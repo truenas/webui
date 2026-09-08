@@ -98,3 +98,39 @@ export async function ensureUserPresent(client: E2eApiClient, username: string):
     }]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
+
+/**
+ * Creates a plain local group if absent, for grants to name.
+ *
+ * Same reasoning as {@link ensureUserPresent}: the S3 grant pickers list
+ * non-builtin principals only, and a group is a precondition rather than the
+ * thing under test.
+ */
+export async function ensureGroupPresent(client: E2eApiClient, name: string): Promise<void> {
+  const [existing] = await firstValueFrom(
+    client.api.query('group.query', [['group', '=', name]]).pipe(timeout(readTimeoutMs)),
+  );
+
+  if (existing) {
+    return;
+  }
+
+  await firstValueFrom(
+    client.api.call('group.create', [{ name, smb: false }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/** Removes a group if present, by name. Succeeds when the group does not exist. */
+export async function ensureGroupAbsent(client: E2eApiClient, name: string): Promise<void> {
+  const [existing] = await firstValueFrom(
+    client.api.query('group.query', [['group', '=', name]]).pipe(timeout(readTimeoutMs)),
+  );
+
+  if (!existing) {
+    return;
+  }
+
+  await firstValueFrom(
+    client.api.call('group.delete', [existing.id]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
