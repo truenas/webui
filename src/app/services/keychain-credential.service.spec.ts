@@ -1,11 +1,10 @@
-import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { KeychainSshCredentials, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { KeychainCredentialService } from './keychain-credential.service';
 
 describe('KeychainCredentialService', () => {
@@ -36,10 +35,12 @@ describe('KeychainCredentialService', () => {
   const createService = createServiceFactory({
     service: KeychainCredentialService,
     providers: [
-      mockApi([
-        mockCall('keychaincredential.query', sshKeys),
-        mockCall('keychaincredential.setup_ssh_connection', newConnection),
-      ]),
+      mockProvider(TypedApiService, {
+        query: jest.fn((_, filters: [string, string, KeychainCredentialType][]) => {
+          return of(filters[0][2] === KeychainCredentialType.SshKeyPair ? sshKeys : sshConnections);
+        }),
+        call: jest.fn(() => of(newConnection)),
+      }),
     ],
   });
 
@@ -54,25 +55,20 @@ describe('KeychainCredentialService', () => {
         expect(keys).toEqual(sshKeys);
       });
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.query', [
-        [['type', '=', KeychainCredentialType.SshKeyPair]],
+      expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('keychaincredential.query', [
+        ['type', '=', KeychainCredentialType.SshKeyPair],
       ]);
     });
   });
 
   describe('getSshConnections', () => {
-    beforeEach(() => {
-      const api = spectator.inject(ApiService);
-      (api.call as jest.Mock).mockReturnValue(of(sshConnections));
-    });
-
     it('should return SSH connections', () => {
       service.getSshConnections().subscribe((connections) => {
         expect(connections).toEqual(sshConnections);
       });
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.query', [
-        [['type', '=', KeychainCredentialType.SshCredentials]],
+      expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('keychaincredential.query', [
+        ['type', '=', KeychainCredentialType.SshCredentials],
       ]);
     });
   });
@@ -80,7 +76,7 @@ describe('KeychainCredentialService', () => {
   describe('addSshConnection', () => {
     it('should add SSH connection and trigger refetch when generating new key', () => {
       const refetchSpy = jest.spyOn(service.refetchSshKeys, 'next');
-      const setupWithNewKey = {
+      const setupWithNewKey: SshConnectionSetup = {
         ...connectionSetup,
         private_key: { generate_key: true, name: 'test-key' },
       };
@@ -89,7 +85,7 @@ describe('KeychainCredentialService', () => {
         expect(connection).toEqual(newConnection);
       });
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
         'keychaincredential.setup_ssh_connection',
         [setupWithNewKey],
       );
@@ -103,7 +99,7 @@ describe('KeychainCredentialService', () => {
         expect(connection).toEqual(newConnection);
       });
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
         'keychaincredential.setup_ssh_connection',
         [connectionSetup],
       );
