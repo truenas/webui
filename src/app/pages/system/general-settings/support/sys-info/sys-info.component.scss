@@ -25,3 +25,29 @@
     gap: 4px;
   }
 }
+
+// The licensed features list can be long. Let this one row grow to as many
+// lines as it needs, undoing the fixed height of a single-line list item and
+// the ellipsis the shared card styles put on .value.
+// .mdc-list-item is part of the selector to outweigh Material's own
+// .mdc-list-item.mdc-list-item--with-one-line height.
+.features-row.mdc-list-item {
+  height: auto;
+  min-height: 48px;
+  overflow: visible;
+  padding-bottom: 8px;
+  padding-top: 8px;
+
+  ::ng-deep .mdc-list-item__content {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  .features-value {
+    overflow: visible;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    white-space: normal;
+  }
+}
