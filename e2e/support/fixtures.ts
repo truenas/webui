@@ -23,6 +23,9 @@ import { connectAndLogin } from './api/client';
 import { buildTokenLoginUrl, generateAuthToken } from './auth/token';
 import { loadTargetConfig, type TargetConfig } from './config';
 import { adminLayout } from './constants';
+import { poolLifecycle } from '../fixtures/pool';
+
+const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
 
 /**
  * The wall-clock budget for signing in, how long one attempt may wait for the
@@ -134,6 +137,16 @@ export interface E2eWorkerFixtures {
    * difference between testing the UI and testing middleware.
    */
   api: E2eApiClient;
+  /**
+   * The name of an online pool for datasets to live under.
+   *
+   * An existing pool where the appliance has one; otherwise a one-disk pool
+   * the suite builds and exports when the worker ends. Worker-scoped so every
+   * spec in a worker shares one build, and lazy so a spec that never asks for
+   * a pool never builds one. Not for tests *about* pools — those drive the
+   * wizard. See `fixtures/pool.ts`.
+   */
+  pool: string;
 }
 
 /**
@@ -172,6 +185,19 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
       } finally {
         // Runs even when a test throws, so a failing run still exits cleanly.
         client.close();
+      }
+    },
+    { scope: 'worker' },
+  ],
+
+  pool: [
+    async ({ api }, use) => {
+      const lifecycle = poolLifecycle();
+      const name = await lifecycle.provide(api);
+      try {
+        await use(name);
+      } finally {
+        await lifecycle.release(api, keepTestData);
       }
     },
     { scope: 'worker' },

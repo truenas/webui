@@ -39,14 +39,15 @@ harness signed each test in with its own token — see the `page` fixture); then
 the service on a TLS listener (`s3-service`), grants to a real user and group,
 the row toggle and delete (`s3-bucket-management`), and rotating and deleting a
 key (`s3-access-key-management`). They need a pool (any, or they build a
-one-disk one and export it once per spec) and the S3 service. The S3 work also
+one-disk one through the worker-scoped `pool` fixture, exported when the worker
+ends) and the S3 service. The S3 work also
 moved the suite to `@truenas/api-client` 5.0, the first release whose v27
 directory carries `sharing.s3.*` and `s3.accesskey.*`, and pulled the shared
 pieces out: `fixtures/services.ts` (one service-stop protocol for SMB and S3)
 and `support/cleanup.ts` (the run-every-step teardown).
 
-The framework is done and the coverage is not. Nine journeys against 19
-top-level feature areas. What the work bought is that the next twenty tests are cheap: the
+The framework is done and the coverage is not. Eleven tests — ten journeys and
+the smoke — against 19 top-level feature areas. What the work bought is that the next twenty tests are cheap: the
 target seam, auth, fixtures, unconditional teardown, selector discipline and
 failure legibility are all built and proven against three different appliances.
 

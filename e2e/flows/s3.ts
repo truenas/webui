@@ -141,8 +141,22 @@ export interface NewS3Grant {
   principalType: 'USER' | 'GROUP';
   /** Username or group name, as the picker shows it. */
   principal: string;
-  access: 'READONLY' | 'READWRITE' | 'DENY';
+  access: 'READONLY' | 'WRITEONLY' | 'READWRITE' | 'DENY';
 }
+
+/**
+ * What the selects show for each value — `s3PrincipalTypeLabels`,
+ * `s3AccessLabels` and `s3LogLevelLabels` in `app/enums/s3.enum.ts`. Option
+ * ids are keyed by label, so the flows translate from the value the API
+ * speaks to the text the picker shows.
+ */
+const principalTypeLabels = { USER: 'User', GROUP: 'Group' } as const;
+const accessLabels = {
+  READONLY: 'Read Only', WRITEONLY: 'Write Only', READWRITE: 'Read / Write', DENY: 'Deny',
+} as const;
+const logLevelLabels = {
+  ERROR: 'Error', WARNING: 'Warning', NOTICE: 'Notice', INFO: 'Info', DEBUG: 'Debug',
+} as const;
 
 /**
  * Opens a bucket's editor from the dashboard card's row menu.
@@ -180,7 +194,7 @@ export async function addBucketGrant(page: Page, grant: NewS3Grant): Promise<voi
   await page.locator(grants.add).click();
 
   await page.locator(grants.principalType).last().click();
-  await page.locator(grants.principalTypeOption(grant.principalType)).click();
+  await page.locator(grants.principalTypeOption(principalTypeLabels[grant.principalType])).click();
 
   // The picker is an autocomplete over a middleware query: typing narrows it,
   // clicking the option commits the value.
@@ -188,7 +202,7 @@ export async function addBucketGrant(page: Page, grant: NewS3Grant): Promise<voi
   await page.locator(grants.principalOption(grant.principal)).click();
 
   await page.locator(grants.access).last().click();
-  await page.locator(grants.accessOption(grant.access)).click();
+  await page.locator(grants.accessOption(accessLabels[grant.access])).click();
 }
 
 /** Saves the open side panel; the panel closing is the app's own signal that the save succeeded. */
@@ -273,7 +287,11 @@ export interface S3ServiceSettings {
  * no picker option id of its own (its value is `null`).
  *
  * The form loads its configuration after opening, so the Servers input
- * appearing is what confirms it is ready to be driven.
+ * appearing is what confirms it is ready to be driven. The listener row's
+ * controls fall back to their control names and so would match every row; the
+ * fixture clears the listeners beforehand, and this still scopes to the last
+ * row — the one just added — so a leftover row breaks the assertion, not the
+ * locator.
  */
 export async function configureS3Service(page: Page, serviceId: number, settings: S3ServiceSettings): Promise<void> {
   await goToShares(page);
@@ -284,16 +302,17 @@ export async function configureS3Service(page: Page, serviceId: number, settings
   await expect(page.locator(form.servers)).toBeVisible();
 
   await page.locator(form.addListener).click();
-  await expect(page.locator(form.listenerAddress)).toBeVisible();
-  await selectOption(page, form.listenerAddress, form.listenerAddressOption(settings.address));
-  await page.locator(form.listenerPort).fill(String(settings.port));
+  await expect(page.locator(form.listenerAddress).last()).toBeVisible();
+  await page.locator(form.listenerAddress).last().click();
+  await page.locator(form.listenerAddressOption(settings.address)).click();
+  await page.locator(form.listenerPort).last().fill(String(settings.port));
   if (settings.tls) {
-    await page.locator(form.listenerTls).click();
+    await page.locator(form.listenerTls).last().click();
   }
 
   await page.locator(form.servers).fill(String(settings.servers));
   await page.locator(form.region).fill(settings.region);
-  await selectOption(page, form.logLevel, form.logLevelOption(settings.logLevel));
+  await selectOption(page, form.logLevel, form.logLevelOption(logLevelLabels[settings.logLevel]));
 
   await page.locator(form.save).click();
   await expect(page.locator(form.save)).toBeHidden({ timeout: saveTimeoutMs });

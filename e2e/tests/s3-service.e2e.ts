@@ -12,7 +12,7 @@
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import {
-  ensureS3ServiceStopped, queryS3Service, readS3Config, restoreS3Config, type S3ConfigEntry,
+  clearS3Listeners, ensureS3ServiceStopped, queryS3Service, readS3Config, restoreS3Config, type S3ConfigEntry,
 } from '../fixtures/s3';
 import { configureS3Service } from '../flows/s3';
 import { runCleanupSteps } from '../support/cleanup';
@@ -37,9 +37,18 @@ const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
  */
 let original: S3ConfigEntry | undefined;
 
-test.beforeEach(async ({ api }) => {
+/**
+ * The `pool` fixture is asked for, though nothing here is stored under it: the
+ * Shares dashboard renders an empty state instead of its cards on an appliance
+ * with no pool, and the S3 card is where the configuration is opened from.
+ */
+test.beforeEach(async ({ api, pool }) => {
+  expect(pool, 'the Shares dashboard only shows its cards once a pool exists').not.toBe('');
   await ensureS3ServiceStopped(api);
   original = await readS3Config(api);
+  // The form appends to the stored listeners; starting from none is what makes
+  // "exactly one listener" below a statement about this journey.
+  await clearS3Listeners(api);
 });
 
 test.afterEach(async ({ api }) => {

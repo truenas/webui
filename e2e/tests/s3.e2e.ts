@@ -11,9 +11,10 @@
  * Everything they merely depend on — a pool, the parent dataset, the account,
  * a stopped S3 service — comes from the API.
  */
+import { findOnlinePool } from '../fixtures/pool';
 import {
   ensureDatasetAbsent, ensureDatasetPresent, ensureS3AccessKeysAbsent, ensureS3BucketAbsent,
-  ensureS3ServiceStopped, findOnlinePool, findS3AccessKeys, findS3Bucket, queryS3Service, s3PoolLifecycle,
+  ensureS3ServiceStopped, findS3AccessKeys, findS3Bucket, queryS3Service,
 } from '../fixtures/s3';
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';
 import { createS3AccessKey, createS3BucketWithObjectLock } from '../flows/s3';
@@ -33,18 +34,14 @@ const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
 /** How long the S3 service gets to reach RUNNING after the start dialog. */
 const serviceStartTimeoutMs = 60_000;
 
-const s3Pool = s3PoolLifecycle();
-
 /**
  * Order matters: the service first, so nothing is serving what is about to be
  * removed; keys before the user, because a key outlives its account; the
  * bucket before its datasets, so the share is never left pointing at a dataset
  * that is gone.
  *
- * The pool is not here. On an appliance without one the bucket test builds
- * `e2e_s3_tank`, and exporting it between tests only to build it again would
- * cost two `pool.create`s and an export before the journey starts. It is
- * exported once, in `afterAll`.
+ * The pool is not here: it is the worker-scoped `pool` fixture's, provided
+ * once per worker and exported by it if the suite built it.
  */
 async function cleanUp(api: E2eApiClient): Promise<void> {
   // Read, not provided: a leftover dataset can only exist under a pool that
@@ -80,13 +77,7 @@ test.afterEach(async ({ api }) => {
   await cleanUp(api);
 });
 
-test.afterAll(async ({ api }) => {
-  await s3Pool.release(api, keepTestData);
-});
-
-test('an admin publishes an S3 bucket with object lock and starts the service', async ({ page, api }) => {
-  // The only test that needs a pool, so the only one that may build it.
-  const pool = await s3Pool.provide(api);
+test('an admin publishes an S3 bucket with object lock and starts the service', async ({ page, api, pool }) => {
   const parent = `${pool}/${parentDataset}`;
   await ensureDatasetPresent(api, parent);
 

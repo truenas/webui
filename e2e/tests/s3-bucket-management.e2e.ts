@@ -14,7 +14,7 @@
 import { firstValueFrom, timeout } from 'rxjs';
 import {
   ensureDatasetAbsent, ensureDatasetPresent, ensureS3AccessKeysAbsent, ensureS3BucketAbsent,
-  ensureS3BucketPresent, ensureS3ServiceStopped, findS3Bucket, s3PoolLifecycle,
+  ensureS3BucketPresent, ensureS3ServiceStopped, findS3Bucket,
 } from '../fixtures/s3';
 import {
   ensureGroupAbsent, ensureGroupPresent, ensureUserAbsent, ensureUserPresent,
@@ -40,30 +40,20 @@ const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
 /** How long the toggle's `sharing.s3.update` gets to land. */
 const updateTimeoutMs = 30_000;
 
-const s3Pool = s3PoolLifecycle();
-
-/** The pool the parent dataset lives under, resolved in `beforeEach`. */
-let pool: string;
-
-async function cleanUp(api: E2eApiClient): Promise<void> {
+async function cleanUp(api: E2eApiClient, pool: string): Promise<void> {
   await runCleanupSteps([
     ['stop the S3 service', () => ensureS3ServiceStopped(api)],
     ['remove the access keys', () => ensureS3AccessKeysAbsent(api, owner)],
     ['remove the bucket', () => ensureS3BucketAbsent(api, bucket)],
-    ['delete the parent dataset', async () => {
-      if (pool) {
-        await ensureDatasetAbsent(api, `${pool}/${parentDataset}`);
-      }
-    }],
+    ['delete the parent dataset', () => ensureDatasetAbsent(api, `${pool}/${parentDataset}`)],
     ['delete the group', () => ensureGroupAbsent(api, group)],
     ['delete the reader', () => ensureUserAbsent(api, reader)],
     ['delete the owner', () => ensureUserAbsent(api, owner)],
   ]);
 }
 
-test.beforeEach(async ({ api }) => {
-  pool = await s3Pool.provide(api);
-  await cleanUp(api);
+test.beforeEach(async ({ api, pool }) => {
+  await cleanUp(api, pool);
   await ensureUserPresent(api, owner);
   await ensureUserPresent(api, reader);
   await ensureGroupPresent(api, group);
@@ -71,16 +61,12 @@ test.beforeEach(async ({ api }) => {
   await ensureS3BucketPresent(api, { name: bucket, parentDataset: `${pool}/${parentDataset}`, owner });
 });
 
-test.afterEach(async ({ api }) => {
+test.afterEach(async ({ api, pool }) => {
   if (keepTestData) {
     console.warn(`TN_KEEP_TEST_DATA=1 — leaving bucket "${bucket}", its datasets, and the accounts.`);
     return;
   }
-  await cleanUp(api);
-});
-
-test.afterAll(async ({ api }) => {
-  await s3Pool.release(api, keepTestData);
+  await cleanUp(api, pool);
 });
 
 test('an admin grants a user and a group access to a bucket', async ({ page, api }) => {
@@ -122,7 +108,7 @@ test('an admin disables a bucket from the dashboard', async ({ page, api }) => {
   }).toBe(false);
 });
 
-test('an admin deletes a bucket and its data stays', async ({ page, api }) => {
+test('an admin deletes a bucket and its data stays', async ({ page, api, pool }) => {
   await deleteBucketFromDashboard(page, bucket);
 
   expect(await findS3Bucket(api, bucket)).toBeUndefined();

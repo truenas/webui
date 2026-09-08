@@ -6,6 +6,12 @@
  * formControlName="object_lock">` is `checkbox-object-lock`), and every segment
  * goes through the library's `kebabTestSegment`.
  *
+ * A `tn-select` option is `option-<base>-<label>` — keyed by the text on
+ * screen, not the value behind it, unless the select declares an
+ * `optionTestIdKey` (none of these do). So `S3Access.ReadOnly`, whose value is
+ * `READONLY`, is reached as `option-access-read-only` from its label "Read
+ * Only". The option locators below therefore take the label.
+ *
  * Two things here are not library controls and normalize differently, through
  * lodash `kebabCase` (`legacyKebabTestSegment`) rather than the library's own:
  *
@@ -60,17 +66,16 @@ export const s3BucketLocators = {
     grants: {
       add: '[data-test="button-add-item-grants"]',
       principalType: '[data-test="select-principal-type"]',
-      principalTypeOption: (type: 'USER' | 'GROUP' | 'EVERYONE') => (
-        `[data-test="option-principal-type-${kebabTestSegment(type)}"]`
+      /** By label: "User", "Group" or "Everyone". */
+      principalTypeOption: (label: string) => (
+        `[data-test="option-principal-type-${kebabTestSegment(label)}"]`
       ),
       /** `ix-combobox` behind `[ixTest]`, like the user picker — hence the legacy normalizer. */
       principal: '[data-test="input-xid"]',
       principalOption: (label: string) => `[data-test="option-xid-${legacyKebabTestSegment(label)}"]`,
       access: '[data-test="select-access"]',
-      /** `S3Access` values are `READONLY` / `READWRITE` / `DENY`. */
-      accessOption: (access: 'READONLY' | 'READWRITE' | 'DENY') => (
-        `[data-test="option-access-${kebabTestSegment(access)}"]`
-      ),
+      /** By label: "Read Only", "Write Only", "Read / Write" or "Deny" (`s3AccessLabels`). */
+      accessOption: (label: string) => `[data-test="option-access-${kebabTestSegment(label)}"]`,
     },
   },
 
@@ -194,7 +199,10 @@ export const s3ServiceLocators = {
     /** `tn-form-list` names its Add control `['add-item', label]`; the label is "Listen Addresses". */
     addListener: '[data-test="button-add-item-listen-addresses"]',
     listenerAddress: '[data-test="select-address"]',
-    /** Option keys are the bind addresses from `s3.bindip_choices`; `0.0.0.0` normalizes to `0-0-0-0`. */
+    /**
+     * Options are `s3.bindip_choices` with the address as both value and label,
+     * so the label rule and the value coincide; `0.0.0.0` normalizes to `0-0-0-0`.
+     */
     listenerAddressOption: (address: string) => (
       `[data-test="option-address-${kebabTestSegment(address)}"]`
     ),
@@ -203,9 +211,8 @@ export const s3ServiceLocators = {
     servers: '[data-test="input-servers"]',
     region: '[data-test="input-region"]',
     logLevel: '[data-test="select-log-level"]',
-    logLevelOption: (level: 'ERROR' | 'WARNING' | 'NOTICE' | 'INFO' | 'DEBUG') => (
-      `[data-test="option-log-level-${kebabTestSegment(level)}"]`
-    ),
+    /** By label: "Error", "Warning", "Notice", "Info" or "Debug" (`s3LogLevelLabels`). */
+    logLevelOption: (label: string) => `[data-test="option-log-level-${kebabTestSegment(label)}"]`,
     save: '[data-test="button-save"]',
   },
 } as const;
