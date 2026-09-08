@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import {
   createHostFactory, createSpyObject, mockProvider, SpectatorHost,
 } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness, TnChipInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -18,13 +18,13 @@ import {
   FileTicketLicensedComponent,
 } from 'app/modules/feedback/components/file-ticket-licensed/file-ticket-licensed.component';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { fillControlValues, indexFormControls } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
+import { TnFileInputTestHarness } from 'app/modules/forms/ix-forms/testing/tn-file-input.harness';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 
 describe('FileTicketLicensedFormComponent', () => {
   let spectator: SpectatorHost<FileTicketLicensedComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   let submitButton: TnButtonHarness;
   let feedbackService: FeedbackService;
   const dialogRef = createSpyObject(DialogRef);
@@ -64,16 +64,14 @@ describe('FileTicketLicensedFormComponent', () => {
       { hostProps: { dialogRef } },
     );
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
     submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Submit' }));
     feedbackService = spectator.inject(FeedbackService);
   });
 
   async function fillTextFields(): Promise<void> {
-    await form.fillForm({
+    await fillControlValues(await indexFormControls(loader), {
       Name: 'John Wick',
       Email: 'john.wick@gmail.com',
-      CC: ['marcus@gmail.com'],
       Phone: '310-564-8005',
       Type: 'Performance',
       Environment: 'Staging',
@@ -81,6 +79,9 @@ describe('FileTicketLicensedFormComponent', () => {
       Subject: 'Assassination Request',
       Message: 'New request',
     });
+
+    // `tn-chip-input` is outside what `TnFormControlHarness` can set, so drive it through its own harness.
+    await (await loader.getHarness(TnChipInputHarness)).addChip('marcus@gmail.com');
   }
 
   it('opens window when User Guide is pressed', async () => {
@@ -107,11 +108,7 @@ describe('FileTicketLicensedFormComponent', () => {
 
     await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Attach additional images' }))).check();
 
-    await form.fillForm(
-      {
-        'Attach images (optional)': fakeAttachments,
-      },
-    );
+    await (await loader.getHarness(TnFileInputTestHarness)).setValue(fakeAttachments);
 
     await submitButton.click();
 

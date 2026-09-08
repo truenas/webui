@@ -2,16 +2,6 @@
   display: block;
   max-width: 100%;
   width: 550px;
-
-  ::ng-deep {
-    ix-textarea {
-      textarea {
-        max-height: 40vh;
-        min-height: 7vh;
-        min-width: 96.5%;
-      }
-    }
-  }
 }
 
 .feedback-actions {

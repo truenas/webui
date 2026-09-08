@@ -10,34 +10,37 @@
       </tn-input>
       <tn-checkbox
         testId="websocket-debug-auto-scroll"
-        tnTooltip="Auto-scroll to latest message"
-        label="Auto-scroll"
+        [tnTooltip]="'Auto-scroll to latest message' | translate"
+        [label]="'Auto-scroll' | translate"
         [(ngModel)]="autoScroll"
       ></tn-checkbox>
       <tn-checkbox
         testId="websocket-debug-duplicate-notifications"
-        tnTooltip="Show snackbar when duplicate API calls are detected"
-        label="Duplicate alerts"
+        [tnTooltip]="'Show snackbar when duplicate API calls are detected' | translate"
+        [label]="'Duplicate alerts' | translate"
         [ngModel]="duplicateNotificationsEnabled()"
         (ngModelChange)="toggleDuplicateNotifications()"
       ></tn-checkbox>
       <tn-icon-button
         name="delete-outline"
         library="mdi"
-        tooltip="Clear messages"
         class="clear-button"
         testId="websocket-debug-clear-messages"
-        [ariaLabel]="'Clear messages'"
-        (click)="clearMessages()"
+        [tooltip]="'Clear messages' | translate"
+        [ariaLabel]="'Clear messages' | translate"
+        (onClick)="clearMessages()"
       ></tn-icon-button>
     </div>
   </div>
 
   @if (!hasMessages) {
-    <div class="empty-state">
-      <tn-icon name="message-text-outline" library="mdi" class="empty-icon" customSize="48px"></tn-icon>
-      <p>No messages yet</p>
-    </div>
+    <tn-empty
+      class="empty-state"
+      icon="message-text-outline"
+      iconLibrary="mdi"
+      iconSize="48px"
+      [title]="'No messages yet' | translate"
+    ></tn-empty>
   } @else {
     <div #messageViewport class="message-viewport">
       @for (message of filteredMessagesArray; track message.id) {
@@ -59,7 +62,7 @@
           <span class="method-name">{{ message.methodName }}</span>
           
           @if (message.isMocked) {
-            <span class="mocked-badge">MOCKED</span>
+            <span class="mocked-badge">{{ 'MOCKED' | translate }}</span>
           }
           
           <span class="timestamp">{{ message.formattedTime }}</span>
@@ -68,33 +71,35 @@
             <tn-icon-button
               name="plus"
               library="mdi"
-              tooltip="Create mock from response"
               class="mock-button"
               testId="websocket-debug-create-mock"
-              [attr.aria-label]="'Create mock from response'"
-              (click)="createMockFromMessage(message); $event.stopPropagation()"
+              [tooltip]="'Create mock from response' | translate"
+              [ariaLabel]="'Create mock from response' | translate"
+              (onClick)="createMockFromMessage(message); $event.stopPropagation()"
             ></tn-icon-button>
           }
 
           <tn-icon-button
             name="content-copy"
             library="mdi"
-            tooltip="Copy message"
             class="copy-button"
             testId="websocket-debug-copy-message"
-            [attr.aria-label]="'Copy message'"
-            (click)="copyMessage(message); $event.stopPropagation()"
+            [tooltip]="'Copy message' | translate"
+            [ariaLabel]="'Copy message' | translate"
+            (onClick)="copyMessage(message); $event.stopPropagation()"
           ></tn-icon-button>
 
           <tn-icon-button
             library="mdi"
             class="toggle-button"
             testId="websocket-debug-toggle-message"
-            tooltip="Toggle message details"
+            [tooltip]="'Toggle message details' | translate"
             [name]="message.isExpanded ? 'chevron-down' : 'chevron-right'"
-            [attr.aria-label]="message.isExpanded ? 'Collapse message details' : 'Expand message details'"
-            [attr.aria-expanded]="message.isExpanded"
-            (click)="toggleMessage(message.id)"
+            [ariaLabel]="message.isExpanded
+              ? ('Collapse message details' | translate)
+              : ('Expand message details' | translate)"
+            [ariaExpanded]="message.isExpanded"
+            (onClick)="toggleMessage(message.id)"
           ></tn-icon-button>
         </div>
         

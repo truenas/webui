@@ -5,10 +5,15 @@
     {{ '{service} Service is not currently running. Start the service now?' | translate: { service: serviceHumanName } }}
   </p>
 
-  <ix-slide-toggle
+  <!--
+    The control is bound by reference, not by name, so `tn-slide-toggle` has no control name to
+    derive an id from — `testId` carries the bare `toggle` value `ix-slide-toggle` resolved to.
+  -->
+  <tn-slide-toggle
+    testId="toggle"
     [formControl]="startAutomaticallyControl"
     [label]="'Enable this service to start automatically.' | translate"
-  ></ix-slide-toggle>
+  ></tn-slide-toggle>
 
   <ix-form-actions tnDialogAction class="form-actions">
     <tn-button
