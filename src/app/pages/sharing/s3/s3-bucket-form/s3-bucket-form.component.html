@@ -113,6 +113,15 @@
             [required]="true"
           ></ix-select>
 
+          <ix-select
+            formControlName="object_ownership"
+            [label]="'Object Ownership' | translate"
+            [tooltip]="helptext.objectOwnershipTooltip | translate"
+            [hint]="objectOwnershipHint()"
+            [options]="objectOwnershipOptions$"
+            [required]="true"
+          ></ix-select>
+
           <ix-s3-grants-list
             [formArray]="form.controls.grants"
             [label]="'Grants' | translate"
