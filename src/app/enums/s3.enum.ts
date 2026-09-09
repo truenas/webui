@@ -26,16 +26,34 @@ export const s3PrincipalTypeLabels = new Map<S3PrincipalType, string>([
   [S3PrincipalType.Everyone, T('Everyone')],
 ]);
 
+/**
+ * How the S3 service treats the filesystem permissions on a bucket's tree.
+ * Which account an operation runs as is `S3ObjectOwnership`'s answer, not this one's.
+ */
 export enum S3PermissionsModel {
   S3 = 'S3',
   Multiprotocol = 'MULTIPROTOCOL',
-  BucketOwnerEnforced = 'S3_BUCKET_OWNER_ENFORCED',
 }
 
 export const s3PermissionsModelLabels = new Map<S3PermissionsModel, string>([
   [S3PermissionsModel.S3, T('S3 Only')],
   [S3PermissionsModel.Multiprotocol, T('Multiprotocol')],
-  [S3PermissionsModel.BucketOwnerEnforced, T('Bucket Owner Enforced')],
+]);
+
+/**
+ * S3 Object Ownership: who owns an uploaded object and whether the bucket supports S3 ACLs.
+ * A Multiprotocol bucket is always `ObjectWriter`; middleware folds it so.
+ */
+export enum S3ObjectOwnership {
+  BucketOwnerEnforced = 'BUCKET_OWNER_ENFORCED',
+  BucketOwnerPreferred = 'BUCKET_OWNER_PREFERRED',
+  ObjectWriter = 'OBJECT_WRITER',
+}
+
+export const s3ObjectOwnershipLabels = new Map<S3ObjectOwnership, string>([
+  [S3ObjectOwnership.BucketOwnerEnforced, T('Bucket Owner Enforced')],
+  [S3ObjectOwnership.BucketOwnerPreferred, T('Bucket Owner Preferred')],
+  [S3ObjectOwnership.ObjectWriter, T('Object Writer')],
 ]);
 
 export enum S3Versioning {
