@@ -94,6 +94,16 @@
         </ng-template>
       </ng-container>
 
+      <ng-container [tnColumnDef]="'object_ownership'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Object Ownership' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Object Ownership' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ objectOwnershipLabel(row) }}</span>
+        </ng-template>
+      </ng-container>
+
       <ng-container [tnColumnDef]="'versioning'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Versioning' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
