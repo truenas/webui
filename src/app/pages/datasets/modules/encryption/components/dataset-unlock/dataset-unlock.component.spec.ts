@@ -80,14 +80,15 @@ describe('DatasetUnlockComponent', () => {
   });
 
   it('does not allow submitting when no keys or passphrases were entered manually', async () => {
-    await fillControlValues(await indexFormControls(loader), {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
       'Unlock with Key file': 'Provide keys/passphrases manually',
     });
 
-    const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock' }));
+    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock' }));
     expect(await unlockButton.isDisabled()).toBe(true);
 
-    await fillControlValues(await indexFormControls(loader), {
+    await form.fillForm({
       'Dataset Passphrase': '12345678',
     });
 
