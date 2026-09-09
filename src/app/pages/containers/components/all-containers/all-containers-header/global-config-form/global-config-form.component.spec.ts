@@ -237,8 +237,10 @@ describe('GlobalConfigFormComponent - automatic bridge', () => {
     expect(await bridgeSelect.getDisplayText()).toBe('Automatic');
 
     expect(await form.getValues()).toEqual({
+      Bridge: 'Automatic',
       'IPv4 Network': '10.0.0.0/24',
       'IPv6 Network': 'fd00::/64',
+      'Preferred Pool': 'tank',
     });
 
     // Network fields should be visible

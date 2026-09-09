@@ -9,11 +9,11 @@ import {
 } from '@truenas/ui-components';
 import { Option } from 'app/interfaces/option.interface';
 import {
+  IxIpInputWithNetmaskComponent,
+} from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import {
   IxStarRatingComponent,
 } from 'app/modules/forms/controls/ix-star-rating/ix-star-rating.component';
-import {
-  IxIpInputWithNetmaskComponent,
-} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import {
   IxFormControlHarness, unreadableControl,
 } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';

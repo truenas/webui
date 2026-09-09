@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
+  TnButtonHarness, TnChipInputHarness, TnFormListHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -28,7 +28,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { fillControlValues, indexFormControls } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
@@ -182,11 +181,11 @@ describe('IscsiWizardComponent', () => {
     await initiatorsInput.addChip('initiator1');
     await initiatorsInput.addChip('initiator2');
 
-    const addIpAddressButton = await loader.getHarness(IxListHarness.with({ label: 'IP Address' }));
-    await addIpAddressButton.pressAddButton();
+    const addIpAddressButton = await loader.getHarness(TnFormListHarness.with({ label: 'IP Address' }));
+    await addIpAddressButton.add();
 
     const listenIpSelect = await loader.getHarness(
-      TnSelectHarness.with({ ancestor: 'ix-list-item' }),
+      TnSelectHarness.with({ ancestor: 'tn-form-list-item' }),
     );
     await listenIpSelect.selectOption('::');
   }
@@ -330,8 +329,8 @@ describe('IscsiWizardComponent', () => {
 
     it('allows valid MPIO configuration with ports on different physical ports', async () => {
       // Add first port on fc0
-      const fcPortsList = await loader.getHarness(IxListHarness.with({ label: 'Fibre Channel Ports' }));
-      await fcPortsList.pressAddButton();
+      const fcPortsList = await loader.getHarness(TnFormListHarness.with({ label: 'Fibre Channel Ports' }));
+      await fcPortsList.add();
 
       await fillByLabel({
         'Port Mode': 'Use existing port',
@@ -339,7 +338,7 @@ describe('IscsiWizardComponent', () => {
       });
 
       // Add second port on fc1 (different physical port)
-      await fcPortsList.pressAddButton();
+      await fcPortsList.add();
 
       await fillByLabel({
         'Port Mode': 'Use existing port',
@@ -359,17 +358,17 @@ describe('IscsiWizardComponent', () => {
 
     it('blocks when two NPIV virtual ports share the same physical port', async () => {
       // Add two virtual ports on the same physical port
-      const fcPortsList = await loader.getHarness(IxListHarness.with({ label: 'Fibre Channel Ports' }));
+      const fcPortsList = await loader.getHarness(TnFormListHarness.with({ label: 'Fibre Channel Ports' }));
 
       // First NPIV port on fc0
-      await fcPortsList.pressAddButton();
+      await fcPortsList.add();
       await fillByLabel({
         'Port Mode': 'Create new virtual port',
         'Choose Host for New Virtual Port': 'fc0/2',
       });
 
       // Second NPIV port on fc0 (should fail validation)
-      await fcPortsList.pressAddButton();
+      await fcPortsList.add();
       await fillByLabel({
         'Port Mode': 'Create new virtual port',
         'Choose Host for New Virtual Port': 'fc0/2',
@@ -387,8 +386,8 @@ describe('IscsiWizardComponent', () => {
 
     it('allows valid MPIO with mix of physical and NPIV ports on different ports', async () => {
       // Add physical port on fc0
-      const fcPortsList = await loader.getHarness(IxListHarness.with({ label: 'Fibre Channel Ports' }));
-      await fcPortsList.pressAddButton();
+      const fcPortsList = await loader.getHarness(TnFormListHarness.with({ label: 'Fibre Channel Ports' }));
+      await fcPortsList.add();
 
       await fillByLabel({
         'Port Mode': 'Use existing port',
@@ -396,7 +395,7 @@ describe('IscsiWizardComponent', () => {
       });
 
       // Add NPIV port on fc1 (different physical port)
-      await fcPortsList.pressAddButton();
+      await fcPortsList.add();
 
       await fillByLabel({
         'Port Mode': 'Create new virtual port',

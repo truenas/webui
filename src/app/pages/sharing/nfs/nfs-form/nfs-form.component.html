@@ -107,38 +107,42 @@
   }
 
   <tn-form-section>
-    <ix-list
+    <tn-form-list
       formArrayName="networks"
       [empty]="form.controls.networks.controls.length === 0"
       [label]="'Networks' | translate"
-      [formArray]="form.get('networks')"
+      [control]="form.get('networks')"
       [tooltip]="helptext.addNetworkTooltip | translate"
       (add)="addNetworkControl()"
     >
       @for (network of form.controls.networks.controls; track network; let i = $index) {
-        <ix-list-item
+        <tn-form-list-item
           [label]="'Networks' | translate"
           (delete)="removeNetworkControl(i)"
         >
-          <ix-ip-input-with-netmask
+          <tn-form-field
             [required]="true"
-            [formControlName]="i"
             [label]="'Network' | translate"
-          ></ix-ip-input-with-netmask>
-        </ix-list-item>
+          >
+            <ix-ip-input-with-netmask
+              [formControlName]="i"
+              [required]="true"
+            ></ix-ip-input-with-netmask>
+          </tn-form-field>
+        </tn-form-list-item>
       }
-    </ix-list>
+    </tn-form-list>
 
-    <ix-list
+    <tn-form-list
       formArrayName="hosts"
       [empty]="form.controls.hosts.controls.length === 0"
       [label]="'Hosts' | translate"
-      [formArray]="form.get('hosts')"
+      [control]="form.get('hosts')"
       [tooltip]="helptext.addHostsTooltip | translate"
       (add)="addHostControl()"
     >
       @for (network of form.controls.hosts.controls; track network; let i = $index) {
-        <ix-list-item
+        <tn-form-list-item
           [label]="'Hosts' | translate"
           (delete)="removeHostControl(i)"
         >
@@ -149,8 +153,8 @@
           >
             <tn-input [formControlName]="i"></tn-input>
           </tn-form-field>
-        </ix-list-item>
+        </tn-form-list-item>
       }
-    </ix-list>
+    </tn-form-list>
   </tn-form-section>
 </ix-form>

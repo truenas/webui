@@ -4,20 +4,21 @@ import {
 import { IxStarRatingHarness } from 'app/modules/forms/controls/ix-star-rating/ix-star-rating.harness';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import {
-  IxIpInputWithNetmaskHarness,
-} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
-import { IxPermissionsHarness } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.harness';
-import {
   IxFormControlHarness, unreadableControl,
 } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 
+/**
+ * The ix-* controls that still render a label row of their own, so a spec can find one by label
+ * without an enclosing `tn-form-field`. `ix-permissions`, `ix-ip-input-with-netmask` and
+ * `ix-code-editor` are deliberately absent: they are bare controls now, always projected into a
+ * field, and {@link TnFormControlHarness} reaches them through that field — listing them here as
+ * well would also close an import cycle back through this module.
+ */
 export const supportedFormControlSelectors = [
-  IxPermissionsHarness,
   IxExplorerHarness,
   SchedulerHarness,
-  IxIpInputWithNetmaskHarness,
   IxStarRatingHarness,
 ] as const;
 

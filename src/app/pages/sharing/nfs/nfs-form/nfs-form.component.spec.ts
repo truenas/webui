@@ -5,7 +5,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnInputHarness } from '@truenas/ui-components';
+import {
+  TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnFormListHarness, TnInputHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -17,13 +19,10 @@ import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxIpInputWithNetmaskComponent,
-} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import {
-  IxIpInputWithNetmaskHarness,
-} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
-import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
+} from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import {
   IxGroupComboboxHarness,
   IxUserComboboxHarness,
@@ -205,14 +204,14 @@ describe('NfsFormComponent', () => {
       await setDescription('New share');
       await (await getTnCheckbox('ro')).check();
 
-      const networkList = await loader.getHarness(IxListHarness.with({ label: 'Networks' }));
-      await networkList.pressAddButton();
-      const hostsList = await loader.getHarness(IxListHarness.with({ label: 'Hosts' }));
-      await hostsList.pressAddButton();
+      const networkList = await loader.getHarness(TnFormListHarness.with({ label: 'Networks' }));
+      await networkList.add();
+      const hostsList = await loader.getHarness(TnFormListHarness.with({ label: 'Hosts' }));
+      await hostsList.add();
       await form.fillForm({
         Network: '192.168.1.189/24',
       });
-      const hostInput = await loader.getHarness(TnInputHarness.with({ ancestor: 'ix-list-item' }));
+      const hostInput = await loader.getHarness(TnInputHarness.with({ ancestor: 'tn-form-list-item' }));
       await hostInput.setValue('truenas.com');
 
       expect(await loader.getHarnessOrNull(
@@ -301,8 +300,8 @@ describe('NfsFormComponent', () => {
       expect(await (await getAutocomplete('maproot_user')).getInputValue()).toBe('news');
       expect(await (await getAutocomplete('maproot_group')).getInputValue()).toBe('operator');
 
-      const networks = await loader.getAllHarnesses(IxIpInputWithNetmaskHarness.with({ label: 'Network' }));
-      const hosts = await loader.getAllHarnesses(TnInputHarness.with({ ancestor: 'ix-list-item' }));
+      const networks = await loader.getAllHarnesses(TnFormControlHarness.with({ label: 'Network' }));
+      const hosts = await loader.getAllHarnesses(TnInputHarness.with({ ancestor: 'tn-form-list-item' }));
       expect(networks).toHaveLength(1);
       expect(hosts).toHaveLength(2);
       expect(await networks[0].getValue()).toBe('192.168.1.78/21');
@@ -316,10 +315,10 @@ describe('NfsFormComponent', () => {
       await setDescription('Updated share');
       await (await getTnCheckbox('enabled')).uncheck();
 
-      const networkList = await loader.getHarness(IxListHarness.with({ label: 'Networks' }));
-      await networkList.pressAddButton();
+      const networkList = await loader.getHarness(TnFormListHarness.with({ label: 'Networks' }));
+      await networkList.add();
 
-      const networks = await loader.getAllHarnesses(IxIpInputWithNetmaskHarness.with({ label: 'Network' }));
+      const networks = await loader.getAllHarnesses(TnFormControlHarness.with({ label: 'Network' }));
       await networks[1].setValue('10.56.1.1/20');
 
       const closed = jest.fn();

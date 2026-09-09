@@ -2,7 +2,6 @@ import { AsyncPipe } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, input, OnChanges, OnInit, Signal, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
-import { MatHint } from '@angular/material/form-field';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { Compartment, Extension } from '@codemirror/state';
 import {
@@ -17,10 +16,7 @@ import { languageFunctionsMap } from 'app/constants/language-functions-map.const
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { SelectOptionValueType } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
-import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @Component({
@@ -29,12 +25,8 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   styleUrls: ['./ix-code-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxLabelComponent,
-    IxErrorsComponent,
-    MatHint,
     ReactiveFormsModule,
     AsyncPipe,
-    TestOverrideDirective,
   ],
   hostDirectives: [
     { ...registeredDirectiveConfig },
@@ -45,10 +37,6 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
-  readonly label = input<TranslatedString>();
-  readonly hint = input<TranslatedString>();
-  readonly required = input<boolean>(false);
-  readonly tooltip = input<TranslatedString>();
   readonly language = input<CodeEditorLanguage>();
   readonly placeholder = input<TranslatedString>('');
   readonly defaultValue = input<string>();

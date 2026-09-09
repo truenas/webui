@@ -5,7 +5,7 @@ import {
 import { TreeComponent } from '@bugsplat/angular-tree-component';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import {
-  InputType, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import { MockInstance } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
@@ -22,13 +22,11 @@ import {
   DynamicFormSchemaText, AddListItemEvent, DeleteListItemEvent,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { IxCodeEditorComponent } from 'app/modules/forms/controls/ix-code-editor/ix-code-editor.component';
+import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxDynamicFormItemComponent } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form-item/ix-dynamic-form-item.component';
-import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 
 const dynamicForm = new FormGroup({
   dict: new FormGroup({
@@ -150,7 +148,7 @@ describe('IxDynamicFormItemComponent', () => {
   });
 
   describe('Component rendering', () => {
-    it('renders an "ix-input" when schema with "input" type is supplied', () => {
+    it('renders a "tn-input" when schema with "input" type is supplied', () => {
       spectator = createComponent({
         props: {
           dynamicForm,
@@ -180,8 +178,11 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('ix-code-editor')).toBeVisible();
-      expect(spectator.query(IxCodeEditorComponent)!.required()).toBe(textSchema.required);
-      expect(spectator.query(IxCodeEditorComponent)!.tooltip()).toBe(textSchema.tooltip);
+      // The label row belongs to the wrapping `tn-form-field` now, so `required`/`tooltip` are
+      // asserted there rather than on the bare control.
+      const textField = spectator.query(TnFormFieldComponent)!;
+      expect(textField.required()).toBe(textSchema.required);
+      expect(textField.tooltip()).toBe(textSchema.tooltip);
       expect(spectator.query('ix-code-editor')).not.toBeHidden();
       const field = spectator.component.dynamicForm()!.controls.text as CustomUntypedFormField;
       if (!field.hidden$) {
@@ -242,8 +243,12 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('ix-ip-input-with-netmask')).toBeVisible();
+      // `required` stays on the control as well: it renders the native attribute on the address
+      // input, where the field only renders the asterisk.
       expect(spectator.query(IxIpInputWithNetmaskComponent)!.required()).toBe(ipaddrSchema.required);
-      expect(spectator.query(IxIpInputWithNetmaskComponent)!.tooltip()).toBe(ipaddrSchema.tooltip);
+      const ipField = spectator.query(TnFormFieldComponent)!;
+      expect(ipField.required()).toBe(ipaddrSchema.required);
+      expect(ipField.tooltip()).toBe(ipaddrSchema.tooltip);
 
       expect(spectator.query('ix-ip-input-with-netmask')).not.toBeHidden();
       const field = spectator.component.dynamicForm()!.controls.ipaddr as CustomUntypedFormField;
@@ -276,27 +281,27 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query('ix-explorer')).toBeHidden();
     });
 
-    it('renders an "ix-list" when schema with "list" type is supplied', () => {
+    it('renders a "tn-form-list" when schema with "list" type is supplied', () => {
       spectator = createComponent({
         props: {
           dynamicForm,
           dynamicSchema: listSchema,
         },
       });
-      expect(spectator.query('ix-list')).toBeVisible();
-      expect(spectator.queryAll('ix-list-item')).toHaveLength(1);
+      expect(spectator.query('tn-form-list')).toBeVisible();
+      expect(spectator.queryAll('tn-form-list-item')).toHaveLength(1);
       expect(spectator.queryAll('ix-dynamic-form-item')).toHaveLength(listSchema.items!.length);
-      expect(spectator.query(IxListComponent)!.empty()).toBe(false);
-      expect(spectator.query(IxListComponent)!.label()).toBe(listSchema.title);
+      expect(spectator.query(TnFormListComponent)!.empty()).toBe(false);
+      expect(spectator.query(TnFormListComponent)!.label()).toBe(listSchema.title);
 
-      expect(spectator.query('ix-list')).not.toBeHidden();
+      expect(spectator.query('tn-form-list')).not.toBeHidden();
       const field = spectator.component.dynamicForm()!.controls.list as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
       field.hidden$.next(true);
       spectator.detectComponentChanges();
-      expect(spectator.query('ix-list')).toBeHidden();
+      expect(spectator.query('tn-form-list')).toBeHidden();
     });
 
     it('renders an "ix-dynamic-form-item" when schema with "dict" type is supplied', () => {
@@ -309,7 +314,7 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query('.label')).toHaveText('Label Dict');
       expect(spectator.queryAll('ix-dynamic-form-item')).toHaveLength(dictSchema.attrs!.length);
 
-      spectator.queryAll(IxListItemComponent).forEach((item) => {
+      spectator.queryAll(TnFormListItemComponent).forEach((item) => {
         expect(item).not.toBeHidden();
       });
 
@@ -343,7 +348,7 @@ describe('IxDynamicFormItemComponent', () => {
       spectator.detectComponentChanges();
 
       jest.spyOn(spectator.component.addListItem, 'emit').mockImplementation();
-      spectator.query(IxListComponent)!.add.emit([]);
+      spectator.query(TnFormListComponent)!.add.emit([]);
 
       expect(spectator.component.addListItem.emit).toHaveBeenCalledWith({
         array: dynamicForm.controls.list,
@@ -367,8 +372,8 @@ describe('IxDynamicFormItemComponent', () => {
       spectator.detectComponentChanges();
 
       jest.spyOn(spectator.component.deleteListItem, 'emit').mockImplementation();
-      expect(spectator.queryAll(IxListItemComponent)).toHaveLength(1);
-      spectator.query(IxListItemComponent)!.delete.emit();
+      expect(spectator.queryAll(TnFormListItemComponent)).toHaveLength(1);
+      spectator.query(TnFormListItemComponent)!.delete.emit();
 
       expect(spectator.component.deleteListItem.emit).toHaveBeenCalledWith({
         array: dynamicForm.controls.list,

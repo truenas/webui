@@ -1,11 +1,13 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, output, inject } from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, output, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UntypedFormArray, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnAutocompleteComponent, TnCheckboxComponent, TnFormFieldComponent, TnIconComponent,
-  TnInputComponent, TnSelectComponent, TnTooltipDirective,
+  InputType, TnAutocompleteComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormListComponent,
+  TnFormListItemComponent, TnIconComponent, TnInputComponent, TnSelectComponent, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { Subject } from 'rxjs';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
@@ -20,16 +22,14 @@ import {
   DynamicFormSchemaNode, DynamicFormSchemaSelect, DynamicFormSchemaText,
   DynamicFormSchemaUri,
 } from 'app/interfaces/dynamic-form-schema.interface';
+import { IxCodeEditorComponent } from 'app/modules/forms/controls/ix-code-editor/ix-code-editor.component';
+import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
-import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 
@@ -39,13 +39,13 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
   templateUrl: './ix-dynamic-form-item.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFormListComponent,
+    TnFormListItemComponent,
     ReactiveFormsModule,
     SchedulerComponent,
     TnTooltipDirective,
     TnIconComponent,
     IxCodeEditorComponent,
-    IxListComponent,
-    IxListItemComponent,
     IxErrorsComponent,
     TnFormFieldComponent,
     TnInputComponent,
@@ -60,7 +60,7 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
     ExplorerCreateDatasetComponent,
   ],
 })
-export class IxDynamicFormItemComponent implements OnInit {
+export class IxDynamicFormItemComponent implements OnInit, AfterViewInit {
   private changeDetectorRef = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
@@ -105,6 +105,39 @@ export class IxDynamicFormItemComponent implements OnInit {
     if (this.dynamicSchema()?.hidden) {
       (this.dynamicForm().controls[this.dynamicSchema().controlName] as CustomUntypedFormField)?.hidden$?.next(true);
     }
+  }
+
+  /**
+   * Seeds a list schema's `default` entries on a create form. Lived inside `ix-list` before the
+   * move to `tn-form-list`, which knows nothing about chart schemas — and it never belonged
+   * there: it reads `itemsSchema` and emits one add per default, both of which are this
+   * component's own concern.
+   *
+   * Deferred to `AfterViewInit` (and a macrotask beyond it) as it was: adding controls seeds the
+   * `FormArray` the view has just rendered, so it cannot run during that render.
+   */
+  ngAfterViewInit(): void {
+    const schema = this.dynamicSchema();
+    if (schema.type !== DynamicFormSchemaType.List || this.isEditMode() || !schema.default?.length) {
+      return;
+    }
+
+    setTimeout(() => {
+      schema.default?.forEach((defaultValue: Record<string, unknown>) => {
+        this.addControl(
+          schema.itemsSchema?.map((item: ChartSchemaNode) => ({
+            ...item,
+            schema: {
+              ...item.schema,
+              default: defaultValue?.[item.variable]
+                ?? (typeof defaultValue !== 'object' ? defaultValue : item.schema.default),
+            },
+          })),
+        );
+      });
+
+      this.changeDetectorRef.markForCheck();
+    });
   }
 
   get getFormArray(): UntypedFormArray {

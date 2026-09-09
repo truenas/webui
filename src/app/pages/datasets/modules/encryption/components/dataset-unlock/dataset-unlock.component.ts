@@ -10,7 +10,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnButtonComponent, TnCardComponent, TnCheckboxComponent, TnDialog, TnFileInputComponent,
-  TnFormFieldComponent, TnInputComponent, TnRadioGroupComponent, TnTestIdDirective,
+  TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnInputComponent, TnRadioGroupComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { from, of, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -25,8 +26,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UnlockSummaryDialog } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
@@ -66,6 +65,8 @@ function requireAtLeastOneKeyOrPassphrase(message: string): ValidatorFn {
   styleUrls: ['./dataset-unlock.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFormListComponent,
+    TnFormListItemComponent,
     TnCardComponent,
     ReactiveFormsModule,
     IxFormComponent,
@@ -73,8 +74,6 @@ function requireAtLeastOneKeyOrPassphrase(message: string): ValidatorFn {
     TnRadioGroupComponent,
     TnCheckboxComponent,
     TnInputComponent,
-    IxListComponent,
-    IxListItemComponent,
     TranslateModule,
     TnFileInputComponent,
     TnTestIdDirective,

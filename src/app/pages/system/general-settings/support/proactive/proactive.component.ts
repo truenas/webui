@@ -16,8 +16,8 @@ import {
   IxFormComponent,
   SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
+import { WarningComponent } from 'app/modules/warning/warning.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 

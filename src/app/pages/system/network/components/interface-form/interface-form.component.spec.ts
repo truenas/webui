@@ -23,11 +23,9 @@ import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxIpInputWithNetmaskComponent,
-} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import {
-  IxIpInputWithNetmaskHarness,
-} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
+} from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -233,7 +231,7 @@ describe('InterfaceFormComponent', () => {
       await setInputValue('name', 'br0');
       await setInputValue('description', 'Bridge interface');
       await setSelectValue('bridge_members', 'enp0s3', 'enp0s4');
-      const ipAddress = await loader.getHarness(IxIpInputWithNetmaskHarness.with({ label: 'IP Address' }));
+      const ipAddress = await loader.getHarness(TnFormControlHarness.with({ label: 'IP Address' }));
       await ipAddress.setValue('10.0.1.2/24');
       await setCheckbox('Enable Learning', true);
 
@@ -429,7 +427,7 @@ describe('InterfaceFormComponent', () => {
       const ipv6Auto = await loader.getHarness(TnCheckboxHarness.with({ label: 'Autoconfigure IPv6' }));
       expect(await ipv6Auto.isChecked()).toBe(false);
 
-      const ipAddress = await loader.getHarness(IxIpInputWithNetmaskHarness.with({ label: 'IP Address' }));
+      const ipAddress = await loader.getHarness(TnFormControlHarness.with({ label: 'IP Address' }));
       expect(await ipAddress.getValue()).toBe('10.2.3.4/24');
     });
   });
@@ -575,7 +573,7 @@ describe('InterfaceFormComponent', () => {
       await setInputValue('name', 'br0');
 
       const ipAddress = await loader.getHarness(
-        IxIpInputWithNetmaskHarness.with({ label: 'IP Address (This Controller)' }),
+        TnFormControlHarness.with({ label: 'IP Address (This Controller)' }),
       );
       await ipAddress.setValue('10.2.3.4/24');
       await setInputValue('failover_address', '192.168.1.2');

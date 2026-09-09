@@ -7,7 +7,8 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+  TnCheckboxComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnFormSectionComponent,
+  TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
   Observable, catchError, filter, map, of, switchMap,
@@ -20,15 +21,13 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
@@ -57,6 +56,8 @@ export interface NfsFormData {
   templateUrl: './nfs-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFormListComponent,
+    TnFormListItemComponent,
     ReactiveFormsModule,
     IxFormComponent,
     TnFormSectionComponent,
@@ -68,8 +69,6 @@ export interface NfsFormData {
     IxGroupComboboxComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
-    IxListComponent,
-    IxListItemComponent,
     IxIpInputWithNetmaskComponent,
     TranslateModule,
   ],
