@@ -9,6 +9,7 @@ import {
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -40,6 +41,17 @@ describe('ReplicationWhatAndWhereComponent', () => {
     providers: [
       mockProvider(TnStepperComponent),
       mockAuth(),
+      mockTypedApi([
+        mockTypedQuery('keychaincredential.query', [
+          {
+            id: 123,
+            name: 'non-root-ssh-connection',
+            attributes: {
+              username: 'user1',
+            },
+          },
+        ] as KeychainCredential[]),
+      ]),
       mockApi([
         mockCall('replication.query', [
           {
@@ -52,15 +64,6 @@ describe('ReplicationWhatAndWhereComponent', () => {
             transport: TransportMode.Ssh,
           },
         ] as ReplicationTask[]),
-        mockCall('keychaincredential.query', [
-          {
-            id: 123,
-            name: 'non-root-ssh-connection',
-            attributes: {
-              username: 'user1',
-            },
-          },
-        ] as KeychainCredential[]),
         mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
       ]),
       mockProvider(DatasetService),

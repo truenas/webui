@@ -9,6 +9,7 @@ import {
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
@@ -72,13 +73,15 @@ describe('RsyncTaskFormComponent', () => {
         timezone: 'America/New_York',
       }),
       mockAuth(),
-      mockApi([
-        mockCall('rsynctask.create', existingTask),
-        mockCall('rsynctask.update', existingTask),
-        mockCall('keychaincredential.query', [
+      mockTypedApi([
+        mockTypedQuery('keychaincredential.query', [
           { id: 1, name: 'ssh01' },
           { id: 2, name: 'ssh02' },
         ] as KeychainCredential[]),
+      ]),
+      mockApi([
+        mockCall('rsynctask.create', existingTask),
+        mockCall('rsynctask.update', existingTask),
       ]),
       mockProvider(FilesystemService),
       mockProvider(UserService, {

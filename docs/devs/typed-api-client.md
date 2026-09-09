@@ -97,6 +97,22 @@ Where things differ:
   `MockTypedApiService` for adjusting responses on the fly. Fixtures for a
   query or entry response are typed as the generated entity (for example
   `CloudSyncCredentialEntry`), not the UI's reading of it.
+- **A spec that reaches `TypedApiService` unmocked fails fast.**
+  `setup-jest.ts` provides `EmptyTypedApiService` globally, the way it
+  provides `EmptyApiService`, so an unmocked call throws
+  `TypedApiService injection not provided` instead of building the real
+  client, which would open a WebSocket to `environment.remote` from jsdom and
+  hang the test until its timeout. That guard exists because the first
+  service migration caused exactly that: `KeychainCredentialService` moved,
+  and every spec of every component that renders `ix-ssh-credentials-select`
+  timed out at 30 seconds with nothing in the assertion to explain why.
+- **Migrating a service migrates its consumers' specs.** The service's own
+  spec is the small part. Every spec that used `mockCall('x.query', ...)` to
+  feed that service through the legacy `ApiService` now needs
+  `mockTypedQuery('x.query', ...)` instead, including specs of components
+  that only embed a consumer. Before moving a service, grep for its methods'
+  names in `mockCall(` across `src/app` and convert those specs in the same
+  change.
 - **A shared interface is retired by its last consumer.** Until then the
   service that fronts it is the one place that converts, with a named adapter
   rather than a cast at each call site (`CloudCredentialService`'s
@@ -213,6 +229,18 @@ above. Each is a change for `truenas/api-client-ts`.
     the schema for those fields (a `bool | str` coercion, most likely) is
     being emitted as an intersection rather than a union. Harmless until a
     form tries to write those fields through the typed client.
+11. **Version namespaces are type-only and partial.** Generated model types
+    are reachable as `v27_0_0.Name`, and that is how the UI's interface files
+    now alias them (`keychain-credential.interface.ts` is the pattern). Two
+    limits, both in the client's `.d.ts` bundling: the const objects the
+    generator emits for enums are exported type-only, so
+    `v27_0_0.KeychainCredentialEntryType.SshKeyPair` does not compile in any
+    version namespace, and a later namespace carries only the types that
+    changed in that version, so `SSHKeyPairEntry` and
+    `CredentialsVerifyResult` exist under `v25_10_0` but not `v27_0_0`. Until
+    fixed: keep the UI's enums as value holders, and derive a missing type
+    from the directory (`CallResponse<D, 'keychaincredential.create'>`)
+    rather than importing it from an older version's namespace.
 
 ## Version policy
 
