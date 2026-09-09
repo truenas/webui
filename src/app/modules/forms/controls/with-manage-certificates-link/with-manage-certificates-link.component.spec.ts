@@ -1,7 +1,7 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import {
   WithManageCertificatesLinkComponent,
-} from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
+} from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
 
 describe('WithManageCertificatesLinkComponent', () => {
   let spectator: Spectator<WithManageCertificatesLinkComponent>;

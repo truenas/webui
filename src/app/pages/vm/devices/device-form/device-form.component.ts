@@ -10,7 +10,7 @@ import {
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent,
+  InputType, TnAutocompleteComponent, TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent,
   TnFormSectionComponent, TnInputComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { BehaviorSubject, EMPTY, Observable, forkJoin, of } from 'rxjs';
@@ -35,8 +35,6 @@ import {
   VmDevice, VmDeviceUpdate, VmDiskDevice,
 } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
@@ -80,11 +78,11 @@ export interface DeviceFormData {
     TnRadioGroupComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
-    IxComboboxComponent,
     RequiresRolesDirective,
     TnButtonComponent,
     IxErrorsComponent,
     TranslateModule,
+    TnAutocompleteComponent,
     TnBannerComponent,
   ],
 })
@@ -339,17 +337,15 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
   readonly nicTypes$ = of(mapToOptions(vmNicTypeLabels, this.translate));
   readonly displayTypes$ = new BehaviorSubject<{ label: string; value: VmDisplayType }[]>([]);
 
-  readonly passthroughProvider = new SimpleAsyncComboboxProvider(
-    this.api.call('vm.device.passthrough_device_choices').pipe(
-      map((passthroughDevices) => {
-        return Object.keys(passthroughDevices).map((id) => {
-          return {
-            label: passthroughDevices[id].description || id,
-            value: id,
-          };
-        });
-      }),
-    ),
+  readonly passthroughOptions$ = this.api.call('vm.device.passthrough_device_choices').pipe(
+    map((passthroughDevices) => {
+      return Object.keys(passthroughDevices).map((id) => {
+        return {
+          label: passthroughDevices[id].description || id,
+          value: id,
+        };
+      });
+    }),
   );
 
   zvolOptions$: Observable<SelectOption[]>;

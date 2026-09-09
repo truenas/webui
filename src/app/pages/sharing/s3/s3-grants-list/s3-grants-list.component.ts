@@ -5,22 +5,31 @@ import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-i
 import { FormArray, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnSelectComponent,
+  TnAutocompleteComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent,
+  TnOptionsFetchFn, TnSelectComponent,
 } from '@truenas/ui-components';
 import { startWith, switchMap } from 'rxjs';
 import {
   S3PrincipalType, s3AccessLabels, s3PrincipalTypeLabels,
 } from 'app/enums/s3.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { Option } from 'app/interfaces/option.interface';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { createS3GrantFormGroup, S3GrantFormGroup } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
-import { S3PrincipalComboboxProvider } from 'app/pages/sharing/s3/s3-grants-list/s3-principal-combobox-provider';
+import {
+  s3PrincipalOptions, s3PrincipalPageSize,
+} from 'app/pages/sharing/s3/s3-grants-list/s3-principal-options';
 
 interface GrantProviders {
-  user: S3PrincipalComboboxProvider;
-  group: S3PrincipalComboboxProvider;
+  user: TnOptionsFetchFn<Option>;
+  group: TnOptionsFetchFn<Option>;
+  /**
+   * The option naming the grant's own principal, pinned through the picker's `[options]` so an
+   * id-valued field reads as a name on a form that has only been loaded — the first page is not
+   * fetched until the panel opens.
+   */
+  seed: Option[];
 }
 
 /**
@@ -37,7 +46,7 @@ interface GrantProviders {
     TnFormListItemComponent,
     TnFormFieldComponent,
     TnSelectComponent,
-    IxComboboxComponent,
+    TnAutocompleteComponent,
     TranslateModule,
   ],
 })
@@ -68,6 +77,7 @@ export class S3GrantsListComponent {
   protected readonly S3PrincipalType = S3PrincipalType;
   protected readonly principalTypeOptions = mapToOptions(s3PrincipalTypeLabels, this.translate);
   protected readonly accessOptions = mapToOptions(s3AccessLabels, this.translate);
+  protected readonly principalPageSize = s3PrincipalPageSize;
 
   /**
    * Keyed by form group rather than index, so rows keep their providers when an earlier row is removed.
@@ -94,14 +104,14 @@ export class S3GrantsListComponent {
       return providers;
     }
 
-    // Seed only the picker for the grant's own principal type, so a group name never shows up
-    // in the user list after the type is switched.
-    const { principal_type: currentType, xid, name } = group.getRawValue();
-    const seed = xid !== null && name ? [{ label: name, value: xid }] : [];
-    const seedFor = (type: S3PrincipalType): typeof seed => (currentType === type ? seed : []);
+    // The seed names the grant's own principal, and only the picker matching the row's current
+    // type is rendered — so pinning it on both is safe, and a group name can never show up in the
+    // user list. Switching the type clears `xid`/`name` below, which empties the seed with them.
+    const { xid, name } = group.getRawValue();
     providers = {
-      user: new S3PrincipalComboboxProvider(this.api, S3PrincipalType.User, seedFor(S3PrincipalType.User)),
-      group: new S3PrincipalComboboxProvider(this.api, S3PrincipalType.Group, seedFor(S3PrincipalType.Group)),
+      user: s3PrincipalOptions(this.api, S3PrincipalType.User),
+      group: s3PrincipalOptions(this.api, S3PrincipalType.Group),
+      seed: xid !== null && name ? [{ label: name, value: xid }] : [],
     };
     this.providers.set(group, providers);
 

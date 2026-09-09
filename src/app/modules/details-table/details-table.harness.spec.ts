@@ -3,13 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
+import { TnInputComponent, TnInputHarness } from '@truenas/ui-components';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsItemHarness } from 'app/modules/details-table/details-item/details-item.harness';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 
 /**
  * Specifically tests harnesses.
@@ -24,6 +24,7 @@ describe('DetailsTableHarness', () => {
       DetailsItemComponent,
       ReactiveFormsModule,
       EditableComponent,
+      TnInputComponent,
     ],
   });
 
@@ -43,7 +44,7 @@ describe('DetailsTableHarness', () => {
           <ix-editable>
             <div view> {{ form.value.lastName }}</div>
             <div edit>
-              <ix-input formControlName="lastName"></ix-input>
+              <tn-input formControlName="lastName"></tn-input>
             </div>
           </ix-editable>
         </ix-details-item>
@@ -126,7 +127,7 @@ describe('DetailsTableHarness', () => {
     });
 
     it('returns null if no harness in detail view is found', async () => {
-      const firstNameEditable = await details.getHarnessForItemOrNull('Last Name', IxInputHarness);
+      const firstNameEditable = await details.getHarnessForItemOrNull('Last Name', TnInputHarness);
 
       expect(firstNameEditable).toBeNull();
     });

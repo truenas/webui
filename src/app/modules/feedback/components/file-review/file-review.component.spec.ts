@@ -16,8 +16,8 @@ import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { IxStarRatingComponent } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.component';
-import { IxStarRatingHarness } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.harness';
+import { IxStarRatingComponent } from 'app/modules/forms/controls/ix-star-rating/ix-star-rating.component';
+import { IxStarRatingHarness } from 'app/modules/forms/controls/ix-star-rating/ix-star-rating.harness';
 import { TnFileInputTestHarness } from 'app/modules/forms/ix-forms/testing/tn-file-input.harness';
 import { EntitlementsService } from 'app/services/entitlements.service';
 

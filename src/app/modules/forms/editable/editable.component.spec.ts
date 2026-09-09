@@ -4,10 +4,9 @@ import { fakeAsync, tick } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnIconHarness, TnInputComponent, TnInputHarness } from '@truenas/ui-components';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
 
 describe('EditableComponent', () => {
@@ -27,6 +26,7 @@ describe('EditableComponent', () => {
     component: EditableComponent,
     imports: [
       ReactiveFormsModule,
+      TnInputComponent,
       TranslateModule.forRoot(),
     ],
   });
@@ -51,7 +51,7 @@ describe('EditableComponent', () => {
           </div>
 
           <div edit>
-            <ix-input [formControl]="nameControl"></ix-input>
+            <tn-input [formControl]="nameControl"></tn-input>
           </div>
         </ix-editable>
       `,
@@ -115,7 +115,7 @@ describe('EditableComponent', () => {
   describe('edit mode', () => {
     it('shows control from the edit slot', async () => {
       await editable.open();
-      const input = await editable.getHarness(IxInputHarness);
+      const input = await editable.getHarness(TnInputHarness);
       expect(input).toExist();
       expect(await input.getValue()).toBe('Robert');
     });
@@ -123,8 +123,9 @@ describe('EditableComponent', () => {
     it('focuses on the first focusable element when switching to edit mode', async () => {
       await editable.open();
 
-      const input = await editable.getHarness(IxInputHarness);
-      expect(await (await input.getMatInputHarness()).isFocused()).toBe(true);
+      // Asserted on the focused element rather than through the harness: focus lands on the
+      // `<input>` inside `tn-input`, and jsdom does not resolve `:focus-within` on the host.
+      expect(document.activeElement?.closest('tn-input')).toBeTruthy();
     });
 
     it('does not focus on the first focusable element when autoFocus is false', async () => {
@@ -132,8 +133,7 @@ describe('EditableComponent', () => {
 
       await editable.open();
 
-      const input = await editable.getHarness(IxInputHarness);
-      expect(await (await input.getMatInputHarness()).isFocused()).toBe(false);
+      expect(document.activeElement?.closest('tn-input')).toBeFalsy();
     });
 
     it('scrolls edit slot into view when opening', async () => {

@@ -146,7 +146,9 @@ export interface IxFormLoadState {
  * <ix-form [formGroup]="form" [editData]="entity"
  *          [addTitle]="'Add Group' | translate" [editTitle]="'Edit Group' | translate"
  *          [requiredRoles]="requiredRoles" [submitHandler]="handleSubmit">
- *   <ix-fieldset><ix-input formControlName="name" [label]="'Name' | translate" /></ix-fieldset>
+ *   <tn-form-field [label]="'Name' | translate">
+ *     <tn-input formControlName="name"></tn-input>
+ *   </tn-form-field>
  * </ix-form>
  * ```
  *

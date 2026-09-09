@@ -4,7 +4,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialog,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -13,9 +15,9 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { DatasetEncryptionSummary } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFileInputHarness } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.harness';
 import { fillControlValues, indexFormControls } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { TnFileInputTestHarness } from 'app/modules/forms/ix-forms/testing/tn-file-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
 import { UploadService } from 'app/services/upload.service';
@@ -67,7 +69,8 @@ describe('DatasetUnlockComponent', () => {
   it('saves when set key from file', async () => {
     const file = fakeFile('key.txt');
 
-    const fileInput = await loader.getHarness(IxFileInputHarness.with({ label: 'Upload Key file' }));
+    // Only one of the two file inputs is rendered at a time (key-file vs per-dataset key).
+    const fileInput = await loader.getHarness(TnFileInputTestHarness);
     await fileInput.setValue([file]);
 
     const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock' }));

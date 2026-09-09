@@ -16,8 +16,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
+import { addNewSelectOptionValueType } from 'app/modules/forms/custom-selects/ix-select-with-new-option.directive';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
-import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -162,7 +162,7 @@ describe('CloudBackupFormComponent', () => {
       const cloudCredentialService = spectator.inject(CloudCredentialService);
       cloudCredentialService.getBuckets = jest.fn(() => of([]));
 
-      spectator.component.form.controls.credentials.setValue(addNewIxSelectValue as unknown as number);
+      spectator.component.form.controls.credentials.setValue(addNewSelectOptionValueType as unknown as number);
       tick();
 
       expect(cloudCredentialService.getBuckets).not.toHaveBeenCalled();

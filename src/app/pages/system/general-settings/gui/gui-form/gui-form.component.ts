@@ -17,12 +17,12 @@ import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { WithManageCertificatesLinkComponent } from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
 import {
   FormSubmitEvent,
   IxFormComponent,
   SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';

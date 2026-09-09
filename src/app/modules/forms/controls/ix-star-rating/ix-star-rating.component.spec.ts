@@ -1,8 +1,8 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
-import { IxStarRatingComponent } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.component';
-import { IxStarRatingHarness } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.harness';
+import { IxStarRatingComponent } from 'app/modules/forms/controls/ix-star-rating/ix-star-rating.component';
+import { IxStarRatingHarness } from 'app/modules/forms/controls/ix-star-rating/ix-star-rating.harness';
 
 describe('IxStarRatingComponent', () => {
   let spectator: SpectatorHost<IxStarRatingComponent>;

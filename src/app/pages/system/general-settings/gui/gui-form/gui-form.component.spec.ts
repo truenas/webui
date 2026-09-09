@@ -13,7 +13,7 @@ import { SystemSecurityConfig } from 'app/interfaces/system-security-config.inte
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   WithManageCertificatesLinkComponent,
-} from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
+} from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';

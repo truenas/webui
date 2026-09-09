@@ -9,8 +9,8 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  InputType, TnButtonComponent, TnCardComponent, TnCheckboxComponent, TnDialog,
-  TnFormFieldComponent, TnInputComponent, TnRadioGroupComponent,
+  InputType, TnButtonComponent, TnCardComponent, TnCheckboxComponent, TnDialog, TnFileInputComponent,
+  TnFormFieldComponent, TnInputComponent, TnRadioGroupComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { from, of, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -22,7 +22,6 @@ import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset
 import { Job } from 'app/interfaces/job.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -39,7 +38,7 @@ interface DatasetFormGroup {
   passphrase?: FormControl<string>;
   name: FormControl<string>;
   is_passphrase: FormControl<boolean>;
-  file?: FormControl<File[]>;
+  file?: FormControl<File | null>;
 }
 
 type DatasetFormValue = Partial<{ key: string; passphrase: string; is_passphrase: boolean }>;
@@ -74,10 +73,11 @@ function requireAtLeastOneKeyOrPassphrase(message: string): ValidatorFn {
     TnRadioGroupComponent,
     TnCheckboxComponent,
     TnInputComponent,
-    IxFileInputComponent,
     IxListComponent,
     IxListItemComponent,
     TranslateModule,
+    TnFileInputComponent,
+    TnTestIdDirective,
     TnButtonComponent,
     RequiresRolesDirective,
   ],
@@ -111,7 +111,7 @@ export class DatasetUnlockComponent implements OnInit {
   form = this.formBuilder.group({
     use_file: [true],
     unlock_children: [true],
-    file: [null as File[] | null, [Validators.required]],
+    file: [null as File | null, [Validators.required]],
     key: [''],
     datasets: this.formBuilder.array<FormGroup<DatasetFormGroup>>([], [
       requireAtLeastOneKeyOrPassphrase(
@@ -151,8 +151,10 @@ export class DatasetUnlockComponent implements OnInit {
       }
     });
 
+    // `tn-file-input` in single mode holds one `File` (or null), where `ix-file-input` always
+    // held a `File[]`.
     this.form.controls.file.valueChanges.pipe(
-      switchMap((files: File[]) => (!files?.length ? of('') : from(files[0].text()))),
+      switchMap((file: File | null) => (!file ? of('') : from(file.text()))),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((key: string) => {
       this.form.controls.key.setValue(key);
@@ -195,13 +197,13 @@ export class DatasetUnlockComponent implements OnInit {
           this.form.controls.datasets.push(this.formBuilder.group({
             name: [''],
             key: ['', exactLength(64)],
-            file: [[] as File[]],
+            file: [null as File | null],
             is_passphrase: [false],
           }) as FormGroup<DatasetFormGroup>);
         }
 
         (this.form.controls.datasets.controls[i].controls.file as FormControl)?.valueChanges.pipe(
-          switchMap((files: File[]) => (!files?.length ? of('{}') : from(files[0].text()))),
+          switchMap((file: File | null) => (!file ? of('{}') : from(file.text()))),
           takeUntilDestroyed(this.destroyRef),
         ).subscribe((textFromFile) => {
           const key = (JSON.parse(textFromFile) as Record<string, string>)[result.name];
@@ -226,7 +228,7 @@ export class DatasetUnlockComponent implements OnInit {
 
     const job$ = payload.key_file
       ? this.upload.uploadAsJob({
-          file: values.file[0],
+          file: values.file,
           method: 'pool.dataset.unlock',
           params: [this.pk, payload],
         })
@@ -277,7 +279,7 @@ export class DatasetUnlockComponent implements OnInit {
 
     const job$ = values.use_file
       ? this.upload.uploadAsJob({
-          file: values.file[0],
+          file: values.file,
           method: 'pool.dataset.encryption_summary',
           params: [this.pk, payload],
         })

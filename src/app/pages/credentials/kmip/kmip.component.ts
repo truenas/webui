@@ -16,7 +16,7 @@ import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
+import { WithManageCertificatesLinkComponent } from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { kmipElements } from 'app/pages/credentials/kmip/kmip.elements';

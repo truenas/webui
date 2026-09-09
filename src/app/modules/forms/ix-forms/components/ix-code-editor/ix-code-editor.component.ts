@@ -15,10 +15,10 @@ import {
 } from 'rxjs';
 import { languageFunctionsMap } from 'app/constants/language-functions-map.constant';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
+import { SelectOptionValueType } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
@@ -185,7 +185,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
     this.cdr.markForCheck();
   }
 
-  registerOnChange(onChange: (value: IxSelectValue) => void): void {
+  registerOnChange(onChange: (value: SelectOptionValueType) => void): void {
     this.onChange = onChange;
   }
 
