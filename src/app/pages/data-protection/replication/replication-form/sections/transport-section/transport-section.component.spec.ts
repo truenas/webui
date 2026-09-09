@@ -5,7 +5,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnCheckboxHarness, TnDialog, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
@@ -27,12 +28,13 @@ describe('TransportSectionComponent', () => {
       SshCredentialsSelectComponent,
     ],
     providers: [
-      mockApi([
-        mockCall('keychaincredential.query', [
+      mockTypedApi([
+        mockTypedQuery('keychaincredential.query', [
           { id: 1, name: 'connection 1' },
           { id: 2, name: 'connection 2' },
         ] as KeychainCredential[]),
       ]),
+      mockApi(),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
           closed: of(true),

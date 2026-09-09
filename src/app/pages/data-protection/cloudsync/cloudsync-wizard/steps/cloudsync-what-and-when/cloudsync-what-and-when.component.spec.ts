@@ -8,6 +8,8 @@ import {
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { CloudSyncCredentialEntry } from 'app/interfaces/cloudsync-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -30,11 +32,13 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       mockProvider(TnStepperComponent),
       mockProvider(FormSidePanelService),
       mockAuth(),
+      mockTypedApi([
+        mockTypedQuery('cloudsync.credentials.query', [googlePhotosCreds as CloudSyncCredentialEntry]),
+        mockTypedCall('cloudsync.providers', [googlePhotosProvider]),
+      ]),
       mockApi([
         mockCall('cloudsync.create'),
         mockCall('cloudsync.update'),
-        mockCall('cloudsync.credentials.query', [googlePhotosCreds]),
-        mockCall('cloudsync.providers', [googlePhotosProvider]),
       ]),
       mockProvider(DatasetService),
       mockProvider(TnDialog, {
