@@ -21,6 +21,9 @@
         <div class="nic-info">
           <div class="info-header">
             <h3 class="info-header-title">{{ interface.name }}</h3>
+            @if (interface.description) {
+              <div class="info-header-description" [tnTooltip]="interface.description">{{ interface.description }}</div>
+            }
           </div>
         </div>
         <ix-widget-stale-data-notice></ix-widget-stale-data-notice>
@@ -28,6 +31,9 @@
         <div class="nic-info">
         <div class="info-header">
           <h3 class="info-header-title">{{ interface.name }}</h3>
+          @if (interface.description) {
+            <div class="info-header-description" [tnTooltip]="interface.description">{{ interface.description }}</div>
+          }
         </div>
         <div class="info-body">
           <div class="info-column primary">
