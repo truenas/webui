@@ -286,7 +286,7 @@ export class SshConnectionFormComponent extends IxFormHostForm<KeychainCredentia
               });
             }),
             switchMap((retry) => {
-              if (retry && params.setup_type === SshConnectionsSetupMethod.SemiAutomatic) {
+              if (retry && 'semi_automatic_setup' in params) {
                 params.semi_automatic_setup.verify_ssl = false;
                 return this.keychainCredentialService.addSshConnection(params);
               }
