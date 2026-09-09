@@ -8,7 +8,7 @@ import { BehaviorSubject, of, Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
-import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
+import { KeychainCredentialUsedBy, KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -193,14 +193,14 @@ describe('SshConnectionCardComponent', () => {
   });
 
   it('shows conditional warning message when deleting connection with shared keypair', async () => {
-    const usedByResponse = [
+    const usedByResponse: KeychainCredentialUsedBy[] = [
       {
         title: 'test-conn-1',
-        unbind_method: 'keychaincredential.update',
+        unbind_method: 'delete',
       },
       {
         title: 'test-conn-3',
-        unbind_method: 'keychaincredential.update',
+        unbind_method: 'delete',
       },
     ];
 
@@ -221,10 +221,10 @@ describe('SshConnectionCardComponent', () => {
   });
 
   it('does not show secondary warning message when keypair is not shared with other connections', async () => {
-    const usedByResponse = [
+    const usedByResponse: KeychainCredentialUsedBy[] = [
       {
         title: 'test-conn-1', // Only the current connection
-        unbind_method: 'keychaincredential.update',
+        unbind_method: 'delete',
       },
     ];
 

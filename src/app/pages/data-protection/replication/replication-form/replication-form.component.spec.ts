@@ -5,6 +5,7 @@ import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -63,7 +64,6 @@ const existingTask: ReplicationTask = {
       private_key: 1,
       remote_host_key: '',
       username: 'root',
-      id: '5',
     },
     id: 5,
     name: 'test',
@@ -152,14 +152,8 @@ describe('ReplicationFormComponent', () => {
       mockProvider(DatasetService, {
         getDatasetNodeProvider: jest.fn(() => localNodeProvider),
       }),
-      mockApi([
-        mockCall('replication.count_eligible_manual_snapshots', {
-          eligible: 3,
-          total: 5,
-        }),
-        mockCall('replication.create', existingTask),
-        mockCall('replication.update', existingTask),
-        mockCall('keychaincredential.query', [
+      mockTypedApi([
+        mockTypedQuery('keychaincredential.query', [
           {
             id: 123,
             name: 'non-root-ssh-connection',
@@ -168,6 +162,14 @@ describe('ReplicationFormComponent', () => {
             },
           },
         ] as KeychainCredential[]),
+      ]),
+      mockApi([
+        mockCall('replication.count_eligible_manual_snapshots', {
+          eligible: 3,
+          total: 5,
+        }),
+        mockCall('replication.create', existingTask),
+        mockCall('replication.update', existingTask),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of()),

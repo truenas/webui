@@ -8,6 +8,7 @@ import {
 import { MockComponent } from 'ng-mocks';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -46,7 +47,6 @@ const existingTask: ReplicationTask = {
       private_key: 1,
       remote_host_key: '',
       username: 'root',
-      id: '5',
     },
     id: 5,
     name: 'test',
@@ -77,9 +77,11 @@ describe('ReplicationWizardComponent', () => {
     ],
     providers: [
       mockAuth(),
+      mockTypedApi([
+        mockTypedQuery('keychaincredential.query', []),
+      ]),
       mockApi([
         mockCall('replication.query', []),
-        mockCall('keychaincredential.query', []),
         mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
         mockCall('replication.target_unmatched_snapshots', {}),
         mockCall('pool.snapshottask.query', []),

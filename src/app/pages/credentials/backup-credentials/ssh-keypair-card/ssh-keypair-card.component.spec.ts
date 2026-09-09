@@ -130,14 +130,14 @@ describe('SshKeypairCardComponent', () => {
   });
 
   it('automatically cascades delete when keypair is used by other credentials', async () => {
-    const usedByResponse = [
+    const usedByResponse: KeychainCredentialUsedBy[] = [
       {
         title: 'test-connection-1',
-        unbind_method: 'keychaincredential.update',
+        unbind_method: 'delete',
       },
       {
         title: 'test-connection-2',
-        unbind_method: 'keychaincredential.update',
+        unbind_method: 'delete',
       },
     ];
 
