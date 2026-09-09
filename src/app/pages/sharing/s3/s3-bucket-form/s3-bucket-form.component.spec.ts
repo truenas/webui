@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  S3Access, S3MultipartEtag, S3ObjectLockMode, S3PermissionsModel, S3PrincipalType, S3Versioning,
+  S3Access, S3MultipartEtag, S3ObjectLockMode, S3ObjectOwnership, S3PermissionsModel, S3PrincipalType, S3Versioning,
 } from 'app/enums/s3.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Group } from 'app/interfaces/group.interface';
@@ -43,6 +43,7 @@ describe('S3BucketFormComponent', () => {
     owner: 'alice',
     enabled: true,
     permissions_model: S3PermissionsModel.S3,
+    object_ownership: S3ObjectOwnership.BucketOwnerPreferred,
     grants: [
       {
         principal_type: S3PrincipalType.Group, xid: 1001, name: 'staff', access: S3Access.ReadWrite,
@@ -129,6 +130,7 @@ describe('S3BucketFormComponent', () => {
 
       const advancedLabels = await form.getLabels();
       expect(advancedLabels).toContain('Permissions Model');
+      expect(advancedLabels).toContain('Object Ownership');
       expect(advancedLabels).toContain('Versioning');
       expect(advancedLabels).toContain('Multipart ETag');
       expect(advancedLabels).not.toContain('Audit');
@@ -203,6 +205,41 @@ describe('S3BucketFormComponent', () => {
       const objectLock = await getCheckbox('Enable Object Lock');
       expect(await objectLock.isDisabled()).toBe(true);
       expect(await objectLock.getValue()).toBe(false);
+    });
+
+    it('holds object ownership at Object Writer while Multiprotocol is selected, then restores the choice', async () => {
+      await clickAdvancedOptions();
+      expect(await (await getSelect('Object Ownership')).getValue()).toBe('Bucket Owner Enforced');
+      await form.fillForm({ 'Object Ownership': 'Bucket Owner Preferred' });
+
+      await form.fillForm({ 'Permissions Model': 'Multiprotocol' });
+
+      const folded = await getSelect('Object Ownership');
+      expect(await folded.getValue()).toBe('Object Writer');
+      expect(await folded.isDisabled()).toBe(true);
+
+      await form.fillForm({ 'Permissions Model': 'S3' });
+
+      const released = await getSelect('Object Ownership');
+      expect(await released.isDisabled()).toBe(false);
+      expect(await released.getValue()).toBe('Bucket Owner Preferred');
+    });
+
+    it('sends Object Writer ownership for a Multiprotocol bucket', async () => {
+      await form.fillForm({
+        Name: 'shared',
+        'Parent Dataset': 'tank',
+        Owner: 'alice',
+      });
+      await clickAdvancedOptions();
+      await form.fillForm({ 'Permissions Model': 'Multiprotocol' });
+
+      await (await getSaveButton()).click();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+        permissions_model: S3PermissionsModel.Multiprotocol,
+        object_ownership: S3ObjectOwnership.ObjectWriter,
+      })]);
     });
 
     it('requires retention days once object lock is on with a default retention mode', async () => {
@@ -294,7 +331,8 @@ describe('S3BucketFormComponent', () => {
         dataset: 'tank/buckets/videos',
         owner: 'alice',
         enabled: true,
-        permissions_model: S3PermissionsModel.BucketOwnerEnforced,
+        permissions_model: S3PermissionsModel.S3,
+        object_ownership: S3ObjectOwnership.BucketOwnerEnforced,
         grants: [],
         versioning: S3Versioning.Off,
         snapshot_versions: [],
@@ -357,7 +395,8 @@ describe('S3BucketFormComponent', () => {
         Dataset: 'tank/buckets/photos',
         Owner: 'alice',
         Enabled: true,
-        'Permissions Model': 'S3 Only',
+        'Permissions Model': 'S3',
+        'Object Ownership': 'Bucket Owner Preferred',
         Versioning: 'Enabled',
         'Snapshot Versions': ['auto-*'],
       });
@@ -384,6 +423,7 @@ describe('S3BucketFormComponent', () => {
         owner: 'bob',
         enabled: false,
         permissions_model: S3PermissionsModel.S3,
+        object_ownership: S3ObjectOwnership.BucketOwnerPreferred,
         grants: [{ principal_type: S3PrincipalType.Group, xid: 1001, access: S3Access.ReadWrite }],
         versioning: S3Versioning.Enabled,
         snapshot_versions: ['auto-*'],
@@ -416,6 +456,34 @@ describe('S3BucketFormComponent', () => {
       await form.fillForm({ 'Enable Object Lock': true });
 
       expect(spectator.component.form.controls.object_lock_default_mode.value).toBeNull();
+    });
+  });
+
+  describe('editing a stored Multiprotocol bucket', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
+              ...existingBucket,
+              permissions_model: S3PermissionsModel.Multiprotocol,
+              object_ownership: S3ObjectOwnership.ObjectWriter,
+            }),
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('holds its ownership at Object Writer and keeps object lock unavailable', async () => {
+      await clickAdvancedOptions();
+
+      const ownership = await getSelect('Object Ownership');
+      expect(await ownership.getValue()).toBe('Object Writer');
+      expect(await ownership.isDisabled()).toBe(true);
+      expect(await (await getCheckbox('Enable Object Lock')).isDisabled()).toBe(true);
     });
   });
 });
