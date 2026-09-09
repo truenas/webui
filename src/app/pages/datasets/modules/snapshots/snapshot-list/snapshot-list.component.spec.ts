@@ -432,6 +432,43 @@ describe('SnapshotListComponent — paging', () => {
     expect(await table.getCellText(0, 'snapshot_name')).toBe(firstRow);
   });
 
+  it('clamps back into range when a reload shrinks the list below the current page', async () => {
+    const store$ = spectator.inject(MockStore);
+    const remaining = manySnapshots.slice(0, 30);
+
+    // The 70 snapshots behind pages 2 and 3 are gone — a retention prune, or a batch delete
+    // of the rows the user was reading. `keepPage` must not leave them on page 2 of one,
+    // which the empty state would render as "No search results" with no pager to get back.
+    store$.overrideSelector(selectSnapshots, remaining);
+    store$.overrideSelector(selectSnapshotsTotal, remaining.length);
+    store$.refreshState();
+    spectator.detectChanges();
+
+    expect(await pager.getRangeText()).toBe('1 – 30 of 30');
+    expect(await table.getRowCount()).toBe(30);
+  });
+
+  it('drops a selection made on a page the user has left when the store stops listing it', async () => {
+    const store$ = spectator.inject(MockStore);
+
+    await table.toggleRowSelection(0);
+    const offScreenPick = await table.getCellText(0, 'snapshot_name');
+    await pager.goToFirstPage();
+    spectator.detectChanges();
+    expect(spectator.query('.batch-actions-toolbar')).not.toBeNull();
+
+    // Nothing about the visible page-1 selection changes here, so the prune cannot depend on
+    // tn-table emitting selectionChange for a row it never rendered.
+    store$.overrideSelector(
+      selectSnapshots,
+      manySnapshots.filter((snapshot) => snapshot.snapshot_name !== offScreenPick),
+    );
+    store$.refreshState();
+    spectator.detectChanges();
+
+    expect(spectator.query('.batch-actions-toolbar')).toBeNull();
+  });
+
   it('offers rows selected on more than one page to the batch toolbar', async () => {
     await table.toggleRowSelection(0);
     const secondPagePick = await table.getCellText(0, 'snapshot_name');

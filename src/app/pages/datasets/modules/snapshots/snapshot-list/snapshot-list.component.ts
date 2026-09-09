@@ -102,9 +102,10 @@ export class SnapshotListComponent implements OnInit {
   dataProvider = new ArrayDataProvider<ZfsSnapshot>();
   snapshots: ZfsSnapshot[] = [];
   /**
-   * The names in `snapshots`, kept alongside it so `onSelectionChange` can prune in
-   * constant time per selected row. A dataset can hold tens of thousands of snapshots,
-   * and that runs on every tick of a checkbox.
+   * The names in `snapshots`, so a selection can be pruned in constant time per selected
+   * row — a dataset can hold tens of thousands of snapshots, and `onSelectionChange` runs
+   * on every tick of a checkbox. Rebuilt with `snapshots` in `setSnapshots`, which is the
+   * only place either is written.
    */
   private snapshotNames = new Set<string>();
   protected readonly showExtraColumns = signal(false);
@@ -211,8 +212,7 @@ export class SnapshotListComponent implements OnInit {
     this.store$.select(selectSnapshots).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((snapshots) => {
-      this.snapshots = [...snapshots];
-      this.snapshotNames = new Set(this.snapshots.map((snapshot) => snapshot.name));
+      this.setSnapshots(snapshots);
       // A reload is not something the user asked for — a periodic snapshot task firing is
       // enough to trigger one — so it must not cost them their place or the batch they are
       // half way through building. `keepPage` holds the page, and tn-table re-points the
@@ -305,6 +305,25 @@ export class SnapshotListComponent implements OnInit {
     // selected stays in its keyed selection. Drop anything the store no longer lists
     // before a batch action can be pointed at it.
     this.selectedSnapshots.set(snapshots.filter((snapshot) => this.snapshotNames.has(snapshot.name)));
+  }
+
+  /**
+   * The one place `snapshots` is written, so the name index and the selection can never
+   * drift from it.
+   *
+   * The prune has to happen here rather than only in `onSelectionChange`: a snapshot
+   * selected on a page the user has since left is destroyed elsewhere and the reload
+   * lands — nothing about the VISIBLE selection changed, so there is no guarantee
+   * tn-table emits `selectionChange` for it. Dropping it where the list is rebuilt makes
+   * the invariant hold whoever emits, and keeps a batch action from being pointed at a
+   * snapshot that is gone.
+   */
+  private setSnapshots(snapshots: ZfsSnapshot[]): void {
+    this.snapshots = [...snapshots];
+    this.snapshotNames = new Set(this.snapshots.map((snapshot) => snapshot.name));
+    this.selectedSnapshots.update(
+      (selected) => selected.filter((snapshot) => this.snapshotNames.has(snapshot.name)),
+    );
   }
 
   protected onSortChange(event: TnSortEvent): void {
