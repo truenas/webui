@@ -17,7 +17,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSshKeypairs } from 'app/helptext/system/ssh-keypairs';
-import { KeychainCredentialUpdate, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import { KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { atLeastOne } from 'app/modules/forms/ix-forms/validators/at-least-one-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -26,7 +26,7 @@ import {
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -47,7 +47,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class SshKeypairFormComponent extends SidePanelForm implements OnInit {
   private fb = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private errorHandler = inject(ErrorHandlerService);
@@ -153,7 +153,7 @@ export class SshKeypairFormComponent extends SidePanelForm implements OnInit {
 
   protected onSubmit(): void {
     const values = this.form.value;
-    const commonBody: KeychainCredentialUpdate = {
+    const commonBody: Omit<KeychainSshKeyPair, 'id' | 'type'> = {
       name: values.name,
       attributes: {
         private_key: values.private_key,

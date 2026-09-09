@@ -11,8 +11,9 @@ import { map, switchMap, tap } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
+import { KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
@@ -36,7 +37,7 @@ const newOption = 'NEW';
 export class SftpProviderFormComponent extends BaseProviderFormComponent implements OnInit, AfterViewInit {
   protected readonly InputType = InputType;
 
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
@@ -74,7 +75,7 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
   }
 
   private loadPrivateKeys(): void {
-    this.privateKeys$ = this.api.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshKeyPair]]])
+    this.privateKeys$ = this.api.query('keychaincredential.query', [['type', '=', KeychainCredentialType.SshKeyPair]])
       .pipe(
         idNameArrayToOptions(),
         map((options) => {
@@ -92,7 +93,7 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
   private makeNewKeypair(): Observable<unknown> {
     return this.api.call('keychaincredential.generate_ssh_key_pair').pipe(
       switchMap((keypair) => {
-        const createCredential = {
+        const createCredential: Omit<KeychainSshKeyPair, 'id'> = {
           name: this.translate.instant('{key} Key', {
             key: this.form.value.host,
           }),

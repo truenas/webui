@@ -17,7 +17,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
-import { CloudSyncCredential, CloudSyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -25,13 +25,12 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import { getName, getProviderFormClass } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.common';
-import { CloudCredentialService } from 'app/services/cloud-credential.service';
+import { CloudCredentialPayload, CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface CloudCredentialFormInput {
@@ -59,7 +58,6 @@ export interface CloudCredentialFormInput {
   ],
 })
 export class CloudCredentialsFormComponent extends SidePanelForm<CloudSyncCredential | null> implements OnInit {
-  private api = inject(ApiService);
   private formBuilder = inject(FormBuilder);
   private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);
@@ -183,8 +181,8 @@ export class CloudCredentialsFormComponent extends SidePanelForm<CloudSyncCreden
         switchMap(() => {
           const payload = this.preparePayload();
           return this.isNew
-            ? this.api.call('cloudsync.credentials.create', [payload])
-            : this.api.call('cloudsync.credentials.update', [this.existingCredential.id, payload]);
+            ? this.cloudCredentialService.createCredential(payload)
+            : this.cloudCredentialService.updateCredential(this.existingCredential.id, payload);
         }),
         takeUntilDestroyed(this.destroyRef),
       )
@@ -219,7 +217,7 @@ export class CloudCredentialsFormComponent extends SidePanelForm<CloudSyncCreden
         switchMap(() => {
           const payload = this.preparePayload();
 
-          return this.api.call('cloudsync.credentials.verify', [payload.provider]);
+          return this.cloudCredentialService.verifyCredential(payload.provider);
         }),
         takeUntilDestroyed(this.destroyRef),
       )
@@ -244,14 +242,17 @@ export class CloudCredentialsFormComponent extends SidePanelForm<CloudSyncCreden
       });
   }
 
-  private preparePayload(): CloudSyncCredentialUpdate {
+  private preparePayload(): CloudCredentialPayload {
     const commonValues = this.commonForm.getRawValue();
     return {
       name: commonValues.name,
+      // Middleware declares one model per provider, discriminated on `type`.
+      // This form assembles the attributes dynamically from whichever provider
+      // sub-form is rendered, so which model applies is only known at runtime.
       provider: {
         ...this.providerForm.getSubmitAttributes(),
         type: commonValues.type,
-      },
+      } as CloudCredentialPayload['provider'],
     };
   }
 

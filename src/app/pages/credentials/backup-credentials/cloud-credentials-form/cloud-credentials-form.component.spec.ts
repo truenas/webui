@@ -8,15 +8,15 @@ import {
 } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
-import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudSyncCredential, CloudSyncCredentialEntry } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
@@ -83,14 +83,18 @@ describe('CloudCredentialsFormComponent', () => {
     name: CloudSyncProviderName.Box,
     title: 'Box',
   } as CloudSyncProvider;
-  const fakeCloudSyncCredential = {
+  // What middleware answers with, and what the form hands back after `CloudCredentialService`
+  // reshapes it; the same data seen through both types.
+  const fakeCloudSyncCredentialEntry = {
     id: 233,
     name: 'My backup server',
     provider: {
       type: CloudSyncProviderName.AmazonS3,
-      hostname: 'backup.com',
+      access_key_id: 'key',
+      secret_access_key: 'secret',
     },
-  } as CloudSyncCredential;
+  } as CloudSyncCredentialEntry;
+  const fakeCloudSyncCredential = fakeCloudSyncCredentialEntry as unknown as CloudSyncCredential;
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -104,14 +108,14 @@ describe('CloudCredentialsFormComponent', () => {
     providers: [
       mockProvider(SnackbarService),
       mockProvider(DialogService),
-      mockApi([
-        mockCall('cloudsync.credentials.query', []),
-        mockCall('cloudsync.credentials.create', fakeCloudSyncCredential),
-        mockCall('cloudsync.credentials.update', fakeCloudSyncCredential),
-        mockCall('cloudsync.credentials.verify', {
+      mockTypedApi([
+        mockTypedQuery('cloudsync.credentials.query', []),
+        mockTypedCall('cloudsync.credentials.create', fakeCloudSyncCredentialEntry),
+        mockTypedCall('cloudsync.credentials.update', fakeCloudSyncCredentialEntry),
+        mockTypedCall('cloudsync.credentials.verify', {
           valid: true,
         }),
-        mockCall('cloudsync.providers', [s3Provider, boxProvider, storjProvider]),
+        mockTypedCall('cloudsync.providers', [s3Provider, boxProvider, storjProvider]),
       ]),
       mockAuth(),
     ],
@@ -124,7 +128,7 @@ describe('CloudCredentialsFormComponent', () => {
     });
 
     it('loads a list of providers and shows them in Provider select', async () => {
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.providers');
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloudsync.providers');
 
       const providersSelect = await getProviderSelect();
       await providersSelect.open();
@@ -167,7 +171,7 @@ describe('CloudCredentialsFormComponent', () => {
         const verifyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Verify Credential' }));
         await verifyButton.click();
 
-        expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.verify', [{
+        expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloudsync.credentials.verify', [{
           type: CloudSyncProviderName.AmazonS3,
           s3attribute: 's3 value',
         }]);
@@ -185,7 +189,7 @@ describe('CloudCredentialsFormComponent', () => {
       });
 
       it('shows an error when verification fails', async () => {
-        const websocketMock = spectator.inject(MockApiService);
+        const websocketMock = spectator.inject(MockTypedApiService);
         websocketMock.mockCall('cloudsync.credentials.verify', {
           valid: false,
           excerpt: 'Missing some important field',
@@ -225,7 +229,7 @@ describe('CloudCredentialsFormComponent', () => {
 
         spectator.component.submit();
 
-        expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.create', [{
+        expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloudsync.credentials.create', [{
           name: 'New sync',
           provider: {
             type: CloudSyncProviderName.AmazonS3,
@@ -270,7 +274,8 @@ describe('CloudCredentialsFormComponent', () => {
       expect(providerForm).toBeTruthy();
       expect(providerForm.getFormSetter$().next).toHaveBeenCalledWith({
         type: CloudSyncProviderName.AmazonS3,
-        hostname: 'backup.com',
+        access_key_id: 'key',
+        secret_access_key: 'secret',
       });
     });
 
@@ -281,7 +286,7 @@ describe('CloudCredentialsFormComponent', () => {
 
       spectator.component.submit();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.update', [
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloudsync.credentials.update', [
         233,
         {
           name: 'My updated server',

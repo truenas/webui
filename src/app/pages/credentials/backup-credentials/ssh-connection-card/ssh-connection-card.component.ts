@@ -30,7 +30,7 @@ import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { sshConnectionsCardElements } from 'app/pages/credentials/backup-credentials/ssh-connection-card/ssh-connection-card.elements';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -60,7 +60,7 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
   ],
 })
 export class SshConnectionCardComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formPanel = inject(FormSidePanelService);
   private emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
@@ -162,7 +162,7 @@ export class SshConnectionCardComponent implements OnInit {
     const hasAssociatedKeypair = !!keypairId;
 
     const usedBy$ = hasAssociatedKeypair
-      ? this.api.call('keychaincredential.used_by', [keypairId]).pipe(this.loader.withLoader())
+      ? this.keychainCredentialService.getUsedBy(keypairId).pipe(this.loader.withLoader())
       : of([] as KeychainCredentialUsedBy[]);
 
     usedBy$.pipe(

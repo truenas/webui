@@ -7,19 +7,19 @@ import {
 } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { SshConnectionFormComponent } from './ssh-connection-form.component';
 
 describe('SshConnectionFormComponent', () => {
   let spectator: Spectator<SshConnectionFormComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const existingConnection = {
     id: 11,
@@ -50,10 +50,10 @@ describe('SshConnectionFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockCall('keychaincredential.remote_ssh_host_key_scan', 'ssh-rsaAREMOTE'),
-        mockCall('keychaincredential.setup_ssh_connection', existingConnection),
-        mockCall('keychaincredential.update', existingConnection),
+      mockTypedApi([
+        mockTypedCall('keychaincredential.remote_ssh_host_key_scan', 'ssh-rsaAREMOTE'),
+        mockTypedCall('keychaincredential.setup_ssh_connection', existingConnection),
+        mockTypedCall('keychaincredential.update', existingConnection),
       ]),
       mockProvider(KeychainCredentialService, {
         getSshKeys: () => of([
@@ -74,7 +74,7 @@ describe('SshConnectionFormComponent', () => {
         props: { editConnection: existingConnection },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('shows values for an existing SSH connection', async () => {
@@ -114,7 +114,7 @@ describe('SshConnectionFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('saves new SSH connection added manually', async () => {

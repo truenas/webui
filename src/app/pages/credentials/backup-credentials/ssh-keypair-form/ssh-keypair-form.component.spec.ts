@@ -5,10 +5,10 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
-import { KeychainSshKeyPair, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import { KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import {
   DialogService,
 } from 'app/modules/dialog/dialog.service';
@@ -16,14 +16,14 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import {
   SidePanelFooterMenuItem,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import { DownloadService } from 'app/services/download.service';
 
 describe('SshKeypairFormComponent', () => {
   let spectator: Spectator<SshKeypairFormComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
   const fakeSshKeyPair = {
     id: 23,
     name: 'existing key',
@@ -43,13 +43,13 @@ describe('SshKeypairFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockCall('keychaincredential.generate_ssh_key_pair', {
+      mockTypedApi([
+        mockTypedCall('keychaincredential.generate_ssh_key_pair', {
           private_key: 'Generated private key',
           public_key: 'Generated public key',
-        } as SshKeyPair),
-        mockCall('keychaincredential.create'),
-        mockCall('keychaincredential.update'),
+        }),
+        mockTypedCall('keychaincredential.create', fakeSshKeyPair),
+        mockTypedCall('keychaincredential.update', fakeSshKeyPair),
       ]),
       mockProvider(DownloadService),
       mockProvider(FormErrorHandlerService),
@@ -62,7 +62,7 @@ describe('SshKeypairFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('sends a create payload to websocket and emits closed when submitted', async () => {
@@ -138,7 +138,7 @@ describe('SshKeypairFormComponent', () => {
         props: { editKeypair: fakeSshKeyPair },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('shows current values when form is being edited', async () => {
