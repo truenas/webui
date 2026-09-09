@@ -2,17 +2,25 @@
   <ix-form [formGroup]="form" [submitHandler]="handleSubmit">
     <div class="form-row">
       @if (isUserType()) {
-        <ix-user-combobox
-          formControlName="hostUidOrGid"
+        <tn-form-field
           [label]="'User' | translate"
           [required]="true"
-        ></ix-user-combobox>
+        >
+          <ix-user-combobox
+            formControlName="hostUidOrGid"
+            [validateExistence]="false"
+          ></ix-user-combobox>
+        </tn-form-field>
       } @else {
-        <ix-group-combobox
-          formControlName="hostUidOrGid"
+        <tn-form-field
           [label]="'Group' | translate"
           [required]="true"
-        ></ix-group-combobox>
+        >
+          <ix-group-combobox
+            formControlName="hostUidOrGid"
+            [validateExistence]="false"
+          ></ix-group-combobox>
+        </tn-form-field>
       }
 
       <div class="checkbox-with-tooltip">

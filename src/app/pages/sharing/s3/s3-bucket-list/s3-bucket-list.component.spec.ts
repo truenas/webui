@@ -9,7 +9,7 @@ import {
 import { Subject, of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { S3PermissionsModel, S3Versioning } from 'app/enums/s3.enum';
+import { S3ObjectOwnership, S3PermissionsModel, S3Versioning } from 'app/enums/s3.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { S3Bucket } from 'app/interfaces/s3.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -33,7 +33,8 @@ describe('S3BucketListComponent', () => {
       name: 'backups',
       dataset: 'tank/buckets/backups',
       owner: 'bob',
-      permissions_model: S3PermissionsModel.BucketOwnerEnforced,
+      permissions_model: S3PermissionsModel.S3,
+      object_ownership: S3ObjectOwnership.BucketOwnerEnforced,
       versioning: S3Versioning.Enabled,
       object_lock: true,
       enabled: true,
@@ -88,7 +89,7 @@ describe('S3BucketListComponent', () => {
       'Name', 'Dataset', 'Owner', 'Permissions Model', 'Versioning', 'Object Lock', 'Enabled', '',
     ]);
     expect(await table.getAllRowTexts()).toEqual([
-      ['backups', 'tank/buckets/backups', 'bob', 'Bucket Owner Enforced', 'Enabled', 'Yes', '', ''],
+      ['backups', 'tank/buckets/backups', 'bob', 'S3', 'Enabled', 'Yes', '', ''],
     ]);
   });
 

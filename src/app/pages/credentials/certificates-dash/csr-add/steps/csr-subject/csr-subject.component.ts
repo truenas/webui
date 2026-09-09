@@ -4,15 +4,14 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
-  TnStepperNextDirective, TnStepperPreviousDirective,
+  TnButtonComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnSelectComponent, TnStepperNextDirective, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import { pickBy } from 'lodash-es';
 import { map, startWith } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -28,7 +27,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
     TnFormFieldComponent,
     TnFormSectionComponent,
     TnInputComponent,
-    IxChipsComponent,
+    TnChipInputComponent,
     FormActionsComponent,
     TnButtonComponent,
     TnStepperPreviousDirective,

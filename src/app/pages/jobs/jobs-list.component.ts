@@ -117,7 +117,23 @@ export class JobsListComponent implements OnInit {
    */
   private lastSyncedExpandedId: number | null = null;
 
+  /** The `rows()` array the effect last saw, so it can tell a reload from a click. */
+  private lastRows: Job[] = [];
+
+  /**
+   * Set while the table still has to empty its expanded set for an array it has just been given.
+   * See the effect below.
+   */
+  private awaitingTableReset = false;
+
   constructor() {
+    /**
+     * TEMP (NAS-141021): `tn-table` empties its expanded set whenever the `dataSource`
+     * *reference* changes, and the jobs store hands us a new array on every job update — so a
+     * detail row would close itself while the job it belongs to is still running, which is
+     * exactly when its logs are worth watching. Drop the reload branches once `tn-table` keys
+     * expansion through `trackBy` (or exposes a row-expanded output) instead of row identity.
+     */
     effect(() => {
       const table = this.table();
       const rows = this.rows();
@@ -128,16 +144,38 @@ export class JobsListComponent implements OnInit {
       const tableId = [...table.expandedRows()].map((row) => (row as Job).id).at(0) ?? null;
 
       untracked(() => {
+        if (rows !== this.lastRows) {
+          // A new array, and the table has not emptied its set for it yet — its own effect runs
+          // after this one has settled. Whatever the set holds now belongs to the array on its
+          // way out, so it says nothing about what the user wants, and anything written here
+          // would be wiped a moment later. Note that a reset is owed and wait for it.
+          this.lastRows = rows;
+          this.awaitingTableReset = true;
+          return;
+        }
+
+        if (this.awaitingTableReset) {
+          if (tableId !== null) {
+            // Still holding a row from the outgoing array; the reset has not landed.
+            return;
+          }
+          // That reset, not a collapse. Put the row back, keyed on the id rather than on the
+          // object the store has just replaced.
+          this.awaitingTableReset = false;
+          this.openExpandedRow(table, rows, wantedId);
+          return;
+        }
+
         if (tableId === wantedId) {
           this.lastSyncedExpandedId = tableId;
           return;
         }
 
         if (tableId !== this.lastSyncedExpandedId) {
-          // The table moved on its own — the user toggled a chevron. Adopt it and put the job in
-          // the URL, as ix-table's `(expanded)` output used to. A collapse clears the parameter
-          // rather than leaving `?jobId=` pointing at a row that is no longer open, which would
-          // re-expand it on the next reload.
+          // The table moved on its own, with the same rows underneath it — the user toggled a
+          // chevron. Adopt it and put the job in the URL, as ix-table's `(expanded)` output used
+          // to. A collapse clears the parameter rather than leaving `?jobId=` pointing at a row
+          // that is no longer open, which would re-expand it on the next reload.
           this.lastSyncedExpandedId = tableId;
           this.expandedJobId.set(tableId);
           this.navigateToJob(tableId);
@@ -148,21 +186,6 @@ export class JobsListComponent implements OnInit {
         this.openExpandedRow(table, rows, wantedId);
       });
     });
-  }
-
-  /**
-   * TEMP (NAS-141021): `tn-table` empties its expanded set whenever the `dataSource` *reference*
-   * changes, and the jobs store hands us a new array on every job update — so a detail row would
-   * close itself while the job it belongs to is still running, which is exactly when its logs are
-   * worth watching. `selectionChange` is emitted from that same reset and is the only hook the
-   * library offers, so re-open the row from the id we keep. Drop once `tn-table` keys expansion
-   * through `trackBy` (or exposes a row-expanded output) instead of row identity.
-   */
-  protected onTableReset(): void {
-    const table = this.table();
-    if (table) {
-      this.openExpandedRow(table, this.rows(), this.expandedJobId());
-    }
   }
 
   /** Points the table's identity-keyed expanded set at the row currently rendering that job. */

@@ -6,12 +6,11 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnAutocompleteComponent, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent,
-  TnFormListComponent, TnFormListItemComponent, TnFormSectionComponent, TnInputComponent,
-  TnSelectComponent,
+  TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent,
+  TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, of, shareReplay, switchMap, take, tap,
+  catchError, combineLatest, of, take,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
@@ -27,9 +26,9 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import {
   advancedModeFooterAction, advancedModeSettingLabels, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
@@ -38,7 +37,6 @@ import {
   serviceConfigSavedMessage,
 } from 'app/pages/services/components/service-config-forms.constants';
 import { EntitlementsService } from 'app/services/entitlements.service';
-import { UserService } from 'app/services/user.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 interface BindIp {
@@ -100,7 +98,8 @@ type SmbFormValue = ReturnType<ReturnType<typeof createSmbForm>['getRawValue']>;
     TnInputComponent,
     TnCheckboxComponent,
     TnSelectComponent,
-    TnAutocompleteComponent,
+    IxUserComboboxComponent,
+    IxGroupComboboxComponent,
     TnChipInputComponent,
     TnFormListComponent,
     TnFormListItemComponent,
@@ -114,8 +113,6 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   private validatorsService = inject(IxValidatorsService);
-  private userService = inject(UserService);
-  private existenceValidation = inject(UserGroupExistenceValidationService);
   private store$ = inject(Store);
   private destroyRef = inject(DestroyRef);
 
@@ -240,57 +237,7 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
 
   readonly encryptionOptions = mapToOptions(smbEncryptionLabels, this.translate);
 
-  // Server-searched option streams for the Guest Account / Administrators Group
-  // autocompletes. switchMap cancels in-flight queries on new input; catchError
-  // keeps one failed DS query from killing the stream for the rest of the form's
-  // life — the dropdown shows "Options cannot be loaded" via [noResultsText],
-  // the same in-panel signal the old ix-combobox rendered.
-  protected readonly usersFetchFailed = signal(false);
-  protected readonly usersLoading = signal(false);
-  protected readonly userSearch$ = new BehaviorSubject('');
-  protected readonly userOptions$ = this.userSearch$.pipe(
-    debounceTime(defaultDebounceTimeMs),
-    distinctUntilChanged(),
-    tap(() => this.usersLoading.set(true)),
-    switchMap((query) => this.userService.userQueryDsCache(query).pipe(
-      tap(() => this.usersFetchFailed.set(false)),
-      catchError((error: unknown) => {
-        console.error('User autocomplete fetch failed:', error);
-        this.usersFetchFailed.set(true);
-        return of([]);
-      }),
-    )),
-    map((users) => users.map((user) => ({ label: user.username, value: user.username }))),
-    tap(() => this.usersLoading.set(false)),
-    shareReplay({ bufferSize: 1, refCount: true }),
-  );
-
-  protected readonly groupsFetchFailed = signal(false);
-  protected readonly groupsLoading = signal(false);
-  protected readonly groupSearch$ = new BehaviorSubject('');
-  protected readonly groupOptions$ = this.groupSearch$.pipe(
-    debounceTime(defaultDebounceTimeMs),
-    distinctUntilChanged(),
-    tap(() => this.groupsLoading.set(true)),
-    switchMap((query) => this.userService.groupQueryDsCache(query).pipe(
-      tap(() => this.groupsFetchFailed.set(false)),
-      catchError((error: unknown) => {
-        console.error('Group autocomplete fetch failed:', error);
-        this.groupsFetchFailed.set(true);
-        return of([]);
-      }),
-    )),
-    map((groups) => groups.map((group) => ({ label: group.group, value: group.group }))),
-    tap(() => this.groupsLoading.set(false)),
-    shareReplay({ bufferSize: 1, refCount: true }),
-  );
-
   ngOnInit(): void {
-    // Parity with the former ix-user/group-combobox controls: custom-typed values
-    // must exist on the system (empty values pass).
-    this.form.controls.guest.addAsyncValidators(this.existenceValidation.validateUserExists());
-    this.form.controls.admin_group.addAsyncValidators(this.existenceValidation.validateGroupExists());
-
     this.form.controls.minimum_protocol.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => this.isSmb1Enabled.set(value === SmbMinProtocol.Smb1));

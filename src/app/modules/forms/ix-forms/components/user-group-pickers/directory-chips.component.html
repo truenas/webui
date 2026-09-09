@@ -1,0 +1,17 @@
+<!-- Shared by ix-user-chips and ix-group-chips.
+
+     `[options]` alongside `[dataSource]`: the source pins the extra options
+     ahead of page 0, but that page is not fetched until the field is focused —
+     as `[options]` they label a chip on a form that has only been loaded. -->
+<tn-chip-input
+  [dataSource]="optionsSource"
+  [options]="extraOptions()"
+  [dataSourceDebounce]="debounce()"
+  [placeholder]="resolvedPlaceholder()"
+  [disabled]="disabled()"
+  [allowCustomValue]="allowCustomValue()"
+  [maxChips]="maxChips()"
+  [testId]="resolvedTestId()"
+  [ariaLabel]="ariaLabel()"
+  (dataSourceError)="directoryError.emit($event)"
+></tn-chip-input>

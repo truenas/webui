@@ -12,7 +12,7 @@ import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  S3Access, S3MultipartEtag, S3ObjectLockMode, S3PermissionsModel, S3PrincipalType, S3Versioning,
+  S3Access, S3MultipartEtag, S3ObjectLockMode, S3ObjectOwnership, S3PermissionsModel, S3PrincipalType, S3Versioning,
 } from 'app/enums/s3.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Group } from 'app/interfaces/group.interface';
@@ -20,6 +20,7 @@ import { S3Bucket } from 'app/interfaces/s3.interface';
 import { User } from 'app/interfaces/user.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { DatasetService } from 'app/services/dataset/dataset.service';
@@ -42,6 +43,7 @@ describe('S3BucketFormComponent', () => {
     owner: 'alice',
     enabled: true,
     permissions_model: S3PermissionsModel.S3,
+    object_ownership: S3ObjectOwnership.BucketOwnerPreferred,
     grants: [
       {
         principal_type: S3PrincipalType.Group, xid: 1001, name: 'staff', access: S3Access.ReadWrite,
@@ -68,6 +70,13 @@ describe('S3BucketFormComponent', () => {
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
+  // `ix-user-combobox` is its own CVA, so `IxFormHarness` — which indexes ix-* controls and
+  // `tn-form-field`s — does not reach it. Drive it through its own harness.
+  const setOwner = async (username: string): Promise<void> => {
+    const owner = await loader.getHarness(IxUserComboboxHarness);
+    await owner.focus();
+    await owner.selectOption(username);
+  };
   // The Advanced/Basic toggle is rendered by the side-panel host from `footerActions`.
   const clickAdvancedOptions = async (): Promise<void> => {
     const [toggleAdvanced] = spectator.component.footerActions;
@@ -127,6 +136,7 @@ describe('S3BucketFormComponent', () => {
       await clickAdvancedOptions();
 
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Permissions Model' }))).toBe(true);
+      expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Object Ownership' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Versioning' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Multipart ETag' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Audit' }))).toBe(false);
@@ -153,8 +163,8 @@ describe('S3BucketFormComponent', () => {
       await (await getInput('name')).setValue('backups');
       await form.fillForm({
         'Parent Dataset': 'tank',
-        Owner: 'alice',
       });
+      await setOwner('alice');
       await (await getCheckbox('object_lock')).check();
       await (await getInput('object_lock_default_days')).setValue('30');
 
@@ -181,8 +191,8 @@ describe('S3BucketFormComponent', () => {
       await (await getInput('name')).setValue('plain');
       await form.fillForm({
         'Parent Dataset': 'tank',
-        Owner: 'alice',
       });
+      await setOwner('alice');
       await (await getCheckbox('object_lock')).check();
       await (await getCheckbox('object_lock')).uncheck();
 
@@ -203,12 +213,47 @@ describe('S3BucketFormComponent', () => {
       expect(await objectLock.isChecked()).toBe(false);
     });
 
+    it('holds object ownership at Object Writer while Multiprotocol is selected, then restores the choice', async () => {
+      await clickAdvancedOptions();
+      const ownership = await getSelect('object_ownership');
+      expect(await ownership.getDisplayText()).toBe('Bucket Owner Enforced');
+      await ownership.selectOption('Bucket Owner Preferred');
+
+      await (await getSelect('permissions_model')).selectOption('Multiprotocol');
+
+      expect(await (await getSelect('object_ownership')).getDisplayText()).toBe('Object Writer');
+      expect(await (await getSelect('object_ownership')).isDisabled()).toBe(true);
+
+      await (await getSelect('permissions_model')).selectOption('S3');
+
+      const released = await getSelect('object_ownership');
+      expect(await released.isDisabled()).toBe(false);
+      expect(await released.getDisplayText()).toBe('Bucket Owner Preferred');
+    });
+
+    it('sends Object Writer ownership for a Multiprotocol bucket', async () => {
+      await (await getInput('name')).setValue('shared');
+      await form.fillForm({
+        'Parent Dataset': 'tank',
+        Owner: 'alice',
+      });
+      await clickAdvancedOptions();
+      await (await getSelect('permissions_model')).selectOption('Multiprotocol');
+
+      spectator.component.submit();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+        permissions_model: S3PermissionsModel.Multiprotocol,
+        object_ownership: S3ObjectOwnership.ObjectWriter,
+      })]);
+    });
+
     it('rejects the /mnt root as a parent dataset', async () => {
       await (await getInput('name')).setValue('photos');
       await form.fillForm({
         'Parent Dataset': '/mnt',
-        Owner: 'alice',
       });
+      await setOwner('alice');
 
       expect(spectator.component.canSubmit()).toBe(false);
       expect(spectator.component.form.controls.parent_dataset.errors).toMatchObject({
@@ -220,8 +265,8 @@ describe('S3BucketFormComponent', () => {
       await (await getInput('name')).setValue('photos');
       await form.fillForm({
         'Parent Dataset': 'tank/buckets',
-        Owner: 'alice',
       });
+      await setOwner('alice');
 
       expect(spectator.component.canSubmit()).toBe(false);
       expect(spectator.component.form.controls.name.errors).toMatchObject({
@@ -236,8 +281,8 @@ describe('S3BucketFormComponent', () => {
       await (await getInput('name')).setValue('videos');
       await form.fillForm({
         'Parent Dataset': 'tank/buckets',
-        Owner: 'alice',
       });
+      await setOwner('alice');
 
       const closed = jest.fn();
       spectator.component.closed.subscribe(closed);
@@ -248,7 +293,8 @@ describe('S3BucketFormComponent', () => {
         dataset: 'tank/buckets/videos',
         owner: 'alice',
         enabled: true,
-        permissions_model: S3PermissionsModel.BucketOwnerEnforced,
+        permissions_model: S3PermissionsModel.S3,
+        object_ownership: S3ObjectOwnership.BucketOwnerEnforced,
         grants: [],
         versioning: S3Versioning.Off,
         snapshot_versions: [],
@@ -266,8 +312,8 @@ describe('S3BucketFormComponent', () => {
       await (await getInput('name')).setValue('shared');
       await form.fillForm({
         'Parent Dataset': 'tank',
-        Owner: 'alice',
       });
+      await setOwner('alice');
 
       await clickAdvancedOptions();
 
@@ -301,7 +347,8 @@ describe('S3BucketFormComponent', () => {
       expect(await dataset.getValue()).toBe('tank/buckets/photos');
       expect(await dataset.isDisabled()).toBe(true);
       expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
-      expect(await (await getSelect('permissions_model')).getDisplayText()).toBe('S3 Only');
+      expect(await (await getSelect('permissions_model')).getDisplayText()).toBe('S3');
+      expect(await (await getSelect('object_ownership')).getDisplayText()).toBe('Bucket Owner Preferred');
       expect(await (await getSelect('versioning')).getDisplayText()).toBe('Enabled');
       const snapshotVersions = await loader.getHarness(
         TnChipInputHarness.with({ testId: 'chip-input-snapshot-versions' }),
@@ -321,6 +368,25 @@ describe('S3BucketFormComponent', () => {
       await (await getCheckbox('object_lock')).check();
 
       expect(spectator.component.form.controls.object_lock_default_mode.value).toBeNull();
+    });
+
+    it('loads a stored Multiprotocol bucket with its ownership held at Object Writer', async () => {
+      spectator = createComponent({
+        props: {
+          bucket: {
+            ...existingBucket,
+            permissions_model: S3PermissionsModel.Multiprotocol,
+            object_ownership: S3ObjectOwnership.ObjectWriter,
+          },
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await clickAdvancedOptions();
+
+      const ownership = await getSelect('object_ownership');
+      expect(await ownership.getDisplayText()).toBe('Object Writer');
+      expect(await ownership.isDisabled()).toBe(true);
+      expect(await (await getCheckbox('object_lock')).isDisabled()).toBe(true);
     });
 
     it('lets an EVERYONE grant be switched to a user grant', async () => {
@@ -411,7 +477,7 @@ describe('S3BucketFormComponent', () => {
     });
 
     it('updates the bucket without sending the dataset', async () => {
-      await form.fillForm({ Owner: 'bob' });
+      await setOwner('bob');
       await (await getCheckbox('enabled')).uncheck();
 
       const closed = jest.fn();
@@ -423,6 +489,7 @@ describe('S3BucketFormComponent', () => {
         owner: 'bob',
         enabled: false,
         permissions_model: S3PermissionsModel.S3,
+        object_ownership: S3ObjectOwnership.BucketOwnerPreferred,
         grants: [{ principal_type: S3PrincipalType.Group, xid: 1001, access: S3Access.ReadWrite }],
         versioning: S3Versioning.Enabled,
         snapshot_versions: ['auto-*'],

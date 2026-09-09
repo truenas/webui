@@ -12,6 +12,7 @@ import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
@@ -41,6 +42,9 @@ describe('CronFormComponent', () => {
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getRunAsUser = (): Promise<IxUserComboboxHarness> => loader.getHarness(
+    IxUserComboboxHarness.with({ selector: '[formControlName="user"]' }),
   );
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -95,8 +99,11 @@ describe('CronFormComponent', () => {
       await (await getCheckbox('stdout')).check();
       await (await getCheckbox('stderr')).check();
       await (await getCheckbox('enabled')).check();
+      // `ix-user-combobox` is its own CVA, so IxFormHarness — which resolves
+      // only ix-* controls — cannot reach it by label.
+      await (await getRunAsUser()).setInputValue('root');
+      await (await getRunAsUser()).blur();
       await form.fillForm({
-        'Run As User': 'root',
         Schedule: '0 0 * * *',
       });
 
@@ -140,8 +147,9 @@ describe('CronFormComponent', () => {
       expect(await (await getCheckbox('stderr')).isChecked()).toBe(false);
       expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
 
+      expect(await (await getRunAsUser()).getInputValue()).toBe('root');
+
       const values = await form.getValues();
-      expect(values['Run As User']).toBe('root');
       expect(values.Schedule).toBe(
         'Custom At 30 minutes past the hour, every hour, on day 12 of the month, and on Monday, Tuesday, and Wednesday',
       );

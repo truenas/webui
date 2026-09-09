@@ -15,8 +15,8 @@
     "selector-pseudo-element-no-unknown": [true, {
       "ignorePseudoElements": ["ng-deep"]
     }],
-    "selector-disallowed-list": [["mat-icon", "/\\.tn-list-item__/"], {
-      "message": "Disallowed selector. `mat-icon` is Angular Material — use `ix-icon`/`tn-icon`. `.tn-list-item__*` is internal @truenas/ui-components markup — use (or add) a mixin in src/assets/styles/mixins/tn-list.scss instead, see \"Known Library Gaps\" in TRUENAS_UI_INTEGRATION.md."
+    "selector-disallowed-list": [["mat-icon", "/\\.tn-list-item__/", "/mat-dialog|mdc-dialog/"], {
+      "message": "Disallowed selector. `mat-icon` is Angular Material — use `ix-icon`/`tn-icon`. `.tn-list-item__*` is internal @truenas/ui-components markup — use (or add) a mixin in src/assets/styles/mixins/tn-list.scss instead, see \"Known Library Gaps\" in TRUENAS_UI_INTEGRATION.md. Angular Material dialogs are gone (NAS-141066), so `mat-dialog-*`/`mdc-dialog-*` selectors can never match — style the `tn-dialog` overlay via its `panelClass` and `.tn-dialog-panel` instead."
     }]
   },
   "ignoreFiles": [

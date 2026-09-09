@@ -31,13 +31,20 @@
       </tn-form-field>
     }
 
-    <ix-user-picker
-      formControlName="owner"
+    <tn-form-field
       [label]="'Owner' | translate"
       [tooltip]="helptext.ownerTooltip | translate"
       [required]="true"
-      [provider]="ownerProvider"
-    ></ix-user-picker>
+    >
+      <ix-user-combobox
+        formControlName="owner"
+        [directoryOptions]="ownerDirectoryOptions"
+        [requireSelection]="true"
+        [allowCustomValue]="false"
+        [allowCreate]="true"
+        [validateExistence]="false"
+      ></ix-user-combobox>
+    </tn-form-field>
 
     <tn-form-field [tooltip]="helptext.enabledTooltip | translate">
       <tn-checkbox formControlName="enabled" [label]="'Enabled' | translate"></tn-checkbox>
@@ -118,6 +125,15 @@
         [required]="true"
       >
         <tn-select formControlName="permissions_model" [options]="permissionsModelOptions()"></tn-select>
+      </tn-form-field>
+
+      <tn-form-field
+        [label]="'Object Ownership' | translate"
+        [tooltip]="helptext.objectOwnershipTooltip | translate"
+        [hint]="objectOwnershipHint()"
+        [required]="true"
+      >
+        <tn-select formControlName="object_ownership" [options]="objectOwnershipOptions"></tn-select>
       </tn-form-field>
 
       <ix-s3-grants-list

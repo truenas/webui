@@ -3,12 +3,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnFileInputComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { from, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { SomeProviderAttributes } from 'app/interfaces/cloudsync-credential.interface';
-import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
@@ -19,11 +18,12 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxFileInputComponent,
     TranslateModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
+    TnFileInputComponent,
     TnInputComponent,
+    TnTestIdDirective,
   ],
 })
 export class GoogleCloudProviderFormComponent extends BaseProviderFormComponent implements OnInit, AfterViewInit {
@@ -33,18 +33,14 @@ export class GoogleCloudProviderFormComponent extends BaseProviderFormComponent 
 
   form = this.formBuilder.nonNullable.group({
     service_account_credentials: ['', Validators.required],
-    upload_credentials: [[] as File[]],
+    upload_credentials: [null as File | null],
   });
 
   ngOnInit(): void {
     this.form.controls.upload_credentials.valueChanges.pipe(
-      switchMap((files: File[]) => {
-        if (!files.length) {
-          return of('');
-        }
-
-        return from(files[0].text());
-      }),
+      // `tn-file-input` is single-file here, so its value is one `File` (or null),
+      // where `ix-file-input` always handed over a `File[]`.
+      switchMap((file: File | null) => (file ? from(file.text()) : of(''))),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((credentials) => {
       this.form.controls.service_account_credentials.setValue(credentials);
