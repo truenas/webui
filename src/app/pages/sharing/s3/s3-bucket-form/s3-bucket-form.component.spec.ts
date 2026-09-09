@@ -216,7 +216,7 @@ describe('S3BucketFormComponent', () => {
       expect(await (await getSelect('object_ownership')).getDisplayText()).toBe('Object Writer');
       expect(await (await getSelect('object_ownership')).isDisabled()).toBe(true);
 
-      await (await getSelect('permissions_model')).selectOption('S3 Only');
+      await (await getSelect('permissions_model')).selectOption('S3');
 
       const released = await getSelect('object_ownership');
       expect(await released.isDisabled()).toBe(false);
@@ -339,7 +339,7 @@ describe('S3BucketFormComponent', () => {
       expect(await dataset.getValue()).toBe('tank/buckets/photos');
       expect(await dataset.isDisabled()).toBe(true);
       expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
-      expect(await (await getSelect('permissions_model')).getDisplayText()).toBe('S3 Only');
+      expect(await (await getSelect('permissions_model')).getDisplayText()).toBe('S3');
       expect(await (await getSelect('object_ownership')).getDisplayText()).toBe('Bucket Owner Preferred');
       expect(await (await getSelect('versioning')).getDisplayText()).toBe('Enabled');
       const snapshotVersions = await loader.getHarness(

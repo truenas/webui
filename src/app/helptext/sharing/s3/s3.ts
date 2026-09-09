@@ -8,7 +8,7 @@ export const helptextSharingS3 = {
   ownerTooltip: T('Account that owns the bucket. The owner bypasses the grants and owns the <i>s3data</i>\
  directory when the S3 service creates it.'),
   enabledTooltip: T('Whether the bucket is served. Toggling restarts the S3 service.'),
-  permissionsModelTooltip: T('<b>S3 Only</b>: the S3 service is the only door to the dataset. Its filesystem\
+  permissionsModelTooltip: T('<b>S3</b>: the S3 service is the only door to the dataset. Its filesystem\
  permissions are ignored, and the grants decide access.<br>\
  <b>Multiprotocol</b>: SMB or NFS share the tree, so its filesystem ACL is enforced for S3 callers as well as the\
  grants. S3 ACLs are not supported on such a bucket.'),

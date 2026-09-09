@@ -36,7 +36,7 @@ export enum S3PermissionsModel {
 }
 
 export const s3PermissionsModelLabels = new Map<S3PermissionsModel, string>([
-  [S3PermissionsModel.S3, T('S3 Only')],
+  [S3PermissionsModel.S3, T('S3')],
   [S3PermissionsModel.Multiprotocol, T('Multiprotocol')],
 ]);
 

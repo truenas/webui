@@ -89,7 +89,7 @@ describe('S3BucketListComponent', () => {
       'Name', 'Dataset', 'Owner', 'Permissions Model', 'Versioning', 'Object Lock', 'Enabled', '',
     ]);
     expect(await table.getAllRowTexts()).toEqual([
-      ['backups', 'tank/buckets/backups', 'bob', 'S3 Only', 'Enabled', 'Yes', '', ''],
+      ['backups', 'tank/buckets/backups', 'bob', 'S3', 'Enabled', 'Yes', '', ''],
     ]);
   });
 

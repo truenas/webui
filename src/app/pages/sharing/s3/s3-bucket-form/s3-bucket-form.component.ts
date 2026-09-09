@@ -158,7 +158,7 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     ]],
     owner: ['', Validators.required],
     enabled: [true],
-    // The middleware defaults: S3 Only with Bucket Owner Enforced ownership, the pairing under which
+    // The middleware defaults: S3 with Bucket Owner Enforced ownership, the pairing under which
     // the grants are the whole of the access control and a grantee needs no permissions on the dataset.
     // The right defaults for a form that hides both in basic mode.
     permissions_model: [S3PermissionsModel.S3],
