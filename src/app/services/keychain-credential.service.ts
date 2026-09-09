@@ -32,13 +32,7 @@ export class KeychainCredentialService {
 
   /** Everything that depends on a credential, so a delete can warn or cascade. */
   getUsedBy(credentialId: number): Observable<KeychainCredentialUsedBy[]> {
-    return this.api.call('keychaincredential.used_by', [credentialId]).pipe(
-      // The generated type is missing `title`, which middleware does declare
-      // and send: the client's generator strips every nested `title` key from
-      // the schema, a real property of that name included. Until that is
-      // fixed upstream the UI's own interface describes the wire correctly.
-      map((usedBy) => usedBy as KeychainCredentialUsedBy[]),
-    );
+    return this.api.call('keychaincredential.used_by', [credentialId]);
   }
 
   addSshConnection(connection: SshConnectionSetup): Observable<KeychainSshCredentials> {

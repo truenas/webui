@@ -198,18 +198,16 @@ above. Each is a change for `truenas/api-client-ts`.
 8. **`crypto.randomUUID`.** The client falls back to `getRandomValues` on
    insecure origins, so plain-http dev boxes work. Noting it because it is the
    kind of thing that breaks quietly.
-9. **Properties named `title` are dropped.** Pydantic stamps a schema `title`
-   on every field, and the generator's `stripNestedTitles` (in
-   `scripts/generate-api-interface/lib/emit.mts`) removes every non-root
-   `title` key so `json-schema-to-typescript` does not hoist aliases. It does
-   not distinguish the keyword from an entry under `properties`, so a real
-   field called `title` disappears too. No generated interface has a `title`
-   property, while thirteen middleware models declare one: `CloudSyncProvider`,
-   `UsedKeychainCredential`, `AlertCategory`, support fields, reporting graphs
-   and others. Until it is fixed, the UI's own interfaces describe those
-   responses and the fronting service casts, with a comment pointing here
-   (`CloudCredentialService.getProviders`, `KeychainCredentialService.getUsedBy`).
-   Fix: skip the strip when the key sits directly under `properties`.
+9. **Properties named `title` were dropped** — fixed in 5.0.1. The
+   generator's `stripNestedTitles` removed every non-root `title` key to stop
+   `json-schema-to-typescript` hoisting aliases, taking real fields of that
+   name with it: no generated interface had a `title` property while thirteen
+   middleware models declared one. `truenas/api-client-ts#53` guards the
+   strip on the value being a string, restores 24 declarations across the
+   chain, and is correctly a breaking change, since 18 of them are required.
+   The UI's casts for `cloudsync.providers` and `keychaincredential.used_by`
+   are gone; the one that remains on providers is for `name`, which
+   middleware types as a plain string and the UI narrows to its enum.
 10. **Impossible intersections.** `S3CredentialsModel` types `skip_region`
     and `signatures_v2` as `boolean & string`, which is `never`. Something in
     the schema for those fields (a `bool | str` coercion, most likely) is
