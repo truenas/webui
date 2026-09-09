@@ -19,6 +19,7 @@ import {
   S3AuditOverflow,
   S3MultipartEtag,
   S3ObjectLockMode,
+  S3ObjectOwnership,
   S3PermissionsModel,
   S3Versioning,
   s3AuditAll,
@@ -26,6 +27,7 @@ import {
   s3AuditOverflowLabels,
   s3MultipartEtagLabels,
   s3ObjectLockModeLabels,
+  s3ObjectOwnershipLabels,
   s3PermissionsModelLabels,
   s3VersioningLabels,
 } from 'app/enums/s3.enum';
@@ -118,6 +120,7 @@ export class S3BucketFormComponent implements OnInit {
   protected readonly ownerProvider = createS3UserPickerProvider();
 
   private readonly permissionsModelBaseOptions = mapToOptions(s3PermissionsModelLabels, this.translate);
+  protected readonly objectOwnershipOptions$ = of(mapToOptions(s3ObjectOwnershipLabels, this.translate));
   protected readonly versioningOptions$ = of(mapToOptions(s3VersioningLabels, this.translate));
   protected readonly multipartEtagOptions$ = of(mapToOptions(s3MultipartEtagLabels, this.translate));
   protected readonly objectLockModeOptions$ = of(mapToOptions(s3ObjectLockModeLabels, this.translate));
@@ -152,9 +155,11 @@ export class S3BucketFormComponent implements OnInit {
     ]],
     owner: ['', Validators.required],
     enabled: [true],
-    // The middleware defaults to S3, but Bucket Owner Enforced is the model that works without any
-    // extra ACL setup for grantees, so it is the better default for a form that hides it in basic mode.
-    permissions_model: [S3PermissionsModel.BucketOwnerEnforced],
+    // The middleware defaults: S3 with Bucket Owner Enforced ownership, the pairing under which
+    // the grants are the whole of the access control and a grantee needs no permissions on the dataset.
+    // The right defaults for a form that hides both in basic mode.
+    permissions_model: [S3PermissionsModel.S3],
+    object_ownership: [S3ObjectOwnership.BucketOwnerEnforced],
     grants: this.fb.array<S3GrantFormGroup>([]),
     versioning: [S3Versioning.Off],
     snapshot_versions: [[] as string[]],
@@ -191,8 +196,14 @@ export class S3BucketFormComponent implements OnInit {
    * on it: checking it switches versioning on and keeps it there. The one thing that rules it out is
    * the Multiprotocol permissions model, under which another protocol could rewrite a locked object.
    */
-  protected readonly canUseObjectLock = computed(() => {
-    return this.formValue().permissions_model !== S3PermissionsModel.Multiprotocol;
+  protected readonly isMultiprotocol = computed(() => {
+    return this.formValue().permissions_model === S3PermissionsModel.Multiprotocol;
+  });
+
+  protected readonly canUseObjectLock = computed(() => !this.isMultiprotocol());
+
+  protected readonly objectOwnershipHint = computed(() => {
+    return this.isMultiprotocol() ? this.translate.instant(this.helptext.objectOwnershipMultiprotocolHint) : '';
   });
 
   protected readonly objectLockHint = computed(() => {
@@ -232,6 +243,7 @@ export class S3BucketFormComponent implements OnInit {
       this.setupExistingDatasetCheck();
     }
     this.setupObjectLockDependency();
+    this.setupObjectOwnershipDependency();
   }
 
   private setupExistingDatasetCheck(): void {
@@ -367,6 +379,40 @@ export class S3BucketFormComponent implements OnInit {
     }
   }
 
+  /**
+   * Middleware folds a Multiprotocol bucket to Object Writer ownership whatever it is given — the
+   * other protocols' users own the filesystem permissions, so only the caller's own account may act,
+   * and such a bucket supports no S3 ACLs under any value. The select shows that rather than offering
+   * a choice middleware would overrule: it is set to Object Writer and held there while Multiprotocol
+   * is selected, and the previous choice comes back when the model changes again.
+   */
+  private setupObjectOwnershipDependency(): void {
+    this.syncObjectOwnership(this.form.controls.permissions_model.value);
+    this.form.controls.permissions_model.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((model) => {
+      this.syncObjectOwnership(model);
+    });
+  }
+
+  /** What ownership was set to before Multiprotocol folded it, restored when the model changes back. */
+  private ownershipBeforeMultiprotocol: S3ObjectOwnership | null = null;
+
+  private syncObjectOwnership(model: S3PermissionsModel): void {
+    const ownership = this.form.controls.object_ownership;
+    if (model === S3PermissionsModel.Multiprotocol) {
+      if (ownership.value !== S3ObjectOwnership.ObjectWriter) {
+        this.ownershipBeforeMultiprotocol = ownership.value;
+        ownership.setValue(S3ObjectOwnership.ObjectWriter);
+      }
+      ownership.disable({ emitEvent: false });
+    } else if (ownership.disabled) {
+      ownership.enable({ emitEvent: false });
+      if (this.ownershipBeforeMultiprotocol !== null) {
+        ownership.setValue(this.ownershipBeforeMultiprotocol);
+        this.ownershipBeforeMultiprotocol = null;
+      }
+    }
+  }
+
   private syncObjectLockAvailability(): void {
     const control = this.form.controls.object_lock;
     if (this.canUseObjectLock()) {
@@ -393,6 +439,7 @@ export class S3BucketFormComponent implements OnInit {
       owner: values.owner,
       enabled: values.enabled,
       permissions_model: values.permissions_model,
+      object_ownership: values.object_ownership,
       grants: toS3Grants(this.form.controls.grants.controls),
       versioning: values.versioning,
       snapshot_versions: values.versioning === S3Versioning.Off ? [] : values.snapshot_versions,
