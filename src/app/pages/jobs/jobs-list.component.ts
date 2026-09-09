@@ -104,9 +104,15 @@ export class JobsListComponent implements OnInit {
   protected readonly trackByJobId = (_: number, row: Job): number => row.id;
 
   /**
-   * Which job's detail row is open, by id. `tn-table` keys its own `expandedRows` set on the row
-   * *object*, and the store hands us a fresh object for a job every time it updates — so the id
-   * is what survives a reload, and the effects below keep the two representations in step.
+   * Keys the table's expansion, so a detail row survives the store handing us a fresh array (and
+   * fresh row objects) on every job update — which is exactly when a running job's logs are worth
+   * watching. A row that pages away is retained by the table and re-opens once it is listed again.
+   */
+  protected readonly jobExpansionKey = (row: Job): number => row.id;
+
+  /**
+   * Which job's detail row is open, by id, so `?jobId=` and the chevron agree on one source of
+   * truth. The table holds row objects; the id is what we can put in the URL.
    */
   private readonly expandedJobId = signal<number | null>(null);
 
@@ -133,6 +139,14 @@ export class JobsListComponent implements OnInit {
           return;
         }
 
+        if (tableId === null && wantedId !== null && !rows.some((job) => job.id === wantedId)) {
+          // The job is not on the current page — another tab, a search. `expandedRows` only ever
+          // holds visible rows, so an empty set here is not the user collapsing anything: the
+          // table retains the row under `expansionKey` and re-opens it once the job is listed
+          // again. Leave both the id and the URL alone.
+          return;
+        }
+
         if (tableId !== this.lastSyncedExpandedId) {
           // The table moved on its own — the user toggled a chevron. Adopt it and put the job in
           // the URL, as ix-table's `(expanded)` output used to. A collapse clears the parameter
@@ -150,33 +164,19 @@ export class JobsListComponent implements OnInit {
     });
   }
 
-  /**
-   * TEMP (NAS-141021): `tn-table` empties its expanded set whenever the `dataSource` *reference*
-   * changes, and the jobs store hands us a new array on every job update — so a detail row would
-   * close itself while the job it belongs to is still running, which is exactly when its logs are
-   * worth watching. `selectionChange` is emitted from that same reset and is the only hook the
-   * library offers, so re-open the row from the id we keep. Drop once `tn-table` keys expansion
-   * through `trackBy` (or exposes a row-expanded output) instead of row identity.
-   */
-  protected onTableReset(): void {
-    const table = this.table();
-    if (table) {
-      this.openExpandedRow(table, this.rows(), this.expandedJobId());
-    }
-  }
-
-  /** Points the table's identity-keyed expanded set at the row currently rendering that job. */
+  /** Opens the row rendering `jobId` through the table's own API, so its retained set stays in step. */
   private openExpandedRow(table: TnTableComponent<Job>, rows: Job[], jobId: number | null): void {
-    const expandedRow = jobId === null ? undefined : rows.find((job) => job.id === jobId);
-    if (!expandedRow) {
-      // The job is not on the current page — a tab switch, a search. Record that the empty table
-      // is what we asked for, so the effect doesn't read it as the user collapsing the row, and
-      // keep `expandedJobId`: the row re-opens on its own once the job is listed again.
+    if (jobId === null) {
+      table.clearExpansion();
       this.lastSyncedExpandedId = null;
       return;
     }
+    const expandedRow = rows.find((job) => job.id === jobId);
+    if (!expandedRow) {
+      return;
+    }
     this.lastSyncedExpandedId = jobId;
-    table.expandedRows.set(new Set<unknown>([expandedRow]));
+    table.expandRow(expandedRow);
   }
 
   emptyType$: Observable<EmptyType> = combineLatest([
