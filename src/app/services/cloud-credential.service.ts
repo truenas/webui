@@ -22,10 +22,8 @@ export class CloudCredentialService {
 
   getProviders(): Observable<CloudSyncProvider[]> {
     return this.api.call('cloudsync.providers').pipe(
-      // The generated type is missing `title`, which middleware does declare
-      // and send: the client's generator strips every nested `title` key from
-      // the schema, a real property of that name included. Until that is
-      // fixed upstream the UI's own interface describes the wire correctly.
+      // Middleware declares `name` as a plain string. The set is finite and
+      // every consumer keys on it, so the UI narrows it to `CloudSyncProviderName`.
       map((providers) => providers as CloudSyncProvider[]),
     );
   }
