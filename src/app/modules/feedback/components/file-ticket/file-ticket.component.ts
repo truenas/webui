@@ -5,7 +5,9 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCheckboxComponent, TnFormFieldComponent } from '@truenas/ui-components';
+import {
+  TnCheckboxComponent, TnFileInputComponent, TnFormFieldComponent, TnInputComponent, TnTestIdDirective,
+} from '@truenas/ui-components';
 import { finalize } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { TicketType, ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
@@ -17,9 +19,6 @@ import { SimilarIssuesComponent } from 'app/modules/feedback/components/similar-
 import { FeedbackForm } from 'app/modules/feedback/interfaces/feedback-form';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -31,13 +30,13 @@ import { ApiService } from 'app/modules/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxInputComponent,
     SimilarIssuesComponent,
-    IxTextareaComponent,
-    IxFileInputComponent,
     OauthButtonComponent,
     TnCheckboxComponent,
+    TnFileInputComponent,
     TnFormFieldComponent,
+    TnInputComponent,
+    TnTestIdDirective,
     TranslateModule,
   ],
   providers: [
@@ -60,7 +59,7 @@ export class FileTicketComponent implements FeedbackForm {
 
   readonly dialogActions = viewChild('dialogActions', { read: TemplateRef });
 
-  private fileInputComponent = viewChild(IxFileInputComponent);
+  private fileInputComponent = viewChild(TnFileInputComponent);
 
   protected form = this.formBuilder.nonNullable.group({
     title: ['', [Validators.maxLength(200)]],

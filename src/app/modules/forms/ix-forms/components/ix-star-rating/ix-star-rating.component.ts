@@ -1,27 +1,22 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, inject } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
-import { MatIconButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
-import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TranslatedString } from 'app/modules/translate/translate.helper';
 
+/**
+ * Bare star-rating control: label, required indicator, tooltip and error text all come from the
+ * wrapping `<tn-form-field>`, the same way `ix-explorer` composes into one.
+ */
 @Component({
   selector: 'ix-star-rating',
   templateUrl: './ix-star-rating.component.html',
   styleUrls: ['./ix-star-rating.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxLabelComponent,
-    MatIconButton,
-    TnIconComponent,
-    IxErrorsComponent,
+    TnIconButtonComponent,
     ReactiveFormsModule,
     TranslateModule,
-    TestDirective,
   ],
   hostDirectives: [
     { ...registeredDirectiveConfig },
@@ -31,10 +26,6 @@ export class IxStarRatingComponent implements ControlValueAccessor {
   controlDirective = inject(NgControl);
   private cdr = inject(ChangeDetectorRef);
 
-  readonly label = input<TranslatedString>('');
-  readonly hint = input<TranslatedString>('');
-  readonly tooltip = input<TranslatedString>('');
-  readonly required = input(false);
   readonly maxRating = input(5);
 
   isDisabled = false;
@@ -73,6 +64,4 @@ export class IxStarRatingComponent implements ControlValueAccessor {
     this.value = value > this.maxRating() ? this.maxRating() : value;
     this.onChange(this.value);
   }
-
-  protected readonly tnIconMarker = tnIconMarker;
 }
