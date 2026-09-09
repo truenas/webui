@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators,
+  AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors,
+  ValidatorFn, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -41,6 +42,25 @@ interface DatasetFormGroup {
   name: FormControl<string>;
   is_passphrase: FormControl<boolean>;
   file?: FormControl<File[]>;
+}
+
+type DatasetFormValue = Partial<{ key: string; passphrase: string; is_passphrase: boolean }>;
+
+/**
+ * `minLength` and `exactLength` both pass on an empty value, so without this the form is valid
+ * (and "Unlock" is clickable) while every passphrase/key is still blank — and only turns invalid
+ * once the user starts typing. Datasets left blank are intentionally skipped when building the
+ * payload, so this only requires that at least one of them is filled in.
+ */
+function requireAtLeastOneKeyOrPassphrase(message: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const datasets = (control.value || []) as DatasetFormValue[];
+    const hasAnyValue = datasets.some((dataset) => {
+      return dataset.is_passphrase ? Boolean(dataset.passphrase) : Boolean(dataset.key);
+    });
+
+    return hasAnyValue ? null : { requireAtLeastOneKeyOrPassphrase: { message } };
+  };
 }
 
 @Component({
@@ -90,7 +110,11 @@ export class DatasetUnlockComponent implements OnInit {
     unlock_children: [true],
     file: [null as File[] | null, [Validators.required]],
     key: [''],
-    datasets: this.formBuilder.array<FormGroup<DatasetFormGroup>>([]),
+    datasets: this.formBuilder.array<FormGroup<DatasetFormGroup>>([], [
+      requireAtLeastOneKeyOrPassphrase(
+        this.translate.instant('Enter a key or passphrase for at least one dataset.'),
+      ),
+    ]),
     force: [false],
   });
 
@@ -110,6 +134,8 @@ export class DatasetUnlockComponent implements OnInit {
 
   ngOnInit(): void {
     this.pk = this.aroute.snapshot.params['datasetId'] as string;
+    // Matches the initial `use_file` value, so the manual keys are not validated until they are shown.
+    this.form.controls.datasets.disable();
     this.getEncryptionSummary();
 
     this.form.controls.use_file.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((useFile) => {

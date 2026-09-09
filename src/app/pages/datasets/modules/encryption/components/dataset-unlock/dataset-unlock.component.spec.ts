@@ -79,6 +79,22 @@ describe('DatasetUnlockComponent', () => {
     });
   });
 
+  it('does not allow submitting when no keys or passphrases were entered manually', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Unlock with Key file': 'Provide keys/passphrases manually',
+    });
+
+    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock' }));
+    expect(await unlockButton.isDisabled()).toBe(true);
+
+    await form.fillForm({
+      'Dataset Passphrase': '12345678',
+    });
+
+    expect(await unlockButton.isDisabled()).toBe(false);
+  });
+
   it('saves when set key manually', async () => {
     const form = await loader.getHarness(IxFormHarness);
 
