@@ -2,6 +2,7 @@
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit($event)">
   <ix-unused-disk-select
     formControlName="newDisk"
+    testId="new-disk"
     [label]="'New Disk' | translate"
     [required]="true"
     [tooltip]="helptext.dialogFormFields.newDisk.tooltip | translate"

@@ -1,16 +1,23 @@
 @if (nonUniqueSerialDisks().length) {
-  <ix-checkbox
-    [formControl]="allowDuplicateSerials"
-    [label]="'Allow non-unique serialed disks (not recommended)' | translate"
-    [tooltip]="nonUniqueSerialDisksTooltip()"
-    [required]="true"
-  ></ix-checkbox>
+  <tn-form-field [tooltip]="nonUniqueSerialDisksTooltip()">
+    <tn-checkbox
+      testId="allow-duplicate-serials"
+      [formControl]="allowDuplicateSerials"
+      [label]="'Allow non-unique serialed disks (not recommended)' | translate"
+      [required]="true"
+    ></tn-checkbox>
+  </tn-form-field>
 }
 
-<ix-combobox
-  [label]="label()"
+<tn-form-field
+  [label]="label() || ''"
+  [tooltip]="tooltip() || ''"
   [required]="required()"
-  [provider]="disksProvider"
-  [tooltip]="tooltip()"
-></ix-combobox>
-
+>
+  <tn-autocomplete
+    [testId]="testId()"
+    [formControl]="diskControl"
+    [options]="(shownOptions$ | async) ?? []"
+    [requireSelection]="true"
+  ></tn-autocomplete>
+</tn-form-field>

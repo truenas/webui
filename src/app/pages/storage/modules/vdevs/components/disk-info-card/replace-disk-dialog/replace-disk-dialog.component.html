@@ -2,6 +2,7 @@
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-unused-disk-select
     formControlName="replacement"
+    testId="replacement"
     valueField="identifier"
     [label]="'Member Disk' | translate"
     [required]="true"

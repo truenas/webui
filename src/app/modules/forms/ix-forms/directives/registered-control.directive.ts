@@ -1,6 +1,5 @@
 import { AfterViewInit, Directive, effect, ElementRef, inject, input, OnDestroy } from '@angular/core';
 import { NgControl } from '@angular/forms';
-import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
 
 export const ixControlLabelTag = 'ix-label';
@@ -14,7 +13,6 @@ export const ixControlLabelTag = 'ix-label';
 export class RegisteredControlDirective implements AfterViewInit, OnDestroy {
   private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private formService = inject(IxFormService);
-  private parentFormSection = inject(IxFormSectionComponent, { optional: true, host: true, skipSelf: true });
 
   label = input<string>();
   formControlName = input<string | number>();
@@ -65,16 +63,10 @@ export class RegisteredControlDirective implements AfterViewInit, OnDestroy {
 
     this.elementRef.nativeElement.setAttribute(ixControlLabelTag, labelValue);
     this.formService.registerControl(this.registeredName, this.elementRef);
-    if (this.parentFormSection) {
-      this.formService.registerSectionControl(this.control, this.parentFormSection);
-    }
   }
 
   ngOnDestroy(): void {
     this.formService.unregisterControl(this.registeredName);
-    if (this.parentFormSection) {
-      this.formService.unregisterSectionControl(this.parentFormSection, this.control);
-    }
   }
 }
 
