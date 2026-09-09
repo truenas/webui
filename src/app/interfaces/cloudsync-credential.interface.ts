@@ -1,4 +1,6 @@
+import { QueryEntity } from '@truenas/api-client';
 import { CloudSyncProviderName, OneDriveType } from 'app/enums/cloudsync-provider.enum';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export type SomeProviderAttributes = Record<string, string | number | boolean | null | string[] | number[] | boolean[]>;
 
@@ -9,6 +11,13 @@ export interface CloudSyncCredential {
     type: CloudSyncProviderName;
   };
 }
+
+/**
+ * The credential as middleware declares it, with `provider` a union of one
+ * model per provider. `CloudSyncCredential` is the UI's reading of the same
+ * wire object; `CloudCredentialService` converts between the two.
+ */
+export type CloudSyncCredentialEntry = QueryEntity<WebUiApiDirectory['call'], 'cloudsync.credentials.query'>;
 
 export type CloudSyncCredentialUpdate = Omit<CloudSyncCredential, 'id'>;
 
@@ -29,7 +38,8 @@ export interface CloudSyncBucket {
 export interface CloudSyncOneDriveDrive {
   name: string;
   description: string;
-  drive_type: OneDriveType;
+  /** The wire literal; compare against `OneDriveType`. */
+  drive_type: `${OneDriveType}`;
   drive_id: string;
 }
 

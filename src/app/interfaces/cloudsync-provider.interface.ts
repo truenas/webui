@@ -7,7 +7,7 @@ export interface CloudSyncProvider {
   credentials_oauth: string | null;
   credentials_schema: unknown[];
   name: CloudSyncProviderName;
-  task_schema: unknown[]; // Not really used
+  task_schema: { property: string }[]; // Not really used
   title: string;
 }
 

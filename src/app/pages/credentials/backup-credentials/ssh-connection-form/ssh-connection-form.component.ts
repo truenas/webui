@@ -42,7 +42,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 
@@ -71,7 +71,7 @@ const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';
 export class SshConnectionFormComponent extends IxFormHostForm<KeychainCredential | null> implements OnInit {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private errorHandler = inject(ErrorHandlerService);
   private keychainCredentialService = inject(KeychainCredentialService);
@@ -313,6 +313,9 @@ export class SshConnectionFormComponent extends IxFormHostForm<KeychainCredentia
       } as SshCredentials,
     };
 
-    return this.api.call('keychaincredential.update', [this.existingConnection.id, params]);
+    return this.api.call('keychaincredential.update', [this.existingConnection.id, params]).pipe(
+      // The entry type is the union of both credential kinds; this form only ever updates a connection.
+      map((credential) => credential as KeychainSshCredentials),
+    );
   }
 }

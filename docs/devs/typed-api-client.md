@@ -81,9 +81,26 @@ Where things differ:
 - **Errors are unchanged.** `call` throws the same `ApiCallError` as
   `ApiService`, with the full JSON-RPC payload, so `ErrorHandlerService` and
   form validation work as before. `job` throws `FailedJobError` on failure.
-- **Specs** mock `TypedApiService` the way they mock any service:
-  `mockProvider(TypedApiService, { call: jest.fn(() => of(...)) })`. A
-  `mockTypedApi()` helper mirroring `mockApi()` is a Phase 1 deliverable.
+- **Discriminants are literals, enums stay for writing.** Generated types
+  carry the wire literal (`type: 'SSH_KEY_PAIR'`); the UI's enums are still
+  assignable *to* those literals and comparable with them, but a literal is
+  not assignable to an enum. So an interface that describes API data types its
+  discriminant as the literal, spelled as the enum's value so the two cannot
+  drift: `` type: `${KeychainCredentialType.SshKeyPair}` ``. Code keeps
+  writing and comparing with the enum.
+- **Optional on the wire is optional in the interface.** Middleware defaults
+  (`port = 22`) come through as optional properties. A UI interface that
+  requires them cannot receive the generated value; loosen it.
+- **Specs** use `mockTypedApi()` from
+  `app/core/testing/utils/mock-typed-api.utils`, the typed counterpart of
+  `mockApi()`: `mockTypedCall`, `mockTypedQuery`, `mockTypedJob`, and
+  `MockTypedApiService` for adjusting responses on the fly. Fixtures for a
+  query or entry response are typed as the generated entity (for example
+  `CloudSyncCredentialEntry`), not the UI's reading of it.
+- **A shared interface is retired by its last consumer.** Until then the
+  service that fronts it is the one place that converts, with a named adapter
+  rather than a cast at each call site (`CloudCredentialService`'s
+  `toCloudSyncCredential` is the pattern).
 
 ## Phases
 
@@ -95,6 +112,9 @@ Where things differ:
 - One pilot consumer, `KeychainCredentialService`, to prove the path end to
   end. It surfaced the first drift: `SshConnectionSetup` was one loose object
   where middleware declares a discriminated union, and is now shaped to match.
+- The Backup Credentials page, cloud credentials included, as the first whole
+  feature area: eight components, `CloudCredentialService`,
+  `KeychainCredentialService`, and the `mockTypedApi()` spec helper.
 - This document.
 
 ### Phase 1 — move call sites
@@ -178,6 +198,23 @@ above. Each is a change for `truenas/api-client-ts`.
 8. **`crypto.randomUUID`.** The client falls back to `getRandomValues` on
    insecure origins, so plain-http dev boxes work. Noting it because it is the
    kind of thing that breaks quietly.
+9. **Properties named `title` are dropped.** Pydantic stamps a schema `title`
+   on every field, and the generator's `stripNestedTitles` (in
+   `scripts/generate-api-interface/lib/emit.mts`) removes every non-root
+   `title` key so `json-schema-to-typescript` does not hoist aliases. It does
+   not distinguish the keyword from an entry under `properties`, so a real
+   field called `title` disappears too. No generated interface has a `title`
+   property, while thirteen middleware models declare one: `CloudSyncProvider`,
+   `UsedKeychainCredential`, `AlertCategory`, support fields, reporting graphs
+   and others. Until it is fixed, the UI's own interfaces describe those
+   responses and the fronting service casts, with a comment pointing here
+   (`CloudCredentialService.getProviders`, `KeychainCredentialService.getUsedBy`).
+   Fix: skip the strip when the key sits directly under `properties`.
+10. **Impossible intersections.** `S3CredentialsModel` types `skip_region`
+    and `signatures_v2` as `boolean & string`, which is `never`. Something in
+    the schema for those fields (a `bool | str` coercion, most likely) is
+    being emitted as an intersection rather than a union. Harmless until a
+    form tries to write those fields through the typed client.
 
 ## Version policy
 

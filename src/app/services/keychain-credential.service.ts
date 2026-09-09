@@ -3,7 +3,9 @@ import {
   map, Observable, Subject, tap,
 } from 'rxjs';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
-import { KeychainSshCredentials, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import {
+  KeychainCredentialUsedBy, KeychainSshCredentials, KeychainSshKeyPair,
+} from 'app/interfaces/keychain-credential.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
@@ -25,6 +27,17 @@ export class KeychainCredentialService {
   getSshConnections(): Observable<KeychainSshCredentials[]> {
     return this.api.query('keychaincredential.query', [['type', '=', KeychainCredentialType.SshCredentials]]).pipe(
       map((credentials) => credentials as KeychainSshCredentials[]),
+    );
+  }
+
+  /** Everything that depends on a credential, so a delete can warn or cascade. */
+  getUsedBy(credentialId: number): Observable<KeychainCredentialUsedBy[]> {
+    return this.api.call('keychaincredential.used_by', [credentialId]).pipe(
+      // The generated type is missing `title`, which middleware does declare
+      // and send: the client's generator strips every nested `title` key from
+      // the schema, a real property of that name included. Until that is
+      // fixed upstream the UI's own interface describes the wire correctly.
+      map((usedBy) => usedBy as KeychainCredentialUsedBy[]),
     );
   }
 

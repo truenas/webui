@@ -30,7 +30,7 @@ import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/tab
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { cloudCredentialsCardElements } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.elements';
 import { CloudCredentialFormInput, CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
@@ -61,7 +61,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CloudCredentialsCardComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   private emptyService = inject(EmptyService);
@@ -74,7 +74,7 @@ export class CloudCredentialsCardComponent implements OnInit {
   protected readonly searchableElements = cloudCredentialsCardElements;
 
   protected readonly dataProvider = new AsyncDataProvider<CloudSyncCredential>(
-    this.api.call('cloudsync.credentials.query').pipe(takeUntilDestroyed(this.destroyRef)),
+    this.cloudCredentialService.getCloudSyncCredentials().pipe(takeUntilDestroyed(this.destroyRef)),
   );
 
   protected readonly currentPage = toSignal(this.dataProvider.currentPage$, {
