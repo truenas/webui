@@ -25,3 +25,31 @@
     gap: 4px;
   }
 }
+
+// The licensed features list can be long. Let this row grow past the fixed
+// single-line list item height and undo the ellipsis Material and the shared
+// card styles put on it, so the whole list stays readable.
+.features-row {
+  --mat-list-list-item-one-line-container-height: auto;
+
+  min-height: 48px;
+  padding-bottom: 8px;
+  padding-top: 8px;
+
+  .features-value {
+    display: block;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    white-space: normal;
+  }
+}
+
+:host ::ng-deep .features-row {
+  .mdc-list-item__content,
+  .mdc-list-item__primary-text {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+}

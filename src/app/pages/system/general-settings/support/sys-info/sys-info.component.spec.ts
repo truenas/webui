@@ -97,6 +97,24 @@ describe('SysInfoComponent', () => {
     });
   });
 
+  it('lets the Features row wrap so a long license feature list stays fully visible', () => {
+    spectator.setInput({
+      licenseInfo: {
+        ...licenseInfo,
+        featureNames: Array.from({ length: 20 }, (_, index) => `FEATURE_${index}`),
+      },
+      hasLicense: true,
+    });
+
+    const featuresRow = spectator.query('mat-list-item.features-row');
+
+    expect(featuresRow).toExist();
+    expect(featuresRow?.querySelector('.value')).toHaveClass('features-value');
+    expect(getInfoRows()['Features:']).toBe(
+      Array.from({ length: 20 }, (_, index) => `FEATURE_${index}`).join(', '),
+    );
+  });
+
   describe('Proactive support status', () => {
     beforeEach(() => {
       spectator.setInput({
