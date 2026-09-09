@@ -5,12 +5,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import {
-  TnAutocompleteHarness, TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnInputHarness,
-} from '@truenas/ui-components';
+import { TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
@@ -26,14 +26,18 @@ import {
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import {
+  IxGroupComboboxHarness,
+  IxUserComboboxHarness,
+} from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('NfsFormComponent', () => {
   const existingShare = {
@@ -79,11 +83,17 @@ describe('NfsFormComponent', () => {
   // than by DOM order, so reordering the Access fieldset can't silently swap them.
   const getAutocomplete = (
     field: 'maproot_user' | 'maproot_group' | 'mapall_user' | 'mapall_group',
-  ): Promise<TnAutocompleteHarness> => loader.getHarness(
-    TnAutocompleteHarness.with({ selector: `[formControlName="${field}"]` }),
-  );
+  ): Promise<IxUserComboboxHarness | IxGroupComboboxHarness> => {
+    const selector = `[formControlName="${field}"]`;
+    return field.endsWith('_user')
+      ? loader.getHarness(IxUserComboboxHarness.with({ selector }))
+      : loader.getHarness(IxGroupComboboxHarness.with({ selector }));
+  };
 
-  const typeCustomValue = async (harness: TnAutocompleteHarness, value: string): Promise<void> => {
+  const typeCustomValue = async (
+    harness: IxUserComboboxHarness | IxGroupComboboxHarness,
+    value: string,
+  ): Promise<void> => {
     await harness.setInputValue(value);
     await harness.blur();
   };
@@ -125,8 +135,14 @@ describe('NfsFormComponent', () => {
           value: [],
         },
         {
-          selector: selectIsEnterprise,
-          value: false,
+          selector: selectEntitlements,
+          value: {
+            [EntitlementFeature.NfsSnapshot]: {
+              entitled: false,
+              reason: EntitlementReason.KeyMissing,
+              message: "This system's license does not include NFS snapshot exposure.",
+            },
+          },
         },
       ],
     }),
@@ -172,7 +188,8 @@ describe('NfsFormComponent', () => {
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Maproot Group' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Mapall User' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Mapall Group' }))).toBe(true);
-      expect(await loader.getAllHarnesses(TnAutocompleteHarness)).toHaveLength(4);
+      expect(await loader.getAllHarnesses(IxUserComboboxHarness)).toHaveLength(2);
+      expect(await loader.getAllHarnesses(IxGroupComboboxHarness)).toHaveLength(2);
       expect(await loader.hasHarness(TnCheckboxHarness.with({ label: 'Read Only' }))).toBe(true);
     });
 
@@ -210,7 +227,8 @@ describe('NfsFormComponent', () => {
         TnCheckboxHarness.with({ selector: '[formControlName="expose_snapshots"]' }),
       )).toBeNull();
 
-      mockStore$.overrideSelector(selectIsEnterprise, true);
+      // An empty map is a loaded map with no gated keys, i.e. entitled.
+      mockStore$.overrideSelector(selectEntitlements, {});
       mockStore$.refreshState();
 
       await (await getTnCheckbox('expose_snapshots')).check();

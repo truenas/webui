@@ -267,10 +267,10 @@ export class SigninStore extends ComponentStore<SigninState> {
   performFailoverChecksAndCompleteLogin(): Observable<LoginResult> {
     return this.failoverValidation.validateFailover().pipe(
       tap((result) => {
-        // Dispatch HA license status synchronously before adminUiInitialized.
-        // NgRx reducers are synchronous, so the state is updated before completeLogin()
-        // dispatches adminUiInitialized, preventing ha-info.effects loadFailoverLicensedStatus
-        // from making a duplicate API call.
+        // Seeds `isHaLicensed` synchronously before adminUiInitialized: NgRx reducers are
+        // synchronous, so the state is set before completeLogin() dispatches it. This is the
+        // only seed — `syncHaLicenseFromEntitlements` overrides it only when the engine reports
+        // an `HA` key — so the dispatch must stay.
         this.store$.dispatch(failoverLicensedStatusLoaded({ isHaLicensed: result.isHaLicensed }));
       }),
       switchMap((result) => {

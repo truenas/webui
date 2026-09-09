@@ -15,6 +15,7 @@ import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CertificateAcmeAddComponent,
@@ -54,6 +55,7 @@ describe('CertificateAcmeAddComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockApi([
         mockCall('certificate.acme_server_choices', {
           'https://acme-staging-v02.api.letsencrypt.org/directory': "Let's Encrypt Staging Directory",

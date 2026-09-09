@@ -9,8 +9,10 @@ import {
 } from 'app/enums/nfs-acl.enum';
 import { NfsAclItem } from 'app/interfaces/acl.interface';
 import { User } from 'app/interfaces/user.interface';
-import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import {
+  IxGroupComboboxHarness,
+  IxUserComboboxHarness,
+} from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { UserService } from 'app/services/user.service';
 import { EditNfsAceComponent } from './edit-nfs-ace.component';
@@ -18,7 +20,6 @@ import { EditNfsAceComponent } from './edit-nfs-ace.component';
 describe('EditNfsAceComponent', () => {
   let spectator: Spectator<EditNfsAceComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   const createComponent = createComponentFactory({
     component: EditNfsAceComponent,
     imports: [
@@ -47,7 +48,16 @@ describe('EditNfsAceComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  // The user/group fields are their own CVAs, addressed by control name — the
+  // control name sits on the wrapper, not on the tn-autocomplete inside it.
+  const getUserField = (): Promise<IxUserComboboxHarness> => loader.getHarness(
+    IxUserComboboxHarness.with({ selector: '[formControlName="user"]' }),
+  );
+  const getGroupField = (): Promise<IxGroupComboboxHarness> => loader.getHarness(
+    IxGroupComboboxHarness.with({ selector: '[formControlName="group"]' }),
+  );
+
+  beforeEach(() => {
     spectator = createComponent({
       props: {
         ace: {
@@ -69,15 +79,14 @@ describe('EditNfsAceComponent', () => {
     });
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
   it('shows current ace values from ace input', async () => {
     const whoSelect = await loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="tag"]' }));
     expect(await whoSelect.getDisplayText()).toBe('User');
 
-    const userCombobox = await form.getControl('User') as IxComboboxHarness;
-    expect(await userCombobox.getValue()).toBe('trunk');
+    const userCombobox = await getUserField();
+    expect(await userCombobox.getInputValue()).toBe('trunk');
 
     const allowRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Allow' }));
     expect(await allowRadio.isChecked()).toBe(true);
@@ -127,13 +136,14 @@ describe('EditNfsAceComponent', () => {
 
   describe('user ace', () => {
     it('shows user combobox when Who is user', async () => {
-      const userSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'User' }));
+      const userSelect = await getUserField();
       expect(userSelect).toExist();
     });
 
     it('allows custom values in User combobox', async () => {
-      const userCombobox = await form.getControl('User') as IxComboboxHarness;
-      await userCombobox.writeCustomValue('AD\\administrator');
+      const userCombobox = await getUserField();
+      await userCombobox.setInputValue('AD\\administrator');
+      await userCombobox.blur();
 
       expect(spectator.inject(DatasetAclEditorStore).updateSelectedAce).toHaveBeenLastCalledWith(
         expect.objectContaining({ who: 'AD\\administrator' }),
@@ -147,7 +157,7 @@ describe('EditNfsAceComponent', () => {
       const whoSelect = await loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="tag"]' }));
       await whoSelect.selectOption(/^Group$/);
 
-      const groupSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'Group' }));
+      const groupSelect = await getGroupField();
       expect(groupSelect).toExist();
     });
 
@@ -155,8 +165,9 @@ describe('EditNfsAceComponent', () => {
       const whoSelect = await loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="tag"]' }));
       await whoSelect.selectOption(/^Group$/);
 
-      const userCombobox = await form.getControl('Group') as IxComboboxHarness;
-      await userCombobox.writeCustomValue('AD\\domain users');
+      const userCombobox = await getGroupField();
+      await userCombobox.setInputValue('AD\\domain users');
+      await userCombobox.blur();
 
       expect(spectator.inject(DatasetAclEditorStore).updateSelectedAce).toHaveBeenLastCalledWith(
         expect.objectContaining({ who: 'AD\\domain users' }),

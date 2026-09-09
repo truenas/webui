@@ -95,22 +95,13 @@
         <tn-checkbox
           formControlName="spotlight_search"
           [label]="'Enable Search (Spotlight)' | translate"
-          [attr.aria-describedby]="shouldShowTruenasConnectNotice() ? 'truenas-connect-notice' : null"
+          [attr.aria-describedby]="shouldShowSpotlightNotice() ? 'spotlight-notice' : null"
         ></tn-checkbox>
       </tn-form-field>
 
-      @if (shouldShowTruenasConnectNotice()) {
-        <div id="truenas-connect-notice" class="truenas-connect-notice">
-          <span
-            class="truenas-connect-link"
-            role="button"
-            tabindex="0"
-            [attr.aria-label]="'Configure TrueNAS Connect to enable Spotlight Search feature' | translate"
-            (click)="openTruenasConnectModal()"
-            (keydown)="onTruenasConnectLinkKeydown($event)"
-          >
-            {{ 'Configure TrueNAS Connect to enable this feature.' | translate }}
-          </span>
+      @if (shouldShowSpotlightNotice()) {
+        <div id="spotlight-notice" class="spotlight-notice">
+          {{ 'Search (Spotlight) is not included in this system\'s license.' | translate }}
         </div>
       }
 
@@ -118,32 +109,22 @@
         [label]="'Administrators Group' | translate"
         [tooltip]="tooltips.admin_group | translate"
       >
-        <tn-autocomplete
+        <ix-group-combobox
           formControlName="admin_group"
           [testId]="'admin-group'"
           [placeholder]="'Administrators Group' | translate"
-          [options]="(groupOptions$ | async) ?? []"
-          [allowCustomValue]="true"
-          [loading]="groupsLoading()"
-          [noResultsText]="(groupsFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
-          (searchChange)="groupSearch$.next($event)"
-        ></tn-autocomplete>
+        ></ix-group-combobox>
       </tn-form-field>
 
       <tn-form-field
         [label]="'Guest Account' | translate"
         [tooltip]="tooltips.guest | translate"
       >
-        <tn-autocomplete
+        <ix-user-combobox
           formControlName="guest"
           [testId]="'guest'"
           [placeholder]="'Guest Account' | translate"
-          [options]="(userOptions$ | async) ?? []"
-          [allowCustomValue]="true"
-          [loading]="usersLoading()"
-          [noResultsText]="(usersFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
-          (searchChange)="userSearch$.next($event)"
-        ></tn-autocomplete>
+        ></ix-user-combobox>
       </tn-form-field>
 
       <tn-form-field

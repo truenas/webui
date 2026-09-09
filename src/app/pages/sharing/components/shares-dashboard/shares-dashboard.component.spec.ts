@@ -76,7 +76,7 @@ describe('SharesDashboardComponent', () => {
     expect(spectator.query(WebShareCardComponent)).toExist();
   });
 
-  it('hides WebShare card on enterprise systems', () => {
+  it('hides WebShare card when WebShare should not be shown', () => {
     setup(false);
 
     expect(spectator.query(WebShareCardComponent)).not.toExist();

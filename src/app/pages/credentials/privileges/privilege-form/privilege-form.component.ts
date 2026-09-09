@@ -3,33 +3,34 @@ import {
   ChangeDetectionStrategy, Component, OnInit, signal, inject,
   DestroyRef, input,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnChipInputComponent, TnCheckboxComponent, TnFormFieldComponent,
-  TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  Observable, Subject, combineLatest, debounceTime, distinctUntilChanged, finalize, map, of, startWith, switchMap,
+  Observable, combineLatest, finalize, map, of, switchMap,
 } from 'rxjs';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { helptextPrivilege } from 'app/helptext/account/priviledge';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
-import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
-import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
-import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-chips.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
+import { DirectoryQueryOptions } from 'app/services/user-directory.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-privilege-form',
@@ -37,10 +38,10 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
-    TnChipInputComponent,
     IxGroupChipsComponent,
     TnSelectComponent,
     TnCheckboxComponent,
@@ -49,11 +50,12 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     AsyncPipe,
   ],
 })
-export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
+export class PrivilegeFormComponent extends IxFormHostForm implements OnInit {
   private destroyRef = inject(DestroyRef);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private errorHandler = inject(FormErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
 
@@ -62,23 +64,17 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
   /** Row to edit, passed in by `FormSidePanelService.open`. Absent for Add. */
   readonly editPrivilege = input<Privilege | undefined>(undefined);
 
-  /**
-   * Maximum number of groups to return in autocomplete queries.
-   * Limits API response size for better performance.
-   */
-  private readonly GROUP_QUERY_LIMIT = 50;
-
-  protected isLoading = signal(false);
   protected showDsAuthButton = signal(false);
   protected isEnablingDsAuth = signal(false);
   protected dsAuthEnabled = signal(false);
   private dsStatus = signal<DirectoryServicesStatus | null>(null);
 
-  /** String-mode suggestions for the local-groups chip input, refreshed on each search. */
-  protected localGroupsSuggestions = signal<string[]>([]);
-
-  /** Emits the latest chip-input search term; `switchMap` cancels stale in-flight queries. */
-  private readonly localGroupsSearch$ = new Subject<string>();
+  /**
+   * Local groups only, built-ins included: a privilege can legitimately be
+   * granted to a built-in local group, so this deliberately does not ask for
+   * `mutableOnly`.
+   */
+  protected readonly localGroupsOptions: DirectoryQueryOptions = { localOnly: true };
 
   protected readonly form = this.formBuilder.group({
     name: ['', [Validators.required]],
@@ -88,10 +84,8 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
     roles: [[] as Role[]],
   });
 
-  readonly canSubmit = this.trackCanSubmit(this.isLoading);
-
   protected readonly helptext = helptextPrivilege;
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly hasDirectoryServices = this.entitlements.entitled(EntitlementFeature.DirectoryServicesAuth);
   protected existingPrivilege: Privilege | undefined;
 
   readonly rolesOptions$ = this.api.call('privilege.roles').pipe(
@@ -112,54 +106,6 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
     }),
   );
 
-  /**
-   * Provider for local groups autocomplete.
-   *
-   * Uses ChipsProvider instead of GroupComboboxProvider because:
-   * - Chips UI is simpler and more appropriate for multi-select privileges
-   * - No pagination needed - 50-item limit is sufficient for most privilege scenarios
-   * - Avoids complexity of managing paginated state across multiple chips fields
-   *
-   * Fetches local groups from API with search filtering:
-   * - Uses '^' prefix filter for server-side search
-   * - Falls back to client-side includes() for better UX (contains match)
-   * - Limited to 50 results for performance
-   *
-   * Note: No caching to keep implementation simple and avoid stale data issues.
-   * For SMB shares with larger group lists requiring pagination, see GroupComboboxProvider.
-   */
-  readonly localGroupsProvider: ChipsProvider = (query: string) => {
-    const trimmedQuery = query?.trim() || '';
-    const lowerCaseQuery = trimmedQuery.toLowerCase();
-
-    const filters: (['local', '=', true] | ['group', '^', string])[] = [['local', '=', true]];
-    if (trimmedQuery) {
-      // The server-side `^` (prefix) filter is case-sensitive, so pass the query verbatim
-      // (matching UserService.smbGroupQueryDsCache) — lowercasing it would drop groups with
-      // uppercase names. The client-side contains-match below is what's intentionally lax.
-      filters.push(['group', '^', trimmedQuery]);
-    }
-
-    return this.api.call('group.query', [filters, { limit: this.GROUP_QUERY_LIMIT, order_by: ['group'] }]).pipe(
-      map((groups) => {
-        const groupNames = groups.map((group) => group.group);
-        if (!trimmedQuery) {
-          return groupNames;
-        }
-
-        // Client-side contains match (case-insensitive) for better UX.
-        return groupNames.filter((name) => name.toLowerCase().includes(lowerCaseQuery));
-      }),
-    );
-  };
-
-  /**
-   * Refreshes the local-groups chip-input suggestions as the user types, driving the
-   * autocomplete from {@link localGroupsProvider}.
-   */
-  protected onLocalGroupsSearch(query: string): void {
-    this.localGroupsSearch$.next(query);
-  }
 
   ngOnInit(): void {
     this.existingPrivilege = this.editPrivilege();
@@ -195,21 +141,6 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
     ).subscribe((dsGroups) => {
       this.updateDsAuthButtonVisibility(dsGroups);
     });
-
-    // Drive suggestions off the latest search term only. `tn-chip-input` does not debounce
-    // its `searchChange`, so debounce here (matching the old ix-chips behavior) to avoid a
-    // `group.query` per keystroke. `startWith('')` preloads the dropdown immediately on init
-    // (it sits after `debounceTime`, so it fires without waiting a debounce interval), and
-    // routing that preload through the same stream means `switchMap` serializes it with the
-    // typed queries — an in-flight empty-query preload is cancelled the moment the user types,
-    // so its stale response can't overwrite fresh search results.
-    this.localGroupsSearch$.pipe(
-      debounceTime(defaultDebounceTimeMs),
-      distinctUntilChanged(),
-      startWith(''),
-      switchMap((query) => this.localGroupsProvider(query)),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((groups) => this.localGroupsSuggestions.set(groups));
   }
 
   private setPrivilegeForEdit(existingPrivilege: Privilege): void {
@@ -247,8 +178,8 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
       return;
     }
 
-    // Hide button in non-enterprise mode
-    if (!this.isEnterprise()) {
+    // Hide button when the system is not entitled to directory-services authentication
+    if (!this.hasDirectoryServices()) {
       this.showDsAuthButton.set(false);
       return;
     }
@@ -290,11 +221,9 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
     });
   }
 
-  protected onSubmit(): void {
-    this.isLoading.set(true);
-
-    // Resolve all group names to UIDs before submitting
-    combineLatest([this.localGroupsUids$, this.dsGroupsUids$]).pipe(
+  protected handleSubmit = (): SubmitResult => {
+    // Resolve all group names to UIDs before submitting.
+    const request$ = combineLatest([this.localGroupsUids$, this.dsGroupsUids$]).pipe(
       switchMap(([localGroups, dsGroups]) => {
         const values: PrivilegeUpdate = {
           name: this.form.value.name,
@@ -308,17 +237,15 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
           ? this.api.call('privilege.update', [this.existingPrivilege.id, values])
           : this.api.call('privilege.create', [values]);
       }),
-      finalize(() => this.isLoading.set(false)),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.close(true);
-      },
-      error: (error: unknown) => {
-        this.errorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+    );
+
+    return {
+      request$,
+      successMessage: this.existingPrivilege
+        ? this.translate.instant('Privilege updated')
+        : this.translate.instant('Privilege created'),
+    };
+  };
 
   /**
    * Resolves local group names to GIDs.

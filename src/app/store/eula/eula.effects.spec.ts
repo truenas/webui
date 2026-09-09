@@ -1,18 +1,16 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { of, ReplaySubject } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { EulaEffects } from 'app/store/eula/eula.effects';
-import { selectProductType } from 'app/store/system-info/system-info.selectors';
 
 describe('EulaEffects', () => {
   let spectator: SpectatorService<EulaEffects>;
@@ -32,12 +30,6 @@ describe('EulaEffects', () => {
       mockProvider(TranslateService, {
         get: jest.fn((key: string) => of(key)),
       }),
-      provideMockStore({
-        selectors: [{
-          selector: selectProductType,
-          value: ProductType.Enterprise,
-        }],
-      }),
       mockAuth(),
     ],
   });
@@ -54,7 +46,7 @@ describe('EulaEffects', () => {
       spectator.service.checkEula$.subscribe();
     });
 
-    it('should show EULA dialog on enterprise systems', () => {
+    it('shows the EULA dialog whenever middleware reports it pending, with no product-type check', () => {
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
         message: 'Please do not sue us.',
       }));
@@ -62,6 +54,23 @@ describe('EulaEffects', () => {
 
     it('should call truenas.accept_eula when EULA dialog is accepted', () => {
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('truenas.accept_eula');
+    });
+  });
+
+  describe('when the EULA is already accepted', () => {
+    it('does not show the dialog', () => {
+      actions$ = new ReplaySubject<unknown>(1);
+      spectator = createService({
+        providers: [
+          provideMockActions(() => actions$),
+        ],
+      });
+      spectator.inject(MockApiService).mockCall('truenas.is_eula_accepted', true);
+      actions$.next(adminUiInitialized());
+      spectator.service.checkEula$.subscribe();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('truenas.is_eula_accepted');
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
     });
   });
 

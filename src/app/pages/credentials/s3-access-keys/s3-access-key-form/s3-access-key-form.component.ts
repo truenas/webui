@@ -12,7 +12,7 @@ import { Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSharingS3 } from 'app/helptext/sharing';
 import { S3AccessKey } from 'app/interfaces/s3.interface';
-import { IxUserPickerComponent } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -21,7 +21,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   S3AccessKeyCredentialsDialogComponent,
 } from 'app/pages/credentials/s3-access-keys/s3-access-key-credentials-dialog/s3-access-key-credentials-dialog.component';
-import { createS3UserPickerProvider } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
+import { s3UserDirectoryOptions } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 
 @Component({
   selector: 'ix-s3-access-key-form',
@@ -34,7 +34,7 @@ import { createS3UserPickerProvider } from 'app/pages/sharing/s3/utils/s3-user-p
     TnInputComponent,
     TnCheckboxComponent,
     TnDateInputComponent,
-    IxUserPickerComponent,
+    IxUserComboboxComponent,
     TranslateModule,
   ],
 })
@@ -54,7 +54,7 @@ export class S3AccessKeyFormComponent extends SidePanelForm implements OnInit {
   protected readonly requiredRoles = [Role.SharingS3Write, Role.SharingWrite];
   protected readonly helptext = helptextSharingS3;
   protected readonly minDateToday = new Date();
-  protected readonly userProvider = createS3UserPickerProvider();
+  protected readonly userDirectoryOptions = s3UserDirectoryOptions;
 
   protected readonly isNew = computed(() => !this.accessKey());
   protected readonly isLoading = signal(false);

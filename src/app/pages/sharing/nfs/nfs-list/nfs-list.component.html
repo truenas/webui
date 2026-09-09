@@ -15,11 +15,15 @@
         [routerLink]="['/sharing', 'nfs', 'sessions']"
       >{{ 'NFS Sessions' | translate }}</a>
 
-      <ix-table-column-picker
-        [columns]="columns()"
-        [columnPreferencesKey]="'nfsList'"
-        (columnsChange)="onColumnsChange($event)"
-      ></ix-table-column-picker>
+      <!-- Mounted once the entitlement is known, so the picker reconciles saved preferences
+           against the final column set instead of racing the entitlement fetch. -->
+      @if (hasNfsSnapshots() !== undefined) {
+        <ix-table-column-picker
+          [columns]="visibleColumns()"
+          [columnPreferencesKey]="'nfsList'"
+          (columnsChange)="onColumnsChange($event)"
+        ></ix-table-column-picker>
+      }
 
       <tn-button
         *ixRequiresRoles="requiredRoles"

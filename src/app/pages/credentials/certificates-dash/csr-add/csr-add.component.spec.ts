@@ -2,7 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -12,7 +14,6 @@ import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -36,7 +37,6 @@ import { CsrAddComponent } from './csr-add.component';
 describe('CsrAddComponent', () => {
   let spectator: Spectator<CsrAddComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   let nextButton: TnButtonHarness;
 
   const profile = {
@@ -94,7 +94,6 @@ describe('CsrAddComponent', () => {
   async function updateStepHarnesses(): Promise<void> {
     // tn-stepper renders only the active step's content, so the single visible
     // form, controls and Next button resolve straight from the document-root loader.
-    form = await loader.getHarness(IxFormHarness);
     nextButton = await loader.getHarness(TnButtonHarness.with({ label: 'Next' }));
   }
 
@@ -134,9 +133,10 @@ describe('CsrAddComponent', () => {
     await updateStepHarnesses();
 
     await selectValue('country', 'United States');
-    await form.fillForm({
-      'Subject Alternative Name': ['jobs.umbrella.com'],
-    });
+    const sanChips = await loader.getHarness(
+      TnChipInputHarness.with({ selector: '[formControlName="san"]' }),
+    );
+    await sanChips.addChip('jobs.umbrella.com');
     await setInput('state', 'Pennsylvania');
     await setInput('city', 'Racoon City');
     await setInput('organization', 'Umbrella Corp');

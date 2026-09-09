@@ -1,9 +1,8 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, input, output, signal,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, output, signal,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent,
@@ -16,6 +15,7 @@ import {
 } from '@truenas/ui-components';
 import { Observable, of, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { LicenseType } from 'app/enums/license-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport } from 'app/helptext/system/support';
 import { getLabelForContractType } from 'app/interfaces/system-info.interface';
@@ -27,8 +27,6 @@ import {
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-sys-info',
@@ -54,9 +52,6 @@ export class SysInfoComponent {
   private translate = inject(TranslateService);
   private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
-  private store$ = inject<Store<AppState>>(Store);
-
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   readonly hasLicense = input<boolean>();
   readonly licenseInfo = input<LicenseInfoInSupport>();
@@ -64,6 +59,12 @@ export class SysInfoComponent {
   readonly productionControl = input<FormControl<boolean>>();
   readonly isProactiveSupportAvailable = input<boolean>(false);
   readonly isProactiveSupportEnabled = input<boolean>(false);
+
+  /** The thumbprint exists to obtain or extend a license; enterprise-licensed systems already have one. */
+  protected readonly hasEnterpriseLicense = computed(() => {
+    const type = this.licenseInfo()?.type;
+    return type === LicenseType.EnterpriseHa || type === LicenseType.EnterpriseSingle;
+  });
 
   readonly editContacts = output();
 

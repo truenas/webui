@@ -1,7 +1,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { firstValueFrom, of, ReplaySubject } from 'rxjs';
+import { firstValueFrom, of, ReplaySubject, Subject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
@@ -88,6 +88,27 @@ describe('RebootInfoEffects', () => {
         otherNodeRebootInfo: null,
       }));
     });
+
+    it('drops a fetch started on a stale licensed status once it is corrected', () => {
+      // The HA fetch is still in flight when the entitlement corrects the status to non-HA; its
+      // late answer must not overwrite the corrected one.
+      const haInfo$ = new Subject<FailoverRebootInfo>();
+      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => (
+        method === 'failover.reboot.info' ? haInfo$ : of(fakeThisNodeRebootInfo)
+      ));
+      const dispatched: unknown[] = [];
+      spectator.service.loadRebootInfo.subscribe((action) => dispatched.push(action));
+      dispatched.length = 0;
+
+      actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: true }));
+      actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: false }));
+      haInfo$.next({ this_node: fakeThisNodeRebootInfo, other_node: fakeOtherNodeRebootInfo });
+
+      expect(dispatched).toEqual([rebootInfoLoaded({
+        thisNodeRebootInfo: fakeThisNodeRebootInfo,
+        otherNodeRebootInfo: null,
+      })]);
+    });
   });
 
   describe('subscribeToRebootInfo', () => {
@@ -107,6 +128,32 @@ describe('RebootInfoEffects', () => {
         thisNodeRebootInfo: fakeThisNodeRebootInfo,
         otherNodeRebootInfo: null,
       }));
+    });
+
+    it('replaces the subscription when the licensed status is corrected later', () => {
+      // Sign-in seeds HA as licensed, then the HA entitlement says otherwise: the first source
+      // must be torn down, or both keep pushing reboot info and race each other.
+      const haEvents$ = new Subject<ApiEvent<FailoverRebootInfo>>();
+      jest.spyOn(spectator.inject(ApiService), 'subscribe').mockImplementation((method) => (
+        method === 'failover.reboot.info'
+          ? haEvents$
+          : of({ fields: fakeThisNodeRebootInfo } as ApiEvent<SystemRebootInfo>)
+      ));
+      const dispatched: unknown[] = [];
+      spectator.service.subscribeToRebootInfo.subscribe((action) => dispatched.push(action));
+      // `actions$` replays the previous test's action to a new subscriber; start counting here.
+      dispatched.length = 0;
+
+      actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: true }));
+      actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: false }));
+      haEvents$.next({
+        fields: { this_node: fakeThisNodeRebootInfo, other_node: fakeOtherNodeRebootInfo },
+      } as ApiEvent<FailoverRebootInfo>);
+
+      expect(dispatched).toEqual([rebootInfoLoaded({
+        thisNodeRebootInfo: fakeThisNodeRebootInfo,
+        otherNodeRebootInfo: null,
+      })]);
     });
   });
 

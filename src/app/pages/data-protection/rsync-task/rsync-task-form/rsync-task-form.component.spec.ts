@@ -18,9 +18,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   SshCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
-import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -137,7 +137,11 @@ describe('RsyncTaskFormComponent', () => {
 
     it('adds a new rsync task when new form is saved', async () => {
       await (await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }))).setValue('/mnt/new');
-      await (await loader.getHarness(IxComboboxHarness.with({ label: 'User' }))).setValue('steven');
+      // `ix-user-combobox` is its own CVA — the control name is on the wrapper,
+      // so it is addressed by that rather than by the field label.
+      const user = await loader.getHarness(IxUserComboboxHarness.with({ selector: '[formControlName="user"]' }));
+      await user.setInputValue('steven');
+      await user.blur();
       await (await getSelect('direction')).selectOption('Pull');
       await (await getInput('desc')).setValue('My new task');
 
@@ -198,7 +202,9 @@ describe('RsyncTaskFormComponent', () => {
 
     it('shows values for an existing rsync task when it is open for edit', async () => {
       expect(await (await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }))).getValue()).toBe('/mnt/x/oooo');
-      expect(await (await loader.getHarness(IxComboboxHarness.with({ label: 'User' }))).getValue()).toBe('root');
+      expect(await (await loader.getHarness(
+        IxUserComboboxHarness.with({ selector: '[formControlName="user"]' }),
+      )).getInputValue()).toBe('root');
       expect(await (await getSelect('direction')).getDisplayText()).toBe('Push');
       expect(await (await getInput('desc')).getValue()).toBe('My rsync task');
 

@@ -6,18 +6,17 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnAutocompleteComponent, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent,
-  TnFormListComponent, TnFormListItemComponent, TnFormSectionComponent, TnInputComponent,
-  TnSelectComponent,
+  TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent,
+  TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  BehaviorSubject, catchError, debounceTime, distinctUntilChanged, of, shareReplay, switchMap, tap,
+  catchError, combineLatest, of, take,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enum';
 import { SmbMinProtocol, smbMinProtocolLabels } from 'app/enums/smb-min-protocol.enum';
-import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
@@ -27,20 +26,18 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import {
   advancedModeFooterAction, advancedModeSettingLabels, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   serviceConfigSavedMessage,
 } from 'app/pages/services/components/service-config-forms.constants';
-import { UserService } from 'app/services/user.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 interface BindIp {
   bindIp: string;
@@ -101,7 +98,8 @@ type SmbFormValue = ReturnType<ReturnType<typeof createSmbForm>['getRawValue']>;
     TnInputComponent,
     TnCheckboxComponent,
     TnSelectComponent,
-    TnAutocompleteComponent,
+    IxUserComboboxComponent,
+    IxGroupComboboxComponent,
     TnChipInputComponent,
     TnFormListComponent,
     TnFormListItemComponent,
@@ -111,12 +109,10 @@ type SmbFormValue = ReturnType<ReturnType<typeof createSmbForm>['getRawValue']>;
 })
 export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> implements OnInit {
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   private validatorsService = inject(IxValidatorsService);
-  private truenasConnectService = inject(TruenasConnectService);
-  private userService = inject(UserService);
-  private existenceValidation = inject(UserGroupExistenceValidationService);
   private store$ = inject(Store);
   private destroyRef = inject(DestroyRef);
 
@@ -124,29 +120,25 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
   protected isSmb1Enabled = signal(false);
   protected readonly minimumProtocolOptions = mapToOptions(smbMinProtocolLabels, this.translate);
 
-  protected isEnterprise = toSignal(this.store$.select(selectIsEnterprise), { initialValue: false });
   protected isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed), { initialValue: false });
 
-  protected isTruenasConnectConfigured = computed(() => {
-    const config = this.truenasConnectService.config();
-    return config?.status === TruenasConnectStatus.Configured;
-  });
+  private readonly hasTrueSearch = this.entitlements.entitled(EntitlementFeature.TrueSearch);
 
-  protected isSpotlightEnabled = computed(() => {
-    return this.isEnterprise() || this.isTruenasConnectConfigured();
-  });
+  // Entitlement alone by design (NAS-143012). Middleware validates `search_protocols` against
+  // `truesearch.unavailable_reasons` (boot-pool placement + the TRUESEARCH entitlement) and never
+  // against TrueNAS Connect, so SMB Spotlight needs no Connect check. The WebShare `search`
+  // toggle does, because WebShare itself is a Connect feature — see service-webshare.
+  protected isSpotlightEnabled = computed(() => Boolean(this.hasTrueSearch()));
 
-  protected shouldShowTruenasConnectNotice = computed(() => {
-    return !this.isEnterprise() && !this.isTruenasConnectConfigured();
-  });
+  /** `=== false` so the licensing notice is not shown while entitlements are still loading. */
+  protected shouldShowSpotlightNotice = computed(() => this.hasTrueSearch() === false);
 
   protected isStatefulFailoverEnabled = computed(() => {
     return this.isHaLicensed() && !this.hasIncompatibleShares() && !this.isSmb1Enabled();
   });
 
   /**
-   * Reactively enable/disable the Spotlight checkbox based on TrueNAS Connect configuration
-   * and Enterprise status. On non-Enterprise systems, Spotlight requires TrueNAS Connect.
+   * Reactively enable/disable the Spotlight checkbox on the TRUESEARCH entitlement.
    *
    * Reactively enable/disable the Stateful Failover checkbox based on HA license,
    * incompatible shares, and SMB1 status.
@@ -159,6 +151,7 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
       if (isEnabled) {
         this.form.controls.spotlight_search.enable();
       } else {
+        this.form.controls.spotlight_search.setValue(false, { emitEvent: false });
         this.form.controls.spotlight_search.disable();
       }
     });
@@ -244,57 +237,7 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
 
   readonly encryptionOptions = mapToOptions(smbEncryptionLabels, this.translate);
 
-  // Server-searched option streams for the Guest Account / Administrators Group
-  // autocompletes. switchMap cancels in-flight queries on new input; catchError
-  // keeps one failed DS query from killing the stream for the rest of the form's
-  // life — the dropdown shows "Options cannot be loaded" via [noResultsText],
-  // the same in-panel signal the old ix-combobox rendered.
-  protected readonly usersFetchFailed = signal(false);
-  protected readonly usersLoading = signal(false);
-  protected readonly userSearch$ = new BehaviorSubject('');
-  protected readonly userOptions$ = this.userSearch$.pipe(
-    debounceTime(defaultDebounceTimeMs),
-    distinctUntilChanged(),
-    tap(() => this.usersLoading.set(true)),
-    switchMap((query) => this.userService.userQueryDsCache(query).pipe(
-      tap(() => this.usersFetchFailed.set(false)),
-      catchError((error: unknown) => {
-        console.error('User autocomplete fetch failed:', error);
-        this.usersFetchFailed.set(true);
-        return of([]);
-      }),
-    )),
-    map((users) => users.map((user) => ({ label: user.username, value: user.username }))),
-    tap(() => this.usersLoading.set(false)),
-    shareReplay({ bufferSize: 1, refCount: true }),
-  );
-
-  protected readonly groupsFetchFailed = signal(false);
-  protected readonly groupsLoading = signal(false);
-  protected readonly groupSearch$ = new BehaviorSubject('');
-  protected readonly groupOptions$ = this.groupSearch$.pipe(
-    debounceTime(defaultDebounceTimeMs),
-    distinctUntilChanged(),
-    tap(() => this.groupsLoading.set(true)),
-    switchMap((query) => this.userService.groupQueryDsCache(query).pipe(
-      tap(() => this.groupsFetchFailed.set(false)),
-      catchError((error: unknown) => {
-        console.error('Group autocomplete fetch failed:', error);
-        this.groupsFetchFailed.set(true);
-        return of([]);
-      }),
-    )),
-    map((groups) => groups.map((group) => ({ label: group.group, value: group.group }))),
-    tap(() => this.groupsLoading.set(false)),
-    shareReplay({ bufferSize: 1, refCount: true }),
-  );
-
   ngOnInit(): void {
-    // Parity with the former ix-user/group-combobox controls: custom-typed values
-    // must exist on the system (empty values pass).
-    this.form.controls.guest.addAsyncValidators(this.existenceValidation.validateUserExists());
-    this.form.controls.admin_group.addAsyncValidators(this.existenceValidation.validateGroupExists());
-
     this.form.controls.minimum_protocol.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => this.isSmb1Enabled.set(value === SmbMinProtocol.Smb1));
@@ -307,7 +250,12 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
       },
     });
 
-    this.loadFormConfig(this.api.call('smb.config'), (config) => {
+    // Waits for a real entitlement answer so a server-side-enabled Spotlight is never dropped
+    // merely because `smb.config` resolved before entitlements did.
+    this.loadFormConfig(combineLatest([
+      this.api.call('smb.config'),
+      this.entitlements.entitled$(EntitlementFeature.TrueSearch).pipe(take(1)),
+    ]), ([config, hasTrueSearch]) => {
       const searchProtocolEnabled = config.search_protocols.includes(smbSearchSpotlight);
       // The rows are pushed, not patched, so the patch has to start from an empty array to stay
       // idempotent — `loadFormConfig` replays it on retry, and without this every bind IP would
@@ -317,7 +265,8 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
       this.configuredBindIps.set(config.bindip);
       this.form.patchValue({
         ...config,
-        spotlight_search: searchProtocolEnabled,
+        // A stale `true` must not be restored (and later submitted) without the entitlement.
+        spotlight_search: searchProtocolEnabled && hasTrueSearch,
         bindip: config.bindip.map((ip) => ({ bindIp: ip })),
       });
       this.isSmb1Enabled.set(config.minimum_protocol === SmbMinProtocol.Smb1);
@@ -334,17 +283,6 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
     this.form.controls.bindip.removeAt(index);
   }
 
-  protected openTruenasConnectModal(): void {
-    this.truenasConnectService.openStatusModal();
-  }
-
-  protected onTruenasConnectLinkKeydown(event: KeyboardEvent): void {
-    if (event.key !== 'Enter' && event.key !== ' ') {
-      return;
-    }
-    event.preventDefault(); // Prevents page scroll on Space
-    this.openTruenasConnectModal();
-  }
 
   // Built from `allValues`, not `changedValues`, so the disabled controls — `spotlight_search` /
   // `stateful_failover` — still reach the API.

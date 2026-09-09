@@ -21,6 +21,7 @@ import { DetailsTableHarness } from 'app/modules/details-table/details-table.har
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxPermissionsHarness } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.harness';
+import { IxGroupComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/users/user-form/additional-details-section/additional-details-section.component';
@@ -65,6 +66,7 @@ describe('AdditionalDetailsSectionComponent', () => {
     sshpubkey: null,
     group: {
       id: 101,
+      bsdgrp_group: 'test-group',
     },
     groups: [102, 103],
     immutable: false,
@@ -747,6 +749,23 @@ describe('AdditionalDetailsSectionComponent', () => {
 
       const defaultPermsCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Default Permissions' }));
       expect(defaultPermsCheckbox).not.toBeNull();
+    });
+  });
+
+  describe('primary group on an edit form', () => {
+    it('names the group the user already has, before the field is touched', async () => {
+      // The control holds a group id and the directory is not queried until the
+      // field is focused, so the picker has nothing to name 101 with — it
+      // opened reading "101" until the loaded user's own group was pinned.
+      spectator = createComponent({ props: { editingUser: mockUser } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const table = await loader.getHarness(DetailsTableHarness);
+      await (await table.getHarnessForItem('Groups', EditableHarness)).open();
+
+      const primaryGroup = await loader.getHarness(IxGroupComboboxHarness);
+
+      expect(await primaryGroup.getInputValue()).toBe('test-group');
     });
   });
 

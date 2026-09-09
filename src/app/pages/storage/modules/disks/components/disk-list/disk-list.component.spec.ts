@@ -1,6 +1,7 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
@@ -11,6 +12,8 @@ import { NEVER, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -39,7 +42,7 @@ import {
 import {
   DiskWipeDialog,
 } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
-import { LicenseService } from 'app/services/license.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('DiskListComponent', () => {
@@ -132,9 +135,7 @@ describe('DiskListComponent', () => {
           close: jest.fn(),
         }) as unknown as DialogRef),
       }),
-      mockProvider(LicenseService, {
-        hasSed$: of(true),
-      }),
+      mockEntitlements(),
       provideMockStore({
         selectors: [
           {
@@ -551,9 +552,7 @@ describe('DiskListComponent - without SED license', () => {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TnDialog),
-      mockProvider(LicenseService, {
-        hasSed$: of(false),
-      }),
+      mockEntitlements([EntitlementFeature.Sed]),
       provideMockStore({
         selectors: [
           {
@@ -575,10 +574,68 @@ describe('DiskListComponent - without SED license', () => {
     table = await loader.getHarness(TnTableHarness);
   });
 
-  it('hides SED column when hasSed$ is false', async () => {
+  it('hides the SED column when the system is not entitled to SED', async () => {
     const headerRow = await table.getHeaderTexts();
 
     expect(headerRow).not.toContain('Self-Encrypting Drive (SED)');
     expect(headerRow).toEqual(['Name', 'Serial', 'Disk Size', 'Pool']);
+  });
+});
+
+describe('DiskListComponent when the SED entitlement resolves late', () => {
+  let spectator: Spectator<DiskListComponent>;
+  let loader: HarnessLoader;
+  // Saved preferences come from memory, `truenas.entitlements.info` is a round trip: the picker
+  // must not reconcile preferences against a column set the entitlement has not decided yet.
+  const hasSed = signal<boolean | undefined>(undefined);
+
+  const createComponent = createComponentFactory({
+    component: DiskListComponent,
+    imports: [
+      MockComponent(PageHeaderComponent),
+      BasicSearchComponent,
+      TableColumnPickerComponent,
+      TableDetailsRowComponent,
+    ],
+    providers: [
+      mockAuth(),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.empty()),
+      }),
+      mockProvider(TnDialog),
+      mockProvider(EntitlementsService, {
+        entitled: () => hasSed,
+        entitled$: () => of(true),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectPreferences,
+            value: {},
+          },
+        ],
+      }),
+      mockApi([
+        mockCall('disk.query', [] as Disk[]),
+        mockCall('disk.details', { unused: [], used: [] }),
+      ]),
+    ],
+  });
+
+  beforeEach(() => {
+    hasSed.set(undefined);
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('mounts the column picker only once the entitlement is known, with the SED column in it', async () => {
+    expect(spectator.query(TableColumnPickerComponent)).toBeNull();
+
+    hasSed.set(true);
+    spectator.detectChanges();
+
+    expect(spectator.query(TableColumnPickerComponent)).not.toBeNull();
+    const picker = await loader.getHarness(TnSelectHarness);
+    expect(await picker.getOptions()).toContain('Self-Encrypting Drive (SED)');
   });
 });

@@ -3,10 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import {
-  TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
-} from '@truenas/ui-components';
-import { of, throwError } from 'rxjs';
+import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
+import { of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
@@ -14,6 +13,7 @@ import { Group } from 'app/interfaces/group.interface';
 import { SshConfig } from 'app/interfaces/ssh-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { IxGroupChipsHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -42,8 +42,8 @@ describe('ServiceSshComponent', () => {
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
-  const getPasswordLoginGroups = (): Promise<TnChipInputHarness> => loader.getHarness(
-    TnChipInputHarness.with({ selector: '[formControlName="password_login_groups"]' }),
+  const getPasswordLoginGroups = (): Promise<IxGroupChipsHarness> => loader.getHarness(
+    IxGroupChipsHarness.with({ selector: '[formControlName="password_login_groups"]' }),
   );
   const hasInput = async (name: string): Promise<boolean> => (await loader.getAllHarnesses(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -157,20 +157,25 @@ describe('ServiceSshComponent', () => {
     ]);
   });
 
-  // The async existence check is the one behaviour that moved out of ix-group-chips and into
-  // this component, so it needs a case where it actually fails: the suite-wide
-  // `getGroupByNameCached` mock answers `of(null)` for an unknown group, which the validator
-  // reads as "exists", and every other test would pass with the validator not wired at all.
-  it('blocks Save while a typed group does not exist on the system', () => {
-    // `Once`, so the erroring lookup cannot leak into the submit tests below: the validator
-    // makes exactly one call per group, and this control holds exactly one.
-    const lookup = jest.spyOn(spectator.inject(UserService), 'getGroupByNameCached')
-      .mockImplementationOnce(() => throwError(() => new Error('Group not found')));
+  // The existence check now lives in `ix-group-chips`, which reaches the system through
+  // UserDirectoryService. It needs a case where it actually fails: the suite-wide
+  // `group.query` mock answers every lookup with the full list, so every other test would
+  // pass with the validation not wired at all.
+  it('blocks Save while a typed group does not exist on the system', async () => {
+    // An EMPTY result is what the directory reads as "no such group" — a lookup that
+    // ERRORS is a transport failure and deliberately leaves the name unflagged.
+    spectator.inject(MockApiService).mockCall('group.query', []);
 
     const groups = spectator.component.form.controls.password_login_groups;
     groups.setValue(['ghost-group']);
 
-    expect(lookup).toHaveBeenCalledWith('ghost-group');
+    // The field debounces before it asks, so the verdict lands a tick later.
+    await new Promise((resolve) => {
+      setTimeout(resolve, 400);
+    });
+    spectator.detectChanges();
+
+    expect(api.call).toHaveBeenCalledWith('group.query', [[['name', '=', 'ghost-group']]]);
     expect(groups.hasError('groupsDoNotExist')).toBe(true);
     expect(spectator.component.canSubmit()).toBe(false);
   });
@@ -181,7 +186,8 @@ describe('ServiceSshComponent', () => {
     await groups.typeText('dummy');
 
     expect(await groups.getSuggestions()).toEqual(['dummy-group']);
-    expect(spectator.inject(UserService).groupQueryDsCache).toHaveBeenCalledWith('dummy');
+    // The directory passes the full query shape: (search, hideBuiltIn, offset, extraFilters).
+    expect(spectator.inject(UserService).groupQueryDsCache).toHaveBeenCalledWith('dummy', false, 0, []);
   });
 
   it('exposes a single footer action that flips between Advanced and Basic Settings', () => {

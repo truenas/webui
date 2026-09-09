@@ -7,14 +7,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnAutocompleteComponent, TnFormErrorsComponent, TnFormFieldComponent, TnFormListComponent,
-  TnFormListItemComponent, TnFormSectionComponent, TnSelectComponent,
+  TnFormErrorsComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnFormSectionComponent,
+  TnSelectComponent,
 } from '@truenas/ui-components';
 import { isNumber } from 'lodash-es';
-import {
-  BehaviorSubject, catchError, combineLatest, concatMap, debounceTime, distinctUntilChanged, firstValueFrom, from,
-  map, mergeMap, Observable, of, shareReplay, switchMap, tap, toArray,
-} from 'rxjs';
+import { concatMap, firstValueFrom, from, mergeMap, Observable, of, toArray } from 'rxjs';
+import { ComboboxQueryType } from 'app/enums/combobox.enum';
 import { NfsAclTag, smbAclTagLabels } from 'app/enums/nfs-acl.enum';
 import { Role } from 'app/enums/role.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
@@ -29,10 +27,12 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { DirectoryQueryOptions, PrincipalOption } from 'app/services/user-directory.service';
 import { UserService } from 'app/services/user.service';
 
 type NameOrId = string | number | null;
@@ -62,7 +62,8 @@ interface FormAclEntry {
     TnFormListComponent,
     TnFormListItemComponent,
     TnFormErrorsComponent,
-    TnAutocompleteComponent,
+    IxUserComboboxComponent,
+    IxGroupComboboxComponent,
     TranslateModule,
   ],
 })
@@ -118,76 +119,25 @@ export class SmbAclComponent extends IxFormHostForm implements OnInit {
   readonly helptext = helptextSharingSmb;
   readonly nfsAclTag = NfsAclTag;
 
-  // Options seeded from the loaded ACL so existing uid/gid values display as
-  // names (the search query below only covers what the user has typed).
-  private readonly initialUserOptions$ = new BehaviorSubject<Option[]>([]);
-  private readonly initialGroupOptions$ = new BehaviorSubject<Option[]>([]);
+  /**
+   * Names for the ids already on the ACL, resolved once when it loads. The
+   * search cannot produce them — an entry holds a uid/gid, not a name — so they
+   * are pinned into each field's list with `[extraOptions]`, which is what the
+   * old provider's `initialOptions` did.
+   */
+  protected readonly initialUserOptions = signal<PrincipalOption[]>([]);
+  protected readonly initialGroupOptions = signal<PrincipalOption[]>([]);
 
-  // Server-searched option streams for the per-entry user/group autocompletes.
-  // All entries share one stream per kind — options only matter while that
-  // dropdown is open — and shareReplay collapses the `async` subscribers into a
-  // single SMB directory query per search. Option values are uid/gid numbers;
-  // free-typed names commit as strings and are resolved to ids on submit
-  // (see `getAclEntriesFromForm`), matching the old combobox behavior.
-  // On a failed fetch the stream stays alive with empty options and the dropdown
-  // shows "Options cannot be loaded" via [noResultsText] — the same in-panel
-  // signal the old ix-combobox rendered (a modal per failed keystroke query
-  // would be far noisier than the transient panel notice).
-  protected readonly usersFetchFailed = signal(false);
-  protected readonly usersLoading = signal(false);
-  protected readonly userSearch$ = new BehaviorSubject('');
-  protected readonly userOptions$ = combineLatest([
-    this.userSearch$.pipe(
-      debounceTime(defaultDebounceTimeMs),
-      distinctUntilChanged(),
-      tap(() => this.usersLoading.set(true)),
-      switchMap((query) => this.userService.smbUserQueryDsCache(query).pipe(
-        tap(() => this.usersFetchFailed.set(false)),
-        catchError((error: unknown) => {
-          console.error('SMB user autocomplete fetch failed:', error);
-          this.usersFetchFailed.set(true);
-          return of([] as User[]);
-        }),
-      )),
-      map((users) => users.map((user) => ({ label: user.username, value: user.uid }))),
-      tap(() => this.usersLoading.set(false)),
-    ),
-    this.initialUserOptions$,
-  ]).pipe(
-    map(([options, initial]) => [
-      ...initial.filter((item) => !options.some((option) => option.value === item.value)),
-      ...options,
-    ]),
-    shareReplay({ bufferSize: 1, refCount: true }),
-  );
+  /** SMB ACL entries hold uids/gids, and only SMB-capable principals qualify. */
+  protected readonly smbUserOptions: DirectoryQueryOptions = {
+    queryType: ComboboxQueryType.Smb,
+    valueField: 'uid',
+  };
 
-  protected readonly groupsFetchFailed = signal(false);
-  protected readonly groupsLoading = signal(false);
-  protected readonly groupSearch$ = new BehaviorSubject('');
-  protected readonly groupOptions$ = combineLatest([
-    this.groupSearch$.pipe(
-      debounceTime(defaultDebounceTimeMs),
-      distinctUntilChanged(),
-      tap(() => this.groupsLoading.set(true)),
-      switchMap((query) => this.userService.smbGroupQueryDsCache(query, false).pipe(
-        tap(() => this.groupsFetchFailed.set(false)),
-        catchError((error: unknown) => {
-          console.error('SMB group autocomplete fetch failed:', error);
-          this.groupsFetchFailed.set(true);
-          return of([] as Group[]);
-        }),
-      )),
-      map((groups) => groups.map((group) => ({ label: group.group, value: group.gid }))),
-      tap(() => this.groupsLoading.set(false)),
-    ),
-    this.initialGroupOptions$,
-  ]).pipe(
-    map(([options, initial]) => [
-      ...initial.filter((item) => !options.some((option) => option.value === item.value)),
-      ...options,
-    ]),
-    shareReplay({ bufferSize: 1, refCount: true }),
-  );
+  protected readonly smbGroupOptions: DirectoryQueryOptions = {
+    queryType: ComboboxQueryType.Smb,
+    valueField: 'gid',
+  };
 
   ngOnInit(): void {
     // Share name arrives via the `shareName` input from the side-panel host.
@@ -338,8 +288,8 @@ export class SmbAclComponent extends IxFormHostForm implements OnInit {
           }
         });
 
-        this.initialUserOptions$.next(userOptions);
-        this.initialGroupOptions$.next(groupOptions);
+        this.initialUserOptions.set(userOptions);
+        this.initialGroupOptions.set(groupOptions);
         this.isLoading.set(false);
       });
   }

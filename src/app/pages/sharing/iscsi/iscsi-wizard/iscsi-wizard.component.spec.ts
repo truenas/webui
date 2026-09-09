@@ -11,8 +11,8 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { IscsiExtentType, IscsiExtentUsefor } from 'app/enums/iscsi.enum';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -60,7 +60,6 @@ describe('IscsiWizardComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockApi([
-        mockCall('fc.capable', true),
         mockCall('iscsi.global.sessions', [] as IscsiGlobalSession[]),
         mockCall('iscsi.extent.query', []),
         mockCall('iscsi.target.query', []),
@@ -96,6 +95,7 @@ describe('IscsiWizardComponent', () => {
         mockCall('fcport.create'),
         mockCall('fc.fc_host.update'),
       ]),
+      mockEntitlements(),
       provideMockStore({
         selectors: [
           {
@@ -111,9 +111,6 @@ describe('IscsiWizardComponent', () => {
             selector: selectSystemInfo,
             value: {
               version: 'TrueNAS-SCALE-22.12',
-              license: {
-                features: [{ name: LicenseFeature.FibreChannel, start_date: null, expires_at: null }],
-              },
             } as SystemInfo,
           },
         ],

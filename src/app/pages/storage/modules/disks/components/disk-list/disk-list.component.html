@@ -4,11 +4,15 @@
     (queryChange)="onListFiltered($event)"
   ></ix-basic-search>
 
-  <ix-table-column-picker
-    [columns]="columns()"
-    [columnPreferencesKey]="'diskList'"
-    (columnsChange)="onColumnsChange($event)"
-  ></ix-table-column-picker>
+  <!-- Mounted once the SED entitlement is known, so the picker reconciles saved preferences
+       against the final column set instead of racing the entitlement fetch. -->
+  @if (hasSedEntitlement() !== undefined) {
+    <ix-table-column-picker
+      [columns]="visibleColumns()"
+      [columnPreferencesKey]="'diskList'"
+      (columnsChange)="onColumnsChange($event)"
+    ></ix-table-column-picker>
+  }
 </ix-page-header>
 
 <!--

@@ -4,8 +4,7 @@ import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angula
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCheckboxComponent, TnDialog,
-  TnFormFieldComponent, TnSpinnerComponent,
+  TnButtonComponent, TnCardComponent, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnSpinnerComponent,
 } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import { Observable, of } from 'rxjs';
@@ -14,8 +13,8 @@ import { AclType } from 'app/enums/acl-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Acl, NfsAclItem, PosixAclItem } from 'app/interfaces/acl.interface';
-import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
-import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { CanComponentDeactivate } from 'app/modules/unsaved-changes/unsaved-form.guard';

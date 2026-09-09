@@ -6,25 +6,22 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnBannerComponent,
-  TnBannerHarness,
-  TnCheckboxHarness,
-  TnChipInputHarness,
-  TnDialog,
-  TnFormFieldHarness,
-  TnInputHarness,
-  TnSelectHarness,
+  TnBannerComponent, TnBannerHarness, TnCheckboxHarness, TnChipInputHarness, TnDialog, TnFormFieldHarness,
+  TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { of, Subject, throwError } from 'rxjs';
+import type { Observable } from 'rxjs';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import {
   provideTnFormFieldDismissibleErrors,
   provideTnFormFieldErrors,
 } from 'app/core/providers/tn-form-field-errors.provider';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
@@ -46,11 +43,13 @@ import {
 } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { IxGroupChipsHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbUsersWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-users-warning/smb-users-warning.component';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
@@ -117,6 +116,12 @@ describe('SmbFormComponent', () => {
   const getTnChipInput = (name: string): Promise<TnChipInputHarness> => loader.getHarness(
     TnChipInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
+
+  // The audit Watch/Ignore lists are `ix-group-chips`, so the control name sits on
+  // that wrapper — its own harness reaches the chip input nested inside.
+  const getGroupChips = (name: string): Promise<IxGroupChipsHarness> => loader.getHarness(
+    IxGroupChipsHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
   // tn-select fires a value change even when re-selecting the currently displayed option,
   // which re-runs the purpose presets and wipes edit-loaded values. Mirror the Material
   // dedupe by only selecting when the displayed purpose actually differs.
@@ -143,6 +148,7 @@ describe('SmbFormComponent', () => {
     ],
     providers: [
       mockAuth(),
+      mockEntitlements(),
       mockApi([
         mockCall('group.query', [{ id: 1, group: 'test', builtin: false }] as Group[]),
         mockCall('group.get_group_obj', { gr_gid: 1000, gr_name: 'test', gr_mem: [] }),
@@ -824,6 +830,18 @@ describe('SmbFormComponent', () => {
       ]);
     });
 
+    it('omits Veeam Repository Share when the system is not entitled to SMB_VEEAM', async () => {
+      jest.spyOn(spectator.inject(EntitlementsService), 'entitled$').mockReturnValue(of(false));
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
+
+      const purposeSelect = await getTnSelect('purpose');
+      await purposeSelect.open();
+
+      expect(await purposeSelect.getOptions()).not.toContain('Veeam Repository Share');
+    });
+
     it('should autofill name from path if name is empty', async () => {
       // Verify name is initially empty
       expect(spectator.component.form.controls.name.value).toBeFalsy();
@@ -1178,7 +1196,7 @@ describe('SmbFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(false);
 
       // Add a group to watch list
-      const watchListChips = await getTnChipInput('watch_list');
+      const watchListChips = await getGroupChips('watch_list');
       await watchListChips.addChip('test');
 
       spectator.detectChanges();
@@ -1203,7 +1221,7 @@ describe('SmbFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(false);
 
       // Add a group to ignore list
-      const ignoreListChips = await getTnChipInput('ignore_list');
+      const ignoreListChips = await getGroupChips('ignore_list');
       await ignoreListChips.addChip('test');
 
       spectator.detectChanges();
@@ -1267,7 +1285,7 @@ describe('SmbFormComponent', () => {
       expect(getErrorText()).toContain('At least one group must be specified');
 
       // Add a group to watch list
-      const watchListChips = await getTnChipInput('watch_list');
+      const watchListChips = await getGroupChips('watch_list');
       await watchListChips.addChip('test');
 
       spectator.detectChanges();
@@ -1287,9 +1305,9 @@ describe('SmbFormComponent', () => {
     });
 
     it('should show error when non-existent group is entered in watch list', async () => {
-      // Mock API to return error for non-existent group
-      const userService = spectator.inject(UserService);
-      jest.spyOn(userService, 'getGroupByNameCached').mockReturnValue(throwError(() => new Error('Group not found')));
+      // An EMPTY result is what the directory reads as "no such group"; a lookup
+      // that ERRORS is a transport failure and leaves the name unflagged.
+      spectator.inject(MockApiService).mockCall('group.query', []);
 
       // Fill in required fields and enable audit logging
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
@@ -1323,9 +1341,9 @@ describe('SmbFormComponent', () => {
     });
 
     it('should show error when non-existent group is entered in ignore list', async () => {
-      // Mock API to return error for non-existent group
-      const userService = spectator.inject(UserService);
-      jest.spyOn(userService, 'getGroupByNameCached').mockReturnValue(throwError(() => new Error('Group not found')));
+      // An EMPTY result is what the directory reads as "no such group"; a lookup
+      // that ERRORS is a transport failure and leaves the name unflagged.
+      spectator.inject(MockApiService).mockCall('group.query', []);
 
       // Fill in required fields and enable audit logging
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
@@ -1400,16 +1418,14 @@ describe('SmbFormComponent', () => {
     });
 
     it('should disable save button during async validation', async () => {
-      // Mock API with a delayed response to catch the PENDING state
+      // A delayed response, to catch the PENDING state.
       const userService = spectator.inject(UserService) as {
-        getGroupByNameCached: jest.Mock;
         isGroupInAutocompleteCache: jest.Mock;
         isGroupCachedAsNonExistent: jest.Mock;
       };
-      const delayedObservable$ = new Subject<Group>();
-
-      // Override mock methods to ensure delayed observable is used
-      userService.getGroupByNameCached = jest.fn(() => delayedObservable$.asObservable());
+      const delayedObservable$ = new Subject<Group[]>();
+      jest.spyOn(spectator.inject(ApiService), 'call')
+        .mockReturnValue(delayedObservable$.asObservable() as Observable<never>);
       userService.isGroupInAutocompleteCache = jest.fn(() => false);
       userService.isGroupCachedAsNonExistent = jest.fn(() => false);
 
@@ -1439,13 +1455,13 @@ describe('SmbFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(false);
 
       // Complete the async validation
-      delayedObservable$.next({
+      delayedObservable$.next([{
         id: 1,
         gid: 1000,
         name: 'test',
         group: 'test',
         builtin: false,
-      } as Group);
+      } as Group]);
       delayedObservable$.complete();
 
       spectator.detectChanges();

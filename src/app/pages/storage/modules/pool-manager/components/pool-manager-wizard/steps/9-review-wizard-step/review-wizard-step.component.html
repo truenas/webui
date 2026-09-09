@@ -77,7 +77,7 @@
   }
 </div>
 
-@if (!isEnterprise()) {
+@if (hasSupport() === false) {
   <div class="force-topology">
     <tn-form-field
       [tooltip]="'Bypass topology recommendation checks (equal data VDEV width, RAIDZ/mirror width limits, and special/dedup redundancy). Not recommended.' | translate"
