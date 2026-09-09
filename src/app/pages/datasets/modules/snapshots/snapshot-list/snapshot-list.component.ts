@@ -100,12 +100,16 @@ export class SnapshotListComponent implements OnInit {
   protected readonly requiredRoles = [Role.SnapshotDelete];
   searchQuery = signal('');
   dataProvider = new ArrayDataProvider<ZfsSnapshot>();
-  snapshots: ZfsSnapshot[] = [];
+  /**
+   * Written only by `setSnapshots`, which keeps `snapshotNames` and the selection in step
+   * with it. Private so the compiler enforces that rather than a comment — a second write
+   * site would leave the name index stale, and the selection prune trusts that index.
+   */
+  private snapshots: ZfsSnapshot[] = [];
   /**
    * The names in `snapshots`, so a selection can be pruned in constant time per selected
    * row — a dataset can hold tens of thousands of snapshots, and `onSelectionChange` runs
-   * on every tick of a checkbox. Rebuilt with `snapshots` in `setSnapshots`, which is the
-   * only place either is written.
+   * on every tick of a checkbox. Rebuilt with `snapshots` in `setSnapshots`.
    */
   private snapshotNames = new Set<string>();
   protected readonly showExtraColumns = signal(false);
@@ -335,25 +339,39 @@ export class SnapshotListComponent implements OnInit {
   /**
    * @param options `keepPage` re-runs the same query without moving the user — see
    * `BaseDataProvider.setFilter`. A query the user typed always starts at page 1.
+   *
+   * The dataset filter is CHOSEN before it is applied rather than applied and then undone.
+   * Applying it first and falling back on an empty result cost the user their page: the
+   * discarded pass ran with `keepPage`, so it clamped the page down against zero rows, and
+   * the real pass then started from page 1. It also put an empty page on `currentPage$`
+   * that nothing wanted to render.
    */
   protected onListFiltered(query: string, { keepPage = false }: { keepPage?: boolean } = {}): void {
     this.searchQuery.set(query);
     const datasetParam = this.route.snapshot.paramMap.get('dataset');
+    const isDatasetRoute = Boolean(datasetParam) && query === datasetParam;
 
-    if (datasetParam && query === datasetParam) {
-      this.dataProvider.setFilter({
-        list: this.snapshots,
-        query,
-        columnKeys: ['dataset'],
-        exact: true,
-      }, { keepPage });
+    this.dataProvider.setFilter(
+      isDatasetRoute && this.hasSnapshotsInDataset(query)
+        ? {
+            list: this.snapshots,
+            query,
+            columnKeys: ['dataset'],
+            exact: true,
+          }
+        : this.buildSearchFilter(query),
+      { keepPage },
+    );
+  }
 
-      if (this.dataProvider.totalRows === 0) {
-        this.dataProvider.setFilter(this.buildSearchFilter(query), { keepPage });
-      }
-    } else {
-      this.dataProvider.setFilter(this.buildSearchFilter(query), { keepPage });
-    }
+  /**
+   * Mirrors what the `exact` dataset filter would match — `filterTableRows` compares both
+   * sides lowercased — so the choice above lands on the same branch the discarded pass used
+   * to reveal.
+   */
+  private hasSnapshotsInDataset(query: string): boolean {
+    const target = query.toLowerCase();
+    return this.snapshots.some((snapshot) => snapshot.dataset?.toLowerCase() === target);
   }
 
   /**

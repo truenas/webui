@@ -105,6 +105,18 @@ describe('SnapshotListComponent', () => {
     table = await loader.getHarness(TnTableHarness);
   });
 
+  /**
+   * Feeds the component through the store, the way the real page gets its rows. `snapshots`
+   * is private precisely so it can't be written behind `setSnapshots`, which is what keeps
+   * the name index and the selection in step with the list.
+   */
+  function setSnapshots(snapshots: ZfsSnapshot[]): void {
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectSnapshots, snapshots);
+    store$.refreshState();
+    spectator.detectChanges();
+  }
+
   it('should show table rows', async () => {
     expect(await table.getRowCount()).toBe(2);
 
@@ -196,8 +208,8 @@ describe('SnapshotListComponent', () => {
     const testSnapshots = [
       {
         id: '1',
-        name: '/dozer/test-dataset@snapshot1',
-        dataset: '/dozer/test-dataset',
+        name: 'test-dataset@snapshot1',
+        dataset: 'test-dataset',
         snapshot_name: 'snapshot1',
       } as ZfsSnapshot,
       {
@@ -214,7 +226,7 @@ describe('SnapshotListComponent', () => {
       } as ZfsSnapshot,
     ];
 
-    component.snapshots = testSnapshots;
+    setSnapshots(testSnapshots);
 
     const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
 
@@ -222,8 +234,10 @@ describe('SnapshotListComponent', () => {
 
     expect(component.searchQuery()).toBe('test-dataset');
 
+    // One call: the dataset filter is chosen up front, not applied and then reconsidered.
+    expect(setFilterSpy).toHaveBeenCalledTimes(1);
     expect(setFilterSpy).toHaveBeenCalledWith({
-      list: component.snapshots,
+      list: testSnapshots,
       query: 'test-dataset',
       columnKeys: ['dataset'],
       exact: true,
@@ -248,21 +262,18 @@ describe('SnapshotListComponent', () => {
       } as ZfsSnapshot,
     ];
 
-    component.snapshots = testSnapshots;
+    setSnapshots(testSnapshots);
 
     const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
 
     spectator.triggerEventHandler('ix-basic-search', 'queryChange', 'test-dataset');
 
-    expect(setFilterSpy).toHaveBeenCalledTimes(2);
-    expect(setFilterSpy).toHaveBeenNthCalledWith(1, {
-      list: component.snapshots,
-      query: 'test-dataset',
-      columnKeys: ['dataset'],
-      exact: true,
-    }, { keepPage: false });
-    expect(setFilterSpy).toHaveBeenNthCalledWith(2, {
-      list: component.snapshots,
+    // No snapshot sits in a dataset called `test-dataset`, so the name filter is chosen
+    // directly. The dataset filter is never applied: applying it and undoing it clamped
+    // the page against its own empty result and cost the user their place.
+    expect(setFilterSpy).toHaveBeenCalledTimes(1);
+    expect(setFilterSpy).toHaveBeenCalledWith({
+      list: testSnapshots,
       query: 'test-dataset',
       columnKeys: ['name'],
     }, { keepPage: false });
@@ -278,7 +289,7 @@ describe('SnapshotListComponent', () => {
     spectator.triggerEventHandler('ix-basic-search', 'queryChange', '1.49');
 
     expect(setFilterSpy).toHaveBeenCalledWith({
-      list: component.snapshots,
+      list: fakeZfsSnapshotDataSource,
       query: '1.49',
       columnKeys: ['name'],
     }, { keepPage: false });
@@ -338,7 +349,7 @@ describe('SnapshotListComponent', () => {
       } as ZfsSnapshot,
     ];
 
-    component.snapshots = testSnapshots;
+    setSnapshots(testSnapshots);
 
     const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
 
@@ -346,7 +357,7 @@ describe('SnapshotListComponent', () => {
 
     expect(setFilterSpy).toHaveBeenCalledTimes(1);
     expect(setFilterSpy).toHaveBeenCalledWith({
-      list: component.snapshots,
+      list: testSnapshots,
       query: 'dozer/boom',
       columnKeys: ['dataset'],
       exact: true,
@@ -486,5 +497,74 @@ describe('SnapshotListComponent — paging', () => {
     expect(await table.isRowSelected(0)).toBe(true);
     expect(await table.getCellText(0, 'snapshot_name')).toBe(secondPagePick);
     expect(firstPagePick).not.toBe(secondPagePick);
+  });
+});
+
+describe('SnapshotListComponent — paging on a dataset route', () => {
+  // The case the dataset fallback exists for: the route names `tank`, which holds no
+  // snapshots of its own, while its children hold enough for three pages.
+  const childSnapshots: ZfsSnapshot[] = Array.from({ length: 120 }, (_, index) => ({
+    id: String(index),
+    name: `tank/child@snap-${String(index).padStart(3, '0')}`,
+    dataset: 'tank/child',
+    snapshot_name: `snap-${String(index).padStart(3, '0')}`,
+  } as ZfsSnapshot));
+
+  let spectator: Spectator<SnapshotListComponent>;
+  let loader: HarnessLoader;
+  let pager: TnTablePagerHarness;
+
+  const createComponent = createComponentFactory({
+    component: SnapshotListComponent,
+    imports: [
+      MockComponent(PageHeaderComponent),
+      BasicSearchComponent,
+      ReactiveFormsModule,
+      MockComponent(IxDateComponent),
+    ],
+    declarations: [
+      FakeFormatDateTimePipe,
+    ],
+    providers: [
+      mockAuth(),
+      mockApi([mockCall('pool.snapshot.query', childSnapshots)]),
+      mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
+      mockProvider(FormSidePanelService, { open: jest.fn(() => SlideInResult.empty()) }),
+      provideMockStore({
+        selectors: [
+          { selector: selectSnapshotState, value: snapshotsInitialState },
+          { selector: selectSnapshots, value: childSnapshots },
+          { selector: selectSnapshotsTotal, value: childSnapshots.length },
+          { selector: selectPreferences, value: { showSnapshotExtraColumns: false } },
+          { selector: selectGeneralConfig, value: { timezone: 'Europe/Kiev' } },
+        ],
+      }),
+      {
+        provide: ActivatedRoute,
+        useValue: { snapshot: { paramMap: { get: (): string | null => 'tank' } } },
+      },
+    ],
+  });
+
+  beforeEach(async () => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    pager = await loader.getHarness(TnTablePagerHarness);
+    await pager.nextPage();
+    spectator.detectChanges();
+  });
+
+  it('holds the page through a reload when the dataset match falls back to name search', async () => {
+    const store$ = spectator.inject(MockStore);
+    expect(await pager.getRangeText()).toBe('51 – 100 of 120');
+
+    store$.overrideSelector(selectSnapshots, childSnapshots.map((snapshot) => ({ ...snapshot })));
+    store$.refreshState();
+    spectator.detectChanges();
+
+    // Applying the dataset filter first and undoing it clamped the page against its own
+    // empty result, so the surviving pass started from page 1 — the reported symptom, on
+    // the one route the rest of the paging suite never reaches.
+    expect(await pager.getRangeText()).toBe('51 – 100 of 120');
   });
 });
