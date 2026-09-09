@@ -7,13 +7,12 @@ import {
   FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest'; // cspell:ignore ngneat
+import { TnFormFieldComponent, TnInputComponent } from '@truenas/ui-components';
 import {
   concat, EMPTY, NEVER, of, throwError,
 } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -38,16 +37,18 @@ describe('IxFormComponent', () => {
         [submitHandler]="handleSubmit"
         [suppressSuccessSnackbar]="suppressSnackbar"
       >
-        <ix-fieldset>
-          <ix-input formControlName="name" [label]="'Name'" />
-          <ix-input formControlName="description" [label]="'Description'" />
-        </ix-fieldset>
+        <tn-form-field [label]="'Name'">
+          <tn-input formControlName="name"></tn-input>
+        </tn-form-field>
+        <tn-form-field [label]="'Description'">
+          <tn-input formControlName="description"></tn-input>
+        </tn-form-field>
       </ix-form>
     `,
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'ix-test-host',
-    imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+    imports: [ReactiveFormsModule, IxFormComponent, TnFormFieldComponent, TnInputComponent],
   })
   class TestHostComponent {
     ixForm = viewChild.required(IxFormComponent);
@@ -75,15 +76,15 @@ describe('IxFormComponent', () => {
         [requiredRoles]="[role]"
         [submitHandler]="handleSubmit"
       >
-        <ix-fieldset>
-          <ix-input formControlName="name" [label]="'Name'" />
-        </ix-fieldset>
+        <tn-form-field [label]="'Name'">
+          <tn-input formControlName="name"></tn-input>
+        </tn-form-field>
       </ix-form>
     `,
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'ix-auto-title-host',
-    imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+    imports: [ReactiveFormsModule, IxFormComponent, TnFormFieldComponent, TnInputComponent],
   })
   class AutoTitleHostComponent {
     ixForm = viewChild.required(IxFormComponent);
@@ -414,15 +415,15 @@ describe('IxFormComponent', () => {
           [requiredRoles]="[role]"
           [submitHandler]="handleSubmit"
         >
-          <ix-fieldset>
-            <ix-input formControlName="name" [label]="'Name'" />
-          </ix-fieldset>
+            <tn-form-field [label]="'Name'">
+              <tn-input formControlName="name"></tn-input>
+            </tn-form-field>
         </ix-form>
       `,
       standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       selector: 'ix-extra-disabled-host',
-      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+      imports: [ReactiveFormsModule, IxFormComponent, TnFormFieldComponent, TnInputComponent],
     })
     class ExtraDisabledHostComponent {
       ixForm = viewChild.required(IxFormComponent);
@@ -482,16 +483,18 @@ describe('IxFormComponent', () => {
           [requiredRoles]="[role]"
           [submitHandler]="handleSubmit"
         >
-          <ix-fieldset>
-            <ix-input formControlName="name" [label]="'Name'" />
-            <ix-input formControlName="description" [label]="'Description'" />
-          </ix-fieldset>
+            <tn-form-field [label]="'Name'">
+              <tn-input formControlName="name"></tn-input>
+            </tn-form-field>
+            <tn-form-field [label]="'Description'">
+              <tn-input formControlName="description"></tn-input>
+            </tn-form-field>
         </ix-form>
       `,
       standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       selector: 'ix-transform-host',
-      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+      imports: [ReactiveFormsModule, IxFormComponent, TnFormFieldComponent, TnInputComponent],
     })
     class TransformHostComponent {
       ixForm = viewChild.required(IxFormComponent);
@@ -564,15 +567,15 @@ describe('IxFormComponent', () => {
           [onCancel]="onCancel"
           [submitHandler]="handleSubmit"
         >
-          <ix-fieldset>
-            <ix-input formControlName="name" [label]="'Name'" />
-          </ix-fieldset>
+            <tn-form-field [label]="'Name'">
+              <tn-input formControlName="name"></tn-input>
+            </tn-form-field>
         </ix-form>
       `,
       standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       selector: 'ix-cancel-host',
-      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+      imports: [ReactiveFormsModule, IxFormComponent, TnFormFieldComponent, TnInputComponent],
     })
     class CancelHostComponent {
       ixForm = viewChild.required(IxFormComponent);
@@ -628,15 +631,15 @@ describe('IxFormComponent', () => {
           [requiredRoles]="[role]"
           [submitHandler]="handleSubmit"
         >
-          <ix-fieldset>
-            <ix-input formControlName="name" [label]="'Name'" />
-          </ix-fieldset>
+            <tn-form-field [label]="'Name'">
+              <tn-input formControlName="name"></tn-input>
+            </tn-form-field>
         </ix-form>
       `,
       standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       selector: 'ix-suppress-host',
-      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+      imports: [ReactiveFormsModule, IxFormComponent, TnFormFieldComponent, TnInputComponent],
     })
     class SuppressHostComponent {
       ixForm = viewChild.required(IxFormComponent);
@@ -822,15 +825,15 @@ describe('IxFormComponent', () => {
           [requiredRoles]="[role]"
           [submitHandler]="handleSubmit"
         >
-          <ix-fieldset>
-            <ix-input formControlName="name" [label]="'Name'" />
-          </ix-fieldset>
+            <tn-form-field [label]="'Name'">
+              <tn-input formControlName="name"></tn-input>
+            </tn-form-field>
         </ix-form>
       `,
       standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       selector: 'ix-external-loading-host',
-      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+      imports: [ReactiveFormsModule, IxFormComponent, TnFormFieldComponent, TnInputComponent],
     })
     class ExternalLoadingHostComponent {
       ixForm = viewChild.required(IxFormComponent);
@@ -888,15 +891,15 @@ describe('IxFormComponent', () => {
           [requiredRoles]="[role]"
           [submitHandler]="handleSubmit"
         >
-          <ix-fieldset>
-            <ix-input formControlName="name" [label]="'Name'" />
-          </ix-fieldset>
+            <tn-form-field [label]="'Name'">
+              <tn-input formControlName="name"></tn-input>
+            </tn-form-field>
         </ix-form>
       `,
       standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       selector: 'ix-snapshot-host',
-      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+      imports: [ReactiveFormsModule, IxFormComponent, TnFormFieldComponent, TnInputComponent],
     })
     class SnapshotHostComponent {
       ixForm = viewChild.required(IxFormComponent);
@@ -942,15 +945,15 @@ describe('IxFormComponent', () => {
           [requiredRoles]="[role]"
           [submitHandler]="handleSubmit"
         >
-          <ix-fieldset>
-            <ix-input formControlName="name" [label]="'Name'" />
-          </ix-fieldset>
+            <tn-form-field [label]="'Name'">
+              <tn-input formControlName="name"></tn-input>
+            </tn-form-field>
         </ix-form>
       `,
       standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       selector: 'ix-edit-mode-host',
-      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+      imports: [ReactiveFormsModule, IxFormComponent, TnFormFieldComponent, TnInputComponent],
     })
     class EditModeHostComponent {
       ixForm = viewChild.required(IxFormComponent);

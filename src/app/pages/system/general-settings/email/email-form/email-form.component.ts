@@ -10,8 +10,8 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
-  TnIconComponent, TnInputComponent, TnSelectComponent, InputType,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnIconComponent, TnInputComponent,
+  TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MailSecurity } from 'app/enums/mail-security.enum';
@@ -29,7 +29,6 @@ import {
   IxFormComponent,
   SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
@@ -51,7 +50,8 @@ import { selectProductType } from 'app/store/system-info/system-info.selectors';
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
-    IxRadioGroupComponent,
+    TnRadioGroupComponent,
+    TnRadioComponent,
     TnInputComponent,
     TnSelectComponent,
     TnCheckboxComponent,

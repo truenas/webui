@@ -8,9 +8,8 @@ import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components'
 import { Observable, map } from 'rxjs';
 import { CloudSyncProviderName, cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
-import { Option } from 'app/interfaces/option.interface';
-import { IxSelectWithNewOption } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
-import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { Option, SelectOptionValueType } from 'app/interfaces/option.interface';
+import { IxSelectWithNewOption } from 'app/modules/forms/custom-selects/ix-select-with-new-option.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
@@ -50,7 +49,7 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption<Cloud
     );
   }
 
-  getValueFromSlideInResponse(result: CloudSyncCredential): IxSelectValue {
+  getValueFromSlideInResponse(result: CloudSyncCredential): SelectOptionValueType {
     return result.id;
   }
 

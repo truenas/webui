@@ -24,20 +24,28 @@
 
       @switch (group.controls.principal_type.value) {
         @case (S3PrincipalType.User) {
-          <ix-combobox
-            formControlName="xid"
-            [label]="'User' | translate"
-            [provider]="providers.user"
-            [required]="true"
-          ></ix-combobox>
+          <tn-form-field [label]="'User' | translate" [required]="true">
+            <tn-autocomplete
+              testId="xid"
+              [formControl]="group.controls.xid"
+              [dataSource]="providers.user"
+              [options]="providers.seed"
+              [pageSize]="principalPageSize"
+              [requireSelection]="true"
+            ></tn-autocomplete>
+          </tn-form-field>
         }
         @case (S3PrincipalType.Group) {
-          <ix-combobox
-            formControlName="xid"
-            [label]="'Group' | translate"
-            [provider]="providers.group"
-            [required]="true"
-          ></ix-combobox>
+          <tn-form-field [label]="'Group' | translate" [required]="true">
+            <tn-autocomplete
+              testId="xid"
+              [formControl]="group.controls.xid"
+              [dataSource]="providers.group"
+              [options]="providers.seed"
+              [pageSize]="principalPageSize"
+              [requireSelection]="true"
+            ></tn-autocomplete>
+          </tn-form-field>
         }
       }
 

@@ -12,6 +12,7 @@ import { Role } from 'app/enums/role.enum';
 import { invertUmask } from 'app/helpers/mode.helper';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceFtp } from 'app/helptext/services/components/service-ftp';
+import { WithManageCertificatesLinkComponent } from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
@@ -21,7 +22,6 @@ import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
-import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { portRangeValidator, rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import {
   advancedModeFooterAction, SidePanelFooterAction,

@@ -54,27 +54,11 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import {
-  IxButtonGroupComponent,
-} from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
-import { IxIconGroupComponent } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import {
-  IxSlideToggleComponent,
-} from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
@@ -171,19 +155,7 @@ defineGlobalsInjections({
     MatExpansionModule,
     MatProgressSpinnerModule,
     MatButtonModule,
-    IxInputComponent,
-    IxCheckboxComponent,
-    IxRadioGroupComponent,
-    IxSelectComponent,
-    IxFieldsetComponent,
-    IxButtonGroupComponent,
     IxExplorerComponent,
-    IxFileInputComponent,
-    IxTextareaComponent,
-    IxSlideToggleComponent,
-    IxIconGroupComponent,
-    IxChipsComponent,
-    IxComboboxComponent,
     IxListComponent,
     IxListItemComponent,
     IxErrorsComponent,

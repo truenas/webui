@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnCheckboxHarness, TnDialog, TnFormListHarness, TnInputHarness, TnSelectHarness,
+  TnAutocompleteHarness, TnCheckboxHarness, TnDialog, TnFormListHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -15,7 +15,6 @@ import {
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { S3Config } from 'app/interfaces/s3.interface';
 import { User } from 'app/interfaces/user.interface';
-import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
@@ -101,8 +100,8 @@ describe('ServiceS3Component', () => {
     expect(await (await getSelect('log_level')).getDisplayText()).toBe('Notice');
 
     expect(await (await getSelect('principal_type')).getDisplayText()).toBe('User');
-    const principal = await loader.getHarness(IxComboboxHarness.with({ label: 'User' }));
-    expect(await principal.getValue()).toBe('alice');
+    const principal = await loader.getHarness(TnAutocompleteHarness);
+    expect(await principal.getInputValue()).toBe('alice');
     expect(await (await getSelect('access')).getDisplayText()).toBe('Deny');
   });
 

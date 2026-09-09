@@ -1,23 +1,12 @@
 import {
   ComponentHarness, ComponentHarnessConstructor, HarnessLoader, parallel,
 } from '@angular/cdk/testing';
-import { IxButtonGroupHarness } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.harness';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
-import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
+import { IxStarRatingHarness } from 'app/modules/forms/controls/ix-star-rating/ix-star-rating.harness';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
-import { IxFileInputHarness } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.harness';
-import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import {
   IxIpInputWithNetmaskHarness,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
 import { IxPermissionsHarness } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.harness';
-import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxSlideToggleHarness } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
-import { IxStarRatingHarness } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.harness';
-import { IxTextareaHarness } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.harness';
 import {
   IxFormControlHarness, unreadableControl,
 } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
@@ -25,22 +14,11 @@ import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 
 export const supportedFormControlSelectors = [
-  IxInputHarness,
-  IxCheckboxHarness,
   IxPermissionsHarness,
-  IxSelectHarness,
-  IxTextareaHarness,
-  IxComboboxHarness,
-  IxChipsHarness,
   IxExplorerHarness,
-  IxSlideToggleHarness,
-  IxRadioGroupHarness,
   SchedulerHarness,
   IxIpInputWithNetmaskHarness,
-  IxFileInputHarness,
   IxStarRatingHarness,
-  IxButtonGroupHarness,
-  IxIconGroupHarness,
 ] as const;
 
 export type SupportedFormControlHarness = InstanceType<(typeof supportedFormControlSelectors)[number]>;

@@ -9,8 +9,8 @@ import {
 } from '@truenas/ui-components';
 import { Option } from 'app/interfaces/option.interface';
 import {
-  IxInputComponent,
-} from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+  IxStarRatingComponent,
+} from 'app/modules/forms/controls/ix-star-rating/ix-star-rating.component';
 import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
@@ -39,7 +39,7 @@ import { NetworkService } from 'app/services/network.service';
     TnChipInputComponent,
     TnRadioGroupComponent,
     IxIpInputWithNetmaskComponent,
-    IxInputComponent,
+    IxStarRatingComponent,
   ],
 })
 class HostComponent {
@@ -388,7 +388,7 @@ describe('TnFormControlHarness, projected ix-* controls', () => {
     imports: [
       ReactiveFormsModule,
       IxIpInputWithNetmaskComponent,
-      IxInputComponent,
+      IxStarRatingComponent,
     ],
     providers: [
       mockProvider(NetworkService, {
@@ -408,7 +408,7 @@ describe('TnFormControlHarness, projected ix-* controls', () => {
         </tn-form-field>
 
         <tn-form-field [label]="'Path'">
-          <ix-input formControlName="path"></ix-input>
+          <ix-star-rating formControlName="path"></ix-star-rating>
         </tn-form-field>
       </div>
     `);

@@ -1,7 +1,7 @@
 /**
  * Default debounce time in milliseconds for autocomplete suggestions and validation.
  *
- * Used by `ix-chips`, `ix-combobox` and the `ix-user-*` / `ix-group-*` directory
+ * Used by the `ix-user-*` / `ix-group-*` directory
  * pickers, for BOTH the search fetch and the existence validation — so a field
  * does not query the directory twice on different clocks.
  *

@@ -47,15 +47,15 @@ import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/clouds
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
-import { newOption, SelectOption } from 'app/interfaces/option.interface';
+import { SelectOption, newOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
+import { addNewSelectOptionValueType } from 'app/modules/forms/custom-selects/ix-select-with-new-option.directive';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { FormSubmitEvent, IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { bwlimitValidator } from 'app/modules/forms/ix-forms/validators/bwlimit-validation/bwlimit-validation';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
@@ -422,9 +422,9 @@ export class CloudSyncFormComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(([previousCreds, currentCreds]) => {
       this.form.controls.folder_source.reset([]);
-      const isPreviousValueAddNew = previousCreds != null && previousCreds.toString() === addNewIxSelectValue;
+      const isPreviousValueAddNew = previousCreds != null && previousCreds.toString() === addNewSelectOptionValueType;
       const isCurrentValueExists = currentCreds != null;
-      const isCurrentValueAddNew = isCurrentValueExists && currentCreds.toString() === addNewIxSelectValue;
+      const isCurrentValueAddNew = isCurrentValueExists && currentCreds.toString() === addNewSelectOptionValueType;
 
       if (!isCurrentValueExists || isCurrentValueAddNew) {
         return;

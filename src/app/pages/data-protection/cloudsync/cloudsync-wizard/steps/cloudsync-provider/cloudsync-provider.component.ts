@@ -11,8 +11,8 @@ import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interfa
 import { newOption } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
+import { addNewSelectOptionValueType } from 'app/modules/forms/custom-selects/ix-select-with-new-option.directive';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -155,7 +155,7 @@ export class CloudSyncProviderComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((currentCreds) => {
         const isCurrentValueExists = currentCreds != null;
-        const isCurrentValueAddNew = isCurrentValueExists && currentCreds.toString() === addNewIxSelectValue;
+        const isCurrentValueAddNew = isCurrentValueExists && currentCreds.toString() === addNewSelectOptionValueType;
 
         if (!isCurrentValueExists || isCurrentValueAddNew) {
           return;

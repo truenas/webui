@@ -430,7 +430,9 @@ describe('AppWizardComponent', () => {
       const hostNetwork = await loader.getHarness(
         TnCheckboxHarness.with({ label: 'Provide access to node network namespace for the workload' }),
       );
-      const updateStrategy = await loader.getHarness(TnAutocompleteHarness);
+      // Scoped to the form: the wizard's field-search box is a `tn-autocomplete` too, and it
+      // comes first in the DOM.
+      const updateStrategy = await (await loader.getChildLoader('ix-form')).getHarness(TnAutocompleteHarness);
 
       expect(await releaseName.getValue()).toBe('ipfs');
       expect(await version.getDisplayText()).toBe('Version: 0.9.1 / Revision: 1.2.1');
@@ -448,7 +450,9 @@ describe('AppWizardComponent', () => {
       const hostNetwork = await loader.getHarness(
         TnCheckboxHarness.with({ label: 'Provide access to node network namespace for the workload' }),
       );
-      const updateStrategy = await loader.getHarness(TnAutocompleteHarness);
+      // Scoped to the form: the wizard's field-search box is a `tn-autocomplete` too, and it
+      // comes first in the DOM.
+      const updateStrategy = await (await loader.getChildLoader('ix-form')).getHarness(TnAutocompleteHarness);
 
       await releaseName.setValue('appname');
       await apiPort.setValue('9599');

@@ -25,9 +25,6 @@ import { ContractType, License, SystemInfo } from 'app/interfaces/system-info.in
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
-import {
-  IxSlideToggleComponent,
-} from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -69,7 +66,6 @@ describe('SupportCardComponent', () => {
     component: SupportCardComponent,
     imports: [
       ReactiveFormsModule,
-      IxSlideToggleComponent,
       TnBannerComponent,
       TnBannerActionDirective,
       TnButtonComponent,

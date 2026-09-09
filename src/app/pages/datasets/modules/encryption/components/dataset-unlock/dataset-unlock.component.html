@@ -26,12 +26,24 @@
           ></tn-checkbox>
         </tn-form-field>
 
-        <ix-file-input
-          formControlName="file"
+        <!--
+          `tn-file-input` composes its own id under a `file-input-*` prefix and has no
+          control-name fallback, so the legacy `input-file` is pinned on the host instead.
+        -->
+        <tn-form-field
           [label]="helptext.uploadKeyFileLabel | translate"
           [tooltip]="helptext.uploadKeyFileTooltip | translate"
           [required]="true"
-        ></ix-file-input>
+        >
+          <tn-file-input
+            tnTestIdType="input"
+            formControlName="file"
+            [tnTestId]="'file'"
+            [ariaLabel]="helptext.uploadKeyFileLabel | translate"
+            [buttonLabel]="'Choose File' | translate"
+            [noFileText]="'No file chosen' | translate"
+          ></tn-file-input>
+        </tn-form-field>
       } @else {
         <ix-list
           formArrayName="datasets"
@@ -69,10 +81,17 @@
                     [multiline]="true"
                   ></tn-input>
                 </tn-form-field>
-                <ix-file-input
-                  formControlName="file"
-                  [acceptedFiles]="'.json'"
-                ></ix-file-input>
+                <tn-form-field>
+                  <tn-file-input
+                    tnTestIdType="input"
+                    accept=".json"
+                    formControlName="file"
+                    [tnTestId]="'file'"
+                    [ariaLabel]="helptext.datasetKeyLabel | translate"
+                    [buttonLabel]="'Choose File' | translate"
+                    [noFileText]="'No file chosen' | translate"
+                  ></tn-file-input>
+                </tn-form-field>
               }
             </ix-list-item>
           }

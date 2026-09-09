@@ -18,8 +18,8 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { IxStarRatingComponent } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.component';
-import { IxStarRatingHarness } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.harness';
+import { IxStarRatingComponent } from 'app/modules/forms/controls/ix-star-rating/ix-star-rating.component';
+import { IxStarRatingHarness } from 'app/modules/forms/controls/ix-star-rating/ix-star-rating.harness';
 import { TnFileInputTestHarness } from 'app/modules/forms/ix-forms/testing/tn-file-input.harness';
 
 describe('FileReviewComponent', () => {
