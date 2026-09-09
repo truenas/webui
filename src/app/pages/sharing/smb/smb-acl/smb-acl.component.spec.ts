@@ -46,13 +46,6 @@ describe('SmbAclComponent', () => {
     ],
   } as SmbSharesec;
 
-  const rootUser: Partial<TnUser> = {
-    id: 0,
-    uid: 0,
-    username: 'root',
-    smb: true,
-  };
-
   /** All `tn-select`s bound to a given control, in DOM (list-item) order. */
   const getSelects = (controlName: string): Promise<TnSelectHarness[]> => loader.getAllHarnesses(
     TnSelectHarness.with({ selector: `[formControlName="${controlName}"]` }),
@@ -89,7 +82,9 @@ describe('SmbAclComponent', () => {
       mockApi([
         mockCall('sharing.smb.getacl', mockAcl),
         mockCall('sharing.smb.setacl'),
-        mockCall('user.query', [rootUser] as TnUser[]),
+        mockCall('user.query', [{
+          id: 3001, uid: 3001, username: 'myuser', smb: true,
+        }] as TnUser[]),
         mockCall('group.query', [{
           group: 'wheel', id: 1, gid: 1, smb: true,
         }] as Group[]),
@@ -210,8 +205,13 @@ describe('SmbAclComponent', () => {
     expect(await permSelects[1].getDisplayText()).toBe('FULL');
     expect(await typeSelects[1].getDisplayText()).toBe('DENIED');
 
+    // By NAME, before anyone opens the dropdown. An entry holds a uid and the
+    // directory is not queried until the field is focused, so the only thing
+    // that can name it is the option resolved from the loaded ACL and pinned
+    // with [extraOptions]. Until the inner control read those, every entry
+    // opened showing the raw number.
     const userAutocomplete = await getAutocomplete('User');
-    expect(await userAutocomplete.getInputValue()).toBe('3001');
+    expect(await userAutocomplete.getInputValue()).toBe('myuser');
   });
 
   it('saves updated acl when form is submitted', async () => {

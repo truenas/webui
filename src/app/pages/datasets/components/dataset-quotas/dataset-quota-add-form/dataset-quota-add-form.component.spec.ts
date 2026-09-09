@@ -8,9 +8,11 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import {
+  IxGroupChipsHarness,
+  IxUserChipsHarness,
+} from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { UserService } from 'app/services/user.service';
@@ -85,12 +87,13 @@ describe('DatasetQuotaAddFormComponent', () => {
     });
 
     it('adds user quotas when form is submitted', async () => {
-      const form = await loader.getHarness(IxFormHarness);
       await (await getTnInput('data_quota')).setValue('500M');
       await (await getTnInput('obj_quota')).setValue('2000');
 
-      const usersInput = await form.getControl('Apply To Users') as IxChipsHarness;
-      await usersInput.selectSuggestionValue('john');
+      const usersInput = await loader.getHarness(
+        IxUserChipsHarness.with({ selector: '[formControlName="users"]' }),
+      );
+      await usersInput.selectSuggestion('john');
 
       const closed = jest.fn();
       spectator.component.closed.subscribe(closed);
@@ -120,10 +123,11 @@ describe('DatasetQuotaAddFormComponent', () => {
     });
 
     it('adds group quotas when form is submitted', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Apply To Groups': ['sys', 'bin'],
-      });
+      const groupsInput = await loader.getHarness(
+        IxGroupChipsHarness.with({ selector: '[formControlName="groups"]' }),
+      );
+      await groupsInput.addChip('sys');
+      await groupsInput.addChip('bin');
 
       await (await getTnInput('data_quota')).setValue('500M');
       await (await getTnInput('obj_quota')).setValue('2000');

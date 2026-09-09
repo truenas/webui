@@ -12,7 +12,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { S3AccessKeyStatus } from 'app/enums/s3.enum';
 import { S3AccessKey } from 'app/interfaces/s3.interface';
 import { User } from 'app/interfaces/user.interface';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -73,6 +73,14 @@ describe('S3AccessKeyFormComponent', () => {
     TnInputHarness.with({ name }),
   );
 
+  // `ix-user-combobox` is its own CVA, so `IxFormHarness` — which indexes ix-* controls and
+  // `tn-form-field`s — does not reach it. Drive it through its own harness.
+  const setUser = async (username: string): Promise<void> => {
+    const user = await loader.getHarness(IxUserComboboxHarness);
+    await user.focus();
+    await user.selectOption(username);
+  };
+
   describe('creating an access key', () => {
     beforeEach(async () => {
       spectator = createComponent();
@@ -85,8 +93,7 @@ describe('S3AccessKeyFormComponent', () => {
       spectator.component.closed.subscribe(closed);
 
       await (await getInput('name')).setValue('backup-key');
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({ User: 'alice' });
+      await setUser('alice');
       await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Non-expiring' }))).check();
 
       spectator.component.submit();
@@ -112,7 +119,7 @@ describe('S3AccessKeyFormComponent', () => {
       await spectator.fixture.whenStable();
 
       await (await getInput('name')).setValue('backup-key');
-      await (await loader.getHarness(IxFormHarness)).fillForm({ User: 'alice' });
+      await setUser('alice');
       // The picker stores the chosen day at local midnight, so it is set and asserted in local time.
       await (await loader.getHarness(TnDateInputHarness)).setValue(new Date(2030, 0, 15));
 

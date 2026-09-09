@@ -20,6 +20,7 @@ import { S3Bucket } from 'app/interfaces/s3.interface';
 import { User } from 'app/interfaces/user.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { DatasetService } from 'app/services/dataset/dataset.service';
@@ -68,6 +69,13 @@ describe('S3BucketFormComponent', () => {
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
+  // `ix-user-combobox` is its own CVA, so `IxFormHarness` — which indexes ix-* controls and
+  // `tn-form-field`s — does not reach it. Drive it through its own harness.
+  const setOwner = async (username: string): Promise<void> => {
+    const owner = await loader.getHarness(IxUserComboboxHarness);
+    await owner.focus();
+    await owner.selectOption(username);
+  };
   // The Advanced/Basic toggle is rendered by the side-panel host from `footerActions`.
   const clickAdvancedOptions = async (): Promise<void> => {
     const [toggleAdvanced] = spectator.component.footerActions;
@@ -153,8 +161,8 @@ describe('S3BucketFormComponent', () => {
       await (await getInput('name')).setValue('backups');
       await form.fillForm({
         'Parent Dataset': 'tank',
-        Owner: 'alice',
       });
+      await setOwner('alice');
       await (await getCheckbox('object_lock')).check();
       await (await getInput('object_lock_default_days')).setValue('30');
 
@@ -181,8 +189,8 @@ describe('S3BucketFormComponent', () => {
       await (await getInput('name')).setValue('plain');
       await form.fillForm({
         'Parent Dataset': 'tank',
-        Owner: 'alice',
       });
+      await setOwner('alice');
       await (await getCheckbox('object_lock')).check();
       await (await getCheckbox('object_lock')).uncheck();
 
@@ -207,8 +215,8 @@ describe('S3BucketFormComponent', () => {
       await (await getInput('name')).setValue('photos');
       await form.fillForm({
         'Parent Dataset': '/mnt',
-        Owner: 'alice',
       });
+      await setOwner('alice');
 
       expect(spectator.component.canSubmit()).toBe(false);
       expect(spectator.component.form.controls.parent_dataset.errors).toMatchObject({
@@ -220,8 +228,8 @@ describe('S3BucketFormComponent', () => {
       await (await getInput('name')).setValue('photos');
       await form.fillForm({
         'Parent Dataset': 'tank/buckets',
-        Owner: 'alice',
       });
+      await setOwner('alice');
 
       expect(spectator.component.canSubmit()).toBe(false);
       expect(spectator.component.form.controls.name.errors).toMatchObject({
@@ -236,8 +244,8 @@ describe('S3BucketFormComponent', () => {
       await (await getInput('name')).setValue('videos');
       await form.fillForm({
         'Parent Dataset': 'tank/buckets',
-        Owner: 'alice',
       });
+      await setOwner('alice');
 
       const closed = jest.fn();
       spectator.component.closed.subscribe(closed);
@@ -266,8 +274,8 @@ describe('S3BucketFormComponent', () => {
       await (await getInput('name')).setValue('shared');
       await form.fillForm({
         'Parent Dataset': 'tank',
-        Owner: 'alice',
       });
+      await setOwner('alice');
 
       await clickAdvancedOptions();
 
@@ -411,7 +419,7 @@ describe('S3BucketFormComponent', () => {
     });
 
     it('updates the bucket without sending the dataset', async () => {
-      await form.fillForm({ Owner: 'bob' });
+      await setOwner('bob');
       await (await getCheckbox('enabled')).uncheck();
 
       const closed = jest.fn();

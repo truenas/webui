@@ -16,21 +16,27 @@
     </tn-form-field>
 
     @if (isUserTag) {
-      <ix-user-combobox
-        formControlName="user"
+      <tn-form-field
         [label]="'User' | translate"
         [tooltip]="tooltips.user | translate"
         [required]="true"
-      ></ix-user-combobox>
+      >
+        <ix-user-combobox
+          formControlName="user"
+        ></ix-user-combobox>
+      </tn-form-field>
     }
 
     @if (isGroupTag) {
-      <ix-group-combobox
-        formControlName="group"
+      <tn-form-field
         [label]="'Group' | translate"
         [tooltip]="tooltips.group | translate"
         [required]="true"
-      ></ix-group-combobox>
+      >
+        <ix-group-combobox
+          formControlName="group"
+        ></ix-group-combobox>
+      </tn-form-field>
     }
 
     <tn-form-field

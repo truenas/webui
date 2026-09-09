@@ -1,14 +1,15 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, input, signal, inject,
+  ChangeDetectionStrategy, Component, OnInit, input, inject,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
   TnCheckboxComponent,
   TnFormFieldComponent,
+  TnFormListComponent,
+  TnFormListItemComponent,
   TnFormSectionComponent,
   TnInputComponent,
   TnSelectComponent,
@@ -19,15 +20,11 @@ import { choicesToOptions, idNameArrayToOptions } from 'app/helpers/operators/op
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-certificate-acme-add',
@@ -37,30 +34,27 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     AsyncPipe,
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
     TnCheckboxComponent,
     TnSelectComponent,
-    IxListComponent,
-    IxListItemComponent,
+    TnFormListComponent,
+    TnFormListItemComponent,
     TranslateModule,
   ],
 })
-export class CertificateAcmeAddComponent extends SidePanelForm implements OnInit {
+export class CertificateAcmeAddComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private validatorsService = inject(IxValidatorsService);
   private translate = inject(TranslateService);
-  private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
-  private formErrorHandler = inject(FormErrorHandlerService);
-  private snackbar = inject(SnackbarService);
-  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.CertificateWrite];
 
-  form = this.formBuilder.nonNullable.group({
+  protected form = this.formBuilder.nonNullable.group({
     name: ['', [
       Validators.required,
       this.validatorsService.withMessage(
@@ -75,38 +69,27 @@ export class CertificateAcmeAddComponent extends SidePanelForm implements OnInit
     domains: this.formBuilder.array<string>([]),
   });
 
-  protected isLoading = signal(false);
+  protected domains: TranslatedString[] = [];
 
-  readonly canSubmit = this.trackCanSubmit(this.isLoading);
+  /**
+   * CSR to create the ACME certificate from, supplied by the `<tn-side-panel>` host. Required:
+   * the payload below is meaningless without it, and `csr_id: undefined` would be dropped by
+   * JSON serialisation and rejected by middleware rather than failing here.
+   */
+  readonly csr = input.required<Certificate>();
 
-  domains: TranslatedString[] = [];
+  protected readonly acmeDirectoryUris$ = this.api.call('certificate.acme_server_choices').pipe(choicesToOptions());
+  protected readonly authenticators$ = this.api.call('acme.dns.authenticator.query').pipe(idNameArrayToOptions());
 
-  /** CSR to create the ACME certificate from, supplied by the `<tn-side-panel>` host. */
-  readonly csr = input<Certificate | undefined>(undefined);
-
-  private csrData: Certificate | undefined;
-
-  readonly acmeDirectoryUris$ = this.api.call('certificate.acme_server_choices').pipe(choicesToOptions());
-  readonly authenticators$ = this.api.call('acme.dns.authenticator.query').pipe(idNameArrayToOptions());
-
-  readonly helptext = helptextSystemCertificates;
+  protected readonly helptext = helptextSystemCertificates;
 
   protected readonly InputType = InputType;
 
   ngOnInit(): void {
-    this.csrData = this.csr();
-    if (this.csrData) {
-      this.loadDomains();
-    }
+    this.loadDomains(this.csr());
   }
 
-  protected onSubmit(): void {
-    // The form is only ever opened with a CSR (the panel supplies it via the `csr` input);
-    // guard the invariant explicitly rather than rely on non-strict null checks.
-    if (!this.csrData) {
-      return;
-    }
-
+  protected handleSubmit = (): SubmitResult => {
     const formValues = this.form.getRawValue();
 
     const dnsMapping = this.domains.reduce((mapping, domain, i) => {
@@ -118,7 +101,7 @@ export class CertificateAcmeAddComponent extends SidePanelForm implements OnInit
 
     const payload = {
       name: formValues.name,
-      csr_id: this.csrData.id,
+      csr_id: this.csr().id,
       tos: formValues.tos,
       create_type: CertificateCreateType.CreateAcme,
       renew_days: formValues.renew_days,
@@ -126,47 +109,28 @@ export class CertificateAcmeAddComponent extends SidePanelForm implements OnInit
       dns_mapping: dnsMapping,
     };
 
-    this.isLoading.set(true);
+    return {
+      request$: this.dialogService.jobDialog(
+        this.api.job('certificate.create', [payload]),
+        {
+          title: this.translate.instant('Creating ACME Certificate'),
+        },
+      ).afterClosed(),
+      successMessage: this.translate.instant('ACME Certificate Created'),
+    };
+  };
 
-    this.dialogService.jobDialog(
-      this.api.job('certificate.create', [payload]),
-      {
-        title: this.translate.instant('Creating ACME Certificate'),
+  private loadDomains(csr: Certificate): void {
+    this.loadFormConfig(
+      this.api.call('webui.crypto.get_certificate_domain_names', [csr.id]),
+      (domains) => {
+        // `loadFormConfig` replays `patch` on retry, so rebuild the array rather than
+        // appending to whatever a previous attempt left behind.
+        this.form.controls.domains.clear();
+        this.domains = domains.map(ignoreTranslation);
+        domains.forEach((domain) => this.addDomainControls(domain));
       },
-    )
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.close(true);
-          this.snackbar.success(this.translate.instant('ACME Certificate Created'));
-        },
-        complete: () => {
-          this.isLoading.set(false);
-        },
-        error: (error: unknown) => {
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.isLoading.set(false);
-        },
-      });
-  }
-
-  private loadDomains(): void {
-    this.isLoading.set(true);
-
-    this.api.call('webui.crypto.get_certificate_domain_names', [this.csrData.id])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (domains) => {
-          this.domains = domains.map(ignoreTranslation);
-          domains.forEach((domain) => this.addDomainControls(domain));
-          this.isLoading.set(false);
-        },
-        error: (error: unknown) => {
-          this.isLoading.set(false);
-          this.errorHandler.showErrorModal(error);
-        },
-      });
+    );
   }
 
   private addDomainControls(domain: string): void {

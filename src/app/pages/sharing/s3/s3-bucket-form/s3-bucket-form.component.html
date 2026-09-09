@@ -31,13 +31,20 @@
       </tn-form-field>
     }
 
-    <ix-user-picker
-      formControlName="owner"
+    <tn-form-field
       [label]="'Owner' | translate"
       [tooltip]="helptext.ownerTooltip | translate"
       [required]="true"
-      [provider]="ownerProvider"
-    ></ix-user-picker>
+    >
+      <ix-user-combobox
+        formControlName="owner"
+        [directoryOptions]="ownerDirectoryOptions"
+        [requireSelection]="true"
+        [allowCustomValue]="false"
+        [allowCreate]="true"
+        [validateExistence]="false"
+      ></ix-user-combobox>
+    </tn-form-field>
 
     <tn-form-field [tooltip]="helptext.enabledTooltip | translate">
       <tn-checkbox formControlName="enabled" [label]="'Enabled' | translate"></tn-checkbox>

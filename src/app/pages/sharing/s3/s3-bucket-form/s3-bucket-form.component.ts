@@ -40,7 +40,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxUserPickerComponent } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import {
   advancedModeOptionLabels, SidePanelFooterAction,
@@ -48,7 +48,7 @@ import {
 import { ApiService } from 'app/modules/websocket/api.service';
 import { createS3GrantFormGroup, S3GrantFormGroup, toS3Grants } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
 import { S3GrantsListComponent } from 'app/pages/sharing/s3/s3-grants-list/s3-grants-list.component';
-import { createS3UserPickerProvider } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
+import { s3UserDirectoryOptions } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -71,7 +71,7 @@ export const s3BucketNamePattern = /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/;
     TnChipInputComponent,
     TnSelectComponent,
     IxExplorerComponent,
-    IxUserPickerComponent,
+    IxUserComboboxComponent,
     S3GrantsListComponent,
     TranslateModule,
   ],
@@ -107,7 +107,7 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
   private readonly existingDatasets = signal<string[]>([]);
 
   readonly treeNodeProvider = this.datasetService.getDatasetNodeProvider();
-  protected readonly ownerProvider = createS3UserPickerProvider();
+  protected readonly ownerDirectoryOptions = s3UserDirectoryOptions;
 
   private readonly permissionsModelBaseOptions = mapToOptions(s3PermissionsModelLabels, this.translate);
   protected readonly versioningOptions = mapToOptions(s3VersioningLabels, this.translate);
