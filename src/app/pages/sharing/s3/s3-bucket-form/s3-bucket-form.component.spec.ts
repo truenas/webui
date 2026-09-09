@@ -362,6 +362,25 @@ describe('S3BucketFormComponent', () => {
       expect(spectator.component.form.controls.object_lock_default_mode.value).toBeNull();
     });
 
+    it('loads a stored Multiprotocol bucket with its ownership held at Object Writer', async () => {
+      spectator = createComponent({
+        props: {
+          bucket: {
+            ...existingBucket,
+            permissions_model: S3PermissionsModel.Multiprotocol,
+            object_ownership: S3ObjectOwnership.ObjectWriter,
+          },
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await clickAdvancedOptions();
+
+      const ownership = await getSelect('object_ownership');
+      expect(await ownership.getDisplayText()).toBe('Object Writer');
+      expect(await ownership.isDisabled()).toBe(true);
+      expect(await (await getCheckbox('object_lock')).isDisabled()).toBe(true);
+    });
+
     it('lets an EVERYONE grant be switched to a user grant', async () => {
       spectator = createComponent({
         props: {

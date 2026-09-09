@@ -209,14 +209,16 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     return this.translate.instant('Bucket dataset: {dataset}', { dataset: `${parent}/${name}` });
   });
 
+  protected readonly isMultiprotocol = computed(() => {
+    return this.formValue().permissions_model === S3PermissionsModel.Multiprotocol;
+  });
+
   /**
    * Object lock is a primary option (backup targets), so it drives versioning rather than depending
    * on it: checking it switches versioning on and keeps it there. The one thing that rules it out is
    * the Multiprotocol permissions model, under which another protocol could rewrite a locked object.
    */
-  protected readonly canUseObjectLock = computed(() => {
-    return this.formValue().permissions_model !== S3PermissionsModel.Multiprotocol;
-  });
+  protected readonly canUseObjectLock = computed(() => !this.isMultiprotocol());
 
   protected readonly objectLockHint = computed(() => {
     return this.canUseObjectLock() ? '' : this.translate.instant(this.helptext.objectLockMultiprotocolHint);
@@ -234,10 +236,6 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
 
   protected readonly versioningHint = computed(() => {
     return this.isObjectLockOn() ? this.translate.instant(this.helptext.versioningLockedHint) : '';
-  });
-
-  protected readonly isMultiprotocol = computed(() => {
-    return this.formValue().permissions_model === S3PermissionsModel.Multiprotocol;
   });
 
   protected readonly objectOwnershipHint = computed(() => {

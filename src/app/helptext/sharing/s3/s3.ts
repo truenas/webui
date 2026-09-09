@@ -18,8 +18,8 @@ export const helptextSharingS3 = {
  <b>Bucket Owner Preferred</b>: the owner owns objects uploaded with the bucket-owner-full-control ACL; any other\
  upload is owned by the account that wrote it.<br>\
  <b>Object Writer</b>: the account that uploads an object owns it and may grant access to it through ACLs.'),
-  objectOwnershipMultiprotocolHint: T('A Multiprotocol bucket always runs as the object writer: the other\
- protocols\' users own the filesystem permissions.'),
+  objectOwnershipMultiprotocolHint: T('A Multiprotocol bucket always runs as the object writer, with S3 ACLs off:\
+ the other protocols\' users own the filesystem permissions.'),
   grantsTooltip: T('Who may access the bucket and how, beyond its owner. A <b>Deny</b> grant refuses every\
  operation for the principal and outranks the owner.'),
   globalGrantsTooltip: T('Grants that apply to every bucket. A <b>Deny</b> here suspends the principal everywhere.'),
