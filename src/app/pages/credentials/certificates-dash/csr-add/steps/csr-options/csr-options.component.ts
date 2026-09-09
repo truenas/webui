@@ -65,8 +65,15 @@ export class CsrOptionsComponent implements SummaryProvider {
 
   readonly helptext = helptextSystemCertificates;
 
+  // Mirrors the form value so `isRsa` is signal-driven. A profile patch comes from the parent
+  // wizard, which doesn't mark this OnPush view dirty, leaving the `@if` block stale.
+  private readonly formValue = toSignal(
+    this.form.valueChanges.pipe(map(() => this.form.getRawValue())),
+    { initialValue: this.form.getRawValue() },
+  );
+
   get isRsa(): boolean {
-    return this.form.value.key_type === CertificateKeyType.Rsa;
+    return this.formValue().key_type === CertificateKeyType.Rsa;
   }
 
   readonly keyTypes$ = of(mapToOptions(certificateKeyTypeLabels, this.translate));
