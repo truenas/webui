@@ -55,7 +55,7 @@
   }
 </form>
 
-@if (!isEnterprise()) {
+@if (hasSupport() === false) {
   <p [innerHTML]="voteForNewFeaturesText"></p>
 }
 

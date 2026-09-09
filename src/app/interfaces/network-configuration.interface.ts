@@ -5,9 +5,11 @@ export interface NetworkConfiguration extends NetworkConfigurationState {
   domain: string;
   domains: string[];
   hostname: string;
-  hostname_b: string;
+  /** Absent entirely — not `null` — unless the system is HA capable. */
+  hostname_b?: string;
   hostname_local: string;
-  hostname_virtual: string;
+  /** Absent entirely — not `null` — unless the system is HA capable. */
+  hostname_virtual?: string;
   hosts: string[];
   httpproxy: string;
   id: number;

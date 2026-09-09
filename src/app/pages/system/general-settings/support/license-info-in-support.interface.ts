@@ -1,3 +1,4 @@
+import { LicenseType } from 'app/enums/license-type.enum';
 import { ContractType } from 'app/interfaces/system-info.interface';
 
 /**
@@ -9,6 +10,7 @@ import { ContractType } from 'app/interfaces/system-info.interface';
  * the template.
  */
 export interface LicenseInfoInSupport {
+  type: LicenseType;
   contractType: ContractType | null;
   model: string | null;
   /**

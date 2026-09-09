@@ -13,6 +13,7 @@ import {
   Observable, catchError, filter, map, of, switchMap,
 } from 'rxjs';
 import { DatasetPreset } from 'app/enums/dataset.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { Role } from 'app/enums/role.enum';
@@ -40,11 +41,11 @@ import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 /** Edit/default data supplied by the panel host (via `nfsShareData` input). */
 export interface NfsFormData {
@@ -76,6 +77,7 @@ export interface NfsFormData {
 })
 export class NfsFormComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private filesystemService = inject(FilesystemService);
@@ -126,7 +128,7 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
 
   readonly helptext = helptextSharingNfs;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  readonly hasNfsSnapshots = this.entitlements.entitled(EntitlementFeature.NfsSnapshot);
 
   /** The Security select only applies when the NFS service has protocol v4 enabled. */
   protected readonly hasNfsSecurityField = toSignal(
@@ -192,7 +194,7 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     const nfsShare = { ...this.form.value };
 
-    if (!this.isEnterprise()) {
+    if (!this.hasNfsSnapshots()) {
       delete nfsShare.expose_snapshots;
     }
 

@@ -2,9 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import {
-  map, mergeMap, switchMap, take,
-} from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs/operators';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { failoverLicensedStatusLoaded } from 'app/store/ha-info/ha-info.actions';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -16,20 +14,25 @@ export class RebootInfoEffects {
   private api = inject(ApiService);
   private store$ = inject(Store);
 
+  // Latest wins here and below: the licensed status is seeded at sign-in and can be corrected once
+  // the `HA` entitlement arrives, and a fetch started on the stale answer must not land after the
+  // corrected one.
   loadRebootInfo = createEffect(() => this.actions$.pipe(
     ofType(failoverLicensedStatusLoaded),
-    mergeMap(({ isHaLicensed }) => this.fetchRebootInfo(isHaLicensed)),
+    switchMap(({ isHaLicensed }) => this.fetchRebootInfo(isHaLicensed)),
   ));
 
   refreshRebootInfo = createEffect(() => this.actions$.pipe(
     ofType(refreshRebootInfo),
     switchMap(() => this.store$.select(selectIsHaLicensed).pipe(take(1))),
-    mergeMap((isHaLicensed) => this.fetchRebootInfo(isHaLicensed)),
+    switchMap((isHaLicensed) => this.fetchRebootInfo(isHaLicensed)),
   ));
 
+  // The earlier subscription must be torn down on that correction too, or two reboot-info sources
+  // race each other.
   subscribeToRebootInfo = createEffect(() => this.actions$.pipe(
     ofType(failoverLicensedStatusLoaded),
-    mergeMap(({ isHaLicensed }) => {
+    switchMap(({ isHaLicensed }) => {
       if (isHaLicensed) {
         return this.api.subscribe('failover.reboot.info').pipe(
           map((event) => rebootInfoLoaded({

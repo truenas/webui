@@ -235,8 +235,8 @@ describe('S3BucketFormComponent', () => {
       await (await getInput('name')).setValue('shared');
       await form.fillForm({
         'Parent Dataset': 'tank',
-        Owner: 'alice',
       });
+      await setOwner('alice');
       await clickAdvancedOptions();
       await (await getSelect('permissions_model')).selectOption('Multiprotocol');
 

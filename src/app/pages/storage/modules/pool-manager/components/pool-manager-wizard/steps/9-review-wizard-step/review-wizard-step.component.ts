@@ -2,15 +2,15 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, output, inject,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
@@ -31,8 +31,7 @@ import {
   PoolManagerStore,
   PoolManagerTopology, PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { EntitlementsService } from 'app/services/entitlements.service';
 
 @Component({
   selector: 'ix-review-wizard-step',
@@ -57,7 +56,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 export class ReviewWizardStepComponent implements OnInit {
   private tnDialog = inject(TnDialog);
   private store = inject(PoolManagerStore);
-  private systemStore$ = inject<Store<AppState>>(Store);
+  private entitlements = inject(EntitlementsService);
   private cdr = inject(ChangeDetectorRef);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
@@ -69,8 +68,8 @@ export class ReviewWizardStepComponent implements OnInit {
   readonly vDevType = VDevType;
   readonly createPool = output();
 
-  // force_topology is a Community Edition escape hatch; middleware rejects it on Enterprise.
-  protected readonly isEnterprise = toSignal(this.systemStore$.select(selectIsEnterprise), { requireSync: true });
+  // Middleware rejects force_topology on systems with a support entitlement.
+  protected readonly hasSupport = this.entitlements.entitled(EntitlementFeature.Support);
   protected readonly forceTopologyControl = new FormControl(false, { nonNullable: true });
 
   state: PoolManagerState;

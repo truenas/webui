@@ -14,9 +14,12 @@ import {
 } from '@truenas/ui-components';
 import { range } from 'lodash-es';
 import {
-  BehaviorSubject, EMPTY, forkJoin, of, Observable,
+  BehaviorSubject, Observable, of,
 } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import {
+  filter, map, switchMap, take,
+} from 'rxjs/operators';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import {
   CreateNetworkInterfaceType,
   LacpduRate,
@@ -56,11 +59,12 @@ import {
   interfaceAliasesToFormAliases,
   NetworkInterfaceFormAlias,
 } from 'app/pages/system/network/components/interface-form/network-interface-alias-control.interface';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
 import { AppState } from 'app/store';
+import { selectHaInfoState } from 'app/store/ha-info/ha-info.selectors';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-interface-form',
@@ -90,6 +94,7 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private translate = inject(TranslateService);
   private networkService = inject(NetworkService);
   private errorHandler = inject(ErrorHandlerService);
@@ -112,7 +117,6 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
   readonly defaultMtu = 1500;
   protected readonly isHaEnabled$ = new BehaviorSubject(false);
 
-  protected isEnterprise = false;
   protected fecModeOptions$: Observable<{ label: string; value: string }[]> = of([]);
   protected showFecMode = signal(false);
   isHaLicensed = false;
@@ -235,6 +239,7 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
     this.interfaceList = this.interfacesList();
 
     this.loadFailoverStatus();
+    this.loadFecModes();
     this.validateNameOnTypeChange();
     this.updateRequiredValidatorsOnTypeChange();
     this.checkFailoverDisabled();
@@ -422,24 +427,33 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
     }
   }
 
+  /**
+   * FEC mode is gated on `NETWORK_FEC` and nothing else. It used to share a product-type
+   * check with the failover lookup below, which gated two unrelated things at once.
+   */
+  private loadFecModes(): void {
+    const existingInterface = this.existingInterface;
+    if (!existingInterface) {
+      return;
+    }
+
+    this.entitlements.entitled$(EntitlementFeature.NetworkFec).pipe(
+      filter(Boolean),
+      take(1),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.loadAvailableFecModes(existingInterface.id));
+  }
+
+  /** The `HA` entitlement alone decides HA here; product type must not pre-gate it. */
   private loadFailoverStatus(): void {
-    this.store$.select(selectIsEnterprise).pipe(
-      switchMap((isEnterprise) => {
-        this.isEnterprise = isEnterprise;
-
-        if (!isEnterprise) {
-          return EMPTY;
-        }
-
-        if (this.existingInterface) {
-          this.loadAvailableFecModes(this.existingInterface.id);
-        }
-
-        return forkJoin([
-          this.api.call('failover.licensed'),
-          this.api.call('failover.node'),
-        ]);
-      }),
+    this.store$.select(selectHaInfoState).pipe(
+      filter((haInfo) => haInfo.isHaLicensed !== null),
+      map((haInfo) => haInfo.isHaLicensed),
+      take(1),
+      switchMap((isHaLicensed) => (isHaLicensed
+        ? this.api.call('failover.node').pipe(map((failoverNode) => [true, failoverNode] as const))
+        : of([false, null] as const)
+      )),
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(([isHaLicensed, failoverNode]) => {
@@ -531,7 +545,7 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
       };
     }
 
-    if (this.isEnterprise && this.showFecMode() && formValues.fec_mode) {
+    if (this.showFecMode() && formValues.fec_mode) {
       params.fec_mode = formValues.fec_mode;
     }
 

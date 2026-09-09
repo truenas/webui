@@ -274,8 +274,8 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       payload.all_sed = true;
     }
 
-    // Community Edition only. The flag is gated to CE in the UI, so state.forceTopology
-    // is never true on Enterprise, where middleware rejects it outright.
+    // Only offered without a SUPPORT entitlement (see review-wizard-step), so state.forceTopology
+    // is never true on a supported system, where middleware rejects it outright.
     if (this.state.forceTopology) {
       payload.force_topology = true;
     }
