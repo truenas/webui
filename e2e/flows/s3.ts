@@ -10,12 +10,12 @@ import { s3AccessKeyLocators, s3BucketLocators, s3ServiceLocators } from '../loc
 const saveTimeoutMs = 90_000;
 
 /**
- * Picks an account in an `ix-user-picker`.
+ * Picks an account in an `ix-user-combobox`.
  *
- * The picker is an autocomplete over a middleware query, so the option is not
- * in the DOM until the typed text has been sent and answered. Typing the whole
- * username narrows the list to it (plus the picker's own "Add New" entry), and
- * clicking the option is what commits the value — the text alone does not.
+ * The field is an autocomplete over a middleware query, so the row is not in
+ * the DOM until the typed text has been sent and answered. Typing the whole
+ * username narrows the list to it (plus the field's own "Add New" row), and
+ * clicking the row is what commits the value — the text alone does not.
  */
 async function pickUser(page: Page, input: string, option: string, username: string): Promise<void> {
   await page.locator(input).fill(username);
