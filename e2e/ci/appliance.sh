@@ -39,13 +39,16 @@
 #                      template true and a snapshot to clone from)
 #   tn_guest.py delete --host H --pool P (...) <name or nickname>
 #
-# With a template password configured, a claim clones the template (seconds,
-# no ISO install), building it first if the host has none or the template was
-# built from something other than the ISO and disk geometry this claim asks
-# for. Without one, every claim installs from the ISO.
-# `build-template` makes the template by hand: a
-# bare install, shut down and snapshotted, that `clone` copies with
-# middleware's vm.clone. This is E5 of the design in its first form:
+# With a template password configured, a claim clones a template (seconds,
+# no ISO install). Templates are named by what they are built from — the ISO
+# and the disk geometry, hashed into the nickname — so the template for this
+# claim's ISO either exists and is cloned, or is built beside whatever older
+# templates are there. Nothing is deleted to make room: an old template goes
+# when a later claim finds nothing cloned from it any more. Without a
+# template password, every claim installs from the ISO. `build-template`
+# builds the current template by hand: a bare install, shut down and
+# snapshotted, that `clone` copies with middleware's vm.clone. This is E5 of
+# the design in its first form:
 # baselines as snapshots, clones as provisioning. Revert between tests (E1)
 # is not here yet.
 #
@@ -60,9 +63,12 @@
 #   TN_GUEST_HOST_USER  API user on the host (default: root)
 #   TN_GUEST_HOST_API_KEY or TN_GUEST_HOST_PASSWORD — credential for that user
 #   TN_GUEST_LIFETIME   VM lifetime, so a leaked one expires (default: 3h)
-#   TN_GUEST_TEMPLATE   nickname of the template to clone (default: e2e-template)
+#   TN_GUEST_TEMPLATE_PREFIX
+#                       templates are nicknamed <prefix>-<8 hex>, the hex a
+#                       hash of the ISO name and disk geometry they were
+#                       built from (default: e2e-template)
 #   TN_GUEST_TEMPLATE_PASSWORD
-#                       the template's admin password. Set: claims clone the
+#                       the templates' admin password. Set: claims clone the
 #                       template and rotate the password per claim. Unset:
 #                       every claim installs from the ISO.
 #
@@ -73,19 +79,9 @@
 #   TN_GUEST_MEMORY_MB, TN_GUEST_VCPUS       applied per claim, clone or install
 #   TN_GUEST_OS_DISK_GB, TN_GUEST_DATA_DISK_COUNT, TN_GUEST_DATA_DISK_GB
 #                                            the disks are the template's:
-#                                            changing one rebuilds the template
-#                                            on the next claim (see below)
-#
-# What the template on the host was built from is recorded by the runner in
-#
-#   TN_GUEST_STATE_DIR  as .template-<nickname>, holding the ISO's name and
-#                       the disk geometry (default: TN_GUEST_ISO_DIR when the
-#                       host is this machine, else ~/.local/state/tn-guest;
-#                       the runner's, in both cases, not the host's). A claim
-#                       whose ISO or geometry differs from the record rebuilds
-#                       the template first; no record at all rebuilds too.
-#                       Exact, so a pin back to an older nightly still on disk
-#                       rebuilds, and independent of where the host is.
+#                                            they are part of its name, so
+#                                            changing one means a new
+#                                            template on the next claim
 #
 # Nightly resolution (`iso`), when TN_GUEST_ISO is not pinned:
 #
@@ -114,7 +110,7 @@ TN_GUEST_HOST="${TN_GUEST_HOST:-localhost}"
 TN_GUEST_POOL="${TN_GUEST_POOL:-tank}"
 TN_GUEST_HOST_USER="${TN_GUEST_HOST_USER:-root}"
 TN_GUEST_LIFETIME="${TN_GUEST_LIFETIME:-3h}"
-TN_GUEST_TEMPLATE="${TN_GUEST_TEMPLATE:-e2e-template}"
+TN_GUEST_TEMPLATE_PREFIX="${TN_GUEST_TEMPLATE_PREFIX:-e2e-template}"
 TN_GUEST_MEMORY_MB="${TN_GUEST_MEMORY_MB:-6144}"
 TN_GUEST_VCPUS="${TN_GUEST_VCPUS:-4}"
 TN_GUEST_OS_DISK_GB="${TN_GUEST_OS_DISK_GB:-10}"
@@ -132,17 +128,6 @@ TN_GUEST_ISO_KEEP="${TN_GUEST_ISO_KEEP:-2}"
 # Which nightly `iso` last chose, kept beside the files. Its mtime is the
 # choice's age, which is what the refresh policy reads.
 currentNightlyFile=".current-nightly"
-
-# The runner's own record of what it built lives with the ISOs when the
-# runner is the host, which is the lab's layout; a runner driving a remote
-# host has no ISO directory of its own and keeps the record in its state dir.
-if [ -z "${TN_GUEST_STATE_DIR:-}" ]; then
-  if [ "$TN_GUEST_HOST" = "localhost" ]; then
-    TN_GUEST_STATE_DIR="$TN_GUEST_ISO_DIR"
-  else
-    TN_GUEST_STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/tn-guest"
-  fi
-fi
 
 # Where `claim` records the deployment name, so `release` can find it without
 # the caller.
@@ -226,30 +211,25 @@ claim() {
   # tn_guest.py logs progress to stderr and prints the deployment JSON last on
   # stdout; the log noise is worth keeping in the job log.
   if [ -n "${TN_GUEST_TEMPLATE_PASSWORD:-}" ]; then
-    # No template yet — the first run after a fresh box, or after someone
-    # deleted it — builds one, so a claim never silently regresses to an ISO
-    # install per run. A template built from a different ISO or disk
-    # geometry than this claim wants is rebuilt the same way: the template
-    # is that ISO frozen, so when `iso` rotates the nightly, or a pin
-    # changes, the next claim pays one install and every claim after it
-    # clones the new build. That is the whole rotation policy; nothing
-    # rebuilds on a calendar. The comparison is against the runner's record
-    # of what it built (templateSpec), never against timestamps.
-    local listing built recorded wanted
+    # The template for this claim's ISO and disk geometry, by name: the name
+    # is a hash of exactly those, so it exists or it does not, and there is
+    # nothing to compare. None — the first run after a fresh box, after `iso`
+    # rotated the nightly, after a pin changed, after someone changed the
+    # geometry — builds it, so a claim never silently regresses to an ISO
+    # install per run, and every claim after it clones the new build. That
+    # is the whole rotation policy; nothing rebuilds on a calendar. Older
+    # templates are left where they are and collected after the clone.
+    local listing template built
+    template=$(templateNickname)
     readDeployments listing
-    wanted=$(templateSpec)
-    if ! built=$(templateCreatedIn "$listing"); then
-      echo "appliance.sh: no template named '$TN_GUEST_TEMPLATE' on the host, building it first" >&2
+    if ! built=$(templateCreatedIn "$listing" "$template"); then
+      echo "appliance.sh: no template '$template' for [$(templateSpec)] on the host, building it first" >&2
       build_template fresh-install
-    elif ! recorded=$(cat "$(templateRecord)" 2>/dev/null); then
-      echo "appliance.sh: template '$TN_GUEST_TEMPLATE' (built $built) has no record of what it was built from, rebuilding it first" >&2
-      build_template fresh-install
-    elif [ "$recorded" != "$wanted" ]; then
-      echo "appliance.sh: template '$TN_GUEST_TEMPLATE' (built $built) was built from [$recorded], this claim wants [$wanted]; rebuilding it first" >&2
-      build_template fresh-install
+    else
+      echo "appliance.sh: template '$template' (built $built) is [$(templateSpec)]" >&2
     fi
-    echo "appliance.sh: cloning template '$TN_GUEST_TEMPLATE' into '$nickname' on $TN_GUEST_HOST" >&2
-    json=$(tnGuest clone "$TN_GUEST_TEMPLATE" \
+    echo "appliance.sh: cloning template '$template' into '$nickname' on $TN_GUEST_HOST" >&2
+    json=$(tnGuest clone "$template" \
       --admin-pass "$TN_GUEST_TEMPLATE_PASSWORD" \
       --rotate-admin-pass "$password" \
       --nickname "$nickname" \
@@ -257,6 +237,7 @@ claim() {
       --memory-mb "$TN_GUEST_MEMORY_MB" \
       --vcpus "$TN_GUEST_VCPUS") \
       || die "tn_guest.py clone failed for '$nickname'"
+    collectTemplates "$template"
   else
     echo "appliance.sh: creating '$nickname' on $TN_GUEST_HOST from $TN_GUEST_ISO" >&2
     json=$(tnGuest create \
@@ -318,24 +299,37 @@ readDeployments() {
   printf -v "$1" '%s' "$deployments"
 }
 
-# Whether the listing in $1 has a template with the configured nickname,
-# frozen or not — the question before a `delete`, since a half-built one is
-# in the way as much as a good one.
+# Whether the listing in $1 has a template nicknamed $2, frozen or not — the
+# question before a `delete`, since a half-built one is in the way as much as
+# a good one.
 templateExistsIn() {
-  jq -e --arg n "$TN_GUEST_TEMPLATE" \
+  jq -e --arg n "$2" \
     'map(select(.nickname == $n and (.template == true or .template == "true"))) | length > 0' \
     <<<"$1" > /dev/null
 }
 
-# When the template with the configured nickname in the listing in $1 was
-# built, as the ISO 8601 timestamp tn_guest.py recorded on its dataset. Fails
-# when there is none — and "none" includes a template without a snapshot,
-# which `clone` refuses. The template flag is read as a boolean or as the
-# string tn_guest.py stores.
+# When the template nicknamed $2 in the listing in $1 was built, as the ISO
+# 8601 timestamp tn_guest.py recorded on its dataset. Fails when there is
+# none — and "none" includes a template without a snapshot, which `clone`
+# refuses. The template flag is read as a boolean or as the string
+# tn_guest.py stores.
 templateCreatedIn() {
-  jq -re --arg n "$TN_GUEST_TEMPLATE" \
+  jq -re --arg n "$2" \
     'map(select(.nickname == $n and (.template == true or .template == "true") and (.snapshot // "") != ""))
      | first | .created // empty' \
+    <<<"$1"
+}
+
+# The templates in the listing in $1 that carry this script's prefix and are
+# not $2, one nickname per line: the ones a claim no longer needs. The bare
+# prefix counts too — it is what templates were called before the hash was
+# part of the name, and the one on the lab box is otherwise orphaned.
+staleTemplatesIn() {
+  jq -r --arg p "$TN_GUEST_TEMPLATE_PREFIX" --arg keep "$2" \
+    'map(select((.template == true or .template == "true")
+                and ((.nickname // "" | startswith($p + "-")) or .nickname == $p)
+                and .nickname != $keep))
+     | .[].nickname' \
     <<<"$1"
 }
 
@@ -347,16 +341,47 @@ templateSpec() {
     "$(basename "$TN_GUEST_ISO")" "$TN_GUEST_OS_DISK_GB" "$TN_GUEST_DATA_DISK_COUNT" "$TN_GUEST_DATA_DISK_GB"
 }
 
-# Where the runner records the spec the configured template was built from.
-templateRecord() {
-  printf '%s/.template-%s' "$TN_GUEST_STATE_DIR" "$TN_GUEST_TEMPLATE"
+# The nickname of the template for the current spec: the prefix and the first
+# eight hex digits of the spec's SHA-256. Deterministic, so the same ISO and
+# geometry always name the same template, and exact, so a pin back to an
+# older nightly names that nightly's template — built again if it is gone.
+templateNickname() {
+  local digest
+  digest=$(printf '%s' "$(templateSpec)" | { sha256sum 2>/dev/null || shasum -a 256; } | cut -c1-8)
+  printf '%s-%s' "$TN_GUEST_TEMPLATE_PREFIX" "$digest"
 }
 
-# Build the template every claim clones: a bare install from the ISO, shut
-# down after its first boot and snapshotted. Replaces the previous template of
-# the same nickname, which is only possible when nothing is cloned from it —
-# the e2e-lab concurrency group guarantees that, since every run destroys its
-# clone before releasing the group.
+# Delete the templates a claim no longer needs: every one with this script's
+# prefix other than $1, the one just cloned. Best effort, after the clone:
+# a template with live clones — a run on another runner, a leaked appliance
+# its lease has not yet expired, somebody's debugging clone — cannot be
+# deleted, and must not fail this claim for it. It is tried again by the
+# next claim, by which time the lease has usually run out and `prune` has
+# taken the clone. This is why a new template is built beside the old one
+# rather than in its place: the build never has to wait on anybody's clone.
+collectTemplates() {
+  local keep="$1" listing stale
+  readDeployments listing
+  stale=$(staleTemplatesIn "$listing" "$keep")
+  [ -n "$stale" ] || return 0
+  local old
+  while IFS= read -r old; do
+    if tnGuest delete "$old" > /dev/null 2>&1; then
+      echo "appliance.sh: deleted old template '$old'" >&2
+    else
+      echo "appliance.sh: old template '$old' still has clones (or would not delete); leaving it for a later claim" >&2
+    fi
+  done <<<"$stale"
+}
+
+# Build the template for the current ISO and disk geometry: a bare install
+# from the ISO, shut down after its first boot and snapshotted, under the
+# nickname templateNickname gives it. Built beside whatever templates the
+# host already has, never in place of one, so a clone of an older template
+# never blocks it and a build that fails leaves the older template usable.
+# Already frozen under that nickname: nothing to do. There but never frozen —
+# a build that died between create and snapshot — it is removed first, which
+# is safe because nothing can have been cloned from it.
 #
 # Emits nothing on stdout. The template's password is the one in
 # TN_GUEST_TEMPLATE_PASSWORD; clones rotate away from it, so it never reaches
@@ -372,28 +397,25 @@ build_template() {
   [ -n "${TN_GUEST_HOST_API_KEY:-}${TN_GUEST_HOST_PASSWORD:-}" ] \
     || die "TN_GUEST_HOST_API_KEY or TN_GUEST_HOST_PASSWORD is required"
 
-  mkdir -p "$TN_GUEST_STATE_DIR" 2>/dev/null || true
-  [ -d "$TN_GUEST_STATE_DIR" ] && [ -w "$TN_GUEST_STATE_DIR" ] \
-    || die "TN_GUEST_STATE_DIR is not a writable directory: $TN_GUEST_STATE_DIR (the template's build record goes there)"
-
-  # The record goes before the template does: between here and the new
-  # record there is no template the record could be true of, and a claim
-  # that finds a template without one rebuilds, which is the right answer.
-  rm -f "$(templateRecord)"
-  local listing
+  local template listing
+  template=$(templateNickname)
   readDeployments listing
-  if templateExistsIn "$listing"; then
-    echo "appliance.sh: replacing template '$TN_GUEST_TEMPLATE'" >&2
-    tnGuest delete "$TN_GUEST_TEMPLATE" > /dev/null \
-      || die "could not delete the existing template '$TN_GUEST_TEMPLATE' — clones of it may still exist"
+  if templateCreatedIn "$listing" "$template" > /dev/null; then
+    echo "appliance.sh: template '$template' for [$(templateSpec)] already exists" >&2
+    return 0
+  fi
+  if templateExistsIn "$listing" "$template"; then
+    echo "appliance.sh: removing the unfrozen template '$template' left by an earlier build" >&2
+    tnGuest delete "$template" > /dev/null \
+      || die "could not delete the unfrozen template '$template'"
   fi
 
-  echo "appliance.sh: building template '$TN_GUEST_TEMPLATE' from $TN_GUEST_ISO" >&2
+  echo "appliance.sh: building template '$template' from $TN_GUEST_ISO as [$(templateSpec)]" >&2
   local json
   json=$(tnGuest create --template \
     --iso "$TN_GUEST_ISO" \
     --admin-pass "$TN_GUEST_TEMPLATE_PASSWORD" \
-    --nickname "$TN_GUEST_TEMPLATE" \
+    --nickname "$template" \
     --memory-mb "$TN_GUEST_MEMORY_MB" \
     --vcpus "$TN_GUEST_VCPUS" \
     --os-disk-gb "$TN_GUEST_OS_DISK_GB" \
@@ -401,8 +423,7 @@ build_template() {
     --data-disk-gb "$TN_GUEST_DATA_DISK_GB" \
     --network hostfwd) \
     || die "tn_guest.py create --template failed"
-  templateSpec > "$(templateRecord)"
-  echo "appliance.sh: template '$TN_GUEST_TEMPLATE' is $(jq -r '.name' <<<"$json"), built from [$(templateSpec)]" >&2
+  echo "appliance.sh: template '$template' is $(jq -r '.name' <<<"$json")" >&2
 }
 
 # Destroy an appliance. Safe to call twice, and safe to call when claim
@@ -600,7 +621,7 @@ case "${1:-}" in
   iso)            shift; iso "$@" ;;
   claim)          shift; claim "$@" ;;
   release)        shift; release "$@" ;;
-  build-template) shift; build_template "$@" ;;
+  build-template) shift; build_template "$@"; collectTemplates "$(templateNickname)" ;;
   snapshot)       shift; snapshot "$@" ;;
   revert)         shift; revert "$@" ;;
   *) die "usage: appliance.sh {iso|claim|release|build-template|snapshot|revert} [args]" ;;

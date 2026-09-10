@@ -375,11 +375,12 @@ answers **E2**'s "warm spare" cheaply: spares are clones.
 the bare install, shuts it down and snapshots its deployment dataset;
 `tn_guest.py clone` uses middleware's `vm.clone`, which copies the VM record,
 its UEFI NVRAM state and every zvol from that snapshot, then rewrites the
-clone's ports and boots it. `appliance.sh claim` clones it, rebuilding it
-first whenever the ISO name or disk geometry the claim asks for differs from
-what the template was built from, which the runner records per template.
-Baselines beyond `fresh-install` are the same mechanism with a configuration
-step before the shutdown.
+clone's ports and boots it. Templates are named by a hash of the ISO and
+disk geometry they were built from; `appliance.sh claim` clones the one for
+its own ISO, building it beside the older ones when it is missing and
+collecting the older ones once nothing is cloned from them. Baselines beyond
+`fresh-install` are the same mechanism with a configuration step before the
+shutdown.
 
 **Baselines age with the nightly.** A baseline built from one ISO is that
 build. Rebuild them when the nightly moves — on a schedule, not per run — so
