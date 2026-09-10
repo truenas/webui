@@ -3,14 +3,15 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
   byTextContent, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnCheckboxHarness, TnDialog, TnStepperComponent,
 } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -33,7 +34,6 @@ import {
   PoolManagerState,
   PoolManagerStore,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('ReviewWizardStepComponent', () => {
   let spectator: Spectator<ReviewWizardStepComponent>;
@@ -89,11 +89,7 @@ describe('ReviewWizardStepComponent', () => {
         totalUsableCapacity$: of(2 * GiB),
       }),
       mockProvider(TnDialog),
-      provideMockStore({
-        selectors: [
-          { selector: selectIsEnterprise, value: false },
-        ],
-      }),
+      mockEntitlements([EntitlementFeature.Support]),
       mockAuth(),
     ],
   });
@@ -285,7 +281,7 @@ describe('ReviewWizardStepComponent', () => {
     });
   });
 
-  describe('force topology (Community Edition)', () => {
+  describe('force topology without a support entitlement', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -295,7 +291,7 @@ describe('ReviewWizardStepComponent', () => {
       forceTopology$.next(false);
     });
 
-    it('shows the Force checkbox on non-Enterprise systems', async () => {
+    it('shows the Force checkbox', async () => {
       const checkbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Force' }));
       expect(checkbox).not.toBeNull();
     });
@@ -317,12 +313,12 @@ describe('ReviewWizardStepComponent', () => {
       spectator.detectChanges();
       expect(await checkbox.isChecked()).toBe(false);
     });
+  });
 
-    it('hides the Force checkbox on Enterprise systems', async () => {
-      const store$ = spectator.inject(MockStore);
-      store$.overrideSelector(selectIsEnterprise, true);
-      store$.refreshState();
-      spectator.detectChanges();
+  describe('force topology with a support entitlement', () => {
+    it('hides the Force checkbox', async () => {
+      spectator = createComponent({ providers: [mockEntitlements()] });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
       const checkbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Force' }));
       expect(checkbox).toBeNull();

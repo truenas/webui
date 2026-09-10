@@ -4,7 +4,6 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnButtonComponent, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent,
@@ -13,7 +12,7 @@ import {
 import {
   catchError, forkJoin, Observable, of, tap,
 } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
@@ -38,8 +37,6 @@ import {
 } from 'app/pages/services/components/service-config-forms.constants';
 import { AddSpnDialog } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 // Built here rather than inline in the component, and left with an inferred return type — see
 // the `V` type parameter on IxFormHostForm for why.
@@ -93,7 +90,6 @@ type NfsFormValue = ReturnType<ReturnType<typeof createNfsForm>['getRawValue']>;
 export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> implements OnInit {
   private api = inject(ApiService);
   private fb = inject(NonNullableFormBuilder);
-  private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private tnDialog = inject(TnDialog);
@@ -221,12 +217,11 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
   }
 
   private checkForRdmaSupport(): Observable<void> {
-    return forkJoin([
-      this.api.call('rdma.capable_protocols'),
-      this.store$.select(selectIsEnterprise).pipe(take(1)),
-    ]).pipe(
-      map(([capableProtocols, isEnterprise]): void => {
-        const hasRdmaSupport = capableProtocols.includes(RdmaProtocolName.Nfs) && isEnterprise;
+    // `rdma.capable_protocols` already accounts for the RDMA entitlement, so it decides this
+    // alone. It used to be qualified by product type, which is not a licensing signal.
+    return this.api.call('rdma.capable_protocols').pipe(
+      map((capableProtocols): void => {
+        const hasRdmaSupport = capableProtocols.includes(RdmaProtocolName.Nfs);
         if (hasRdmaSupport) {
           this.form.controls.rdma.enable();
         } else {

@@ -127,6 +127,15 @@
         <tn-select formControlName="permissions_model" [options]="permissionsModelOptions()"></tn-select>
       </tn-form-field>
 
+      <tn-form-field
+        [label]="'Object Ownership' | translate"
+        [tooltip]="helptext.objectOwnershipTooltip | translate"
+        [hint]="objectOwnershipHint()"
+        [required]="true"
+      >
+        <tn-select formControlName="object_ownership" [options]="objectOwnershipOptions"></tn-select>
+      </tn-form-field>
+
       <ix-s3-grants-list
         [formArray]="form.controls.grants"
         [label]="'Grants' | translate"

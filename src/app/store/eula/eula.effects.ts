@@ -27,6 +27,10 @@ export class EulaEffects {
   private store$ = inject<Store<AppState>>(Store);
   private authService = inject(AuthService);
 
+  /**
+   * `truenas.is_eula_accepted` only reports whether the pending marker exists; it does not check
+   * the license, so the UI must gate on product type or community systems would see the dialog.
+   */
   checkEula$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     filterAsync(() => this.store$.select(selectIsEnterprise).pipe(filter(Boolean))),

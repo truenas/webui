@@ -5,6 +5,7 @@ import {
   S3LogLevel,
   S3MultipartEtag,
   S3ObjectLockMode,
+  S3ObjectOwnership,
   S3PermissionsModel,
   S3PrincipalType,
   S3Versioning,
@@ -66,6 +67,7 @@ export interface S3Bucket {
   owner_uid: number;
   grants: S3GrantEntry[];
   permissions_model: S3PermissionsModel;
+  object_ownership: S3ObjectOwnership;
   versioning: S3Versioning;
   snapshot_versions: string[];
   snapshot_versions_max: number;

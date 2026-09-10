@@ -66,6 +66,7 @@ describe('AccessCardComponent', () => {
       ]),
       provideMockStore({
         initialState: {
+          entitlements: { entitlements: {} },
           systemInfo: {
             systemInfo: null,
             productType: ProductType.Enterprise,
