@@ -76,12 +76,16 @@
             [required]="listSchema.required || false"
             [canAdd]="!isAllListControlsDisabled"
             [control]="getFormArray"
+            [addLabel]="'Add' | translate"
+            [emptyMessage]="'No items have been added yet.' | translate"
             (add)="addControl()"
           >
             @for (element of getFormArray.controls; track element; let i = $index) {
               <tn-form-list-item
+                testId="remove-from-list"
                 [label]="listSchema.title ? (listSchema.title | translate) : ''"
                 [canDelete]="!isAllListControlsDisabled"
+                [removeAriaLabel]="'Remove {label} item' | translate: { label: listSchema.title ? (listSchema.title | translate) : '' }"
                 (delete)="removeControl(i)"
               >
                 @for (item of listSchema.items; track item) {

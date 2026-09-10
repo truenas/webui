@@ -12,6 +12,8 @@
       [empty]="form.controls.fcPorts.length === 0"
       [label]="'Fibre Channel Ports' | translate"
       [control]="form.get('fcPorts')"
+      [addLabel]="'Add' | translate"
+      [emptyMessage]="'No items have been added yet.' | translate"
       (add)="addFcPort()"
     >
       @if (form.controls.fcPorts.length >= 2) {
@@ -20,7 +22,9 @@
 
       @for (entry of form.controls.fcPorts.controls; track entry; let i = $index) {
         <tn-form-list-item
+          testId="remove-from-list"
           [label]="'Port' | translate"
+          [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Port' | translate }"
           (delete)="deleteFcPort(i)"
         >
           <ix-fc-port-item-controls
@@ -77,11 +81,15 @@
           [empty]="form.controls.auth_networks.length === 0"
           [label]="helptext.authNetwork.label | translate"
           [control]="form.get('auth_networks')"
+          [addLabel]="'Add' | translate"
+          [emptyMessage]="'No items have been added yet.' | translate"
           (add)="addNetwork()"
         >
           @for (entry of form.controls.auth_networks.controls; track entry; let i = $index) {
             <tn-form-list-item
+              testId="remove-from-list"
               [label]="helptext.authNetwork.label | translate"
+              [removeAriaLabel]="'Remove {label} item' | translate: { label: helptext.authNetwork.label | translate }"
               (delete)="deleteNetwork(i)"
             >
               <tn-form-field
@@ -117,12 +125,16 @@
             [control]="form.get('groups')"
             [empty]="form.controls.groups.length === 0"
             [label]="'Add groups' | translate"
+            [addLabel]="'Add' | translate"
+            [emptyMessage]="'No items have been added yet.' | translate"
             (add)="addGroup()"
           >
             @for (entry of form.controls.groups.controls; track entry; let i = $index) {
               <tn-form-list-item
+                testId="remove-from-list"
                 [label]="'Groups' | translate"
                 [formGroupName]="i"
+                [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Groups' | translate }"
                 (delete)="deleteGroup(i)"
               >
                 <tn-form-field

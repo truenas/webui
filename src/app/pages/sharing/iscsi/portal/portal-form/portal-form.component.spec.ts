@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnFormListHarness, TnIconButtonHarness, TnInputHarness, TnSelectHarness,
+  TnButtonHarness, TnFormListHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -143,7 +143,6 @@ describe('PortalFormComponent', () => {
     it('adds and removes blocks when Add or Delete button is pressed', async () => {
       const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
       const list = await loader.getHarness(TnFormListHarness);
-      let deleteButton: TnIconButtonHarness;
       expect(await list.getItems()).toHaveLength(0);
       expect(spectator.component.form.value.ip).toHaveLength(0);
 
@@ -155,13 +154,11 @@ describe('PortalFormComponent', () => {
       expect(await list.getItems()).toHaveLength(2);
       expect(spectator.component.form.value.ip).toHaveLength(2);
 
-      deleteButton = await loader.getHarness(TnIconButtonHarness.with({ selector: '.tn-form-list-item__remove' }));
-      await deleteButton.click();
+      await (await list.getItems())[0].remove();
       expect(await list.getItems()).toHaveLength(1);
       expect(spectator.component.form.value.ip).toHaveLength(1);
 
-      deleteButton = await loader.getHarness(TnIconButtonHarness.with({ selector: '.tn-form-list-item__remove' }));
-      await deleteButton.click();
+      await (await list.getItems())[0].remove();
       expect(await list.getItems()).toHaveLength(0);
       expect(spectator.component.form.value.ip).toHaveLength(0);
     });

@@ -113,11 +113,15 @@
       [label]="'Networks' | translate"
       [control]="form.get('networks')"
       [tooltip]="helptext.addNetworkTooltip | translate"
+      [addLabel]="'Add' | translate"
+      [emptyMessage]="'No items have been added yet.' | translate"
       (add)="addNetworkControl()"
     >
       @for (network of form.controls.networks.controls; track network; let i = $index) {
         <tn-form-list-item
+          testId="remove-from-list"
           [label]="'Networks' | translate"
+          [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Networks' | translate }"
           (delete)="removeNetworkControl(i)"
         >
           <tn-form-field
@@ -139,11 +143,15 @@
       [label]="'Hosts' | translate"
       [control]="form.get('hosts')"
       [tooltip]="helptext.addHostsTooltip | translate"
+      [addLabel]="'Add' | translate"
+      [emptyMessage]="'No items have been added yet.' | translate"
       (add)="addHostControl()"
     >
       @for (network of form.controls.hosts.controls; track network; let i = $index) {
         <tn-form-list-item
+          testId="remove-from-list"
           [label]="'Hosts' | translate"
+          [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Hosts' | translate }"
           (delete)="removeHostControl(i)"
         >
           <tn-form-field

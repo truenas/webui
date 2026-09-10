@@ -18,11 +18,15 @@
       [empty]="listen.length === 0"
       [label]="'Add listen' | translate"
       [required]="true"
+      [addLabel]="'Add' | translate"
+      [emptyMessage]="'No items have been added yet.' | translate"
       (add)="onAdd()"
     >
       @for (item of listen; track item; let i = $index) {
         <tn-form-list-item
+          testId="remove-from-list"
           [label]="'IP Address' | translate"
+          [removeAriaLabel]="'Remove {label} item' | translate: { label: 'IP Address' | translate }"
           (delete)="onDelete(i)"
         >
           <tn-form-field

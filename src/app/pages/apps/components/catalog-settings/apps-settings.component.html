@@ -39,14 +39,10 @@
               [required]="true"
               [tooltip]="helptext.dockerSettings.addressPoolsBase | translate"
             >
-              <tn-form-field
+              <ix-ip-input-with-netmask
+                formControlName="base"
                 [required]="true"
-              >
-                <ix-ip-input-with-netmask
-                  formControlName="base"
-                  [required]="true"
-                ></ix-ip-input-with-netmask>
-              </tn-form-field>
+              ></ix-ip-input-with-netmask>
             </tn-form-field>
 
             <tn-form-field

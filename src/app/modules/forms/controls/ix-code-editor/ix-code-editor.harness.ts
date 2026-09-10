@@ -1,36 +1,29 @@
-import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
+import { ComponentHarness } from '@angular/cdk/testing';
+import { UnitTestElement } from '@angular/cdk/testing/testbed';
 import { EditorView } from 'codemirror';
-import { IxLabelHarness } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.harness';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 import { getErrorText } from 'app/modules/forms/ix-forms/utils/harness.utils';
-
-export interface IxCodeEditorFilters extends BaseHarnessFilters {
-  label?: string;
-}
 
 export class IxCodeEditorHarness extends ComponentHarness implements IxFormControlHarness {
   static readonly hostSelector = 'ix-code-editor';
 
-  static with(options: IxCodeEditorFilters): HarnessPredicate<IxCodeEditorHarness> {
-    return new HarnessPredicate(IxCodeEditorHarness, options)
-      .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
-  }
-
   getEditorLines = this.locatorForAll('.cm-line');
   getErrorText = getErrorText;
 
-  async getLabelText(): Promise<string> {
-    const label = await this.locatorForOptional(IxLabelHarness)();
-    if (!label) {
-      return '';
-    }
-    return label.getLabel();
+  /**
+   * Always '': the control renders no label of its own since it became a bare control, so the
+   * enclosing `tn-form-field` is what names it. `TnFormControlHarness` reads the label off that
+   * field and only delegates the *value* here, so nothing asks this for a name.
+   */
+  getLabelText(): Promise<string> {
+    return Promise.resolve('');
   }
 
   getInputArea = this.locatorFor('.cm-content');
 
   async getValue(): Promise<string> {
-    return Promise.resolve(this.getEditor().state.doc.toString());
+    const editor = await this.getEditor();
+    return editor.state.doc.toString();
   }
 
   async setValue(value: string): Promise<void> {
@@ -47,12 +40,20 @@ export class IxCodeEditorHarness extends ComponentHarness implements IxFormContr
     await this.forceStabilize();
   }
 
-  isDisabled(): Promise<boolean> {
-    return Promise.resolve(this.getEditor().state.readOnly);
+  async isDisabled(): Promise<boolean> {
+    const editor = await this.getEditor();
+    return editor.state.readOnly;
   }
 
-  private getEditor(): EditorView {
-    const container = document.querySelector<HTMLElement>('.input-container');
+  /**
+   * Scoped to this harness's own host. A document-wide `.input-container` lookup would resolve to
+   * the first match on the page, which is the wrong editor in a form holding two of them — and
+   * `ix-ip-input-with-netmask` renders a `.input-container` of its own, so a form holding both
+   * would hand `findFromDOM` a div with no editor in it and throw.
+   */
+  private async getEditor(): Promise<EditorView> {
+    const host = (await this.host()) as UnitTestElement;
+    const container = host.element.querySelector<HTMLElement>('.input-container');
     if (!container) {
       throw new Error('Input container not found');
     }

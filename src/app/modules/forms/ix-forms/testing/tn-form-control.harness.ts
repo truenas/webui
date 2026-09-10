@@ -150,12 +150,6 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
   }
 
   /**
-   * Empty only when the field carries no label and holds nothing that names itself — neither a
-   * `tn-checkbox`'s own `[label]` nor a radio group's `[ariaLabel]`. `indexControlsByLabel` leaves
-   * such a control out of the index entirely (no label a caller could pass would reach it); query
-   * it through its own tn-* harness instead.
-   */
-  /**
    * The projected ix-* control this field wraps, when it is one this adapter can drive. Checked
    * before every tn-* locator, since those would reach inside it.
    */
@@ -165,14 +159,21 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
       ?? (await this.codeEditor());
   }
 
+  /**
+   * Empty only when the field carries no label and holds nothing that names itself — neither a
+   * `tn-checkbox`'s own `[label]` nor a radio group's `[ariaLabel]`. `indexControlsByLabel` leaves
+   * such a control out of the index entirely (no label a caller could pass would reach it); query
+   * it through its own tn-* harness instead.
+   */
   async getLabelText(): Promise<string> {
     const label = await this.getLabel();
     if (label) {
       return label;
     }
-    // A projected ix-* control names itself through its own `ix-label`, so ask it rather than
-    // the tn-* internals it renders — a composite's first `tn-checkbox` would otherwise name
-    // the whole field below.
+    // A projected ix-* control renders no label of its own any more — the field names it — so a
+    // field holding one and carrying no label of its own is genuinely nameless. Answer that here
+    // rather than falling through to the tn-* branches below, where a composite's first
+    // `tn-checkbox` would otherwise name the whole field.
     if (await this.projectedIxControl()) {
       return '';
     }

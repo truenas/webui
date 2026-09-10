@@ -115,10 +115,20 @@ export class IxDynamicFormItemComponent implements OnInit, AfterViewInit {
    *
    * Deferred to `AfterViewInit` (and a macrotask beyond it) as it was: adding controls seeds the
    * `FormArray` the view has just rendered, so it cannot run during that render.
+   *
+   * `schema.hidden` is skipped to keep the behaviour `ix-list` had. The whole template sits under
+   * `@if (!(isHidden$ | async))`, so a list that starts hidden never rendered a list to run this,
+   * and its defaults were never added to the payload. This hook is on the item itself and would
+   * otherwise run for it regardless.
    */
   ngAfterViewInit(): void {
     const schema = this.dynamicSchema();
-    if (schema.type !== DynamicFormSchemaType.List || this.isEditMode() || !schema.default?.length) {
+    if (
+      schema.type !== DynamicFormSchemaType.List
+      || this.isEditMode()
+      || schema.hidden
+      || !schema.default?.length
+    ) {
       return;
     }
 

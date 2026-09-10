@@ -12,9 +12,12 @@ import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/sch
 /**
  * The ix-* controls that still render a label row of their own, so a spec can find one by label
  * without an enclosing `tn-form-field`. `ix-permissions`, `ix-ip-input-with-netmask` and
- * `ix-code-editor` are deliberately absent: they are bare controls now, always projected into a
- * field, and {@link TnFormControlHarness} reaches them through that field — listing them here as
- * well would also close an import cycle back through this module.
+ * `ix-code-editor` are deliberately absent: they are bare controls now, so they have no label to
+ * be found by. Inside a form they are projected into a `tn-form-field` and
+ * {@link TnFormControlHarness} reaches them through it; the few places that render one outside a
+ * field — `job-logs-row` and the websocket debug `message-list` both show a read-only
+ * `ix-code-editor` — are display-only, so nothing needs to index them at all. Listing them here
+ * would also close an import cycle back through this module.
  */
 export const supportedFormControlSelectors = [
   IxExplorerHarness,
@@ -71,8 +74,8 @@ export async function indexControlsByLabel<T extends IxFormControlHarness>(
   const result: Record<string, T> = {};
   for (const control of controls) {
     const label = await control.getLabelText();
-    // Repeated *labelled* controls are legitimate and long-standing here — an `ix-list` renders
-    // one set of labels per row — so those stay last-wins, as they have always been. An unlabelled
+    // Repeated *labelled* controls are legitimate and long-standing here — a `tn-form-list`
+    // renders one set of labels per row — so those stay last-wins, as they have always been. An unlabelled
     // control is different: '' is not a name any caller would ask for, and a second one would
     // collide with the first under it. Skip them unconditionally rather than only once a second
     // appears — a threshold would make whether '' resolves depend on unrelated markup elsewhere

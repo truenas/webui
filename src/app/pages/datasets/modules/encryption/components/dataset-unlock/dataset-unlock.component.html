@@ -51,6 +51,7 @@
           [label]="'Datasets' | translate"
           [canAdd]="false"
           [control]="form.controls.datasets"
+          [emptyMessage]="'No items have been added yet.' | translate"
         >
           @for (dataset of form.controls.datasets.controls; track dataset; let i = $index) {
             <tn-form-list-item

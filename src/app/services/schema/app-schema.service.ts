@@ -574,7 +574,7 @@ export class AppSchemaService {
    * but path doesn't resolve to list data - populates from schema.default array
    *
    * Object defaults (e.g., [{key: 'value'}]) are intentionally skipped here because
-   * the ix-list component handles them directly through user interaction (clicking "Add" button).
+   * the list control handles them directly through user interaction (clicking "Add" button).
    * Only primitive defaults (e.g., ['string1', 'string2']) are populated automatically.
    */
   private getItemsToPopulate(
@@ -613,7 +613,7 @@ export class AppSchemaService {
       }
     } else if (isNew && !hasObjectDefaults && schema.default && Array.isArray(schema.default)) {
       // No config but has primitive defaults - populate them (nested primitive lists)
-      // Object defaults are skipped because they require user interaction via ix-list
+      // Object defaults are skipped because they require user interaction via the list control
       return schema.default;
     }
 
