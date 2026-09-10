@@ -193,8 +193,10 @@ jobs:
       # serve it. Built before the claim so the lab is not held during the
       # build, and so the build's memory is back before a 6GB guest starts.
       #
-      # The web server is a stock nginx image with the repository's own
-      # `docker/nginx.conf`, the file the shipped UI is served through. Pulled
+      # The web server is a stock nginx image driven by `docker/nginx.conf`,
+      # this repository's copy of the appliance's nginx routing. A stand-in
+      # rather than the real thing: the deb ships only `dist/`, so an appliance
+      # serves the UI through middleware's own config, not this file. Pulled
       # here for the same fail-early reason as the Playwright image.
       - name: Build the UI
         if: (inputs.ui || 'built') == 'built'
@@ -225,10 +227,11 @@ jobs:
           rm -f "$RUNNER_TEMP/appliance.env"
 
       # nginx serves the build at /ui/ and proxies /api, /_upload, /_download
-      # and the WebSocket to the appliance over plain HTTP, exactly as
-      # `docker/nginx.conf` does on the appliance itself and in the Dockerfile.
-      # The two placeholders are filled the way `docker/start.sh` fills them,
-      # plus the syslog targets, which a container has no socket for. The
+      # and the WebSocket to the appliance over plain HTTP, which is the
+      # routing `docker/nginx.conf` describes. The sed fills its two
+      # placeholders — `%%HOSTNAME%%` with the appliance's forwarded port,
+      # `%%VERTAG%%` with a timestamp to bust the UI cache — and redirects the
+      # syslog targets, which a container has no socket for. The
       # upstream is the appliance's forwarded port 80, reached from the
       # container's bridge network through Docker's host gateway. It cannot
       # share the host network: nginx binds the ports the TrueNAS host's own
