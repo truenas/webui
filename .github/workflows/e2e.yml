@@ -129,7 +129,8 @@ jobs:
       TN_GUEST_HOST_PASSWORD: ${{ secrets.TN_GUEST_HOST_PASSWORD }}
       # With the template password set, a claim clones a template instead of
       # installing from the ISO, building the template first when the host
-      # has none or the resolved ISO is newer than it. See e2e/ci/appliance.sh.
+      # has none, or when the ISO name or disk geometry the claim asks for
+      # differs from what the template was built from. See e2e/ci/appliance.sh.
       TN_GUEST_TEMPLATE: ${{ vars.E2E_TN_GUEST_TEMPLATE || 'e2e-template' }}
       TN_GUEST_TEMPLATE_PASSWORD: ${{ secrets.TN_GUEST_TEMPLATE_PASSWORD }}
       # Serves the built UI. Debian-based on purpose: docker/nginx.conf runs

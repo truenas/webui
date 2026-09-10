@@ -35,7 +35,7 @@
 #                      --nickname <template nickname>            -> JSON
 #   tn_guest.py list   --host H --pool P (...) --json
 #                      -> JSON [{nickname, template, snapshot, created, …}]
-#                      (read by templateCreated: a template is an entry with
+#                      (read by templateCreatedIn: a template is an entry with
 #                      template true and a snapshot to clone from)
 #   tn_guest.py delete --host H --pool P (...) <name or nickname>
 #
@@ -78,8 +78,10 @@
 #
 # What the template on the host was built from is recorded by the runner in
 #
-#   TN_GUEST_STATE_DIR  (default: TN_GUEST_ISO_DIR) as .template-<nickname>,
-#                       holding the ISO's name and the disk geometry. A claim
+#   TN_GUEST_STATE_DIR  as .template-<nickname>, holding the ISO's name and
+#                       the disk geometry (default: TN_GUEST_ISO_DIR when the
+#                       host is this machine, else ~/.local/state/tn-guest;
+#                       the runner's, in both cases, not the host's). A claim
 #                       whose ISO or geometry differs from the record rebuilds
 #                       the template first; no record at all rebuilds too.
 #                       Exact, so a pin back to an older nightly still on disk
@@ -131,7 +133,16 @@ TN_GUEST_ISO_KEEP="${TN_GUEST_ISO_KEEP:-2}"
 # choice's age, which is what the refresh policy reads.
 currentNightlyFile=".current-nightly"
 
-TN_GUEST_STATE_DIR="${TN_GUEST_STATE_DIR:-$TN_GUEST_ISO_DIR}"
+# The runner's own record of what it built lives with the ISOs when the
+# runner is the host, which is the lab's layout; a runner driving a remote
+# host has no ISO directory of its own and keeps the record in its state dir.
+if [ -z "${TN_GUEST_STATE_DIR:-}" ]; then
+  if [ "$TN_GUEST_HOST" = "localhost" ]; then
+    TN_GUEST_STATE_DIR="$TN_GUEST_ISO_DIR"
+  else
+    TN_GUEST_STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/tn-guest"
+  fi
+fi
 
 # Where `claim` records the deployment name, so `release` can find it without
 # the caller.
@@ -224,9 +235,10 @@ claim() {
     # clones the new build. That is the whole rotation policy; nothing
     # rebuilds on a calendar. The comparison is against the runner's record
     # of what it built (templateSpec), never against timestamps.
-    local built recorded wanted
+    local listing built recorded wanted
+    readDeployments listing
     wanted=$(templateSpec)
-    if ! built=$(templateCreated); then
+    if ! built=$(templateCreatedIn "$listing"); then
       echo "appliance.sh: no template named '$TN_GUEST_TEMPLATE' on the host, building it first" >&2
       build_template fresh-install
     elif ! recorded=$(cat "$(templateRecord)" 2>/dev/null); then
@@ -289,35 +301,42 @@ TN_BASELINE=$baseline
 EOF
 }
 
-# The host's deployments, as tn_guest.py lists them. A failed `list` is an
-# error, not an empty host: an empty answer would send every claim down the
-# rebuild path with a log line blaming a missing template, when the real
-# problem is a credential, a verb this tn_guest.py lacks, or a moved field.
-# tn_guest.py's own stderr goes to the job log for the same reason.
-listDeployments() {
-  tnGuest list --json \
+# The host's deployments, as tn_guest.py lists them, into the variable named
+# by $1. A failed `list` is an error, not an empty host: an empty answer
+# would send every claim down the rebuild path with a log line blaming a
+# missing template, when the real problem is a credential, a verb this
+# tn_guest.py lacks, or a moved field. tn_guest.py's own stderr goes to the
+# job log for the same reason. Called at statement level by the verbs, never
+# inside a pipeline or a `$(...)`: `die` in a subshell ends only the subshell,
+# and the caller would read that as "no template" — the very fallback this
+# exists to rule out. The template questions below are then pure jq over the
+# listing they are handed.
+readDeployments() {
+  local deployments
+  deployments=$(tnGuest list --json) \
     || die "tn_guest.py list --json failed, so whether a template exists cannot be known (see its output above)"
+  printf -v "$1" '%s' "$deployments"
 }
 
-# Whether any deployment with the configured nickname is a template, frozen
-# or not — the question before a `delete`, since a half-built one is in the
-# way as much as a good one.
-templateExists() {
-  listDeployments \
-    | jq -e --arg n "$TN_GUEST_TEMPLATE" \
-        'map(select(.nickname == $n and (.template == true or .template == "true"))) | length > 0' \
-    > /dev/null
+# Whether the listing in $1 has a template with the configured nickname,
+# frozen or not — the question before a `delete`, since a half-built one is
+# in the way as much as a good one.
+templateExistsIn() {
+  jq -e --arg n "$TN_GUEST_TEMPLATE" \
+    'map(select(.nickname == $n and (.template == true or .template == "true"))) | length > 0' \
+    <<<"$1" > /dev/null
 }
 
-# When the template with the configured nickname was built, as the ISO 8601
-# timestamp tn_guest.py recorded on its dataset. Fails when there is none —
-# and "none" includes a template without a snapshot, which `clone` refuses:
-# the record of one is read as a boolean or as the string tn_guest.py stores.
-templateCreated() {
-  listDeployments \
-    | jq -re --arg n "$TN_GUEST_TEMPLATE" \
-        'map(select(.nickname == $n and (.template == true or .template == "true") and (.snapshot // "") != ""))
-         | first | .created // empty'
+# When the template with the configured nickname in the listing in $1 was
+# built, as the ISO 8601 timestamp tn_guest.py recorded on its dataset. Fails
+# when there is none — and "none" includes a template without a snapshot,
+# which `clone` refuses. The template flag is read as a boolean or as the
+# string tn_guest.py stores.
+templateCreatedIn() {
+  jq -re --arg n "$TN_GUEST_TEMPLATE" \
+    'map(select(.nickname == $n and (.template == true or .template == "true") and (.snapshot // "") != ""))
+     | first | .created // empty' \
+    <<<"$1"
 }
 
 # What a template is built from, as one line: the ISO by name and the disk
@@ -353,6 +372,7 @@ build_template() {
   [ -n "${TN_GUEST_HOST_API_KEY:-}${TN_GUEST_HOST_PASSWORD:-}" ] \
     || die "TN_GUEST_HOST_API_KEY or TN_GUEST_HOST_PASSWORD is required"
 
+  mkdir -p "$TN_GUEST_STATE_DIR" 2>/dev/null || true
   [ -d "$TN_GUEST_STATE_DIR" ] && [ -w "$TN_GUEST_STATE_DIR" ] \
     || die "TN_GUEST_STATE_DIR is not a writable directory: $TN_GUEST_STATE_DIR (the template's build record goes there)"
 
@@ -360,7 +380,9 @@ build_template() {
   # record there is no template the record could be true of, and a claim
   # that finds a template without one rebuilds, which is the right answer.
   rm -f "$(templateRecord)"
-  if templateExists; then
+  local listing
+  readDeployments listing
+  if templateExistsIn "$listing"; then
     echo "appliance.sh: replacing template '$TN_GUEST_TEMPLATE'" >&2
     tnGuest delete "$TN_GUEST_TEMPLATE" > /dev/null \
       || die "could not delete the existing template '$TN_GUEST_TEMPLATE' — clones of it may still exist"
