@@ -23,6 +23,31 @@ export const helptext2fa = {
 
   error: T('Error'),
 
+  /**
+   * The middleware mints and arms a secret in one call, so the setup page can only
+   * make the confirmation step feel safe by being explicit about what is already
+   * true and what cancelling undoes.
+   */
+  verification: {
+    pending: T('A 2FA secret has been generated and is already active for your account. Scan the QR code with your\
+ authenticator app, then enter the code the app shows to confirm it was added correctly. If you cancel, the secret is\
+ removed and two-factor authentication stays off for your account.'),
+    label: T('One-Time Password'),
+    tooltip: T('The code your authenticator app currently shows for this account. It changes every 30 seconds.'),
+    verifyBtn: T('Confirm Code'),
+    cancelBtn: T('Cancel Setup'),
+    invalid: T('That code does not match this secret. Check that your authenticator app was set up from the QR code\
+ above and that your device clock is correct, then enter the code it shows now.'),
+    verified: T('Two-factor authentication is confirmed for your account.'),
+    cancel: {
+      title: T('Cancel Two-Factor Authentication Setup?'),
+      message: T('The secret that was just generated will be removed and two-factor authentication will stay off for\
+ your account. You can set it up again at any time.'),
+      btn: T('Remove Secret'),
+      cancelBtn: T('Keep Setting Up'),
+    },
+  },
+
   renewSecret: {
     title: T('Renew Secret'),
     message: T('Renewing the secret will cause a new URI and a\

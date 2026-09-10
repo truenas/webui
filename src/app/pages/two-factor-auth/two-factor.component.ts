@@ -1,9 +1,13 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnDestroy, OnInit, input, output, signal, inject, computed } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, input, output, signal, inject, computed, effect,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnBannerComponent, TnButtonComponent, TnCardComponent, TnDialog, TnProgressBarComponent,
+  TnBannerComponent, TnButtonComponent, TnCardComponent, TnDialog, TnFormFieldComponent, TnInputComponent,
+  TnProgressBarComponent,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -15,16 +19,26 @@ import {
   filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { verifyTotp } from 'app/helpers/totp.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 import { twoFactorElements } from 'app/pages/two-factor-auth/two-factor.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+
+/**
+ * Set while a secret exists that the user has not yet proven their authenticator app
+ * holds. Persisted rather than kept in memory so a reload, a navigation away, or a
+ * browser crash lands the user back on the confirmation step — with the QR code and
+ * the escape hatch — instead of on a page that claims the setup is finished.
+ */
+const pendingVerificationKey = 'pending2FaVerification';
 
 @Component({
   selector: 'ix-two-factor',
@@ -38,15 +52,25 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     NgxSkeletonLoaderModule,
     TnBannerComponent,
     TnButtonComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     QrViewerComponent,
+    ReactiveFormsModule,
     TranslateModule,
     AsyncPipe,
     CopyButtonComponent,
   ],
 })
-export class TwoFactorComponent implements OnInit, OnDestroy {
+export class TwoFactorComponent implements OnInit {
   readonly isSetupDialog = input(false);
   readonly skipSetup = output();
+
+  /**
+   * Mirrors {@link isSetupComplete} for hosts that gate their own "done" affordance on
+   * it — the first-login dialog's Finish button, which must not appear while a secret
+   * is still waiting to be confirmed.
+   */
+  readonly setupComplete = output<boolean>();
 
   authService = inject(AuthService);
   private dialogService = inject(DialogService);
@@ -54,6 +78,8 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   protected tnDialog = inject(TnDialog);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private formBuilder = inject(FormBuilder);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
 
@@ -63,14 +89,25 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   protected isDataLoading = signal(false);
   protected isFormLoading = signal(false);
   globalTwoFactorEnabled = signal(false);
-  showQrCodeWarning = false;
   currentSessionIs2fa = signal(false);
+  pendingVerification = signal(false);
+
+  protected readonly verificationForm = this.formBuilder.nonNullable.group({
+    otp: ['', Validators.required],
+  });
 
   protected readonly showSkipButton = computed(() => {
     return this.isSetupDialog() && !this.userTwoFactorAuthConfigured();
   });
 
+  private readonly isSetupComplete = computed(() => {
+    return this.userTwoFactorAuthConfigured() && !this.pendingVerification();
+  });
+
   protected get global2FaMsg(): string {
+    if (this.pendingVerification()) {
+      return this.translate.instant(helptext2fa.verification.pending);
+    }
     if (!this.globalTwoFactorEnabled()) {
       return this.translate.instant(helptext2fa.globallyDisabled);
     }
@@ -83,7 +120,16 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     return this.translate.instant(helptext2fa.enabledGloballyButNotForUser);
   }
 
+  protected get statusBannerType(): 'warning' | 'success' {
+    const isSettled = this.globalTwoFactorEnabled() && this.userTwoFactorAuthConfigured();
+    return isSettled && !this.pendingVerification() ? 'success' : 'warning';
+  }
+
   readonly helptext = helptext2fa;
+
+  protected readonly otpErrorMessages = {
+    invalidOtp: this.translate.instant(helptext2fa.verification.invalid),
+  };
 
   readonly labels = {
     secret: helptext2fa.secret.label,
@@ -95,14 +141,12 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     uri: helptext2fa.uri.tooltip,
   };
 
-  ngOnInit(): void {
-    this.loadTwoFactorConfigs();
-
-    this.showQrCodeWarning = this.window.localStorage.getItem('showQr2FaWarning') === 'true';
+  constructor() {
+    effect(() => this.setupComplete.emit(this.isSetupComplete()));
   }
 
-  ngOnDestroy(): void {
-    this.setQrWarningState(false);
+  ngOnInit(): void {
+    this.loadTwoFactorConfigs();
   }
 
   private loadTwoFactorConfigs(): void {
@@ -117,6 +161,10 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
           this.isDataLoading.set(false);
           this.userTwoFactorAuthConfigured.set(userConfig.secret_configured);
           this.globalTwoFactorEnabled.set(globalConfig.enabled);
+          // A stored flag without a secret is stale — the secret was unset elsewhere.
+          this.pendingVerification.set(
+            userConfig.secret_configured && this.window.localStorage.getItem(pendingVerificationKey) === 'true',
+          );
         },
       });
 
@@ -132,6 +180,58 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       filter(Boolean),
       switchMap(() => this.renewSecretForUser()),
       tap(() => this.isFormLoading.set(false)),
+      catchError((error: unknown) => this.handleError(error)),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe();
+  }
+
+  /**
+   * Confirms the code the user read off their authenticator app.
+   *
+   * The check runs in the browser against the secret the QR code carries: the
+   * middleware has no endpoint that validates a code without also arming the secret,
+   * and the authoritative check happens at login regardless. What this buys is the
+   * guarantee the reporter asked for — that nobody leaves this page with 2FA armed
+   * against a secret their app never received.
+   */
+  protected onVerifyOtp(): void {
+    if (this.verificationForm.invalid) {
+      this.verificationForm.controls.otp.markAsTouched();
+      return;
+    }
+
+    this.authService.userTwoFactorConfig$.pipe(
+      take(1),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((config) => {
+      const secret = this.getProvisioningUriSecret(config.provisioning_uri);
+      const isValid = !!secret && verifyTotp(secret, this.verificationForm.controls.otp.value, {
+        interval: config.interval,
+        digits: config.otp_digits,
+      });
+
+      if (!isValid) {
+        this.verificationForm.controls.otp.setErrors({ invalidOtp: true });
+        return;
+      }
+
+      this.setPendingVerification(false);
+      this.verificationForm.reset();
+      this.snackbar.success(this.translate.instant(helptext2fa.verification.verified));
+    });
+  }
+
+  protected onCancelVerification(): void {
+    this.dialogService.confirm({
+      title: this.translate.instant(helptext2fa.verification.cancel.title),
+      message: this.translate.instant(helptext2fa.verification.cancel.message),
+      buttonText: this.translate.instant(helptext2fa.verification.cancel.btn),
+      cancelText: this.translate.instant(helptext2fa.verification.cancel.cancelBtn),
+      hideCheckbox: true,
+      buttonColor: 'warn',
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => this.unsetSecretForUser()),
       catchError((error: unknown) => this.handleError(error)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();
@@ -154,9 +254,8 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   private renewSecretForUser(): Observable<void> {
     this.isFormLoading.set(true);
 
-    this.setQrWarningState(true);
-
     this.currentSessionIs2fa.set(false);
+    this.verificationForm.reset();
 
     return this.authService.user$.pipe(
       take(1),
@@ -165,6 +264,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       switchMap(() => this.authService.refreshUser()),
       tap(() => {
         this.userTwoFactorAuthConfigured.set(true);
+        this.setPendingVerification(true);
       }),
       takeUntilDestroyed(this.destroyRef),
     );
@@ -213,28 +313,32 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
-      switchMap(() => {
-        this.isFormLoading.set(true);
-        return this.authService.user$.pipe(
-          take(1),
-          filter((user) => !!user),
-          switchMap((user) => this.api.call('user.unset_2fa_secret', [user.pw_name])),
-        );
-      }),
-      switchMap(() => this.authService.refreshUser()),
-      tap(() => {
-        this.isFormLoading.set(false);
-        this.userTwoFactorAuthConfigured.set(false);
-        this.setQrWarningState(false);
-        this.currentSessionIs2fa.set(false);
-      }),
+      switchMap(() => this.unsetSecretForUser()),
       catchError((error: unknown) => this.handleError(error)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
-  private setQrWarningState(show: boolean): void {
-    this.showQrCodeWarning = show;
-    this.window.localStorage.setItem('showQr2FaWarning', show.toString());
+  private unsetSecretForUser(): Observable<undefined> {
+    this.isFormLoading.set(true);
+
+    return this.authService.user$.pipe(
+      take(1),
+      filter((user) => !!user),
+      switchMap((user) => this.api.call('user.unset_2fa_secret', [user.pw_name])),
+      switchMap(() => this.authService.refreshUser()),
+      tap(() => {
+        this.isFormLoading.set(false);
+        this.userTwoFactorAuthConfigured.set(false);
+        this.currentSessionIs2fa.set(false);
+        this.setPendingVerification(false);
+        this.verificationForm.reset();
+      }),
+    );
+  }
+
+  private setPendingVerification(isPending: boolean): void {
+    this.pendingVerification.set(isPending);
+    this.window.localStorage.setItem(pendingVerificationKey, isPending.toString());
   }
 }
