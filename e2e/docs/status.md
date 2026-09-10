@@ -69,12 +69,15 @@ a number. See `05-ci.md`.
    across appliances and rolls back a snapshot between tests. Neither exists
    yet. That document was rewritten against the pipeline as built: the design
    stands, the substrate is a TrueNAS host with zvol-backed VMs rather than
-   `ixnode` on libvirt, and its next step is measuring the rollback cycle.
+   `ixnode` on libvirt, and the rollback cycle it wanted measured is now
+   read off every clone.
 
    It runs nightly and on every merged UI change, drives the UI built from
-   the checkout, and publishes traces for failed tests. What is next for the
-   pipeline is measuring the rollback cycle (Q0b in the design) and deciding
-   about snapshots on that number.
+   the checkout, and publishes traces for failed tests. Appliances are
+   clones of a template rebuilt whenever the weekly-rotated nightly ISO moves,
+   rather than fresh ISO installs (E5 in the design, first form). What is next for the pipeline is reading the
+   rollback cycle (Q0b) off the clone timings and deciding about per-test
+   restore on that number.
 3. **Observability.** No WebSocket capture, no middleware log collection (the
    guest is behind `hostfwd`, so it needs an API route rather than SSH), no
    version recording in reports. These are what make a 3am failure diagnosable
