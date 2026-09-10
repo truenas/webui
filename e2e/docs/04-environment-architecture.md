@@ -433,7 +433,8 @@ proceed — not skip everything.
 configuration in one place and fails at load naming every missing variable at
 once. This extends something that exists and works. Today the pipeline hands
 over the pre-descriptor form of this: `TN_HOST`, credentials, `TN_BASELINE`
-and `TN_DOMAIN` as environment variables (`e2e/ci/appliance.sh`).
+and `TN_DOMAIN` as environment variables (the `truenas-appliance` action in
+iXsystems/ux-github-workflows).
 
 ---
 
