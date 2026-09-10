@@ -1,10 +1,11 @@
-import { HarnessLoader } from '@angular/cdk/testing';
+import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness, TnSlideToggleHarness,
+  TnCheckboxHarness, TnChipInputHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness,
+  TnSlideToggleHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -190,6 +191,34 @@ describe('RsyncTaskFormComponent', () => {
         user: 'steven',
       }]);
       expect(closedSpy).toHaveBeenCalledWith(true);
+    });
+
+    // NAS-143522: the panel opened with "User is required" already in red, before the
+    // user had reached the field. `tn-form-field` only shows a message once the control
+    // is dirty or touched, so this pins that nothing marks a control either on load.
+    it('shows no validation errors before the user interacts with the form', async () => {
+      const fields = await loader.getAllHarnesses(TnFormFieldHarness);
+      const errors = await parallel(() => fields.map((field) => field.getErrorMessage()));
+
+      expect(errors.filter(Boolean)).toEqual([]);
+
+      // Guards the assertion above from passing because errors never render at all.
+      const user = await loader.getHarness(IxUserComboboxHarness.with({ selector: '[formControlName="user"]' }));
+      await user.focus();
+      await user.blur();
+
+      const userField = await loader.getHarness(TnFormFieldHarness.with({ label: 'User' }));
+      expect(await userField.getErrorMessage()).toMatch(/required/i);
+    });
+
+    // NAS-143522: the help bubbles rendered with runs of blank space mid-sentence, from
+    // line-continuation indentation baked into the helptext strings.
+    it('renders help text without whitespace artifacts', async () => {
+      const fields = await loader.getAllHarnesses(TnFormFieldHarness);
+      const tooltips = (await parallel(() => fields.map((field) => field.getTooltip()))).filter(Boolean);
+
+      expect(tooltips.length).toBeGreaterThan(0);
+      expect(tooltips.filter((tooltip) => /\s{2}|\n/.test(tooltip))).toEqual([]);
     });
   });
 
