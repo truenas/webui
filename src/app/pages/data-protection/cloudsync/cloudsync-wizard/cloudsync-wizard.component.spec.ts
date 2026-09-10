@@ -77,15 +77,16 @@ describe('CloudSyncWizardComponent', () => {
   });
 
   it('creates objects when wizard is submitted', async () => {
-    expect(await form!.getValues()).toEqual({});
+    // The first step holds only the Credentials picker, and it starts unpicked.
+    expect(await form!.getValues()).toEqual({ Credentials: '' });
 
     await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="exist_credential"]' })))
       .selectOption('Google Photos (Google Photos)');
 
     await goToNextStep();
 
-    // The what-and-when step's Description is a migrated `tn-input`, so it's reached via
-    // TnInputHarness rather than IxFormHarness (which only resolves ix-* controls).
+    // `form` is re-resolved per step, so the Description on the next one is reached through its
+    // own harness rather than by holding on to a stale form-wide index.
     const descriptionInput = await loader.getHarness(
       TnInputHarness.with({ selector: '[formControlName="description"]' }),
     );

@@ -32,6 +32,13 @@ export type IxFormBasicValueType = string | number | boolean | string[] | number
  * Described here rather than at each call site so the list can't drift between them. The
  * assertion is the price of a heterogeneous constructor list: `locatorForAll`/`getAllHarnesses`
  * need a single constructor type, and the harnesses share only the interface, not a base class.
+ *
+ * The order here does NOT set precedence between two harnesses matching the same label:
+ * `locatorForAll` returns its results in DOM order, so an ix-* composite that renders a
+ * `tn-form-field` of its own under the same label — `ix-scheduler` is a `tn-select` labelled
+ * "Schedule" — is shadowed by that inner field under {@link indexControlsByLabel}'s last-wins.
+ * Drive such a control through its own harness rather than by label; `cron-form` and
+ * `rsync-task-form` both reach the scheduler through `SchedulerHarness`.
  */
 export const formControlHarnessTypes = [
   ...supportedFormControlSelectors,
