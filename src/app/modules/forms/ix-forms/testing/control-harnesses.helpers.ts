@@ -21,8 +21,6 @@ export const supportedFormControlSelectors = [
   IxStarRatingHarness,
 ] as const;
 
-export type SupportedFormControlHarness = InstanceType<(typeof supportedFormControlSelectors)[number]>;
-
 export type IxFormBasicValueType = string | number | boolean | string[] | number[];
 
 /**
@@ -54,10 +52,10 @@ export async function indexFormControls(loader: HarnessLoader): Promise<Record<s
 }
 
 /**
- * All four helpers below take the {@link IxFormControlHarness} surface rather than the narrower
- * {@link SupportedFormControlHarness} union: it is the only surface they use, and forms part-way
- * through the tn-* migration index a mix of ix-* harnesses and {@link TnFormControlHarness}, which
- * is not a member of that union. Callers holding the narrower type still pass without a cast.
+ * All four helpers below take the {@link IxFormControlHarness} surface rather than any narrower
+ * union of the concrete harnesses: it is the only surface they use, and forms part-way through the
+ * tn-* migration index a mix of ix-* harnesses and {@link TnFormControlHarness}, which share
+ * nothing else. Callers holding a concrete harness type still pass without a cast.
  */
 export async function indexControlsByLabel<T extends IxFormControlHarness>(
   controls: T[],

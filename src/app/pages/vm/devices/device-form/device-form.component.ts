@@ -13,7 +13,7 @@ import {
   InputType, TnAutocompleteComponent, TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent,
   TnFormSectionComponent, TnInputComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { BehaviorSubject, EMPTY, Observable, forkJoin, of } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, forkJoin, of, shareReplay } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { macAddressInvalidMessage } from 'app/constants/mac-address.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -337,6 +337,8 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
   readonly nicTypes$ = of(mapToOptions(vmNicTypeLabels, this.translate));
   readonly displayTypes$ = new BehaviorSubject<{ label: string; value: VmDisplayType }[]>([]);
 
+  // The template subscribes to this again every time the user returns to the PCI device type, and
+  // `api.call` is cold - the replay keeps the choices from being re-fetched on each visit.
   readonly passthroughOptions$ = this.api.call('vm.device.passthrough_device_choices').pipe(
     map((passthroughDevices) => {
       return Object.keys(passthroughDevices).map((id) => {
@@ -346,6 +348,7 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
         };
       });
     }),
+    shareReplay({ bufferSize: 1, refCount: false }),
   );
 
   zvolOptions$: Observable<SelectOption[]>;

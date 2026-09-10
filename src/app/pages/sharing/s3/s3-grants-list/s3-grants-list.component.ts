@@ -99,16 +99,17 @@ export class S3GrantsListComponent {
    * `EVERYONE` row as well and can re-enable `xid` when the type changes.
    */
   protected providersFor(group: S3GrantFormGroup): GrantProviders {
-    let providers = this.providers.get(group);
-    if (providers) {
-      return providers;
+    const existing = this.providers.get(group);
+    if (existing) {
+      return existing;
     }
 
-    // The seed names the grant's own principal, and only the picker matching the row's current
-    // type is rendered — so pinning it on both is safe, and a group name can never show up in the
-    // user list. Switching the type clears `xid`/`name` below, which empties the seed with them.
+    // The seed only NAMES a value — with `[dataSource]` bound it never fills the dropdown — and
+    // only the picker matching the row's current type is rendered, so pinning it on both is safe.
+    // It describes the type the row was loaded with, so the subscription below drops it when the
+    // type changes, along with the `xid`/`name` it was built from.
     const { xid, name } = group.getRawValue();
-    providers = {
+    const providers: GrantProviders = {
       user: s3PrincipalOptions(this.api, S3PrincipalType.User),
       group: s3PrincipalOptions(this.api, S3PrincipalType.Group),
       seed: xid !== null && name ? [{ label: name, value: xid }] : [],
@@ -121,6 +122,7 @@ export class S3GrantsListComponent {
       const xidControl = group.controls.xid;
       xidControl.setValue(null);
       group.controls.name.setValue('');
+      providers.seed = [];
       // The picker for the principal is only rendered on the next change detection, and Angular's own
       // `required` directive on it is detached at the same time. Disabling the control keeps the row's
       // validity independent of that timing.
