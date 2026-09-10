@@ -6,6 +6,7 @@ import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
+import { attachAsyncValidator } from 'app/modules/forms/ix-forms/validators/attach-async-validator';
 import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { UserService } from 'app/services/user.service';
@@ -62,12 +63,13 @@ export class IxGroupComboboxComponent implements AfterViewInit, ControlValueAcce
     // suggestions which are guaranteed to exist, making validation redundant.
     const control = this.controlDirective.control;
     if (control && this.allowCustomValue()) {
-      control.addAsyncValidators([
-        this.existenceValidator.validateGroupExists(this.debounceTime()),
-      ]);
-      // Don't call updateValueAndValidity() here to avoid showing validation errors
-      // immediately on form load. Validation will run automatically when the user
-      // interacts with the field or when the form is submitted.
+      // Attached silently: `addAsyncValidators()` would route through the
+      // `@ngneat/reactive-forms` override of `setAsyncValidators`, which runs
+      // `updateValueAndValidity()` and so emits a status change. On an untouched,
+      // empty, required control that emission is enough for `ix-errors` to render
+      // "<field> is required" before the user has reached the field (NAS-143522).
+      // Validation still runs when the user edits the field or the form is submitted.
+      attachAsyncValidator(control, this.existenceValidator.validateGroupExists(this.debounceTime()));
     }
   }
 
