@@ -31,6 +31,9 @@ import { S3AuditMask, S3Config, S3Listener } from 'app/interfaces/s3.interface';
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
@@ -102,6 +105,7 @@ type S3ServiceFormValue = ReturnType<ReturnType<typeof createS3ServiceForm>['get
     TnFormListItemComponent,
     WithManageCertificatesLinkComponent,
     IxExplorerComponent,
+    ExplorerCreateDatasetComponent,
     S3GrantsListComponent,
     TranslateModule,
   ],

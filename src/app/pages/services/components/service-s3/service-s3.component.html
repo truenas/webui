@@ -77,7 +77,10 @@
       [label]="'Managed Root Dataset' | translate"
       [tooltip]="helptext.managedRootDatasetTooltip | translate"
       [nodeProvider]="treeNodeProvider"
-    ></ix-explorer>
+    >
+      <!-- The root must already exist: middleware never creates it. Offer to create it here instead. -->
+      <ix-explorer-create-dataset></ix-explorer-create-dataset>
+    </ix-explorer>
   </tn-form-section>
 
   <tn-form-section [heading]="'Global Grants' | translate">

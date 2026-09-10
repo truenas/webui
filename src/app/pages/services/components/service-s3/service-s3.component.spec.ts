@@ -15,6 +15,9 @@ import {
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { S3Config } from 'app/interfaces/s3.interface';
 import { User } from 'app/interfaces/user.interface';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -145,6 +148,10 @@ describe('ServiceS3Component', () => {
       global_grants: [{ principal_type: S3PrincipalType.User, xid: 1000, access: S3Access.Deny }],
     }]);
     expect(closed).toHaveBeenCalledWith(true);
+  });
+
+  it('offers to create the managed root dataset from the explorer', () => {
+    expect(spectator.query(ExplorerCreateDatasetComponent)).toBeTruthy();
   });
 
   it('rejects the /mnt root as the managed root dataset', async () => {
