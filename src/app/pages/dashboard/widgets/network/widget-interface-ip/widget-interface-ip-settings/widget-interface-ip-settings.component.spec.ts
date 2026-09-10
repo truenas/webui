@@ -28,9 +28,11 @@ describe('WidgetInterfaceIpSettingsComponent', () => {
           value: [{
             id: '1',
             name: 'eth0',
+            description: 'Management network',
           }, {
             id: '2',
             name: 'eth1',
+            description: '',
           }, {
             id: '3',
             name: 'eth2',
@@ -49,11 +51,11 @@ describe('WidgetInterfaceIpSettingsComponent', () => {
   it('checks pre-select first option when no settings', async () => {
     const networkInterface = await loader.getHarness(TnSelectHarness);
     const selectedInterface = await networkInterface.getDisplayText();
-    expect(selectedInterface).toBe('eth0');
+    expect(selectedInterface).toBe('eth0 (Management network)');
   });
 
-  it('checks interface options', async () => {
+  it('labels interface options with their description when there is one', async () => {
     const networkInterface = await loader.getHarness(TnSelectHarness);
-    expect(await networkInterface.getOptions()).toEqual(['eth0', 'eth1', 'eth2']);
+    expect(await networkInterface.getOptions()).toEqual(['eth0 (Management network)', 'eth1', 'eth2']);
   });
 });

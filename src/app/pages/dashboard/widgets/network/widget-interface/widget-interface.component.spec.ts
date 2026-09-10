@@ -38,6 +38,7 @@ describe('WidgetInterfaceComponent', () => {
               id: '1',
               type: NetworkInterfaceType.Physical,
               name: 'ens1',
+              description: 'Management network',
               aliases: [
                 {
                   address: '192.168.238.12',
@@ -111,6 +112,11 @@ describe('WidgetInterfaceComponent', () => {
     it('shows interface name', fakeAsync(() => {
       spectator.tick(1);
       expect(spectator.query('.info-header-title')).toHaveText('ens1');
+    }));
+
+    it('shows interface description', fakeAsync(() => {
+      spectator.tick(1);
+      expect(spectator.query('.info-header-description')).toHaveText('Management network');
     }));
 
     it('shows interface state', fakeAsync(() => {
@@ -268,6 +274,11 @@ describe('WidgetInterfaceComponent', () => {
     it('shows interface name', fakeAsync(() => {
       spectator.tick(1);
       expect(spectator.query('.info-header-title')).toHaveText('ens1');
+    }));
+
+    it('shows interface description', fakeAsync(() => {
+      spectator.tick(1);
+      expect(spectator.query('.info-header-description')).toHaveText('Management network');
     }));
 
     it('shows interface state', fakeAsync(() => {

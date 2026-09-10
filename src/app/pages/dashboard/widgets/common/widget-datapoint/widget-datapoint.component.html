@@ -2,6 +2,11 @@
   <div class="card-content">
     <div class="header">
       <h3>{{ label() | translate }}</h3>
+
+      @let desc = description();
+      @if (desc) {
+        <div class="description">{{ desc }}</div>
+      }
     </div>
 
     <div

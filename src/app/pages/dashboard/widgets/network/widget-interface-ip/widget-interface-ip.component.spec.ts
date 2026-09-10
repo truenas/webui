@@ -26,6 +26,7 @@ describe('WidgetInterfaceIpComponent', () => {
           value: [
             {
               name: 'eth0',
+              description: 'Management network',
               aliases: [],
               failover_aliases: [],
               failover_virtual_aliases: [],
@@ -82,6 +83,18 @@ describe('WidgetInterfaceIpComponent', () => {
       const widget = spectator.query(WidgetDatapointComponent)!;
       expect(widget).toBeTruthy();
       expect(widget.text()).toBe('192.168.1.1\n192.168.1.2');
+    });
+
+    it('passes the interface description to the datapoint widget', () => {
+      const widget = spectator.query(WidgetDatapointComponent)!;
+      expect(widget.description()).toBe('Management network');
+    });
+
+    it('passes an empty description when the interface has none', () => {
+      spectator.setInput('settings', { interface: 'eth1' });
+
+      const widget = spectator.query(WidgetDatapointComponent)!;
+      expect(widget.description()).toBe('');
     });
 
     it('renders IPv4 addresses for the selected network interface from state', () => {
@@ -155,6 +168,7 @@ describe('WidgetInterfaceIpComponent', () => {
             value: [
               {
                 name: 'eth0',
+                description: 'Management network',
                 aliases: [],
                 failover_aliases: [
                   { type: NetworkInterfaceAliasType.Inet, address: '10.220.16.58' },
@@ -184,6 +198,11 @@ describe('WidgetInterfaceIpComponent', () => {
           size: SlotSize.Quarter,
         },
       });
+    });
+
+    it('renders the interface description under the widget title', () => {
+      haSpectator.detectChanges();
+      expect(haSpectator.query('.header-description')).toHaveText('Management network');
     });
 
     it('renders IP addresses with HA labels', () => {
