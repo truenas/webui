@@ -39,6 +39,7 @@
 #   TN_GUEST_HOST       the TrueNAS host to create VMs on (default: localhost)
 #   TN_GUEST_POOL       pool on that host for VM datasets and zvols
 #   TN_GUEST_ISO        install ISO, as a path on the host under /mnt/<pool>/…
+#                       Optional: unset, `iso` resolves one (below).
 #   TN_GUEST_HOST_USER  API user on the host (default: root)
 #   TN_GUEST_HOST_API_KEY or TN_GUEST_HOST_PASSWORD — credential for that user
 #   TN_GUEST_LIFETIME   VM lifetime, so a leaked one expires (default: 3h)
@@ -49,6 +50,20 @@
 #
 #   TN_GUEST_MEMORY_MB, TN_GUEST_VCPUS, TN_GUEST_OS_DISK_GB,
 #   TN_GUEST_DATA_DISK_COUNT, TN_GUEST_DATA_DISK_GB
+#
+# Nightly resolution (`iso`), when TN_GUEST_ISO is not pinned:
+#
+#   TN_GUEST_ISO_DIR           where nightlies live on the host
+#                              (default: /mnt/<pool>/iso — a child dataset)
+#   TN_GUEST_ISO_INDEX         the nightly index to read
+#                              (default: https://iso.sys.truenas.net/TrueNAS-27-Nightlies/)
+#   TN_GUEST_ISO_SERIES        the build series to follow (default: TrueNAS-27.0.0-MASTER)
+#   TN_GUEST_ISO_MAX_AGE_DAYS  how long the chosen nightly is kept before the
+#                              next newer one is fetched (default: 7)
+#   TN_GUEST_ISO_REFRESH       `1` fetches the newest nightly now, whatever the age
+#                              (the workflow also drops the pin for it)
+#   TN_GUEST_ISO_KEEP          nightlies of the series left on disk after a
+#                              fetch, newest first (default: 2)
 #
 # The password `claim` sets on the guest is generated per claim, and `release`
 # destroys the guest. Test artifacts on a public repository are world-readable
@@ -70,6 +85,16 @@ TN_GUEST_OS_DISK_GB="${TN_GUEST_OS_DISK_GB:-10}"
 # needs at least nine identical unused disks (see e2e/docs/status.md).
 TN_GUEST_DATA_DISK_COUNT="${TN_GUEST_DATA_DISK_COUNT:-10}"
 TN_GUEST_DATA_DISK_GB="${TN_GUEST_DATA_DISK_GB:-10}"
+
+TN_GUEST_ISO_DIR="${TN_GUEST_ISO_DIR:-/mnt/$TN_GUEST_POOL/iso}"
+TN_GUEST_ISO_INDEX="${TN_GUEST_ISO_INDEX:-https://iso.sys.truenas.net/TrueNAS-27-Nightlies/}"
+TN_GUEST_ISO_SERIES="${TN_GUEST_ISO_SERIES:-TrueNAS-27.0.0-MASTER}"
+TN_GUEST_ISO_MAX_AGE_DAYS="${TN_GUEST_ISO_MAX_AGE_DAYS:-7}"
+TN_GUEST_ISO_KEEP="${TN_GUEST_ISO_KEEP:-2}"
+
+# Which nightly `iso` last chose, kept beside the files. Its mtime is the
+# choice's age, which is what the refresh policy reads.
+currentNightlyFile=".current-nightly"
 
 # Where `claim` records the deployment name, so `release` can find it without
 # the caller.
@@ -117,7 +142,7 @@ claim() {
   # create a VM and find out at the CD-ROM attach.
   local isoProblem=""
   if [ -z "${TN_GUEST_ISO:-}" ]; then
-    isoProblem="TN_GUEST_ISO is not set"
+    isoProblem="TN_GUEST_ISO is not set (pin one, or run 'appliance.sh iso' first to resolve a nightly)"
   elif [ "$TN_GUEST_HOST" = "localhost" ] && [ ! -f "$TN_GUEST_ISO" ]; then
     isoProblem="TN_GUEST_ISO does not exist on this host: $TN_GUEST_ISO"
   fi
@@ -220,6 +245,160 @@ release() {
   return 0
 }
 
+# ─── Nightly resolution ──────────────────────────────────────────────────────
+#
+# Which ISO to install from, without anybody naming a file.
+#
+# A pinned TN_GUEST_ISO is honoured as it always was. Otherwise the newest
+# nightly of the series is kept on the host and reused until it is
+# TN_GUEST_ISO_MAX_AGE_DAYS old, then the newest one is fetched. A week is the
+# cadence the appliance template is meant to be rebuilt on; between rebuilds
+# every run installs the same build, so a failure that appears mid-week is a
+# UI change and not a moving appliance. A run that needs a middleware change
+# merged this morning asks for it with TN_GUEST_ISO_REFRESH=1 (the
+# `refresh_iso` input of the workflow) rather than waiting the week out.
+#
+# The index is a plain listing with cursor pagination and no useful order
+# across pages, so every page is read and the newest name wins: the series
+# names embed `+YYYYMMDD-HHMMSS`, which sorts as text. A `.iso.sha256` beside
+# the file is used when the index has one. The file is written world-readable
+# into the directory as a whole file, never a partial one: middleware refuses
+# an ISO that libvirt cannot read, and a run must never install from a
+# download that stopped halfway.
+#
+# Emits `TN_GUEST_ISO=<path>` on stdout for `>> "$GITHUB_ENV"`, plus
+# `TN_GUEST_ISO_SOURCE=pinned|reused|downloaded` so the log says which.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Every ISO name the index lists, one per line, across all of its pages.
+listIndex() {
+  local cursor="" previous="" page next
+  local i
+  for i in $(seq 1 100); do
+    page=$(curl -fsSL --retry 3 --retry-delay 5 "${TN_GUEST_ISO_INDEX}${cursor}") \
+      || die "could not read the nightly index at ${TN_GUEST_ISO_INDEX}${cursor}"
+    grep -oiE 'href="[^"]*\.iso\?download=1"' <<<"$page" \
+      | sed -E 's/^href="//; s/\?download=1"$//; s|^.*/||; s/&#43;/+/g; s/%2[bB]/+/g' || true
+    next=$(grep -oE 'href="[^"]*[?&]cursor=[^"&]*' <<<"$page" | head -1 | sed -E 's/.*cursor=//' || true)
+    [ -n "$next" ] && [ "$next" != "$previous" ] || return 0
+    previous="$next"
+    cursor="?cursor=$next"
+  done
+  die "the nightly index did not end after $i pages; refusing to loop forever"
+}
+
+# The newest nightly of the series the index offers.
+newestNightly() {
+  local pattern="^${TN_GUEST_ISO_SERIES//./\\.}\\+[0-9]{8}-[0-9]{6}\\.iso$"
+  listIndex | grep -E "$pattern" | sort | tail -1
+}
+
+# The URL a listed name downloads from. Only `+` needs encoding in these names.
+downloadUrl() {
+  local name="$1"
+  printf '%s%s?download=1' "$TN_GUEST_ISO_INDEX" "${name//+/%2B}"
+}
+
+# Fetch one nightly into TN_GUEST_ISO_DIR, verified when a checksum is published.
+fetchNightly() {
+  local name="$1"
+  local target="$TN_GUEST_ISO_DIR/$name" partial="$TN_GUEST_ISO_DIR/$name.part"
+
+  echo "appliance.sh: downloading $name to $TN_GUEST_ISO_DIR" >&2
+  # Resumable, so a network blip mid-way through 2.7GB costs the remainder,
+  # not the whole file. Silent: the progress meter is thousands of lines in a
+  # CI log, and errors still print.
+  curl -fsSL --retry 3 --retry-delay 10 -C - -o "$partial" "$(downloadUrl "$name")" \
+    || die "download of $name failed"
+
+  local published
+  if published=$(curl -fsSL --retry 2 "$(downloadUrl "$name.sha256")" 2>/dev/null | awk 'NR==1 {print $1}') \
+    && [ -n "$published" ]; then
+    local actual
+    actual=$(sha256sum "$partial" | awk '{print $1}')
+    [ "$actual" = "$published" ] \
+      || { rm -f "$partial"; die "checksum mismatch for $name: index says $published, file is $actual"; }
+    echo "appliance.sh: checksum verified" >&2
+  else
+    echo "appliance.sh: no checksum published for $name; installing it unverified" >&2
+  fi
+
+  chmod 0644 "$partial"
+  mv "$partial" "$target"
+}
+
+# Drop nightlies of the series beyond the newest TN_GUEST_ISO_KEEP. Only files
+# this resolver would have fetched match the pattern; anything else in the
+# directory is somebody's and is left alone.
+pruneNightlies() {
+  local pattern="^${TN_GUEST_ISO_SERIES//./\\.}\\+[0-9]{8}-[0-9]{6}\\.iso$"
+  local stale
+  stale=$(ls -1 "$TN_GUEST_ISO_DIR" 2>/dev/null | grep -E "$pattern" | sort -r | tail -n "+$((TN_GUEST_ISO_KEEP + 1))" || true)
+  local name
+  for name in $stale; do
+    echo "appliance.sh: pruning $name" >&2
+    rm -f "$TN_GUEST_ISO_DIR/$name"
+  done
+}
+
+# Age of the current choice in whole days, or a large number when there is none.
+currentNightlyAgeDays() {
+  local pointer="$TN_GUEST_ISO_DIR/$currentNightlyFile"
+  [ -f "$pointer" ] || { echo 999999; return; }
+  local now modified
+  now=$(date +%s)
+  modified=$(stat -c %Y "$pointer" 2>/dev/null || stat -f %m "$pointer")
+  echo $(( (now - modified) / 86400 ))
+}
+
+iso() {
+  if [ -n "${TN_GUEST_ISO:-}" ]; then
+    echo "appliance.sh: using pinned ISO $TN_GUEST_ISO" >&2
+    printf 'TN_GUEST_ISO=%s\nTN_GUEST_ISO_SOURCE=pinned\n' "$TN_GUEST_ISO"
+    return
+  fi
+
+  command -v curl > /dev/null || die "curl is required to resolve a nightly"
+  command -v sha256sum > /dev/null || die "sha256sum is required to verify a nightly"
+  [ -d "$TN_GUEST_ISO_DIR" ] \
+    || die "TN_GUEST_ISO_DIR does not exist: $TN_GUEST_ISO_DIR (it has to be a child dataset the runner can write)"
+  [ -w "$TN_GUEST_ISO_DIR" ] \
+    || die "TN_GUEST_ISO_DIR is not writable by $(id -un): $TN_GUEST_ISO_DIR"
+
+  local pointer="$TN_GUEST_ISO_DIR/$currentNightlyFile"
+  local current="" age
+  [ -f "$pointer" ] && current=$(cat "$pointer")
+  age=$(currentNightlyAgeDays)
+
+  if [ "${TN_GUEST_ISO_REFRESH:-}" != "1" ] && [ -n "$current" ] && [ -f "$TN_GUEST_ISO_DIR/$current" ] \
+    && [ "$age" -lt "$TN_GUEST_ISO_MAX_AGE_DAYS" ]; then
+    echo "appliance.sh: reusing $current, chosen $age day(s) ago (refreshes at $TN_GUEST_ISO_MAX_AGE_DAYS)" >&2
+    printf 'TN_GUEST_ISO=%s\nTN_GUEST_ISO_SOURCE=reused\n' "$TN_GUEST_ISO_DIR/$current"
+    return
+  fi
+
+  local newest
+  newest=$(newestNightly)
+  [ -n "$newest" ] || die "the index at $TN_GUEST_ISO_INDEX lists no $TN_GUEST_ISO_SERIES nightly"
+  echo "appliance.sh: newest nightly is $newest" >&2
+
+  local source="downloaded"
+  if [ -f "$TN_GUEST_ISO_DIR/$newest" ]; then
+    echo "appliance.sh: already on disk" >&2
+    source="reused"
+  else
+    fetchNightly "$newest"
+  fi
+
+  # The choice is recorded after the file is whole, and its clock starts now:
+  # a refresh that finds the same file still resets the week.
+  printf '%s\n' "$newest" > "$pointer"
+  touch "$pointer"
+  pruneNightlies
+
+  printf 'TN_GUEST_ISO=%s\nTN_GUEST_ISO_SOURCE=%s\n' "$TN_GUEST_ISO_DIR/$newest" "$source"
+}
+
 # Snapshot and revert (E1, E5). Not available: tn_guest.py has no such verbs,
 # and a VM behind hostfwd is reinstalled per run. Kept as named entry points so
 # the design's references still resolve to the place the work will go.
@@ -232,9 +411,10 @@ revert() { die "revert is not available with tn_guest.py yet (E1, E5)"; }
 # nothing.
 
 case "${1:-}" in
+  iso)          shift; iso "$@" ;;
   claim)        shift; claim "$@" ;;
   release)      shift; release "$@" ;;
   snapshot)     shift; snapshot "$@" ;;
   revert)       shift; revert "$@" ;;
-  *) die "usage: appliance.sh {claim|release|snapshot|revert} [args]" ;;
+  *) die "usage: appliance.sh {iso|claim|release|snapshot|revert} [args]" ;;
 esac

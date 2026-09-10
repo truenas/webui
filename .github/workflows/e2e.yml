@@ -81,6 +81,13 @@ on:
         type: choice
         default: built
         options: [built, shipped]
+      refresh_iso:
+        description: >-
+          Install from the newest v27 nightly now, instead of the one chosen
+          this week or pinned by E2E_TN_GUEST_ISO. For a change merged to
+          middleware this morning.
+        type: boolean
+        default: false
 
 # Reads code, uploads artifacts. No reason to write to the repository.
 permissions:
@@ -109,10 +116,14 @@ jobs:
       TN_GUEST: /mnt/tank/github/api-ci-testbed/jenkins/scripts/tn_guest.py
       TN_GUEST_PYTHON: /mnt/tank/github/venv/bin/python3
       # Lab facts that belong in the e2e-lab environment's variables and
-      # secrets rather than here: which pool holds the VMs, which ISO to
-      # install, and a credential for the box's own API.
+      # secrets rather than here: which pool holds the VMs and a credential
+      # for the box's own API. The ISO is resolved by a step below; setting
+      # E2E_TN_GUEST_ISO pins one file and turns that resolution off, except
+      # for a dispatch that asks for the newest nightly, which is a decision
+      # about this run and beats a standing pin.
       TN_GUEST_POOL: ${{ vars.E2E_TN_GUEST_POOL || 'tank' }}
-      TN_GUEST_ISO: ${{ vars.E2E_TN_GUEST_ISO }}
+      TN_GUEST_ISO: ${{ !inputs.refresh_iso && vars.E2E_TN_GUEST_ISO || '' }}
+      TN_GUEST_ISO_REFRESH: ${{ inputs.refresh_iso && '1' || '' }}
       TN_GUEST_HOST_USER: ${{ vars.E2E_TN_GUEST_HOST_USER || 'root' }}
       TN_GUEST_HOST_API_KEY: ${{ secrets.TN_GUEST_HOST_API_KEY }}
       TN_GUEST_HOST_PASSWORD: ${{ secrets.TN_GUEST_HOST_PASSWORD }}
@@ -186,6 +197,14 @@ jobs:
           [ -f dist/index.html ] || { echo "::error::yarn build:prod produced no dist/index.html"; exit 1; }
           $DOCKER pull --quiet "$NGINX_IMAGE"
           echo "UI_DIST=$GITHUB_WORKSPACE/dist" >> "$GITHUB_ENV"
+
+      # The newest v27 nightly, kept for a week and then replaced, so the
+      # appliance moves at the cadence its template is meant to and not under
+      # every run. Before the claim: a download that fails must not cost a VM.
+      - name: Resolve the install ISO
+        run: |
+          set -euo pipefail
+          ./e2e/ci/appliance.sh iso | tee -a "$GITHUB_ENV"
 
       - name: Claim an appliance
         run: |
