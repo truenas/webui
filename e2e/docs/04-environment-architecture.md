@@ -375,8 +375,8 @@ answers **E2**'s "warm spare" cheaply: spares are clones.
 the bare install, shuts it down and snapshots its deployment dataset;
 `tn_guest.py clone` uses middleware's `vm.clone`, which copies the VM record,
 its UEFI NVRAM state and every zvol from that snapshot, then rewrites the
-clone's ports and boots it. `e2e-template.yml` rebuilds the template weekly
-and `appliance.sh claim` clones it. Baselines beyond `fresh-install` are the
+clone's ports and boots it. `appliance.sh claim` clones it, rebuilding it
+first whenever the resolved ISO is newer than the template. Baselines beyond `fresh-install` are the
 same mechanism with a configuration step before the shutdown.
 
 **Baselines age with the nightly.** A baseline built from one ISO is that
