@@ -282,6 +282,7 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
       this.setBucketForEdit(bucket);
     } else {
       this.setupExistingDatasetCheck();
+      this.prefillParentDataset();
     }
     this.setupObjectLockDependency();
     this.setupObjectOwnershipDependency();
@@ -319,6 +320,20 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     // The check spans two fields, so a parent change has to re-run the name's validators.
     this.form.controls.parent_dataset.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.form.controls.name.updateValueAndValidity();
+    });
+  }
+
+  /**
+   * The service's managed root dataset is where S3 protocol CreateBucket requests put their datasets,
+   * so it is the natural default here too. Only a starting point: the field stays editable, and a
+   * parent already typed before the config arrives is kept.
+   */
+  private prefillParentDataset(): void {
+    this.api.call('s3.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
+      const parent = this.form.controls.parent_dataset;
+      if (config.managed_root_dataset && !parent.value) {
+        parent.setValue(config.managed_root_dataset);
+      }
     });
   }
 

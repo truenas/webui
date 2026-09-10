@@ -38,6 +38,8 @@ describe('S3AccessKeyListComponent', () => {
       secret: 'secret',
       status: S3AccessKeyStatus.Enabled,
       expires_at: null,
+      last_used_at: null,
+      manage_buckets: false,
       created_at: { $date: 1700000000000 },
     },
   ] as S3AccessKey[];
@@ -88,10 +90,10 @@ describe('S3AccessKeyListComponent', () => {
 
   it('shows table rows', async () => {
     expect(await table.getHeaderTexts()).toEqual([
-      'Name', 'User', 'Access Key ID', 'Status', 'Expires On', '',
+      'Name', 'User', 'Access Key ID', 'Status', 'Expires On', 'Last Used', '',
     ]);
     expect(await table.getAllRowTexts()).toEqual([
-      ['backup-key', 'alice', 'AKIAEXAMPLE12345', 'Enabled', 'Never', ''],
+      ['backup-key', 'alice', 'AKIAEXAMPLE12345', 'Enabled', 'Never', 'Never', ''],
     ]);
   });
 

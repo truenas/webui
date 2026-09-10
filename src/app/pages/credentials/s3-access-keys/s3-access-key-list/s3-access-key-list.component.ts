@@ -23,6 +23,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
@@ -65,6 +66,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TableActionsCellComponent,
     TnTablePagerComponent,
     IxDateComponent,
+    YesNoPipe,
     TranslateModule,
   ],
 })
@@ -141,6 +143,15 @@ export class S3AccessKeyListComponent implements OnInit {
       propertyName: 'expires_at',
     }),
     column({
+      title: this.translate.instant('Last Used'),
+      propertyName: 'last_used_at',
+    }),
+    column({
+      title: this.translate.instant('Manage Buckets'),
+      propertyName: 'manage_buckets',
+      hidden: true,
+    }),
+    column({
       title: this.translate.instant('Created'),
       propertyName: 'created_at',
       hidden: true,
@@ -171,6 +182,13 @@ export class S3AccessKeyListComponent implements OnInit {
   protected expiresLabel(row: S3AccessKey): string {
     return row.expires_at?.$date
       ? formatDistanceToNowShortened(row.expires_at.$date)
+      : this.translate.instant('Never');
+  }
+
+  /** The S3 service reports usage at intervals, so a recent request can lag here for a short time. */
+  protected lastUsedLabel(row: S3AccessKey): string {
+    return row.last_used_at?.$date
+      ? formatDistanceToNowShortened(row.last_used_at.$date)
       : this.translate.instant('Never');
   }
 

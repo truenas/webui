@@ -71,6 +71,15 @@
     </tn-form-field>
   </tn-form-section>
 
+  <tn-form-section [heading]="'Protocol-Created Buckets' | translate">
+    <ix-explorer
+      formControlName="managed_root_dataset"
+      [label]="'Managed Root Dataset' | translate"
+      [tooltip]="helptext.managedRootDatasetTooltip | translate"
+      [nodeProvider]="treeNodeProvider"
+    ></ix-explorer>
+  </tn-form-section>
+
   <tn-form-section [heading]="'Global Grants' | translate">
     <ix-s3-grants-list
       [formArray]="form.controls.global_grants"

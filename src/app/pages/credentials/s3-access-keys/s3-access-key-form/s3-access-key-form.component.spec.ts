@@ -42,6 +42,7 @@ describe('S3AccessKeyFormComponent', () => {
     name: 'backup-key',
     username: 'alice',
     enabled: false,
+    manage_buckets: true,
     expires_at: { $date: parseISO('2030-01-15T00:00:00Z').getTime() },
   } as S3AccessKey;
 
@@ -95,6 +96,7 @@ describe('S3AccessKeyFormComponent', () => {
       await (await getInput('name')).setValue('backup-key');
       await setUser('alice');
       await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Non-expiring' }))).check();
+      await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Manage Buckets' }))).check();
 
       spectator.component.submit();
 
@@ -103,6 +105,7 @@ describe('S3AccessKeyFormComponent', () => {
         username: 'alice',
         enabled: true,
         expires_at: null,
+        manage_buckets: true,
       }]);
       expect(closed).toHaveBeenCalledWith(true);
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
@@ -159,12 +162,14 @@ describe('S3AccessKeyFormComponent', () => {
       expect(await username.getValue()).toBe('alice');
       expect(await username.isDisabled()).toBe(true);
       expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Enabled' }))).isChecked()).toBe(false);
+      expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Manage Buckets' }))).isChecked()).toBe(true);
       expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Non-expiring' }))).isChecked()).toBe(false);
     });
 
     it('updates the key without changing the user and does not show credentials', async () => {
       await (await getInput('name')).setValue('renamed-key');
       await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Enabled' }))).check();
+      await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Manage Buckets' }))).uncheck();
       await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Non-expiring' }))).check();
 
       spectator.component.submit();
@@ -173,6 +178,7 @@ describe('S3AccessKeyFormComponent', () => {
         name: 'renamed-key',
         enabled: true,
         expires_at: null,
+        manage_buckets: false,
       }]);
       expect(spectator.inject(TnDialog).open).not.toHaveBeenCalled();
     });

@@ -15,9 +15,12 @@ import {
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { S3Config } from 'app/interfaces/s3.interface';
 import { User } from 'app/interfaces/user.interface';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
+import { DatasetService } from 'app/services/dataset/dataset.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectLicense } from 'app/store/system-info/system-info.selectors';
 
@@ -35,6 +38,7 @@ describe('ServiceS3Component', () => {
     log_level: S3LogLevel.Notice,
     default_audit: [],
     default_audit_overflow: S3AuditOverflow.Drop,
+    managed_root_dataset: 'tank/s3',
     global_grants: [
       {
         principal_type: S3PrincipalType.User, xid: 1000, name: 'alice', access: S3Access.Deny,
@@ -71,6 +75,9 @@ describe('ServiceS3Component', () => {
       mockProvider(SystemGeneralService, {
         getCertificates: () => of([{ id: 5, name: 's3-cert' }] as Certificate[]),
       }),
+      mockProvider(DatasetService, {
+        getDatasetNodeProvider: () => () => of([]),
+      }),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({ closed: of(true) })),
       }),
@@ -98,6 +105,8 @@ describe('ServiceS3Component', () => {
     expect(await (await getInput('servers')).getValue()).toBe('2');
     expect(await (await getInput('region')).getValue()).toBe('us-east-1');
     expect(await (await getSelect('log_level')).getDisplayText()).toBe('Notice');
+    const form = await loader.getHarness(IxFormHarness);
+    expect(await form.getValues()).toMatchObject({ 'Managed Root Dataset': 'tank/s3' });
 
     expect(await (await getSelect('principal_type')).getDisplayText()).toBe('User');
     const principal = await loader.getHarness(TnAutocompleteHarness);
@@ -109,6 +118,8 @@ describe('ServiceS3Component', () => {
     await (await getInput('servers')).setValue('4');
     await (await getInput('region')).setValue('eu-west-1');
     await (await getSelect('log_level')).selectOption('Info');
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({ 'Managed Root Dataset': 'tank/buckets' });
 
     const listeners = await loader.getHarness(TnFormListHarness.with({ label: 'Listen Addresses' }));
     await listeners.add();
@@ -130,8 +141,17 @@ describe('ServiceS3Component', () => {
       servers: 4,
       region: 'eu-west-1',
       log_level: S3LogLevel.Info,
+      managed_root_dataset: 'tank/buckets',
       global_grants: [{ principal_type: S3PrincipalType.User, xid: 1000, access: S3Access.Deny }],
     }]);
     expect(closed).toHaveBeenCalledWith(true);
+  });
+
+  it('rejects the /mnt root as the managed root dataset', async () => {
+    const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Managed Root Dataset' }));
+    await explorer.setValue('/mnt');
+
+    expect(await explorer.getErrorText()).toBe('Select a pool or dataset. The /mnt directory itself is not a dataset.');
+    expect(spectator.component.canSubmit()).toBe(false);
   });
 });
