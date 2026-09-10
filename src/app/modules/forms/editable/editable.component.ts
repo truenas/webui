@@ -23,7 +23,7 @@ import { FocusService } from 'app/services/focus.service';
  *    </div>
  *
  *    <div edit>
- *      <ix-textarea formControlName="name"></ix-textarea>
+ *      <tn-input formControlName="name"></tn-input>
  *    </div>
  *  </ix-editable>
  * ```

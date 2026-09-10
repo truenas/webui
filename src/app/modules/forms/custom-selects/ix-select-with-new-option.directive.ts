@@ -7,13 +7,12 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject, Observable, merge, switchMap, take, tap,
 } from 'rxjs';
-import { Option } from 'app/interfaces/option.interface';
-import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { Option, SelectOptionValueType } from 'app/interfaces/option.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
-export const addNewIxSelectValue = 'ADD_NEW';
+export const addNewSelectOptionValueType = 'ADD_NEW';
 
 /**
  * Base for the custom "select with an Add New option" controls (cloud / SSH credentials). It renders
@@ -33,7 +32,7 @@ export abstract class IxSelectWithNewOption<R = unknown> implements ControlValue
   readonly required = input<boolean>(false);
 
   /** Drives the inner `<tn-select>`. The directive mediates between it and the host's form control. */
-  protected readonly selectControl = new FormControl<IxSelectValue>(null);
+  protected readonly selectControl = new FormControl<SelectOptionValueType>(null);
   /** "Add New" + the fetched options, fed to `<tn-select [options]>`. */
   protected readonly options$ = new BehaviorSubject<Option[]>([]);
 
@@ -52,12 +51,12 @@ export abstract class IxSelectWithNewOption<R = unknown> implements ControlValue
   }
 
   /** Last real (non-"Add New") value, used to restore the selection when the create form is cancelled. */
-  private previousValue: IxSelectValue = null;
-  private onChange: (value: IxSelectValue) => void = (): void => {};
+  private previousValue: SelectOptionValueType = null;
+  private onChange: (value: SelectOptionValueType) => void = (): void => {};
   private onTouched: () => void = (): void => {};
 
   abstract fetchOptions(): Observable<Option[]>;
-  abstract getValueFromSlideInResponse(result: R): IxSelectValue;
+  abstract getValueFromSlideInResponse(result: R): SelectOptionValueType;
   abstract getFormComponentType(): Type<unknown>;
   /** Title shown on the `<tn-side-panel>` opened for the "Add New" option. */
   abstract getFormTitle(): string;
@@ -72,7 +71,7 @@ export abstract class IxSelectWithNewOption<R = unknown> implements ControlValue
     this.selectControl.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((value) => {
-      if (value === addNewIxSelectValue) {
+      if (value === addNewSelectOptionValueType) {
         this.openNewForm();
         return;
       }
@@ -82,12 +81,12 @@ export abstract class IxSelectWithNewOption<R = unknown> implements ControlValue
     });
   }
 
-  writeValue(value: IxSelectValue): void {
+  writeValue(value: SelectOptionValueType): void {
     this.previousValue = value;
     this.selectControl.setValue(value, { emitEvent: false });
   }
 
-  registerOnChange(onChange: (value: IxSelectValue) => void): void {
+  registerOnChange(onChange: (value: SelectOptionValueType) => void): void {
     this.onChange = onChange;
   }
 
@@ -139,7 +138,7 @@ export abstract class IxSelectWithNewOption<R = unknown> implements ControlValue
 
   private prependAddNew(options: Option[]): Option[] {
     return [
-      { label: this.translateService.instant('Add New'), value: addNewIxSelectValue } as Option,
+      { label: this.translateService.instant('Add New'), value: addNewSelectOptionValueType } as Option,
       ...options,
     ];
   }

@@ -28,13 +28,13 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSharingS3 } from 'app/helptext/sharing';
 import { S3AuditMask, S3Config, S3Listener } from 'app/interfaces/s3.interface';
+import {
+  WithManageCertificatesLinkComponent,
+} from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import {
-  WithManageCertificatesLinkComponent,
-} from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { portRangeValidator, rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { serviceConfigSavedMessage } from 'app/pages/services/components/service-config-forms.constants';

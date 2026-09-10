@@ -17,7 +17,7 @@ import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackForm } from 'app/modules/feedback/interfaces/feedback-form';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { IxStarRatingComponent } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.component';
+import { IxStarRatingComponent } from 'app/modules/forms/controls/ix-star-rating/ix-star-rating.component';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { TranslatedString } from 'app/modules/translate/translate.helper';

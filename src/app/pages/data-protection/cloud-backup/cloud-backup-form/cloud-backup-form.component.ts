@@ -31,13 +31,13 @@ import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.inte
 import { SelectOption, newOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
+import { addNewSelectOptionValueType } from 'app/modules/forms/custom-selects/ix-select-with-new-option.directive';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
@@ -300,7 +300,7 @@ export class CloudBackupFormComponent implements OnInit {
   private listenForCredentialsChanges(): void {
     this.form.controls.credentials.valueChanges
       .pipe(
-        filter((credentialId) => credentialId?.toString() !== addNewIxSelectValue),
+        filter((credentialId) => credentialId?.toString() !== addNewSelectOptionValueType),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((credentialId) => {

@@ -214,13 +214,18 @@
           </tn-form-field>
         }
         @case (VmDeviceType.Pci) {
-          <ix-combobox
-            formControlName="pptdev"
+          <tn-form-field
             [label]="'PCI Passthrough Device' | translate"
-            [provider]="passthroughProvider"
             [tooltip]="helptext.pptdev_tooltip | translate"
             [required]="true"
-          ></ix-combobox>
+          >
+            <tn-autocomplete
+              testId="pptdev"
+              formControlName="pptdev"
+              [options]="(passthroughOptions$ | async) ?? []"
+              [requireSelection]="true"
+            ></tn-autocomplete>
+          </tn-form-field>
         }
         @case (VmDeviceType.Usb) {
           <tn-form-field [label]="'Controller Type' | translate" [required]="true">

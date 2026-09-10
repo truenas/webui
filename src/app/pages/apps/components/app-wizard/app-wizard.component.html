@@ -8,12 +8,17 @@
   <div class="app-wizard-wrapper">
     <div class="wizard-container">
       <div class="mini-search-card">
-        <ix-input
-          [prefixIcon]="tnIconMarker('magnify', 'mdi')"
-          [formControl]="searchControl"
-          [placeholder]="'Search Input Fields' | translate"
-          [autocompleteOptions]="searchOptions"
-        ></ix-input>
+        <div class="field-search">
+          <tn-icon class="field-search__icon" name="magnify" library="mdi" size="sm"></tn-icon>
+          <tn-autocomplete
+            testId="search-input-fields"
+            [formControl]="searchControl"
+            [placeholder]="'Search Input Fields' | translate"
+            [options]="searchOptions"
+            [allowCustomValue]="true"
+            [ariaLabel]="'Search Input Fields' | translate"
+          ></tn-autocomplete>
+        </div>
       </div>
       <ix-form
         [formGroup]="form"
@@ -49,12 +54,17 @@
     @if (appsLoaded) {
       <div class="search-container">
         <div class="search-card">
-          <ix-input
-            [prefixIcon]="tnIconMarker('magnify', 'mdi')"
-            [formControl]="searchControl"
-            [placeholder]="'Search Input Fields' | translate"
-            [autocompleteOptions]="searchOptions"
-          ></ix-input>
+          <div class="field-search">
+            <tn-icon class="field-search__icon" name="magnify" library="mdi" size="sm"></tn-icon>
+            <tn-autocomplete
+              testId="search-input-fields"
+              [formControl]="searchControl"
+              [placeholder]="'Search Input Fields' | translate"
+              [options]="searchOptions"
+              [allowCustomValue]="true"
+              [ariaLabel]="'Search Input Fields' | translate"
+            ></tn-autocomplete>
+          </div>
           @for (section of dynamicSection; track section) {
             <div class="section" (click)="onSectionClick(section.name)">
               {{ section.name }}

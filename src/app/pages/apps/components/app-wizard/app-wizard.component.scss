@@ -109,3 +109,23 @@ ix-app-metadata-card ::ng-deep {
     justify-content: flex-start;
   }
 }
+
+// The field search is a bare `tn-autocomplete`, which has no prefix-icon slot of its own (only
+// `tn-input` has one, and that has no dropdown). The magnifier therefore sits BESIDE the control
+// rather than inside it — reaching into the library's own input to overlay it would mean an
+// ::ng-deep on a class that is not part of its API.
+.field-search {
+  align-items: center;
+  display: flex;
+  gap: 6px;
+
+  .field-search__icon {
+    color: var(--fg2);
+    flex: none;
+  }
+
+  tn-autocomplete {
+    flex: 1;
+    min-width: 0;
+  }
+}

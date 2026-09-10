@@ -18,7 +18,7 @@ import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   WithManageCertificatesLinkComponent,
-} from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
+} from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';

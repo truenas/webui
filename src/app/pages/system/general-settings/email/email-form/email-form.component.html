@@ -7,11 +7,19 @@
   (closed)="closed.emit($event)"
 >
   <tn-form-section>
-    <ix-radio-group
-      [label]="'Send Mail Method' | translate"
-      [formControl]="sendMethodControl"
-      [options]="sendMethodOptions$"
-    ></ix-radio-group>
+    <tn-form-field [label]="'Send Mail Method' | translate">
+      <tn-radio-group [formControl]="sendMethodControl">
+        @for (option of (sendMethodOptions$ | async) ?? []; track option.value) {
+          <!-- `radio-button` in the base is absorbed by composeTestId's idempotent guard, keeping the
+               legacy `radio-button-*` option ids that `<ix-radio-group>` produced. -->
+          <tn-radio
+            [value]="option.value"
+            [label]="option.label"
+            [testId]="['radio-button', 'send-mail-method', option.label]"
+          ></tn-radio>
+        }
+      </tn-radio-group>
+    </tn-form-field>
 
     <tn-form-field
       [label]="'From Email' | translate"

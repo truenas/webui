@@ -14,6 +14,7 @@ import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-fo
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { LocaleService } from 'app/modules/language/locale.service';
+import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { UserService } from 'app/services/user.service';
@@ -48,6 +49,12 @@ describe('CronFormComponent', () => {
   );
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  // `ix-scheduler` renders a `tn-form-field` of its own under the same label, which shadows it in
+  // `IxFormHarness`'s by-label index — so the scheduler is driven through its own harness, the way
+  // `rsync-task-form` does. Only this harness accepts a raw crontab; the inner select offers presets.
+  const getSchedule = (): Promise<SchedulerHarness> => loader.getHarness(
+    SchedulerHarness.with({ label: 'Schedule' }),
   );
 
   const createComponent = createComponentFactory({
@@ -103,9 +110,7 @@ describe('CronFormComponent', () => {
       // only ix-* controls — cannot reach it by label.
       await (await getRunAsUser()).setInputValue('root');
       await (await getRunAsUser()).blur();
-      await form.fillForm({
-        Schedule: '0 0 * * *',
-      });
+      await (await getSchedule()).setValue('0 0 * * *');
 
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
@@ -158,9 +163,7 @@ describe('CronFormComponent', () => {
     it('edits an existing cron job entry when it is open for editing', async () => {
       await (await getInput('description')).setValue('Updated cron job');
       await (await getCheckbox('enabled')).uncheck();
-      await form.fillForm({
-        Schedule: '* */2 * * 0-4',
-      });
+      await (await getSchedule()).setValue('* */2 * * 0-4');
 
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 

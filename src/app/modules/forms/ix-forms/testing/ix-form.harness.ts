@@ -4,29 +4,33 @@ import {
 } from '@angular/cdk/testing';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 import {
-  supportedFormControlSelectors,
-  SupportedFormControlHarness,
+  formControlHarnessTypes,
   indexControlsByLabel, getControlValues, IxFormBasicValueType, getDisabledStates,
 } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 
 /**
  * This class provides sugar syntax to make it easier to work with forms.
- * When possibilities of this class are not enough, use individual harnesses such as IxInputHarness, etc.
+ * When possibilities of this class are not enough, use individual harnesses such as TnInputHarness, etc.
  */
 export class IxFormHarness extends ComponentHarness {
   static readonly hostSelector = 'form';
 
-  getControlHarnesses = this.locatorForAll(...supportedFormControlSelectors);
+  /**
+   * Every control under this `<form>`: the remaining ix-* composites AND the `tn-form-field`s
+   * around tn-* controls, through {@link formControlHarnessTypes}. Indexing only the ix-* list
+   * would leave a fully migrated form empty, which is what most forms now are.
+   */
+  getControlHarnesses = this.locatorForAll(...formControlHarnessTypes);
 
   /**
    * Returns a dictionary of form control harnesses indexed by their labels.
    */
-  async getControlHarnessesDict(): Promise<Record<string, SupportedFormControlHarness>> {
+  async getControlHarnessesDict(): Promise<Record<string, IxFormControlHarness>> {
     const controls = await this.getControlHarnesses();
     return indexControlsByLabel(controls);
   }
 
-  async getControl(label: string): Promise<SupportedFormControlHarness> {
+  async getControl(label: string): Promise<IxFormControlHarness> {
     const controlsDict = await this.getControlHarnessesDict();
     return controlsDict[label];
   }
@@ -57,7 +61,7 @@ export class IxFormHarness extends ComponentHarness {
     const labels = Object.keys(values);
     for (const label of labels) {
       const controlsDict = await this.getControlHarnessesDict();
-      const control = controlsDict[label] as IxFormControlHarness;
+      const control = controlsDict[label];
       if (!control) {
         throw new Error(`Could not find control with label ${label}.`);
       }

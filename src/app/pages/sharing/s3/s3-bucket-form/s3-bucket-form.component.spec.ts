@@ -5,8 +5,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnCheckboxHarness, TnChipInputHarness, TnDialog, TnFormFieldHarness, TnFormListHarness, TnInputHarness,
-  TnSelectHarness,
+  TnAutocompleteHarness, TnCheckboxHarness, TnChipInputHarness, TnDialog, TnFormFieldHarness,
+  TnFormListHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -410,6 +410,23 @@ describe('S3BucketFormComponent', () => {
 
       expect(xid.enabled).toBe(true);
       expect(spectator.component.canSubmit()).toBe(false);
+    });
+
+    it('commits a principal picked after the row switches type', async () => {
+      await clickAdvancedOptions();
+
+      // The row loads as the group `staff` (gid 1001) and `bob` carries the same number as a uid,
+      // so the picker has to name the principal it actually fetched, not the one the row was
+      // loaded with.
+      await (await getSelect('principal_type')).selectOption('User');
+
+      // The owner picker is an autocomplete too, so scope to the grant row.
+      const principal = await loader.getHarness(TnAutocompleteHarness.with({ ancestor: 'tn-form-list-item' }));
+      await principal.selectOption('bob');
+      await principal.blur();
+
+      expect(await principal.getInputValue()).toBe('bob');
+      expect(spectator.component.form.controls.grants.at(0).controls.xid.value).toBe(1001);
     });
 
     it('requires retention days once object lock is on with a default retention mode', async () => {

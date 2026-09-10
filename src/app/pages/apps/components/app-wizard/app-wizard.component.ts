@@ -9,7 +9,9 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialog, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
+import {
+  TnAutocompleteComponent, TnButtonComponent, TnDialog, TnIconComponent,
+} from '@truenas/ui-components';
 import {
   isArray, isEqual, isPlainObject, unset,
 } from 'lodash-es';
@@ -50,12 +52,11 @@ import {
   IxDynamicWizardComponent,
 } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-wizard/ix-dynamic-wizard.component';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { ReadOnlyComponent } from 'app/modules/page-header/readonly-badge/readonly-badge.component';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerHubRateInfoDialog } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
@@ -75,7 +76,7 @@ import { AppSchemaService } from 'app/services/schema/app-schema.service';
     PageHeaderComponent,
     ReadOnlyComponent,
     IxFormComponent,
-    IxInputComponent,
+    TnAutocompleteComponent,
     AppMetadataCardComponent,
     TnButtonComponent,
     RequiresRolesDirective,
@@ -130,7 +131,6 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   searchOptions: Option[] = [];
 
   readonly helptext = helptextApps;
-  readonly tnIconMarker = tnIconMarker;
 
   private _pageTitle$ = new BehaviorSubject<string>('...');
   pageTitle$ = this._pageTitle$.asObservable().pipe(

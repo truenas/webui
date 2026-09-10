@@ -1,23 +1,12 @@
 import {
   ComponentHarness, ComponentHarnessConstructor, HarnessLoader, parallel,
 } from '@angular/cdk/testing';
-import { IxButtonGroupHarness } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.harness';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
-import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
+import { IxStarRatingHarness } from 'app/modules/forms/controls/ix-star-rating/ix-star-rating.harness';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
-import { IxFileInputHarness } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.harness';
-import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import {
   IxIpInputWithNetmaskHarness,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
 import { IxPermissionsHarness } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.harness';
-import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxSlideToggleHarness } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
-import { IxStarRatingHarness } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.harness';
-import { IxTextareaHarness } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.harness';
 import {
   IxFormControlHarness, unreadableControl,
 } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
@@ -25,25 +14,12 @@ import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 
 export const supportedFormControlSelectors = [
-  IxInputHarness,
-  IxCheckboxHarness,
   IxPermissionsHarness,
-  IxSelectHarness,
-  IxTextareaHarness,
-  IxComboboxHarness,
-  IxChipsHarness,
   IxExplorerHarness,
-  IxSlideToggleHarness,
-  IxRadioGroupHarness,
   SchedulerHarness,
   IxIpInputWithNetmaskHarness,
-  IxFileInputHarness,
   IxStarRatingHarness,
-  IxButtonGroupHarness,
-  IxIconGroupHarness,
 ] as const;
-
-export type SupportedFormControlHarness = InstanceType<(typeof supportedFormControlSelectors)[number]>;
 
 export type IxFormBasicValueType = string | number | boolean | string[] | number[];
 
@@ -56,6 +32,13 @@ export type IxFormBasicValueType = string | number | boolean | string[] | number
  * Described here rather than at each call site so the list can't drift between them. The
  * assertion is the price of a heterogeneous constructor list: `locatorForAll`/`getAllHarnesses`
  * need a single constructor type, and the harnesses share only the interface, not a base class.
+ *
+ * The order here does NOT set precedence between two harnesses matching the same label:
+ * `locatorForAll` returns its results in DOM order, so an ix-* composite that renders a
+ * `tn-form-field` of its own under the same label — `ix-scheduler` is a `tn-select` labelled
+ * "Schedule" — is shadowed by that inner field under {@link indexControlsByLabel}'s last-wins.
+ * Drive such a control through its own harness rather than by label; `cron-form` and
+ * `rsync-task-form` both reach the scheduler through `SchedulerHarness`.
  */
 export const formControlHarnessTypes = [
   ...supportedFormControlSelectors,
@@ -76,10 +59,10 @@ export async function indexFormControls(loader: HarnessLoader): Promise<Record<s
 }
 
 /**
- * All four helpers below take the {@link IxFormControlHarness} surface rather than the narrower
- * {@link SupportedFormControlHarness} union: it is the only surface they use, and forms part-way
- * through the tn-* migration index a mix of ix-* harnesses and {@link TnFormControlHarness}, which
- * is not a member of that union. Callers holding the narrower type still pass without a cast.
+ * All four helpers below take the {@link IxFormControlHarness} surface rather than any narrower
+ * union of the concrete harnesses: it is the only surface they use, and forms part-way through the
+ * tn-* migration index a mix of ix-* harnesses and {@link TnFormControlHarness}, which share
+ * nothing else. Callers holding a concrete harness type still pass without a cast.
  */
 export async function indexControlsByLabel<T extends IxFormControlHarness>(
   controls: T[],
