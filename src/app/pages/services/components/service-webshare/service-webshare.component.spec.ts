@@ -8,6 +8,8 @@ import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of, Subject } from 'rxjs';
 import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WebSharePasskey } from 'app/enums/webshare-passkey.enum';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
@@ -17,6 +19,7 @@ import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-fo
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServiceWebshareComponent } from './service-webshare.component';
 
@@ -57,6 +60,7 @@ describe('ServiceWebshareComponent', () => {
       mockProvider(TruenasConnectService, {
         config: tnConnectConfig,
       }),
+      mockEntitlements(),
     ],
   });
 
@@ -201,6 +205,39 @@ describe('ServiceWebshareComponent', () => {
     expect(await searchCheckbox.isChecked()).toBe(false);
   });
 
+  describe('when the system is not entitled to TRUESEARCH', () => {
+    const createDenied = createComponentFactory({
+      component: ServiceWebshareComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockAuth(),
+        mockApi([
+          mockCall('webshare.config', mockWebShareConfig),
+          mockCall('webshare.update', mockWebShareConfig),
+        ]),
+        ...ixFormTestingProviders(),
+        mockProvider(ErrorHandlerService),
+        mockProvider(TruenasConnectService, { config: tnConnectConfig }),
+        mockEntitlements([EntitlementFeature.TrueSearch]),
+      ],
+    });
+
+    it('locks the TrueSearch toggle even while TrueNAS Connect is configured', async () => {
+      tnConnectConfig.set({ status: TruenasConnectStatus.Configured } as TruenasConnectConfig);
+      const deniedSpectator = createDenied();
+      deniedSpectator.detectChanges();
+      await deniedSpectator.fixture.whenStable();
+
+      const deniedLoader = TestbedHarnessEnvironment.loader(deniedSpectator.fixture);
+      const searchCheckbox = await deniedLoader.getHarness(
+        TnCheckboxHarness.with({ selector: '[formControlName="search"]' }),
+      );
+
+      expect(await searchCheckbox.isDisabled()).toBe(true);
+      expect(await searchCheckbox.isChecked()).toBe(false);
+    });
+  });
+
   it('does not submit TrueSearch as enabled when TrueNAS Connect is not configured', () => {
     tnConnectConfig.set({ status: TruenasConnectStatus.Disabled } as TruenasConnectConfig);
     spectator.detectChanges();
@@ -250,5 +287,54 @@ describe('ServiceWebshareComponent', () => {
     tnConnectConfig.set({ status: TruenasConnectStatus.Configured } as TruenasConnectConfig);
     spectator.detectChanges();
     expect(await (await getCheckbox('search')).isDisabled()).toBe(false);
+  });
+
+  describe('when entitlements resolve after webshare.config', () => {
+    const isEntitled = signal<boolean | undefined>(undefined);
+    const entitled$ = new Subject<boolean>();
+
+    const createLateComponent = createComponentFactory({
+      component: ServiceWebshareComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockAuth(),
+        mockApi([
+          mockCall('webshare.config', mockWebShareConfig),
+          mockCall('webshare.update', mockWebShareConfig),
+        ]),
+        ...ixFormTestingProviders(),
+        mockProvider(ErrorHandlerService),
+        mockProvider(TruenasConnectService, { config: tnConnectConfig }),
+        mockProvider(EntitlementsService, {
+          entitled: () => isEntitled,
+          entitled$: () => entitled$,
+        }),
+      ],
+    });
+
+    beforeEach(() => {
+      isEntitled.set(undefined);
+      tnConnectConfig.set({ status: TruenasConnectStatus.Configured } as TruenasConnectConfig);
+      spectator = createLateComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('keeps a server-enabled TrueSearch instead of patching it off before the entitlement is known', async () => {
+      // `webshare.config` has already answered (synchronously above); the entitlement lands now.
+      entitled$.next(true);
+      isEntitled.set(true);
+      spectator.detectChanges();
+
+      const checkbox = await getCheckbox('search');
+      expect(await checkbox.isDisabled()).toBe(false);
+      expect(await checkbox.isChecked()).toBe(true);
+
+      spectator.component.submit();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'webshare.update',
+        [expect.objectContaining({ search: true })],
+      );
+    });
   });
 });

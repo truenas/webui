@@ -3,6 +3,8 @@ import { mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -87,7 +89,8 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
-import { selectHasEnclosureSupport, selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
+import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
 export const commonImports = [
   ReactiveFormsModule,
@@ -147,8 +150,15 @@ export const commonProviders = [
         value: true,
       },
       {
-        selector: selectIsEnterprise,
-        value: false,
+        // SED provisioning now gates on the entitlement; denied here to mirror the non-Enterprise default.
+        selector: selectEntitlements,
+        value: {
+          [EntitlementFeature.Sed]: {
+            entitled: false,
+            reason: EntitlementReason.NoLicense,
+            message: 'This system is not licensed to use the SED feature.',
+          },
+        },
       },
     ],
   }),

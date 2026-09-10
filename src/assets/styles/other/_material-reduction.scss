@@ -770,10 +770,6 @@ body {
     outline: 1.5px solid var(--primary);
   }
 
-  ix-fieldset.highlighted fieldset {
-    outline: 1.5px solid var(--primary);
-  }
-
   // Both variants paint the highlight via an absolutely-positioned ::after
   // overlay so the visual is on top of the element's content (outline /
   // box-shadow on the host gets hidden under child backgrounds in cards).

@@ -22,8 +22,6 @@ export const supportedFormControlSelectors = [
   IxStarRatingHarness,
 ] as const;
 
-export type SupportedFormControlHarness = InstanceType<(typeof supportedFormControlSelectors)[number]>;
-
 export type IxFormBasicValueType = string | number | boolean | string[] | number[];
 
 /**
@@ -35,6 +33,13 @@ export type IxFormBasicValueType = string | number | boolean | string[] | number
  * Described here rather than at each call site so the list can't drift between them. The
  * assertion is the price of a heterogeneous constructor list: `locatorForAll`/`getAllHarnesses`
  * need a single constructor type, and the harnesses share only the interface, not a base class.
+ *
+ * The order here does NOT set precedence between two harnesses matching the same label:
+ * `locatorForAll` returns its results in DOM order, so an ix-* composite that renders a
+ * `tn-form-field` of its own under the same label — `ix-scheduler` is a `tn-select` labelled
+ * "Schedule" — is shadowed by that inner field under {@link indexControlsByLabel}'s last-wins.
+ * Drive such a control through its own harness rather than by label; `cron-form` and
+ * `rsync-task-form` both reach the scheduler through `SchedulerHarness`.
  */
 export const formControlHarnessTypes = [
   ...supportedFormControlSelectors,
@@ -55,10 +60,10 @@ export async function indexFormControls(loader: HarnessLoader): Promise<Record<s
 }
 
 /**
- * All four helpers below take the {@link IxFormControlHarness} surface rather than the narrower
- * {@link SupportedFormControlHarness} union: it is the only surface they use, and forms part-way
- * through the tn-* migration index a mix of ix-* harnesses and {@link TnFormControlHarness}, which
- * is not a member of that union. Callers holding the narrower type still pass without a cast.
+ * All four helpers below take the {@link IxFormControlHarness} surface rather than any narrower
+ * union of the concrete harnesses: it is the only surface they use, and forms part-way through the
+ * tn-* migration index a mix of ix-* harnesses and {@link TnFormControlHarness}, which share
+ * nothing else. Callers holding a concrete harness type still pass without a cast.
  */
 export async function indexControlsByLabel<T extends IxFormControlHarness>(
   controls: T[],

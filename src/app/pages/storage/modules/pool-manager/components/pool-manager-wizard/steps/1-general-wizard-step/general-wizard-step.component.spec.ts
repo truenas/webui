@@ -2,12 +2,14 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnStepperComponent,
 } from '@truenas/ui-components';
 import { of, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -19,7 +21,7 @@ import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 
 describe('GeneralWizardStepComponent', () => {
   let spectator: Spectator<GeneralWizardStepComponent>;
@@ -59,7 +61,8 @@ describe('GeneralWizardStepComponent', () => {
       }),
       provideMockStore({
         selectors: [
-          { selector: selectIsEnterprise, value: true },
+          // Loaded map with no gated keys, i.e. entitled to everything.
+          { selector: selectEntitlements, value: {} },
         ],
       }),
     ],
@@ -245,7 +248,8 @@ describe('GeneralWizardStepComponent with SED disks and no global password', () 
       }),
       provideMockStore({
         selectors: [
-          { selector: selectIsEnterprise, value: true },
+          // Loaded map with no gated keys, i.e. entitled to everything.
+          { selector: selectEntitlements, value: {} },
         ],
       }),
     ],
@@ -254,6 +258,26 @@ describe('GeneralWizardStepComponent with SED disks and no global password', () 
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('offers no SED encryption option when the system is not entitled to SED', async () => {
+    // Same SED-capable disks as the test below; only the entitlement differs.
+    spectator.inject(MockStore).overrideSelector(selectEntitlements, {
+      [EntitlementFeature.Sed]: {
+        entitled: false,
+        reason: EntitlementReason.NoLicense,
+        message: 'This system is not licensed to use the SED feature.',
+      },
+    });
+    spectator.inject(MockStore).refreshState();
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+    const sedRadio = await loader.getHarnessOrNull(TnRadioHarness.with({ label: 'Self Encrypting Drives (SED)' }));
+    expect(sedRadio).toBeNull();
+
+    // Software encryption is ungated and sits beside it — proves the radio group rendered.
+    expect(await loader.getHarnessOrNull(TnRadioHarness.with({ label: 'Software Encryption (ZFS)' }))).not.toBeNull();
   });
 
   it('shows info message when no global SED password is set', async () => {
@@ -301,7 +325,8 @@ describe('GeneralWizardStepComponent with existing SED password', () => {
       }),
       provideMockStore({
         selectors: [
-          { selector: selectIsEnterprise, value: true },
+          // Loaded map with no gated keys, i.e. entitled to everything.
+          { selector: selectEntitlements, value: {} },
         ],
       }),
     ],

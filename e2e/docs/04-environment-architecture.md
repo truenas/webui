@@ -238,7 +238,7 @@ direction for a budget ask.
 
 | Restore primitive | Restore cost | Appliances per shard at a 20s test |
 |---|---|---|
-| Rollback + boot, 6GB guest | ~60–90s, **unmeasured (Q0b)** | **4–6** |
+| Rollback + boot, 6GB guest | **~60–75 s, measured via clone (Q0b)** | **4–5** |
 | Full ISO reinstall | ~210s (**Q0a**, measured) | **12** |
 
 Derivation, so the numbers can be checked rather than trusted: an appliance's
@@ -370,6 +370,17 @@ clone` and a boot. This is how the per-run install in the current pipeline goes
 away, and it is the same shape as the `<pool>/ci/golden` layout the
 api-ci-testbed setup notes already reserve for pre-installed images. It also
 answers **E2**'s "warm spare" cheaply: spares are clones.
+
+*Implemented for `fresh-install`:* `tn_guest.py create --template` builds
+the bare install, shuts it down and snapshots its deployment dataset;
+`tn_guest.py clone` uses middleware's `vm.clone`, which copies the VM record,
+its UEFI NVRAM state and every zvol from that snapshot, then rewrites the
+clone's ports and boots it. Templates are named by a hash of the ISO and
+disk geometry they were built from; `appliance.sh claim` clones the one for
+its own ISO, building it beside the older ones when it is missing and
+collecting the older ones once nothing is cloned from them. Baselines beyond
+`fresh-install` are the same mechanism with a configuration step before the
+shutdown.
 
 **Baselines age with the nightly.** A baseline built from one ISO is that
 build. Rebuild them when the nightly moves — on a schedule, not per run — so
@@ -693,7 +704,7 @@ plan. Grow when measurement justifies it, not before.
 | | Question | Blocks |
 |---|---|---|
 | ~~**Q0a**~~ | **Answered 2026-09-02: ~3.5 minutes** from `tn_guest.py create` to a usable, credentialed API on a v27 nightly ISO; ~10 minutes on a 25.10 release ISO. See `05-ci.md` | — |
-| **Q0b** | **Rollback-to-usable**: `vm.stop` + `zfs rollback` + `vm.start` + middleware ready + re-auth, on a 6GB guest on the actual host | **E1**, **E2**. The most load-bearing unmeasured number in this document — it sets the appliance count |
+| ~~**Q0b**~~ | **Measured 2026-09-03, by proxy: ~75 s** from `clone` request to a usable API on the interim host, of which ~60 s is the boot. A rollback-and-boot is the same boot. See `05-ci.md` | **E2**'s arithmetic can now be done once **Q1** is known |
 | **Q1** | How long does the Local tier take against one appliance, and how long is a representative Global test? | Whether tiering is needed *yet*; sets the appliance count in **E2** |
 | ~~**Q2**~~ | ~~Will `ixnode` add snapshot and revert?~~ **Moot 2026-09-02:** no `ixnode`; snapshot and revert are ours (**E5**) | — |
 | ~~**Q3**~~ | **Answered 2026-08-10: shared.** So per-run identity is now required work, not a contingency — see **E9** | — |

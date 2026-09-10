@@ -8,11 +8,18 @@ export const helptextSharingS3 = {
   ownerTooltip: T('Account that owns the bucket. The owner bypasses the grants and owns the <i>s3data</i>\
  directory when the S3 service creates it.'),
   enabledTooltip: T('Whether the bucket is served. Toggling restarts the S3 service.'),
-  permissionsModelTooltip: T('<b>S3 Only</b>: only the S3 service writes the dataset and every object is written\
- under the account that put it.<br>\
- <b>Multiprotocol</b>: other protocols share the tree, so file permissions also apply to reads.<br>\
- <b>Bucket Owner Enforced</b>: every read and write runs as the owner, so the grants are the whole of the\
- bucket\'s access control.'),
+  permissionsModelTooltip: T('<b>S3</b>: the S3 service is the only door to the dataset. Its filesystem\
+ permissions are ignored, and the grants decide access.<br>\
+ <b>Multiprotocol</b>: SMB or NFS share the tree, so its filesystem ACL is enforced for S3 callers as well as the\
+ grants. S3 ACLs are not supported on such a bucket.'),
+  objectOwnershipTooltip: T('Who owns an uploaded object, and whether the bucket supports S3 ACLs.<br>\
+ <b>Bucket Owner Enforced</b>: the owner owns every object and ACLs are disabled, so the grants are the whole of\
+ the bucket\'s access control and a grantee needs no permissions on the dataset.<br>\
+ <b>Bucket Owner Preferred</b>: the owner owns objects uploaded with the bucket-owner-full-control ACL; any other\
+ upload is owned by the account that wrote it.<br>\
+ <b>Object Writer</b>: the account that uploads an object owns it and may grant access to it through ACLs.'),
+  objectOwnershipMultiprotocolHint: T('A Multiprotocol bucket always runs as the object writer, with S3 ACLs off:\
+ the other protocols\' users own the filesystem permissions.'),
   grantsTooltip: T('Who may access the bucket and how, beyond its owner. A <b>Deny</b> grant refuses every\
  operation for the principal and outranks the owner.'),
   globalGrantsTooltip: T('Grants that apply to every bucket. A <b>Deny</b> here suspends the principal everywhere.'),

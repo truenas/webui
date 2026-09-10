@@ -122,7 +122,7 @@
     }
   }
 
-  @if (!isEnterprise()) {
+  @if (!hasEnterpriseLicense()) {
     <tn-list-item class="fingerprint-row">
       <div class="row-with-action">
         <span class="label">{{ 'System Thumbprint' | translate }}:</span>

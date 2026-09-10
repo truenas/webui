@@ -249,6 +249,39 @@ describe('CsrAddComponent', () => {
     ]);
   });
 
+  it('shows the fields of the constraints enabled by a profile selected on an earlier step', async () => {
+    await setInput('name', 'profile');
+    await selectValue('profile', 'HTTPS RSA Certificate');
+
+    await nextButton.click();
+    await updateStepHarnesses();
+
+    await nextButton.click();
+    await updateStepHarnesses();
+
+    await selectValue('country', 'United States');
+    const sanChips = await loader.getHarness(
+      TnChipInputHarness.with({ selector: '[formControlName="san"]' }),
+    );
+    await sanChips.addChip('jobs.umbrella.com');
+    await setInput('state', 'Pennsylvania');
+    await setInput('city', 'Racoon City');
+    await setInput('organization', 'Umbrella Corp');
+    await setInput('email', 'no-reply@umbrella.com');
+
+    await nextButton.click();
+    await updateStepHarnesses();
+
+    const basicConstraints = await loader.getHarness(TnCheckboxHarness.with({ label: 'Basic Constraints' }));
+    expect(await basicConstraints.isChecked()).toBe(true);
+
+    // The checkbox is checked by the profile, so the fields it controls must be shown right away.
+    const pathLength = await loader.getHarnessOrNull(
+      TnInputHarness.with({ selector: '[formControlName="path_length"]' }),
+    );
+    expect(pathLength).not.toBeNull();
+  });
+
   it('updates form fields and sets constrains when Profile is emitted by CertificateIdentifierAndTypeComponent', async () => {
     // tn-stepper only renders the active step's content, so inactive step
     // components are resolved via the parent's viewChild signals rather than a DOM query.

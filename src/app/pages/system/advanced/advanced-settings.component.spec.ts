@@ -4,8 +4,10 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
@@ -40,6 +42,7 @@ import { SystemSecurityCardComponent } from 'app/pages/system/advanced/system-se
 import { TunableCardComponent } from 'app/pages/system/advanced/tunable/tunable-card/tunable-card.component';
 import { SaveDebugButtonComponent } from 'app/pages/system/general-settings/support/save-debug-button/save-debug-button.component';
 import { LicenseService } from 'app/services/license.service';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 import { selectProductType } from 'app/store/system-info/system-info.selectors';
 import { InitShutdownCardComponent } from './init-shutdown/init-shutdown-card/init-shutdown-card.component';
 
@@ -75,9 +78,7 @@ describe('AdvancedSettingsComponent', () => {
       ),
     ],
     providers: [
-      mockApi([
-        mockCall('system.advanced.sed_global_password_is_set', false),
-      ]),
+      mockApi(),
       mockAuth(),
       provideMockStore({
         selectors: [{
@@ -117,7 +118,18 @@ describe('AdvancedSettingsComponent', () => {
     spectator = createComponent();
   });
 
-  it('community edition: shows cards with advanced settings', () => {
+  it('shows the advanced settings cards without the SED card when SED is not entitled', () => {
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectEntitlements, {
+      [EntitlementFeature.Sed]: {
+        entitled: false,
+        reason: EntitlementReason.NoLicense,
+        message: 'This system is not licensed to use the SED feature.',
+      },
+    });
+    store$.refreshState();
+    spectator.detectChanges();
+
     expect(spectator.query(ConsoleCardComponent)).toExist();
     expect(spectator.query(SyslogCardComponent)).toExist();
     expect(spectator.query(KernelCardComponent)).toExist();
@@ -138,9 +150,10 @@ describe('AdvancedSettingsComponent', () => {
     expect(spectator.query(FailoverCardComponent)).toExist();
   });
 
-  it('enterprise: shows cards with advanced settings', () => {
+  it('shows the SED card when the system is entitled to SED', () => {
     const store$ = spectator.inject(MockStore);
-    store$.overrideSelector(selectProductType, ProductType.Enterprise);
+    // Loaded map with no gated keys, i.e. entitled to SED.
+    store$.overrideSelector(selectEntitlements, {});
     store$.refreshState();
 
     spectator.detectChanges();

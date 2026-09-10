@@ -821,15 +821,6 @@ textarea {
   padding: 8px !important;
 }
 
-mat-autocomplete,
-ix-combobox {
-  box-sizing: border-box;
-
-  input {
-    padding: 3px 8px;
-  }
-}
-
 mat-form-field {
   .mat-mdc-text-field-wrapper {
     padding: 0;

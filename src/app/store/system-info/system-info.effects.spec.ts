@@ -25,7 +25,9 @@ describe('SystemInfoEffects', () => {
     contract_type: ContractType.Gold,
     model: 'M40',
     expires_at: null,
-    features: [{ name: LicenseFeature.Apps, start_date: null, expires_at: null }],
+    features: [{
+      name: LicenseFeature.Apps, start_date: null, expires_at: null, source: 'enterprise', type: null,
+    }],
     serials: ['CI-1'],
     enclosures: {},
   };

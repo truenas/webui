@@ -14,7 +14,7 @@
       <tn-input formControlName="basenqn"></tn-input>
     </tn-form-field>
 
-    @if (isEnterprise()) {
+    @if (hasSpdk()) {
       <tn-form-field
         [label]="'Implementation (Experimental)' | translate"
         [tooltip]="helptext.implementationTooltip | translate"
