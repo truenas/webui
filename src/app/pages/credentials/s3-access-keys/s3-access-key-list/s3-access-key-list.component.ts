@@ -17,6 +17,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { s3AccessKeyStatusLabels } from 'app/enums/s3.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { S3AccessKey } from 'app/interfaces/s3.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -180,15 +181,17 @@ export class S3AccessKeyListComponent implements OnInit {
   }
 
   protected expiresLabel(row: S3AccessKey): string {
-    return row.expires_at?.$date
-      ? formatDistanceToNowShortened(row.expires_at.$date)
-      : this.translate.instant('Never');
+    return this.relativeOrNever(row.expires_at);
   }
 
   /** The S3 service reports usage at intervals, so a recent request can lag here for a short time. */
   protected lastUsedLabel(row: S3AccessKey): string {
-    return row.last_used_at?.$date
-      ? formatDistanceToNowShortened(row.last_used_at.$date)
+    return this.relativeOrNever(row.last_used_at);
+  }
+
+  private relativeOrNever(timestamp: ApiTimestamp | null): string {
+    return timestamp?.$date
+      ? formatDistanceToNowShortened(timestamp.$date)
       : this.translate.instant('Never');
   }
 

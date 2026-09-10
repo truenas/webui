@@ -14,6 +14,7 @@ import {
 import {
   combineLatest, map, shareReplay, startWith,
 } from 'rxjs';
+import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { Role } from 'app/enums/role.enum';
 import {
   S3AuditMode,
@@ -39,7 +40,6 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { portRangeValidator, rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { serviceConfigSavedMessage } from 'app/pages/services/components/service-config-forms.constants';
@@ -61,25 +61,15 @@ const defaultPort = 9000;
 // Built here rather than inline in the component, and left with an inferred return type — see
 // the `V` type parameter on IxFormHostForm for why.
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function createS3ServiceForm(
-  fb: NonNullableFormBuilder,
-  validatorsService: IxValidatorsService,
-  translate: TranslateService,
-) {
+function createS3ServiceForm(fb: NonNullableFormBuilder) {
   return fb.group({
     listeners: fb.array<ListenerFormGroup>([]),
     certificate: [null as number | null],
     servers: [1, [Validators.required, rangeValidator(1, 8)]],
     region: [''],
     log_level: [S3LogLevel.Notice, Validators.required],
-    // Optional: empty refuses S3 protocol CreateBucket requests. The explorer offers the /mnt root
-    // as a node, and a dataset name never starts with a slash, so that is the one selection to refuse.
-    managed_root_dataset: ['', [
-      validatorsService.customValidator(
-        (control) => !String(control.value ?? '').startsWith('/'),
-        translate.instant('Select a pool or dataset. The /mnt directory itself is not a dataset.'),
-      ),
-    ]],
+    // Optional: empty refuses S3 protocol CreateBucket requests.
+    managed_root_dataset: [''],
     global_grants: fb.array<S3GrantFormGroup>([]),
     default_audit_mode: [S3AuditMode.None],
     default_audit_actions: [[] as string[]],
@@ -114,7 +104,6 @@ export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormVal
   private api = inject(ApiService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
-  private validatorsService = inject(IxValidatorsService);
   private systemGeneralService = inject(SystemGeneralService);
   private datasetService = inject(DatasetService);
   private store$ = inject(Store<AppState>);
@@ -129,9 +118,10 @@ export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormVal
    */
   protected readonly isLicensed = toSignal(this.store$.select(selectLicense).pipe(map((license) => !!license)));
 
-  protected readonly form = createS3ServiceForm(this.fb, this.validatorsService, this.translate);
+  protected readonly form = createS3ServiceForm(this.fb);
 
   protected readonly treeNodeProvider = this.datasetService.getDatasetNodeProvider();
+  protected readonly emptyRootNode = [emptyRootNode];
 
   /**
    * Listener rows are pushed after first render (once `s3.config` resolves) into an array whose

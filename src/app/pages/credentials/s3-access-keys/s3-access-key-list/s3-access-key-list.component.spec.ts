@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
+  TnButtonHarness, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnSelectHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -40,6 +40,18 @@ describe('S3AccessKeyListComponent', () => {
       expires_at: null,
       last_used_at: null,
       manage_buckets: false,
+      created_at: { $date: 1700000000000 },
+    },
+    {
+      id: 2,
+      name: 'restic-key',
+      username: 'bob',
+      access_key: 'AKIAEXAMPLE67890',
+      secret: 'secret',
+      status: S3AccessKeyStatus.Enabled,
+      expires_at: null,
+      last_used_at: { $date: Date.now() - 3 * 24 * 60 * 60 * 1000 },
+      manage_buckets: true,
       created_at: { $date: 1700000000000 },
     },
   ] as S3AccessKey[];
@@ -94,7 +106,19 @@ describe('S3AccessKeyListComponent', () => {
     ]);
     expect(await table.getAllRowTexts()).toEqual([
       ['backup-key', 'alice', 'AKIAEXAMPLE12345', 'Enabled', 'Never', 'Never', ''],
+      ['restic-key', 'bob', 'AKIAEXAMPLE67890', 'Enabled', 'Never', '3 days ago', ''],
     ]);
+  });
+
+  it('shows the Manage Buckets column once it is enabled in the column picker', async () => {
+    const picker = await loader.getHarness(TnSelectHarness.with({ ancestor: 'ix-table-column-picker' }));
+    await picker.open();
+    await picker.selectOption('Manage Buckets');
+
+    expect(await table.getHeaderTexts()).toContain('Manage Buckets');
+    const rows = await table.getAllRowTexts();
+    expect(rows[0]).toContain('No');
+    expect(rows[1]).toContain('Yes');
   });
 
   it('opens the access key form when Add is pressed', async () => {

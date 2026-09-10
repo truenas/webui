@@ -7,6 +7,7 @@ import {
   TnAutocompleteHarness, TnCheckboxHarness, TnDialog, TnFormListHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
@@ -18,7 +19,7 @@ import { User } from 'app/interfaces/user.interface';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -150,15 +151,10 @@ describe('ServiceS3Component', () => {
     expect(closed).toHaveBeenCalledWith(true);
   });
 
-  it('offers to create the managed root dataset from the explorer', () => {
+  it('offers to create the managed root dataset from a dataset-name explorer', () => {
     expect(spectator.query(ExplorerCreateDatasetComponent)).toBeTruthy();
-  });
-
-  it('rejects the /mnt root as the managed root dataset', async () => {
-    const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Managed Root Dataset' }));
-    await explorer.setValue('/mnt');
-
-    expect(await explorer.getErrorText()).toBe('Select a pool or dataset. The /mnt directory itself is not a dataset.');
-    expect(spectator.component.canSubmit()).toBe(false);
+    // The empty root keeps the explorer in dataset-name space, so the path a created dataset comes
+    // back with is stripped of /mnt before it lands in the control (see IxExplorerComponent).
+    expect(spectator.query(IxExplorerComponent)!.rootNodes()).toEqual([emptyRootNode]);
   });
 });

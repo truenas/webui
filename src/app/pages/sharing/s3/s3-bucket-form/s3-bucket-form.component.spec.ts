@@ -145,7 +145,6 @@ describe('S3BucketFormComponent', () => {
 
     it('starts with the parent dataset set to the service managed root dataset', async () => {
       expect(await form.getValues()).toMatchObject({ 'Parent Dataset': 'tank/s3' });
-      expect(spectator.component.form.controls.parent_dataset.value).toBe('tank/s3');
     });
 
     it('turns versioning on and defaults to Compliance retention when object lock is enabled', async () => {

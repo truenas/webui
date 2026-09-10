@@ -72,10 +72,15 @@
   </tn-form-section>
 
   <tn-form-section [heading]="'Protocol-Created Buckets' | translate">
+    <!--
+      Dataset names, not mount points: the empty root keeps the explorer in that space, so a dataset
+      created from the picker comes back as `tank/s3` rather than `/mnt/tank/s3`.
+    -->
     <ix-explorer
       formControlName="managed_root_dataset"
       [label]="'Managed Root Dataset' | translate"
       [tooltip]="helptext.managedRootDatasetTooltip | translate"
+      [rootNodes]="emptyRootNode"
       [nodeProvider]="treeNodeProvider"
     >
       <!-- The root must already exist: middleware never creates it. Offer to create it here instead. -->

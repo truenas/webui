@@ -12,7 +12,7 @@ import {
   TnInputComponent, TnSelectComponent, type TnSelectOption,
 } from '@truenas/ui-components';
 import {
-  map, merge, Observable, startWith,
+  catchError, EMPTY, map, merge, Observable, startWith,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import {
@@ -329,7 +329,11 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
    * parent already typed before the config arrives is kept.
    */
   private prefillParentDataset(): void {
-    this.api.call('s3.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
+    this.api.call('s3.config').pipe(
+      // A convenience only: the user can pick the parent themselves, so a failed read stays silent.
+      catchError(() => EMPTY),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((config) => {
       const parent = this.form.controls.parent_dataset;
       if (config.managed_root_dataset && !parent.value) {
         parent.setValue(config.managed_root_dataset);
