@@ -5,25 +5,27 @@
   [headerMenu]="serviceMenu()"
   [headerMenuTriggerTestId]="headerMenuTriggerTestId()"
 >
-  <a
-    tnCardHeader
-    class="card-title-link"
-    tnTestIdType="link"
-    [tnTestId]="['s3-bucket', 'open-in-new']"
-    [routerLink]="['/sharing', 's3']"
-    [tnTooltip]="'Open S3 list in full page' | translate"
-  >
-    <h3 class="tn-card__title">
-      {{ 'Object Storage (S3) Buckets' | translate }}
-      <tn-icon
-        name="open-in-new"
-        library="mdi"
-        class="title-icon"
-        [attr.aria-label]="'Open S3 list in full page' | translate"
-      ></tn-icon>
-      <ix-card-alert-badge [menuPath]="cardMenuPath" />
-    </h3>
-  </a>
+  <div tnCardHeader class="card-header-title">
+    <a
+      class="card-title-link"
+      tnTestIdType="link"
+      [tnTestId]="['s3-bucket', 'open-in-new']"
+      [routerLink]="['/sharing', 's3']"
+      [tnTooltip]="'Open S3 list in full page' | translate"
+    >
+      <h3 class="tn-card__title">
+        {{ 'Object Storage (S3) Buckets' | translate }}
+        <tn-icon
+          name="open-in-new"
+          library="mdi"
+          class="title-icon"
+          [attr.aria-label]="'Open S3 list in full page' | translate"
+        ></tn-icon>
+        <ix-card-alert-badge [menuPath]="cardMenuPath" />
+      </h3>
+    </a>
+    <span class="experimental-badge">{{ 'Experimental' | translate }}</span>
+  </div>
 
   <ng-template tnCardHeaderActions>
     @if (service(); as service) {

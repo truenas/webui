@@ -3,8 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnCardComponent, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness,
-  TnTableHarness,
+  TnButtonHarness, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { Subject, of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -79,9 +78,9 @@ describe('S3BucketListComponent', () => {
     table = await loader.getHarness(TnTableHarness);
   });
 
-  it('shows the page title', () => {
-    // White-box: no TnCardHarness in @truenas/ui-components yet.
-    expect(spectator.query(TnCardComponent)!.title()).toBe('S3 Buckets');
+  it('shows the page title with the experimental badge', () => {
+    expect(spectator.query('.tn-card__title')).toHaveText('S3 Buckets');
+    expect(spectator.query('.experimental-badge')).toHaveText('Experimental');
   });
 
   it('shows table rows', async () => {
