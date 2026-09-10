@@ -69,7 +69,8 @@ a number. See `05-ci.md`.
    across appliances and rolls back a snapshot between tests. Neither exists
    yet. That document was rewritten against the pipeline as built: the design
    stands, the substrate is a TrueNAS host with zvol-backed VMs rather than
-   `ixnode` on libvirt, and its next step is measuring the rollback cycle.
+   `ixnode` on libvirt, and the rollback cycle it wanted measured is now
+   read off every clone.
 
    It runs nightly and on every merged UI change, drives the UI built from
    the checkout, and publishes traces for failed tests. Appliances are
