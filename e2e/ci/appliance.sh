@@ -308,15 +308,17 @@ templateExistsIn() {
     <<<"$1" > /dev/null
 }
 
-# When the template nicknamed $2 in the listing in $1 was built, as the ISO
-# 8601 timestamp tn_guest.py recorded on its dataset. Fails when there is
-# none — and "none" includes a template without a snapshot, which `clone`
-# refuses. The template flag is read as a boolean or as the string
-# tn_guest.py stores.
+# When the frozen template nicknamed $2 in the listing in $1 was built, as
+# the ISO 8601 timestamp tn_guest.py recorded on its dataset, or "an unknown
+# time" when the entry has no such field: the timestamp is for the log, and
+# whether the template exists must not turn on it. Fails only when there is
+# no such template — and "none" includes a template without a snapshot,
+# which `clone` refuses. The template flag is read as a boolean or as the
+# string tn_guest.py stores.
 templateCreatedIn() {
   jq -re --arg n "$2" \
     'map(select(.nickname == $n and (.template == true or .template == "true") and (.snapshot // "") != ""))
-     | first | .created // empty' \
+     | first | if . == null then null else (.created // "an unknown time") end' \
     <<<"$1"
 }
 
@@ -361,7 +363,13 @@ templateNickname() {
 # rather than in its place: the build never has to wait on anybody's clone.
 collectTemplates() {
   local keep="$1" listing stale
-  readDeployments listing
+  # Not readDeployments: that one is fatal by design, and this runs after
+  # the claim has its appliance. A listing that cannot be read here costs
+  # the collection, not the run.
+  if ! listing=$(tnGuest list --json); then
+    echo "appliance.sh: could not list deployments; leaving old templates for a later claim" >&2
+    return 0
+  fi
   stale=$(staleTemplatesIn "$listing" "$keep")
   [ -n "$stale" ] || return 0
   local old
