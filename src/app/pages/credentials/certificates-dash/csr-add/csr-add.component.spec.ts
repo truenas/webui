@@ -260,9 +260,10 @@ describe('CsrAddComponent', () => {
     await updateStepHarnesses();
 
     await selectValue('country', 'United States');
-    await form.fillForm({
-      'Subject Alternative Name': ['jobs.umbrella.com'],
-    });
+    const sanChips = await loader.getHarness(
+      TnChipInputHarness.with({ selector: '[formControlName="san"]' }),
+    );
+    await sanChips.addChip('jobs.umbrella.com');
     await setInput('state', 'Pennsylvania');
     await setInput('city', 'Racoon City');
     await setInput('organization', 'Umbrella Corp');
