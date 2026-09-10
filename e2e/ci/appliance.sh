@@ -36,8 +36,9 @@
 #   tn_guest.py delete --host H --pool P (...) <name or nickname>
 #
 # With a template password configured, a claim clones the template (seconds,
-# no ISO install), building it first if the host has none. Without one,
-# every claim installs from the ISO. `build-template` makes the template: a
+# no ISO install), building it first if the host has none or the ISO is newer
+# than the template. Without one, every claim installs from the ISO.
+# `build-template` makes the template by hand: a
 # bare install, shut down and snapshotted, that `clone` copies with
 # middleware's vm.clone. This is E5 of the design in its first form:
 # baselines as snapshots, clones as provisioning. Revert between tests (E1)
@@ -197,9 +198,17 @@ claim() {
   if [ -n "${TN_GUEST_TEMPLATE_PASSWORD:-}" ]; then
     # No template yet — the first run after a fresh box, or after someone
     # deleted it — builds one, so a claim never silently regresses to an ISO
-    # install per run. Costs one install, once.
-    if ! templateExists; then
+    # install per run. A template older than the ISO is rebuilt the same way:
+    # the template is that ISO frozen, so when `iso` rotates the nightly (or
+    # a pin changes) the next claim pays one install and every claim after
+    # it clones the new build. That is the whole rotation policy; nothing
+    # rebuilds on a calendar.
+    local built
+    if ! built=$(templateCreated); then
       echo "appliance.sh: no template named '$TN_GUEST_TEMPLATE' on the host, building it first" >&2
+      build_template fresh-install
+    elif templatePredatesIso "$built"; then
+      echo "appliance.sh: template '$TN_GUEST_TEMPLATE' (built $built) predates $TN_GUEST_ISO, rebuilding it first" >&2
       build_template fresh-install
     fi
     echo "appliance.sh: cloning template '$TN_GUEST_TEMPLATE' into '$nickname' on $TN_GUEST_HOST" >&2
@@ -257,9 +266,29 @@ EOF
 
 # Whether a template with the configured nickname exists on the host.
 templateExists() {
+  templateCreated > /dev/null
+}
+
+# When the template with the configured nickname was built, as the ISO 8601
+# timestamp tn_guest.py recorded on its dataset. Fails when there is none.
+templateCreated() {
   tnGuest list --json 2>/dev/null \
-    | jq -e --arg n "$TN_GUEST_TEMPLATE" \
-        'map(select(.nickname == $n and .template == "true")) | length > 0' > /dev/null
+    | jq -re --arg n "$TN_GUEST_TEMPLATE" \
+        'map(select(.nickname == $n and .template == "true")) | first | .created // empty'
+}
+
+# Whether a template built at $1 is older than the ISO a claim would install
+# from — the ISO file's own mtime, which is when it landed on the host. Only
+# decidable when this runs on the host, where the file can be stat'ed;
+# elsewhere the template is trusted as it is.
+templatePredatesIso() {
+  local built="$1"
+  [ "$TN_GUEST_HOST" = "localhost" ] || return 1
+  [ -f "$TN_GUEST_ISO" ] || return 1
+  local builtEpoch isoEpoch
+  builtEpoch=$(date -d "$built" +%s 2>/dev/null) || return 1
+  isoEpoch=$(stat -c %Y "$TN_GUEST_ISO" 2>/dev/null || stat -f %m "$TN_GUEST_ISO")
+  [ "$builtEpoch" -lt "$isoEpoch" ]
 }
 
 # Build the template every claim clones: a bare install from the ISO, shut

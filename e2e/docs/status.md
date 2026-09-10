@@ -73,8 +73,8 @@ a number. See `05-ci.md`.
 
    It runs nightly and on every merged UI change, drives the UI built from
    the checkout, and publishes traces for failed tests. Appliances are
-   clones of a weekly-built template rather than fresh ISO installs (E5 in
-   the design, first form). What is next for the pipeline is reading the
+   clones of a template rebuilt whenever the weekly-rotated nightly ISO moves,
+   rather than fresh ISO installs (E5 in the design, first form). What is next for the pipeline is reading the
    rollback cycle (Q0b) off the clone timings and deciding about per-test
    restore on that number.
 3. **Observability.** No WebSocket capture, no middleware log collection (the
