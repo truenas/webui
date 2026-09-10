@@ -1,7 +1,10 @@
 <mat-card>
   <ix-fake-progress-bar [loading]="!!(dataProvider.isLoading$ | async)"></ix-fake-progress-bar>
   <mat-toolbar-row>
-    <h3>{{ 'S3 Buckets' | translate }}</h3>
+    <h3>
+      {{ 'S3 Buckets' | translate }}
+      <span class="experimental-badge">{{ 'Experimental' | translate }}</span>
+    </h3>
     <div class="actions action-icon">
       <ix-basic-search
         [query]="searchQuery()"
