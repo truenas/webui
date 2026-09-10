@@ -15,7 +15,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { s3PermissionsModelLabels, s3VersioningLabels } from 'app/enums/s3.enum';
+import { s3ObjectOwnershipLabels, s3PermissionsModelLabels, s3VersioningLabels } from 'app/enums/s3.enum';
 import { helptextSharingS3 } from 'app/helptext/sharing';
 import { S3Bucket } from 'app/interfaces/s3.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -141,6 +141,12 @@ export class S3BucketListComponent implements OnInit {
       sortBy: (row) => this.permissionsModelLabel(row),
     }),
     column({
+      title: this.translate.instant('Object Ownership'),
+      propertyName: 'object_ownership',
+      sortBy: (row) => this.objectOwnershipLabel(row),
+      hidden: true,
+    }),
+    column({
       title: this.translate.instant('Versioning'),
       propertyName: 'versioning',
       // Sort on the label the cell shows, not the raw enum, so the order matches the visible text.
@@ -171,6 +177,10 @@ export class S3BucketListComponent implements OnInit {
 
   protected permissionsModelLabel(row: S3Bucket): string {
     return this.translate.instant(s3PermissionsModelLabels.get(row.permissions_model) || row.permissions_model);
+  }
+
+  protected objectOwnershipLabel(row: S3Bucket): string {
+    return this.translate.instant(s3ObjectOwnershipLabels.get(row.object_ownership) || row.object_ownership);
   }
 
   protected versioningLabel(row: S3Bucket): string {

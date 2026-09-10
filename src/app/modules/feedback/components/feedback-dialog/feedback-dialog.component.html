@@ -25,21 +25,20 @@
         [isLoading]="isLoading()"
         (isLoadingChange)="onIsLoadingChange($event)"
       ></ix-file-review>
-    } @else {
-      @if (isEnterprise()) {
-        <ix-file-ticket-licensed
-          [dialogRef]="dialogRef"
-          [isLoading]="isLoading()"
-          (isLoadingChange)="onIsLoadingChange($event)"
-        ></ix-file-ticket-licensed>
-      } @else {
-        <ix-file-ticket
-          [type]="typeControl.value | cast"
-          [dialogRef]="dialogRef"
-          [isLoading]="isLoading()"
-          (isLoadingChange)="onIsLoadingChange($event)"
-        ></ix-file-ticket>
-      }
+    } @else if (hasSupport() === false) {
+      <!-- `=== false` so neither ticket form flashes while entitlements are still loading. -->
+      <ix-file-ticket
+        [type]="typeControl.value | cast"
+        [dialogRef]="dialogRef"
+        [isLoading]="isLoading()"
+        (isLoadingChange)="onIsLoadingChange($event)"
+      ></ix-file-ticket>
+    } @else if (hasSupport()) {
+      <ix-file-ticket-licensed
+        [dialogRef]="dialogRef"
+        [isLoading]="isLoading()"
+        (isLoadingChange)="onIsLoadingChange($event)"
+      ></ix-file-ticket-licensed>
     }
   }
 

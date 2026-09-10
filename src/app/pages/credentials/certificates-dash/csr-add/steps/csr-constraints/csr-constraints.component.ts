@@ -86,6 +86,14 @@ export class CsrConstraintsComponent implements OnInit, SummaryProvider {
     { initialValue: this.form.valid },
   );
 
+  // Mirrors the form value so `hasExtension()` is signal-driven. A profile patch comes from the
+  // parent wizard, which doesn't mark this OnPush view dirty: the tn-checkboxes would update
+  // themselves while the `@if` blocks around their fields kept the stale value.
+  private readonly formValue = toSignal(
+    this.form.valueChanges.pipe(map(() => this.form.getRawValue())),
+    { initialValue: this.form.getRawValue() },
+  );
+
   readonly helptext = helptextSystemCertificates;
 
   protected readonly InputType = InputType;
@@ -102,7 +110,7 @@ export class CsrConstraintsComponent implements OnInit, SummaryProvider {
   }
 
   hasExtension(extension: CertificateExtension): boolean {
-    return this.form.getRawValue()[extension].enabled;
+    return this.formValue()[extension].enabled;
   }
 
   getSummary(): SummarySection {
