@@ -1,4 +1,4 @@
-import { HarnessLoader } from '@angular/cdk/testing';
+import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
@@ -20,6 +20,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { TooltipHarness } from 'app/modules/tooltip/tooltip.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
@@ -168,6 +169,27 @@ describe('RsyncTaskFormComponent', () => {
         user: 'steven',
       }]);
       expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
+    });
+
+    // NAS-143522: the panel opened with "User is required" already in red, before the user
+    // had reached the field. Errors must wait for the control to be dirty or touched.
+    it('shows no validation errors before the user interacts with the form', async () => {
+      const errors = await parallel(() => spectator.queryAll('ix-errors .form-error')
+        .map((element) => Promise.resolve(element.textContent?.trim())));
+
+      expect(errors.filter(Boolean)).toEqual([]);
+      expect(spectator.component.form.controls.user.touched).toBe(false);
+      expect(spectator.component.form.controls.user.dirty).toBe(false);
+    });
+
+    // NAS-143522: the help bubbles rendered with runs of blank space mid-sentence, from
+    // line-continuation indentation baked into the helptext strings.
+    it('renders help text without whitespace artifacts', async () => {
+      const tooltips = await loader.getAllHarnesses(TooltipHarness);
+      const messages = await parallel(() => tooltips.map((tooltip) => tooltip.getMessage()));
+
+      expect(messages.length).toBeGreaterThan(0);
+      expect(messages.filter((message) => /\s{2}|\n/.test(message))).toEqual([]);
     });
   });
 
