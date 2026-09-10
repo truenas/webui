@@ -50,6 +50,7 @@ import { poolStore } from 'app/services/global-store/stores.constant';
 @Component({
   selector: 'ix-s3-bucket-list',
   templateUrl: './s3-bucket-list.component.html',
+  styleUrls: ['./s3-bucket-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,
