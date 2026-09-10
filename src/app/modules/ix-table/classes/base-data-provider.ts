@@ -73,10 +73,35 @@ export class BaseDataProvider<T> implements DataProvider<T> {
     this.sortingOrPaginationUpdate.emit();
   }
 
-  setFilter(filter: TableFilter<T>): void {
-    this.resetPaginationToFirstPage();
+  /**
+   * Applies a filter and, by default, sends the user back to the first page — the right
+   * move when the QUERY changed, since the rows they were reading are no longer the ones
+   * the table holds.
+   *
+   * Pass `keepPage` when the same query is being re-run against refreshed rows, e.g. a
+   * background reload the user did not ask for. Resetting there reads as the table losing
+   * their place mid-task, which is what NAS-143108 reported.
+   */
+  setFilter(filter: TableFilter<T>, { keepPage = false }: { keepPage?: boolean } = {}): void {
+    if (!keepPage) {
+      this.resetPaginationToFirstPage();
+    }
     const filteredRows = filterTableRows(filter);
     this.setRows(filteredRows);
+  }
+
+  /**
+   * Re-emits the current page so the table re-renders, leaving the filter, the sort and
+   * the pagination alone.
+   *
+   * A checkbox column keeps its state ON the row (`row.selected`) and mutates it in
+   * place, so nothing in the table's OnPush tree learns about it. Re-running the filter
+   * does force the re-render, but `setFilter` also resets to the first page — which is
+   * why ticking a checkbox on page 2 used to snap the user back to page 1 (NAS-143108).
+   */
+  refreshCurrentPage(): void {
+    this.currentPage$.next([]);
+    this.updateCurrentPage(this.allRows);
   }
 
   protected resetPaginationToFirstPage(): void {
