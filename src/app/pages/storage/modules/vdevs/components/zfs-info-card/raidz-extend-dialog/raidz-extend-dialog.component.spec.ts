@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnAutocompleteHarness, TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -15,8 +15,6 @@ import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
-import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -104,17 +102,15 @@ describe('RaidzExtendDialogComponent', () => {
     const warningMessage = spectator.query(byText('Only disks that are at least 12 TiB are shown.'));
     expect(warningMessage).toExist();
 
-    const combobox = await loader.getHarness(IxComboboxHarness.with({ label: 'New Disk' }));
-    await combobox.focusInput();
-    const options = await combobox.getAutocompleteOptions();
+    const disk = await loader.getHarness(TnAutocompleteHarness);
+    await disk.focus();
+    const options = await disk.getOptions();
     expect(options).toEqual(['sde (12 TiB)']);
   });
 
   it('extends a vdev when new unused disk is selected', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'New Disk': 'sde (12 TiB)',
-    });
+    const disk = await loader.getHarness(TnAutocompleteHarness);
+    await disk.selectOption('sde (12 TiB)');
 
     const extendButton = await loader.getHarness(TnButtonHarness.with({ label: 'Extend' }));
     await extendButton.click();
@@ -135,10 +131,8 @@ describe('RaidzExtendDialogComponent', () => {
     const poolExtendJobService = spectator.inject(PoolExtendJobService);
     jest.spyOn(poolExtendJobService, 'checkForExistingExtendJob').mockReturnValue(of(true));
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'New Disk': 'sde (12 TiB)',
-    });
+    const disk = await loader.getHarness(TnAutocompleteHarness);
+    await disk.selectOption('sde (12 TiB)');
 
     const extendButton = await loader.getHarness(TnButtonHarness.with({ label: 'Extend' }));
     await extendButton.click();
@@ -154,10 +148,8 @@ describe('RaidzExtendDialogComponent', () => {
     const poolExtendJobService = spectator.inject(PoolExtendJobService);
     jest.spyOn(poolExtendJobService, 'checkForExistingExtendJob').mockReturnValue(of(false));
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'New Disk': 'sde (12 TiB)',
-    });
+    const disk = await loader.getHarness(TnAutocompleteHarness);
+    await disk.selectOption('sde (12 TiB)');
 
     const extendButton = await loader.getHarness(TnButtonHarness.with({ label: 'Extend' }));
     await extendButton.click();

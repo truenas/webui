@@ -3,8 +3,6 @@ import {
   ReactiveFormsModule, FormGroup, FormControl, NgControl,
 } from '@angular/forms';
 import { createDirectiveFactory, mockProvider } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
-import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
 import { RegisteredControlDirective } from './registered-control.directive';
 
@@ -29,7 +27,7 @@ describe('RegisteredControlDirective', () => {
   });
   const createDirective = createDirectiveFactory({
     directive: RegisteredControlDirective,
-    imports: [ReactiveFormsModule, MockComponent(IxFormSectionComponent)],
+    imports: [ReactiveFormsModule],
     providers: [
       mockProvider(NgControl, {
         name: 'testGroup',
@@ -53,9 +51,9 @@ describe('RegisteredControlDirective', () => {
     expect(spectator.inject(IxFormService).registerControl).toHaveBeenCalled();
   });
 
-  it('registers control and form section available', () => {
+  it('registers the control element under its name and unregisters it on destroy', () => {
     const spectator = createDirective(`
-      <div [formGroup]="fg"><ix-form-section [label]="'Test Section'"><div ixRegisteredControl [label]="'Test Group'" [formGroupName]="'testGroup'"><input formControlName="testControl"></div></ix-form-section></div>
+      <div [formGroup]="fg"><div ixRegisteredControl [label]="'Test Group'" [formGroupName]="'testGroup'"><input formControlName="testControl"></div></div>
     `, {
       hostProps: {
         fg: new FormGroup({
@@ -67,21 +65,8 @@ describe('RegisteredControlDirective', () => {
     expect(
       formService.registerControl,
     ).toHaveBeenCalledWith('testGroup', new ElementRef(getGroupDiv()));
-    const ixFormSection = document.createElement('ix-form-section');
-    ixFormSection.setAttribute('id', 'Test Section');
-    expect(formService.registerSectionControl).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'testGroup', control: testGroup }),
-      expect.objectContaining({
-        label: 'Test Section',
-      }),
-    );
+
     spectator.directive.ngOnDestroy();
     expect(formService.unregisterControl).toHaveBeenCalledWith('testGroup');
-    expect(formService.unregisterSectionControl).toHaveBeenCalledWith(
-      expect.objectContaining({
-        label: 'Test Section',
-      }),
-      expect.objectContaining({ name: 'testGroup', control: testGroup }),
-    );
   });
 });

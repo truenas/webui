@@ -1,7 +1,11 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef, forwardRef, input, OnInit, signal, viewChild, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, forwardRef, input, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import {
+  ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators,
+} from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnAutocompleteComponent, TnCheckboxComponent, TnFormFieldComponent } from '@truenas/ui-components';
 import {
   combineLatest, distinctUntilChanged, filter, map,
 } from 'rxjs';
@@ -11,9 +15,6 @@ import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -25,6 +26,10 @@ import { hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils
  * Presents unused disks, shows their size and if there is exported pool on them.
  * Shows warning when user selects a disk with an exported pool.
  * Show extra "Allow non-unique serialed disks" if user has such disks.
+ *
+ * Like the other `custom-selects`, this is the {@link ControlValueAccessor} for the host's
+ * `formControlName`: the `<tn-autocomplete>` inside is bound to {@link diskControl}, and this
+ * component mediates between it and the host's control.
  */
 @Component({
   selector: 'ix-unused-disk-select',
@@ -38,13 +43,15 @@ import { hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
     TranslateModule,
-    IxCheckboxComponent,
-    IxComboboxComponent,
+    TnAutocompleteComponent,
+    TnCheckboxComponent,
+    TnFormFieldComponent,
   ],
 })
-export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
+export class UnusedDiskSelectComponent implements ControlValueAccessor, OnInit {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
@@ -59,6 +66,12 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
   readonly tooltip = input<TranslatedString>();
   // TODO: It may be better to allow for object to be written as value.
   readonly valueField = input<keyof DetailsDisk>('name');
+  /**
+   * Test-id base for the disk picker. The `<tn-autocomplete>` is bound through a bare
+   * `[formControl]`, so it has no control name to fall back on — pass the host's control name
+   * to keep each usage addressable under its own id.
+   */
+  readonly testId = input('unused-disk');
 
   readonly unusedDisks = signal<DetailsDisk[]>([]);
   readonly nonUniqueSerialDisks = computed(() => this.unusedDisks().filter(hasNonUniqueSerial));
@@ -79,6 +92,9 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
 
   protected allowDuplicateSerials = new FormControl(false, { nonNullable: true });
 
+  /** Drives the inner `<tn-autocomplete>`. */
+  protected readonly diskControl = new FormControl<string | null>(null);
+
   protected shownOptions$ = combineLatest([
     this.unusedDisks$,
     this.allowDuplicateSerials.valueChanges.pipe(startWith(false)),
@@ -92,16 +108,49 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
       }),
     );
 
-  protected disksProvider = new SimpleAsyncComboboxProvider(this.shownOptions$);
+  private onChange: (value: string | null) => void = (): void => {};
+  private onTouched: () => void = (): void => {};
 
-  private readonly combobox = viewChild.required(IxComboboxComponent);
+  constructor() {
+    // Mirror the host's required state onto the inner control so `<tn-form-field>` renders the
+    // inline "required" error: the field reads validity from the control it wraps, not from the
+    // host's form control, which carries the actual validator.
+    effect(() => {
+      this.diskControl.setValidators(this.required() ? [Validators.required] : []);
+      this.diskControl.updateValueAndValidity({ emitEvent: false });
+    });
+  }
 
   ngOnInit(): void {
     this.loadDisks();
+    this.setupExportedPoolWarning();
+
+    this.diskControl.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((value) => {
+      this.onChange(value);
+      this.onTouched();
+    });
   }
 
-  ngAfterViewInit(): void {
-    this.setupExportedPoolWarning();
+  writeValue(value: string | null): void {
+    this.diskControl.setValue(value, { emitEvent: false });
+  }
+
+  registerOnChange(onChange: (value: string | null) => void): void {
+    this.onChange = onChange;
+  }
+
+  registerOnTouched(onTouched: () => void): void {
+    this.onTouched = onTouched;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    if (isDisabled) {
+      this.diskControl.disable({ emitEvent: false });
+    } else {
+      this.diskControl.enable({ emitEvent: false });
+    }
   }
 
   private loadDisks(): void {
@@ -113,10 +162,7 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
   }
 
   private setupExportedPoolWarning(): void {
-    if (!this.combobox()) {
-      return;
-    }
-    this.combobox().controlDirective.control?.valueChanges?.pipe(
+    this.diskControl.valueChanges.pipe(
       distinctUntilChanged(),
       filter(Boolean),
       takeUntilDestroyed(this.destroyRef),
