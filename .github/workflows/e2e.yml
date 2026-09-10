@@ -186,14 +186,15 @@ jobs:
 
       # Resolves the ISO (the newest v27 nightly, kept for a week, or the
       # E2E_TN_GUEST_ISO pin), claims an appliance — a clone of the template
-      # for that ISO, built on first use — and puts TN_HOST, TN_USERNAME,
-      # TN_PASSWORD, TN_DOMAIN and TN_BASELINE in the job environment. Its
+      # for that ISO, built on first use — and puts TN_PROFILE, TN_HOST,
+      # TN_HOST_HTTP, TN_USERNAME, TN_PASSWORD, TN_DOMAIN and TN_BASELINE in
+      # the job environment. Its
       # post step releases the appliance whatever happens below, and the
       # lease it sets covers a runner that never gets there. Lab facts stay
       # in the e2e-lab environment's variables and secrets. A dispatch that
       # asks for the newest nightly beats a standing pin.
       - name: Claim an appliance
-        uses: iXsystems/ux-github-workflows/.github/actions/truenas-appliance@NAS-e2e-appliance-action
+        uses: iXsystems/ux-github-workflows/.github/actions/truenas-appliance@master
         with:
           baseline: fresh-install
           pool: ${{ vars.E2E_TN_GUEST_POOL || 'tank' }}
