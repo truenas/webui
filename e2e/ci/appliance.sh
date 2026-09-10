@@ -33,6 +33,10 @@
 #                      --nickname <name> --lifetime <duration>   -> JSON
 #   tn_guest.py create (...) --template --iso <path> --admin-pass <template's>
 #                      --nickname <template nickname>            -> JSON
+#                      (--leave-running: stop before the snapshot, for a
+#                      baseline script to configure the guest)
+#   tn_guest.py freeze --host H (...) <template nickname>
+#   tn_guest.py list   --host H --pool P (...) --json
 #   tn_guest.py delete --host H --pool P (...) <name or nickname>
 #
 # With a template password configured, a claim clones the template (seconds,
@@ -55,11 +59,15 @@
 #   TN_GUEST_HOST_USER  API user on the host (default: root)
 #   TN_GUEST_HOST_API_KEY or TN_GUEST_HOST_PASSWORD — credential for that user
 #   TN_GUEST_LIFETIME   VM lifetime, so a leaked one expires (default: 3h)
-#   TN_GUEST_TEMPLATE   nickname of the template to clone (default: e2e-template)
+#   TN_GUEST_TEMPLATE_PREFIX
+#                       templates are nicknamed <prefix>-<baseline>, one per
+#                       baseline (default: e2e, so e2e-fresh-install,
+#                       e2e-with-pool)
 #   TN_GUEST_TEMPLATE_PASSWORD
-#                       the template's admin password. Set: claims clone the
-#                       template and rotate the password per claim. Unset:
-#                       every claim installs from the ISO.
+#                       the templates' admin password. Set: claims clone the
+#                       baseline's template and rotate the password per claim.
+#                       Unset: every claim installs from the ISO, and only
+#                       `fresh-install` is available.
 #
 # Guest sizing, all with defaults below. The host is shared with the runner,
 # Docker and the browser, so memory and the OS disk are deliberately smaller
@@ -95,7 +103,36 @@ TN_GUEST_HOST="${TN_GUEST_HOST:-localhost}"
 TN_GUEST_POOL="${TN_GUEST_POOL:-tank}"
 TN_GUEST_HOST_USER="${TN_GUEST_HOST_USER:-root}"
 TN_GUEST_LIFETIME="${TN_GUEST_LIFETIME:-3h}"
-TN_GUEST_TEMPLATE="${TN_GUEST_TEMPLATE:-e2e-template}"
+TN_GUEST_TEMPLATE_PREFIX="${TN_GUEST_TEMPLATE_PREFIX:-e2e}"
+
+# The baselines a claim can ask for, and what each is.
+#
+#   fresh-install  a bare install: admin user set, nothing else. For journeys
+#                  about first-run things — building the first pool.
+#   with-pool      fresh-install plus one striped pool named `tank`, so every
+#                  other journey has somewhere to put a dataset without
+#                  building it first.
+#
+# A baseline beyond fresh-install is a script under baselines/, run against
+# the template guest's API between `create --template --leave-running` and
+# `freeze`. Adding one is adding a script and a line here.
+baselines="fresh-install with-pool"
+
+# Where the baseline scripts live: beside this script.
+baselineDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/baselines"
+
+knownBaseline() {
+  local baseline="$1" candidate
+  for candidate in $baselines; do
+    [ "$candidate" = "$baseline" ] && return 0
+  done
+  return 1
+}
+
+# The template a baseline is cloned from, by nickname.
+templateNickname() {
+  printf '%s-%s' "$TN_GUEST_TEMPLATE_PREFIX" "$1"
+}
 TN_GUEST_MEMORY_MB="${TN_GUEST_MEMORY_MB:-6144}"
 TN_GUEST_VCPUS="${TN_GUEST_VCPUS:-4}"
 TN_GUEST_OS_DISK_GB="${TN_GUEST_OS_DISK_GB:-10}"
@@ -149,10 +186,12 @@ checkTools() {
 # and eventually the suite's own fixture. Everything else goes to stderr.
 claim() {
   local baseline="${1:?baseline name required}"
-  # tn_guest.py installs from an ISO every time, so a clean install is the
-  # only baseline it can produce. Anything else is the snapshot design (E5).
-  [ "$baseline" = "fresh-install" ] \
-    || die "baseline '$baseline' is not available: tn_guest.py can only produce 'fresh-install'"
+  knownBaseline "$baseline" \
+    || die "baseline '$baseline' is not one of: $baselines"
+  # Without templates every claim is an ISO install, and an ISO install is a
+  # fresh install: the configured baselines only exist as templates.
+  [ -n "${TN_GUEST_TEMPLATE_PASSWORD:-}" ] || [ "$baseline" = "fresh-install" ] \
+    || die "baseline '$baseline' needs templates: set TN_GUEST_TEMPLATE_PASSWORD"
   checkTools
 
   # The ISO is a path on the host. When the host is this machine, which is the
@@ -203,16 +242,17 @@ claim() {
     # a pin changes) the next claim pays one install and every claim after
     # it clones the new build. That is the whole rotation policy; nothing
     # rebuilds on a calendar.
-    local built
-    if ! built=$(templateCreated); then
-      echo "appliance.sh: no template named '$TN_GUEST_TEMPLATE' on the host, building it first" >&2
-      build_template fresh-install
+    local template built
+    template=$(templateNickname "$baseline")
+    if ! built=$(templateCreated "$template"); then
+      echo "appliance.sh: no frozen template named '$template' on the host, building it first" >&2
+      build_template "$baseline"
     elif templatePredatesIso "$built"; then
-      echo "appliance.sh: template '$TN_GUEST_TEMPLATE' (built $built) predates $TN_GUEST_ISO, rebuilding it first" >&2
-      build_template fresh-install
+      echo "appliance.sh: template '$template' (built $built) predates $TN_GUEST_ISO, rebuilding it first" >&2
+      build_template "$baseline"
     fi
-    echo "appliance.sh: cloning template '$TN_GUEST_TEMPLATE' into '$nickname' on $TN_GUEST_HOST" >&2
-    json=$(tnGuest clone "$TN_GUEST_TEMPLATE" \
+    echo "appliance.sh: cloning template '$template' into '$nickname' on $TN_GUEST_HOST" >&2
+    json=$(tnGuest clone "$template" \
       --admin-pass "$TN_GUEST_TEMPLATE_PASSWORD" \
       --rotate-admin-pass "$password" \
       --nickname "$nickname" \
@@ -264,17 +304,24 @@ TN_BASELINE=$baseline
 EOF
 }
 
-# Whether a template with the configured nickname exists on the host.
+# Whether a template with nickname $1 exists on the host, frozen or not.
 templateExists() {
-  templateCreated > /dev/null
+  tnGuest list --json 2>/dev/null \
+    | jq -e --arg n "$1" \
+        'map(select(.nickname == $n and .template == "true")) | length > 0' > /dev/null
 }
 
-# When the template with the configured nickname was built, as the ISO 8601
+# When the frozen template with nickname $1 was built, as the ISO 8601
 # timestamp tn_guest.py recorded on its dataset. Fails when there is none.
+#
+# Frozen only: a template that was created and never froze — a baseline
+# script that failed, a build interrupted between the two — has no snapshot
+# to clone from, and a claim that finds one must rebuild it rather than ask
+# `clone` for it and be refused.
 templateCreated() {
   tnGuest list --json 2>/dev/null \
-    | jq -re --arg n "$TN_GUEST_TEMPLATE" \
-        'map(select(.nickname == $n and .template == "true")) | first | .created // empty'
+    | jq -re --arg n "$1" \
+        'map(select(.nickname == $n and .template == "true" and (.snapshot // "") != "")) | first | .created // empty'
 }
 
 # Whether a template built at $1 is older than the ISO a claim would install
@@ -291,18 +338,26 @@ templatePredatesIso() {
   [ "$builtEpoch" -lt "$isoEpoch" ]
 }
 
-# Build the template every claim clones: a bare install from the ISO, shut
-# down after its first boot and snapshotted. Replaces the previous template of
-# the same nickname, which is only possible when nothing is cloned from it —
-# the e2e-lab concurrency group guarantees that, since every run destroys its
-# clone before releasing the group.
+# Build the template a baseline's claims clone. `fresh-install` is an install
+# from the ISO, shut down after its first boot and snapshotted. Every other
+# baseline is that install left running, its script from baselines/ run
+# against the guest's API, then the same shutdown and snapshot (`freeze`).
+# Replaces the previous template of the same nickname, which is only possible
+# when nothing is cloned from it — the e2e-lab concurrency group guarantees
+# that, since every run destroys its clone before releasing the group.
 #
 # Emits nothing on stdout. The template's password is the one in
 # TN_GUEST_TEMPLATE_PASSWORD; clones rotate away from it, so it never reaches
-# a trace.
+# a trace. The baseline script gets it through the environment, not argv.
 build_template() {
-  [ "${1:-fresh-install}" = "fresh-install" ] \
-    || die "only the 'fresh-install' template is defined so far"
+  local baseline="${1:-fresh-install}"
+  knownBaseline "$baseline" \
+    || die "baseline '$baseline' is not one of: $baselines"
+  local template script
+  template=$(templateNickname "$baseline")
+  script="$baselineDir/$baseline.py"
+  [ "$baseline" = "fresh-install" ] || [ -f "$script" ] \
+    || die "baseline '$baseline' has no script at $script"
   checkTools
   [ -n "${TN_GUEST_ISO:-}" ] || die "TN_GUEST_ISO is required to build a template"
   [ "$TN_GUEST_HOST" != "localhost" ] || [ -f "$TN_GUEST_ISO" ] \
@@ -311,18 +366,21 @@ build_template() {
   [ -n "${TN_GUEST_HOST_API_KEY:-}${TN_GUEST_HOST_PASSWORD:-}" ] \
     || die "TN_GUEST_HOST_API_KEY or TN_GUEST_HOST_PASSWORD is required"
 
-  if templateExists; then
-    echo "appliance.sh: replacing template '$TN_GUEST_TEMPLATE'" >&2
-    tnGuest delete "$TN_GUEST_TEMPLATE" > /dev/null \
-      || die "could not delete the existing template '$TN_GUEST_TEMPLATE' — clones of it may still exist"
+  if templateExists "$template"; then
+    echo "appliance.sh: replacing template '$template'" >&2
+    tnGuest delete "$template" > /dev/null \
+      || die "could not delete the existing template '$template' — clones of it may still exist"
   fi
 
-  echo "appliance.sh: building template '$TN_GUEST_TEMPLATE' from $TN_GUEST_ISO" >&2
+  local leaveRunning=()
+  [ "$baseline" = "fresh-install" ] || leaveRunning=(--leave-running)
+
+  echo "appliance.sh: building template '$template' ($baseline) from $TN_GUEST_ISO" >&2
   local json
-  json=$(tnGuest create --template \
+  json=$(tnGuest create --template "${leaveRunning[@]}" \
     --iso "$TN_GUEST_ISO" \
     --admin-pass "$TN_GUEST_TEMPLATE_PASSWORD" \
-    --nickname "$TN_GUEST_TEMPLATE" \
+    --nickname "$template" \
     --memory-mb "$TN_GUEST_MEMORY_MB" \
     --vcpus "$TN_GUEST_VCPUS" \
     --os-disk-gb "$TN_GUEST_OS_DISK_GB" \
@@ -330,7 +388,31 @@ build_template() {
     --data-disk-gb "$TN_GUEST_DATA_DISK_GB" \
     --network hostfwd) \
     || die "tn_guest.py create --template failed"
-  echo "appliance.sh: template '$TN_GUEST_TEMPLATE' is $(jq -r '.name' <<<"$json")" >&2
+  local name
+  name=$(jq -r '.name' <<<"$json")
+
+  if [ "$baseline" != "fresh-install" ]; then
+    local adminUser apiHost httpPort
+    adminUser=$(jq -re '.admin_user' <<<"$json")           || die "create output has no .admin_user"
+    apiHost=$(jq -re '.nodes[0].api_host' <<<"$json")      || die "create output has no .nodes[0].api_host"
+    httpPort=$(jq -re '.nodes[0].api_port_http' <<<"$json") || die "create output has no .nodes[0].api_port_http"
+
+    # A template that fails to configure is deleted, not left: unfrozen, it
+    # cannot be cloned, and the next claim would only find it in the way.
+    echo "appliance.sh: configuring '$template' with $script" >&2
+    if ! TN_ADMIN_PASSWORD="$TN_GUEST_TEMPLATE_PASSWORD" "$TN_GUEST_PYTHON" "$script" \
+        --uri "ws://$apiHost:$httpPort/api/current" --user "$adminUser"; then
+      tnGuest delete "$template" > /dev/null || true
+      die "baseline script failed for '$template'; the template was deleted"
+    fi
+
+    echo "appliance.sh: freezing '$template'" >&2
+    if ! tnGuest freeze "$template" > /dev/null; then
+      tnGuest delete "$template" > /dev/null || true
+      die "tn_guest.py freeze failed for '$template'; the template was deleted"
+    fi
+  fi
+  echo "appliance.sh: template '$template' is $name" >&2
 }
 
 # Destroy an appliance. Safe to call twice, and safe to call when claim

@@ -376,7 +376,12 @@ the bare install, shuts it down and snapshots its deployment dataset;
 `tn_guest.py clone` uses middleware's `vm.clone`, which copies the VM record,
 its UEFI NVRAM state and every zvol from that snapshot, then rewrites the
 clone's ports and boots it. `appliance.sh claim` clones it, rebuilding it
-first whenever the resolved ISO is newer than the template. Baselines beyond `fresh-install` are the
+first whenever the resolved ISO is newer than the template.
+
+*Implemented for `with-pool`:* the same, with `create --template
+--leave-running`, a script from `e2e/ci/baselines/` run against the guest's
+API, and `tn_guest.py freeze` for the shutdown and snapshot. Any further
+baseline is another script. Baselines beyond `fresh-install` are the
 same mechanism with a configuration step before the shutdown.
 
 **Baselines age with the nightly.** A baseline built from one ISO is that
