@@ -20,7 +20,6 @@ export interface Preferences {
   hideBuiltinGroups: boolean;
   autoRefreshReports: boolean;
   showSnapshotExtraColumns: boolean;
-  shownNewFeatureIndicatorKeys: string[];
 
   rebootAfterManualUpdate: boolean;
   lifetime: number;
