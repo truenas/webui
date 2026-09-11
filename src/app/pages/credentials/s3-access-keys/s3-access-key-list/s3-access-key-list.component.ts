@@ -28,6 +28,7 @@ import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-
 import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
@@ -128,6 +129,17 @@ export class S3AccessKeyListComponent implements OnInit {
       title: this.translate.instant('Expires On'),
       propertyName: 'expires_at',
       getValue: (row) => row.expires_at?.$date || this.translate.instant('Never'),
+    }),
+    // The S3 service reports usage at intervals, so a recent request can lag here for a short time.
+    relativeDateColumn({
+      title: this.translate.instant('Last Used'),
+      propertyName: 'last_used_at',
+      getValue: (row) => row.last_used_at?.$date || this.translate.instant('Never'),
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Manage Buckets'),
+      propertyName: 'manage_buckets',
+      hidden: true,
     }),
     dateColumn({
       title: this.translate.instant('Created'),
