@@ -7,8 +7,6 @@ import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { QrCodeComponent, QrCodeDirective } from 'ng-qrcode';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { BehaviorSubject } from 'rxjs';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.component';
 import { TwoFactorSetupDialog } from './two-factor-setup-dialog.component';
 
@@ -16,15 +14,10 @@ describe('FirstLoginDialogComponent', () => {
   let spectator: Spectator<TwoFactorSetupDialog>;
   let loader: HarnessLoader;
 
-  const mockTwoFactorConfig$ = new BehaviorSubject({ secret_configured: false });
-
   const createComponent = createComponentFactory({
     component: TwoFactorSetupDialog,
     declarations: [MockComponents(TwoFactorComponent)],
     providers: [
-      mockProvider(AuthService, {
-        userTwoFactorConfig$: mockTwoFactorConfig$.asObservable(),
-      }),
       provideMockStore(),
       mockProvider(DialogRef),
     ],
@@ -40,16 +33,32 @@ describe('FirstLoginDialogComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
+  function completeSetup(): void {
+    spectator.query(TwoFactorComponent).setupComplete.emit(true);
+    spectator.detectChanges();
+  }
+
   it('renders the required sub-components', () => {
     expect(spectator.query(TwoFactorComponent)).toExist();
   });
 
-  it('shows the "Finish" button only when 2fa is configured', async () => {
+  it('hides "Finish" again when the setup stops being complete', async () => {
+    // canFinish starts false, so emitting false on its own would assert nothing. The
+    // transition is what proves the binding follows the output rather than latching.
+    completeSetup();
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Finish' }))).not.toBeNull();
+
+    spectator.query(TwoFactorComponent).setupComplete.emit(false);
+    spectator.detectChanges();
+
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Finish' }))).toBeNull();
+  });
+
+  it('shows the "Finish" button only once the setup component reports 2fa as confirmed', async () => {
     let finishButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Finish' }));
     expect(finishButton).toBeNull();
 
-    mockTwoFactorConfig$.next({ secret_configured: true });
-    spectator.detectChanges();
+    completeSetup();
 
     finishButton = await loader.getHarness(TnButtonHarness.with({ label: 'Finish' }));
     expect(finishButton).toExist();
@@ -59,8 +68,7 @@ describe('FirstLoginDialogComponent', () => {
   });
 
   it('closes dialog on first click of Finish button', async () => {
-    mockTwoFactorConfig$.next({ secret_configured: true });
-    spectator.detectChanges();
+    completeSetup();
 
     const finishButton = await loader.getHarness(TnButtonHarness.with({ label: 'Finish' }));
     const dialogRef = spectator.inject(DialogRef);

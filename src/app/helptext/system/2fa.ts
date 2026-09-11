@@ -22,6 +22,58 @@ export const helptext2fa = {
   qrCodeMessage: T('Scan this QR Code with your authenticator app of choice. The next time you try to login, you will be asked to enter an One Time Password (OTP) from your authenticator app. This step is extremely important. Without the OTP you will be locked out of this system.'),
 
   error: T('Error'),
+  loadFailed: T('The two-factor authentication settings could not be read from this system. Reload the page to try\
+ again.'),
+
+  /**
+   * The middleware mints and arms a secret in one call, so the setup page can only
+   * make the confirmation step feel safe by being explicit about what is already
+   * true and what cancelling undoes.
+   */
+  verification: {
+    pending: T('A 2FA secret has been generated and is already active for your account. Scan the QR code with your\
+ authenticator app, then enter the code the app shows to confirm it was added correctly. If you cancel, the secret is\
+ removed and two-factor authentication stays off for your account.'),
+    // Renewing has already invalidated the old secret, so cancelling here turns 2FA off
+    // on an account that was protected a moment ago. Say so instead of implying nothing changes.
+    pendingRenewal: T('A new 2FA secret has been generated and has replaced your previous one, which no longer works.\
+ Scan the QR code with your authenticator app, then enter the code the app shows to confirm it was added correctly. If\
+ you cancel, two-factor authentication is turned off for your account and you will have to set it up again.'),
+    // The marker is written before the call that mints the secret, so a failed renew
+    // leaves the step on screen with nothing behind it. Saying a secret "is already
+    // active" there would contradict the error the user just dismissed.
+    pendingUnknown: T('A 2FA secret may have been generated, but it could not be read back. Generate a new one to try\
+ again, or cancel to make sure no secret is left on your account.'),
+    // Appended to whichever pending message is showing when 2FA is off system-wide: the
+    // pending copy says the secret is active, which is only true once an administrator
+    // turns 2FA on, and the paragraph that normally carries that caveat is not rendered
+    // in this state.
+    notActiveGlobally: T('Two-factor authentication is not enabled on this system yet, so this secret has no effect\
+ until an administrator enables it.'),
+    label: T('One-Time Password'),
+    tooltip: T('The code your authenticator app currently shows for this account. It changes every 30 seconds.'),
+    verifyBtn: T('Confirm Code'),
+    cancelBtn: T('Cancel Setup'),
+    invalid: T('That code does not match this secret. Check that your authenticator app was set up from the QR code\
+ above and that your device clock is correct, then enter the code it shows now.'),
+    // Points at Cancel Setup, not at Renew: while a secret is unconfirmed the page does
+    // not render the secret buttons, so cancelling and starting over is the only route
+    // actually on offer.
+    unreadableSecret: T('The secret for this account could not be read, so the code cannot be checked. Cancel the\
+ setup and start again.'),
+    checkFailed: T('The code could not be checked because the current secret could not be fetched from the system.\
+ Check your connection and try again.'),
+    verified: T('Two-factor authentication is confirmed for your account.'),
+    cancel: {
+      title: T('Cancel Two-Factor Authentication Setup?'),
+      message: T('The secret that was just generated will be removed and two-factor authentication will stay off for\
+ your account. You can set it up again at any time.'),
+      renewalMessage: T('The new secret will be removed and two-factor authentication will be turned off for your\
+ account. Your previous secret was already replaced and cannot be restored, so you will have to set 2FA up again.'),
+      btn: T('Remove Secret'),
+      cancelBtn: T('Keep Setting Up'),
+    },
+  },
 
   renewSecret: {
     title: T('Renew Secret'),

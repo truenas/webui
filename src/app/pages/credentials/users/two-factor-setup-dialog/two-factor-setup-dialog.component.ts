@@ -1,10 +1,7 @@
 import { DialogRef } from '@angular/cdk/dialog';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
-import { map } from 'rxjs';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.component';
 
 @Component({
@@ -20,12 +17,14 @@ import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.compone
   ],
 })
 export class TwoFactorSetupDialog {
-  private authService = inject(AuthService);
   protected dialogRef = inject(DialogRef<unknown, TwoFactorSetupDialog>);
 
-  protected canFinish = toSignal(
-    this.authService.userTwoFactorConfig$.pipe(map((config) => config.secret_configured)),
-  );
+  /**
+   * Driven by the setup component rather than by `secret_configured` alone: a secret
+   * exists from the moment it is generated, but offering Finish then would let the user
+   * leave with 2FA armed against a secret their authenticator app may never have taken.
+   */
+  protected canFinish = signal(false);
 
   protected onSkipSetup(): void {
     this.dialogRef.close(true);

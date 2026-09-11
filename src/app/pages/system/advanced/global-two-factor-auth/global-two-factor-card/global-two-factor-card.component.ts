@@ -14,7 +14,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { WINDOW } from 'app/helpers/window.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -51,7 +50,6 @@ export class GlobalTwoFactorAuthCardComponent {
   private dialogService = inject(DialogService);
   private authService = inject(AuthService);
   private router = inject(Router);
-  private window = inject<Window>(WINDOW);
   private firstTimeWarning = inject(FirstTimeWarningService);
   private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
@@ -81,7 +79,6 @@ export class GlobalTwoFactorAuthCardComponent {
           this.dialogService,
           this.authService,
           this.router,
-          this.window,
           twoFactorAuthConfig,
         ),
         {

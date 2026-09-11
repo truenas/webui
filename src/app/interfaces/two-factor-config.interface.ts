@@ -16,7 +16,8 @@ export interface GlobalTwoFactorConfigUpdate {
 }
 
 export interface UserTwoFactorConfig {
-  provisioning_uri: string;
+  /** Null until a secret exists for the account. */
+  provisioning_uri: string | null;
   secret_configured: boolean;
   interval: number;
   otp_digits: number;

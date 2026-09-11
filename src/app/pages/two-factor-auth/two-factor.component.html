@@ -15,7 +15,7 @@
     } @else {
       <tn-banner
         class="status-banner"
-        [type]="!globalTwoFactorEnabled() || !userTwoFactorAuthConfigured() ? 'warning' : 'success'"
+        [type]="statusBannerType"
         [message]="global2FaMsg"
       ></tn-banner>
     }
@@ -25,22 +25,30 @@
       </p>
     }
     <div class="button-group">
-      <tn-button
-        color="primary"
-        [testId]="'renew-secret'"
-        [label]="userTwoFactorAuthConfigured() ? ('Renew 2FA Secret' | translate) : ('Configure 2FA Secret' | translate)"
-        [disabled]="isFormLoading()"
-        [ixUiSearch]="searchableElements.elements.configure2FaSecret"
-        (onClick)="renewSecretOrEnable2Fa()"
-      ></tn-button>
-      @if (userTwoFactorAuthConfigured()) {
+      <!-- Renewing or unsetting while a secret is still unconfirmed would just replace one
+           unconfirmed secret with another, so the confirmation step owns those actions —
+           but only while a secret actually exists, hence hasUnconfirmedSecret() rather
+           than pendingVerification(). Skip sits outside the gate entirely: it touches no
+           secret, and it is the only non-destructive way out of the first-login dialog,
+           which is opened with disableClose. -->
+      @if (!hasUnconfirmedSecret()) {
         <tn-button
-          color="warn"
-          [testId]="'unset-2fa-secret'"
-          [label]="'Unset 2FA Secret' | translate"
-          [disabled]="isFormLoading()"
-          (onClick)="unset2FaSecret()"
+          color="primary"
+          [testId]="'renew-secret'"
+          [label]="userTwoFactorAuthConfigured() ? ('Renew 2FA Secret' | translate) : ('Configure 2FA Secret' | translate)"
+          [disabled]="isFormLoading() || isDataLoading()"
+          [ixUiSearch]="searchableElements.elements.configure2FaSecret"
+          (onClick)="renewSecretOrEnable2Fa()"
         ></tn-button>
+        @if (userTwoFactorAuthConfigured()) {
+          <tn-button
+            color="warn"
+            [testId]="'unset-2fa-secret'"
+            [label]="'Unset 2FA Secret' | translate"
+            [disabled]="isFormLoading() || isDataLoading()"
+            (onClick)="unset2FaSecret()"
+          ></tn-button>
+        }
       }
       @if (showSkipButton()) {
         <tn-button
@@ -57,7 +65,7 @@
     <div class="qr-section">
       <ix-qr-viewer
         [qrInfo]="qrInfo?.provisioning_uri"
-        [showWarning]="globalTwoFactorEnabled() && showQrCodeWarning"
+        [showWarning]="globalTwoFactorEnabled() && pendingVerification()"
       ></ix-qr-viewer>
     </div>
 
@@ -76,5 +84,43 @@
         </div>
       </div>
     }
+  }
+
+  <!-- Outside the QR block on purpose: if a renew half-fails the flag is set while
+       `secret_configured` is still false, and gating the form on the QR would leave a
+       pending banner with no way to confirm and no way out. -->
+  @if (pendingVerification()) {
+    <form class="verification" novalidate [formGroup]="verificationForm" (ngSubmit)="onVerifyOtp()">
+      <tn-form-field
+        class="verification-field"
+        [label]="helptext.verification.label | translate"
+        [tooltip]="helptext.verification.tooltip | translate"
+        [errorMessages]="otpErrorMessages()"
+      >
+        <tn-input
+          name="otp"
+          formControlName="otp"
+          autocomplete="one-time-code"
+          testId="verify-otp"
+          [required]="true"
+        ></tn-input>
+      </tn-form-field>
+
+      <div class="button-group">
+        <tn-button
+          type="submit"
+          color="primary"
+          [testId]="'verify-otp'"
+          [label]="helptext.verification.verifyBtn | translate"
+          [disabled]="isFormLoading()"
+        ></tn-button>
+        <tn-button
+          [testId]="'cancel-2fa-setup'"
+          [label]="helptext.verification.cancelBtn | translate"
+          [disabled]="isFormLoading()"
+          (onClick)="onCancelVerification()"
+        ></tn-button>
+      </div>
+    </form>
   }
 </tn-card>
