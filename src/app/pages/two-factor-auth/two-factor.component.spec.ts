@@ -53,6 +53,7 @@ describe('TwoFactorComponent', () => {
         localStorage: {
           getItem: (key: string) => storage.get(key) ?? null,
           setItem: (key: string, value: string) => storage.set(key, value),
+          removeItem: (key: string) => storage.delete(key),
         },
       }),
       mockApi([
@@ -234,8 +235,6 @@ describe('TwoFactorComponent', () => {
     it('asks for a code from the authenticator app once a secret is generated', async () => {
       await generateSecret();
 
-      expect(spectator.component.pendingVerification()).toBe(true);
-
       const banner = await loader.getHarness(TnBannerHarness);
       expect(await banner.getText()).toContain(helptext2fa.verification.pending);
       expect(await loader.getHarnessOrNull(TnInputHarness)).not.toBeNull();
@@ -258,7 +257,7 @@ describe('TwoFactorComponent', () => {
 
       const field = await loader.getHarness(TnFormFieldHarness);
       expect(await field.getErrorMessage()).toBe(helptext2fa.verification.invalid);
-      expect(spectator.component.pendingVerification()).toBe(true);
+      expect(await loader.getHarnessOrNull(TnInputHarness)).not.toBeNull();
     });
 
     it('completes setup when the code matches the secret', async () => {
@@ -269,7 +268,6 @@ describe('TwoFactorComponent', () => {
       await (await loader.getHarness(TnButtonHarness.with({ label: helptext2fa.verification.verifyBtn }))).click();
       spectator.detectChanges();
 
-      expect(spectator.component.pendingVerification()).toBe(false);
       expect(await loader.getHarnessOrNull(TnInputHarness)).toBeNull();
       expect(await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Unset 2FA Secret' }))).toHaveLength(1);
     });
@@ -288,7 +286,7 @@ describe('TwoFactorComponent', () => {
         buttonColor: 'warn',
       });
       expect(api.call).toHaveBeenCalledWith('user.unset_2fa_secret', ['dummy']);
-      expect(spectator.component.pendingVerification()).toBe(false);
+      expect(await loader.getHarnessOrNull(TnInputHarness)).toBeNull();
     });
 
     it('resumes confirmation after a reload, so an unconfirmed secret is never left behind', async () => {
@@ -297,8 +295,33 @@ describe('TwoFactorComponent', () => {
       const reloaded = createComponent();
       const reloadedLoader = TestbedHarnessEnvironment.loader(reloaded.fixture);
 
-      expect(reloaded.component.pendingVerification()).toBe(true);
       expect(await reloadedLoader.getHarnessOrNull(TnInputHarness)).not.toBeNull();
+    });
+
+    it('keys the stored flag to the account, so another user\'s flag is ignored', async () => {
+      // Nothing clears this on logout, so on a shared workstation an origin-wide key
+      // would drop the next user into a confirmation step for a secret that is not theirs.
+      storage.set('pending2FaVerification:someone-else', 'true');
+
+      const nextUser = createComponent();
+      const nextUserLoader = TestbedHarnessEnvironment.loader(nextUser.fixture);
+
+      expect(await nextUserLoader.getHarnessOrNull(TnInputHarness)).toBeNull();
+      expect(await nextUserLoader.getAllHarnesses(
+        TnButtonHarness.with({ label: 'Renew 2FA Secret' }),
+      )).toHaveLength(1);
+    });
+
+    it('drops the stored flag once the code is confirmed', async () => {
+      await generateSecret();
+      expect(storage.get('pending2FaVerification:dummy')).toBe('true');
+
+      const otpInput = await loader.getHarness(TnInputHarness);
+      await otpInput.setValue(validCode);
+      await (await loader.getHarness(TnButtonHarness.with({ label: helptext2fa.verification.verifyBtn }))).click();
+      spectator.detectChanges();
+
+      expect(storage.has('pending2FaVerification:dummy')).toBe(false);
     });
 
     it('reports setup as incomplete while a secret is waiting to be confirmed', async () => {

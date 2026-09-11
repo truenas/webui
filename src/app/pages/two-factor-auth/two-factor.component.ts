@@ -37,8 +37,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
  * holds. Persisted rather than kept in memory so a reload, a navigation away, or a
  * browser crash lands the user back on the confirmation step — with the QR code and
  * the escape hatch — instead of on a page that claims the setup is finished.
+ *
+ * Suffixed with the account name because nothing clears this on logout: on a shared
+ * workstation an origin-wide key would put the next user into a confirmation step for
+ * a secret that was never theirs, with Renew and Unset hidden behind it.
  */
-const pendingVerificationKey = 'pending2FaVerification';
+const pendingVerificationKeyPrefix = 'pending2FaVerification';
 
 @Component({
   selector: 'ix-two-factor',
@@ -90,7 +94,10 @@ export class TwoFactorComponent implements OnInit {
   protected isFormLoading = signal(false);
   globalTwoFactorEnabled = signal(false);
   currentSessionIs2fa = signal(false);
-  pendingVerification = signal(false);
+  protected pendingVerification = signal(false);
+
+  /** Account the persisted pending flag is keyed to; empty until `user$` resolves. */
+  private username = signal('');
 
   protected readonly verificationForm = this.formBuilder.nonNullable.group({
     otp: ['', Validators.required],
@@ -152,19 +159,24 @@ export class TwoFactorComponent implements OnInit {
   private loadTwoFactorConfigs(): void {
     this.isDataLoading.set(true);
     combineLatest([
-      this.authService.userTwoFactorConfig$.pipe(take(1)),
+      // The whole user, not just userTwoFactorConfig$: the persisted pending flag is
+      // keyed to the account name, which only the user record carries.
+      this.authService.user$.pipe(filter(Boolean), take(1)),
       this.authService.getGlobalTwoFactorConfig(),
     ])
       .pipe(take(1), takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: ([userConfig, globalConfig]) => {
+        next: ([user, globalConfig]) => {
           this.isDataLoading.set(false);
-          this.userTwoFactorAuthConfigured.set(userConfig.secret_configured);
+          this.username.set(user.pw_name);
+          this.userTwoFactorAuthConfigured.set(user.two_factor_config.secret_configured);
           this.globalTwoFactorEnabled.set(globalConfig.enabled);
-          // A stored flag without a secret is stale — the secret was unset elsewhere.
-          this.pendingVerification.set(
-            userConfig.secret_configured && this.window.localStorage.getItem(pendingVerificationKey) === 'true',
-          );
+
+          // A stored flag without a secret behind it is stale — the secret was unset
+          // elsewhere. Drop it rather than leave it for the next read.
+          const isPending = user.two_factor_config.secret_configured
+            && this.window.localStorage.getItem(this.pendingVerificationKey()) === 'true';
+          this.setPendingVerification(isPending);
         },
       });
 
@@ -260,6 +272,7 @@ export class TwoFactorComponent implements OnInit {
     return this.authService.user$.pipe(
       take(1),
       filter((user) => !!user),
+      tap((user) => this.username.set(user.pw_name)),
       switchMap((user) => this.api.call('user.renew_2fa_secret', [user.pw_name, { interval: 30, otp_digits: 6 }])),
       switchMap(() => this.authService.refreshUser()),
       tap(() => {
@@ -339,6 +352,15 @@ export class TwoFactorComponent implements OnInit {
 
   private setPendingVerification(isPending: boolean): void {
     this.pendingVerification.set(isPending);
-    this.window.localStorage.setItem(pendingVerificationKey, isPending.toString());
+
+    if (isPending) {
+      this.window.localStorage.setItem(this.pendingVerificationKey(), 'true');
+    } else {
+      this.window.localStorage.removeItem(this.pendingVerificationKey());
+    }
+  }
+
+  private pendingVerificationKey(): string {
+    return `${pendingVerificationKeyPrefix}:${this.username()}`;
   }
 }
