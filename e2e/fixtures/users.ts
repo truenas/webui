@@ -77,7 +77,11 @@ export async function ensureUserAbsent(client: E2eApiClient, username: string): 
  * one more secret to keep out of logs. S3 clients authenticate with an access
  * key, which the journey mints separately.
  */
-export async function ensureUserPresent(client: E2eApiClient, username: string): Promise<void> {
+export async function ensureUserPresent(
+  client: E2eApiClient,
+  username: string,
+  options: { administrator?: boolean } = {},
+): Promise<void> {
   const [existing] = await firstValueFrom(
     client.api
       .query('user.query', [['username', '=', username]])
@@ -88,11 +92,27 @@ export async function ensureUserPresent(client: E2eApiClient, username: string):
     return;
   }
 
+  // Roles come from group membership, and `builtin_administrators` carries
+  // every one of them. An administrator here is an account that holds a role
+  // a journey needs — SHARING_S3_WRITE for a bucket-managing key — not a
+  // second sign-in; the account still cannot log in (password_disabled).
+  const groups: number[] = [];
+  if (options.administrator) {
+    const [administrators] = await firstValueFrom(
+      client.api.query('group.query', [['group', '=', 'builtin_administrators']]).pipe(timeout(readTimeoutMs)),
+    );
+    if (!administrators) {
+      throw new Error('group.query returned no builtin_administrators row; cannot create an administrator.');
+    }
+    groups.push(administrators.id);
+  }
+
   await firstValueFrom(
     client.api.call('user.create', [{
       username,
       full_name: `E2E ${username}`,
       group_create: true,
+      groups,
       password_disabled: true,
       smb: false,
     }]).pipe(timeout(slowCallTimeoutMs)),

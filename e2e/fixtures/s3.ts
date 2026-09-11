@@ -13,13 +13,31 @@
  */
 import type { CallResponse, QueryEntity } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
-import { ensureServiceStopped, queryService, type ServiceState } from './services';
+import { ensureServiceRunning, ensureServiceStopped, queryService, type ServiceState } from './services';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
-export type S3BucketEntry = QueryEntity<E2eApiDirectory['call'], 'sharing.s3.query'>;
-export type S3AccessKeyEntry = QueryEntity<E2eApiDirectory['call'], 's3.accesskey.query'>;
-export type S3ConfigEntry = CallResponse<E2eApiDirectory, 's3.config'>;
+/**
+ * Fields middleware has that `@truenas/api-client` 5.0.2 does not yet type:
+ * object ownership (middleware #19661), bucket-managing keys (#19670) and the
+ * managed root dataset (#19670). Declared here, once, and intersected onto the
+ * generated entry types below, so the journeys can assert on them without
+ * `any`. Delete this block when the client is regenerated.
+ */
+interface S3BucketLatestFields {
+  object_ownership?: 'BUCKET_OWNER_ENFORCED' | 'BUCKET_OWNER_PREFERRED' | 'OBJECT_WRITER';
+}
+interface S3AccessKeyLatestFields {
+  manage_buckets?: boolean;
+}
+interface S3ConfigLatestFields {
+  /** A dataset name, or an empty string for "refuse protocol CreateBucket". */
+  managed_root_dataset?: string;
+}
+
+export type S3BucketEntry = QueryEntity<E2eApiDirectory['call'], 'sharing.s3.query'> & S3BucketLatestFields;
+export type S3AccessKeyEntry = QueryEntity<E2eApiDirectory['call'], 's3.accesskey.query'> & S3AccessKeyLatestFields;
+export type S3ConfigEntry = CallResponse<E2eApiDirectory, 's3.config'> & S3ConfigLatestFields;
 
 /**
  * Middleware's name for the service; the UI calls it "S3". Renamed from
@@ -175,6 +193,21 @@ export async function queryS3Service(client: E2eApiClient): Promise<ServiceState
 }
 
 /**
+ * Brings the S3 service to running, for the journeys about that state: the
+ * card's header toggle, and a bucket saved without the start prompt.
+ *
+ * Only ever called with a bucket already present: the service serves buckets
+ * and is not started by the fixtures on an appliance that has none.
+ */
+export async function ensureS3ServiceRunning(client: E2eApiClient): Promise<void> {
+  await ensureServiceRunning(
+    client,
+    s3ServiceName,
+    'S3 service did not start; the journey cannot begin from a running service.',
+  );
+}
+
+/**
  * Returns the S3 service to stopped and not-auto-starting.
  *
  * Load-bearing, as for SMB: saving the first bucket raises "Start S3 Service"
@@ -212,6 +245,18 @@ export async function resetS3ListenersAndCertificate(client: E2eApiClient): Prom
 /** The service configuration as middleware holds it. */
 export async function readS3Config(client: E2eApiClient): Promise<S3ConfigEntry> {
   return firstValueFrom(client.api.call('s3.config').pipe(timeout(readTimeoutMs)));
+}
+
+/**
+ * Sets the service's managed root dataset over the API, or clears it with an
+ * empty string. The field is one `@truenas/api-client` 5.0.2 does not type on
+ * `s3.update`, hence the cast at the call; see `S3ConfigLatestFields`.
+ */
+export async function setS3ManagedRootDataset(client: E2eApiClient, dataset: string): Promise<void> {
+  const update: S3ConfigLatestFields = { managed_root_dataset: dataset };
+  await firstValueFrom(
+    client.api.call('s3.update', [update as never]).pipe(timeout(slowCallTimeoutMs)),
+  );
 }
 
 /**

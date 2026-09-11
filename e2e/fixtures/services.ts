@@ -85,3 +85,40 @@ export async function ensureServiceStopped(
     },
   );
 }
+
+/**
+ * Brings a service to running, for journeys that start from one.
+ *
+ * The counterpart of {@link ensureServiceStopped} and just as deliberate: the
+ * app's post-save dialog is raised only while the service is stopped, so a
+ * journey about the running state has to put it there first rather than
+ * inherit whatever the previous test left. Auto-start is left alone; the
+ * teardown's stop clears it.
+ */
+export async function ensureServiceRunning(
+  client: E2eApiClient,
+  service: string,
+  whatItCosts: string,
+): Promise<void> {
+  const row = await queryService(client, service);
+
+  if (!row) {
+    throw new Error(
+      `service.query returned no \`${service}\` row, so it cannot be started: ${whatItCosts}`,
+    );
+  }
+
+  if (row.state === 'RUNNING') {
+    return;
+  }
+
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('service.control', ['START', service, { silent: false }]),
+    {
+      timeoutMs: serviceControlTimeoutMs,
+      whatItCosts,
+      confirm: async () => (await queryService(client, service))?.state === 'RUNNING',
+    },
+  );
+}

@@ -60,8 +60,34 @@ export const s3BucketLocators = {
     defaultRetentionDays: '[data-test="input-object-lock-default-days"]',
     /** The side panel's Save, `[testId]="'save'"` in form-side-panel-container. */
     save: '[data-test="button-save"]',
+    /** The side panel's own close, `closeButtonTestId="close-side-panel"` in the same container. */
+    closePanel: '[data-test="button-close-side-panel"]',
     /** The Advanced/Basic toggle the side panel renders from the form's `footerActions`. */
     advancedOptions: '[data-test="button-toggle-advanced-options"]',
+
+    /** Advanced-mode selects, all by label (`s3.enum.ts`): "S3" or "Multiprotocol". */
+    permissionsModel: '[data-test="select-permissions-model"]',
+    permissionsModelOption: (label: string) => (
+      `[data-test="option-permissions-model-${kebabTestSegment(label)}"]`
+    ),
+    /**
+     * Shows the chosen ownership as text; a Multiprotocol bucket folds it to
+     * "Object Writer" and disables the select (`syncObjectOwnership`).
+     */
+    objectOwnership: '[data-test="select-object-ownership"]',
+    /** "Off", "Enabled" or "Suspended". */
+    versioning: '[data-test="select-versioning"]',
+    versioningOption: (label: string) => `[data-test="option-versioning-${kebabTestSegment(label)}"]`,
+    /**
+     * `tn-chip-input testId="snapshot-versions"`: the typable field is
+     * `chip-input-<testId>`; Enter commits the typed text as a chip
+     * (`allowCustomValue`). Rendered only while versioning is not Off.
+     */
+    snapshotVersions: '[data-test="chip-input-snapshot-versions"]',
+    snapshotVersionsMax: '[data-test="input-snapshot-versions-max"]',
+    /** "Composite (S3 standard)" or "Minted (opaque token)". */
+    multipartEtag: '[data-test="select-multipart-etag"]',
+    multipartEtagOption: (label: string) => `[data-test="option-multipart-etag-${kebabTestSegment(label)}"]`,
 
     /**
      * The Grants list, rendered only in advanced mode. `tn-form-list` names its
@@ -145,7 +171,19 @@ export const s3AccessKeyLocators = {
     nonExpiring: '[data-test="checkbox-non-expiring"]',
     /** `<tn-date-input [testId]="'expires-at'">`, prefixed by its element type. */
     expiresAt: '[data-test="date-input-expires-at"]',
+    /** The typable `<input>` inside it; takes `MM/DD/YYYY`. */
+    expiresAtInput: '[data-test="date-input-expires-at"] input',
+    /** Off by default; middleware refuses it for an account without SHARING_S3_WRITE. */
+    manageBuckets: '[data-test="checkbox-manage-buckets"]',
+    /**
+     * Any field error the form shows. The library renders one as
+     * `tnTestIdType="error"` with the field's own id, so `error-<field>`; the
+     * prefix match is deliberate, since which field middleware blames is the
+     * assertion's business, not the locator's.
+     */
+    anyError: '[data-test^="error-"]',
     save: '[data-test="button-save"]',
+    closePanel: '[data-test="button-close-side-panel"]',
   },
 
   /**
@@ -165,6 +203,16 @@ export const s3AccessKeyLocators = {
   rowName: (name: string) => {
     const rowTag = legacyKebabTestSegment(`s3-access-key-${name}`);
     return `[data-test="text-name-${rowTag}-row-text"]`;
+  },
+  /** The "Expires On" cell of a key's row: a relative date, or "Never". */
+  rowExpiry: (name: string) => {
+    const rowTag = legacyKebabTestSegment(`s3-access-key-${name}`);
+    return `[data-test="text-expires-on-${rowTag}-row-text"]`;
+  },
+  /** The "Manage Buckets" cell of a key's row. */
+  rowManageBuckets: (name: string) => {
+    const rowTag = legacyKebabTestSegment(`s3-access-key-${name}`);
+    return `[data-test="text-manage-buckets-${rowTag}-row-text"]`;
   },
 
   /** The row's action menu and its items — same composition as the bucket card, on the legacy tag. */
@@ -203,6 +251,12 @@ export const s3ServiceLocators = {
    * #19674; the fixture's `s3ServiceName` is the one place the name lives.
    */
   configService: `[data-test="button-${legacyKebabTestSegment('s3')}-actions-menu-config-service"]`,
+  /**
+   * The card header's on/off switch: `tn-slide-toggle` with
+   * `serviceControlTestId`, `service-<service.service>`, so `toggle-service-s3`.
+   * Flipping it calls `service.control` straight away; no dialog.
+   */
+  cardServiceToggle: `[data-test="toggle-service-${kebabTestSegment('s3')}"]`,
 
   form: {
     /** `tn-form-list` names its Add control `['add-item', label]`; the label is "Listen Addresses". */
@@ -222,6 +276,8 @@ export const s3ServiceLocators = {
     logLevel: '[data-test="select-log-level"]',
     /** By label: "Error", "Warning", "Notice", "Info" or "Debug" (`s3LogLevelLabels`). */
     logLevelOption: (label: string) => `[data-test="option-log-level-${kebabTestSegment(label)}"]`,
+    /** `ix-explorer` over dataset names, typable like the bucket form's parent dataset. */
+    managedRootDataset: '[data-test="input-managed-root-dataset"]',
     save: '[data-test="button-save"]',
   },
 } as const;

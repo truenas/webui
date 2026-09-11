@@ -4,6 +4,7 @@
 import { expect, type Page } from '@playwright/test';
 import { goToS3AccessKeys, goToShares } from './navigation';
 import { confirmDestructiveAction, selectOption } from './storage';
+import { confirmDialogLocators } from '../locators/dialogs';
 import { s3AccessKeyLocators, s3BucketLocators, s3ServiceLocators } from '../locators/s3';
 
 /** Saving a bucket creates its dataset and reconfigures the service; not instant. */
@@ -31,6 +32,15 @@ export interface NewS3Bucket {
   retentionDays: number;
 }
 
+export interface CreateBucketOptions {
+  /**
+   * The service is already running, so the app has nothing to offer after the
+   * save and the panel closes straight to the list. The prompt's absence is
+   * asserted, since a prompt over a running service would be the bug.
+   */
+  serviceRunning?: boolean;
+}
+
 /**
  * Creates a bucket with object lock from the Shares dashboard, and starts the
  * S3 service when the app offers to.
@@ -44,13 +54,14 @@ export interface NewS3Bucket {
  * Starting the service matters for the same reason as SMB: a bucket on a
  * stopped service is configuration that serves nothing.
  */
-export async function createS3BucketWithObjectLock(page: Page, bucket: NewS3Bucket): Promise<void> {
-  await goToShares(page);
-
-  await page.locator(s3BucketLocators.addFromDashboard).click();
+export async function createS3BucketWithObjectLock(
+  page: Page,
+  bucket: NewS3Bucket,
+  options: CreateBucketOptions = {},
+): Promise<void> {
+  await openBucketCreator(page);
 
   const form = s3BucketLocators.form;
-  await expect(page.locator(form.name)).toBeVisible();
   await page.locator(form.name).fill(bucket.name);
 
   // The picker commits typed text on `change`, which fires on blur — so blur
@@ -70,22 +81,73 @@ export async function createS3BucketWithObjectLock(page: Page, bucket: NewS3Buck
 
   await page.locator(form.save).click();
 
-  // Asserted rather than probed: the fixture stops the service beforehand, so
-  // the prompt is part of the journey and its absence is a flow change worth
-  // failing on.
   const startService = page.locator(s3BucketLocators.startService);
-  await expect(startService).toBeVisible({ timeout: saveTimeoutMs });
-  await startService.click();
+  if (options.serviceRunning) {
+    await expect(page.locator(form.save)).toBeHidden({ timeout: saveTimeoutMs });
+    await expect(startService).toBeHidden();
+  } else {
+    // Asserted rather than probed: the fixture stops the service beforehand, so
+    // the prompt is part of the journey and its absence is a flow change worth
+    // failing on.
+    await expect(startService).toBeVisible({ timeout: saveTimeoutMs });
+    await startService.click();
+    await expect(page.locator(form.save)).toBeHidden({ timeout: saveTimeoutMs });
+  }
 
-  await expect(page.locator(form.save)).toBeHidden({ timeout: saveTimeoutMs });
   await expect(page.locator(s3BucketLocators.dashboardRowName(bucket.name))).toBeVisible({
     timeout: saveTimeoutMs,
   });
 }
 
+/**
+ * Opens the bucket creator from the Shares dashboard card. The Name input
+ * appearing is the signal the side panel has rendered the form.
+ */
+export async function openBucketCreator(page: Page): Promise<void> {
+  await goToShares(page);
+  await page.locator(s3BucketLocators.addFromDashboard).click();
+  await expect(page.locator(s3BucketLocators.form.name)).toBeVisible();
+}
+
+/** What the Parent Dataset field of the open bucket creator holds. */
+export async function readBucketParentDataset(page: Page): Promise<string> {
+  return page.locator(s3BucketLocators.form.parentDataset).inputValue();
+}
+
+/**
+ * Closes the open bucket panel without saving, answering "Yes" to the
+ * unsaved-changes question when the form asks it.
+ *
+ * The question is raised only for a dirty form; a prefilled field is set
+ * programmatically and leaves the form pristine, so whether it appears is the
+ * form's business. It is looked for briefly rather than required.
+ */
+export async function closeBucketPanel(page: Page): Promise<void> {
+  await page.locator(s3BucketLocators.form.closePanel).click();
+  const discard = page.locator(confirmDialogLocators.confirm);
+  if (await discard.isVisible({ timeout: 2_000 }).catch(() => false)) {
+    await discard.click();
+  }
+  await expect(page.locator(s3BucketLocators.form.name)).toBeHidden();
+}
+
 export interface NewS3AccessKey {
   name: string;
   username: string;
+  /**
+   * Let clients signing with the key create and delete buckets. Middleware
+   * accepts it only for an account holding SHARING_S3_WRITE.
+   */
+  manageBuckets?: boolean;
+  /** When the key stops working. Omitted, the key is made non-expiring. */
+  expiresOn?: Date;
+}
+
+/** `MM/DD/YYYY`, the shape `tn-date-input` accepts when typed. */
+function formatForDateInput(date: Date): string {
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${month}/${day}/${date.getFullYear()}`;
 }
 
 /** What the credentials dialog showed, read back for the API cross-check. */
@@ -106,6 +168,51 @@ export interface ShownS3Credentials {
  * looked up afterwards — nothing on the appliance will show it again.
  */
 export async function createS3AccessKey(page: Page, key: NewS3AccessKey): Promise<ShownS3Credentials> {
+  await fillAccessKeyForm(page, key);
+  await page.locator(s3AccessKeyLocators.form.save).click();
+
+  const shown = await readCredentialsDialog(page);
+  await expect(page.locator(s3AccessKeyLocators.rowName(key.name))).toBeVisible({ timeout: saveTimeoutMs });
+
+  return shown;
+}
+
+/**
+ * Tries to create a key middleware is expected to refuse, and returns once
+ * the form shows the refusal: a field error, with the panel still open.
+ *
+ * The one case today is Manage Buckets on a key whose account lacks
+ * SHARING_S3_WRITE. What the mocked unit spec cannot check is that the error
+ * comes back and lands in the form rather than in a dialog over it.
+ */
+export async function attemptRefusedS3AccessKey(page: Page, key: NewS3AccessKey): Promise<void> {
+  await fillAccessKeyForm(page, key);
+  const form = s3AccessKeyLocators.form;
+  await page.locator(form.save).click();
+
+  await expect(page.locator(form.anyError).first()).toBeVisible({ timeout: saveTimeoutMs });
+  await expect(page.locator(form.save)).toBeVisible();
+
+  // Leave nothing over the next test's screen. The form is dirty, so the
+  // unsaved-changes question is asserted rather than looked for.
+  await page.locator(form.closePanel).click();
+  const discard = page.locator(confirmDialogLocators.confirm);
+  await expect(discard).toBeVisible();
+  await discard.click();
+  await expect(page.locator(form.name)).toBeHidden();
+}
+
+/**
+ * Opens the access key form under Credentials and fills it in, up to Save.
+ *
+ * Non-expiring is opt-in: the form asks for a date by default. Ticking the box
+ * is checked by the date input disappearing, so a default that flips would
+ * fail here rather than quietly producing a key with a date nobody chose. An
+ * expiry is typed into the date input in the shape it accepts, and the value
+ * read back, since a date input that swallowed the text would leave the field
+ * required and the save refused for a reason unrelated to the journey.
+ */
+async function fillAccessKeyForm(page: Page, key: NewS3AccessKey): Promise<void> {
   await goToS3AccessKeys(page);
 
   await page.locator(s3AccessKeyLocators.add).click();
@@ -116,16 +223,20 @@ export async function createS3AccessKey(page: Page, key: NewS3AccessKey): Promis
 
   await pickUser(page, form.user, form.userOption(key.username), key.username);
 
+  if (key.manageBuckets) {
+    await page.locator(form.manageBuckets).click();
+  }
+
   await expect(page.locator(form.expiresAt)).toBeVisible();
-  await page.locator(form.nonExpiring).click();
-  await expect(page.locator(form.expiresAt)).toBeHidden();
-
-  await page.locator(form.save).click();
-
-  const shown = await readCredentialsDialog(page);
-  await expect(page.locator(s3AccessKeyLocators.rowName(key.name))).toBeVisible({ timeout: saveTimeoutMs });
-
-  return shown;
+  if (key.expiresOn) {
+    const typed = formatForDateInput(key.expiresOn);
+    await page.locator(form.expiresAtInput).fill(typed);
+    await page.locator(form.expiresAtInput).blur();
+    await expect(page.locator(form.expiresAtInput)).toHaveValue(typed);
+  } else {
+    await page.locator(form.nonExpiring).click();
+    await expect(page.locator(form.expiresAt)).toBeHidden();
+  }
 }
 
 /**
@@ -237,6 +348,60 @@ export async function addBucketGrant(page: Page, grant: NewS3Grant): Promise<voi
 }
 
 /**
+ * What the advanced selects show for each value — `s3PermissionsModelLabels`,
+ * `s3VersioningLabels` and `s3MultipartEtagLabels` in `app/enums/s3.enum.ts`.
+ */
+const permissionsModelLabels = { S3: 'S3', MULTIPROTOCOL: 'Multiprotocol' } as const;
+const versioningLabels = { OFF: 'Off', ENABLED: 'Enabled', SUSPENDED: 'Suspended' } as const;
+const multipartEtagLabels = { COMPOSITE: 'Composite (S3 standard)', MINTED: 'Minted (opaque token)' } as const;
+
+/**
+ * Picks the permissions model in the open bucket editor, which must be in
+ * Advanced Options.
+ */
+export async function setBucketPermissionsModel(page: Page, model: 'S3' | 'MULTIPROTOCOL'): Promise<void> {
+  const { form } = s3BucketLocators;
+  await selectOption(page, form.permissionsModel, form.permissionsModelOption(permissionsModelLabels[model]));
+}
+
+/**
+ * Asserts what the Object Ownership select shows, by label — "Object Writer"
+ * once Multiprotocol has folded it.
+ */
+export async function expectObjectOwnershipShown(page: Page, label: string): Promise<void> {
+  await expect(page.locator(s3BucketLocators.form.objectOwnership)).toContainText(label);
+}
+
+export interface S3VersioningOptions {
+  /** strftime-style snapshot name patterns, one chip each. */
+  snapshotVersions: readonly string[];
+  snapshotVersionsMax: number;
+  multipartEtag: 'COMPOSITE' | 'MINTED';
+}
+
+/**
+ * Turns versioning on in the open bucket editor (Advanced Options) and fills
+ * the options that appear with it, plus the ETag choice from "Other Options".
+ *
+ * The snapshot controls render only once versioning is not Off, so their
+ * appearance confirms the select took. Each pattern is typed and committed
+ * with Enter; the chip input accepts free text (`allowCustomValue`).
+ */
+export async function setBucketVersioningOptions(page: Page, options: S3VersioningOptions): Promise<void> {
+  const { form } = s3BucketLocators;
+  await selectOption(page, form.versioning, form.versioningOption(versioningLabels.ENABLED));
+  await expect(page.locator(form.snapshotVersions)).toBeVisible();
+
+  for (const pattern of options.snapshotVersions) {
+    await page.locator(form.snapshotVersions).fill(pattern);
+    await page.locator(form.snapshotVersions).press('Enter');
+  }
+  await page.locator(form.snapshotVersionsMax).fill(String(options.snapshotVersionsMax));
+
+  await selectOption(page, form.multipartEtag, form.multipartEtagOption(multipartEtagLabels[options.multipartEtag]));
+}
+
+/**
  * Saves the open bucket editor, declining the "Start S3 Service" prompt.
  *
  * Saving an edit dispatches the same service check as creating, so with the
@@ -329,12 +494,8 @@ export interface S3ServiceSettings {
  * locator.
  */
 export async function configureS3Service(page: Page, serviceId: number, settings: S3ServiceSettings): Promise<void> {
-  await goToShares(page);
-  await page.locator(s3ServiceLocators.cardMenuTrigger(serviceId)).click();
-  await page.locator(s3ServiceLocators.configService).click();
-
+  await openS3ServiceConfig(page, serviceId);
   const form = s3ServiceLocators.form;
-  await expect(page.locator(form.servers)).toBeVisible();
 
   // Same race as `addBucketGrant`: the row renders a tick after Add, so wait
   // for it to exist before `.last()` can mean the row just added.
@@ -355,4 +516,48 @@ export async function configureS3Service(page: Page, serviceId: number, settings
 
   await page.locator(form.save).click();
   await expect(page.locator(form.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Opens the S3 service configuration from the dashboard card's header menu.
+ * The form loads its configuration after opening, so the Servers input
+ * appearing is what confirms it is ready to be driven.
+ */
+async function openS3ServiceConfig(page: Page, serviceId: number): Promise<void> {
+  await goToShares(page);
+  await page.locator(s3ServiceLocators.cardMenuTrigger(serviceId)).click();
+  await page.locator(s3ServiceLocators.configService).click();
+  await expect(page.locator(s3ServiceLocators.form.servers)).toBeVisible();
+}
+
+/**
+ * Sets the service's managed root dataset — where buckets created through the
+ * S3 protocol get their datasets — and saves.
+ *
+ * Typed as a dataset name (`tank/s3`), not a mount point: the explorer runs in
+ * dataset-name space precisely so what is typed is what is stored. Blurred
+ * explicitly, as for the bucket form's parent dataset: the picker commits on
+ * `change`.
+ */
+export async function setS3ManagedRootDatasetFromCard(page: Page, serviceId: number, dataset: string): Promise<void> {
+  await openS3ServiceConfig(page, serviceId);
+  const form = s3ServiceLocators.form;
+
+  await page.locator(form.managedRootDataset).fill(dataset);
+  await page.locator(form.managedRootDataset).blur();
+
+  await page.locator(form.save).click();
+  await expect(page.locator(form.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Flips the S3 service's on/off switch in the dashboard card's header.
+ *
+ * The switch calls `service.control` straight away and reports through a
+ * snackbar; whether the service actually changed state is a question for the
+ * API, which the test asks.
+ */
+export async function toggleS3ServiceFromCard(page: Page): Promise<void> {
+  await goToShares(page);
+  await page.locator(s3ServiceLocators.cardServiceToggle).click();
 }
