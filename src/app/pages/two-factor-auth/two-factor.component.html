@@ -24,10 +24,14 @@
         {{ 'Two-Factor Authentication has been enabled on this system. It is strongly recommended to set up 2FA for your account to enhance security. Make sure to scan the QR code with your authenticator app before logging out or navigating away, otherwise you may have difficulty accessing your account later.' | translate }}
       </p>
     }
-    <!-- Renewing or unsetting while a secret is still unconfirmed would just replace one
-         unconfirmed secret with another; the confirmation step owns those actions instead. -->
-    @if (!pendingVerification()) {
-      <div class="button-group">
+    <div class="button-group">
+      <!-- Renewing or unsetting while a secret is still unconfirmed would just replace one
+           unconfirmed secret with another; the confirmation step owns those actions. Skip
+           is deliberately outside the gate: it touches no secret, and it is the only
+           non-destructive way out of the first-login dialog, which is opened with
+           disableClose. A renew that fails leaves this page pending with no secret behind
+           it, and hiding Skip there would leave Cancel Setup as the sole exit. -->
+      @if (!pendingVerification()) {
         <tn-button
           color="primary"
           [testId]="'renew-secret'"
@@ -45,16 +49,16 @@
             (onClick)="unset2FaSecret()"
           ></tn-button>
         }
-        @if (showSkipButton()) {
-          <tn-button
-            [testId]="'skip-2fa-setup'"
-            [label]="'Skip Setup' | translate"
-            [disabled]="isFormLoading()"
-            (onClick)="onSkipSetup()"
-          ></tn-button>
-        }
-      </div>
-    }
+      }
+      @if (showSkipButton()) {
+        <tn-button
+          [testId]="'skip-2fa-setup'"
+          [label]="'Skip Setup' | translate"
+          [disabled]="isFormLoading()"
+          (onClick)="onSkipSetup()"
+        ></tn-button>
+      }
+    </div>
   </div>
 
   @if (userTwoFactorAuthConfigured() && (authService.userTwoFactorConfig$ | async); as qrInfo) {

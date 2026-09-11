@@ -397,7 +397,13 @@ describe('TwoFactorComponent', () => {
 
     it('falls back to the browser clock when the appliance time cannot be read', async () => {
       jest.mocked(api.call).mockImplementation(((method: string) => {
-        return method === 'system.info' ? throwError(() => new Error('down')) : of(undefined);
+        if (method === 'system.info') {
+          return throwError(() => new Error('down'));
+        }
+        // auth.sessions has to stay list-shaped: loadTwoFactorConfigs calls .find() on it
+        // and the subscribe has no error handler, so undefined would surface as unhandled
+        // RxJS noise rather than a failure.
+        return method === 'auth.sessions' ? of([]) : of(undefined);
       }) as ApiService['call']);
 
       const offline = createComponent();
@@ -469,6 +475,27 @@ describe('TwoFactorComponent', () => {
 
       const field = await loader.getHarness(TnFormFieldHarness);
       expect(await field.getErrorMessage()).toBe(helptext2fa.verification.invalid);
+    });
+
+    it('keeps Skip Setup reachable in the dialog when a first-time renew failed', async () => {
+      // The first-login dialog is opened with disableClose, and Skip touches no secret.
+      // A renew that fails leaves the page pending with nothing behind it, so hiding Skip
+      // there would leave Cancel Setup as the only exit from a dialog that cannot be closed.
+      user$.next({ pw_name: 'dummy', two_factor_config: { secret_configured: false } } as LoggedInUser);
+      jest.mocked(api.call).mockImplementation(((method: string) => {
+        if (method === 'user.renew_2fa_secret') {
+          return throwError(() => new Error('nope'));
+        }
+        return method === 'auth.sessions' ? of([]) : of(undefined);
+      }) as ApiService['call']);
+
+      const dialog = createComponent({ props: { isSetupDialog: true } });
+      const dialogLoader = TestbedHarnessEnvironment.loader(dialog.fixture);
+
+      await (await dialogLoader.getHarness(TnButtonHarness.with({ label: 'Configure 2FA Secret' }))).click();
+      dialog.detectChanges();
+
+      expect(await dialogLoader.getAllHarnesses(TnButtonHarness.with({ label: 'Skip Setup' }))).toHaveLength(1);
     });
 
     it('reports setup as incomplete while a secret is waiting to be confirmed', async () => {

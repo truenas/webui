@@ -42,7 +42,12 @@ describe('FirstLoginDialogComponent', () => {
     expect(spectator.query(TwoFactorComponent)).toExist();
   });
 
-  it('keeps "Finish" hidden while a generated secret is still unconfirmed', async () => {
+  it('hides "Finish" again when the setup stops being complete', async () => {
+    // canFinish starts false, so emitting false on its own would assert nothing. The
+    // transition is what proves the binding follows the output rather than latching.
+    completeSetup();
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Finish' }))).not.toBeNull();
+
     spectator.query(TwoFactorComponent).setupComplete.emit(false);
     spectator.detectChanges();
 
