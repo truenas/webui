@@ -76,9 +76,9 @@ export const s3BucketLocators = {
       principalTypeOption: (label: string) => (
         `[data-test="option-principal-type-${kebabTestSegment(label)}"]`
       ),
-      /** `ix-combobox` behind `[ixTest]`, like the user picker — hence the legacy normalizer. */
-      principal: '[data-test="input-xid"]',
-      principalOption: (label: string) => `[data-test="option-xid-${legacyKebabTestSegment(label)}"]`,
+      /** `tn-autocomplete` with `testId="xid"`, like the owner picker; options are keyed by label. */
+      principal: '[data-test="autocomplete-xid"]',
+      principalOption: (label: string) => `[data-test="option-xid-${kebabTestSegment(label)}"]`,
       access: '[data-test="select-access"]',
       /** By label: "Read Only", "Write Only", "Read / Write" or "Deny" (`s3AccessLabels`). */
       accessOption: (label: string) => `[data-test="option-access-${kebabTestSegment(label)}"]`,
@@ -197,11 +197,12 @@ export const s3ServiceLocators = {
    */
   cardMenuTrigger: (serviceId: number) => `[data-test="button-${serviceId}-actions-menu"]`,
   /**
-   * "Config Service" in that menu. `menuItemTestId` runs `['button', 'truenas_s3',
-   * 'actions-menu', 'Config Service']` through the legacy normalizer, which splits
-   * the digit: `truenas-s-3`.
+   * "Config Service" in that menu. `menuItemTestId` runs `['button', 's3',
+   * 'actions-menu', 'Config Service']` through the legacy normalizer, which
+   * splits the digit: `s-3`. The service was `truenas_s3` until middleware
+   * #19674; the fixture's `s3ServiceName` is the one place the name lives.
    */
-  configService: '[data-test="button-truenas-s-3-actions-menu-config-service"]',
+  configService: `[data-test="button-${legacyKebabTestSegment('s3')}-actions-menu-config-service"]`,
 
   form: {
     /** `tn-form-list` names its Add control `['add-item', label]`; the label is "Listen Addresses". */

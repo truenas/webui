@@ -21,8 +21,12 @@ export type S3BucketEntry = QueryEntity<E2eApiDirectory['call'], 'sharing.s3.que
 export type S3AccessKeyEntry = QueryEntity<E2eApiDirectory['call'], 's3.accesskey.query'>;
 export type S3ConfigEntry = CallResponse<E2eApiDirectory, 's3.config'>;
 
-/** Middleware's name for the service; the UI calls it "S3". */
-export const s3ServiceName = 'truenas_s3';
+/**
+ * Middleware's name for the service; the UI calls it "S3". Renamed from
+ * `truenas_s3` in middleware #19674 (2026-09-10), so an appliance older than
+ * that has no `s3` row and the journeys cannot run against it.
+ */
+export const s3ServiceName = 's3';
 
 /** Creates a plain filesystem dataset by full name (`pool/name`) if absent. */
 export async function ensureDatasetPresent(client: E2eApiClient, name: string): Promise<void> {
