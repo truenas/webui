@@ -70,8 +70,8 @@ test.afterEach(async ({ api }) => {
 test('an admin mints a key that may manage buckets for an account allowed to', async ({ page, api }) => {
   await createS3AccessKey(page, { name: managerKey, username: administrator, manageBuckets: true });
 
-  await expect(page.locator(s3AccessKeyLocators.rowManageBuckets(managerKey))).toHaveText(/yes/i);
-
+  // Over the API: the list's Manage Buckets column is hidden by default, so
+  // the row cannot say, and middleware is the one that enforced the role.
   const [key] = await findS3AccessKeys(api, administrator);
   expect(key).toMatchObject({ name: managerKey, manage_buckets: true, enabled: true });
 });

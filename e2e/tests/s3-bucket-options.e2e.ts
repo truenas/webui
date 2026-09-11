@@ -30,7 +30,7 @@ const parentDataset = 'e2e_s3_options';
 const bucket = 'e2e-s3-options';
 
 const versioning = {
-  snapshotVersions: ['auto-%Y-%m-%d'],
+  snapshotVersions: ['auto-*'],
   snapshotVersionsMax: 5,
   multipartEtag: 'MINTED',
 } as const;

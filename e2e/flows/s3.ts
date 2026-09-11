@@ -143,11 +143,28 @@ export interface NewS3AccessKey {
   expiresOn?: Date;
 }
 
-/** `MM/DD/YYYY`, the shape `tn-date-input` accepts when typed. */
-function formatForDateInput(date: Date): string {
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${month}/${day}/${date.getFullYear()}`;
+/**
+ * Types a date into `tn-date-input`, which is three segment inputs — month,
+ * day, year — rather than one text field. Each segment is filled and read
+ * back, so a segment that swallowed its digits would fail here rather than
+ * leave the field required and the save refused for a reason unrelated to
+ * the journey.
+ */
+async function fillDateInput(
+  page: Page,
+  segments: { month: string; day: string; year: string },
+  date: Date,
+): Promise<void> {
+  const parts = {
+    month: String(date.getMonth() + 1).padStart(2, '0'),
+    day: String(date.getDate()).padStart(2, '0'),
+    year: String(date.getFullYear()),
+  };
+  for (const segment of ['month', 'day', 'year'] as const) {
+    await page.locator(segments[segment]).fill(parts[segment]);
+    await expect(page.locator(segments[segment])).toHaveValue(parts[segment]);
+  }
+  await page.locator(segments.year).blur();
 }
 
 /** What the credentials dialog showed, read back for the API cross-check. */
@@ -190,7 +207,11 @@ export async function attemptRefusedS3AccessKey(page: Page, key: NewS3AccessKey)
   const form = s3AccessKeyLocators.form;
   await page.locator(form.save).click();
 
-  await expect(page.locator(form.anyError).first()).toBeVisible({ timeout: saveTimeoutMs });
+  // The library renders a field error as a `role="alert"` under the control,
+  // with no test id of its own; the role is the contract. The role name is
+  // what the assertion is about, so a refusal that came back as a dialog over
+  // the form, or under a different field, would fail here.
+  await expect(page.getByRole('alert').filter({ hasText: /SHARING_S3_WRITE/ })).toBeVisible({ timeout: saveTimeoutMs });
   await expect(page.locator(form.save)).toBeVisible();
 
   // Leave nothing over the next test's screen. The form is dirty, so the
@@ -208,9 +229,7 @@ export async function attemptRefusedS3AccessKey(page: Page, key: NewS3AccessKey)
  * Non-expiring is opt-in: the form asks for a date by default. Ticking the box
  * is checked by the date input disappearing, so a default that flips would
  * fail here rather than quietly producing a key with a date nobody chose. An
- * expiry is typed into the date input in the shape it accepts, and the value
- * read back, since a date input that swallowed the text would leave the field
- * required and the save refused for a reason unrelated to the journey.
+ * expiry is typed segment by segment; see `fillDateInput`.
  */
 async function fillAccessKeyForm(page: Page, key: NewS3AccessKey): Promise<void> {
   await goToS3AccessKeys(page);
@@ -229,10 +248,7 @@ async function fillAccessKeyForm(page: Page, key: NewS3AccessKey): Promise<void>
 
   await expect(page.locator(form.expiresAt)).toBeVisible();
   if (key.expiresOn) {
-    const typed = formatForDateInput(key.expiresOn);
-    await page.locator(form.expiresAtInput).fill(typed);
-    await page.locator(form.expiresAtInput).blur();
-    await expect(page.locator(form.expiresAtInput)).toHaveValue(typed);
+    await fillDateInput(page, { month: form.expiresAtMonth, day: form.expiresAtDay, year: form.expiresAtYear }, key.expiresOn);
   } else {
     await page.locator(form.nonExpiring).click();
     await expect(page.locator(form.expiresAt)).toBeHidden();
@@ -373,7 +389,10 @@ export async function expectObjectOwnershipShown(page: Page, label: string): Pro
 }
 
 export interface S3VersioningOptions {
-  /** strftime-style snapshot name patterns, one chip each. */
+  /**
+   * Snapshot name patterns, one chip each: letters, digits, `-`, `_`, `.`,
+   * `:`, space, and `*` / `?` as the only wildcards (the form validates this).
+   */
   snapshotVersions: readonly string[];
   snapshotVersionsMax: number;
   multipartEtag: 'COMPOSITE' | 'MINTED';

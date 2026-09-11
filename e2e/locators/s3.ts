@@ -171,17 +171,16 @@ export const s3AccessKeyLocators = {
     nonExpiring: '[data-test="checkbox-non-expiring"]',
     /** `<tn-date-input [testId]="'expires-at'">`, prefixed by its element type. */
     expiresAt: '[data-test="date-input-expires-at"]',
-    /** The typable `<input>` inside it; takes `MM/DD/YYYY`. */
-    expiresAtInput: '[data-test="date-input-expires-at"] input',
+    /**
+     * The three typable segments inside it — month, day, year — each its own
+     * `<input>`. The library gives them classes, not ids, so they are reached
+     * by class within the dated control's own id.
+     */
+    expiresAtMonth: '[data-test="date-input-expires-at"] input.tn-date-segment-month',
+    expiresAtDay: '[data-test="date-input-expires-at"] input.tn-date-segment-day',
+    expiresAtYear: '[data-test="date-input-expires-at"] input.tn-date-segment-year',
     /** Off by default; middleware refuses it for an account without SHARING_S3_WRITE. */
     manageBuckets: '[data-test="checkbox-manage-buckets"]',
-    /**
-     * Any field error the form shows. The library renders one as
-     * `tnTestIdType="error"` with the field's own id, so `error-<field>`; the
-     * prefix match is deliberate, since which field middleware blames is the
-     * assertion's business, not the locator's.
-     */
-    anyError: '[data-test^="error-"]',
     save: '[data-test="button-save"]',
     closePanel: '[data-test="button-close-side-panel"]',
   },
@@ -208,11 +207,6 @@ export const s3AccessKeyLocators = {
   rowExpiry: (name: string) => {
     const rowTag = legacyKebabTestSegment(`s3-access-key-${name}`);
     return `[data-test="text-expires-on-${rowTag}-row-text"]`;
-  },
-  /** The "Manage Buckets" cell of a key's row. */
-  rowManageBuckets: (name: string) => {
-    const rowTag = legacyKebabTestSegment(`s3-access-key-${name}`);
-    return `[data-test="text-manage-buckets-${rowTag}-row-text"]`;
   },
 
   /** The row's action menu and its items — same composition as the bucket card, on the legacy tag. */
@@ -253,10 +247,11 @@ export const s3ServiceLocators = {
   configService: `[data-test="button-${legacyKebabTestSegment('s3')}-actions-menu-config-service"]`,
   /**
    * The card header's on/off switch: `tn-slide-toggle` with
-   * `serviceControlTestId`, `service-<service.service>`, so `toggle-service-s3`.
-   * Flipping it calls `service.control` straight away; no dialog.
+   * `serviceControlTestId`, which runs `service-<service.service>` through the
+   * legacy normalizer — so `toggle-service-s-3`, the digit split like the
+   * menu item's. Flipping it calls `service.control` straight away; no dialog.
    */
-  cardServiceToggle: `[data-test="toggle-service-${kebabTestSegment('s3')}"]`,
+  cardServiceToggle: `[data-test="toggle-service-${legacyKebabTestSegment('s3')}"]`,
 
   form: {
     /** `tn-form-list` names its Add control `['add-item', label]`; the label is "Listen Addresses". */
