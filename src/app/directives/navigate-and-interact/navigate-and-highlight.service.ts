@@ -23,6 +23,15 @@ const lateFocusDelayMs = 350;
 // the dismiss set at runtime.
 const dismissKeys: ReadonlySet<string> = new Set(['Escape', 'Tab'] as const);
 
+// `tn-menu` renders its overlay panel as `<div class="tn-menu" cdkMenu>` holding
+// `<button class="tn-menu-item" cdkMenuItem>` rows. These are internal
+// @truenas/ui-components class names rather than a public API, so they are pinned
+// here instead of being spread across the file.
+// TEMP: replace once the library exposes a stable hook for its menu panel/items
+// (tracked under Epic NAS-141021 as a library follow-up).
+const tnMenuPanelSelector = '.tn-menu';
+const tnMenuItemClass = 'tn-menu-item';
+
 export interface WaitForElementOptions {
   block?: ScrollLogicalPosition;
   /**
@@ -50,7 +59,7 @@ export class NavigateAndHighlightService {
   private prevHighlightTarget: HTMLElement | null = null;
   // Tracks whether the non-menu `focusTarget` branch added a synthetic
   // `tabindex="-1"` to a non-natively-focusable host (so cleanup knows
-  // whether to remove it). The mat-menu branch never adds a tabindex, so it
+  // whether to remove it). The menu branch never adds a tabindex, so it
   // explicitly leaves this `false` — see `focusTarget` for the contract.
   private prevTabindexAdded = false;
   private prevSubscription: Subscription | null = null;
@@ -219,7 +228,7 @@ export class NavigateAndHighlightService {
     this.window.document.addEventListener(
       'keydown',
       (event: KeyboardEvent) => {
-        // mat-menu items rely on the browser's default Enter→click. Inside a
+        // Menu items rely on the browser's default Enter→click. Inside a
         // menu, that default can fail to reach the focused row in some
         // menu/keymanager states, so we hijack Enter at the capture phase
         // for the focused item inside the same menu panel as the highlight
@@ -228,12 +237,12 @@ export class NavigateAndHighlightService {
         // must NOT pre-empt it (would double-fire or stomp on bespoke
         // Enter handlers on the host). Verified against @angular/cdk 21.x.
         if (event.key === 'Enter') {
-          const targetMenuPanel = targetElement.closest('.mat-mdc-menu-panel');
+          const targetMenuPanel = targetElement.closest(tnMenuPanelSelector);
           if (targetMenuPanel) {
             const focused = this.window.document.activeElement;
             const focusedIsInSameMenu = focused instanceof HTMLElement
               && targetMenuPanel.contains(focused)
-              && focused.classList.contains('mat-mdc-menu-item');
+              && focused.classList.contains(tnMenuItemClass);
             if (focusedIsInSameMenu) {
               event.stopPropagation();
               event.preventDefault();
@@ -251,17 +260,19 @@ export class NavigateAndHighlightService {
   }
 
   private focusTarget(target: HTMLElement): void {
-    // mat-menu has its own FocusKeyManager that tracks `_activeItem`
-    // independently of the actual focused DOM element. If we just focus
-    // `target` programmatically, KeyManager's _activeItem stays as the menu's
-    // first item — so subsequent arrow keys / Enter act on the wrong row.
-    // Walk the KeyManager forward via synthetic ArrowDown events until its
-    // _activeItem matches our target (each ArrowDown advances _activeItem AND
-    // focuses the new item, so when the loop ends focus is on `target` AND
-    // the keymanager is in sync). Verified against @angular/cdk 21.x.
-    const menuPanel = target.closest<HTMLElement>('.mat-mdc-menu-panel');
+    // `tn-menu` renders its panel as a `<div class="tn-menu" cdkMenu>`, and CdkMenu
+    // owns a FocusKeyManager that tracks `_activeItem` independently of the actual
+    // focused DOM element. If we just focus `target` programmatically, the
+    // KeyManager's _activeItem stays as the menu's first item — so subsequent arrow
+    // keys / Enter act on the wrong row. Walk the KeyManager forward via synthetic
+    // ArrowDown events until its _activeItem matches our target (each ArrowDown
+    // advances _activeItem AND focuses the new item, so when the loop ends focus is
+    // on `target` AND the keymanager is in sync). The panel div is also the element
+    // carrying CdkMenu's keydown host listener, so it is the right dispatch target.
+    // Verified against @angular/cdk 21.x.
+    const menuPanel = target.closest<HTMLElement>(tnMenuPanelSelector);
     if (menuPanel) {
-      const items = Array.from(menuPanel.querySelectorAll<HTMLElement>('.mat-mdc-menu-item'));
+      const items = Array.from(menuPanel.querySelectorAll<HTMLElement>(`.${tnMenuItemClass}`));
       const targetIndex = items.indexOf(target);
       for (let i = 0; i < targetIndex; i++) {
         // Angular CDK's FocusKeyManager still reads `event.keyCode` (deprecated
@@ -281,7 +292,7 @@ export class NavigateAndHighlightService {
         Object.defineProperty(event, 'which', { value: 40 });
         menuPanel.dispatchEvent(event);
       }
-      // Sanity check: if Material renamed the menu classes, re-ordered items,
+      // Sanity check: if the library renamed the menu classes, re-ordered items,
       // or the keymanager stopped honouring synthetic events, the loop above
       // can leave focus on the wrong row. Force focus to `target` so the
       // user at least lands on the searched-for item even when the
@@ -289,7 +300,7 @@ export class NavigateAndHighlightService {
       if (this.window.document.activeElement !== target) {
         target.focus({ preventScroll: true });
       }
-      // The menu path never injects a tabindex (mat-menu items are already
+      // The menu path never injects a tabindex (menu items are already
       // focusable). Make the contract explicit so cleanup is a no-op.
       this.prevTabindexAdded = false;
       return;

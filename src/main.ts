@@ -3,10 +3,6 @@ import { provideHttpClient, withInterceptorsFromDi, HttpClient } from '@angular/
 import {
   enableProdMode, ErrorHandler, importProvidersFrom, inject, provideAppInitializer,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import {
-  provideNativeDateAdapter,
-} from '@angular/material/core';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 // Legacy animations engine required by @truenas/ui-components (tn-table's [@detailExpand]);
 // all provide*Animations* APIs are deprecated in Angular 20.2+. Revisit once the library
@@ -100,7 +96,6 @@ bootstrapApplication(AppComponent, {
           opacity: 0.25,
         },
       }),
-      MatButtonModule,
       MarkdownModule.forRoot({ loader: HttpClient }),
     ),
     provideStore(rootReducers, {
@@ -126,7 +121,6 @@ bootstrapApplication(AppComponent, {
     // long-standing instant (non-animated) behavior unchanged.
     // eslint-disable-next-line sonarjs/deprecation -- see import note above.
     provideNoopAnimations(),
-    provideNativeDateAdapter(),
     {
       provide: OVERLAY_DEFAULT_CONFIG,
       useValue: { usePopover: false },

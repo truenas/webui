@@ -176,7 +176,7 @@ export class WidgetBackupComponent implements OnInit {
 
   // CloudSyncWizardComponent / ReplicationWizardComponent / RsyncTaskFormComponent structurally
   // provide the host surface (closed/canSubmit/submit/hasUnsavedChanges/requiredRoles) the panel
-  // reads; cast past the nominal base type. The wizards are `footerless` — their mat-stepper owns
+  // reads; cast past the nominal base type. The wizards are `footerless` — their tn-stepper owns
   // its Next/Save buttons, and "Advanced" swaps in place via the form panel.
   private readonly cloudSyncWizard = CloudSyncWizardComponent as unknown as Type<SidePanelForm>;
   private readonly replicationWizard = ReplicationWizardComponent as unknown as Type<SidePanelForm>;

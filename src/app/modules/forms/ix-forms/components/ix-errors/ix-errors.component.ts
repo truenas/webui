@@ -2,7 +2,6 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnDestroy, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl } from '@angular/forms';
-import { MatError } from '@angular/material/form-field';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
@@ -21,7 +20,6 @@ type SomeError = Record<string, unknown>;
   styleUrls: ['./ix-errors.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatError,
     TnIconComponent,
     TnTooltipDirective,
     TranslateModule,

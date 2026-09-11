@@ -36,8 +36,6 @@ module.exports = {
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths || {}),
-    '^@angular/material/([^/]+)/testing$': '<rootDir>/node_modules/@angular/material/fesm2022/$1-testing.mjs',
-    '^@angular/material/([^/]+)$': '<rootDir>/node_modules/@angular/material/fesm2022/$1.mjs',
   },
   testPathIgnorePatterns: [
     '<rootDir>/dist/',

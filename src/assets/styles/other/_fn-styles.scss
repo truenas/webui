@@ -45,15 +45,6 @@ div {
   box-sizing: border-box;
 }
 
-.mat-mdc-card {
-  font-size: 0.875rem;
-
-  .mat-mdc-card-subtitle,
-  .mat-mdc-card-content {
-    font-size: 14px;
-  }
-}
-
 a,
 a:focus,
 a:hover {
@@ -61,16 +52,11 @@ a:hover {
 }
 
 a:focus-visible,
-button.mat-mdc-button.mat-accent:focus-visible,
 .ix-dark button:focus-visible,
 button:focus-visible {
   border-color: transparent !important;
   box-shadow: 0 0 0 1.5px var(--focus-brd) inset;
   outline-width: 0;
-}
-
-.mdc-button--outlined:focus-visible {
-  outline: 1.5px solid var(--primary);
 }
 
 a:focus-visible {
@@ -158,40 +144,9 @@ samp {
 }
 
 /*---- Common -----*/
-.mat-mdc-card {
-  margin: 0.333333rem;
-}
-
-.mat-mdc-card .mat-mdc-card-title .mat-divider,
-.mat-divider.full-width {
-  margin-left: -24px;
-  margin-right: -24px;
-}
-
-.mat-mdc-button,
-.mat-raised-button {
-  font-weight: 400 !important;
-}
 
 .full-width {
   width: 100%;
-}
-
-.mat-mdc-card-header .mat-mdc-card-title {
-  font-family: var(--font-family-header);
-  font-size: 1rem;
-}
-
-.mat-chip:not(.mat-basic-chip) {
-  border-radius: 24px;
-  display: inline-block;
-  font-size: 13px;
-  line-height: 16px;
-  padding: 8px 12px;
-}
-
-.ix-form-container .mat-chip.mat-standard-chip.mat-mdc-chip-disabled {
-  opacity: 1;
 }
 
 .chart {
@@ -200,29 +155,10 @@ samp {
 }
 
 /*---- Third party adjust -----*/
-/*--------- Material ---------*/
-mat-list a[mat-list-item] .mat-mdc-list-item-unscoped-content,
-mat-list mat-list-item .mat-mdc-list-item-unscoped-content,
 .nav-list .sidebar-list-item,
-.slide-in-nav-item,
-[mat-menu-item],
-.mat-mdc-option,
-body .mat-mdc-select-trigger {
+.slide-in-nav-item {
   font-size: 0.875rem !important;
   overflow: visible;
-}
-
-.mat-mdc-option {
-  height: inherit !important;
-  white-space: pre-line !important;
-}
-
-.mat-mdc-option-text {
-  word-break: break-all;
-}
-
-[mat-menu-item] tn-icon {
-  margin-right: 16px;
 }
 
 /*-------- Scrollbar ---------*/
@@ -363,7 +299,6 @@ body * {
     ix-truenas-logo {
       max-width: 48px;
     }
-
   }
 }
 
@@ -378,23 +313,6 @@ input:-webkit-autofill:active {
 
 input:-webkit-autofill {
   -webkit-text-fill-color: var(--fg1);
-}
-
-.mat-mdc-menu-panel.mat-mdc-menu-after.mat-mdc-menu-below {
-  min-width: 140px !important;
-}
-
-/*---- Media queries -----*/
-@media (max-width: 767px) {
-  .mat-mdc-card-title .mat-divider {
-    margin-left: 0;
-    margin-right: 0;
-  }
-}
-
-.has-tooltip mat-form-field.full-width,
-.has-tooltip mat-select.full-width {
-  width: 100%;
 }
 
 .has-tooltip .tooltip .material-icons {
