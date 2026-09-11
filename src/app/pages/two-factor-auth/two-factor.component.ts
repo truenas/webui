@@ -97,6 +97,16 @@ export class TwoFactorComponent implements OnInit {
   protected isDataLoading = signal(false);
   protected isFormLoading = signal(false);
   globalTwoFactorEnabled = signal(false);
+
+  /**
+   * Whether {@link globalTwoFactorEnabled} holds something the page actually read.
+   *
+   * After a failed load it holds its `false` default, and `loadFailed` cannot stand in
+   * for that — a later successful read of the *account* clears it while the global config
+   * is still unknown. Saying "2FA is not enabled on this system" from a default is the
+   * one sentence that tells the user whether scanning the QR matters at all.
+   */
+  private globalConfigKnown = signal(false);
   currentSessionIs2fa = signal(false);
   protected pendingVerification = signal(false);
 
@@ -172,9 +182,14 @@ export class TwoFactorComponent implements OnInit {
       // The banner shows one message, and the paragraph that normally carries this caveat
       // is gated on the same flag — so without this the page drops the one fact the user
       // needs and keeps the claim that overstates what just happened.
-      return this.globalTwoFactorEnabled()
-        ? pending
-        : `${pending} ${this.translate.instant(helptext2fa.verification.notActiveGlobally)}`;
+      return this.isKnownGloballyDisabled()
+        ? `${pending} ${this.translate.instant(helptext2fa.verification.notActiveGlobally)}`
+        : pending;
+    }
+    if (!this.globalConfigKnown()) {
+      // Same reason: every remaining branch asserts something about the system-wide
+      // setting, and the page has not read it.
+      return this.translate.instant(helptext2fa.loadFailed);
     }
     if (!this.globalTwoFactorEnabled()) {
       return this.translate.instant(helptext2fa.globallyDisabled);
@@ -186,6 +201,10 @@ export class TwoFactorComponent implements OnInit {
       return this.translate.instant(helptext2fa.allSetUp);
     }
     return this.translate.instant(helptext2fa.enabledGloballyButNotForUser);
+  }
+
+  private isKnownGloballyDisabled(): boolean {
+    return this.globalConfigKnown() && !this.globalTwoFactorEnabled();
   }
 
   private pendingMessage(): string {
@@ -284,6 +303,7 @@ export class TwoFactorComponent implements OnInit {
 
           this.username.set(user.pw_name);
           this.globalTwoFactorEnabled.set(globalConfig.enabled);
+          this.globalConfigKnown.set(true);
           this.toleranceWindow.set(globalConfig.window);
           this.clockOffset.set(systemInfo ? systemInfo.datetime.$date - Date.now() : 0);
 

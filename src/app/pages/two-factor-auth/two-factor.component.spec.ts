@@ -863,6 +863,25 @@ describe('TwoFactorComponent', () => {
       expect(await field.getErrorMessage()).toBe(helptext2fa.verification.checkFailed);
     });
 
+    it('does not claim 2FA is off system-wide when it never read that setting', async () => {
+      // globalTwoFactorEnabled holds its false default after a failed load, and the
+      // account re-read inside the renew clears loadFailed — so nothing else stops the
+      // caveat asserting, on a system where 2FA is on, that scanning the QR does not
+      // matter.
+      jest.mocked(spectator.inject(AuthService).getGlobalTwoFactorConfig)
+        .mockReturnValueOnce(throwError(() => new Error('down')));
+
+      const blind = createComponent();
+      const blindLoader = TestbedHarnessEnvironment.loader(blind.fixture);
+
+      await (await blindLoader.getHarness(TnButtonHarness.with({ label: 'Configure 2FA Secret' }))).click();
+      blind.detectChanges();
+
+      const banner = await blindLoader.getHarness(TnBannerHarness);
+      expect(await banner.getText()).toContain(helptext2fa.verification.pendingRenewal);
+      expect(await banner.getText()).not.toContain(helptext2fa.verification.notActiveGlobally);
+    });
+
     it('reports setup as incomplete while a secret is waiting to be confirmed', async () => {
       const emitted: boolean[] = [];
       spectator.component.setupComplete.subscribe((isComplete) => emitted.push(isComplete));

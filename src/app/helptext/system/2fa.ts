@@ -56,8 +56,11 @@ export const helptext2fa = {
     cancelBtn: T('Cancel Setup'),
     invalid: T('That code does not match this secret. Check that your authenticator app was set up from the QR code\
  above and that your device clock is correct, then enter the code it shows now.'),
-    unreadableSecret: T('The secret for this account could not be read, so the code cannot be checked. Generate a new\
- secret and scan it again.'),
+    // Points at Cancel Setup, not at Renew: while a secret is unconfirmed the page does
+    // not render the secret buttons, so cancelling and starting over is the only route
+    // actually on offer.
+    unreadableSecret: T('The secret for this account could not be read, so the code cannot be checked. Cancel the\
+ setup and start again.'),
     checkFailed: T('The code could not be checked because the current secret could not be fetched from the system.\
  Check your connection and try again.'),
     verified: T('Two-factor authentication is confirmed for your account.'),
