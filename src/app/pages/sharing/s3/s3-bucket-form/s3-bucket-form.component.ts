@@ -10,7 +10,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  map, merge, Observable, of,
+  catchError, EMPTY, map, merge, Observable, of,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -241,9 +241,28 @@ export class S3BucketFormComponent implements OnInit {
       this.setBucketForEdit(this.existingBucket);
     } else {
       this.setupExistingDatasetCheck();
+      this.prefillParentDataset();
     }
     this.setupObjectLockDependency();
     this.setupObjectOwnershipDependency();
+  }
+
+  /**
+   * The service's managed root dataset is where S3 protocol CreateBucket requests put their datasets,
+   * so it is the natural default here too. Only a starting point: the field stays editable, and a
+   * parent already typed before the config arrives is kept.
+   */
+  private prefillParentDataset(): void {
+    this.api.call('s3.config').pipe(
+      // A convenience only: the user can pick the parent themselves, so a failed read stays silent.
+      catchError(() => EMPTY),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((config) => {
+      const parent = this.form.controls.parent_dataset;
+      if (config.managed_root_dataset && !parent.value) {
+        parent.setValue(config.managed_root_dataset);
+      }
+    });
   }
 
   private setupExistingDatasetCheck(): void {
