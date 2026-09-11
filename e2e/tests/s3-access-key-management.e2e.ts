@@ -24,7 +24,7 @@ const owner = 'keyowner';
 const accessKey = 'e2e-s3-managed-key';
 
 /** The secret middleware issued at creation; the one rotation must replace. */
-let createdSecret: string | null;
+let createdSecret: string;
 
 async function cleanUp(api: E2eApiClient): Promise<void> {
   await runCleanupSteps([
@@ -36,7 +36,15 @@ async function cleanUp(api: E2eApiClient): Promise<void> {
 test.beforeEach(async ({ api }) => {
   await cleanUp(api);
   await ensureUserPresent(api, owner);
-  createdSecret = (await provisionS3AccessKey(api, { name: accessKey, username: owner })).secret;
+  const created = await provisionS3AccessKey(api, { name: accessKey, username: owner });
+  // `secret` is nullable by design — redacted without SHARING_S3_WRITE, or
+  // lost to a config restore. A null here would make the rotation check
+  // below compare against nothing and pass whatever rotation did, so it is a
+  // precondition failure, not a value to carry.
+  if (!created.secret) {
+    throw new Error('middleware returned no secret at creation, so rotation cannot be compared against it.');
+  }
+  createdSecret = created.secret;
 });
 
 test.afterEach(async ({ api }) => {
