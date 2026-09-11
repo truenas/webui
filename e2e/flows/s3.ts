@@ -248,7 +248,11 @@ async function fillAccessKeyForm(page: Page, key: NewS3AccessKey): Promise<void>
 
   await expect(page.locator(form.expiresAt)).toBeVisible();
   if (key.expiresOn) {
-    await fillDateInput(page, { month: form.expiresAtMonth, day: form.expiresAtDay, year: form.expiresAtYear }, key.expiresOn);
+    await fillDateInput(
+      page,
+      { month: form.expiresAtMonth, day: form.expiresAtDay, year: form.expiresAtYear },
+      key.expiresOn,
+    );
   } else {
     await page.locator(form.nonExpiring).click();
     await expect(page.locator(form.expiresAt)).toBeHidden();
