@@ -6,7 +6,7 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { QrCodeComponent, QrCodeDirective } from 'ng-qrcode';
-import { BehaviorSubject, of, throwError } from 'rxjs';
+import { BehaviorSubject, Subject, of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { helptext2fa } from 'app/helptext/system/2fa';
@@ -564,6 +564,68 @@ describe('TwoFactorComponent', () => {
       const field = await loader.getHarness(TnFormFieldHarness);
       expect(await field.getErrorMessage()).toBe(helptext2fa.verification.checkFailed);
       expect(storage.get('pending2FaVerification:dummy')).toBe('renewal');
+    });
+
+    it('holds the secret buttons until the page knows what it is looking at', async () => {
+      // The load waits on system.info, and a click landing before it resolves would be
+      // rolled back by the snapshot that reply carries.
+      const systemInfo$ = new Subject<SystemInfo>();
+      jest.mocked(api.call).mockImplementation(((method: string) => {
+        if (method === 'system.info') {
+          return systemInfo$;
+        }
+        return method === 'auth.sessions' ? of([]) : of(undefined);
+      }) as ApiService['call']);
+
+      const loading = createComponent();
+      const loadingLoader = TestbedHarnessEnvironment.loader(loading.fixture);
+
+      const renewBtn = await loadingLoader.getHarness(TnButtonHarness.with({ label: 'Configure 2FA Secret' }));
+      expect(await renewBtn.isDisabled()).toBe(true);
+
+      systemInfo$.next({ datetime: { $date: applianceNow } } as SystemInfo);
+      systemInfo$.complete();
+      loading.detectChanges();
+
+      expect(await renewBtn.isDisabled()).toBe(false);
+    });
+
+    it('applies the account state it re-read when confirming', async () => {
+      // A disconnect spanning both the renew and its retry leaves the page believing no
+      // secret exists. The confirming re-read knows better, and dropping it would leave
+      // the card offering Configure right after saying 2FA was confirmed.
+      user$.next({ pw_name: 'dummy', two_factor_config: { secret_configured: false } } as LoggedInUser);
+      jest.mocked(api.call).mockImplementation(((method: string) => {
+        if (method === 'user.renew_2fa_secret') {
+          return throwError(() => new Error('offline'));
+        }
+        if (method === 'system.info') {
+          return of({ datetime: { $date: applianceNow } } as SystemInfo);
+        }
+        return method === 'auth.sessions' ? of([]) : of(undefined);
+      }) as ApiService['call']);
+      jest.mocked(spectator.inject(AuthService).refreshUser)
+        .mockReturnValueOnce(throwError(() => new Error('offline')));
+
+      const stranded = createComponent();
+      const strandedLoader = TestbedHarnessEnvironment.loader(stranded.fixture);
+      await (await strandedLoader.getHarness(TnButtonHarness.with({ label: 'Configure 2FA Secret' }))).click();
+      stranded.detectChanges();
+
+      // Connectivity is back and the secret was in fact armed all along.
+      const otpInput = await strandedLoader.getHarness(TnInputHarness);
+      await otpInput.setValue(validCode);
+      await (await strandedLoader.getHarness(
+        TnButtonHarness.with({ label: helptext2fa.verification.verifyBtn }),
+      )).click();
+      stranded.detectChanges();
+
+      expect(await strandedLoader.getAllHarnesses(
+        TnButtonHarness.with({ label: 'Unset 2FA Secret' }),
+      )).toHaveLength(1);
+      expect(await strandedLoader.getAllHarnesses(
+        TnButtonHarness.with({ label: 'Configure 2FA Secret' }),
+      )).toHaveLength(0);
     });
 
     it('reports setup as incomplete while a secret is waiting to be confirmed', async () => {

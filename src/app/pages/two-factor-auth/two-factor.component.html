@@ -36,7 +36,7 @@
           color="primary"
           [testId]="'renew-secret'"
           [label]="userTwoFactorAuthConfigured() ? ('Renew 2FA Secret' | translate) : ('Configure 2FA Secret' | translate)"
-          [disabled]="isFormLoading()"
+          [disabled]="isFormLoading() || isDataLoading()"
           [ixUiSearch]="searchableElements.elements.configure2FaSecret"
           (onClick)="renewSecretOrEnable2Fa()"
         ></tn-button>
@@ -45,7 +45,7 @@
             color="warn"
             [testId]="'unset-2fa-secret'"
             [label]="'Unset 2FA Secret' | translate"
-            [disabled]="isFormLoading()"
+            [disabled]="isFormLoading() || isDataLoading()"
             (onClick)="unset2FaSecret()"
           ></tn-button>
         }

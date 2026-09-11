@@ -212,10 +212,21 @@ export class TwoFactorComponent implements OnInit {
         next: ([user, globalConfig, systemInfo]) => {
           this.isDataLoading.set(false);
           this.username.set(user.pw_name);
-          this.userTwoFactorAuthConfigured.set(user.two_factor_config.secret_configured);
           this.globalTwoFactorEnabled.set(globalConfig.enabled);
           this.toleranceWindow.set(globalConfig.window);
           this.clockOffset.set(systemInfo ? systemInfo.datetime.$date - Date.now() : 0);
+
+          // The user here is a snapshot taken when this load was subscribed, before the
+          // round trips above resolved. A renew that started in the meantime has already
+          // moved the page past it, so applying the snapshot would roll that back —
+          // clearing the marker it just wrote and leaving an armed secret looking settled.
+          // The secret buttons are disabled while loading so this should not be reachable
+          // through the UI; it stays because the cost of being wrong here is a lockout.
+          if (this.pendingVerification()) {
+            return;
+          }
+
+          this.userTwoFactorAuthConfigured.set(user.two_factor_config.secret_configured);
 
           // A stored flag without a secret behind it is stale — the secret was unset
           // elsewhere. Drop it rather than leave it for the next read.
@@ -319,6 +330,10 @@ export class TwoFactorComponent implements OnInit {
         return;
       }
 
+      // The re-read above is the freshest word on the account; dropping it would let the
+      // card report a confirmed secret and still offer Configure, with the QR hidden and
+      // Finish never appearing in the first-login dialog.
+      this.userTwoFactorAuthConfigured.set(config.secret_configured);
       this.setPendingVerification(false);
       this.verificationForm.reset();
       this.snackbar.success(this.translate.instant(helptext2fa.verification.verified));
