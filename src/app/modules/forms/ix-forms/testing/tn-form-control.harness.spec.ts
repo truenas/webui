@@ -7,7 +7,9 @@ import {
   TnCheckboxComponent, TnCheckboxGroupComponent, TnChipInputComponent, TnFormFieldComponent,
   TnInputComponent, TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
+import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { Option } from 'app/interfaces/option.interface';
+import { IxCodeEditorComponent } from 'app/modules/forms/controls/ix-code-editor/ix-code-editor.component';
 import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
@@ -40,6 +42,7 @@ import { NetworkService } from 'app/services/network.service';
     TnRadioGroupComponent,
     IxIpInputWithNetmaskComponent,
     IxStarRatingComponent,
+    IxCodeEditorComponent,
   ],
 })
 class HostComponent {
@@ -57,7 +60,12 @@ class HostComponent {
   readonly projected = new FormGroup({
     base: new FormControl(''),
     path: new FormControl(''),
+    config: new FormControl(''),
+    stackTrace: new FormControl(''),
   });
+
+  /** `ix-code-editor` only builds its CodeMirror view once a language is bound. */
+  readonly language = CodeEditorLanguage.Json;
 
   readonly options: Option<string>[] = [
     { label: 'Alpha', value: 'a' },
@@ -462,5 +470,79 @@ describe('TnFormControlHarness, projected ix-* controls', () => {
         'tn-form-field "Path" wraps an ix-* control, whose internal tn-select is not the field\'s own',
       );
     });
+  });
+});
+
+
+// A fourth suite, same reason as the third: one TestBed per host template. This one holds two
+// code editors and a netmask input at once, the shape `IxCodeEditorHarness` used to get wrong —
+// it looked its editor up through a document-wide `.input-container`, so it answered for the
+// first one on the page whichever field was asked, and `ix-ip-input-with-netmask` renders a
+// `.input-container` of its own for it to trip over.
+describe('TnFormControlHarness, a form holding more than one code editor', () => {
+  let spectator: SpectatorHost<TnFormFieldComponent, HostComponent>;
+  let loader: HarnessLoader;
+
+  const createHost = createHostFactory({
+    component: TnFormFieldComponent,
+    host: HostComponent,
+    imports: [
+      ReactiveFormsModule,
+      IxCodeEditorComponent,
+      IxIpInputWithNetmaskComponent,
+    ],
+    providers: [
+      mockProvider(NetworkService, {
+        getV4Netmasks: () => [{ label: '12', value: '12' }, { label: '24', value: '24' }],
+        getV6PrefixLength: () => [{ label: '64', value: '64' }],
+      }),
+    ],
+  });
+
+  // The netmask field comes first deliberately: its `.input-container` is the one a document-wide
+  // lookup would find before either editor's.
+  beforeEach(() => {
+    spectator = createHost(`
+      <div [formGroup]="projected">
+        <tn-form-field [label]="'Base'">
+          <ix-ip-input-with-netmask formControlName="base"></ix-ip-input-with-netmask>
+        </tn-form-field>
+
+        <tn-form-field [label]="'Extra Data'">
+          <ix-code-editor formControlName="config" [language]="language"></ix-code-editor>
+        </tn-form-field>
+
+        <tn-form-field [label]="'Stack Trace'">
+          <ix-code-editor formControlName="stackTrace" [language]="language"></ix-code-editor>
+        </tn-form-field>
+      </div>
+    `);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  async function getControls(): Promise<Record<string, IxFormControlHarness>> {
+    return indexControlsByLabel(await loader.getAllHarnesses(TnFormControlHarness));
+  }
+
+  it('reads each editor out of its own field rather than the first one on the page', async () => {
+    spectator.hostComponent.projected.patchValue({ config: 'first', stackTrace: 'second' });
+    spectator.detectComponentChanges();
+
+    const controls = await getControls();
+
+    expect(await controls['Extra Data'].getValue()).toBe('first');
+    expect(await controls['Stack Trace'].getValue()).toBe('second');
+  });
+
+  // No disabled-state test to pair with the one above: `IxCodeEditorHarness.isDisabled()` reads
+  // CodeMirror's `state.readOnly`, which `ix-code-editor` never sets — it reconfigures `editable`
+  // instead — so it answers `false` for a disabled editor. That predates the scoping fix here and
+  // is left alone rather than asserted, which would fix the wrong behaviour in place.
+
+  it('leaves the netmask input beside them readable, despite the shared container class', async () => {
+    spectator.hostComponent.projected.controls.base.setValue('172.17.0.0/12');
+    spectator.detectChanges();
+
+    expect(await (await getControls()).Base.getValue()).toBe('172.17.0.0/12');
   });
 });

@@ -11,6 +11,7 @@ import { MockInstance } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
+import { ChartSchemaNode } from 'app/interfaces/app.interface';
 import {
   DynamicFormSchemaInput,
   DynamicFormSchemaList,
@@ -391,6 +392,72 @@ describe('IxDynamicFormItemComponent', () => {
       jest.spyOn(spectator.component.deleteListItem, 'emit').mockImplementation();
       spectator.component.removeControlNext({} as DeleteListItemEvent);
       expect(spectator.component.deleteListItem.emit).toHaveBeenCalledTimes(1);
+    });
+  });
+  /**
+   * The seeding that used to live in `ix-list`. `tn-form-list` knows nothing about chart schemas,
+   * so the component that owns the schema does it now — these cover the three ways it declines.
+   */
+  describe('seeding a list schema\'s defaults', () => {
+    const itemsSchema = [
+      { variable: 'input', schema: { type: 'string' } },
+      { variable: 'select', schema: { type: 'string', default: 'fallback' } },
+    ] as ChartSchemaNode[];
+
+    function createListComponent(overrides: Partial<DynamicFormSchemaList>, isEditMode = false): void {
+      spectator = createComponent({
+        props: {
+          dynamicForm,
+          dynamicSchema: { ...listSchema, itemsSchema, ...overrides } as DynamicFormSchemaList,
+          isEditMode,
+        },
+      });
+      // Seeding is deferred a macrotask past AfterViewInit, so the spy is in place before it runs.
+      jest.spyOn(spectator.component.addListItem, 'emit').mockImplementation();
+    }
+
+    async function flushSeeding(): Promise<void> {
+      await new Promise((resolve) => {
+        setTimeout(resolve);
+      });
+    }
+
+    it('adds one row per default, carrying that row\'s values into the item schema', async () => {
+      createListComponent({ default: [{ input: 'first' }, { input: 'second' }] });
+      await flushSeeding();
+
+      expect(spectator.component.addListItem.emit).toHaveBeenCalledTimes(2);
+      expect(spectator.component.addListItem.emit).toHaveBeenNthCalledWith(1, {
+        array: dynamicForm.controls.list,
+        schema: [
+          { variable: 'input', schema: { type: 'string', default: 'first' } },
+          // Untouched by this default, so the item schema's own default stands.
+          { variable: 'select', schema: { type: 'string', default: 'fallback' } },
+        ],
+      });
+    });
+
+    it('seeds nothing on an edit form, where the saved rows come from the value', async () => {
+      createListComponent({ default: [{ input: 'first' }] }, true);
+      await flushSeeding();
+
+      expect(spectator.component.addListItem.emit).not.toHaveBeenCalled();
+    });
+
+    // The template sits under `@if (!(isHidden$ | async))`, so a list that starts hidden never
+    // rendered an `ix-list` to run this, and its defaults never reached the payload.
+    it('seeds nothing for a schema that starts hidden', async () => {
+      createListComponent({ default: [{ input: 'first' }], hidden: true });
+      await flushSeeding();
+
+      expect(spectator.component.addListItem.emit).not.toHaveBeenCalled();
+    });
+
+    it('seeds nothing when the schema carries no defaults', async () => {
+      createListComponent({});
+      await flushSeeding();
+
+      expect(spectator.component.addListItem.emit).not.toHaveBeenCalled();
     });
   });
 });
