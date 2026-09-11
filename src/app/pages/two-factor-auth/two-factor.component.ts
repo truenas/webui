@@ -174,6 +174,7 @@ export class TwoFactorComponent implements OnInit {
     return {
       invalidOtp: this.translate.instant(helptext2fa.verification.invalid),
       unreadableSecret: this.translate.instant(helptext2fa.verification.unreadableSecret),
+      checkFailed: this.translate.instant(helptext2fa.verification.checkFailed),
     };
   });
 
@@ -239,9 +240,29 @@ export class TwoFactorComponent implements OnInit {
       filter(Boolean),
       switchMap(() => this.renewSecretForUser(kind)),
       tap(() => this.isFormLoading.set(false)),
-      catchError((error: unknown) => this.handleError(error)),
+      catchError((error: unknown) => {
+        this.rereadSecretState();
+        return this.handleError(error);
+      }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();
+  }
+
+  /**
+   * Re-reads the account after a renew that did not complete.
+   *
+   * The call may have rotated the secret before its reply was lost, in which case the QR
+   * still on screen points at a secret the account no longer holds — so the user would
+   * scan the superseded one. The template follows `userTwoFactorConfig$`, so refreshing
+   * updates the code as well as the flag that gates it. Best effort: if this fails too
+   * the marker stays set, which is the safe direction.
+   */
+  private rereadSecretState(): void {
+    this.authService.refreshUser().pipe(
+      switchMap(() => this.authService.user$.pipe(filter(Boolean), take(1))),
+      catchError(() => EMPTY),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((user) => this.userTwoFactorAuthConfigured.set(user.two_factor_config.secret_configured));
   }
 
   /**
@@ -259,10 +280,25 @@ export class TwoFactorComponent implements OnInit {
       return;
     }
 
-    this.authService.userTwoFactorConfig$.pipe(
-      take(1),
+    this.isFormLoading.set(true);
+
+    // Re-read the account before judging the code, rather than trusting the cached
+    // config. A renew whose reply was lost may have rotated the secret server-side
+    // without this page ever hearing about it, and confirming against the superseded
+    // secret would clear the marker and report success for a secret the account no
+    // longer holds — the lockout this step exists to prevent. It also gives the verify
+    // path a definite outcome when `user$` is sitting on the transient null a failed
+    // refresh leaves behind, instead of silently never emitting.
+    this.authService.refreshUser().pipe(
+      switchMap(() => this.authService.userTwoFactorConfig$.pipe(take(1))),
+      catchError(() => {
+        this.isFormLoading.set(false);
+        this.verificationForm.controls.otp.setErrors({ checkFailed: true });
+        return EMPTY;
+      }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((config) => {
+      this.isFormLoading.set(false);
       const secret = this.getProvisioningUriSecret(config.provisioning_uri);
       if (!secret) {
         // Nothing to check the code against, and no QR on screen either — telling the

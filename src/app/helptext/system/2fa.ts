@@ -50,6 +50,8 @@ export const helptext2fa = {
  above and that your device clock is correct, then enter the code it shows now.'),
     unreadableSecret: T('The secret for this account could not be read, so the code cannot be checked. Generate a new\
  secret and scan it again.'),
+    checkFailed: T('The code could not be checked because the current secret could not be fetched from the system.\
+ Check your connection and try again.'),
     verified: T('Two-factor authentication is confirmed for your account.'),
     cancel: {
       title: T('Cancel Two-Factor Authentication Setup?'),

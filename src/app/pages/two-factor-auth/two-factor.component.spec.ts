@@ -525,6 +525,47 @@ describe('TwoFactorComponent', () => {
       expect(await dialogLoader.getAllHarnesses(TnButtonHarness.with({ label: 'Skip Setup' }))).toHaveLength(1);
     });
 
+    it('confirms against the secret the account holds now, not the cached one', async () => {
+      // A renew whose reply was lost can rotate the secret without this page hearing
+      // about it. Confirming against the superseded secret would clear the marker and
+      // report success for a secret the account no longer has — the lockout, with a
+      // green message in front of it.
+      await generateSecret();
+
+      // The server has moved on to a different secret; the page still caches the old one.
+      jest.mocked(spectator.inject(AuthService).refreshUser).mockImplementationOnce(() => {
+        twoFactorConfig$.next({
+          ...twoFactorConfig,
+          provisioning_uri: 'somepath://here/TrueNAS:first-test?secret=MZXW6YTBMZXW6YTBMZXW6YTBMZXW6YTB',
+        });
+        return of(undefined);
+      });
+
+      const otpInput = await loader.getHarness(TnInputHarness);
+      await otpInput.setValue(validCode);
+      await (await loader.getHarness(TnButtonHarness.with({ label: helptext2fa.verification.verifyBtn }))).click();
+      spectator.detectChanges();
+
+      const field = await loader.getHarness(TnFormFieldHarness);
+      expect(await field.getErrorMessage()).toBe(helptext2fa.verification.invalid);
+      expect(storage.get('pending2FaVerification:dummy')).toBe('renewal');
+    });
+
+    it('says so when the account cannot be re-read, instead of confirming blind', async () => {
+      await generateSecret();
+      jest.mocked(spectator.inject(AuthService).refreshUser)
+        .mockReturnValueOnce(throwError(() => new Error('offline')));
+
+      const otpInput = await loader.getHarness(TnInputHarness);
+      await otpInput.setValue(validCode);
+      await (await loader.getHarness(TnButtonHarness.with({ label: helptext2fa.verification.verifyBtn }))).click();
+      spectator.detectChanges();
+
+      const field = await loader.getHarness(TnFormFieldHarness);
+      expect(await field.getErrorMessage()).toBe(helptext2fa.verification.checkFailed);
+      expect(storage.get('pending2FaVerification:dummy')).toBe('renewal');
+    });
+
     it('reports setup as incomplete while a secret is waiting to be confirmed', async () => {
       const emitted: boolean[] = [];
       spectator.component.setupComplete.subscribe((isComplete) => emitted.push(isComplete));
