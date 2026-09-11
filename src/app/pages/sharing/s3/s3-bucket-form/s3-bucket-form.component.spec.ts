@@ -16,7 +16,7 @@ import {
 } from 'app/enums/s3.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Group } from 'app/interfaces/group.interface';
-import { S3Bucket, S3Config } from 'app/interfaces/s3.interface';
+import { S3Bucket } from 'app/interfaces/s3.interface';
 import { User } from 'app/interfaces/user.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -95,7 +95,6 @@ describe('S3BucketFormComponent', () => {
         mockCall('sharing.s3.update'),
         mockCall('sharing.s3.audit_choices', { GetObject: 'GetObject', PutObject: 'PutObject' }),
         mockCall('pool.filesystem_choices', ['tank', 'tank/buckets', 'tank/buckets/photos']),
-        mockCall('s3.config', { managed_root_dataset: 'tank/s3' } as S3Config),
         mockCall('user.query', [
           { username: 'alice', uid: 1000 },
           { username: 'bob', uid: 1001 },
@@ -141,10 +140,6 @@ describe('S3BucketFormComponent', () => {
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Versioning' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Multipart ETag' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Audit' }))).toBe(false);
-    });
-
-    it('starts with the parent dataset set to the service managed root dataset', async () => {
-      expect(await form.getValues()).toMatchObject({ 'Parent Dataset': 'tank/s3' });
     });
 
     it('turns versioning on and defaults to Compliance retention when object lock is enabled', async () => {
