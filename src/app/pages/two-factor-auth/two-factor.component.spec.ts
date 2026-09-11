@@ -466,7 +466,7 @@ describe('TwoFactorComponent', () => {
       // behind it. `new URL(null)` throws inside the subscribe, so Confirm Code would do
       // nothing at all — no message, no state change, just a console error.
       await generateSecret();
-      twoFactorConfig$.next({ ...twoFactorConfig, provisioning_uri: null } as unknown as UserTwoFactorConfig);
+      twoFactorConfig$.next({ ...twoFactorConfig, provisioning_uri: null });
 
       const otpInput = await loader.getHarness(TnInputHarness);
       await otpInput.setValue(validCode);
