@@ -11,7 +11,7 @@ import {
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  Observable, of, EMPTY,
+  Observable, of, EMPTY, TimeoutError,
   combineLatest, map,
 } from 'rxjs';
 import {
@@ -106,6 +106,10 @@ export class TwoFactorComponent implements OnInit {
    * Without it the banner keeps rendering from field defaults, which reads as a
    * confident "2FA is not enabled on this system" — a statement the page has no basis
    * for and which invites the user to act on it.
+   *
+   * Cleared by {@link setSecretConfigured} rather than only by a reload: the load is not
+   * the page's last chance to learn the account state, and leaving it set would shadow
+   * every later banner — including the one explaining what the code field is for.
    */
   private loadFailed = signal(false);
 
@@ -227,11 +231,15 @@ export class TwoFactorComponent implements OnInit {
   private loadTwoFactorConfigs(): void {
     this.isDataLoading.set(true);
     this.loadFailed.set(false);
-    // Every source here can complete WITHOUT emitting, not just error: a clean websocket
-    // reconnect completes the response stream, so an in-flight call ends silently and
-    // combineLatest completes with it. `defaultIfEmpty` turns that into a value this can
-    // recognise — without it the card renders from field defaults and states that 2FA is
-    // off for a user who has it on, with no error anywhere on screen.
+    // A call can complete WITHOUT emitting, not just error: a clean websocket reconnect
+    // completes the response stream, so an in-flight call ends silently and combineLatest
+    // completes with it — leaving the card rendering field defaults that state 2FA is off
+    // for a user who has it on, with no error anywhere. `defaultIfEmpty` turns that into a
+    // value this can recognise.
+    //
+    // Only the bare `system.info` call can reach that today: the other two are piped off
+    // BehaviorSubjects that never complete, so they either emit or hang, and `timeout` is
+    // what covers them. Their guards are belt-and-braces against those shapes changing.
     combineLatest([
       // The whole user, not just userTwoFactorConfig$: the persisted pending flag is
       // keyed to the account name, which only the user record carries.
@@ -278,7 +286,7 @@ export class TwoFactorComponent implements OnInit {
             return;
           }
 
-          this.userTwoFactorAuthConfigured.set(user.two_factor_config.secret_configured);
+          this.setSecretConfigured(user.two_factor_config.secret_configured);
 
           // A stored flag without a secret behind it is stale — the secret was unset
           // elsewhere. Drop it rather than leave it for the next read.
@@ -290,7 +298,12 @@ export class TwoFactorComponent implements OnInit {
           // Same reason as the empty-read branch: without this the banner keeps asserting
           // that 2FA is off here, which the page has no basis for saying.
           this.loadFailed.set(true);
-          this.errorHandler.showErrorModal(error);
+          // The timeout is the likeliest arrival here, and its message is RxJS's
+          // untranslated "Timeout has occurred" — say the same thing the banner says.
+          const isTimeout = error instanceof TimeoutError;
+          this.errorHandler.showErrorModal(
+            isTimeout ? new Error(this.translate.instant(helptext2fa.loadFailed)) : error,
+          );
         },
       });
 
@@ -330,7 +343,7 @@ export class TwoFactorComponent implements OnInit {
       switchMap(() => this.authService.user$.pipe(filter(Boolean), take(1))),
       catchError(() => EMPTY),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((user) => this.userTwoFactorAuthConfigured.set(user.two_factor_config.secret_configured));
+    ).subscribe((user) => this.setSecretConfigured(user.two_factor_config.secret_configured));
   }
 
   /**
@@ -398,7 +411,7 @@ export class TwoFactorComponent implements OnInit {
       // The re-read above is the freshest word on the account; dropping it would let the
       // card report a confirmed secret and still offer Configure, with the QR hidden and
       // Finish never appearing in the first-login dialog.
-      this.userTwoFactorAuthConfigured.set(config.secret_configured);
+      this.setSecretConfigured(config.secret_configured);
       this.setPendingVerification(false);
       this.verificationForm.reset();
       this.snackbar.success(this.translate.instant(helptext2fa.verification.verified));
@@ -476,7 +489,7 @@ export class TwoFactorComponent implements OnInit {
       }),
       switchMap((user) => this.api.call('user.renew_2fa_secret', [user.pw_name, { interval: 30, otp_digits: 6 }])),
       switchMap(() => this.authService.refreshUser()),
-      tap(() => this.userTwoFactorAuthConfigured.set(true)),
+      tap(() => this.setSecretConfigured(true)),
       // See onVerifyOtp: a silent completion would otherwise strand the flag on.
       finalize(() => this.isFormLoading.set(false)),
       takeUntilDestroyed(this.destroyRef),
@@ -542,7 +555,7 @@ export class TwoFactorComponent implements OnInit {
       switchMap((user) => this.api.call('user.unset_2fa_secret', [user.pw_name])),
       switchMap(() => this.authService.refreshUser()),
       tap(() => {
-        this.userTwoFactorAuthConfigured.set(false);
+        this.setSecretConfigured(false);
         this.currentSessionIs2fa.set(false);
         this.setPendingVerification(false);
         this.verificationForm.reset();
@@ -550,6 +563,15 @@ export class TwoFactorComponent implements OnInit {
       // See onVerifyOtp: a silent completion would otherwise strand the flag on.
       finalize(() => this.isFormLoading.set(false)),
     );
+  }
+
+  /**
+   * Records account state learned from a fresh read — which also means the page is no
+   * longer blind, so it stops saying the settings could not be read.
+   */
+  private setSecretConfigured(isConfigured: boolean): void {
+    this.userTwoFactorAuthConfigured.set(isConfigured);
+    this.loadFailed.set(false);
   }
 
   private setPendingVerification(isPending: boolean, kind: PendingTwoFactorKind = 'setup'): void {

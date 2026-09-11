@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import {
-  TnBannerComponent, TnBannerHarness, TnButtonHarness, TnFormFieldHarness, TnInputHarness,
+  TnBannerComponent, TnBannerHarness, TnButtonComponent, TnButtonHarness, TnFormFieldHarness, TnInputHarness,
 } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { QrCodeComponent, QrCodeDirective } from 'ng-qrcode';
@@ -568,10 +568,11 @@ describe('TwoFactorComponent', () => {
       expect(storage.get('pending2FaVerification:dummy')).toBe('renewal');
     });
 
-    // DOM queries rather than harnesses: the load carries a timeout timer while it is in
-    // flight, which keeps the Angular zone unstable, and a harness would wait it out.
-    function renewButtonOf(fixtureHost: Spectator<TwoFactorComponent>): HTMLButtonElement | null {
-      return fixtureHost.query('[data-test="button-renew-secret"]');
+    // The component instance rather than a harness: while the load is in flight it holds
+    // a timeout timer, which keeps the Angular zone unstable, and a harness would wait it
+    // out. Reading the rendered component's inputs needs no test-id locator.
+    function renewButtonOf(fixtureHost: Spectator<TwoFactorComponent>): TnButtonComponent | undefined {
+      return fixtureHost.queryAll(TnButtonComponent).find((button) => button.label().endsWith('2FA Secret'));
     }
 
     it('holds the secret buttons until the page knows what it is looking at', () => {
@@ -587,13 +588,13 @@ describe('TwoFactorComponent', () => {
 
       const loading = createComponent();
 
-      expect(renewButtonOf(loading)?.disabled).toBe(true);
+      expect(renewButtonOf(loading)?.disabled()).toBe(true);
 
       systemInfo$.next({ datetime: { $date: applianceNow } } as SystemInfo);
       systemInfo$.complete();
       loading.detectChanges();
 
-      expect(renewButtonOf(loading)?.disabled).toBe(false);
+      expect(renewButtonOf(loading)?.disabled()).toBe(false);
     });
 
     it('gives the load a terminal outcome when a source never settles at all', fakeAsync(() => {
@@ -604,12 +605,12 @@ describe('TwoFactorComponent', () => {
       jest.mocked(spectator.inject(AuthService).getGlobalTwoFactorConfig).mockReturnValueOnce(NEVER);
 
       const stuck = createComponent();
-      expect(renewButtonOf(stuck)?.disabled).toBe(true);
+      expect(renewButtonOf(stuck)?.disabled()).toBe(true);
 
       tick(30_000);
       stuck.detectChanges();
 
-      expect(renewButtonOf(stuck)?.disabled).toBe(false);
+      expect(renewButtonOf(stuck)?.disabled()).toBe(false);
       expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
     }));
 
@@ -740,6 +741,27 @@ describe('TwoFactorComponent', () => {
         TnButtonHarness.with({ label: 'Configure 2FA Secret' }),
       );
       expect(await configureBtn.isDisabled()).toBe(false);
+    });
+
+    it('stops saying the settings could not be read once a later call has read them', async () => {
+      // The load is not the page's last chance to learn the account state. Left set, the
+      // failure banner shadows every later one — including the copy that explains what the
+      // code field is for and what Cancel Setup undoes.
+      jest.mocked(spectator.inject(AuthService).getGlobalTwoFactorConfig)
+        .mockReturnValueOnce(throwError(() => new Error('down')));
+
+      const recovered = createComponent();
+      const recoveredLoader = TestbedHarnessEnvironment.loader(recovered.fixture);
+
+      expect(await (await recoveredLoader.getHarness(TnBannerHarness)).getText())
+        .toContain(helptext2fa.loadFailed);
+
+      await (await recoveredLoader.getHarness(TnButtonHarness.with({ label: 'Configure 2FA Secret' }))).click();
+      recovered.detectChanges();
+
+      const banner = await recoveredLoader.getHarness(TnBannerHarness);
+      expect(await banner.getText()).toContain(helptext2fa.verification.pending);
+      expect(await banner.getText()).not.toContain(helptext2fa.loadFailed);
     });
 
     it('reports setup as incomplete while a secret is waiting to be confirmed', async () => {
