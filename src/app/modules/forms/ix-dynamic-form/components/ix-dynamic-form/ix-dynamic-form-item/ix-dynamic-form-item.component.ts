@@ -10,7 +10,7 @@ import {
   TnFormListItemComponent, TnIconComponent, TnInputComponent, TnSelectComponent, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { BehaviorSubject } from 'rxjs';
-import { distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, take } from 'rxjs/operators';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { ChartSchemaNode } from 'app/interfaces/app.interface';
@@ -116,16 +116,16 @@ export class IxDynamicFormItemComponent implements OnInit, AfterViewInit {
    * Deferred to `AfterViewInit` (and a macrotask beyond it) as it was: adding controls seeds the
    * `FormArray` the view has just rendered, so it cannot run during that render.
    *
-   * A hidden list seeds nothing, which is the behaviour `ix-list` had for free: the whole template
-   * sits under `@if (!(isHidden$ | async))`, so no list was instantiated and its `ngAfterViewInit`
-   * never ran. This hook is on the item, which is always instantiated, so the question has to be
-   * asked outright — and asked of `hidden$` rather than `schema.hidden`, because a `show_if`
-   * relation or a subquestion hides a question through the subject alone: `app-schema.service`
-   * pairs `hidden$.next(true)` with `disable()` and leaves the static flag `false`.
+   * Seeding waits for the list to be *visible*, which is what `ix-list` got for free by living
+   * under `@if (!(isHidden$ | async))`. The question has to be asked of `hidden$` rather than
+   * `schema.hidden`, because a `show_if` relation or a subquestion hides a question through the
+   * subject alone: `app-schema.service` pairs `hidden$.next(true)` with `disable()` and leaves the
+   * static flag `false`.
    *
-   * Seeding one of those would not just add invisible rows, it would un-disable them:
+   * Seeding a hidden list would not just add invisible rows, it would un-disable them:
    * `FormArray.push` runs `updateValueAndValidity` → `_setInitialStatus`, which re-enables an
-   * array once it holds an enabled control, so the rows would reach the install payload.
+   * array once it holds an enabled control, so the rows would reach the install payload of a
+   * question the user never saw.
    */
   ngAfterViewInit(): void {
     const schema = this.dynamicSchema();
@@ -139,27 +139,42 @@ export class IxDynamicFormItemComponent implements OnInit, AfterViewInit {
     }
 
     setTimeout(() => {
-      // Read late, inside the macrotask: the relations that hide a question are wired while the
-      // form is built, so this is the first point the answer is settled. A control built outside
-      // `app-schema` carries no subject at all and is never hidden.
-      if (this.isHidden$?.value) {
+      const seed = (): void => {
+        schema.default?.forEach((defaultValue: Record<string, unknown>) => {
+          this.addControl(
+            schema.itemsSchema?.map((item: ChartSchemaNode) => ({
+              ...item,
+              schema: {
+                ...item.schema,
+                default: defaultValue?.[item.variable]
+                  ?? (typeof defaultValue !== 'object' ? defaultValue : item.schema.default),
+              },
+            })),
+          );
+        });
+
+        this.changeDetectorRef.markForCheck();
+      };
+
+      // A control built outside `app-schema` — a plain `FormArray` — carries no subject and is
+      // never hidden.
+      const hidden$ = this.isHidden$;
+      if (!hidden$) {
+        seed();
         return;
       }
 
-      schema.default?.forEach((defaultValue: Record<string, unknown>) => {
-        this.addControl(
-          schema.itemsSchema?.map((item: ChartSchemaNode) => ({
-            ...item,
-            schema: {
-              ...item.schema,
-              default: defaultValue?.[item.variable]
-                ?? (typeof defaultValue !== 'object' ? defaultValue : item.schema.default),
-            },
-          })),
-        );
-      });
-
-      this.changeDetectorRef.markForCheck();
+      // Waiting for the first *visible* emission rather than reading the subject once: a list
+      // gated by a `show_if` is hidden on a `timer(0)` and revealed again whenever the user
+      // satisfies the relation, and its object-shaped defaults have nowhere else to come from —
+      // `AppSchemaService.getItemsToPopulate` skips those deliberately. `take(1)` is what keeps a
+      // question that is hidden and shown repeatedly from stacking a fresh set of defaults each
+      // time, which is what `ix-list` did by being rebuilt on every re-show.
+      hidden$.pipe(
+        filter((isHidden) => !isHidden),
+        take(1),
+        takeUntilDestroyed(this.destroyRef),
+      ).subscribe(() => seed());
     });
   }
 

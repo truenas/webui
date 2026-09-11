@@ -159,18 +159,6 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
       ?? (await this.codeEditor());
   }
 
-  /**
-   * The subset of {@link delegate} whose *disabled* state can be believed. `ix-code-editor` is
-   * absent: its harness reads CodeMirror's `state.readOnly`, which the component never sets — it
-   * reconfigures `editable` instead — so it answers `false` for a disabled editor. Returning that
-   * would put a key certifying "enabled" into `getDisabledStates` for a control that is disabled,
-   * the exact false pass {@link unreadableControl} exists to prevent; falling through to the
-   * `projectedIxControl()` branch reads it as unreadable instead, and the whole-form readers leave
-   * it out. Fix the harness and this can collapse back into {@link delegate}.
-   */
-  private async disabledDelegate(): Promise<IxFormControlHarness | null> {
-    return (await this.ipInputWithNetmask()) ?? (await this.permissions());
-  }
 
   /**
    * Empty only when the field carries no label and holds nothing that names itself — neither a
@@ -415,7 +403,7 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
    * on {@link getValue}: a `false` would read as "enabled" for a control that may well be disabled.
    */
   async isDisabled(): Promise<boolean | typeof unreadableControl> {
-    const delegate = await this.disabledDelegate();
+    const delegate = await this.delegate();
     if (delegate) {
       return delegate.isDisabled();
     }

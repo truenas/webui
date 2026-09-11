@@ -534,21 +534,26 @@ describe('TnFormControlHarness, a form holding more than one code editor', () =>
     expect(await controls['Stack Trace'].getValue()).toBe('second');
   });
 
-  // `IxCodeEditorHarness.isDisabled()` reads CodeMirror's `state.readOnly`, which `ix-code-editor`
-  // never sets — it reconfigures `editable` instead — so it would answer `false` for a disabled
-  // editor. `isDisabled` therefore does not delegate to it, and the editor reads as unreadable.
-  it('reads a disabled editor as unreadable rather than certifying it enabled', async () => {
+  // Reads the `editable` facet the component actually reconfigures. `state.readOnly`, which the
+  // harness used to read, is never set, so every editor answered "enabled" — including this one.
+  it('reports each editor\'s own disabled state', async () => {
     spectator.hostComponent.projected.controls.stackTrace.disable();
     spectator.detectComponentChanges();
 
-    expect(await (await getControls())['Stack Trace'].isDisabled()).toBe(unreadableControl);
+    const controls = await getControls();
+
+    expect(await controls['Extra Data'].isDisabled()).toBe(false);
+    expect(await controls['Stack Trace'].isDisabled()).toBe(true);
   });
 
-  it('leaves a disabled editor out of a whole-form disabled map, rather than in it as enabled', async () => {
+  it('carries that state into a whole-form disabled map', async () => {
     spectator.hostComponent.projected.controls.stackTrace.disable();
     spectator.detectComponentChanges();
 
-    expect(await getDisabledStates(await getControls())).not.toHaveProperty('Stack Trace');
+    expect(await getDisabledStates(await getControls())).toMatchObject({
+      'Extra Data': false,
+      'Stack Trace': true,
+    });
   });
 
   // Queried off the host fixture, not `spectator.query`: the component under test here is one

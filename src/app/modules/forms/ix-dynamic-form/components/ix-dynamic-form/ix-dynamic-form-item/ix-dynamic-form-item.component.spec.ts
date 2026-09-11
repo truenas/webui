@@ -479,6 +479,40 @@ describe('IxDynamicFormItemComponent', () => {
       expect(list.disabled).toBe(true);
     });
 
+    // The other half of that: the rows are still owed once the user satisfies the relation, and
+    // `AppSchemaService.getItemsToPopulate` skips object-shaped defaults deliberately, so nothing
+    // else would ever fill them in.
+    it('seeds a relation-hidden list once it is revealed', async () => {
+      const list = new CustomUntypedFormArray([]);
+      list.hidden$.next(true);
+      list.disable();
+      const relationHiddenForm = new UntypedFormGroup({ list });
+
+      createListComponent({ default: [{ input: 'first' }] }, false, relationHiddenForm);
+      await flushSeeding();
+      expect(spectator.component.addListItem.emit).not.toHaveBeenCalled();
+
+      list.enable();
+      list.hidden$.next(false);
+
+      expect(spectator.component.addListItem.emit).toHaveBeenCalledTimes(1);
+    });
+
+    it('seeds a revealed list once, not again on every re-show', async () => {
+      const list = new CustomUntypedFormArray([]);
+      list.hidden$.next(true);
+      const relationHiddenForm = new UntypedFormGroup({ list });
+
+      createListComponent({ default: [{ input: 'first' }] }, false, relationHiddenForm);
+      await flushSeeding();
+
+      list.hidden$.next(false);
+      list.hidden$.next(true);
+      list.hidden$.next(false);
+
+      expect(spectator.component.addListItem.emit).toHaveBeenCalledTimes(1);
+    });
+
     it('seeds nothing when the schema carries no defaults', async () => {
       createListComponent({});
       await flushSeeding();

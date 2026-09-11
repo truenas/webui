@@ -42,7 +42,10 @@ export class IxCodeEditorHarness extends ComponentHarness implements IxFormContr
 
   async isDisabled(): Promise<boolean> {
     const editor = await this.getEditor();
-    return editor.state.readOnly;
+    // The `editable` facet, not `state.readOnly`: `ix-code-editor` disables itself by
+    // reconfiguring the former through its `editableCompartment` and never touches the latter,
+    // which would answer `false` for every editor, disabled or not.
+    return !editor.state.facet(EditorView.editable);
   }
 
   /**
