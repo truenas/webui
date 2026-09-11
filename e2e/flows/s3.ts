@@ -103,36 +103,12 @@ export async function createS3BucketWithObjectLock(
  * Opens the bucket creator from the Shares dashboard card. The Name input
  * appearing is the signal the side panel has rendered the form.
  */
-export async function openBucketCreator(page: Page): Promise<void> {
+async function openBucketCreator(page: Page): Promise<void> {
   await goToShares(page);
   await page.locator(s3BucketLocators.addFromDashboard).click();
   await expect(page.locator(s3BucketLocators.form.name)).toBeVisible();
 }
 
-/** What the Parent Dataset field of the open bucket creator holds. */
-export async function readBucketParentDataset(page: Page): Promise<string> {
-  return page.locator(s3BucketLocators.form.parentDataset).inputValue();
-}
-
-/**
- * Closes the open bucket panel without saving, answering "Yes" to the
- * unsaved-changes question when the form asks it.
- *
- * The question is raised only for a dirty form; a prefilled field is set
- * programmatically and leaves the form pristine, so whether it appears is the
- * form's business. It is looked for briefly rather than required.
- */
-export async function closeBucketPanel(page: Page): Promise<void> {
-  await page.locator(s3BucketLocators.form.closePanel).click();
-  // `waitFor`, not `isVisible`: the latter ignores its timeout and answers at
-  // once, which would miss a question raised a frame after the click.
-  const discard = page.locator(confirmDialogLocators.confirm);
-  const asked = await discard.waitFor({ state: 'visible', timeout: 2_000 }).then(() => true, () => false);
-  if (asked) {
-    await discard.click();
-  }
-  await expect(page.locator(s3BucketLocators.form.name)).toBeHidden();
-}
 
 export interface NewS3AccessKey {
   name: string;

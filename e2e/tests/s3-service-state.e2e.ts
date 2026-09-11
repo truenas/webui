@@ -5,7 +5,7 @@
  * the app takes in its stride — no "Start S3 Service" prompt — and then stops
  * the service with the switch in the card's header. Separately, an
  * administrator sets the managed root dataset the service creates
- * protocol-made buckets under, and sees the bucket form default to it.
+ * protocol-made buckets under.
  *
  * Every other S3 journey starts from a stopped service; this file is the one
  * that starts from a running one, so the other branch of the post-save check
@@ -17,10 +17,7 @@ import {
   ensureS3ServiceStopped, queryS3Service, readS3Config, setS3ManagedRootDataset,
 } from '../fixtures/s3';
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';
-import {
-  closeBucketPanel, createS3BucketWithObjectLock, openBucketCreator, readBucketParentDataset,
-  setS3ManagedRootDatasetFromCard, toggleS3ServiceFromCard,
-} from '../flows/s3';
+import { createS3BucketWithObjectLock, setS3ManagedRootDatasetFromCard, toggleS3ServiceFromCard } from '../flows/s3';
 import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
@@ -90,7 +87,7 @@ test('an admin adds a bucket to a running service and stops it from the card', a
   });
 });
 
-test('an admin sets the managed root dataset and new buckets default to it', async ({ page, api, pool }) => {
+test('an admin sets the managed root dataset for protocol-created buckets', async ({ page, api, pool }) => {
   const root = `${pool}/${managedRoot}`;
   // Middleware never creates the root; it has to exist before it is named.
   await ensureDatasetPresent(api, root);
@@ -100,16 +97,10 @@ test('an admin sets the managed root dataset and new buckets default to it', asy
     throw new Error('The S3 service row is missing, so this appliance has no S3 to configure.');
   }
 
-  await test.step('name the dataset in the service configuration', async () => {
-    await setS3ManagedRootDatasetFromCard(page, service.id, root);
-    expect((await readS3Config(api)).managed_root_dataset).toBe(root);
-  });
+  await setS3ManagedRootDatasetFromCard(page, service.id, root);
 
-  // The bucket form reads the service configuration when it opens and offers
-  // the managed root as the parent, which is the whole point of naming one.
-  await test.step('see it offered as the parent of a new bucket', async () => {
-    await openBucketCreator(page);
-    await expect.poll(() => readBucketParentDataset(page)).toBe(root);
-    await closeBucketPanel(page);
-  });
+  // Where protocol CreateBucket requests will put their datasets is a service
+  // setting, and only middleware can say it was stored as typed. Buckets
+  // added through the UI choose their own parent; the root is not a default.
+  expect((await readS3Config(api)).managed_root_dataset).toBe(root);
 });

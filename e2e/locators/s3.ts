@@ -60,8 +60,6 @@ export const s3BucketLocators = {
     defaultRetentionDays: '[data-test="input-object-lock-default-days"]',
     /** The side panel's Save, `[testId]="'save'"` in form-side-panel-container. */
     save: '[data-test="button-save"]',
-    /** The side panel's own close, `closeButtonTestId="close-side-panel"` in the same container. */
-    closePanel: '[data-test="button-close-side-panel"]',
     /** The Advanced/Basic toggle the side panel renders from the form's `footerActions`. */
     advancedOptions: '[data-test="button-toggle-advanced-options"]',
 
