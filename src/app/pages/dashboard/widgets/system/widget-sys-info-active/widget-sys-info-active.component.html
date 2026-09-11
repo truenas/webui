@@ -88,7 +88,7 @@
             <strong>{{ 'Edition' | translate }}:</strong>
             @if (isLoaded()) {
               <span>
-                @if (isEnterprise()) {
+                @if (hasEnterpriseBranding()) {
                   {{ 'Enterprise' | translate }}
                 } @else {
                   {{ 'Community' | translate }}
@@ -174,7 +174,7 @@
             }
           </tn-list-item>
 
-          @if (!isEnterprise()) {
+          @if (!hasEnterpriseBranding()) {
             <!-- The marketing message is a sentence, not a label: let it wrap instead of ellipsizing. -->
             <tn-list-item class="use-enterprise" [wrap]="true">
               <ix-use-enterprise-marketing-link></ix-use-enterprise-marketing-link>

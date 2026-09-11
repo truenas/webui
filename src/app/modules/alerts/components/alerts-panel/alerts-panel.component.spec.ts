@@ -97,6 +97,7 @@ describe('AlertsPanelComponent', () => {
             productType: ProductType.Enterprise,
             isIxHardware: false,
             buildYear: 2024,
+            licenseLoadFailed: false,
           },
         },
       }),

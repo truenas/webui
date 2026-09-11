@@ -84,8 +84,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
   readonly copyrightHtml = toSignal(this.store$.select(selectCopyrightHtml));
-  readonly brandedProductType = toSignal(this.store$.select(selectBrandedProductType));
-  readonly hasCommunityBranding = toSignal(this.store$.select(selectHasCommunityBranding));
+  private readonly brandedProductType = toSignal(this.store$.select(selectBrandedProductType));
+  protected readonly hasCommunityBranding = toSignal(this.store$.select(selectHasCommunityBranding));
 
   // angular tooltips are unable to display HTML content, so we just remove the `<br>` tags
   // credit <https://github.com/JackW6809> for the replace pattern!

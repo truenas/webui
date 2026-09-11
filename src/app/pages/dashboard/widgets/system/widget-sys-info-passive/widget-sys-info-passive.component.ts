@@ -31,7 +31,7 @@ import {
 import { AppState } from 'app/store';
 import { selectCanFailover, selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
-  selectIsIxHardware, selectIsEnterprise, selectHasEnclosureSupport,
+  selectIsIxHardware, selectIsEnterprise, selectHasEnclosureSupport, selectHasEnterpriseBranding,
 } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -71,6 +71,7 @@ export class WidgetSysInfoPassiveComponent {
   canFailover = toSignal(this.store$.select(selectCanFailover));
   isIxHardware = toSignal(this.store$.select(selectIsIxHardware));
   isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly hasEnterpriseBranding = toSignal(this.store$.select(selectHasEnterpriseBranding));
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   isHaEnabled = toSignal(this.store$.select(selectIsHaEnabled));
   hasEnclosureSupport = toSignal(this.store$.select(selectHasEnclosureSupport));

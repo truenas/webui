@@ -83,10 +83,11 @@ describe('SystemInfoEffects', () => {
       expect(api.call).toHaveBeenCalledWith('truenas.license.info');
       expect(action).toEqual(systemInfoLoaded({
         systemInfo: { ...baseSystemInfo, license: baseLicense },
+        licenseLoadFailed: false,
       }));
     });
 
-    it('emits systemInfoLoaded with license: null when truenas.license.info errors', async () => {
+    it('emits systemInfoLoaded with license: null and licenseLoadFailed when truenas.license.info errors', async () => {
       jest.spyOn(console, 'error').mockImplementation();
       stubLoadCalls(null, new Error('license fetch failed'));
 
@@ -95,6 +96,7 @@ describe('SystemInfoEffects', () => {
 
       expect(action).toEqual(systemInfoLoaded({
         systemInfo: { ...baseSystemInfo, license: null },
+        licenseLoadFailed: true,
       }));
     });
 

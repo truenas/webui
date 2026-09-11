@@ -38,25 +38,47 @@ export const selectLicense = createSelector(
   (systemInfo) => systemInfo?.license ?? null,
 );
 
+export const selectLicenseLoadFailed = createSelector(
+  selectSystemInfoState,
+  (state) => state.licenseLoadFailed,
+);
+
 /**
  * Product type used for UI branding (logo, copyright line, nav badge).
  * An Enterprise product type without a license (e.g. unlicensed R-series
  * hardware) is branded as Community Edition.
+ *
+ * Returns null while an Enterprise system's license is still unknown, so the
+ * UI never flashes the wrong edition, and falls back to the raw product type
+ * when the license fetch failed rather than silently downgrading a licensed
+ * appliance.
  */
 export const selectBrandedProductType = createSelector(
   selectProductType,
-  selectLicense,
-  (productType, license) => {
-    if (productType === ProductType.Enterprise && license === null) {
-      return ProductType.CommunityEdition;
+  selectSystemInfo,
+  selectLicenseLoadFailed,
+  (productType, systemInfo, licenseLoadFailed) => {
+    if (productType !== ProductType.Enterprise) {
+      return productType;
     }
-    return productType;
+    if (!systemInfo) {
+      return null;
+    }
+    if (licenseLoadFailed) {
+      return productType;
+    }
+    return systemInfo.license === null ? ProductType.CommunityEdition : productType;
   },
 );
 
 export const selectHasCommunityBranding = createSelector(
   selectBrandedProductType,
   (productType) => productType === ProductType.CommunityEdition,
+);
+
+export const selectHasEnterpriseBranding = createSelector(
+  selectBrandedProductType,
+  (productType) => productType === ProductType.Enterprise,
 );
 
 export const selectCopyrightHtml = createSelector(

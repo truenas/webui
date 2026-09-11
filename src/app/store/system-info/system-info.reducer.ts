@@ -12,6 +12,11 @@ export interface SystemInfoState {
   productType: ProductType | null;
   isIxHardware: boolean;
   buildYear: number;
+  /**
+   * `truenas.license.info` failed, so `systemInfo.license === null` means
+   * "unknown" rather than "no license".
+   */
+  licenseLoadFailed: boolean;
 }
 
 const initialState: SystemInfoState = {
@@ -19,11 +24,16 @@ const initialState: SystemInfoState = {
   productType: null,
   isIxHardware: false,
   buildYear: environment.buildYear,
+  licenseLoadFailed: false,
 };
 
 export const systemInfoReducer = createReducer(
   initialState,
-  on(systemInfoLoaded, (state, { systemInfo }) => ({ ...state, systemInfo })),
+  on(systemInfoLoaded, (state, { systemInfo, licenseLoadFailed }) => ({
+    ...state,
+    systemInfo,
+    licenseLoadFailed: Boolean(licenseLoadFailed),
+  })),
   on(productTypeLoaded, (state, { productType }) => ({ ...state, productType })),
   on(ixHardwareLoaded, (state, { isIxHardware }) => ({ ...state, isIxHardware })),
 );

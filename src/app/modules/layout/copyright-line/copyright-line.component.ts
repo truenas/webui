@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
-import { ProductType } from 'app/enums/product-type.enum';
 import { getCopyrightHtml } from 'app/helpers/copyright-text.helper';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
-import { selectBrandedProductType, selectCopyrightHtml } from 'app/store/system-info/system-info.selectors';
+import { selectCopyrightHtml, selectHasEnterpriseBranding } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-copyright-line',
@@ -22,10 +21,8 @@ export class CopyrightLineComponent {
   readonly copyrightHtml = toSignal(this.store$.select(selectCopyrightHtml));
   readonly copyrightText = computed(() => (this.skipType() ? getCopyrightHtml() : this.copyrightHtml()));
 
-  private readonly brandedProductType = toSignal(this.store$.select(selectBrandedProductType));
+  private readonly hasEnterpriseBranding = toSignal(this.store$.select(selectHasEnterpriseBranding));
   readonly targetHref = computed(() => {
-    return this.brandedProductType() === ProductType.Enterprise
-      ? 'https://truenas.com/production'
-      : 'https://truenas.com/testdrive';
+    return this.hasEnterpriseBranding() ? 'https://truenas.com/production' : 'https://truenas.com/testdrive';
   });
 }

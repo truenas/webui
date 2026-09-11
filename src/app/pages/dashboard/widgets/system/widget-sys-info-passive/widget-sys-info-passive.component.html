@@ -89,7 +89,7 @@
             <strong>{{ 'Edition' | translate }}:</strong>
             @if (isLoaded()) {
               <span>
-                @if (isEnterprise()) {
+                @if (hasEnterpriseBranding()) {
                   {{ 'Enterprise' | translate }}
                 } @else {
                   {{ 'Community' | translate }}

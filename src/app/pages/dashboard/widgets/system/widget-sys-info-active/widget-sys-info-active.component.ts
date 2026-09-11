@@ -26,7 +26,7 @@ import {
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
-  selectHasEnclosureSupport, selectIsEnterprise, selectIsIxHardware,
+  selectHasEnclosureSupport, selectHasEnterpriseBranding, selectIsEnterprise, selectIsIxHardware,
 } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -61,6 +61,7 @@ export class WidgetSysInfoActiveComponent {
 
   isIxHardware = toSignal(this.store$.select(selectIsIxHardware));
   isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly hasEnterpriseBranding = toSignal(this.store$.select(selectHasEnterpriseBranding));
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   hasEnclosureSupport = toSignal(this.store$.select(selectHasEnclosureSupport));
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForActiveNode));
