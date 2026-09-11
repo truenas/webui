@@ -92,15 +92,52 @@ export class BaseDataProvider<T> implements DataProvider<T> {
     this.sortingOrPaginationUpdate.emit();
   }
 
-  setFilter(filter: TableFilter<T>): void {
-    this.resetPaginationToFirstPage();
+  /**
+   * Applies a filter and, by default, sends the user back to the first page — the right
+   * move when the QUERY changed, since the rows they were reading are no longer the ones
+   * the table holds.
+   *
+   * Pass `keepPage` when the same query is being re-run against refreshed rows, e.g. a
+   * background reload the user did not ask for. Resetting there reads as the table losing
+   * their place mid-task, which is what NAS-143108 reported. A page the refreshed total
+   * puts out of range is clamped back to the last page that has rows, so the user can
+   * never be stranded on an empty page whose pager the empty state has unmounted.
+   */
+  setFilter(filter: TableFilter<T>, { keepPage = false }: { keepPage?: boolean } = {}): void {
+    if (!keepPage) {
+      this.resetPaginationToFirstPage();
+    }
     const filteredRows = filterTableRows(filter);
+    if (keepPage) {
+      this.clampPaginationToLastPage(filteredRows.length);
+    }
     this.setRows(filteredRows);
   }
 
   protected resetPaginationToFirstPage(): void {
     if (this.pagination.pageNumber !== null) {
       this.pagination.pageNumber = 1;
+    }
+  }
+
+  /**
+   * Pulls `pageNumber` back into range for `totalRows`. Only `keepPage` needs it — every
+   * other path resets to page 1 — but it has to run before `setRows`, so the page the
+   * pager syncs from `currentPage$` is the one the rows were sliced for.
+   *
+   * Mutates `pagination` in place rather than replacing it: the pager holds a reference to
+   * this same object and compares against it to tell an external change from the echo of
+   * its own push.
+   */
+  protected clampPaginationToLastPage(totalRows: number): void {
+    const { pageNumber, pageSize } = this.pagination;
+    if (pageNumber === null || pageSize === null) {
+      return;
+    }
+
+    const lastPage = Math.max(1, Math.ceil(totalRows / pageSize));
+    if (pageNumber > lastPage) {
+      this.pagination.pageNumber = lastPage;
     }
   }
 
