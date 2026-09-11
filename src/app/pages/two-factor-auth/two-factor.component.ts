@@ -327,9 +327,16 @@ export class TwoFactorComponent implements OnInit {
 
   protected renewSecretOrEnable2Fa(): void {
     // Captured before the call, which sets `userTwoFactorAuthConfigured` unconditionally.
-    const kind: PendingTwoFactorKind = this.userTwoFactorAuthConfigured() ? 'renewal' : 'setup';
+    //
+    // While the load failed that signal holds its default rather than a fact, so a blind
+    // page counts as "may already have a secret". The asymmetry decides it: labelling a
+    // real renewal as a first-time setup withholds the one sentence that says the old
+    // secret is already gone, whereas the reverse only over-warns someone who had nothing
+    // to lose.
+    const mayHaveSecret = this.userTwoFactorAuthConfigured() || this.loadFailed();
+    const kind: PendingTwoFactorKind = mayHaveSecret ? 'renewal' : 'setup';
 
-    this.getConfirmation().pipe(
+    this.getConfirmation(mayHaveSecret).pipe(
       filter(Boolean),
       switchMap(() => this.renewSecretForUser(kind)),
       catchError((error: unknown) => {
@@ -507,8 +514,8 @@ export class TwoFactorComponent implements OnInit {
     );
   }
 
-  private getConfirmation(): Observable<boolean> {
-    if (this.userTwoFactorAuthConfigured()) {
+  private getConfirmation(mayHaveSecret: boolean): Observable<boolean> {
+    if (mayHaveSecret) {
       return this.dialogService.confirm({
         title: this.translate.instant(helptext2fa.renewSecret.title),
         message: this.translate.instant(helptext2fa.renewSecret.message),

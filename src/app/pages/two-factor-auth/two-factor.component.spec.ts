@@ -760,7 +760,7 @@ describe('TwoFactorComponent', () => {
       recovered.detectChanges();
 
       const banner = await recoveredLoader.getHarness(TnBannerHarness);
-      expect(await banner.getText()).toContain(helptext2fa.verification.pending);
+      expect(await banner.getText()).toContain(helptext2fa.verification.pendingRenewal);
       expect(await banner.getText()).not.toContain(helptext2fa.loadFailed);
     });
 
@@ -787,6 +787,34 @@ describe('TwoFactorComponent', () => {
       const banner = await enabledLoader.getHarness(TnBannerHarness);
       expect(await banner.getText()).toContain(helptext2fa.verification.pendingRenewal);
       expect(await banner.getText()).not.toContain(helptext2fa.verification.notActiveGlobally);
+    });
+
+    it('assumes a secret may exist while the page is blind, and warns accordingly', async () => {
+      // After a failed load `userTwoFactorAuthConfigured()` is a default, not a fact. If a
+      // real renewal is labelled a first-time setup, Cancel Setup says 2FA will "stay off"
+      // instead of saying the previous secret is already gone — the one sentence written
+      // to tell the user what they just lost.
+      jest.mocked(spectator.inject(AuthService).getGlobalTwoFactorConfig)
+        .mockReturnValueOnce(throwError(() => new Error('down')));
+
+      const blind = createComponent();
+      const blindLoader = TestbedHarnessEnvironment.loader(blind.fixture);
+      const dialog = jest.mocked(spectator.inject(DialogService).confirm);
+      dialog.mockClear();
+
+      await (await blindLoader.getHarness(TnButtonHarness.with({ label: 'Configure 2FA Secret' }))).click();
+      blind.detectChanges();
+
+      // The renew warning is not skipped either.
+      expect(dialog.mock.calls[0][0]).toMatchObject({ title: helptext2fa.renewSecret.title });
+
+      await (await blindLoader.getHarness(
+        TnButtonHarness.with({ label: helptext2fa.verification.cancelBtn }),
+      )).click();
+
+      expect(dialog.mock.calls.at(-1)[0]).toMatchObject({
+        message: helptext2fa.verification.cancel.renewalMessage,
+      });
     });
 
     it('reports setup as incomplete while a secret is waiting to be confirmed', async () => {
