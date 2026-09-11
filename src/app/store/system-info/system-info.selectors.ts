@@ -48,10 +48,11 @@ export const selectLicenseLoadFailed = createSelector(
  * An Enterprise product type without a license (e.g. unlicensed R-series
  * hardware) is branded as Community Edition.
  *
- * Returns null while an Enterprise system's license is still unknown, so the
- * UI never flashes the wrong edition, and falls back to the raw product type
- * when the license fetch failed rather than silently downgrading a licensed
- * appliance.
+ * Three-state on purpose: returns null while an Enterprise system's license is
+ * still unknown (system info not loaded yet), so consumers must render a
+ * neutral state rather than assume Community. Falls back to the raw product
+ * type when the license fetch failed rather than silently downgrading a
+ * licensed appliance.
  */
 export const selectBrandedProductType = createSelector(
   selectProductType,
@@ -74,11 +75,6 @@ export const selectBrandedProductType = createSelector(
 export const selectHasCommunityBranding = createSelector(
   selectBrandedProductType,
   (productType) => productType === ProductType.CommunityEdition,
-);
-
-export const selectHasEnterpriseBranding = createSelector(
-  selectBrandedProductType,
-  (productType) => productType === ProductType.Enterprise,
 );
 
 export const selectCopyrightHtml = createSelector(

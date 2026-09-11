@@ -15,7 +15,7 @@ import { RestartComponent } from 'app/pages/system-tasks/restart/restart.compone
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { selectIsEnterprise, selectProductType } from 'app/store/system-info/system-info.selectors';
+import { selectBrandedProductType, selectProductType } from 'app/store/system-info/system-info.selectors';
 
 describe('RestartComponent', () => {
   let spectator: Spectator<RestartComponent>;
@@ -28,7 +28,7 @@ describe('RestartComponent', () => {
           { selector: selectIsHaLicensed, value: false },
           { selector: selectIsHaEnabled, value: false },
           { selector: selectProductType, value: ProductType.CommunityEdition },
-          { selector: selectIsEnterprise, value: false },
+          { selector: selectBrandedProductType, value: ProductType.CommunityEdition },
         ],
       }),
       mockApi([

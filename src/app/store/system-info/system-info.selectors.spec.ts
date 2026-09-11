@@ -3,7 +3,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { License, SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
 import {
-  selectBrandedProductType, selectCopyrightHtml, selectHasCommunityBranding, selectHasEnterpriseBranding,
+  selectBrandedProductType, selectCopyrightHtml, selectHasCommunityBranding,
 } from 'app/store/system-info/system-info.selectors';
 
 describe('system-info selectors', () => {
@@ -63,15 +63,11 @@ describe('system-info selectors', () => {
     });
   });
 
-  describe('selectHasCommunityBranding / selectHasEnterpriseBranding', () => {
-    it('reflect the branded product type', () => {
+  describe('selectHasCommunityBranding', () => {
+    it('is true only for a confirmed Community Edition branding', () => {
       expect(selectHasCommunityBranding.projector(ProductType.CommunityEdition)).toBe(true);
       expect(selectHasCommunityBranding.projector(ProductType.Enterprise)).toBe(false);
       expect(selectHasCommunityBranding.projector(null)).toBe(false);
-
-      expect(selectHasEnterpriseBranding.projector(ProductType.Enterprise)).toBe(true);
-      expect(selectHasEnterpriseBranding.projector(ProductType.CommunityEdition)).toBe(false);
-      expect(selectHasEnterpriseBranding.projector(null)).toBe(false);
     });
   });
 

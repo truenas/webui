@@ -12,7 +12,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ConfigResetComponent } from 'app/pages/system-tasks/config-reset/config-reset.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
-import { selectIsEnterprise, selectProductType } from 'app/store/system-info/system-info.selectors';
+import { selectBrandedProductType, selectProductType } from 'app/store/system-info/system-info.selectors';
 
 describe('ConfigResetComponent', () => {
   let spectator: Spectator<ConfigResetComponent>;
@@ -23,7 +23,7 @@ describe('ConfigResetComponent', () => {
       provideMockStore({
         selectors: [
           { selector: selectProductType, value: ProductType.CommunityEdition },
-          { selector: selectIsEnterprise, value: false },
+          { selector: selectBrandedProductType, value: ProductType.CommunityEdition },
         ],
       }),
       mockApi([

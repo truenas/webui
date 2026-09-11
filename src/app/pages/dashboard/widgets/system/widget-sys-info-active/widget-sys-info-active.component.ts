@@ -10,6 +10,7 @@ import {
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, map } from 'rxjs';
+import { ProductType } from 'app/enums/product-type.enum';
 import { getLabelForContractType } from 'app/interfaces/system-info.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
@@ -26,7 +27,7 @@ import {
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
-  selectHasEnclosureSupport, selectHasEnterpriseBranding, selectIsEnterprise, selectIsIxHardware,
+  selectHasEnclosureSupport, selectBrandedProductType, selectIsEnterprise, selectIsIxHardware,
 } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -61,7 +62,8 @@ export class WidgetSysInfoActiveComponent {
 
   isIxHardware = toSignal(this.store$.select(selectIsIxHardware));
   isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-  protected readonly hasEnterpriseBranding = toSignal(this.store$.select(selectHasEnterpriseBranding));
+  protected readonly brandedProductType = toSignal(this.store$.select(selectBrandedProductType));
+  protected readonly ProductType = ProductType;
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   hasEnclosureSupport = toSignal(this.store$.select(selectHasEnclosureSupport));
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForActiveNode));

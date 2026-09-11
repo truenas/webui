@@ -17,7 +17,7 @@ import { WidgetSysInfoActiveComponent } from 'app/pages/dashboard/widgets/system
 import { selectIsHaLicensed, selectIsHaEnabled } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectIsIxHardware, selectProductType,
-  selectHasEnclosureSupport, selectHasEnterpriseBranding,
+  selectHasEnclosureSupport, selectBrandedProductType,
 } from 'app/store/system-info/system-info.selectors';
 
 describe('WidgetSysInfoActiveComponent', () => {
@@ -69,8 +69,8 @@ describe('WidgetSysInfoActiveComponent', () => {
             value: ProductType.Enterprise,
           },
           {
-            selector: selectHasEnterpriseBranding,
-            value: true,
+            selector: selectBrandedProductType,
+            value: ProductType.Enterprise,
           },
           {
             selector: selectHasEnclosureSupport,

@@ -12,7 +12,7 @@ import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler
 import { FailoverComponent } from 'app/pages/system-tasks/failover/failover.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
-import { selectIsEnterprise, selectProductType } from 'app/store/system-info/system-info.selectors';
+import { selectBrandedProductType, selectProductType } from 'app/store/system-info/system-info.selectors';
 
 describe('FailoverComponent', () => {
   let spectator: Spectator<FailoverComponent>;
@@ -24,7 +24,7 @@ describe('FailoverComponent', () => {
       provideMockStore({
         selectors: [
           { selector: selectProductType, value: ProductType.CommunityEdition },
-          { selector: selectIsEnterprise, value: false },
+          { selector: selectBrandedProductType, value: ProductType.CommunityEdition },
         ],
       }),
       mockApi([

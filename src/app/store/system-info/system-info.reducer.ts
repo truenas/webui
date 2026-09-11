@@ -29,11 +29,7 @@ const initialState: SystemInfoState = {
 
 export const systemInfoReducer = createReducer(
   initialState,
-  on(systemInfoLoaded, (state, { systemInfo, licenseLoadFailed }) => ({
-    ...state,
-    systemInfo,
-    licenseLoadFailed: Boolean(licenseLoadFailed),
-  })),
+  on(systemInfoLoaded, (state, { systemInfo, licenseLoadFailed }) => ({ ...state, systemInfo, licenseLoadFailed })),
   on(productTypeLoaded, (state, { productType }) => ({ ...state, productType })),
   on(ixHardwareLoaded, (state, { isIxHardware }) => ({ ...state, isIxHardware })),
 );

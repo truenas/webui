@@ -42,7 +42,7 @@ describe('CopyrightLineComponent', () => {
 
     expect(spectator.fixture.nativeElement).toHaveText(`TrueNAS®  © ${buildYear} iXsystems, Inc. dba  TrueNAS`);
     expect(spectator.fixture.nativeElement).toHaveText('iXsystems, Inc');
-    expect(spectator.query('a')).toHaveAttribute('href', 'https://truenas.com/testdrive');
+    expect(spectator.query('a')).toHaveAttribute('href', 'https://truenas.com/');
   });
 
   it('shows copyright line with product type and year of build', () => {
@@ -74,5 +74,15 @@ describe('CopyrightLineComponent', () => {
 
     expect(spectator.fixture.nativeElement).toHaveText(`TrueNAS® Community Edition  © ${buildYear} iXsystems, Inc. dba  TrueNAS`);
     expect(spectator.query('a')).toHaveAttribute('href', 'https://truenas.com/testdrive');
+  });
+
+  it('shows no edition and a neutral link while an Enterprise license is still unknown', () => {
+    store$.overrideSelector(selectProductType, ProductType.Enterprise);
+    store$.overrideSelector(selectSystemInfo, null);
+    store$.refreshState();
+    spectator.detectChanges();
+
+    expect(spectator.fixture.nativeElement).toHaveText(`TrueNAS®  © ${buildYear} iXsystems, Inc. dba  TrueNAS`);
+    expect(spectator.query('a')).toHaveAttribute('href', 'https://truenas.com/');
   });
 });

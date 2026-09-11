@@ -3,9 +3,10 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import { ProductType } from 'app/enums/product-type.enum';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { AppState } from 'app/store';
-import { selectHasEnterpriseBranding } from 'app/store/system-info/system-info.selectors';
+import { selectBrandedProductType } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-truenas-logo',
@@ -24,7 +25,7 @@ export class TruenasLogoComponent {
   readonly color = input<'primary' | 'white'>('primary');
   readonly fullSize = input(false);
   readonly hideText = input(false);
-  private readonly hasEnterpriseBranding = toSignal(this.store$.select(selectHasEnterpriseBranding));
+  private readonly brandedProductType = toSignal(this.store$.select(selectBrandedProductType));
   protected readonly activeTheme = toSignal(this.themeService.activeTheme$);
 
   protected useWhiteLogo = computed(() => {
@@ -49,13 +50,18 @@ export class TruenasLogoComponent {
   });
 
   readonly fullSizeIcon = computed(() => {
-    if (this.hasEnterpriseBranding()) {
-      return this.useWhite()
-        ? tnIconMarker('truenas-logo-enterprise', 'custom')
-        : tnIconMarker('truenas-logo-enterprise-color', 'custom');
+    switch (this.brandedProductType()) {
+      case ProductType.Enterprise:
+        return this.useWhite()
+          ? tnIconMarker('truenas-logo-enterprise', 'custom')
+          : tnIconMarker('truenas-logo-enterprise-color', 'custom');
+      case ProductType.CommunityEdition:
+        return this.useWhite()
+          ? tnIconMarker('truenas-logo-ce', 'custom')
+          : tnIconMarker('truenas-logo-ce-color', 'custom');
+      default:
+        // Edition not known yet: plain logo without an edition banner.
+        return tnIconMarker('truenas-logo', 'custom');
     }
-    return this.useWhite()
-      ? tnIconMarker('truenas-logo-ce', 'custom')
-      : tnIconMarker('truenas-logo-ce-color', 'custom');
   });
 }

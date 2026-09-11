@@ -6,6 +6,7 @@
           <tn-icon [name]="isIxHardware() ? tnIconMarker('truenas-logo', 'custom') : tnIconMarker('truenas-logo-type', 'custom')" [fullSize]="true"></tn-icon>
         </div>
 
+        <!-- isEnterprise here is a hardware-support question, not branding: it tracks the real product type on purpose. -->
         <ix-product-image
           class="product-image"
           [systemProduct]="systemInfo()?.platform"
@@ -86,9 +87,9 @@
 
           <tn-list-item>
             <strong>{{ 'Edition' | translate }}:</strong>
-            @if (isLoaded()) {
+            @if (isLoaded() && brandedProductType(); as productType) {
               <span>
-                @if (hasEnterpriseBranding()) {
+                @if (productType === ProductType.Enterprise) {
                   {{ 'Enterprise' | translate }}
                 } @else {
                   {{ 'Community' | translate }}
@@ -174,7 +175,7 @@
             }
           </tn-list-item>
 
-          @if (!hasEnterpriseBranding()) {
+          @if (brandedProductType() === ProductType.CommunityEdition) {
             <!-- The marketing message is a sentence, not a label: let it wrap instead of ellipsizing. -->
             <tn-list-item class="use-enterprise" [wrap]="true">
               <ix-use-enterprise-marketing-link></ix-use-enterprise-marketing-link>

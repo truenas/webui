@@ -115,6 +115,19 @@ describe('TruenasLogoComponent', () => {
     expect(await icons[0].getName()).toBe('app-truenas-logo-ce-color');
   });
 
+  it('enterprise with license not yet known: shows the plain full logo', async () => {
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectSystemInfoState, {
+      productType: ProductType.Enterprise,
+      systemInfo: null,
+    } as SystemInfoState);
+    store$.refreshState();
+    spectator.setInput('fullSize', true);
+    icons = await loader.getAllHarnesses(TnIconHarness);
+
+    expect(await icons[0].getName()).toBe('app-truenas-logo');
+  });
+
   it('checks white color', async () => {
     spectator.setInput('color', 'white');
     const [mark, text] = icons;
