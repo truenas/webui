@@ -13,7 +13,7 @@ import {
 } from 'app/enums/s3.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Group } from 'app/interfaces/group.interface';
-import { S3Bucket, S3Config } from 'app/interfaces/s3.interface';
+import { S3Bucket } from 'app/interfaces/s3.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
@@ -80,7 +80,6 @@ describe('S3BucketFormComponent', () => {
         mockCall('sharing.s3.update'),
         mockCall('sharing.s3.audit_choices', { GetObject: 'GetObject', PutObject: 'PutObject' }),
         mockCall('pool.filesystem_choices', ['tank', 'tank/buckets', 'tank/buckets/photos']),
-        mockCall('s3.config', { managed_root_dataset: 'tank/s3' } as S3Config),
         mockCall('group.query', [{ group: 'staff', gid: 1001 }] as Group[]),
       ]),
       mockAuth(),
@@ -135,10 +134,6 @@ describe('S3BucketFormComponent', () => {
       expect(advancedLabels).toContain('Versioning');
       expect(advancedLabels).toContain('Multipart ETag');
       expect(advancedLabels).not.toContain('Audit');
-    });
-
-    it('starts with the parent dataset set to the service managed root dataset', async () => {
-      expect(await form.getValues()).toMatchObject({ 'Parent Dataset': 'tank/s3' });
     });
 
     it('turns versioning on and defaults to Compliance retention when object lock is enabled', async () => {
