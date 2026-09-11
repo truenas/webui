@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
@@ -19,6 +20,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
+import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectLicense } from 'app/store/system-info/system-info.selectors';
 
@@ -36,6 +38,7 @@ describe('ServiceS3Component', () => {
     log_level: S3LogLevel.Notice,
     default_audit: [],
     default_audit_overflow: S3AuditOverflow.Drop,
+    managed_root_dataset: 'tank/s3',
     global_grants: [
       {
         principal_type: S3PrincipalType.User, xid: 1000, name: 'alice', access: S3Access.Deny,
@@ -59,6 +62,10 @@ describe('ServiceS3Component', () => {
       mockProvider(SystemGeneralService, {
         getCertificates: () => of([{ id: 5, name: 's3-cert' }] as Certificate[]),
       }),
+      mockProvider(FilesystemService, {
+        getFilesystemNodeProvider: () => () => of([]),
+      }),
+      mockProvider(MatDialog),
       mockProvider(SlideInRef, {
         close: jest.fn(),
         requireConfirmationWhen: jest.fn(),
@@ -88,6 +95,7 @@ describe('ServiceS3Component', () => {
       Servers: '2',
       Region: 'us-east-1',
       'Log Level': 'Notice',
+      'Managed Root Dataset': '/mnt/tank/s3',
     });
 
     const grants = await loader.getHarness(IxListHarness.with({ label: 'Global Grants' }));
@@ -103,6 +111,7 @@ describe('ServiceS3Component', () => {
       Servers: 4,
       Region: '',
       'Log Level': 'Info',
+      'Managed Root Dataset': '/mnt/tank/buckets',
     });
 
     const listeners = await loader.getHarness(IxListHarness.with({ label: 'Listen Addresses' }));
@@ -125,9 +134,31 @@ describe('ServiceS3Component', () => {
       servers: 4,
       region: '',
       log_level: S3LogLevel.Info,
+      managed_root_dataset: 'tank/buckets',
       global_grants: [{ principal_type: S3PrincipalType.User, xid: 1000, access: S3Access.Deny }],
     }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Service configuration saved');
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+  });
+
+  it('sends an empty managed root dataset when the field is cleared', async () => {
+    await form.fillForm({ 'Managed Root Dataset': '' });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('s3.update', [expect.objectContaining({
+      managed_root_dataset: '',
+    })]);
+  });
+
+  it('rejects the /mnt root as the managed root dataset', async () => {
+    await form.fillForm({ 'Managed Root Dataset': '/mnt' });
+
+    expect(spectator.component.form.controls.managed_root_dataset.errors).toMatchObject({
+      customValidator: { message: 'Select a pool or dataset. The /mnt directory itself is not a dataset.' },
+    });
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    expect(await saveButton.isDisabled()).toBe(true);
   });
 });

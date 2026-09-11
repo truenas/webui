@@ -13,6 +13,8 @@ import {
   combineLatest, map, of, shareReplay,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { DatasetPreset } from 'app/enums/dataset.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import {
   S3AuditMode,
@@ -26,9 +28,14 @@ import {
 import { choicesToOptions, idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSharingS3 } from 'app/helptext/sharing';
+import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { S3AuditMask, S3Config, S3Listener } from 'app/interfaces/s3.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
@@ -38,6 +45,7 @@ import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { portRangeValidator, rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -47,6 +55,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { createS3GrantFormGroup, S3GrantFormGroup, toS3Grants } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
 import { S3GrantsListComponent } from 'app/pages/sharing/s3/s3-grants-list/s3-grants-list.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectLicense } from 'app/store/system-info/system-info.selectors';
@@ -75,6 +84,8 @@ const defaultPort = 9000;
     IxCheckboxComponent,
     IxListComponent,
     IxListItemComponent,
+    IxExplorerComponent,
+    ExplorerCreateDatasetComponent,
     WithManageCertificatesLinkComponent,
     S3GrantsListComponent,
     FormActionsComponent,
@@ -92,6 +103,8 @@ export class ServiceS3Component implements OnInit {
   private formErrorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private systemGeneralService = inject(SystemGeneralService);
+  private filesystemService = inject(FilesystemService);
+  private validatorsService = inject(IxValidatorsService);
   private store$ = inject(Store<AppState>);
   private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
@@ -111,11 +124,23 @@ export class ServiceS3Component implements OnInit {
     servers: [1, [Validators.required, rangeValidator(1, 8)]],
     region: [''],
     log_level: [S3LogLevel.Notice, Validators.required],
+    // Optional: empty refuses S3 protocol CreateBucket requests. Held as a mount point (see the template);
+    // the /mnt root itself is the one selection the picker offers that is not a dataset.
+    managed_root_dataset: ['', [
+      this.validatorsService.customValidator(
+        (control) => !control.value || String(control.value).startsWith(`${mntPath}/`),
+        this.translate.instant('Select a pool or dataset. The /mnt directory itself is not a dataset.'),
+      ),
+    ]],
     global_grants: this.fb.array<S3GrantFormGroup>([]),
     default_audit_mode: [S3AuditMode.None],
     default_audit_actions: [[] as string[]],
     default_audit_overflow: [S3AuditOverflow.Drop],
   });
+
+  /** Datasets only: the managed root must be one, not a plain directory. */
+  protected readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ datasetsOnly: true });
+  protected readonly createDatasetProps: Omit<DatasetCreate, 'name'> = { share_type: DatasetPreset.Generic };
 
   /**
    * Loaded once and shared between the form population and the listener address options.
@@ -190,6 +215,7 @@ export class ServiceS3Component implements OnInit {
       servers: values.servers,
       region: values.region,
       log_level: values.log_level,
+      managed_root_dataset: this.toDatasetName(values.managed_root_dataset),
       global_grants: toS3Grants(this.form.controls.global_grants.controls),
       ...(this.isLicensed()
         ? {
@@ -222,10 +248,20 @@ export class ServiceS3Component implements OnInit {
       servers: config.servers,
       region: config.region,
       log_level: config.log_level,
+      managed_root_dataset: this.toMountPoint(config.managed_root_dataset),
       default_audit_mode: auditMode,
       default_audit_actions: auditActions,
       default_audit_overflow: config.default_audit_overflow,
     });
+  }
+
+  /** Middleware stores a dataset name (`tank/s3`); the picker works in mount points (`/mnt/tank/s3`). */
+  private toMountPoint(datasetName: string): string {
+    return datasetName ? `${mntPath}/${datasetName}` : '';
+  }
+
+  private toDatasetName(mountPoint: string): string {
+    return mountPoint.replace(new RegExp(`^${mntPath}/?`), '');
   }
 
   private auditMaskToForm(mask: S3AuditMask): [S3AuditMode, string[]] {

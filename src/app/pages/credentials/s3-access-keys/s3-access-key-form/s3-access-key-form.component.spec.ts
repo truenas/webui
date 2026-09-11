@@ -41,6 +41,7 @@ describe('S3AccessKeyFormComponent', () => {
     name: 'backup-key',
     username: 'alice',
     enabled: false,
+    manage_buckets: true,
     expires_at: { $date: new Date('2030-01-15T00:00:00Z').getTime() },
   } as S3AccessKey;
 
@@ -84,6 +85,7 @@ describe('S3AccessKeyFormComponent', () => {
       await form.fillForm({
         Name: 'backup-key',
         User: 'alice',
+        'Manage Buckets': true,
         'Non-expiring': true,
       });
 
@@ -95,6 +97,7 @@ describe('S3AccessKeyFormComponent', () => {
         username: 'alice',
         enabled: true,
         expires_at: null,
+        manage_buckets: true,
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
@@ -126,6 +129,7 @@ describe('S3AccessKeyFormComponent', () => {
         username: 'alice',
         enabled: true,
         expires_at: { $date: Date.UTC(2030, 0, 15) },
+        manage_buckets: false,
       }]);
     });
 
@@ -161,6 +165,7 @@ describe('S3AccessKeyFormComponent', () => {
         Name: 'backup-key',
         User: 'alice',
         Enabled: false,
+        'Manage Buckets': true,
         'Non-expiring': false,
       });
       expect(await form.getDisabledState()).toMatchObject({ User: true });
@@ -170,6 +175,7 @@ describe('S3AccessKeyFormComponent', () => {
       await form.fillForm({
         Name: 'renamed-key',
         Enabled: true,
+        'Manage Buckets': false,
         'Non-expiring': true,
       });
 
@@ -180,6 +186,7 @@ describe('S3AccessKeyFormComponent', () => {
         name: 'renamed-key',
         enabled: true,
         expires_at: null,
+        manage_buckets: false,
       }]);
       expect(spectator.inject(MatDialog).open).not.toHaveBeenCalled();
     });
