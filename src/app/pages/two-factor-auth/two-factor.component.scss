@@ -49,7 +49,9 @@
 
 .verification {
   margin-top: 16px;
-  max-width: 320px;
+  // Wide enough that the "code does not match" message reads as a sentence rather
+  // than a narrow stack, without stretching a six-digit field across the card.
+  max-width: 420px;
 }
 
 .verification-field {
