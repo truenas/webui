@@ -32,6 +32,11 @@ export const helptext2fa = {
     pending: T('A 2FA secret has been generated and is already active for your account. Scan the QR code with your\
  authenticator app, then enter the code the app shows to confirm it was added correctly. If you cancel, the secret is\
  removed and two-factor authentication stays off for your account.'),
+    // Renewing has already invalidated the old secret, so cancelling here turns 2FA off
+    // on an account that was protected a moment ago. Say so instead of implying nothing changes.
+    pendingRenewal: T('A new 2FA secret has been generated and has replaced your previous one, which no longer works.\
+ Scan the QR code with your authenticator app, then enter the code the app shows to confirm it was added correctly. If\
+ you cancel, two-factor authentication is turned off for your account and you will have to set it up again.'),
     label: T('One-Time Password'),
     tooltip: T('The code your authenticator app currently shows for this account. It changes every 30 seconds.'),
     verifyBtn: T('Confirm Code'),
@@ -43,6 +48,8 @@ export const helptext2fa = {
       title: T('Cancel Two-Factor Authentication Setup?'),
       message: T('The secret that was just generated will be removed and two-factor authentication will stay off for\
  your account. You can set it up again at any time.'),
+      renewalMessage: T('The new secret will be removed and two-factor authentication will be turned off for your\
+ account. Your previous secret was already replaced and cannot be restored, so you will have to set 2FA up again.'),
       btn: T('Remove Secret'),
       cancelBtn: T('Keep Setting Up'),
     },

@@ -41,8 +41,21 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
  * Suffixed with the account name because nothing clears this on logout: on a shared
  * workstation an origin-wide key would put the next user into a confirmation step for
  * a secret that was never theirs, with Renew and Unset hidden behind it.
+ *
+ * Being browser state, the guarantee is per browser, not per account: generate a secret
+ * here and open the page in another browser (or a private window, or after a storage
+ * clear) and it reports the setup as settled, because `secret_configured` is all the
+ * server can tell us. Closing that needs the middleware pending-secret API — until then
+ * this covers the case the report was actually about, a crash or a navigation away.
+ *
+ * The stored value also records which path opened the step, because cancelling a renewal
+ * is destructive in a way cancelling a first-time setup is not.
  */
 const pendingVerificationKeyPrefix = 'pending2FaVerification';
+
+type PendingKind = 'setup' | 'renewal';
+
+const pendingKinds: PendingKind[] = ['setup', 'renewal'];
 
 @Component({
   selector: 'ix-two-factor',
@@ -96,8 +109,18 @@ export class TwoFactorComponent implements OnInit {
   currentSessionIs2fa = signal(false);
   protected pendingVerification = signal(false);
 
+  /** Which path opened the confirmation step — decides how destructive cancelling is. */
+  private pendingKind = signal<PendingKind>('setup');
+
   /** Account the persisted pending flag is keyed to; empty until `user$` resolves. */
   private username = signal('');
+
+  /**
+   * The appliance's own OTP tolerance, in time steps either side of the current one.
+   * The confirmation check has to use it rather than its own default, or it can accept
+   * a code login will reject — the exact outcome this step exists to prevent.
+   */
+  private toleranceWindow = signal(0);
 
   protected readonly verificationForm = this.formBuilder.nonNullable.group({
     otp: ['', Validators.required],
@@ -113,7 +136,9 @@ export class TwoFactorComponent implements OnInit {
 
   protected get global2FaMsg(): string {
     if (this.pendingVerification()) {
-      return this.translate.instant(helptext2fa.verification.pending);
+      return this.translate.instant(
+        this.pendingKind() === 'renewal' ? helptext2fa.verification.pendingRenewal : helptext2fa.verification.pending,
+      );
     }
     if (!this.globalTwoFactorEnabled()) {
       return this.translate.instant(helptext2fa.globallyDisabled);
@@ -171,12 +196,14 @@ export class TwoFactorComponent implements OnInit {
           this.username.set(user.pw_name);
           this.userTwoFactorAuthConfigured.set(user.two_factor_config.secret_configured);
           this.globalTwoFactorEnabled.set(globalConfig.enabled);
+          this.toleranceWindow.set(globalConfig.window);
 
           // A stored flag without a secret behind it is stale — the secret was unset
           // elsewhere. Drop it rather than leave it for the next read.
-          const isPending = user.two_factor_config.secret_configured
-            && this.window.localStorage.getItem(this.pendingVerificationKey()) === 'true';
-          this.setPendingVerification(isPending);
+          const stored = this.window.localStorage.getItem(this.pendingVerificationKey());
+          const kind = pendingKinds.find((candidate) => candidate === stored);
+          const isPending = user.two_factor_config.secret_configured && !!kind;
+          this.setPendingVerification(isPending, kind);
         },
       });
 
@@ -188,9 +215,12 @@ export class TwoFactorComponent implements OnInit {
   }
 
   protected renewSecretOrEnable2Fa(): void {
+    // Captured before the call, which sets `userTwoFactorAuthConfigured` unconditionally.
+    const kind: PendingKind = this.userTwoFactorAuthConfigured() ? 'renewal' : 'setup';
+
     this.getConfirmation().pipe(
       filter(Boolean),
-      switchMap(() => this.renewSecretForUser()),
+      switchMap(() => this.renewSecretForUser(kind)),
       tap(() => this.isFormLoading.set(false)),
       catchError((error: unknown) => this.handleError(error)),
       takeUntilDestroyed(this.destroyRef),
@@ -220,6 +250,7 @@ export class TwoFactorComponent implements OnInit {
       const isValid = !!secret && verifyTotp(secret, this.verificationForm.controls.otp.value, {
         interval: config.interval,
         digits: config.otp_digits,
+        window: this.toleranceWindow(),
       });
 
       if (!isValid) {
@@ -234,9 +265,13 @@ export class TwoFactorComponent implements OnInit {
   }
 
   protected onCancelVerification(): void {
+    const isRenewal = this.pendingKind() === 'renewal';
+
     this.dialogService.confirm({
       title: this.translate.instant(helptext2fa.verification.cancel.title),
-      message: this.translate.instant(helptext2fa.verification.cancel.message),
+      message: this.translate.instant(
+        isRenewal ? helptext2fa.verification.cancel.renewalMessage : helptext2fa.verification.cancel.message,
+      ),
       buttonText: this.translate.instant(helptext2fa.verification.cancel.btn),
       cancelText: this.translate.instant(helptext2fa.verification.cancel.cancelBtn),
       hideCheckbox: true,
@@ -263,7 +298,7 @@ export class TwoFactorComponent implements OnInit {
     return EMPTY;
   }
 
-  private renewSecretForUser(): Observable<void> {
+  private renewSecretForUser(kind: PendingKind): Observable<void> {
     this.isFormLoading.set(true);
 
     this.currentSessionIs2fa.set(false);
@@ -277,7 +312,7 @@ export class TwoFactorComponent implements OnInit {
       switchMap(() => this.authService.refreshUser()),
       tap(() => {
         this.userTwoFactorAuthConfigured.set(true);
-        this.setPendingVerification(true);
+        this.setPendingVerification(true, kind);
       }),
       takeUntilDestroyed(this.destroyRef),
     );
@@ -350,11 +385,12 @@ export class TwoFactorComponent implements OnInit {
     );
   }
 
-  private setPendingVerification(isPending: boolean): void {
+  private setPendingVerification(isPending: boolean, kind: PendingKind = 'setup'): void {
     this.pendingVerification.set(isPending);
+    this.pendingKind.set(kind);
 
     if (isPending) {
-      this.window.localStorage.setItem(this.pendingVerificationKey(), 'true');
+      this.window.localStorage.setItem(this.pendingVerificationKey(), kind);
     } else {
       this.window.localStorage.removeItem(this.pendingVerificationKey());
     }

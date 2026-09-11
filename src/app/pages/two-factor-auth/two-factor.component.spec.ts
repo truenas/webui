@@ -6,7 +6,7 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { QrCodeComponent, QrCodeDirective } from 'ng-qrcode';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { helptext2fa } from 'app/helptext/system/2fa';
@@ -36,6 +36,14 @@ describe('TwoFactorComponent', () => {
   // brings a user who reloaded mid-setup back to the confirmation step.
   const storage = new Map<string, string>();
 
+  // RFC 6238 reference seed, so the codes below are the published test vectors.
+  const provisioningUri = 'somepath://here/TrueNAS:first-test?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
+
+  // Mutable so a test can start from an account that has no secret yet — the providers
+  // themselves cannot be overridden once the first component has instantiated the module.
+  const configuredUser = { pw_name: 'dummy', two_factor_config: { secret_configured: true } } as LoggedInUser;
+  const user$ = new BehaviorSubject<LoggedInUser>(configuredUser);
+
   const createComponent = createComponentFactory({
     component: TwoFactorComponent,
     imports: [
@@ -62,19 +70,14 @@ describe('TwoFactorComponent', () => {
         mockCall('auth.sessions', [{ current: true, credentials: CredentialType.TwoFactor } as AuthSession]),
       ]),
       mockProvider(AuthService, {
-        user$: of({
-          pw_name: 'dummy',
-          two_factor_config: {
-            secret_configured: true,
-          },
-        } as LoggedInUser),
+        user$,
         userTwoFactorConfig$: of({
-          provisioning_uri: 'somepath://here/TrueNAS:first-test?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ',
+          provisioning_uri: provisioningUri,
           interval: 30,
           otp_digits: 6,
           secret_configured: true,
         } as UserTwoFactorConfig),
-        getGlobalTwoFactorConfig: jest.fn(() => of({ enabled: false } as GlobalTwoFactorConfig)),
+        getGlobalTwoFactorConfig: jest.fn(() => of({ enabled: false, window: 0 } as GlobalTwoFactorConfig)),
         refreshUser: jest.fn(() => of(undefined)),
       }),
     ],
@@ -82,6 +85,7 @@ describe('TwoFactorComponent', () => {
 
   beforeEach(() => {
     storage.clear();
+    user$.next(configuredUser);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
@@ -93,7 +97,7 @@ describe('TwoFactorComponent', () => {
 
     const qrViewer = spectator.query(QrViewerComponent);
     expect(qrViewer).toBeTruthy();
-    expect(qrViewer).toHaveProperty('qrInfo', 'somepath://here/TrueNAS:first-test?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ');
+    expect(qrViewer).toHaveProperty('qrInfo', provisioningUri);
   });
 
   it('displays the secret from provisioning URI in the component', () => {
@@ -217,6 +221,8 @@ describe('TwoFactorComponent', () => {
     // RFC 4226 test vector for the reference seed above at counter 1, i.e. the time
     // step covering 30-59s. Pinning Date.now() keeps the code the one that verifies.
     const validCode = '287082';
+    // RFC 4226 counter 0 — the step before the one `validCode` belongs to.
+    const previousStepCode = '755224';
 
     async function generateSecret(): Promise<void> {
       const configureBtn = await loader.getHarness(TnButtonHarness.with({ label: 'Renew 2FA Secret' }));
@@ -236,7 +242,7 @@ describe('TwoFactorComponent', () => {
       await generateSecret();
 
       const banner = await loader.getHarness(TnBannerHarness);
-      expect(await banner.getText()).toContain(helptext2fa.verification.pending);
+      expect(await banner.getText()).toContain(helptext2fa.verification.pendingRenewal);
       expect(await loader.getHarnessOrNull(TnInputHarness)).not.toBeNull();
     });
 
@@ -279,7 +285,7 @@ describe('TwoFactorComponent', () => {
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
         title: helptext2fa.verification.cancel.title,
-        message: helptext2fa.verification.cancel.message,
+        message: helptext2fa.verification.cancel.renewalMessage,
         buttonText: helptext2fa.verification.cancel.btn,
         cancelText: helptext2fa.verification.cancel.cancelBtn,
         hideCheckbox: true,
@@ -314,7 +320,7 @@ describe('TwoFactorComponent', () => {
 
     it('drops the stored flag once the code is confirmed', async () => {
       await generateSecret();
-      expect(storage.get('pending2FaVerification:dummy')).toBe('true');
+      expect(storage.get('pending2FaVerification:dummy')).toBe('renewal');
 
       const otpInput = await loader.getHarness(TnInputHarness);
       await otpInput.setValue(validCode);
@@ -322,6 +328,45 @@ describe('TwoFactorComponent', () => {
       spectator.detectChanges();
 
       expect(storage.has('pending2FaVerification:dummy')).toBe(false);
+    });
+
+    it('warns that cancelling a renewal turns 2FA off, not that it stays off', async () => {
+      // The old secret is already invalidated by the time this step opens, so cancelling
+      // is destructive here in a way it is not on a first-time setup.
+      await generateSecret();
+      await (await loader.getHarness(TnButtonHarness.with({ label: helptext2fa.verification.cancelBtn }))).click();
+
+      const { message } = jest.mocked(spectator.inject(DialogService).confirm).mock.calls.at(-1)[0];
+      expect(message).toBe(helptext2fa.verification.cancel.renewalMessage);
+      expect(message).not.toContain('stay off');
+    });
+
+    it('uses the first-time wording when no secret existed before', async () => {
+      user$.next({ pw_name: 'dummy', two_factor_config: { secret_configured: false } } as LoggedInUser);
+
+      const firstTime = createComponent();
+      const firstTimeLoader = TestbedHarnessEnvironment.loader(firstTime.fixture);
+
+      await (await firstTimeLoader.getHarness(TnButtonHarness.with({ label: 'Configure 2FA Secret' }))).click();
+      firstTime.detectChanges();
+
+      const banner = await firstTimeLoader.getHarness(TnBannerHarness);
+      expect(await banner.getText()).toContain(helptext2fa.verification.pending);
+      expect(storage.get('pending2FaVerification:dummy')).toBe('setup');
+    });
+
+    it('honours the appliance tolerance window instead of its own default', async () => {
+      // Global config says window: 0, so only the current step counts. A code from the
+      // adjacent step must be refused here, or the page would confirm a code login rejects.
+      await generateSecret();
+
+      const otpInput = await loader.getHarness(TnInputHarness);
+      await otpInput.setValue(previousStepCode);
+      await (await loader.getHarness(TnButtonHarness.with({ label: helptext2fa.verification.verifyBtn }))).click();
+      spectator.detectChanges();
+
+      const field = await loader.getHarness(TnFormFieldHarness);
+      expect(await field.getErrorMessage()).toBe(helptext2fa.verification.invalid);
     });
 
     it('reports setup as incomplete while a secret is waiting to be confirmed', async () => {
