@@ -581,15 +581,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/common@npm:~21.2.19":
-  version: 21.2.19
-  resolution: "@angular/common@npm:21.2.19"
+"@angular/common@npm:~21.2.20":
+  version: 21.2.20
+  resolution: "@angular/common@npm:21.2.20"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/core": 21.2.19
+    "@angular/core": 21.2.20
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10/e8278f12928c05649586f8d3039386b8cc4c52b308a3de90b3410ca765512aa22931beef14befed3918d8666430fd9e8387acf04f4fc18adc4c0b5f7be99a912
+  checksum: 10/d364bd4e103a88d3c2cd28a76cdea05e7bda4704edac9c1c8008452aab8ff806cee41ec9ba7b560734792159e342126dc6b1e6226fa00aa123d47957a3d8faad
   languageName: node
   linkType: hard
 
@@ -618,12 +618,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/compiler@npm:~21.2.19":
-  version: 21.2.19
-  resolution: "@angular/compiler@npm:21.2.19"
+"@angular/compiler@npm:~21.2.20":
+  version: 21.2.20
+  resolution: "@angular/compiler@npm:21.2.20"
   dependencies:
     tslib: "npm:^2.3.0"
-  checksum: 10/73e0cd6f7ac9c3139b1f16b15853d977ece110755bf14c420e18137766e1328776e597be98f73d4be7fcd74cd88b1e40324a6930c082e67826aa0b736ea07ba0
+  checksum: 10/5eecc7a954a2d83dc283f67a59433f6b3e39c76b3fca707946bf78e7c01218b58c7c7e8c711c1aad4efcd693049effdfdcbe3f9dd090ff18bace6cab144f1c16
   languageName: node
   linkType: hard
 
@@ -16053,8 +16053,8 @@ __metadata:
     "@angular/build": "npm:~21.2.10"
     "@angular/cdk": "npm:~21.2.0"
     "@angular/cli": "npm:~21.2.10"
-    "@angular/common": "npm:~21.2.19"
-    "@angular/compiler": "npm:~21.2.19"
+    "@angular/common": "npm:~21.2.20"
+    "@angular/compiler": "npm:~21.2.20"
     "@angular/compiler-cli": "npm:~21.2.0"
     "@angular/core": "npm:~21.2.19"
     "@angular/forms": "npm:~21.2.0"
