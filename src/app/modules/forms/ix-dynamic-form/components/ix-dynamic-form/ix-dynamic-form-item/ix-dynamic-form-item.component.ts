@@ -9,7 +9,7 @@ import {
   InputType, TnAutocompleteComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormListComponent,
   TnFormListItemComponent, TnIconComponent, TnInputComponent, TnSelectComponent, TnTooltipDirective,
 } from '@truenas/ui-components';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
@@ -116,10 +116,16 @@ export class IxDynamicFormItemComponent implements OnInit, AfterViewInit {
    * Deferred to `AfterViewInit` (and a macrotask beyond it) as it was: adding controls seeds the
    * `FormArray` the view has just rendered, so it cannot run during that render.
    *
-   * `schema.hidden` is skipped to keep the behaviour `ix-list` had. The whole template sits under
-   * `@if (!(isHidden$ | async))`, so a list that starts hidden never rendered a list to run this,
-   * and its defaults were never added to the payload. This hook is on the item itself and would
-   * otherwise run for it regardless.
+   * A hidden list seeds nothing, which is the behaviour `ix-list` had for free: the whole template
+   * sits under `@if (!(isHidden$ | async))`, so no list was instantiated and its `ngAfterViewInit`
+   * never ran. This hook is on the item, which is always instantiated, so the question has to be
+   * asked outright — and asked of `hidden$` rather than `schema.hidden`, because a `show_if`
+   * relation or a subquestion hides a question through the subject alone: `app-schema.service`
+   * pairs `hidden$.next(true)` with `disable()` and leaves the static flag `false`.
+   *
+   * Seeding one of those would not just add invisible rows, it would un-disable them:
+   * `FormArray.push` runs `updateValueAndValidity` → `_setInitialStatus`, which re-enables an
+   * array once it holds an enabled control, so the rows would reach the install payload.
    */
   ngAfterViewInit(): void {
     const schema = this.dynamicSchema();
@@ -133,6 +139,13 @@ export class IxDynamicFormItemComponent implements OnInit, AfterViewInit {
     }
 
     setTimeout(() => {
+      // Read late, inside the macrotask: the relations that hide a question are wired while the
+      // form is built, so this is the first point the answer is settled. A control built outside
+      // `app-schema` carries no subject at all and is never hidden.
+      if (this.isHidden$?.value) {
+        return;
+      }
+
       schema.default?.forEach((defaultValue: Record<string, unknown>) => {
         this.addControl(
           schema.itemsSchema?.map((item: ChartSchemaNode) => ({
@@ -154,7 +167,7 @@ export class IxDynamicFormItemComponent implements OnInit, AfterViewInit {
     return this.dynamicForm().controls[this.dynamicSchema().controlName] as UntypedFormArray;
   }
 
-  get isHidden$(): Subject<boolean> {
+  get isHidden$(): BehaviorSubject<boolean> {
     return (this.dynamicForm().controls[this.dynamicSchema().controlName] as CustomUntypedFormField)?.hidden$;
   }
 

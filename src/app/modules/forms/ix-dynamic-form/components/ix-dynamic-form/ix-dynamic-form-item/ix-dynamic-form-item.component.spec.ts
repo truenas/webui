@@ -1,6 +1,6 @@
 import { ElementRef, signal } from '@angular/core';
 import {
-  FormArray, FormControl, FormGroup, ReactiveFormsModule,
+  FormArray, FormControl, FormGroup, ReactiveFormsModule, UntypedFormGroup,
 } from '@angular/forms';
 import { TreeComponent } from '@bugsplat/angular-tree-component';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
@@ -25,6 +25,9 @@ import {
 import { Option } from 'app/interfaces/option.interface';
 import { IxCodeEditorComponent } from 'app/modules/forms/controls/ix-code-editor/ix-code-editor.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import {
+  CustomUntypedFormArray,
+} from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untped-form-array';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxDynamicFormItemComponent } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form-item/ix-dynamic-form-item.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
@@ -404,10 +407,14 @@ describe('IxDynamicFormItemComponent', () => {
       { variable: 'select', schema: { type: 'string', default: 'fallback' } },
     ] as ChartSchemaNode[];
 
-    function createListComponent(overrides: Partial<DynamicFormSchemaList>, isEditMode = false): void {
+    function createListComponent(
+      overrides: Partial<DynamicFormSchemaList>,
+      isEditMode = false,
+      form: UntypedFormGroup = dynamicForm as unknown as UntypedFormGroup,
+    ): void {
       spectator = createComponent({
         props: {
-          dynamicForm,
+          dynamicForm: form,
           dynamicSchema: { ...listSchema, itemsSchema, ...overrides } as DynamicFormSchemaList,
           isEditMode,
         },
@@ -451,6 +458,25 @@ describe('IxDynamicFormItemComponent', () => {
       await flushSeeding();
 
       expect(spectator.component.addListItem.emit).not.toHaveBeenCalled();
+    });
+
+    /**
+     * The case the static flag misses: `show_if` relations and subquestions hide a question by
+     * pushing to `hidden$` and disabling the control, leaving `schema.hidden` false. Seeding one
+     * would also re-enable the array — `push` re-runs `_setInitialStatus` — so its invisible rows
+     * would be submitted.
+     */
+    it('seeds nothing for a list a relation has hidden, where the static flag stays false', async () => {
+      const list = new CustomUntypedFormArray([]);
+      list.hidden$.next(true);
+      list.disable();
+      const relationHiddenForm = new UntypedFormGroup({ list });
+
+      createListComponent({ default: [{ input: 'first' }] }, false, relationHiddenForm);
+      await flushSeeding();
+
+      expect(spectator.component.addListItem.emit).not.toHaveBeenCalled();
+      expect(list.disabled).toBe(true);
     });
 
     it('seeds nothing when the schema carries no defaults', async () => {

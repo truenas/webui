@@ -534,10 +534,35 @@ describe('TnFormControlHarness, a form holding more than one code editor', () =>
     expect(await controls['Stack Trace'].getValue()).toBe('second');
   });
 
-  // No disabled-state test to pair with the one above: `IxCodeEditorHarness.isDisabled()` reads
-  // CodeMirror's `state.readOnly`, which `ix-code-editor` never sets — it reconfigures `editable`
-  // instead — so it answers `false` for a disabled editor. That predates the scoping fix here and
-  // is left alone rather than asserted, which would fix the wrong behaviour in place.
+  // `IxCodeEditorHarness.isDisabled()` reads CodeMirror's `state.readOnly`, which `ix-code-editor`
+  // never sets — it reconfigures `editable` instead — so it would answer `false` for a disabled
+  // editor. `isDisabled` therefore does not delegate to it, and the editor reads as unreadable.
+  it('reads a disabled editor as unreadable rather than certifying it enabled', async () => {
+    spectator.hostComponent.projected.controls.stackTrace.disable();
+    spectator.detectComponentChanges();
+
+    expect(await (await getControls())['Stack Trace'].isDisabled()).toBe(unreadableControl);
+  });
+
+  it('leaves a disabled editor out of a whole-form disabled map, rather than in it as enabled', async () => {
+    spectator.hostComponent.projected.controls.stackTrace.disable();
+    spectator.detectComponentChanges();
+
+    expect(await getDisabledStates(await getControls())).not.toHaveProperty('Stack Trace');
+  });
+
+  // Queried off the host fixture, not `spectator.query`: the component under test here is one
+  // `tn-form-field`, and these editors sit in the host template beside it.
+  it('lets the enclosing field name the textbox CodeMirror renders', () => {
+    const editors = spectator.fixture.nativeElement.querySelectorAll('ix-code-editor');
+    const fields = spectator.fixture.nativeElement.querySelectorAll('tn-form-field');
+
+    const labelledby = editors[0].querySelector('.cm-content')?.getAttribute('aria-labelledby');
+
+    expect(labelledby).toBeTruthy();
+    // The id belongs to the field wrapping this editor, not to the one before it.
+    expect(fields[1].querySelector(`#${labelledby}`)).toBeTruthy();
+  });
 
   it('leaves the netmask input beside them readable, despite the shared container class', async () => {
     spectator.hostComponent.projected.controls.base.setValue('172.17.0.0/12');
