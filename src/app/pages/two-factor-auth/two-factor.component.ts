@@ -15,13 +15,16 @@ import {
   combineLatest, map,
 } from 'rxjs';
 import {
-  catchError,
+  catchError, defaultIfEmpty,
   filter, finalize, switchMap, take, tap,
 } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { verifyTotp } from 'app/helpers/totp.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { PendingTwoFactorKind, PendingTwoFactorService } from 'app/modules/auth/pending-two-factor.service';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
@@ -84,6 +87,15 @@ export class TwoFactorComponent implements OnInit {
   currentSessionIs2fa = signal(false);
   protected pendingVerification = signal(false);
 
+  /**
+   * Set when the load could not read the account or the global config.
+   *
+   * Without it the banner keeps rendering from field defaults, which reads as a
+   * confident "2FA is not enabled on this system" — a statement the page has no basis
+   * for and which invites the user to act on it.
+   */
+  private loadFailed = signal(false);
+
   /** Which path opened the confirmation step — decides how destructive cancelling is. */
   private pendingKind = signal<PendingTwoFactorKind>('setup');
 
@@ -135,6 +147,9 @@ export class TwoFactorComponent implements OnInit {
   });
 
   protected get global2FaMsg(): string {
+    if (this.loadFailed()) {
+      return this.translate.instant(helptext2fa.loadFailed);
+    }
     if (this.pendingVerification() && !this.userTwoFactorAuthConfigured()) {
       return this.translate.instant(helptext2fa.verification.pendingUnknown);
     }
@@ -157,7 +172,7 @@ export class TwoFactorComponent implements OnInit {
 
   protected get statusBannerType(): 'warning' | 'success' {
     const isSettled = this.globalTwoFactorEnabled() && this.userTwoFactorAuthConfigured();
-    return isSettled && !this.pendingVerification() ? 'success' : 'warning';
+    return isSettled && !this.pendingVerification() && !this.loadFailed() ? 'success' : 'warning';
   }
 
   readonly helptext = helptext2fa;
@@ -198,26 +213,41 @@ export class TwoFactorComponent implements OnInit {
 
   private loadTwoFactorConfigs(): void {
     this.isDataLoading.set(true);
+    this.loadFailed.set(false);
+    // Every source here can complete WITHOUT emitting, not just error: a clean websocket
+    // reconnect completes the response stream, so an in-flight call ends silently and
+    // combineLatest completes with it. `defaultIfEmpty` turns that into a value this can
+    // recognise — without it the card renders from field defaults and states that 2FA is
+    // off for a user who has it on, with no error anywhere on screen.
     combineLatest([
       // The whole user, not just userTwoFactorConfig$: the persisted pending flag is
       // keyed to the account name, which only the user record carries.
-      this.authService.user$.pipe(filter(Boolean), take(1)),
-      this.authService.getGlobalTwoFactorConfig(),
-      // Never fatal: without it the check falls back to the browser clock, which is
-      // where it stood before, rather than leaving the page unusable.
-      this.api.call('system.info').pipe(catchError(() => of(null))),
+      this.authService.user$.pipe(filter(Boolean), take(1), defaultIfEmpty(null as LoggedInUser | null)),
+      this.authService.getGlobalTwoFactorConfig()
+        .pipe(take(1), defaultIfEmpty(null as GlobalTwoFactorConfig | null)),
+      // The clock read alone is genuinely optional: without it the check falls back to
+      // the browser clock, which is where it stood before.
+      this.api.call('system.info')
+        .pipe(catchError(() => of(null)), defaultIfEmpty(null as SystemInfo | null)),
     ])
       .pipe(
         take(1),
         // finalize, not a line in `next`: this flag disables every secret button, so a
         // stream that errors or completes without emitting would leave the page inert
-        // with no error on screen. getGlobalTwoFactorConfig does complete empty when the
-        // socket is mid-reconnect, which needs no API failure at all.
+        // with no error on screen.
         finalize(() => this.isDataLoading.set(false)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: ([user, globalConfig, systemInfo]) => {
+          if (!user || !globalConfig) {
+            // Say the settings could not be read, rather than showing defaults that read
+            // as "2FA is off here" and inviting the user to act on them.
+            this.loadFailed.set(true);
+            this.errorHandler.showErrorModal(new Error(this.translate.instant(helptext2fa.loadFailed)));
+            return;
+          }
+
           this.username.set(user.pw_name);
           this.globalTwoFactorEnabled.set(globalConfig.enabled);
           this.toleranceWindow.set(globalConfig.window);
@@ -258,7 +288,6 @@ export class TwoFactorComponent implements OnInit {
     this.getConfirmation().pipe(
       filter(Boolean),
       switchMap(() => this.renewSecretForUser(kind)),
-      tap(() => this.isFormLoading.set(false)),
       catchError((error: unknown) => {
         this.rereadSecretState();
         return this.handleError(error);
@@ -311,13 +340,16 @@ export class TwoFactorComponent implements OnInit {
     this.authService.refreshUser().pipe(
       switchMap(() => this.authService.userTwoFactorConfig$.pipe(take(1))),
       catchError(() => {
-        this.isFormLoading.set(false);
         this.verificationForm.controls.otp.setErrors({ checkFailed: true });
         return EMPTY;
       }),
+      // A clean reconnect completes an in-flight call without emitting, so neither the
+      // subscribe nor the catchError would run. While this flag is on, Confirm Code and
+      // Cancel Setup are disabled and Renew/Unset/Skip are not rendered at all — a card
+      // with no working control, inside a dialog opened with disableClose.
+      finalize(() => this.isFormLoading.set(false)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((config) => {
-      this.isFormLoading.set(false);
       const secret = this.getProvisioningUriSecret(config.provisioning_uri);
       if (!secret) {
         // Nothing to check the code against, and no QR on screen either — telling the
@@ -420,6 +452,8 @@ export class TwoFactorComponent implements OnInit {
       switchMap((user) => this.api.call('user.renew_2fa_secret', [user.pw_name, { interval: 30, otp_digits: 6 }])),
       switchMap(() => this.authService.refreshUser()),
       tap(() => this.userTwoFactorAuthConfigured.set(true)),
+      // See onVerifyOtp: a silent completion would otherwise strand the flag on.
+      finalize(() => this.isFormLoading.set(false)),
       takeUntilDestroyed(this.destroyRef),
     );
   }
@@ -483,12 +517,13 @@ export class TwoFactorComponent implements OnInit {
       switchMap((user) => this.api.call('user.unset_2fa_secret', [user.pw_name])),
       switchMap(() => this.authService.refreshUser()),
       tap(() => {
-        this.isFormLoading.set(false);
         this.userTwoFactorAuthConfigured.set(false);
         this.currentSessionIs2fa.set(false);
         this.setPendingVerification(false);
         this.verificationForm.reset();
       }),
+      // See onVerifyOtp: a silent completion would otherwise strand the flag on.
+      finalize(() => this.isFormLoading.set(false)),
     );
   }
 

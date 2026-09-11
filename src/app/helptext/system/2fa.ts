@@ -22,6 +22,8 @@ export const helptext2fa = {
   qrCodeMessage: T('Scan this QR Code with your authenticator app of choice. The next time you try to login, you will be asked to enter an One Time Password (OTP) from your authenticator app. This step is extremely important. Without the OTP you will be locked out of this system.'),
 
   error: T('Error'),
+  loadFailed: T('The two-factor authentication settings could not be read from this system. Reload the page to try\
+ again.'),
 
   /**
    * The middleware mints and arms a secret in one call, so the setup page can only

@@ -629,19 +629,56 @@ describe('TwoFactorComponent', () => {
       )).toHaveLength(0);
     });
 
-    it('does not leave the page inert when the load completes without emitting', async () => {
-      // getGlobalTwoFactorConfig does this on its own during a socket reconnect: take(1)
-      // over a filtered auth flag completes empty, no API error involved. isDataLoading
-      // disables every secret button, so a stuck flag means a page nobody can use.
+    it('does not leave the page inert when a call completes without emitting', async () => {
+      // A clean websocket reconnect completes the response stream, so an in-flight call
+      // ends silently rather than erroring. isDataLoading disables every secret button,
+      // so a stuck flag means a page nobody can use.
+      jest.mocked(api.call).mockImplementation(((method: string) => {
+        if (method === 'system.info') {
+          return EMPTY;
+        }
+        return method === 'auth.sessions' ? of([]) : of(undefined);
+      }) as ApiService['call']);
+
+      const stalled = createComponent();
+      const stalledLoader = TestbedHarnessEnvironment.loader(stalled.fixture);
+
+      const renewBtn = await stalledLoader.getHarness(
+        TnButtonHarness.with({ label: 'Renew 2FA Secret' }),
+      );
+      expect(await renewBtn.isDisabled()).toBe(false);
+    });
+
+    it('says the settings could not be read rather than rendering defaults', async () => {
+      // Silently completing the user read would otherwise leave the card stating that 2FA
+      // is off on a system where it is on, with no error anywhere on screen.
       jest.mocked(spectator.inject(AuthService).getGlobalTwoFactorConfig).mockReturnValueOnce(EMPTY);
 
       const stalled = createComponent();
       const stalledLoader = TestbedHarnessEnvironment.loader(stalled.fixture);
 
-      const configureBtn = await stalledLoader.getHarness(
-        TnButtonHarness.with({ label: 'Configure 2FA Secret' }),
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+      const banner = await stalledLoader.getHarness(TnBannerHarness);
+      expect(await banner.getText()).toContain(helptext2fa.loadFailed);
+    });
+
+    it('releases the form flag when the confirming read completes without emitting', async () => {
+      await generateSecret();
+      jest.mocked(spectator.inject(AuthService).refreshUser).mockReturnValueOnce(EMPTY);
+
+      const otpInput = await loader.getHarness(TnInputHarness);
+      await otpInput.setValue(validCode);
+      const confirmBtn = await loader.getHarness(
+        TnButtonHarness.with({ label: helptext2fa.verification.verifyBtn }),
       );
-      expect(await configureBtn.isDisabled()).toBe(false);
+      await confirmBtn.click();
+      spectator.detectChanges();
+
+      // Confirm Code and Cancel Setup are the only controls rendered in this state.
+      expect(await confirmBtn.isDisabled()).toBe(false);
+      expect(await (await loader.getHarness(
+        TnButtonHarness.with({ label: helptext2fa.verification.cancelBtn }),
+      )).isDisabled()).toBe(false);
     });
 
     it('surfaces a load failure instead of disabling the page silently', async () => {
