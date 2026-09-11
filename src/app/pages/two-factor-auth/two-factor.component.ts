@@ -167,13 +167,14 @@ export class TwoFactorComponent implements OnInit {
     if (this.loadFailed()) {
       return this.translate.instant(helptext2fa.loadFailed);
     }
-    if (this.pendingVerification() && !this.userTwoFactorAuthConfigured()) {
-      return this.translate.instant(helptext2fa.verification.pendingUnknown);
-    }
     if (this.pendingVerification()) {
-      return this.translate.instant(
-        this.pendingKind() === 'renewal' ? helptext2fa.verification.pendingRenewal : helptext2fa.verification.pending,
-      );
+      const pending = this.translate.instant(this.pendingMessage());
+      // The banner shows one message, and the paragraph that normally carries this caveat
+      // is gated on the same flag — so without this the page drops the one fact the user
+      // needs and keeps the claim that overstates what just happened.
+      return this.globalTwoFactorEnabled()
+        ? pending
+        : `${pending} ${this.translate.instant(helptext2fa.verification.notActiveGlobally)}`;
     }
     if (!this.globalTwoFactorEnabled()) {
       return this.translate.instant(helptext2fa.globallyDisabled);
@@ -185,6 +186,16 @@ export class TwoFactorComponent implements OnInit {
       return this.translate.instant(helptext2fa.allSetUp);
     }
     return this.translate.instant(helptext2fa.enabledGloballyButNotForUser);
+  }
+
+  private pendingMessage(): string {
+    if (!this.userTwoFactorAuthConfigured()) {
+      return helptext2fa.verification.pendingUnknown;
+    }
+
+    return this.pendingKind() === 'renewal'
+      ? helptext2fa.verification.pendingRenewal
+      : helptext2fa.verification.pending;
   }
 
   protected get statusBannerType(): 'warning' | 'success' {

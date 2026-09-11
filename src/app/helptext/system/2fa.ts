@@ -44,6 +44,12 @@ export const helptext2fa = {
     // active" there would contradict the error the user just dismissed.
     pendingUnknown: T('A 2FA secret may have been generated, but it could not be read back. Generate a new one to try\
  again, or cancel to make sure no secret is left on your account.'),
+    // Appended to whichever pending message is showing when 2FA is off system-wide: the
+    // pending copy says the secret is active, which is only true once an administrator
+    // turns 2FA on, and the paragraph that normally carries that caveat is not rendered
+    // in this state.
+    notActiveGlobally: T('Two-factor authentication is not enabled on this system yet, so this secret has no effect\
+ until an administrator enables it.'),
     label: T('One-Time Password'),
     tooltip: T('The code your authenticator app currently shows for this account. It changes every 30 seconds.'),
     verifyBtn: T('Confirm Code'),

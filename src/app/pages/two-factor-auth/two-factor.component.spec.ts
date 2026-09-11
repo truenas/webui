@@ -764,6 +764,31 @@ describe('TwoFactorComponent', () => {
       expect(await banner.getText()).not.toContain(helptext2fa.loadFailed);
     });
 
+    it('keeps the globally-disabled caveat while a secret waits to be confirmed', async () => {
+      // The pending copy says the secret is active, which is only true once an admin turns
+      // 2FA on — and the paragraph that normally carries that caveat is gated on the same
+      // flag, so the banner is the only place left to say it.
+      await generateSecret();
+
+      const banner = await loader.getHarness(TnBannerHarness);
+      expect(await banner.getText()).toContain(helptext2fa.verification.pendingRenewal);
+      expect(await banner.getText()).toContain(helptext2fa.verification.notActiveGlobally);
+    });
+
+    it('drops the caveat once 2FA is enabled system-wide', async () => {
+      jest.mocked(spectator.inject(AuthService).getGlobalTwoFactorConfig)
+        .mockReturnValueOnce(of({ enabled: true, window: 0 } as GlobalTwoFactorConfig));
+
+      const enabled = createComponent();
+      const enabledLoader = TestbedHarnessEnvironment.loader(enabled.fixture);
+      await (await enabledLoader.getHarness(TnButtonHarness.with({ label: 'Renew 2FA Secret' }))).click();
+      enabled.detectChanges();
+
+      const banner = await enabledLoader.getHarness(TnBannerHarness);
+      expect(await banner.getText()).toContain(helptext2fa.verification.pendingRenewal);
+      expect(await banner.getText()).not.toContain(helptext2fa.verification.notActiveGlobally);
+    });
+
     it('reports setup as incomplete while a secret is waiting to be confirmed', async () => {
       const emitted: boolean[] = [];
       spectator.component.setupComplete.subscribe((isComplete) => emitted.push(isComplete));
