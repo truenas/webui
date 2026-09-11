@@ -226,19 +226,19 @@ describe('NavigateAndHighlightService', () => {
     expect(late.scrollIntoView).not.toHaveBeenCalled();
   }));
 
-  it('dispatches synthetic ArrowDown events to sync the mat-menu KeyManager with the target item', () => {
-    // Smoke test for the focus-target dance against mat-mdc-menu-panel —
+  it('dispatches synthetic ArrowDown events to sync the menu KeyManager with the target item', () => {
+    // Smoke test for the focus-target dance against tn-menu's `.tn-menu` panel —
     // the gnarliest piece of the highlight code. A KeyManager would normally
-    // be wired up by Material; here we just observe that one ArrowDown
+    // be wired up by CdkMenu; here we just observe that one ArrowDown
     // keydown is fired per step from the first item to the target.
     const menuPanel = document.createElement('div');
-    menuPanel.classList.add('mat-mdc-menu-panel');
+    menuPanel.classList.add('tn-menu');
     document.body.appendChild(menuPanel);
 
     const items = ['first', 'second', 'third', 'fourth'].map((id) => {
       const item = document.createElement('button');
       item.id = id;
-      item.classList.add('mat-mdc-menu-item');
+      item.classList.add('tn-menu-item');
       menuPanel.appendChild(item);
       return item;
     });
@@ -264,7 +264,7 @@ describe('NavigateAndHighlightService', () => {
     expect(dispatched[1].keyCode).toBe(40);
   });
 
-  it('does NOT hijack Enter when the highlighted target is not inside a mat-menu', () => {
+  it('does NOT hijack Enter when the highlighted target is not inside a menu', () => {
     const button = document.createElement('button');
     button.id = 'plain-button';
     button.click = jest.fn();

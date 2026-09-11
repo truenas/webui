@@ -1,0 +1,358 @@
+// App-wide element styling: base typography, the `.form-element` form rhythm,
+// tooltips, the search-highlight pulse and a couple of overlay z-indexes.
+// Was `_material-reduction.scss` until NAS-141025 — it existed to walk back Angular
+// Material's defaults, and was renamed once the last of Material was removed.
+@import 'scss-imports/cssvars';
+@import 'mixins/text';
+@import 'mixins/animations';
+
+/* TYPOGRAPHY */
+
+p { margin-bottom: 1.15rem; }
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  line-height: 1.15;
+  margin: 0;
+}
+
+h1 {
+  color: var(--fg1);
+  font-size: 2.488em;
+  margin-top: 0;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-family-header);
+  font-weight: 500;
+}
+
+h4,
+h5 {
+  font-family: var(--font-family-body);
+  font-weight: 400;
+}
+
+h2 {font-size: 2.074em;}
+
+h3 {font-size: 1.728em;}
+
+h4 {font-size: 1.44em;}
+
+h5 {font-size: 1.2em;}
+
+small {font-size: 0.833em;}
+
+span.code {
+  background: rgba(255, 255, 255, 0.1);
+  font-family: var(--font-family-monospace);
+  opacity: 0.75;
+}
+
+/*********************************************************************/
+/* Dematerialize Form Fields :) */
+.form-element {
+  margin: 16px 0 17px;
+  text-align: left;
+}
+
+.form-element .label.input-text,
+.form-element .label.input-select {
+  font-size: x-small;
+}
+
+.form-element .label-container {
+  align-items: center;
+  display: flex;
+  height: 24px;
+  margin-bottom: 4px;
+  padding: 4px 0;
+
+  label {
+    margin-right: 8px;
+  }
+}
+
+.fieldset {
+  padding-bottom: 24px;
+}
+
+.fieldset.empty-fieldset {
+  padding-bottom: 0;
+}
+
+.full-width {
+  position: relative;
+}
+
+.form-element input[type = 'password'],
+.form-element input[type = 'email'],
+.form-element input[type = 'text'],
+.form-element input[type = 'number'],
+.form-element textarea,
+.form-element select {
+  background-color: var(--bg1);
+  border: solid 1px var(--lines);
+  box-sizing: border-box;
+  color: var(--fg1);
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: var(--disabled-opacity);
+  }
+}
+
+.form-element,
+#password,
+.form-element .form-button,
+.form-element input[type = 'password'],
+.form-element input[type = 'email'],
+.form-element input[type = 'text'],
+.form-element input[type = 'number'],
+.form-element input[type = 'search'],
+.form-element textarea,
+.form-element select {
+  border-radius: 0;
+  line-height: normal !important;
+  min-height: 33px;
+  width: 100% !important;
+}
+
+.form-element textarea {
+  max-width: 100%;
+  min-width: 100%;
+
+  .no-rows {
+    min-height: 96px;
+  }
+}
+
+ix-tooltip button {
+  i,
+  tn-icon {
+    opacity: 0.5;
+  }
+}
+
+.label-container ix-tooltip {
+  margin: 0;
+}
+
+.tooltip .material-icons {
+  font-size: 16px !important;
+}
+
+.sidenav-link:hover,
+.slide-in-nav-item:hover {
+  background-color: var(--hover-bg) !important;
+}
+
+.value {
+  font-weight: 500;
+}
+
+.label {
+  margin-right: 8px;
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+ix-tooltip {
+  popper-content {
+    display: none;
+  }
+}
+
+// Tooltip container must have explicit z-index to appear above CDK overlays (z-index: 1000).
+// The z-index in _tn-styles.scss doesn't apply because the selector hierarchy is inverted
+// when popperAppendTo="body" is used (ngxp__container becomes the parent, not child).
+// CDK overlays sit around z-index 1000-1400, so 20001 ensures tooltips appear above them.
+.ngxp__container {
+  border-radius: 6px !important;
+  z-index: 20001 !important;
+
+  &[aria-hidden='false'] {
+    display: block !important;
+  }
+
+  &[data-popper-placement=right] {
+    margin-left: 13px !important;
+  }
+
+  &[data-popper-placement=top] {
+    margin-left: 11px !important;
+  }
+
+  &[data-popper-placement=bottom] {
+    margin-left: 11px !important;
+  }
+}
+
+ix-root {
+  .warning {
+    color: var(--orange);
+  }
+
+  .error,
+  .error-warning {
+    color: var(--error);
+  }
+
+  %focused-shared {
+    box-shadow: 0 0 0 1.5px var(--focus-bg) inset !important;
+    outline-width: 0;
+  }
+
+  .cdk-focused,
+  .cdk-keyboard-focused,
+  .cdk-mouse-focused {
+    @extend %focused-shared;
+    background-color: var(--focus-bg) !important;
+  }
+
+  ix-app-row:focus-visible,
+  ix-app-row:focus {
+    @extend %focused-shared;
+  }
+}
+
+body {
+  ix-dynamic-form-item.highlighted > div:first-child {
+    outline: 1.5px solid var(--primary);
+  }
+
+  // Both variants paint the highlight via an absolutely-positioned ::after
+  // overlay so the visual is on top of the element's content (outline /
+  // box-shadow on the host gets hidden under child backgrounds in cards).
+  .ix-highlight-target,
+  .ix-highlight-target-inset {
+    // CSS multi-column layouts (master-detail .scroll-window uses `columns:`)
+    // can fragment a tall block across columns, splitting the card and the
+    // ::after overlay in half. Keep the highlight target atomic.
+    break-inside: avoid;
+    // `!important` is needed because some hosts (e.g. `.details-item a` from
+    // shared card mixins) set `overflow: hidden` with equal-or-higher
+    // specificity, which clips the ::after pulse outline so the user only
+    // sees a color flash on the link with no animated border.
+    overflow: visible !important;
+    position: relative !important;
+
+    // The service focuses the highlighted host (adding tabindex=-1 if it
+    // isn't natively focusable). Suppress the browser's default focus ring,
+    // the cdk-focused background-tint, AND any focus-driven color change so
+    // the only visual is our pulse — the ::after IS the focus indicator.
+    // `<tr>` is excluded because the highlight is painted via outline +
+    // box-shadow ON THE HOST for table rows (the ::after overlay isn't
+    // reliable on `<tr>`); zeroing those out here would erase the pulse.
+    &:not(tr) {
+      &:focus,
+      &:focus-visible,
+      &.cdk-focused,
+      &.cdk-keyboard-focused,
+      &.cdk-mouse-focused {
+        background-color: inherit !important;
+        box-shadow: none !important;
+        color: inherit !important;
+        outline: none !important;
+      }
+    }
+
+    &::after {
+      border-radius: inherit;
+      bottom: 0;
+      content: '';
+      left: 0;
+      pointer-events: none;
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: 999;
+    }
+  }
+
+  // Default outset variant — outline + glow drawn OUTSIDE the element edge.
+  .ix-highlight-target::after {
+    animation: ix-highlight-pulse 1.5s infinite;
+
+    @media (prefers-reduced-motion) {
+      animation: none;
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+  }
+
+  // Inset variant — solid border drawn at the element's edges, painted from
+  // inside via the ::after overlay. Use for elements whose surrounding
+  // overflow:hidden parent would clip an outset outline (master-detail cards).
+  .ix-highlight-target-inset::after {
+    animation: ix-highlight-pulse-inset 1.5s ease-in-out infinite;
+    border: 2px solid var(--primary);
+
+    @media (prefers-reduced-motion) {
+      animation: none;
+    }
+  }
+
+  // `<tr>` does not establish a reliable containing block for an absolutely
+  // positioned ::after — the `top/right/bottom/left: 0` overlay escapes the
+  // row's box and stretches across the table's positioned ancestor, visibly
+  // distorting the page. Paint the pulse directly on the row (skip the
+  // ::after overlay) and always use the outset variant — `border-collapse`
+  // makes a `border` on `<tr>` unreliable, and tables don't have the
+  // overflow-hidden parents that motivated the inset variant.
+  tr.ix-highlight-target,
+  tr.ix-highlight-target-inset {
+    animation: ix-highlight-pulse 1.5s infinite;
+
+    &::after {
+      content: none;
+    }
+
+    @media (prefers-reduced-motion) {
+      animation: none;
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+  }
+}
+
+table {
+  overflow: auto;
+
+  @media(max-width: $breakpoint-md) {
+    tr th {
+      width: 78px;
+    }
+  }
+
+  ul li {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+}
+
+// Inline highlight targets (e.g. router-outlet content links) inside a tab panel need
+// to be block-level for the ::after pulse overlay to size correctly. Rooted on the
+// tabpanel role, which the plain <div> tab hosts carry since tn-tabs replaced
+// mat-tab-nav-panel.
+[role='tabpanel'] {
+  :is(.ix-highlight-target, .ix-highlight-target-inset) {
+    &:not(button) {
+      display: block;
+    }
+  }
+}
+
+// Overlay container for menus inside the alert panel.
+// Must be above alert panel (z-index: 1001) so menus render on top.
+.alert-panel-overlay-container {
+  z-index: 1002;
+}

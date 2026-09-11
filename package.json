@@ -78,7 +78,6 @@
     "@angular/compiler-cli": "~21.2.0",
     "@angular/core": "~21.2.19",
     "@angular/forms": "~21.2.0",
-    "@angular/material": "~21.2.0",
     "@angular/platform-browser": "~21.2.0",
     "@angular/platform-browser-dynamic": "~21.2.0",
     "@angular/router": "~21.2.0",

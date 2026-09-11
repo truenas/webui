@@ -1,17 +1,3 @@
-:host-context(.mat-mdc-menu-panel) {
-  :host {
-    display: block;
-
-    ::ng-deep .role-missing a {
-      opacity: 1;
-    }
-  }
-}
-
-:host-context(mat-list) :host {
-  display: block;
-}
-
 :host {
   cursor: not-allowed;
   display: inline-block;
@@ -19,14 +5,14 @@
 }
 
 :host ::ng-deep .role-missing {
-  // @truenas/ui-components controls render their own (non-Material) markup, so the
-  // Material-class dimming below never reaches them and the `button:disabled` reset
-  // above cancels their built-in disabled opacity. Dim the whole tn-* host instead —
-  // opacity compounds over the inner control regardless of that reset — so role-gated
-  // tn-* buttons/toggles read as disabled. The lock icon is a sibling, so it stays crisp.
-  // Block pointer events on the host too: the `a, button` reset below only neutralises
-  // tn-button/tn-icon-button (their inner element is an anchor/button), but tn-checkbox
-  // and tn-slide-toggle expose a <label>/<input>, which stays clickable otherwise.
+  // @truenas/ui-components controls render their own markup and the `button:disabled`
+  // reset below cancels their built-in disabled opacity. Dim the whole tn-* host
+  // instead — opacity compounds over the inner control regardless of that reset — so
+  // role-gated tn-* buttons/toggles read as disabled. The lock icon is a sibling, so it
+  // stays crisp. Block pointer events on the host too: the `a, button` reset below only
+  // neutralises tn-button/tn-icon-button (their inner element is an anchor/button), but
+  // tn-checkbox and tn-slide-toggle expose a <label>/<input>, which stays clickable
+  // otherwise.
   tn-button,
   tn-icon-button,
   tn-slide-toggle,
@@ -36,32 +22,20 @@
     pointer-events: none;
   }
 
-  .mat-mdc-checkbox,
-  .mdc-switch__handle,
   a,
   button {
     cursor: none;
     pointer-events: none;
 
     &:disabled {
-      color: var(--mdc-icon-button-icon-color);
+      color: var(--fg2);
       opacity: 1;
     }
   }
 
-  .mat-mdc-checkbox,
-  .mat-mdc-slide-toggle,
-  .mdc-button__label,
-  .mat-icon,
-  a,
-  .mat-mdc-menu-item-text {
-    color: var(--mdc-icon-button-icon-color);
+  a {
+    color: var(--fg2);
     opacity: 0.5;
-
-    &:disabled {
-      color: var(--mdc-icon-button-icon-color);
-      opacity: 1;
-    }
 
     + .role-missing-icon {
       bottom: 5px;

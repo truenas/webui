@@ -11,7 +11,7 @@ import {
   lifetimeTokenUpdated,
   terminalFontSizeUpdated,
   localizationFormSubmitted, noPreferencesFound,
-  preferencesLoaded, preferredColumnsUpdated, shownNewIndicatorKeysUpdated, themeChangedInGuiForm,
+  preferencesLoaded, preferredColumnsUpdated, themeChangedInGuiForm,
   themeNotFound,
   updateRebootAfterManualUpdate,
 } from 'app/store/preferences/preferences.actions';
@@ -54,9 +54,6 @@ export const preferencesReducer = createReducer(
       tableDisplayedColumns: mergedPreferences,
     });
   }),
-  on(shownNewIndicatorKeysUpdated, (state, { keys }) => updatePreferences(state, {
-    shownNewFeatureIndicatorKeys: keys,
-  })),
   on(localizationFormSubmitted, (state, { dateFormat, timeFormat, language }) => updatePreferences(state, {
     dateFormat,
     timeFormat,

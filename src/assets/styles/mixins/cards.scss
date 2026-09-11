@@ -1,5 +1,4 @@
 @import 'mixins/animations';
-@import 'mixins/buttons';
 @import 'scss-imports/variables';
 
 @mixin details-cards {
@@ -53,40 +52,6 @@
   border-radius: 0;
   margin: 0;
 
-  mat-card-header {
-    align-items: center;
-    border-bottom: 1px solid var(--lines);
-    justify-content: space-between;
-    min-height: 40px;
-    padding: 8px 8px 8px 16px;
-
-    .mat-mdc-button {
-      flex-shrink: 0;
-    }
-  }
-
-  .mat-mdc-card-title {
-    align-items: center;
-    column-gap: 5px;
-    display: flex;
-    font-size: 1.65rem;
-    margin-bottom: 0;
-
-    // Smaller text for smaller screens
-    @media (max-width: $breakpoint-flex) {
-      font-size: 1.728em;
-    }
-  }
-
-  mat-card-content {
-    margin: 0;
-    padding: 16px !important;
-
-    > div {
-      padding: 0;
-    }
-  }
-
   ngx-skeleton-loader {
     flex: 1;
   }
@@ -137,19 +102,6 @@
       ::ng-deep .loader {
         margin-bottom: 0;
       }
-    }
-  }
-
-  mat-card-actions {
-    border-top: 1px solid var(--lines);
-    box-sizing: border-box;
-    display: flex;
-    justify-content: flex-end;
-    margin: 0;
-    padding: 8px 8px 8px 16px;
-
-    .mdc-button--outlined {
-      @include stroked-button();
     }
   }
 }
