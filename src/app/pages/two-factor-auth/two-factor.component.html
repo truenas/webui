@@ -26,12 +26,12 @@
     }
     <div class="button-group">
       <!-- Renewing or unsetting while a secret is still unconfirmed would just replace one
-           unconfirmed secret with another; the confirmation step owns those actions. Skip
-           is deliberately outside the gate: it touches no secret, and it is the only
-           non-destructive way out of the first-login dialog, which is opened with
-           disableClose. A renew that fails leaves this page pending with no secret behind
-           it, and hiding Skip there would leave Cancel Setup as the sole exit. -->
-      @if (!pendingVerification()) {
+           unconfirmed secret with another, so the confirmation step owns those actions —
+           but only while a secret actually exists, hence hasUnconfirmedSecret() rather
+           than pendingVerification(). Skip sits outside the gate entirely: it touches no
+           secret, and it is the only non-destructive way out of the first-login dialog,
+           which is opened with disableClose. -->
+      @if (!hasUnconfirmedSecret()) {
         <tn-button
           color="primary"
           [testId]="'renew-secret'"

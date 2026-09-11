@@ -37,12 +37,19 @@ export const helptext2fa = {
     pendingRenewal: T('A new 2FA secret has been generated and has replaced your previous one, which no longer works.\
  Scan the QR code with your authenticator app, then enter the code the app shows to confirm it was added correctly. If\
  you cancel, two-factor authentication is turned off for your account and you will have to set it up again.'),
+    // The marker is written before the call that mints the secret, so a failed renew
+    // leaves the step on screen with nothing behind it. Saying a secret "is already
+    // active" there would contradict the error the user just dismissed.
+    pendingUnknown: T('A 2FA secret may have been generated, but it could not be read back. Generate a new one to try\
+ again, or cancel to make sure no secret is left on your account.'),
     label: T('One-Time Password'),
     tooltip: T('The code your authenticator app currently shows for this account. It changes every 30 seconds.'),
     verifyBtn: T('Confirm Code'),
     cancelBtn: T('Cancel Setup'),
     invalid: T('That code does not match this secret. Check that your authenticator app was set up from the QR code\
  above and that your device clock is correct, then enter the code it shows now.'),
+    unreadableSecret: T('The secret for this account could not be read, so the code cannot be checked. Generate a new\
+ secret and scan it again.'),
     verified: T('Two-factor authentication is confirmed for your account.'),
     cancel: {
       title: T('Cancel Two-Factor Authentication Setup?'),

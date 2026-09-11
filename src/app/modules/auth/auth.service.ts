@@ -24,6 +24,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { LoginExMechanism, LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { PendingTwoFactorService } from 'app/modules/auth/pending-two-factor.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
@@ -40,6 +41,7 @@ export class AuthService implements OnDestroy {
   private tokenLastUsedService = inject(TokenLastUsedService);
   private wsStatus = inject(WebSocketStatusService);
   private errorHandler = inject(ErrorHandlerService);
+  private pendingTwoFactor = inject(PendingTwoFactorService);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
 
@@ -185,8 +187,15 @@ export class AuthService implements OnDestroy {
             return of(false);
           }
 
-          return this.userTwoFactorConfig$.pipe(
-            map((userConfig) => !userConfig.secret_configured),
+          // A secret that exists but has not been confirmed still needs the prompt: the
+          // user may have reloaded mid-setup, and `secret_configured` alone would let
+          // them past the dialog with an armed secret their app never received.
+          return this.user$.pipe(
+            filter(Boolean),
+            map((user) => {
+              return !user.two_factor_config.secret_configured
+                || !!this.pendingTwoFactor.get(user.pw_name);
+            }),
           );
         }),
       )),

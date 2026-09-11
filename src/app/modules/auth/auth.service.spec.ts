@@ -27,6 +27,7 @@ import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { PendingTwoFactorService } from 'app/modules/auth/pending-two-factor.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -68,6 +69,9 @@ describe('AuthService', () => {
     providers: [
       mockAuth(),
       mockProvider(LocalStorageService),
+      // mockAuth's WINDOW stub has non-persisting localStorage jest.fn()s, so drive the
+      // pending marker through its service rather than through storage.
+      mockProvider(PendingTwoFactorService),
       mockApi([
         mockCall('auth.me', authMeUser),
         mockCall('auth.logout'),
@@ -476,6 +480,26 @@ describe('AuthService', () => {
       const result = await firstValueFrom(spectator.service.isTwoFactorSetupRequired());
 
       expect(result).toBe(false);
+    });
+
+    it('returns true when the configured secret has not been confirmed yet', async () => {
+      // The reload case this exists for: the user generated a secret and reloaded before
+      // confirming it. secret_configured alone would walk them past the setup dialog with
+      // an armed secret their authenticator app may never have received.
+      const userWithSecret = {
+        ...authMeUser,
+        two_factor_config: {
+          secret_configured: true,
+        } as UserTwoFactorConfig,
+      };
+
+      spectator.inject(MockApiService).mockCall('auth.me', userWithSecret);
+      await firstValueFrom(spectator.service.refreshUser());
+      jest.mocked(spectator.inject(PendingTwoFactorService).get).mockReturnValue('renewal');
+
+      const result = await firstValueFrom(spectator.service.isTwoFactorSetupRequired());
+
+      expect(result).toBe(true);
     });
   });
 

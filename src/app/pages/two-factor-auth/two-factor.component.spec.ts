@@ -461,10 +461,11 @@ describe('TwoFactorComponent', () => {
       expect(api.call).toHaveBeenCalledWith('user.unset_2fa_secret', ['dummy']);
     });
 
-    it('reports an unusable provisioning URI as a mismatched code, not a dead button', async () => {
+    it('says the secret could not be read rather than blaming the code or the clock', async () => {
       // A first-time setup whose renew failed leaves the step on screen with no secret
-      // behind it. `new URL(null)` throws inside the subscribe, so Confirm Code would do
-      // nothing at all — no message, no state change, just a console error.
+      // behind it. `new URL(null)` threw inside the subscribe, so Confirm Code did
+      // nothing at all — and the generic message would send the user to re-scan a QR
+      // code that is not on screen.
       await generateSecret();
       twoFactorConfig$.next({ ...twoFactorConfig, provisioning_uri: null });
 
@@ -474,7 +475,33 @@ describe('TwoFactorComponent', () => {
       spectator.detectChanges();
 
       const field = await loader.getHarness(TnFormFieldHarness);
-      expect(await field.getErrorMessage()).toBe(helptext2fa.verification.invalid);
+      expect(await field.getErrorMessage()).toBe(helptext2fa.verification.unreadableSecret);
+    });
+
+    it('keeps Configure reachable when a renew failed before minting a secret', async () => {
+      // pendingVerification() is true but no secret exists, so the reason for hiding the
+      // secret-management buttons does not apply — and hiding them would leave Cancel
+      // Setup as the only control on the page.
+      user$.next({ pw_name: 'dummy', two_factor_config: { secret_configured: false } } as LoggedInUser);
+      jest.mocked(api.call).mockImplementation(((method: string) => {
+        if (method === 'user.renew_2fa_secret') {
+          return throwError(() => new Error('nope'));
+        }
+        return method === 'auth.sessions' ? of([]) : of(undefined);
+      }) as ApiService['call']);
+
+      const failed = createComponent();
+      const failedLoader = TestbedHarnessEnvironment.loader(failed.fixture);
+
+      await (await failedLoader.getHarness(TnButtonHarness.with({ label: 'Configure 2FA Secret' }))).click();
+      failed.detectChanges();
+
+      expect(await failedLoader.getAllHarnesses(
+        TnButtonHarness.with({ label: 'Configure 2FA Secret' }),
+      )).toHaveLength(1);
+
+      const banner = await failedLoader.getHarness(TnBannerHarness);
+      expect(await banner.getText()).toContain(helptext2fa.verification.pendingUnknown);
     });
 
     it('keeps Skip Setup reachable in the dialog when a first-time renew failed', async () => {
