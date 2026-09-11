@@ -48,6 +48,14 @@ describe('TwoFactorComponent', () => {
   // tests is parked a step earlier, so only a check using appliance time accepts it.
   const applianceNow = 59_000;
   const browserNow = 5_000;
+
+  const twoFactorConfig = {
+    provisioning_uri: provisioningUri,
+    interval: 30,
+    otp_digits: 6,
+    secret_configured: true,
+  } as UserTwoFactorConfig;
+  const twoFactorConfig$ = new BehaviorSubject(twoFactorConfig);
   const user$ = new BehaviorSubject<LoggedInUser>(configuredUser);
 
   const createComponent = createComponentFactory({
@@ -78,12 +86,7 @@ describe('TwoFactorComponent', () => {
       ]),
       mockProvider(AuthService, {
         user$,
-        userTwoFactorConfig$: of({
-          provisioning_uri: provisioningUri,
-          interval: 30,
-          otp_digits: 6,
-          secret_configured: true,
-        } as UserTwoFactorConfig),
+        userTwoFactorConfig$: twoFactorConfig$,
         getGlobalTwoFactorConfig: jest.fn(() => of({ enabled: false, window: 0 } as GlobalTwoFactorConfig)),
         refreshUser: jest.fn(() => of(undefined)),
       }),
@@ -93,6 +96,7 @@ describe('TwoFactorComponent', () => {
   beforeEach(() => {
     storage.clear();
     user$.next(configuredUser);
+    twoFactorConfig$.next(twoFactorConfig);
     jest.spyOn(Date, 'now').mockReturnValue(browserNow);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -311,7 +315,11 @@ describe('TwoFactorComponent', () => {
     it('keys the stored flag to the account, so another user\'s flag is ignored', async () => {
       // Nothing clears this on logout, so on a shared workstation an origin-wide key
       // would drop the next user into a confirmation step for a secret that is not theirs.
-      storage.set('pending2FaVerification:someone-else', 'true');
+      // Both shapes: the origin-wide key an unscoped build would read, and another
+      // account's scoped one. A real PendingKind value, since an invalid one would be
+      // rejected on its own and prove nothing about the key.
+      storage.set('pending2FaVerification', 'renewal');
+      storage.set('pending2FaVerification:someone-else', 'renewal');
 
       const nextUser = createComponent();
       const nextUserLoader = TestbedHarnessEnvironment.loader(nextUser.fixture);
@@ -424,6 +432,43 @@ describe('TwoFactorComponent', () => {
       const reloaded = createComponent();
       const reloadedLoader = TestbedHarnessEnvironment.loader(reloaded.fixture);
       expect(await reloadedLoader.getHarnessOrNull(TnInputHarness)).not.toBeNull();
+    });
+
+    it('keeps Cancel Setup working after a failed refresh left no current user', async () => {
+      // refreshUser() pushes null onto user$ before re-fetching, so a failure leaves null
+      // as the current value. Taking that null and filtering it would complete the stream
+      // having done nothing, stranding the loading flag on with every button disabled.
+      jest.mocked(spectator.inject(AuthService).refreshUser)
+        .mockReturnValueOnce(throwError(() => new Error('session dropped')));
+      await generateSecret();
+
+      user$.next(null as unknown as LoggedInUser);
+      await (await loader.getHarness(TnButtonHarness.with({ label: helptext2fa.verification.cancelBtn }))).click();
+
+      // Nothing can happen while there is no user...
+      expect(api.call).not.toHaveBeenCalledWith('user.unset_2fa_secret', ['dummy']);
+
+      // ...but the moment one is resolved again, the cancel goes through.
+      user$.next(configuredUser);
+      spectator.detectChanges();
+
+      expect(api.call).toHaveBeenCalledWith('user.unset_2fa_secret', ['dummy']);
+    });
+
+    it('reports an unusable provisioning URI as a mismatched code, not a dead button', async () => {
+      // A first-time setup whose renew failed leaves the step on screen with no secret
+      // behind it. `new URL(null)` throws inside the subscribe, so Confirm Code would do
+      // nothing at all — no message, no state change, just a console error.
+      await generateSecret();
+      twoFactorConfig$.next({ ...twoFactorConfig, provisioning_uri: null } as unknown as UserTwoFactorConfig);
+
+      const otpInput = await loader.getHarness(TnInputHarness);
+      await otpInput.setValue(validCode);
+      await (await loader.getHarness(TnButtonHarness.with({ label: helptext2fa.verification.verifyBtn }))).click();
+      spectator.detectChanges();
+
+      const field = await loader.getHarness(TnFormFieldHarness);
+      expect(await field.getErrorMessage()).toBe(helptext2fa.verification.invalid);
     });
 
     it('reports setup as incomplete while a secret is waiting to be confirmed', async () => {

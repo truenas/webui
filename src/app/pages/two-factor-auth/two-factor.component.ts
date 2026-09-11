@@ -2,7 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, input, output, signal, inject, computed, effect,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -170,9 +170,17 @@ export class TwoFactorComponent implements OnInit {
 
   readonly helptext = helptext2fa;
 
-  protected readonly otpErrorMessages = {
-    invalidOtp: this.translate.instant(helptext2fa.verification.invalid),
-  };
+  /**
+   * Rebuilt on language change: `instant` at field initialisation would freeze this
+   * message in whichever language was active when the component was constructed, while
+   * every other string on the page follows a runtime switch.
+   */
+  private readonly langChange = toSignal(this.translate.onLangChange, { initialValue: null });
+
+  protected readonly otpErrorMessages = computed(() => {
+    this.langChange();
+    return { invalidOtp: this.translate.instant(helptext2fa.verification.invalid) };
+  });
 
   readonly labels = {
     secret: helptext2fa.secret.label,
@@ -300,11 +308,22 @@ export class TwoFactorComponent implements OnInit {
     ).subscribe();
   }
 
-  protected getProvisioningUriSecret(uri: string): string | null {
-    const url = new URL(uri);
-    const params = new URLSearchParams(url.search);
+  /**
+   * The URI is `null` on an account with no secret — including while the confirmation
+   * step is showing after a renew that failed before arming one — and `new URL(null)`
+   * throws, which inside a subscribe handler would leave Confirm Code doing nothing at
+   * all. A `null` here surfaces as the ordinary "code does not match" message instead.
+   */
+  protected getProvisioningUriSecret(uri: string | null): string | null {
+    if (!uri) {
+      return null;
+    }
 
-    return params.get('secret');
+    try {
+      return new URLSearchParams(new URL(uri).search).get('secret');
+    } catch {
+      return null;
+    }
   }
 
   private handleError(error: unknown): Observable<boolean> {
@@ -315,15 +334,17 @@ export class TwoFactorComponent implements OnInit {
   }
 
   private renewSecretForUser(kind: PendingKind): Observable<void> {
-    this.isFormLoading.set(true);
-
-    this.currentSessionIs2fa.set(false);
-    this.verificationForm.reset();
-
     return this.authService.user$.pipe(
-      take(1),
+      // `filter` before `take`, not after: `refreshUser()` pushes `null` onto `user$`
+      // before re-fetching, so a failed refresh leaves `null` as the current value and
+      // `take(1)` would grab it, drop it, and complete having done nothing — stranding
+      // the loading flag on and every button disabled. This waits for a real user.
       filter((user) => !!user),
+      take(1),
       tap((user) => {
+        this.isFormLoading.set(true);
+        this.currentSessionIs2fa.set(false);
+        this.verificationForm.reset();
         this.username.set(user.pw_name);
         // Marked before the call, not after it. `renew_2fa_secret` arms the secret
         // server-side, so a call that times out having actually succeeded — or whose
@@ -392,11 +413,12 @@ export class TwoFactorComponent implements OnInit {
   }
 
   private unsetSecretForUser(): Observable<undefined> {
-    this.isFormLoading.set(true);
-
     return this.authService.user$.pipe(
-      take(1),
+      // See renewSecretForUser: `filter` first, and the loading flag only once a real
+      // user is in hand, so Cancel Setup cannot leave the page spinning with no exit.
       filter((user) => !!user),
+      take(1),
+      tap(() => this.isFormLoading.set(true)),
       switchMap((user) => this.api.call('user.unset_2fa_secret', [user.pw_name])),
       switchMap(() => this.authService.refreshUser()),
       tap(() => {
