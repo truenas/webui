@@ -16,7 +16,7 @@ import {
 } from 'rxjs';
 import {
   catchError, defaultIfEmpty,
-  filter, finalize, switchMap, take, tap,
+  filter, finalize, switchMap, take, tap, timeout,
 } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { verifyTotp } from 'app/helpers/totp.helper';
@@ -34,6 +34,19 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 import { twoFactorElements } from 'app/pages/two-factor-auth/two-factor.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+
+/**
+ * How long the load waits before calling the read failed.
+ *
+ * `defaultIfEmpty` only fires on completion, and two of the three sources never complete:
+ * `user$` is a BehaviorSubject, and `getGlobalTwoFactorConfig()` switchMaps over another
+ * one, so an inner call that ends without a result leaves the whole load hanging rather
+ * than empty. Since this flag now disables every secret button, a hang is a permanently
+ * inert card — so the load needs a terminal outcome even when nothing downstream provides
+ * one. The bound is a judgement call: long enough not to fire on a slow appliance, short
+ * enough that nobody stares at a dead card.
+ */
+const loadTimeoutMs = 30_000;
 
 @Component({
   selector: 'ix-two-factor',
@@ -232,6 +245,8 @@ export class TwoFactorComponent implements OnInit {
     ])
       .pipe(
         take(1),
+        // Covers the sources `defaultIfEmpty` cannot, which never complete at all.
+        timeout(loadTimeoutMs),
         // finalize, not a line in `next`: this flag disables every secret button, so a
         // stream that errors or completes without emitting would leave the page inert
         // with no error on screen.
@@ -271,7 +286,12 @@ export class TwoFactorComponent implements OnInit {
           const isPending = user.two_factor_config.secret_configured && !!kind;
           this.setPendingVerification(isPending, kind ?? 'setup');
         },
-        error: (error: unknown) => this.errorHandler.showErrorModal(error),
+        error: (error: unknown) => {
+          // Same reason as the empty-read branch: without this the banner keeps asserting
+          // that 2FA is off here, which the page has no basis for saying.
+          this.loadFailed.set(true);
+          this.errorHandler.showErrorModal(error);
+        },
       });
 
     this.api.call('auth.sessions').pipe(
@@ -323,6 +343,11 @@ export class TwoFactorComponent implements OnInit {
    * against a secret their app never received.
    */
   protected onVerifyOtp(): void {
+    // Re-run the validators first: `checkFailed` and `unreadableSecret` are set by hand
+    // and both ask the user to retry the same code, so leaving them on the control would
+    // make the guard below swallow the retry the message just invited.
+    this.verificationForm.controls.otp.updateValueAndValidity();
+
     if (this.verificationForm.invalid) {
       this.verificationForm.controls.otp.markAsTouched();
       return;

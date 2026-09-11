@@ -1,12 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { fakeAsync, tick } from '@angular/core/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import {
   TnBannerComponent, TnBannerHarness, TnButtonHarness, TnFormFieldHarness, TnInputHarness,
 } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { QrCodeComponent, QrCodeDirective } from 'ng-qrcode';
-import { BehaviorSubject, EMPTY, Subject, of, throwError } from 'rxjs';
+import { BehaviorSubject, EMPTY, NEVER, Subject, of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { helptext2fa } from 'app/helptext/system/2fa';
@@ -567,9 +568,15 @@ describe('TwoFactorComponent', () => {
       expect(storage.get('pending2FaVerification:dummy')).toBe('renewal');
     });
 
-    it('holds the secret buttons until the page knows what it is looking at', async () => {
-      // The load waits on system.info, and a click landing before it resolves would be
-      // rolled back by the snapshot that reply carries.
+    // DOM queries rather than harnesses: the load carries a timeout timer while it is in
+    // flight, which keeps the Angular zone unstable, and a harness would wait it out.
+    function renewButtonOf(fixtureHost: Spectator<TwoFactorComponent>): HTMLButtonElement | null {
+      return fixtureHost.query('[data-test="button-renew-secret"]');
+    }
+
+    it('holds the secret buttons until the page knows what it is looking at', () => {
+      // A click landing before the load resolves would be rolled back by the snapshot
+      // that reply carries.
       const systemInfo$ = new Subject<SystemInfo>();
       jest.mocked(api.call).mockImplementation(((method: string) => {
         if (method === 'system.info') {
@@ -579,16 +586,56 @@ describe('TwoFactorComponent', () => {
       }) as ApiService['call']);
 
       const loading = createComponent();
-      const loadingLoader = TestbedHarnessEnvironment.loader(loading.fixture);
 
-      const renewBtn = await loadingLoader.getHarness(TnButtonHarness.with({ label: 'Configure 2FA Secret' }));
-      expect(await renewBtn.isDisabled()).toBe(true);
+      expect(renewButtonOf(loading)?.disabled).toBe(true);
 
       systemInfo$.next({ datetime: { $date: applianceNow } } as SystemInfo);
       systemInfo$.complete();
       loading.detectChanges();
 
-      expect(await renewBtn.isDisabled()).toBe(false);
+      expect(renewButtonOf(loading)?.disabled).toBe(false);
+    });
+
+    it('gives the load a terminal outcome when a source never settles at all', fakeAsync(() => {
+      // defaultIfEmpty only fires on completion, and getGlobalTwoFactorConfig switchMaps
+      // over a BehaviorSubject that never completes — so an inner call that ends without
+      // a result hangs the load rather than emptying it. Without the timeout the card
+      // stays inert forever, with every secret button disabled and no error on screen.
+      jest.mocked(spectator.inject(AuthService).getGlobalTwoFactorConfig).mockReturnValueOnce(NEVER);
+
+      const stuck = createComponent();
+      expect(renewButtonOf(stuck)?.disabled).toBe(true);
+
+      tick(30_000);
+      stuck.detectChanges();
+
+      expect(renewButtonOf(stuck)?.disabled).toBe(false);
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+    }));
+
+    it('lets the user retry the same code after a failed check', async () => {
+      // checkFailed and unreadableSecret are set by hand and both say "try again"; if they
+      // are left on the control the next submit is swallowed by the validity guard.
+      await generateSecret();
+      jest.mocked(spectator.inject(AuthService).refreshUser)
+        .mockReturnValueOnce(throwError(() => new Error('offline')));
+
+      const otpInput = await loader.getHarness(TnInputHarness);
+      await otpInput.setValue(validCode);
+      const confirmBtn = await loader.getHarness(
+        TnButtonHarness.with({ label: helptext2fa.verification.verifyBtn }),
+      );
+      await confirmBtn.click();
+      spectator.detectChanges();
+
+      const field = await loader.getHarness(TnFormFieldHarness);
+      expect(await field.getErrorMessage()).toBe(helptext2fa.verification.checkFailed);
+
+      // Connection is back; the same code, unedited, must now be accepted.
+      await confirmBtn.click();
+      spectator.detectChanges();
+
+      expect(await loader.getHarnessOrNull(TnInputHarness)).toBeNull();
     });
 
     it('applies the account state it re-read when confirming', async () => {
