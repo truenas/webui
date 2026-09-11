@@ -513,6 +513,20 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.component.addListItem.emit).toHaveBeenCalledTimes(1);
     });
 
+    /**
+     * The macrotask can outlive the view: a list nested in a `show_if`-gated dict is torn down by
+     * the relation's own `timer(0)`, one macrotask ahead of this one. Seeding a destroyed item
+     * would emit rows for a view that is gone, and the `hidden$` branch would throw NG0911 —
+     * `takeUntilDestroyed` registers its `DestroyRef` hook at subscribe time.
+     */
+    it('cancels the deferred seeding when the item is destroyed first', async () => {
+      createListComponent({ default: [{ input: 'first' }] });
+      spectator.fixture.destroy();
+      await flushSeeding();
+
+      expect(spectator.component.addListItem.emit).not.toHaveBeenCalled();
+    });
+
     it('seeds nothing when the schema carries no defaults', async () => {
       createListComponent({});
       await flushSeeding();

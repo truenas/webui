@@ -138,7 +138,11 @@ export class IxDynamicFormItemComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    setTimeout(() => {
+    // The macrotask is cancelled on destroy rather than left to expire harmlessly: its callback
+    // subscribes with `takeUntilDestroyed`, which registers the `DestroyRef` hook at subscribe
+    // time and throws NG0911 once the view is gone. A list nested in a `show_if`-gated dict is
+    // torn down by the relation's own `timer(0)`, one macrotask ahead of this one.
+    const seedTimeout = setTimeout(() => {
       const seed = (): void => {
         schema.default?.forEach((defaultValue: Record<string, unknown>) => {
           this.addControl(
@@ -176,6 +180,8 @@ export class IxDynamicFormItemComponent implements OnInit, AfterViewInit {
         takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => seed());
     });
+
+    this.destroyRef.onDestroy(() => clearTimeout(seedTimeout));
   }
 
   get getFormArray(): UntypedFormArray {
