@@ -124,8 +124,11 @@ export async function readBucketParentDataset(page: Page): Promise<string> {
  */
 export async function closeBucketPanel(page: Page): Promise<void> {
   await page.locator(s3BucketLocators.form.closePanel).click();
+  // `waitFor`, not `isVisible`: the latter ignores its timeout and answers at
+  // once, which would miss a question raised a frame after the click.
   const discard = page.locator(confirmDialogLocators.confirm);
-  if (await discard.isVisible({ timeout: 2_000 }).catch(() => false)) {
+  const asked = await discard.waitFor({ state: 'visible', timeout: 2_000 }).then(() => true, () => false);
+  if (asked) {
     await discard.click();
   }
   await expect(page.locator(s3BucketLocators.form.name)).toBeHidden();
