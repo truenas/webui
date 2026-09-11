@@ -122,6 +122,17 @@ export class TwoFactorComponent implements OnInit {
    */
   private toleranceWindow = signal(0);
 
+  /**
+   * Appliance clock minus browser clock, in milliseconds.
+   *
+   * TOTP works because the authenticator and the appliance are both NTP-synced; the
+   * browser is a third clock with no part in the real exchange. Checking against it
+   * would reject the very code login accepts whenever the workstation has drifted —
+   * and with Renew and Unset hidden, the only offered way out is Cancel Setup. Reading
+   * the appliance's own time makes this check ask the same question login will.
+   */
+  private clockOffset = signal(0);
+
   protected readonly verificationForm = this.formBuilder.nonNullable.group({
     otp: ['', Validators.required],
   });
@@ -188,15 +199,19 @@ export class TwoFactorComponent implements OnInit {
       // keyed to the account name, which only the user record carries.
       this.authService.user$.pipe(filter(Boolean), take(1)),
       this.authService.getGlobalTwoFactorConfig(),
+      // Never fatal: without it the check falls back to the browser clock, which is
+      // where it stood before, rather than leaving the page unusable.
+      this.api.call('system.info').pipe(catchError(() => of(null))),
     ])
       .pipe(take(1), takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: ([user, globalConfig]) => {
+        next: ([user, globalConfig, systemInfo]) => {
           this.isDataLoading.set(false);
           this.username.set(user.pw_name);
           this.userTwoFactorAuthConfigured.set(user.two_factor_config.secret_configured);
           this.globalTwoFactorEnabled.set(globalConfig.enabled);
           this.toleranceWindow.set(globalConfig.window);
+          this.clockOffset.set(systemInfo ? systemInfo.datetime.$date - Date.now() : 0);
 
           // A stored flag without a secret behind it is stale — the secret was unset
           // elsewhere. Drop it rather than leave it for the next read.
@@ -251,6 +266,7 @@ export class TwoFactorComponent implements OnInit {
         interval: config.interval,
         digits: config.otp_digits,
         window: this.toleranceWindow(),
+        now: Date.now() + this.clockOffset(),
       });
 
       if (!isValid) {
@@ -307,13 +323,21 @@ export class TwoFactorComponent implements OnInit {
     return this.authService.user$.pipe(
       take(1),
       filter((user) => !!user),
-      tap((user) => this.username.set(user.pw_name)),
-      switchMap((user) => this.api.call('user.renew_2fa_secret', [user.pw_name, { interval: 30, otp_digits: 6 }])),
-      switchMap(() => this.authService.refreshUser()),
-      tap(() => {
-        this.userTwoFactorAuthConfigured.set(true);
+      tap((user) => {
+        this.username.set(user.pw_name);
+        // Marked before the call, not after it. `renew_2fa_secret` arms the secret
+        // server-side, so a call that times out having actually succeeded — or whose
+        // `refreshUser` follow-up fails — would otherwise leave an armed secret with
+        // nothing recording that it is unconfirmed, and the next load would present it
+        // as finished setup. Being wrongly pending is recoverable: the stale sweep in
+        // loadTwoFactorConfigs drops the flag when no secret materialised, and on the
+        // renewal path the user clears it by entering a code. Being wrongly finished is
+        // the failure this whole step exists to prevent.
         this.setPendingVerification(true, kind);
       }),
+      switchMap((user) => this.api.call('user.renew_2fa_secret', [user.pw_name, { interval: 30, otp_digits: 6 }])),
+      switchMap(() => this.authService.refreshUser()),
+      tap(() => this.userTwoFactorAuthConfigured.set(true)),
       takeUntilDestroyed(this.destroyRef),
     );
   }

@@ -6,13 +6,14 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { QrCodeComponent, QrCodeDirective } from 'ng-qrcode';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
@@ -42,6 +43,11 @@ describe('TwoFactorComponent', () => {
   // Mutable so a test can start from an account that has no secret yet — the providers
   // themselves cannot be overridden once the first component has instantiated the module.
   const configuredUser = { pw_name: 'dummy', two_factor_config: { secret_configured: true } } as LoggedInUser;
+
+  // The appliance sits in the time step `validCode` belongs to; the browser clock in the
+  // tests is parked a step earlier, so only a check using appliance time accepts it.
+  const applianceNow = 59_000;
+  const browserNow = 5_000;
   const user$ = new BehaviorSubject<LoggedInUser>(configuredUser);
 
   const createComponent = createComponentFactory({
@@ -68,6 +74,7 @@ describe('TwoFactorComponent', () => {
         mockCall('user.renew_2fa_secret'),
         mockCall('user.unset_2fa_secret'),
         mockCall('auth.sessions', [{ current: true, credentials: CredentialType.TwoFactor } as AuthSession]),
+        mockCall('system.info', { datetime: { $date: applianceNow } } as SystemInfo),
       ]),
       mockProvider(AuthService, {
         user$,
@@ -86,9 +93,14 @@ describe('TwoFactorComponent', () => {
   beforeEach(() => {
     storage.clear();
     user$.next(configuredUser);
+    jest.spyOn(Date, 'now').mockReturnValue(browserNow);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
+  });
+
+  afterEach(() => {
+    jest.spyOn(Date, 'now').mockRestore();
   });
 
   it('shows the QR code viewer with correct provisioning URI when 2FA is configured', () => {
@@ -230,14 +242,6 @@ describe('TwoFactorComponent', () => {
       spectator.detectChanges();
     }
 
-    beforeEach(() => {
-      jest.spyOn(Date, 'now').mockReturnValue(59_000);
-    });
-
-    afterEach(() => {
-      jest.spyOn(Date, 'now').mockRestore();
-    });
-
     it('asks for a code from the authenticator app once a secret is generated', async () => {
       await generateSecret();
 
@@ -367,6 +371,59 @@ describe('TwoFactorComponent', () => {
 
       const field = await loader.getHarness(TnFormFieldHarness);
       expect(await field.getErrorMessage()).toBe(helptext2fa.verification.invalid);
+    });
+
+    it('checks the code against the appliance clock, not the browser one', async () => {
+      // The browser is a third clock with no part in the real exchange: the phone and the
+      // appliance are NTP-synced, and login asks appliance-time-vs-secret. A workstation
+      // 54s adrift must not reject the code the middleware would accept.
+      await generateSecret();
+
+      const otpInput = await loader.getHarness(TnInputHarness);
+      await otpInput.setValue(validCode);
+      await (await loader.getHarness(TnButtonHarness.with({ label: helptext2fa.verification.verifyBtn }))).click();
+      spectator.detectChanges();
+
+      expect(await loader.getHarnessOrNull(TnInputHarness)).toBeNull();
+    });
+
+    it('falls back to the browser clock when the appliance time cannot be read', async () => {
+      jest.mocked(api.call).mockImplementation(((method: string) => {
+        return method === 'system.info' ? throwError(() => new Error('down')) : of(undefined);
+      }) as ApiService['call']);
+
+      const offline = createComponent();
+      const offlineLoader = TestbedHarnessEnvironment.loader(offline.fixture);
+
+      await (await offlineLoader.getHarness(TnButtonHarness.with({ label: 'Renew 2FA Secret' }))).click();
+      offline.detectChanges();
+
+      // browserNow sits in the step before validCode's, so the browser-clock fallback
+      // accepts that step's code — the behaviour before appliance time was consulted.
+      const otpInput = await offlineLoader.getHarness(TnInputHarness);
+      await otpInput.setValue(previousStepCode);
+      await (await offlineLoader.getHarness(
+        TnButtonHarness.with({ label: helptext2fa.verification.verifyBtn }),
+      )).click();
+      offline.detectChanges();
+
+      expect(await offlineLoader.getHarnessOrNull(TnInputHarness)).toBeNull();
+    });
+
+    it('marks the secret unconfirmed even if the follow-up user refresh fails', async () => {
+      // renew_2fa_secret arms the secret server-side. If the refresh behind it fails and
+      // the flag were written after, the next load would present an armed, unscanned
+      // secret as finished setup.
+      jest.mocked(spectator.inject(AuthService).refreshUser)
+        .mockReturnValueOnce(throwError(() => new Error('session dropped')));
+
+      await generateSecret();
+
+      expect(storage.get('pending2FaVerification:dummy')).toBe('renewal');
+
+      const reloaded = createComponent();
+      const reloadedLoader = TestbedHarnessEnvironment.loader(reloaded.fixture);
+      expect(await reloadedLoader.getHarnessOrNull(TnInputHarness)).not.toBeNull();
     });
 
     it('reports setup as incomplete while a secret is waiting to be confirmed', async () => {

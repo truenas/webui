@@ -80,40 +80,43 @@
         </div>
       </div>
     }
+  }
 
-    @if (pendingVerification()) {
-      <form class="verification" novalidate [formGroup]="verificationForm" (ngSubmit)="onVerifyOtp()">
-        <tn-form-field
-          class="verification-field"
-          [label]="helptext.verification.label | translate"
-          [tooltip]="helptext.verification.tooltip | translate"
-          [errorMessages]="otpErrorMessages"
-        >
-          <tn-input
-            name="otp"
-            formControlName="otp"
-            autocomplete="one-time-code"
-            testId="verify-otp"
-            [required]="true"
-          ></tn-input>
-        </tn-form-field>
+  <!-- Outside the QR block on purpose: if a renew half-fails the flag is set while
+       `secret_configured` is still false, and gating the form on the QR would leave a
+       pending banner with no way to confirm and no way out. -->
+  @if (pendingVerification()) {
+    <form class="verification" novalidate [formGroup]="verificationForm" (ngSubmit)="onVerifyOtp()">
+      <tn-form-field
+        class="verification-field"
+        [label]="helptext.verification.label | translate"
+        [tooltip]="helptext.verification.tooltip | translate"
+        [errorMessages]="otpErrorMessages"
+      >
+        <tn-input
+          name="otp"
+          formControlName="otp"
+          autocomplete="one-time-code"
+          testId="verify-otp"
+          [required]="true"
+        ></tn-input>
+      </tn-form-field>
 
-        <div class="button-group">
-          <tn-button
-            type="submit"
-            color="primary"
-            [testId]="'verify-otp'"
-            [label]="helptext.verification.verifyBtn | translate"
-            [disabled]="isFormLoading()"
-          ></tn-button>
-          <tn-button
-            [testId]="'cancel-2fa-setup'"
-            [label]="helptext.verification.cancelBtn | translate"
-            [disabled]="isFormLoading()"
-            (onClick)="onCancelVerification()"
-          ></tn-button>
-        </div>
-      </form>
-    }
+      <div class="button-group">
+        <tn-button
+          type="submit"
+          color="primary"
+          [testId]="'verify-otp'"
+          [label]="helptext.verification.verifyBtn | translate"
+          [disabled]="isFormLoading()"
+        ></tn-button>
+        <tn-button
+          [testId]="'cancel-2fa-setup'"
+          [label]="helptext.verification.cancelBtn | translate"
+          [disabled]="isFormLoading()"
+          (onClick)="onCancelVerification()"
+        ></tn-button>
+      </div>
+    </form>
   }
 </tn-card>
