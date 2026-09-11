@@ -116,10 +116,11 @@ function hmacSha1(key: Uint8Array, message: Uint8Array): Uint8Array {
  * Decodes an RFC 4648 base32 secret, ignoring the spacing and `=` padding that
  * authenticator apps and provisioning URIs sprinkle through them.
  *
- * Returns `null` when the text is not base32 at all, so callers can tell "wrong
- * code" apart from "unusable secret".
+ * Returns `null` for text that is not base32, which {@link verifyTotp} reports as a
+ * failed check — the page tells an unusable secret apart from a wrong code earlier, by
+ * whether the provisioning URI parsed at all.
  */
-export function decodeBase32(secret: string): Uint8Array | null {
+function decodeBase32(secret: string): Uint8Array | null {
   const normalized = secret.replace(/[\s=-]/g, '').toUpperCase();
   if (!normalized.length) {
     return null;

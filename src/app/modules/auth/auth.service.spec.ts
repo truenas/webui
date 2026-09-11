@@ -87,6 +87,15 @@ describe('AuthService', () => {
             ],
           },
         } as LoginExResponse),
+        mockCall('auth.login_ex_continue', {
+          authenticator: AuthenticatorLoginLevel.Level2,
+          response_type: LoginExResponseType.Success,
+          user_info: {
+            pw_name: 'name',
+            privilege: { webui_access: true },
+            account_attributes: [AccountAttribute.Local],
+          },
+        } as LoginExResponse),
         mockCall('auth.twofactor.config', {
           enabled: true,
           id: 1,
@@ -500,6 +509,23 @@ describe('AuthService', () => {
       const result = await firstValueFrom(spectator.service.isTwoFactorSetupRequired());
 
       expect(result).toBe(true);
+    });
+  });
+
+  describe('pending two-factor marker', () => {
+    it('clears it when a login is completed with an OTP', async () => {
+      // That login validated a code against the account's current secret, which is what
+      // the marker is waiting for. Left set, the setup dialog reopens offering only
+      // another code or a cancel that deletes a secret the user demonstrably holds.
+      await firstValueFrom(spectator.service.login('name', 'pass', '123456'));
+
+      expect(spectator.inject(PendingTwoFactorService).clear).toHaveBeenCalledWith('name');
+    });
+
+    it('leaves it alone for a password-only login', async () => {
+      await firstValueFrom(spectator.service.login('name', 'pass'));
+
+      expect(spectator.inject(PendingTwoFactorService).clear).not.toHaveBeenCalled();
     });
   });
 

@@ -168,6 +168,15 @@ export class AuthService implements OnDestroy {
         }]);
 
     return loginCall$.pipe(
+      tap((result) => {
+        // A successful OTP login validated a code against the account's current secret,
+        // which is exactly what the pending marker is waiting for. Without clearing it
+        // here the setup dialog reopens on the next guard run, offering only another code
+        // or a Cancel Setup that deletes a secret the user demonstrably holds.
+        if (otp && result.response_type === LoginExResponseType.Success && result.user_info?.pw_name) {
+          this.pendingTwoFactor.clear(result.user_info.pw_name);
+        }
+      }),
       switchMap((result) => this.processLoginResult(result).pipe(
         map((loginResult) => ({
           loginResponse: result,

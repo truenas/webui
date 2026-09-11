@@ -1,22 +1,7 @@
-import { decodeBase32, verifyTotp } from 'app/helpers/totp.helper';
+import { verifyTotp } from 'app/helpers/totp.helper';
 
 // RFC 6238 / RFC 4226 reference seed: the ASCII string '12345678901234567890'.
 const referenceSecret = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
-
-describe('decodeBase32', () => {
-  it('decodes a base32 string into its bytes', () => {
-    expect(Array.from(decodeBase32('MZXW6YTB') || [])).toEqual([...'fooba'].map((char) => char.charCodeAt(0)));
-  });
-
-  it('ignores padding, spacing and casing that authenticator apps add', () => {
-    expect(decodeBase32('mzxw 6ytb==')).toEqual(decodeBase32('MZXW6YTB'));
-  });
-
-  it('returns null for text that is not base32', () => {
-    expect(decodeBase32('not-base32!')).toBeNull();
-    expect(decodeBase32('   ')).toBeNull();
-  });
-});
 
 describe('verifyTotp', () => {
   // Every 8-digit vector from RFC 6238, Appendix B (SHA-1 column).
@@ -41,6 +26,12 @@ describe('verifyTotp', () => {
     expect(verifyTotp(referenceSecret, '287082', { now: 29_000 })).toBe(true);
     expect(verifyTotp(referenceSecret, '287082', { now: 89_000 })).toBe(true);
     expect(verifyTotp(referenceSecret, '287082', { window: 0, now: 89_000 })).toBe(false);
+  });
+
+  it('reads a secret however an authenticator app spells it', () => {
+    // Padding, spacing and casing all appear in provisioning URIs and in secrets people
+    // copy by hand; all three must decode to the same key.
+    expect(verifyTotp('gezd gnbv gy3t qojq gezd gnbv gy3t qojq==', '287082', { window: 0, now: 59_000 })).toBe(true);
   });
 
   it('tolerates spacing in the code the user typed', () => {
