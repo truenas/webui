@@ -7,9 +7,10 @@
  * things, and a stopped S3 service so the post-save "Start S3 Service" prompt
  * is deterministic.
  *
- * The S3 methods arrived in `@truenas/api-client` 5.0; the entry shapes below
- * are named off the directory the same way `fixtures/storage.ts` names its ACL
- * entry, so they follow the generated types rather than restating them.
+ * The S3 methods arrived in `@truenas/api-client` 5.0 and their current fields
+ * in 6.0; the entry shapes below are named off the directory the same way
+ * `fixtures/storage.ts` names its ACL entry, so they follow the generated
+ * types rather than restating them.
  */
 import type { CallResponse, QueryEntity } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -17,27 +18,9 @@ import { ensureServiceRunning, ensureServiceStopped, queryService, type ServiceS
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
-/**
- * Fields middleware has that `@truenas/api-client` 5.0.2 does not yet type:
- * object ownership (middleware #19661), bucket-managing keys (#19670) and the
- * managed root dataset (#19670). Declared here, once, and intersected onto the
- * generated entry types below, so the journeys can assert on them without
- * `any`. Delete this block when the client is regenerated.
- */
-interface S3BucketLatestFields {
-  object_ownership?: 'BUCKET_OWNER_ENFORCED' | 'BUCKET_OWNER_PREFERRED' | 'OBJECT_WRITER';
-}
-interface S3AccessKeyLatestFields {
-  manage_buckets?: boolean;
-}
-interface S3ConfigLatestFields {
-  /** A dataset name, or an empty string for "refuse protocol CreateBucket". */
-  managed_root_dataset?: string;
-}
-
-export type S3BucketEntry = QueryEntity<E2eApiDirectory['call'], 'sharing.s3.query'> & S3BucketLatestFields;
-export type S3AccessKeyEntry = QueryEntity<E2eApiDirectory['call'], 's3.accesskey.query'> & S3AccessKeyLatestFields;
-export type S3ConfigEntry = CallResponse<E2eApiDirectory, 's3.config'> & S3ConfigLatestFields;
+export type S3BucketEntry = QueryEntity<E2eApiDirectory['call'], 'sharing.s3.query'>;
+export type S3AccessKeyEntry = QueryEntity<E2eApiDirectory['call'], 's3.accesskey.query'>;
+export type S3ConfigEntry = CallResponse<E2eApiDirectory, 's3.config'>;
 
 /**
  * Middleware's name for the service; the UI calls it "S3". Renamed from
@@ -249,13 +232,11 @@ export async function readS3Config(client: E2eApiClient): Promise<S3ConfigEntry>
 
 /**
  * Sets the service's managed root dataset over the API, or clears it with an
- * empty string. The field is one `@truenas/api-client` 5.0.2 does not type on
- * `s3.update`, hence the cast at the call; see `S3ConfigLatestFields`.
+ * empty string.
  */
 export async function setS3ManagedRootDataset(client: E2eApiClient, dataset: string): Promise<void> {
-  const update: S3ConfigLatestFields = { managed_root_dataset: dataset };
   await firstValueFrom(
-    client.api.call('s3.update', [update as never]).pipe(timeout(slowCallTimeoutMs)),
+    client.api.call('s3.update', [{ managed_root_dataset: dataset }]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
 
