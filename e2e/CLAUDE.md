@@ -173,8 +173,9 @@ provisions or reshapes an appliance.
 
 `docs/05-ci.md` is the pipeline as it actually runs: what the lab runner has
 to provide, the measured timings, and the failure behind every rule in
-`.github/workflows/e2e.yml` and `e2e/ci/appliance.sh`. Check it before
-touching either file.
+`.github/workflows/e2e.yml` and the `truenas-appliance` action's
+`appliance.sh` in iXsystems/ux-github-workflows. Check it before touching
+either.
 
 ## Talking to middleware
 
