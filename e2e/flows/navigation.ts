@@ -19,6 +19,7 @@ const expectedRoute = {
   datasets: /\/datasets/,
   shares: /\/sharing/,
   users: /\/credentials\/users/,
+  s3AccessKeys: /\/credentials\/s3-access-keys/,
 } as const;
 
 /**
@@ -58,4 +59,17 @@ export async function goToShares(page: Page): Promise<void> {
 export async function goToUsers(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.credentials).click();
   await clickAndArrive(page, navLocators.users, expectedRoute.users);
+}
+
+/**
+ * S3 Access Keys lives under the same Credentials slide-out as Users.
+ *
+ * The S3 bucket list page carries a link with the same id (`link-s3-access-keys`,
+ * a shortcut next to its Add button), but that page is never where this starts:
+ * a user reaching Credentials from the dashboard sees only the sidebar copy, and
+ * `visibleNavLink` takes the first visible one regardless.
+ */
+export async function goToS3AccessKeys(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.credentials).click();
+  await clickAndArrive(page, navLocators.s3AccessKeys, expectedRoute.s3AccessKeys);
 }

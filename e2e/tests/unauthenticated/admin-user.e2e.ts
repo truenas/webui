@@ -3,7 +3,7 @@
  *
  * This is the first test that covers a real user journey rather than proving
  * the rig. It deliberately runs without the token bypass — it lives under
- * `tests/unauthenticated/`, which has no `storageState` and no dependency on
+ * `tests/unauthenticated/`, which signs nobody in and has no dependency on
  * the setup project, because a test of authentication that authenticates by
  * side channel tests nothing (R4.2).
  *
@@ -17,6 +17,7 @@ import { ensureUserAbsent, testAdmin } from '../../fixtures/users';
 import { expectSignedInAs, signIn, signOut } from '../../flows/auth';
 import { createTrueNasAdminUser } from '../../flows/users';
 import { topbarLocators } from '../../locators/topbar';
+import { leavingTestData } from '../../support/cleanup';
 import { expect, test } from '../../support/fixtures';
 
 /**
@@ -35,11 +36,9 @@ test.beforeEach(async ({ api }) => {
  * inspected after a run. Cleanup still happens in `beforeEach`, so the next run
  * is unaffected — this only changes what is left behind, never what a run finds.
  */
-const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
 
 test.afterEach(async ({ api }) => {
-  if (keepTestData) {
-    console.warn(`TN_KEEP_TEST_DATA=1 — leaving user "${testAdmin.username}" on the appliance.`);
+  if (leavingTestData(`user "${testAdmin.username}" on the appliance`)) {
     return;
   }
   await ensureUserAbsent(api, testAdmin.username);

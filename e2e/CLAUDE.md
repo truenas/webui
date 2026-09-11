@@ -178,7 +178,7 @@ touching either file.
 
 ## Talking to middleware
 
-Everything goes through `@truenas/api-client` 3.x, which types the whole
+Everything goes through `@truenas/api-client` 5.x, which types the whole
 generated API per version. There is no escape hatch and none is needed.
 
 - **`client.api.query(method, filters)`** for collections.

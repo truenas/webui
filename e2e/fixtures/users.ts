@@ -64,3 +64,93 @@ export async function ensureUserAbsent(client: E2eApiClient, username: string): 
     client.api.call('user.delete', [existing.id]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
+
+/**
+ * Creates a plain local user if absent, for S3 to run as.
+ *
+ * The S3 bucket owner and access-key user pickers list non-builtin accounts
+ * only, so a test that needs "some user" cannot fall back on root. The account
+ * is a precondition, not the thing under test, so it is made over the API and
+ * never through the user form.
+ *
+ * Password-disabled, on purpose: nothing signs in as it, and a password would be
+ * one more secret to keep out of logs. S3 clients authenticate with an access
+ * key, which the journey mints separately.
+ */
+export async function ensureUserPresent(
+  client: E2eApiClient,
+  username: string,
+  options: { administrator?: boolean } = {},
+): Promise<void> {
+  const [existing] = await firstValueFrom(
+    client.api
+      .query('user.query', [['username', '=', username]])
+      .pipe(timeout(readTimeoutMs)),
+  );
+
+  if (existing) {
+    return;
+  }
+
+  // Roles come from group membership, and `builtin_administrators` carries
+  // every one of them. An administrator here is an account that holds a role
+  // a journey needs — SHARING_S3_WRITE for a bucket-managing key — not a
+  // second sign-in; the account still cannot log in (password_disabled).
+  const groups: number[] = [];
+  if (options.administrator) {
+    const [administrators] = await firstValueFrom(
+      client.api.query('group.query', [['group', '=', 'builtin_administrators']]).pipe(timeout(readTimeoutMs)),
+    );
+    if (!administrators) {
+      throw new Error('group.query returned no builtin_administrators row; cannot create an administrator.');
+    }
+    groups.push(administrators.id);
+  }
+
+  await firstValueFrom(
+    client.api.call('user.create', [{
+      username,
+      full_name: `E2E ${username}`,
+      group_create: true,
+      groups,
+      password_disabled: true,
+      smb: false,
+    }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
+ * Creates a plain local group if absent, for grants to name.
+ *
+ * Same reasoning as {@link ensureUserPresent}: the S3 grant pickers list
+ * non-builtin principals only, and a group is a precondition rather than the
+ * thing under test.
+ */
+export async function ensureGroupPresent(client: E2eApiClient, name: string): Promise<void> {
+  const [existing] = await firstValueFrom(
+    client.api.query('group.query', [['group', '=', name]]).pipe(timeout(readTimeoutMs)),
+  );
+
+  if (existing) {
+    return;
+  }
+
+  await firstValueFrom(
+    client.api.call('group.create', [{ name, smb: false }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/** Removes a group if present, by name. Succeeds when the group does not exist. */
+export async function ensureGroupAbsent(client: E2eApiClient, name: string): Promise<void> {
+  const [existing] = await firstValueFrom(
+    client.api.query('group.query', [['group', '=', name]]).pipe(timeout(readTimeoutMs)),
+  );
+
+  if (!existing) {
+    return;
+  }
+
+  await firstValueFrom(
+    client.api.call('group.delete', [existing.id]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
