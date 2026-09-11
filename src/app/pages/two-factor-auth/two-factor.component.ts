@@ -16,7 +16,7 @@ import {
 } from 'rxjs';
 import {
   catchError,
-  filter, switchMap, take, tap,
+  filter, finalize, switchMap, take, tap,
 } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { verifyTotp } from 'app/helpers/totp.helper';
@@ -207,10 +207,17 @@ export class TwoFactorComponent implements OnInit {
       // where it stood before, rather than leaving the page unusable.
       this.api.call('system.info').pipe(catchError(() => of(null))),
     ])
-      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        take(1),
+        // finalize, not a line in `next`: this flag disables every secret button, so a
+        // stream that errors or completes without emitting would leave the page inert
+        // with no error on screen. getGlobalTwoFactorConfig does complete empty when the
+        // socket is mid-reconnect, which needs no API failure at all.
+        finalize(() => this.isDataLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe({
         next: ([user, globalConfig, systemInfo]) => {
-          this.isDataLoading.set(false);
           this.username.set(user.pw_name);
           this.globalTwoFactorEnabled.set(globalConfig.enabled);
           this.toleranceWindow.set(globalConfig.window);
@@ -234,6 +241,7 @@ export class TwoFactorComponent implements OnInit {
           const isPending = user.two_factor_config.secret_configured && !!kind;
           this.setPendingVerification(isPending, kind ?? 'setup');
         },
+        error: (error: unknown) => this.errorHandler.showErrorModal(error),
       });
 
     this.api.call('auth.sessions').pipe(
@@ -364,7 +372,8 @@ export class TwoFactorComponent implements OnInit {
    * The URI is `null` on an account with no secret — including while the confirmation
    * step is showing after a renew that failed before arming one — and `new URL(null)`
    * throws, which inside a subscribe handler would leave Confirm Code doing nothing at
-   * all. A `null` here surfaces as the ordinary "code does not match" message instead.
+   * all. Callers turn a `null` into the `unreadableSecret` message, which points at
+   * generating a fresh secret rather than at re-scanning a QR code that is not on screen.
    */
   protected getProvisioningUriSecret(uri: string | null): string | null {
     if (!uri) {

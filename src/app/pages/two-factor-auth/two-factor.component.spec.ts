@@ -6,7 +6,7 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { QrCodeComponent, QrCodeDirective } from 'ng-qrcode';
-import { BehaviorSubject, Subject, of, throwError } from 'rxjs';
+import { BehaviorSubject, EMPTY, Subject, of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { helptext2fa } from 'app/helptext/system/2fa';
@@ -22,6 +22,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 // `MockComponent(QrViewerComponent)` deep-mocks that child's whole import graph,
 // which now includes TnBannerComponent — the primitive this component renders itself.
@@ -626,6 +627,35 @@ describe('TwoFactorComponent', () => {
       expect(await strandedLoader.getAllHarnesses(
         TnButtonHarness.with({ label: 'Configure 2FA Secret' }),
       )).toHaveLength(0);
+    });
+
+    it('does not leave the page inert when the load completes without emitting', async () => {
+      // getGlobalTwoFactorConfig does this on its own during a socket reconnect: take(1)
+      // over a filtered auth flag completes empty, no API error involved. isDataLoading
+      // disables every secret button, so a stuck flag means a page nobody can use.
+      jest.mocked(spectator.inject(AuthService).getGlobalTwoFactorConfig).mockReturnValueOnce(EMPTY);
+
+      const stalled = createComponent();
+      const stalledLoader = TestbedHarnessEnvironment.loader(stalled.fixture);
+
+      const configureBtn = await stalledLoader.getHarness(
+        TnButtonHarness.with({ label: 'Configure 2FA Secret' }),
+      );
+      expect(await configureBtn.isDisabled()).toBe(false);
+    });
+
+    it('surfaces a load failure instead of disabling the page silently', async () => {
+      jest.mocked(spectator.inject(AuthService).getGlobalTwoFactorConfig)
+        .mockReturnValueOnce(throwError(() => new Error('down')));
+
+      const failed = createComponent();
+      const failedLoader = TestbedHarnessEnvironment.loader(failed.fixture);
+
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+      const configureBtn = await failedLoader.getHarness(
+        TnButtonHarness.with({ label: 'Configure 2FA Secret' }),
+      );
+      expect(await configureBtn.isDisabled()).toBe(false);
     });
 
     it('reports setup as incomplete while a secret is waiting to be confirmed', async () => {
