@@ -47,16 +47,19 @@ export class SystemInfoEffects {
       return forkJoin({
         systemInfo: this.api.call('system.info'),
         // A license fetch failure must not take the dashboard down. Recover to
-        // null so `systemInfoLoaded` still fires with the rest of the payload.
-        license: this.api.call('truenas.license.info').pipe(
+        // null so `systemInfoLoaded` still fires with the rest of the payload,
+        // but flag it so a failed fetch is not mistaken for an unlicensed system.
+        licenseResult: this.api.call('truenas.license.info').pipe(
+          map((license) => ({ license, failed: false })),
           catchError((error: unknown) => {
             console.error(error);
-            return of(null);
+            return of({ license: null as License | null, failed: true });
           }),
         ),
       }).pipe(
-        map(({ systemInfo, license }) => systemInfoLoaded({
-          systemInfo: { ...systemInfo, license: normalizeLicense(license) },
+        map(({ systemInfo, licenseResult }) => systemInfoLoaded({
+          systemInfo: { ...systemInfo, license: normalizeLicense(licenseResult.license) },
+          licenseLoadFailed: licenseResult.failed,
         })),
         catchError((error: unknown) => {
           // TODO: Basically a fatal error. Handle it.

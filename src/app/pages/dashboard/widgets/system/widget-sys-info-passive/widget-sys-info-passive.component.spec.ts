@@ -18,6 +18,7 @@ import {
   selectIsIxHardware,
   selectProductType,
   selectHasEnclosureSupport,
+  selectBrandedProductType,
 } from 'app/store/system-info/system-info.selectors';
 
 describe('WidgetSysInfoPassiveComponent', () => {
@@ -57,6 +58,10 @@ describe('WidgetSysInfoPassiveComponent', () => {
         selectors: [
           {
             selector: selectProductType,
+            value: ProductType.Enterprise,
+          },
+          {
+            selector: selectBrandedProductType,
             value: ProductType.Enterprise,
           },
           {

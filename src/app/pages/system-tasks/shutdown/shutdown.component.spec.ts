@@ -10,7 +10,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ShutdownComponent, blackoutDelay } from 'app/pages/system-tasks/shutdown/shutdown.component';
-import { selectIsEnterprise, selectProductType } from 'app/store/system-info/system-info.selectors';
+import { selectBrandedProductType, selectProductType } from 'app/store/system-info/system-info.selectors';
 
 describe('ShutdownComponent', () => {
   let spectator: Spectator<ShutdownComponent>;
@@ -20,7 +20,7 @@ describe('ShutdownComponent', () => {
       provideMockStore({
         selectors: [
           { selector: selectProductType, value: ProductType.CommunityEdition },
-          { selector: selectIsEnterprise, value: false },
+          { selector: selectBrandedProductType, value: ProductType.CommunityEdition },
         ],
       }),
       mockApi([

@@ -53,18 +53,18 @@
           }
 
           <p class="product-type">
-            @if (!isEnterprise()) {
+            @if (hasCommunityBranding()) {
               <a
                 tnTestIdType="link"
                 target="_blank"
                 [tnTestId]="'navigate-to-enterprise-marketing-link'"
                 [href]="currentMessageHref()"
               >
-                {{ productTypeText }}
+                {{ productTypeText() }}
               </a>
             } @else {
               <span>
-                {{ productTypeText }}
+                {{ productTypeText() }}
               </span>
             }
           </p>

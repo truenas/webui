@@ -4,7 +4,7 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 
 export const systemInfoLoaded = createAction(
   '[System Info API] Info Loaded',
-  props<{ systemInfo: SystemInfo }>(),
+  props<{ systemInfo: SystemInfo; licenseLoadFailed: boolean }>(),
 );
 
 export const productTypeLoaded = createAction(

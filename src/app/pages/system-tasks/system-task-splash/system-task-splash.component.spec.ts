@@ -3,7 +3,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { SystemTaskSplashComponent } from 'app/pages/system-tasks/system-task-splash/system-task-splash.component';
-import { selectIsEnterprise, selectProductType } from 'app/store/system-info/system-info.selectors';
+import { selectBrandedProductType, selectProductType } from 'app/store/system-info/system-info.selectors';
 
 describe('SystemTaskSplashComponent', () => {
   let spectator: Spectator<SystemTaskSplashComponent>;
@@ -13,7 +13,7 @@ describe('SystemTaskSplashComponent', () => {
       provideMockStore({
         selectors: [
           { selector: selectProductType, value: ProductType.CommunityEdition },
-          { selector: selectIsEnterprise, value: false },
+          { selector: selectBrandedProductType, value: ProductType.CommunityEdition },
         ],
       }),
     ],

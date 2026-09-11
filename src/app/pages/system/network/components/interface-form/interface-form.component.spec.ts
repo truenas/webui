@@ -130,6 +130,7 @@ describe('InterfaceFormComponent', () => {
             },
             isIxHardware: false,
             buildYear: 2024,
+            licenseLoadFailed: false,
           },
         },
       }),

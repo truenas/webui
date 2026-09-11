@@ -56,6 +56,7 @@ describe('IpmiFormComponent', () => {
             },
             isIxHardware: false,
             buildYear: 2024,
+            licenseLoadFailed: false,
           },
         },
       }),
