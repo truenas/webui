@@ -44,6 +44,20 @@ describe('S3AccessKeyListComponent', () => {
       secret: 'secret',
       status: S3AccessKeyStatus.Enabled,
       expires_at: null,
+      last_used_at: null,
+      manage_buckets: false,
+      created_at: { $date: 1700000000000 },
+    },
+    {
+      id: 2,
+      name: 'restic-key',
+      username: 'bob',
+      access_key: 'AKIAEXAMPLE67890',
+      secret: 'secret',
+      status: S3AccessKeyStatus.Enabled,
+      expires_at: null,
+      last_used_at: { $date: Date.now() - 3 * 24 * 60 * 60 * 1000 },
+      manage_buckets: true,
       created_at: { $date: 1700000000000 },
     },
   ] as S3AccessKey[];
@@ -92,8 +106,9 @@ describe('S3AccessKeyListComponent', () => {
   it('shows table rows', async () => {
     const cells = await table.getCellTexts();
     expect(cells).toEqual([
-      ['Name', 'User', 'Access Key ID', 'Status', 'Expires On', ''],
-      ['backup-key', 'alice', 'AKIAEXAMPLE12345', 'Enabled', 'Never', ''],
+      ['Name', 'User', 'Access Key ID', 'Status', 'Expires On', 'Last Used', ''],
+      ['backup-key', 'alice', 'AKIAEXAMPLE12345', 'Enabled', 'Never', 'Never', ''],
+      ['restic-key', 'bob', 'AKIAEXAMPLE67890', 'Enabled', 'Never', '3 days ago', ''],
     ]);
   });
 

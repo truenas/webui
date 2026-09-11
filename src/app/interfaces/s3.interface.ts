@@ -49,6 +49,11 @@ export interface S3Config {
   default_audit: S3AuditMask;
   default_audit_overflow: S3AuditOverflow;
   global_grants: S3GrantEntry[];
+  /**
+   * Dataset name (not a mount point) under which buckets created through the S3 protocol get their
+   * datasets. Must already exist. Empty means such CreateBucket requests are refused.
+   */
+  managed_root_dataset: string;
 }
 
 export interface S3ConfigUpdate extends Partial<Omit<S3Config, 'id' | 'global_grants'>> {
@@ -82,7 +87,10 @@ export interface S3Bucket {
 
 export interface S3BucketCreate extends Partial<Omit<S3Bucket, 'id' | 'owner_uid' | 'grants' | 'locked'>> {
   name: string;
-  dataset: string;
+  /**
+   * Omitted, the dataset is created under the service's `managed_root_dataset` and named after the bucket.
+   */
+  dataset?: string;
   owner: string;
   grants?: S3Grant[];
 }
@@ -103,6 +111,16 @@ export interface S3AccessKey {
   enabled: boolean;
   expires_at: ApiTimestamp | null;
   created_at: ApiTimestamp;
+  /**
+   * When the S3 service last accepted a request signed with this key. Reported at intervals, so a
+   * recent request may be missing for a short time. `null` if never used. Read-only.
+   */
+  last_used_at: ApiTimestamp | null;
+  /**
+   * Whether the key may create and delete buckets through the S3 protocol. Requires the owning
+   * account to hold `SHARING_S3_WRITE`, checked when turned on.
+   */
+  manage_buckets: boolean;
   status: S3AccessKeyStatus;
 }
 
@@ -113,11 +131,13 @@ export interface S3AccessKeyCreate {
   expires_at?: ApiTimestamp | null;
   access_key?: string | null;
   secret?: string | null;
+  manage_buckets?: boolean;
 }
 
 export interface S3AccessKeyUpdate {
   name?: string;
   enabled?: boolean;
   expires_at?: ApiTimestamp | null;
+  manage_buckets?: boolean;
   rotate?: boolean;
 }
