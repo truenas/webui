@@ -817,6 +817,52 @@ describe('TwoFactorComponent', () => {
       });
     });
 
+    it('does not touch app-wide user state for a code that is simply wrong', async () => {
+      // refreshUser() pushes a transient null through user$, and consumers that read it
+      // unguarded blink while it is in flight. A typo should not cost that.
+      await generateSecret();
+      const refreshUser = jest.mocked(spectator.inject(AuthService).refreshUser);
+      refreshUser.mockClear();
+
+      const otpInput = await loader.getHarness(TnInputHarness);
+      await otpInput.setValue('000000');
+      await (await loader.getHarness(TnButtonHarness.with({ label: helptext2fa.verification.verifyBtn }))).click();
+      spectator.detectChanges();
+
+      const field = await loader.getHarness(TnFormFieldHarness);
+      expect(await field.getErrorMessage()).toBe(helptext2fa.verification.invalid);
+      expect(refreshUser).not.toHaveBeenCalled();
+    });
+
+    it('still re-reads the account before accepting a code that looks right', async () => {
+      await generateSecret();
+      const refreshUser = jest.mocked(spectator.inject(AuthService).refreshUser);
+      refreshUser.mockClear();
+
+      const otpInput = await loader.getHarness(TnInputHarness);
+      await otpInput.setValue(validCode);
+      await (await loader.getHarness(TnButtonHarness.with({ label: helptext2fa.verification.verifyBtn }))).click();
+      spectator.detectChanges();
+
+      expect(refreshUser).toHaveBeenCalled();
+      expect(await loader.getHarnessOrNull(TnInputHarness)).toBeNull();
+    });
+
+    it('says the check failed when the re-read completes without emitting', async () => {
+      // Neither a value nor an error: without a default the press produces no message and
+      // no change, which the user cannot tell from being ignored.
+      await generateSecret();
+      jest.mocked(spectator.inject(AuthService).refreshUser).mockReturnValueOnce(EMPTY);
+
+      const otpInput = await loader.getHarness(TnInputHarness);
+      await otpInput.setValue(validCode);
+      await (await loader.getHarness(TnButtonHarness.with({ label: helptext2fa.verification.verifyBtn }))).click();
+      spectator.detectChanges();
+
+      const field = await loader.getHarness(TnFormFieldHarness);
+      expect(await field.getErrorMessage()).toBe(helptext2fa.verification.checkFailed);
+    });
+
     it('reports setup as incomplete while a secret is waiting to be confirmed', async () => {
       const emitted: boolean[] = [];
       spectator.component.setupComplete.subscribe((isComplete) => emitted.push(isComplete));

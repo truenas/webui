@@ -24,7 +24,7 @@ import { helptext2fa } from 'app/helptext/system/2fa';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { PendingTwoFactorKind, PendingTwoFactorService } from 'app/modules/auth/pending-two-factor.service';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
@@ -384,28 +384,64 @@ export class TwoFactorComponent implements OnInit {
       return;
     }
 
+    // Screen against the cached secret before going to the network. A wrong code is the
+    // ordinary case, and the re-read below calls `refreshUser()`, which pushes a
+    // transient null through the app-wide `user$` — consumers that read it unguarded
+    // blink while it is in flight. A typo should not cost that, or a round trip.
+    //
+    // `take(1)` on `user$` without `filter`, so a null current value is an answer rather
+    // than a wait: being blind means there is nothing to screen against, and the re-read
+    // is exactly what that case needs.
+    this.authService.user$.pipe(
+      take(1),
+      switchMap((user) => {
+        return user ? this.authService.userTwoFactorConfig$.pipe(take(1)) : of(null as UserTwoFactorConfig | null);
+      }),
+      defaultIfEmpty(null as UserTwoFactorConfig | null),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((cached) => {
+      const cachedSecret = this.getProvisioningUriSecret(cached?.provisioning_uri ?? null);
+
+      // Only reject cheaply on a secret we could actually read: an unreadable cached one
+      // may simply be stale, and the re-read is what resolves that.
+      if (cached && cachedSecret && !this.isCodeValidFor(cached, cachedSecret)) {
+        this.verificationForm.controls.otp.setErrors({ invalidOtp: true });
+        return;
+      }
+
+      this.confirmAgainstAccount();
+    });
+  }
+
+  /**
+   * Confirms an apparently-good code against what the account actually holds.
+   *
+   * The cached config is not the last word: a renew whose reply was lost may have rotated
+   * the secret server-side without this page hearing about it, and confirming against the
+   * superseded one would clear the marker and report success for a secret the account no
+   * longer has — the lockout this step exists to prevent.
+   */
+  private confirmAgainstAccount(): void {
     this.isFormLoading.set(true);
 
-    // Re-read the account before judging the code, rather than trusting the cached
-    // config. A renew whose reply was lost may have rotated the secret server-side
-    // without this page ever hearing about it, and confirming against the superseded
-    // secret would clear the marker and report success for a secret the account no
-    // longer holds — the lockout this step exists to prevent. It also gives the verify
-    // path a definite outcome when `user$` is sitting on the transient null a failed
-    // refresh leaves behind, instead of silently never emitting.
     this.authService.refreshUser().pipe(
       switchMap(() => this.authService.userTwoFactorConfig$.pipe(take(1))),
-      catchError(() => {
-        this.verificationForm.controls.otp.setErrors({ checkFailed: true });
-        return EMPTY;
-      }),
-      // A clean reconnect completes an in-flight call without emitting, so neither the
-      // subscribe nor the catchError would run. While this flag is on, Confirm Code and
-      // Cancel Setup are disabled and Renew/Unset/Skip are not rendered at all — a card
-      // with no working control, inside a dialog opened with disableClose.
+      // A clean reconnect completes an in-flight call without emitting, which is neither
+      // a value nor an error — without this the press would produce no message and no
+      // change, indistinguishable from being ignored.
+      defaultIfEmpty(null as UserTwoFactorConfig | null),
+      catchError(() => of(null as UserTwoFactorConfig | null)),
+      // While this flag is on, Confirm Code and Cancel Setup are disabled and
+      // Renew/Unset/Skip are not rendered at all — a card with no working control,
+      // inside a dialog opened with disableClose.
       finalize(() => this.isFormLoading.set(false)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((config) => {
+      if (!config) {
+        this.verificationForm.controls.otp.setErrors({ checkFailed: true });
+        return;
+      }
+
       const secret = this.getProvisioningUriSecret(config.provisioning_uri);
       if (!secret) {
         // Nothing to check the code against, and no QR on screen either — telling the
@@ -414,14 +450,7 @@ export class TwoFactorComponent implements OnInit {
         return;
       }
 
-      const isValid = verifyTotp(secret, this.verificationForm.controls.otp.value, {
-        interval: config.interval,
-        digits: config.otp_digits,
-        window: this.toleranceWindow(),
-        now: Date.now() + this.clockOffset(),
-      });
-
-      if (!isValid) {
+      if (!this.isCodeValidFor(config, secret)) {
         this.verificationForm.controls.otp.setErrors({ invalidOtp: true });
         return;
       }
@@ -433,6 +462,15 @@ export class TwoFactorComponent implements OnInit {
       this.setPendingVerification(false);
       this.verificationForm.reset();
       this.snackbar.success(this.translate.instant(helptext2fa.verification.verified));
+    });
+  }
+
+  private isCodeValidFor(config: UserTwoFactorConfig, secret: string): boolean {
+    return verifyTotp(secret, this.verificationForm.controls.otp.value, {
+      interval: config.interval,
+      digits: config.otp_digits,
+      window: this.toleranceWindow(),
+      now: Date.now() + this.clockOffset(),
     });
   }
 
