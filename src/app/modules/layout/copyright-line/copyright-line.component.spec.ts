@@ -42,7 +42,7 @@ describe('CopyrightLineComponent', () => {
 
     expect(spectator.fixture.nativeElement).toHaveText(`TrueNAS®  © ${buildYear} iXsystems, Inc. dba  TrueNAS`);
     expect(spectator.fixture.nativeElement).toHaveText('iXsystems, Inc');
-    expect(spectator.query('a')).toHaveAttribute('href', 'https://truenas.com/');
+    expect(spectator.query('a')).toHaveAttribute('href', 'https://truenas.com/testdrive');
   });
 
   it('shows copyright line with product type and year of build', () => {

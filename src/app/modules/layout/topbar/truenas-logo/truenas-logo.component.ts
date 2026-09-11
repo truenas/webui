@@ -60,7 +60,8 @@ export class TruenasLogoComponent {
           ? tnIconMarker('truenas-logo-ce', 'custom')
           : tnIconMarker('truenas-logo-ce-color', 'custom');
       default:
-        // Edition not known yet: plain logo without an edition banner.
+        // Edition not known yet: plain logo without an edition banner. This asset
+        // only ships in one variant (no `-color` counterpart), so it ignores `useWhite()`.
         return tnIconMarker('truenas-logo', 'custom');
     }
   });
