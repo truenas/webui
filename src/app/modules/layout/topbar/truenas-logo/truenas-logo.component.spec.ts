@@ -8,6 +8,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { ProductType } from 'app/enums/product-type.enum';
+import { License, SystemInfo } from 'app/interfaces/system-info.interface';
 import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/truenas-logo.component';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
@@ -17,6 +18,11 @@ describe('TruenasLogoComponent', () => {
   let spectator: Spectator<TruenasLogoComponent>;
   let loader: HarnessLoader;
   let icons: TnIconHarness[];
+
+  const licensedEnterpriseState = {
+    productType: ProductType.Enterprise,
+    systemInfo: { license: { id: 'license-1' } as License } as SystemInfo,
+  } as SystemInfoState;
 
   const createComponent = createComponentFactory({
     component: TruenasLogoComponent,
@@ -67,9 +73,7 @@ describe('TruenasLogoComponent', () => {
 
   it('enterprise: shows a logotype', async () => {
     const store$ = spectator.inject(MockStore);
-    store$.overrideSelector(selectSystemInfoState, {
-      productType: ProductType.Enterprise,
-    });
+    store$.overrideSelector(selectSystemInfoState, licensedEnterpriseState);
     store$.refreshState();
 
     const [mark, text] = icons;
@@ -79,9 +83,7 @@ describe('TruenasLogoComponent', () => {
 
   it('enterprise: shows full logo in color', async () => {
     const store$ = spectator.inject(MockStore);
-    store$.overrideSelector(selectSystemInfoState, {
-      productType: ProductType.Enterprise,
-    });
+    store$.overrideSelector(selectSystemInfoState, licensedEnterpriseState);
     store$.refreshState();
     spectator.setInput('fullSize', true);
     icons = await loader.getAllHarnesses(TnIconHarness);
@@ -91,15 +93,26 @@ describe('TruenasLogoComponent', () => {
 
   it('enterprise: shows full logo in white', async () => {
     const store$ = spectator.inject(MockStore);
-    store$.overrideSelector(selectSystemInfoState, {
-      productType: ProductType.Enterprise,
-    });
+    store$.overrideSelector(selectSystemInfoState, licensedEnterpriseState);
     store$.refreshState();
     spectator.setInput('fullSize', true);
     spectator.setInput('color', 'white');
     icons = await loader.getAllHarnesses(TnIconHarness);
 
     expect(await icons[0].getName()).toBe('app-truenas-logo-enterprise');
+  });
+
+  it('unlicensed enterprise: shows community edition full logo', async () => {
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectSystemInfoState, {
+      productType: ProductType.Enterprise,
+      systemInfo: { license: null } as SystemInfo,
+    } as SystemInfoState);
+    store$.refreshState();
+    spectator.setInput('fullSize', true);
+    icons = await loader.getAllHarnesses(TnIconHarness);
+
+    expect(await icons[0].getName()).toBe('app-truenas-logo-ce-color');
   });
 
   it('checks white color', async () => {

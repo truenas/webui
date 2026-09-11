@@ -33,25 +33,35 @@ export const selectIsEnterprise = createSelector(
   (productType) => productType === ProductType.Enterprise,
 );
 
-export const selectCopyrightHtml = createSelector(
-  selectProductType,
-  (productType) => getCopyrightHtml(productType || undefined),
-);
-
 export const selectLicense = createSelector(
   selectSystemInfo,
   (systemInfo) => systemInfo?.license ?? null,
 );
 
 /**
+ * Product type used for UI branding (logo, copyright line, nav badge).
  * An Enterprise product type without a license (e.g. unlicensed R-series
- * hardware) is branded as Community Edition in the UI.
+ * hardware) is branded as Community Edition.
  */
-export const selectHasCommunityBranding = createSelector(
+export const selectBrandedProductType = createSelector(
   selectProductType,
   selectLicense,
-  (productType, license) => productType === ProductType.CommunityEdition
-    || (productType === ProductType.Enterprise && license === null),
+  (productType, license) => {
+    if (productType === ProductType.Enterprise && license === null) {
+      return ProductType.CommunityEdition;
+    }
+    return productType;
+  },
+);
+
+export const selectHasCommunityBranding = createSelector(
+  selectBrandedProductType,
+  (productType) => productType === ProductType.CommunityEdition,
+);
+
+export const selectCopyrightHtml = createSelector(
+  selectBrandedProductType,
+  (productType) => getCopyrightHtml(productType || undefined),
 );
 
 export const waitForSystemInfo = selectNotNull(selectSystemInfo);

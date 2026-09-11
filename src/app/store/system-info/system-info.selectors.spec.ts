@@ -1,40 +1,63 @@
+import { environment } from 'environments/environment';
 import { ProductType } from 'app/enums/product-type.enum';
 import { License, SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
-import { selectHasCommunityBranding } from 'app/store/system-info/system-info.selectors';
+import {
+  selectBrandedProductType, selectCopyrightHtml, selectHasCommunityBranding,
+} from 'app/store/system-info/system-info.selectors';
 
 describe('system-info selectors', () => {
-  describe('selectHasCommunityBranding', () => {
-    const makeState = (productType: ProductType | null, license: License | null): SystemInfoState => ({
-      productType,
-      systemInfo: { license } as SystemInfo,
-      isIxHardware: false,
-      buildYear: 2026,
+  const license = { id: 'license-1' } as License;
+
+  const makeState = (productType: ProductType | null, systemLicense: License | null): SystemInfoState => ({
+    productType,
+    systemInfo: { license: systemLicense } as SystemInfo,
+    isIxHardware: false,
+    buildYear: 2026,
+  });
+
+  describe('selectBrandedProductType', () => {
+    it('keeps Community Edition as is', () => {
+      expect(selectBrandedProductType.projector(ProductType.CommunityEdition, null))
+        .toBe(ProductType.CommunityEdition);
+      expect(selectBrandedProductType.projector(ProductType.CommunityEdition, license))
+        .toBe(ProductType.CommunityEdition);
     });
 
-    it('returns true for Community Edition', () => {
-      expect(selectHasCommunityBranding.projector(ProductType.CommunityEdition, null)).toBe(true);
-      expect(selectHasCommunityBranding.projector(ProductType.CommunityEdition, { id: 'l1' } as License)).toBe(true);
+    it('keeps licensed Enterprise as Enterprise', () => {
+      expect(selectBrandedProductType.projector(ProductType.Enterprise, license)).toBe(ProductType.Enterprise);
     });
 
-    it('returns true for Enterprise without a license', () => {
-      expect(selectHasCommunityBranding.projector(ProductType.Enterprise, null)).toBe(true);
+    it('brands unlicensed Enterprise as Community Edition', () => {
+      expect(selectBrandedProductType.projector(ProductType.Enterprise, null)).toBe(ProductType.CommunityEdition);
     });
 
-    it('returns false for licensed Enterprise', () => {
-      expect(selectHasCommunityBranding.projector(ProductType.Enterprise, { id: 'l1' } as License)).toBe(false);
-    });
-
-    it('returns false while product type is unknown', () => {
-      expect(selectHasCommunityBranding.projector(null, null)).toBe(false);
+    it('returns null while product type is unknown', () => {
+      expect(selectBrandedProductType.projector(null, null)).toBeNull();
     });
 
     it('derives license from system info state', () => {
-      const unlicensedEnterprise = { systemInfo: makeState(ProductType.Enterprise, null) };
-      const licensedEnterprise = { systemInfo: makeState(ProductType.Enterprise, { id: 'l1' } as License) };
+      expect(selectBrandedProductType({ systemInfo: makeState(ProductType.Enterprise, null) }))
+        .toBe(ProductType.CommunityEdition);
+      expect(selectBrandedProductType({ systemInfo: makeState(ProductType.Enterprise, license) }))
+        .toBe(ProductType.Enterprise);
+    });
+  });
 
-      expect(selectHasCommunityBranding(unlicensedEnterprise)).toBe(true);
-      expect(selectHasCommunityBranding(licensedEnterprise)).toBe(false);
+  describe('selectHasCommunityBranding', () => {
+    it('is true only for a Community Edition branded product type', () => {
+      expect(selectHasCommunityBranding.projector(ProductType.CommunityEdition)).toBe(true);
+      expect(selectHasCommunityBranding.projector(ProductType.Enterprise)).toBe(false);
+      expect(selectHasCommunityBranding.projector(null)).toBe(false);
+    });
+  });
+
+  describe('selectCopyrightHtml', () => {
+    it('uses the branded product type', () => {
+      expect(selectCopyrightHtml({ systemInfo: makeState(ProductType.Enterprise, null) }))
+        .toBe(`TrueNAS® Community Edition <br /> © ${environment.buildYear}`);
+      expect(selectCopyrightHtml({ systemInfo: makeState(ProductType.Enterprise, license) }))
+        .toBe(`TrueNAS® Enterprise <br /> © ${environment.buildYear}`);
     });
   });
 });
