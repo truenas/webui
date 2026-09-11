@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnFormFieldHarness, TnInputHarness, TnRadioGroupHarness, TnSelectHarness,
+  TnButtonHarness, TnFormFieldHarness, TnFormListHarness, TnInputHarness, TnRadioGroupHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
@@ -20,8 +20,7 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxIpInputWithNetmaskComponent,
-} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
+} from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -411,21 +410,21 @@ describe('TargetFormComponent', () => {
     it('shows groups section when mode is iSCSI', async () => {
       await setMode('iSCSI');
 
-      const groupsList = spectator.query('ix-list[formArrayName="groups"]');
+      const groupsList = spectator.query('tn-form-list[formArrayName="groups"]');
       expect(groupsList).toExist();
     });
 
     it('shows groups section when mode is BOTH', async () => {
       await setMode('Both');
 
-      const groupsList = spectator.query('ix-list[formArrayName="groups"]');
+      const groupsList = spectator.query('tn-form-list[formArrayName="groups"]');
       expect(groupsList).toExist();
     });
 
     it('hides groups section when mode is FC', async () => {
       await setMode('Fibre Channel');
 
-      const groupsList = spectator.query('ix-list[formArrayName="groups"]');
+      const groupsList = spectator.query('tn-form-list[formArrayName="groups"]');
       expect(groupsList).not.toExist();
     });
   });
@@ -505,8 +504,8 @@ describe('TargetFormComponent', () => {
       await (await getTnInput('name')).setValue('test-target');
       await setMode('iSCSI');
 
-      const groupsList = await loader.getHarness(IxListHarness.with({ label: 'Add groups' }));
-      await groupsList.pressAddButton();
+      const groupsList = await loader.getHarness(TnFormListHarness.with({ label: 'Add groups' }));
+      await groupsList.add();
 
       // Fill in the group details
       await fillGroupSelects({
@@ -517,7 +516,7 @@ describe('TargetFormComponent', () => {
       });
 
       // Verify groups section is visible
-      let groupsSection = spectator.query('ix-list[formArrayName="groups"]');
+      let groupsSection = spectator.query('tn-form-list[formArrayName="groups"]');
       expect(groupsSection).toExist();
 
       // Verify groups are populated in the form model
@@ -532,13 +531,13 @@ describe('TargetFormComponent', () => {
       // Switch to FC mode - groups should be hidden but preserved
       await setMode('Fibre Channel');
 
-      groupsSection = spectator.query('ix-list[formArrayName="groups"]');
+      groupsSection = spectator.query('tn-form-list[formArrayName="groups"]');
       expect(groupsSection).not.toExist();
 
       // Switch back to iSCSI mode - groups should reappear with same values
       await setMode('iSCSI');
 
-      groupsSection = spectator.query('ix-list[formArrayName="groups"]');
+      groupsSection = spectator.query('tn-form-list[formArrayName="groups"]');
       expect(groupsSection).toExist();
 
       // Verify the groups still have the same values
@@ -556,8 +555,8 @@ describe('TargetFormComponent', () => {
       await (await getTnInput('name')).setValue('test-target');
       await setMode('iSCSI');
 
-      const groupsList = await loader.getHarness(IxListHarness.with({ label: 'Add groups' }));
-      await groupsList.pressAddButton();
+      const groupsList = await loader.getHarness(TnFormListHarness.with({ label: 'Add groups' }));
+      await groupsList.add();
 
       await fillGroupSelects({
         portal: '1 (comment_1)',
@@ -606,8 +605,8 @@ describe('TargetFormComponent', () => {
       await (await getTnInput('name')).setValue('test-target');
       await setMode('Both');
 
-      const groupsList = await loader.getHarness(IxListHarness.with({ label: 'Add groups' }));
-      await groupsList.pressAddButton();
+      const groupsList = await loader.getHarness(TnFormListHarness.with({ label: 'Add groups' }));
+      await groupsList.add();
 
       await fillGroupSelects({
         portal: '2 (comment_2)',
@@ -618,13 +617,13 @@ describe('TargetFormComponent', () => {
       // Switch to FC mode
       await setMode('Fibre Channel');
 
-      let groupsSection = spectator.query('ix-list[formArrayName="groups"]');
+      let groupsSection = spectator.query('tn-form-list[formArrayName="groups"]');
       expect(groupsSection).not.toExist();
 
       // Switch back to BOTH mode
       await setMode('Both');
 
-      groupsSection = spectator.query('ix-list[formArrayName="groups"]');
+      groupsSection = spectator.query('tn-form-list[formArrayName="groups"]');
       expect(groupsSection).toExist();
 
       // Verify groups are preserved

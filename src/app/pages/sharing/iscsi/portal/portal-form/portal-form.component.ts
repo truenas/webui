@@ -6,7 +6,8 @@ import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+  TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnFormSectionComponent, TnInputComponent,
+  TnSelectComponent,
 } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
@@ -17,8 +18,6 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -29,14 +28,14 @@ import { IscsiService } from 'app/services/iscsi.service';
   styleUrls: ['./portal-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFormListComponent,
+    TnFormListItemComponent,
     ReactiveFormsModule,
     IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
     TnSelectComponent,
-    IxListComponent,
-    IxListItemComponent,
     TranslateModule,
     AsyncPipe,
   ],

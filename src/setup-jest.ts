@@ -31,12 +31,9 @@ import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
 import {
-  LabelMarkupPipe,
-  TN_DEFAULT_FALLBACK_LABELS,
-  TN_FALLBACK_LABELS,
-  TN_TEST_ATTR, TnButtonComponent, TnIconButtonComponent, TnIconComponent, TnIconTesting,
-  TnInputComponent,
-  TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTablePagerComponent, TnTestIdDirective,
+  LabelMarkupPipe, TN_DEFAULT_FALLBACK_LABELS, TN_FALLBACK_LABELS, TN_TEST_ATTR, TnButtonComponent,
+  TnIconButtonComponent, TnIconComponent, TnIconTesting, TnInputComponent, TnMenuComponent, TnMenuItemComponent,
+  TnMenuTriggerDirective, TnTablePagerComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import failOnConsole from 'jest-fail-on-console';
 import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
@@ -57,9 +54,6 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
 import {
@@ -68,6 +62,7 @@ import {
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { WarningComponent } from 'app/modules/warning/warning.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -156,8 +151,6 @@ defineGlobalsInjections({
     MatProgressSpinnerModule,
     MatButtonModule,
     IxExplorerComponent,
-    IxListComponent,
-    IxListItemComponent,
     IxErrorsComponent,
     IxLabelComponent,
     WarningComponent,

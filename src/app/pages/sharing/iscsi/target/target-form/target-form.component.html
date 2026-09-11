@@ -7,11 +7,13 @@
   (closed)="closed.emit($event)"
 >
   <ng-template #fcPortsTemplate>
-    <ix-list
+    <tn-form-list
       formArrayName="fcPorts"
       [empty]="form.controls.fcPorts.length === 0"
       [label]="'Fibre Channel Ports' | translate"
-      [formArray]="form.get('fcPorts')"
+      [control]="form.get('fcPorts')"
+      [addLabel]="'Add' | translate"
+      [emptyMessage]="'No items have been added yet.' | translate"
       (add)="addFcPort()"
     >
       @if (form.controls.fcPorts.length >= 2) {
@@ -19,8 +21,10 @@
       }
 
       @for (entry of form.controls.fcPorts.controls; track entry; let i = $index) {
-        <ix-list-item
+        <tn-form-list-item
+          testId="remove-from-list"
           [label]="'Port' | translate"
+          [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Port' | translate }"
           (delete)="deleteFcPort(i)"
         >
           <ix-fc-port-item-controls
@@ -31,9 +35,9 @@
             [usedPhysicalPorts]="usedPhysicalPortsByIndex()[i]"
             [availablePorts]="availableFcPorts()"
           ></ix-fc-port-item-controls>
-        </ix-list-item>
+        </tn-form-list-item>
       }
-    </ix-list>
+    </tn-form-list>
 
     @if (fcPortValidationErrors().length > 0) {
       <div class="fc-port-error" role="alert">
@@ -72,26 +76,34 @@
           </tn-form-field>
         }
 
-        <ix-list
+        <tn-form-list
           formArrayName="auth_networks"
           [empty]="form.controls.auth_networks.length === 0"
           [label]="helptext.authNetwork.label | translate"
-          [formArray]="form.get('auth_networks')"
+          [control]="form.get('auth_networks')"
+          [addLabel]="'Add' | translate"
+          [emptyMessage]="'No items have been added yet.' | translate"
           (add)="addNetwork()"
         >
           @for (entry of form.controls.auth_networks.controls; track entry; let i = $index) {
-            <ix-list-item
+            <tn-form-list-item
+              testId="remove-from-list"
               [label]="helptext.authNetwork.label | translate"
+              [removeAriaLabel]="'Remove {label} item' | translate: { label: helptext.authNetwork.label | translate }"
               (delete)="deleteNetwork(i)"
             >
-              <ix-ip-input-with-netmask
-                [formControlName]="i"
+              <tn-form-field
                 [label]="'Network' | translate"
                 [required]="true"
-              ></ix-ip-input-with-netmask>
-            </ix-list-item>
+              >
+                <ix-ip-input-with-netmask
+                  [formControlName]="i"
+                  [required]="true"
+                ></ix-ip-input-with-netmask>
+              </tn-form-field>
+            </tn-form-list-item>
           }
-        </ix-list>
+        </tn-form-list>
 
         @if (showPortControls && showGroupsControls) {
           <ng-container *ngTemplateOutlet="fcPortsTemplate"></ng-container>
@@ -108,17 +120,21 @@
 
       @if (showGroupsControls) {
         <tn-form-section [heading]="helptext.targetGroup | translate">
-          <ix-list
+          <tn-form-list
             formArrayName="groups"
-            [formArray]="form.get('groups')"
+            [control]="form.get('groups')"
             [empty]="form.controls.groups.length === 0"
             [label]="'Add groups' | translate"
+            [addLabel]="'Add' | translate"
+            [emptyMessage]="'No items have been added yet.' | translate"
             (add)="addGroup()"
           >
             @for (entry of form.controls.groups.controls; track entry; let i = $index) {
-              <ix-list-item
+              <tn-form-list-item
+                testId="remove-from-list"
                 [label]="'Groups' | translate"
                 [formGroupName]="i"
+                [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Groups' | translate }"
                 (delete)="deleteGroup(i)"
               >
                 <tn-form-field
@@ -163,9 +179,9 @@
                     [options]="(auths$ | async) ?? []"
                   ></tn-select>
                 </tn-form-field>
-              </ix-list-item>
+              </tn-form-list-item>
             }
-          </ix-list>
+          </tn-form-list>
         </tn-form-section>
       }
     </div>

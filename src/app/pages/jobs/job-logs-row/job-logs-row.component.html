@@ -7,6 +7,7 @@
       <ix-code-editor
         [formControl]="argumentsControl"
         [language]="CodeEditorLanguage.Json"
+        [ariaLabel]="'Arguments' | translate"
       ></ix-code-editor>
       <ix-copy-button [text]="job().arguments | json"></ix-copy-button>
     </div>

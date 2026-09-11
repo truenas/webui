@@ -3,11 +3,7 @@ import { ControlValueAccessor, FormsModule, NgControl, ReactiveFormsModule } fro
 import {
   injectTnFormFieldAria, TnSelectComponent, TnSelectOption, TnTestIdDirective,
 } from '@truenas/ui-components';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
-import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
-import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { NetworkService } from 'app/services/network.service';
 
 @Component({
@@ -16,13 +12,10 @@ import { NetworkService } from 'app/services/network.service';
   styleUrls: ['./ix-ip-input-with-netmask.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxLabelComponent,
     FormsModule,
     ReactiveFormsModule,
     TnSelectComponent,
     TnTestIdDirective,
-    IxErrorsComponent,
-    TestOverrideDirective,
   ],
   hostDirectives: [
     { ...registeredDirectiveConfig },
@@ -33,19 +26,20 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   controlDirective = inject(NgControl);
   private cdr = inject(ChangeDetectorRef);
 
-  readonly label = input<TranslatedString>();
-  readonly tooltip = input<TranslatedString>();
-  readonly hint = input<TranslatedString>();
   readonly required = input<boolean>(false);
+  /**
+   * Explicit accessible name, for the rare standalone use with no enclosing `tn-form-field`.
+   * Inside a field, leave it unset: the field's own label names the address input through
+   * `aria-labelledby`, and setting this would override it.
+   */
+  readonly ariaLabel = input<string>();
 
   /**
-   * ARIA wiring from an enclosing `tn-form-field`, so a consumer can hand this control's label
-   * row to the field (which is what makes it line up with the `tn-input`s beside it) without the
-   * address input losing its accessible name. All-null standalone, and suppressed while this
-   * component renders its own `ix-label` — `label()` is passed in, so the field's label never
-   * competes with one written here.
+   * ARIA wiring from the enclosing `tn-form-field`. This control renders no label of its own —
+   * the field owns the label row, which is what makes it line up with the `tn-input`s beside it —
+   * so the field names the address input. All-null standalone.
    */
-  protected readonly fieldAria = injectTnFormFieldAria(this.label);
+  protected readonly fieldAria = injectTnFormFieldAria(this.ariaLabel);
 
   onChange: (value: string) => void = (): void => {};
   onTouched: () => void = (): void => {};

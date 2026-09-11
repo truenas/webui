@@ -71,13 +71,17 @@
             (delete)="removeStaticIpAddress(i)"
           >
             <div class="alias">
-              <ix-ip-input-with-netmask
-                class="alias-ip"
-                formControlName="address"
+              <tn-form-field
                 [label]="asTranslatedString(('IP Address' | translate) + ipLabelSuffix)"
                 [required]="true"
                 [tooltip]="helptext.aliasAddressTooltip | translate"
-              ></ix-ip-input-with-netmask>
+              >
+                <ix-ip-input-with-netmask
+                  class="alias-ip"
+                  formControlName="address"
+                  [required]="true"
+                ></ix-ip-input-with-netmask>
+              </tn-form-field>
 
               @if (isHaLicensed) {
                 <tn-form-field

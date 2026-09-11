@@ -1,12 +1,3 @@
-@if (label() || tooltip()) {
-  <ix-label
-    [label]="label()"
-    [tooltip]="tooltip()"
-    [required]="required()"
-    [ixTestOverride]="controlDirective.name || ''"
-  ></ix-label>
-}
-
 <div class="permissions-container">
   <table ixTest="permissions-table" [class.disabled]="isDisabled">
     <tr [ixTest]="[controlDirective.name, 'permissions-header']">
@@ -130,8 +121,3 @@
     }
   </table>
 </div>
-
-@let control = controlDirective.control;
-@if (control) {
-  <ix-errors [control]="control" [label]="label()"></ix-errors>
-}

@@ -20,7 +20,7 @@ import { User } from 'app/interfaces/user.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
-import { IxPermissionsHarness } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.harness';
+import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { IxGroupComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -491,7 +491,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(spectator.component.form.controls.home.value).toBe('/var/empty');
 
       // Permissions should not be shown for /var/empty
-      const perms = await loader.getHarnessOrNull(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
+      const perms = await loader.getHarnessOrNull(TnFormControlHarness.with({ label: 'Home Directory Permissions' }));
       expect(perms).toBeNull();
     });
 
@@ -517,7 +517,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         await checkbox.uncheck();
       }
 
-      const perms = await loader.getHarness(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
+      const perms = await loader.getHarness(TnFormControlHarness.with({ label: 'Home Directory Permissions' }));
       expect(await perms.isDisabled()).toBe(false);
     });
 
@@ -562,7 +562,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         await checkbox.uncheck();
       }
 
-      const perms = await loader.getHarness(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
+      const perms = await loader.getHarness(TnFormControlHarness.with({ label: 'Home Directory Permissions' }));
       await perms.setValue('755');
 
       const createCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Create Home Directory' }));
@@ -574,7 +574,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(spectator.component.form.controls.home_mode.value).toBe('700');
 
       // The permissions component should be hidden when default_permissions is true
-      const hiddenPerms = await loader.getHarnessOrNull(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
+      const hiddenPerms = await loader.getHarnessOrNull(TnFormControlHarness.with({ label: 'Home Directory Permissions' }));
       expect(hiddenPerms).toBeNull();
     });
 
@@ -670,7 +670,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       await homeEditable.open();
 
       const explorer = await loader.getHarnessOrNull(IxExplorerHarness.with({ label: 'Home Directory' }));
-      const perms = await loader.getHarnessOrNull(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
+      const perms = await loader.getHarnessOrNull(TnFormControlHarness.with({ label: 'Home Directory Permissions' }));
       const createCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Create Home Directory' }));
 
       expect(await explorer.isDisabled()).toBe(true);
@@ -729,7 +729,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       await homeEditable.open();
 
       const defaultPermsCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Default Permissions' }));
-      const permissionsComponent = await loader.getHarnessOrNull(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
+      const permissionsComponent = await loader.getHarnessOrNull(TnFormControlHarness.with({ label: 'Home Directory Permissions' }));
 
       expect(defaultPermsCheckbox).toBeNull();
       expect(permissionsComponent).toBeNull();

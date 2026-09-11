@@ -79,17 +79,23 @@
             <tn-checkbox formControlName="ident" [label]="'Require IDENT Authentication' | translate"></tn-checkbox>
           </tn-form-field>
 
-          <ix-permissions
-            formControlName="filemask"
+          <tn-form-field
             [label]="'File Permissions' | translate"
             [tooltip]="helptext.filemaskTooltip | translate"
-          ></ix-permissions>
+          >
+            <ix-permissions
+              formControlName="filemask"
+            ></ix-permissions>
+          </tn-form-field>
 
-          <ix-permissions
-            formControlName="dirmask"
+          <tn-form-field
             [label]="'Directory Permissions' | translate"
             [tooltip]="helptext.dirmaskTooltip | translate"
-          ></ix-permissions>
+          >
+            <ix-permissions
+              formControlName="dirmask"
+            ></ix-permissions>
+          </tn-form-field>
         </tn-form-section>
       }
     </div>

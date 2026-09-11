@@ -5,9 +5,11 @@ import {
   TnCheckboxGroupHarness,
   TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
 } from '@truenas/ui-components';
+import { IxCodeEditorHarness } from 'app/modules/forms/controls/ix-code-editor/ix-code-editor.harness';
 import {
   IxIpInputWithNetmaskHarness,
-} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
+} from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
+import { IxPermissionsHarness } from 'app/modules/forms/controls/ix-permissions/ix-permissions.harness';
 import { ixControlLabelTag } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import {
   IxFormControlHarness, unreadableControl,
@@ -34,10 +36,10 @@ import {
  *
  * A field may also wrap a composite ix-* control rather than a bare tn-* one (the ix-* control
  * hands its label row to the field so it lines up with the `tn-input`s beside it). Those are
- * matched FIRST — see {@link projectedIxControl} — because the tn-* locators below would otherwise
- * reach *inside* one and drive an internal that is not the field's control at all. The user/group
- * pickers are the exception: they carry no `ix-label` marker, so they get explicit branches of
- * their own at the end.
+ * matched FIRST — see {@link delegate} and {@link projectedIxControl} — because the tn-* locators
+ * below would otherwise reach *inside* one and drive an internal that is not the field's control
+ * at all. The user/group pickers are the exception: they carry no `ix-label` marker, so they get
+ * explicit branches of their own at the end.
  *
  * A field wrapping anything else (a bare `tn-chip-input`, `tn-file-input`, …) still indexes by
  * label, but {@link getValue} and {@link isDisabled} return {@link unreadableControl} — whole-form
@@ -55,9 +57,17 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
    * `ix-ip-input-with-netmask` renders a bare `<input>` for the address and a `tn-select` for the
    * netmask, so {@link select} matches that netmask picker and {@link getValue} would report '12'
    * where the field's value is '172.17.0.0/12'. Delegating to the control's own harness reads the
-   * whole `address/netmask` instead — the only projected ix-* control this adapter can drive.
+   * whole `address/netmask` instead. See {@link delegate} for the full set.
    */
   private ipInputWithNetmask = this.locatorForOptional(IxIpInputWithNetmaskHarness);
+  /**
+   * The other two webui-specific controls a field may wrap. Like the netmask input above they
+   * render tn-* internals of their own — `ix-permissions` a grid of `tn-checkbox`es, whose first
+   * one the checkbox locator would otherwise report as the field's value — so each is driven
+   * through its own harness rather than through an internal.
+   */
+  private permissions = this.locatorForOptional(IxPermissionsHarness);
+  private codeEditor = this.locatorForOptional(IxCodeEditorHarness);
   /**
    * Any *other* projected ix-* control. `RegisteredControlDirective` — the host directive every
    * ix-* control carries — stamps `ix-label` on its own element once the control registers, so
@@ -140,6 +150,17 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
   }
 
   /**
+   * The projected ix-* control this field wraps, when it is one this adapter can drive. Checked
+   * before every tn-* locator, since those would reach inside it.
+   */
+  private async delegate(): Promise<IxFormControlHarness | null> {
+    return (await this.ipInputWithNetmask())
+      ?? (await this.permissions())
+      ?? (await this.codeEditor());
+  }
+
+
+  /**
    * Empty only when the field carries no label and holds nothing that names itself — neither a
    * `tn-checkbox`'s own `[label]` nor a radio group's `[ariaLabel]`. `indexControlsByLabel` leaves
    * such a control out of the index entirely (no label a caller could pass would reach it); query
@@ -150,13 +171,10 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
     if (label) {
       return label;
     }
-    // A projected ix-* control names itself through its own `ix-label`, so ask it rather than
-    // the tn-* internals it renders — a composite's first `tn-checkbox` would otherwise name
-    // the whole field below.
-    const ipInputWithNetmask = await this.ipInputWithNetmask();
-    if (ipInputWithNetmask) {
-      return ipInputWithNetmask.getLabelText();
-    }
+    // A projected ix-* control renders no label of its own any more — the field names it — so a
+    // field holding one and carrying no label of its own is genuinely nameless. Answer that here
+    // rather than falling through to the tn-* branches below, where a composite's first
+    // `tn-checkbox` would otherwise name the whole field.
     if (await this.projectedIxControl()) {
       return '';
     }
@@ -184,9 +202,9 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
   }
 
   async getValue(): Promise<unknown> {
-    const ipInputWithNetmask = await this.ipInputWithNetmask();
-    if (ipInputWithNetmask) {
-      return ipInputWithNetmask.getValue();
+    const delegate = await this.delegate();
+    if (delegate) {
+      return delegate.getValue();
     }
     if (await this.projectedIxControl()) {
       return unreadableControl;
@@ -249,9 +267,9 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
   }
 
   async setValue(value: unknown): Promise<void> {
-    const ipInputWithNetmask = await this.ipInputWithNetmask();
-    if (ipInputWithNetmask) {
-      await ipInputWithNetmask.setValue(value == null ? '' : String(value));
+    const delegate = await this.delegate();
+    if (delegate) {
+      await delegate.setValue(value == null ? '' : String(value));
       return;
     }
     if (await this.projectedIxControl()) {
@@ -358,7 +376,7 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
    * still address it by label, instead of hanging a CSS anchor on the select for the test's sake.
    */
   async getSelectOptions(): Promise<string[]> {
-    if (await this.ipInputWithNetmask() || await this.projectedIxControl()) {
+    if (await this.delegate() || await this.projectedIxControl()) {
       throw new Error(
         `tn-form-field "${await this.getLabelText()}" wraps an ix-* control, whose internal `
         + 'tn-select is not the field\'s own — read its options through that control\'s harness.',
@@ -385,9 +403,9 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
    * on {@link getValue}: a `false` would read as "enabled" for a control that may well be disabled.
    */
   async isDisabled(): Promise<boolean | typeof unreadableControl> {
-    const ipInputWithNetmask = await this.ipInputWithNetmask();
-    if (ipInputWithNetmask) {
-      return ipInputWithNetmask.isDisabled();
+    const delegate = await this.delegate();
+    if (delegate) {
+      return delegate.isDisabled();
     }
     if (await this.projectedIxControl()) {
       return unreadableControl;
