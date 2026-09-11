@@ -20,7 +20,7 @@ export interface ServiceState {
   enable: boolean;
 }
 
-/** The service row by middleware name (`cifs`, `truenas_s3`), or undefined when the query returns nothing. */
+/** The service row by middleware name (`cifs`, `s3`), or undefined when the query returns nothing. */
 export async function queryService(client: E2eApiClient, service: string): Promise<ServiceState | undefined> {
   // `query`, not `queryOne` — an empty result has to be representable, because
   // callers distinguish it from "stopped".
