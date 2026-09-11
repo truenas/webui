@@ -38,7 +38,7 @@ export interface WaitForElementOptions {
    * When true, draws the highlight outline inset (negative outline-offset)
    * so it isn't clipped by the viewport edge or an overflow container.
    *
-   * Caveat: `<tr>` rows are special-cased in `_material-reduction.scss` and
+   * Caveat: `<tr>` rows are special-cased in `_globals.scss` and
    * always render an outset pulse regardless of this flag — outlines on
    * table rows interact poorly with `border-collapse`. If a future caller
    * sets `inset: true` on a row and expects an inset outline, update the

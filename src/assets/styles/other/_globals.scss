@@ -1,8 +1,7 @@
-// Historically this file walked back Angular Material's defaults. Material is gone
-// (NAS-141025 removed the last of it), so what is left here is plain global styling:
-// base typography, the `.form-element` form rhythm, tooltips, the search-highlight
-// pulse and a couple of overlay z-indexes. The filename is kept because a number of
-// component stylesheets cite it when they explain which global rule they replaced.
+// App-wide element styling: base typography, the `.form-element` form rhythm,
+// tooltips, the search-highlight pulse and a couple of overlay z-indexes.
+// Was `_material-reduction.scss` until NAS-141025 — it existed to walk back Angular
+// Material's defaults, and was renamed once the last of Material was removed.
 @import 'scss-imports/cssvars';
 @import 'mixins/text';
 @import 'mixins/animations';
