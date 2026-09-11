@@ -43,4 +43,15 @@ export const selectLicense = createSelector(
   (systemInfo) => systemInfo?.license ?? null,
 );
 
+/**
+ * An Enterprise product type without a license (e.g. unlicensed R-series
+ * hardware) is branded as Community Edition in the UI.
+ */
+export const selectHasCommunityBranding = createSelector(
+  selectProductType,
+  selectLicense,
+  (productType, license) => productType === ProductType.CommunityEdition
+    || (productType === ProductType.Enterprise && license === null),
+);
+
 export const waitForSystemInfo = selectNotNull(selectSystemInfo);

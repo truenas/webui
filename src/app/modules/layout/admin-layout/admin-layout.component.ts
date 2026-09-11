@@ -13,7 +13,7 @@ import {
 } from '@truenas/ui-components';
 import { filter, map, pairwise, startWith } from 'rxjs';
 import { exploreNasEnterpriseLink } from 'app/constants/explore-nas-enterprise-link.constant';
-import { productTypeLabels } from 'app/enums/product-type.enum';
+import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import { hashMessage } from 'app/helpers/hash-message';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
@@ -37,7 +37,7 @@ import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
 import {
-  selectCopyrightHtml, selectIsEnterprise, selectProductType, waitForSystemInfo,
+  selectCopyrightHtml, selectHasCommunityBranding, selectProductType, waitForSystemInfo,
 } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -85,12 +85,27 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
   readonly copyrightHtml = toSignal(this.store$.select(selectCopyrightHtml));
   readonly productType = toSignal(this.store$.select(selectProductType));
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  readonly hasCommunityBranding = toSignal(this.store$.select(selectHasCommunityBranding));
+  private readonly brandedProductType = computed(() => {
+    return this.hasCommunityBranding() ? ProductType.CommunityEdition : this.productType();
+  });
+
   // angular tooltips are unable to display HTML content, so we just remove the `<br>` tags
   // credit <https://github.com/JackW6809> for the replace pattern!
   readonly copyrightText = computed(() => this.copyrightHtml().replace(/<br\s*\/?>/gi, '\n'));
 
-  protected currentMessageHref = computed(() => `${exploreNasEnterpriseLink}?m=${hashMessage(this.productType())}`);
+  protected currentMessageHref = computed(() => {
+    return `${exploreNasEnterpriseLink}?m=${hashMessage(this.brandedProductType())}`;
+  });
+
+  protected productTypeText = computed(() => {
+    const productType = this.brandedProductType();
+    if (!productType) {
+      return '';
+    }
+
+    return productTypeLabels.get(productType) || productType;
+  });
 
   get sidenavWidth(): string {
     return this.sidenavService.sidenavWidth;
@@ -118,15 +133,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get menuName(): string {
     return this.sidenavService.menuName;
-  }
-
-  get productTypeText(): string {
-    const productType = this.productType();
-    if (!productType) {
-      return '';
-    }
-
-    return productTypeLabels.get(productType) || productType;
   }
 
   ngOnInit(): void {
