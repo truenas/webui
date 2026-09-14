@@ -150,6 +150,31 @@ describe('TaskCardJobRepainter', () => {
     expect(mergeSpy).toHaveBeenCalledTimes(1);
   });
 
+  it('repaints when a repeat of the final state brings the log excerpt the row is missing', () => {
+    const mergeSpy = jest.fn((row: TestRow, job: Job) => ({ ...row, job, state: { state: job.state } }));
+    repainter.destroy();
+    repainter = new TaskCardJobRepainter<TestRow>(
+      store$,
+      () => rows,
+      (next) => {
+        rows = next;
+      },
+      mergeSpy,
+    );
+
+    // Middleware publishes SUCCESS before it has read the job's log file, then sends a
+    // second event with the same state once `logs_excerpt` is filled in.
+    rows = [{ id: 1, job: { id: 10, state: JobState.Success } as Job }];
+    setJobs([{ id: 10, state: JobState.Success } as Job]);
+    repainter.watch(rows);
+    mergeSpy.mockClear();
+
+    setJobs([{ id: 10, state: JobState.Success, logs_excerpt: 'rsync finished' } as Job]);
+
+    expect(mergeSpy).toHaveBeenCalledTimes(1);
+    expect(rows[0].job?.logs_excerpt).toBe('rsync finished');
+  });
+
   it('repaintRow applies the transform to the matching row and republishes the list', () => {
     const row1 = { id: 1, job: { id: 10, state: JobState.Running } as Job };
     const row2 = { id: 2, job: { id: 20, state: JobState.Running } as Job };

@@ -70,6 +70,27 @@ describe('RsyncTaskCardComponent', () => {
         state: 'FAILED',
       },
     } as unknown as RsyncTaskUi,
+    {
+      id: 2,
+      path: '/mnt/DATA',
+      remotehost: 'qwe',
+      remotemodule: 'qweqwe',
+      user: 'test',
+      enabled: true,
+      mode: RsyncMode.Module,
+      direction: Direction.Push,
+      // A task that has never run: middleware reports no job at all.
+      job: null,
+      ssh_credentials: null,
+      schedule: {
+        minute: '0',
+        hour: '*',
+        dom: '*',
+        month: '*',
+        dow: '*',
+      },
+      locked: false,
+    } as unknown as RsyncTaskUi,
   ];
 
   const createComponent = createComponentFactory({
@@ -86,7 +107,7 @@ describe('RsyncTaskCardComponent', () => {
         selectors: [
           {
             selector: selectJobs,
-            value: rsyncTasks.map((task) => task.job),
+            value: rsyncTasks.map((task) => task.job).filter(Boolean),
           },
           {
             selector: selectSystemConfigState,
@@ -130,7 +151,26 @@ describe('RsyncTaskCardComponent', () => {
     expect(await table.getHeaderTexts()).toEqual(['Path', 'State', 'Enabled', '']);
     expect(await table.getAllRowTexts()).toEqual([
       ['/mnt/APPS', 'Failed', '', ''],
+      ['/mnt/DATA', 'Pending', '', ''],
     ]);
+  });
+
+  it('reloads so the row picks up a run started outside the card', () => {
+    const loadSpy = jest.spyOn(spectator.component.dataProvider, 'load');
+
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectJobs, [
+      {
+        id: 1, state: JobState.Failed, method: 'rsynctask.run', arguments: [1],
+      } as Job,
+      // A cron-scheduled run of task 2 that no row is watching.
+      {
+        id: 77, state: JobState.Success, method: 'rsynctask.run', arguments: [2],
+      } as Job,
+    ]);
+    store$.refreshState();
+
+    expect(loadSpy).toHaveBeenCalled();
   });
 
   it('repaints the row through the data provider when the backing job changes in the background', () => {

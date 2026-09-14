@@ -99,6 +99,7 @@ export class CloudBackupCardComponent extends JobTaskCardBase<CloudBackup> {
   protected readonly displayedColumns = ['description', 'state', 'enabled', 'actions'];
   protected readonly defaultSortProperty = 'description';
   protected readonly addTestId = 'cloud-backup-add';
+  protected readonly runMethod = 'cloud_backup.sync' as const;
   updatedCount = signal(0);
 
   protected readonly actions: IconActionConfig<CloudBackup>[] = [
