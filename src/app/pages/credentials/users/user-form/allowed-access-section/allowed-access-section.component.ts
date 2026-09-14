@@ -82,11 +82,12 @@ export class AllowedAccessSectionComponent {
    * Turns SMB access off and locks the checkbox when the create flow asked for
    * it — the account this flow is about is not an SMB account.
    *
-   * `setValue` before `disable`, and the disable silenced: the store learns the
-   * value from the first call, and a disabled control is dropped from
-   * `valueChanges`, so letting the second one emit would report `undefined`
-   * access to everything watching. The payload still carries it, because the
-   * form reads these sections with `getRawValue`.
+   * `setValue` before `disable`, and the disable silenced: the store learns
+   * the value from the first call, and the second has nothing new to say.
+   * What keeps it said is {@link updateStoreOnChanges} reporting the raw
+   * value — `smb` reaches `user.create` through the store, not through the
+   * form, so a disabled control that stopped reporting would quietly drop out
+   * of the request.
    */
   private applyPreset(): void {
     effect(() => {
@@ -190,8 +191,15 @@ export class AllowedAccessSectionComponent {
   }
 
   private updateStoreOnChanges(): void {
+    // `getRawValue`, not the emitted value: a disabled control is dropped from
+    // the payload `valueChanges` carries, and `updateUserConfig` spreads what
+    // it is given — so reporting the emission would overwrite a disabled
+    // control's setting with `undefined` on the next change to any sibling,
+    // and `user.create` would go out with nothing to say about it. The auth
+    // section reports the same way, for the same reason.
     this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (values) => {
+      next: () => {
+        const values = this.form.getRawValue();
         this.userFormStore.setAllowedAccessConfig({
           smbAccess: values.smb,
           webshareAccess: values.webshare,

@@ -68,10 +68,22 @@ describe('AllowedAccessSectionComponent', () => {
       );
     });
 
-    it('still sends SMB access with the form, though its control is disabled', () => {
+    it('keeps telling the store SMB is off when a sibling control changes', async () => {
+      // The locked control is dropped from `valueChanges`, and the store's
+      // config is spread rather than merged — so reporting the emission
+      // instead of the raw value would replace `smb: false` with `undefined`
+      // here, and `user.create` would go out saying nothing about SMB at all.
       spectator.setInput('preset', { lockSmbAccessOff: true });
 
-      expect(spectator.component.form.getRawValue()).toMatchObject({ smb: false });
+      const truenasAccess = await loader.getHarness(TnCheckboxHarness.with({ label: 'TrueNAS Access' }));
+      await truenasAccess.check();
+
+      expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenLastCalledWith(
+        expect.objectContaining({ smb: false }),
+      );
+      expect(spectator.inject(UserFormStore).setAllowedAccessConfig).toHaveBeenLastCalledWith(
+        expect.objectContaining({ smbAccess: false }),
+      );
     });
 
     it('leaves the checkbox alone without a preset', async () => {
