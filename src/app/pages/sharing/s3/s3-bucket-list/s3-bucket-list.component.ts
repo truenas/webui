@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   tnIconMarker, TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective, TnCardHeaderDirective,
@@ -10,7 +10,7 @@ import {
   TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { tap } from 'rxjs';
+import { of, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -36,8 +36,10 @@ import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell
 import { ApiService } from 'app/modules/websocket/api.service';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { s3BucketListElements } from 'app/pages/sharing/s3/s3-bucket-list/s3-bucket-list.elements';
-import { bucketToShareRow } from 'app/pages/sharing/s3/utils/s3-bucket.utils';
-import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
+import { bucketDataPath, bucketToShareRow } from 'app/pages/sharing/s3/utils/s3-bucket.utils';
+import {
+  getFilesystemAclUnavailableReason, getUnavailableReason, isShareUnavailable,
+} from 'app/pages/sharing/utils/share-exported-pool.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
 
@@ -74,6 +76,7 @@ export class S3BucketListComponent implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
+  private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
   private formPanel = inject(FormSidePanelService);
   protected emptyService = inject(EmptyService);
@@ -106,6 +109,15 @@ export class S3BucketListComponent implements OnInit {
       iconName: tnIconMarker('pencil', 'mdi'),
       tooltip: this.translate.instant('Edit'),
       onClick: (row) => this.doEdit(row),
+    },
+    {
+      iconName: tnIconMarker('security', 'mdi'),
+      tooltip: this.translate.instant('Edit Filesystem ACL'),
+      disabled: (row) => of(isShareUnavailable(bucketToShareRow(row), this.activePoolPaths())),
+      disabledTooltip: (row: S3Bucket) => this.translate.instant(
+        getFilesystemAclUnavailableReason(bucketToShareRow(row), this.activePoolPaths()),
+      ),
+      onClick: (row) => this.doFilesystemAclEdit(row),
     },
     {
       iconName: tnIconMarker('delete', 'mdi'),
@@ -230,6 +242,26 @@ export class S3BucketListComponent implements OnInit {
       title: this.translate.instant('Add S3 Bucket'),
       inputs: { bucket: undefined },
     }).onSuccess(() => this.refresh(), this.destroyRef);
+  }
+
+  /**
+   * The ACL editor works on the bucket's `s3data` directory, the same way the
+   * SMB surfaces send it the share's path. A locked dataset has no path to edit.
+   */
+  private doFilesystemAclEdit(row: S3Bucket): void {
+    if (row.locked) {
+      this.dialog.error({
+        title: this.translate.instant('Error'),
+        message: this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path: bucketDataPath(row) }),
+      });
+      return;
+    }
+    this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+      queryParams: {
+        path: bucketDataPath(row),
+        returnUrl: this.router.url,
+      },
+    });
   }
 
   protected doEdit(row: S3Bucket): void {
