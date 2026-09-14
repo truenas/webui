@@ -10,6 +10,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { TnFormFieldComponent } from '@truenas/ui-components';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { UserFormPreset } from 'app/interfaces/user.interface';
 import {
   IxGroupChipsComponent,
 } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-chips.component';
@@ -64,6 +65,9 @@ class StubDirectory {
 
   createUserImpl: () => Observable<PrincipalOption | null> = () => of(null);
 
+  /** Every `preset` a field passed to the create flow. */
+  seenPresets: (UserFormPreset | undefined)[] = [];
+
   queryUsers(search: string, page: number, options: DirectoryQueryOptions): Observable<PrincipalOption[]> {
     this.seenOptions.push(options);
     return this.queryUsersImpl(search);
@@ -82,8 +86,9 @@ class StubDirectory {
     return of(groups.includes(groupName));
   }
 
-  createUser(options: DirectoryQueryOptions): Observable<PrincipalOption | null> {
+  createUser(options: DirectoryQueryOptions, preset?: UserFormPreset): Observable<PrincipalOption | null> {
     this.seenOptions.push(options);
+    this.seenPresets.push(preset);
     return this.createUserImpl();
   }
 }
@@ -116,6 +121,7 @@ const fakeTranslate = {
           <ix-user-combobox
             formControlName="owner"
             [allowCreate]="allowCreate()"
+            [createPreset]="createPreset()"
             [directoryOptions]="directoryOptions()"
             [extraOptions]="extraOptions()"
             [validateExistence]="validateOwner()"
@@ -150,6 +156,7 @@ class DirectoryHostComponent {
   get groupList(): FormControl<string[] | null> { return this.form.controls.groupList; }
 
   allowCreate = signal(false);
+  createPreset = signal<UserFormPreset | undefined>(undefined);
   directoryOptions = signal<DirectoryQueryOptions>({});
   extraOptions = signal<PrincipalOption[]>([]);
   /** Lets a spec destroy the owner field while its control stays in the form. */
@@ -574,6 +581,33 @@ describe('ix-user-* / ix-group-* directory pickers', () => {
       await settle();
 
       expect(host.owner.value).toBe('newbie');
+    });
+
+    it('hands the create flow what the field wants the new account to start as', async () => {
+      host.allowCreate.set(true);
+      host.createPreset.set({ lockSmbAccessOff: true, passwordDisabled: true });
+      directory.createUserImpl = () => of({ label: ignoreTranslation('newbie'), value: 'newbie' });
+      fixture.detectChanges();
+
+      const owner = await loader.getHarness(IxUserComboboxHarness);
+      await owner.focus();
+      await owner.selectOption('Add New');
+      await settle();
+
+      expect(directory.seenPresets).toEqual([{ lockSmbAccessOff: true, passwordDisabled: true }]);
+    });
+
+    it('hands it nothing when the field asks for nothing', async () => {
+      host.allowCreate.set(true);
+      directory.createUserImpl = () => of({ label: ignoreTranslation('newbie'), value: 'newbie' });
+      fixture.detectChanges();
+
+      const owner = await loader.getHarness(IxUserComboboxHarness);
+      await owner.focus();
+      await owner.selectOption('Add New');
+      await settle();
+
+      expect(directory.seenPresets).toEqual([undefined]);
     });
 
     it('shows the created principal by name, not by the id it was given', async () => {

@@ -15,7 +15,7 @@ import { Role } from 'app/enums/role.enum';
 import {
   hasShellAccess, hasSshAccess, hasTrueNasAccess, isEmptyHomeDirectory,
 } from 'app/helpers/user.helper';
-import { User, UserUpdate } from 'app/interfaces/user.interface';
+import { User, UserFormPreset, UserUpdate } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -61,6 +61,17 @@ export class UserFormComponent extends IxFormHostForm<User> implements OnInit {
 
   /** Record being edited, supplied by the `<tn-side-panel>` host via the `editUser` input. */
   readonly editUser = input<User | undefined>(undefined);
+
+  /**
+   * What a create flow wants this form to start as, for an account that is not
+   * a general-purpose one — see {@link UserFormPreset}. Ignored while editing.
+   *
+   * Handed straight to the sections that own the controls it names; this form
+   * holds only the username. The two halves coordinate through the store, as
+   * everything else here does: SMB access going off is what lets the auth
+   * section tick "Disable Password" at all.
+   */
+  readonly preset = input<UserFormPreset | undefined>(undefined);
 
   protected isStigMode = this.userFormStore.isStigMode;
   // The host applies the `editUser` input after construction, so the edited record is

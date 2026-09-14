@@ -18,11 +18,15 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { S3Bucket } from 'app/interfaces/s3.interface';
 import { User } from 'app/interfaces/user.interface';
+import {
+  IxUserComboboxComponent,
+} from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
+import { s3UserFormPreset } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -126,6 +130,12 @@ describe('S3BucketFormComponent', () => {
       api = spectator.inject(ApiService);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
+    });
+
+    it('opens "Add New" on a user-form preset for an S3 account', () => {
+      // An account created from here owns a bucket or signs a key; it is not an
+      // SMB account and never signs in. See `s3UserFormPreset`.
+      expect(spectator.query(IxUserComboboxComponent).createPreset()).toEqual(s3UserFormPreset);
     });
 
     it('shows object lock with the basic fields and the rest only after Advanced Options is pressed', async () => {

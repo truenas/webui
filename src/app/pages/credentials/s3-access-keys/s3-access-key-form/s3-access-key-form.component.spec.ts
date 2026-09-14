@@ -12,6 +12,9 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { S3AccessKeyStatus } from 'app/enums/s3.enum';
 import { S3AccessKey } from 'app/interfaces/s3.interface';
 import { User } from 'app/interfaces/user.interface';
+import {
+  IxUserComboboxComponent,
+} from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { LocaleService } from 'app/modules/language/locale.service';
@@ -22,6 +25,7 @@ import {
   S3AccessKeyCredentialsDialogComponent,
 } from 'app/pages/credentials/s3-access-keys/s3-access-key-credentials-dialog/s3-access-key-credentials-dialog.component';
 import { S3AccessKeyFormComponent } from 'app/pages/credentials/s3-access-keys/s3-access-key-form/s3-access-key-form.component';
+import { s3UserFormPreset } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 
 describe('S3AccessKeyFormComponent', () => {
   let spectator: Spectator<S3AccessKeyFormComponent>;
@@ -89,6 +93,12 @@ describe('S3AccessKeyFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await spectator.fixture.whenStable();
+    });
+
+    it('opens "Add New" on a user-form preset for an S3 account', () => {
+      // An account created from here owns a bucket or signs a key; it is not an
+      // SMB account and never signs in. See `s3UserFormPreset`.
+      expect(spectator.query(IxUserComboboxComponent).createPreset()).toEqual(s3UserFormPreset);
     });
 
     it('creates a key and shows its credentials', async () => {

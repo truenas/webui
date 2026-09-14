@@ -19,7 +19,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   S3AccessKeyCredentialsDialogComponent,
 } from 'app/pages/credentials/s3-access-keys/s3-access-key-credentials-dialog/s3-access-key-credentials-dialog.component';
-import { s3UserDirectoryOptions } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
+import { s3UserDirectoryOptions, s3UserFormPreset } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 
 @Component({
   selector: 'ix-s3-access-key-form',
@@ -51,6 +51,7 @@ export class S3AccessKeyFormComponent extends IxFormHostForm implements OnInit {
   protected readonly helptext = helptextSharingS3;
   protected readonly minDateToday = new Date();
   protected readonly userDirectoryOptions = s3UserDirectoryOptions;
+  protected readonly userFormPreset = s3UserFormPreset;
 
   protected readonly isNew = computed(() => !this.accessKey());
 

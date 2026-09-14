@@ -51,6 +51,38 @@ describe('AllowedAccessSectionComponent', () => {
     });
   });
 
+  describe('when a create flow presets the section', () => {
+    it('turns SMB access off and locks the checkbox', async () => {
+      spectator.setInput('preset', { lockSmbAccessOff: true });
+
+      const smbAccessCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'SMB Access' }));
+      expect(await smbAccessCheckbox.isChecked()).toBe(false);
+      expect(await smbAccessCheckbox.isDisabled()).toBe(true);
+    });
+
+    it('tells the store SMB access is off, rather than that it is unknown', () => {
+      spectator.setInput('preset', { lockSmbAccessOff: true });
+
+      expect(spectator.inject(UserFormStore).setAllowedAccessConfig).toHaveBeenLastCalledWith(
+        expect.objectContaining({ smbAccess: false }),
+      );
+    });
+
+    it('still sends SMB access with the form, though its control is disabled', () => {
+      spectator.setInput('preset', { lockSmbAccessOff: true });
+
+      expect(spectator.component.form.getRawValue()).toMatchObject({ smb: false });
+    });
+
+    it('leaves the checkbox alone without a preset', async () => {
+      spectator.setInput('preset', undefined);
+
+      const smbAccessCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'SMB Access' }));
+      expect(await smbAccessCheckbox.isChecked()).toBe(true);
+      expect(await smbAccessCheckbox.isDisabled()).toBe(false);
+    });
+  });
+
   describe('when existing user', () => {
     beforeEach(() => {
       spectator.setInput('editingUser', {

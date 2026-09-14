@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, effect, input, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, untracked,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnCheckboxComponent, TnCheckboxLabelDirective, TnFormSectionComponent, TnIconComponent, TnSelectComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { hasShellAccess, hasSshAccess } from 'app/helpers/user.helper';
-import { User } from 'app/interfaces/user.interface';
+import { User, UserFormPreset } from 'app/interfaces/user.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { defaultRole, UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 
@@ -35,6 +37,8 @@ export class AllowedAccessSectionComponent {
   editingUser = input<User>();
   password = input<string>();
   passwordDisabled = input<boolean>();
+  /** What a create flow wants this section to start as. Ignored while editing. */
+  preset = input<UserFormPreset | undefined>(undefined);
 
   protected sshAccess = this.userFormStore.sshAccess;
 
@@ -58,6 +62,7 @@ export class AllowedAccessSectionComponent {
   constructor() {
     this.setFieldRelations();
     this.updateStoreOnChanges();
+    this.applyPreset();
 
     // Revalidate when password changes
     effect(() => {
@@ -70,6 +75,28 @@ export class AllowedAccessSectionComponent {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.form.updateValueAndValidity();
+    });
+  }
+
+  /**
+   * Turns SMB access off and locks the checkbox when the create flow asked for
+   * it — the account this flow is about is not an SMB account.
+   *
+   * `setValue` before `disable`, and the disable silenced: the store learns the
+   * value from the first call, and a disabled control is dropped from
+   * `valueChanges`, so letting the second one emit would report `undefined`
+   * access to everything watching. The payload still carries it, because the
+   * form reads these sections with `getRawValue`.
+   */
+  private applyPreset(): void {
+    effect(() => {
+      if (!this.preset()?.lockSmbAccessOff || this.editingUser()) {
+        return;
+      }
+      untracked(() => {
+        this.form.controls.smb.setValue(false);
+        this.form.controls.smb.disable({ emitEvent: false });
+      });
     });
   }
 

@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, input, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, Injector, input, OnInit, untracked,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -7,7 +9,7 @@ import {
 } from '@truenas/ui-components';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { helptextUsers } from 'app/helptext/account/user-form';
-import { User } from 'app/interfaces/user.interface';
+import { User, UserFormPreset } from 'app/interfaces/user.interface';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { UserFormStore, UserStigPasswordOption, defaultHomePath } from 'app/pages/credentials/users/user-form/user.store';
 
@@ -31,10 +33,13 @@ export class AuthSectionComponent implements OnInit {
   private userStore = inject(UserFormStore);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
+  private injector = inject(Injector);
 
   editingUser = input<User>();
   homeDirectory = input<string>();
   shell = input<string | null>();
+  /** What a create flow wants this section to start as. Ignored while editing. */
+  preset = input<UserFormPreset | undefined>(undefined);
 
   protected sshAccess = this.userStore.sshAccess;
   protected smbAccess = this.userStore.smbAccess;
@@ -169,6 +174,29 @@ export class AuthSectionComponent implements OnInit {
 
   ngOnInit(): void {
     this.setPasswordFieldRelations();
+    this.applyPreset();
+  }
+
+  /**
+   * Ticks "Disable Password" when the create flow asked for it — the account
+   * this flow is about never signs in.
+   *
+   * Applied once, and only once SMB access has actually gone off: the watcher
+   * above forces this control off and disabled for as long as SMB access reads
+   * true, so a tick applied ahead of that is silently undone. Once is what
+   * makes it a starting point rather than a setting — the user can untick it,
+   * and nothing puts it back.
+   */
+  private applyPreset(): void {
+    let applied = false;
+
+    effect(() => {
+      if (applied || !this.preset()?.passwordDisabled || this.editingUser() || this.smbAccess()) {
+        return;
+      }
+      applied = true;
+      untracked(() => this.form.controls.password_disabled.setValue(true));
+    }, { injector: this.injector });
   }
 
   private setupPasswordValidation(): void {

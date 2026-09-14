@@ -84,3 +84,26 @@ export interface SetPasswordParams {
   old_password: string;
   new_password: string;
 }
+
+/**
+ * What a create-user flow opens the user form with, when the account it is
+ * about is not a general-purpose one.
+ *
+ * Only for a NEW user: an edit form is about a record that already exists, and
+ * nothing here would be an honest thing to say about it.
+ */
+export interface UserFormPreset {
+  /**
+   * Start with SMB access off and the checkbox locked. For a flow whose account
+   * is not an SMB account: leaving it on is not a default the user is choosing,
+   * it is a setting they would have to notice and undo.
+   *
+   * Load-bearing for {@link passwordDisabled} too — the form keeps "Disable
+   * Password" off and untouchable while SMB access is on, because SMB
+   * authenticates with one.
+   */
+  lockSmbAccessOff?: boolean;
+
+  /** Start with "Disable Password" ticked, for an account that never logs in. */
+  passwordDisabled?: boolean;
+}
