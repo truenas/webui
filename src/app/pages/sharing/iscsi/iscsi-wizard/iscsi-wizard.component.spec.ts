@@ -128,9 +128,9 @@ describe('IscsiWizardComponent', () => {
   );
 
   /**
-   * Fills controls addressed by their visible label. The wizard holds ix-* (`ix-explorer`) and
-   * tn-* controls side by side, and `IxFormHarness` indexes only the former — `indexFormControls`
-   * walks both. Repeated labels stay last-wins, which is what the FC-port tests rely on to fill
+   * Fills controls addressed by their visible label. `IxFormHarness` is scoped to a `<form>`
+   * element, which this wizard has none of — `indexFormControls` works off any loader.
+   * Repeated labels stay last-wins, which is what the FC-port tests rely on to fill
    * the row they just added.
    *
    * Re-indexes before every key, the way `IxFormHarness.fillForm` does: one key can reveal the

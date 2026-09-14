@@ -102,8 +102,7 @@ export class TrustedDomainsConfigComponent implements OnInit {
 
   /**
    * The legacy select keyed an option's `data-test` off the RAW (untranslated) label, while the
-   * template
-   * rendered a translated one. `tn-select` derives the id from the label it is given, so keying it
+   * template rendered a translated one. `tn-select` derives the id from the label it is given, so keying it
    * off the pre-translated list would make every option id follow the UI language. Map back to the
    * raw marker — through lodash kebab, which the library's own normalizer does not reproduce at a
    * letter/digit boundary (`RFC2307` → `rfc-2307`) — to keep the ids byte-identical.

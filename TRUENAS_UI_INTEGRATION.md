@@ -238,7 +238,7 @@ tnIconMarker('tn-dataset');  // TrueNAS-specific icons
 tnIconMarker('my-custom-icon', 'custom');  // Resolves to app-my-custom-icon
 ```
 
-**Note:** The library uses `tnIconMarker()` (not `iconMarker()`) the legacy webui icon marker it replaced.
+**Note:** The library uses `tnIconMarker()` (not `iconMarker()`, the legacy webui icon marker it replaced).
 
 **Important:** TrueNAS library icons have the `tn-` prefix (e.g., `tn-dataset`). The `library="custom"` parameter is for **your application's** custom icons, which get prefixed with `app-`.
 

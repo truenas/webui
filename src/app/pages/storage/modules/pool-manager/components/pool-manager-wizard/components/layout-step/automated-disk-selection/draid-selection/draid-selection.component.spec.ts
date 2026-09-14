@@ -27,8 +27,8 @@ describe('DraidSelectionComponent', () => {
   const startOver$ = new Subject<void>();
   const resetStep$ = new Subject<void>();
 
-  // The draid form mixes ix-* (Disk Size) and tn-* controls; `indexFormControls` indexes both by
-  // label so the tests can fill/read/inspect by label as before.
+  // Every control here is a `tn-form-field`; `indexFormControls` indexes them by label so the
+  // tests can fill/read/inspect by label as before.
   function getControls(): Promise<Record<string, IxFormControlHarness>> {
     return indexFormControls(loader);
   }

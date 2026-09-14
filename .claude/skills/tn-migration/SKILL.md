@@ -227,7 +227,7 @@ selection card) the control can stand alone.
 | Angular Material | @truenas/ui-components | Notes |
 |---|---|---|
 | `<mat-icon>` | `<tn-icon>` | webui already migrated; always `tn-icon`, never `ix-icon`. |
-| `<ix-empty [conf]>` | `<tn-empty>` | See **Recipe 3**. Inline `icon`/`iconLibrary`/`[title]`; drop the `*EmptyConfig` constant. ⚠ No `iconSize` input — use the sanctioned `::ng-deep` workaround. |
+| `<ix-empty [conf]>` | `<tn-empty>` | See **Recipe 3**. Inline `icon`/`iconLibrary`/`[title]`/`[iconSize]`; drop the `*EmptyConfig` constant. |
 
 ### Library-only (no Material counterpart)
 
@@ -276,7 +276,7 @@ Keep `EmptyService` (used by data providers) — only `EmptyComponent` is replac
 
 ## Known upstream defects (worked around in webui)
 
-Defects observed in the **pinned** `@truenas/ui-components` (`package.json` currently `~0.3.26`).
+Defects observed in the **pinned** `@truenas/ui-components` (`package.json` currently `~0.7.5`).
 Every workaround in webui should carry a `TEMP (NAS-141021)` marker and a "drop once …" condition
 so this table stays the single index for the cleanup pass. **Check this list before inventing a new
 workaround** — and add to it when you find a new one, rather than leaving the knowledge in one
@@ -284,13 +284,11 @@ component's comment.
 
 | Defect | Symptom | Workaround | Drop when |
 |---|---|---|---|
-| `tn-checkbox` does not `stopPropagation()` the inner `<input>`'s native `change` | Ivy invokes a `(change)` binding for both the component output and the bubbled DOM event, so handlers fire twice — the second time with an `Event`, not the boolean | Guard with `isTnCheckboxChange(event)` (`modules/forms/ix-forms/utils/tn-checkbox-change.utils.ts`; call site: `pool-warnings.component.ts`). Handlers that ignore the payload entirely (e.g. `services.component.html`'s `enableToggle(row)`) fire twice with no signal at all — check these | Fixed in **0.4.x**; drop once the dependency range moves past 0.4.0. `tn-radio` already stops it in 0.3.26 |
 | `tn-select`'s `writeValue` unwraps an array to its first element in single-select mode | An array-valued option can never be written back into the control | Model the value as an object, not a tuple (see `size-and-type.interface.ts`) | Library preserves array values in single-select |
-| `tn-card` declares no host `display`, so it defaults to `inline` | An inline box wrapping block content fragments, each painting the host background — stray rectangles above/below the card | `tn-card-block-host` mixin in `mixins/cards.scss` | Library sets a block host display |
 | `.tn-card__title` is style-scoped to `tn-card` | A consumer projecting an adornment next to the title can't lay the row out without `::ng-deep` | `tn-card-inline-title` / `tn-detail-card` mixins in `mixins/cards.scss` | Library exposes a styled-title projection slot |
 | `tn-card` header/footer dividers use the unmapped `--tn-lines` token | Divider falls back to a light colour that reads wrong in the dark theme | `tn-detail-card` repoints them at webui's `--lines` | Design tokens are bridged |
 | `tn-empty`'s internal action button carries no test id, and the input exposes no way to set one | Empty-state CTAs are unaddressable by automation | Render the button outside `tn-empty` instead of via `actionText` | Library accepts a test id for the action |
-| `tn-checkbox` does not consume `TN_FORM_FIELD_CONTEXT` | Only `tn-input`, `tn-select`, `tn-autocomplete` and `tn-chip-input` call `injectTnFormFieldAria` in 0.3.26. A `tn-form-field [hint]` wrapping a checkbox renders the hint visibly but never links it via `aria-describedby` — the checkbox's `aria-describedby` is hard-wired to its own error id | Fold the hint into the checkbox's `[label]` (which becomes its `aria-label`), accepting name-vs-description as the lesser loss. See `unlock-sed-disks.component.ts` | `tn-checkbox` wires up the field context |
+| `tn-checkbox` does not consume `TN_FORM_FIELD_CONTEXT` | In 0.7.5 eight controls call `injectTnFormFieldAria` (`tn-input`, `tn-select`, `tn-autocomplete`, `tn-chip-input`, `tn-checkbox-group`, `tn-radio-group`, `tn-selection-list`, `tn-slider`) — `tn-checkbox` is still not among them. A `tn-form-field [hint]` wrapping a checkbox renders the hint visibly but never links it via `aria-describedby` — the checkbox's `aria-describedby` is hard-wired to its own error id | Fold the hint into the checkbox's `[label]` (which becomes its `aria-label`), accepting name-vs-description as the lesser loss. See `unlock-sed-disks.component.ts` | `tn-checkbox` wires up the field context |
 | No `TnCardHarness` | Card titles can only be asserted by reaching for `.tn-card__title` in the DOM | White-box query, commented as such | Library ships a card harness |
 | `tn-button`'s anchor arm hard-codes `tnTestIdType="button"` | A `tn-button` that renders a real `<a routerLink>` still resolves `[testId]="'x'"` to `button-x`, renaming a legacy `link-x` id | Pin the id on the host instead — `tnTestIdType="link"` + `[tnTestId]`. Do this for **every** call site of a given action, so one action never has two ids depending on which branch rendered it | Library derives the type from the rendered element |
 
@@ -465,18 +463,13 @@ the `default` branch is an easy, silent inconsistency.
 Inline the icon/title from the old `*EmptyConfig` constant, then delete the constant import
 and the component field. `EmptyComponent` import → `TnEmptyComponent`.
 
-**Known gap — empty-state icon size.** `tn-empty` has no `iconSize` input yet, so the icon
-renders at the inline ~24px scale — too small for a card empty state. The pilot works
-around this with one shared block in `shares-dashboard.component.scss`:
+**Empty-state icon size.** `tn-empty` takes an `[iconSize]` input (since 0.3.7), so the
+card-scale icon is a binding, not a workaround — the old `::ng-deep tn-empty tn-icon` block is
+gone from webui and must not come back.
 
-```scss
-// TEMP: until @truenas/ui-components ships the tn-empty `iconSize` input.
-:host ::ng-deep tn-empty tn-icon { width: 56px; height: 56px; font-size: 56px; }
-```
-
-If your area needs sized empty-state icons, reuse that **exact** selector — do not invent a
-different one. Keep the `// TEMP` marker; it is removed in favour of `[iconSize]` once the
-library ships the input. This is the only sanctioned `::ng-deep` into a `tn-*` internal.
+There are now **no sanctioned `::ng-deep` reaches into a `tn-*` internal.** If you need one,
+it carries a `// TEMP (NAS-141021)` marker naming the private classes it touches and the
+library change that retires it — see `editable.component.ts` for the shape.
 
 ## Recipe 4 — Banner (`info-message` notice → `tn-banner`)
 
