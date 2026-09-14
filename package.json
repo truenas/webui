@@ -118,7 +118,7 @@
     "@smarttools/eslint-plugin-rxjs": "~1.0.22",
     "@stylistic/eslint-plugin": "~2.9.0",
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master",
-    "@truenas/ui-components": "~0.7.5",
+    "@truenas/ui-components": "~0.7.6",
     "@types/cheerio": "~0.22.35",
     "@types/d3": "~7.4.3",
     "@types/dygraphs": "^2.1.10",
@@ -217,7 +217,7 @@
     "@angular-eslint/template-parser": "~21.2.0",
     "@mdi/js": "~7.4.47",
     "@playwright/test": "~1.56.0",
-    "@truenas/api-client": "~3.0.2",
+    "@truenas/api-client": "~6.0.0",
     "@typescript-eslint/types": "~8.41.0",
     "@typescript-eslint/utils": "~8.41.0",
     "prettier": "~3.6.2"

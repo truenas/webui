@@ -65,8 +65,9 @@ export class TaskCardJobRepainter<T extends TaskWithJob> {
             return;
           }
           // A burst of progress emits keeps the same state; only repaint when
-          // the state actually moves, since that is all the pill renders.
-          if (this.jobStates.get(job.id) === job.state) {
+          // the state actually moves, since that is all the pill renders — except
+          // when the emit brings logs the row does not have yet (see `bringsLogs`).
+          if (this.jobStates.get(job.id) === job.state && !this.bringsLogs(job)) {
             return;
           }
           this.jobStates.set(job.id, job.state);
@@ -91,6 +92,25 @@ export class TaskCardJobRepainter<T extends TaskWithJob> {
         this.jobStates.delete(jobId);
       }
     }
+  }
+
+  /**
+   * Whether `job` carries a log excerpt (or error) the matching row's copy is missing.
+   *
+   * A job reaches its final state *before* middleware has its logs: `SUCCESS` is published
+   * from the progress update at the end of the method body, and `logs_excerpt` is only read
+   * off disk afterwards, arriving in a second `CHANGED` event that carries the very same
+   * state. Deduping on state alone drops that second event, so the row keeps a completed
+   * job with no logs and the status pill answers "No logs are available for this task" for
+   * a run that does have them.
+   */
+  private bringsLogs(job: Job): boolean {
+    const current = this.getRows().find((row) => row.job?.id === job.id)?.job;
+    if (!current) {
+      return false;
+    }
+
+    return (!!job.logs_excerpt && !current.logs_excerpt) || (!!job.error && !current.error);
   }
 
   /**

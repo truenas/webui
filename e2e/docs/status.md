@@ -14,7 +14,7 @@ status and direction — keep it that way, and keep it short.**
 
 ## Where we are
 
-Running on **`@truenas/api-client` 3.x**, which types the full generated API
+Running on **`@truenas/api-client` 5.x**, which types the full generated API
 surface per version rather than a curated subset of 65 endpoints. There is no
 escape hatch: every middleware call is checked against a real signature.
 `pool.export` and `service.control` are declared as jobs and go through `runJob`
@@ -27,12 +27,27 @@ jobs restart services over the socket the event stream depends on.
 parameter is the one place the choice is made; unset, the client defaults to
 v25.10.0 and most of what the fixtures call looks unavailable.
 
-Three tests. **Green on the 3.x client against a freshly installed v27 nightly,
-in CI, 2026-09-02** — the first real run after the client move, and it passed
-first time once the appliance was right. The move to 3.x is no longer unproven.
+Three tests were **green on the 3.x client against a freshly installed v27
+nightly, in CI, 2026-09-02** — the first real run after the client move, and it
+passed first time once the appliance was right. The later move to 5.x (2026-09-08)
+changed nothing the suite calls; it was proven by the same runs that proved S3.
 
-The framework is done and the coverage is not. Two journeys against 19 top-level
-feature areas. What the work bought is that the next twenty tests are cheap: the
+S3 followed (2026-09-07/08), in `tests/s3*.e2e.ts`: creating a bucket with
+object lock from the Shares dashboard and minting an access key under
+Credentials (`s3.e2e.ts`, green in CI from run 34257876916: no retries, once the
+harness signed each test in with its own token — see the `page` fixture); then
+the service on a TLS listener (`s3-service`), grants to a real user and group,
+the row toggle and delete (`s3-bucket-management`), and rotating and deleting a
+key (`s3-access-key-management`). They need a pool (any, or they build a
+one-disk one through the worker-scoped `pool` fixture, exported when the worker
+ends) and the S3 service. The S3 work also
+moved the suite to `@truenas/api-client` 5.0, the first release whose v27
+directory carries `sharing.s3.*` and `s3.accesskey.*`, and pulled the shared
+pieces out: `fixtures/services.ts` (one service-stop protocol for SMB and S3)
+and `support/cleanup.ts` (the run-every-step teardown).
+
+The framework is done and the coverage is not. Eleven tests — ten journeys and
+the smoke — against 19 top-level feature areas. What the work bought is that the next twenty tests are cheap: the
 target seam, auth, fixtures, unconditional teardown, selector discipline and
 failure legibility are all built and proven against three different appliances.
 
@@ -54,7 +69,9 @@ a number. See `05-ci.md`.
 ## Next steps
 
 1. **Widen coverage.** Dataset ACL and manual snapshot are the two uncovered
-   stories worth taking next. Deleting things through the UI is blocked: no
+   stories worth taking next. S3 is covered as a feature — create, configure,
+   edit, toggle, rotate, delete — except auditing, which is licence-gated and
+   needs an Enterprise appliance. Deleting things through the UI is blocked: no
    per-row test id on `tn-table`, so no list-driven journey can be automated
    compliantly. Fixing that once unblocks every future one.
 2. **CI is running.** `.github/workflows/e2e.yml` installs a nested TrueNAS VM
@@ -87,21 +104,27 @@ a number. See `05-ci.md`.
 
 - **TLS verification is disabled process-wide** by `playwright.config.ts`, not
   scoped to the one connection that needs it. Still no seam in
-  `@truenas/api-client@3.0.2`: `CreateClientOptions` still exposes no TLS,
-  socket-constructor or dispatcher option. See the comment there for what would
-  close it.
+  `@truenas/api-client@5.0.0`: `CreateClientOptions` gained a `version` option
+  but still exposes no TLS, socket-constructor or dispatcher option. See the
+  comment there for what would close it.
 - **Nothing guards the `data-test` contract.** Every locator depends on
   attributes that webui's own convention forbids unit tests from asserting on,
   so they have no coverage in the repository that emits them. NAS-142069 was one
   such attribute deleted by a migration and caught by a person, not by CI.
-- **Fixed names** (`bob`, `e2e_tank`) mean two runs against one appliance
+- **Per-test token login** replaced `storageState` once two authenticated tests
+  ran back to back (the S3 pair). `setup` still gates the authenticated project
+  as the earliest report of a broken token login. Each login mints its own
+  token: middleware stops honouring one once the session that redeemed it ends,
+  so a per-worker token carried exactly one test too. Cost: one authenticated
+  call and a few seconds per test.
+- **Fixed names** (`bob`, `e2e_tank`, `e2e_shared_tank`, the S3 specs' owners) mean two runs against one appliance
   collide. Fine for one-appliance-per-run; run-scoped naming is the fix.
 - **`AuthResponseType` is declared but not exported** while
   `AuthResponse.response_type` is typed as it, so `support/api/client.ts` checks
   a successful login by comparing `String(...)` against `'SUCCESS'`. Still true
-  in 3.0.2. `ServiceControlAction` has the same problem but no longer costs
-  anything: `service.control` is a job, and the job path takes the verb as a
-  literal.
+  in 5.0.0. (`ServiceControlAction`, which had the same problem, is gone from
+  5.0 altogether; `service.control` is a job whose path takes the verb as a
+  literal, so nothing here needed it.)
 
 ---
 
@@ -142,8 +165,8 @@ comment instead.
 | R8.3 | No fixed sleeps — wait on observable conditions |
 | R8.4 | Quarantine policy for persistently flaky tests |
 | R9.2 | One command runs the suite against a developer's own appliance |
-| T3 | Middleware client is `@truenas/api-client` (3.x; T3.1 covered the curated-subset problem that version removed) |
-| T5 | Authentication via a setup project plus `storageState` |
+| T3 | Middleware client is `@truenas/api-client` (5.x since 2026-09-08, 3.x before; T3.1 covered the curated-subset problem that 3.x removed) |
+| T5 | Authentication via a setup project plus `storageState` — the `storageState` half was dropped 2026-09-08: the app rotates the persisted token into a five-minute single-use one, so the snapshot carried exactly one test. Each authenticated test now signs in through the token URL in the `page` fixture |
 | T10 | Configuration through target profiles, resolved in one module |
 | D1 | PR gating — deferred; needs a measured flake rate first. The `e2e` check runs on same-repo PRs touching the suite, but it is not a required check, so a red run informs and does not block |
 | D2 | Parallel execution by sharding across appliances — deferred |

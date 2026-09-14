@@ -104,9 +104,15 @@ export class JobsListComponent implements OnInit {
   protected readonly trackByJobId = (_: number, row: Job): number => row.id;
 
   /**
-   * Which job's detail row is open, by id. `tn-table` keys its own `expandedRows` set on the row
-   * *object*, and the store hands us a fresh object for a job every time it updates — so the id
-   * is what survives a reload, and the effects below keep the two representations in step.
+   * Keys the table's expansion, so a detail row survives the store handing us a fresh array (and
+   * fresh row objects) on every job update — which is exactly when a running job's logs are worth
+   * watching. A row that pages away is retained by the table and re-opens once it is listed again.
+   */
+  protected readonly jobExpansionKey = (row: Job): number => row.id;
+
+  /**
+   * Which job's detail row is open, by id, so `?jobId=` and the chevron agree on one source of
+   * truth. The table holds row objects; the id is what we can put in the URL.
    */
   private readonly expandedJobId = signal<number | null>(null);
 
@@ -117,23 +123,7 @@ export class JobsListComponent implements OnInit {
    */
   private lastSyncedExpandedId: number | null = null;
 
-  /** The `rows()` array the effect last saw, so it can tell a reload from a click. */
-  private lastRows: Job[] = [];
-
-  /**
-   * Set while the table still has to empty its expanded set for an array it has just been given.
-   * See the effect below.
-   */
-  private awaitingTableReset = false;
-
   constructor() {
-    /**
-     * TEMP (NAS-141021): `tn-table` empties its expanded set whenever the `dataSource`
-     * *reference* changes, and the jobs store hands us a new array on every job update — so a
-     * detail row would close itself while the job it belongs to is still running, which is
-     * exactly when its logs are worth watching. Drop the reload branches once `tn-table` keys
-     * expansion through `trackBy` (or exposes a row-expanded output) instead of row identity.
-     */
     effect(() => {
       const table = this.table();
       const rows = this.rows();
@@ -144,38 +134,24 @@ export class JobsListComponent implements OnInit {
       const tableId = [...table.expandedRows()].map((row) => (row as Job).id).at(0) ?? null;
 
       untracked(() => {
-        if (rows !== this.lastRows) {
-          // A new array, and the table has not emptied its set for it yet — its own effect runs
-          // after this one has settled. Whatever the set holds now belongs to the array on its
-          // way out, so it says nothing about what the user wants, and anything written here
-          // would be wiped a moment later. Note that a reset is owed and wait for it.
-          this.lastRows = rows;
-          this.awaitingTableReset = true;
-          return;
-        }
-
-        if (this.awaitingTableReset) {
-          if (tableId !== null) {
-            // Still holding a row from the outgoing array; the reset has not landed.
-            return;
-          }
-          // That reset, not a collapse. Put the row back, keyed on the id rather than on the
-          // object the store has just replaced.
-          this.awaitingTableReset = false;
-          this.openExpandedRow(table, rows, wantedId);
-          return;
-        }
-
         if (tableId === wantedId) {
           this.lastSyncedExpandedId = tableId;
           return;
         }
 
+        if (tableId === null && wantedId !== null && !rows.some((job) => job.id === wantedId)) {
+          // The job is not on the current page — another tab, a search. `expandedRows` only ever
+          // holds visible rows, so an empty set here is not the user collapsing anything: the
+          // table retains the row under `expansionKey` and re-opens it once the job is listed
+          // again. Leave both the id and the URL alone.
+          return;
+        }
+
         if (tableId !== this.lastSyncedExpandedId) {
-          // The table moved on its own, with the same rows underneath it — the user toggled a
-          // chevron. Adopt it and put the job in the URL, as ix-table's `(expanded)` output used
-          // to. A collapse clears the parameter rather than leaving `?jobId=` pointing at a row
-          // that is no longer open, which would re-expand it on the next reload.
+          // The table moved on its own — the user toggled a chevron. Adopt it and put the job in
+          // the URL, as ix-table's `(expanded)` output used to. A collapse clears the parameter
+          // rather than leaving `?jobId=` pointing at a row that is no longer open, which would
+          // re-expand it on the next reload.
           this.lastSyncedExpandedId = tableId;
           this.expandedJobId.set(tableId);
           this.navigateToJob(tableId);
@@ -188,18 +164,19 @@ export class JobsListComponent implements OnInit {
     });
   }
 
-  /** Points the table's identity-keyed expanded set at the row currently rendering that job. */
+  /** Opens the row rendering `jobId` through the table's own API, so its retained set stays in step. */
   private openExpandedRow(table: TnTableComponent<Job>, rows: Job[], jobId: number | null): void {
-    const expandedRow = jobId === null ? undefined : rows.find((job) => job.id === jobId);
-    if (!expandedRow) {
-      // The job is not on the current page — a tab switch, a search. Record that the empty table
-      // is what we asked for, so the effect doesn't read it as the user collapsing the row, and
-      // keep `expandedJobId`: the row re-opens on its own once the job is listed again.
+    if (jobId === null) {
+      table.clearExpansion();
       this.lastSyncedExpandedId = null;
       return;
     }
+    const expandedRow = rows.find((job) => job.id === jobId);
+    if (!expandedRow) {
+      return;
+    }
     this.lastSyncedExpandedId = jobId;
-    table.expandedRows.set(new Set<unknown>([expandedRow]));
+    table.expandRow(expandedRow);
   }
 
   emptyType$: Observable<EmptyType> = combineLatest([

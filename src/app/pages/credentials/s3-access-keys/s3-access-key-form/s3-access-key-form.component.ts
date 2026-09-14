@@ -63,6 +63,9 @@ export class S3AccessKeyFormComponent extends SidePanelForm implements OnInit {
     name: ['', Validators.required],
     username: ['', Validators.required],
     enabled: [true],
+    // Off by default: the flag widens what the key may do, and middleware refuses it for an account
+    // without SHARING_S3_WRITE, with the error landing on this control.
+    manage_buckets: [false],
     // Keys expire unless the admin opts out, so a new key asks for a date up front.
     nonExpiring: [false],
     expires_at: [null as Date | null],
@@ -96,17 +99,19 @@ export class S3AccessKeyFormComponent extends SidePanelForm implements OnInit {
 
   protected onSubmit(): void {
     const {
-      name, username, enabled, nonExpiring, expires_at: expiresAtDate,
+      name, username, enabled, manage_buckets: manageBuckets, nonExpiring, expires_at: expiresAtDate,
     } = this.form.getRawValue();
     const expiresAt = (nonExpiring || !expiresAtDate) ? null : { $date: expiresAtDate.getTime() };
     const accessKey = this.accessKey();
 
     let request$: Observable<S3AccessKey>;
     if (accessKey) {
-      request$ = this.api.call('s3.accesskey.update', [accessKey.id, { name, enabled, expires_at: expiresAt }]);
+      request$ = this.api.call('s3.accesskey.update', [accessKey.id, {
+        name, enabled, expires_at: expiresAt, manage_buckets: manageBuckets,
+      }]);
     } else {
       request$ = this.api.call('s3.accesskey.create', [{
-        name, username, enabled, expires_at: expiresAt,
+        name, username, enabled, expires_at: expiresAt, manage_buckets: manageBuckets,
       }]);
     }
 
@@ -136,6 +141,7 @@ export class S3AccessKeyFormComponent extends SidePanelForm implements OnInit {
       name: key.name,
       username: key.username ?? '',
       enabled: key.enabled,
+      manage_buckets: key.manage_buckets,
       nonExpiring: !key.expires_at?.$date,
       expires_at: key.expires_at?.$date ? new Date(key.expires_at.$date) : null,
     });

@@ -52,11 +52,17 @@ export const helptextSharingS3 = {
   regionTooltip: T('Region name echoed to clients. Leave empty to accept whatever a client signs for.'),
   logLevelTooltip: T('Least serious log record the S3 service keeps. <b>Info</b> adds one record per request.'),
   defaultAuditTooltip: T('Actions audited on every bucket that does not set its own audit mask.'),
+  managedRootDatasetTooltip: T('Dataset under which a bucket created by an S3 client (CreateBucket) gets a\
+ dataset of its own, named after the bucket. The dataset must already exist. Leave empty to refuse\
+ CreateBucket requests. Buckets added here choose their own parent dataset.'),
 
   accessKeyNameTooltip: T('Human-readable name for the access key.'),
   accessKeyUsernameTooltip: T('Account the access key belongs to. The S3 service runs requests signed with this\
  key as that account.'),
   accessKeyEnabledTooltip: T('A disabled key is refused by the S3 service.'),
+  accessKeyManageBucketsTooltip: T('Let clients signing with this key create and delete buckets through the S3\
+ protocol. The account must hold the SHARING_S3_WRITE role. Creating needs a managed root dataset on the S3\
+ service. Other keys of the same account are not affected.'),
 
   deleteBucketMessage: T('The bucket\'s dataset and every object in it are left in place.\
  The S3 service simply stops serving them.'),

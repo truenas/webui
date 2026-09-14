@@ -26,7 +26,6 @@ import { DockerStatus } from 'app/enums/docker-status.enum';
 import { PasswordComplexityRuleset, passwordComplexityRulesetLabels } from 'app/enums/password-complexity-ruleset.enum';
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { WINDOW } from 'app/helpers/window.helper';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
@@ -130,7 +129,6 @@ export class SystemSecurityFormComponent extends SidePanelForm implements OnInit
   private formPanel = inject(FormSidePanelService);
   private navigateAndHighlightService = inject(NavigateAndHighlightService);
   private document = inject(DOCUMENT);
-  private window = inject<Window>(WINDOW);
   private router = inject(Router);
   private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
 
@@ -712,7 +710,6 @@ export class SystemSecurityFormComponent extends SidePanelForm implements OnInit
           this.dialogService,
           this.authService,
           this.router,
-          this.window,
           config,
         ),
         {

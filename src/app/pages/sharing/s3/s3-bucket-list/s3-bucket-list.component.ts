@@ -5,7 +5,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  tnIconMarker, TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective,
+  tnIconMarker, TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective, TnCardHeaderDirective,
   TnCellDefDirective, TnEmptyComponent, TnHeaderCellDefDirective,
   TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
   type TnSortEvent,
@@ -48,6 +48,7 @@ import { poolStore } from 'app/services/global-store/stores.constant';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
+    TnCardHeaderDirective,
     TnCardHeaderActionsDirective,
     BasicSearchComponent,
     TableColumnPickerComponent,

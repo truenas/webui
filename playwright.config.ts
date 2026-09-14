@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import { describeTarget, loadTargetConfig } from './e2e/support/config';
-import { storageStatePath } from './e2e/support/constants';
+import type { E2eTestOptions } from './e2e/support/fixtures';
 
 /**
  * Load local configuration if present. Uses Node's built-in env-file support
@@ -49,9 +49,9 @@ const target = loadTargetConfig();
  * process, including ones added later by someone who never reads this comment.
  * Scoping it to the one connection that needs it would be strictly better.
  *
- * There is no seam for that, verified against `@truenas/api-client@3.0.2`:
- * `CreateClientOptions` takes `uuid`, `hostnames`, `enabled`, `systemName` and
- * `logger` — no `WebSocketCtor`, no dispatcher, no TLS options — and the socket
+ * There is no seam for that, verified against `@truenas/api-client@5.0.0`:
+ * `CreateClientOptions` takes `uuid`, `hostnames`, `enabled`, `systemName`,
+ * `logger` and `version` — no `WebSocketCtor`, no dispatcher, no TLS options — and the socket
  * is built internally from an rxjs `WebSocketSubjectConfig` the caller never
  * sees. Version discovery's `fetch` needs the same leniency and has no seam
  * either. `NODE_EXTRA_CA_CERTS` is not an answer while the certificate is
@@ -126,7 +126,7 @@ const slowMoMs = (() => {
   return parsed;
 })();
 
-export default defineConfig({
+export default defineConfig<E2eTestOptions>({
   testDir: './e2e',
   outputDir: 'test-results',
 
@@ -259,29 +259,32 @@ export default defineConfig({
     {
       /**
        * Everything that starts from an authenticated session.
+       *
+       * The sign-in happens per test, in the `page` fixture (`support/fixtures.ts`),
+       * not through a `storageState` captured by `setup`: the app rotates the
+       * persisted token into a five-minute single-use one on every login, so a
+       * snapshot of it only ever carries the first test. `setup` still runs
+       * first — it is the earliest, clearest report that token login is broken.
        */
       name: 'authenticated',
       testDir: './e2e/tests',
       testIgnore: '**/unauthenticated/**',
       dependencies: ['setup'],
-      use: {
-        ...devices['Desktop Chrome'],
-        storageState: storageStatePath,
-      },
+      use: { ...devices['Desktop Chrome'] },
     },
     {
       /**
        * Tests that must start from a signed-out browser — anything covering
        * sign-in, sign-out, or session identity.
        *
-       * No `storageState` and no dependency on `setup`, deliberately: the token
-       * bypass would defeat the point (R4.2). It also means these tests do not
-       * wait on the setup project, so they still run when token auth is broken —
-       * which is exactly when you want them reporting.
+       * `authenticate: false` and no dependency on `setup`, deliberately: the
+       * token bypass would defeat the point (R4.2). It also means these tests do
+       * not wait on the setup project, so they still run when token auth is
+       * broken — which is exactly when you want them reporting.
        */
       name: 'unauthenticated',
       testDir: './e2e/tests/unauthenticated',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], authenticate: false },
     },
   ],
 });

@@ -1,4 +1,9 @@
-<tn-card [padContent]="false" [title]="'S3 Buckets' | translate">
+<tn-card [padContent]="false">
+  <div tnCardHeader class="header-title">
+    <h3 class="tn-card__title">{{ 'S3 Buckets' | translate }}</h3>
+    <span class="experimental-badge">{{ 'Experimental' | translate }}</span>
+  </div>
+
   <ng-template tnCardHeaderActions>
     <div class="actions">
       <ix-basic-search

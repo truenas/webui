@@ -8,6 +8,7 @@
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
+import { ensureServiceStopped } from './services';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
@@ -27,14 +28,16 @@ import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
  * cover two of these — cleanup runs in both hooks. Raise one and check the other.
  */
 const poolExportTimeoutMs = 6 * 60_000;
-const serviceControlTimeoutMs = 60_000;
 
 interface NamedPool {
   id: number;
   name: string;
 }
 
-interface UnusedDisk {
+export interface UnusedDisk {
+  name: string;
+  /** Device name, `sdb` — what the wizard's `topologyToPayload` puts in a vdev's `disks`. */
+  devname: string;
   /** `DiskType` — `HDD` or `SSD`. */
   type: string;
   /** Bytes. */
@@ -83,7 +86,7 @@ interface DiskBucket {
  * dies on a 20 second action timeout instead. Assert against the source the UI
  * reads, not the one that sounds equivalent.
  */
-async function getSelectableDisks(client: E2eApiClient): Promise<UnusedDisk[]> {
+export async function getSelectableDisks(client: E2eApiClient): Promise<UnusedDisk[]> {
   // `disk.details` is typed, but only as `unknown[] | Record<string, unknown>` —
   // the dump does not describe its shape, so the narrowing has to happen here.
   const details = await firstValueFrom(
@@ -328,72 +331,14 @@ export async function findGroupAclGrants(
  * Service", running raises "Restart SMB Service" instead. Leaving the service
  * running means the next run silently exercises a different path — and the
  * story's whole premise is a *fresh* instance, which a running, auto-starting
- * SMB service is not.
- *
- * The auto-start flag matters too: the start dialog's toggle defaults to on, so
- * a run that starts the service also enables it at boot.
+ * SMB service is not. The protocol itself lives in `fixtures/services.ts`.
  */
 export async function ensureSmbServiceStopped(client: E2eApiClient): Promise<void> {
-  const cifs = await querySmbService(client);
-
-  // Not `return` on empty. That is the inference the polling guard below exists
-  // to reject, and it is no safer here: TrueNAS always has a `cifs` row, so an
-  // empty result means the query did not answer properly, not that there is no
-  // service to stop. Returning quietly would skip the teardown that keeps the
-  // next run honest — and the whole point of this fixture is that a leftover
-  // running service makes the following run exercise a different dialog while
-  // still reporting green.
-  if (!cifs) {
-    throw new Error(
-      'service.query returned no `cifs` row. Every TrueNAS appliance has one, so this is a '
-      + 'failed query rather than an absent service — treating it as "nothing to stop" would '
-      + 'leave SMB running and silently change what the next run tests.',
-    );
-  }
-
-  if (cifs.enable) {
-    await firstValueFrom(
-      client.api
-        .call('service.update', [cifs.id, { enable: false }])
-        .pipe(timeout(slowCallTimeoutMs)),
-    );
-  }
-
-  if (cifs.state !== 'RUNNING') {
-    return;
-  }
-
-  await runJob(
+  await ensureServiceStopped(
     client,
-    () => client.api.callAndGetJobId('service.control', ['STOP', 'cifs', { silent: false }]),
-    {
-      timeoutMs: serviceControlTimeoutMs,
-      whatItCosts: 'SMB service did not stop; the next run will not start from a fresh state.',
-      confirm: async () => {
-        const current = await querySmbService(client);
-        return current !== undefined && current.state !== 'RUNNING';
-      },
-    },
+    'cifs',
+    'SMB service did not stop; the next run will not start from a fresh state.',
   );
-}
-
-interface SmbServiceState {
-  id: number;
-  state: string;
-  enable: boolean;
-}
-
-/** The `cifs` service row, or undefined when the query returns nothing. */
-async function querySmbService(client: E2eApiClient): Promise<SmbServiceState | undefined> {
-  // `query`, not `queryOne` — see `findPool`. An empty result has to be
-  // representable here, because the caller distinguishes it from "stopped".
-  const [cifs] = await firstValueFrom(
-    client.api
-      .query('service.query', [['service', '=', 'cifs']])
-      .pipe(timeout(readTimeoutMs)),
-  );
-
-  return cifs;
 }
 
 /**

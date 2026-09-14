@@ -14,7 +14,3 @@ Angular-based WebUI for TrueNAS.
 
 ### Set up Development Environment
 - :toolbox: [Set up local environment.](https://github.com/truenas/webui/blob/master/docs/setup.md)
-
-### Test Specific UI Version
-- :test_tube: Learn [How To Run WebUI In a Docker Container.](https://github.com/truenas/webui/blob/master/docs/testing_ui.md)
-
