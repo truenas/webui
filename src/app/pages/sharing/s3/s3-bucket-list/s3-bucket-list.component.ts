@@ -6,10 +6,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import { filter, switchMap, tap } from 'rxjs';
+import {
+  filter, of, switchMap, tap,
+} from 'rxjs';
 import { s3CardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -42,8 +44,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { s3BucketListElements } from 'app/pages/sharing/s3/s3-bucket-list/s3-bucket-list.elements';
-import { bucketToShareRow } from 'app/pages/sharing/s3/utils/s3-bucket.utils';
-import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
+import { bucketDataPath, bucketToShareRow } from 'app/pages/sharing/s3/utils/s3-bucket.utils';
+import {
+  getFilesystemAclUnavailableReason, getUnavailableReason, isShareUnavailable,
+} from 'app/pages/sharing/utils/share-exported-pool.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
 
@@ -80,6 +84,7 @@ export class S3BucketListComponent implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
+  private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
   private slideIn = inject(SlideIn);
   private cdr = inject(ChangeDetectorRef);
@@ -154,6 +159,15 @@ export class S3BucketListComponent implements OnInit {
           onClick: (row) => this.doEdit(row),
         },
         {
+          iconName: tnIconMarker('security', 'mdi'),
+          tooltip: this.translate.instant('Edit Filesystem ACL'),
+          disabled: (row) => of(isShareUnavailable(bucketToShareRow(row), this.activePoolPaths())),
+          disabledTooltip: (row: S3Bucket) => this.translate.instant(
+            getFilesystemAclUnavailableReason(bucketToShareRow(row), this.activePoolPaths()),
+          ),
+          onClick: (row) => this.doFilesystemAclEdit(row),
+        },
+        {
           iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
@@ -207,6 +221,26 @@ export class S3BucketListComponent implements OnInit {
       filter((response) => !!response.response),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.refresh());
+  }
+
+  /**
+   * The ACL editor works on the bucket's `s3data` directory, the same way the
+   * SMB surfaces send it the share's path. A locked dataset has no path to edit.
+   */
+  private doFilesystemAclEdit(row: S3Bucket): void {
+    if (row.locked) {
+      this.dialog.error({
+        title: this.translate.instant('Error'),
+        message: this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path: bucketDataPath(row) }),
+      });
+      return;
+    }
+    this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+      queryParams: {
+        path: bucketDataPath(row),
+        returnUrl: this.router.url,
+      },
+    });
   }
 
   protected doEdit(bucket: S3Bucket): void {
