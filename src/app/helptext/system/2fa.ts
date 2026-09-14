@@ -24,6 +24,10 @@ export const helptext2fa = {
   error: T('Error'),
   loadFailed: T('The two-factor authentication settings could not be read from this system. Reload the page to try\
  again.'),
+  // RxJS reports a timeout as the untranslated "Timeout has occurred", which says nothing
+  // about what was being attempted or whether it took effect.
+  actionTimedOut: T('This system did not answer in time, so it is not clear whether the change was applied. Reload the\
+ page to see the current state of your two-factor authentication.'),
 
   /**
    * The middleware mints and arms a secret in one call, so the setup page can only

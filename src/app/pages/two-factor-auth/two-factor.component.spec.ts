@@ -39,6 +39,16 @@ describe('TwoFactorComponent', () => {
   // brings a user who reloaded mid-setup back to the confirmation step.
   const storage = new Map<string, string>();
 
+  // The marker is stored stamped, so a test reads the kind out rather than the raw value.
+  const storedKind = (username: string): string | undefined => {
+    const raw = storage.get(`pending2FaVerification:${username}`);
+
+    return raw ? (JSON.parse(raw) as { kind: string }).kind : undefined;
+  };
+  const storeKind = (key: string, kind: string): void => {
+    storage.set(key, JSON.stringify({ kind, at: Date.now() }));
+  };
+
   // RFC 6238 reference seed, so the codes below are the published test vectors.
   const provisioningUri = 'somepath://here/TrueNAS:first-test?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
 
@@ -320,8 +330,8 @@ describe('TwoFactorComponent', () => {
       // Both shapes: the origin-wide key an unscoped build would read, and another
       // account's scoped one. A real PendingKind value, since an invalid one would be
       // rejected on its own and prove nothing about the key.
-      storage.set('pending2FaVerification', 'renewal');
-      storage.set('pending2FaVerification:someone-else', 'renewal');
+      storeKind('pending2FaVerification', 'renewal');
+      storeKind('pending2FaVerification:someone-else', 'renewal');
 
       const nextUser = createComponent();
       const nextUserLoader = TestbedHarnessEnvironment.loader(nextUser.fixture);
@@ -334,7 +344,7 @@ describe('TwoFactorComponent', () => {
 
     it('drops the stored flag once the code is confirmed', async () => {
       await generateSecret();
-      expect(storage.get('pending2FaVerification:dummy')).toBe('renewal');
+      expect(storedKind('dummy')).toBe('renewal');
 
       const otpInput = await loader.getHarness(TnInputHarness);
       await otpInput.setValue(validCode);
@@ -366,7 +376,7 @@ describe('TwoFactorComponent', () => {
 
       const banner = await firstTimeLoader.getHarness(TnBannerHarness);
       expect(await banner.getText()).toContain(helptext2fa.verification.pending);
-      expect(storage.get('pending2FaVerification:dummy')).toBe('setup');
+      expect(storedKind('dummy')).toBe('setup');
     });
 
     it('honours the appliance tolerance window instead of its own default', async () => {
@@ -435,7 +445,7 @@ describe('TwoFactorComponent', () => {
 
       await generateSecret();
 
-      expect(storage.get('pending2FaVerification:dummy')).toBe('renewal');
+      expect(storedKind('dummy')).toBe('renewal');
 
       const reloaded = createComponent();
       const reloadedLoader = TestbedHarnessEnvironment.loader(reloaded.fixture);
@@ -550,7 +560,7 @@ describe('TwoFactorComponent', () => {
 
       const field = await loader.getHarness(TnFormFieldHarness);
       expect(await field.getErrorMessage()).toBe(helptext2fa.verification.invalid);
-      expect(storage.get('pending2FaVerification:dummy')).toBe('renewal');
+      expect(storedKind('dummy')).toBe('renewal');
     });
 
     it('says so when the account cannot be re-read, instead of confirming blind', async () => {
@@ -565,7 +575,7 @@ describe('TwoFactorComponent', () => {
 
       const field = await loader.getHarness(TnFormFieldHarness);
       expect(await field.getErrorMessage()).toBe(helptext2fa.verification.checkFailed);
-      expect(storage.get('pending2FaVerification:dummy')).toBe('renewal');
+      expect(storedKind('dummy')).toBe('renewal');
     });
 
     // The component instance rather than a harness: while the load is in flight it holds
@@ -975,6 +985,81 @@ describe('TwoFactorComponent', () => {
 
       expect(await blindLoader.getHarnessOrNull(TnInputHarness)).toBeNull();
     });
+
+    it('retries the clock on its own when only that read failed', async () => {
+      // The load sets the tolerance from the global config while leaving the clock null
+      // whenever system.info failed. Keyed on the tolerance alone, that mixed state counts
+      // as calibrated and the clock is never fetched — so the check runs on browser time
+      // and refuses the very code the appliance accepts.
+      let systemInfoCalls = 0;
+      jest.mocked(api.call).mockImplementation(((method: string) => {
+        if (method === 'system.info') {
+          systemInfoCalls += 1;
+          return systemInfoCalls === 1
+            ? throwError(() => new Error('down'))
+            : of({ datetime: { $date: applianceNow } } as SystemInfo);
+        }
+        return method === 'auth.sessions' ? of([]) : of(undefined);
+      }) as ApiService['call']);
+
+      const halfBlind = createComponent();
+      const halfBlindLoader = TestbedHarnessEnvironment.loader(halfBlind.fixture);
+
+      await (await halfBlindLoader.getHarness(TnButtonHarness.with({ label: 'Renew 2FA Secret' }))).click();
+      halfBlind.detectChanges();
+
+      const otpInput = await halfBlindLoader.getHarness(TnInputHarness);
+      await otpInput.setValue(validCode);
+      await (await halfBlindLoader.getHarness(
+        TnButtonHarness.with({ label: helptext2fa.verification.verifyBtn }),
+      )).click();
+      halfBlind.detectChanges();
+
+      expect(systemInfoCalls).toBe(2);
+      expect(await halfBlindLoader.getHarnessOrNull(TnInputHarness)).toBeNull();
+    });
+  });
+
+  describe('calls that never answer', () => {
+    it('gives the confirming re-read a terminal outcome of its own', fakeAsync(() => {
+      // api.call applies no timeout, so a reply that never arrives would leave
+      // isFormLoading on — and in the first-login dialog that is Confirm Code and Cancel
+      // Setup, both disabled, inside a dialog opened with disableClose.
+      spectator.component.renewSecretOrEnable2Fa();
+      spectator.detectChanges();
+      // The RFC 6238 vector for the appliance's current step, as in the tests above.
+      spectator.component.verificationForm.controls.otp.setValue('287082');
+
+      jest.mocked(spectator.inject(AuthService).refreshUser).mockReturnValueOnce(NEVER);
+      spectator.component.onVerifyOtp();
+      expect(spectator.component.isFormLoading()).toBe(true);
+
+      tick(30_000);
+      spectator.detectChanges();
+
+      expect(spectator.component.isFormLoading()).toBe(false);
+      expect(spectator.component.verificationForm.controls.otp.errors).toEqual({ checkFailed: true });
+    }));
+
+    it('gives up on an unset that never answers, saying what is unclear', fakeAsync(() => {
+      // Cancel Setup is the only exit offered while a secret is unconfirmed.
+      spectator.component.renewSecretOrEnable2Fa();
+      spectator.detectChanges();
+
+      jest.mocked(api.call).mockReturnValueOnce(NEVER as ReturnType<ApiService['call']>);
+      spectator.component.unset2FaSecret();
+      expect(spectator.component.isFormLoading()).toBe(true);
+
+      tick(30_000);
+      spectator.detectChanges();
+
+      expect(spectator.component.isFormLoading()).toBe(false);
+      // Not RxJS's untranslated "Timeout has occurred", which says neither what was
+      // attempted nor whether it took effect.
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(
+        new Error(helptext2fa.actionTimedOut),
+      );
+    }));
   });
 
   it('shows skip button only in setup dialog when 2FA is not configured', async () => {

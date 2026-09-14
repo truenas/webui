@@ -439,7 +439,10 @@ export class TwoFactorComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((cached) => {
       const cachedSecret = this.getProvisioningUriSecret(cached?.provisioning_uri ?? null);
-      const isCalibrated = this.toleranceWindow() !== null;
+      // Both values, not the tolerance alone: screening against an unread clock is the
+      // browser's time, and a workstation a step out would see its valid code rejected
+      // here without the re-read below ever getting the chance to fetch the real one.
+      const isCalibrated = this.toleranceWindow() !== null && this.clockOffset() !== null;
 
       // Only reject cheaply on a secret we could actually read, and only while the check
       // matches the one login runs: an unreadable cached secret may simply be stale, and
@@ -468,10 +471,18 @@ export class TwoFactorComponent implements OnInit {
     combineLatest([
       this.authService.refreshUser().pipe(
         switchMap(() => this.authService.userTwoFactorConfig$.pipe(take(1))),
+        // The third shape, alongside the two below: a call that neither emits nor errors
+        // but simply never answers. `api.call` applies no timeout of its own, so without
+        // this a lost reply strands `isFormLoading` on — and the comment below the
+        // `combineLatest` spells out what that leaves on screen.
+        timeout(loadTimeoutMs),
         // A clean reconnect completes an in-flight call without emitting, which is neither
         // a value nor an error — without this the press would produce no message and no
         // change, indistinguishable from being ignored.
         defaultIfEmpty(null as UserTwoFactorConfig | null),
+        // Inside this branch rather than on the outer pipe so a timeout lands on the
+        // `checkFailed` message — which already says what happened and invites the same
+        // code again — instead of erroring the subscription into the global handler.
         catchError(() => of(null as UserTwoFactorConfig | null)),
       ),
       // Alongside the re-read rather than before it: this press is the last point at
@@ -528,16 +539,32 @@ export class TwoFactorComponent implements OnInit {
    * a card whose only working control is Cancel Setup.
    */
   private readCalibration(): Observable<unknown> {
-    if (this.toleranceWindow() !== null) {
+    // Keyed on each value separately, not on the tolerance as a proxy for both: the load
+    // sets the tolerance from the global config while leaving the clock `null` whenever
+    // `system.info` failed, and that mixed state is exactly the one this should finish.
+    const needsTolerance = this.toleranceWindow() === null;
+    const needsClock = this.clockOffset() === null;
+
+    if (!needsTolerance && !needsClock) {
       return of(null);
     }
 
     // Each read records what it learned on its own way past, so neither depends on the
-    // other arriving. The guards are the ones the load already carries, for the same
-    // reasons — a call can hang, and one piped off a BehaviorSubject can complete without
-    // emitting — except that here a failure needs no message: the press it belongs to
-    // reports its own outcome either way.
-    const tolerance$ = this.authService.getGlobalTwoFactorConfig().pipe(
+    // other arriving, and only the one that is actually missing is asked for.
+    return combineLatest([
+      needsTolerance ? this.readToleranceWindow() : of(null),
+      needsClock ? this.readClockOffset() : of(null),
+    ]).pipe(take(1));
+  }
+
+  /**
+   * The guards are the ones the load already carries, for the same reasons — a call can
+   * hang, and one piped off a BehaviorSubject can complete without emitting — except that
+   * here a failure needs no message: the press it belongs to reports its own outcome
+   * either way.
+   */
+  private readToleranceWindow(): Observable<unknown> {
+    return this.authService.getGlobalTwoFactorConfig().pipe(
       take(1),
       timeout(loadTimeoutMs),
       tap((globalConfig) => {
@@ -551,16 +578,17 @@ export class TwoFactorComponent implements OnInit {
       defaultIfEmpty(null),
       catchError(() => of(null)),
     );
+  }
 
-    const clock$ = this.api.call('system.info').pipe(
+  /** See {@link readToleranceWindow} for the guards. */
+  private readClockOffset(): Observable<unknown> {
+    return this.api.call('system.info').pipe(
       take(1),
       timeout(loadTimeoutMs),
       tap((systemInfo) => this.clockOffset.set(systemInfo.datetime.$date - Date.now())),
       defaultIfEmpty(null),
       catchError(() => of(null)),
     );
-
-    return combineLatest([tolerance$, clock$]).pipe(take(1));
   }
 
   private isCodeValidFor(config: UserTwoFactorConfig, secret: string): boolean {
@@ -613,7 +641,12 @@ export class TwoFactorComponent implements OnInit {
 
   private handleError(error: unknown): Observable<boolean> {
     this.isFormLoading.set(false);
-    this.errorHandler.showErrorModal(error);
+    // Same substitution the load makes: a timed-out renew or unset may have taken effect
+    // before its reply was lost, and "Timeout has occurred" tells the user neither that
+    // nor what to do about it.
+    this.errorHandler.showErrorModal(
+      error instanceof TimeoutError ? new Error(this.translate.instant(helptext2fa.actionTimedOut)) : error,
+    );
 
     return EMPTY;
   }
@@ -641,8 +674,17 @@ export class TwoFactorComponent implements OnInit {
         // the failure this whole step exists to prevent.
         this.setPendingVerification(true, kind);
       }),
-      switchMap((user) => this.api.call('user.renew_2fa_secret', [user.pw_name, { interval: 30, otp_digits: 6 }])),
-      switchMap(() => this.authService.refreshUser()),
+      // See confirmAgainstAccount: neither `api.call` nor `refreshUser` gives up on its
+      // own, so a reply that never arrives would leave the flag on and every button
+      // disabled. Around the calls only — the wait for a real user above is not a hang,
+      // it happens with the flag still off and resolves the moment a user lands.
+      switchMap((user) => this.api.call(
+        'user.renew_2fa_secret',
+        [user.pw_name, { interval: 30, otp_digits: 6 }],
+      ).pipe(
+        switchMap(() => this.authService.refreshUser()),
+        timeout(loadTimeoutMs),
+      )),
       tap(() => this.setSecretConfigured(true)),
       // See onVerifyOtp: a silent completion would otherwise strand the flag on.
       finalize(() => this.isFormLoading.set(false)),
@@ -706,8 +748,12 @@ export class TwoFactorComponent implements OnInit {
       filter((user) => !!user),
       take(1),
       tap(() => this.isFormLoading.set(true)),
-      switchMap((user) => this.api.call('user.unset_2fa_secret', [user.pw_name])),
-      switchMap(() => this.authService.refreshUser()),
+      // See renewSecretForUser: this is the only exit offered while a secret is
+      // unconfirmed, so a call that never answers must not strand it disabled.
+      switchMap((user) => this.api.call('user.unset_2fa_secret', [user.pw_name]).pipe(
+        switchMap(() => this.authService.refreshUser()),
+        timeout(loadTimeoutMs),
+      )),
       tap(() => {
         this.setSecretConfigured(false);
         this.currentSessionIs2fa.set(false);
