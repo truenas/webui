@@ -19,7 +19,6 @@ describe('getGlobalTwoFactorFormConfig', () => {
   const dialogService = { confirm: jest.fn(() => of(true)) } as unknown as DialogService;
   const authService = { globalTwoFactorConfigUpdated: jest.fn() } as unknown as AuthService;
   const router = { navigate: jest.fn() } as unknown as Router;
-  const window = { localStorage: { setItem: jest.fn() } } as unknown as Window;
   const twoFactorConfig = { enabled: false, window: 0, services: { ssh: false } } as GlobalTwoFactorConfig;
 
   beforeEach(() => jest.clearAllMocks());
@@ -31,7 +30,6 @@ describe('getGlobalTwoFactorFormConfig', () => {
       dialogService,
       authService,
       router,
-      window,
       twoFactorConfig,
     );
 

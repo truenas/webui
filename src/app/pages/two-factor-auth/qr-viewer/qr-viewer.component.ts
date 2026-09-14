@@ -18,7 +18,8 @@ import { helptext2fa } from 'app/helptext/system/2fa';
   ],
 })
 export class QrViewerComponent {
-  readonly qrInfo = input.required<string>();
+  /** Null until the account has a secret — there is then no code to draw. */
+  readonly qrInfo = input.required<string | null>();
   readonly showWarning = input(false);
 
   readonly helpText = helptext2fa;
