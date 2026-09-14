@@ -173,6 +173,29 @@ describe('AllowedAccessSectionComponent', () => {
       expect(await truenasAccessDropdown.isDisabled()).toBe(true);
     });
 
+    it('keeps reporting root\'s TrueNAS access, though its control is disabled', () => {
+      // Reported from the raw value, so the three controls this section locks
+      // for root keep their say. On the emitted value they read `undefined`,
+      // which sent `role: null` to the store — and the details section strips
+      // a role's group from the account when the role goes null, which for
+      // root is the one account that must not lose it.
+      spectator.setInput('editingUser', {
+        uid: 0,
+        username: 'root',
+        smb: true,
+        webshare: false,
+        roles: [Role.FullAdmin],
+      } as User);
+      spectator.detectChanges();
+
+      expect(spectator.inject(UserFormStore).setAllowedAccessConfig).toHaveBeenLastCalledWith(
+        expect.objectContaining({ truenasAccess: true, webshareAccess: false }),
+      );
+      expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenLastCalledWith(
+        expect.objectContaining({ role: Role.FullAdmin }),
+      );
+    });
+
     it('allows webshare and truenas access for non-root users', async () => {
       spectator.setInput('editingUser', {
         uid: 1001,
