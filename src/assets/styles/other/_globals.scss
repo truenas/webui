@@ -138,11 +138,6 @@ ix-root {
     @extend %focused-shared;
     background-color: var(--focus-bg) !important;
   }
-
-  ix-app-row:focus-visible,
-  ix-app-row:focus {
-    @extend %focused-shared;
-  }
 }
 
 body {
