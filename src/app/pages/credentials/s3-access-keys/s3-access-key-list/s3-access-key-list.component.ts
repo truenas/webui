@@ -147,10 +147,12 @@ export class S3AccessKeyListComponent implements OnInit {
       title: this.translate.instant('Last Used'),
       propertyName: 'last_used_at',
     }),
+    // Shown by default: a key that may create and delete buckets is a
+    // privileged credential, and whether a key is one is the first thing an
+    // admin scanning the list needs to see.
     column({
       title: this.translate.instant('Manage Buckets'),
       propertyName: 'manage_buckets',
-      hidden: true,
     }),
     column({
       title: this.translate.instant('Created'),

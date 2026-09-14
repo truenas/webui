@@ -23,6 +23,7 @@ import {
 import { S3AccessKeyFormComponent } from 'app/pages/credentials/s3-access-keys/s3-access-key-form/s3-access-key-form.component';
 import { S3AccessKeyListComponent } from 'app/pages/credentials/s3-access-keys/s3-access-key-list/s3-access-key-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
+import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('S3AccessKeyListComponent', () => {
   let spectator: Spectator<S3AccessKeyListComponent>;
@@ -78,7 +79,11 @@ describe('S3AccessKeyListComponent', () => {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       provideMockStore({
-        selectors: [{ selector: selectPreferences, value: {} }],
+        selectors: [
+          { selector: selectPreferences, value: {} },
+          // The Created column renders `ix-date`, which reads the timezone here.
+          { selector: selectGeneralConfig, value: { timezone: 'UTC' } },
+        ],
       }),
       mockApi([
         mockCall('s3.accesskey.query', keys),
@@ -100,25 +105,22 @@ describe('S3AccessKeyListComponent', () => {
     table = await loader.getHarness(TnTableHarness);
   });
 
-  it('shows table rows', async () => {
+  it('shows table rows, with whether each key may manage buckets', async () => {
     expect(await table.getHeaderTexts()).toEqual([
-      'Name', 'User', 'Access Key ID', 'Status', 'Expires On', 'Last Used', '',
+      'Name', 'User', 'Access Key ID', 'Status', 'Expires On', 'Last Used', 'Manage Buckets', '',
     ]);
     expect(await table.getAllRowTexts()).toEqual([
-      ['backup-key', 'alice', 'AKIAEXAMPLE12345', 'Enabled', 'Never', 'Never', ''],
-      ['restic-key', 'bob', 'AKIAEXAMPLE67890', 'Enabled', 'Never', '3 days ago', ''],
+      ['backup-key', 'alice', 'AKIAEXAMPLE12345', 'Enabled', 'Never', 'Never', 'No', ''],
+      ['restic-key', 'bob', 'AKIAEXAMPLE67890', 'Enabled', 'Never', '3 days ago', 'Yes', ''],
     ]);
   });
 
-  it('shows the Manage Buckets column once it is enabled in the column picker', async () => {
+  it('shows the Created column once it is enabled in the column picker', async () => {
     const picker = await loader.getHarness(TnSelectHarness.with({ ancestor: 'ix-table-column-picker' }));
     await picker.open();
-    await picker.selectOption('Manage Buckets');
+    await picker.selectOption('Created');
 
-    expect(await table.getHeaderTexts()).toContain('Manage Buckets');
-    const rows = await table.getAllRowTexts();
-    expect(rows[0]).toContain('No');
-    expect(rows[1]).toContain('Yes');
+    expect(await table.getHeaderTexts()).toContain('Created');
   });
 
   it('opens the access key form when Add is pressed', async () => {
