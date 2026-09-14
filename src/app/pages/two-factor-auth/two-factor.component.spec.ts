@@ -896,6 +896,85 @@ describe('TwoFactorComponent', () => {
 
       expect(emitted.at(-1)).toBe(true);
     });
+
+    it('reads the tolerance and the clock the load missed, before checking a code', async () => {
+      // A failed load leaves Configure enabled on purpose, so the confirmation step can
+      // open on a page that read neither value. Checking with `window: 0` and raw browser
+      // time there is stricter than login rather than equal to it — and this is the code
+      // the appliance accepts, with Cancel Setup the only other control on the card.
+      jest.mocked(spectator.inject(AuthService).getGlobalTwoFactorConfig)
+        .mockReturnValueOnce(throwError(() => new Error('down')));
+
+      const blind = createComponent();
+      const blindLoader = TestbedHarnessEnvironment.loader(blind.fixture);
+
+      await (await blindLoader.getHarness(TnButtonHarness.with({ label: 'Configure 2FA Secret' }))).click();
+      blind.detectChanges();
+
+      const otpInput = await blindLoader.getHarness(TnInputHarness);
+      await otpInput.setValue(validCode);
+      await (await blindLoader.getHarness(
+        TnButtonHarness.with({ label: helptext2fa.verification.verifyBtn }),
+      )).click();
+      blind.detectChanges();
+
+      expect(await blindLoader.getHarnessOrNull(TnInputHarness)).toBeNull();
+    });
+
+    it('applies what that read says rather than a blanket allowance', async () => {
+      // The recovery is a real read, not a loosened check: the retried config still says
+      // `window: 0`, so the adjacent step is refused here exactly as login would refuse it.
+      jest.mocked(spectator.inject(AuthService).getGlobalTwoFactorConfig)
+        .mockReturnValueOnce(throwError(() => new Error('down')));
+
+      const blind = createComponent();
+      const blindLoader = TestbedHarnessEnvironment.loader(blind.fixture);
+
+      await (await blindLoader.getHarness(TnButtonHarness.with({ label: 'Configure 2FA Secret' }))).click();
+      blind.detectChanges();
+
+      const otpInput = await blindLoader.getHarness(TnInputHarness);
+      await otpInput.setValue(previousStepCode);
+      await (await blindLoader.getHarness(
+        TnButtonHarness.with({ label: helptext2fa.verification.verifyBtn }),
+      )).click();
+      blind.detectChanges();
+
+      const field = await blindLoader.getHarness(TnFormFieldHarness);
+      expect(await field.getErrorMessage()).toBe(helptext2fa.verification.invalid);
+    });
+
+    it('stays no stricter than login when the settings cannot be read at all', async () => {
+      // Neither the load nor the retry gets an answer, so the tolerance is never known.
+      // The fallback is the helper's own allowance rather than none: over-accepting costs
+      // one unconfirmed secret, refusing a working code costs the account.
+      jest.mocked(spectator.inject(AuthService).getGlobalTwoFactorConfig)
+        .mockReturnValueOnce(throwError(() => new Error('down')))
+        .mockReturnValueOnce(throwError(() => new Error('down')));
+      jest.mocked(api.call).mockImplementation(((method: string) => {
+        if (method === 'system.info') {
+          return throwError(() => new Error('down'));
+        }
+        return method === 'auth.sessions' ? of([]) : of(undefined);
+      }) as ApiService['call']);
+
+      const blind = createComponent();
+      const blindLoader = TestbedHarnessEnvironment.loader(blind.fixture);
+
+      await (await blindLoader.getHarness(TnButtonHarness.with({ label: 'Configure 2FA Secret' }))).click();
+      blind.detectChanges();
+
+      // browserNow sits a step before validCode's, so only an allowance either side of
+      // the current step accepts it.
+      const otpInput = await blindLoader.getHarness(TnInputHarness);
+      await otpInput.setValue(validCode);
+      await (await blindLoader.getHarness(
+        TnButtonHarness.with({ label: helptext2fa.verification.verifyBtn }),
+      )).click();
+      blind.detectChanges();
+
+      expect(await blindLoader.getHarnessOrNull(TnInputHarness)).toBeNull();
+    });
   });
 
   it('shows skip button only in setup dialog when 2FA is not configured', async () => {

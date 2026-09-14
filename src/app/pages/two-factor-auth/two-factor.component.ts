@@ -48,6 +48,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
  */
 const loadTimeoutMs = 30_000;
 
+/**
+ * Tolerance used when the appliance's own is not known — the same allowance `verifyTotp`
+ * applies by default, and the one most TOTP implementations use.
+ *
+ * The direction is what matters: a check stricter than the one login runs rejects codes
+ * that actually work, and with Renew and Unset hidden the only control left in that state
+ * is Cancel Setup.
+ */
+const defaultToleranceWindow = 1;
+
 @Component({
   selector: 'ix-two-factor',
   templateUrl: './two-factor.component.html',
@@ -133,8 +143,13 @@ export class TwoFactorComponent implements OnInit {
    * The appliance's own OTP tolerance, in time steps either side of the current one.
    * The confirmation check has to use it rather than its own default, or it can accept
    * a code login will reject — the exact outcome this step exists to prevent.
+   *
+   * `null` until the page has actually read it, rather than `0`. A failed load leaves the
+   * secret buttons enabled on purpose, so this step can open on a page that never got this
+   * value — and `0` there is stricter than login rather than equal to it, which rejects
+   * codes the appliance accepts. {@link readCalibration} fills it in on the first confirm.
    */
-  private toleranceWindow = signal(0);
+  private toleranceWindow = signal<number | null>(null);
 
   /**
    * Appliance clock minus browser clock, in milliseconds.
@@ -144,8 +159,11 @@ export class TwoFactorComponent implements OnInit {
    * would reject the very code login accepts whenever the workstation has drifted —
    * and with Renew and Unset hidden, the only offered way out is Cancel Setup. Reading
    * the appliance's own time makes this check ask the same question login will.
+   *
+   * `null` while unread, for the same reason as {@link toleranceWindow}; the check then
+   * falls back to the browser clock, which is where it stood before this was consulted.
    */
-  private clockOffset = signal(0);
+  private clockOffset = signal<number | null>(null);
 
   protected readonly verificationForm = this.formBuilder.nonNullable.group({
     otp: ['', Validators.required],
@@ -305,7 +323,7 @@ export class TwoFactorComponent implements OnInit {
           this.globalTwoFactorEnabled.set(globalConfig.enabled);
           this.globalConfigKnown.set(true);
           this.toleranceWindow.set(globalConfig.window);
-          this.clockOffset.set(systemInfo ? systemInfo.datetime.$date - Date.now() : 0);
+          this.clockOffset.set(systemInfo ? systemInfo.datetime.$date - Date.now() : null);
 
           // The user here is a snapshot taken when this load was subscribed, before the
           // round trips above resolved. A renew that started in the meantime has already
@@ -421,10 +439,13 @@ export class TwoFactorComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((cached) => {
       const cachedSecret = this.getProvisioningUriSecret(cached?.provisioning_uri ?? null);
+      const isCalibrated = this.toleranceWindow() !== null;
 
-      // Only reject cheaply on a secret we could actually read: an unreadable cached one
-      // may simply be stale, and the re-read is what resolves that.
-      if (cached && cachedSecret && !this.isCodeValidFor(cached, cachedSecret)) {
+      // Only reject cheaply on a secret we could actually read, and only while the check
+      // matches the one login runs: an unreadable cached secret may simply be stale, and
+      // an uncalibrated check is stricter than login rather than equal to it. Both cases
+      // belong to the re-read below, which fetches what the load missed along the way.
+      if (cached && cachedSecret && isCalibrated && !this.isCodeValidFor(cached, cachedSecret)) {
         this.verificationForm.controls.otp.setErrors({ invalidOtp: true });
         return;
       }
@@ -444,19 +465,26 @@ export class TwoFactorComponent implements OnInit {
   private confirmAgainstAccount(): void {
     this.isFormLoading.set(true);
 
-    this.authService.refreshUser().pipe(
-      switchMap(() => this.authService.userTwoFactorConfig$.pipe(take(1))),
-      // A clean reconnect completes an in-flight call without emitting, which is neither
-      // a value nor an error — without this the press would produce no message and no
-      // change, indistinguishable from being ignored.
-      defaultIfEmpty(null as UserTwoFactorConfig | null),
-      catchError(() => of(null as UserTwoFactorConfig | null)),
+    combineLatest([
+      this.authService.refreshUser().pipe(
+        switchMap(() => this.authService.userTwoFactorConfig$.pipe(take(1))),
+        // A clean reconnect completes an in-flight call without emitting, which is neither
+        // a value nor an error — without this the press would produce no message and no
+        // change, indistinguishable from being ignored.
+        defaultIfEmpty(null as UserTwoFactorConfig | null),
+        catchError(() => of(null as UserTwoFactorConfig | null)),
+      ),
+      // Alongside the re-read rather than before it: this press is the last point at
+      // which the check can still be calibrated, and neither read needs the other.
+      this.readCalibration(),
+    ]).pipe(
+      take(1),
       // While this flag is on, Confirm Code and Cancel Setup are disabled and
       // Renew/Unset/Skip are not rendered at all — a card with no working control,
       // inside a dialog opened with disableClose.
       finalize(() => this.isFormLoading.set(false)),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((config) => {
+    ).subscribe(([config]) => {
       if (!config) {
         this.verificationForm.controls.otp.setErrors({ checkFailed: true });
         return;
@@ -485,12 +513,62 @@ export class TwoFactorComponent implements OnInit {
     });
   }
 
+  /**
+   * Reads the two values this check needs in order to ask what login asks, when the load
+   * did not get them.
+   *
+   * Reachable because a failed load deliberately leaves Configure and Renew enabled: the
+   * page can mint a secret and open the confirmation step having read neither the
+   * appliance's tolerance nor its clock. The global config is recorded in full while it
+   * is in hand — the load is not the page's last chance to learn what it says.
+   *
+   * Best effort. If this read fails too the check falls back to
+   * {@link defaultToleranceWindow} and the browser clock, which is permissive rather than
+   * stricter than login — the direction that costs an over-accepted code here instead of
+   * a card whose only working control is Cancel Setup.
+   */
+  private readCalibration(): Observable<unknown> {
+    if (this.toleranceWindow() !== null) {
+      return of(null);
+    }
+
+    // Each read records what it learned on its own way past, so neither depends on the
+    // other arriving. The guards are the ones the load already carries, for the same
+    // reasons — a call can hang, and one piped off a BehaviorSubject can complete without
+    // emitting — except that here a failure needs no message: the press it belongs to
+    // reports its own outcome either way.
+    const tolerance$ = this.authService.getGlobalTwoFactorConfig().pipe(
+      take(1),
+      timeout(loadTimeoutMs),
+      tap((globalConfig) => {
+        this.toleranceWindow.set(globalConfig.window);
+        // Recorded while it is in hand: the load is not the page's last chance to learn
+        // what the system-wide setting says, and the banner is still asserting nothing
+        // about it.
+        this.globalTwoFactorEnabled.set(globalConfig.enabled);
+        this.globalConfigKnown.set(true);
+      }),
+      defaultIfEmpty(null),
+      catchError(() => of(null)),
+    );
+
+    const clock$ = this.api.call('system.info').pipe(
+      take(1),
+      timeout(loadTimeoutMs),
+      tap((systemInfo) => this.clockOffset.set(systemInfo.datetime.$date - Date.now())),
+      defaultIfEmpty(null),
+      catchError(() => of(null)),
+    );
+
+    return combineLatest([tolerance$, clock$]).pipe(take(1));
+  }
+
   private isCodeValidFor(config: UserTwoFactorConfig, secret: string): boolean {
     return verifyTotp(secret, this.verificationForm.controls.otp.value, {
       interval: config.interval,
       digits: config.otp_digits,
-      window: this.toleranceWindow(),
-      now: Date.now() + this.clockOffset(),
+      window: this.toleranceWindow() ?? defaultToleranceWindow,
+      now: Date.now() + (this.clockOffset() ?? 0),
     });
   }
 
