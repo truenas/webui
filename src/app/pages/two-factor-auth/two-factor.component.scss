@@ -46,3 +46,14 @@
 .skeleton-loader {
   width: 100%;
 }
+
+.verification {
+  margin-top: 16px;
+  // Wide enough that the "code does not match" message reads as a sentence rather
+  // than a narrow stack, without stretching a six-digit field across the card.
+  max-width: 420px;
+}
+
+.verification-field {
+  display: block;
+}

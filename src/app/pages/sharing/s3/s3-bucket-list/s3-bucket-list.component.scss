@@ -1,10 +1,18 @@
 @import '../../components/tn-table-in-card';
+@import '../../components/experimental-badge';
 
 @include tn-table-in-card;
+@include experimental-badge;
 
 :host {
   display: block;
   max-width: 1080px;
+}
+
+.header-title {
+  align-items: center;
+  display: flex;
+  gap: 8px;
 }
 
 .actions {

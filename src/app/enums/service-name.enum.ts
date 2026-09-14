@@ -9,7 +9,7 @@ export enum ServiceName {
   Http = 'http',
   NvmeOf = 'nvmet',
   WebShare = 'webshare',
-  S3 = 'truenas_s3',
+  S3 = 's3',
 }
 
 export const serviceNames = new Map<ServiceName, string>([

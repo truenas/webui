@@ -190,10 +190,9 @@ which is why they are infrastructure parameters rather than details.
 ### What a snapshot still does not fix
 
 **Restore invalidates the suite's session, and nothing re-mints it.** The
-`setup` project writes `e2e/.auth/storage-state.json` once per run and the
-`authenticated` project consumes it (`playwright.config.ts`); it holds a live
-middleware token. A rebooted guest has no memory of that session, so the
-WebSocket is dead and the token is gone. The harness needs per-appliance
+`page` fixture (`support/fixtures.ts`) signs each authenticated test in with a
+token minted for that login; it is a live middleware token. A rebooted guest
+has no memory of that session, so the WebSocket is dead and the token is gone. The harness needs per-appliance
 re-authentication after restore — which pulls **E10**'s "the harness must be
 able to expect disconnection" out of the HA future and onto the critical path
 now.
@@ -433,7 +432,8 @@ proceed — not skip everything.
 configuration in one place and fails at load naming every missing variable at
 once. This extends something that exists and works. Today the pipeline hands
 over the pre-descriptor form of this: `TN_HOST`, credentials, `TN_BASELINE`
-and `TN_DOMAIN` as environment variables (`e2e/ci/appliance.sh`).
+and `TN_DOMAIN` as environment variables (the `truenas-appliance` action in
+iXsystems/ux-github-workflows).
 
 ---
 

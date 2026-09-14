@@ -100,7 +100,18 @@ export class SnapshotListComponent implements OnInit {
   protected readonly requiredRoles = [Role.SnapshotDelete];
   searchQuery = signal('');
   dataProvider = new ArrayDataProvider<ZfsSnapshot>();
-  snapshots: ZfsSnapshot[] = [];
+  /**
+   * Written only by `setSnapshots`, which keeps `snapshotNames` and the selection in step
+   * with it. Private so the compiler enforces that rather than a comment — a second write
+   * site would leave the name index stale, and the selection prune trusts that index.
+   */
+  private snapshots: ZfsSnapshot[] = [];
+  /**
+   * The names in `snapshots`, so a selection can be pruned in constant time per selected
+   * row — a dataset can hold tens of thousands of snapshots, and `onSelectionChange` runs
+   * on every tick of a checkbox. Rebuilt with `snapshots` in `setSnapshots`.
+   */
+  private snapshotNames = new Set<string>();
   protected readonly showExtraColumns = signal(false);
   // Drives the slide toggle through a ControlValueAccessor rather than a plain
   // `[checked]` binding: tn-slide-toggle latches its own visual state internally,
@@ -129,6 +140,13 @@ export class SnapshotListComponent implements OnInit {
   });
 
   protected readonly trackBySnapshotId = (_: number, row: ZfsSnapshot): string => row.name;
+
+  /**
+   * Selection identity. A snapshot's `name` carries both its dataset and its own name, so
+   * it is unique across the whole list — which is what lets tn-table hold the selection
+   * across a page turn and across a reload that rebuilt every row object.
+   */
+  protected readonly snapshotSelectionKey = (row: ZfsSnapshot): string => row.name;
 
   /**
    * `used`/`created`/`referenced` are display-only columns whose values live under `properties`,
@@ -198,20 +216,13 @@ export class SnapshotListComponent implements OnInit {
     this.store$.select(selectSnapshots).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((snapshots) => {
-      // The store hands back fresh row objects on every emission, so any prior
-      // selection now points at stale references that no longer map to visible
-      // rows. Clear it before swapping in the new set so the batch-operations
-      // toolbar can't act on a phantom selection.
-      //
-      // Reconciling the prior selection by `name` (to preserve an in-progress
-      // batch across a background reload) isn't achievable here: tn-table clears
-      // its own selection whenever the `dataSource` reference changes, so any rows
-      // we re-selected would be wiped by that internal effect on the next tick.
-      // Preserving intent would need key-based selection support in tn-table.
-      this.table()?.selection.clear();
-      this.selectedSnapshots.set([]);
-      this.snapshots = [...snapshots];
-      this.onListFiltered(this.searchQuery());
+      this.setSnapshots(snapshots);
+      // A reload is not something the user asked for — a periodic snapshot task firing is
+      // enough to trigger one — so it must not cost them their place or the batch they are
+      // half way through building. `keepPage` holds the page, and tn-table re-points the
+      // selection (keyed by `name`, see snapshotSelectionKey) at the fresh row objects the
+      // store just handed back instead of dropping it.
+      this.onListFiltered(this.searchQuery(), { keepPage: true });
       this.cdr.markForCheck();
     });
   }
@@ -285,14 +296,38 @@ export class SnapshotListComponent implements OnInit {
       .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.table()?.selection.clear();
+        // clearSelection(), not selection.clear(): the latter only drops the rows on screen
+        // and would leave selections made on other pages to come back on the next reload.
+        this.table()?.clearSelection();
         this.selectedSnapshots.set([]);
         this.cdr.markForCheck();
       });
   }
 
   protected onSelectionChange(snapshots: ZfsSnapshot[]): void {
-    this.selectedSnapshots.set(snapshots);
+    // The table only ever sees one page, so a snapshot destroyed elsewhere while it was
+    // selected stays in its keyed selection. Drop anything the store no longer lists
+    // before a batch action can be pointed at it.
+    this.selectedSnapshots.set(snapshots.filter((snapshot) => this.snapshotNames.has(snapshot.name)));
+  }
+
+  /**
+   * The one place `snapshots` is written, so the name index and the selection can never
+   * drift from it.
+   *
+   * The prune has to happen here rather than only in `onSelectionChange`: a snapshot
+   * selected on a page the user has since left is destroyed elsewhere and the reload
+   * lands — nothing about the VISIBLE selection changed, so there is no guarantee
+   * tn-table emits `selectionChange` for it. Dropping it where the list is rebuilt makes
+   * the invariant hold whoever emits, and keeps a batch action from being pointed at a
+   * snapshot that is gone.
+   */
+  private setSnapshots(snapshots: ZfsSnapshot[]): void {
+    this.snapshots = [...snapshots];
+    this.snapshotNames = new Set(this.snapshots.map((snapshot) => snapshot.name));
+    this.selectedSnapshots.update(
+      (selected) => selected.filter((snapshot) => this.snapshotNames.has(snapshot.name)),
+    );
   }
 
   protected onSortChange(event: TnSortEvent): void {
@@ -301,24 +336,42 @@ export class SnapshotListComponent implements OnInit {
     );
   }
 
-  protected onListFiltered(query: string): void {
+  /**
+   * @param options `keepPage` re-runs the same query without moving the user — see
+   * `BaseDataProvider.setFilter`. A query the user typed always starts at page 1.
+   *
+   * The dataset filter is CHOSEN before it is applied rather than applied and then undone.
+   * Applying it first and falling back on an empty result cost the user their page: the
+   * discarded pass ran with `keepPage`, so it clamped the page down against zero rows, and
+   * the real pass then started from page 1. It also put an empty page on `currentPage$`
+   * that nothing wanted to render.
+   */
+  protected onListFiltered(query: string, { keepPage = false }: { keepPage?: boolean } = {}): void {
     this.searchQuery.set(query);
     const datasetParam = this.route.snapshot.paramMap.get('dataset');
+    const isDatasetRoute = Boolean(datasetParam) && query === datasetParam;
 
-    if (datasetParam && query === datasetParam) {
-      this.dataProvider.setFilter({
-        list: this.snapshots,
-        query,
-        columnKeys: ['dataset'],
-        exact: true,
-      });
+    this.dataProvider.setFilter(
+      isDatasetRoute && this.hasSnapshotsInDataset(query)
+        ? {
+            list: this.snapshots,
+            query,
+            columnKeys: ['dataset'],
+            exact: true,
+          }
+        : this.buildSearchFilter(query),
+      { keepPage },
+    );
+  }
 
-      if (this.dataProvider.totalRows === 0) {
-        this.dataProvider.setFilter(this.buildSearchFilter(query));
-      }
-    } else {
-      this.dataProvider.setFilter(this.buildSearchFilter(query));
-    }
+  /**
+   * Mirrors what the `exact` dataset filter would match — `filterTableRows` compares both
+   * sides lowercased — so the choice above lands on the same branch the discarded pass used
+   * to reveal.
+   */
+  private hasSnapshotsInDataset(query: string): boolean {
+    const target = query.toLowerCase();
+    return this.snapshots.some((snapshot) => snapshot.dataset?.toLowerCase() === target);
   }
 
   /**

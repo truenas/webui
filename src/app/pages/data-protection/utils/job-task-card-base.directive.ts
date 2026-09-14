@@ -6,13 +6,21 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { type TnSortEvent } from '@truenas/ui-components';
 import { Observable, tap } from 'rxjs';
+import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { JobSlice } from 'app/modules/jobs/store/job.selectors';
+import { JobSlice, selectJobsByMethod } from 'app/modules/jobs/store/job.selectors';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import { TaskCardJobRepainter, type TaskWithJob } from 'app/pages/data-protection/utils/task-card-job-repainter';
+
+/** The task a run job belongs to. Every task run method takes the task id as its first argument. */
+function taskIdOf(job: Job): number | null {
+  const [taskId] = job.arguments as unknown[];
+  return typeof taskId === 'number' ? taskId : null;
+}
 
 /**
  * Shared wiring for the data-protection task cards whose rows are backed by a
@@ -73,6 +81,8 @@ export abstract class JobTaskCardBase<T extends TaskWithJob> implements OnInit {
   protected abstract readonly defaultSortProperty: keyof T;
   /** data-test id for the Add button, e.g. `cloudsync-task-add`. */
   protected abstract readonly addTestId: string;
+  /** Job method a run of this task type creates, e.g. `rsynctask.run`. */
+  protected abstract readonly runMethod: ApiJobMethod;
 
   /** Query the backing tasks. Re-subscribed on every {@link reload}. */
   protected abstract queryTasks(): Observable<T[]>;
@@ -83,8 +93,50 @@ export abstract class JobTaskCardBase<T extends TaskWithJob> implements OnInit {
 
   protected readonly trackByTaskId = (_index: number, row: T): number => row.id;
 
+  /**
+   * States already reloaded for, per job no row carries yet. Keeps
+   * {@link watchExternalRuns} from reloading twice for the same job state.
+   */
+  private readonly externalJobStates = new Map<number, JobState>();
+
   ngOnInit(): void {
     this.loadAndWatch();
+    this.watchExternalRuns();
+  }
+
+  /**
+   * Rows only ever learn about the job they were queried with. A run started outside this
+   * card — a cron-scheduled one, or one triggered from another tab — mints a *new* job id
+   * that no row is watching, so the card would go on showing the previous run's state and
+   * logs (or none at all, for a task that had never run) until something reloaded the list.
+   * Re-query once per state of such a job, which is what hands the row its new job.
+   */
+  private watchExternalRuns(): void {
+    this.store$.select(selectJobsByMethod(this.runMethod)).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((jobs) => {
+      const rowJobIds = new Set(this.rows.map((row) => row.job?.id));
+      const unseenJobs = jobs.filter((job) => {
+        const taskId = taskIdOf(job);
+        return taskId !== null
+          && !rowJobIds.has(job.id)
+          && this.rows.some((row) => row.id === taskId)
+          && this.externalJobStates.get(job.id) !== job.state;
+      });
+
+      // Recorded before reloading so a second emit for the same state can't queue another.
+      unseenJobs.forEach((job) => this.externalJobStates.set(job.id, job.state));
+      // Jobs the rows have caught up with need no further bookkeeping.
+      for (const jobId of this.externalJobStates.keys()) {
+        if (rowJobIds.has(jobId)) {
+          this.externalJobStates.delete(jobId);
+        }
+      }
+
+      if (unseenJobs.length) {
+        this.reload();
+      }
+    });
   }
 
   protected onSortChange(event: TnSortEvent): void {

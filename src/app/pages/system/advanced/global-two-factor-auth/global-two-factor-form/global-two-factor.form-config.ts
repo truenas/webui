@@ -22,7 +22,6 @@ export function getGlobalTwoFactorFormConfig(
   dialogService: DialogService,
   authService: AuthService,
   router: Router,
-  window: Window,
   twoFactorConfig: GlobalTwoFactorConfig,
 ): FormDefinition<GlobalTwoFactorFormValues> {
   const enableWarning = translate.instant('Once enabled, users will be prompted to set up two-factor authentication next time they login. They can choose to skip the setup if desired.');
@@ -77,7 +76,6 @@ export function getGlobalTwoFactorFormConfig(
         ),
         successMessage: translate.instant('Settings saved'),
         onSuccess: () => {
-          window.localStorage.setItem('showQr2FaWarning', `${values.enabled}`);
           authService.globalTwoFactorConfigUpdated();
           if (!isEqual(twoFactorConfig, payload) && payload.enabled) {
             router.navigate(['/two-factor-auth']);
