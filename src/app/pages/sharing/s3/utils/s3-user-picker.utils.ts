@@ -22,6 +22,6 @@ export const s3UserDirectoryOptions: DirectoryQueryOptions = {
  * form's own defaults and stays editable.
  */
 export const s3UserFormPreset: UserFormPreset = {
-  lockSmbAccessOff: true,
-  passwordDisabled: true,
+  values: { smb: false, password_disabled: true },
+  locked: ['smb'],
 };

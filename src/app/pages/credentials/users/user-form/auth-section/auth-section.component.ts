@@ -178,24 +178,27 @@ export class AuthSectionComponent implements OnInit {
   }
 
   /**
-   * Ticks "Disable Password" when the create flow asked for it — the account
-   * this flow is about never signs in.
+   * Applies the create flow's preset to the one control here it can name.
    *
    * Applied once, and only once SMB access has actually gone off: the watcher
    * above forces this control off and disabled for as long as SMB access reads
-   * true, so a tick applied ahead of that is silently undone. Once is what
-   * makes it a starting point rather than a setting — the user can untick it,
-   * and nothing puts it back.
+   * true, so a value set ahead of that is silently undone. This is the
+   * ordering a generic patcher could not know about, and the reason applying a
+   * preset is each form's own job.
+   *
+   * Once is what makes it a starting point rather than a setting — the user
+   * can change it back, and nothing puts it again.
    */
   private applyPreset(): void {
     let applied = false;
 
     effect(() => {
-      if (applied || !this.preset()?.passwordDisabled || this.editingUser() || this.smbAccess()) {
+      const passwordDisabled = this.preset()?.values?.password_disabled;
+      if (applied || passwordDisabled === undefined || this.editingUser() || this.smbAccess()) {
         return;
       }
       applied = true;
-      untracked(() => this.form.controls.password_disabled.setValue(true));
+      untracked(() => this.form.controls.password_disabled.setValue(passwordDisabled));
     }, { injector: this.injector });
   }
 

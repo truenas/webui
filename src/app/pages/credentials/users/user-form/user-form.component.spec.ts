@@ -191,7 +191,7 @@ describe('UserFormComponent', () => {
     // The sections own every control the preset names, so this form's whole job
     // is to hand it over; what each one does with it is their own spec.
     it('hands the preset to the sections that own those controls', () => {
-      const preset = { lockSmbAccessOff: true, passwordDisabled: true };
+      const preset: UserFormPreset = { values: { smb: false, password_disabled: true }, locked: ['smb'] };
       spectator = createComponent({ props: { preset } });
 
       expect(presetOf(spectator.query(AllowedAccessSectionComponent))).toEqual(preset);

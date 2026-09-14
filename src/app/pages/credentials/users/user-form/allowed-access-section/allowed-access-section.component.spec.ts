@@ -53,7 +53,7 @@ describe('AllowedAccessSectionComponent', () => {
 
   describe('when a create flow presets the section', () => {
     it('turns SMB access off and locks the checkbox', async () => {
-      spectator.setInput('preset', { lockSmbAccessOff: true });
+      spectator.setInput('preset', { values: { smb: false }, locked: ['smb'] });
 
       const smbAccessCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'SMB Access' }));
       expect(await smbAccessCheckbox.isChecked()).toBe(false);
@@ -61,7 +61,7 @@ describe('AllowedAccessSectionComponent', () => {
     });
 
     it('tells the store SMB access is off, rather than that it is unknown', () => {
-      spectator.setInput('preset', { lockSmbAccessOff: true });
+      spectator.setInput('preset', { values: { smb: false }, locked: ['smb'] });
 
       expect(spectator.inject(UserFormStore).setAllowedAccessConfig).toHaveBeenLastCalledWith(
         expect.objectContaining({ smbAccess: false }),
@@ -73,7 +73,7 @@ describe('AllowedAccessSectionComponent', () => {
       // config is spread rather than merged — so reporting the emission
       // instead of the raw value would replace `smb: false` with `undefined`
       // here, and `user.create` would go out saying nothing about SMB at all.
-      spectator.setInput('preset', { lockSmbAccessOff: true });
+      spectator.setInput('preset', { values: { smb: false }, locked: ['smb'] });
 
       const truenasAccess = await loader.getHarness(TnCheckboxHarness.with({ label: 'TrueNAS Access' }));
       await truenasAccess.check();
@@ -84,6 +84,14 @@ describe('AllowedAccessSectionComponent', () => {
       expect(spectator.inject(UserFormStore).setAllowedAccessConfig).toHaveBeenLastCalledWith(
         expect.objectContaining({ smbAccess: false }),
       );
+    });
+
+    it('sets the value without locking it when the flow names no lock', async () => {
+      spectator.setInput('preset', { values: { smb: false } });
+
+      const smbAccessCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'SMB Access' }));
+      expect(await smbAccessCheckbox.isChecked()).toBe(false);
+      expect(await smbAccessCheckbox.isDisabled()).toBe(false);
     });
 
     it('leaves the checkbox alone without a preset', async () => {

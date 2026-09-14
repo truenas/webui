@@ -65,14 +65,14 @@ describe('AuthSectionComponent', () => {
 
   describe('when a create flow presets the section', () => {
     it('ticks Disable Password once SMB access is off', async () => {
-      spectator.setInput('preset', { passwordDisabled: true });
+      spectator.setInput('preset', { values: { password_disabled: true } });
 
       expect(await (await getCheckbox('Disable Password')).isChecked()).toBe(true);
     });
 
     it('waits for SMB access to go off, which is what makes the tick stick', async () => {
       smbAccess.set(true);
-      spectator.setInput('preset', { passwordDisabled: true });
+      spectator.setInput('preset', { values: { password_disabled: true } });
 
       // The section forces the box off and disabled while SMB access is on, so
       // a tick applied here would be undone rather than honoured.
@@ -85,7 +85,7 @@ describe('AuthSectionComponent', () => {
     });
 
     it('leaves it a starting point: unticking it stays unticked', async () => {
-      spectator.setInput('preset', { passwordDisabled: true });
+      spectator.setInput('preset', { values: { password_disabled: true } });
 
       const checkbox = await getCheckbox('Disable Password');
       await checkbox.uncheck();

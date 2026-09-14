@@ -1,4 +1,5 @@
 import { Role } from 'app/enums/role.enum';
+import { FormPreset } from 'app/interfaces/form-preset.interface';
 
 export const directIdMapping = 'DIRECT' as const;
 
@@ -86,24 +87,14 @@ export interface SetPasswordParams {
 }
 
 /**
- * What a create-user flow opens the user form with, when the account it is
- * about is not a general-purpose one.
+ * What a create-user flow opens the user form with — see {@link FormPreset}.
  *
- * Only for a NEW user: an edit form is about a record that already exists, and
- * nothing here would be an honest thing to say about it.
+ * Narrowed to the two keys the form honours. `smb` is the one worth locking
+ * for an account that is not an SMB account, and it is load-bearing for the
+ * other: the form keeps "Disable Password" off and untouchable while SMB
+ * access is on, because SMB authenticates with a password. So a preset that
+ * sets `password_disabled` without also turning `smb` off gets the first
+ * silently reverted; the form applies them in that order for exactly that
+ * reason.
  */
-export interface UserFormPreset {
-  /**
-   * Start with SMB access off and the checkbox locked. For a flow whose account
-   * is not an SMB account: leaving it on is not a default the user is choosing,
-   * it is a setting they would have to notice and undo.
-   *
-   * Load-bearing for {@link passwordDisabled} too — the form keeps "Disable
-   * Password" off and untouchable while SMB access is on, because SMB
-   * authenticates with one.
-   */
-  lockSmbAccessOff?: boolean;
-
-  /** Start with "Disable Password" ticked, for an account that never logs in. */
-  passwordDisabled?: boolean;
-}
+export type UserFormPreset = FormPreset<Pick<UserUpdate, 'smb' | 'password_disabled'>>;

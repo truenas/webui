@@ -585,7 +585,7 @@ describe('ix-user-* / ix-group-* directory pickers', () => {
 
     it('hands the create flow what the field wants the new account to start as', async () => {
       host.allowCreate.set(true);
-      host.createPreset.set({ lockSmbAccessOff: true, passwordDisabled: true });
+      host.createPreset.set({ values: { smb: false }, locked: ['smb'] });
       directory.createUserImpl = () => of({ label: ignoreTranslation('newbie'), value: 'newbie' });
       fixture.detectChanges();
 
@@ -594,7 +594,7 @@ describe('ix-user-* / ix-group-* directory pickers', () => {
       await owner.selectOption('Add New');
       await settle();
 
-      expect(directory.seenPresets).toEqual([{ lockSmbAccessOff: true, passwordDisabled: true }]);
+      expect(directory.seenPresets).toEqual([{ values: { smb: false }, locked: ['smb'] }]);
     });
 
     it('hands it nothing when the field asks for nothing', async () => {

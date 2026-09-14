@@ -79,8 +79,7 @@ export class AllowedAccessSectionComponent {
   }
 
   /**
-   * Turns SMB access off and locks the checkbox when the create flow asked for
-   * it — the account this flow is about is not an SMB account.
+   * Applies the create flow's preset to the one control here it can name.
    *
    * `setValue` before `disable`, and the disable silenced: the store learns
    * the value from the first call, and the second has nothing new to say.
@@ -91,12 +90,16 @@ export class AllowedAccessSectionComponent {
    */
   private applyPreset(): void {
     effect(() => {
-      if (!this.preset()?.lockSmbAccessOff || this.editingUser()) {
+      const preset = this.preset();
+      const smb = preset?.values?.smb;
+      if (smb === undefined || this.editingUser()) {
         return;
       }
       untracked(() => {
-        this.form.controls.smb.setValue(false);
-        this.form.controls.smb.disable({ emitEvent: false });
+        this.form.controls.smb.setValue(smb);
+        if (preset.locked?.includes('smb')) {
+          this.form.controls.smb.disable({ emitEvent: false });
+        }
       });
     });
   }
