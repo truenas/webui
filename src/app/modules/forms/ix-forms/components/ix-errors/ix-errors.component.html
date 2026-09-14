@@ -1,12 +1,12 @@
 @if (control().touched || control().dirty || showErrorsForUntouched) {
   <div class="form-error" role="alert" aria-live="polite">
     @for (message of messages; track trackMessage(message)) {
-      <mat-error>
+      <div class="error-message">
         <span [innerHTML]="message | translate"></span>
-      </mat-error>
+      </div>
     }
     @if (control().errors && control().errors?.[ixManualValidateError]) {
-      <mat-error class="manual-error">
+      <div class="error-message manual-error">
         <span class="manual-message" [innerHTML]="control().errors && control().errors?.[ixManualValidateError]?.message"></span>
         <tn-icon
           class="close-icon"
@@ -20,7 +20,7 @@
           (keydown.enter)="removeManualError()"
           (keydown.space)="removeManualError()"
         ></tn-icon>
-      </mat-error>
+      </div>
     }
   </div>
 }

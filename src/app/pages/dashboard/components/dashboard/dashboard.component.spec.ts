@@ -14,7 +14,6 @@ import { AnimateOutDirective } from 'app/directives/animate-out/animate-out.dire
 import {
   DisableFocusableElementsDirective,
 } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
-import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicator/new-feature-indicator.directive';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -55,7 +54,6 @@ describe('DashboardComponent', () => {
       WidgetGroupControlsComponent,
       MockComponent(PageHeaderComponent),
       MockComponent(WidgetGroupComponent),
-      NewFeatureIndicatorDirective,
       DisableFocusableElementsDirective,
       AnimateOutDirective,
     ],

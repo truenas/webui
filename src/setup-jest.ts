@@ -7,21 +7,6 @@ import { APP_BASE_HREF } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatListModule } from '@angular/material/list';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSortModule } from '@angular/material/sort';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { defineGlobalsInjections } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
@@ -129,27 +114,12 @@ jest.setTimeout(30 * 1000);
 
 defineGlobalsInjections({
   imports: [
-    MatCheckboxModule,
-    MatSlideToggleModule,
-    MatMenuModule,
     TnButtonComponent,
     TnIconComponent,
     TnIconButtonComponent,
     TnMenuComponent,
     TnMenuItemComponent,
     TnMenuTriggerDirective,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatSelectModule,
-    MatSortModule,
-    MatTooltipModule,
-    MatCardModule,
-    MatListModule,
-    MatToolbarModule,
-    MatBadgeModule,
-    MatExpansionModule,
-    MatProgressSpinnerModule,
-    MatButtonModule,
     IxExplorerComponent,
     IxErrorsComponent,
     IxLabelComponent,

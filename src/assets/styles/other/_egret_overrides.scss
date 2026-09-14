@@ -6,30 +6,6 @@
   display: none;
 }
 
-/* Navigation shorter and fixed to Top */
-div.mat-toolbar {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  min-height: 64px;
-  padding: 0 16px;
-  width: 100%;
-}
-
-.mat-mdc-tab-body-wrapper {
-  padding: 16px;
-}
-
-/* Cards & Tables */
-.mat-mdc-card-table {
-  padding: 0 !important;
-}
-
-.mat-card-title-text {
-  font-size: 24px;
-  margin: 16px;
-}
-
 .cdk-drop-list-dragging {
   cursor: grabbing;
 }

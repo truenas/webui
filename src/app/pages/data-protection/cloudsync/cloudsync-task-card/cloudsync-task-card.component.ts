@@ -188,7 +188,7 @@ export class CloudSyncTaskCardComponent extends JobTaskCardBase<CloudSyncTaskUi>
 
   // CloudSyncFormComponent / CloudSyncWizardComponent structurally provide the host surface the panel
   // reads (closed / hasUnsavedChanges, and for the form canSubmit/submit); cast past the nominal base.
-  // The wizard is `footerless` — its mat-stepper owns its Next/Save buttons.
+  // The wizard is `footerless` — its tn-stepper owns its Next/Save buttons.
   private readonly cloudSyncForm = CloudSyncFormComponent as unknown as Type<SidePanelForm>;
   private readonly cloudSyncWizard = CloudSyncWizardComponent as unknown as Type<SidePanelForm>;
 

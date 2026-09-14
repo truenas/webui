@@ -8,7 +8,7 @@ import { startWith } from 'rxjs';
 /**
  * The minimal surface EVERY side-panel-hosted component exposes — close signalling and the
  * unsaved-changes guard — which {@link FormSidePanelService} and its container always drive,
- * regardless of whether the panel renders a Save footer. Footerless hosts (e.g. a `mat-stepper`
+ * regardless of whether the panel renders a Save footer. Footerless hosts (e.g. a `tn-stepper`
  * wizard that owns its own Next/Back/Save buttons) satisfy only this; that's why `open()` accepts
  * it rather than the fuller {@link SidePanelHostForm}, so a footerless wizard passes without a cast.
  *

@@ -26,11 +26,16 @@ const projectOverrides = {
     'no-restricted-imports': [
       'error',
       {
-        paths: [
+        patterns: [
           {
-            name: '@angular/material/dialog',
-            message: "Angular Material dialogs have been fully replaced by `tn-dialog` (NAS-141066). Open dialogs through `DialogService` (app/modules/dialog/dialog.service.ts), or inject `TnDialog` from '@truenas/ui-components' for a dialog DialogService does not wrap.",
+            // `@angular/material` is gone from package.json entirely (NAS-141025), so a
+            // stray import already fails to resolve. This keeps the failure legible — and
+            // stops someone re-adding the dependency to "fix" it.
+            group: ['@angular/material', '@angular/material/*'],
+            message: "Angular Material has been fully replaced by @truenas/ui-components (NAS-141025). Use the `tn-*` equivalent; for dialogs, go through `DialogService` (app/modules/dialog/dialog.service.ts) or inject `TnDialog` from '@truenas/ui-components'.",
           },
+        ],
+        paths: [
           {
             name: '@angular/common',
             importNames: ['DatePipe'],

@@ -1,48 +1,7 @@
-@use '@angular/material' as mat;
-@use 'sass:color';
-@use 'sass:map';
 @import 'scss-imports/cssvars';
-$standard-height: 40px;
-@include mat.all-component-typographies();
-@include mat.elevation-classes();
-@include mat.app-background();
-@include mat.slide-toggle-density(-1);
-@include mat.radio-density(-1);
-@include mat.checkbox-density(-1);
-@import 'angular15';
-@import 'material-overrides';
 
-$ix-primary: mat.m2-define-palette($md-primary);
-$ix-accent: mat.m2-define-palette($md-accent);
-
-$ix-typography: mat.m2-define-typography-config($body-1: mat.m2-define-typography-level($font-size: 0.875rem,
-$font-family: var(--font-family-body),),
-$body-2: mat.m2-define-typography-level($font-size: 0.875rem,
-$font-family: var(--font-family-body),),);
-
-$ix-theme: mat.m2-define-light-theme((
-  color: (
-    primary: $ix-primary,
-    accent: $ix-accent,
-  ),
-  typography: $ix-typography,
-));
-
-$primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
-
-// include the custom theme object into the angular material theme
+// Theme-scoped globals. The class is set on <body> by the theme service.
 .ix-dark {
-  @include mat.all-component-themes($ix-theme);
-
-  .mat-bg-primary {
-    background: map.get($md-primary, 500) !important;
-    color: #fff !important;
-  }
-
-  .mat-color-primary {
-    color: map.get($md-primary, 500) !important;
-  }
-
   .nav-list .sidebar-list-item {
     color: rgba(0, 0, 0, 0.94);
   }
@@ -73,121 +32,14 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     font-size: 15px;
   }
 
-  /////////////////// SpecSelectors: Selectors not originally in ix-dark theme
-  .mdc-tab__text-label {
-    @include variable(color, --fg1, $fg1);
-  }
-
-  .mat-mdc-menu-item .mat-icon:not([color]),
-  .mat-mdc-menu-item .theme-picker-swatch .mat-icon:not([color]),
-  .mat-mdc-menu-item-submenu-trigger::after {
-    @include variable(color, --fg1, $fg1);
-    align-items: center;
-    display: flex;
-  }
-
-  .mat-toolbar,
-  .mat-raised-button {
-    @include variable(color, --fg1, $fg1);
-    background-color: rgba(0, 0, 0, 0.1);
-  }
-
-  .mat-step-header .mat-step-icon:not(.mat-step-icon-state-error) {
-    background-color: var(--alt-bg1);
-  }
-
-  .mat-step-header .mat-step-icon.mat-step-icon-selected {
-    background-color: var(--primary);
-  }
-
-  .mat-bg-primary,
-  .mat-raised-button.mat-primary,
-  .mat-fab.mat-primary,
-  .mat-mini-fab.mat-primary,
-  .mat-step-header .mat-step-icon:not(.mat-step-icon-state-error):not(.mat-step-icon-state-number):not(.mat-step-icon-state-edit) {
-    @include variable(background, --primary, $primary, !important);
-    @include variable(color, --primary-txt, $primary-txt, !important);
-  }
-
-  .mat-bg-accent,
-  .mat-raised-button.mat-accent,
-  .mat-fab.mat-accent,
-  .mat-mini-fab.mat-accent {
-    @include variable(background, --accent, $accent, !important);
-    @include variable(color, #000, #000, !important);
-    background-color: map.get($md-accent, 500);
-    color: black;
-  }
-
-  .navigation-hold#scroll-area,
-  .mat-mdc-card,
-  .mat-mdc-option,
-  .mat-mdc-paginator,
-  .mat-mdc-select-content,
-  .mat-mdc-select-panel,
-  .mat-mdc-select-panel,
-  .mat-mdc-select-panel-done-animating,
-  .mat-expansion-panel,
-  .mat-stepper-horizontal,
-  .mat-stepper-vertical {
+  .navigation-hold#scroll-area {
     @include variable(background, --bg2, $bg2);
     @include variable(color, --fg2, $fg2);
-  }
-
-  .mat-button-toggle-checked {
-    @include variable(color, --fg2, $fg2);
-    background-color: rgba(0, 0, 0, 0.1);
-  }
-
-  .mat-mdc-card .mat-divider {
-    @include variable(background, --alt-fg1, $alt-fg1);
-    opacity: 0.15;
   }
 
   .nav-list .sidebar-list-item,
   .slidein-nav .slide-in-nav-item,
-  .app-user .app-user-name,
-  .mat-expansion-panel-header-title,
-  .mat-expansion-panel-header-description,
-  .mat-mdc-list .mat-mdc-list-item,
-  .mat-mdc-menu-panel button,
-  .mat-mdc-menu-panel a,
-  .mat-mdc-paginator-navigation-next,
-  .mat-mdc-paginator-navigation-previous,
-
-  .mat-mdc-form-field-label,
-  .mat-mdc-selection-list .mat-mdc-list-item,
-  .mat-mdc-option,
-  .mat-mdc-select-arrow,
-  .mat-mdc-select-value {
-    @include variable(color, --fg2, $fg2, !important);
-  }
-
-  .mat-mdc-form-field .mat-mdc-select.mat-mdc-select-disabled .mat-mdc-select-arrow,
-  .mat-mdc-select-disabled .mat-mdc-select-value {
-    @include variable(color, --fg2, $fg2);
-    cursor: not-allowed;
-    opacity: var(--disabled-opacity);
-  }
-
-  .mat-mdc-form-field.mat-focused.mat-primary .mat-mdc-select-arrow {
-    @include variable(color, --primary, $primary, !important);
-  }
-
-  .mat-mdc-checkbox-disabled {
-    opacity: 0.7;
-    pointer-events: all;
-
-    label {
-      @include variable(color, --fg2, $fg2);
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
-  }
-
-  .mat-mdc-menu-panel,
-  .mat-mdc-option.mat-active {
-    @include variable(background, --bg2, $bg2);
+  .app-user .app-user-name {
     @include variable(color, --fg2, $fg2, !important);
   }
 
@@ -199,166 +51,8 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     @include variable(color, --fg2, $fg2, !important);
   }
 
-  .mat-mdc-option.mat-mdc-option-disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
-
-  .mat-mdc-form-field-underline {
-    @include variable(background-color, --fg2, $fg2, !important);
-    opacity: 0.35;
-  }
-
-  .mat-warn .mat-mdc-form-field-underline {
-    opacity: 0.85;
-  }
-
-  .mat-mdc-form-field.mat-focused .mat-mdc-form-field-ripple {
-    @include variable(background-color, --primary, $primary, !important);
-  }
-
-  .mat-mdc-form-field.mat-focused.mat-primary {
-    @include variable(color, --fg2, $fg2, !important);
-  }
-
-  .mat-mdc-form-field-invalid .mat-mdc-form-field-label {
-    color: #f44336 !important;
-  }
-
-  .mat-mdc-form-field-disabled .mat-mdc-form-field-label {
-    opacity: var(--disabled-opacity);
-  }
-
-  .mat-mdc-button:disabled {
-    cursor: not-allowed;
-    opacity: var(--disabled-opacity);
-    pointer-events: all;
-  }
-
-  .mat-mdc-form-field-ripple {
-    @include variable(background-color, --primary, $primary);
-  }
-
-  .mat-input-element {
-    @include variable(caret-color, --fg2, $fg2, !important);
-  }
-
-  .mat-input-element:disabled {
-    @include variable(color, --fg2, $fg2);
-    opacity: var(--disabled-opacity);
-  }
-
-  .mat-calendar-table-header,
-  .mat-calendar-table,
-  .mat-calendar-body-cell-content,
-  .mat-calendar-table-header th,
-  .mat-calendar-body-label {
-    @include variable(color, --fg2, $fg2);
-  }
-
-  .mat-calendar-table-header,
-  .mat-calendar-body-cell,
-  .mat-calendar-body-cell-content {
-    cursor: default;
-  }
-
-  .mat-calendar-body-today:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical) {
-    border-color: var(--focus-brd);
-  }
-
-  .mat-raised-button.mat-primary[disabled],
-  .mat-raised-button.mat-accent[disabled],
-  .mat-raised-button.mat-warn[disabled],
-  .mat-raised-button[disabled][disabled],
-  .mat-fab.mat-primary[disabled],
-  .mat-fab.mat-accent[disabled],
-  .mat-fab.mat-warn[disabled],
-  .mat-fab[disabled][disabled],
-  .mat-mini-fab.mat-primary[disabled],
-  .mat-mini-fab.mat-accent[disabled],
-  .mat-mini-fab.mat-warn[disabled],
-  .mat-mini-fab[disabled][disabled] {
-    @include variable(background-color, #999, #999);
-    opacity: var(--disabled-opacity);
-  }
-
-  .mat-radio-outer-circle {
-    @include variable(border-color, --primary, $primary);
-  }
-
-  .mat-expansion-indicator::after,
-  .mat-pseudo-checkbox {
-    @include variable(color, --fg1, $fg1);
-  }
-
-  .mat-mdc-menu-item[disabled] {
-    @include variable(color, --primary-txt, $primary-txt);
-    opacity: var(--disabled-opacity);
-  }
-
   .spacer {
     flex: 1 1 auto;
-  }
-
-  // System wide hover effects
-  .mat-mdc-select-panel .mat-mdc-option:focus,
-  .mat-mdc-select-panel .mat-mdc-option:focus,
-  .mat-mdc-select-panel .mat-mdc-option:focus-visible,
-  .mat-mdc-select-panel .mat-mdc-option:focus-visible,
-  .mat-mdc-select-panel .mat-mdc-option.mat-mdc-selected:not(.mat-mdc-option-multiple),
-  .mat-mdc-select-panel .mat-mdc-option.mat-mdc-option-active {
-    @include variable(background, --primary, $primary, !important);
-    @include variable(color, --primary-txt, $primary-txt, !important);
-  }
-
-  .mat-mdc-option-active {
-    &:not(:hover) {
-      span {
-        color: var(--primary-txt) !important;
-      }
-    }
-
-    &:hover {
-      span {
-        color: var(--fg2) !important;
-      }
-    }
-  }
-
-  .mat-mdc-select-panel .mat-mdc-option:hover,
-  mat-option.mat-mdc-option-active,
-  .mat-mdc-menu-content button.mat-mdc-menu-item:hover,
-  .mat-mdc-menu-content button.mat-mdc-menu-item:hover .mat-icon:not(.theme-picker-swatch-icon),
-  .mat-mdc-menu-content button.mat-mdc-menu-item:focus,
-  .mat-mdc-menu-content button.mat-mdc-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon) {
-    background-color: var(--hover-bg) !important;
-  }
-
-  //Entity Module Overrides
-  .mat-mdc-card-actions .mat-mdc-button {
-    margin-left: 1px !important;
-    margin-right: 3px !important;
-  }
-
-  .form-card.mat-mdc-card {
-    font-size: 12px;
-  }
-
-  /////////////////// END SpecSelectors
-
-  .mat-spinner circle {
-    @include variable(stroke, --primary, $primary, !important);
-  }
-
-  // Add rule for entity wizards to make text light on dark themes
-  .mat-step-header .mat-step-label.mat-step-label-active {
-    @include variable(color, --fg2, $fg2);
-    opacity: 1;
-  }
-
-  .mat-step-header .mat-step-label {
-    @include variable(color, --fg2, $fg2);
-    opacity: var(--disabled-opacity);
   }
 
   // Style file trees to be highlighted with a theme color
@@ -366,44 +60,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   .node-content-wrapper-focused {
     background-color: var(--bg1);
     box-shadow: none;
-  }
-
-  // style nav chevrons on datatable pager w/regard to theme
-  .mdc-button__label .mat-mdc-paginator-decrement,
-  .mdc-button__label .mat-mdc-paginator-increment {
-    @include variable(border-color, --fg1, $fg1);
-  }
-
-  .mat-icon-button:disabled .mdc-button__label .mat-mdc-paginator-decrement,
-  .mat-icon-button:disabled .mdc-button__label .mat-mdc-paginator-increment {
-    @include variable(border-color, --fg1, $fg1);
-    opacity: var(--disabled-opacity);
-  }
-
-  // style to make sure all radio buttons catch the theme color
-  .mat-radio-button.mat-accent .mat-radio-inner-circle {
-    @include variable(background-color, --primary, $primary, !important);
-  }
-
-  .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
-    @include variable(border-color, --primary, $primary, !important);
-  }
-
-  // Fix icon color in notification area
-  .mat-spinner circle {
-    @include variable(stroke, --primary, $primary, !important);
-  }
-
-  // Fix a layout problem on Sharing/ISCSI page with ink-bar under active link...
-  ix-iscsi .mat-mdc-tab-label-active,
-  ix-reports-dashboard .mat-mdc-tab-label-active {
-    @include variable(border-color, --primary, $primary);
-    border-bottom: 2px solid;
-  }
-
-  //...by hiding ink bar, replacing it with a bottom border, above.
-  ix-reports-dashboard .mat-ink-bar {
-    opacity: 0;
   }
 
   // Helper styles for red,blue,green,cyan,orange,magenta,violet,yellow
@@ -468,133 +124,9 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     color: var(--fg2);
   }
 
-  .mat-mdc-button,
-  .mdc-button {
-    @include variable(font-family, --font-family-body, !important);
-    background: var(--btn-default-bg);
-    font-weight: 700 !important;
-  }
-
-  .mdc-button--outlined {
-    background-color: transparent !important;
-    border: 1px solid currentColor !important;
-    border-radius: 25px !important;
-    height: 30px;
-    line-height: 30px;
-
-    &.fn-theme-primary {
-      @include variable(color, --primary, $primary, !important);
-    }
-
-    &.fn-theme-grey {
-      @include variable(color, --grey, #989898, !important);
-    }
-
-    &.fn-theme-red {
-      @include variable(color, --red, $red, !important);
-    }
-
-    &.fn-theme-blue {
-      @include variable(color, --blue, $blue, !important);
-    }
-
-    &.fn-theme-green {
-      @include variable(color, --green, $green, !important);
-    }
-
-    &.fn-theme-cyan {
-      @include variable(color, --cyan, $cyan, !important);
-    }
-
-    &.fn-theme-orange {
-      @include variable(color, --orange, $orange, !important);
-    }
-
-    &.fn-theme-magenta {
-      @include variable(color, --magenta, $magenta, !important);
-    }
-
-    &.fn-theme-violet {
-      @include variable(color, --violet, $violet, !important);
-    }
-
-    &.fn-theme-yellow {
-      @include variable(color, --yellow, $yellow, !important);
-    }
-  }
-
-  .mat-mdc-button[color='default'] {
-    @include variable(color, --fg2, $fg2, !important);
-  }
-
-  // Gets checkboxes in SMART tests to pick up theme color
-  .mat-primary .mat-pseudo-checkbox-checked,
-  .mat-primary .mat-pseudo-checkbox-indeterminate {
-    @include variable(background, --primary, $primary, !important);
-    border: none;
-  }
-
-  .mat-mdc-checkbox .mdc-checkbox__ripple {
-    background-color: var(--primary);
-  }
-
-  .mat-mdc-checkbox.mat-mdc-checkbox-disabled * {
-    cursor: not-allowed;
-  }
-
-  // for multi-selection only
-  .mat-mdc-option-pseudo-checkbox.mat-pseudo-checkbox {
-    display: none;
-  }
-
   // Fix for overscrolling problem with sidenav
   .navigation-hold {
     position: static !important;
-  }
-
-  // Bring theme colors to rollover effect for standard primary buttons
-  .mat-mdc-button.mat-primary .mat-mdc-button-focus-overlay {
-    @include variable(background-color, --primary, $primary);
-    opacity: 0.12;
-  }
-
-  // Bring theme colors to rollover effect for standard accent buttons
-  .mat-mdc-button.mat-accent .mat-mdc-button-focus-overlay {
-    @include variable(background-color, --accent, $accent);
-    opacity: 0.12;
-  }
-
-  // Bring theme color to small icon buttons
-  .mat-icon-button {
-    &.mat-primary {
-      @include variable(color, --primary, $primary !important);
-    }
-
-    .mat-accent {
-      @include variable(color, --accent, $accent !important);
-    }
-  }
-
-  .mat-mdc-progress-bar-fill::after {
-    @include variable(background-color, --primary, $primary);
-  }
-
-  .mat-mdc-progress-bar-buffer {
-    @include variable(background-color, --primary, $primary);
-    opacity: 0.5;
-  }
-
-  .mat-mdc-progress-bar .mat-mdc-progress-bar-background {
-    display: none;
-  }
-
-  .mat-mdc-tab-nav-bar,
-  .mat-mdc-tab-header {
-    border-bottom: 1px solid var(--lines);
-  }
-
-  .mat-simple-snackbar-action {
-    color: var(--accent);
   }
 
   input[type=number] {
@@ -603,24 +135,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
 
   input[type=number]::-webkit-inner-spin-button {
     appearance: none;
-  }
-
-  .mat-autocomplete-panel {
-    background: var(--bg2) !important;
-  }
-
-  .mat-autocomplete-panel .mat-mdc-option.mat-mdc-selected:not(.mat-active):not(:hover),
-  .mat-autocomplete-panel .mat-mdc-option:hover {
-    background-color: var(--primary) !important;
-  }
-
-  .mat-autocomplete-panel .mat-mdc-option-text {
-    color: var(--fg2) !important;
-  }
-
-  mat-radio-group .radio-option-tooltip {
-    left: 5px;
-    position: relative;
   }
 
   .node-content-wrapper {
@@ -632,15 +146,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     line-height: 25px;
     padding-left: 3px;
     vertical-align: top;
-  }
-
-  .mat-mdc-card {
-    border-radius: 0;
-
-    ix-empty .empty-page {
-      margin: 0;
-      width: 100%;
-    }
   }
 
   ix-confirm-dialog pre,
@@ -659,22 +164,15 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     margin-bottom: 10px;
   }
 
-  mat-error {
+  // `ix-errors` renders each message through [innerHTML], so the injected markup
+  // carries no component scope attribute and the component's own styles can't reach
+  // it. Colour the messages (and any links inside them) from here instead.
+  ix-errors .error-message {
     color: var(--error);
 
     a {
       text-decoration: underline;
     }
-  }
-
-  .mat-mdc-select-panel,
-  .mat-mdc-select-panel {
-    max-height: 50vh !important; // values over 50vh will push last visible element out the screen
-  }
-
-  mat-hint {
-    color: var(--fg2) !important;
-    font-size: 0.7rem;
   }
 
   /// Slide-in menu ///////////////////////////////
@@ -691,8 +189,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   }
 
   .sidenav-link:hover,
-  .slide-in-nav-item:hover,
-  .mat-mdc-button.mat-default:hover {
+  .slide-in-nav-item:hover {
     background: var(--hover-bg) !important;
   }
 
@@ -747,15 +244,8 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     }
   }
 
-  button.menu-toggle {
-    .mdc-button__label {
-      align-items: center;
-      display: inline-flex;
-    }
-  }
-
   // Disabled form fields
-  .form-element .mat-mdc-text-field-wrapper[disabled],
+
   .form-element input[type=email][disabled],
   .form-element input[type=number][disabled],
   .form-element input[type=password][disabled],
@@ -765,27 +255,11 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     opacity: var(--disabled-opacity);
   }
 
-  // focus state styles for mat-form-field
-  .mat-mdc-form-field.mat-focused:focus-within {
-    outline: 1.5px solid var(--primary);
-  }
-
   .error-warning-icon {
     color: var(--orange);
     margin-right: 10px;
   }
-} // end of ix theme
-
-.mdc-list-item__primary-text {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-
-  > span {
-    align-items: center;
-    display: flex;
-  }
-}
+} // end of .ix-dark
 
 .tooltip-multiline {
   white-space: pre-line;
@@ -795,41 +269,12 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   font-size: 12px;
 }
 
-.mdc-menu-surface.mat-mdc-select-panel {
-  box-shadow: 0 2px 4px -1px #0003, 0 4px 5px #00000024, 0 1px 10px #0000001f;
-  margin-top: 5px !important;
-  padding: 0 !important;
-}
-
-.mat-mdc-select-arrow-wrapper {
-  width: 21px;
-}
-
-mat-select {
-  box-sizing: border-box;
-
-  .mat-mdc-select-value {
-    padding: 8px;
-  }
-}
-
 input {
   padding: 8px;
 }
 
 textarea {
   padding: 8px !important;
-}
-
-mat-form-field {
-  .mat-mdc-text-field-wrapper {
-    padding: 0;
-  }
-}
-
-.mdc-line-ripple::before,
-.mdc-line-ripple::after {
-  border: 0 !important;
 }
 
 // `tn-side-panel` renders its overlay inline (position: fixed; z-index: 1000) rather than
