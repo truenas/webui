@@ -30,7 +30,7 @@ export class AsyncDataProvider<T> extends BaseDataProvider<T> {
     );
   }
 
-  override setFilter(filter: TableFilter<T>): void {
-    super.setFilter({ ...filter, list: filter.list || this.loadedRows });
+  override setFilter(filter: TableFilter<T>, options?: { keepPage?: boolean }): void {
+    super.setFilter({ ...filter, list: filter.list || this.loadedRows }, options);
   }
 }

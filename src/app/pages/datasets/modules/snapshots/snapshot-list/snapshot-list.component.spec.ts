@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnSlideToggleHarness, TnTableHarness,
+  TnButtonHarness, TnSlideToggleHarness, TnTableHarness, TnTablePagerHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
@@ -105,6 +105,18 @@ describe('SnapshotListComponent', () => {
     table = await loader.getHarness(TnTableHarness);
   });
 
+  /**
+   * Feeds the component through the store, the way the real page gets its rows. `snapshots`
+   * is private precisely so it can't be written behind `setSnapshots`, which is what keeps
+   * the name index and the selection in step with the list.
+   */
+  function setSnapshots(snapshots: ZfsSnapshot[]): void {
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectSnapshots, snapshots);
+    store$.refreshState();
+    spectator.detectChanges();
+  }
+
   it('should show table rows', async () => {
     expect(await table.getRowCount()).toBe(2);
 
@@ -150,19 +162,35 @@ describe('SnapshotListComponent', () => {
     expect(await table.getHeaderTexts()).not.toContain('Used');
   });
 
-  it('clears the current selection when the snapshot list reloads', async () => {
+  it('keeps the current selection when the snapshot list reloads', async () => {
     const store$ = spectator.inject(MockStore);
 
     await table.toggleRowSelection(0);
     expect(await table.getSelectedRowCount()).toBe(1);
 
-    // A store re-emission hands back fresh row objects; the prior selection now
-    // points at stale references that no longer map to visible rows, so it is cleared.
-    store$.overrideSelector(selectSnapshots, [...fakeZfsSnapshotDataSource]);
+    // A store re-emission hands back fresh row objects. Keyed by `name`, the selection
+    // survives it — a reload nobody asked for must not cost the user a batch they were
+    // half way through building.
+    store$.overrideSelector(selectSnapshots, fakeZfsSnapshotDataSource.map((snapshot) => ({ ...snapshot })));
     store$.refreshState();
     spectator.detectChanges();
 
-    expect(await table.getSelectedRowCount()).toBe(0);
+    expect(await table.getSelectedRowCount()).toBe(1);
+    expect(await table.isRowSelected(0)).toBe(true);
+  });
+
+  it('drops a selected snapshot the store no longer lists', async () => {
+    const store$ = spectator.inject(MockStore);
+
+    await table.toggleRowSelection(0);
+    // Row 0 is `second-snapshot` — the list is sorted by name, descending.
+    store$.overrideSelector(selectSnapshots, [fakeZfsSnapshotDataSource[0]]);
+    store$.refreshState();
+    spectator.detectChanges();
+
+    // The table only ever sees one page, so it cannot know the row is gone; the component
+    // prunes it before the batch toolbar can offer to delete it.
+    expect(spectator.query('.batch-actions-toolbar')).toBeNull();
   });
 
   it('should open form when Add button is pressed', async () => {
@@ -180,8 +208,8 @@ describe('SnapshotListComponent', () => {
     const testSnapshots = [
       {
         id: '1',
-        name: '/dozer/test-dataset@snapshot1',
-        dataset: '/dozer/test-dataset',
+        name: 'test-dataset@snapshot1',
+        dataset: 'test-dataset',
         snapshot_name: 'snapshot1',
       } as ZfsSnapshot,
       {
@@ -198,7 +226,7 @@ describe('SnapshotListComponent', () => {
       } as ZfsSnapshot,
     ];
 
-    component.snapshots = testSnapshots;
+    setSnapshots(testSnapshots);
 
     const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
 
@@ -206,12 +234,14 @@ describe('SnapshotListComponent', () => {
 
     expect(component.searchQuery()).toBe('test-dataset');
 
+    // One call: the dataset filter is chosen up front, not applied and then reconsidered.
+    expect(setFilterSpy).toHaveBeenCalledTimes(1);
     expect(setFilterSpy).toHaveBeenCalledWith({
-      list: component.snapshots,
+      list: testSnapshots,
       query: 'test-dataset',
       columnKeys: ['dataset'],
       exact: true,
-    });
+    }, { keepPage: false });
   });
 
   it('should fallback to name-based filtering when dataset exact match fails', () => {
@@ -232,24 +262,21 @@ describe('SnapshotListComponent', () => {
       } as ZfsSnapshot,
     ];
 
-    component.snapshots = testSnapshots;
+    setSnapshots(testSnapshots);
 
     const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
 
     spectator.triggerEventHandler('ix-basic-search', 'queryChange', 'test-dataset');
 
-    expect(setFilterSpy).toHaveBeenCalledTimes(2);
-    expect(setFilterSpy).toHaveBeenNthCalledWith(1, {
-      list: component.snapshots,
-      query: 'test-dataset',
-      columnKeys: ['dataset'],
-      exact: true,
-    });
-    expect(setFilterSpy).toHaveBeenNthCalledWith(2, {
-      list: component.snapshots,
+    // No snapshot sits in a dataset called `test-dataset`, so the name filter is chosen
+    // directly. The dataset filter is never applied: applying it and undoing it clamped
+    // the page against its own empty result and cost the user their place.
+    expect(setFilterSpy).toHaveBeenCalledTimes(1);
+    expect(setFilterSpy).toHaveBeenCalledWith({
+      list: testSnapshots,
       query: 'test-dataset',
       columnKeys: ['name'],
-    });
+    }, { keepPage: false });
   });
 
   it('filters only by name when the extra columns are hidden', () => {
@@ -262,10 +289,10 @@ describe('SnapshotListComponent', () => {
     spectator.triggerEventHandler('ix-basic-search', 'queryChange', '1.49');
 
     expect(setFilterSpy).toHaveBeenCalledWith({
-      list: component.snapshots,
+      list: fakeZfsSnapshotDataSource,
       query: '1.49',
       columnKeys: ['name'],
-    });
+    }, { keepPage: false });
   });
 
   it('also filters by the extra columns (used/referenced/created) when they are visible', async () => {
@@ -322,7 +349,7 @@ describe('SnapshotListComponent', () => {
       } as ZfsSnapshot,
     ];
 
-    component.snapshots = testSnapshots;
+    setSnapshots(testSnapshots);
 
     const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
 
@@ -330,10 +357,214 @@ describe('SnapshotListComponent', () => {
 
     expect(setFilterSpy).toHaveBeenCalledTimes(1);
     expect(setFilterSpy).toHaveBeenCalledWith({
-      list: component.snapshots,
+      list: testSnapshots,
       query: 'dozer/boom',
       columnKeys: ['dataset'],
       exact: true,
-    });
+    }, { keepPage: false });
+  });
+});
+
+describe('SnapshotListComponent — paging', () => {
+  // Enough snapshots for three pages at the default page size of 50.
+  const manySnapshots: ZfsSnapshot[] = Array.from({ length: 120 }, (_, index) => ({
+    id: String(index),
+    name: `test-dataset@snap-${String(index).padStart(3, '0')}`,
+    dataset: 'test-dataset',
+    snapshot_name: `snap-${String(index).padStart(3, '0')}`,
+  } as ZfsSnapshot));
+
+  let spectator: Spectator<SnapshotListComponent>;
+  let loader: HarnessLoader;
+  let table: TnTableHarness;
+  let pager: TnTablePagerHarness;
+
+  const createComponent = createComponentFactory({
+    component: SnapshotListComponent,
+    imports: [
+      MockComponent(PageHeaderComponent),
+      BasicSearchComponent,
+      ReactiveFormsModule,
+      MockComponent(IxDateComponent),
+    ],
+    declarations: [
+      FakeFormatDateTimePipe,
+    ],
+    providers: [
+      mockAuth(),
+      mockApi([mockCall('pool.snapshot.query', manySnapshots)]),
+      mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
+      mockProvider(FormSidePanelService, { open: jest.fn(() => SlideInResult.empty()) }),
+      provideMockStore({
+        selectors: [
+          { selector: selectSnapshotState, value: snapshotsInitialState },
+          { selector: selectSnapshots, value: manySnapshots },
+          { selector: selectSnapshotsTotal, value: manySnapshots.length },
+          { selector: selectPreferences, value: { showSnapshotExtraColumns: false } },
+          { selector: selectGeneralConfig, value: { timezone: 'Europe/Kiev' } },
+        ],
+      }),
+      {
+        provide: ActivatedRoute,
+        useValue: { snapshot: { paramMap: { get: (): string | null => null } } },
+      },
+    ],
+  });
+
+  beforeEach(async () => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(TnTableHarness);
+    pager = await loader.getHarness(TnTablePagerHarness);
+    await pager.nextPage();
+    spectator.detectChanges();
+  });
+
+  it('stays on the page the user is reading when a row there is selected', async () => {
+    const firstRow = await table.getCellText(0, 'snapshot_name');
+
+    await table.toggleRowSelection(0);
+    spectator.detectChanges();
+
+    expect(await pager.getRangeText()).toBe('51 – 100 of 120');
+    expect(await table.getCellText(0, 'snapshot_name')).toBe(firstRow);
+    expect(await table.isRowSelected(0)).toBe(true);
+  });
+
+  it('stays on the page the user is reading when the store reloads underneath them', async () => {
+    const store$ = spectator.inject(MockStore);
+    const firstRow = await table.getCellText(0, 'snapshot_name');
+
+    store$.overrideSelector(selectSnapshots, manySnapshots.map((snapshot) => ({ ...snapshot })));
+    store$.refreshState();
+    spectator.detectChanges();
+
+    expect(await pager.getRangeText()).toBe('51 – 100 of 120');
+    expect(await table.getCellText(0, 'snapshot_name')).toBe(firstRow);
+  });
+
+  it('clamps back into range when a reload shrinks the list below the current page', async () => {
+    const store$ = spectator.inject(MockStore);
+    const remaining = manySnapshots.slice(0, 30);
+
+    // The 70 snapshots behind pages 2 and 3 are gone — a retention prune, or a batch delete
+    // of the rows the user was reading. `keepPage` must not leave them on page 2 of one,
+    // which the empty state would render as "No search results" with no pager to get back.
+    store$.overrideSelector(selectSnapshots, remaining);
+    store$.overrideSelector(selectSnapshotsTotal, remaining.length);
+    store$.refreshState();
+    spectator.detectChanges();
+
+    expect(await pager.getRangeText()).toBe('1 – 30 of 30');
+    expect(await table.getRowCount()).toBe(30);
+  });
+
+  it('drops a selection made on a page the user has left when the store stops listing it', async () => {
+    const store$ = spectator.inject(MockStore);
+
+    await table.toggleRowSelection(0);
+    const offScreenPick = await table.getCellText(0, 'snapshot_name');
+    await pager.goToFirstPage();
+    spectator.detectChanges();
+    expect(spectator.query('.batch-actions-toolbar')).not.toBeNull();
+
+    // Nothing about the visible page-1 selection changes here, so the prune cannot depend on
+    // tn-table emitting selectionChange for a row it never rendered.
+    store$.overrideSelector(
+      selectSnapshots,
+      manySnapshots.filter((snapshot) => snapshot.snapshot_name !== offScreenPick),
+    );
+    store$.refreshState();
+    spectator.detectChanges();
+
+    expect(spectator.query('.batch-actions-toolbar')).toBeNull();
+  });
+
+  it('offers rows selected on more than one page to the batch toolbar', async () => {
+    await table.toggleRowSelection(0);
+    const secondPagePick = await table.getCellText(0, 'snapshot_name');
+
+    await pager.goToFirstPage();
+    spectator.detectChanges();
+    await table.toggleRowSelection(0);
+    const firstPagePick = await table.getCellText(0, 'snapshot_name');
+    spectator.detectChanges();
+
+    // The row picked on page 2 is still selected, and comes back checked when that page does.
+    expect(spectator.query('.batch-actions-toolbar')).not.toBeNull();
+    await pager.nextPage();
+    spectator.detectChanges();
+    expect(await table.isRowSelected(0)).toBe(true);
+    expect(await table.getCellText(0, 'snapshot_name')).toBe(secondPagePick);
+    expect(firstPagePick).not.toBe(secondPagePick);
+  });
+});
+
+describe('SnapshotListComponent — paging on a dataset route', () => {
+  // The case the dataset fallback exists for: the route names `tank`, which holds no
+  // snapshots of its own, while its children hold enough for three pages.
+  const childSnapshots: ZfsSnapshot[] = Array.from({ length: 120 }, (_, index) => ({
+    id: String(index),
+    name: `tank/child@snap-${String(index).padStart(3, '0')}`,
+    dataset: 'tank/child',
+    snapshot_name: `snap-${String(index).padStart(3, '0')}`,
+  } as ZfsSnapshot));
+
+  let spectator: Spectator<SnapshotListComponent>;
+  let loader: HarnessLoader;
+  let pager: TnTablePagerHarness;
+
+  const createComponent = createComponentFactory({
+    component: SnapshotListComponent,
+    imports: [
+      MockComponent(PageHeaderComponent),
+      BasicSearchComponent,
+      ReactiveFormsModule,
+      MockComponent(IxDateComponent),
+    ],
+    declarations: [
+      FakeFormatDateTimePipe,
+    ],
+    providers: [
+      mockAuth(),
+      mockApi([mockCall('pool.snapshot.query', childSnapshots)]),
+      mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
+      mockProvider(FormSidePanelService, { open: jest.fn(() => SlideInResult.empty()) }),
+      provideMockStore({
+        selectors: [
+          { selector: selectSnapshotState, value: snapshotsInitialState },
+          { selector: selectSnapshots, value: childSnapshots },
+          { selector: selectSnapshotsTotal, value: childSnapshots.length },
+          { selector: selectPreferences, value: { showSnapshotExtraColumns: false } },
+          { selector: selectGeneralConfig, value: { timezone: 'Europe/Kiev' } },
+        ],
+      }),
+      {
+        provide: ActivatedRoute,
+        useValue: { snapshot: { paramMap: { get: (): string | null => 'tank' } } },
+      },
+    ],
+  });
+
+  beforeEach(async () => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    pager = await loader.getHarness(TnTablePagerHarness);
+    await pager.nextPage();
+    spectator.detectChanges();
+  });
+
+  it('holds the page through a reload when the dataset match falls back to name search', async () => {
+    const store$ = spectator.inject(MockStore);
+    expect(await pager.getRangeText()).toBe('51 – 100 of 120');
+
+    store$.overrideSelector(selectSnapshots, childSnapshots.map((snapshot) => ({ ...snapshot })));
+    store$.refreshState();
+    spectator.detectChanges();
+
+    // Applying the dataset filter first and undoing it clamped the page against its own
+    // empty result, so the surviving pass started from page 1 — the reported symptom, on
+    // the one route the rest of the paging suite never reaches.
+    expect(await pager.getRangeText()).toBe('51 – 100 of 120');
   });
 });
