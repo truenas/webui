@@ -142,6 +142,7 @@
       >
         @for (envControl of form.controls.environment_variables.controls; track envControl; let i = $index) {
           <tn-form-list-item
+            testId="remove-from-list"
             [formGroupName]="i"
             [label]="'Environment Variable' | translate"
             [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Environment Variable' | translate }"

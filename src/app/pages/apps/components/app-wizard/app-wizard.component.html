@@ -10,8 +10,10 @@
       <div class="mini-search-card">
         <div class="field-search">
           <tn-icon class="field-search__icon" name="magnify" library="mdi" size="sm"></tn-icon>
+          <!-- Both search fields are in the DOM at once (this one is CSS-hidden at wide widths),
+               so the compact copy takes its own id rather than duplicating the full one. -->
           <tn-autocomplete
-            testId="search-input-fields"
+            testId="search-input-fields-compact"
             [formControl]="searchControl"
             [placeholder]="'Search Input Fields' | translate"
             [options]="searchOptions"

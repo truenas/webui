@@ -48,8 +48,10 @@
     }
 
     @if (showExtensionsWarning()) {
+      <!-- The Save this used to describe now lives in the panel footer, which takes no
+           `aria-describedby`. The warning is a `tn-banner` (role="status"), so it announces
+           on appearance; the dangling id has no referrer and is dropped. -->
       <ix-smb-extensions-warning
-        id="apple-extensions-warning"
         (extensionsEnabled)="extensionsEnabled()"
       ></ix-smb-extensions-warning>
     }

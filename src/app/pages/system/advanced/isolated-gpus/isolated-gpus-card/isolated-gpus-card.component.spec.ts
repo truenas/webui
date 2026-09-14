@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnEmptyHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -103,10 +103,11 @@ describe('IsolatedGpusCardComponent', () => {
           }),
         ],
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('shows an empty state when no GPUs are isolated', () => {
-      expect(spectator.query('tn-empty')).not.toBeNull();
+    it('shows an empty state when no GPUs are isolated', async () => {
+      expect(await loader.hasHarness(TnEmptyHarness)).toBe(true);
       expect(spectator.query('.details-item')).toBeNull();
     });
   });

@@ -2,8 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment, UnitTestElement } from '@angular/cdk/testing/testbed';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnBannerComponent, TnButtonHarness, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting,
-  TnTableHarness,
+  TnBannerComponent, TnBannerHarness, TnButtonHarness, TnDialog, TnIconButtonHarness, TnMenuHarness,
+  TnMenuTesting, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -220,8 +220,8 @@ describe('DeviceListComponent', () => {
       expect(await menu.isItemDisabled({ label: 'Export to Image' })).toBe(true);
     });
 
-    it('states the reason in a banner while the VM runs, and drops it when it stops', () => {
-      expect(spectator.query('tn-banner')).toBeNull();
+    it('states the reason in a banner while the VM runs, and drops it when it stops', async () => {
+      expect(await loader.hasHarness(TnBannerHarness)).toBe(false);
 
       emitVmState(VmState.Running);
 
@@ -230,7 +230,7 @@ describe('DeviceListComponent', () => {
 
       emitVmState(VmState.Stopped);
 
-      expect(spectator.query('tn-banner')).toBeNull();
+      expect(await loader.hasHarness(TnBannerHarness)).toBe(false);
     });
 
     it('opens the export dialog from the menu item when the VM is stopped', async () => {

@@ -1687,7 +1687,7 @@ describe('SmbFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(false);
 
       // Verify warning component is shown with correct id
-      const warningElement = spectator.query('#apple-extensions-warning');
+      const warningElement = spectator.query('ix-smb-extensions-warning');
       expect(warningElement).toBeTruthy();
     });
 
@@ -1719,7 +1719,7 @@ describe('SmbFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(true);
 
       // Verify warning component is no longer shown
-      const warningElement = spectator.query('#apple-extensions-warning');
+      const warningElement = spectator.query('ix-smb-extensions-warning');
       expect(warningElement).toBeFalsy();
     });
 

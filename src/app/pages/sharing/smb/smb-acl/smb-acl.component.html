@@ -11,14 +11,18 @@
     <tn-form-list
       formArrayName="entries"
       [control]="form.controls.entries"
+      [label]="'Add entry' | translate"
       [addLabel]="'Add entry' | translate"
+      [emptyMessage]="'No items have been added yet.' | translate"
       [empty]="form.controls.entries.length === 0 && !isLoading()"
       (add)="addAce()"
     >
       @for (entry of form.controls.entries.controls; track entry; let i = $index) {
         <tn-form-list-item
+          testId="remove-from-list"
           [formGroupName]="i"
           [label]="'ACL entry' | translate"
+          [removeAriaLabel]="'Remove {label} item' | translate: { label: 'ACL entry' | translate }"
           (delete)="removeAce(i)"
         >
           @if (entry.controls.ae_who_sid.value) {

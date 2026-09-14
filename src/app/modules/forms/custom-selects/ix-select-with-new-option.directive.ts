@@ -56,7 +56,7 @@ export abstract class IxSelectWithNewOption<R = unknown> implements ControlValue
   private onTouched: () => void = (): void => {};
 
   abstract fetchOptions(): Observable<Option[]>;
-  abstract getValueFromSlideInResponse(result: R): SelectOptionValueType;
+  abstract getValueFromFormResponse(result: R): SelectOptionValueType;
   abstract getFormComponentType(): Type<unknown>;
   /** Title shown on the `<tn-side-panel>` opened for the "Add New" option. */
   abstract getFormTitle(): string;
@@ -119,7 +119,7 @@ export abstract class IxSelectWithNewOption<R = unknown> implements ControlValue
     merge(
       result$.success$.pipe(
         switchMap((response) => {
-          const newValue = this.getValueFromSlideInResponse(response);
+          const newValue = this.getValueFromFormResponse(response);
           // Refetch first so the freshly created record is among the options before we select it.
           return this.loadOptions().pipe(
             tap(() => {

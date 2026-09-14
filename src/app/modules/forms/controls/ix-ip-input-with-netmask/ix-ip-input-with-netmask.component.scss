@@ -66,8 +66,11 @@
   .select {
     flex: 0 0 auto;
 
-    // Strip tn-select's own bordered field so it reads as part of the single input-container box
-    // (address / netmask) instead of a border-in-border.
+    // TEMP (NAS-141021): reaches tn-select's private `.tn-select-container` / `.tn-select-trigger`
+    // / `.tn-select-text` / `.tn-select-arrow` classes to strip its own bordered field, so the
+    // address and netmask read as one input-container box instead of a border-in-border. These
+    // are unversioned library internals — a bump can rename them and silently drop the styling.
+    // Drop once @truenas/ui-components exposes a borderless/embedded tn-select variant.
     ::ng-deep {
       .tn-select-container {
         width: auto;

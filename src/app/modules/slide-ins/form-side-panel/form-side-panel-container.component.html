@@ -123,5 +123,13 @@
       [disabled]="!form.canSubmit() || (form.isBusy?.() ?? false)"
       (onClick)="form.submit()"
     ></tn-button>
+
+    <!-- `tn-button` exposes no `ariaLive`/`ariaBusy`, so the Save -> Saving… label flip is
+         otherwise silent. The legacy submit button carried `aria-live="polite"` itself. -->
+    <span class="sr-only" role="status" aria-live="polite">
+      @if (form.isSubmitting?.()) {
+        {{ 'Saving…' | translate }}
+      }
+    </span>
   }
 </tn-side-panel>

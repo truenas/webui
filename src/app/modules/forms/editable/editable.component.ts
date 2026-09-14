@@ -147,8 +147,8 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
 
     try {
       if (
-        allowedOverlaySelectors.some((sel) => document.querySelector(sel)?.contains(target))
-        || document.querySelector('.tn-dialog-panel')
+        allowedOverlaySelectors.some((sel) => this.document.querySelector(sel)?.contains(target))
+        || this.document.querySelector('.tn-dialog-panel')
       ) {
         return true;
       }

@@ -2,7 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormControl } from '@angular/forms';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnIconButtonHarness, TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialog, TnIconButtonHarness, TnSlideToggleHarness,
+} from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LicenseType } from 'app/enums/license-type.enum';
@@ -171,7 +173,7 @@ describe('SysInfoComponent', () => {
   });
 
   describe('Production toggle', () => {
-    it('shows production toggle in Model row when productionControl is provided', () => {
+    it('shows production toggle in Model row when productionControl is provided', async () => {
       const productionControl = new FormControl(false);
       spectator.setInput({
         licenseInfo,
@@ -183,8 +185,7 @@ describe('SysInfoComponent', () => {
       const modelRow = spectator.query('.model-row');
       expect(modelRow).toExist();
 
-      const toggle = spectator.query('.model-row tn-slide-toggle');
-      expect(toggle).toExist();
+      expect(await loader.hasHarness(TnSlideToggleHarness.with({ ancestor: '.model-row' }))).toBe(true);
     });
   });
 

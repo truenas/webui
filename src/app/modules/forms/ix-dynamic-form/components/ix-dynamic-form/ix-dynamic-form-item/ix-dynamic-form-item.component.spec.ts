@@ -1,3 +1,5 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ElementRef, signal } from '@angular/core';
 import {
   FormArray, FormControl, FormGroup, ReactiveFormsModule, UntypedFormGroup,
@@ -5,7 +7,8 @@ import {
 import { TreeComponent } from '@bugsplat/angular-tree-component';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import {
-  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnInputComponent,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormListComponent, TnFormListHarness,
+  TnFormListItemComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import { MockInstance } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
@@ -135,6 +138,7 @@ const textSchema = {
 
 describe('IxDynamicFormItemComponent', () => {
   let spectator: Spectator<IxDynamicFormItemComponent>;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: IxDynamicFormItemComponent,
     imports: [
@@ -285,18 +289,20 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query('ix-explorer')).toBeHidden();
     });
 
-    it('renders a "tn-form-list" when schema with "list" type is supplied', () => {
+    it('renders a "tn-form-list" when schema with "list" type is supplied', async () => {
       spectator = createComponent({
         props: {
           dynamicForm,
           dynamicSchema: listSchema,
         },
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       expect(spectator.query('tn-form-list')).toBeVisible();
-      expect(spectator.queryAll('tn-form-list-item')).toHaveLength(1);
+      const list = await loader.getHarness(TnFormListHarness);
+      expect(await list.getItemCount()).toBe(1);
       expect(spectator.queryAll('ix-dynamic-form-item')).toHaveLength(listSchema.items!.length);
-      expect(spectator.query(TnFormListComponent)!.empty()).toBe(false);
-      expect(spectator.query(TnFormListComponent)!.label()).toBe(listSchema.title);
+      expect(await list.isEmpty()).toBe(false);
+      expect(await list.getLabel()).toBe(listSchema.title);
 
       expect(spectator.query('tn-form-list')).not.toBeHidden();
       const field = spectator.component.dynamicForm()!.controls.list as CustomUntypedFormField;

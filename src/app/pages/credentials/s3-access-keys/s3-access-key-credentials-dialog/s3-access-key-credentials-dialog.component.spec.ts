@@ -3,7 +3,7 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
+import { TnBannerHarness, TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { S3AccessKey } from 'app/interfaces/s3.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -39,8 +39,9 @@ describe('S3AccessKeyCredentialsDialogComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('warns that the secret is shown only once', () => {
-    expect(spectator.query('tn-banner')).toHaveText('This is the only time the secret access key is shown.');
+  it('warns that the secret is shown only once', async () => {
+    const banner = await loader.getHarness(TnBannerHarness);
+    expect(await banner.getText()).toContain('This is the only time the secret access key is shown.');
   });
 
   it('shows access key id and secret', async () => {

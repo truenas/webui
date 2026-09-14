@@ -657,7 +657,9 @@ describe('OtherOptionsSectionComponent', () => {
 
       await (await getSelect('special_small_block_size')).selectOption('On');
 
-      expect(spectator.query('tn-input[formControlName="special_small_block_size_custom"]')).toExist();
+      expect(await loader.hasHarness(
+        TnInputHarness.with({ selector: '[formControlName="special_small_block_size_custom"]' }),
+      )).toBe(true);
     });
 
     it('sends custom value when specified', () => {

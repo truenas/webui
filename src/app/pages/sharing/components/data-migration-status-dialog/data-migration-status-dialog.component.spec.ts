@@ -7,7 +7,7 @@ import { Subject, of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { TierRewriteJobStatus } from 'app/enums/tier-rewrite-job-status.enum';
-import { ApiEvent } from 'app/interfaces/api-event.interface';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { ZfsTierRewriteJobEntry, ZfsTierRewriteJobStats } from 'app/interfaces/zfs-tier.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';

@@ -39,6 +39,7 @@ import { rootRoutes } from 'app/app.routes';
 import { defaultLanguage } from 'app/constants/languages.constant';
 import { provideTnAutocompleteLabels } from 'app/core/providers/tn-autocomplete-labels.provider';
 import { provideTnCalendarIntl } from 'app/core/providers/tn-calendar-intl.provider';
+import { provideTnChipInputLabels } from 'app/core/providers/tn-chip-input-labels.provider';
 import { provideTnDialogLabels } from 'app/core/providers/tn-dialog-labels.provider';
 import { provideTnFallbackLabels } from 'app/core/providers/tn-fallback-labels.provider';
 import {
@@ -65,11 +66,6 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    // Align @truenas/ui-components with webui's long-standing data-test attribute convention
-    // (see the [ixTest] directive). Library default is data-testid; this single provider
-    // routes every component-level testId input and TnTestIdDirective binding through data-test
-    // so existing automated tests keep matching their selectors.
-    { provide: TN_TEST_ATTR, useValue: 'data-test' },
     importProvidersFrom(
       BrowserModule,
       TranslateModule.forRoot({
@@ -135,7 +131,9 @@ bootstrapApplication(AppComponent, {
     },
     {
       // webui targets `data-test` (thousands of existing selectors), so switch the
-      // ui-components library off its `data-testid` default for all `testId` inputs.
+      // ui-components library off its `data-testid` default. This one provider routes every
+      // component-level `testId` input and `TnTestIdDirective` binding through `data-test`,
+      // so the existing automated selectors keep matching.
       provide: TN_TEST_ATTR,
       useValue: 'data-test',
     },
@@ -145,6 +143,7 @@ bootstrapApplication(AppComponent, {
     provideTnCalendarIntl(),
     provideTnSelectLabels(),
     provideTnAutocompleteLabels(),
+    provideTnChipInputLabels(),
     provideTnDialogLabels(),
     provideTnTableLabels(),
     provideTnFallbackLabels(),

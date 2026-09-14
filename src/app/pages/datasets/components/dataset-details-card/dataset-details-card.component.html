@@ -2,6 +2,7 @@
   padding="small"
   [title]="isFilesystem() ? ('Details' | translate) : ('Zvol Details' | translate)"
   [headerMenu]="actionsMenu()"
+  [headerMenuTriggerAriaLabel]="'Dataset actions' | translate"
   [headerMenuTriggerTestId]="'dataset-actions'"
 >
   @if (isRootDataset()) {

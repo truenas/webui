@@ -1,7 +1,10 @@
 @import 'mixins/cards';
 
 @include tn-detail-card;
-@include tn-card-block-host;
+
+:host {
+  display: block;
+}
 
 .loading {
   padding: 16px;

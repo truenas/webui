@@ -1,6 +1,6 @@
 <div class="search-row">
   <div class="advanced-search">
-    <span class="prefix-icon" [tnTooltip]="errorMessages?.[0]?.message">
+    <span class="prefix-icon" [tnTooltip]="errorMessages?.[0]?.message" [attr.aria-hidden]="true">
       @if (!queryInputValue) {
         <tn-icon name="text-search-variant" library="mdi"></tn-icon>
       } @else if (hasQueryErrors) {
@@ -33,6 +33,13 @@
       <tn-icon name="close-circle" library="mdi"></tn-icon>
     </span>
   </div>
+
+  <!-- The syntax error was previously exposed only as a hover tooltip on the (non-focusable)
+       status icon, so a keyboard or screen-reader user could never surface it. Mirror what
+       `ix-errors` does and render it in a live region. -->
+  @if (hasQueryErrors && errorMessages?.[0]?.message; as errorMessage) {
+    <div class="query-error" role="alert">{{ errorMessage }}</div>
+  }
 
   <button
     class="switch-link"

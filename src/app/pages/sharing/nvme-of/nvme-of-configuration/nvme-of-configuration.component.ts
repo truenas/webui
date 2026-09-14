@@ -4,8 +4,8 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
-  TnRadioComponent, TnTooltipDirective,
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnRadioComponent,
+  TnRadioGroupComponent, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { finalize, forkJoin } from 'rxjs';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
@@ -37,6 +37,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TnFormFieldComponent,
     TnInputComponent,
     TnRadioComponent,
+    TnRadioGroupComponent,
     TnCheckboxComponent,
     ReactiveFormsModule,
     TnTooltipDirective,

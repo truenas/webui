@@ -13,7 +13,6 @@ import { translated } from 'app/helpers/translated.helper';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { WarningComponent } from 'app/modules/warning/warning.component';
 import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
@@ -32,7 +31,6 @@ import { hasNonUniqueSerial, hasExportedPool, isSedCapable } from 'app/pages/sto
     TnFormFieldComponent,
     TnRadioComponent,
     TnRadioGroupComponent,
-    IxLabelComponent,
     TnCheckboxComponent,
     TnCheckboxLabelDirective,
     TranslateModule,
@@ -76,6 +74,9 @@ export class PoolWarningsComponent implements OnInit {
     this.initUnsafeDisksWarnings();
     this.connectWarningsToStore();
   }
+
+  /** Names the exported-pool checkbox group; single-instance component, so a static id is safe. */
+  protected readonly exportedPoolsLabelId = 'exported-pools-group-label';
 
   protected checkboxChanged(pool: string, checked: boolean): void {
     let allowExportedPools = [...this.form.controls.allowExportedPools.value];
