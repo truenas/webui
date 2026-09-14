@@ -94,6 +94,20 @@ describe('AllowedAccessSectionComponent', () => {
       expect(await smbAccessCheckbox.isDisabled()).toBe(false);
     });
 
+    it('stops applying an unlocked value once it has, so a tick of the user\'s stands', async () => {
+      // A host binding an object literal hands this a new reference every
+      // change-detection pass; re-applying would undo the tick each time and
+      // the user could never turn SMB access on at all.
+      spectator.setInput('preset', { values: { smb: false } });
+
+      const smbAccessCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'SMB Access' }));
+      await smbAccessCheckbox.check();
+
+      spectator.setInput('preset', { values: { smb: false } });
+
+      expect(await smbAccessCheckbox.isChecked()).toBe(true);
+    });
+
     it('leaves the checkbox alone without a preset', async () => {
       spectator.setInput('preset', undefined);
 
