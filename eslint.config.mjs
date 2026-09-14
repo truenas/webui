@@ -31,6 +31,12 @@ const projectOverrides = {
             // `@angular/material` is gone from package.json entirely (NAS-141025), so a
             // stray import already fails to resolve. This keeps the failure legible — and
             // stops someone re-adding the dependency to "fix" it.
+            //
+            // Deliberately repo-wide rather than scoped to `src/app/modules/forms/**` plus
+            // the migrated sections (NAS-142358): every section is migrated now, so a list
+            // of paths would only be a list that goes stale. The `.scss` half is covered by
+            // `selector-disallowed-list` in .stylelintrc.json, and `mat-*` elements in
+            // templates are already a compile error now that the package is gone.
             group: ['@angular/material', '@angular/material/*'],
             message: "Angular Material has been fully replaced by @truenas/ui-components (NAS-141025). Use the `tn-*` equivalent; for dialogs, go through `DialogService` (app/modules/dialog/dialog.service.ts) or inject `TnDialog` from '@truenas/ui-components'.",
           },
