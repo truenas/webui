@@ -244,17 +244,6 @@
     }
   }
 
-  // Disabled form fields
-
-  .form-element input[type=email][disabled],
-  .form-element input[type=number][disabled],
-  .form-element input[type=password][disabled],
-  .form-element input[type=text][disabled],
-  .form-element select[disabled],
-  .form-element textarea[disabled] {
-    opacity: var(--disabled-opacity);
-  }
-
   .error-warning-icon {
     color: var(--orange);
     margin-right: 10px;
