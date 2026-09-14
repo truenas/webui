@@ -14,7 +14,6 @@ import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { isTnCheckboxChange } from 'app/modules/forms/ix-forms/utils/tn-checkbox-change.utils';
 import { WarningComponent } from 'app/modules/warning/warning.component';
 import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
@@ -78,16 +77,10 @@ export class PoolWarningsComponent implements OnInit {
     this.connectWarningsToStore();
   }
 
-  protected checkboxChanged(pool: string, event: boolean | Event): void {
-    // Only act on the component's boolean emission — see the helper for why the handler is
-    // invoked a second time with a DOM Event.
-    if (!isTnCheckboxChange(event)) {
-      return;
-    }
-
+  protected checkboxChanged(pool: string, checked: boolean): void {
     let allowExportedPools = [...this.form.controls.allowExportedPools.value];
 
-    if (event) {
+    if (checked) {
       allowExportedPools = [...allowExportedPools, pool];
     } else {
       allowExportedPools = allowExportedPools.filter((item) => item !== pool);

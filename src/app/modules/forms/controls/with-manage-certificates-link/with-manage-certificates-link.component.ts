@@ -5,7 +5,7 @@ import { TnTestIdDirective } from '@truenas/ui-components';
 
 /**
  * Adds a manage certificates link to the form control.
- * Designed to be used with an ix-select.
+ * Designed to wrap a `tn-form-field` holding a certificate `tn-select`.
  */
 @Component({
   selector: 'ix-with-manage-certificates-link',
