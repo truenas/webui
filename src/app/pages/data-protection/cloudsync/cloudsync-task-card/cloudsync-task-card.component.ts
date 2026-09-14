@@ -102,6 +102,7 @@ export class CloudSyncTaskCardComponent extends JobTaskCardBase<CloudSyncTaskUi>
   protected readonly displayedColumns = ['description', 'state', 'enabled', 'actions'];
   protected readonly defaultSortProperty = 'description';
   protected readonly addTestId = 'cloudsync-task-add';
+  protected readonly runMethod = 'cloudsync.sync' as const;
 
   protected readonly actions: IconActionConfig<CloudSyncTaskUi>[] = [
     {

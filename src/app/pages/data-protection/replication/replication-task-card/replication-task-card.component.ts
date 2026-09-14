@@ -106,6 +106,7 @@ export class ReplicationTaskCardComponent extends JobTaskCardBase<ReplicationTas
   protected readonly displayedColumns = ['name', 'state', 'enabled', 'actions'];
   protected readonly defaultSortProperty = 'name';
   protected readonly addTestId = 'replication-task-add';
+  protected readonly runMethod = 'replication.run' as const;
 
   protected readonly actions: IconActionConfig<ReplicationTask>[] = [
     {

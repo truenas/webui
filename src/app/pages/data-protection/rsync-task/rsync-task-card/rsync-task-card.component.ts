@@ -24,7 +24,7 @@ import {
   catchError, EMPTY, Observable, filter, map, of, switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { JobState } from 'app/enums/job-state.enum';
+import { DisplayableState, JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -95,6 +95,7 @@ export class RsyncTaskCardComponent extends JobTaskCardBase<RsyncTaskUi> {
   protected readonly displayedColumns = ['path', 'state', 'enabled', 'actions'];
   protected readonly defaultSortProperty = 'path';
   protected readonly addTestId = 'rsync-task-add';
+  protected readonly runMethod = 'rsynctask.run' as const;
 
   protected readonly actions: IconActionConfig<RsyncTaskUi>[] = [
     {
@@ -194,22 +195,22 @@ export class RsyncTaskCardComponent extends JobTaskCardBase<RsyncTaskUi> {
   }
 
   private transformRsyncTasks(rsyncTasks: RsyncTaskUi[]): RsyncTaskUi[] {
-    return rsyncTasks.map((rsyncTask: RsyncTaskUi) => {
-      // make sure we deep-copy `state` and `job` so we aren't overriding the originals
-      // when we mutate `task`.
-      const task: RsyncTaskUi = {
-        ...rsyncTask,
-        state: { ...rsyncTask.state },
-        job: { ...rsyncTask.job },
-      };
-      if (task.job === null) {
-        task.state = { state: task.locked ? TaskState.Locked : TaskState.Pending };
-      } else {
-        task.state = { state: task.job.state };
-      }
+    // A fresh row with a freshly derived `state`, so the pill never reads through to the
+    // query response. `job` is deliberately carried over by reference rather than spread:
+    // `{ ...null }` is `{}`, which is truthy, so a task that has never run would be read as
+    // having a job and render its (undefined) state as "N/A" instead of "Pending".
+    return rsyncTasks.map((rsyncTask: RsyncTaskUi) => ({
+      ...rsyncTask,
+      state: { state: this.getTaskState(rsyncTask) },
+    }));
+  }
 
-      return task;
-    });
+  private getTaskState(task: RsyncTaskUi): DisplayableState {
+    if (!task.job) {
+      return task.locked ? TaskState.Locked : TaskState.Pending;
+    }
+
+    return task.job.state;
   }
 
   protected onChangeEnabledState(rsyncTask: RsyncTaskUi, toggle: TableToggleCellComponent): void {
