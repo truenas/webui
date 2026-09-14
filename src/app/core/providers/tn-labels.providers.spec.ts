@@ -6,6 +6,8 @@ import {
 import {
   TN_AUTOCOMPLETE_DEFAULT_LABELS,
   TN_AUTOCOMPLETE_LABELS,
+  TN_CHIP_INPUT_DEFAULT_LABELS,
+  TN_CHIP_INPUT_LABELS,
   TN_DIALOG_CHROME_LABELS,
   TN_DIALOG_DEFAULT_CHROME_LABELS,
   TN_SELECT_DEFAULT_LABELS,
@@ -15,6 +17,7 @@ import {
 } from '@truenas/ui-components';
 import { Subject } from 'rxjs';
 import { provideTnAutocompleteLabels } from 'app/core/providers/tn-autocomplete-labels.provider';
+import { provideTnChipInputLabels } from 'app/core/providers/tn-chip-input-labels.provider';
 import { provideTnDialogLabels } from 'app/core/providers/tn-dialog-labels.provider';
 import { provideTnSelectLabels } from 'app/core/providers/tn-select-labels.provider';
 import { provideTnTableLabels } from 'app/core/providers/tn-table-labels.provider';
@@ -37,6 +40,12 @@ const bundles = [
     provider: provideTnAutocompleteLabels(),
     token: TN_AUTOCOMPLETE_LABELS,
     defaults: TN_AUTOCOMPLETE_DEFAULT_LABELS,
+  },
+  {
+    name: 'provideTnChipInputLabels',
+    provider: provideTnChipInputLabels(),
+    token: TN_CHIP_INPUT_LABELS,
+    defaults: TN_CHIP_INPUT_DEFAULT_LABELS,
   },
   {
     name: 'provideTnDialogLabels',

@@ -34,13 +34,6 @@
     </span>
   </div>
 
-  <!-- The syntax error was previously exposed only as a hover tooltip on the (non-focusable)
-       status icon, so a keyboard or screen-reader user could never surface it. Mirror what
-       `ix-errors` does and render it in a live region. -->
-  @if (hasQueryErrors && errorMessages?.[0]?.message; as errorMessage) {
-    <div class="query-error" role="alert">{{ errorMessage }}</div>
-  }
-
   <button
     class="switch-link"
     type="button"
@@ -53,6 +46,14 @@
     {{ 'Basic' | translate }}
   </button>
 </div>
+
+<!-- The syntax error was previously exposed only as a hover tooltip on the (non-focusable) status
+     icon, so a keyboard or screen-reader user could never surface it. Mirror what `ix-errors` does
+     and render it in a live region. It sits OUTSIDE `.search-row` (a `display: flex` row) so it
+     stacks under the search box instead of becoming a third flex item beside it. -->
+@if (hasQueryErrors && errorMessages?.[0]?.message; as errorMessage) {
+  <div class="query-error" role="alert">{{ errorMessage }}</div>
+}
 
 @if (filterPresets()?.length > 0) {
   <ix-filter-presets

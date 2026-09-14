@@ -123,10 +123,15 @@
       [disabled]="!form.canSubmit() || (form.isBusy?.() ?? false)"
       (onClick)="form.submit()"
     ></tn-button>
+  }
 
-    <!-- `tn-button` exposes no `ariaLive`/`ariaBusy`, so the Save -> Saving… label flip is
-         otherwise silent. The legacy submit button carried `aria-live="polite"` itself. -->
-    <span class="sr-only" role="status" aria-live="polite">
+  <!-- `tn-button` exposes no `ariaLive`/`ariaBusy`, so the Save -> Saving… label flip is otherwise
+       silent. The legacy submit button carried `aria-live="polite"` itself. The live region gets its
+       OWN `@if` + `tnSidePanelAction` (see the note above) — sharing the Save button's block would
+       give it two root nodes and drop the footer Save into the default content slot. It is
+       `position: absolute`, so it adds no gap of its own to the footer flex row. -->
+  @if (!footerless() && !form()?.hideSave?.() && form(); as form) {
+    <span tnSidePanelAction class="sr-only" role="status" aria-live="polite">
       @if (form.isSubmitting?.()) {
         {{ 'Saving…' | translate }}
       }
