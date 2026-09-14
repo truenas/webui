@@ -45,15 +45,16 @@
           ></tn-file-input>
         </tn-form-field>
       } @else {
-        <ix-list
+        <tn-form-list
           formArrayName="datasets"
           [empty]="form.controls.datasets.controls.length === 0"
           [label]="'Datasets' | translate"
           [canAdd]="false"
-          [formArray]="form.controls.datasets"
+          [control]="form.controls.datasets"
+          [emptyMessage]="'No items have been added yet.' | translate"
         >
           @for (dataset of form.controls.datasets.controls; track dataset; let i = $index) {
-            <ix-list-item
+            <tn-form-list-item
               [formGroupName]="i"
               [canDelete]="false"
             >
@@ -93,9 +94,9 @@
                   ></tn-file-input>
                 </tn-form-field>
               }
-            </ix-list-item>
+            </tn-form-list-item>
           }
-        </ix-list>
+        </tn-form-list>
       }
 
       <tn-form-field [tooltip]="helptext.datasetForceTooltip | translate">

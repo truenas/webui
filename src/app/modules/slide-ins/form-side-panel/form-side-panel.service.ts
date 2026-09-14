@@ -48,7 +48,7 @@ export interface FormSidePanelOptions {
   inputs?: Record<string, unknown>;
   /**
    * Hide the panel footer (Save + secondary actions) — for hosted components that own their
-   * actions inline, e.g. a `mat-stepper` wizard with Next/Back/Save buttons inside the steps.
+   * actions inline, e.g. a `tn-stepper` wizard with Next/Back/Save buttons inside the steps.
    */
   footerless?: boolean;
 }

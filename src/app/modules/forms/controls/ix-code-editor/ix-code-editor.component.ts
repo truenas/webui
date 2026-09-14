@@ -1,13 +1,13 @@
 import { AsyncPipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, input, OnChanges, OnInit, Signal, viewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, computed, effect, input, OnChanges, OnInit, Signal, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
-import { MatHint } from '@angular/material/form-field';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { Compartment, Extension } from '@codemirror/state';
 import {
   EditorView, EditorViewConfig, keymap, lineNumbers, placeholder,
 } from '@codemirror/view';
+import { injectTnFormFieldAria } from '@truenas/ui-components';
 import { material } from '@uiw/codemirror-theme-material';
 import { basicSetup } from 'codemirror';
 import {
@@ -17,10 +17,7 @@ import { languageFunctionsMap } from 'app/constants/language-functions-map.const
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { SelectOptionValueType } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
-import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @Component({
@@ -29,12 +26,8 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   styleUrls: ['./ix-code-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxLabelComponent,
-    IxErrorsComponent,
-    MatHint,
     ReactiveFormsModule,
     AsyncPipe,
-    TestOverrideDirective,
   ],
   hostDirectives: [
     { ...registeredDirectiveConfig },
@@ -45,13 +38,47 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
-  readonly label = input<TranslatedString>();
-  readonly hint = input<TranslatedString>();
-  readonly required = input<boolean>(false);
-  readonly tooltip = input<TranslatedString>();
   readonly language = input<CodeEditorLanguage>();
   readonly placeholder = input<TranslatedString>('');
   readonly defaultValue = input<string>();
+
+  /**
+   * Explicit accessible name, for the standalone use with no enclosing `tn-form-field` — the
+   * read-only editors in `job-logs-row` and the websocket debug panel. Inside a field, leave it
+   * unset: the field's label names the editor through `aria-labelledby`.
+   */
+  readonly ariaLabel = input<string>();
+
+  /**
+   * ARIA wiring from the enclosing `tn-form-field`. This control renders no label of its own, so
+   * the field names what the user actually focuses — which is CodeMirror's `.cm-content`, a
+   * `role="textbox"` the template never sees. {@link contentAria} pushes these onto it.
+   */
+  private readonly fieldAria = injectTnFormFieldAria(this.ariaLabel);
+
+  private readonly contentAria = computed(() => {
+    const attributes: Record<string, string> = {};
+    const ariaLabel = this.ariaLabel();
+    const labelledby = this.fieldAria.labelledby();
+    const describedby = this.fieldAria.describedby();
+
+    if (ariaLabel) {
+      attributes['aria-label'] = ariaLabel;
+    }
+    if (labelledby) {
+      attributes['aria-labelledby'] = labelledby;
+    }
+    if (describedby) {
+      attributes['aria-describedby'] = describedby;
+    }
+    if (this.fieldAria.invalid()) {
+      attributes['aria-invalid'] = 'true';
+    }
+
+    return attributes;
+  });
+
+  private ariaCompartment = new Compartment();
 
   afterViewInit$ = new BehaviorSubject<boolean>(false);
 
@@ -74,6 +101,18 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
 
   constructor() {
     this.controlDirective.valueAccessor = this;
+
+    // A compartment rather than attributes in the initial config: the field resolves its label id
+    // after this component is constructed, and an invalid state arrives later still.
+    effect(() => {
+      const attributes = this.contentAria();
+      if (!this.editorView) {
+        return;
+      }
+      this.editorView.dispatch({
+        effects: this.ariaCompartment.reconfigure(EditorView.contentAttributes.of(attributes)),
+      });
+    });
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -144,6 +183,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
       keymap.of([...defaultKeymap as unknown[], ...historyKeymap]),
       material,
       this.editableCompartment.of(EditorView.editable.of(true)),
+      this.ariaCompartment.of(EditorView.contentAttributes.of(this.contentAria())),
       placeholder(this.placeholder()),
     ];
 

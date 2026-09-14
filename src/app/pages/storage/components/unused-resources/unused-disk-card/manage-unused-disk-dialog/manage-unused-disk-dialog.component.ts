@@ -18,8 +18,8 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
-import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { WarningComponent } from 'app/modules/warning/warning.component';
 import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.interface';
 
 @Component({

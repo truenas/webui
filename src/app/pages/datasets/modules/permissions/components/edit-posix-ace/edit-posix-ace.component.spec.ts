@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
 import { PosixAclItem } from 'app/interfaces/acl.interface';
 import { User } from 'app/interfaces/user.interface';
-import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
+import { IxPermissionsComponent } from 'app/modules/forms/controls/ix-permissions/ix-permissions.component';
 import {
   IxGroupComboboxHarness,
   IxUserComboboxHarness,

@@ -26,15 +26,21 @@
     </tn-form-field>
 
     @if (isAutoBridge) {
-      <ix-ip-input-with-netmask
-        formControlName="v4_network"
+      <tn-form-field
         [label]="'IPv4 Network' | translate"
-      ></ix-ip-input-with-netmask>
+      >
+        <ix-ip-input-with-netmask
+          formControlName="v4_network"
+        ></ix-ip-input-with-netmask>
+      </tn-form-field>
 
-      <ix-ip-input-with-netmask
-        formControlName="v6_network"
+      <tn-form-field
         [label]="'IPv6 Network' | translate"
-      ></ix-ip-input-with-netmask>
+      >
+        <ix-ip-input-with-netmask
+          formControlName="v6_network"
+        ></ix-ip-input-with-netmask>
+      </tn-form-field>
 
       <p class="hint">
         <strong>{{ 'Note' | translate }}:</strong>

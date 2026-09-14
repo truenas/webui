@@ -7,12 +7,13 @@ import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnIconComponent, TnIconButtonComponent, TnCheckboxComponent, TnEmptyComponent, TnInputComponent, TnTooltipDirective,
+  TnCheckboxComponent, TnEmptyComponent, TnIconButtonComponent, TnIconComponent,
+  TnInputComponent, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
-import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
+import { IxCodeEditorComponent } from 'app/modules/forms/controls/ix-code-editor/ix-code-editor.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { scrollToBottomDelayMs } from 'app/modules/websocket-debug-panel/constants';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';

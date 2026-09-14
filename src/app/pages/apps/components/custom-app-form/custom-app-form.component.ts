@@ -14,7 +14,7 @@ import { Role } from 'app/enums/role.enum';
 import { jsonToYaml } from 'app/helpers/json-to-yaml.helper';
 import { App, AppCreate } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
+import { IxCodeEditorComponent } from 'app/modules/forms/controls/ix-code-editor/ix-code-editor.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,

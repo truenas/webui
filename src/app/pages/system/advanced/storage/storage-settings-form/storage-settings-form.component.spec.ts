@@ -15,8 +15,8 @@ import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
-import { WarningHarness } from 'app/modules/forms/ix-forms/components/warning/warning.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
+import { WarningHarness } from 'app/modules/warning/warning.harness';
 import {
   StorageSettingsFormComponent,
 } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';

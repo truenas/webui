@@ -1,16 +1,17 @@
 import { ElementRef, signal } from '@angular/core';
 import {
-  FormArray, FormControl, FormGroup, ReactiveFormsModule,
+  FormArray, FormControl, FormGroup, ReactiveFormsModule, UntypedFormGroup,
 } from '@angular/forms';
 import { TreeComponent } from '@bugsplat/angular-tree-component';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import {
-  InputType, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import { MockInstance } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
+import { ChartSchemaNode } from 'app/interfaces/app.interface';
 import {
   DynamicFormSchemaInput,
   DynamicFormSchemaList,
@@ -22,13 +23,14 @@ import {
   DynamicFormSchemaText, AddListItemEvent, DeleteListItemEvent,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { IxCodeEditorComponent } from 'app/modules/forms/controls/ix-code-editor/ix-code-editor.component';
+import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import {
+  CustomUntypedFormArray,
+} from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untped-form-array';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxDynamicFormItemComponent } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form-item/ix-dynamic-form-item.component';
-import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 
 const dynamicForm = new FormGroup({
   dict: new FormGroup({
@@ -150,7 +152,7 @@ describe('IxDynamicFormItemComponent', () => {
   });
 
   describe('Component rendering', () => {
-    it('renders an "ix-input" when schema with "input" type is supplied', () => {
+    it('renders a "tn-input" when schema with "input" type is supplied', () => {
       spectator = createComponent({
         props: {
           dynamicForm,
@@ -180,8 +182,11 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('ix-code-editor')).toBeVisible();
-      expect(spectator.query(IxCodeEditorComponent)!.required()).toBe(textSchema.required);
-      expect(spectator.query(IxCodeEditorComponent)!.tooltip()).toBe(textSchema.tooltip);
+      // The label row belongs to the wrapping `tn-form-field` now, so `required`/`tooltip` are
+      // asserted there rather than on the bare control.
+      const textField = spectator.query(TnFormFieldComponent)!;
+      expect(textField.required()).toBe(textSchema.required);
+      expect(textField.tooltip()).toBe(textSchema.tooltip);
       expect(spectator.query('ix-code-editor')).not.toBeHidden();
       const field = spectator.component.dynamicForm()!.controls.text as CustomUntypedFormField;
       if (!field.hidden$) {
@@ -242,8 +247,12 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('ix-ip-input-with-netmask')).toBeVisible();
+      // `required` stays on the control as well: it renders the native attribute on the address
+      // input, where the field only renders the asterisk.
       expect(spectator.query(IxIpInputWithNetmaskComponent)!.required()).toBe(ipaddrSchema.required);
-      expect(spectator.query(IxIpInputWithNetmaskComponent)!.tooltip()).toBe(ipaddrSchema.tooltip);
+      const ipField = spectator.query(TnFormFieldComponent)!;
+      expect(ipField.required()).toBe(ipaddrSchema.required);
+      expect(ipField.tooltip()).toBe(ipaddrSchema.tooltip);
 
       expect(spectator.query('ix-ip-input-with-netmask')).not.toBeHidden();
       const field = spectator.component.dynamicForm()!.controls.ipaddr as CustomUntypedFormField;
@@ -276,27 +285,27 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query('ix-explorer')).toBeHidden();
     });
 
-    it('renders an "ix-list" when schema with "list" type is supplied', () => {
+    it('renders a "tn-form-list" when schema with "list" type is supplied', () => {
       spectator = createComponent({
         props: {
           dynamicForm,
           dynamicSchema: listSchema,
         },
       });
-      expect(spectator.query('ix-list')).toBeVisible();
-      expect(spectator.queryAll('ix-list-item')).toHaveLength(1);
+      expect(spectator.query('tn-form-list')).toBeVisible();
+      expect(spectator.queryAll('tn-form-list-item')).toHaveLength(1);
       expect(spectator.queryAll('ix-dynamic-form-item')).toHaveLength(listSchema.items!.length);
-      expect(spectator.query(IxListComponent)!.empty()).toBe(false);
-      expect(spectator.query(IxListComponent)!.label()).toBe(listSchema.title);
+      expect(spectator.query(TnFormListComponent)!.empty()).toBe(false);
+      expect(spectator.query(TnFormListComponent)!.label()).toBe(listSchema.title);
 
-      expect(spectator.query('ix-list')).not.toBeHidden();
+      expect(spectator.query('tn-form-list')).not.toBeHidden();
       const field = spectator.component.dynamicForm()!.controls.list as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
       field.hidden$.next(true);
       spectator.detectComponentChanges();
-      expect(spectator.query('ix-list')).toBeHidden();
+      expect(spectator.query('tn-form-list')).toBeHidden();
     });
 
     it('renders an "ix-dynamic-form-item" when schema with "dict" type is supplied', () => {
@@ -309,7 +318,7 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query('.label')).toHaveText('Label Dict');
       expect(spectator.queryAll('ix-dynamic-form-item')).toHaveLength(dictSchema.attrs!.length);
 
-      spectator.queryAll(IxListItemComponent).forEach((item) => {
+      spectator.queryAll(TnFormListItemComponent).forEach((item) => {
         expect(item).not.toBeHidden();
       });
 
@@ -343,7 +352,7 @@ describe('IxDynamicFormItemComponent', () => {
       spectator.detectComponentChanges();
 
       jest.spyOn(spectator.component.addListItem, 'emit').mockImplementation();
-      spectator.query(IxListComponent)!.add.emit([]);
+      spectator.query(TnFormListComponent)!.add.emit([]);
 
       expect(spectator.component.addListItem.emit).toHaveBeenCalledWith({
         array: dynamicForm.controls.list,
@@ -367,8 +376,8 @@ describe('IxDynamicFormItemComponent', () => {
       spectator.detectComponentChanges();
 
       jest.spyOn(spectator.component.deleteListItem, 'emit').mockImplementation();
-      expect(spectator.queryAll(IxListItemComponent)).toHaveLength(1);
-      spectator.query(IxListItemComponent)!.delete.emit();
+      expect(spectator.queryAll(TnFormListItemComponent)).toHaveLength(1);
+      spectator.query(TnFormListItemComponent)!.delete.emit();
 
       expect(spectator.component.deleteListItem.emit).toHaveBeenCalledWith({
         array: dynamicForm.controls.list,
@@ -386,6 +395,143 @@ describe('IxDynamicFormItemComponent', () => {
       jest.spyOn(spectator.component.deleteListItem, 'emit').mockImplementation();
       spectator.component.removeControlNext({} as DeleteListItemEvent);
       expect(spectator.component.deleteListItem.emit).toHaveBeenCalledTimes(1);
+    });
+  });
+  /**
+   * The seeding that used to live in `ix-list`. `tn-form-list` knows nothing about chart schemas,
+   * so the component that owns the schema does it now — these cover the three ways it declines.
+   */
+  describe('seeding a list schema\'s defaults', () => {
+    const itemsSchema = [
+      { variable: 'input', schema: { type: 'string' } },
+      { variable: 'select', schema: { type: 'string', default: 'fallback' } },
+    ] as ChartSchemaNode[];
+
+    function createListComponent(
+      overrides: Partial<DynamicFormSchemaList>,
+      isEditMode = false,
+      form: UntypedFormGroup = dynamicForm as unknown as UntypedFormGroup,
+    ): void {
+      spectator = createComponent({
+        props: {
+          dynamicForm: form,
+          dynamicSchema: { ...listSchema, itemsSchema, ...overrides } as DynamicFormSchemaList,
+          isEditMode,
+        },
+      });
+      // Seeding is deferred a macrotask past AfterViewInit, so the spy is in place before it runs.
+      jest.spyOn(spectator.component.addListItem, 'emit').mockImplementation();
+    }
+
+    async function flushSeeding(): Promise<void> {
+      await new Promise((resolve) => {
+        setTimeout(resolve);
+      });
+    }
+
+    it('adds one row per default, carrying that row\'s values into the item schema', async () => {
+      createListComponent({ default: [{ input: 'first' }, { input: 'second' }] });
+      await flushSeeding();
+
+      expect(spectator.component.addListItem.emit).toHaveBeenCalledTimes(2);
+      expect(spectator.component.addListItem.emit).toHaveBeenNthCalledWith(1, {
+        array: dynamicForm.controls.list,
+        schema: [
+          { variable: 'input', schema: { type: 'string', default: 'first' } },
+          // Untouched by this default, so the item schema's own default stands.
+          { variable: 'select', schema: { type: 'string', default: 'fallback' } },
+        ],
+      });
+    });
+
+    it('seeds nothing on an edit form, where the saved rows come from the value', async () => {
+      createListComponent({ default: [{ input: 'first' }] }, true);
+      await flushSeeding();
+
+      expect(spectator.component.addListItem.emit).not.toHaveBeenCalled();
+    });
+
+    // The template sits under `@if (!(isHidden$ | async))`, so a list that starts hidden never
+    // rendered an `ix-list` to run this, and its defaults never reached the payload.
+    it('seeds nothing for a schema that starts hidden', async () => {
+      createListComponent({ default: [{ input: 'first' }], hidden: true });
+      await flushSeeding();
+
+      expect(spectator.component.addListItem.emit).not.toHaveBeenCalled();
+    });
+
+    /**
+     * The case the static flag misses: `show_if` relations and subquestions hide a question by
+     * pushing to `hidden$` and disabling the control, leaving `schema.hidden` false. Seeding one
+     * would also re-enable the array — `push` re-runs `_setInitialStatus` — so its invisible rows
+     * would be submitted.
+     */
+    it('seeds nothing for a list a relation has hidden, where the static flag stays false', async () => {
+      const list = new CustomUntypedFormArray([]);
+      list.hidden$.next(true);
+      list.disable();
+      const relationHiddenForm = new UntypedFormGroup({ list });
+
+      createListComponent({ default: [{ input: 'first' }] }, false, relationHiddenForm);
+      await flushSeeding();
+
+      expect(spectator.component.addListItem.emit).not.toHaveBeenCalled();
+      expect(list.disabled).toBe(true);
+    });
+
+    // The other half of that: the rows are still owed once the user satisfies the relation, and
+    // `AppSchemaService.getItemsToPopulate` skips object-shaped defaults deliberately, so nothing
+    // else would ever fill them in.
+    it('seeds a relation-hidden list once it is revealed', async () => {
+      const list = new CustomUntypedFormArray([]);
+      list.hidden$.next(true);
+      list.disable();
+      const relationHiddenForm = new UntypedFormGroup({ list });
+
+      createListComponent({ default: [{ input: 'first' }] }, false, relationHiddenForm);
+      await flushSeeding();
+      expect(spectator.component.addListItem.emit).not.toHaveBeenCalled();
+
+      list.enable();
+      list.hidden$.next(false);
+
+      expect(spectator.component.addListItem.emit).toHaveBeenCalledTimes(1);
+    });
+
+    it('seeds a revealed list once, not again on every re-show', async () => {
+      const list = new CustomUntypedFormArray([]);
+      list.hidden$.next(true);
+      const relationHiddenForm = new UntypedFormGroup({ list });
+
+      createListComponent({ default: [{ input: 'first' }] }, false, relationHiddenForm);
+      await flushSeeding();
+
+      list.hidden$.next(false);
+      list.hidden$.next(true);
+      list.hidden$.next(false);
+
+      expect(spectator.component.addListItem.emit).toHaveBeenCalledTimes(1);
+    });
+
+    /**
+     * The macrotask can outlive the view: a list nested in a `show_if`-gated dict is torn down by
+     * the relation's own `timer(0)`, one macrotask ahead of this one. Seeding a destroyed item
+     * would emit rows for a view that is gone, and the `hidden$` branch would throw NG0911 —
+     * `takeUntilDestroyed` registers its `DestroyRef` hook at subscribe time.
+     */
+    it('cancels the deferred seeding when the item is destroyed first', async () => {
+      createListComponent({ default: [{ input: 'first' }] });
+      spectator.fixture.destroy();
+      await flushSeeding();
+
+      expect(spectator.component.addListItem.emit).not.toHaveBeenCalled();
+    });
+
+    it('seeds nothing when the schema carries no defaults', async () => {
+      createListComponent({});
+      await flushSeeding();
+
+      expect(spectator.component.addListItem.emit).not.toHaveBeenCalled();
     });
   });
 });

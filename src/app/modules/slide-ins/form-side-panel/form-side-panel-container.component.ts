@@ -105,7 +105,7 @@ export class FormSidePanelContainerComponent {
   readonly saveLabel = input<string>('Save');
   /**
    * Hide the panel footer (Save + secondary actions). For hosted components that manage their own
-   * actions inline — e.g. a `mat-stepper` wizard whose Next/Back/Save buttons live inside the steps.
+   * actions inline — e.g. a `tn-stepper` wizard whose Next/Back/Save buttons live inside the steps.
    */
   readonly footerless = input<boolean>(false);
   readonly portal = input<ComponentPortal<SidePanelHostCloseable> | null>(null);

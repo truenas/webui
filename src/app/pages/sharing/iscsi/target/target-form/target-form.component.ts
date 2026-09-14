@@ -7,8 +7,8 @@ import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnRadioGroupComponent,
-  TnSelectComponent,
+  TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnFormSectionComponent, TnInputComponent,
+  TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import { Observable, of } from 'rxjs';
@@ -21,15 +21,13 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiTarget, IscsiTargetGroup } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
+import {
+  IxIpInputWithNetmaskComponent,
+} from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import {
-  IxIpInputWithNetmaskComponent,
-} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -50,6 +48,8 @@ import { IscsiService } from 'app/services/iscsi.service';
   styleUrls: ['./target-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFormListComponent,
+    TnFormListItemComponent,
     NgTemplateOutlet,
     ReactiveFormsModule,
     IxFormComponent,
@@ -58,8 +58,6 @@ import { IscsiService } from 'app/services/iscsi.service';
     TnInputComponent,
     TnRadioGroupComponent,
     TnSelectComponent,
-    IxListComponent,
-    IxListItemComponent,
     IxIpInputWithNetmaskComponent,
     FcPortItemControlsComponent,
     FcMpioInfoBannerComponent,

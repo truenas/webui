@@ -16,12 +16,15 @@
         [readonly]="!isNew"
       ></tn-input>
     </tn-form-field>
-    <ix-code-editor
-      formControlName="custom_compose_config_string"
-      [language]="CodeEditorLanguage.Yaml"
+    <tn-form-field
       [label]="'Custom Config' | translate"
       [tooltip]="'Custom app config in YAML format.' | translate"
       [required]="true"
-    ></ix-code-editor>
+    >
+      <ix-code-editor
+        formControlName="custom_compose_config_string"
+        [language]="CodeEditorLanguage.Yaml"
+      ></ix-code-editor>
+    </tn-form-field>
   </tn-form-section>
 </ix-form>

@@ -27,6 +27,6 @@ describe('WidgetStaleDataNoticeComponent', () => {
   it('should not have a border', () => {
     const container = spectator.query('.container');
     expect(container).toExist();
-    expect(spectator.query('mat-card')).not.toExist();
+    expect(spectator.query('tn-card')).not.toExist();
   });
 });

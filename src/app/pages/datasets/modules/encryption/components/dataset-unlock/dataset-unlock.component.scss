@@ -11,9 +11,9 @@
   gap: 1.25rem;
   padding: 24px;
 
-  // `ix-list` ships its own vertical margins, which would stack on the column gap above. The gap
-  // owns the rhythm here.
-  > ix-list {
+  // `tn-form-list` ships its own vertical margins, which would stack on the column gap above. The
+  // gap owns the rhythm here.
+  > tn-form-list {
     margin-bottom: 0;
     margin-top: 0;
   }
@@ -27,6 +27,6 @@
   padding: 24px;
 }
 
-ix-list-item {
+tn-form-list-item {
   padding: 10px;
 }

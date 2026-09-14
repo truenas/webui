@@ -18,7 +18,6 @@ export const defaultPreferences: Preferences = {
   hideBuiltinGroups: true,
 
   showSnapshotExtraColumns: false,
-  shownNewFeatureIndicatorKeys: [],
 
   rebootAfterManualUpdate: false,
   autoRefreshReports: false,

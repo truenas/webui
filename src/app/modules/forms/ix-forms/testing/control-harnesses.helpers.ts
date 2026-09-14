@@ -4,20 +4,24 @@ import {
 import { IxStarRatingHarness } from 'app/modules/forms/controls/ix-star-rating/ix-star-rating.harness';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import {
-  IxIpInputWithNetmaskHarness,
-} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
-import { IxPermissionsHarness } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.harness';
-import {
   IxFormControlHarness, unreadableControl,
 } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 
+/**
+ * The ix-* controls that still render a label row of their own, so a spec can find one by label
+ * without an enclosing `tn-form-field`. `ix-permissions`, `ix-ip-input-with-netmask` and
+ * `ix-code-editor` are deliberately absent: they are bare controls now, so they have no label to
+ * be found by. Inside a form they are projected into a `tn-form-field` and
+ * {@link TnFormControlHarness} reaches them through it; the few places that render one outside a
+ * field — `job-logs-row` and the websocket debug `message-list` both show a read-only
+ * `ix-code-editor` — are display-only, so nothing needs to index them at all. Listing them here
+ * would also close an import cycle back through this module.
+ */
 export const supportedFormControlSelectors = [
-  IxPermissionsHarness,
   IxExplorerHarness,
   SchedulerHarness,
-  IxIpInputWithNetmaskHarness,
   IxStarRatingHarness,
 ] as const;
 
@@ -70,8 +74,8 @@ export async function indexControlsByLabel<T extends IxFormControlHarness>(
   const result: Record<string, T> = {};
   for (const control of controls) {
     const label = await control.getLabelText();
-    // Repeated *labelled* controls are legitimate and long-standing here — an `ix-list` renders
-    // one set of labels per row — so those stay last-wins, as they have always been. An unlabelled
+    // Repeated *labelled* controls are legitimate and long-standing here — a `tn-form-list`
+    // renders one set of labels per row — so those stay last-wins, as they have always been. An unlabelled
     // control is different: '' is not a name any caller would ask for, and a second one would
     // collide with the first under it. Skip them unconditionally rather than only once a second
     // appears — a threshold would make whether '' resolves depend on unrelated markup elsewhere

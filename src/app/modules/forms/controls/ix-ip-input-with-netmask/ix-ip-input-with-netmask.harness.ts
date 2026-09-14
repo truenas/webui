@@ -1,33 +1,22 @@
-import {
-  BaseHarnessFilters, ComponentHarness, HarnessPredicate,
-} from '@angular/cdk/testing';
+import { ComponentHarness } from '@angular/cdk/testing';
 import { TnSelectHarness } from '@truenas/ui-components';
-import { IxLabelHarness } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.harness';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 import { getErrorText } from 'app/modules/forms/ix-forms/utils/harness.utils';
 
-export interface IxIpInputWithNetmaskHarnessFilters extends BaseHarnessFilters {
-  label?: string;
-}
-
 export class IxIpInputWithNetmaskHarness extends ComponentHarness implements IxFormControlHarness {
   static readonly hostSelector = 'ix-ip-input-with-netmask';
-
-  static with(options: IxIpInputWithNetmaskHarnessFilters): HarnessPredicate<IxIpInputWithNetmaskHarness> {
-    return new HarnessPredicate(IxIpInputWithNetmaskHarness, options)
-      .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
-  }
 
   getAddressInput = this.locatorFor('input');
   getNetmaskHarness = this.locatorFor(TnSelectHarness);
   getErrorText = getErrorText;
 
-  async getLabelText(): Promise<string> {
-    const label = await this.locatorForOptional(IxLabelHarness)();
-    if (!label) {
-      return '';
-    }
-    return label.getLabel();
+  /**
+   * Always '': the control renders no label of its own since it became a bare control, so the
+   * enclosing `tn-form-field` is what names it. `TnFormControlHarness` reads the label off that
+   * field and only delegates the *value* here, so nothing asks this for a name.
+   */
+  getLabelText(): Promise<string> {
+    return Promise.resolve('');
   }
 
   async getValue(): Promise<string> {

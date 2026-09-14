@@ -7,21 +7,6 @@ import { APP_BASE_HREF } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatListModule } from '@angular/material/list';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSortModule } from '@angular/material/sort';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { defineGlobalsInjections } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
@@ -31,12 +16,9 @@ import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
 import {
-  LabelMarkupPipe,
-  TN_DEFAULT_FALLBACK_LABELS,
-  TN_FALLBACK_LABELS,
-  TN_TEST_ATTR, TnButtonComponent, TnIconButtonComponent, TnIconComponent, TnIconTesting,
-  TnInputComponent,
-  TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTablePagerComponent, TnTestIdDirective,
+  LabelMarkupPipe, TN_DEFAULT_FALLBACK_LABELS, TN_FALLBACK_LABELS, TN_TEST_ATTR, TnButtonComponent,
+  TnIconButtonComponent, TnIconComponent, TnIconTesting, TnInputComponent, TnMenuComponent, TnMenuItemComponent,
+  TnMenuTriggerDirective, TnTablePagerComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import failOnConsole from 'jest-fail-on-console';
 import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
@@ -57,9 +39,6 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
 import {
@@ -68,6 +47,7 @@ import {
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { WarningComponent } from 'app/modules/warning/warning.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -134,30 +114,13 @@ jest.setTimeout(30 * 1000);
 
 defineGlobalsInjections({
   imports: [
-    MatCheckboxModule,
-    MatSlideToggleModule,
-    MatMenuModule,
     TnButtonComponent,
     TnIconComponent,
     TnIconButtonComponent,
     TnMenuComponent,
     TnMenuItemComponent,
     TnMenuTriggerDirective,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatSelectModule,
-    MatSortModule,
-    MatTooltipModule,
-    MatCardModule,
-    MatListModule,
-    MatToolbarModule,
-    MatBadgeModule,
-    MatExpansionModule,
-    MatProgressSpinnerModule,
-    MatButtonModule,
     IxExplorerComponent,
-    IxListComponent,
-    IxListItemComponent,
     IxErrorsComponent,
     IxLabelComponent,
     WarningComponent,

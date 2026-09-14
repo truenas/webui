@@ -1,12 +1,3 @@
-@if (label() || tooltip()) {
-  <ix-label
-    [label]="label()"
-    [tooltip]="tooltip()"
-    [required]="required()"
-    [ixTestOverride]="controlDirective.name || ''"
-  ></ix-label>
-}
-
 <div class="input-container" [class.disabled]="isDisabled">
   <input
     #addressInput
@@ -16,7 +7,7 @@
     [tnTestId]="controlDirective.name"
     [disabled]="isDisabled"
     [value]="address"
-    [attr.aria-label]="label()"
+    [attr.aria-label]="ariaLabel()"
     [attr.aria-labelledby]="fieldAria.labelledby()"
     [attr.aria-describedby]="fieldAria.describedby()"
     [attr.aria-invalid]="fieldAria.invalid()"
@@ -34,14 +25,3 @@
     (ngModelChange)="onNetmaskChange($event)"
   ></tn-select>
 </div>
-
-@if (hint()) {
-  <p class="hint">
-    {{ hint() }}
-  </p>
-}
-
-@let control = controlDirective.control;
-@if (control) {
-  <ix-errors [control]="control" [label]="label()"></ix-errors>
-}

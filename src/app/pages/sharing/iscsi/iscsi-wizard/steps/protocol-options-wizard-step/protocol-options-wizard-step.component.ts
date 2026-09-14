@@ -4,7 +4,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnChipInputComponent, TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
+import {
+  TnChipInputComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import {
   map, of, switchMap,
 } from 'rxjs';
@@ -12,8 +14,6 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { newOption, Option } from 'app/interfaces/option.interface';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import {
   FcMpioInfoBannerComponent,
@@ -30,12 +30,12 @@ import { IscsiService } from 'app/services/iscsi.service';
   styleUrls: ['./protocol-options-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFormListComponent,
+    TnFormListItemComponent,
     ReactiveFormsModule,
     TnFormFieldComponent,
     TnSelectComponent,
     TnChipInputComponent,
-    IxListComponent,
-    IxListItemComponent,
     FcPortItemControlsComponent,
     FcMpioInfoBannerComponent,
     TranslateModule,

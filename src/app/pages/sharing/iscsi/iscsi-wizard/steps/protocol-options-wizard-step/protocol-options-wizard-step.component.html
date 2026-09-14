@@ -1,10 +1,12 @@
 <ng-container [formGroup]="form()">
   @if(isFibreChannelMode()) {
-    <ix-list
+    <tn-form-list
       formArrayName="fcPorts"
       [empty]="form().controls.fcPorts.controls.length === 0"
       [label]="'Fibre Channel Ports' | translate"
-      [formArray]="form().get('fcPorts')"
+      [control]="form().get('fcPorts')"
+      [addLabel]="'Add' | translate"
+      [emptyMessage]="'No items have been added yet.' | translate"
       (add)="addFcPort()()"
     >
       @if (form().controls.fcPorts.controls.length >= 2) {
@@ -12,7 +14,12 @@
       }
 
       @for (entry of form().controls.fcPorts.controls; track entry; let i = $index) {
-        <ix-list-item [label]="'Port' | translate" (delete)="deleteFcPort()(i)">
+        <tn-form-list-item
+          testId="remove-from-list"
+          [label]="'Port' | translate"
+          [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Port' | translate }"
+          (delete)="deleteFcPort()(i)"
+        >
           <ix-fc-port-item-controls
             [form]="form().controls.fcPorts.at(i)"
             [index]="i"
@@ -21,9 +28,9 @@
             [usedPhysicalPorts]="getUsedPhysicalPorts()(i)"
             [availablePorts]="availablePorts()"
           ></ix-fc-port-item-controls>
-        </ix-list-item>
+        </tn-form-list-item>
       }
-    </ix-list>
+    </tn-form-list>
   } @else {
     <tn-form-field
       [label]="helptextSharingIscsi.portalLabel | translate"
@@ -36,18 +43,22 @@
       ></tn-select>
     </tn-form-field>
     @if (isNewPortal) {
-      <ix-list
+      <tn-form-list
         formArrayName="listen"
         [empty]="form().controls.listen.controls.length === 0"
         [label]="helptextSharingIscsi.portal.ipLabel | translate"
         [tooltip]="helptextSharingIscsi.portal.ipTooltip | translate"
         [required]="true"
-        [formArray]="form().get('listen')"
+        [control]="form().get('listen')"
+        [addLabel]="'Add' | translate"
+        [emptyMessage]="'No items have been added yet.' | translate"
         (add)="addAddress()"
         >
         @for (network of form().controls.listen.controls; track network; let i = $index) {
-          <ix-list-item
+          <tn-form-list-item
+            testId="remove-from-list"
             [label]="helptextSharingIscsi.portal.ipLabel | translate"
+            [removeAriaLabel]="'Remove {label} item' | translate: { label: helptextSharingIscsi.portal.ipLabel | translate }"
             (delete)="removeAddress(i)"
             >
             <tn-form-field
@@ -59,9 +70,9 @@
                 [options]="(addressOptions$ | async) ?? []"
               ></tn-select>
             </tn-form-field>
-          </ix-list-item>
+          </tn-form-list-item>
         }
-      </ix-list>
+      </tn-form-list>
     }
     <tn-form-field
       [label]="helptextSharingIscsi.initiatorsLabel | translate"

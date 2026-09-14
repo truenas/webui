@@ -4,12 +4,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TnCheckboxComponent } from '@truenas/ui-components';
 import { PosixPermission } from 'app/enums/posix-acl.enum';
 import { parseMode } from 'app/helpers/mode.helper';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
-import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @Component({
   selector: 'ix-permissions',
@@ -17,12 +13,9 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   styleUrls: ['./ix-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxLabelComponent,
     TnCheckboxComponent,
     ReactiveFormsModule,
-    IxErrorsComponent,
     TranslateModule,
-    TestOverrideDirective,
     TestDirective,
   ],
   hostDirectives: [
@@ -33,9 +26,6 @@ export class IxPermissionsComponent implements ControlValueAccessor {
   controlDirective = inject(NgControl);
   private cdr = inject(ChangeDetectorRef);
 
-  readonly label = input<TranslatedString>();
-  readonly tooltip = input<TranslatedString>();
-  readonly required = input(false);
   readonly hideOthersPermissions = input(false);
 
   isDisabled = false;
@@ -71,7 +61,7 @@ export class IxPermissionsComponent implements ControlValueAccessor {
       this.value = value;
     } else {
       this.value = '000';
-      console.error('Invalid value format for ', this.label());
+      console.error('Invalid value format for ', this.controlDirective.name);
     }
 
     this.owner = parseInt(this.value[0]);
