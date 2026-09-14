@@ -1,5 +1,6 @@
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import { JobState } from 'app/enums/job-state.enum';
+import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { adapter, JobsState } from 'app/modules/jobs/store/job.reducer';
 
@@ -31,6 +32,15 @@ export const selectAllNonTransientJobs = createSelector(
 export const selectJob = (id: number): MemoizedSelector<object, Job | undefined> => createSelector(
   selectJobs,
   (jobs) => jobs.find((job) => job.id === id),
+);
+
+/**
+ * Every job for a given method, e.g. every `rsynctask.run`. Lets a task card notice a run
+ * it did not start itself — a cron-scheduled one, or one triggered from another tab.
+ */
+export const selectJobsByMethod = (method: ApiJobMethod): MemoizedSelector<object, Job[]> => createSelector(
+  selectJobs,
+  (jobs) => jobs.filter((job) => job.method === method),
 );
 
 export function selectJobWithCallId(
