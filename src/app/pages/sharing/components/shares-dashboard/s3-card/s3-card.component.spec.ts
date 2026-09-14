@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
+import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -108,6 +109,19 @@ describe('S3CardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(S3BucketFormComponent, {
       data: expect.objectContaining(buckets[0]),
+    });
+  });
+
+  it('navigates to the filesystem ACL editor for the bucket data directory when Edit Filesystem ACL is pressed', async () => {
+    const router = spectator.inject(Router);
+    jest.spyOn(router, 'navigate').mockImplementation();
+
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Edit Filesystem ACL' });
+
+    expect(router.navigate).toHaveBeenCalledWith(['/', 'datasets', 'acl', 'edit'], {
+      queryParams: { path: '/mnt/tank/buckets/photos/s3data', returnUrl: router.url },
     });
   });
 
