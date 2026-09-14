@@ -119,7 +119,7 @@
     <tn-radio-group formControlName="schema_or_regex">
       @for (option of (snapshotNamingOptions$ | async) ?? []; track option.value) {
         <!-- `radio-button` in the base is absorbed by composeTestId's idempotent guard, keeping the
-             legacy `radio-button-*` option ids that `<ix-radio-group>` produced. -->
+             legacy `radio-button-*` option ids that the legacy radio group produced. -->
         <tn-radio
           [value]="option.value"
           [label]="option.label"

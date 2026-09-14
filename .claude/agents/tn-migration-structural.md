@@ -91,9 +91,10 @@ overlays / Indicators). For every `tn-*` component the migration introduces:
     `error()`; flag if the migration doesn't either restore or document the regression.
   - (Icon-button `[ariaLabel]`, `tn-select` `[required]`, and `tn-menu-item` test-id prefix are
     a11y/test-id concerns — note them for the sibling agents rather than adjudicating.)
-- **Form-control swaps.** The mapping table is explicit that form-context controls stay on
-  `ix-*` (NAS-141028 owns). A migration that swaps `<mat-checkbox>` → `<tn-checkbox>` inside a
-  reactive form is a scope-creep finding — should have stayed `<ix-checkbox>`.
+- **Form-control swaps.** NAS-141028 is done: the legacy `ix-*` form controls no longer exist,
+  so a reactive form's fields belong in `<tn-form-field>` wrapping a `tn-*` control. A bare
+  `tn-*` control inside a form with no wrapping field is a finding — it loses the label,
+  required indicator, and error text the field supplies.
 - **API verification.** When in doubt about an input name, projection slot, or default value,
   `grep` the installed types directly:
   `node_modules/@truenas/ui-components/types/truenas-ui-components.d.ts`. The mapping table can

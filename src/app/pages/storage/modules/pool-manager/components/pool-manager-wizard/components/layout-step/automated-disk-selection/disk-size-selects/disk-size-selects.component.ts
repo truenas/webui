@@ -63,7 +63,7 @@ export class DiskSizeSelectsComponent implements OnChanges {
    * a tooltip. Composed through a translatable pattern so clause order and punctuation stay in the
    * translator's hands rather than being hard-coded as `+ '. ' +`.
    *
-   * The field-level hint the pre-migration `ix-checkbox [tooltip]` provided cannot be restored as
+   * The field-level hint the pre-migration checkbox's `[tooltip]` provided cannot be restored as
    * an `aria-describedby` *description*: in the pinned 0.3.26 only `tn-input`, `tn-select`,
    * `tn-autocomplete` and `tn-chip-input` consume `TN_FORM_FIELD_CONTEXT`, and `tn-checkbox`'s
    * `aria-describedby` is hard-wired to its own error id — so the tooltip reaches no screen reader

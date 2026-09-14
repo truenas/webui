@@ -4,7 +4,7 @@
   grid-template-columns: 1fr 1fr;
   width: 100%;
 
-  // ix-list-item host has no bottom padding and tn-form-field adds no bottom
+  // tn-form-list-item host has no bottom padding and tn-form-field adds no bottom
   // margin, so keep the inputs off the bottom edge of the list-item box.
   padding-bottom: 10px;
 }

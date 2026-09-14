@@ -61,7 +61,7 @@ export class FileValidatorService {
   }
 
   /**
-   * Accepts either shape a file control can hold: `ix-file-input` always stored a `File[]`, while
+   * Accepts either shape a file control can hold: the legacy file input always stored a `File[]`,
    * `tn-file-input` in single mode stores one `File`.
    */
   maxSize(maxSizeInBytes: number) {

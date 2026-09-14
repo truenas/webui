@@ -106,7 +106,7 @@ export class FcPortItemControlsComponent implements OnInit {
     // Configure for the initial mode explicitly. The parent builds the fcPorts group without
     // validators and this component owns them, so leaving it to `valueChanges` below would leave
     // the default 'existing' mode unvalidated until the user touched the select — previously
-    // papered over by `ix-select` echoing its initial value back through `ngModelChange`.
+    // papered over by the legacy select echoing its initial value back through `ngModelChange`.
     configurePortControlsForMode(this.modeControl.value, this.form().controls);
 
     // Handle mode switching with helper

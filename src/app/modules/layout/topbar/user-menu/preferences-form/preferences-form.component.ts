@@ -85,7 +85,7 @@ export class PreferencesFormComponent extends SidePanelForm implements OnInit {
 
   protected readonly InputType = InputType;
 
-  // tn-select renders labels verbatim, so pre-translate them (the old ix-select piped
+  // tn-select renders labels verbatim, so pre-translate them (the legacy select piped
   // every option label through translate at render).
   protected lightThemeOptions: TnSelectOption[] = translateOptions(
     this.translate,

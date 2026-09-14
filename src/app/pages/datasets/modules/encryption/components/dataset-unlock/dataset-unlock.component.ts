@@ -150,7 +150,7 @@ export class DatasetUnlockComponent implements OnInit {
       }
     });
 
-    // `tn-file-input` in single mode holds one `File` (or null), where `ix-file-input` always
+    // `tn-file-input` in single mode holds one `File` (or null), where the legacy file input always
     // held a `File[]`.
     this.form.controls.file.valueChanges.pipe(
       switchMap((file: File | null) => (!file ? of('') : from(file.text()))),

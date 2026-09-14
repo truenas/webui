@@ -88,7 +88,7 @@ export class UploadIsoDialogComponent {
       '',
       [Validators.required, validateNotPoolRoot(this.translate.instant(this.helptext.upload_iso_pool_root_error))],
     ],
-    // tn-file-input in single mode emits File | null (ix-file-input used File[]).
+    // tn-file-input in single mode emits File | null (the legacy file input used File[]).
     files: [null as File | null, Validators.required],
   });
 

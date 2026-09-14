@@ -1,7 +1,7 @@
 @import 'scss-imports/cssvars';
 
 // `tn-form-section` lays its body out as a flex column with its own gap, so the fields need no
-// margin of their own — `ix-fieldset` had no such gap and the margin here supplied the spacing.
+// margin of their own — the legacy fieldset had no such gap and the margin here supplied the spacing.
 .half-width {
   width: 50%;
 

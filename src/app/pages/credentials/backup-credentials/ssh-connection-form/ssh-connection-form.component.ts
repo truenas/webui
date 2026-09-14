@@ -258,7 +258,7 @@ export class SshConnectionFormComponent extends SidePanelForm<KeychainCredential
     } else {
       params.semi_automatic_setup = {
         // tn-input has no `[parse]`; normalize the bare URL (prepend protocol) at submit,
-        // matching the legacy ix-input `stringAsUrlParsing` behavior. Safe to defer to submit:
+        // matching the legacy input control's `stringAsUrlParsing` behavior. Safe to defer to submit:
         // the `url` control only validates presence (conditional `Validators.required`), so the
         // normalized value never feeds a format validator.
         url: this.formatter.stringAsUrlParsing(values.url),

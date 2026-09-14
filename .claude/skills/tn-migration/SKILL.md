@@ -29,7 +29,7 @@ their own tickets and migrating them piecemeal will cause conflicts:
 
 | Concern | Owning ticket | What to do in a feature-area migration |
 |---|---|---|
-| `ix-forms` internals (`ix-input`, `ix-select`, `ix-fieldset`, `ix-chips`, `ix-checkbox`) | NAS-141028 | **Leave as-is.** Keep using `ix-*` form controls. |
+| `ix-forms` internals | NAS-141028 | **Done.** The legacy `ix-*` form controls were deleted — write `<tn-form-field>` + a `tn-*` control directly. |
 | `ix-table` and its sub-components | NAS-141029 | **Gone.** `app/modules/ix-table` was deleted; use `tn-table` + `app/modules/tn-table`. |
 | `DialogService` / dialog components | NAS-141022 | Keep calling `DialogService`. |
 | `SnackbarService` | NAS-141027 | Keep calling `SnackbarService`. |
@@ -56,18 +56,19 @@ declarative actions, and `tn-icon` (already migrated — always `tn-icon`, never
 >   `app/modules/tn-table/`. The pager itself, `<tn-table-pager>`, comes from
 >   `@truenas/ui-components`.
 >   Reference: `cron-list`, `portal-list`, `jobs-list`.
-> - **`ix-*` form controls → `tn-form` primitives.** `ix-fieldset` → `<tn-form-section
+> - **Form controls → `tn-form` primitives.** Group sections with `<tn-form-section
 >   [heading]>` (there is **no `tn-fieldset`**). Wrap each control in `<tn-form-field [label]
 >   [tooltip] [required]>` containing `tn-input` / `tn-checkbox` / `tn-select`. `tn-input
->   [multiline]="true"` replaces `ix-textarea`; `[inputType]="InputType.Number"` for numbers.
+>   [multiline]="true"` for textareas; `[inputType]="InputType.Number"` for numbers.
 >   `tn-select` takes a **synchronous** `TnSelectOption[]` (unwrap observables with `| async`)
 >   and does **not** translate labels — pre-translate with `translateOptions(this.translate,
 >   …)`. `tn-select` has no `[required]` — put the indicator on the wrapping `tn-form-field`.
 >   Its own copy (placeholder, empty-dropdown message, "select all") comes from the app-root
 >   `TN_SELECT_LABELS` provider (`provideTnSelectLabels()`, `main.ts`), so do **not** bind
 >   `[placeholder]`/`[noOptionsLabel]` per call site — only where a field needs its own wording.
->   Controls with no `tn-*` equivalent (`ix-explorer`, `ix-permissions`, `ix-chips`,
->   `ix-ip-input-with-netmask`, `ix-user/group-combobox`) **stay `ix-*`**. Reference:
+>   Controls with no `tn-*` equivalent stay webui-owned and go *inside* a `tn-form-field`
+>   like any other: `ix-explorer`, `ix-permissions`, `ix-ip-input-with-netmask`,
+>   `ix-code-editor`, `ix-star-rating`, and the `ix-user-*`/`ix-group-*` pickers. Reference:
 >   `service-ftp`, `global-config-form`.
 > - **SlideIn forms → `tn-side-panel` via the `SidePanelForm` base class**
 >   (`app/modules/slide-ins/side-panel-form.directive.ts`). The form `extends SidePanelForm`:
@@ -160,27 +161,28 @@ the ticket and document it in the PR.
 | `<mat-menu>` | `<tn-menu>` | `[items]` input takes `TnMenuItem[]`. See `ServiceActionsMenuService` for the composition pattern (Recipe 2). |
 | `<button mat-menu-item>` | `<tn-menu-item>` | Test IDs resolve to `button-*`, matching the legacy value — `tn-menu-panel` renders each item as a `<button tnTestIdType="button">`, so a legacy `button-foo` survives from `testId="foo"`. Pass the bare semantic base (`[testId]="['expand', name]"` → `button-expand-<name>`). Do NOT edit `test.directive.ts`. See "Test IDs." |
 | `[matMenuTriggerFor]` | `[tnMenuTriggerFor]` | `TnMenuTriggerDirective`; same usage shape. |
-| `[matTooltip]` | `[tnTooltip]` | `TnTooltipDirective`. ⚠ Tooltips are not accessible descriptions on their own — for form controls prefer the `[tooltip]` input on `ix-input`/`ix-checkbox`/etc., reserve `[tnTooltip]` for hover-only context (disabled-state hints, etc.). |
+| `[matTooltip]` | `[tnTooltip]` | `TnTooltipDirective`. ⚠ Tooltips are not accessible descriptions on their own — for form controls prefer the `[tooltip]` input on the wrapping `tn-form-field`, reserve `[tnTooltip]` for hover-only context (disabled-state hints, etc.). |
 
 ### Form controls
 
-Forms are owned by **NAS-141028** — most form-field surfaces stay on the `ix-*` wrappers
-(`ix-input`, `ix-select`, `ix-checkbox`, `ix-chips`, `ix-fieldset`). The `tn-*` form
-primitives below are for **non-form display surfaces** (toolbar filters, selection cards,
-read-only views) unless a feature-ticket explicitly carries `ix-*` work.
+**NAS-141028 is done.** The legacy `ix-*` form wrappers were deleted, so every form control —
+in a reactive form or on a display surface — is a `tn-*` primitive. In a form, wrap it in
+`<tn-form-field [label] [tooltip] [required]>`, which supplies the label, required indicator,
+hint and error text the old wrappers carried; on a bare display surface (toolbar filter,
+selection card) the control can stand alone.
 
 | Angular Material | @truenas/ui-components | Notes |
 |---|---|---|
-| `<mat-form-field>` / `<input matInput>` | *(use `ix-input` — NAS-141028 owns)* | Library does export `TnFormFieldComponent`/`TnInputComponent`/`TnInputDirective`, but feature tickets keep `ix-*`. |
-| `<mat-hint>` / `<mat-error>` | *(use `ix-input` hint/error inputs)* | Same — owned by `ix-forms`. |
-| `<mat-select>` / `<mat-option>` | `<tn-select>` *(non-form)* or `<ix-select>` *(forms)* | ⚠ `tn-select` has no `[required]` input — required indicator is silently dropped. ⚠ No `[ariaLabelledby]`; use `[ariaLabel]` for accessible name. For form contexts, keep `ix-select`. |
+| `<mat-form-field>` / `<input matInput>` | `<tn-form-field>` + `<tn-input>` | `TnFormFieldComponent`/`TnInputComponent`/`TnInputDirective`. |
+| `<mat-hint>` / `<mat-error>` | `tn-form-field`'s `[hint]` / error inputs | Errors also resolve app-wide through `TN_FORM_FIELD_ERRORS`. |
+| `<mat-select>` / `<mat-option>` | `<tn-select>` | ⚠ `tn-select` has no `[required]` input — put the indicator on the wrapping `tn-form-field`. ⚠ No `[ariaLabelledby]`; use `[ariaLabel]` for an accessible name outside a field. |
 | `<mat-select-trigger>` | *(use `tn-select`'s `[displayWith]` if available, else hold)* | Verify against d.ts; the trigger-template pattern may not be supported. |
 | `<mat-autocomplete>` / `[matAutocomplete]` | `<tn-autocomplete>` | `TnAutocompleteComponent`/`TnAutocompleteHarness`. Verify input shape against d.ts. |
-| `<mat-checkbox>` | `<tn-checkbox>` *(non-form)* or `<ix-checkbox>` *(forms)* | `TnCheckboxComponent`/`TnCheckboxLabelDirective`. Forms keep `ix-checkbox`. |
-| `<mat-radio-group>` / `<mat-radio-button>` | `<tn-radio-group>` + `<tn-radio>` *(non-form)* or `<ix-radio>` *(forms)* | `TnRadioGroupComponent`/`TnRadioGroupHarness` own the value for the whole set — never bind one form control to several standalone `tn-radio`s, which renders stale. Pass `[options]` (`TnRadioOption[]` — webui's `Option` fits) or project `<tn-radio>` children; `[inline]="true"` replaces `[inlineFields]`; `[compareWith]` for object values. Inside a `tn-form-field` the group is a normal control (name, required indicator, error text). ⚠ **Test IDs: project the options** — `[options]` gives no per-option test-id override, and the legacy `radio-button-*` ids can only be preserved per `<tn-radio>`. See "Radio groups" under Test IDs. |
-| `<mat-slide-toggle>` | `<tn-slide-toggle>` *(non-form)* or `<ix-slide-toggle>` *(forms)* | |
+| `<mat-checkbox>` | `<tn-checkbox>` | `TnCheckboxComponent`/`TnCheckboxLabelDirective`. |
+| `<mat-radio-group>` / `<mat-radio-button>` | `<tn-radio-group>` + `<tn-radio>` | `TnRadioGroupComponent`/`TnRadioGroupHarness` own the value for the whole set — never bind one form control to several standalone `tn-radio`s, which renders stale. Pass `[options]` (`TnRadioOption[]` — webui's `Option` fits) or project `<tn-radio>` children; `[inline]="true"` replaces `[inlineFields]`; `[compareWith]` for object values. Inside a `tn-form-field` the group is a normal control (name, required indicator, error text). ⚠ **Test IDs: project the options** — `[options]` gives no per-option test-id override, and the legacy `radio-button-*` ids can only be preserved per `<tn-radio>`. See "Radio groups" under Test IDs. |
+| `<mat-slide-toggle>` | `<tn-slide-toggle>` | |
 | `<mat-slider>` | `<tn-slider>` + `[tnSliderThumb]` | Also `TnSliderWithLabelDirective`. |
-| `<mat-chip-grid>` / `<mat-chip-row>` (input pattern) | *(use `ix-chips` — NAS-141028 owns)* | |
+| `<mat-chip-grid>` / `<mat-chip-row>` (input pattern) | `<tn-chip-input>` | `TnChipInputComponent`. Server-side suggestions go through `(searchChange)`; the `ix-user-*`/`ix-group-*` pickers wrap it. |
 | `<mat-chip>` (display only) | `<tn-chip>` | `TnChipComponent` for static display chips. |
 | `<mat-datepicker>` / `<input matDatepicker>` / `<mat-datepicker-toggle>` | `<tn-date-input>` | `TnDateInputComponent` plus `TnDateRangeInputComponent`, `TnCalendarComponent`, `TnCalendarHeaderComponent`, `TnMonthViewComponent`, `TnMultiYearViewComponent`. Verify against d.ts. |
 | `<mat-calendar>` | `<tn-calendar>` | Standalone; pair with `<tn-calendar-header>` if needed. |
@@ -265,7 +267,7 @@ Material UI). Leave these alone:
 | `MatTabGroupHarness` | `TnTabsHarness` / `TnTabHarness` / `TnTabPanelHarness` | |
 | `MatExpansionPanelHarness` | `TnExpansionPanelHarness` | |
 | `MatFormFieldHarness` | `TnFormFieldHarness` | (rare — forms keep `IxFormHarness`) |
-| `MatInputHarness` | `TnInputHarness` | (rare — forms keep `IxInputHarness`) |
+| `MatInputHarness` | `TnInputHarness` | Reachable through `IxFormHarness`/`TnFormControlHarness` by label. |
 | `MatDatepickerInputHarness` | `TnDateInputHarness` / `TnDateRangeInputHarness` | |
 | `MatDialogHarness` | `TnDialogHarness` + `TnDialogTesting` | |
 | `OverlayContainerHarness` (snackbar) | `TnToastMock` + `TnToastTesting.providers(...)` | See NAS-141027 spec for the pattern. |
@@ -644,10 +646,10 @@ What's available in 0.1.60:
   `getDetailRowContent`. Do not query `tn-table` internals with raw CSS — `.tn-table__*`
   classes are not part of the public contract.
 
-## Recipe 7 — Button toggle group (`ix-button-group` → `tn-button-toggle-group`)
+## Recipe 7 — Button toggle group (`tn-button-toggle-group`)
 
-`tn-button-toggle-group` is content-projection-based and has a smaller input surface than
-`ix-button-group`. Two things to get right:
+`tn-button-toggle-group` is content-projection-based and has a smaller input surface than the
+legacy button group it replaced. Two things to get right:
 
 ```html
 <span [id]="controllerToggleLabelId" class="visually-hidden-label">
@@ -677,7 +679,7 @@ What's available in 0.1.60:
   counter incremented in a class field initializer; see `audit.component.ts`) is one
   way; `crypto.randomUUID()` is another.
 - **Options are children, not an `[options]` array.** Use `@for` with `<tn-button-toggle>`
-  children. The previous `IxButtonGroupComponent` auto-synthesized per-option test IDs
+  children. The legacy button group auto-synthesized per-option test IDs
   from `[name]` + `option.value`; with `tn-button-toggle` you set `[testId]` on each toggle
   yourself (a single token or an array base for the option). `tn-button-toggle` declares the
   `button-toggle` prefix, so pass the bare semantic base — the library composes the rest. Do
@@ -727,7 +729,7 @@ Three properties make this safe:
   `testId` through the library's `controlTestId()`, which reads `formControlName` (or a named
   `[formControl]`/`ngModel`) when no explicit `testId` is given. So `<tn-input
   formControlName="sshPort">` emits `input-ssh-port` with no `testId` at all — matching what
-  `ix-input`'s `[ixTest]="controlDirective.name"` produced. Passing an explicit `testId` on a
+  the legacy input's `[ixTest]="controlDirective.name"` produced. Passing an explicit `testId` on a
   bound control is redundant, not required; it is only needed to *override* the control name.
 - **Options key off the value, not the label.** `tn-select`/`tn-autocomplete` derive an option's
   id from its `value`, where `[ixTest]` used the `label` — so any select whose two differ
@@ -871,8 +873,8 @@ focus — none surface in a compile error or a visual review. Verify per recipe:
 - **Focus management on `tn-side-panel`.** Opening moves focus into the panel; closing
   returns focus to the trigger; Escape closes. Verify per migrated panel.
 - **Tooltips are not the only description.** `[tnTooltip]` on a hover surface is not an
-  accessible description on its own. For form controls, prefer the `[tooltip]` input on
-  `ix-input` / `ix-checkbox` / etc. (which produces an accessible description) and use
+  accessible description on its own. For form controls, prefer the `[tooltip]` input on the
+  wrapping `tn-form-field` (which produces an accessible description) and use
   `[tnTooltip]` only for hover-only context — the disabled-state hint pattern in
   `nvme-of-configuration` is the canonical use.
 - **Keyboard reachability.** Tab through the migrated page: every interactive element is

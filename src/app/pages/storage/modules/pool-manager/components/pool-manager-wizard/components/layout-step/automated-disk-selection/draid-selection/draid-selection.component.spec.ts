@@ -224,8 +224,8 @@ describe('DraidSelectionComponent', () => {
     startOver$.next();
 
     // Start Over clears the disk selection, so none of the dRAID selects has any option left to
-    // offer. `tn-select` renders a value verbatim even when no option matches it (`ix-select`
-    // used to blank it), so the reset has to blank the restored defaults itself — these
+    // offer. `tn-select` renders a value verbatim even when no option matches it (the legacy
+    // select used to blank it), so the reset has to blank the restored defaults itself — these
     // assertions read exactly what the user sees.
     const controls = await getControls();
     expect(await controls['Disk Size'].getValue()).toBe('');

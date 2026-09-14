@@ -51,7 +51,7 @@ Key state slices: systemConfig, preferences, services, jobs, alerts, networkInte
 
 ## Code Style Guidelines
 - **Angular Component Naming**: Use kebab-case with prefix `ix-` (e.g., `ix-my-component`)
-- **Own components**: Use ix-icon instead of mat-icon, use ix-form related components like ix-input instead of standard Angular Material components.
+- **Own components**: Use `tn-icon` for icons. Build forms from `<tn-form-field>` wrapping a `tn-*` control (`tn-input`, `tn-select`, `tn-checkbox`, …); the legacy `ix-*` form controls have been deleted.
 - **Templates**: Use Angular embedded control syntax (e.g. @if, @for) instead of ngIf, ngFor.
 - **File Naming**: Kebab-case with specific suffixes (.component.ts, .service.ts, etc.)
 - **Scope**: Use `private` on methods and fields only used in the component. Use `protected` for methods and fields used in component and template.

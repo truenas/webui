@@ -62,7 +62,7 @@ export class KerberosKeytabsFormComponent extends IxFormHostForm implements OnIn
 
   protected readonly form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
-    // `tn-file-input` in single mode holds one `File`, where `ix-file-input` always held a `File[]`.
+    // `tn-file-input` in single mode holds one `File`, where the legacy file input always held a `File[]`.
     file: [null as File | null, Validators.compose([
       Validators.required,
       this.fileValidator.maxSize(40 * KiB),

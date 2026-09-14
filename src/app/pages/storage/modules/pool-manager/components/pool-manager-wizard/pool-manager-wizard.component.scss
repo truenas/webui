@@ -13,7 +13,7 @@
 }
 
 // TEMP (NAS-141021): the migrated steps render bare `tn-form-field`s and `ix-form-actions`
-// rows that carry no vertical rhythm of their own — the legacy `ix-input`/`ix-select`
+// rows that carry no vertical rhythm of their own — the legacy input/select
 // wrappers used to supply it. The spacing lives here once instead of in nine near-identical
 // step stylesheets. Drop once the library exposes a field-density input on `tn-form-field`.
 //

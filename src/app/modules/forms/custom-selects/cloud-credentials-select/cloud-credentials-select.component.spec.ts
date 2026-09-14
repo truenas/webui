@@ -68,7 +68,7 @@ describe('CloudCredentialsSelectComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('should populate ix-select with credentials when providers are set', async () => {
+    it('should populate tn-select with credentials when providers are set', async () => {
       const select = await loader.getHarness(TnSelectHarness);
       await select.open();
       const optionLabels = await select.getOptions();
@@ -119,7 +119,7 @@ describe('CloudCredentialsSelectComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('should populate ix-select with credentials when providers are set', async () => {
+    it('should populate tn-select with credentials when providers are set', async () => {
       const select = await loader.getHarness(TnSelectHarness);
       await select.open();
       const optionLabels = await select.getOptions();
