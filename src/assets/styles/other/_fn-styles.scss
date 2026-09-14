@@ -287,15 +287,6 @@ body * {
       display: none;
     }
 
-    .icon-menu {
-      padding: 0;
-
-      .icon-menu-item button {
-        margin: 0 0 4px;
-        padding: 0 12px;
-      }
-    }
-
     ix-truenas-logo {
       max-width: 48px;
     }
@@ -313,8 +304,4 @@ input:-webkit-autofill:active {
 
 input:-webkit-autofill {
   -webkit-text-fill-color: var(--fg1);
-}
-
-.has-tooltip .tooltip .material-icons {
-  vertical-align: middle;
 }

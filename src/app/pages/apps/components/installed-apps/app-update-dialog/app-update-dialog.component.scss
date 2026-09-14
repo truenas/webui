@@ -38,6 +38,18 @@
   width: 100%;
 }
 
+// Was the app-wide `.form-element` class until NAS-142358. That class was the last
+// survivor of the Material form-field reset in `_globals.scss`; these are the only
+// declarations from it that this select actually resolved.
+.version-select {
+  border-radius: 0;
+  line-height: normal;
+  margin: 16px 0 17px;
+  min-height: 33px;
+  text-align: left;
+  width: 100%;
+}
+
 .app-name {
   font-size: 20px;
   font-weight: bold;
