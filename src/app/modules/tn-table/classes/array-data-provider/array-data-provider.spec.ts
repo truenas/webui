@@ -83,6 +83,46 @@ describe('ArrayDataProvider', () => {
     expect(dataProvider.pagination.pageNumber).toBe(1);
   });
 
+  it('keeps the current page when the filter is re-run with keepPage', async () => {
+    const dataProvider = new ArrayDataProvider<TestTableData>();
+    dataProvider.setRows(testTableData);
+    dataProvider.setPagination({ pageNumber: 2, pageSize: 2 });
+
+    dataProvider.setFilter({ query: '', columnKeys: ['stringField'], list: testTableData }, { keepPage: true });
+
+    expect(dataProvider.pagination.pageNumber).toBe(2);
+    expect(await firstValueFrom(dataProvider.currentPage$)).toEqual([
+      { numberField: 4, stringField: 'b', booleanField: false },
+      { numberField: 3, stringField: 'd', booleanField: true },
+    ]);
+  });
+
+  it('clamps to the last page with rows when keepPage would leave it out of range', async () => {
+    const dataProvider = new ArrayDataProvider<TestTableData>();
+    dataProvider.setRows(testTableData);
+    dataProvider.setPagination({ pageNumber: 2, pageSize: 2 });
+
+    // The rows behind page 2 are gone. Keeping the page would serve an empty page, which the
+    // table renders as an empty state — with the pager unmounted along with it.
+    dataProvider.setFilter({ query: 'a', columnKeys: ['stringField'], list: testTableData }, { keepPage: true });
+
+    expect(dataProvider.pagination.pageNumber).toBe(1);
+    expect(await firstValueFrom(dataProvider.currentPage$)).toEqual([
+      { numberField: 1, stringField: 'a', booleanField: true },
+    ]);
+  });
+
+  it('clamps to page 1 when keepPage leaves no rows at all', async () => {
+    const dataProvider = new ArrayDataProvider<TestTableData>();
+    dataProvider.setRows(testTableData);
+    dataProvider.setPagination({ pageNumber: 2, pageSize: 2 });
+
+    dataProvider.setFilter({ query: 'nothing', columnKeys: ['stringField'], list: testTableData }, { keepPage: true });
+
+    expect(dataProvider.pagination.pageNumber).toBe(1);
+    expect(await firstValueFrom(dataProvider.currentPage$)).toEqual([]);
+  });
+
   it('does not reset pagination when it has not been initialized', () => {
     const dataProvider = new ArrayDataProvider<TestTableData>();
     dataProvider.setRows(testTableData);

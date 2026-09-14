@@ -14,6 +14,7 @@ import {
 import {
   combineLatest, map, shareReplay, startWith,
 } from 'rxjs';
+import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { Role } from 'app/enums/role.enum';
 import {
   S3AuditMode,
@@ -31,6 +32,10 @@ import { S3AuditMask, S3Config, S3Listener } from 'app/interfaces/s3.interface';
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
@@ -40,6 +45,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { serviceConfigSavedMessage } from 'app/pages/services/components/service-config-forms.constants';
 import { createS3GrantFormGroup, S3GrantFormGroup, toS3Grants } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
 import { S3GrantsListComponent } from 'app/pages/sharing/s3/s3-grants-list/s3-grants-list.component';
+import { DatasetService } from 'app/services/dataset/dataset.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectLicense } from 'app/store/system-info/system-info.selectors';
@@ -62,6 +68,8 @@ function createS3ServiceForm(fb: NonNullableFormBuilder) {
     servers: [1, [Validators.required, rangeValidator(1, 8)]],
     region: [''],
     log_level: [S3LogLevel.Notice, Validators.required],
+    // Optional: empty refuses S3 protocol CreateBucket requests.
+    managed_root_dataset: [''],
     global_grants: fb.array<S3GrantFormGroup>([]),
     default_audit_mode: [S3AuditMode.None],
     default_audit_actions: [[] as string[]],
@@ -86,6 +94,8 @@ type S3ServiceFormValue = ReturnType<ReturnType<typeof createS3ServiceForm>['get
     TnFormListComponent,
     TnFormListItemComponent,
     WithManageCertificatesLinkComponent,
+    IxExplorerComponent,
+    ExplorerCreateDatasetComponent,
     S3GrantsListComponent,
     TranslateModule,
   ],
@@ -95,6 +105,7 @@ export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormVal
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private systemGeneralService = inject(SystemGeneralService);
+  private datasetService = inject(DatasetService);
   private store$ = inject(Store<AppState>);
 
   protected readonly requiredRoles = [Role.SharingS3Write, Role.SharingWrite];
@@ -108,6 +119,9 @@ export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormVal
   protected readonly isLicensed = toSignal(this.store$.select(selectLicense).pipe(map((license) => !!license)));
 
   protected readonly form = createS3ServiceForm(this.fb);
+
+  protected readonly treeNodeProvider = this.datasetService.getDatasetNodeProvider();
+  protected readonly emptyRootNode = [emptyRootNode];
 
   /**
    * Listener rows are pushed after first render (once `s3.config` resolves) into an array whose
@@ -194,6 +208,7 @@ export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormVal
       servers: values.servers,
       region: values.region,
       log_level: values.log_level,
+      managed_root_dataset: values.managed_root_dataset,
       global_grants: toS3Grants(this.form.controls.global_grants.controls),
       ...(this.isLicensed()
         ? {
@@ -221,6 +236,7 @@ export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormVal
       servers: config.servers,
       region: config.region,
       log_level: config.log_level,
+      managed_root_dataset: config.managed_root_dataset,
       default_audit_mode: auditMode,
       default_audit_actions: auditActions,
       default_audit_overflow: config.default_audit_overflow,

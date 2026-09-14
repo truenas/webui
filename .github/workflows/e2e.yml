@@ -10,8 +10,10 @@
 #
 # The runner is a TrueNAS box and the appliance is a nested VM on it, created
 # by `tn_guest.py` from iXsystems/api-ci-testbed through the box's own API.
-# The browser runs in Playwright's container on the same box. See
-# e2e/ci/appliance.sh for the contract and the configuration it needs.
+# The browser runs in Playwright's container on the same box. The appliance
+# is claimed and released by the `truenas-appliance` action in
+# iXsystems/ux-github-workflows; its appliance.sh is the contract with the
+# lab and documents the configuration it needs.
 #
 # Sharding and snapshot restore are layered on once they exist, with a
 # measured reason. See E1, E2 and E12 in the design.
@@ -111,29 +113,6 @@ jobs:
     # a hang blocks the lab for six hours.
     timeout-minutes: 90
     env:
-      # Where the lab runner keeps tn_guest.py and a Python with
-      # truenas_api_client: on the runner's own dataset, not on PATH.
-      TN_GUEST: /mnt/tank/github/api-ci-testbed/jenkins/scripts/tn_guest.py
-      TN_GUEST_PYTHON: /mnt/tank/github/venv/bin/python3
-      # Lab facts that belong in the e2e-lab environment's variables and
-      # secrets rather than here: which pool holds the VMs and a credential
-      # for the box's own API. The ISO is resolved by a step below; setting
-      # E2E_TN_GUEST_ISO pins one file and turns that resolution off, except
-      # for a dispatch that asks for the newest nightly, which is a decision
-      # about this run and beats a standing pin.
-      TN_GUEST_POOL: ${{ vars.E2E_TN_GUEST_POOL || 'tank' }}
-      TN_GUEST_ISO: ${{ !inputs.refresh_iso && vars.E2E_TN_GUEST_ISO || '' }}
-      TN_GUEST_ISO_REFRESH: ${{ inputs.refresh_iso && '1' || '' }}
-      TN_GUEST_HOST_USER: ${{ vars.E2E_TN_GUEST_HOST_USER || 'root' }}
-      TN_GUEST_HOST_API_KEY: ${{ secrets.TN_GUEST_HOST_API_KEY }}
-      TN_GUEST_HOST_PASSWORD: ${{ secrets.TN_GUEST_HOST_PASSWORD }}
-      # With the template password set, a claim clones a template instead of
-      # installing from the ISO. Templates are named by the ISO and disk
-      # geometry they were built from, so a claim whose ISO has moved builds
-      # a new one beside the old and collects the old once nothing is cloned
-      # from it. See e2e/ci/appliance.sh.
-      TN_GUEST_TEMPLATE_PREFIX: ${{ vars.E2E_TN_GUEST_TEMPLATE_PREFIX || 'e2e-template' }}
-      TN_GUEST_TEMPLATE_PASSWORD: ${{ secrets.TN_GUEST_TEMPLATE_PASSWORD }}
       # Serves the built UI. Debian-based on purpose: docker/nginx.conf runs
       # as `www-data`, which the alpine image does not have.
       NGINX_IMAGE: nginx:1.27
@@ -207,24 +186,27 @@ jobs:
           $DOCKER pull --quiet "$NGINX_IMAGE"
           echo "UI_DIST=$GITHUB_WORKSPACE/dist" >> "$GITHUB_ENV"
 
-      # The newest v27 nightly, kept for a week and then replaced, so the
-      # appliance moves at the cadence its template is meant to and not under
-      # every run. Before the claim: a download that fails must not cost a VM.
-      - name: Resolve the install ISO
-        run: |
-          set -euo pipefail
-          ./e2e/ci/appliance.sh iso | tee -a "$GITHUB_ENV"
-
+      # Resolves the ISO (the newest v27 nightly, kept for a week, or the
+      # E2E_TN_GUEST_ISO pin), claims an appliance — a clone of the template
+      # for that ISO, built on first use — and puts TN_PROFILE, TN_HOST,
+      # TN_HOST_HTTP, TN_USERNAME, TN_PASSWORD, TN_DOMAIN and TN_BASELINE in
+      # the job environment. Its
+      # post step releases the appliance whatever happens below, and the
+      # lease it sets covers a runner that never gets there. Lab facts stay
+      # in the e2e-lab environment's variables and secrets. A dispatch that
+      # asks for the newest nightly beats a standing pin.
       - name: Claim an appliance
-        run: |
-          set -euo pipefail
-          ./e2e/ci/appliance.sh claim fresh-install > "$RUNNER_TEMP/appliance.env"
-          # The appliance password is generated per claim, not a GitHub secret,
-          # so nothing masks it automatically. Register it before it can reach
-          # a log.
-          echo "::add-mask::$(sed -n 's/^TN_PASSWORD=//p' "$RUNNER_TEMP/appliance.env")"
-          cat "$RUNNER_TEMP/appliance.env" >> "$GITHUB_ENV"
-          rm -f "$RUNNER_TEMP/appliance.env"
+        uses: iXsystems/ux-github-workflows/.github/actions/truenas-appliance@master
+        with:
+          baseline: fresh-install
+          pool: ${{ vars.E2E_TN_GUEST_POOL || 'tank' }}
+          iso: ${{ !inputs.refresh_iso && vars.E2E_TN_GUEST_ISO || '' }}
+          refresh-iso: ${{ inputs.refresh_iso && 'true' || 'false' }}
+          host-user: ${{ vars.E2E_TN_GUEST_HOST_USER || 'root' }}
+          host-api-key: ${{ secrets.TN_GUEST_HOST_API_KEY }}
+          host-password: ${{ secrets.TN_GUEST_HOST_PASSWORD }}
+          template-prefix: ${{ vars.E2E_TN_GUEST_TEMPLATE_PREFIX || 'e2e-template' }}
+          template-password: ${{ secrets.TN_GUEST_TEMPLATE_PASSWORD }}
 
       # nginx serves the build at /ui/ and proxies /api, /_upload, /_download
       # and the WebSocket to the appliance over plain HTTP, which is the
@@ -422,9 +404,5 @@ jobs:
         if: always() && env.DOCKER != ''
         run: $DOCKER rm -f "e2e-ui-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" > /dev/null 2>&1 || true
 
-      # Unconditional: an appliance left claimed is one the next run cannot use.
-      # Reads the domain from the file `claim` wrote, so a failure between the
-      # claim and `$GITHUB_ENV` being populated still releases.
-      - name: Release the appliance
-        if: always()
-        run: ./e2e/ci/appliance.sh release "${TN_DOMAIN:-}"
+      # No release step: the claim action's post step releases the appliance,
+      # on success, failure and cancellation alike, after every step here.

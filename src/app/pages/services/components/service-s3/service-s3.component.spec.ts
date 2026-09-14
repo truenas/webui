@@ -7,6 +7,7 @@ import {
   TnAutocompleteHarness, TnCheckboxHarness, TnDialog, TnFormListHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
@@ -15,9 +16,15 @@ import {
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { S3Config } from 'app/interfaces/s3.interface';
 import { User } from 'app/interfaces/user.interface';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
+import { DatasetService } from 'app/services/dataset/dataset.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectLicense } from 'app/store/system-info/system-info.selectors';
 
@@ -35,6 +42,7 @@ describe('ServiceS3Component', () => {
     log_level: S3LogLevel.Notice,
     default_audit: [],
     default_audit_overflow: S3AuditOverflow.Drop,
+    managed_root_dataset: 'tank/s3',
     global_grants: [
       {
         principal_type: S3PrincipalType.User, xid: 1000, name: 'alice', access: S3Access.Deny,
@@ -71,6 +79,9 @@ describe('ServiceS3Component', () => {
       mockProvider(SystemGeneralService, {
         getCertificates: () => of([{ id: 5, name: 's3-cert' }] as Certificate[]),
       }),
+      mockProvider(DatasetService, {
+        getDatasetNodeProvider: () => () => of([]),
+      }),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({ closed: of(true) })),
       }),
@@ -98,6 +109,8 @@ describe('ServiceS3Component', () => {
     expect(await (await getInput('servers')).getValue()).toBe('2');
     expect(await (await getInput('region')).getValue()).toBe('us-east-1');
     expect(await (await getSelect('log_level')).getDisplayText()).toBe('Notice');
+    const form = await loader.getHarness(IxFormHarness);
+    expect(await form.getValues()).toMatchObject({ 'Managed Root Dataset': 'tank/s3' });
 
     expect(await (await getSelect('principal_type')).getDisplayText()).toBe('User');
     const principal = await loader.getHarness(TnAutocompleteHarness);
@@ -109,6 +122,8 @@ describe('ServiceS3Component', () => {
     await (await getInput('servers')).setValue('4');
     await (await getInput('region')).setValue('eu-west-1');
     await (await getSelect('log_level')).selectOption('Info');
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({ 'Managed Root Dataset': 'tank/buckets' });
 
     const listeners = await loader.getHarness(TnFormListHarness.with({ label: 'Listen Addresses' }));
     await listeners.add();
@@ -130,8 +145,16 @@ describe('ServiceS3Component', () => {
       servers: 4,
       region: 'eu-west-1',
       log_level: S3LogLevel.Info,
+      managed_root_dataset: 'tank/buckets',
       global_grants: [{ principal_type: S3PrincipalType.User, xid: 1000, access: S3Access.Deny }],
     }]);
     expect(closed).toHaveBeenCalledWith(true);
+  });
+
+  it('offers to create the managed root dataset from a dataset-name explorer', () => {
+    expect(spectator.query(ExplorerCreateDatasetComponent)).toBeTruthy();
+    // The empty root keeps the explorer in dataset-name space, so the path a created dataset comes
+    // back with is stripped of /mnt before it lands in the control (see IxExplorerComponent).
+    expect(spectator.query(IxExplorerComponent)!.rootNodes()).toEqual([emptyRootNode]);
   });
 });

@@ -32,6 +32,7 @@ import { expectSignedInAs, signIn, signOut } from '../../flows/auth';
 import { createRaidz2Pool, createSmbDataset, createSmbShare } from '../../flows/storage';
 import { createTrueNasAdminUser } from '../../flows/users';
 import type { E2eApiClient } from '../../support/api/client';
+import { leavingTestData } from '../../support/cleanup';
 import { expect, test } from '../../support/fixtures';
 import { readTimeoutMs } from '../../support/timeouts';
 
@@ -46,8 +47,6 @@ const share = 'e2e-share';
 
 /** Where the dataset is mounted, and therefore what the SMB share points at. */
 const datasetPath = `/mnt/${pool.name}/${dataset}`;
-
-const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
 
 /**
  * Per-call bound inside the service-state poll below.
@@ -107,11 +106,7 @@ test.beforeEach(async ({ api }) => {
 });
 
 test.afterEach(async ({ api }) => {
-  if (keepTestData) {
-    console.warn(
-      `TN_KEEP_TEST_DATA=1 — leaving pool "${pool.name}", share "${share}" `
-      + `and user "${testAdmin.username}".`,
-    );
+  if (leavingTestData(`pool "${pool.name}", share "${share}" and user "${testAdmin.username}"`)) {
     return;
   }
   await cleanUp(api);
