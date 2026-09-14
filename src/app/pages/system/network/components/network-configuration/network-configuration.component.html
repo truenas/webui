@@ -107,14 +107,17 @@
         [label]="outboundNetworkActivity.label | translate"
         [tooltip]="outboundNetworkActivity.tooltip"
       >
-        @for (option of (outboundNetworkActivity.options | async) ?? []; track option.value) {
-          <tn-radio
-            name="outbound_network_activity"
-            [formControlName]="outboundNetworkActivity.fcName"
-            [value]="option.value"
-            [label]="option.label"
-          ></tn-radio>
-        }
+        <tn-radio-group [formControlName]="outboundNetworkActivity.fcName">
+          @for (option of (outboundNetworkActivity.options | async) ?? []; track option.value) {
+            <!-- `radio-button` in the base is absorbed by composeTestId's idempotent guard, keeping the
+                 legacy `radio-button-*` option ids that the legacy radio group produced. -->
+            <tn-radio
+              [value]="option.value"
+              [label]="option.label"
+              [testId]="['radio-button', 'outbound-network-activity', option.label]"
+            ></tn-radio>
+          }
+        </tn-radio-group>
       </tn-form-field>
 
       @if (!outboundNetworkValue.hidden) {

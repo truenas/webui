@@ -7,7 +7,7 @@ import { FileInputHarnessFilters, TnFileInputHarness } from '@truenas/ui-compone
  *
  * The library harness exposes only readers (`getButtonText`/`getFileName`/`hasFile`/`isDisabled`/
  * `open`), so a spec that needs the control to *hold* a value has to drive the native input the way
- * `IxFileInputHarness.setValue` did: dispatch a synthetic `change` whose `target.files` the
+ * the legacy file-input harness's `setValue` did: dispatch a synthetic `change` whose `target.files` the
  * component's `onFilesSelected` reads. Subclassing keeps that inside a harness — `locatorFor` is
  * only reachable from within one — instead of scattering raw DOM queries through specs.
  *

@@ -2,14 +2,17 @@
   @if (remoteControllerOptions) {
     <tn-form-section [heading]="helptext.ipmiRemoteController | translate">
       <tn-form-field [label]="helptext.ipmiRemoteController | translate">
-        @for (option of (remoteControllerOptions | async) ?? []; track option.value) {
-          <tn-radio
-            name="apply_remote"
-            formControlName="apply_remote"
-            [value]="option.value"
-            [label]="option.label"
-          ></tn-radio>
-        }
+        <tn-radio-group formControlName="apply_remote">
+          @for (option of (remoteControllerOptions | async) ?? []; track option.value) {
+            <!-- `radio-button` in the base is absorbed by composeTestId's idempotent guard, keeping the
+                 legacy `radio-button-*` option ids that the legacy radio group produced. -->
+            <tn-radio
+              [value]="option.value"
+              [label]="option.label"
+              [testId]="['radio-button', 'apply-remote', option.label]"
+            ></tn-radio>
+          }
+        </tn-radio-group>
       </tn-form-field>
     </tn-form-section>
   }

@@ -27,6 +27,7 @@
     >
       @for (network of form.controls.address_pools.controls; track network; let i = $index) {
         <tn-form-list-item
+          testId="remove-from-list"
           [formGroupName]="i"
           [label]="'Address Pool' | translate"
           [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Address Pool' | translate }"
@@ -70,6 +71,7 @@
     >
       @for (mirror of form.controls.registry_mirrors.controls; track mirror; let i = $index) {
         <tn-form-list-item
+          testId="remove-from-list"
           [formGroupName]="i"
           [label]="'Registry Mirror' | translate"
           [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Registry Mirror' | translate }"

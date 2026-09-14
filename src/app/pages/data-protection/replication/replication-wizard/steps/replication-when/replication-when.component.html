@@ -8,7 +8,7 @@
       <tn-radio-group formControlName="schedule_method" [required]="true">
         @for (option of (scheduleMethodOptions$ | async) ?? []; track option.value) {
           <!-- `radio-button` in the base is absorbed by composeTestId's idempotent guard, keeping the
-               legacy `radio-button-*` option ids that `<ix-radio-group>` produced. -->
+               legacy `radio-button-*` option ids that the legacy radio group produced. -->
           <tn-radio
             [value]="option.value"
             [label]="option.label"

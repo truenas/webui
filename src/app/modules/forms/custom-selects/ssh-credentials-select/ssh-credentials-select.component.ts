@@ -36,7 +36,7 @@ export class SshCredentialsSelectComponent extends IxSelectWithNewOption<Keychai
     );
   }
 
-  getValueFromSlideInResponse(result: KeychainCredential): SelectOptionValueType {
+  getValueFromFormResponse(result: KeychainCredential): SelectOptionValueType {
     return result.id || null;
   }
 

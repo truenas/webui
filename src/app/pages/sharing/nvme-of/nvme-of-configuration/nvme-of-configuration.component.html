@@ -20,14 +20,17 @@
         [tooltip]="helptext.implementationTooltip | translate"
         [tnTooltip]="form.controls.kernel.disabled ? (helptext.implementationDisabledTooltip | translate) : ''"
       >
-        @for (option of implementationOptions; track option.value) {
-          <tn-radio
-            name="kernel"
-            formControlName="kernel"
-            [value]="option.value"
-            [label]="option.label"
-          ></tn-radio>
-        }
+        <tn-radio-group formControlName="kernel">
+          @for (option of implementationOptions; track option.value) {
+            <!-- `radio-button` in the base is absorbed by composeTestId's idempotent guard, keeping the
+                 legacy `radio-button-*` option ids that the legacy radio group produced. -->
+            <tn-radio
+              [value]="option.value"
+              [label]="option.label"
+              [testId]="['radio-button', 'kernel', option.label]"
+            ></tn-radio>
+          }
+        </tn-radio-group>
       </tn-form-field>
     }
 
@@ -41,7 +44,7 @@
     </tn-form-field>
 
     <tn-form-field
-      [tooltip]="helptext.rdmaTooltip"
+      [tooltip]="helptext.rdmaTooltip | translate"
       [tnTooltip]="form.controls.rdma.disabled ? (helptext.rdmaDisabledTooltip | translate) : ''"
     >
       <tn-checkbox

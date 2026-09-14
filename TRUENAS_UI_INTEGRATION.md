@@ -178,10 +178,8 @@ export class ExampleComponent {
 The component library uses an automatic sprite generation system that includes only the icons you use in your application.
 
 **Two Icon Systems in Parallel:**
-- **ix-icon**: WebUI's original icon system (uses `yarn icons` to generate `src/assets/icons/sprite.svg`)
-- **tn-icon**: Component library's icon system (uses `yarn tn-icons` to generate `src/assets/tn-icons/sprite.svg`)
-
-Both systems coexist during the migration period.
+- **tn-icon**: the only icon component (uses `yarn tn-icons` to generate `src/assets/tn-icons/sprite.svg`)
+- webui's own SVGs still live in `src/assets/icons/custom/` and are emitted into that same sprite with an `app-` prefix.
 
 ### Icon Sources
 
@@ -240,7 +238,7 @@ tnIconMarker('tn-dataset');  // TrueNAS-specific icons
 tnIconMarker('my-custom-icon', 'custom');  // Resolves to app-my-custom-icon
 ```
 
-**Note:** The library uses `tnIconMarker()` (not `iconMarker()`) to avoid conflicts with the webui's existing `ix-icon` system.
+**Note:** The library uses `tnIconMarker()` (not `iconMarker()`, the legacy webui icon marker it replaced).
 
 **Important:** TrueNAS library icons have the `tn-` prefix (e.g., `tn-dataset`). The `library="custom"` parameter is for **your application's** custom icons, which get prefixed with `app-`.
 
@@ -263,7 +261,7 @@ export default {
 1. Use `<tn-icon>` elements in templates - they're automatically detected
 2. Only use `tnIconMarker()` for truly dynamic icons (runtime-computed names)
 3. Sprites are automatically generated before dev server starts and before builds
-4. Generated sprites are committed to git (following the same pattern as webui's `ix-icon` sprites)
+4. Generated sprites are committed to git (as webui's sprites always were)
 
 **Manual Generation:**
 ```bash
@@ -277,8 +275,7 @@ yarn tn-icons
 **How It Works:**
 - **Template scanning**: Automatically detects `<tn-icon>` elements in HTML templates (no marker needed)
 - **Marker scanning**: Finds `tnIconMarker()` calls in TypeScript for dynamic icons
-- The webui's `ix-icon` system uses `iconMarker()` for namespace separation
-- This allows scanning the entire codebase without conflicts between the two icon systems
+- The `app-` prefix keeps webui's own custom SVGs namespaced apart from the library's `tn-` icons
 
 ### Available TrueNAS Custom Icons
 

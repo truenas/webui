@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness, TnFormFieldHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
@@ -99,8 +99,9 @@ describe('RebootRequiredDialogComponent', () => {
     ]);
   });
 
-  it('does not show validation error on the confirmation checkbox before user interacts', () => {
-    expect(spectator.query('tn-form-field .tn-form-field-error')).not.toExist();
+  it('does not show validation error on the confirmation checkbox before user interacts', async () => {
+    const field = await loader.getHarness(TnFormFieldHarness);
+    expect(await field.hasError()).toBe(false);
   });
 
   it('reboots another node and closes dialog when Reboot Standby Controller is pressed', async () => {

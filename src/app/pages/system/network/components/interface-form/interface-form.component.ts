@@ -8,9 +8,8 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType,
-  TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent,
-  TnFormSectionComponent, TnInputComponent, TnRadioComponent, TnSelectComponent,
+  InputType, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent,
+  TnFormSectionComponent, TnInputComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { range } from 'lodash-es';
 import {
@@ -81,6 +80,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     TnInputComponent,
     TnCheckboxComponent,
     TnRadioComponent,
+    TnRadioGroupComponent,
     TnFormListComponent,
     TnFormListItemComponent,
     OrderedListboxComponent,

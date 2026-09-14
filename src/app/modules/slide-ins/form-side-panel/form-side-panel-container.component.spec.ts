@@ -425,6 +425,32 @@ describe('FormSidePanelContainerComponent footer Save', () => {
     expect(saveSubmit).toHaveBeenCalled();
   });
 
+  // Regression guard for the container template's one-projectable-node-per-@if invariant: a second
+  // root node in Save's `@if` block silently stops `tnSidePanelAction` matching `tn-side-panel`'s
+  // footer slot, so Save falls through into the panel body. Selecting the button by its directive
+  // alone can't see that — assert where it actually landed.
+  it('projects Save into the panel footer rather than the content slot', () => {
+    setUp();
+
+    expect(document.querySelector(`footer.tn-side-panel__actions ${saveButtonSelector}`)).not.toBeNull();
+  });
+
+  // Same invariant, other node: `tn-button` exposes no `ariaLive`, so the Save -> Saving… flip is
+  // announced by a sibling live region that needs its own block and its own directive.
+  it('announces the in-flight save through a footer live region', () => {
+    setUp();
+    const liveRegion = document.querySelector<HTMLElement>('footer.tn-side-panel__actions [role="status"]');
+
+    expect(liveRegion).not.toBeNull();
+    expect(liveRegion.getAttribute('aria-live')).toBe('polite');
+    expect(liveRegion.textContent.trim()).toBe('');
+
+    getForm().submitting.set(true);
+    fixture.detectChanges();
+
+    expect(liveRegion.textContent.trim()).toBe('Saving…');
+  });
+
   it('disables Save while the hosted form reports it cannot submit', async () => {
     setUp();
     const saveButton = await TnMenuTesting.rootLoader(fixture).getHarness(TnButtonHarness.with({ label: 'Save' }));

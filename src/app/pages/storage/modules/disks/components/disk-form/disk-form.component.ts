@@ -27,7 +27,7 @@ export type DiskFormResponse = (DiskUpdate & { identifier: string })[];
 /**
  * `tn-select` derives an option's test id from a primitive `value` before falling back to the
  * label, which would collapse `option-advpowermgmt-level-127-…` down to `option-advpowermgmt-127`.
- * The legacy `ix-select` ids were label-derived, so pin the extractor to keep them byte-stable.
+ * The legacy select ids were label-derived, so pin the extractor to keep them byte-stable.
  * Shared with the bulk-edit form, which renders the same option list.
  */
 export const advPowerManagementOptionTestId = (option: TnSelectOption<DiskPowerLevel>): string => option.label;

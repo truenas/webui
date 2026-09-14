@@ -108,7 +108,7 @@ export class IxDynamicFormItemComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Seeds a list schema's `default` entries on a create form. Lived inside `ix-list` before the
+   * Seeds a list schema's `default` entries on a create form. Lived inside the legacy list control before the
    * move to `tn-form-list`, which knows nothing about chart schemas — and it never belonged
    * there: it reads `itemsSchema` and emits one add per default, both of which are this
    * component's own concern.
@@ -116,7 +116,7 @@ export class IxDynamicFormItemComponent implements OnInit, AfterViewInit {
    * Deferred to `AfterViewInit` (and a macrotask beyond it) as it was: adding controls seeds the
    * `FormArray` the view has just rendered, so it cannot run during that render.
    *
-   * Seeding waits for the list to be *visible*, which is what `ix-list` got for free by living
+   * Seeding waits for the list to be *visible*, which is what the legacy list control got for free by living
    * under `@if (!(isHidden$ | async))`. The question has to be asked of `hidden$` rather than
    * `schema.hidden`, because a `show_if` relation or a subquestion hides a question through the
    * subject alone: `app-schema.service` pairs `hidden$.next(true)` with `disable()` and leaves the
@@ -173,7 +173,7 @@ export class IxDynamicFormItemComponent implements OnInit, AfterViewInit {
       // satisfies the relation, and its object-shaped defaults have nowhere else to come from —
       // `AppSchemaService.getItemsToPopulate` skips those deliberately. `take(1)` is what keeps a
       // question that is hidden and shown repeatedly from stacking a fresh set of defaults each
-      // time, which is what `ix-list` did by being rebuilt on every re-show.
+      // time, which is what the legacy list control did by being rebuilt on every re-show.
       hidden$.pipe(
         filter((isHidden) => !isHidden),
         take(1),

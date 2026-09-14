@@ -1,6 +1,6 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import {
-  of, Subject,
+  catchError, firstValueFrom, of, Subject,
 } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
@@ -183,30 +183,18 @@ describe('SubscriptionManagerService', () => {
     }));
   });
 
-  // eslint-disable-next-line jest/no-done-callback
-  it('should throw ApiCallError when receiving notify_unsubscribed with error', (done) => {
+  it('should throw ApiCallError when receiving notify_unsubscribed with error', async () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     jest.spyOn(require('uuid'), 'v4').mockReturnValue('1');
 
-    spectator.service.subscribe('container.metrics').subscribe({
-      next: () => {},
-      error: (error: unknown) => {
-        expect(error).toMatchObject({
-          message: 'Invalid subscription',
-          error: {
-            data: {
-              error: 22,
-              errname: ApiErrorName.Validation,
-              reason: 'Invalid subscription',
-            },
-          },
-        });
-        done();
-      },
-      complete: () => {
-        done.fail('Observable completed when it should have errored');
-      },
-    });
+    // `firstValueFrom` subscribes synchronously, so the responses pushed below are seen.
+    // An error is the expected outcome, so route it into the value channel; a stream that
+    // completes instead yields EmptyError and fails the assertion.
+    const outcome = firstValueFrom(
+      spectator.service.subscribe('container.metrics').pipe(
+        catchError((error: unknown) => of(error)),
+      ),
+    );
 
     responses$.next({
       jsonrpc: '2.0',
@@ -224,6 +212,17 @@ describe('SubscriptionManagerService', () => {
           errname: ApiErrorName.Validation,
           reason: 'Invalid subscription',
         } as ApiErrorDetails,
+      },
+    });
+
+    await expect(outcome).resolves.toMatchObject({
+      message: 'Invalid subscription',
+      error: {
+        data: {
+          error: 22,
+          errname: ApiErrorName.Validation,
+          reason: 'Invalid subscription',
+        },
       },
     });
   });

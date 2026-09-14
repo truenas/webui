@@ -2,15 +2,16 @@
 
 WebUI generates a single sprite containing all icons used in the application.
 
-Icon sprite is generated before application is built.\
-To include new icons manually while application is running, you can run `yarn icons`.
+The sprite is generated before the dev server starts and before every build.
+To regenerate it manually while the application is running, run `yarn tn-icons`.
 
-For icon to be included in the sprite it must be:
-- used with `<ix-icon name="myIcon"></ix-icon>`
-- or marked with `iconMarker('myIcon')`
+For an icon to be included in the sprite it must be:
+- used with `<tn-icon name="myIcon"></tn-icon>`
+- or marked with `tnIconMarker('myIcon')` for names computed at runtime
 
 ### Custom Images
-SVGs added to `custom` subdirectory will be included in the sprite.
+SVGs added to the `src/assets/icons/custom` subdirectory are included in the sprite under an
+`app-` prefix (`cloud-off.svg` becomes `app-cloud-off`).
 
 To add a new icon:
 1. Remove styling from the SVG file so that it does not conflict with our application's CSS.

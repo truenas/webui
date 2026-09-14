@@ -115,7 +115,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
 
         // Restoring the declared defaults is only half a reset: they are starting values, not
         // necessarily *valid* ones. `tn-select` renders a value verbatim even when no option
-        // matches it (`ix-select` used to blank exactly that state), so a reset that clears the
+        // matches it (the legacy select used to blank exactly that state), so a reset that clears the
         // disk selection would otherwise leave every control showing its default over a
         // "No options" dropdown. Re-deriving the option lists here blanks whatever the current
         // disks don't support and keeps the defaults that they do.
@@ -230,7 +230,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
 
     // Only default to the optimal width when there is one. With no disks selected
     // `maxPossibleWidth` is 0, and defaulting to it would leave a meaningless "Children: 0"
-    // in the control — invisible with `ix-select` (which blanked a value that matched no
+    // in the control — invisible with the legacy select (which blanked a value that matched no
     // option) but rendered verbatim by `tn-select`. `unsetControlIfNoMatchingOption` above has
     // already blanked the control by then, so skipping the default leaves it empty.
     if (this.isStepActive() && maxPossibleWidth) {

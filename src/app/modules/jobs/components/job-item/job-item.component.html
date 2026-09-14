@@ -101,6 +101,7 @@
     library="mdi"
     [class.job-icon-abort]="true"
     [testId]="['abort', job().description, job().method]"
+    [ariaLabel]="'Abort' | translate"
     [tnTooltip]="'Abort' | translate"
     (click)="abort()"
   ></tn-icon-button>
@@ -112,6 +113,7 @@
     library="mdi"
     [class.job-icon-waiting]="true"
     [testId]="['waiting', job().description, job().method]"
+    [ariaLabel]="'Waiting' | translate"
     [disabled]="true"
   ></tn-icon-button>
 }
@@ -123,6 +125,7 @@
     tnTooltipPosition="left"
     [class.job-icon-failed]="true"
     [testId]="['failed', job().description, job().method]"
+    [ariaLabel]="'Failed' | translate"
     [tnTooltip]="job().error"
     [disabled]="true"
   ></tn-icon-button>
@@ -134,6 +137,7 @@
     library="mdi"
     [class.job-icon-success]="true"
     [testId]="['success', job().description, job().method]"
+    [ariaLabel]="'Succeeded' | translate"
     [disabled]="true"
   ></tn-icon-button>
 }

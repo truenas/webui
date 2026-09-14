@@ -39,7 +39,7 @@ export class GoogleCloudProviderFormComponent extends BaseProviderFormComponent 
   ngOnInit(): void {
     this.form.controls.upload_credentials.valueChanges.pipe(
       // `tn-file-input` is single-file here, so its value is one `File` (or null),
-      // where `ix-file-input` always handed over a `File[]`.
+      // where the legacy file input always handed over a `File[]`.
       switchMap((file: File | null) => (file ? from(file.text()) : of(''))),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((credentials) => {

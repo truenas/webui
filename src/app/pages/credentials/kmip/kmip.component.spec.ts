@@ -135,7 +135,7 @@ describe('KmipComponent', () => {
       }],
     );
 
-    // Guard against the Number input regressing to a string payload (ix-input type="number" used to coerce this).
+    // Guard against the Number input regressing to a string payload (the legacy number input used to coerce this).
     const [, [payload]] = jest.mocked(spectator.inject(ApiService).job).mock.calls[0];
     expect(typeof payload.port).toBe('number');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(

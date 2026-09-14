@@ -5,8 +5,8 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
-  TnInputComponent, TnRadioComponent, TnSelectComponent,
+  TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
@@ -54,6 +54,7 @@ export type UiNetworkActivityType = NetworkActivityType | SpecificActivityType;
     TnSelectComponent,
     TnChipInputComponent,
     TnRadioComponent,
+    TnRadioGroupComponent,
     TranslateModule,
   ],
 })

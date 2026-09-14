@@ -4,7 +4,7 @@ import { containersHelptext } from 'app/helptext/containers/containers';
 
 /**
  * Icon mapping for container device types (Filesystem, USB, NIC)
- * Uses Material Design Icons (mdi) from ix-icon component
+ * Uses Material Design Icons (mdi) from the tn-icon component
  */
 export interface StorageDeviceIcon {
   name: string;

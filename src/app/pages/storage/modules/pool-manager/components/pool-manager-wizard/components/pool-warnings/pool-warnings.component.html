@@ -30,29 +30,36 @@
   @if (disksWithExportedPools.length) {
     <div class="spacer-bottom">
       <ix-warning [message]="exportedPoolsWarning | translate"></ix-warning>
-      <ix-label [label]="'Select disks you want to use' | translate"></ix-label>
-      @for (item of poolAndDisks | keyvalue; track item.key) {
-        <!--
-          `label` is what tn-checkbox emits as the input's `aria-label`, which overrides the
-          projected content as the accessible name — without it every row in this loop would be
-          announced as the default "Checkbox", with no way to tell the pools apart.
+      <!-- These checkboxes are one multi-select, not independent fields, so they need a group
+           with a name. `ix-label` rendered a bare <label> with no `for` and no wrapped control,
+           which named nothing. -->
+      <div role="group" [attr.aria-labelledby]="exportedPoolsLabelId">
+        <span class="group-label" [id]="exportedPoolsLabelId">
+          {{ 'Select disks you want to use' | translate }}
+        </span>
+        @for (item of poolAndDisks | keyvalue; track item.key) {
+          <!--
+            `label` is what tn-checkbox emits as the input's `aria-label`, which overrides the
+            projected content as the accessible name — without it every row in this loop would be
+            announced as the default "Checkbox", with no way to tell the pools apart.
 
-          The pool and disk names are data, but the punctuation between them is not: it goes
-          through a translatable pattern rather than a hard-coded `+ ': ' +`, so the separator and
-          the clause order stay in the translator's hands. The `, ` joining the disk names stays
-          hard-coded on purpose — it mirrors the visible list rendered right below.
-        -->
-        <tn-checkbox
-          [testId]="[item.key, 'exported_pool']"
-          [label]="'{pool}: {disks}' | translate: { pool: item.key, disks: item.value.join(', ') }"
-          (change)="checkboxChanged(item.key, $event)"
-        >
-          <div tnCheckboxLabel class="label">
-            <strong class="pool-name">{{ item.key }}</strong>
-            <small class="disk-name">{{ item.value.join(', ') }}</small>
-          </div>
-        </tn-checkbox>
-      }
+            The pool and disk names are data, but the punctuation between them is not: it goes
+            through a translatable pattern rather than a hard-coded `+ ': ' +`, so the separator and
+            the clause order stay in the translator's hands. The `, ` joining the disk names stays
+            hard-coded on purpose — it mirrors the visible list rendered right below.
+          -->
+          <tn-checkbox
+            [testId]="[item.key, 'exported_pool']"
+            [label]="'{pool}: {disks}' | translate: { pool: item.key, disks: item.value.join(', ') }"
+            (change)="checkboxChanged(item.key, $event)"
+          >
+            <div tnCheckboxLabel class="label">
+              <strong class="pool-name">{{ item.key }}</strong>
+              <small class="disk-name">{{ item.value.join(', ') }}</small>
+            </div>
+          </tn-checkbox>
+        }
+      </div>
     </div>
   }
 </ng-container>

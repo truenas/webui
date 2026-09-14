@@ -72,7 +72,7 @@ findings (still emit the heading + "No findings"). Findings cover only **changed
 
 Per-finding format:
 ~~~
-- file.ts:42 — `MatTooltip` still imported and applied to <ix-checkbox>.  [Info]
+- file.ts:42 — `MatTooltip` still imported and applied to <tn-checkbox>.  [Info]
   ```ts
   import { MatTooltip } from '@angular/material/tooltip';
   ...

@@ -55,8 +55,8 @@ describe('UploadConfigDialogComponent', () => {
     const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     const file = fakeFile('config.db');
 
-    // `FileInputHarnessFilters` has no label predicate, so the label/control association the old
-    // `IxFileInputHarness.with({ label })` covered is asserted through the wrapping field instead.
+    // `FileInputHarnessFilters` has no label predicate, so the label/control association
+    // the legacy file-input harness's label filter covered is asserted through the wrapping field instead.
     const field = await loader.getHarness(TnFormFieldHarness);
     expect(await field.getLabel()).toBe('Select Configuration File');
 

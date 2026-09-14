@@ -9,9 +9,8 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType,
-  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
-  TnInputComponent, TnRadioComponent,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnRadioComponent,
+  TnRadioGroupComponent,
 } from '@truenas/ui-components';
 import { combineLatest, forkJoin, Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
@@ -46,6 +45,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnRadioComponent,
+    TnRadioGroupComponent,
     TnCheckboxComponent,
     TnInputComponent,
     TranslateModule,

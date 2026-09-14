@@ -30,6 +30,9 @@ import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/
 import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
+/** The groups `tn-form-list`, addressed by its form array rather than by tag name. */
+const groupsListPredicate = TnFormListHarness.with({ selector: '[formArrayName="groups"]' });
+
 describe('TargetFormComponent', () => {
   let spectator: Spectator<TargetFormComponent>;
   let loader: HarnessLoader;
@@ -410,22 +413,19 @@ describe('TargetFormComponent', () => {
     it('shows groups section when mode is iSCSI', async () => {
       await setMode('iSCSI');
 
-      const groupsList = spectator.query('tn-form-list[formArrayName="groups"]');
-      expect(groupsList).toExist();
+      expect(await loader.hasHarness(groupsListPredicate)).toBe(true);
     });
 
     it('shows groups section when mode is BOTH', async () => {
       await setMode('Both');
 
-      const groupsList = spectator.query('tn-form-list[formArrayName="groups"]');
-      expect(groupsList).toExist();
+      expect(await loader.hasHarness(groupsListPredicate)).toBe(true);
     });
 
     it('hides groups section when mode is FC', async () => {
       await setMode('Fibre Channel');
 
-      const groupsList = spectator.query('tn-form-list[formArrayName="groups"]');
-      expect(groupsList).not.toExist();
+      expect(await loader.hasHarness(groupsListPredicate)).toBe(false);
     });
   });
 
@@ -516,8 +516,7 @@ describe('TargetFormComponent', () => {
       });
 
       // Verify groups section is visible
-      let groupsSection = spectator.query('tn-form-list[formArrayName="groups"]');
-      expect(groupsSection).toExist();
+      expect(await loader.hasHarness(groupsListPredicate)).toBe(true);
 
       // Verify groups are populated in the form model
       expect(spectator.component.form.controls.groups).toHaveLength(1);
@@ -531,14 +530,12 @@ describe('TargetFormComponent', () => {
       // Switch to FC mode - groups should be hidden but preserved
       await setMode('Fibre Channel');
 
-      groupsSection = spectator.query('tn-form-list[formArrayName="groups"]');
-      expect(groupsSection).not.toExist();
+      expect(await loader.hasHarness(groupsListPredicate)).toBe(false);
 
       // Switch back to iSCSI mode - groups should reappear with same values
       await setMode('iSCSI');
 
-      groupsSection = spectator.query('tn-form-list[formArrayName="groups"]');
-      expect(groupsSection).toExist();
+      expect(await loader.hasHarness(groupsListPredicate)).toBe(true);
 
       // Verify the groups still have the same values
       expect(spectator.component.form.controls.groups).toHaveLength(1);
@@ -617,14 +614,12 @@ describe('TargetFormComponent', () => {
       // Switch to FC mode
       await setMode('Fibre Channel');
 
-      let groupsSection = spectator.query('tn-form-list[formArrayName="groups"]');
-      expect(groupsSection).not.toExist();
+      expect(await loader.hasHarness(groupsListPredicate)).toBe(false);
 
       // Switch back to BOTH mode
       await setMode('Both');
 
-      groupsSection = spectator.query('tn-form-list[formArrayName="groups"]');
-      expect(groupsSection).toExist();
+      expect(await loader.hasHarness(groupsListPredicate)).toBe(true);
 
       // Verify groups are preserved
       expect(spectator.component.form.controls.groups).toHaveLength(1);

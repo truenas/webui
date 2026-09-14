@@ -55,7 +55,7 @@ export class PoolManagerHarness extends ComponentHarness {
     await stepper.selectStep(labels.indexOf(label));
   }
 
-  // TODO: This is similar to ix-form.harness.ts and ix-fieldset-harness.
+  // TODO: This is similar to ix-form.harness.ts.
   // TODO: Find a way to apply IxFormHarness to portions of components.
   async getControlHarnessesInStep(): Promise<Record<string, IxFormControlHarness>> {
     // Only the active step's content is rendered, so querying the host is

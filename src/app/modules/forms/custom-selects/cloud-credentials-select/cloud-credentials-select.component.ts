@@ -49,7 +49,7 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption<Cloud
     );
   }
 
-  getValueFromSlideInResponse(result: CloudSyncCredential): SelectOptionValueType {
+  getValueFromFormResponse(result: CloudSyncCredential): SelectOptionValueType {
     return result.id;
   }
 

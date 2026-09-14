@@ -1,3 +1,5 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ElementRef, signal } from '@angular/core';
 import {
   FormArray, FormControl, FormGroup, ReactiveFormsModule, UntypedFormGroup,
@@ -5,7 +7,8 @@ import {
 import { TreeComponent } from '@bugsplat/angular-tree-component';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import {
-  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnInputComponent,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormListComponent, TnFormListHarness,
+  TnFormListItemComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import { MockInstance } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
@@ -135,6 +138,7 @@ const textSchema = {
 
 describe('IxDynamicFormItemComponent', () => {
   let spectator: Spectator<IxDynamicFormItemComponent>;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: IxDynamicFormItemComponent,
     imports: [
@@ -197,7 +201,7 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query('ix-code-editor')).toBeHidden();
     });
 
-    it('renders an "ix-select" when schema with "select" type is supplied', () => {
+    it('renders a "tn-select" when schema with "select" type is supplied', () => {
       spectator = createComponent({
         props: {
           dynamicForm,
@@ -218,7 +222,7 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query('tn-select')).toBeHidden();
     });
 
-    it('renders an "ix-checkbox" when schema with "checkbox" type is supplied', () => {
+    it('renders a "tn-checkbox" when schema with "checkbox" type is supplied', () => {
       spectator = createComponent({
         props: {
           dynamicForm,
@@ -285,18 +289,20 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query('ix-explorer')).toBeHidden();
     });
 
-    it('renders a "tn-form-list" when schema with "list" type is supplied', () => {
+    it('renders a "tn-form-list" when schema with "list" type is supplied', async () => {
       spectator = createComponent({
         props: {
           dynamicForm,
           dynamicSchema: listSchema,
         },
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       expect(spectator.query('tn-form-list')).toBeVisible();
-      expect(spectator.queryAll('tn-form-list-item')).toHaveLength(1);
+      const list = await loader.getHarness(TnFormListHarness);
+      expect(await list.getItemCount()).toBe(1);
       expect(spectator.queryAll('ix-dynamic-form-item')).toHaveLength(listSchema.items!.length);
-      expect(spectator.query(TnFormListComponent)!.empty()).toBe(false);
-      expect(spectator.query(TnFormListComponent)!.label()).toBe(listSchema.title);
+      expect(await list.isEmpty()).toBe(false);
+      expect(await list.getLabel()).toBe(listSchema.title);
 
       expect(spectator.query('tn-form-list')).not.toBeHidden();
       const field = spectator.component.dynamicForm()!.controls.list as CustomUntypedFormField;
@@ -398,7 +404,7 @@ describe('IxDynamicFormItemComponent', () => {
     });
   });
   /**
-   * The seeding that used to live in `ix-list`. `tn-form-list` knows nothing about chart schemas,
+   * The seeding that used to live in the legacy list control. `tn-form-list` knows nothing about chart schemas,
    * so the component that owns the schema does it now — these cover the three ways it declines.
    */
   describe('seeding a list schema\'s defaults', () => {
@@ -452,7 +458,7 @@ describe('IxDynamicFormItemComponent', () => {
     });
 
     // The template sits under `@if (!(isHidden$ | async))`, so a list that starts hidden never
-    // rendered an `ix-list` to run this, and its defaults never reached the payload.
+    // rendered a list control to run this, and its defaults never reached the payload.
     it('seeds nothing for a schema that starts hidden', async () => {
       createListComponent({ default: [{ input: 'first' }], hidden: true });
       await flushSeeding();

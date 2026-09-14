@@ -30,3 +30,10 @@
     margin-bottom: 4px;
   }
 }
+
+// Matches the weight/spacing the group heading had when it was rendered by `ix-label`.
+.group-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+}

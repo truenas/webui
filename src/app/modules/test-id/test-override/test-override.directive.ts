@@ -5,7 +5,8 @@ import {
 /**
  * Overrides nested ixTest attribute.
  *
- * Example usage: put on ix-input to override nested ixTest directive on <input>
+ * Example usage: put on a control component to override the nested ixTest directive on its
+ * inner `<input>`.
  */
 @Directive({
   selector: '[ixTestOverride]',

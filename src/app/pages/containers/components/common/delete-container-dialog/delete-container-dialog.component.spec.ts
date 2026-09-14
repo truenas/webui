@@ -2,7 +2,7 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCheckboxHarness, TnDialogHarness } from '@truenas/ui-components';
+import { TnBannerHarness, TnButtonHarness, TnCheckboxHarness, TnDialogHarness } from '@truenas/ui-components';
 import { ContainerStatus } from 'app/enums/container.enum';
 import { Container } from 'app/interfaces/container.interface';
 import {
@@ -79,14 +79,14 @@ describe('DeleteContainerDialog', () => {
   it('warns about the irreversible destruction once recursive is checked', async () => {
     setupTest(fakeContainer());
 
-    expect(spectator.query('tn-banner')).toBeNull();
+    expect(await loader.hasHarness(TnBannerHarness)).toBe(false);
 
     const recursiveCheckbox = await loader.getHarness(
       TnCheckboxHarness.with({ label: 'Delete child datasets, snapshots and clones' }),
     );
     await recursiveCheckbox.check();
 
-    expect(spectator.query('tn-banner')).toBeTruthy();
+    expect(await loader.hasHarness(TnBannerHarness)).toBe(true);
   });
 
   it('does not delete on implicit form submission while the deletion is unconfirmed', () => {

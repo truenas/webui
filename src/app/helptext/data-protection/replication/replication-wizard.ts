@@ -24,7 +24,7 @@ export const helptextReplicationWizard = {
   sourceDatasetsLabel: T('Source'),
   sourceDatasetsTooltip: T('Define the path to a system location\
  that has snapshots to replicate. Click the\
- <i class="material-icons">folder</i> to see all locations on the\
+ folder icon to see all locations on the\
  source system or click in the field to manually type a location\
  (Example: <code>pool1/dataset1</code>). Multiple source locations can\
  be selected or manually defined with a comma (<code>,</code>) separator.\
@@ -36,7 +36,7 @@ export const helptextReplicationWizard = {
   targetDatasetLabel: T('Destination'),
   targetDatasetTooltip: T('Define the path to a system location that\
  will store replicated snapshots. Click the\
- <i class="material-icons">folder</i> to see all locations on the\
+ folder icon to see all locations on the\
  destination system or click in the field to manually type a location\
  path (Example: <code>pool1/dataset1</code>). Selecting a location\
  defines the full path to that location as the destination. Appending a\

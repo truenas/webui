@@ -42,14 +42,20 @@
       [label]="'DHCP' | translate"
       [tooltip]="helptext.dhcpTooltip | translate"
     >
-      @for (option of (dhcpOptions$ | async) ?? []; track option.value) {
-        <tn-radio
-          name="ipv4_dhcp"
-          formControlName="ipv4_dhcp"
-          [value]="option.value"
-          [label]="option.label"
-        ></tn-radio>
-      }
+      <tn-radio-group formControlName="ipv4_dhcp">
+        @for (option of (dhcpOptions$ | async) ?? []; track option.value) {
+          <!-- `radio-button` in the base is absorbed by composeTestId's idempotent guard, keeping the
+               legacy `radio-button-*` option ids that the legacy radio group produced. The base is
+               spelled pre-kebabed as `ipv-4-dhcp` (not the raw `ipv4_dhcp` control name) because the
+               library normalizer does not split the letter->digit boundary lodash does, and
+               `[ixTest]` produced `radio-button-ipv-4-dhcp-*`. See normalize-test-id.utils.ts. -->
+          <tn-radio
+            [value]="option.value"
+            [label]="option.label"
+            [testId]="['radio-button', 'ipv-4-dhcp', option.label]"
+          ></tn-radio>
+        }
+      </tn-radio-group>
     </tn-form-field>
 
     @if (canHaveStaticIpAddresses) {

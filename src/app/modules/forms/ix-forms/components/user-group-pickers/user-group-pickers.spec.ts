@@ -33,8 +33,8 @@ import {
 /**
  * The four user/group pickers, against a stub directory.
  *
- * These replaced five near-identical wrappers built on `ix-combobox` /
- * `ix-chips`, so what matters here is the contract those wrappers carried: the
+ * These replaced five near-identical wrappers built on the legacy combobox /
+ * chips controls, so what matters here is the contract those wrappers carried: the
  * value reaches a form control through two levels of `ControlValueAccessor`, a
  * typed name that does not exist is rejected, and an edit form does not open
  * already showing errors for values it just loaded.

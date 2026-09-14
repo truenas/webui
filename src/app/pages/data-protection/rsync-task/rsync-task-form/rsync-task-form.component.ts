@@ -121,7 +121,7 @@ export class RsyncTaskFormComponent implements OnInit {
   readonly helptext = helptextRsyncForm;
 
   // `tn-select` takes synchronous options, so these are plain arrays rather than the
-  // observables the `ix-select` era needed.
+  // observables the legacy select era needed.
   protected readonly directions: TnSelectOption<Direction>[] = [
     { label: this.translate.instant('Push'), value: Direction.Push },
     { label: this.translate.instant('Pull'), value: Direction.Pull },

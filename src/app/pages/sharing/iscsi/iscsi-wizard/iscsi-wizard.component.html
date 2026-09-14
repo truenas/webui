@@ -6,7 +6,7 @@
         <tn-button
           tnStepperNext
           color="primary"
-          [testId]="'next'"
+          [testId]="['target', 'next']"
           [label]="'Next' | translate"
           [disabled]="form.controls.target.invalid"
         ></tn-button>
@@ -19,14 +19,14 @@
         <tn-button
           tnStepperPrevious
           color="secondary"
-          [testId]="'back'"
+          [testId]="['extent', 'back']"
           [label]="'Back' | translate"
         ></tn-button>
         @if (isNewTarget) {
           <tn-button
             tnStepperNext
             color="primary"
-            [testId]="'next'"
+            [testId]="['extent', 'next']"
             [label]="'Next' | translate"
             [disabled]="form.controls.extent.invalid"
           ></tn-button>
@@ -63,7 +63,7 @@
           <tn-button
             tnStepperPrevious
             color="secondary"
-            [testId]="'back'"
+            [testId]="['confirm', 'back']"
             [label]="'Back' | translate"
           ></tn-button>
           <tn-button
