@@ -2,7 +2,9 @@ import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { EntitlementEntry } from 'app/interfaces/entitlement.interface';
 import { EntitlementsState } from 'app/store/entitlements/entitlements.reducer';
-import { selectEntitlement, selectIsEntitled } from 'app/store/entitlements/entitlements.selectors';
+import {
+  selectEntitlement, selectIsEntitled, selectIsEntitledStrictly,
+} from 'app/store/entitlements/entitlements.selectors';
 
 const denied = {
   entitled: false,
@@ -27,6 +29,25 @@ describe('Entitlements Selectors', () => {
     });
 
     it('treats a key absent from a loaded map as not gated', () => {
+      expect(selectIsEntitled(EntitlementFeature.Kmip)(stateWith({}))).toBe(true);
+    });
+  });
+
+  describe('selectIsEntitledStrictly', () => {
+    it('returns undefined while entitlements have not loaded, not false', () => {
+      expect(selectIsEntitledStrictly(EntitlementFeature.Kmip)(stateWith(null))).toBeUndefined();
+    });
+
+    it('returns the decision when the feature is gated', () => {
+      const state = stateWith({ [EntitlementFeature.Kmip]: denied });
+
+      expect(selectIsEntitledStrictly(EntitlementFeature.Kmip)(state)).toBe(false);
+    });
+
+    it('treats a key absent from a loaded map as denied, unlike selectIsEntitled', () => {
+      // A middleware whose POLICY does not carry the key cannot enforce the feature either, so
+      // the UI offering it unlocked would be the wrong half of the guess.
+      expect(selectIsEntitledStrictly(EntitlementFeature.Kmip)(stateWith({}))).toBe(false);
       expect(selectIsEntitled(EntitlementFeature.Kmip)(stateWith({}))).toBe(true);
     });
   });

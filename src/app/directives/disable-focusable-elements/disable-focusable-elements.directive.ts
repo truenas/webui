@@ -1,4 +1,6 @@
-import { DestroyRef, Directive, ElementRef, OnChanges, Renderer2, input, inject } from '@angular/core';
+import {
+  DestroyRef, Directive, ElementRef, NgZone, OnChanges, Renderer2, input, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { take, timer } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -10,8 +12,26 @@ export class DisableFocusableElementsDirective implements OnChanges {
   private readonly destroyRef = inject(DestroyRef);
   private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private renderer = inject(Renderer2);
+  private zone = inject(NgZone);
 
   readonly disableFocusableElements = input.required<boolean>();
+
+  /**
+   * A selector for descendants that stay reachable while the region is disabled. Empty by default.
+   *
+   * The region loses the keyboard because the user is not meant to *operate* it. A control that
+   * only explains it — a tooltip trigger — is the exception: a locked feature whose help text
+   * cannot be opened is the one thing the region is being left on screen for.
+   */
+  readonly keepFocusable = input('');
+
+  /** Live only while the region is disabled — see `watchForLateContent`. */
+  private observer: MutationObserver | undefined;
+
+  constructor() {
+    // Registered once here rather than per watch, which would stack a callback per input change.
+    this.destroyRef.onDestroy(() => this.stopWatching());
+  }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.disableFocusableElements) {
@@ -20,15 +40,54 @@ export class DisableFocusableElementsDirective implements OnChanges {
   }
 
   private updateFocusableElements(): void {
+    const disabled = this.disableFocusableElements();
+
+    this.stopWatching();
+    if (disabled) {
+      this.watchForLateContent();
+    }
+
     timer(0).pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      const tabIndex = this.disableFocusableElements() ? -1 : 0;
-      this.updateTabIndex(tabIndex);
+      this.updateTabIndex(disabled ? -1 : 0);
     });
   }
 
+  /**
+   * Re-sweeps whatever the region renders after the first pass.
+   *
+   * The sweep below is a one-off walk of the DOM as it stands, so a control revealed later — a
+   * section expanded, a field a sibling's value brings into view — would keep its place in the tab
+   * order inside a region the user is not meant to operate.
+   *
+   * Only while disabled, and childList only, both on purpose. In the enabled direction the sweep
+   * *removes* `disabled`, and re-running that on every DOM change would strip the attribute off
+   * controls something else disabled for its own reasons. Attribute mutations are not watched
+   * because the sweep writes attributes itself, which would set it running against its own output.
+   */
+  private watchForLateContent(): void {
+    if (typeof MutationObserver === 'undefined') {
+      return;
+    }
+    // Nothing here needs change detection: the callback only writes attributes.
+    this.zone.runOutsideAngular(() => {
+      this.observer = new MutationObserver(() => this.updateTabIndex(-1));
+      this.observer.observe(this.elementRef.nativeElement, { childList: true, subtree: true });
+    });
+  }
+
+  private stopWatching(): void {
+    this.observer?.disconnect();
+    this.observer = undefined;
+  }
+
   private updateTabIndex(tabIndex: number): void {
+    const exempt = this.keepFocusable();
     const focusableElements = this.getFocusableElements();
     focusableElements.forEach((element) => {
+      // `closest` rather than `matches`: an exempt host counts for whatever it renders inside.
+      if (exempt && element.closest(exempt)) {
+        return;
+      }
       this.renderer.setAttribute(element, 'tabindex', tabIndex.toString());
       this.updateDisabledAttribute(element, tabIndex);
     });

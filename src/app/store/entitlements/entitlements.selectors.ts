@@ -36,3 +36,29 @@ export const selectIsEntitled = (
     return entitlements[feature]?.entitled ?? true;
   },
 );
+
+/**
+ * The same decision for a feature the UI will not offer without an affirmative grant: a loaded
+ * map missing the key reads as denied rather than as not gated. `undefined` still means not
+ * loaded — nothing is decided before the answer arrives.
+ *
+ * `selectIsEntitled` stays the default and the general rule, because it is middleware's: `check`
+ * answers NOT_GATED for a key `POLICY` does not carry, and most gates here guard whole navigation
+ * sections (Apps, VMs, Containers) that must not vanish because a middleware is older than a key,
+ * or because the map failed to load.
+ *
+ * Reach for this one where showing the feature unlocked is the worse half of that guess: it is
+ * new enough that a map without its key means a middleware that cannot enforce it either, and the
+ * denied treatment costs nothing but a tag.
+ */
+export const selectIsEntitledStrictly = (
+  feature: EntitlementFeature,
+): MemoizedSelector<object, boolean | undefined> => createSelector(
+  selectEntitlements,
+  (entitlements) => {
+    if (entitlements === null) {
+      return undefined;
+    }
+    return entitlements[feature]?.entitled ?? false;
+  },
+);

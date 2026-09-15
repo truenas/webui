@@ -5,9 +5,15 @@ import { TranslateModule } from '@ngx-translate/core';
 import { premiumFeatureExplanation } from 'app/directives/premium-feature/premium-badge.component';
 import { PremiumFeatureDirective } from 'app/directives/premium-feature/premium-feature.directive';
 
+/**
+ * The second button stands in for the library's `tn-form-field [tooltip]` trigger, which carries
+ * that class and is the one control inside a denied region that has to stay operable.
+ */
 @Component({
   selector: 'ix-premium-host',
-  template: '<button *ixPremiumFeature="entitled; testId: \'thing\'" type="button">Do the thing</button>',
+  template: `<div *ixPremiumFeature="entitled; testId: 'thing'">
+    <button class="action" type="button">Do the thing</button>
+    <button class="tn-form-field-tooltip" type="button">?</button></div>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PremiumFeatureDirective],
 })
@@ -30,7 +36,8 @@ describe('PremiumFeatureDirective', () => {
   }
 
   const badge = (): HTMLElement | null => spectator.query('[data-test="button-thing-premium"]');
-  const action = (): HTMLElement | null => spectator.query('button:not([data-test])');
+  const action = (): HTMLElement | null => spectator.query('button.action');
+  const tooltipTrigger = (): HTMLElement | null => spectator.query('.tn-form-field-tooltip');
 
   it('renders the content plainly when the system is entitled', () => {
     render(true);
@@ -60,9 +67,9 @@ describe('PremiumFeatureDirective', () => {
   it('explains what to do about it, on the badge itself', () => {
     render(false);
 
-    // The name, not the visible word: "Premium" alone says nothing about why
-    // the controls beside it will not respond.
-    expect(badge()).toHaveAttribute('aria-label', premiumFeatureExplanation);
+    // Leads with the visible word so WCAG 2.5.3 Label in Name holds, then explains: "Premium"
+    // alone says nothing about why the controls beside it will not respond.
+    expect(badge()).toHaveAttribute('aria-label', `Premium: ${premiumFeatureExplanation}`);
   });
 
   it('takes the denied content out of the tab order, leaving the badge in it', fakeAsync(() => {
@@ -77,5 +84,17 @@ describe('PremiumFeatureDirective', () => {
     // and an unreachable explanation is worse than none.
     expect(badge()).not.toHaveAttribute('tabindex', '-1');
     expect(badge()).not.toHaveAttribute('disabled');
+  }));
+
+  it('leaves the denied content\'s tooltip triggers operable', fakeAsync(() => {
+    render(false);
+    tick();
+
+    // The section is shown so an administrator can read what the feature does, and the library
+    // opens a pinned tooltip on a click of this button alone — disabling it withholds the help.
+    expect(tooltipTrigger()).not.toHaveAttribute('disabled');
+    expect(tooltipTrigger()).not.toHaveAttribute('tabindex', '-1');
+    // The control beside it is still out of reach.
+    expect(action()).toHaveAttribute('disabled');
   }));
 });

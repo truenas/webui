@@ -109,8 +109,8 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
    * Object lock rides on versioning: it is implemented with it, and middleware refuses to turn
    * versioning on without the key, so a bucket cannot be locked without it either.
    */
-  protected readonly hasAudit = this.entitlements.entitled(EntitlementFeature.S3Audit);
-  protected readonly hasVersioning = this.entitlements.entitled(EntitlementFeature.S3Versioning);
+  protected readonly hasAudit = this.entitlements.entitledStrictly(EntitlementFeature.S3Audit);
+  protected readonly hasVersioning = this.entitlements.entitledStrictly(EntitlementFeature.S3Versioning);
 
   /**
    * Every dataset on the system. The bucket's dataset is created on submit and must not exist yet.
@@ -227,8 +227,14 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
    * Object lock is a primary option (backup targets), so it drives versioning rather than depending
    * on it: checking it switches versioning on and keeps it there. The one thing that rules it out is
    * the Multiprotocol permissions model, under which another protocol could rewrite a locked object.
+   *
+   * Deliberately NOT the versioning entitlement, though the section is tagged Premium without it.
+   * This clears the control when it turns false (see `syncObjectLockAvailability`), and a bucket that
+   * already has object lock keeps it: the dataset root latches the flag and middleware refuses to
+   * serve a bucket whose row contradicts the latch. Middleware gates the *transition* for the same
+   * reason, so an unentitled appliance saving such a bucket sends the value back unchanged.
    */
-  protected readonly canUseObjectLock = computed(() => !this.isMultiprotocol() && this.hasVersioning() !== false);
+  protected readonly canUseObjectLock = computed(() => !this.isMultiprotocol());
 
   protected readonly objectLockHint = computed(() => {
     if (this.hasVersioning() === false) {
@@ -483,8 +489,10 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
 
     // Omitted rather than sent as the form's defaults when the appliance has no key:
     // middleware rejects audit settings it is not entitled to, and the controls the user saw
-    // were inert, so nothing on screen was theirs to send.
-    if (this.hasAudit()) {
+    // were inert, so nothing on screen was theirs to send. Only an outright denial omits it:
+    // `undefined` is the map still loading, and the fields are live on screen meanwhile, so
+    // dropping them then would silently discard what the user typed.
+    if (this.hasAudit() !== false) {
       payload.audit = this.formToAuditMask(values.audit_mode, values.audit_actions);
       payload.audit_overflow = values.audit_overflow;
     }

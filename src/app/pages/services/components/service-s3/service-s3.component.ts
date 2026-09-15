@@ -127,7 +127,7 @@ export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormVal
    * the chassis: `S3_AUDIT` is a key-only rule, so an appliance and a community system with the
    * same key are both entitled.
    */
-  protected readonly hasAudit = this.entitlements.entitled(EntitlementFeature.S3Audit);
+  protected readonly hasAudit = this.entitlements.entitledStrictly(EntitlementFeature.S3Audit);
 
   protected readonly form = createS3ServiceForm(this.fb);
 
@@ -223,8 +223,10 @@ export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormVal
       global_grants: toS3Grants(this.form.controls.global_grants.controls),
       // Omitted rather than sent as the form's defaults when the appliance has no key:
       // middleware rejects audit settings it is not entitled to, and the controls the user saw
-      // were inert, so nothing on screen was theirs to send.
-      ...(this.hasAudit()
+      // were inert, so nothing on screen was theirs to send. Only an outright denial omits it:
+      // `undefined` is the map still loading, and the fields are live on screen meanwhile, so
+      // dropping them then would silently discard what the user typed.
+      ...(this.hasAudit() !== false
         ? {
             default_audit: this.formToAuditMask(values.default_audit_mode, values.default_audit_actions),
             default_audit_overflow: values.default_audit_overflow,

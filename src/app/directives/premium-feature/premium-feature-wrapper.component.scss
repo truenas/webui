@@ -18,10 +18,30 @@
   opacity: 0.5;
 
   // The content is inert, not merely dim: `disableFocusableElements` takes the
-  // keyboard out, and this takes the pointer out. Without it a tn-checkbox or
-  // tn-slide-toggle stays clickable, because those expose a <label> rather
-  // than the <button> that directive disables.
-  ::ng-deep * {
-    pointer-events: none;
+  // keyboard out, and this takes the pointer out. The controls rather than
+  // everything, as `missing-access-wrapper.component.scss` does: a tn-checkbox
+  // or tn-slide-toggle exposes a <label> rather than the <button> that
+  // directive disables, so those need it, but a blanket rule reaches the help
+  // text too.
+  ::ng-deep {
+    a,
+    button,
+    tn-button,
+    tn-checkbox,
+    tn-icon-button,
+    tn-input,
+    tn-select,
+    tn-slide-toggle {
+      pointer-events: none;
+    }
+
+    // Except the tooltip triggers, which explain rather than operate — the
+    // other half of `keepFocusable` on the host. A class beats an element
+    // selector, so these win over the `button` rule above.
+    .tn-form-field-tooltip,
+    .tn-form-section__tooltip {
+      cursor: help;
+      pointer-events: auto;
+    }
   }
 }

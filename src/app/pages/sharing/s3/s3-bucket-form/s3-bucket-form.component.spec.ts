@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnAutocompleteHarness, TnCheckboxHarness, TnChipInputHarness, TnDialog, TnFormFieldHarness,
   TnFormListHarness, TnInputHarness, TnSelectHarness,
@@ -30,7 +30,9 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { s3UserFormPreset } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 import { DatasetService } from 'app/services/dataset/dataset.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { AppState } from 'app/store';
+import { entitlementsStateKey } from 'app/store/entitlements/entitlements.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
 import { selectLicense } from 'app/store/system-info/system-info.selectors';
@@ -368,6 +370,31 @@ describe('S3BucketFormComponent', () => {
       expect(premiumBadge('s3-audit')).toBeNull();
     });
 
+    it('tags them when the loaded map carries no S3 key at all', async () => {
+      // The reported case: middleware older than the S3 entries in its own POLICY answers
+      // `truenas.entitlements.info` without them. Run through the real service and selector
+      // rather than a mocked decision, because the absent key *is* what is under test.
+      spectator = createComponent({
+        providers: [{ provide: EntitlementsService, useClass: EntitlementsService }],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      // Nothing is tagged before the answer arrives, which is the other half of the contract.
+      expect(premiumBadge('s3-object-lock')).toBeNull();
+
+      const mockStore$ = spectator.inject(MockStore);
+      mockStore$.setState({ [entitlementsStateKey]: { entitlements: {} } });
+      mockStore$.refreshState();
+      spectator.detectChanges();
+
+      expect(premiumBadge('s3-object-lock')).not.toBeNull();
+
+      await clickAdvancedOptions();
+
+      expect(premiumBadge('s3-versioning')).not.toBeNull();
+      expect(premiumBadge('s3-audit')).not.toBeNull();
+    });
+
     it('tags auditing without the S3_AUDIT key, and still shows it', async () => {
       spectator = createComponent({
         providers: [mockEntitlements([EntitlementFeature.S3Audit])],
@@ -387,6 +414,12 @@ describe('S3BucketFormComponent', () => {
         providers: [mockEntitlements([EntitlementFeature.S3Versioning])],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      // eslint-disable-next-line no-console
+      console.log(
+        'DEBUG svc',
+        spectator.inject(EntitlementsService).constructor.name,
+        spectator.inject(EntitlementsService).entitledStrictly(EntitlementFeature.S3Versioning)(),
+      );
 
       expect(premiumBadge('s3-object-lock')).not.toBeNull();
 
@@ -421,6 +454,63 @@ describe('S3BucketFormComponent', () => {
       expect(payload).not.toHaveProperty('audit');
       expect(payload).not.toHaveProperty('audit_overflow');
       expect(payload).toMatchObject({ name: 'videos' });
+    });
+
+    it('sends the audit settings on screen while the entitlement map is still loading', async () => {
+      // `undefined` is "not answered yet", and every gated section renders plainly meanwhile.
+      // Reading that as a denial would quietly drop fields the form is showing as live.
+      spectator = createComponent({
+        providers: [
+          mockProvider(EntitlementsService, {
+            entitled: () => () => undefined,
+            entitledStrictly: () => () => undefined,
+            entitled$: () => of(true),
+            entitlement: () => () => undefined,
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      api = spectator.inject(ApiService);
+
+      await form.fillForm({
+        Name: 'videos',
+        'Parent Dataset': 'tank/buckets',
+        Owner: 'alice',
+      });
+      spectator.component.submit();
+
+      const createCall = jest.mocked(api.call).mock.calls
+        .find(([method]) => method === 'sharing.s3.create');
+      const payload = (createCall?.[1] as [Record<string, unknown>])[0];
+
+      expect(payload).toHaveProperty('audit');
+      expect(payload).toHaveProperty('audit_overflow');
+    });
+
+    it('keeps the object lock a bucket already has when the versioning key is missing', () => {
+      // Middleware latches object lock on the dataset root and gates the transition rather than
+      // the state, so a bucket that has it keeps it on an unentitled appliance. Clearing the
+      // control here would turn a save of something else on the form into an attempt to unlock.
+      const lockedBucket = {
+        ...existingBucket,
+        object_lock: true,
+        object_lock_default_mode: S3ObjectLockMode.Compliance,
+        object_lock_default_days: 30,
+      } as S3Bucket;
+      spectator = createComponent({
+        props: { bucket: lockedBucket },
+        providers: [mockEntitlements([EntitlementFeature.S3Versioning])],
+      });
+      api = spectator.inject(ApiService);
+
+      spectator.component.submit();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.update', [7, expect.objectContaining({
+        object_lock: true,
+        object_lock_default_mode: S3ObjectLockMode.Compliance,
+        object_lock_default_days: 30,
+      })]);
     });
   });
 

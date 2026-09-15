@@ -80,6 +80,7 @@ describe('ServiceS3Component', () => {
       mockAuth(),
       mockProvider(EntitlementsService, {
         entitled: (feature: EntitlementFeature) => computed(() => !deniedFeatures().includes(feature)),
+        entitledStrictly: (feature: EntitlementFeature) => computed(() => !deniedFeatures().includes(feature)),
       }),
       mockApi([
         mockCall('s3.config', config),

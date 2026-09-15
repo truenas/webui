@@ -30,4 +30,12 @@ import { PremiumBadgeComponent } from 'app/directives/premium-feature/premium-ba
 export class PremiumFeatureWrapperComponent {
   readonly template = input.required<TemplateRef<HTMLElement>>();
   readonly testId = input<TnTestIdValue>(undefined);
+
+  /**
+   * The library's tooltip triggers on `tn-form-field [tooltip]` and `tn-form-section [tooltip]`.
+   * They stay operable inside the locked region: the point of leaving a denied feature on screen
+   * is that an administrator can read what it does, and the library pins its tooltips — they open
+   * on a click of that button and on nothing else, so disabling it withholds the explanation.
+   */
+  protected readonly keepFocusable = '.tn-form-field-tooltip, .tn-form-section__tooltip';
 }
