@@ -1,16 +1,16 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, input, OnInit, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, input, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
-import { Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextKerberosRealms } from 'app/helptext/directory-service/kerberos-realms-form-list';
 import { KerberosRealm, KerberosRealmUpdate } from 'app/interfaces/kerberos-realm.interface';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -19,6 +19,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
@@ -26,19 +27,16 @@ import { ApiService } from 'app/modules/websocket/api.service';
     TranslateModule,
   ],
 })
-export class KerberosRealmsFormComponent extends SidePanelForm implements OnInit {
+export class KerberosRealmsFormComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
-  private errorHandler = inject(FormErrorHandlerService);
   private fb = inject(FormBuilder);
-  private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
 
   /** Realm being edited; absent when adding. Supplied by the `<tn-side-panel>` host. */
   readonly editingRow = input<KerberosRealm | undefined>(undefined);
 
   readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected editingRealm: KerberosRealm | undefined;
-
-  protected readonly isFormLoading = signal(false);
 
   protected readonly form = this.fb.group({
     realm: ['', Validators.required],
@@ -47,8 +45,6 @@ export class KerberosRealmsFormComponent extends SidePanelForm implements OnInit
     admin_server: [[] as string[]],
     kpasswd_server: [[] as string[]],
   });
-
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   readonly tooltips = {
     realm: helptextKerberosRealms.realmTooltip,
@@ -59,36 +55,21 @@ export class KerberosRealmsFormComponent extends SidePanelForm implements OnInit
   };
 
   ngOnInit(): void {
+    // The inner `<ix-form>` patches the record through `[editData]`; kept here for the submit path.
     this.editingRealm = this.editingRow();
-
-    if (this.editingRealm) {
-      this.form.patchValue(this.editingRealm);
-    }
   }
 
-  protected onSubmit(): void {
-    const values = this.form.value;
+  protected handleSubmit = (event: FormSubmitEvent): SubmitResult => {
+    const values = this.form.value as KerberosRealmUpdate;
+    const editingRealm = this.editingRealm;
 
-    this.isFormLoading.set(true);
-    let request$: Observable<unknown>;
-    if (this.editingRealm) {
-      request$ = this.api.call('kerberos.realm.update', [
-        this.editingRealm.id,
-        values as KerberosRealmUpdate,
-      ]);
-    } else {
-      request$ = this.api.call('kerberos.realm.create', [values as KerberosRealmUpdate]);
-    }
-
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.isFormLoading.set(false);
-        this.close(true);
-      },
-      error: (error: unknown) => {
-        this.isFormLoading.set(false);
-        this.errorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+    return {
+      request$: editingRealm
+        ? this.api.call('kerberos.realm.update', [editingRealm.id, values])
+        : this.api.call('kerberos.realm.create', [values]),
+      successMessage: event.isEdit
+        ? this.translate.instant('Kerberos realm updated.')
+        : this.translate.instant('Kerberos realm created.'),
+    };
+  };
 }

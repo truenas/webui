@@ -1,4 +1,10 @@
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="true"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <!-- Basic Configuration -->
   <tn-form-section [heading]="'Basic Configuration' | translate">
     <tn-form-field
@@ -97,4 +103,4 @@
       (isValid)="onIpaValidityChanged($event)"
     ></ix-ipa-config>
   }
-</form>
+</ix-form>
