@@ -11,6 +11,7 @@
  * Everything they merely depend on — a pool, the parent dataset, the account,
  * a stopped S3 service — comes from the API.
  */
+import { entitlementFeature, isEntitled } from '../fixtures/entitlements';
 import { findOnlinePool } from '../fixtures/pool';
 import {
   ensureDatasetAbsent, ensureDatasetPresent, ensureS3AccessKeysAbsent, ensureS3BucketAbsent,
@@ -71,7 +72,17 @@ test.afterEach(async ({ api }) => {
   await cleanUp(api);
 });
 
-test('an admin publishes an S3 bucket with object lock and starts the service', async ({ page, api, pool }) => {
+test('an admin publishes an S3 bucket with object lock and starts the service', async ({
+  page, api, pool, entitlements,
+}) => {
+  // Object lock is built on versioning, so the one key gates both: without it the UI renders the
+  // section dimmed and inert with a Premium tag, and this journey's first click has nothing to
+  // hit. See `fixtures/entitlements.ts`.
+  test.skip(
+    !isEntitled(entitlements, entitlementFeature.s3Versioning),
+    'This appliance is not entitled to S3_VERSIONING, so the UI locks the Object Lock section.',
+  );
+
   const parent = `${pool}/${parentDataset}`;
   await ensureDatasetPresent(api, parent);
 

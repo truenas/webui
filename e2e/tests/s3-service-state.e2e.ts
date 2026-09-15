@@ -12,6 +12,7 @@
  * is exercised too, and the header switch — which nothing else touches — is
  * shown to call `service.control` for real.
  */
+import { entitlementFeature, isEntitled } from '../fixtures/entitlements';
 import {
   ensureDatasetAbsent, ensureDatasetPresent, ensureS3BucketAbsent, ensureS3BucketPresent, ensureS3ServiceRunning,
   ensureS3ServiceStopped, queryS3Service, readS3Config, setS3ManagedRootDataset,
@@ -59,7 +60,17 @@ test.afterEach(async ({ api, pool }) => {
   await cleanUp(api, pool);
 });
 
-test('an admin adds a bucket to a running service and stops it from the card', async ({ page, api, pool }) => {
+test('an admin adds a bucket to a running service and stops it from the card', async ({
+  page, api, pool, entitlements,
+}) => {
+  // Object lock is built on versioning, so the one key gates both: without it the UI renders the
+  // section dimmed and inert with a Premium tag, and this journey's first click has nothing to
+  // hit. See `fixtures/entitlements.ts`.
+  test.skip(
+    !isEntitled(entitlements, entitlementFeature.s3Versioning),
+    'This appliance is not entitled to S3_VERSIONING, so the UI locks the Object Lock section.',
+  );
+
   const parent = `${pool}/${parentDataset}`;
   await ensureS3BucketPresent(api, { name: firstBucket, parentDataset: parent, owner });
   await ensureS3ServiceRunning(api);
