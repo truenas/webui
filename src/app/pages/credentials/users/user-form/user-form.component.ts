@@ -15,7 +15,9 @@ import { Role } from 'app/enums/role.enum';
 import {
   hasShellAccess, hasSshAccess, hasTrueNasAccess, isEmptyHomeDirectory,
 } from 'app/helpers/user.helper';
-import { User, UserUpdate } from 'app/interfaces/user.interface';
+import {
+  isUserFormPresetData, User, UserFormPresetData, UserUpdate,
+} from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -60,7 +62,7 @@ import { AppState } from 'app/store';
 })
 export class UserFormComponent implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
-  slideInRef = inject<SlideInRef<User | undefined, User>>(SlideInRef);
+  slideInRef = inject<SlideInRef<User | UserFormPresetData | undefined, User>>(SlideInRef);
   private userFormStore = inject(UserFormStore);
   private formErrorHandler = inject(FormErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
@@ -70,7 +72,23 @@ export class UserFormComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected isStigMode = this.userFormStore.isStigMode;
-  protected editingUser = signal<User>(this.slideInRef.getData());
+  private readonly slideInData = this.slideInRef.getData();
+
+  protected editingUser = signal<User>(
+    isUserFormPresetData(this.slideInData) ? undefined : this.slideInData,
+  );
+
+  /**
+   * What the create flow wants this form to start as, for an account that is
+   * not a general-purpose one — see {@link UserFormPreset}. Absent while
+   * editing, which is what keeps it out of forms about a record that exists.
+   *
+   * Handed straight to the sections that own the controls it names; this form
+   * holds only the username. The two halves coordinate through the store, as
+   * everything else here does: SMB access going off is what lets the auth
+   * section tick "Disable Password" at all.
+   */
+  protected readonly preset = isUserFormPresetData(this.slideInData) ? this.slideInData.preset : undefined;
 
   protected isFormLoading = signal<boolean>(false);
 

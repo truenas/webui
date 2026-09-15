@@ -30,7 +30,7 @@ import {
   tap,
 } from 'rxjs/operators';
 import { newOption, Option } from 'app/interfaces/option.interface';
-import { User } from 'app/interfaces/user.interface';
+import { User, UserFormPreset } from 'app/interfaces/user.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { UserPickerProvider } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker-provider';
@@ -79,6 +79,13 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
   readonly allowCustomValue = input(false);
 
   readonly provider = input.required<UserPickerProvider>();
+  /**
+   * What the "Add New" panel opens with, for a field whose new account is not
+   * a general-purpose one — see {@link UserFormPreset}. Only a starting point:
+   * the form is fully editable from there, except where the preset says
+   * otherwise.
+   */
+  readonly createPreset = input<UserFormPreset | undefined>(undefined);
   readonly translate = inject(TranslateService);
   readonly slideIn = inject(SlideIn);
   private destroyRef = inject(DestroyRef);
@@ -358,7 +365,12 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
     this.controlDirective?.control?.valueChanges?.pipe(
       distinctUntilChanged(),
       filter((selectedOption) => selectedOption === newOption),
-      switchMap(() => this.slideIn.open(UserFormComponent, { wide: true })),
+      // No `data` at all without a preset, so a field that asks for nothing
+      // opens the form exactly as it always did.
+      switchMap(() => {
+        const preset = this.createPreset();
+        return this.slideIn.open(UserFormComponent, preset ? { wide: true, data: { preset } } : { wide: true });
+      }),
       catchError((error: unknown) => {
         // Handle slide-in errors gracefully
         this.errorHandler.handleError(error);
