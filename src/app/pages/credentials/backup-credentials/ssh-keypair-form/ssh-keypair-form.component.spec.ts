@@ -13,6 +13,7 @@ import {
   DialogService,
 } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import {
   SidePanelFooterMenuItem,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
@@ -43,6 +44,7 @@ describe('SshKeypairFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockApi([
         mockCall('keychaincredential.generate_ssh_key_pair', {
           private_key: 'Generated private key',

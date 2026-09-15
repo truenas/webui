@@ -12,6 +12,8 @@ import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxFormComponent } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -36,6 +38,9 @@ ngMocks.globalKeep(TnCheckboxComponent);
 // `tn-form-field` uses signal-based content queries that crash when auto-mocked
 // by ng-mocks; render it real so the form template initializes.
 ngMocks.globalKeep(TnFormFieldComponent);
+// The wrapper owns the edit-data patch and the submit lifecycle, so a mocked one would leave the
+// controls blank and swallow Save.
+ngMocks.globalKeep(IxFormComponent);
 
 describe('CertificateEditComponent', () => {
   let spectator: Spectator<CertificateEditComponent>;
@@ -63,6 +68,7 @@ describe('CertificateEditComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockApi([
         mockJob('certificate.update'),
       ]),

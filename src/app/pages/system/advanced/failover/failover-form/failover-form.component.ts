@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -7,12 +7,12 @@ import {
   InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent,
 } from '@truenas/ui-components';
-import { filter, finalize, switchMap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -25,6 +25,7 @@ import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
   imports: [
     ReactiveFormsModule,
     TranslateModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnCheckboxComponent,
@@ -33,12 +34,11 @@ import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
     TnButtonComponent,
   ],
 })
-export class FailoverFormComponent extends SidePanelForm {
+export class FailoverFormComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private store$ = inject(Store);
@@ -49,20 +49,27 @@ export class FailoverFormComponent extends SidePanelForm {
     timeout: [null as number | null],
   });
 
-  protected isLoading = signal(false);
+  /**
+   * A peer sync kicked off by the in-body actions — neither a config load nor a submit, so it is
+   * tracked here and folded into the host's busy/Save gating by the overrides below.
+   */
+  protected readonly isSyncing = signal(false);
+
   protected readonly helptext = helptextSystemFailover;
   protected readonly InputType = InputType;
 
-  readonly canSubmit = this.trackCanSubmit(this.isLoading);
+  /** Surfaces the peer sync in the panel's progress bar alongside the load/submit the base tracks. */
+  override isBusy(): boolean {
+    return super.isBusy() || this.isSyncing();
+  }
 
-  constructor() {
-    super();
+  /** A sync and a save both talk to the peer; don't let the footer Save start one mid-sync. */
+  override canSubmit(): boolean {
+    return !this.isSyncing() && super.canSubmit();
+  }
 
-    this.isLoading.set(true);
-    this.api.call('failover.config').pipe(
-      finalize(() => this.isLoading.set(false)),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((config) => {
+  ngOnInit(): void {
+    this.loadFormConfig(this.api.call('failover.config'), (config) => {
       this.form.patchValue({
         enabled: !config.disabled,
         timeout: config.timeout,
@@ -70,30 +77,19 @@ export class FailoverFormComponent extends SidePanelForm {
     });
   }
 
-  protected onSubmit(): void {
-    this.isLoading.set(true);
+  protected handleSubmit = (): SubmitResult => {
     const values = this.form.getRawValue();
-    const payload = {
-      master: true,
-      timeout: values.timeout,
-      disabled: !values.enabled,
+
+    return {
+      request$: this.api.call('failover.update', [{
+        master: true,
+        timeout: values.timeout,
+        disabled: !values.enabled,
+      }]),
+      successMessage: this.translate.instant('Settings saved.'),
+      onSuccess: () => this.store$.dispatch(haSettingsUpdated()),
     };
-
-    this.api.call('failover.update', [payload]).pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.store$.dispatch(haSettingsUpdated());
-          this.snackbar.success(this.translate.instant('Settings saved.'));
-          this.isLoading.set(false);
-
-          this.close(true);
-        },
-        error: (error: unknown) => {
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-          this.isLoading.set(false);
-        },
-      });
-  }
+  };
 
   protected onSyncToPeerPressed(): void {
     this.dialogService.confirm({
@@ -106,20 +102,20 @@ export class FailoverFormComponent extends SidePanelForm {
       .pipe(
         filter((result) => result.confirmed),
         switchMap((result) => {
-          this.isLoading.set(true);
+          this.isSyncing.set(true);
           return this.api.call('failover.sync_to_peer', [{ reboot: result.secondaryCheckbox }]);
         }),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: () => {
-          this.isLoading.set(false);
+          this.isSyncing.set(false);
           this.snackbar.success(
             this.translate.instant(helptextSystemFailover.confirmDialogs.syncToMessage),
           );
         },
         error: (error: unknown) => {
-          this.isLoading.set(false);
+          this.isSyncing.set(false);
           this.errorHandler.showErrorModal(error);
         },
       });
@@ -134,20 +130,20 @@ export class FailoverFormComponent extends SidePanelForm {
       .pipe(
         filter(Boolean),
         switchMap(() => {
-          this.isLoading.set(true);
+          this.isSyncing.set(true);
           return this.api.call('failover.sync_from_peer');
         }),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: () => {
-          this.isLoading.set(false);
+          this.isSyncing.set(false);
           this.snackbar.success(
             this.translate.instant(helptextSystemFailover.confirmDialogs.syncFromMessage),
           );
         },
         error: (error: unknown) => {
-          this.isLoading.set(false);
+          this.isSyncing.set(false);
           this.errorHandler.showErrorModal(error);
         },
       });

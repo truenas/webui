@@ -11,6 +11,7 @@ import { Observable, of } from 'rxjs';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Option } from 'app/interfaces/option.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LanguageService } from 'app/modules/language/language.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
@@ -31,6 +32,7 @@ describe('PreferencesFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       provideMockStore({
         selectors: [{
           selector: selectPreferences,

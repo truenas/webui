@@ -1,4 +1,11 @@
-<form class="card ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<ix-form
+  class="card"
+  [formGroup]="form"
+  [isEditMode]="true"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <div class="two-columns">
     <tn-form-section [heading]="helptext.hostnameAndDomain | translate">
       <tn-form-field [label]="hostname.label | translate">
@@ -152,4 +159,4 @@
       </tn-form-field>
     </tn-form-section>
   </div>
-</form>
+</ix-form>

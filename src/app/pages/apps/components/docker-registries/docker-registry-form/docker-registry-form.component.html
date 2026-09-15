@@ -1,4 +1,10 @@
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="!!existingDockerRegistry"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <tn-form-section>
     @if (!loggedInToDockerHub && !existingDockerRegistry) {
       <tn-form-field [label]="'URI' | translate">
@@ -51,4 +57,4 @@
       ></tn-input>
     </tn-form-field>
   </tn-form-section>
-</form>
+</ix-form>

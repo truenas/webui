@@ -34,11 +34,12 @@ import { IpaConfig } from 'app/interfaces/ipa-config.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import {
   SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ActiveDirectoryConfigComponent } from './active-directory-config/active-directory-config.component';
@@ -56,6 +57,7 @@ import { DirectoryServiceValidationService } from './services/directory-service-
   imports: [
     AsyncPipe,
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
@@ -68,7 +70,7 @@ import { DirectoryServiceValidationService } from './services/directory-service-
     IpaConfigComponent,
   ],
 })
-export class DirectoryServicesFormComponent extends SidePanelForm implements OnInit {
+export class DirectoryServicesFormComponent extends IxFormHostForm implements OnInit {
   private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
@@ -83,7 +85,10 @@ export class DirectoryServicesFormComponent extends SidePanelForm implements OnI
   readonly existingConfig = input<DirectoryServicesConfig | undefined>(undefined);
 
   protected readonly previousConfig = signal<DirectoryServicesConfig | null>(null);
-  protected readonly isLoading = signal(false);
+
+  /** The "Clear Config" footer action's job — a separate write from the form's own save. */
+  private readonly isClearingConfig = signal(false);
+
   readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly helptext = helptextDirectoryServices;
   protected readonly InputType = InputType;
@@ -102,11 +107,30 @@ export class DirectoryServicesFormComponent extends SidePanelForm implements OnI
   });
 
   /**
-   * Drives the host-owned Save action (`<tn-side-panel>` footer). Built by hand rather than via
-   * the base `trackCanSubmit()` because validity here is the aggregate `isFormValid()` signal
-   * (main form + child-form validation service), not just `form.status`.
+   * Widened: validity here is the aggregate `isFormValid()` (main form + the child configuration
+   * and credential forms, tracked by the validation service), not just the group `<ix-form>` owns.
    */
-  readonly canSubmit = computed(() => this.isFormValid() && !this.isLoading());
+  override canSubmit(): boolean {
+    return this.isFormValid() && !this.isClearingConfig() && super.canSubmit();
+  }
+
+  /** Folds the "Clear Config" job into the panel's progress bar. */
+  override isBusy(): boolean {
+    return super.isBusy() || this.isClearingConfig();
+  }
+
+  /**
+   * The host's Save must respect the aggregate gate above, which the inner `<ix-form>` cannot see.
+   * Manual (backend-mapped) errors are cleared first: they may be the only thing making the form
+   * look invalid, so the gate has to judge the corrected state.
+   */
+  override submit(): void {
+    this.validationService.clearFormControlErrors(this.form);
+    if (!this.canSubmit()) {
+      return;
+    }
+    super.submit();
+  }
 
   /** Secondary footer action rendered by the side-panel host beside Save. */
   readonly footerActions: SidePanelFooterAction[] = [{
@@ -218,40 +242,19 @@ export class DirectoryServicesFormComponent extends SidePanelForm implements OnI
     this.cdr.markForCheck();
   }
 
-  protected onSubmit(): void {
-    // Clear any manual validation errors before submitting
-    this.validationService.clearFormControlErrors(this.form);
-
-    if (this.form.invalid) {
-      return;
-    }
-
-    if (!this.isFormValid()) {
-      return;
-    }
-
-    const formValue = this.form.value;
-    const apiPayload = this.transformFormDataToApiPayload(formValue);
-
-    this.isLoading.set(true);
-    this.dialogService.jobDialog(
-      this.api.job('directoryservices.update', [apiPayload]),
+  protected handleSubmit = (): SubmitResult => ({
+    request$: this.dialogService.jobDialog(
+      this.api.job('directoryservices.update', [this.transformFormDataToApiPayload(this.form.value)]),
       { title: this.translate.instant('Updating Directory Services Configuration') },
-    )
-      .afterClosed()
-      .pipe(
-        finalize(() => this.isLoading.set(false)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe({
-        next: () => {
-          this.close(true);
-        },
-        error: (error: unknown) => {
-          this.formErrorHandler.handleValidationErrors(error, this.form, this.getFieldsMap());
-        },
-      });
-  }
+    ).afterClosed(),
+    successMessage: this.translate.instant('Directory services configuration updated.'),
+    // Backend field names span the child forms, so they need `getFieldsMap()` to land anywhere
+    // useful — the wrapper's default handler maps against the main group alone.
+    onError: (error) => {
+      this.formErrorHandler.handleValidationErrors(error, this.form, this.getFieldsMap());
+      return true;
+    },
+  });
 
   protected onClearConfig(): void {
     this.dialogService.confirm({
@@ -265,19 +268,19 @@ export class DirectoryServicesFormComponent extends SidePanelForm implements OnI
         return;
       }
 
-      this.isLoading.set(true);
+      this.isClearingConfig.set(true);
       this.dialogService.jobDialog(
         this.api.job('directoryservices.update', [{ enable: false, service_type: null } as DirectoryServicesUpdate]),
         { title: this.translate.instant('Clearing Directory Services Configuration') },
       )
         .afterClosed()
         .pipe(
-          finalize(() => this.isLoading.set(false)),
+          finalize(() => this.isClearingConfig.set(false)),
           takeUntilDestroyed(this.destroyRef),
         )
         .subscribe({
           next: () => {
-            this.close(true);
+            this.closed.emit(true);
           },
           error: (error: unknown) => {
             this.errorHandler.showErrorModal(error);

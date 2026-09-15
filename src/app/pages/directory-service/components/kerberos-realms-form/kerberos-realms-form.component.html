@@ -1,4 +1,10 @@
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<ix-form
+  [formGroup]="form"
+  [editData]="editingRow()"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <tn-form-section>
     <tn-form-field
       [label]="'Realm' | translate"
@@ -60,4 +66,4 @@
       ></tn-chip-input>
     </tn-form-field>
   </tn-form-section>
-</form>
+</ix-form>

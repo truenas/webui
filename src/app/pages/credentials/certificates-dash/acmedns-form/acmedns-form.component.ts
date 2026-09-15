@@ -24,11 +24,12 @@ import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/compon
 import {
   IxDynamicFormComponent,
 } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudflareAuthValidator } from 'app/pages/credentials/certificates-dash/acmedns-form/cloudflare-auth.validator';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface DnsAuthenticatorList {
   key: DnsAuthenticatorType;
@@ -43,6 +44,7 @@ interface DnsAuthenticatorList {
   imports: [
     AsyncPipe,
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
@@ -52,17 +54,15 @@ interface DnsAuthenticatorList {
     IxDynamicFormComponent,
   ],
 })
-export class AcmednsFormComponent extends SidePanelForm implements OnInit {
+export class AcmednsFormComponent extends IxFormHostForm implements OnInit {
   private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);
-  private errorHandler = inject(ErrorHandlerService);
-  private formErrorHandlerService = inject(FormErrorHandlerService);
   private api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
-  form = this.formBuilder.nonNullable.group({
+  protected form = this.formBuilder.nonNullable.group({
     name: [null as string | null, Validators.required],
     authenticator: [DnsAuthenticatorType.Cloudflare, Validators.required],
     attributes: this.formBuilder.group<Record<string, string>>({}, {
@@ -79,10 +79,16 @@ export class AcmednsFormComponent extends SidePanelForm implements OnInit {
     return this.form.controls.attributes as UntypedFormGroup;
   }
 
-  protected isLoading = signal(false);
-  protected isLoadingSchemas = signal(true);
+  /**
+   * Gates the dynamic sub-form on the schemas that define its controls. Distinct from the base's
+   * load flag: that clears on failure too, and rendering the dynamic form against no schemas at
+   * all would blank the panel.
+   */
+  protected readonly schemasLoaded = signal(false);
 
-  readonly canSubmit = this.trackCanSubmit(this.isLoading);
+  // The Cloudflare listeners hang off controls that only exist after the schemas land, so unlike
+  // most wiring they can't be set up before the load — guard them against the retry replay instead.
+  private isCloudflareValidationWired = false;
 
   /** Authenticator to edit, supplied by the `<tn-side-panel>` host. Absent for Add. */
   readonly editingAuthenticator = input<DnsAuthenticator | undefined>(undefined);
@@ -113,31 +119,24 @@ export class AcmednsFormComponent extends SidePanelForm implements OnInit {
   }
 
   private loadSchemas(): void {
-    this.isLoading.set(true);
-    this.getAuthenticatorSchemas()
-      .pipe(
-        this.errorHandler.withErrorHandler(),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((schemas: AuthenticatorSchema[]) => {
-        this.setAuthenticatorOptions(schemas);
-        this.createAuthenticatorControls(schemas);
+    this.loadFormConfig(this.getAuthenticatorSchemas(), (schemas: AuthenticatorSchema[]) => {
+      this.setAuthenticatorOptions(schemas);
+      this.createAuthenticatorControls(schemas);
 
-        if (this.editingAcmedns) {
-          this.form.patchValue(this.editingAcmedns);
-          const authenticatorType = this.editingAcmedns.attributes.authenticator as DnsAuthenticatorType;
-          if (authenticatorType) {
-            this.form.patchValue({ authenticator: authenticatorType });
-            this.onAuthenticatorTypeChanged(authenticatorType);
-          }
+      if (this.editingAcmedns) {
+        this.form.patchValue(this.editingAcmedns);
+        const authenticatorType = this.editingAcmedns.attributes.authenticator as DnsAuthenticatorType;
+        if (authenticatorType) {
+          this.form.patchValue({ authenticator: authenticatorType });
+          this.onAuthenticatorTypeChanged(authenticatorType);
         }
+      }
 
-        // Setup validation listeners after controls are created
-        this.setupCloudflareValidation();
+      // Setup validation listeners after controls are created
+      this.setupCloudflareValidation();
 
-        this.isLoading.set(false);
-        this.isLoadingSchemas.set(false);
-      });
+      this.schemasLoaded.set(true);
+    });
   }
 
   private setAuthenticatorOptions(schemas: AuthenticatorSchema[]): void {
@@ -204,6 +203,11 @@ export class AcmednsFormComponent extends SidePanelForm implements OnInit {
   }
 
   private setupCloudflareValidation(): void {
+    if (this.isCloudflareValidationWired) {
+      return;
+    }
+    this.isCloudflareValidationWired = true;
+
     const attributes = this.form.controls.attributes;
 
     // Listen to value changes on Cloudflare fields to re-validate
@@ -221,7 +225,7 @@ export class AcmednsFormComponent extends SidePanelForm implements OnInit {
     return this.form.value.authenticator === DnsAuthenticatorType.Cloudflare;
   }
 
-  protected onSubmit(): void {
+  protected handleSubmit = (event: FormSubmitEvent): SubmitResult => {
     const values = {
       name: this.form.value.name,
       attributes: this.form.value.attributes,
@@ -235,27 +239,15 @@ export class AcmednsFormComponent extends SidePanelForm implements OnInit {
       }
     }
 
-    this.isLoading.set(true);
-    let request$: Observable<unknown>;
+    const editingAcmedns = this.editingAcmedns;
 
-    if (this.editingAcmedns) {
-      request$ = this.api.call('acme.dns.authenticator.update', [
-        this.editingAcmedns.id,
-        values,
-      ]);
-    } else {
-      request$ = this.api.call('acme.dns.authenticator.create', [values]);
-    }
-
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.isLoading.set(false);
-        this.close(true);
-      },
-      error: (error: unknown) => {
-        this.isLoading.set(false);
-        this.formErrorHandlerService.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+    return {
+      request$: editingAcmedns
+        ? this.api.call('acme.dns.authenticator.update', [editingAcmedns.id, values])
+        : this.api.call('acme.dns.authenticator.create', [values]),
+      successMessage: event.isEdit
+        ? this.translate.instant('DNS authenticator updated.')
+        : this.translate.instant('DNS authenticator created.'),
+    };
+  };
 }

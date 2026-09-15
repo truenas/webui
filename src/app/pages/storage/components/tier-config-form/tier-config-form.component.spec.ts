@@ -10,6 +10,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TierConfigFormComponent } from 'app/pages/storage/components/tier-config-form/tier-config-form.component';
 
@@ -31,6 +32,7 @@ describe('TierConfigFormComponent', () => {
     component: TierConfigFormComponent,
     imports: [ReactiveFormsModule],
     providers: [
+      ...ixFormTestingProviders(),
       mockApi([
         mockCall('zfs.tier.config', mockConfig),
         mockCall('zfs.tier.update', mockConfig),

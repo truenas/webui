@@ -14,6 +14,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ImportPoolComponent } from './import-pool.component';
 
@@ -66,6 +67,7 @@ describe('ImportPoolComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockApi([
         mockJob('pool.import_pool', fakeSuccessfulJob()),
         mockJob('pool.import_find', fakeSuccessfulJob(mockPools)),
@@ -145,6 +147,7 @@ describe('ImportPoolComponent', () => {
       component: ImportPoolComponent,
       imports: [ReactiveFormsModule],
       providers: [
+        ...ixFormTestingProviders(),
         mockApi([
           mockJob('pool.import_find', fakeSuccessfulJob(mockPools)),
         ]),
@@ -175,6 +178,7 @@ describe('ImportPoolComponent', () => {
       component: ImportPoolComponent,
       imports: [ReactiveFormsModule],
       providers: [
+        ...ixFormTestingProviders(),
         mockApi([
           mockJob('pool.import_pool', fakeSuccessfulJob()),
           mockJob('pool.import_find', fakeSuccessfulJob(mockPools)),

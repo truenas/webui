@@ -4,17 +4,16 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType,
   TnBannerComponent, TnCheckboxComponent,
   TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-tier-config-form',
@@ -22,6 +21,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnCheckboxComponent,
@@ -30,16 +30,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
   ],
 })
-export class TierConfigFormComponent extends SidePanelForm implements OnInit {
+export class TierConfigFormComponent extends IxFormHostForm implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
-  private errorHandler = inject(FormErrorHandlerService);
-  private globalErrorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly InputType = InputType;
 
-  protected isFormLoading = signal(false);
   protected showEnabledWarning = signal(false);
 
   protected readonly enabledWarningHeading = T('Shares will be locked to a single dataset');
@@ -60,7 +58,7 @@ export class TierConfigFormComponent extends SidePanelForm implements OnInit {
   private static readonly defaultMaxUsedPercent = 80;
   private static readonly defaultReservePercent = 25;
 
-  readonly form = this.fb.nonNullable.group({
+  protected readonly form = this.fb.nonNullable.group({
     enabled: [false],
     max_concurrent_jobs: [
       TierConfigFormComponent.defaultMaxConcurrentJobs,
@@ -80,8 +78,6 @@ export class TierConfigFormComponent extends SidePanelForm implements OnInit {
     ],
   });
 
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
-
   private initialEnabled = false;
 
   constructor() {
@@ -95,38 +91,14 @@ export class TierConfigFormComponent extends SidePanelForm implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isFormLoading.set(true);
-    this.api.call('zfs.tier.config').pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (config: ZfsTierConfig) => {
-        this.initialEnabled = config.enabled;
-        this.form.patchValue(config);
-        this.isFormLoading.set(false);
-      },
-      error: (error: unknown) => {
-        this.isFormLoading.set(false);
-        this.globalErrorHandler.showErrorModal(error);
-      },
+    this.loadFormConfig(this.api.call('zfs.tier.config'), (config: ZfsTierConfig) => {
+      this.initialEnabled = config.enabled;
+      this.form.patchValue(config);
     });
   }
 
-  protected onSubmit(): void {
-    if (this.isFormLoading()) return;
-    const values = this.form.getRawValue();
-    this.isFormLoading.set(true);
-
-    this.api.call('zfs.tier.update', [values]).pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.isFormLoading.set(false);
-        this.close(true);
-      },
-      error: (error: unknown) => {
-        this.isFormLoading.set(false);
-        this.errorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+  protected handleSubmit = (): SubmitResult => ({
+    request$: this.api.call('zfs.tier.update', [this.form.getRawValue()]),
+    successMessage: this.translate.instant('Tiering configuration updated.'),
+  });
 }

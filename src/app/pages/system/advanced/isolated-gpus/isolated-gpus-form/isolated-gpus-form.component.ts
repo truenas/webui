@@ -1,15 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, ChangeDetectorRef, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent } from '@truenas/ui-components';
-import { take } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CriticalGpuPreventionService } from 'app/services/gpu/critical-gpu-prevention.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
@@ -24,6 +21,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnSelectComponent,
@@ -31,73 +29,55 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
     AsyncPipe,
   ],
 })
-export class IsolatedGpusFormComponent extends SidePanelForm implements OnInit {
+export class IsolatedGpusFormComponent extends IxFormHostForm implements OnInit {
   protected api = inject(ApiService);
-  private errorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
-  private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
   private gpuValidator = inject(IsolatedGpuValidatorService);
   private gpuService = inject(GpuService);
-  private snackbar = inject(SnackbarService);
   private criticalGpuPrevention = inject(CriticalGpuPreventionService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
-  protected isFormLoading = signal(false);
-
-  form = new FormGroup({
+  protected readonly form = new FormGroup({
     isolated_gpu_pci_ids: new FormControl<string[]>([], {
       nonNullable: true,
       asyncValidators: [this.gpuValidator.validateGpu],
     }),
   });
 
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
-
   criticalGpus = new Map<string, string>(); // Maps pci_slot to critical_reason
 
   readonly options$ = this.gpuService.getGpuOptions();
 
   ngOnInit(): void {
-    this.store$.pipe(
-      waitForAdvancedConfig,
-      take(1),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((config) => {
-      this.form.setValue({
-        isolated_gpu_pci_ids: config.isolated_gpu_pci_ids,
-      });
-      this.cdr.markForCheck();
-    });
-
-    // Setup critical GPU prevention
+    // Wired before the load so a replayed `loadFormConfig` patch can't register it twice.
     this.criticalGpus = this.criticalGpuPrevention.setupCriticalGpuPrevention(
       this.form.controls.isolated_gpu_pci_ids,
       this.destroyRef,
       this.translate.instant('Cannot Isolate GPU'),
       this.translate.instant('System critical GPUs cannot be isolated'),
     );
-  }
 
-  protected onSubmit(): void {
-    this.isFormLoading.set(true);
-    const { isolated_gpu_pci_ids: isolatedGpuPciIds } = this.form.value;
-
-    this.api.call('system.advanced.update_gpu_pci_ids', [isolatedGpuPciIds]).pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.isFormLoading.set(false);
-        this.snackbar.success(this.translate.instant('Settings saved'));
-        this.store$.dispatch(advancedConfigUpdated());
-        this.close(true);
-      },
-      error: (error: unknown) => {
-        this.isFormLoading.set(false);
-        this.errorHandler.handleValidationErrors(error, this.form);
-      },
+    this.loadFormConfig(this.store$.pipe(waitForAdvancedConfig), (config) => {
+      // `emitEvent: false` because the critical-GPU guard wired above is meant to police the
+      // USER's selections. Loading a saved id that the guard considers critical would otherwise
+      // pop "Cannot Isolate GPU" on open and silently strip it — and that stripped value is what
+      // `loadFormConfig` then captures as the pristine snapshot.
+      this.form.setValue({
+        isolated_gpu_pci_ids: config.isolated_gpu_pci_ids,
+      }, { emitEvent: false });
     });
   }
+
+  protected handleSubmit = (): SubmitResult => {
+    const { isolated_gpu_pci_ids: isolatedGpuPciIds } = this.form.value;
+
+    return {
+      request$: this.api.call('system.advanced.update_gpu_pci_ids', [isolatedGpuPciIds]),
+      successMessage: this.translate.instant('Settings saved'),
+      onSuccess: () => this.store$.dispatch(advancedConfigUpdated()),
+    };
+  };
 }

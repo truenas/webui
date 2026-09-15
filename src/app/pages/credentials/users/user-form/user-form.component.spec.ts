@@ -23,6 +23,7 @@ import { SystemSecurityConfig } from 'app/interfaces/system-security-config.inte
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
@@ -124,6 +125,7 @@ describe('UserFormComponent', () => {
       ),
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockAuth(),
       mockApi([
         mockCall('group.query', [{
@@ -341,10 +343,11 @@ describe('UserFormComponent', () => {
         ]);
       });
 
-      it('shows "Saving…" via isSubmitting even when the save is gated behind an async confirmation', async () => {
-        // The default new-user values trigger getHomeCreateWarning, so onSubmit() routes through the
-        // (asynchronous) confirmation dialog before the save goes busy. Hold both the confirm and the
-        // create in flight so we can observe each phase.
+      it('stays "Saving…" from Save through the async confirmation until the create settles', async () => {
+        // The default new-user values trigger getHomeCreateWarning, so the submit routes through the
+        // (asynchronous) confirmation dialog before the create is issued. Hold both the confirm and
+        // the create in flight so we can observe each phase. The submit lifecycle belongs to
+        // `<ix-form>`, which counts the whole request — confirmation included — as the save.
         const confirm$ = new Subject<boolean>();
         // mockReturnValueOnce so the shared confirm mock reverts to its default for later tests.
         (spectator.inject(DialogService).confirm as jest.Mock).mockReturnValueOnce(confirm$);
@@ -361,10 +364,10 @@ describe('UserFormComponent', () => {
         spectator.component.submit();
         spectator.detectChanges();
 
-        // Awaiting the user's confirmation: the save hasn't started, so it must not read "Saving…".
-        expect(spectator.component.isSubmitting()).toBe(false);
+        // Awaiting the user's confirmation — already part of the save, so Save reads "Saving…".
+        expect(spectator.component.isSubmitting()).toBe(true);
 
-        // User confirms → loading flips true (long after submit() returned) → Save must show "Saving…".
+        // User confirms → the create goes out; still saving.
         confirm$.next(true);
         spectator.detectChanges();
         expect(spectator.component.isBusy()).toBe(true);

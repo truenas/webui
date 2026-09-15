@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -9,14 +9,16 @@ import {
   InputType,
   TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { dockerHubRegistry, DockerRegistry, DockerRegistryPayload } from 'app/interfaces/docker-registry.interface';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-docker-registry-form',
@@ -26,15 +28,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     AsyncPipe,
     ReactiveFormsModule,
     TranslateModule,
+    IxFormComponent,
     TnFormFieldComponent,
     TnFormSectionComponent,
     TnInputComponent,
     TnSelectComponent,
   ],
 })
-export class DockerRegistryFormComponent extends SidePanelForm implements OnInit {
+export class DockerRegistryFormComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
-  private errorHandler = inject(ErrorHandlerService);
   private fb = inject(FormBuilder);
   private urlValidationService = inject(UrlValidationService);
   private translate = inject(TranslateService);
@@ -50,7 +52,6 @@ export class DockerRegistryFormComponent extends SidePanelForm implements OnInit
   protected existingDockerRegistry: DockerRegistry | undefined;
   /** Resolved from the input; read by the template. */
   protected loggedInToDockerHub = false;
-  readonly isFormLoading = signal(false);
   protected readonly dockerHubRegistry = ignoreTranslation(dockerHubRegistry);
 
   protected registriesOptions$ = of([
@@ -68,9 +69,6 @@ export class DockerRegistryFormComponent extends SidePanelForm implements OnInit
       updateOn: 'blur',
     }],
   });
-
-  /** Public signal hosts can read to disable a Save action while invalid or loading. */
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   ngOnInit(): void {
     this.existingDockerRegistry = this.registry();
@@ -95,35 +93,19 @@ export class DockerRegistryFormComponent extends SidePanelForm implements OnInit
     });
   }
 
-  onSubmit(): void {
-    if (!this.canSubmit()) {
-      return;
-    }
-
+  protected handleSubmit = (event: FormSubmitEvent): SubmitResult => {
     const payload = this.getPayload();
+    const existingDockerRegistry = this.existingDockerRegistry;
 
-    let request$: Observable<DockerRegistryPayload>;
-
-    if (this.existingDockerRegistry) {
-      request$ = this.api.call('app.registry.update', [this.existingDockerRegistry.id, payload]);
-    } else {
-      request$ = this.api.call('app.registry.create', [payload]);
-    }
-
-    this.isFormLoading.set(true);
-
-    request$.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.isFormLoading.set(false);
-          this.close(true);
-        },
-        error: (error: unknown) => {
-          this.isFormLoading.set(false);
-          this.errorHandler.showErrorModal(error);
-        },
-      });
-  }
+    return {
+      request$: existingDockerRegistry
+        ? this.api.call('app.registry.update', [existingDockerRegistry.id, payload])
+        : this.api.call('app.registry.create', [payload]),
+      successMessage: event.isEdit
+        ? this.translate.instant('Registry updated.')
+        : this.translate.instant('Registry added.'),
+    };
+  };
 
   private getPayload(): DockerRegistryPayload {
     const payload = {

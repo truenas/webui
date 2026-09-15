@@ -16,14 +16,14 @@ import {
   TnSelectOption,
 } from '@truenas/ui-components';
 import {
-  Subscription, merge, startWith,
+  Subscription, defer, merge, of, startWith,
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { LanguageService } from 'app/modules/language/language.service';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -40,6 +40,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnCheckboxComponent,
@@ -49,10 +50,9 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
     TranslateModule,
   ],
 })
-export class PreferencesFormComponent extends SidePanelForm implements OnInit {
+export class PreferencesFormComponent extends IxFormHostForm implements OnInit {
   private fb = inject(FormBuilder);
   private store$ = inject<Store<AppState>>(Store);
-  private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private themeService = inject(ThemeService);
   private localeService = inject(LocaleService);
@@ -114,9 +114,6 @@ export class PreferencesFormComponent extends SidePanelForm implements OnInit {
   protected dateFormatOptions = signal<TnSelectOption[]>([]);
   protected timeFormatOptions = signal<TnSelectOption[]>([]);
 
-  /** Submission is synchronous (store dispatches only), so there is no loading state. */
-  readonly canSubmit = this.trackCanSubmit(signal(false));
-
   constructor() {
     super();
     this.setupThemePreview();
@@ -160,7 +157,17 @@ export class PreferencesFormComponent extends SidePanelForm implements OnInit {
     });
   }
 
-  protected onSubmit(): void {
+  // Saving here is a set of synchronous store dispatches, not a request — `defer` keeps them on
+  // the wrapper's submit path so the snackbar and close still hang off the same lifecycle.
+  protected handleSubmit = (): SubmitResult => ({
+    request$: defer(() => {
+      this.applyPreferences();
+      return of(true);
+    }),
+    successMessage: this.translate.instant('Preferences saved'),
+  });
+
+  private applyPreferences(): void {
     const values = this.form.getRawValue();
 
     this.previewSubscription.unsubscribe();
@@ -185,9 +192,6 @@ export class PreferencesFormComponent extends SidePanelForm implements OnInit {
     this.window.localStorage.setItem('dateFormat', values.date_format);
     this.window.localStorage.setItem('timeFormat', values.time_format);
     this.langService.setLanguage(values.language);
-
-    this.snackbar.success(this.translate.instant('Preferences saved'));
-    this.close(true);
   }
 
   private setTimeOptions(tz: string): void {

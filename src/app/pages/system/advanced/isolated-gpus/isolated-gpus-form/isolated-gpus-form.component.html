@@ -1,4 +1,10 @@
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="true"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <tn-form-section>
     <tn-form-field [label]="'GPUs' | translate">
       <tn-select
@@ -8,4 +14,4 @@
       ></tn-select>
     </tn-form-field>
   </tn-form-section>
-</form>
+</ix-form>

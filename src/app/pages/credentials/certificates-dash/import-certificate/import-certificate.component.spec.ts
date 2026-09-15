@@ -5,6 +5,7 @@ import { TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ImportCertificateComponent } from './import-certificate.component';
@@ -16,6 +17,7 @@ describe('ImportCertificateComponent', () => {
   const createComponent = createComponentFactory({
     component: ImportCertificateComponent,
     providers: [
+      ...ixFormTestingProviders(),
       mockAuth(),
       mockApi([
         mockJob('certificate.create'),

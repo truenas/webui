@@ -13,20 +13,20 @@ import {
   TnRadioGroupComponent,
 } from '@truenas/ui-components';
 import { combineLatest, forkJoin, Observable, of } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
 import { Ipmi, IpmiQueryParams, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import {
   SidePanelFooterMenu,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -42,6 +42,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   imports: [
     AsyncPipe,
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnRadioComponent,
@@ -51,14 +52,13 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     TranslateModule,
   ],
 })
-export class IpmiFormComponent extends SidePanelForm implements OnInit {
+export class IpmiFormComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private redirect = inject(RedirectService);
   private fb = inject(FormBuilder);
   private validatorsService = inject(IxValidatorsService);
   private errorHandler = inject(ErrorHandlerService);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private systemGeneralService = inject(SystemGeneralService);
   private store$ = inject<Store<AppState>>(Store);
@@ -74,9 +74,12 @@ export class IpmiFormComponent extends SidePanelForm implements OnInit {
   remoteControllerOptions: Observable<RadioOption[]>;
   managementIp: string;
 
-  protected isLoading = signal(false);
   protected isFlashing = signal(false);
   protected isFlashingLoading = signal(false);
+
+  // The remote-controller listener is wired from inside the load, so guard it against the replay
+  // a `retryLoad` would otherwise turn into a second listener.
+  private isRemoteControllerWatchWired = false;
 
   queryParams: IpmiQueryParams;
   protected ipmiId: number | undefined;
@@ -101,8 +104,6 @@ export class IpmiFormComponent extends SidePanelForm implements OnInit {
 
   vlanEnabled = toSignal(this.form.controls.vlan_id_enable.valueChanges);
 
-  readonly canSubmit = this.trackCanSubmit(this.isLoading);
-
   /** Secondary actions rendered in the side-panel footer's overflow (three-dots) menu. */
   readonly footerMenu = computed<SidePanelFooterMenu>(() => ({
     label: T('IPMI Actions'),
@@ -111,7 +112,7 @@ export class IpmiFormComponent extends SidePanelForm implements OnInit {
       {
         label: T('Manage'),
         testId: 'manage-ipmi',
-        disabled: () => this.isManageButtonDisabled || this.isLoading(),
+        disabled: () => this.isManageButtonDisabled || this.isBusy(),
         onClick: () => this.openManageWindow(),
       },
       {
@@ -172,27 +173,17 @@ export class IpmiFormComponent extends SidePanelForm implements OnInit {
   }
 
   private loadFormData(): void {
-    this.isLoading.set(true);
-
-    forkJoin([
-      this.api.call('ipmi.lan.query', this.queryParams),
-      this.loadFlashingStatus(),
-    ])
-      .pipe(
-        tap(([ipmiData]) => {
-          this.setFormValues(ipmiData[0]);
-        }),
-        switchMap(() => this.loadFailoverData()),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe({
-        next: () => {
-          this.isLoading.set(false);
-        },
-        error: (error: unknown) => {
-          this.errorHandler.showErrorModal(error);
-          this.isLoading.set(false);
-        },
-      });
+    this.loadFormConfig(
+      forkJoin([
+        this.api.call('ipmi.lan.query', this.queryParams),
+        this.loadFlashingStatus(),
+      ]).pipe(
+        // Failover data decides whether the remote-controller selector exists at all, so it is part
+        // of the load rather than a follow-up: the record is carried past it to the patch below.
+        switchMap(([ipmiData]) => this.loadFailoverData().pipe(map(() => ipmiData[0]))),
+      ),
+      (ipmi) => this.setFormValues(ipmi),
+    );
   }
 
   private createControllerOptions(node: string): void {
@@ -233,39 +224,40 @@ export class IpmiFormComponent extends SidePanelForm implements OnInit {
   }
 
   private loadDataOnRemoteControllerChange(): void {
+    if (this.isRemoteControllerWatchWired) {
+      return;
+    }
+    this.isRemoteControllerWatchWired = true;
+
     this.form.controls.apply_remote.valueChanges
-      .pipe(
-        switchMap((isUsingRemote) => {
-          this.isLoading.set(true);
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((isUsingRemote) => {
+        let queryParams = this.queryParams;
+        if (queryParams?.length && isUsingRemote) {
+          queryParams = [{
+            ...queryParams[0],
+            'ipmi-options': { 'query-remote': isUsingRemote },
+          }];
+        }
 
-          let queryParams = this.queryParams;
-          if (queryParams?.length && isUsingRemote) {
-            queryParams = [{
-              ...queryParams[0],
-              'ipmi-options': { 'query-remote': isUsingRemote },
-            }];
-          }
+        const chassisInfoParams = isUsingRemote ? { 'query-remote': true } : {};
 
-          const chassisInfoParams = isUsingRemote ? { 'query-remote': true } : {};
-
-          return forkJoin([
+        // Re-entrant by design: switching controllers replaces whatever the last load was, and
+        // routes the swap through the same loading/failure gating as the initial one.
+        this.loadFormConfig(
+          forkJoin([
             this.api.call('ipmi.lan.query', queryParams),
             this.api.call('ipmi.chassis.info', [chassisInfoParams]),
-          ]);
-        }),
-        this.errorHandler.withErrorHandler(),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(([dataIpmi, chassisInfo]) => {
-        this.setFormValues(dataIpmi[0]);
-        this.isFlashing.set(chassisInfo.chassis_identify_state !== IpmiChassisIdentifyState.Off);
-        this.isLoading.set(false);
+          ]),
+          ([dataIpmi, chassisInfo]) => {
+            this.setFormValues(dataIpmi[0]);
+            this.isFlashing.set(chassisInfo.chassis_identify_state !== IpmiChassisIdentifyState.Off);
+          },
+        );
       });
   }
 
-  protected onSubmit(): void {
-    this.isLoading.set(true);
-
+  protected handleSubmit = (): SubmitResult => {
     const updateParams: IpmiUpdate = {
       dhcp: this.form.value.dhcp,
       gateway: this.form.value.gateway,
@@ -283,22 +275,11 @@ export class IpmiFormComponent extends SidePanelForm implements OnInit {
       delete updateParams.password;
     }
 
-    this.api.call('ipmi.lan.update', [this.ipmiId, updateParams])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.isLoading.set(false);
-          this.close(true);
-          this.snackbar.success(
-            this.translate.instant('Successfully saved IPMI settings.'),
-          );
-        },
-        error: (error: unknown) => {
-          this.isLoading.set(false);
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-        },
-      });
-  }
+    return {
+      request$: this.api.call('ipmi.lan.update', [this.ipmiId, updateParams]),
+      successMessage: this.translate.instant('Successfully saved IPMI settings.'),
+    };
+  };
 
   private setFormRelations(): void {
     const stateDhcp$ = this.form.controls.dhcp.valueChanges;
@@ -358,8 +339,10 @@ export class IpmiFormComponent extends SidePanelForm implements OnInit {
         return this.api.call('failover.node').pipe(
           tap((node) => {
             this.createControllerOptions(node);
+            // No `setValue(false)` to kick this off: `apply_remote` already defaults to false, so
+            // that only re-fetched the data this very load is fetching — and now that the listener
+            // re-enters `loadFormConfig`, it would cancel the load that wired it.
             this.loadDataOnRemoteControllerChange();
-            this.form.controls.apply_remote.setValue(false);
           }),
         );
       }),

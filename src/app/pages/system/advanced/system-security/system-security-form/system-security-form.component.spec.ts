@@ -20,6 +20,7 @@ import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interfa
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -178,6 +179,7 @@ describe('SystemSecurityFormComponent', () => {
     component: SystemSecurityFormComponent,
     imports: [ReactiveFormsModule],
     providers: [
+      ...ixFormTestingProviders(),
       provideMockStore({
         selectors: [
           { selector: selectSystemInfo, value: { hostname: 'host.truenas.com' } },
@@ -875,6 +877,7 @@ describe('SystemSecurityFormComponent', () => {
       component: SystemSecurityFormComponent,
       imports: [ReactiveFormsModule],
       providers: [
+        ...ixFormTestingProviders(),
         mockProvider(ErrorHandlerService, {
           withErrorHandler: jest.fn(() => (source$: Observable<unknown>) => source$),
         }),
@@ -1115,6 +1118,7 @@ describe('SystemSecurityFormComponent', () => {
       component: SystemSecurityFormComponent,
       imports: [ReactiveFormsModule],
       providers: [
+        ...ixFormTestingProviders(),
         mockProvider(FormSidePanelService, {
           open: jest.fn(() => SlideInResult.empty()),
           openForm: jest.fn(() => SlideInResult.empty()),

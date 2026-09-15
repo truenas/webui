@@ -12,6 +12,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { SshConnectionFormComponent } from './ssh-connection-form.component';
@@ -50,6 +51,7 @@ describe('SshConnectionFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockApi([
         mockCall('keychaincredential.remote_ssh_host_key_scan', 'ssh-rsaAREMOTE'),
         mockCall('keychaincredential.setup_ssh_connection', existingConnection),

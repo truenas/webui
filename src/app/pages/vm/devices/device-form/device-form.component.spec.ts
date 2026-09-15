@@ -32,10 +32,10 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import {
   fillControlValues, getControlValues, indexFormControls, IxFormBasicValueType,
 } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DeviceFormComponent, DeviceFormData } from 'app/pages/vm/devices/device-form/device-form.component';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { VmService } from 'app/services/vm.service';
@@ -114,6 +114,7 @@ describe('DeviceFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       // Mirrors main.ts: tn-form-field resolves validator messages through this app-wide
       // resolver, so without it the spec would assert the library's English fallback.
       provideTnFormFieldErrors(),
@@ -488,6 +489,25 @@ describe('DeviceFormComponent', () => {
           'NIC To Attach': 'enp0s3',
           'Trust Guest Filters': false,
         });
+      });
+
+      // The Type picker is hidden when editing, so the root group's type-specific slot is only
+      // ever seeded from the value `setDeviceForEdit()` set. Left on the default `cdromForm`
+      // (always valid, never dirty) Save would stay enabled over an invalid NIC form.
+      it('gates Save on the edited NIC form rather than the default CD-ROM one', async () => {
+        expect(spectator.component.canSubmit()).toBe(true);
+
+        await fillForm({ 'MAC Address': 'not-a-mac' });
+
+        expect(spectator.component.canSubmit()).toBe(false);
+      });
+
+      it('reports unsaved changes confined to the edited NIC form', async () => {
+        expect(spectator.component.hasUnsavedChanges()).toBe(false);
+
+        await fillForm({ 'NIC To Attach': 'enp0s4' });
+
+        expect(spectator.component.hasUnsavedChanges()).toBe(true);
       });
     });
   });
@@ -1057,7 +1077,11 @@ describe('DeviceFormComponent', () => {
 
         await saveButton.click();
 
-        expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(preflightError);
+        // The pre-flight is part of the submit request now, so its failure takes the wrapper's
+        // error path — onto the active type-specific form, which falls back to a modal for a
+        // non-validation error like this one.
+        expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
+          .toHaveBeenCalledWith(preflightError, spectator.component.pciForm);
         expect(spectator.component.isBusy()).toBe(false);
         expect(spectator.component.canSubmit()).toBe(true);
         expect(api.call).not.toHaveBeenCalledWith('vm.device.update', expect.anything());
@@ -1211,6 +1235,7 @@ describe('DeviceFormComponent', () => {
           ReactiveFormsModule,
         ],
         providers: [
+          ...ixFormTestingProviders(),
           mockApi([
             mockCall('vm.device.create'),
             mockCall('vm.device.update'),
@@ -1309,6 +1334,7 @@ describe('DeviceFormComponent', () => {
           ReactiveFormsModule,
         ],
         providers: [
+          ...ixFormTestingProviders(),
           mockApi([
             mockCall('vm.device.create'),
             mockCall('vm.device.update'),

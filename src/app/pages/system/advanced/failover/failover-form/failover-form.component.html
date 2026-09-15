@@ -1,4 +1,9 @@
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="true"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <tn-form-section>
     <tn-form-field>
       <tn-checkbox
@@ -19,7 +24,7 @@
     <tn-button
       color="default"
       [testId]="'sync-to-peer'"
-      [disabled]="isLoading()"
+      [disabled]="isBusy()"
       [label]="'Sync To Peer' | translate"
       (onClick)="onSyncToPeerPressed()"
     ></tn-button>
@@ -27,9 +32,9 @@
     <tn-button
       color="default"
       [testId]="'sync-from-peer'"
-      [disabled]="isLoading()"
+      [disabled]="isBusy()"
       [label]="'Sync From Peer' | translate"
       (onClick)="onSyncFromPeerPressed()"
     ></tn-button>
   </ix-form-actions>
-</form>
+</ix-form>
