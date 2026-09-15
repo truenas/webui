@@ -5,7 +5,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
-import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent,
@@ -52,7 +51,6 @@ import { S3GrantsListComponent } from 'app/pages/sharing/s3/s3-grants-list/s3-gr
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { AppState } from 'app/store';
 
 type ListenerFormGroup = FormGroup<{
   address: FormControl<string>;
@@ -112,16 +110,12 @@ export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormVal
   private entitlements = inject(EntitlementsService);
   private systemGeneralService = inject(SystemGeneralService);
   private datasetService = inject(DatasetService);
-  private store$ = inject(Store<AppState>);
 
   protected readonly requiredRoles = [Role.SharingS3Write, Role.SharingWrite];
   protected readonly helptext = helptextSharingS3;
   protected readonly InputType = InputType;
   protected readonly S3AuditMode = S3AuditMode;
 
-  /**
-   * Auditing needs a license. Mirrors the middleware check (`system.license` is set).
-   */
   /**
    * Auditing is a licensed feature, decided by middleware's entitlement engine rather than by
    * the chassis: `S3_AUDIT` is a key-only rule, so an appliance and a community system with the

@@ -414,12 +414,6 @@ describe('S3BucketFormComponent', () => {
         providers: [mockEntitlements([EntitlementFeature.S3Versioning])],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      // eslint-disable-next-line no-console
-      console.log(
-        'DEBUG svc',
-        spectator.inject(EntitlementsService).constructor.name,
-        spectator.inject(EntitlementsService).entitledStrictly(EntitlementFeature.S3Versioning)(),
-      );
 
       expect(premiumBadge('s3-object-lock')).not.toBeNull();
 

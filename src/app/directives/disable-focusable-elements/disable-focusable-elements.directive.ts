@@ -59,10 +59,16 @@ export class DisableFocusableElementsDirective implements OnChanges {
    * section expanded, a field a sibling's value brings into view — would keep its place in the tab
    * order inside a region the user is not meant to operate.
    *
-   * Only while disabled, and childList only, both on purpose. In the enabled direction the sweep
-   * *removes* `disabled`, and re-running that on every DOM change would strip the attribute off
-   * controls something else disabled for its own reasons. Attribute mutations are not watched
-   * because the sweep writes attributes itself, which would set it running against its own output.
+   * Only while disabled, and childList only, both on purpose. The enabled direction writes
+   * `tabindex="0"` and removes `disabled`, so running it on every DOM change would strip the
+   * attribute off controls something else disabled for its own reasons — `getFocusableElements`
+   * skips `button[disabled]`, but not a disabled input, textarea or select. Attribute mutations
+   * are not watched because the sweep writes attributes itself, which would set it running
+   * against its own output.
+   *
+   * The callback filters to batches that actually added an element. Every existing caller gets
+   * this observer too — `*ixHasAccess` binds a constant `true` — and a batch that only removed
+   * nodes or changed text has nothing new to take out of the tab order.
    */
   private watchForLateContent(): void {
     if (typeof MutationObserver === 'undefined') {
@@ -70,7 +76,14 @@ export class DisableFocusableElementsDirective implements OnChanges {
     }
     // Nothing here needs change detection: the callback only writes attributes.
     this.zone.runOutsideAngular(() => {
-      this.observer = new MutationObserver(() => this.updateTabIndex(-1));
+      this.observer = new MutationObserver((records) => {
+        const addedElement = records.some((record) => {
+          return Array.from(record.addedNodes).some((node) => node.nodeType === Node.ELEMENT_NODE);
+        });
+        if (addedElement) {
+          this.updateTabIndex(-1);
+        }
+      });
       this.observer.observe(this.elementRef.nativeElement, { childList: true, subtree: true });
     });
   }

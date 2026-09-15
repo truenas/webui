@@ -1,8 +1,6 @@
-import {
-  ChangeDetectionStrategy, Component, computed, inject, input, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, viewChild } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   scopeTestId, TnTestIdDirective, TnTooltipDirective, type TnTestIdValue,
 } from '@truenas/ui-components';
@@ -40,19 +38,9 @@ export class PremiumBadgeComponent {
   /** Distinguishes this badge from the others on the same screen. */
   readonly testId = input<TnTestIdValue>(undefined);
 
-  private readonly translate = inject(TranslateService);
-
   private readonly tooltip = viewChild.required(TnTooltipDirective);
 
   protected readonly explanation = premiumFeatureExplanation;
-
-  /**
-   * The visible word first, then the sentence. WCAG 2.5.3 asks that the accessible name contain
-   * the visible label, so a voice-control user saying "click Premium" reaches the tag.
-   */
-  protected readonly accessibleName = computed(() => {
-    return `${this.translate.instant('Premium')}: ${this.translate.instant(this.explanation)}`;
-  });
 
   /**
    * The library's own way to derive a child id from a caller's base, which may

@@ -2,20 +2,24 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnFormFieldComponent, TnFormSectionComponent } from '@truenas/ui-components';
 import { premiumFeatureExplanation } from 'app/directives/premium-feature/premium-badge.component';
 import { PremiumFeatureDirective } from 'app/directives/premium-feature/premium-feature.directive';
 
 /**
- * The second button stands in for the library's `tn-form-field [tooltip]` trigger, which carries
- * that class and is the one control inside a denied region that has to stay operable.
+ * Renders the real `tn-form-section [tooltip]` and `tn-form-field [tooltip]` rather than standing
+ * in for them. `keepFocusable` is keyed on the class names their triggers carry, which are the
+ * library's internals: a rename in a `@truenas/ui-components` bump has to fail a test here, or the
+ * help text inside every locked section silently becomes unopenable — the one thing leaving a
+ * denied feature on screen is for.
  */
 @Component({
   selector: 'ix-premium-host',
-  template: `<div *ixPremiumFeature="entitled; testId: 'thing'">
-    <button class="action" type="button">Do the thing</button>
-    <button class="tn-form-field-tooltip" type="button">?</button></div>`,
+  template: `<tn-form-section *ixPremiumFeature="entitled; testId: 'thing'" heading="Thing" tooltip="Why the section">
+    <tn-form-field label="Field" tooltip="Why the field"><input class="action" /></tn-form-field>
+  </tn-form-section>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PremiumFeatureDirective],
+  imports: [PremiumFeatureDirective, TnFormFieldComponent, TnFormSectionComponent],
 })
 class PremiumHostComponent {
   entitled: boolean | undefined = true;
@@ -36,8 +40,14 @@ describe('PremiumFeatureDirective', () => {
   }
 
   const badge = (): HTMLElement | null => spectator.query('[data-test="button-thing-premium"]');
-  const action = (): HTMLElement | null => spectator.query('button.action');
-  const tooltipTrigger = (): HTMLElement | null => spectator.query('.tn-form-field-tooltip');
+  const action = (): HTMLElement | null => spectator.query('input.action');
+  /**
+   * Located by what the user reaches for — the help button the library renders for a `[tooltip]`
+   * — not by the class `keepFocusable` matches on, so the test fails if the two stop agreeing.
+   */
+  const tooltipTriggers = (): HTMLElement[] => spectator.queryAll<HTMLElement>(
+    'tn-form-section button, tn-form-field button',
+  );
 
   it('renders the content plainly when the system is entitled', () => {
     render(true);
@@ -91,10 +101,13 @@ describe('PremiumFeatureDirective', () => {
     tick();
 
     // The section is shown so an administrator can read what the feature does, and the library
-    // opens a pinned tooltip on a click of this button alone — disabling it withholds the help.
-    expect(tooltipTrigger()).not.toHaveAttribute('disabled');
-    expect(tooltipTrigger()).not.toHaveAttribute('tabindex', '-1');
-    // The control beside it is still out of reach.
+    // opens a pinned tooltip on a click of that button alone — disabling it withholds the help.
+    expect(tooltipTriggers()).not.toHaveLength(0);
+    tooltipTriggers().forEach((trigger) => {
+      expect(trigger).not.toHaveAttribute('disabled');
+      expect(trigger).not.toHaveAttribute('tabindex', '-1');
+    });
+    // The control beside them is still out of reach.
     expect(action()).toHaveAttribute('disabled');
   }));
 });
