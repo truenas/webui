@@ -18,10 +18,10 @@ import { Option } from 'app/interfaces/option.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { LockedSedDisksComponent } from './locked-sed-disks/locked-sed-disks.component';
@@ -37,6 +37,7 @@ type ImportStep = 'loading' | 'locked-sed' | 'unlock-sed' | 'import';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    IxFormComponent,
     TnSpinnerComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
@@ -49,21 +50,19 @@ type ImportStep = 'loading' | 'locked-sed' | 'unlock-sed' | 'import';
     UnlockSedDisksComponent,
   ],
 })
-export class ImportPoolComponent extends SidePanelForm implements OnInit {
+export class ImportPoolComponent extends IxFormHostForm implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private router = inject(Router);
-  private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.PoolWrite];
 
   protected readonly helptext = helptextImport;
-  protected isLoading = signal(false);
   protected currentStep = signal<ImportStep>('loading');
   protected lockedSedDisks = signal<LockedSedDisk[]>([]);
   protected globalSedPassword = signal('');
@@ -73,17 +72,9 @@ export class ImportPoolComponent extends SidePanelForm implements OnInit {
     guid: string;
   }[] = [];
 
-  readonly form = this.fb.nonNullable.group({
+  protected readonly form = this.fb.nonNullable.group({
     guid: ['' as string, Validators.required],
   });
-
-  /**
-   * Required by {@link SidePanelForm}, but inert here: `PoolsDashboardComponent` opens this form
-   * `footerless`, so the panel renders no Save action to read it and the template carries its own
-   * submit button. Wire the footer to it before deleting the in-template one, not the other way
-   * round — the multi-step flow (locked SED -> unlock -> import) has steps with no submit at all.
-   */
-  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   protected readonly poolLabel = helptextImport.poolLabel;
   protected readonly poolOptions = signal<Option[]>([]);
@@ -108,8 +99,10 @@ export class ImportPoolComponent extends SidePanelForm implements OnInit {
     return super.hasUnsavedChanges() || Boolean(this.unlockSedDisks()?.hasUnsavedChanges());
   }
 
+  // The step machine drives its own progress (the `loading` step's spinner) rather than
+  // `loadFormConfig`: these run before the `<ix-form>` exists, and they chain into one another —
+  // a nested `loadFormConfig` would cancel the load that started it.
   private checkForLockedDisks(): void {
-    this.isLoading.set(true);
     this.currentStep.set('loading');
 
     forkJoin([
@@ -119,7 +112,6 @@ export class ImportPoolComponent extends SidePanelForm implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ([diskDetails, sedGlobalPassword]) => {
-        this.isLoading.set(false);
         this.globalSedPassword.set(sedGlobalPassword || '');
 
         const allDisks = [...diskDetails.used, ...diskDetails.unused];
@@ -133,14 +125,14 @@ export class ImportPoolComponent extends SidePanelForm implements OnInit {
         }
       },
       error: (error: unknown) => {
-        this.isLoading.set(false);
         this.errorHandler.showErrorModal(error);
       },
     });
   }
 
   private loadImportablePools(): void {
-    this.isLoading.set(true);
+    // Show the spinner step while the find job runs, instead of leaving the SED step on screen.
+    this.currentStep.set('loading');
 
     this.api.job('pool.import_find').pipe(
       observeJob(),
@@ -148,8 +140,6 @@ export class ImportPoolComponent extends SidePanelForm implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (importablePoolFindJob) => {
-        this.isLoading.set(false);
-
         const result: PoolFindResult[] = importablePoolFindJob.result || [];
         this.importablePools = result.map((pool) => ({
           name: pool.name,
@@ -164,7 +154,6 @@ export class ImportPoolComponent extends SidePanelForm implements OnInit {
         this.currentStep.set('import');
       },
       error: (error: unknown) => {
-        this.isLoading.set(false);
         this.errorHandler.showErrorModal(error);
       },
     });
@@ -186,30 +175,20 @@ export class ImportPoolComponent extends SidePanelForm implements OnInit {
     this.checkForLockedDisks();
   }
 
-  protected onSubmit(): void {
-    this.dialogService.jobDialog(
+  protected handleSubmit = (): SubmitResult<boolean, [Dataset[], boolean]> => ({
+    request$: this.dialogService.jobDialog(
       this.api.job('pool.import_pool', [{ guid: this.form.getRawValue().guid }]),
       { title: this.translate.instant('Importing Pool') },
     )
       .afterClosed()
-      .pipe(
-        switchMap(() => this.checkIfUnlockNeeded()),
-        this.errorHandler.withErrorHandler(),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe({
-        next: ([datasets, shouldTryUnlocking]) => {
-          this.close(true);
-          this.snackbar.success(this.translate.instant('Pool imported successfully.'));
-          if (shouldTryUnlocking) {
-            this.router.navigate(['/datasets', datasets[0].id, 'unlock']);
-          }
-        },
-        error: () => {
-          this.isLoading.set(false);
-        },
-      });
-  }
+      .pipe(switchMap(() => this.checkIfUnlockNeeded())),
+    successMessage: this.translate.instant('Pool imported successfully.'),
+    onSuccess: ([datasets, shouldTryUnlocking]) => {
+      if (shouldTryUnlocking) {
+        this.router.navigate(['/datasets', datasets[0].id, 'unlock']);
+      }
+    },
+  });
 
   private checkIfUnlockNeeded(): Observable<[Dataset[], boolean]> {
     const selectedPool = this.importablePools.find((pool) => pool.guid === this.form.value.guid);

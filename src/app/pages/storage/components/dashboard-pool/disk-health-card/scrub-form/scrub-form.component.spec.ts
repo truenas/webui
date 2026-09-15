@@ -8,6 +8,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -40,6 +41,7 @@ describe('ScrubTaskFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockProvider(LocaleService, {
         timezone: 'America/New_York',
       }),

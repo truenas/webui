@@ -26,12 +26,13 @@
     ></ix-unlock-sed-disks>
   }
   @case ('import') {
-    <!-- Submission routes through the host-facing submit() — not onSubmit() — so the panel
-         footer's Save would latch to "Saving…" if this form is ever opened with a footer. -->
-    <form
-      class="ix-form-container"
+    <!-- `PoolsDashboardComponent` opens this panel footerless (the multi-step flow has steps with
+         no submit at all), so the Import button below is the form's own submit trigger. -->
+    <ix-form
       [formGroup]="form"
-      (submit)="submit()"
+      [requiredRoles]="requiredRoles"
+      [submitHandler]="handleSubmit"
+      (closed)="closed.emit($event)"
     >
       <tn-form-section [heading]="helptext.selectPool | translate">
         <tn-form-field
@@ -52,10 +53,10 @@
           type="submit"
           color="primary"
           [testId]="'import'"
-          [disabled]="form.invalid || isLoading()"
+          [disabled]="!canSubmit()"
           [label]="'Import' | translate"
         ></tn-button>
       </ix-form-actions>
-    </form>
+    </ix-form>
   }
 }

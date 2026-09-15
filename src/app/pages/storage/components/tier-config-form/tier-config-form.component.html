@@ -1,6 +1,9 @@
-<!-- Implicit (Enter-key) submission routes through the host-facing submit() — not onSubmit() —
-     so the panel footer's Save still latches to "Saving…" if this form ever drops to one field. -->
-<form class="ix-form-container" [formGroup]="form" (submit)="submit()">
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="true"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <tn-form-section [heading]="'Tiering Configuration' | translate">
     <tn-form-field>
       <tn-checkbox
@@ -47,4 +50,4 @@
       ></tn-input>
     </tn-form-field>
   </tn-form-section>
-</form>
+</ix-form>
