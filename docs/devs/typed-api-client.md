@@ -94,9 +94,21 @@ Where things differ:
 - **Specs** use `mockTypedApi()` from
   `app/core/testing/utils/mock-typed-api.utils`, the typed counterpart of
   `mockApi()`: `mockTypedCall`, `mockTypedQuery`, `mockTypedJob`, and
-  `MockTypedApiService` for adjusting responses on the fly. Fixtures for a
-  query or entry response are typed as the generated entity (for example
-  `CloudSyncCredentialEntry`), not the UI's reading of it.
+  `MockTypedApiService` for adjusting answers on the fly. Behind it is a real
+  `@truenas/api-client` running on the package's own fake connection
+  (`@truenas/api-client/testing`, since 6.0), so the real dispatch, job
+  correlation and subscriptions run and only the *answers* are scripted. The
+  client is strict: a call nothing scripted fails with `UnmockedCallError`
+  naming the method. Fixtures for a query or entry response are typed as the
+  generated entity (for example `CloudSyncCredentialEntry`), not the UI's
+  reading of it. `mockTypedCall` refuses `.query` methods; script those with
+  `mockTypedQuery`, which feeds `query`, `queryOne` and `queryCount` from one
+  set of rows. For connection-level scenarios reach the client itself:
+  `spectator.inject(MockTypedApiService).client.connection.simulateClose()`.
+- **`TypedApiService`'s own spec** provides `TYPED_API_CLIENT` with a
+  non-strict `createFakeClient` and answers frames by hand with
+  `connection.reply` / `replyError`, which is how the auth bridge and the
+  service's own dispatch are exercised end to end without a socket.
 - **A spec that reaches `TypedApiService` unmocked fails fast.**
   `setup-jest.ts` provides `EmptyTypedApiService` globally, the way it
   provides `EmptyApiService`, so an unmocked call throws
@@ -209,8 +221,16 @@ above. Each is a change for `truenas/api-client-ts`.
 6. **Job type drift.** The client's `Job` is honest about `result` and
    `time_started` being `null` before a job starts; the UI's is not. The
    wrapper narrows for now; the UI should adopt the client's type.
-7. **Test double.** A `createFakeClient()` for consumers' specs would replace
-   the hand-rolled fake in `typed-api.service.spec.ts`.
+7. **Test double** — shipped in 6.0 as `@truenas/api-client/testing`
+   (`createFakeClient`, `mock.call` / `query` / `job` / `emit`, `withSpies`,
+   `UnmockedCallError`, fixture builders), from
+   `docs/devs/api-client-testing-proposal.md`. webui's `MockTypedApiService`
+   and `typed-api.service.spec.ts` run on it. Still open upstream: the
+   inherited 20-second ping timer lives until `close()`. Inside Angular's
+   zone that pending interval keeps a fixture from ever becoming stable, so
+   every harness call times out; `mockTypedApi()` therefore builds the client
+   with `NgZone.runOutsideAngular` and `MockTypedApiService` closes it in
+   `ngOnDestroy`. Both go away once the client gates the ping on `enabled`.
 8. **`crypto.randomUUID`.** The client falls back to `getRandomValues` on
    insecure origins, so plain-http dev boxes work. Noting it because it is the
    kind of thing that breaks quietly.

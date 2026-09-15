@@ -75,6 +75,8 @@ describe('SshKeypairFormComponent', () => {
       await (await getInput('public_key')).setValue('New public key');
 
       spectator.component.submit();
+      // The fake client answers on a microtask, as a socket would.
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('keychaincredential.create', [{
         name: 'new',
@@ -157,6 +159,8 @@ describe('SshKeypairFormComponent', () => {
       await (await getInput('public_key')).setValue('New public key');
 
       spectator.component.submit();
+      // The fake client answers on a microtask, as a socket would.
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('keychaincredential.update', [
         23,

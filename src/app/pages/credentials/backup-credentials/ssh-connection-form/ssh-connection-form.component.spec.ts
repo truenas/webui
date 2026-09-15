@@ -96,6 +96,8 @@ describe('SshConnectionFormComponent', () => {
       await (await getInput('remote_host_key')).setValue('ssh-rsaAAAAUpdated');
 
       spectator.component.submit();
+      // The fake client answers on a microtask, as a socket would.
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('keychaincredential.update', [11, {
         name: 'Updated',

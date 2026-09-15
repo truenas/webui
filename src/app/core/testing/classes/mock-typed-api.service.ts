@@ -1,93 +1,116 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import {
-  CallMethod, CallParams, CallResponse, JobMethod, QueryEntity, QueryMethod,
+  CallMethod, CallParams, CallResponse, EventName, EventUnion, JobMethod, JobResult, QueryEntity, QueryMethod,
 } from '@truenas/api-client';
 import {
-  Observable, of, Subject, throwError,
-} from 'rxjs';
+  createFakeClient, FakeTrueNasClient, JobUpdate, withSpies,
+} from '@truenas/api-client/testing';
+import { map, Observable } from 'rxjs';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 type D = WebUiApiDirectory;
-type QueryableMethod = QueryMethod<D['call']>;
 
-export type TypedCallResponseOrFactory<M extends CallMethod<D>>
+/** Methods `mockCall` accepts: everything in the call directory except the `.query` family, which `mockQuery` owns. */
+export type TypedCallMethod = Exclude<CallMethod<D>, QueryMethod<D['call']>>;
+
+export type TypedCallResponseOrFactory<M extends TypedCallMethod>
   = | CallResponse<D, M>
     | ((params: CallParams<D, M>) => CallResponse<D, M>);
 
 /**
- * Test double for `TypedApiService`. Set it up with `mockTypedApi()` and
- * adjust responses on the fly through `mockCall` / `mockQuery` / `mockJob`.
+ * The client's verbs with their generics erased. The typing lives on the
+ * scripting side (`mockCall`, `mockQuery`, `mockJob`), where fixtures are
+ * checked against the directory; the verbs themselves mirror
+ * `TypedApiService`'s loose-argument `jest.fn` shape so specs can assert on
+ * them the way they always have.
+ */
+interface LooseApi {
+  call(method: string, params?: unknown): Observable<unknown>;
+  query(method: string, filters?: unknown, options?: unknown): Observable<unknown[]>;
+  queryOne(method: string, filters?: unknown, options?: unknown): Observable<unknown>;
+  queryCount(method: string, filters?: unknown): Observable<number>;
+  job(method: string, params?: unknown): Observable<unknown>;
+  callAndGetJobId(method: string, params?: unknown): Observable<number>;
+  events(event: string): Observable<unknown>;
+}
+
+/**
+ * Test double for `TypedApiService`, running a real `@truenas/api-client`
+ * over the package's fake connection.
  *
- * Every verb is a `jest.fn`, so specs assert on it the way they always have:
- * `expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(...)`.
+ * Nothing here reimplements dispatch, job correlation or subscriptions: every
+ * verb forwards to the real client, and `mockCall` / `mockQuery` / `mockJob`
+ * script the *answers* the fake connection gives. The client is strict, so a
+ * call nothing scripted fails with `UnmockedCallError` naming the method
+ * rather than hanging.
+ *
+ * Set it up with `mockTypedApi()`. For connection-level scenarios — a dropped
+ * socket, a hand-written reply — reach the client through `client`.
  */
 @Injectable()
-export class MockTypedApiService {
-  private readonly calls = new Map<string, unknown>();
-  private readonly queries = new Map<string, unknown[]>();
-  private readonly jobs = new Map<string, Job>();
-  private readonly events$ = new Subject<unknown>();
+export class MockTypedApiService implements OnDestroy {
+  readonly client: FakeTrueNasClient<D> = withSpies(
+    createFakeClient({ version: 'v27.0.0', strict: true }),
+    jest.fn,
+  );
 
-  readonly call = jest.fn((method: string, params?: unknown): Observable<unknown> => {
-    if (!this.calls.has(method)) {
-      return throwError(() => new Error(`Unmocked typed api call ${method} with ${JSON.stringify(params)}`));
-    }
-    const response = this.calls.get(method);
-    return of(response instanceof Function ? response(params) : response);
+  readonly isAuthenticated$ = this.client.authenticator.authenticated$.asObservable();
+
+  readonly call = jest.fn((method: string, params?: unknown) => this.api.call(method, params));
+
+  readonly query = jest.fn((method: string, filters?: unknown, options?: unknown) => {
+    return this.api.query(method, filters, options);
   });
 
-  readonly query = jest.fn((method: string): Observable<unknown[]> => this.rowsFor(method));
-
-  readonly queryOne = jest.fn((method: string): Observable<unknown> => {
-    return this.rowsFor(method).pipe((rows$) => new Observable((subscriber) => rows$.subscribe({
-      next: (rows) => subscriber.next(rows[0]),
-      error: (error: unknown) => subscriber.error(error),
-      complete: () => subscriber.complete(),
-    })));
+  readonly queryOne = jest.fn((method: string, filters?: unknown, options?: unknown) => {
+    return this.api.queryOne(method, filters, options);
   });
 
-  readonly queryCount = jest.fn((method: string): Observable<number> => {
-    return new Observable((subscriber) => this.rowsFor(method).subscribe({
-      next: (rows) => subscriber.next(rows.length),
-      error: (error: unknown) => subscriber.error(error),
-      complete: () => subscriber.complete(),
-    }));
+  readonly queryCount = jest.fn((method: string, filters?: unknown) => this.api.queryCount(method, filters));
+
+  /** Same contract as `TypedApiService.job`: emits every update, throws `FailedJobError` on failure. */
+  readonly job = jest.fn((method: string, params?: unknown) => {
+    return this.api.job(method, params).pipe(
+      map((job) => job as Job),
+      observeJob(),
+    );
   });
 
-  readonly job = jest.fn((method: string, params?: unknown): Observable<Job> => {
-    if (!this.jobs.has(method)) {
-      return throwError(() => new Error(`Unmocked typed api job ${method} with ${JSON.stringify(params)}`));
-    }
-    return of(this.jobs.get(method));
-  });
+  readonly startJob = jest.fn((method: string, params?: unknown) => this.api.callAndGetJobId(method, params));
 
-  readonly startJob = jest.fn((method: string): Observable<number> => {
-    return this.jobs.has(method) ? of(this.jobs.get(method).id) : of(1);
-  });
+  readonly subscribe = jest.fn((event: string) => this.api.events(event));
 
-  readonly subscribe = jest.fn((): Observable<unknown> => this.events$.asObservable());
-
-  mockCall<M extends CallMethod<D>>(method: M, response?: TypedCallResponseOrFactory<M>): void {
-    this.calls.set(method, response);
+  mockCall<M extends TypedCallMethod>(method: M, response: TypedCallResponseOrFactory<M>): void {
+    this.client.mock.call(method, response);
   }
 
-  mockQuery<M extends QueryableMethod>(method: M, rows: QueryEntity<D['call'], M>[]): void {
-    this.queries.set(method, rows);
+  /** Feeds `query`, `queryOne` (first row) and `queryCount` (row count) from one set of rows. */
+  mockQuery<M extends QueryMethod<D['call']>>(method: M, rows: QueryEntity<D['call'], M>[]): void {
+    this.client.mock.query(method, rows);
   }
 
-  mockJob<M extends JobMethod<D>>(method: M, job: Job): void {
-    this.jobs.set(method, job);
+  /** Answers a job with these updates in order; each is completed by the package's `fakeJob`. */
+  mockJob<M extends JobMethod<D>>(
+    method: M,
+    updates: JobUpdate<JobResult<D, M>> | JobUpdate<JobResult<D, M>>[],
+  ): void {
+    this.client.mock.job(method, updates);
   }
 
-  emitEvent(event: unknown): void {
-    this.events$.next(event);
+  emitEvent<E extends EventName<D>>(event: E, change: EventUnion<D, E>): void {
+    this.client.mock.emit(event, change);
   }
 
-  private rowsFor(method: string): Observable<unknown[]> {
-    if (!this.queries.has(method)) {
-      return throwError(() => new Error(`Unmocked typed api query ${method}`));
-    }
-    return of(this.queries.get(method));
+  ngOnDestroy(): void {
+    // The real connection keeps a ping interval alive until it is closed.
+    this.client.close();
+  }
+
+  private get api(): LooseApi {
+    // The client's verbs are generic over the directory; this double takes
+    // loose arguments on purpose (see `LooseApi`), so the erasure is explicit.
+    return this.client.api as unknown as LooseApi;
   }
 }

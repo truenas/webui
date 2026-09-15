@@ -230,6 +230,8 @@ describe('CloudCredentialsFormComponent', () => {
         await (await getInput('name')).setValue('New sync');
 
         spectator.component.submit();
+        // The fake client answers on a microtask, as a socket would.
+        await spectator.fixture.whenStable();
 
         expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloudsync.credentials.create', [{
           name: 'New sync',
@@ -287,6 +289,8 @@ describe('CloudCredentialsFormComponent', () => {
       await (await getInput('name')).setValue('My updated server');
 
       spectator.component.submit();
+      // The fake client answers on a microtask, as a socket would.
+      await spectator.fixture.whenStable();
 
       expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloudsync.credentials.update', [
         233,

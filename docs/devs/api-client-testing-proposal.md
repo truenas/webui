@@ -1,9 +1,13 @@
 # Proposal: a `testing` entry for `@truenas/api-client`
 
-Status: draft, 2026-09-09. Written from the webui migration
-(`docs/devs/typed-api-client.md`), where every consumer of the client has so
-far had to build its own test double. Fold into gap 7 of that document once
-it lands.
+Status: implemented. Shipped in `@truenas/api-client` 6.0 as the
+`./testing` subpath (`truenas/api-client-ts` #54, #56, #59), following the
+reconciled design: `FakeConnection` and `FakeAuthenticator` are real
+subclasses and `createFakeClient` returns a real client on them, with
+`mock.call` / `mock.query` / `mock.job` / `mock.emit` scripting answers to
+frames rather than replacing verbs. webui adopted it on 2026-09-15; see the
+spec section of `docs/devs/typed-api-client.md`. Kept as the record of the
+reasoning. Originally drafted 2026-09-09.
 
 ## Why
 
