@@ -51,6 +51,72 @@ describe('AllowedAccessSectionComponent', () => {
     });
   });
 
+  describe('when a create flow presets the section', () => {
+    it('turns SMB access off and locks the checkbox', async () => {
+      spectator.setInput('preset', { values: { smb: false }, locked: ['smb'] });
+
+      const smbAccessCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'SMB Access' }));
+      expect(await smbAccessCheckbox.isChecked()).toBe(false);
+      expect(await smbAccessCheckbox.isDisabled()).toBe(true);
+    });
+
+    it('tells the store SMB access is off, rather than that it is unknown', () => {
+      spectator.setInput('preset', { values: { smb: false }, locked: ['smb'] });
+
+      expect(spectator.inject(UserFormStore).setAllowedAccessConfig).toHaveBeenLastCalledWith(
+        expect.objectContaining({ smbAccess: false }),
+      );
+    });
+
+    it('keeps telling the store SMB is off when a sibling control changes', async () => {
+      // The locked control is dropped from `valueChanges`, and the store's
+      // config is spread rather than merged — so reporting the emission
+      // instead of the raw value would replace `smb: false` with `undefined`
+      // here, and `user.create` would go out saying nothing about SMB at all.
+      spectator.setInput('preset', { values: { smb: false }, locked: ['smb'] });
+
+      const truenasAccess = await loader.getHarness(TnCheckboxHarness.with({ label: 'TrueNAS Access' }));
+      await truenasAccess.check();
+
+      expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenLastCalledWith(
+        expect.objectContaining({ smb: false }),
+      );
+      expect(spectator.inject(UserFormStore).setAllowedAccessConfig).toHaveBeenLastCalledWith(
+        expect.objectContaining({ smbAccess: false }),
+      );
+    });
+
+    it('sets the value without locking it when the flow names no lock', async () => {
+      spectator.setInput('preset', { values: { smb: false } });
+
+      const smbAccessCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'SMB Access' }));
+      expect(await smbAccessCheckbox.isChecked()).toBe(false);
+      expect(await smbAccessCheckbox.isDisabled()).toBe(false);
+    });
+
+    it('stops applying an unlocked value once it has, so a tick of the user\'s stands', async () => {
+      // A host binding an object literal hands this a new reference every
+      // change-detection pass; re-applying would undo the tick each time and
+      // the user could never turn SMB access on at all.
+      spectator.setInput('preset', { values: { smb: false } });
+
+      const smbAccessCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'SMB Access' }));
+      await smbAccessCheckbox.check();
+
+      spectator.setInput('preset', { values: { smb: false } });
+
+      expect(await smbAccessCheckbox.isChecked()).toBe(true);
+    });
+
+    it('leaves the checkbox alone without a preset', async () => {
+      spectator.setInput('preset', undefined);
+
+      const smbAccessCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'SMB Access' }));
+      expect(await smbAccessCheckbox.isChecked()).toBe(true);
+      expect(await smbAccessCheckbox.isDisabled()).toBe(false);
+    });
+  });
+
   describe('when existing user', () => {
     beforeEach(() => {
       spectator.setInput('editingUser', {
@@ -127,6 +193,29 @@ describe('AllowedAccessSectionComponent', () => {
 
       const truenasAccessDropdown = await loader.getHarness(TnSelectHarness);
       expect(await truenasAccessDropdown.isDisabled()).toBe(true);
+    });
+
+    it('keeps reporting root\'s TrueNAS access, though its control is disabled', () => {
+      // Reported from the raw value, so the three controls this section locks
+      // for root keep their say. On the emitted value they read `undefined`,
+      // which sent `role: null` to the store — and the details section strips
+      // a role's group from the account when the role goes null, which for
+      // root is the one account that must not lose it.
+      spectator.setInput('editingUser', {
+        uid: 0,
+        username: 'root',
+        smb: true,
+        webshare: false,
+        roles: [Role.FullAdmin],
+      } as User);
+      spectator.detectChanges();
+
+      expect(spectator.inject(UserFormStore).setAllowedAccessConfig).toHaveBeenLastCalledWith(
+        expect.objectContaining({ truenasAccess: true, webshareAccess: false }),
+      );
+      expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenLastCalledWith(
+        expect.objectContaining({ role: Role.FullAdmin }),
+      );
     });
 
     it('allows webshare and truenas access for non-root users', async () => {

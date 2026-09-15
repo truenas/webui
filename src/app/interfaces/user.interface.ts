@@ -1,4 +1,5 @@
 import { Role } from 'app/enums/role.enum';
+import { FormPreset } from 'app/interfaces/form-preset.interface';
 
 export const directIdMapping = 'DIRECT' as const;
 
@@ -84,3 +85,20 @@ export interface SetPasswordParams {
   old_password: string;
   new_password: string;
 }
+
+/**
+ * What a create-user flow opens the user form with — see {@link FormPreset}.
+ *
+ * Narrowed to the two keys the form honours, and to the one it can lock.
+ * `smb` is load-bearing for the other: the form keeps "Disable Password" off
+ * and untouchable while SMB access is on, because SMB authenticates with a
+ * password. So a preset that sets `password_disabled` without also turning
+ * `smb` off gets the first silently reverted; the form applies them in that
+ * order for exactly that reason.
+ *
+ * `password_disabled` is presettable but not lockable: the section's own
+ * watchers enable and disable that control as SMB and SSH access change, so a
+ * lock here would be undone by the next thing the user touched. A starting
+ * point is what it can honestly offer.
+ */
+export type UserFormPreset = FormPreset<Pick<UserUpdate, 'smb' | 'password_disabled'>, 'smb'>;

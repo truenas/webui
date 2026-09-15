@@ -6,7 +6,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { ComboboxQueryType } from 'app/enums/combobox.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { QueryFilter, QueryFilters, QueryParams } from 'app/interfaces/query-api.interface';
-import { User } from 'app/interfaces/user.interface';
+import { User, UserFormPreset } from 'app/interfaces/user.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -228,17 +228,21 @@ export class UserDirectoryService {
    * Opens the user form in a side panel, resolving to the created user — or to
    * null when it was dismissed.
    *
+   * `preset` is what the calling field wants the form to start as, for a flow
+   * whose new account is not a general-purpose one — see {@link UserFormPreset}.
+   *
    * Imported dynamically: this service is provided at the root, and a static
    * import would pull a page component (and its dependency tree) into the
    * initial bundle for every screen that never opens a user picker.
    */
-  createUser(options: DirectoryQueryOptions): Observable<PrincipalOption | null> {
+  createUser(options: DirectoryQueryOptions, preset?: UserFormPreset): Observable<PrincipalOption | null> {
     const valueField = resolveValueField(options.valueField, userValueFields, 'username');
 
     return from(import('app/pages/credentials/users/user-form/user-form.component')).pipe(
       switchMap((module) => this.formPanel.open(module.UserFormComponent, {
         wide: true,
         title: this.translate.instant('Add User'),
+        inputs: { preset },
       })),
       map(({ response }) => (response
         ? toOption(response.username, response[valueField])

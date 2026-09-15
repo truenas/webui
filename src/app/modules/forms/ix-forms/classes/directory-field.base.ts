@@ -16,6 +16,7 @@ import {
 } from '@truenas/ui-components';
 import { Observable, forkJoin, of, timer } from 'rxjs';
 import { catchError, first, map, switchMap, tap } from 'rxjs/operators';
+import type { UserFormPreset } from 'app/interfaces/user.interface';
 import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import {
@@ -546,6 +547,14 @@ export abstract class DirectoryComboboxBase extends DirectoryFieldBase implement
   /** Offer a row above the results that opens the create-user side panel. */
   readonly allowCreate = input<boolean>(false);
 
+  /**
+   * What the create-user panel opens with, for a field whose new account is not
+   * a general-purpose one — see {@link UserFormPreset}. Only a starting point:
+   * the form is fully editable from there, except where the preset says
+   * otherwise.
+   */
+  readonly createPreset = input<UserFormPreset | undefined>(undefined);
+
   /** Emits the newly created principal after it has been selected. */
   readonly created = output<PrincipalOption>();
 
@@ -581,7 +590,7 @@ export abstract class DirectoryComboboxBase extends DirectoryFieldBase implement
     // can stay open for minutes, so a parent `@if` or a stepper page can tear
     // the field down while the panel is still up — after which this would write
     // and dirty a control on behalf of a field nobody can see.
-    this.directory.createUser(this.directoryOptions()).pipe(
+    this.directory.createUser(this.directoryOptions(), this.createPreset()).pipe(
       first(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((created) => {

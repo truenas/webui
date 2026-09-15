@@ -20,7 +20,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
-import { User } from 'app/interfaces/user.interface';
+import { User, UserFormPreset } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
@@ -175,6 +175,34 @@ describe('UserFormComponent', () => {
     it('checks username field is disabled when user immutable', async () => {
       const usernameField = await loader.getHarness(TnInputHarness.with({ name: 'username' }));
       expect(await usernameField.isDisabled()).toBeTruthy();
+    });
+  });
+
+  describe('create flow preset', () => {
+    /**
+     * The sections are mocked here, and ng-mocks flattens a signal input on a
+     * mock into a plain property holding the bound value — so the real
+     * component's `InputSignal` type does not describe what is there to read.
+     */
+    function presetOf(section: AllowedAccessSectionComponent | AuthSectionComponent): UserFormPreset | undefined {
+      return (section as unknown as { preset: UserFormPreset | undefined }).preset;
+    }
+
+    // The sections own every control the preset names, so this form's whole job
+    // is to hand it over; what each one does with it is their own spec.
+    it('hands the preset to the sections that own those controls', () => {
+      const preset: UserFormPreset = { values: { smb: false, password_disabled: true }, locked: ['smb'] };
+      spectator = createComponent({ props: { preset } });
+
+      expect(presetOf(spectator.query(AllowedAccessSectionComponent))).toEqual(preset);
+      expect(presetOf(spectator.query(AuthSectionComponent))).toEqual(preset);
+    });
+
+    it('hands them nothing when the flow asked for nothing', () => {
+      spectator = createComponent();
+
+      expect(presetOf(spectator.query(AllowedAccessSectionComponent))).toBeUndefined();
+      expect(presetOf(spectator.query(AuthSectionComponent))).toBeUndefined();
     });
   });
 
