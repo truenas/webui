@@ -18,7 +18,7 @@ import {
   ensureS3ServiceStopped, queryS3Service, readS3Config, setS3ManagedRootDataset,
 } from '../fixtures/s3';
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';
-import { createS3BucketWithObjectLock, setS3ManagedRootDatasetFromCard, toggleS3ServiceFromCard } from '../flows/s3';
+import { createS3Bucket, setS3ManagedRootDatasetFromCard, toggleS3ServiceFromCard } from '../flows/s3';
 import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
@@ -63,22 +63,21 @@ test.afterEach(async ({ api, pool }) => {
 test('an admin adds a bucket to a running service and stops it from the card', async ({
   page, api, pool, entitlements,
 }) => {
-  // Object lock is built on versioning, so the one key gates both: without it the UI renders the
-  // section dimmed and inert with a Premium tag, and this journey's first click has nothing to
-  // hit. See `fixtures/entitlements.ts`.
-  test.skip(
-    !isEntitled(entitlements, entitlementFeature.s3Versioning),
-    'This appliance is not entitled to S3_VERSIONING, so the UI locks the Object Lock section.',
-  );
+  // Object lock is built on versioning, so without that key the UI renders its section dimmed and
+  // inert and the checkbox cannot be clicked. Only that part of the journey is dropped: creating a
+  // bucket from the Shares dashboard and the card header switch do not depend on the entitlement,
+  // and a community appliance — denied the key whatever middleware it runs — is where this suite
+  // would otherwise lose their only coverage. See `fixtures/entitlements.ts`.
+  const objectLock = isEntitled(entitlements, entitlementFeature.s3Versioning);
 
   const parent = `${pool}/${parentDataset}`;
   await ensureS3BucketPresent(api, { name: firstBucket, parentDataset: parent, owner });
   await ensureS3ServiceRunning(api);
 
   await test.step('create a bucket without being offered to start the service', async () => {
-    await createS3BucketWithObjectLock(page, {
+    await createS3Bucket(page, {
       name: secondBucket, parentDataset: parent, owner, retentionDays,
-    }, { serviceRunning: true });
+    }, { serviceRunning: true, objectLock });
   });
 
   await test.step('stop the service with the card header switch', async () => {

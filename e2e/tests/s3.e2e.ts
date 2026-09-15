@@ -18,7 +18,7 @@ import {
   ensureS3ServiceStopped, findS3AccessKeys, findS3Bucket, queryS3Service,
 } from '../fixtures/s3';
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';
-import { createS3AccessKey, createS3BucketWithObjectLock } from '../flows/s3';
+import { createS3AccessKey, createS3Bucket } from '../flows/s3';
 import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
@@ -75,21 +75,20 @@ test.afterEach(async ({ api }) => {
 test('an admin publishes an S3 bucket with object lock and starts the service', async ({
   page, api, pool, entitlements,
 }) => {
-  // Object lock is built on versioning, so the one key gates both: without it the UI renders the
-  // section dimmed and inert with a Premium tag, and this journey's first click has nothing to
-  // hit. See `fixtures/entitlements.ts`.
-  test.skip(
-    !isEntitled(entitlements, entitlementFeature.s3Versioning),
-    'This appliance is not entitled to S3_VERSIONING, so the UI locks the Object Lock section.',
-  );
+  // Object lock is built on versioning, so without that key the UI renders its section dimmed and
+  // inert and the checkbox cannot be clicked. Only that part is dropped: publishing from the
+  // Shares dashboard and the start-service dialog do not depend on the entitlement, and this is
+  // their only end-to-end coverage — which a community appliance, denied the key whatever
+  // middleware it runs, would otherwise never exercise. See `fixtures/entitlements.ts`.
+  const objectLock = isEntitled(entitlements, entitlementFeature.s3Versioning);
 
   const parent = `${pool}/${parentDataset}`;
   await ensureDatasetPresent(api, parent);
 
   await test.step('create the bucket from the Shares dashboard', async () => {
-    await createS3BucketWithObjectLock(page, {
+    await createS3Bucket(page, {
       name: bucket, parentDataset: parent, owner, retentionDays,
-    });
+    }, { objectLock });
   });
 
   // Through the API, deliberately: the screens confirmed a row appeared, and
@@ -104,10 +103,17 @@ test('an admin publishes an S3 bucket with object lock and starts the service', 
       dataset: `${parent}/${bucket}`,
       owner,
       enabled: true,
-      object_lock: true,
-      versioning: 'ENABLED',
-      object_lock_default_mode: 'COMPLIANCE',
-      object_lock_default_days: retentionDays,
+      // What object lock sets behind the basic-mode form, when it was available to set. Without
+      // the entitlement the bucket is published unlocked, and asserting the defaults here would
+      // be asserting middleware's, not the form's.
+      ...(objectLock
+        ? {
+            object_lock: true,
+            versioning: 'ENABLED',
+            object_lock_default_mode: 'COMPLIANCE',
+            object_lock_default_days: retentionDays,
+          }
+        : { object_lock: false }),
     });
 
     // Polled: starting a service is a job that completes after the dialog
