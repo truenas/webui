@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormBuilder, FormControl, FormArray } from '@ngneat/reactive-forms';
@@ -9,20 +9,15 @@ import {
   TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import {
-  EMPTY, Subscription, take,
-} from 'rxjs';
-import {
-  catchError, map, tap,
-} from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AdvancedConfigUpdate, SyslogServer } from 'app/interfaces/advanced-config.interface';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
@@ -36,6 +31,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnCheckboxComponent,
@@ -46,28 +42,23 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
     AsyncPipe,
   ],
 })
-export class SyslogFormComponent extends SidePanelForm implements OnInit {
+export class SyslogFormComponent extends IxFormHostForm implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
-  private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
-  protected isFormLoading = signal(false);
   private subscriptions: Subscription[] = [];
 
-  readonly form = this.fb.group({
+  protected readonly form = this.fb.group({
     fqdn_syslog: [false],
     sysloglevel: new FormControl(null as SyslogLevel | null),
     syslog_audit: [false],
     syslogservers: this.fb.array<SyslogServer>([]),
   });
-
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   get syslogServersArray(): FormArray<SyslogServer> {
     return this.form.controls.syslogservers;
@@ -112,11 +103,7 @@ export class SyslogFormComponent extends SidePanelForm implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store$.pipe(
-      waitForAdvancedConfig,
-      take(1),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((config) => {
+    this.loadFormConfig(this.store$.pipe(waitForAdvancedConfig), (config) => {
       this.loadForm({
         fqdn_syslog: config.fqdn_syslog,
         sysloglevel: config.sysloglevel,
@@ -156,8 +143,8 @@ export class SyslogFormComponent extends SidePanelForm implements OnInit {
     this.syslogServersArray.removeAt(index);
   }
 
-  protected onSubmit(): void {
-    const { ...values } = this.form.value;
+  protected handleSubmit = (): SubmitResult => {
+    const values = this.form.value;
     const configUpdate: Partial<AdvancedConfigUpdate> = {
       fqdn_syslog: values.fqdn_syslog,
       sysloglevel: values.sysloglevel || undefined,
@@ -165,22 +152,12 @@ export class SyslogFormComponent extends SidePanelForm implements OnInit {
       syslogservers: values.syslogservers.filter((server: SyslogServer) => server.host),
     };
 
-    this.isFormLoading.set(true);
-    this.api.call('system.advanced.update', [configUpdate]).pipe(
-      tap(() => {
-        this.snackbar.success(this.translate.instant('Settings saved'));
-        this.store$.dispatch(advancedConfigUpdated());
-        this.isFormLoading.set(false);
-        this.close(true);
-      }),
-      catchError((error: unknown) => {
-        this.isFormLoading.set(false);
-        this.formErrorHandler.handleValidationErrors(error, this.form);
-        return EMPTY;
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
-  }
+    return {
+      request$: this.api.call('system.advanced.update', [configUpdate]),
+      successMessage: this.translate.instant('Settings saved'),
+      onSuccess: () => this.store$.dispatch(advancedConfigUpdated()),
+    };
+  };
 
   private loadForm(syslogConfig: {
     fqdn_syslog: boolean;

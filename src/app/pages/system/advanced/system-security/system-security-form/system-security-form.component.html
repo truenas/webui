@@ -1,4 +1,10 @@
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="true"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <tn-form-section>
     <tn-form-field
       [tooltip]="'Enforce the use of FIPS 140-2 compliant algorithms' | translate"
@@ -132,4 +138,4 @@
     </tn-form-field>
 
   </tn-form-section>
-</form>
+</ix-form>

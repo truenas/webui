@@ -1,4 +1,10 @@
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="true"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <tn-form-section>
     <tn-form-field [tooltip]="tooltips.fqdn_syslog | translate">
       <tn-checkbox
@@ -76,4 +82,4 @@
       ></tn-checkbox>
     </tn-form-field>
   </tn-form-section>
-</form>
+</ix-form>

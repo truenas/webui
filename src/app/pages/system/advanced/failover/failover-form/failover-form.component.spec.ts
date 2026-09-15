@@ -10,6 +10,7 @@ import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FailoverFormComponent } from 'app/pages/system/advanced/failover/failover-form/failover-form.component';
@@ -32,6 +33,7 @@ describe('FailoverFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockAuth(),
       mockApi([
         mockCall('failover.config', {

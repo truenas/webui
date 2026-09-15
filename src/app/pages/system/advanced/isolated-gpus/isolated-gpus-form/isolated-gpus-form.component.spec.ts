@@ -9,7 +9,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { IsolatedGpusFormComponent } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
 import { GpuService } from 'app/services/gpu/gpu.service';
@@ -32,6 +32,7 @@ describe('IsolatedGpusFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       provideMockStore({
         selectors: [
           {
@@ -63,7 +64,6 @@ describe('IsolatedGpusFormComponent', () => {
         }),
       ]),
       mockProvider(SystemGeneralService),
-      mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(GpuService, {
         getGpuOptions: () => of([

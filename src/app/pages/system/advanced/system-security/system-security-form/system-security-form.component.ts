@@ -18,7 +18,7 @@ import {
   TnProgressBarComponent, TnSelectComponent, TnSlideToggleComponent,
 } from '@truenas/ui-components';
 import {
-  filter, finalize, map, of, tap, forkJoin, zip, take,
+  filter, finalize, map, Observable, of, switchMap, tap, forkJoin, zip,
 } from 'rxjs';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
@@ -33,9 +33,9 @@ import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interfac
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import {
@@ -106,6 +106,7 @@ interface MissingStigRequirement {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnSlideToggleComponent,
@@ -116,11 +117,10 @@ interface MissingStigRequirement {
     AsyncPipe,
   ],
 })
-export class SystemSecurityFormComponent extends SidePanelForm implements OnInit {
+export class SystemSecurityFormComponent extends IxFormHostForm implements OnInit {
   private destroyRef = inject(DestroyRef);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private snackbar = inject(SnackbarService);
   private dialogService = inject(DialogService);
   private store$ = inject(Store);
   private api = inject(ApiService);
@@ -174,13 +174,21 @@ export class SystemSecurityFormComponent extends SidePanelForm implements OnInit
   protected missingStigWarnings = signal<MissingStigRequirement[]>([]);
   private twoFactorConfig = signal<GlobalTwoFactorConfig | null>(null);
 
-  readonly canSubmit = this.trackCanSubmit(this.loadingStigRequirements);
+  /** Folds the STIG requirement probe into the panel's progress bar alongside the base's own load. */
+  override isBusy(): boolean {
+    return super.isBusy() || this.loadingStigRequirements();
+  }
+
+  /** The probe decides whether STIG may be enabled at all, so Save must wait for its verdict. */
+  override canSubmit(): boolean {
+    return !this.loadingStigRequirements() && super.canSubmit();
+  }
 
   ngOnInit(): void {
-    this.api.call('system.security.config').pipe(
-      take(1),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((config) => {
+    // Wired before the load, so a retried `loadFormConfig` can't register a second listener.
+    this.watchStigToggle();
+
+    this.loadFormConfig(this.api.call('system.security.config'), (config) => {
       this.systemSecurityConfig.set(config);
       this.initSystemSecurityForm();
       if (config.enable_gpos_stig) {
@@ -497,41 +505,42 @@ export class SystemSecurityFormComponent extends SidePanelForm implements OnInit
     return null;
   }
 
-  protected onSubmit(): void {
+  protected handleSubmit = (): SubmitResult => {
     const values = this.form.value as unknown as SystemSecurityConfig;
     const isEnablingStig = values.enable_gpos_stig && !this.systemSecurityConfig()?.enable_gpos_stig;
 
-    if (isEnablingStig) {
-      this.checkUsersWithoutTwoFactorAuth(() => this.saveSettings(values));
-    } else {
-      this.saveSettings(values);
-    }
-  }
+    // Declining the lock-out warning completes the request without emitting, which `<ix-form>`
+    // reads as "nothing happened": no snackbar, no close, Save re-enables.
+    const mayProceed$ = isEnablingStig ? this.confirmStigLockout() : of(true);
 
-  private checkUsersWithoutTwoFactorAuth(callback: () => void): void {
-    this.api.call('user.query', [[
+    return {
+      request$: mayProceed$.pipe(
+        filter(Boolean),
+        switchMap(() => this.saveSettings(values)),
+      ),
+      successMessage: this.translate.instant('System Security Settings Updated.'),
+      onSuccess: () => {
+        if (values.enable_gpos_stig) {
+          this.authService.clearAuthToken();
+        }
+      },
+    };
+  };
+
+  /** Resolves false when the user backs out of enabling STIG over users who would lose access. */
+  private confirmStigLockout(): Observable<boolean> {
+    return this.api.call('user.query', [[
       ['builtin', '=', false],
       ['twofactor_auth_configured', '=', false],
       ['locked', '=', false],
       ['password_disabled', '=', false],
       ['roles', '!=', []],
     ]] as QueryParams<User>).pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (users) => {
-        if (users.length > 0) {
-          this.showStigWarningDialog(users, callback);
-        } else {
-          callback();
-        }
-      },
-      error: (error: unknown) => {
-        this.errorHandler.withErrorHandler()(of(error));
-      },
-    });
+      switchMap((users) => (users.length > 0 ? this.showStigWarningDialog(users) : of(true))),
+    );
   }
 
-  private showStigWarningDialog(usersWithoutTwoFactor: User[], callback: () => void): void {
+  private showStigWarningDialog(usersWithoutTwoFactor: User[]): Observable<boolean> {
     const userList = usersWithoutTwoFactor.map((user) => user.username).join(', ');
     const message = this.translate.instant(
       'Warning: The following users have roles but do not have Two-Factor Authentication configured: {userList}. '
@@ -540,21 +549,16 @@ export class SystemSecurityFormComponent extends SidePanelForm implements OnInit
       { userList },
     );
 
-    this.dialogService.confirm({
+    return this.dialogService.confirm({
       title: this.translate.instant('STIG Mode Warning'),
       message,
       buttonText: this.translate.instant('Enable STIG Mode Anyway'),
       cancelText: this.translate.instant('Cancel'),
       hideCheckbox: true,
-    }).pipe(
-      filter((result) => !!result),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      callback();
-    });
+    }).pipe(map((result) => !!result));
   }
 
-  private saveSettings(values: SystemSecurityConfig): void {
+  private saveSettings(values: SystemSecurityConfig): Observable<unknown> {
     const valuesToSave = { ...values };
     if (valuesToSave.password_complexity_ruleset) {
       valuesToSave.password_complexity_ruleset = {
@@ -564,7 +568,7 @@ export class SystemSecurityFormComponent extends SidePanelForm implements OnInit
 
     this.rebootInfoSuppression.suppress();
 
-    this.dialogService.jobDialog(
+    return this.dialogService.jobDialog(
       this.api.job('system.security.update', [valuesToSave]),
       {
         title: this.translate.instant('Saving settings'),
@@ -574,17 +578,7 @@ export class SystemSecurityFormComponent extends SidePanelForm implements OnInit
       .pipe(
         tap(() => this.store$.dispatch(refreshRebootInfo())),
         finalize(() => this.rebootInfoSuppression.unsuppress()),
-        this.errorHandler.withErrorHandler(),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => {
-        if (values.enable_gpos_stig) {
-          this.authService.clearAuthToken();
-        }
-
-        this.close(true);
-        this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
-      });
+      );
   }
 
   private initSystemSecurityForm(): void {
@@ -598,13 +592,22 @@ export class SystemSecurityFormComponent extends SidePanelForm implements OnInit
       ...config,
       password_complexity_ruleset: config.password_complexity_ruleset?.$set,
     });
+  }
 
+  private watchStigToggle(): void {
     this.form.controls.enable_gpos_stig.valueChanges
       .pipe(
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((stigEnabled) => {
         this.isStigEnabled.set(stigEnabled);
+
+        // Skip while `loadFormConfig` is patching the saved config in: those values ARE the saved
+        // state, so there is nothing to coerce up to the STIG minimums and nothing to re-validate.
+        if (this.dataLoading()) {
+          return;
+        }
+
         if (stigEnabled) {
           this.setupStigRequirements();
 
@@ -655,8 +658,12 @@ export class SystemSecurityFormComponent extends SidePanelForm implements OnInit
           this.missingStigWarnings.set([]);
         }
 
+        // Everything but the toggle itself — re-running that from inside its own `valueChanges`
+        // would re-emit. `enable_fips` is included: it carries a `stigRequiresFips` error while
+        // STIG is on, and skipping it left that error latched after STIG was switched back off,
+        // which now keeps the panel's Save disabled over an otherwise valid form.
         Object.keys(this.form.controls).forEach((key) => {
-          if (key !== 'enable_gpos_stig' && key !== 'enable_fips') {
+          if (key !== 'enable_gpos_stig') {
             const control = this.form.controls[key as keyof typeof this.form.controls];
             control.updateValueAndValidity();
           }
