@@ -17,7 +17,6 @@ import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { OnOff } from 'app/enums/on-off.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -149,7 +148,7 @@ describe('ZvolFormComponent', () => {
         initialState: {
           entitlements: { entitlements: {} },
           systemInfo: {
-            productType: ProductType.CommunityEdition,
+            entitlementFacts: null,
             systemInfo: {
               license: { features: [] },
             } as SystemInfo,

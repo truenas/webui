@@ -7,7 +7,8 @@ import {
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { ProductType } from 'app/enums/product-type.enum';
+import { HardwareType } from 'app/enums/hardware-type.enum';
+import { LicenseType } from 'app/enums/license-type.enum';
 import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/truenas-logo.component';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
@@ -33,7 +34,7 @@ describe('TruenasLogoComponent', () => {
         selectors: [{
           selector: selectSystemInfoState,
           value: {
-            productType: ProductType.CommunityEdition,
+            entitlementFacts: { hardware_type: HardwareType.Community, license_type: null },
           } as SystemInfoState,
         }],
       }),
@@ -68,7 +69,7 @@ describe('TruenasLogoComponent', () => {
   it('enterprise: shows a logotype', async () => {
     const store$ = spectator.inject(MockStore);
     store$.overrideSelector(selectSystemInfoState, {
-      productType: ProductType.Enterprise,
+      entitlementFacts: { hardware_type: HardwareType.Truenas, license_type: LicenseType.EnterpriseSingle },
     });
     store$.refreshState();
 
@@ -80,7 +81,7 @@ describe('TruenasLogoComponent', () => {
   it('enterprise: shows full logo in color', async () => {
     const store$ = spectator.inject(MockStore);
     store$.overrideSelector(selectSystemInfoState, {
-      productType: ProductType.Enterprise,
+      entitlementFacts: { hardware_type: HardwareType.Truenas, license_type: LicenseType.EnterpriseSingle },
     });
     store$.refreshState();
     spectator.setInput('fullSize', true);
@@ -92,7 +93,7 @@ describe('TruenasLogoComponent', () => {
   it('enterprise: shows full logo in white', async () => {
     const store$ = spectator.inject(MockStore);
     store$.overrideSelector(selectSystemInfoState, {
-      productType: ProductType.Enterprise,
+      entitlementFacts: { hardware_type: HardwareType.Truenas, license_type: LicenseType.EnterpriseSingle },
     });
     store$.refreshState();
     spectator.setInput('fullSize', true);
@@ -100,6 +101,18 @@ describe('TruenasLogoComponent', () => {
     icons = await loader.getAllHarnesses(TnIconHarness);
 
     expect(await icons[0].getName()).toBe('app-truenas-logo-enterprise');
+  });
+
+  it('commercial: shows the plain full logo, without an edition name', async () => {
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectSystemInfoState, {
+      entitlementFacts: { hardware_type: HardwareType.Community, license_type: LicenseType.Commercial },
+    });
+    store$.refreshState();
+    spectator.setInput('fullSize', true);
+    icons = await loader.getAllHarnesses(TnIconHarness);
+
+    expect(await icons[0].getName()).toBe('app-truenas-logo');
   });
 
   it('checks white color', async () => {

@@ -9,7 +9,6 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
-import { ProductType } from 'app/enums/product-type.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
@@ -64,7 +63,7 @@ describe('ManualUpdateFormComponent', () => {
             systemInfo: {
               version: 'TrueNAS-SCALE-22.12',
             } as SystemInfo,
-            productType: ProductType.CommunityEdition,
+            entitlementFacts: null,
             isIxHardware: false,
             buildYear: 2024,
           },

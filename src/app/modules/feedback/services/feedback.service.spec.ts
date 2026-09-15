@@ -13,7 +13,8 @@ import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import {
   TicketCategory, TicketCriticality, TicketEnvironment, TicketType,
 } from 'app/enums/file-ticket.enum';
-import { ProductType } from 'app/enums/product-type.enum';
+import { HardwareType } from 'app/enums/hardware-type.enum';
+import { LicenseType } from 'app/enums/license-type.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -21,7 +22,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
-import { selectProductType, selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
+import { selectEntitlementFacts, selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
 
 describe('FeedbackService', () => {
   let spectator: SpectatorService<FeedbackService>;
@@ -53,15 +54,15 @@ describe('FeedbackService', () => {
               version: 'SCALE-24.04',
               system_product: 'M40',
             },
-            productType: ProductType.Enterprise,
+            entitlementFacts: { hardware_type: HardwareType.Truenas, license_type: LicenseType.EnterpriseSingle },
             isIxHardware: true,
             buildYear: 2024,
           },
         },
         selectors: [
           {
-            selector: selectProductType,
-            value: ProductType.Enterprise,
+            selector: selectEntitlementFacts,
+            value: { hardware_type: HardwareType.Truenas, license_type: LicenseType.EnterpriseSingle },
           },
           {
             selector: selectSystemInfoState,
@@ -70,7 +71,7 @@ describe('FeedbackService', () => {
                 version: 'SCALE-24.04',
                 system_product: 'M40',
               },
-              productType: ProductType.Enterprise,
+              entitlementFacts: { hardware_type: HardwareType.Truenas, license_type: LicenseType.EnterpriseSingle },
               isIxHardware: true,
               buildYear: 2024,
             } as SystemInfoState,
@@ -301,7 +302,7 @@ describe('FeedbackService', () => {
         message: 'Git gud',
         page: '/storage',
         product_model: 'M40',
-        product_type: ProductType.Enterprise,
+        product_type: 'ENTERPRISE',
         rating: 1,
         release: 'SCALE-24.04',
         user_agent: 'Safari',
@@ -326,7 +327,7 @@ describe('FeedbackService', () => {
         message: 'Git gud',
         page: '/storage',
         product_model: 'M40',
-        product_type: ProductType.Enterprise,
+        product_type: 'ENTERPRISE',
         rating: 1,
         release: 'SCALE-24.04',
         user_agent: 'Safari',
@@ -360,7 +361,7 @@ describe('FeedbackService', () => {
         message: 'Git gud',
         page: '/storage',
         product_model: 'M40',
-        product_type: ProductType.Enterprise,
+        product_type: 'ENTERPRISE',
         rating: 5,
         release: 'SCALE-24.04',
         user_agent: 'Safari',

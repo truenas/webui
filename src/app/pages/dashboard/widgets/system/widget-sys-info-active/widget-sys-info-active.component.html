@@ -86,10 +86,16 @@
             <strong>{{ 'Edition' | translate }}:</strong>
             @if (isLoaded()) {
               <span>
-                @if (isEnterprise()) {
-                  {{ 'Enterprise' | translate }}
-                } @else {
-                  {{ 'Community' | translate }}
+                @switch (productType()) {
+                  @case (ProductType.Enterprise) {
+                    {{ 'Enterprise' | translate }}
+                  }
+                  @case (ProductType.Commercial) {
+                    {{ 'Commercial' | translate }}
+                  }
+                  @default {
+                    {{ 'Community' | translate }}
+                  }
                 }
               </span>
             } @else {
@@ -172,7 +178,7 @@
             }
           </mat-list-item>
 
-          @if (!isEnterprise()) {
+          @if (isCommunityEdition()) {
             <mat-list-item class="use-enterprise">
               <ix-use-enterprise-marketing-link></ix-use-enterprise-marketing-link>
             </mat-list-item>

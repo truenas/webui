@@ -9,7 +9,6 @@ import { of, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { VmBootloader, VmDeviceType, VmDisplayType, VmState } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
@@ -118,7 +117,7 @@ describe('VmListComponent', () => {
           },
           systemInfo: {
             systemInfo: null,
-            productType: ProductType.CommunityEdition,
+            entitlementFacts: null,
             isIxHardware: false,
             buildYear: 2024,
           },

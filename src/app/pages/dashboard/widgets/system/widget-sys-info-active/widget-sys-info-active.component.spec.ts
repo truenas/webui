@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { BehaviorSubject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -118,6 +118,17 @@ describe('WidgetSysInfoActiveComponent', () => {
       'System Serial: AA-00001',
       'Uptime: 23 hours 12 minutes as of 10:34',
     ]);
+  });
+
+  it('shows the Commercial edition for a commercial license', async () => {
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectProductType, ProductType.Commercial);
+    store$.refreshState();
+    spectator.detectChanges();
+
+    const matListItems = await loader.getAllHarnesses(MatListItemHarness);
+    const items = await parallel(() => matListItems.map((item) => item.getFullText()));
+    expect(items).toContain('Edition: Commercial');
   });
 
   it('checks Uptime changed over time', () => {
