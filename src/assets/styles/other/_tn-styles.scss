@@ -245,17 +245,21 @@ textarea {
   padding: 8px !important;
 }
 
-// `tn-side-panel` renders its overlay inline (position: fixed; z-index: 1000) rather than
-// through the CDK overlay container, which is also z-index: 1000. Because the panel appears
+// `tn-side-panel` portals its overlay to `document.body` (position: fixed; z-index: 1000) rather
+// than through the CDK overlay container, which is also z-index: 1000. Because the panel appears
 // later in the DOM, the tie resolves in its favor, so any CDK overlay opened while the panel
 // is open (e.g. the unsaved-changes confirm dialog from its closeGuard, tn-select dropdowns,
 // menus, tooltips) renders BEHIND the panel backdrop — darkened and click-blocked.
 // Drop the panel one below the CDK modal layer so those overlays stack above it as intended.
+//
+// A fallback now, not the main path: `FormSidePanelContainerComponent` moves its overlay into the
+// CDK overlay container (see below), so this only covers the window before that move lands, and
+// the case where it silently bails out because the library renamed what it looks for.
 .tn-side-panel__overlay {
   z-index: 999 !important;
 }
 
-// ...but the CDK overlay container is a single element with a single `z-index`, so the rule above
+// ...because the CDK overlay container is a single element with a single `z-index`, the rule above
 // orders the panel against EVERY CDK overlay at once — including one that was already open when the
 // panel opened. That buried the host/port form under the "Manage Hosts" dialog's backdrop, invisible
 // and click-blocked (NAS-143761).
@@ -265,10 +269,21 @@ textarea {
 // Restore the library's own `z-index` there so the panel ties with `.cdk-overlay-pane` instead of
 // losing to it outright, and the tie resolves in favour of whichever opened last.
 //
-// Scoped to the container, so a `<tn-side-panel>` declared in a template (which stays on `<body>`)
-// keeps the `999` behaviour above.
+// Every side panel in the app is opened through `FormSidePanelService`, so every one of them is
+// re-homed: the container's own template holds the only `<tn-side-panel>` element in `src/app`.
 .cdk-overlay-container .tn-side-panel__overlay {
   z-index: 1000 !important;
+  // `.cdk-overlay-container` is `pointer-events: none` and `pointer-events` inherits, so once the
+  // overlay lives inside it, staying clickable depends on the overlay declaring a value of its own.
+  // The library does — but it had no reason to while the overlay sat on `<body>`, so pin both
+  // states here rather than let a version bump silently make the panel click-through. Gated on
+  // `--open` exactly as the library gates it: a closed overlay still covers the viewport
+  // (`inset: 0`), so forcing `auto` unconditionally would swallow clicks on the page behind it.
+  pointer-events: none !important;
+}
+
+.cdk-overlay-container .tn-side-panel__overlay--open {
+  pointer-events: auto !important;
 }
 
 .app-loader-overlay .cdk-dialog-container {

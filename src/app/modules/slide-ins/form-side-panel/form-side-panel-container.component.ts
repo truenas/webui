@@ -100,7 +100,12 @@ export type HostedSidePanelForm = SidePanelHostForm & {
 })
 export class FormSidePanelContainerComponent {
   private unsavedChanges = inject(UnsavedChangesService);
-  private overlayContainer = inject(OverlayContainer);
+  /**
+   * Resolved eagerly, not inside the render-phase callback below: `getContainerElement()` creates
+   * the container element on first call, so taking it here leaves that callback with a single DOM
+   * write (the move itself).
+   */
+  private cdkOverlayContainer = inject(OverlayContainer).getContainerElement();
   private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private document = inject(DOCUMENT);
 
@@ -136,6 +141,10 @@ export class FormSidePanelContainerComponent {
     // `tn-side-panel` portals its overlay to `document.body` in an `afterNextRender` of its own,
     // which runs in the default `mixedReadWrite` phase; registering ours in the later `read` phase
     // puts us after it in the same render cycle, so the element is always there to move.
+    //
+    // The callback does write to the DOM, which `read` nominally asks it not to. No phase offers
+    // both "after the library's move" and "may write", and ordering is the load-bearing half:
+    // running before the portal lands leaves nothing to re-home at all.
     afterNextRender({ read: () => this.moveOverlayIntoCdkContainer() });
   }
 
@@ -153,8 +162,8 @@ export class FormSidePanelContainerComponent {
    * Inside the container both sit at `z-index: 1000` (see the scoped rule in `_tn-styles.scss`)
    * and DOM order arbitrates, which is exactly "last opened wins" in both directions.
    *
-   * Only panels opened through {@link FormSidePanelService} are moved. A `<tn-side-panel>` declared
-   * in a template keeps the body-level `999` behaviour.
+   * This covers every side panel in the app — `src/app` holds no `<tn-side-panel>` element outside
+   * this component's own template, so they all arrive through {@link FormSidePanelService}.
    */
   private moveOverlayIntoCdkContainer(): void {
     // The overlay leaves the component's own subtree, but `tn-side-panel`'s host element stays
@@ -168,7 +177,7 @@ export class FormSidePanelContainerComponent {
     if (overlay) {
       // `appendChild` moves the element. This runs before the service flips `open` (two animation
       // frames later), so the panel still animates in from its closed, off-screen state.
-      this.overlayContainer.getContainerElement().appendChild(overlay);
+      this.cdkOverlayContainer.appendChild(overlay);
     }
   }
 
