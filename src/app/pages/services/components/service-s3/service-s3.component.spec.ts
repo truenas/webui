@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { computed, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
 import {
   TnAutocompleteHarness, TnCheckboxHarness, TnDialog, TnFormListHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
@@ -29,7 +28,6 @@ import { ServiceS3Component } from 'app/pages/services/components/service-s3/ser
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { selectLicense } from 'app/store/system-info/system-info.selectors';
 
 describe('ServiceS3Component', () => {
   /**
@@ -98,9 +96,6 @@ describe('ServiceS3Component', () => {
       }),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({ closed: of(true) })),
-      }),
-      provideMockStore({
-        selectors: [{ selector: selectLicense, value: null }],
       }),
       ...ixFormTestingProviders(),
     ],

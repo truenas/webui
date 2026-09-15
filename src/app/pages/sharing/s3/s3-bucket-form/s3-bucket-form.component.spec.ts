@@ -32,10 +32,11 @@ import { s3UserFormPreset } from 'app/pages/sharing/s3/utils/s3-user-picker.util
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { AppState } from 'app/store';
+import { entitlementsLoadFailed } from 'app/store/entitlements/entitlements.actions';
+import { entitlementsReducer } from 'app/store/entitlements/entitlements.reducer';
 import { entitlementsStateKey } from 'app/store/entitlements/entitlements.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
-import { selectLicense } from 'app/store/system-info/system-info.selectors';
 
 describe('S3BucketFormComponent', () => {
   let spectator: Spectator<S3BucketFormComponent>;
@@ -120,7 +121,6 @@ describe('S3BucketFormComponent', () => {
       provideMockStore({
         selectors: [
           { selector: selectServices, value: [] },
-          { selector: selectLicense, value: null },
         ],
       }),
       ...ixFormTestingProviders(),
@@ -393,6 +393,27 @@ describe('S3BucketFormComponent', () => {
 
       expect(premiumBadge('s3-versioning')).not.toBeNull();
       expect(premiumBadge('s3-audit')).not.toBeNull();
+    });
+
+    it('tags nothing when the entitlement call failed, on a system that may well hold the key', () => {
+      // `entitlementsLoadFailed` resolves to a map carrying SUPPORT alone — the same shape as an
+      // older middleware, for the opposite reason. Denying on it would put a Premium tag on a
+      // licensed appliance and drop its audit settings from the create below.
+      spectator = createComponent({
+        providers: [{ provide: EntitlementsService, useClass: EntitlementsService }],
+      });
+      const mockStore$ = spectator.inject(MockStore);
+
+      mockStore$.setState({
+        [entitlementsStateKey]: {
+          entitlements: entitlementsReducer(undefined, entitlementsLoadFailed()).entitlements,
+          assumed: true,
+        },
+      });
+      mockStore$.refreshState();
+      spectator.detectChanges();
+
+      expect(premiumBadge('s3-object-lock')).toBeNull();
     });
 
     it('tags auditing without the S3_AUDIT key, and still shows it', async () => {

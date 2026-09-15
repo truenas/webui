@@ -11,7 +11,7 @@ const denied = {
 } as EntitlementEntry;
 
 describe('entitlementsReducer', () => {
-  const unloaded: EntitlementsState = { entitlements: null };
+  const unloaded: EntitlementsState = { entitlements: null, assumed: false };
 
   it('stores the loaded map', () => {
     const state = entitlementsReducer(
@@ -30,6 +30,19 @@ describe('entitlementsReducer', () => {
       entitled: false,
       reason: EntitlementReason.NoLicense,
     });
+    // Marked as an assumption, so a fail-closed gate does not read it as a set of denials.
+    expect(state.assumed).toBe(true);
+  });
+
+  it('marks a loaded map as an answer, including one that replaces the assumption', () => {
+    const assumedState = entitlementsReducer(unloaded, entitlementsLoadFailed());
+
+    const state = entitlementsReducer(
+      assumedState,
+      entitlementsLoaded({ entitlements: { [EntitlementFeature.Kmip]: denied } }),
+    );
+
+    expect(state.assumed).toBe(false);
   });
 
   it('keeps the last known good map when a refresh fails', () => {
@@ -41,5 +54,7 @@ describe('entitlementsReducer', () => {
     const state = entitlementsReducer(loaded, entitlementsLoadFailed());
 
     expect(state.entitlements).toEqual({ [EntitlementFeature.Kmip]: denied });
+    // Still a real answer: the good map was not downgraded to an assumption by a failed refresh.
+    expect(state.assumed).toBe(false);
   });
 });

@@ -12,8 +12,11 @@ const denied = {
   message: 'The KMIP key management feature is not available on this system\'s hardware.',
 } as EntitlementEntry;
 
-function stateWith(entitlements: EntitlementsState['entitlements']): { entitlements: EntitlementsState } {
-  return { entitlements: { entitlements } };
+function stateWith(
+  entitlements: EntitlementsState['entitlements'],
+  assumed = false,
+): { entitlements: EntitlementsState } {
+  return { entitlements: { entitlements, assumed } };
 }
 
 describe('Entitlements Selectors', () => {
@@ -42,6 +45,19 @@ describe('Entitlements Selectors', () => {
       const state = stateWith({ [EntitlementFeature.Kmip]: denied });
 
       expect(selectIsEntitledStrictly(EntitlementFeature.Kmip)(state)).toBe(false);
+    });
+
+    it('stays unanswered for a key absent from the failed-load assumption', () => {
+      // `entitlementsLoadFailed` resolves to a map holding SUPPORT alone, which has the same
+      // shape as an older middleware for the opposite reason. Denying on it would tag a licensed
+      // appliance Premium and drop its settings from a create.
+      expect(selectIsEntitledStrictly(EntitlementFeature.Kmip)(stateWith({}, true))).toBeUndefined();
+    });
+
+    it('still answers for a key the assumption does carry', () => {
+      const state = stateWith({ [EntitlementFeature.Support]: denied }, true);
+
+      expect(selectIsEntitledStrictly(EntitlementFeature.Support)(state)).toBe(false);
     });
 
     it('treats a key absent from a loaded map as denied, unlike selectIsEntitled', () => {
