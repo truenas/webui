@@ -19,7 +19,6 @@ import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { OnOff } from 'app/enums/on-off.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
@@ -242,7 +241,7 @@ describe('OtherOptionsSectionComponent', () => {
         initialState: {
           entitlements: { entitlements: {} },
           systemInfo: {
-            productType: ProductType.CommunityEdition,
+            entitlementFacts: null,
             license: {
               features: [],
             },

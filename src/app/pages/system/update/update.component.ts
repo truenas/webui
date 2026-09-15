@@ -46,7 +46,7 @@ import { ApiCallError } from 'app/services/errors/error.classes';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectIsTruenasHardware } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-update',
@@ -96,7 +96,7 @@ export class UpdateComponent implements OnInit {
   });
 
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly isTruenasHardware = toSignal(this.store$.select(selectIsTruenasHardware));
   private readonly hasSupport = this.entitlements.entitled(EntitlementFeature.Support);
 
   protected isLoading = signal(true);
@@ -164,10 +164,13 @@ export class UpdateComponent implements OnInit {
     return this.newVersion()?.manifest?.changelog.replace(/\n/g, '<br>');
   });
 
-  /** Variables release-notes markdown may test with `@if`: hardware, HA, license presence, support. */
+  /**
+   * Variables release-notes markdown may test with `@if`: hardware, HA, license presence, support.
+   * `isEnterprise` is authored outside the repo, so it keeps its name while meaning appliance hardware.
+   */
   protected readonly releaseNotesContext = computed(() => ({
     isHaLicensed: this.isHaLicensed(),
-    isEnterprise: this.isEnterprise(),
+    isEnterprise: this.isTruenasHardware(),
     hasLicense: Boolean(this.hasLicense()),
     hasSupport: Boolean(this.hasSupport()),
   }));

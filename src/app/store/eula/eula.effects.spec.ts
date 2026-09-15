@@ -12,7 +12,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { EulaEffects } from 'app/store/eula/eula.effects';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectIsTruenasHardware } from 'app/store/system-info/system-info.selectors';
 
 describe('EulaEffects', () => {
   let spectator: SpectatorService<EulaEffects>;
@@ -34,7 +34,7 @@ describe('EulaEffects', () => {
       }),
       provideMockStore({
         selectors: [{
-          selector: selectIsEnterprise,
+          selector: selectIsTruenasHardware,
           value: true,
         }],
       }),
@@ -91,7 +91,7 @@ describe('EulaEffects', () => {
         ],
       });
       const store$ = spectator.inject(MockStore);
-      store$.overrideSelector(selectIsEnterprise, false);
+      store$.overrideSelector(selectIsTruenasHardware, false);
       store$.refreshState();
       jest.clearAllMocks();
 

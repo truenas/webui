@@ -10,7 +10,7 @@ import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select
 import {
   RebootOrShutdownDialog,
 } from 'app/modules/layout/topbar/reboot-or-shutdown-dialog/reboot-or-shutdown-dialog.component';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectIsTruenasHardware } from 'app/store/system-info/system-info.selectors';
 
 describe('RebootOrShutdownDialogComponent', () => {
   let spectator: Spectator<RebootOrShutdownDialog>;
@@ -22,7 +22,7 @@ describe('RebootOrShutdownDialogComponent', () => {
       provideMockStore({
         selectors: [
           {
-            selector: selectIsEnterprise,
+            selector: selectIsTruenasHardware,
             value: true,
           },
         ],
@@ -116,7 +116,7 @@ describe('RebootOrShutdownDialog – non-enterprise', () => {
       provideMockStore({
         selectors: [
           {
-            selector: selectIsEnterprise,
+            selector: selectIsTruenasHardware,
             value: false,
           },
         ],

@@ -1,6 +1,6 @@
 <h3 mat-dialog-title>{{ title }}</h3>
 
-@if (isEnterprise()) {
+@if (isTruenasHardware()) {
   <div mat-dialog-content>
     <ix-select
       [formControl]="form.controls.reason"
@@ -36,7 +36,7 @@
     type="button"
     color="primary"
     ixTest="submit"
-    [disabled]="!form.controls.confirm.value || (isEnterprise() && form.invalid)"
+    [disabled]="!form.controls.confirm.value || (isTruenasHardware() && form.invalid)"
     (click)="onSubmit()"
   >
     {{ buttonText }}
