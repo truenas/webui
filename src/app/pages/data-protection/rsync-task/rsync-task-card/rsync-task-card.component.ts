@@ -14,10 +14,11 @@ import {
 } from 'rxjs';
 import { rsyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { JobState } from 'app/enums/job-state.enum';
+import { DisplayableState, JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
+import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { RsyncTask, RsyncTaskUi, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
@@ -38,7 +39,7 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { selectJob, selectJobsByMethod } from 'app/modules/jobs/store/job.selectors';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -48,6 +49,12 @@ import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsy
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
+
+/** The task a run job belongs to. Every task run method takes the task id as its first argument. */
+function taskIdOf(job: Job): number | null {
+  const [taskId] = job.arguments as unknown[];
+  return typeof taskId === 'number' ? taskId : null;
+}
 
 @Component({
   selector: 'ix-rsync-task-card',
@@ -92,6 +99,14 @@ export class RsyncTaskCardComponent implements OnInit {
   rsyncTasks: RsyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<RsyncTaskUi>;
   jobStates = new Map<number, JobState>();
+
+  private readonly runMethod: ApiJobMethod = 'rsynctask.run';
+
+  /**
+   * States already reloaded for, per job no row carries yet. Keeps
+   * {@link watchExternalRuns} from reloading twice for the same job state.
+   */
+  private readonly externalJobStates = new Map<number, JobState>();
 
   columns = createTable<RsyncTaskUi>([
     textColumn({
@@ -163,6 +178,42 @@ export class RsyncTaskCardComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<RsyncTaskUi>(rsyncTasks$);
     this.getRsyncTasks();
+    this.watchExternalRuns();
+  }
+
+  /**
+   * Rows only ever learn about the job they were queried with. A run started outside this
+   * card — a cron-scheduled one, or one triggered from another tab — mints a *new* job id
+   * that no row is watching, so the card would go on showing the previous run's state and
+   * logs (or none at all, for a task that had never run) until something reloaded the list.
+   * Re-query once per state of such a job, which is what hands the row its new job.
+   */
+  private watchExternalRuns(): void {
+    this.store$.select(selectJobsByMethod(this.runMethod)).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((jobs) => {
+      const rowJobIds = new Set(this.rsyncTasks.map((row) => row.job?.id));
+      const unseenJobs = jobs.filter((job) => {
+        const taskId = taskIdOf(job);
+        return taskId !== null
+          && !rowJobIds.has(job.id)
+          && this.rsyncTasks.some((row) => row.id === taskId)
+          && this.externalJobStates.get(job.id) !== job.state;
+      });
+
+      // Recorded before reloading so a second emit for the same state can't queue another.
+      unseenJobs.forEach((job) => this.externalJobStates.set(job.id, job.state));
+      // Jobs the rows have caught up with need no further bookkeeping.
+      for (const jobId of this.externalJobStates.keys()) {
+        if (rowJobIds.has(jobId)) {
+          this.externalJobStates.delete(jobId);
+        }
+      }
+
+      if (unseenJobs.length) {
+        this.getRsyncTasks();
+      }
+    });
   }
 
   private getRsyncTasks(): void {
@@ -231,18 +282,17 @@ export class RsyncTaskCardComponent implements OnInit {
   }
 
   private transformRsyncTasks(rsyncTasks: RsyncTaskUi[]): RsyncTaskUi[] {
+    // A fresh row with a freshly derived `state`, so the pill never reads through to the
+    // query response. `job` is deliberately carried over by reference rather than spread:
+    // `{ ...null }` is `{}`, which is truthy, so a task that has never run would be read as
+    // having a job and render its (undefined) state as "N/A" instead of "Pending".
     return rsyncTasks.map((rsyncTask: RsyncTaskUi) => {
-      // make sure we deep-copy `state` and `job` so we aren't overriding the originals
-      // when we mutate `task`.
       const task: RsyncTaskUi = {
         ...rsyncTask,
-        state: { ...rsyncTask.state },
-        job: { ...rsyncTask.job },
+        state: { state: this.getTaskState(rsyncTask) },
       };
-      if (task.job === null) {
-        task.state = { state: task.locked ? TaskState.Locked : TaskState.Pending };
-      } else {
-        task.state = { state: task.job.state };
+
+      if (task.job) {
         this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
           .subscribe((job: Job) => {
             task.state = { state: job.state };
@@ -253,6 +303,14 @@ export class RsyncTaskCardComponent implements OnInit {
 
       return task;
     });
+  }
+
+  private getTaskState(task: RsyncTaskUi): DisplayableState {
+    if (!task.job) {
+      return task.locked ? TaskState.Locked : TaskState.Pending;
+    }
+
+    return task.job.state;
   }
 
   private onChangeEnabledState(rsyncTask: RsyncTaskUi): void {

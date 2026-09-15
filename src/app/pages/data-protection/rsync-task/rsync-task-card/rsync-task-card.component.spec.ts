@@ -6,7 +6,7 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -14,6 +14,7 @@ import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
+import { Job } from 'app/interfaces/job.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
@@ -68,6 +69,27 @@ describe('RsyncTaskCardComponent', () => {
         state: 'FAILED',
       },
     } as unknown as RsyncTaskUi,
+    {
+      id: 2,
+      path: '/mnt/DATA',
+      remotehost: 'qwe',
+      remotemodule: 'qweqwe',
+      user: 'test',
+      enabled: true,
+      mode: RsyncMode.Module,
+      direction: Direction.Push,
+      // A task that has never run: middleware reports no job at all.
+      job: null,
+      ssh_credentials: null,
+      schedule: {
+        minute: '0',
+        hour: '*',
+        dom: '*',
+        month: '*',
+        dow: '*',
+      },
+      locked: false,
+    } as unknown as RsyncTaskUi,
   ];
 
   const createComponent = createComponentFactory({
@@ -84,7 +106,7 @@ describe('RsyncTaskCardComponent', () => {
         selectors: [
           {
             selector: selectJobs,
-            value: rsyncTasks.map((task) => task.job),
+            value: rsyncTasks.map((task) => task.job).filter(Boolean),
           },
           {
             selector: selectSystemConfigState,
@@ -125,10 +147,29 @@ describe('RsyncTaskCardComponent', () => {
     const expectedRows = [
       ['Path', 'Remote Host', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
       ['/mnt/APPS', 'asd', 'Every hour, every day', 'Disabled', '1 min. ago', '', 'Failed', ''],
+      ['/mnt/DATA', 'qwe', 'Every hour, every day', 'in 1 day', 'N/A', '', 'Pending', ''],
     ];
 
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
+  });
+
+  it('reloads so the row picks up a run started outside the card', () => {
+    const loadSpy = jest.spyOn(spectator.component.dataProvider, 'load');
+
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectJobs, [
+      {
+        id: 1, state: JobState.Failed, method: 'rsynctask.run', arguments: [1],
+      } as Job,
+      // A cron-scheduled run of task 2 that no row is watching.
+      {
+        id: 77, state: JobState.Success, method: 'rsynctask.run', arguments: [2],
+      } as Job,
+    ]);
+    store$.refreshState();
+
+    expect(loadSpy).toHaveBeenCalled();
   });
 
   it('shows form to edit an existing Rsync Task when Edit button is pressed', async () => {
