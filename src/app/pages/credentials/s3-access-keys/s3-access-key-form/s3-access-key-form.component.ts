@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, input, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -12,11 +12,9 @@ import { Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSharingS3 } from 'app/helptext/sharing';
 import { S3AccessKey } from 'app/interfaces/s3.interface';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { LoaderService } from 'app/modules/loader/loader.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   S3AccessKeyCredentialsDialogComponent,
@@ -29,6 +27,7 @@ import { s3UserDirectoryOptions } from 'app/pages/sharing/s3/utils/s3-user-picke
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
@@ -38,13 +37,10 @@ import { s3UserDirectoryOptions } from 'app/pages/sharing/s3/utils/s3-user-picke
     TranslateModule,
   ],
 })
-export class S3AccessKeyFormComponent extends SidePanelForm implements OnInit {
+export class S3AccessKeyFormComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
-  private formErrorHandler = inject(FormErrorHandlerService);
-  private snackbar = inject(SnackbarService);
-  private loader = inject(LoaderService);
   private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
 
@@ -57,7 +53,6 @@ export class S3AccessKeyFormComponent extends SidePanelForm implements OnInit {
   protected readonly userDirectoryOptions = s3UserDirectoryOptions;
 
   protected readonly isNew = computed(() => !this.accessKey());
-  protected readonly isLoading = signal(false);
 
   protected readonly form = this.fb.group({
     name: ['', Validators.required],
@@ -70,9 +65,6 @@ export class S3AccessKeyFormComponent extends SidePanelForm implements OnInit {
     nonExpiring: [false],
     expires_at: [null as Date | null],
   });
-
-  /** Drives the host-owned Save action (`<tn-side-panel>` footer). */
-  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   ngOnInit(): void {
     const accessKey = this.accessKey();
@@ -97,44 +89,36 @@ export class S3AccessKeyFormComponent extends SidePanelForm implements OnInit {
     this.form.controls.nonExpiring.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(sync);
   }
 
-  protected onSubmit(): void {
+  protected handleSubmit = (): SubmitResult<boolean, S3AccessKey> => {
     const {
       name, username, enabled, manage_buckets: manageBuckets, nonExpiring, expires_at: expiresAtDate,
     } = this.form.getRawValue();
     const expiresAt = (nonExpiring || !expiresAtDate) ? null : { $date: expiresAtDate.getTime() };
     const accessKey = this.accessKey();
 
-    let request$: Observable<S3AccessKey>;
-    if (accessKey) {
-      request$ = this.api.call('s3.accesskey.update', [accessKey.id, {
-        name, enabled, expires_at: expiresAt, manage_buckets: manageBuckets,
-      }]);
-    } else {
-      request$ = this.api.call('s3.accesskey.create', [{
-        name, username, enabled, expires_at: expiresAt, manage_buckets: manageBuckets,
-      }]);
-    }
+    // No `withLoader()`: the panel's own progress bar and disabled Save now cover the save, and a
+    // full-screen blocking overlay on top of them was always redundant.
+    const request$: Observable<S3AccessKey> = accessKey
+      ? this.api.call('s3.accesskey.update', [accessKey.id, {
+          name, enabled, expires_at: expiresAt, manage_buckets: manageBuckets,
+        }])
+      : this.api.call('s3.accesskey.create', [{
+          name, username, enabled, expires_at: expiresAt, manage_buckets: manageBuckets,
+        }]);
 
-    this.isLoading.set(true);
-    request$.pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (created) => {
-        this.isLoading.set(false);
-        this.snackbar.success(
-          this.isNew()
-            ? this.translate.instant('S3 access key created')
-            : this.translate.instant('S3 access key updated'),
-        );
-        this.close(true);
+    return {
+      request$,
+      successMessage: this.isNew()
+        ? this.translate.instant('S3 access key created')
+        : this.translate.instant('S3 access key updated'),
+      // The secret is only ever returned once, so show it before the panel closes.
+      onSuccess: (created) => {
         if (this.isNew()) {
           this.tnDialog.open(S3AccessKeyCredentialsDialogComponent, { data: created });
         }
       },
-      error: (error: unknown) => {
-        this.isLoading.set(false);
-        this.formErrorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+    };
+  };
 
   private setKeyForEdit(key: S3AccessKey): void {
     this.form.patchValue({

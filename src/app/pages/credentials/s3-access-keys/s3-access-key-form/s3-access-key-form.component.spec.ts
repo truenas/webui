@@ -12,6 +12,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { S3AccessKeyStatus } from 'app/enums/s3.enum';
 import { S3AccessKey } from 'app/interfaces/s3.interface';
 import { User } from 'app/interfaces/user.interface';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -50,6 +51,7 @@ describe('S3AccessKeyFormComponent', () => {
     component: S3AccessKeyFormComponent,
     imports: [ReactiveFormsModule],
     providers: [
+      ...ixFormTestingProviders(),
       mockApi([
         mockCall('user.query', [{ username: 'alice', uid: 1000 }] as User[]),
         mockCall('s3.accesskey.create', createdKey),

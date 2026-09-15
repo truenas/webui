@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnFormFieldComponent, TnFormSectionComponent, TnInputComponent } from '@truenas/ui-components';
 import {
-  catchError, combineLatest, distinctUntilChanged, filter, map, Observable, of,
+  combineLatest, distinctUntilChanged, filter, map, Observable, of,
   startWith,
   switchMap,
 } from 'rxjs';
@@ -17,10 +17,10 @@ import {
 } from 'app/helpers/user.helper';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/users/user-form/additional-details-section/additional-details-section.component';
@@ -36,6 +36,7 @@ import { AppState } from 'app/store';
   styleUrls: ['./user-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    IxFormComponent,
     TnFormSectionComponent,
     ReactiveFormsModule,
     TranslateModule,
@@ -49,14 +50,13 @@ import { AppState } from 'app/store';
     UserFormStore,
   ],
 })
-export class UserFormComponent extends SidePanelForm<User> implements OnInit {
+export class UserFormComponent extends IxFormHostForm<User> implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
   private userFormStore = inject(UserFormStore);
   private formErrorHandler = inject(FormErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
   private dialog = inject(DialogService);
   private translate = inject(TranslateService);
-  private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
   /** Record being edited, supplied by the `<tn-side-panel>` host via the `editUser` input. */
@@ -66,8 +66,6 @@ export class UserFormComponent extends SidePanelForm<User> implements OnInit {
   // The host applies the `editUser` input after construction, so the edited record is
   // resolved in ngOnInit rather than eagerly here.
   protected editingUser = signal<User | undefined>(undefined);
-
-  protected isFormLoading = signal<boolean>(false);
 
   protected allowedAccessSection = viewChild.required(AllowedAccessSectionComponent);
   protected authSection = viewChild.required(AuthSectionComponent);
@@ -93,29 +91,12 @@ export class UserFormComponent extends SidePanelForm<User> implements OnInit {
   });
 
   /**
-   * Drives a host-owned Save action (the `<tn-side-panel>` footer). Validity is tracked across
-   * all four sub-forms via {@link isFormInvalid}, so this can't use the base `trackCanSubmit`.
+   * Widened: the inner `<ix-form>` only owns the username group, but Save must also wait on the
+   * three projected sub-forms tracked by {@link isFormInvalid}.
    */
-  readonly canSubmit = computed(() => !this.isFormInvalid() && !this.isFormLoading());
-
-  /**
-   * Busy/loading state read by the `<tn-side-panel>` host to show its progress bar, switch Save to
-   * "Saving…", and keep Save disabled mid-submit. Overrides the base (which sources its loading
-   * from `trackCanSubmit`) because this form builds `canSubmit` from its four sub-forms instead.
-   */
-  override isBusy(): boolean {
-    return this.isFormLoading();
+  override canSubmit(): boolean {
+    return !this.isFormInvalid() && super.canSubmit();
   }
-
-  /**
-   * Whether a save is in flight, read by the host to switch Save to "Saving…". Overrides the base
-   * latch because {@link isFormLoading} is set true *only* by the submit path (never an initial data
-   * load), so busy and submitting coincide here. Tracking it directly also covers the async path
-   * where a save is gated behind a home-dir confirmation dialog — there `isFormLoading` flips true
-   * only after the user confirms, long after `submit()` returns, which the base's synchronous
-   * rising-edge latch can't catch.
-   */
-  override readonly isSubmitting = computed(() => this.isFormLoading());
 
   protected isNewUser = computed(() => {
     return !this.editingUser();
@@ -180,7 +161,7 @@ export class UserFormComponent extends SidePanelForm<User> implements OnInit {
 
   /** Composite dirty across all four sub-forms; drives both hosts' discard confirmation. */
   override hasUnsavedChanges(): boolean {
-    return this.form.dirty
+    return super.hasUnsavedChanges()
       || this.authSection().form.dirty
       || this.allowedAccessSection().form.dirty
       || this.additionalDetailsSection().form.dirty;
@@ -385,15 +366,13 @@ export class UserFormComponent extends SidePanelForm<User> implements OnInit {
   }
 
   private submitUserRequest(payload: UserUpdate): Observable<User> {
-    this.isFormLoading.set(true);
-
     const editingUser = this.editingUser();
     return editingUser
       ? this.userFormStore.updateUser(editingUser.id, payload)
       : this.userFormStore.createUser();
   }
 
-  protected onSubmit(): void {
+  protected handleSubmit = (): SubmitResult<User, User> => {
     const values = { ...this.formValues };
     let payload = { ...this.userFormStore.userConfig() };
 
@@ -411,32 +390,27 @@ export class UserFormComponent extends SidePanelForm<User> implements OnInit {
       delete payload.password;
     }
 
-    this.getHomeCreateConfirmation().pipe(
-      filter(Boolean),
-      switchMap(() => this.submitUserRequest(payload)),
-      catchError((error: unknown) => {
-        this.isFormLoading.set(false);
+    return {
+      // Declining the home-directory warning completes without emitting, which `<ix-form>` reads as
+      // "nothing happened": no snackbar, no close, Save re-enables.
+      request$: this.getHomeCreateConfirmation().pipe(
+        filter(Boolean),
+        switchMap(() => this.submitUserRequest(payload)),
+      ),
+      successMessage: this.isNewUser()
+        ? this.translate.instant('User created')
+        : this.translate.instant('User updated'),
+      // Field errors can belong to any of the four sub-forms; the wrapper's default handler only
+      // knows the one group it owns, so map them across all of them here.
+      onError: (error) => {
         this.formErrorHandler.handleValidationErrors(error, this.allForms);
-        return of(undefined);
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (user) => {
-        this.isFormLoading.set(false);
-        if (user) {
-          // Hand the created/updated record back to the opener. Most callers just reload, but
-          // some (e.g. the API key form's "Add New" username) select the returned User.
-          this.closed.emit(user);
-
-          if (this.isNewUser()) {
-            this.snackbar.success(this.translate.instant('User created'));
-          } else {
-            this.snackbar.success(this.translate.instant('User updated'));
-          }
-        }
+        return true;
       },
-    });
-  }
+      // Hand the created/updated record back to the opener. Most callers just reload, but some
+      // (e.g. the API key form's "Add New" username) select the returned User.
+      closeWith: (user) => user,
+    };
+  };
 
   private listenForAllFormsValidity(): void {
     const forms = [
