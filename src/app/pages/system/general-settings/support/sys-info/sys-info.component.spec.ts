@@ -203,7 +203,7 @@ describe('SysInfoComponent', () => {
       },
     );
 
-    it.each([LicenseType.EnterpriseHa, LicenseType.EnterpriseSingle])(
+    it.each([LicenseType.Enterprise, LicenseType.EnterpriseHa, LicenseType.EnterpriseSingle])(
       'hides the thumbprint row on a %s license',
       (type) => {
         spectator.setInput({ hasLicense: true, licenseInfo: { ...licenseInfo, type } });

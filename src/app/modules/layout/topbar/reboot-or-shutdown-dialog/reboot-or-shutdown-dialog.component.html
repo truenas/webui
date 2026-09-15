@@ -1,5 +1,5 @@
 <tn-dialog-shell testId="reboot-or-shutdown" [title]="title">
-  @if (isEnterprise()) {
+  @if (isTruenasHardware()) {
     <tn-form-field [label]="'Reason' | translate" [required]="true">
       <tn-select
         testId="reason"
@@ -41,7 +41,7 @@
       color="primary"
       testId="submit"
       [label]="buttonText"
-      [disabled]="!form.controls.confirm.value || (!!isEnterprise() && form.invalid)"
+      [disabled]="!form.controls.confirm.value || (!!isTruenasHardware() && form.invalid)"
       (onClick)="onSubmit()"
     ></tn-button>
   </ix-form-actions>

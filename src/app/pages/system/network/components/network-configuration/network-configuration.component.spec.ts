@@ -10,7 +10,6 @@ import {
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { NetworkConfiguration, NetworkConfigurationActivity } from 'app/interfaces/network-configuration.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -81,7 +80,7 @@ describe('NetworkConfigurationComponent', () => {
         initialState: {
           systemInfo: {
             systemInfo: null,
-            productType: ProductType.CommunityEdition,
+            entitlementFacts: null,
             isIxHardware: false,
             buildYear: 2024,
           },

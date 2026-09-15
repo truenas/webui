@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { BehaviorSubject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -118,6 +118,17 @@ describe('WidgetSysInfoActiveComponent', () => {
       'System Serial: AA-00001',
       'Uptime: 23 hours 12 minutes as of 10:34',
     ]);
+  });
+
+  it('shows the Commercial edition for a commercial license', () => {
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectProductType, ProductType.Commercial);
+    store$.refreshState();
+    spectator.detectChanges();
+
+    const items = spectator.queryAll('tn-list-item')
+      .map((item) => item.textContent!.replace(/\s+/g, ' ').trim());
+    expect(items).toContain('Edition: Commercial');
   });
 
   it('checks Uptime changed over time', () => {

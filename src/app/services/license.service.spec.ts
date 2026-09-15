@@ -4,14 +4,14 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom, of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
-import { ProductType } from 'app/enums/product-type.enum';
+import { HardwareType } from 'app/enums/hardware-type.enum';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { LicenseService } from 'app/services/license.service';
-import { selectProductType } from 'app/store/system-info/system-info.selectors';
+import { selectEntitlementFacts } from 'app/store/system-info/system-info.selectors';
 
 describe('LicenseService', () => {
-  function setup(productType: ProductType | null, isWebshareEntitled: boolean): LicenseService {
+  function setup(hardwareType: HardwareType | null, isWebshareEntitled: boolean): LicenseService {
     TestBed.configureTestingModule({
       providers: [
         LicenseService,
@@ -21,7 +21,10 @@ describe('LicenseService', () => {
           entitled$: (feature: EntitlementFeature) => of(feature === EntitlementFeature.Webshare && isWebshareEntitled),
         }),
         provideMockStore({
-          selectors: [{ selector: selectProductType, value: productType }],
+          selectors: [{
+            selector: selectEntitlementFacts,
+            value: hardwareType ? { hardware_type: hardwareType, license_type: null } : null,
+          }],
         }),
       ],
     });
@@ -29,25 +32,25 @@ describe('LicenseService', () => {
   }
 
   describe('shouldShowWebshare$', () => {
-    it('emits true on non-enterprise systems even without the WEBSHARE entitlement', async () => {
-      const service = setup(ProductType.CommunityEdition, false);
+    it('emits true off TrueNAS appliance hardware even without the WEBSHARE entitlement', async () => {
+      const service = setup(HardwareType.Community, false);
 
       await expect(firstValueFrom(service.shouldShowWebshare$)).resolves.toBe(true);
     });
 
-    it('emits true on enterprise systems with the WEBSHARE entitlement', async () => {
-      const service = setup(ProductType.Enterprise, true);
+    it('emits true on TrueNAS appliance hardware with the WEBSHARE entitlement', async () => {
+      const service = setup(HardwareType.Truenas, true);
 
       await expect(firstValueFrom(service.shouldShowWebshare$)).resolves.toBe(true);
     });
 
-    it('emits false on enterprise systems without the WEBSHARE entitlement', async () => {
-      const service = setup(ProductType.Enterprise, false);
+    it('emits false on TrueNAS appliance hardware without the WEBSHARE entitlement', async () => {
+      const service = setup(HardwareType.Truenas, false);
 
       await expect(firstValueFrom(service.shouldShowWebshare$)).resolves.toBe(false);
     });
 
-    it('does not emit until the product type has loaded', () => {
+    it('does not emit until the entitlement facts have loaded', () => {
       const service = setup(null, true);
 
       let hasEmitted = false;

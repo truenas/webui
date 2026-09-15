@@ -4,7 +4,7 @@
       <h3>{{ 'TrueNAS Help' | translate }}</h3>
     </div>
 
-    <div [class]="['container', size()]" [class.enterprise]="isEnterprise()">
+    <div [class]="['container', size()]" [class.enterprise]="isCommercialOrEnterprise()">
       <div class="lines">
         <div class="line-item">
           <div class="icon-wrapper">

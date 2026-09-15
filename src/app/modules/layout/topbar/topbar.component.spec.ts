@@ -12,7 +12,6 @@ import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { selectImportantUnreadAlertsCount, selectIsAlertPanelOpen, selectTopAlertSeverity } from 'app/modules/alerts/store/alert.selectors';
@@ -118,7 +117,7 @@ function createTopbarComponent(options: ComponentOptions = {}): {
         initialState: {
           systemInfo: {
             systemInfo: null,
-            productType: ProductType.CommunityEdition,
+            entitlementFacts: null,
             isIxHardware: false,
             buildYear: 2024,
           },

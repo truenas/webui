@@ -18,7 +18,7 @@ import { Observable, of } from 'rxjs';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectIsTruenasHardware } from 'app/store/system-info/system-info.selectors';
 
 const customReasonValue = 'CUSTOM_REASON_VALUE';
 
@@ -111,7 +111,7 @@ export class RebootOrShutdownDialog {
     },
   ]);
 
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  readonly isTruenasHardware = toSignal(this.store$.select(selectIsTruenasHardware));
 
   get title(): string {
     return this.isShutdown

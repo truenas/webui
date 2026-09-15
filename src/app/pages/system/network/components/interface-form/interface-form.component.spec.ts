@@ -18,7 +18,6 @@ import {
   NetworkInterfaceType,
   XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
@@ -53,7 +52,6 @@ describe('InterfaceFormComponent', () => {
   let loader: HarnessLoader;
   let api: ApiService;
   let aliasesList: TnFormListHarness | null;
-  const productType = ProductType.CommunityEdition;
 
   async function setSelectValue(fcName: string, ...labels: string[]): Promise<void> {
     const select = await loader.getHarness(TnSelectHarness.with({ selector: `[formControlName="${fcName}"]` }));
@@ -123,9 +121,7 @@ describe('InterfaceFormComponent', () => {
           },
           [systemInfoStateKey]: {
             systemInfo: null,
-            get productType() {
-              return productType;
-            },
+            entitlementFacts: null,
             isIxHardware: false,
             buildYear: 2024,
           },
