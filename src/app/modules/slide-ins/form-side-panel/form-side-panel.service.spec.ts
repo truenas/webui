@@ -201,6 +201,11 @@ describe('FormSidePanelService', () => {
 
     const overlay = document.querySelector('.tn-side-panel__overlay');
     expect(overlay?.parentElement).toBe(cdkContainer);
+    // `_tn-styles.scss` restores `pointer-events` on this library-private modifier, because the
+    // container it now sits in is `pointer-events: none` and the property inherits. Pinned here so
+    // a rename upstream fails loudly instead of leaving every panel click-through (jsdom does no
+    // hit-testing, so nothing else in the suite would notice).
+    expect(overlay?.classList.contains('tn-side-panel__overlay--open')).toBe(true);
     expect(Array.from(cdkContainer.children).indexOf(overlay)).toBeGreaterThan(
       Array.from(cdkContainer.children).indexOf(alreadyOpen),
     );

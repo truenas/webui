@@ -273,15 +273,19 @@ textarea {
 // re-homed: the container's own template holds the only `<tn-side-panel>` element in `src/app`.
 .cdk-overlay-container .tn-side-panel__overlay {
   z-index: 1000 !important;
-  // `.cdk-overlay-container` is `pointer-events: none` and `pointer-events` inherits, so once the
-  // overlay lives inside it, staying clickable depends on the overlay declaring a value of its own.
-  // The library does — but it had no reason to while the overlay sat on `<body>`, so pin both
-  // states here rather than let a version bump silently make the panel click-through. Gated on
-  // `--open` exactly as the library gates it: a closed overlay still covers the viewport
-  // (`inset: 0`), so forcing `auto` unconditionally would swallow clicks on the page behind it.
-  pointer-events: none !important;
 }
 
+// `.cdk-overlay-container` is `pointer-events: none` and `pointer-events` inherits, so once the
+// overlay lives inside it, staying clickable depends on the overlay declaring a value of its own.
+// The library does — but it had no reason to while the overlay sat on `<body>`, so pin the open
+// state here rather than let a version bump silently make every side-panel form click-through.
+//
+// ONLY the open state. The closed one needs no rule: with nothing declared, the overlay inherits
+// `none` from the container, which is exactly what a closed panel wants (it still covers the
+// viewport at `inset: 0`, so it must not swallow clicks on the page behind it). That inherited
+// value is also what makes this safe to pin with `!important` — `--open` is a library-private
+// modifier, and if it is ever renamed this rule simply matches nothing and the library's own
+// declarations take over, rather than pinning `none` on forever.
 .cdk-overlay-container .tn-side-panel__overlay--open {
   pointer-events: auto !important;
 }
