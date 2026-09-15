@@ -101,6 +101,9 @@ describe('ManagePortsDialog', () => {
       { title: 'Edit Port', inputs: { port: expect.objectContaining(ports[0]) } },
     );
     expect(spectator.inject(NvmeOfStore).reloadPorts).toHaveBeenCalled();
+    // The form opens in a side panel stacked above this dialog, so the list is still there to
+    // return to once it closes — closing it dropped the user back on the subsystem (NAS-143761).
+    expect(spectator.inject(DialogRef).close).not.toHaveBeenCalled();
   });
 
   it('deletes the port with correct force flag based on subsystem usage', async () => {
@@ -131,5 +134,6 @@ describe('ManagePortsDialog', () => {
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(PortFormComponent, { title: 'Add Port' });
     expect(spectator.inject(NvmeOfStore).reloadPorts).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).not.toHaveBeenCalled();
   });
 });
