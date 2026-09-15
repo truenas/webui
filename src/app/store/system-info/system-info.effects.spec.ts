@@ -3,13 +3,13 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom, ReplaySubject, of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { HardwareType } from 'app/enums/hardware-type.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { LicenseType } from 'app/enums/license-type.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { ContractType, License, SystemInfo } from 'app/interfaces/system-info.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
-import { systemInfoLoaded } from 'app/store/system-info/system-info.actions';
+import { entitlementFactsLoaded, systemInfoLoaded } from 'app/store/system-info/system-info.actions';
 import { SystemInfoEffects } from 'app/store/system-info/system-info.effects';
 
 describe('SystemInfoEffects', () => {
@@ -41,7 +41,10 @@ describe('SystemInfoEffects', () => {
         mockCall('system.info', baseSystemInfo),
         mockCall('truenas.license.info', baseLicense),
         mockCall('truenas.is_ix_hardware', true),
-        mockCall('system.product_type', ProductType.Enterprise),
+        mockCall('truenas.entitlements.facts', {
+          hardware_type: HardwareType.Truenas,
+          license_type: LicenseType.EnterpriseSingle,
+        }),
       ]),
     ],
   });
@@ -116,6 +119,31 @@ describe('SystemInfoEffects', () => {
 
       expect(action.systemInfo.license?.contract_type).toBe('PLATINUM');
       expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('platinum'));
+    });
+  });
+
+  describe('loadEntitlementFacts', () => {
+    it('loads truenas.entitlements.facts', async () => {
+      actions$.next(adminUiInitialized());
+
+      const action = await firstValueFrom(spectator.service.loadEntitlementFacts);
+
+      expect(api.call).toHaveBeenCalledWith('truenas.entitlements.facts');
+      expect(action).toEqual(entitlementFactsLoaded({
+        entitlementFacts: { hardware_type: HardwareType.Truenas, license_type: LicenseType.EnterpriseSingle },
+      }));
+    });
+
+    it('falls back to community hardware without a license when the call fails', async () => {
+      jest.spyOn(console, 'error').mockImplementation();
+      jest.spyOn(api, 'call').mockReturnValue(throwError(() => new Error('facts failed')));
+
+      actions$.next(adminUiInitialized());
+      const action = await firstValueFrom(spectator.service.loadEntitlementFacts);
+
+      expect(action).toEqual(entitlementFactsLoaded({
+        entitlementFacts: { hardware_type: HardwareType.Community, license_type: null },
+      }));
     });
   });
 });

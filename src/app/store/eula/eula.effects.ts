@@ -15,7 +15,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectIsTruenasHardware } from 'app/store/system-info/system-info.selectors';
 
 @Injectable()
 export class EulaEffects {
@@ -29,11 +29,11 @@ export class EulaEffects {
 
   /**
    * `truenas.is_eula_accepted` only reports whether the pending marker exists; it does not check
-   * the license, so the UI must gate on product type or community systems would see the dialog.
+   * the license, so the UI must gate on appliance hardware or community systems would see the dialog.
    */
   checkEula$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
-    filterAsync(() => this.store$.select(selectIsEnterprise).pipe(filter(Boolean))),
+    filterAsync(() => this.store$.select(selectIsTruenasHardware).pipe(filter(Boolean))),
     filterAsync(() => this.authService.hasRole([Role.FullAdmin])),
     mergeMap(() => {
       return this.api.call('truenas.is_eula_accepted').pipe(

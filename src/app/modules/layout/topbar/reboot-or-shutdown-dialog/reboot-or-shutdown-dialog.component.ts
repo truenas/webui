@@ -18,7 +18,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectIsTruenasHardware } from 'app/store/system-info/system-info.selectors';
 
 const customReasonValue = 'CUSTOM_REASON_VALUE';
 
@@ -113,7 +113,7 @@ export class RebootOrShutdownDialog {
     },
   ]);
 
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  readonly isTruenasHardware = toSignal(this.store$.select(selectIsTruenasHardware));
 
   get title(): string {
     return this.isShutdown

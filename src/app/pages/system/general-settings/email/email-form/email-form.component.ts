@@ -12,6 +12,7 @@ import { EMPTY, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { MailSecurity } from 'app/enums/mail-security.enum';
+import { productTypeLabels } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemEmail } from 'app/helptext/system/email';
 import {
@@ -264,9 +265,10 @@ export class EmailFormComponent implements OnInit {
 
   private sendTestEmail(): void {
     const productType = this.productType();
+    const edition = productType ? ` ${productTypeLabels.get(productType)}` : '';
     const email = {
       subject: 'Test Message',
-      text: `This is a test message from TrueNAS ${productType.replace('_', ' ')}.`,
+      text: `This is a test message from TrueNAS${edition}.`,
     };
     const config = this.prepareConfigUpdate();
 

@@ -41,7 +41,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectIsTruenasHardware } from 'app/store/system-info/system-info.selectors';
 
 describe('UpdateComponent', () => {
   let spectator: Spectator<UpdateComponent>;
@@ -99,7 +99,7 @@ describe('UpdateComponent', () => {
         },
         selectors: [
           {
-            selector: selectIsEnterprise,
+            selector: selectIsTruenasHardware,
             value: false,
           },
           {

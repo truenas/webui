@@ -9,7 +9,6 @@ import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ProductType } from 'app/enums/product-type.enum';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
@@ -70,7 +69,7 @@ describe('AccessCardComponent', () => {
           entitlements: { entitlements: {} },
           systemInfo: {
             systemInfo: null,
-            productType: ProductType.Enterprise,
+            entitlementFacts: null,
             isIxHardware: false,
             buildYear: 2024,
           },

@@ -1,7 +1,7 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -137,6 +137,19 @@ describe('WidgetHelpComponent', () => {
 
     it('checks open source row', () => {
       expect(spectator.query('.open-source')).toHaveText('TrueNAS is Free');
+    });
+
+    it('uses the community layout for Community Edition', () => {
+      expect(spectator.query('.container')).not.toHaveClass('enterprise');
+    });
+
+    it.each([ProductType.Commercial, ProductType.Enterprise])('uses the enterprise layout for %s', (productType) => {
+      const store$ = spectator.inject(MockStore);
+      store$.overrideSelector(selectProductType, productType);
+      store$.refreshState();
+      spectator.detectChanges();
+
+      expect(spectator.query('.container')).toHaveClass('enterprise');
     });
 
     it('renders copyright', () => {

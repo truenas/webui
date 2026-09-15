@@ -1,5 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { ProductType } from 'app/enums/product-type.enum';
+
+/** Retired `system.product_type` values the feedback backend still keys on. */
+export type FeedbackProductType = 'ENTERPRISE' | 'COMMUNITY_EDITION';
 
 export enum FeedbackType {
   Review = 'REVIEW',
@@ -40,7 +42,7 @@ export interface AddReview {
   environment: FeedbackEnvironment;
   message: string;
   extra: object;
-  product_type: ProductType;
+  product_type: FeedbackProductType;
   product_model: string;
 }
 

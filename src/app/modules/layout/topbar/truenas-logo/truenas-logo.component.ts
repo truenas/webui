@@ -3,9 +3,10 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import { ProductType } from 'app/enums/product-type.enum';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectProductType } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-truenas-logo',
@@ -24,7 +25,7 @@ export class TruenasLogoComponent {
   readonly color = input<'primary' | 'white'>('primary');
   readonly fullSize = input(false);
   readonly hideText = input(false);
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  readonly productType = toSignal(this.store$.select(selectProductType));
   protected readonly activeTheme = toSignal(this.themeService.activeTheme$);
 
   protected useWhiteLogo = computed(() => {
@@ -49,10 +50,15 @@ export class TruenasLogoComponent {
   });
 
   readonly fullSizeIcon = computed(() => {
-    if (this.isEnterprise()) {
+    const productType = this.productType();
+    if (productType === ProductType.Enterprise) {
       return this.useWhite()
         ? tnIconMarker('truenas-logo-enterprise', 'custom')
         : tnIconMarker('truenas-logo-enterprise-color', 'custom');
+    }
+    if (productType === ProductType.Commercial) {
+      // There is no Commercial edition artwork: show the plain logo rather than another edition's name.
+      return tnIconMarker('truenas-logo', 'custom');
     }
     return this.useWhite()
       ? tnIconMarker('truenas-logo-ce', 'custom')

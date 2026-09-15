@@ -18,7 +18,6 @@ import {
   NetworkInterfaceType,
   XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
@@ -57,7 +56,6 @@ describe('InterfaceFormComponent', () => {
   let api: ApiService;
   let form: IxFormHarness;
   let aliasesList: IxListHarness | null;
-  const productType = ProductType.CommunityEdition;
 
   const existingInterface = {
     id: 'enp0s6',
@@ -102,9 +100,7 @@ describe('InterfaceFormComponent', () => {
           },
           [systemInfoStateKey]: {
             systemInfo: null,
-            get productType() {
-              return productType;
-            },
+            entitlementFacts: null,
             isIxHardware: false,
             buildYear: 2024,
           },
