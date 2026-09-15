@@ -12,6 +12,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DockerRegistry, dockerHubRegistry } from 'app/interfaces/docker-registry.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
 
@@ -32,6 +33,7 @@ describe('DockerRegistryFormComponent', () => {
     component: DockerRegistryFormComponent,
     imports: [ReactiveFormsModule],
     providers: [
+      ...ixFormTestingProviders(),
       mockApi([
         mockCall('app.registry.create'),
         mockCall('app.registry.update'),

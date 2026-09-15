@@ -1,4 +1,10 @@
-<form class="ix-form-container" (submit)="onSubmit($event)">
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="!isNew"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <tn-form-section>
     @if (isNew) {
       <tn-form-field [label]="'Type' | translate" [required]="true">
@@ -368,4 +374,4 @@
       ></tn-input>
     </tn-form-field>
   </tn-form-section>
-</form>
+</ix-form>

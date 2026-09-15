@@ -1,11 +1,11 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit,
-  inject, input, output, signal, viewChild,
+  inject, input, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  FormBuilder, FormControl, Validators, ReactiveFormsModule,
+  AbstractControl, FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -13,8 +13,8 @@ import {
   InputType, TnAutocompleteComponent, TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent,
   TnFormSectionComponent, TnInputComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { BehaviorSubject, EMPTY, Observable, forkJoin, of, shareReplay } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, forkJoin, of, shareReplay } from 'rxjs';
+import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import { macAddressInvalidMessage } from 'app/constants/mac-address.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
@@ -38,11 +38,13 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { FileValidatorService } from 'app/modules/forms/ix-forms/validators/file-validator/file-validator.service';
-import { SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AnnotatedZvolOption, buildAnnotatedZvolOptions,
@@ -69,6 +71,7 @@ export interface DeviceFormData {
   imports: [
     AsyncPipe,
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnSelectComponent,
@@ -86,11 +89,10 @@ export interface DeviceFormData {
     TnBannerComponent,
   ],
 })
-export class DeviceFormComponent implements OnInit, SidePanelHostForm {
+export class DeviceFormComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private snackbar = inject(SnackbarService);
   private networkService = inject(NetworkService);
   private validators = inject(IxValidatorsService);
   private filesystemService = inject(FilesystemService);
@@ -102,81 +104,16 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
   private destroyRef = inject(DestroyRef);
 
   /**
-   * Device + VM context, supplied by the `<tn-side-panel>` host. Required: `onSend()` posts
+   * Device + VM context, supplied by the `<tn-side-panel>` host. Required: the submit posts
    * `vm: this.virtualMachineId`, which is only ever assigned from this input, so a panel opened
    * without it would render a form that looks fine and then save against an undefined VM.
    */
   readonly deviceFormData = input.required<DeviceFormData>();
 
-  /** Emitted to the hosting `<tn-side-panel>` after a successful save. */
-  readonly closed = output<boolean>();
-
   readonly requiredRoles = [Role.VmDeviceWrite];
   protected readonly InputType = InputType;
 
-  private readonly isLoading = signal(false);
   private vmName: string;
-
-  /**
-   * Gates the panel footer Save on the same controls `hasUnsavedChanges()` guards: the three
-   * standalone controls live outside `typeSpecificForm` but are part of the same submission,
-   * and `typeControl` carries `Validators.required`. They use `!.invalid` rather than `.valid`
-   * because `.valid` is false for a *disabled* control, which would silently lock Save with
-   * nothing on screen to explain it should a type-specific branch ever disable one of them.
-   * `typeSpecificForm` keeps the `.valid` spelling so a PENDING async validator inside it
-   * doesn't read as submittable.
-   *
-   * `typeControl` is checked first on purpose: `typeSpecificForm` is keyed off its value and
-   * resolves to `undefined` for one outside `VmDeviceType`, so the short-circuit is what keeps
-   * a cleared type from dereferencing it.
-   */
-  canSubmit(): boolean {
-    return !this.typeControl.invalid
-      && !this.orderControl.invalid
-      && !this.newOrExistingControl.invalid
-      && this.typeSpecificForm.valid
-      && !this.isLoading();
-  }
-
-  /** Whether the form is currently submitting; the host shows a progress bar while true. */
-  isBusy(): boolean {
-    return this.isLoading();
-  }
-
-  /**
-   * `isLoading` is only ever set around a submit (this form has no initial load), so it
-   * doubles as the host's "Saving…" signal for the footer Save.
-   */
-  isSubmitting(): boolean {
-    return this.isLoading();
-  }
-
-  /**
-   * Entry point for the `<tn-side-panel>` footer Save. Gated here rather than relying on the
-   * host disabling the button, so the invariant lives in the one component that owns the forms —
-   * and so a second click during the PCI pre-flight window can't fire a duplicate create.
-   */
-  submit(): void {
-    if (!this.canSubmit()) {
-      return;
-    }
-    this.confirmAndSend();
-  }
-
-  hasUnsavedChanges(): boolean {
-    // The three standalone controls live outside `typeSpecificForm` but are rendered in the
-    // same panel, so edits confined to them must still trip the host's close guard.
-    //
-    // `typeSpecificForm` is guarded by the type check rather than read with `?.`: the getter is
-    // keyed off `typeControl` and its default branch calls `assertUnreachable`, which logs on
-    // every pass. This guard is the host's close guard, so it can run repeatedly for one dismissal
-    // (backdrop, Escape, X) — checking the value up front keeps a cleared type off that branch
-    // entirely instead of logging each time.
-    return this.typeControl.dirty
-      || this.orderControl.dirty
-      || this.newOrExistingControl.dirty
-      || (this.typeControl.value !== null && this.typeSpecificForm.dirty);
-  }
 
   get isNew(): boolean {
     return !this.existingDevice;
@@ -286,6 +223,22 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
       vendor_id: ['', Validators.required],
       product_id: ['', Validators.required],
     }),
+  });
+
+  /**
+   * The single group the inner `<ix-form>` owns. There is no natural root here — the three
+   * standalone controls are bound with `[formControl]` (keeping their explicit test ids, which a
+   * `formControlName` would have re-derived) and the type-specific fields live in one of seven
+   * separate groups. Registering those same instances under one root is what lets the wrapper see
+   * the whole submission: its Save gate and its unsaved-changes guard both read this group, so
+   * neither has to re-enumerate the parts. {@link handleDeviceTypeChange} keeps `typeSpecific`
+   * pointing at whichever group is on screen.
+   */
+  protected readonly form = new FormGroup({
+    dtype: this.typeControl,
+    order: this.orderControl,
+    newOrExisting: this.newOrExistingControl,
+    typeSpecific: this.cdromForm as AbstractControl,
   });
 
   readonly helptext = helptextDevice;
@@ -557,6 +510,12 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
 
   handleDeviceTypeChange(): void {
     this.typeControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((type) => {
+      if (type) {
+        // Swap the root's `typeSpecific` slot to the group now on screen. Guarded on `type`
+        // because the getter's default branch calls `assertUnreachable`.
+        this.form.setControl('typeSpecific', this.typeSpecificForm);
+      }
+
       if (type === VmDeviceType.Nic && this.nicForm.value.mac === '') {
         this.generateMacAddress();
       }
@@ -636,54 +595,45 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
     return true;
   }
 
-  /**
-   * Implicit form submission (Enter in a field); delegates to the same gated entry point as the
-   * panel footer Save so there is one gate rather than two that can drift. The gate matters more
-   * here than on the footer: the container's busy overlay blocks the mouse, not the keyboard, so
-   * a second Enter would otherwise fire a duplicate create while a submit is in flight.
-   */
-  protected onSubmit(event: SubmitEvent): void {
-    event.preventDefault();
-    this.submit();
-  }
+  protected handleSubmit = (event: FormSubmitEvent): SubmitResult => ({
+    // A PCI device without a reset mechanism asks first; declining completes the request without
+    // emitting, which `<ix-form>` reads as "nothing happened" — no snackbar, no close. Folding the
+    // pre-flight into the request is also what keeps Save disabled across it, so a second press
+    // can't stack another dialog and a duplicate create.
+    request$: this.confirmPciResetMechanismIfNeeded().pipe(
+      filter(Boolean),
+      switchMap(() => {
+        const update: VmDeviceUpdate = {
+          vm: this.virtualMachineId,
+          order: this.orderControl.value,
+          attributes: this.getUpdateAttributes(),
+        };
 
-  /**
-   * Submits, first confirming with the user when a PCI passthrough device has no reset
-   * mechanism.
-   *
-   * The busy flag is raised before the pre-flight calls rather than inside `onSend()`, so that
-   * the footer Save is disabled (and the panel shows progress) for the whole window instead of
-   * only once the create/update starts — otherwise a second click during the two round-trips
-   * and the confirmation dialog could stack another dialog and a duplicate create.
-   */
-  private confirmAndSend(): void {
+        return this.isNew
+          ? this.api.call('vm.device.create', [update])
+          : this.api.call('vm.device.update', [this.existingDevice.id, update]);
+      }),
+    ),
+    successMessage: event.isEdit
+      ? this.translate.instant('Device updated')
+      : this.translate.instant('Device added'),
+    // Errors belong on the active type-specific group, not the root the wrapper owns — and the
+    // raw-file branch rewrites one API message before mapping it.
+    onError: (error) => {
+      this.handleFormError(error);
+      // `handleValidationErrors` writes errors onto the form controls, which are not signals,
+      // so OnPush needs telling.
+      this.cdr.markForCheck();
+      return true;
+    },
+  });
+
+  /** `true` straight away for every device type but PCI; see {@link confirmPciResetMechanism}. */
+  private confirmPciResetMechanismIfNeeded(): Observable<boolean> {
     if (this.typeControl.value !== VmDeviceType.Pci) {
-      this.onSend();
-      return;
+      return of(true);
     }
-
-    this.isLoading.set(true);
-
-    this.confirmPciResetMechanism()
-      .pipe(
-        // Spelled out rather than `withErrorHandler()` because a failed pre-flight call has to
-        // release the busy flag as well — that operator swallows the failure into EMPTY, which
-        // never reaches the subscriber below and would leave the form locked.
-        catchError((error: unknown) => {
-          this.isLoading.set(false);
-          this.errorHandler.showErrorModal(error);
-          return EMPTY;
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((confirmed) => {
-        if (!confirmed) {
-          this.isLoading.set(false);
-          return;
-        }
-        // `onSend()` takes over the flag that is already raised.
-        this.onSend();
-      });
+    return this.confirmPciResetMechanism();
   }
 
   /**
@@ -707,42 +657,6 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
         });
       }),
     );
-  }
-
-  private onSend(): void {
-    this.isLoading.set(true);
-
-    const update: VmDeviceUpdate = {
-      vm: this.virtualMachineId,
-      order: this.orderControl.value,
-      attributes: this.getUpdateAttributes(),
-    };
-
-    const request$ = this.isNew
-      ? this.api.call('vm.device.create', [update])
-      : this.api.call('vm.device.update', [this.existingDevice.id, update]);
-
-    request$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          if (this.isNew) {
-            this.snackbar.success(this.translate.instant('Device added'));
-          } else {
-            this.snackbar.success(this.translate.instant('Device updated'));
-          }
-          this.isLoading.set(false);
-          this.closed.emit(true);
-        },
-        error: (error: unknown) => {
-          this.handleFormError(error);
-          this.isLoading.set(false);
-          // Unlike the success path — where `isLoading` is a signal and `closed` tears the panel
-          // down anyway — `handleValidationErrors` writes errors onto the form controls, which
-          // are not signals, so OnPush needs telling.
-          this.cdr.markForCheck();
-        },
-      });
   }
 
   /**
