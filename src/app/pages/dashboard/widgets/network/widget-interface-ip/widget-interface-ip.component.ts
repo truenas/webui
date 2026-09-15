@@ -66,6 +66,20 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
     return this.translate.instant('{nic} Address', { nic: this.interfaceId() }) || '';
   });
 
+  /**
+   * User-provided interface description, shown under the widget title so the NIC can be
+   * identified without opening its edit form.
+   */
+  protected description = computed(() => {
+    const interfaces = this.interfaces();
+    if (interfaces?.isLoading || !interfaces?.value) {
+      return '';
+    }
+
+    const interfaceId = this.interfaceId();
+    return interfaces.value.find((nic) => nic.name === interfaceId)?.description || '';
+  });
+
   // Memoized translated labels to avoid repeated translate.instant() calls
   private virtualIpLabel = computed(() => this.translate.instant('(Virtual IP)'));
   private thisControllerLabel = computed(() => this.translate.instant('(This Controller)'));

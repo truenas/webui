@@ -39,6 +39,16 @@ $ip-label-opacity: 0.6;
   padding-right: 12px;
 }
 
+.header-description {
+  font-size: 12px;
+  line-height: 1.3;
+  opacity: 0.6;
+  overflow: hidden;
+  padding-top: 2px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .ip-addresses {
   align-items: center;
   display: flex;

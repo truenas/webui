@@ -20,6 +20,10 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 export class WidgetDatapointComponent {
   size = input.required<SlotSize>();
   label = input<string>('');
+  /**
+   * Free-form user text shown under the label. Not translated.
+   */
+  description = input<string>('');
   text = input.required<string>();
   subText = input<string>();
 

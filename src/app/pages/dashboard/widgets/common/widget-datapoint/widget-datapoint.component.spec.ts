@@ -18,6 +18,7 @@ describe('WidgetDatapointComponent', () => {
     label: string;
     text: string;
     subText?: string;
+    description?: string;
   }): void {
     spectator = createComponent({ props });
   }
@@ -40,6 +41,18 @@ describe('WidgetDatapointComponent', () => {
 
     it(`it has sub text '${subText}'`, () => {
       expect(spectator.query('.container .sub-text')).toHaveText(subText);
+    });
+
+    it('has no description line when no description is provided', () => {
+      expect(spectator.query('.header .description')).not.toExist();
+    });
+
+    it('shows the description under the label when one is provided', () => {
+      setupTest({
+        size: SlotSize.Full, label, text, subText, description: 'Management network',
+      });
+
+      expect(spectator.query('.header .description')).toHaveText('Management network');
     });
   });
 

@@ -5,8 +5,9 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import { filter, map, startWith } from 'rxjs';
-import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
+import { Option } from 'app/interfaces/option.interface';
 import { getAllFormErrors } from 'app/modules/forms/ix-forms/utils/get-form-errors.utils';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
@@ -36,11 +37,15 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsCompone
     interface: [null as string | null, [Validators.required]],
   });
 
+  // Labelled with the interface description when there is one, so a NIC can be picked by its
+  // role ("Management", "VM traffic") instead of its driver-assigned name.
   protected networkInterfaceOptions$ = this.resources.networkInterfaces$.pipe(
     filter((state) => !!state.value && !state.isLoading),
-    map((state) => state.value),
-    startWith([]),
-    idNameArrayToOptions(),
+    map((state) => state.value.map((nic) => ({
+      label: ignoreTranslation(nic.description ? `${nic.name} (${nic.description})` : nic.name),
+      value: nic.id,
+    }))),
+    startWith([] as Option<string>[]),
   );
 
   protected networkInterfaceOptions = toSignal(this.networkInterfaceOptions$, { initialValue: [] });
