@@ -7,7 +7,7 @@ import { helptextAbout } from 'app/helptext/about';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectIsCommercialOrEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-widget-help',
@@ -26,7 +26,7 @@ export class WidgetHelpComponent {
   private store$ = inject<Store<AppState>>(Store);
 
   readonly size = input.required<SlotSize>();
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  readonly isCommercialOrEnterprise = toSignal(this.store$.select(selectIsCommercialOrEnterprise));
   readonly fullSize = computed(() => this.size() === SlotSize.Full);
   protected readonly helptext = helptextAbout;
 }

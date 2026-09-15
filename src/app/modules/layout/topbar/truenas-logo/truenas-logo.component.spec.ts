@@ -103,6 +103,18 @@ describe('TruenasLogoComponent', () => {
     expect(await icons[0].getName()).toBe('app-truenas-logo-enterprise');
   });
 
+  it('commercial: shows the plain full logo, without an edition name', async () => {
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectSystemInfoState, {
+      entitlementFacts: { hardware_type: HardwareType.Community, license_type: LicenseType.Commercial },
+    });
+    store$.refreshState();
+    spectator.setInput('fullSize', true);
+    icons = await loader.getAllHarnesses(TnIconHarness);
+
+    expect(await icons[0].getName()).toBe('app-truenas-logo');
+  });
+
   it('checks white color', async () => {
     spectator.setInput('color', 'white');
     const [mark, text] = icons;

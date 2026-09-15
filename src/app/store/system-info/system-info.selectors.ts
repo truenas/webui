@@ -59,6 +59,15 @@ export const selectIsCommunityEdition = createSelector(
   (productType) => productType === ProductType.CommunityEdition,
 );
 
+/**
+ * Branding that drops the Community Edition treatment. Prefer this over `selectIsEnterprise`
+ * unless a surface has an Enterprise-only asset. `false` until the facts load.
+ */
+export const selectIsCommercialOrEnterprise = createSelector(
+  selectProductType,
+  (productType) => productType === ProductType.Commercial || productType === ProductType.Enterprise,
+);
+
 export const selectCopyrightHtml = createSelector(
   selectProductType,
   (productType) => getCopyrightHtml(productType || undefined),
