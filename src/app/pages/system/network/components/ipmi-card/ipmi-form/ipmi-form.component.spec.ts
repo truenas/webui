@@ -116,12 +116,12 @@ describe('IpmiFormComponent', () => {
     await spectator.fixture.whenStable();
   }
 
-  describe('product type is SCALE_ENTERPRISE', () => {
+  describe('HA-licensed system', () => {
     beforeEach(async () => {
       await setupTest();
     });
 
-    it('loads data with controller radio buttons in the form for ScaleEnterprise', async () => {
+    it('loads data with controller radio buttons in the form', async () => {
       const activeController = await loader.getHarness(
         TnRadioHarness.with({ label: 'Active: TrueNAS Controller 1' }),
       );
@@ -236,28 +236,6 @@ describe('IpmiFormComponent', () => {
       }]);
       expect(closedSpy).toHaveBeenCalledWith(true);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
-    });
-  });
-
-  describe('product type is SCALE', () => {
-    beforeEach(async () => {
-      await setupTest();
-    });
-
-    it('loads data in the form if the product type is SCALE', async () => {
-      const ipaddress = await loader.getHarness(TnInputHarness.with({ name: 'ipaddress' }));
-      const gateway = await loader.getHarness(TnInputHarness.with({ name: 'gateway' }));
-      const netmask = await loader.getHarness(TnInputHarness.with({ name: 'netmask' }));
-      const vlanId = await loader.getHarness(TnInputHarness.with({ name: 'vlan_id' }));
-      const dhcp = await loader.getHarness(TnCheckboxHarness.with({ label: 'DHCP' }));
-      const enableVlan = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable VLAN' }));
-
-      expect(await dhcp.isChecked()).toBe(false);
-      expect(await ipaddress.getValue()).toBe('10.220.15.114');
-      expect(await gateway.getValue()).toBe('10.220.0.1');
-      expect(await netmask.getValue()).toBe('255.255.240.0');
-      expect(await enableVlan.isChecked()).toBe(true);
-      expect(await vlanId.getValue()).toBe('2');
     });
   });
 
