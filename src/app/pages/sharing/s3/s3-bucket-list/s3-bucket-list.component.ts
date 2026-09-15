@@ -10,12 +10,14 @@ import {
   TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { of, tap } from 'rxjs';
+import { filter, of, switchMap, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { s3ObjectOwnershipLabels, s3PermissionsModelLabels, s3VersioningLabels } from 'app/enums/s3.enum';
+import {
+  S3Versioning, s3ObjectOwnershipLabels, s3PermissionsModelLabels, s3VersioningLabels,
+} from 'app/enums/s3.enum';
 import { helptextSharingS3 } from 'app/helptext/sharing';
 import { S3Bucket } from 'app/interfaces/s3.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -23,6 +25,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { actionsColumn, column } from 'app/modules/tn-table/column-configs';
 import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
@@ -82,10 +85,12 @@ export class S3BucketListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
   private poolStoreService = inject(poolStore);
+  private snackbar = inject(SnackbarService);
 
   protected readonly requiredRoles = [Role.SharingS3Write, Role.SharingWrite];
   protected readonly searchableElements = s3BucketListElements;
   protected readonly EmptyType = EmptyType;
+  protected readonly helptext = helptextSharingS3;
 
   protected readonly searchQuery = signal('');
 
@@ -118,6 +123,18 @@ export class S3BucketListComponent implements OnInit {
         getFilesystemAclUnavailableReason(bucketToShareRow(row), this.activePoolPaths()),
       ),
       onClick: (row) => this.doFilesystemAclEdit(row),
+    },
+    {
+      iconName: tnIconMarker('delete-clock', 'mdi'),
+      tooltip: this.translate.instant('Force Disable Versioning'),
+      // Hidden where versioning is already off: there is no history to destroy, so the action has
+      // nothing to mean. An object-locked bucket keeps the action and is refused on click, the way
+      // `doFilesystemAclEdit` handles a locked dataset — `disabledTooltip` reaches only the
+      // single-action branch of `TableActionsCellComponent`, and this list always renders a menu,
+      // so a disabled item here would carry no reason at all.
+      hidden: (row) => of(row.versioning === S3Versioning.Off),
+      onClick: (row) => this.doForceDisableVersioning(row),
+      requiredRoles: this.requiredRoles,
     },
     {
       iconName: tnIconMarker('delete', 'mdi'),
@@ -269,6 +286,41 @@ export class S3BucketListComponent implements OnInit {
       title: this.translate.instant('Edit S3 Bucket'),
       inputs: { bucket: row },
     }).onSuccess(() => this.refresh(), this.destroyRef);
+  }
+
+  /**
+   * `sharing.s3.update` refuses to take versioning back to OFF, because the versions the bucket
+   * has accumulated cannot survive it. This is middleware's one deliberate exception, so the
+   * confirmation asks for the destruction explicitly rather than for a yes.
+   */
+  private doForceDisableVersioning(row: S3Bucket): void {
+    if (row.object_lock) {
+      this.dialog.error({
+        title: this.translate.instant('Force Disable Versioning'),
+        message: this.translate.instant(this.helptext.forceDisableVersioningObjectLock),
+      });
+      return;
+    }
+
+    this.dialog.confirm({
+      title: this.translate.instant('Force disable versioning on "{name}"?', { name: row.name }),
+      message: this.translate.instant(this.helptext.forceDisableVersioningMessage),
+      confirmationCheckboxText: this.translate.instant(this.helptext.forceDisableVersioningConfirm),
+      buttonText: this.translate.instant('Force Disable'),
+      buttonColor: 'warn',
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => this.api.call('sharing.s3.force_disable_versioning', [row.id])),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: () => {
+        this.snackbar.success(this.translate.instant(this.helptext.forceDisableVersioningSuccess));
+        this.refresh();
+      },
+      // Shown rather than swallowed: middleware refuses a bucket whose dataset root carries the
+      // object-lock latch even when the row does not say so, and that reason is worth reading.
+      error: (error: unknown) => this.errorHandler.showErrorModal(error),
+    });
   }
 
   protected onSortChange(event: TnSortEvent): void {

@@ -42,6 +42,9 @@ describe('S3BucketListComponent', () => {
     },
   ] as S3Bucket[];
 
+  /** What `sharing.s3.query` answers, so a test can shape the row its action reads. */
+  let listedBuckets: S3Bucket[];
+
   const createComponent = createComponentFactory({
     component: S3BucketListComponent,
     providers: [
@@ -51,6 +54,7 @@ describe('S3BucketListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         confirmDelete: jest.fn(() => of(undefined)),
+        error: jest.fn(),
       }),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -59,9 +63,10 @@ describe('S3BucketListComponent', () => {
         selectors: [{ selector: selectPreferences, value: {} }],
       }),
       mockApi([
-        mockCall('sharing.s3.query', buckets),
+        mockCall('sharing.s3.query', () => listedBuckets),
         mockCall('sharing.s3.delete'),
         mockCall('sharing.s3.update'),
+        mockCall('sharing.s3.force_disable_versioning'),
         mockCall('pool.query', [{ path: '/mnt/tank' }] as Pool[]),
       ]),
     ],
@@ -74,6 +79,7 @@ describe('S3BucketListComponent', () => {
   }
 
   beforeEach(async () => {
+    listedBuckets = buckets;
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(TnTableHarness);
@@ -133,6 +139,62 @@ describe('S3BucketListComponent', () => {
       title: expect.any(String),
       message: expect.any(String),
       call: expect.any(Function),
+    });
+  });
+
+  describe('forcing versioning off', () => {
+    /** Rebuilds the list from one bucket, so a row's own state drives the action. */
+    async function renderBucket(bucket: Partial<S3Bucket>): Promise<TnMenuHarness> {
+      listedBuckets = [{ ...buckets[0], ...bucket }] as S3Bucket[];
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      return openRowMenu();
+    }
+
+    it('is not offered for a bucket that has no version history to destroy', async () => {
+      const menu = await renderBucket({ versioning: S3Versioning.Off, object_lock: false });
+
+      expect(await menu.getItemLabels()).not.toContain('Force Disable Versioning');
+    });
+
+    it('explains the refusal on an object-locked bucket, which keeps its history', async () => {
+      const menu = await renderBucket({ versioning: S3Versioning.Enabled, object_lock: true });
+
+      expect(await menu.getItemLabels()).toContain('Force Disable Versioning');
+
+      await menu.clickItem({ label: 'Force Disable Versioning' });
+
+      // Refused on click rather than rendered disabled: a disabled menu item carries no tooltip,
+      // so the reason would never reach the person looking for it.
+      expect(spectator.inject(DialogService).error).toHaveBeenCalledWith(
+        expect.objectContaining({ message: expect.stringContaining('object lock') }),
+      );
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
+      expect(spectator.inject(ApiService).call)
+        .not.toHaveBeenCalledWith('sharing.s3.force_disable_versioning', expect.anything());
+    });
+
+    it('asks for the destruction explicitly, then forces it off', async () => {
+      const menu = await renderBucket({ versioning: S3Versioning.Suspended, object_lock: false });
+      await menu.clickItem({ label: 'Force Disable Versioning' });
+
+      // A confirmation checkbox rather than a plain yes: `sharing.s3.update` refuses this
+      // transition precisely because the versions cannot survive it.
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+        expect.objectContaining({ confirmationCheckboxText: expect.any(String), buttonColor: 'warn' }),
+      );
+      expect(spectator.inject(ApiService).call)
+        .toHaveBeenCalledWith('sharing.s3.force_disable_versioning', [1]);
+    });
+
+    it('leaves the bucket alone when the confirmation is dismissed', async () => {
+      const menu = await renderBucket({ versioning: S3Versioning.Enabled, object_lock: false });
+      jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of(false));
+
+      await menu.clickItem({ label: 'Force Disable Versioning' });
+
+      expect(spectator.inject(ApiService).call)
+        .not.toHaveBeenCalledWith('sharing.s3.force_disable_versioning', expect.anything());
     });
   });
 

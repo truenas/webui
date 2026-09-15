@@ -67,4 +67,13 @@ export const helptextSharingS3 = {
 
   deleteBucketMessage: T('The bucket\'s dataset and every object in it are left in place.\
  The S3 service simply stops serving them.'),
+
+  forceDisableVersioningMessage: T('Every earlier version of every object in this bucket, and every delete\
+ marker, is destroyed. Version history stops being served at once, and the S3 service reclaims the space in the\
+ background. This cannot be undone: turning versioning back on later starts a new history rather than restoring\
+ this one. The S3 service restarts to apply the change, so requests are interrupted briefly.'),
+  forceDisableVersioningConfirm: T('I understand that the version history of this bucket will be destroyed.'),
+  forceDisableVersioningObjectLock: T('A bucket with object lock keeps its version history for as long\
+ as the bucket exists.'),
+  forceDisableVersioningSuccess: T('Versioning is off and the version history is being reclaimed.'),
 };
