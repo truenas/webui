@@ -164,6 +164,12 @@ export class FormSidePanelContainerComponent {
    *
    * This covers every side panel in the app — `src/app` holds no `<tn-side-panel>` element outside
    * this component's own template, so they all arrive through {@link FormSidePanelService}.
+   *
+   * One a11y consequence of no longer being a body sibling: CDK's `Dialog` sweeps `aria-hidden`
+   * onto the container's SIBLINGS when a modal opens, so it no longer hides an open panel behind a
+   * dialog stacked above it (e.g. the unsaved-changes confirm). Tab is still held by the panel's
+   * focus trap, so this is browse-mode only, and it puts the panel on the same footing as every
+   * other CDK overlay with a dialog on top — which is the point of the move.
    */
   private moveOverlayIntoCdkContainer(): void {
     // The overlay leaves the component's own subtree, but `tn-side-panel`'s host element stays

@@ -211,6 +211,40 @@ describe('FormSidePanelService', () => {
     );
   });
 
+  // Escape must close the panel ONLY. CDK's OverlayKeyboardDispatcher listens on `body` in the
+  // bubble phase and routes the key to the topmost overlay it knows about — and it does not know
+  // about the panel, which `tn-side-panel` portals itself rather than creating through
+  // `Overlay.create()`. So with a dialog open underneath (Manage Hosts → Edit), an Escape that
+  // reached `body` would close the DIALOG, landing the user back on the Subsystems screen: the
+  // very symptom of NAS-143761, by another route. It does not, because the library stops
+  // propagation on the panel element, below `body` — pinned here so a library change can't
+  // quietly reintroduce it.
+  it('handles Escape itself, without letting it bubble to the CDK dispatcher on body', async () => {
+    // Angular dev-mode logs "signal read during notification phase" on this path: `tn-side-panel`
+    // writes its `open` model from inside its own output handler, so the container re-renders
+    // mid-notification. Pre-existing and unrelated to the re-homing — it reproduces with
+    // `moveOverlayIntoCdkContainer()` disabled — so keep it from failing the suite here.
+    jest.spyOn(console, 'error').mockImplementation();
+
+    service.open(TestFormComponent, { title: 'NFS' });
+    fixture.detectChanges();
+
+    const bodyKeydown = jest.fn();
+    document.body.addEventListener('keydown', bodyKeydown);
+    fixture.ngZone?.run(() => {
+      document.querySelector('.tn-side-panel__content')
+        ?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    });
+    await fixture.whenStable();
+    fixture.detectChanges();
+    document.body.removeEventListener('keydown', bodyKeydown);
+
+    expect(bodyKeydown).not.toHaveBeenCalled();
+    // ...and the panel itself did react, so Escape is handled, not merely swallowed.
+    expect(document.querySelector('.tn-side-panel__overlay')?.classList)
+      .not.toContain('tn-side-panel__overlay--open');
+  });
+
   it('submits the form and resolves onSuccess when Save is clicked', async () => {
     const onSuccess = jest.fn();
     const destroyRef = fixture.componentRef.injector.get(DestroyRef);

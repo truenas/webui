@@ -76,14 +76,18 @@ export class FormSidePanelService {
   /**
    * Live panels, oldest first. Usually holds a single panel — a config side panel is modal — but a
    * form may open another from within itself (e.g. a username picker's "Add New" inside a hosted
-   * form), so panels stack: each new one mounts its own host later in `document.body`, so at
+   * form), so panels stack: each new one is appended later than the one before it, so at
    * tn-side-panel's shared `z-index` it paints on top, its backdrop dimming the panel beneath, and
    * pops to reveal it on close. A re-entrant open of the component already on top (e.g. a
    * double-fired menu click) is deduped — it returns the in-flight result instead of stacking a
    * duplicate.
    *
-   * Panels are hosted on `document.body` (not in any route's view), so they outlive navigation
-   * unless torn down explicitly — {@link closeAll} does that for every panel in the stack.
+   * "Appended later" means inside the CDK overlay container, not on `<body>`: the container element
+   * created here is a body child, but the overlay that actually paints is re-homed into the CDK
+   * overlay container by {@link FormSidePanelContainerComponent}, which is where the stacking is
+   * decided — against other panels and against CDK dialogs and dropdowns alike. Either way they sit
+   * outside any route's view, so they outlive navigation unless torn down explicitly —
+   * {@link closeAll} does that for every panel in the stack.
    */
   private stack: OpenPanel[] = [];
 
