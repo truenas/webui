@@ -45,6 +45,38 @@ describe('AuthSectionComponent', () => {
     isStigMode.set(false);
   });
 
+  describe('when a create flow presets the section', () => {
+    const getDisablePassword = (): Promise<IxCheckboxHarness> => loader.getHarness(
+      IxCheckboxHarness.with({ label: 'Disable Password' }),
+    );
+
+    it('ticks Disable Password once SMB access is off', async () => {
+      spectator.setInput('preset', { values: { password_disabled: true } });
+
+      expect(await (await getDisablePassword()).getValue()).toBe(true);
+    });
+
+    it('waits for SMB access to go off, which is what makes the tick stick', async () => {
+      smbAccess.set(true);
+      spectator.setInput('preset', { values: { password_disabled: true } });
+
+      // The section forces the box off and disabled while SMB access is on, so
+      // a tick applied here would be undone rather than honoured.
+      expect(await (await getDisablePassword()).getValue()).toBe(false);
+
+      smbAccess.set(false);
+      spectator.detectChanges();
+
+      expect(await (await getDisablePassword()).getValue()).toBe(true);
+    });
+
+    it('leaves it untouched without a preset', async () => {
+      spectator.setInput('preset', undefined);
+
+      expect(await (await getDisablePassword()).getValue()).toBe(false);
+    });
+  });
+
   describe('password fields', () => {
     it('shows Password, Confirm Password and "Disable Password" fields when creating a new user', async () => {
       expect(await form.getValues()).toMatchObject({
