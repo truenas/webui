@@ -1,6 +1,8 @@
+import { OverlayContainer } from '@angular/cdk/overlay';
 import { CdkPortalOutlet, ComponentPortal } from '@angular/cdk/portal';
+import { DOCUMENT } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, ComponentRef, inject, input, model, output, signal,
+  ChangeDetectionStrategy, Component, ComponentRef, ElementRef, afterNextRender, inject, input, model, output, signal,
   type Signal,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -98,6 +100,9 @@ export type HostedSidePanelForm = SidePanelHostForm & {
 })
 export class FormSidePanelContainerComponent {
   private unsavedChanges = inject(UnsavedChangesService);
+  private overlayContainer = inject(OverlayContainer);
+  private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  private document = inject(DOCUMENT);
 
   readonly title = input<string>('');
   readonly width = input<string>('480px');
@@ -126,6 +131,46 @@ export class FormSidePanelContainerComponent {
       ? this.unsavedChanges.showConfirmDialog()
       : of(true);
   };
+
+  constructor() {
+    // `tn-side-panel` portals its overlay to `document.body` in an `afterNextRender` of its own,
+    // which runs in the default `mixedReadWrite` phase; registering ours in the later `read` phase
+    // puts us after it in the same render cycle, so the element is always there to move.
+    afterNextRender({ read: () => this.moveOverlayIntoCdkContainer() });
+  }
+
+  /**
+   * Re-homes the panel's portaled overlay from `document.body` into the CDK overlay container, so
+   * that panel and CDK overlays share one stacking context and the LAST one opened paints on top.
+   *
+   * As body siblings they cannot: the container is one element with one `z-index`, so whichever
+   * value `.tn-side-panel__overlay` takes decides the order for every CDK overlay at once. At the
+   * library's own `1000` the panel (later in the body) beat dropdowns and confirm dialogs opened
+   * from inside it; the `999` override in `_tn-styles.scss` fixed those but buried the panel under
+   * any dialog that was already open — which is how "Manage Hosts → Edit" opened the host form
+   * behind the dialog's backdrop, invisible and click-blocked (NAS-143761).
+   *
+   * Inside the container both sit at `z-index: 1000` (see the scoped rule in `_tn-styles.scss`)
+   * and DOM order arbitrates, which is exactly "last opened wins" in both directions.
+   *
+   * Only panels opened through {@link FormSidePanelService} are moved. A `<tn-side-panel>` declared
+   * in a template keeps the body-level `999` behaviour.
+   */
+  private moveOverlayIntoCdkContainer(): void {
+    // The overlay leaves the component's own subtree, but `tn-side-panel`'s host element stays
+    // behind carrying the same `data-tn-panel` id — the correlation the library documents for it.
+    const panelId = this.elementRef.nativeElement.querySelector('tn-side-panel')?.getAttribute('data-tn-panel');
+    if (!panelId) {
+      return;
+    }
+
+    const overlay = this.document.querySelector(`.tn-side-panel__overlay[data-tn-panel="${panelId}"]`);
+    if (overlay) {
+      // `appendChild` moves the element. This runs before the service flips `open` (two animation
+      // frames later), so the panel still animates in from its closed, off-screen state.
+      this.overlayContainer.getContainerElement().appendChild(overlay);
+    }
+  }
 
   protected onPortalAttached(ref: unknown): void {
     const componentRef = ref as ComponentRef<SidePanelHostCloseable> | null;

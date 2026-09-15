@@ -67,6 +67,7 @@ describe('ManageHostsDialog', () => {
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.success({})),
       }),
+      // Injected by `tn-dialog-shell` for its close button.
       mockProvider(DialogRef, {
         close: jest.fn(),
       }),
@@ -98,6 +99,9 @@ describe('ManageHostsDialog', () => {
       { title: 'Edit Host', inputs: { host: expect.objectContaining(hosts[0]) } },
     );
     expect(spectator.inject(NvmeOfStore).reloadHosts).toHaveBeenCalled();
+    // The form opens in a side panel stacked above this dialog, so the list is still there to
+    // return to once it closes — closing it dropped the user back on the subsystem (NAS-143761).
+    expect(spectator.inject(DialogRef).close).not.toHaveBeenCalled();
   });
 
   it('deletes the port with correct force flag based on subsystem usage', async () => {
@@ -128,5 +132,6 @@ describe('ManageHostsDialog', () => {
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(HostFormComponent, { title: 'Add Host' });
     expect(spectator.inject(NvmeOfStore).reloadHosts).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).not.toHaveBeenCalled();
   });
 });

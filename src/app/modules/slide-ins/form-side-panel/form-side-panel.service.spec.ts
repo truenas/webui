@@ -1,4 +1,5 @@
 /* eslint-disable max-classes-per-file */
+import { OverlayContainer } from '@angular/cdk/overlay';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
@@ -182,6 +183,27 @@ describe('FormSidePanelService', () => {
     expect(await panel.isOpen()).toBe(true);
     expect(await panel.getTitle()).toBe('NFS');
     expect(await panel.getContentText()).toContain('nfs form body');
+  });
+
+  // `tn-side-panel` portals its overlay to `document.body`, where it and the CDK overlay container
+  // are siblings with fixed z-indexes — so a panel opened from an already-open dialog (Manage Hosts
+  // → Edit) rendered under that dialog's backdrop. Inside the container they stack by DOM order
+  // instead, i.e. by open order, which works in both directions. See NAS-143761.
+  it('re-homes the panel overlay into the CDK overlay container, after overlays already open', () => {
+    const cdkContainer = TestBed.inject(OverlayContainer).getContainerElement();
+    // Stand in for a dialog that was already open when the panel opened.
+    const alreadyOpen = document.createElement('div');
+    alreadyOpen.className = 'cdk-overlay-pane';
+    cdkContainer.appendChild(alreadyOpen);
+
+    service.open(TestFormComponent, { title: 'NFS' });
+    fixture.detectChanges();
+
+    const overlay = document.querySelector('.tn-side-panel__overlay');
+    expect(overlay?.parentElement).toBe(cdkContainer);
+    expect(Array.from(cdkContainer.children).indexOf(overlay)).toBeGreaterThan(
+      Array.from(cdkContainer.children).indexOf(alreadyOpen),
+    );
   });
 
   it('submits the form and resolves onSuccess when Save is clicked', async () => {

@@ -106,8 +106,9 @@ export class ManagePortsDialog implements OnInit {
   }
 
   onAdd(): void {
-    // The side panel mounts on document.body and paints on top of this dialog's backdrop,
-    // so the dialog can stay open behind it (no need to close it first as the slide-in did).
+    // The panel stacks above this dialog (FormSidePanelContainerComponent re-homes it into the CDK
+    // overlay container so open order decides), so the dialog stays open behind it and the user is
+    // back on the list as soon as the form closes — no need to close it first as the slide-in did.
     this.formPanel
       .open(PortFormComponent, { title: this.translate.instant('Add Port') })
       .onSuccess(() => {

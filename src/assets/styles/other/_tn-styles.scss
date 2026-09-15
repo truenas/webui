@@ -255,6 +255,22 @@ textarea {
   z-index: 999 !important;
 }
 
+// ...but the CDK overlay container is a single element with a single `z-index`, so the rule above
+// orders the panel against EVERY CDK overlay at once — including one that was already open when the
+// panel opened. That buried the host/port form under the "Manage Hosts" dialog's backdrop, invisible
+// and click-blocked (NAS-143761).
+//
+// `FormSidePanelContainerComponent` therefore re-homes its portaled overlay into the CDK overlay
+// container, where panel and CDK overlays are siblings and DOM order — i.e. open order — decides.
+// Restore the library's own `z-index` there so the panel ties with `.cdk-overlay-pane` instead of
+// losing to it outright, and the tie resolves in favour of whichever opened last.
+//
+// Scoped to the container, so a `<tn-side-panel>` declared in a template (which stays on `<body>`)
+// keeps the `999` behaviour above.
+.cdk-overlay-container .tn-side-panel__overlay {
+  z-index: 1000 !important;
+}
+
 .app-loader-overlay .cdk-dialog-container {
   height: 100%;
   outline: none;
