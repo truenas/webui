@@ -127,12 +127,12 @@ export class S3BucketListComponent implements OnInit {
     {
       iconName: tnIconMarker('delete-clock', 'mdi'),
       tooltip: this.translate.instant('Force Disable Versioning'),
-      // Hidden rather than disabled where versioning is already off: there is no history to
-      // destroy, so the action has nothing to mean. Object lock is the opposite case — the user
-      // is looking for it and deserves to be told why middleware will not do it.
+      // Hidden where versioning is already off: there is no history to destroy, so the action has
+      // nothing to mean. An object-locked bucket keeps the action and is refused on click, the way
+      // `doFilesystemAclEdit` handles a locked dataset — `disabledTooltip` reaches only the
+      // single-action branch of `TableActionsCellComponent`, and this list always renders a menu,
+      // so a disabled item here would carry no reason at all.
       hidden: (row) => of(row.versioning === S3Versioning.Off),
-      disabled: (row) => of(row.object_lock),
-      disabledTooltip: this.translate.instant(this.helptext.forceDisableVersioningObjectLockTooltip),
       onClick: (row) => this.doForceDisableVersioning(row),
       requiredRoles: this.requiredRoles,
     },
@@ -294,6 +294,14 @@ export class S3BucketListComponent implements OnInit {
    * confirmation asks for the destruction explicitly rather than for a yes.
    */
   private doForceDisableVersioning(row: S3Bucket): void {
+    if (row.object_lock) {
+      this.dialog.error({
+        title: this.translate.instant('Force Disable Versioning'),
+        message: this.translate.instant(this.helptext.forceDisableVersioningObjectLock),
+      });
+      return;
+    }
+
     this.dialog.confirm({
       title: this.translate.instant('Force disable versioning on "{name}"?', { name: row.name }),
       message: this.translate.instant(this.helptext.forceDisableVersioningMessage),

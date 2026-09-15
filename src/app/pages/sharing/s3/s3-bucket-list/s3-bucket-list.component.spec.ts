@@ -54,6 +54,7 @@ describe('S3BucketListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         confirmDelete: jest.fn(() => of(undefined)),
+        error: jest.fn(),
       }),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -156,11 +157,21 @@ describe('S3BucketListComponent', () => {
       expect(await menu.getItemLabels()).not.toContain('Force Disable Versioning');
     });
 
-    it('is offered but refused on an object-locked bucket, which keeps its history', async () => {
+    it('explains the refusal on an object-locked bucket, which keeps its history', async () => {
       const menu = await renderBucket({ versioning: S3Versioning.Enabled, object_lock: true });
 
       expect(await menu.getItemLabels()).toContain('Force Disable Versioning');
-      expect(await menu.isItemDisabled({ label: 'Force Disable Versioning' })).toBe(true);
+
+      await menu.clickItem({ label: 'Force Disable Versioning' });
+
+      // Refused on click rather than rendered disabled: a disabled menu item carries no tooltip,
+      // so the reason would never reach the person looking for it.
+      expect(spectator.inject(DialogService).error).toHaveBeenCalledWith(
+        expect.objectContaining({ message: expect.stringContaining('object lock') }),
+      );
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
+      expect(spectator.inject(ApiService).call)
+        .not.toHaveBeenCalledWith('sharing.s3.force_disable_versioning', expect.anything());
     });
 
     it('asks for the destruction explicitly, then forces it off', async () => {
