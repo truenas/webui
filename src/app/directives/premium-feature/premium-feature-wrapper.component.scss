@@ -22,15 +22,39 @@
   // or tn-slide-toggle exposes a <label> rather than the <button> that
   // directive disables, so those need it, but a blanket rule reaches the help
   // text too.
+  //
+  // Named by host element because the sweep writes `disabled` onto a control's
+  // *inner* input, which leaves the component's own chrome undimmed. The list
+  // is every form control @truenas/ui-components ships plus the ix-* ones with
+  // no tn-* equivalent yet, rather than only those the S3 forms happen to use
+  // — the next section wrapped here should not have to discover the gap. The
+  // trailing `[disabled]` catches anything rendered as a plain control, and a
+  // future tn-* the list misses once the sweep has been over it.
   ::ng-deep {
     a,
     button,
+    ix-explorer,
+    ix-group-combobox,
+    ix-user-combobox,
+    tn-autocomplete,
     tn-button,
+    tn-button-toggle-group,
     tn-checkbox,
+    tn-checkbox-group,
+    tn-chip-input,
+    tn-date-input,
+    tn-date-range-input,
+    tn-file-input,
+    tn-file-picker,
     tn-icon-button,
     tn-input,
+    tn-radio-group,
     tn-select,
-    tn-slide-toggle {
+    tn-selection-list,
+    tn-slide-toggle,
+    tn-slider,
+    tn-time-input,
+    [disabled] {
       // Dimmed here rather than over the whole region. WCAG 1.4.3 exempts inactive controls from
       // the contrast minimum; the static text beside them is not exempt, and the heading, labels
       // and hints are what an administrator is being shown a denied feature for.
