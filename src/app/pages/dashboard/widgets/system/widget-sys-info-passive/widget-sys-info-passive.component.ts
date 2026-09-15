@@ -14,6 +14,7 @@ import {
   filter, map,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { getLabelForContractType } from 'app/interfaces/system-info.interface';
@@ -33,7 +34,7 @@ import {
 import { AppState } from 'app/store';
 import { selectCanFailover, selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
-  selectIsIxHardware, selectIsEnterprise, selectHasEnclosureSupport,
+  selectIsIxHardware, selectIsEnterprise, selectHasEnclosureSupport, selectProductType,
 } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -75,11 +76,13 @@ export class WidgetSysInfoPassiveComponent {
   canFailover = toSignal(this.store$.select(selectCanFailover));
   isIxHardware = toSignal(this.store$.select(selectIsIxHardware));
   isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  productType = toSignal(this.store$.select(selectProductType));
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   isHaEnabled = toSignal(this.store$.select(selectIsHaEnabled));
   hasEnclosureSupport = toSignal(this.store$.select(selectHasEnclosureSupport));
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForPassiveNode));
   protected readonly getLabelForContractType = getLabelForContractType;
+  protected readonly ProductType = ProductType;
 
   updateAvailable = toSignal(this.resources.updateAvailable$);
   systemInfo = toSignal(this.resources.dashboardSystemInfo$.pipe(

@@ -8,7 +8,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { CollectionChangeType } from 'app/enums/api.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
@@ -87,7 +86,7 @@ describe('AlertsPanelComponent', () => {
           },
           [systemInfoStateKey]: {
             systemInfo: null,
-            productType: ProductType.Enterprise,
+            entitlementFacts: null,
             isIxHardware: false,
             buildYear: 2024,
           },

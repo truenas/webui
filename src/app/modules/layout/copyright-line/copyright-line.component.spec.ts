@@ -51,6 +51,15 @@ describe('CopyrightLineComponent', () => {
     expect(spectator.query('a')).toHaveAttribute('href', 'https://truenas.com/testdrive');
   });
 
+  it('shows copyright line with commercial product type and links to production', () => {
+    store$.overrideSelector(selectProductType, ProductType.Commercial);
+    store$.refreshState();
+    spectator.detectChanges();
+
+    expect(spectator.fixture.nativeElement).toHaveText(`TrueNAS® Commercial  © ${buildYear} iXsystems, Inc. dba  TrueNAS`);
+    expect(spectator.query('a')).toHaveAttribute('href', 'https://truenas.com/production');
+  });
+
   it('shows copyright line with enterprise product type and year of build', () => {
     store$.overrideSelector(selectProductType, ProductType.Enterprise);
     store$.refreshState();

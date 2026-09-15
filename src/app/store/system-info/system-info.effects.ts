@@ -4,13 +4,13 @@ import { EMPTY, forkJoin, of } from 'rxjs';
 import {
   catchError, map, mergeMap,
 } from 'rxjs/operators';
-import { ProductType } from 'app/enums/product-type.enum';
+import { HardwareType } from 'app/enums/hardware-type.enum';
 import { ContractType, License } from 'app/interfaces/system-info.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
+  entitlementFactsLoaded,
   ixHardwareLoaded,
-  productTypeLoaded,
   systemInfoLoaded, systemInfoUpdated,
 } from 'app/store/system-info/system-info.actions';
 
@@ -81,14 +81,16 @@ export class SystemInfoEffects {
     }),
   ));
 
-  loadProductType = createEffect(() => this.actions$.pipe(
+  loadEntitlementFacts = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
-      return this.api.call('system.product_type').pipe(
-        map((productType) => productTypeLoaded({ productType })),
+      return this.api.call('truenas.entitlements.facts').pipe(
+        map((entitlementFacts) => entitlementFactsLoaded({ entitlementFacts })),
         catchError((error: unknown) => {
           console.error(error);
-          return of(productTypeLoaded({ productType: ProductType.CommunityEdition }));
+          return of(entitlementFactsLoaded({
+            entitlementFacts: { hardware_type: HardwareType.Community, license_type: null },
+          }));
         }),
       );
     }),

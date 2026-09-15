@@ -9,7 +9,6 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { Ipmi, IpmiChassis } from 'app/interfaces/ipmi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -33,7 +32,6 @@ describe('IpmiFormComponent', () => {
   let spectator: Spectator<IpmiFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let productType: ProductType;
 
   const slideInRef: SlideInRef<number | undefined, unknown> = {
     close: jest.fn(),
@@ -59,9 +57,7 @@ describe('IpmiFormComponent', () => {
           },
           [systemInfoStateKey]: {
             systemInfo: null,
-            get productType() {
-              return productType;
-            },
+            entitlementFacts: null,
             isIxHardware: false,
             buildYear: 2024,
           },
@@ -120,8 +116,7 @@ describe('IpmiFormComponent', () => {
     ],
   });
 
-  async function setupTest(newProductType: ProductType): Promise<void> {
-    productType = newProductType;
+  async function setupTest(): Promise<void> {
     spectator = createComponent({
       providers: [
         mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => 1) }),
@@ -131,12 +126,12 @@ describe('IpmiFormComponent', () => {
     form = await loader.getHarness(IxFormHarness);
   }
 
-  describe('product type is SCALE_ENTERPRISE', () => {
+  describe('HA-licensed system', () => {
     beforeEach(async () => {
-      await setupTest(ProductType.Enterprise);
+      await setupTest();
     });
 
-    it('loads data with controller radio buttons in the form for ScaleEnterprise', async () => {
+    it('loads data with controller radio buttons in the form', async () => {
       const formValue = await form.getValues();
 
       expect(formValue).toEqual({
@@ -258,29 +253,9 @@ describe('IpmiFormComponent', () => {
     });
   });
 
-  describe('product type is SCALE', () => {
-    beforeEach(async () => {
-      await setupTest(ProductType.CommunityEdition);
-    });
-
-    it('loads data in the form if the product type is SCALE', async () => {
-      const formValue = await form.getValues();
-
-      expect(formValue).toMatchObject({
-        DHCP: false,
-        'IPv4 Default Gateway': '10.220.0.1',
-        'IPv4 Address': '10.220.15.114',
-        'IPv4 Netmask': '255.255.240.0',
-        'Enable VLAN': true,
-        'VLAN ID': '2',
-        Password: '',
-      });
-    });
-  });
-
   describe('IPMI lights', () => {
     beforeEach(async () => {
-      await setupTest(ProductType.Enterprise);
+      await setupTest();
     });
 
     it('flashes IPMI light when Flash Identify Light is pressed', async () => {
@@ -330,7 +305,7 @@ describe('IpmiFormComponent', () => {
 
   describe('VLAN validation', () => {
     beforeEach(async () => {
-      await setupTest(ProductType.Enterprise);
+      await setupTest();
     });
 
     it('does not require VLAN ID when Enable VLAN is false', async () => {
@@ -358,7 +333,7 @@ describe('IpmiFormComponent', () => {
 
   describe('Manage button functionality', () => {
     beforeEach(async () => {
-      await setupTest(ProductType.Enterprise);
+      await setupTest();
     });
 
     it('should be enabled by default with valid static IP', async () => {
@@ -466,7 +441,7 @@ describe('IpmiFormComponent', () => {
 
   describe('DHCP to static IP transitions', () => {
     beforeEach(async () => {
-      await setupTest(ProductType.Enterprise);
+      await setupTest();
     });
 
     it('should disable manage button when switching to DHCP with no IP', async () => {
@@ -522,7 +497,7 @@ describe('IpmiFormComponent', () => {
 
   describe('error handling', () => {
     it('does not change flashing state when identify light request fails', async () => {
-      await setupTest(ProductType.Enterprise);
+      await setupTest();
       const errorHandler = spectator.inject(ErrorHandlerService);
       jest.spyOn(errorHandler, 'showErrorModal').mockReturnValue(undefined);
 
@@ -542,7 +517,7 @@ describe('IpmiFormComponent', () => {
     });
 
     it('resets loading state when identify light request fails', async () => {
-      await setupTest(ProductType.Enterprise);
+      await setupTest();
       const errorHandler = spectator.inject(ErrorHandlerService);
       jest.spyOn(errorHandler, 'showErrorModal').mockReturnValue(undefined);
 

@@ -13,7 +13,6 @@ import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.util
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { LicenseType } from 'app/enums/license-type.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { ContractType, License, SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
@@ -79,7 +78,6 @@ describe('SupportCardComponent', () => {
       mockApi([
         mockCall('truenas.is_production', true),
         mockJob('truenas.set_production', fakeSuccessfulJob()),
-        mockCall('system.product_type', ProductType.CommunityEdition),
         mockCall('support.is_available', true),
         mockCall('support.is_available_and_enabled', false),
       ]),

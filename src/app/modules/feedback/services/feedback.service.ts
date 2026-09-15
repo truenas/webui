@@ -10,16 +10,19 @@ import {
 } from 'rxjs';
 import { catchError, take } from 'rxjs/operators';
 import { TicketType } from 'app/enums/file-ticket.enum';
+import { HardwareType } from 'app/enums/hardware-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { selectNotNull } from 'app/helpers/operators/select-not-null.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport } from 'app/helptext/system/support';
+import { EntitlementFacts } from 'app/interfaces/entitlement.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
 import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket/file-ticket.component';
 import { FileTicketLicensedComponent } from 'app/modules/feedback/components/file-ticket-licensed/file-ticket-licensed.component';
 import {
-  AddReview, AttachmentAddedResponse, FeedbackEnvironment, ReviewAddedResponse,
+  AddReview, AttachmentAddedResponse, FeedbackEnvironment, FeedbackProductType, ReviewAddedResponse,
 } from 'app/modules/feedback/interfaces/feedback.interface';
 import {
   CreateNewTicket,
@@ -32,11 +35,22 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
 import { AppState } from 'app/store';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
-import { selectProductType, selectSystemInfoState, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import {
+  selectEntitlementFacts, selectSystemInfoState, waitForSystemInfo,
+} from 'app/store/system-info/system-info.selectors';
 
 type ReviewData = FileReviewComponent['form']['value'];
 type TicketData = FileTicketComponent['form']['value'];
 type TicketLicensedData = ReturnType<FileTicketLicensedComponent['form']['getRawValue']>;
+type LoadedSystemInfoState = SystemInfoState & { systemInfo: SystemInfo; entitlementFacts: EntitlementFacts };
+
+/**
+ * The feedback backend still keys on the retired `system.product_type` values. Derive them from
+ * hardware, as middleware's usage reporting does, so reviews keep lining up with earlier ones.
+ */
+function getLegacyProductType(facts: EntitlementFacts): FeedbackProductType {
+  return facts.hardware_type === HardwareType.Truenas ? 'ENTERPRISE' : 'COMMUNITY_EDITION';
+}
 
 @Injectable({
   providedIn: 'root',
@@ -146,13 +160,13 @@ export class FeedbackService {
     }
     return combineLatest([
       this.store$.pipe(waitForSystemInfo),
-      this.store$.select(selectProductType).pipe(filter((productType) => !!productType)),
+      this.store$.pipe(selectNotNull(selectEntitlementFacts)),
     ]).pipe(
       first(),
-      switchMap(([systemInfo, productType]) => {
+      switchMap(([systemInfo, facts]) => {
         const params = new HttpParams()
           .set('version', systemInfo.version)
-          .set('product_type', productType);
+          .set('product_type', getLegacyProductType(facts));
 
         return this.httpClient
           .get<{ value: boolean }>(`${this.hostname}/api/collect-blacklist/check/`, { params })
@@ -221,7 +235,7 @@ export class FeedbackService {
 
   private prepareReview(data: ReviewData): Observable<AddReview> {
     return this.getSystemInfo().pipe(
-      switchMap(([{ systemInfo, isIxHardware, productType }, systemHostId]) => {
+      switchMap(([{ systemInfo, isIxHardware, entitlementFacts }, systemHostId]) => {
         return of({
           host_u_id: systemHostId,
           rating: Number(data.rating),
@@ -230,7 +244,7 @@ export class FeedbackService {
           user_agent: this.window.navigator.userAgent,
           environment: environment.production ? FeedbackEnvironment.Production : FeedbackEnvironment.Development,
           release: systemInfo.version,
-          product_type: productType,
+          product_type: getLegacyProductType(entitlementFacts),
           product_model: systemInfo.system_product && isIxHardware ? systemInfo.system_product : 'Generic',
           extra: {},
         });
@@ -272,12 +286,12 @@ export class FeedbackService {
     );
   }
 
-  private getSystemInfo(): Observable<[SystemInfoState & { systemInfo: SystemInfo }, string]> {
+  private getSystemInfo(): Observable<[LoadedSystemInfoState, string]> {
     return forkJoin([
       this.store$.pipe(
         select(selectSystemInfoState),
-        filter((systemInfoState) => Boolean(systemInfoState.systemInfo) && Boolean(systemInfoState.productType)),
-        map((systemInfoState) => systemInfoState as SystemInfoState & { systemInfo: SystemInfo }),
+        filter((systemInfoState) => Boolean(systemInfoState.systemInfo) && Boolean(systemInfoState.entitlementFacts)),
+        map((systemInfoState) => systemInfoState as LoadedSystemInfoState),
         take(1),
       ),
       this.api.call('system.host_id'),

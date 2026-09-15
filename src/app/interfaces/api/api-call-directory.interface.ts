@@ -5,7 +5,6 @@ import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -117,7 +116,7 @@ import {
   DsUncachedGroup, DsUncachedUser, LoggedInUser,
 } from 'app/interfaces/ds-cache.interface';
 import { DashboardEnclosure, Enclosure, SetDriveBayLightStatus } from 'app/interfaces/enclosure.interface';
-import { EntitlementsInfo } from 'app/interfaces/entitlement.interface';
+import { EntitlementFacts, EntitlementsInfo } from 'app/interfaces/entitlement.interface';
 import {
   FailoverConfig,
   FailoverUpdate,
@@ -879,7 +878,6 @@ export interface ApiCallDirectory {
   'system.ntpserver.delete': { params: [id: number]; response: boolean };
   'system.ntpserver.query': { params: QueryParams<NtpServer>; response: NtpServer[] };
   'system.ntpserver.update': { params: [id: number, params: CreateNtpServer]; response: NtpServer };
-  'system.product_type': { params: void; response: ProductType };
   'system.security.config': { params: void; response: SystemSecurityConfig };
   'system.security.info.fips_available': { params: void; response: boolean };
   'system.reboot.info': { params: void; response: SystemRebootInfo };
@@ -901,6 +899,7 @@ export interface ApiCallDirectory {
 
   // TrueNAS
   'truenas.accept_eula': { params: void; response: void };
+  'truenas.entitlements.facts': { params: void; response: EntitlementFacts };
   'truenas.entitlements.info': { params: void; response: EntitlementsInfo };
   'truenas.get_eula': { params: void; response: string };
   'truenas.is_eula_accepted': { params: void; response: boolean };

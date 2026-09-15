@@ -10,8 +10,8 @@ import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
+import { HardwareType } from 'app/enums/hardware-type.enum';
 import { MailSecurity } from 'app/enums/mail-security.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { MailConfig, MailOauthConfig } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
@@ -61,7 +61,7 @@ describe('EmailFormComponent', () => {
         initialState: {
           systemInfo: {
             systemInfo: { hostname: 'host.truenas.com' },
-            productType: ProductType.CommunityEdition,
+            entitlementFacts: { hardware_type: HardwareType.Community, license_type: null },
             isIxHardware: false,
             buildYear: 2024,
           },
@@ -223,7 +223,7 @@ describe('EmailFormComponent', () => {
         [
           {
             subject: 'Test Message',
-            text: 'This is a test message from TrueNAS COMMUNITY EDITION.',
+            text: 'This is a test message from TrueNAS Community Edition.',
           },
           {
             fromemail: 'from@ixsystems.com',
@@ -332,7 +332,7 @@ describe('EmailFormComponent', () => {
         [
           {
             subject: 'Test Message',
-            text: 'This is a test message from TrueNAS COMMUNITY EDITION.',
+            text: 'This is a test message from TrueNAS Community Edition.',
           },
           {
             fromemail: 'from@ixsystems.com',
@@ -415,7 +415,7 @@ describe('EmailFormComponent', () => {
         [
           {
             subject: 'Test Message',
-            text: 'This is a test message from TrueNAS COMMUNITY EDITION.',
+            text: 'This is a test message from TrueNAS Community Edition.',
           },
           {
             fromemail: 'from@ixsystems.com',
