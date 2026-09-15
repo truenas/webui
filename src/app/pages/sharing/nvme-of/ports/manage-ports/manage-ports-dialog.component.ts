@@ -129,6 +129,9 @@ export class ManagePortsDialog implements OnInit {
   }
 
   onAdd(): void {
+    // The dialog stays open behind the form: both are siblings in the CDK overlay container at
+    // the same z-index, so the slide-in, appended later, paints on top. The user is back on the
+    // list as soon as the form closes.
     this.slideIn
       .open(PortFormComponent)
       .pipe(
