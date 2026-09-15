@@ -5,7 +5,7 @@ import { createHostFactory, mockProvider, SpectatorHost } from '@ngneat/spectato
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { newOption, Option } from 'app/interfaces/option.interface';
-import { User } from 'app/interfaces/user.interface';
+import { User, UserFormPreset } from 'app/interfaces/user.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { SimpleComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-combobox-provider';
 import { IxComboboxProvider } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
@@ -214,6 +214,7 @@ describe('IxUserPickerComponent', () => {
       });
 
       beforeEach(() => {
+        mockSlideIn.open.mockClear();
         addNewFormControl.reset();
         const initialOptions = [
           { label: 'existinguser', value: 'existinguser' },
@@ -222,13 +223,41 @@ describe('IxUserPickerComponent', () => {
         addNewSpectator = createHostWithSlideIn(`<ix-user-picker
           [formControl]="formControl"
           [provider]="provider"
+          [createPreset]="createPreset"
         ></ix-user-picker>`, {
           hostProps: {
             formControl: addNewFormControl,
             provider: new SimpleComboboxProvider(initialOptions),
+            createPreset: undefined as UserFormPreset | undefined,
           },
         });
       });
+
+      it('opens the create form with no data when the field asks for nothing', fakeAsync(() => {
+        addNewSpectator.component.ngOnInit();
+        tick(300);
+
+        addNewFormControl.setValue(newOption);
+        tick();
+
+        expect(mockSlideIn.open).toHaveBeenLastCalledWith(expect.anything(), { wide: true });
+
+        discardPeriodicTasks();
+      }));
+
+      it('opens the create form on the preset the field asked for', fakeAsync(() => {
+        const preset: UserFormPreset = { values: { smb: false, password_disabled: true } };
+        addNewSpectator.setHostInput({ createPreset: preset });
+        addNewSpectator.component.ngOnInit();
+        tick(300);
+
+        addNewFormControl.setValue(newOption);
+        tick();
+
+        expect(mockSlideIn.open).toHaveBeenLastCalledWith(expect.anything(), { wide: true, data: { preset } });
+
+        discardPeriodicTasks();
+      }));
 
       it('adds newly created user to options list immediately', fakeAsync(() => {
         addNewSpectator.component.ngOnInit();

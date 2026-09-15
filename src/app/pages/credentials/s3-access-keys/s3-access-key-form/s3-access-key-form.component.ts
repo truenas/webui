@@ -27,7 +27,9 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   S3AccessKeyCredentialsDialogComponent,
 } from 'app/pages/credentials/s3-access-keys/s3-access-key-credentials-dialog/s3-access-key-credentials-dialog.component';
-import { createS3UserPickerProvider } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
+import {
+  createS3UserPickerProvider, s3UserFormPreset,
+} from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 
 @Component({
   selector: 'ix-s3-access-key-form',
@@ -64,6 +66,7 @@ export class S3AccessKeyFormComponent implements OnInit {
   protected readonly helptext = helptextSharingS3;
   protected readonly minDateToday = new Date();
   protected readonly userProvider = createS3UserPickerProvider();
+  protected readonly userFormPreset = s3UserFormPreset;
 
   protected readonly existingKey = this.slideInRef.getData();
   protected readonly isNew = !this.existingKey;

@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, effect, input, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, untracked,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -7,7 +9,7 @@ import { TnIconComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { hasShellAccess, hasSshAccess } from 'app/helpers/user.helper';
-import { User } from 'app/interfaces/user.interface';
+import { User, UserFormPreset } from 'app/interfaces/user.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -39,6 +41,8 @@ export class AllowedAccessSectionComponent {
   editingUser = input<User>();
   password = input<string>();
   passwordDisabled = input<boolean>();
+  /** What a create flow wants this section to start as. Ignored while editing. */
+  preset = input<UserFormPreset | undefined>(undefined);
 
   protected sshAccess = this.userFormStore.sshAccess;
 
@@ -62,6 +66,7 @@ export class AllowedAccessSectionComponent {
   constructor() {
     this.setFieldRelations();
     this.updateStoreOnChanges();
+    this.applyPreset();
 
     // Revalidate when password changes
     effect(() => {
@@ -74,6 +79,40 @@ export class AllowedAccessSectionComponent {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.form.updateValueAndValidity();
+    });
+  }
+
+  /**
+   * Applies the create flow's preset to the one control here it can name.
+   *
+   * Once: a host binding an object literal hands this a new reference every
+   * change-detection pass, and re-applying would undo the user's own tick each
+   * time. An unlocked preset is a starting point, so it has to stop being
+   * applied the moment the form is on screen.
+   *
+   * `setValue` before `disable`, and the disable silenced: the store learns
+   * the value from the first call, and the second has nothing new to say.
+   * What keeps it said is {@link updateStoreOnChanges} reporting the raw
+   * value — `smb` reaches `user.create` through the store, not through the
+   * form, so a disabled control that stopped reporting would quietly drop out
+   * of the request.
+   */
+  private applyPreset(): void {
+    let applied = false;
+
+    effect(() => {
+      const preset = this.preset();
+      const smb = preset?.values?.smb;
+      if (applied || smb === undefined || this.editingUser()) {
+        return;
+      }
+      applied = true;
+      untracked(() => {
+        this.form.controls.smb.setValue(smb);
+        if (preset.locked?.includes('smb')) {
+          this.form.controls.smb.disable({ emitEvent: false });
+        }
+      });
     });
   }
 
@@ -167,8 +206,16 @@ export class AllowedAccessSectionComponent {
   }
 
   private updateStoreOnChanges(): void {
+    // `getRawValue`, not the emitted value: a disabled control is dropped from
+    // the payload `valueChanges` carries, and `updateUserConfig` spreads what
+    // it is given — so reporting the emission would overwrite a disabled
+    // control's setting with `undefined` on the next change to any sibling,
+    // and `user.create` would go out with nothing to say about it. Root's
+    // edit form hits this too: its locked TrueNAS Access read `undefined`,
+    // which sent `role: null` and stripped the role's group from the account.
     this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (values) => {
+      next: () => {
+        const values = this.form.getRawValue();
         this.userFormStore.setAllowedAccessConfig({
           smbAccess: values.smb,
           webshareAccess: values.webshare,
