@@ -96,33 +96,34 @@
     ></ix-s3-grants-list>
   </tn-form-section>
 
-  @if (isLicensed()) {
-    <tn-form-section [heading]="'Auditing' | translate">
-      <tn-form-field
-        [label]="'Default Audit' | translate"
-        [tooltip]="helptext.defaultAuditTooltip | translate"
-        [required]="true"
-      >
-        <tn-select formControlName="default_audit_mode" [options]="auditModeOptions"></tn-select>
-      </tn-form-field>
+  <tn-form-section
+    *ixPremiumFeature="hasAudit(); testId: 's3-service-audit'"
+    [heading]="'Auditing' | translate"
+  >
+    <tn-form-field
+      [label]="'Default Audit' | translate"
+      [tooltip]="helptext.defaultAuditTooltip | translate"
+      [required]="true"
+    >
+      <tn-select formControlName="default_audit_mode" [options]="auditModeOptions"></tn-select>
+    </tn-form-field>
 
-      @if (form.controls.default_audit_mode.value === S3AuditMode.Selected) {
-        <tn-form-field [label]="'Audited Actions' | translate">
-          <tn-select
-            formControlName="default_audit_actions"
-            [options]="auditActionOptions()"
-            [multiple]="true"
-          ></tn-select>
-        </tn-form-field>
-      }
-
-      <tn-form-field
-        [label]="'Default Audit Overflow' | translate"
-        [tooltip]="helptext.auditOverflowTooltip | translate"
-        [required]="true"
-      >
-        <tn-select formControlName="default_audit_overflow" [options]="auditOverflowOptions"></tn-select>
+    @if (form.controls.default_audit_mode.value === S3AuditMode.Selected) {
+      <tn-form-field [label]="'Audited Actions' | translate">
+        <tn-select
+          formControlName="default_audit_actions"
+          [options]="auditActionOptions()"
+          [multiple]="true"
+        ></tn-select>
       </tn-form-field>
-    </tn-form-section>
-  }
+    }
+
+    <tn-form-field
+      [label]="'Default Audit Overflow' | translate"
+      [tooltip]="helptext.auditOverflowTooltip | translate"
+      [required]="true"
+    >
+      <tn-select formControlName="default_audit_overflow" [options]="auditOverflowOptions"></tn-select>
+    </tn-form-field>
+  </tn-form-section>
 </ix-form>

@@ -1,0 +1,27 @@
+:host {
+  display: block;
+}
+
+.premium-feature {
+  position: relative;
+}
+
+.premium-feature__badge {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+}
+
+.premium-feature__content {
+  cursor: not-allowed;
+  opacity: 0.5;
+
+  // The content is inert, not merely dim: `disableFocusableElements` takes the
+  // keyboard out, and this takes the pointer out. Without it a tn-checkbox or
+  // tn-slide-toggle stays clickable, because those expose a <label> rather
+  // than the <button> that directive disables.
+  ::ng-deep * {
+    pointer-events: none;
+  }
+}

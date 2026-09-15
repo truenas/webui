@@ -1,0 +1,14 @@
+<!--
+  The accessible name explains rather than repeating the word on the tag:
+  "Premium" alone tells a screen-reader user nothing about why the controls
+  beside it will not respond.
+-->
+<button
+  type="button"
+  class="premium-badge"
+  tnTestIdType="button"
+  [tnTestId]="[testId(), 'premium']"
+  [tnTooltip]="explanation | translate"
+  [attr.aria-label]="explanation | translate"
+  (click)="toggleExplanation()"
+>{{ 'Premium' | translate }}</button>

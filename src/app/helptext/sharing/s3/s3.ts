@@ -35,6 +35,7 @@ export const helptextSharingS3 = {
  targets expect. Turns on versioning, which object lock requires.'),
   objectLockMultiprotocolHint: T('Not available with the Multiprotocol permissions model: another protocol could\
  rewrite a locked object.'),
+  objectLockVersioningHint: T('Object lock is built on versioning, which this system is not licensed for.'),
   objectLockDefaultModeTooltip: T('Retention mode applied to new objects. <b>Compliance</b> cannot be shortened or\
  removed by anyone for the retention period. <b>Governance</b> can be overridden by users with the special\
  permission. Leave empty for no default rule.'),
