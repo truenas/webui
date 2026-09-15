@@ -15,6 +15,7 @@ import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -102,6 +103,7 @@ describe('CloudCredentialsFormComponent', () => {
   const createComponent = createComponentFactory({
     component: CloudCredentialsFormComponent,
     providers: [
+      ...ixFormTestingProviders(),
       mockProvider(SnackbarService),
       mockProvider(DialogService),
       mockApi([

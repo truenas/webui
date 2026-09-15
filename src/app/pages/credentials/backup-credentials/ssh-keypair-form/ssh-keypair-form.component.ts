@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, signal, inject, input,
+  ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
@@ -12,20 +12,20 @@ import {
   TnFormSectionComponent,
   TnInputComponent,
 } from '@truenas/ui-components';
-import { Observable } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSshKeypairs } from 'app/helptext/system/ssh-keypairs';
 import { KeychainCredentialUpdate, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { atLeastOne } from 'app/modules/forms/ix-forms/validators/at-least-one-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import {
   SidePanelFooterMenu,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -37,6 +37,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
@@ -45,37 +46,35 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
   ],
 })
-export class SshKeypairFormComponent extends SidePanelForm implements OnInit {
+export class SshKeypairFormComponent extends IxFormHostForm {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private snackbar = inject(SnackbarService);
   private errorHandler = inject(ErrorHandlerService);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private loader = inject(LoaderService);
   private download = inject(DownloadService);
   private destroyRef = inject(DestroyRef);
 
   readonly requiredRoles = [Role.KeychainCredentialWrite];
 
-  get isNew(): boolean {
-    return !this.editingKeypair;
-  }
-
-  protected isFormLoading = signal(false);
-
-  protected editingKeypair: KeychainSshKeyPair | undefined;
-
   /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
   readonly editKeypair = input<KeychainSshKeyPair | undefined>(undefined);
 
-  form = this.fb.group({
+  /** The record's keys live under `attributes`; flatten them onto the controls. */
+  protected transformEditKeypair = (data: unknown): Record<string, unknown> => {
+    const keypair = data as KeychainSshKeyPair;
+    return {
+      name: keypair.name,
+      private_key: keypair.attributes.private_key,
+      public_key: keypair.attributes.public_key,
+    };
+  };
+
+  protected form = this.fb.group({
     name: ['', Validators.required],
     private_key: [''],
     public_key: ['', atLeastOne('private_key', [helptextSshKeypairs.privateKeyLabel, helptextSshKeypairs.publicKeyLabel])],
   });
-
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   readonly tooltips = {
     name: helptextSshKeypairs.nameTooltip,
@@ -108,21 +107,6 @@ export class SshKeypairFormComponent extends SidePanelForm implements OnInit {
     ],
   }));
 
-  ngOnInit(): void {
-    this.editingKeypair = this.editKeypair();
-    if (this.editingKeypair) {
-      this.setKeypairForEditing(this.editingKeypair);
-    }
-  }
-
-  private setKeypairForEditing(keypair: KeychainSshKeyPair): void {
-    this.form.patchValue({
-      name: keypair.name,
-      private_key: keypair.attributes.private_key,
-      public_key: keypair.attributes.public_key,
-    });
-  }
-
   protected onGenerateButtonPressed(): void {
     this.api.call('keychaincredential.generate_ssh_key_pair')
       .pipe(
@@ -151,7 +135,7 @@ export class SshKeypairFormComponent extends SidePanelForm implements OnInit {
     this.download.downloadBlob(blob, filename);
   }
 
-  protected onSubmit(): void {
+  protected handleSubmit = (event: FormSubmitEvent): SubmitResult => {
     const values = this.form.value;
     const commonBody: KeychainCredentialUpdate = {
       name: values.name,
@@ -160,36 +144,18 @@ export class SshKeypairFormComponent extends SidePanelForm implements OnInit {
         public_key: values.public_key,
       },
     };
+    const editingKeypair = this.editKeypair();
 
-    this.isFormLoading.set(true);
-    let request$: Observable<unknown>;
-    if (this.editingKeypair) {
-      request$ = this.api.call('keychaincredential.update', [
-        this.editingKeypair.id,
-        commonBody,
-      ]);
-    } else {
-      request$ = this.api.call('keychaincredential.create', [{
-        ...commonBody,
-        type: KeychainCredentialType.SshKeyPair,
-      }]);
-    }
-
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        if (this.isNew) {
-          this.snackbar.success(this.translate.instant('SSH Keypair created'));
-        } else {
-          this.snackbar.success(this.translate.instant('SSH Keypair updated'));
-        }
-
-        this.isFormLoading.set(false);
-        this.close(true);
-      },
-      error: (error: unknown) => {
-        this.isFormLoading.set(false);
-        this.formErrorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+    return {
+      request$: editingKeypair
+        ? this.api.call('keychaincredential.update', [editingKeypair.id, commonBody])
+        : this.api.call('keychaincredential.create', [{
+            ...commonBody,
+            type: KeychainCredentialType.SshKeyPair,
+          }]),
+      successMessage: event.isEdit
+        ? this.translate.instant('SSH Keypair updated')
+        : this.translate.instant('SSH Keypair created'),
+    };
+  };
 }

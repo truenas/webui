@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
@@ -36,12 +36,12 @@ import { Option } from 'app/interfaces/option.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
@@ -56,6 +56,7 @@ const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
@@ -67,7 +68,7 @@ const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';
     AsyncPipe,
   ],
 })
-export class SshConnectionFormComponent extends SidePanelForm<KeychainCredential | null> implements OnInit {
+export class SshConnectionFormComponent extends IxFormHostForm<KeychainCredential | null> implements OnInit {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
@@ -78,7 +79,6 @@ export class SshConnectionFormComponent extends SidePanelForm<KeychainCredential
   private validatorsService = inject(IxValidatorsService);
   formatter = inject(IxFormatterService);
   private dialogService = inject(DialogService);
-  private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
   readonly requiredRoles = [Role.KeychainCredentialWrite];
@@ -87,7 +87,7 @@ export class SshConnectionFormComponent extends SidePanelForm<KeychainCredential
   /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
   readonly editConnection = input<KeychainSshCredentials | undefined>(undefined);
 
-  form = this.formBuilder.group({
+  protected form = this.formBuilder.group({
     connection_name: ['', Validators.required],
     setup_method: [SshConnectionsSetupMethod.SemiAutomatic],
 
@@ -127,11 +127,6 @@ export class SshConnectionFormComponent extends SidePanelForm<KeychainCredential
     return this.form.controls.setup_method.value === SshConnectionsSetupMethod.Manual;
   }
 
-  protected isLoading = signal(false);
-
-  /** Read by the `<tn-side-panel>` host to enable/disable its footer Save action. */
-  readonly canSubmit = this.trackCanSubmit(this.isLoading);
-
   readonly setupMethods$ = of([
     {
       label: this.translate.instant('Manual'),
@@ -170,10 +165,31 @@ export class SshConnectionFormComponent extends SidePanelForm<KeychainCredential
   private existingConnection: KeychainSshCredentials | undefined;
 
   ngOnInit(): void {
+    this.revalidateOnSetupMethodChange();
+
     this.existingConnection = this.editConnection();
     if (this.existingConnection) {
       this.setConnectionForEdit();
     }
+  }
+
+  /**
+   * `host`/`port` and `url`/`password` are each required for exactly one setup method, and a
+   * conditional validator only re-runs when its own control updates. Without this, switching
+   * methods leaves the other branch's stale `required` errors on the group — which used to be
+   * invisible (submit bypassed validity) but now keeps the panel's Save disabled for good.
+   */
+  private revalidateOnSetupMethodChange(): void {
+    this.form.controls.setup_method.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        [
+          this.form.controls.host,
+          this.form.controls.port,
+          this.form.controls.url,
+          this.form.controls.password,
+        ].forEach((control) => control.updateValueAndValidity());
+      });
   }
 
   get isManualAuthFormValid(): boolean {
@@ -211,30 +227,13 @@ export class SshConnectionFormComponent extends SidePanelForm<KeychainCredential
       });
   }
 
-  protected onSubmit(): void {
-    this.isLoading.set(true);
-
-    const request$: Observable<KeychainCredential> = this.isNew
-      ? this.prepareSetupRequest()
-      : this.prepareUpdateRequest();
-
-    request$.pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (newCredential) => {
-        this.isLoading.set(false);
-        this.snackbar.success(this.translate.instant('SSH Connection saved'));
-        // Richer payload than the base boolean — hand back the created/updated credential so
-        // `ix-ssh-credentials-select` can auto-select it. `closeWith` routes it through
-        // whichever host opened the form.
-        this.closeWith(newCredential);
-      },
-      error: (error: unknown) => {
-        this.isLoading.set(false);
-        this.formErrorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+  protected handleSubmit = (): SubmitResult<KeychainCredential | null, KeychainCredential> => ({
+    request$: this.isNew ? this.prepareSetupRequest() : this.prepareUpdateRequest(),
+    successMessage: this.translate.instant('SSH Connection saved'),
+    // Richer payload than the default boolean — hand back the created/updated credential so
+    // `ix-ssh-credentials-select` can auto-select it.
+    closeWith: (newCredential) => newCredential,
+  });
 
   private prepareSetupRequest(): Observable<KeychainCredential> {
     const values = this.form.value;
