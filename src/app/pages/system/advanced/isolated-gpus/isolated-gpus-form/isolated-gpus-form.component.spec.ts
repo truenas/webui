@@ -125,4 +125,58 @@ describe('IsolatedGpusFormComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('system.advanced.update_gpu_pci_ids', [['0000:00:01.0']]);
   });
+
+  // The critical-GPU guard is wired before the load (so a retried load can't register it twice),
+  // which puts the load's own setValue under it. It must police the user's selections only:
+  // stripping a saved id on open would also make the stripped value the pristine snapshot.
+  describe('when a saved id is a system-critical GPU', () => {
+    const createCriticalComponent = createComponentFactory({
+      component: IsolatedGpusFormComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        ...ixFormTestingProviders(),
+        provideMockStore({
+          selectors: [
+            {
+              selector: selectAdvancedConfig,
+              value: {
+                isolated_gpu_pci_ids: ['0000:00:03.0'],
+              } as AdvancedConfig,
+            },
+          ],
+        }),
+        mockApi([mockCall('system.advanced.update_gpu_pci_ids')]),
+        mockProvider(SystemGeneralService),
+        mockProvider(DialogService),
+        mockProvider(GpuService, {
+          getGpuOptions: () => of([
+            { label: 'Critical GPU [0000:00:03.0] (System Critical)', value: '0000:00:03.0', disabled: false },
+          ]),
+          getRawGpuPciChoices: () => of({
+            'Critical GPU [0000:00:03.0]': {
+              pci_slot: '0000:00:03.0',
+              uses_system_critical_devices: true,
+              critical_reason: 'Critical devices found: 0000:00:01.0',
+            },
+          }),
+        }),
+        mockProvider(IsolatedGpuValidatorService, {
+          validateGpu: () => of(null),
+        }),
+        mockAuth(),
+      ],
+    });
+
+    beforeEach(() => {
+      spectator = createCriticalComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('keeps it selected on open without raising the "Cannot Isolate GPU" error', async () => {
+      const select = await getSelect('isolated_gpu_pci_ids');
+
+      expect(await select.getDisplayText()).toBe('Critical GPU [0000:00:03.0] (System Critical)');
+      expect(spectator.inject(DialogService).error).not.toHaveBeenCalled();
+    });
+  });
 });

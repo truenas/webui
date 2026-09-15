@@ -490,6 +490,25 @@ describe('DeviceFormComponent', () => {
           'Trust Guest Filters': false,
         });
       });
+
+      // The Type picker is hidden when editing, so the root group's type-specific slot is only
+      // ever seeded from the value `setDeviceForEdit()` set. Left on the default `cdromForm`
+      // (always valid, never dirty) Save would stay enabled over an invalid NIC form.
+      it('gates Save on the edited NIC form rather than the default CD-ROM one', async () => {
+        expect(spectator.component.canSubmit()).toBe(true);
+
+        await fillForm({ 'MAC Address': 'not-a-mac' });
+
+        expect(spectator.component.canSubmit()).toBe(false);
+      });
+
+      it('reports unsaved changes confined to the edited NIC form', async () => {
+        expect(spectator.component.hasUnsavedChanges()).toBe(false);
+
+        await fillForm({ 'NIC To Attach': 'enp0s4' });
+
+        expect(spectator.component.hasUnsavedChanges()).toBe(true);
+      });
     });
   });
 

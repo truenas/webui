@@ -509,17 +509,30 @@ export class DeviceFormComponent extends IxFormHostForm implements OnInit {
   }
 
   handleDeviceTypeChange(): void {
+    // Seed from the CURRENT value before subscribing. On the edit path `setDeviceForEdit()` has
+    // already set `typeControl` by the time this runs, and the Type picker is hidden behind
+    // `@if (isNew)` — so `valueChanges` may never fire again, and the slot would sit on the
+    // default `cdromForm` (always valid, never dirty) for the whole session.
+    this.syncTypeSpecificSlot();
+
     this.typeControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((type) => {
-      if (type) {
-        // Swap the root's `typeSpecific` slot to the group now on screen. Guarded on `type`
-        // because the getter's default branch calls `assertUnreachable`.
-        this.form.setControl('typeSpecific', this.typeSpecificForm);
-      }
+      this.syncTypeSpecificSlot();
 
       if (type === VmDeviceType.Nic && this.nicForm.value.mac === '') {
         this.generateMacAddress();
       }
     });
+  }
+
+  /**
+   * Points the root group's `typeSpecific` slot at the group currently on screen, so the
+   * wrapper's Save gate and close guard see it. Guarded on the value because
+   * {@link typeSpecificForm}'s default branch calls `assertUnreachable`.
+   */
+  private syncTypeSpecificSlot(): void {
+    if (this.typeControl.value) {
+      this.form.setControl('typeSpecific', this.typeSpecificForm);
+    }
   }
 
   /**

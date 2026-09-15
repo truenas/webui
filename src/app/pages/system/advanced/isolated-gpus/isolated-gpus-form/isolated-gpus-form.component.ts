@@ -61,9 +61,13 @@ export class IsolatedGpusFormComponent extends IxFormHostForm implements OnInit 
     );
 
     this.loadFormConfig(this.store$.pipe(waitForAdvancedConfig), (config) => {
+      // `emitEvent: false` because the critical-GPU guard wired above is meant to police the
+      // USER's selections. Loading a saved id that the guard considers critical would otherwise
+      // pop "Cannot Isolate GPU" on open and silently strip it — and that stripped value is what
+      // `loadFormConfig` then captures as the pristine snapshot.
       this.form.setValue({
         isolated_gpu_pci_ids: config.isolated_gpu_pci_ids,
-      });
+      }, { emitEvent: false });
     });
   }
 
