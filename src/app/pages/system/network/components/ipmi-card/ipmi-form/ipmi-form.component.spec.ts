@@ -14,6 +14,7 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Ipmi, IpmiChassis } from 'app/interfaces/ipmi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import {
   SidePanelFooterMenu,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
@@ -61,6 +62,7 @@ describe('IpmiFormComponent', () => {
       }),
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockProvider(SystemGeneralService),
       mockProvider(RedirectService),
       mockProvider(DialogService),

@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -17,11 +17,10 @@ import {
   NetworkConfiguration,
   NetworkConfigurationActivity,
 } from 'app/interfaces/network-configuration.interface';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ipv4Validator, ipv6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -47,6 +46,7 @@ export type UiNetworkActivityType = NetworkActivityType | SpecificActivityType;
   imports: [
     AsyncPipe,
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
@@ -58,11 +58,8 @@ export type UiNetworkActivityType = NetworkActivityType | SpecificActivityType;
     TranslateModule,
   ],
 })
-export class NetworkConfigurationComponent extends SidePanelForm implements OnInit {
+export class NetworkConfigurationComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
-  private errorHandler = inject(ErrorHandlerService);
-  private formErrorHandler = inject(FormErrorHandlerService);
-  private cdr = inject(ChangeDetectorRef);
   private fb = inject(NonNullableFormBuilder);
   private systemGeneralService = inject(SystemGeneralService);
   private store$ = inject<Store<AppState>>(Store);
@@ -71,9 +68,7 @@ export class NetworkConfigurationComponent extends SidePanelForm implements OnIn
 
   readonly requiredRoles = [Role.NetworkGeneralWrite];
 
-  protected isFormLoading = signal(false);
-
-  form = this.fb.group({
+  protected form = this.fb.group({
     hostname: ['', Validators.required],
     hostname_b: [null as string | null],
     hostname_virtual: [null as string | null],
@@ -93,8 +88,6 @@ export class NetworkConfigurationComponent extends SidePanelForm implements OnIn
     httpproxy: [''],
     hosts: [[] as string[]],
   });
-
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   readonly helptext = helptextNetworkConfiguration;
 
@@ -249,9 +242,7 @@ export class NetworkConfigurationComponent extends SidePanelForm implements OnIn
   };
 
   ngOnInit(): void {
-    this.isFormLoading.set(true);
-    this.loadConfig();
-
+    // Wired before the load so a retried `loadFormConfig` can't register them a second time.
     this.form.controls.outbound_network_activity.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       (value: NetworkActivityType) => {
         if ([NetworkActivityType.Allow, NetworkActivityType.Deny].includes(value)) {
@@ -279,56 +270,52 @@ export class NetworkConfigurationComponent extends SidePanelForm implements OnIn
       this.hostnameB.hidden = !isHaLicensed;
       this.hostnameVirtual.hidden = !isHaLicensed;
     });
+
+    this.loadConfig();
   }
 
   private loadConfig(): void {
-    this.api.call('network.configuration.config')
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (config: NetworkConfiguration) => {
-          const transformed = {
-            hostname: config.hostname,
-            hostname_b: config.hostname_b,
-            hostname_virtual: config.hostname_virtual,
-            inherit_dhcp: config.domain === '',
-            domain: config.domain,
-            domains: config.domains,
-            nameserver1: config.nameserver1 || config.state.nameserver1,
-            nameserver2: config.nameserver2 || config.state.nameserver2,
-            nameserver3: config.nameserver3 || config.state.nameserver3,
-            ipv4gateway: config.ipv4gateway || config.state.ipv4gateway,
-            ipv6gateway: config.ipv6gateway || config.state.ipv6gateway,
-            outbound_network_activity: UiNetworkActivityType.Allow as UiNetworkActivityType,
-            outbound_network_value: [] as string[],
-            httpproxy: config.httpproxy,
-            hosts: config.hosts,
-            netbios: config.service_announcement.netbios,
-            mdns: config.service_announcement.mdns,
-            wsd: config.service_announcement.wsd,
-          };
+    this.loadFormConfig(
+      this.api.call('network.configuration.config'),
+      (config: NetworkConfiguration) => {
+        const transformed = {
+          hostname: config.hostname,
+          hostname_b: config.hostname_b,
+          hostname_virtual: config.hostname_virtual,
+          inherit_dhcp: config.domain === '',
+          domain: config.domain,
+          domains: config.domains,
+          nameserver1: config.nameserver1 || config.state.nameserver1,
+          nameserver2: config.nameserver2 || config.state.nameserver2,
+          nameserver3: config.nameserver3 || config.state.nameserver3,
+          ipv4gateway: config.ipv4gateway || config.state.ipv4gateway,
+          ipv6gateway: config.ipv6gateway || config.state.ipv6gateway,
+          outbound_network_activity: UiNetworkActivityType.Allow as UiNetworkActivityType,
+          outbound_network_value: [] as string[],
+          httpproxy: config.httpproxy,
+          hosts: config.hosts,
+          netbios: config.service_announcement.netbios,
+          mdns: config.service_announcement.mdns,
+          wsd: config.service_announcement.wsd,
+        };
 
-          if (config.activity) {
-            if (config.activity.activities.length === 0) {
-              transformed.outbound_network_activity = config.activity.type;
-            } else {
-              transformed.outbound_network_activity = config.activity.type === NetworkActivityType.Allow
-                ? UiNetworkActivityType.AllowSpecific
-                : UiNetworkActivityType.DenySpecific;
-              transformed.outbound_network_value = config.activity.activities;
-            }
+        if (config.activity) {
+          if (config.activity.activities.length === 0) {
+            transformed.outbound_network_activity = config.activity.type;
+          } else {
+            transformed.outbound_network_activity = config.activity.type === NetworkActivityType.Allow
+              ? UiNetworkActivityType.AllowSpecific
+              : UiNetworkActivityType.DenySpecific;
+            transformed.outbound_network_value = config.activity.activities;
           }
+        }
 
-          this.form.patchValue(transformed);
-          this.isFormLoading.set(false);
-        },
-        error: (error: unknown) => {
-          this.errorHandler.showErrorModal(error);
-          this.isFormLoading.set(false);
-        },
-      });
+        this.form.patchValue(transformed);
+      },
+    );
   }
 
-  protected onSubmit(): void {
+  protected handleSubmit = (): SubmitResult => {
     const values = { ...this.form.value };
     let activity: NetworkConfigurationActivity;
 
@@ -367,19 +354,10 @@ export class NetworkConfigurationComponent extends SidePanelForm implements OnIn
       service_announcement: serviceAnnouncement,
     };
 
-    this.isFormLoading.set(true);
-    this.api.call('network.configuration.update', [params])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.isFormLoading.set(false);
-          this.store$.dispatch(systemInfoUpdated());
-          this.close(true);
-        },
-        error: (error: unknown) => {
-          this.isFormLoading.set(false);
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-        },
-      });
-  }
+    return {
+      request$: this.api.call('network.configuration.update', [params]),
+      successMessage: this.translate.instant('Network settings updated.'),
+      onSuccess: () => this.store$.dispatch(systemInfoUpdated()),
+    };
+  };
 }

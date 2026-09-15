@@ -14,6 +14,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { NetworkConfiguration, NetworkConfigurationActivity } from 'app/interfaces/network-configuration.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LanguageService } from 'app/modules/language/language.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NetworkConfigurationComponent } from 'app/pages/system/network/components/network-configuration/network-configuration.component';
@@ -32,6 +33,7 @@ describe('NetworkConfigurationComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockApi([
         mockCall('network.configuration.activity_choices', [
           ['acme', 'ACME'],
