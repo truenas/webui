@@ -187,6 +187,23 @@ describe('ServiceS3Component', () => {
       expect(auditBadge()).not.toBeNull();
       expect(spectator.query('[data-test="select-default-audit-mode"]')).not.toBeNull();
     });
+
+    it('sends no audit settings without the key, rather than the form\'s defaults', () => {
+      deniedFeatures.set([EntitlementFeature.S3Audit]);
+      spectator.detectChanges();
+
+      spectator.component.submit();
+
+      // Read off the actual call: middleware rejects audit settings it is not entitled to, and the
+      // controls the user saw were inert, so nothing on screen was theirs to send.
+      const updateCall = jest.mocked(spectator.inject(ApiService).call).mock.calls
+        .find(([method]) => method === 's3.update');
+      const payload = (updateCall?.[1] as [Record<string, unknown>])[0];
+
+      expect(payload).not.toHaveProperty('default_audit');
+      expect(payload).not.toHaveProperty('default_audit_overflow');
+      expect(payload).toMatchObject({ region: 'us-east-1' });
+    });
   });
 
   it('offers to create the managed root dataset from a dataset-name explorer', () => {

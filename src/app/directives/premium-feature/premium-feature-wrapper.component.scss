@@ -15,7 +15,6 @@
 
 .premium-feature__content {
   cursor: not-allowed;
-  opacity: 0.5;
 
   // The content is inert, not merely dim: `disableFocusableElements` takes the
   // keyboard out, and this takes the pointer out. The controls rather than
@@ -32,6 +31,10 @@
     tn-input,
     tn-select,
     tn-slide-toggle {
+      // Dimmed here rather than over the whole region. WCAG 1.4.3 exempts inactive controls from
+      // the contrast minimum; the static text beside them is not exempt, and the heading, labels
+      // and hints are what an administrator is being shown a denied feature for.
+      opacity: 0.5;
       pointer-events: none;
     }
 
@@ -41,6 +44,7 @@
     .tn-form-field-tooltip,
     .tn-form-section__tooltip {
       cursor: help;
+      opacity: 1;
       pointer-events: auto;
     }
   }
