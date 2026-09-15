@@ -52,6 +52,66 @@ describe('AllowedAccessSectionComponent', () => {
     });
   });
 
+  describe('when a create flow presets the section', () => {
+    it('turns SMB access off and locks the checkbox when the flow names a lock', async () => {
+      spectator.setInput('preset', { values: { smb: false }, locked: ['smb'] });
+
+      const smbAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'SMB Access' }));
+      expect(await smbAccessCheckbox.isChecked()).toBe(false);
+      expect(await smbAccessCheckbox.isDisabled()).toBe(true);
+    });
+
+    it('sets the value without locking it when the flow names no lock', async () => {
+      spectator.setInput('preset', { values: { smb: false } });
+
+      const smbAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'SMB Access' }));
+      expect(await smbAccessCheckbox.isChecked()).toBe(false);
+      expect(await smbAccessCheckbox.isDisabled()).toBe(false);
+    });
+
+    it('tells the store SMB access is off, rather than that it is unknown', () => {
+      spectator.setInput('preset', { values: { smb: false }, locked: ['smb'] });
+
+      expect(spectator.inject(UserFormStore).setAllowedAccessConfig).toHaveBeenLastCalledWith(
+        expect.objectContaining({ smbAccess: false }),
+      );
+    });
+
+    it('keeps telling the store SMB is off when a sibling control changes', async () => {
+      // The locked control is dropped from `valueChanges`, and the store's
+      // config is spread rather than merged — so reporting the emission
+      // instead of the raw value would replace `smb: false` with `undefined`
+      // here, and `user.create` would go out saying nothing about SMB at all.
+      spectator.setInput('preset', { values: { smb: false }, locked: ['smb'] });
+
+      const truenasAccess = await loader.getHarness(MatCheckboxHarness.with({ label: 'TrueNAS Access' }));
+      await truenasAccess.check();
+
+      expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenLastCalledWith(
+        expect.objectContaining({ smb: false }),
+      );
+    });
+
+    it('stops applying an unlocked value once it has, so a tick of the user\'s stands', async () => {
+      spectator.setInput('preset', { values: { smb: false } });
+
+      const smbAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'SMB Access' }));
+      await smbAccessCheckbox.check();
+
+      spectator.setInput('preset', { values: { smb: false } });
+
+      expect(await smbAccessCheckbox.isChecked()).toBe(true);
+    });
+
+    it('leaves the checkbox alone without a preset', async () => {
+      spectator.setInput('preset', undefined);
+
+      const smbAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'SMB Access' }));
+      expect(await smbAccessCheckbox.isChecked()).toBe(true);
+      expect(await smbAccessCheckbox.isDisabled()).toBe(false);
+    });
+  });
+
   describe('when existing user', () => {
     beforeEach(() => {
       spectator.setInput('editingUser', {

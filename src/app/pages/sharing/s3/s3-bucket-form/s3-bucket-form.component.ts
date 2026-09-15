@@ -54,7 +54,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { createS3GrantFormGroup, S3GrantFormGroup, toS3Grants } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
 import { S3GrantsListComponent } from 'app/pages/sharing/s3/s3-grants-list/s3-grants-list.component';
-import { createS3UserPickerProvider } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
+import {
+  createS3UserPickerProvider, s3UserFormPreset,
+} from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -118,6 +120,7 @@ export class S3BucketFormComponent implements OnInit {
 
   readonly treeNodeProvider = this.datasetService.getDatasetNodeProvider();
   protected readonly ownerProvider = createS3UserPickerProvider();
+  protected readonly userFormPreset = s3UserFormPreset;
 
   private readonly permissionsModelBaseOptions = mapToOptions(s3PermissionsModelLabels, this.translate);
   protected readonly objectOwnershipOptions$ = of(mapToOptions(s3ObjectOwnershipLabels, this.translate));
