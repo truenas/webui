@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, viewChild } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnTestIdDirective, TnTooltipDirective, type TnTestIdValue } from '@truenas/ui-components';
+import {
+  scopeTestId, TnTestIdDirective, TnTooltipDirective, type TnTestIdValue,
+} from '@truenas/ui-components';
 
 /**
  * What every premium surface says when asked why it is locked. One string, so
@@ -39,6 +41,13 @@ export class PremiumBadgeComponent {
   private readonly tooltip = viewChild.required(TnTooltipDirective);
 
   protected readonly explanation = premiumFeatureExplanation;
+
+  /**
+   * The library's own way to derive a child id from a caller's base, which may
+   * itself be several segments. Hand-building the array types the base as one
+   * segment and nests an array inside one when it is not.
+   */
+  protected readonly scopeTestId = scopeTestId;
 
   protected toggleExplanation(): void {
     this.tooltip().toggle();

@@ -7,7 +7,7 @@
   type="button"
   class="premium-badge"
   tnTestIdType="button"
-  [tnTestId]="[testId(), 'premium']"
+  [tnTestId]="scopeTestId(testId(), 'premium')"
   [tnTooltip]="explanation | translate"
   [attr.aria-label]="explanation | translate"
   (click)="toggleExplanation()"
