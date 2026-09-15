@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { computed, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
 import {
   TnAutocompleteHarness, TnCheckboxHarness, TnDialog, TnFormListHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
@@ -10,6 +10,7 @@ import { of } from 'rxjs';
 import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import {
   S3Access, S3AuditOverflow, S3LogLevel, S3PrincipalType,
 } from 'app/enums/s3.enum';
@@ -25,10 +26,17 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
 import { DatasetService } from 'app/services/dataset/dataset.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { selectLicense } from 'app/store/system-info/system-info.selectors';
 
 describe('ServiceS3Component', () => {
+  /**
+   * Features the entitlement mock denies. A signal, as the real service returns
+   * one, so a test can revoke a key on a live component the way middleware
+   * would and let change detection carry it to the template.
+   */
+  const deniedFeatures = signal<EntitlementFeature[]>([]);
+
   let spectator: Spectator<ServiceS3Component>;
   let loader: HarnessLoader;
   let api: ApiService;
@@ -68,6 +76,10 @@ describe('ServiceS3Component', () => {
     imports: [ReactiveFormsModule],
     providers: [
       mockAuth(),
+      mockProvider(EntitlementsService, {
+        entitled: (feature: EntitlementFeature) => computed(() => !deniedFeatures().includes(feature)),
+        entitledStrictly: (feature: EntitlementFeature) => computed(() => !deniedFeatures().includes(feature)),
+      }),
       mockApi([
         mockCall('s3.config', config),
         mockCall('s3.update', config),
@@ -85,14 +97,12 @@ describe('ServiceS3Component', () => {
       mockProvider(TnDialog, {
         open: jest.fn(() => ({ closed: of(true) })),
       }),
-      provideMockStore({
-        selectors: [{ selector: selectLicense, value: null }],
-      }),
       ...ixFormTestingProviders(),
     ],
   });
 
   beforeEach(async () => {
+    deniedFeatures.set([]);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
@@ -147,8 +157,53 @@ describe('ServiceS3Component', () => {
       log_level: S3LogLevel.Info,
       managed_root_dataset: 'tank/buckets',
       global_grants: [{ principal_type: S3PrincipalType.User, xid: 1000, access: S3Access.Deny }],
+      default_audit: [],
+      default_audit_overflow: S3AuditOverflow.Drop,
     }]);
     expect(closed).toHaveBeenCalledWith(true);
+  });
+
+  describe('premium features', () => {
+    // By the section's own <legend> rather than by a data-test id — see the bucket form's spec.
+    const auditBadge = (): HTMLElement | null => {
+      const wrapper = spectator.queryAll('ix-premium-feature-wrapper').find((element) => {
+        return element.querySelector('legend')?.textContent?.includes('Auditing');
+      });
+      return wrapper?.querySelector('ix-premium-badge') ?? null;
+    };
+
+    it('leaves auditing untagged when the system is entitled', () => {
+      expect(auditBadge()).toBeNull();
+      expect(spectator.query('[data-test="select-default-audit-mode"]')).not.toBeNull();
+    });
+
+    it('tags auditing without the S3_AUDIT key, and still shows it', () => {
+      // Revoked on the live component rather than rebuilt: the outer
+      // `beforeEach` has already instantiated the TestBed, and overriding a
+      // provider after that throws.
+      deniedFeatures.set([EntitlementFeature.S3Audit]);
+      spectator.detectChanges();
+
+      expect(auditBadge()).not.toBeNull();
+      expect(spectator.query('[data-test="select-default-audit-mode"]')).not.toBeNull();
+    });
+
+    it('sends no audit settings without the key, rather than the form\'s defaults', () => {
+      deniedFeatures.set([EntitlementFeature.S3Audit]);
+      spectator.detectChanges();
+
+      spectator.component.submit();
+
+      // Read off the actual call: middleware rejects audit settings it is not entitled to, and the
+      // controls the user saw were inert, so nothing on screen was theirs to send.
+      const updateCall = jest.mocked(spectator.inject(ApiService).call).mock.calls
+        .find(([method]) => method === 's3.update');
+      const payload = (updateCall?.[1] as [Record<string, unknown>])[0];
+
+      expect(payload).not.toHaveProperty('default_audit');
+      expect(payload).not.toHaveProperty('default_audit_overflow');
+      expect(payload).toMatchObject({ region: 'us-east-1' });
+    });
   });
 
   it('offers to create the managed root dataset from a dataset-name explorer', () => {

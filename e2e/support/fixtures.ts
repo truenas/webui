@@ -24,6 +24,7 @@ import { buildTokenLoginUrl, generateAuthToken } from './auth/token';
 import { keepTestData } from './cleanup';
 import { loadTargetConfig, type TargetConfig } from './config';
 import { adminLayout } from './constants';
+import { type EntitlementDecisions, readEntitlements } from '../fixtures/entitlements';
 import { poolLifecycle } from '../fixtures/pool';
 
 /**
@@ -151,6 +152,13 @@ export interface E2eWorkerFixtures {
    * wizard. See `fixtures/pool.ts`.
    */
   pool: string;
+  /**
+   * What the entitlement engine grants this appliance, for a journey that drives a control the
+   * UI locks without the key. Read once per worker — it changes only with the licence.
+   *
+   * Ask with `isEntitled` and skip; see `fixtures/entitlements.ts`.
+   */
+  entitlements: EntitlementDecisions;
 }
 
 /**
@@ -190,6 +198,13 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
         // Runs even when a test throws, so a failing run still exits cleanly.
         client.close();
       }
+    },
+    { scope: 'worker' },
+  ],
+
+  entitlements: [
+    async ({ api }, use) => {
+      await use(await readEntitlements(api));
     },
     { scope: 'worker' },
   ],

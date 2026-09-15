@@ -330,7 +330,13 @@ tn-dialog-shell tn-form-field {
 // *within* a section, so two adjacent sections butt together in the
 // `<tn-side-panel>` host (a section heading sits flush under the previous field).
 // Space sibling sections to match the section's own internal rhythm.
-tn-form-section + tn-form-section {
+// `ix-premium-feature-wrapper` counts as a section here: it wraps one, so it stands between two
+// real sections and breaks the adjacency in both directions. Without this, whether a section keeps
+// its gap depends on whether the appliance happens to be entitled to the one before it.
+tn-form-section + tn-form-section,
+tn-form-section + ix-premium-feature-wrapper,
+ix-premium-feature-wrapper + tn-form-section,
+ix-premium-feature-wrapper + ix-premium-feature-wrapper {
   display: block;
   margin-top: 1.25rem;
 }

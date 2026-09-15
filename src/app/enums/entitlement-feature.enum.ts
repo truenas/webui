@@ -19,6 +19,8 @@ export enum EntitlementFeature {
   NfsSnapshot = 'NFS_SNAPSHOT',
   NvmeOfSpdk = 'NVMEOF_SPDK',
   Rdma = 'RDMA',
+  S3Audit = 'S3_AUDIT',
+  S3Versioning = 'S3_VERSIONING',
   Sed = 'SED',
   SmbFastpath = 'SMB_FASTPATH',
   SmbVeeam = 'SMB_VEEAM',

@@ -11,6 +11,7 @@
  * The unit spec mocks the fold; middleware performs it too, and the two have
  * to agree.
  */
+import { entitlementFeature, isEntitled } from '../fixtures/entitlements';
 import {
   ensureDatasetAbsent, ensureDatasetPresent, ensureS3BucketAbsent, ensureS3BucketPresent, ensureS3ServiceStopped,
   findS3Bucket,
@@ -75,7 +76,16 @@ test('an admin switches a bucket to Multiprotocol and object ownership follows',
   });
 });
 
-test('an admin turns on versioning with snapshot versions and an opaque ETag', async ({ page, api }) => {
+test('an admin turns on versioning with snapshot versions and an opaque ETag', async ({
+  page, api, entitlements,
+}) => {
+  // Without `S3_VERSIONING` the UI renders the Versioning section dimmed and inert with a Premium
+  // tag, so the select this drives is not clickable. See `fixtures/entitlements.ts`.
+  test.skip(
+    !isEntitled(entitlements, entitlementFeature.s3Versioning),
+    'This appliance is not entitled to S3_VERSIONING, so the UI locks the Versioning section.',
+  );
+
   await test.step('set the versioning options in the bucket editor', async () => {
     await openBucketEditor(page, bucket);
     await showAdvancedBucketOptions(page);
