@@ -1,7 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, inject, input, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, input,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, Validators, ReactiveFormsModule, FormGroup, FormControl,
 } from '@angular/forms';
@@ -11,15 +10,17 @@ import {
   InputType, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent,
 } from '@truenas/ui-components';
+import { filter, take } from 'rxjs/operators';
+import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   SidePanelFooterMenu, SidePanelFooterMenuItem,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CertificateAcmeAddComponent,
@@ -39,6 +40,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
@@ -47,11 +49,9 @@ import {
     TranslateModule,
   ],
 })
-export class CertificateEditComponent extends SidePanelForm implements OnInit {
+export class CertificateEditComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
-  private cdr = inject(ChangeDetectorRef);
-  private errorHandler = inject(FormErrorHandlerService);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
@@ -59,9 +59,7 @@ export class CertificateEditComponent extends SidePanelForm implements OnInit {
 
   protected readonly requiredRoles = [Role.CertificateWrite];
 
-  protected isLoading = signal(false);
-
-  form = this.formBuilder.nonNullable.group({
+  protected form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
     add_to_trusted_store: [false],
   }) as FormGroup<{
@@ -69,8 +67,6 @@ export class CertificateEditComponent extends SidePanelForm implements OnInit {
     add_to_trusted_store: FormControl<boolean>;
     renew_days?: FormControl<number | null>;
   }>;
-
-  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   certificate: Certificate | undefined;
 
@@ -121,13 +117,8 @@ export class CertificateEditComponent extends SidePanelForm implements OnInit {
 
   ngOnInit(): void {
     this.certificate = this.editingCertificate();
-    this.setCertificate();
+    // Added before the inner `<ix-form>` initialises, so its `editData` patch reaches the control.
     this.setRenewDaysForEditIfAvailable();
-  }
-
-  private setCertificate(): void {
-    this.form.patchValue(this.certificate);
-    this.cdr.markForCheck();
   }
 
   private setRenewDaysForEditIfAvailable(): void {
@@ -166,31 +157,24 @@ export class CertificateEditComponent extends SidePanelForm implements OnInit {
     this.formPanel.open(CertificateAcmeAddComponent, {
       title: this.translate.instant('Create ACME Certificate'),
       inputs: { csr: this.certificate },
-    }).onSuccess(() => this.close(true), this.destroyRef);
+    }).onSuccess(() => this.closed.emit(true), this.destroyRef);
   }
 
-  protected onSubmit(): void {
-    this.isLoading.set(true);
-
+  protected handleSubmit = (): SubmitResult => {
     const payload = this.form.value;
 
     if (this.isCsr) {
       delete payload.add_to_trusted_store;
     }
 
-    this.api.job('certificate.update', [this.certificate.id, payload])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        complete: () => {
-          this.isLoading.set(false);
-          this.cdr.markForCheck();
-          this.close(true);
-        },
-        error: (error: unknown) => {
-          this.isLoading.set(false);
-          this.cdr.markForCheck();
-          this.errorHandler.handleValidationErrors(error, this.form);
-        },
-      });
-  }
+    return {
+      // `api.job` reports progress before it finishes; wait for the terminal Success state rather
+      // than letting `<ix-form>`'s `take(1)` treat the queued job as a completed save.
+      request$: this.api.job('certificate.update', [this.certificate.id, payload]).pipe(
+        filter((job) => job.state === JobState.Success),
+        take(1),
+      ),
+      successMessage: this.translate.instant('Certificate updated.'),
+    };
+  };
 }
