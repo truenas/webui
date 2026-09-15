@@ -10,6 +10,7 @@ import {
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, map } from 'rxjs';
+import { ProductType } from 'app/enums/product-type.enum';
 import { getLabelForContractType } from 'app/interfaces/system-info.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
@@ -26,7 +27,7 @@ import {
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
-  selectHasEnclosureSupport, selectIsEnterprise, selectIsIxHardware,
+  selectHasEnclosureSupport, selectIsCommunityEdition, selectIsEnterprise, selectIsIxHardware, selectProductType,
 } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -61,10 +62,13 @@ export class WidgetSysInfoActiveComponent {
 
   isIxHardware = toSignal(this.store$.select(selectIsIxHardware));
   isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  productType = toSignal(this.store$.select(selectProductType));
+  isCommunityEdition = toSignal(this.store$.select(selectIsCommunityEdition));
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   hasEnclosureSupport = toSignal(this.store$.select(selectHasEnclosureSupport));
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForActiveNode));
   protected readonly getLabelForContractType = getLabelForContractType;
+  protected readonly ProductType = ProductType;
 
   updateAvailable = toSignal(this.resources.updateAvailable$);
   systemInfo = toSignal(this.resources.dashboardSystemInfo$.pipe(

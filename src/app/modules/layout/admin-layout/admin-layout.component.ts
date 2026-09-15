@@ -37,7 +37,7 @@ import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
 import {
-  selectCopyrightHtml, selectIsEnterprise, selectProductType, waitForSystemInfo,
+  selectCopyrightHtml, selectIsCommunityEdition, selectProductType, waitForSystemInfo,
 } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -85,7 +85,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
   readonly copyrightHtml = toSignal(this.store$.select(selectCopyrightHtml));
   readonly productType = toSignal(this.store$.select(selectProductType));
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  readonly isCommunityEdition = toSignal(this.store$.select(selectIsCommunityEdition));
   // angular tooltips are unable to display HTML content, so we just remove the `<br>` tags
   // credit <https://github.com/JackW6809> for the replace pattern!
   readonly copyrightText = computed(() => this.copyrightHtml().replace(/<br\s*\/?>/gi, '\n'));

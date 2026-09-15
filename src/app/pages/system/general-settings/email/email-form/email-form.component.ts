@@ -15,6 +15,7 @@ import {
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MailSecurity } from 'app/enums/mail-security.enum';
+import { productTypeLabels } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemEmail } from 'app/helptext/system/email';
 import {
@@ -247,9 +248,10 @@ export class EmailFormComponent extends IxFormHostForm implements OnInit {
 
   private sendTestEmail(): void {
     const productType = this.productType();
+    const edition = productType ? ` ${productTypeLabels.get(productType)}` : '';
     const email = {
       subject: 'Test Message',
-      text: `This is a test message from TrueNAS ${productType.replace('_', ' ')}.`,
+      text: `This is a test message from TrueNAS${edition}.`,
     };
     const config = this.prepareConfigUpdate();
 

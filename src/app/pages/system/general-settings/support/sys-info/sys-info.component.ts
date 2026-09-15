@@ -63,7 +63,9 @@ export class SysInfoComponent {
   /** The thumbprint exists to obtain or extend a license; enterprise-licensed systems already have one. */
   protected readonly hasEnterpriseLicense = computed(() => {
     const type = this.licenseInfo()?.type;
-    return type === LicenseType.EnterpriseHa || type === LicenseType.EnterpriseSingle;
+    return type === LicenseType.Enterprise
+      || type === LicenseType.EnterpriseHa
+      || type === LicenseType.EnterpriseSingle;
   });
 
   readonly editContacts = output();

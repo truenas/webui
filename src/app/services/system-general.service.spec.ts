@@ -3,7 +3,6 @@ import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
-import { ProductType } from 'app/enums/product-type.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from './system-general.service';
@@ -16,7 +15,6 @@ describe('SystemGeneralService', () => {
     service: SystemGeneralService,
     providers: [
       mockApi([
-        mockCall('system.product_type', ProductType.CommunityEdition),
         mockCall('certificate.query', []),
         mockCall('certificate.country_choices', { US: 'United States' }),
         mockCall('system.general.ui_address_choices', {}),

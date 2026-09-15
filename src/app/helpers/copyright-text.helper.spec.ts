@@ -13,6 +13,10 @@ describe('getCopyrightHtml', () => {
     expect(getCopyrightHtml(ProductType.CommunityEdition)).toBe(`TrueNAS® Community Edition <br /> © ${buildYear}`);
   });
 
+  it('commercial: copyright text', () => {
+    expect(getCopyrightHtml(ProductType.Commercial)).toBe(`TrueNAS® Commercial <br /> © ${buildYear}`);
+  });
+
   it('enterprise: copyright text', () => {
     expect(getCopyrightHtml(ProductType.Enterprise)).toBe(`TrueNAS® Enterprise <br /> © ${buildYear}`);
   });

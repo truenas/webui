@@ -11,7 +11,6 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { Ipmi, IpmiChassis } from 'app/interfaces/ipmi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
@@ -32,7 +31,6 @@ import { systemInfoStateKey } from 'app/store/system-info/system-info.selectors'
 describe('IpmiFormComponent', () => {
   let spectator: Spectator<IpmiFormComponent>;
   let loader: HarnessLoader;
-  let productType: ProductType;
 
   const createComponent = createComponentFactory({
     component: IpmiFormComponent,
@@ -52,9 +50,7 @@ describe('IpmiFormComponent', () => {
           },
           [systemInfoStateKey]: {
             systemInfo: null,
-            get productType() {
-              return productType;
-            },
+            entitlementFacts: null,
             isIxHardware: false,
             buildYear: 2024,
           },
@@ -112,8 +108,7 @@ describe('IpmiFormComponent', () => {
     ],
   });
 
-  async function setupTest(newProductType: ProductType): Promise<void> {
-    productType = newProductType;
+  async function setupTest(): Promise<void> {
     spectator = createComponent({
       props: { editIpmiId: 1 },
     });
@@ -123,7 +118,7 @@ describe('IpmiFormComponent', () => {
 
   describe('product type is SCALE_ENTERPRISE', () => {
     beforeEach(async () => {
-      await setupTest(ProductType.Enterprise);
+      await setupTest();
     });
 
     it('loads data with controller radio buttons in the form for ScaleEnterprise', async () => {
@@ -246,7 +241,7 @@ describe('IpmiFormComponent', () => {
 
   describe('product type is SCALE', () => {
     beforeEach(async () => {
-      await setupTest(ProductType.CommunityEdition);
+      await setupTest();
     });
 
     it('loads data in the form if the product type is SCALE', async () => {
@@ -272,7 +267,7 @@ describe('IpmiFormComponent', () => {
     };
 
     beforeEach(async () => {
-      await setupTest(ProductType.Enterprise);
+      await setupTest();
     });
 
     it('flashes IPMI light when Flash Identify Light is pressed', () => {
@@ -322,7 +317,7 @@ describe('IpmiFormComponent', () => {
 
   describe('VLAN validation', () => {
     beforeEach(async () => {
-      await setupTest(ProductType.Enterprise);
+      await setupTest();
     });
 
     it('does not require VLAN ID when Enable VLAN is false', async () => {
@@ -354,7 +349,7 @@ describe('IpmiFormComponent', () => {
     };
 
     beforeEach(async () => {
-      await setupTest(ProductType.Enterprise);
+      await setupTest();
     });
 
     it('should be enabled by default with valid static IP', () => {
@@ -448,7 +443,7 @@ describe('IpmiFormComponent', () => {
 
   describe('DHCP to static IP transitions', () => {
     beforeEach(async () => {
-      await setupTest(ProductType.Enterprise);
+      await setupTest();
     });
 
     it('should disable manage button when switching to DHCP with no IP', async () => {
@@ -499,7 +494,7 @@ describe('IpmiFormComponent', () => {
 
   describe('error handling', () => {
     it('does not change flashing state when identify light request fails', async () => {
-      await setupTest(ProductType.Enterprise);
+      await setupTest();
       const errorHandler = spectator.inject(ErrorHandlerService);
       jest.spyOn(errorHandler, 'showErrorModal').mockReturnValue(undefined);
 
@@ -520,7 +515,7 @@ describe('IpmiFormComponent', () => {
     });
 
     it('resets loading state when identify light request fails', async () => {
-      await setupTest(ProductType.Enterprise);
+      await setupTest();
       const errorHandler = spectator.inject(ErrorHandlerService);
       jest.spyOn(errorHandler, 'showErrorModal').mockReturnValue(undefined);
 
@@ -543,7 +538,7 @@ describe('IpmiFormComponent', () => {
 
   describe('side-panel footer menu', () => {
     beforeEach(async () => {
-      await setupTest(ProductType.Enterprise);
+      await setupTest();
     });
 
     it('exposes Manage and Flash actions in the footer overflow menu', () => {

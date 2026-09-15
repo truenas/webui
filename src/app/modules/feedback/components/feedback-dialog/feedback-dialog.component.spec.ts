@@ -14,7 +14,6 @@ import { BehaviorSubject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
@@ -86,7 +85,7 @@ describe('FeedbackDialogComponent', () => {
           },
           systemInfo: {
             systemInfo: null,
-            productType: ProductType.CommunityEdition,
+            entitlementFacts: null,
             isIxHardware: false,
             buildYear: 2024,
           },

@@ -88,10 +88,16 @@
             <strong>{{ 'Edition' | translate }}:</strong>
             @if (isLoaded()) {
               <span>
-                @if (isEnterprise()) {
-                  {{ 'Enterprise' | translate }}
-                } @else {
-                  {{ 'Community' | translate }}
+                @switch (productType()) {
+                  @case (ProductType.Enterprise) {
+                    {{ 'Enterprise' | translate }}
+                  }
+                  @case (ProductType.Commercial) {
+                    {{ 'Commercial' | translate }}
+                  }
+                  @default {
+                    {{ 'Community' | translate }}
+                  }
                 }
               </span>
             } @else {
@@ -174,7 +180,7 @@
             }
           </tn-list-item>
 
-          @if (!isEnterprise()) {
+          @if (isCommunityEdition()) {
             <!-- The marketing message is a sentence, not a label: let it wrap instead of ellipsizing. -->
             <tn-list-item class="use-enterprise" [wrap]="true">
               <ix-use-enterprise-marketing-link></ix-use-enterprise-marketing-link>
