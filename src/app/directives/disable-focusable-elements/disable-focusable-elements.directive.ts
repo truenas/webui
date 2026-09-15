@@ -34,7 +34,9 @@ export class DisableFocusableElementsDirective implements OnChanges {
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.disableFocusableElements) {
+    // `keepFocusable` too: a caller binding a computed exemption would otherwise keep whatever the
+    // previous value swept until the disabled flag happened to flip.
+    if (changes.disableFocusableElements || changes.keepFocusable) {
       this.updateFocusableElements();
     }
   }

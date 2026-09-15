@@ -164,7 +164,13 @@ describe('ServiceS3Component', () => {
   });
 
   describe('premium features', () => {
-    const auditBadge = (): HTMLElement | null => spectator.query('[data-test="button-s3-service-audit-premium"]');
+    // By the section's own <legend> rather than by a data-test id — see the bucket form's spec.
+    const auditBadge = (): HTMLElement | null => {
+      const wrapper = spectator.queryAll('ix-premium-feature-wrapper').find((element) => {
+        return element.querySelector('legend')?.textContent?.includes('Auditing');
+      });
+      return wrapper?.querySelector('ix-premium-badge') ?? null;
+    };
 
     it('leaves auditing untagged when the system is entitled', () => {
       expect(auditBadge()).toBeNull();

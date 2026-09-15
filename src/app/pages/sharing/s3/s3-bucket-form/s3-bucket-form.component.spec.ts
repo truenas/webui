@@ -356,8 +356,13 @@ describe('S3BucketFormComponent', () => {
      * administrator can see what the product offers. What changes is the tag
      * and whether the controls respond.
      */
-    function premiumBadge(testId: string): HTMLElement | null {
-      return spectator.query(`[data-test="button-${testId}-premium"]`);
+    function premiumBadge(heading: string): HTMLElement | null {
+      // By the section's own <legend> — the accessible name tn-form-section gives the group —
+      // rather than by a data-test id, so the assertion is about what is on screen.
+      const wrapper = spectator.queryAll('ix-premium-feature-wrapper').find((element) => {
+        return element.querySelector('legend')?.textContent?.includes(heading);
+      });
+      return wrapper?.querySelector('ix-premium-badge') ?? null;
     }
 
     it('leaves versioning, object lock and auditing untagged when the system is entitled', async () => {
@@ -365,9 +370,9 @@ describe('S3BucketFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await clickAdvancedOptions();
 
-      expect(premiumBadge('s3-versioning')).toBeNull();
-      expect(premiumBadge('s3-object-lock')).toBeNull();
-      expect(premiumBadge('s3-audit')).toBeNull();
+      expect(premiumBadge('Versioning')).toBeNull();
+      expect(premiumBadge('Object Lock')).toBeNull();
+      expect(premiumBadge('Auditing')).toBeNull();
     });
 
     it('tags them when the loaded map carries no S3 key at all', async () => {
@@ -380,19 +385,19 @@ describe('S3BucketFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
       // Nothing is tagged before the answer arrives, which is the other half of the contract.
-      expect(premiumBadge('s3-object-lock')).toBeNull();
+      expect(premiumBadge('Object Lock')).toBeNull();
 
       const mockStore$ = spectator.inject(MockStore);
       mockStore$.setState({ [entitlementsStateKey]: { entitlements: {} } });
       mockStore$.refreshState();
       spectator.detectChanges();
 
-      expect(premiumBadge('s3-object-lock')).not.toBeNull();
+      expect(premiumBadge('Object Lock')).not.toBeNull();
 
       await clickAdvancedOptions();
 
-      expect(premiumBadge('s3-versioning')).not.toBeNull();
-      expect(premiumBadge('s3-audit')).not.toBeNull();
+      expect(premiumBadge('Versioning')).not.toBeNull();
+      expect(premiumBadge('Auditing')).not.toBeNull();
     });
 
     it('tags nothing when the entitlement call failed, on a system that may well hold the key', () => {
@@ -413,7 +418,7 @@ describe('S3BucketFormComponent', () => {
       mockStore$.refreshState();
       spectator.detectChanges();
 
-      expect(premiumBadge('s3-object-lock')).toBeNull();
+      expect(premiumBadge('Object Lock')).toBeNull();
     });
 
     it('tags auditing without the S3_AUDIT key, and still shows it', async () => {
@@ -423,10 +428,10 @@ describe('S3BucketFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await clickAdvancedOptions();
 
-      expect(premiumBadge('s3-audit')).not.toBeNull();
+      expect(premiumBadge('Auditing')).not.toBeNull();
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Audit' }))).toBe(true);
       // Versioning is a separate key, and is not implicated by this one.
-      expect(premiumBadge('s3-versioning')).toBeNull();
+      expect(premiumBadge('Versioning')).toBeNull();
     });
 
     it('tags object lock as well as versioning without the S3_VERSIONING key', async () => {
@@ -436,12 +441,12 @@ describe('S3BucketFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      expect(premiumBadge('s3-object-lock')).not.toBeNull();
+      expect(premiumBadge('Object Lock')).not.toBeNull();
 
       await clickAdvancedOptions();
 
-      expect(premiumBadge('s3-versioning')).not.toBeNull();
-      expect(premiumBadge('s3-audit')).toBeNull();
+      expect(premiumBadge('Versioning')).not.toBeNull();
+      expect(premiumBadge('Auditing')).toBeNull();
     });
 
     it('sends no audit settings without the key, rather than the form\'s defaults', async () => {

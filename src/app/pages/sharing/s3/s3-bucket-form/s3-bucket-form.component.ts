@@ -236,11 +236,17 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
    */
   protected readonly canUseObjectLock = computed(() => !this.isMultiprotocol());
 
+  /**
+   * Multiprotocol first, though both can be true at once: it is the reason `canUseObjectLock`
+   * actually cleared and disabled the control, and the one the user can do something about.
+   */
   protected readonly objectLockHint = computed(() => {
-    if (this.hasVersioning() === false) {
-      return this.translate.instant(this.helptext.objectLockVersioningHint);
+    if (this.isMultiprotocol()) {
+      return this.translate.instant(this.helptext.objectLockMultiprotocolHint);
     }
-    return this.isMultiprotocol() ? this.translate.instant(this.helptext.objectLockMultiprotocolHint) : '';
+    return this.hasVersioning() === false
+      ? this.translate.instant(this.helptext.objectLockVersioningHint)
+      : '';
   });
 
   protected readonly isObjectLockOn = computed(() => !!this.formValue().object_lock);
