@@ -25,9 +25,8 @@ export const helptextSharingS3 = {
   globalGrantsTooltip: T('Grants that apply to every bucket. A <b>Deny</b> here suspends the principal everywhere.'),
   versioningTooltip: T('Keep previous versions of objects. Object lock keeps versioning enabled.'),
   versioningLockedHint: T('Kept enabled while object lock is on.'),
-  versioningOneWayLockedHint: T('Versioning cannot be turned off once it has been on, and a bucket with\
- object lock keeps its version history for as long as the bucket exists. Suspend it to stop new versions while\
- keeping those.'),
+  versioningOneWayLockedHint: T('Object lock keeps versioning on for as long as this bucket exists. Object\
+ lock cannot be turned off either, so this cannot be changed.'),
   versioningOneWayHint: T('Versioning cannot be turned off once it has been on: the versions the bucket\
  already holds would go unreachable. Suspend it to stop new versions while keeping those. To destroy the history\
  and turn it off, use <b>Force Disable Versioning</b> in the bucket list.'),
@@ -39,6 +38,7 @@ export const helptextSharingS3 = {
  writing the bucket reads its ETags, such as a backup target with its own checksums.'),
   objectLockTooltip: T('Protect objects from being overwritten or deleted for a retention period, as backup\
  targets expect. Turns on versioning, which object lock requires.'),
+  objectLockLatchedHint: T('Object lock cannot be turned off once it has been enabled.'),
   objectLockMultiprotocolHint: T('Not available with the Multiprotocol permissions model: another protocol could\
  rewrite a locked object.'),
   objectLockVersioningHint: T('Object lock is built on versioning, which this system is not licensed for.'),

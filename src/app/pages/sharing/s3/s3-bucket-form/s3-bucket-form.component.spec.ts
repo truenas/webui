@@ -671,6 +671,22 @@ describe('S3BucketFormComponent', () => {
       expect(await field.getHint()).toContain('Force Disable Versioning');
     });
 
+    it('holds object lock on a bucket that already has it, which middleware will not lower', async () => {
+      spectator = createComponent({
+        props: { bucket: { ...existingBucket, object_lock: true } as S3Bucket },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const lock = await getCheckbox('object_lock');
+      expect(await lock.isChecked()).toBe(true);
+      expect(await lock.isDisabled()).toBe(true);
+
+      // The object-lock field carries no label, so the section it sits in is the anchor.
+      const section = spectator.queryAll('tn-form-section')
+        .find((element) => element.querySelector('legend')?.textContent?.includes('Object Lock'));
+      expect(section?.textContent).toContain('cannot be turned off');
+    });
+
     it('offers the destructive way out beside the option it unlocks, and applies it', async () => {
       await clickAdvancedOptions();
 

@@ -13,7 +13,7 @@ import {
   TnInputComponent, TnSelectComponent, type TnSelectOption,
 } from '@truenas/ui-components';
 import {
-  filter, merge, Observable, startWith, switchMap,
+  filter, map, merge, Observable, startWith, switchMap,
 } from 'rxjs';
 import {
   PremiumFeatureDirective,
@@ -218,7 +218,16 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
    */
   protected readonly datasetControl = new FormControl({ value: '', disabled: true });
 
-  private readonly formValue = toSignal(this.form.valueChanges, { initialValue: this.form.value });
+  /**
+   * `getRawValue()` rather than the emitted value: a disabled control is omitted from
+   * `valueChanges`, and controls here are disabled to hold a one-way field (object lock) rather
+   * than to drop it. Reading the emitted value would make `isObjectLockOn()` go false the moment
+   * the latch disabled the box, and the sections that depend on it would follow.
+   */
+  private readonly formValue = toSignal(
+    this.form.valueChanges.pipe(map(() => this.form.getRawValue())),
+    { initialValue: this.form.getRawValue() },
+  );
 
   protected readonly datasetHint = computed(() => {
     if (!this.isNew()) {
@@ -253,6 +262,9 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
    * actually cleared and disabled the control, and the one the user can do something about.
    */
   protected readonly objectLockHint = computed(() => {
+    if (this.objectLockIsLatched()) {
+      return this.translate.instant(this.helptext.objectLockLatchedHint);
+    }
     if (this.isMultiprotocol()) {
       return this.translate.instant(this.helptext.objectLockMultiprotocolHint);
     }
@@ -326,6 +338,17 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
   });
 
   private readonly versioningForcedOff = signal(false);
+
+  /**
+   * Object lock is latched on the dataset root and middleware refuses to lower it — "Object lock
+   * cannot be disabled once enabled". So a bucket that arrived locked shows the box ticked and
+   * held, rather than letting it be unticked into a save that can only fail.
+   *
+   * Held at the view rather than by disabling the FormControl: a disabled control drops out of
+   * `valueChanges`, which `isObjectLockOn()` reads, and the section below it would then behave as
+   * though object lock were off.
+   */
+  protected readonly objectLockIsLatched = computed(() => !!this.bucket()?.object_lock);
 
   /**
    * Whether to offer the destructive way out of versioning, beside the option it unlocks.
@@ -550,6 +573,14 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
 
   private syncObjectLockAvailability(): void {
     const control = this.form.controls.object_lock;
+    // Latched buckets keep the box ticked and inert: middleware refuses to lower object lock, so
+    // offering the untick would only produce a save that fails.
+    if (this.objectLockIsLatched()) {
+      if (control.enabled) {
+        control.disable({ emitEvent: false });
+      }
+      return;
+    }
     if (this.canUseObjectLock()) {
       if (control.disabled) {
         control.enable({ emitEvent: false });
