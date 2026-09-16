@@ -71,6 +71,12 @@ const sessionRetryCooldownMs = 30_000;
 interface SessionFailure {
   error: TypedApiSessionError;
   at: number;
+  /**
+   * The bridge itself has stopped, so no attempt can follow. Such a failure
+   * never cools down: clearing it would leave requests waiting on a login
+   * nothing will make.
+   */
+  terminal: boolean;
 }
 
 /**
@@ -316,13 +322,13 @@ export class TypedApiService {
     ).subscribe({
       error: (error: unknown) => {
         console.error('Typed API authentication bridge stopped', error);
-        this.recordSessionFailure(error);
+        this.recordSessionFailure(error, { terminal: true });
       },
     });
   }
 
-  private recordSessionFailure(error: unknown): void {
-    this.sessionFailure$.next({ error: new TypedApiSessionError(error), at: Date.now() });
+  private recordSessionFailure(error: unknown, { terminal = false } = {}): void {
+    this.sessionFailure$.next({ error: new TypedApiSessionError(error), at: Date.now(), terminal });
   }
 
   private clearSessionFailure(): void {
@@ -333,7 +339,7 @@ export class TypedApiService {
 
   private retryIfCooledDown(): void {
     const failure = this.sessionFailure$.value;
-    if (failure && Date.now() - failure.at >= sessionRetryCooldownMs) {
+    if (failure && !failure.terminal && Date.now() - failure.at >= sessionRetryCooldownMs) {
       this.clearSessionFailure();
       this.retryRequested$.next();
     }

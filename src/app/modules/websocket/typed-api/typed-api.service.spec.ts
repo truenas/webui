@@ -276,6 +276,17 @@ describe('TypedApiService', () => {
       expect(await held).toEqual({ version: 'TrueNAS-27.0.0' });
     });
 
+    it('keeps failing requests fast after the cool-off once the bridge itself has stopped', async () => {
+      legacyAuthenticated$.error(new Error('status stream broke'));
+      await tick(0);
+      await expect(firstValueFrom(spectator.service.call('system.info'))).rejects.toBeInstanceOf(TypedApiSessionError);
+
+      await tick(60_000);
+
+      await expect(firstValueFrom(spectator.service.call('system.info'))).rejects.toBeInstanceOf(TypedApiSessionError);
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
+    });
+
     it('drops a pending retry when the legacy session ends', async () => {
       const legacyCall = jest.mocked(spectator.inject(ApiService).call);
       legacyCall.mockReturnValueOnce(throwError(legacyDown));
