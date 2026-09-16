@@ -143,6 +143,30 @@ describe('TypedApiService', () => {
       expect(client.authenticated).toBe(true);
     });
 
+    it('keeps bridging when logging the typed session out fails', async () => {
+      jest.spyOn(console, 'warn').mockImplementation();
+      await bringSessionUp();
+      jest.spyOn(client.authenticator, 'logout').mockReturnValueOnce(throwError(() => new Error('socket gone')));
+
+      legacyAuthenticated$.next(false);
+      legacyAuthenticated$.next(true);
+      await dropSocket();
+      client.connection.simulateOpen();
+      await settle();
+
+      expect(loginTokens()).toEqual(['one-shot-token', 'one-shot-token']);
+      expect(client.authenticated).toBe(true);
+    });
+
+    it('fails requests instead of holding them if the bridge itself stops', async () => {
+      jest.spyOn(console, 'error').mockImplementation();
+      const held = firstValueFrom(spectator.service.call('system.info'));
+
+      legacyAuthenticated$.error(new Error('status stream broke'));
+
+      await expect(held).rejects.toBeInstanceOf(TypedApiSessionError);
+    });
+
     it('starts a new chain after the legacy session ends and comes back', async () => {
       client.authenticator.succeedNextLogin({ reconnect_token: 'chained-1' });
       await bringSessionUp();

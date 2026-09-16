@@ -6,7 +6,11 @@ import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.servi
  * without mocking it fails with a clear error instead of building the real
  * client, which opens a WebSocket to `environment.remote` and hangs the test.
  *
- * Mock it per spec with `mockTypedApi()` or `mockProvider(TypedApiService)`.
+ * Mock it per spec with `mockTypedApi()`. A bare `mockProvider(TypedApiService)`
+ * is not enough: `query`, `queryOne` and `queryCount` are instance properties
+ * rather than prototype methods, so Spectator's spy object leaves them
+ * undefined. Pass them explicitly if you must use `mockProvider`:
+ * `mockProvider(TypedApiService, { query: jest.fn(() => of([])) })`.
  */
 export class EmptyTypedApiService {
   readonly isAuthenticated$ = getMissingInjectionErrorObservable(TypedApiService.name);

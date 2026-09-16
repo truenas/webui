@@ -33,7 +33,12 @@ import {
   KeychainSshCredentials,
 } from 'app/interfaces/keychain-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { SshConnectionSetup, SshConnectionSetupPrivateKey } from 'app/interfaces/ssh-connection-setup.interface';
+import {
+  SshConnectionManualSetup,
+  SshConnectionSemiAutomaticSetup,
+  SshConnectionSetup,
+  SshConnectionSetupPrivateKey,
+} from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
@@ -243,36 +248,8 @@ export class SshConnectionFormComponent extends IxFormHostForm<KeychainCredentia
       : { generate_key: false, existing_key_id: values.private_key };
 
     const params: SshConnectionSetup = values.setup_method === SshConnectionsSetupMethod.Manual
-      ? {
-          setup_type: SshConnectionsSetupMethod.Manual,
-          connection_name: values.connection_name,
-          private_key: privateKey,
-          manual_setup: {
-            host: values.host,
-            port: values.port,
-            username: values.username,
-            remote_host_key: values.remote_host_key,
-            connect_timeout: values.connect_timeout,
-          } as SshCredentials,
-        }
-      : {
-          setup_type: SshConnectionsSetupMethod.SemiAutomatic,
-          connection_name: values.connection_name,
-          private_key: privateKey,
-          semi_automatic_setup: {
-            // tn-input has no `[parse]`; normalize the bare URL (prepend protocol) at submit,
-            // matching the legacy input control's `stringAsUrlParsing` behavior. Safe to defer to submit:
-            // the `url` control only validates presence (conditional `Validators.required`), so the
-            // normalized value never feeds a format validator.
-            url: this.formatter.stringAsUrlParsing(values.url),
-            admin_username: values.admin_username,
-            password: values.password,
-            username: values.username,
-            otp_token: values.otp_token,
-            connect_timeout: values.connect_timeout,
-            sudo: values.sudo,
-          },
-        };
+      ? this.prepareManualSetup(privateKey)
+      : this.prepareSemiAutomaticSetup(privateKey);
 
     return this.keychainCredentialService.addSshConnection(params).pipe(
       catchError((error: unknown) => {
@@ -297,6 +274,44 @@ export class SshConnectionFormComponent extends IxFormHostForm<KeychainCredentia
         return throwError(() => error);
       }),
     );
+  }
+
+  private prepareManualSetup(privateKey: SshConnectionSetupPrivateKey): SshConnectionManualSetup {
+    const values = this.form.value;
+    return {
+      setup_type: SshConnectionsSetupMethod.Manual,
+      connection_name: values.connection_name,
+      private_key: privateKey,
+      manual_setup: {
+        host: values.host,
+        port: values.port,
+        username: values.username,
+        remote_host_key: values.remote_host_key,
+        connect_timeout: values.connect_timeout,
+      } as SshCredentials,
+    };
+  }
+
+  private prepareSemiAutomaticSetup(privateKey: SshConnectionSetupPrivateKey): SshConnectionSemiAutomaticSetup {
+    const values = this.form.value;
+    return {
+      setup_type: SshConnectionsSetupMethod.SemiAutomatic,
+      connection_name: values.connection_name,
+      private_key: privateKey,
+      semi_automatic_setup: {
+        // tn-input has no `[parse]`; normalize the bare URL (prepend protocol) at submit,
+        // matching the legacy input control's `stringAsUrlParsing` behavior. Safe to defer to submit:
+        // the `url` control only validates presence (conditional `Validators.required`), so the
+        // normalized value never feeds a format validator.
+        url: this.formatter.stringAsUrlParsing(values.url),
+        admin_username: values.admin_username,
+        password: values.password,
+        username: values.username,
+        otp_token: values.otp_token,
+        connect_timeout: values.connect_timeout,
+        sudo: values.sudo,
+      },
+    };
   }
 
   private prepareUpdateRequest(): Observable<KeychainCredential> {

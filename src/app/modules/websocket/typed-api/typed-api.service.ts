@@ -259,6 +259,11 @@ export class TypedApiService {
    * stays authenticated, and a single refused `auth.generate_token` must not
    * hold every typed request until the next reconnect. Once the retries are
    * spent the bridge gives up and fails the held requests instead.
+   *
+   * Nothing else in the chain is expected to error, but the subscription has
+   * an error handler all the same: a bridge that died silently would hold
+   * every request for the life of the tab, which is the one outcome this
+   * service exists to avoid.
    */
   private bridgeAuthentication(): void {
     this.client$.pipe(
@@ -290,7 +295,12 @@ export class TypedApiService {
           );
         }),
       )),
-    ).subscribe();
+    ).subscribe({
+      error: (error: unknown) => {
+        console.error('Typed API authentication bridge stopped', error);
+        this.sessionFailure$.next(new TypedApiSessionError(error));
+      },
+    });
   }
 
   private clearSessionFailure(): void {
@@ -327,8 +337,21 @@ export class TypedApiService {
     );
   }
 
+  /**
+   * Best effort. The typed socket may itself be going down, or middleware may
+   * already have voided the session after a restart; a logout that fails
+   * leaves nothing to clean up and must not end the bridge.
+   */
   private endSession(client: WebUiApiClient): Observable<boolean> {
     this.reconnectToken = null;
-    return client.authenticated ? client.authenticator.logout() : EMPTY;
+    if (!client.authenticated) {
+      return EMPTY;
+    }
+    return client.authenticator.logout().pipe(
+      catchError((error: unknown) => {
+        console.warn('Typed API session could not be logged out', error);
+        return EMPTY;
+      }),
+    );
   }
 }

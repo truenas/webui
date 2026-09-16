@@ -4,12 +4,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnDialog, TnSelectHarness, TnStepperComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { CloudSyncCredentialVerifyResult } from 'app/interfaces/cloudsync-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { GooglePhotosProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/google-photos-provider-form/google-photos-provider-form.component';
 import { StorjProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
 import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
@@ -39,14 +38,10 @@ describe('CloudSyncProviderComponent', () => {
     ],
     providers: [
       mockProvider(TnStepperComponent),
-      mockApi([
-        mockCall('cloudsync.credentials.verify', {
-          valid: true,
-        }),
-      ]),
       mockProvider(CloudCredentialService, {
         getCloudSyncCredentials: jest.fn(() => of([googlePhotosCreds])),
         getProviders: jest.fn(() => of([storjProvider, googlePhotosProvider])),
+        verifyCredential: jest.fn(() => of({ valid: true } as CloudSyncCredentialVerifyResult)),
       }),
       mockProvider(DatasetService),
       mockProvider(TnDialog, {
@@ -68,6 +63,7 @@ describe('CloudSyncProviderComponent', () => {
         mockProvider(CloudCredentialService, {
           getCloudSyncCredentials,
           getProviders: jest.fn(() => of([storjProvider, googlePhotosProvider])),
+          verifyCredential: jest.fn(() => of({ valid: true } as CloudSyncCredentialVerifyResult)),
         }),
       ],
     });
@@ -102,12 +98,12 @@ describe('CloudSyncProviderComponent', () => {
     expect(loading.emit).toHaveBeenNthCalledWith(1, true);
     expect(loading.emit).toHaveBeenNthCalledWith(2, false);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.verify', [{
+    expect(spectator.inject(CloudCredentialService).verifyCredential).toHaveBeenCalledWith({
       type: 'GOOGLE_PHOTOS',
       client_id: 'test-client-id',
       client_secret: 'test-client-secret',
       token: 'test-token',
-    }]);
+    });
   });
 
   it('re-fetches and emits the credential when the chosen one is not cached yet', async () => {
@@ -130,7 +126,6 @@ describe('CloudSyncProviderComponent', () => {
     spectator.component.onVerify();
 
     expect(loading.emit).not.toHaveBeenCalled();
-    expect(spectator.inject(ApiService).call)
-      .not.toHaveBeenCalledWith('cloudsync.credentials.verify', expect.anything());
+    expect(spectator.inject(CloudCredentialService).verifyCredential).not.toHaveBeenCalled();
   });
 });
