@@ -223,8 +223,8 @@ above. Each is a change for `truenas/api-client-ts`.
    wrapper narrows for now; the UI should adopt the client's type.
 7. **Test double** — shipped in 6.0 as `@truenas/api-client/testing`
    (`createFakeClient`, `mock.call` / `query` / `job` / `emit`, `withSpies`,
-   `UnmockedCallError`, fixture builders), from
-   `docs/devs/api-client-testing-proposal.md`. webui's `MockTypedApiService`
+   `UnmockedCallError`, fixture builders; `truenas/api-client-ts` #54, #56,
+   #59). webui's `MockTypedApiService`
    and `typed-api.service.spec.ts` run on it. One thing to know about it:
    the fake answers frames on a microtask, as a socket would, so a spec that
    asserts after `submit()` needs `await spectator.fixture.whenStable()`
