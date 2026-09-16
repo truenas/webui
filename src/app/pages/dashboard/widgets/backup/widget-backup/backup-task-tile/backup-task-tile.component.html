@@ -1,9 +1,9 @@
 @if (tile(); as tile) {
   <div class="tile">
-    <div class="tile-content">
+    <div class="tile-content" [class.with-actions]="showBackupActions()">
       <div class="caption">
         <h4 class="title">{{ tile.title | translate }}</h4>
-        @if (hasSendTasks() && !tile.totalSend) {
+        @if (showBackupActions()) {
           <div class="backup-actions">
             <ng-template *ngTemplateOutlet="backupActions() || null"></ng-template>
           </div>
