@@ -7,12 +7,13 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import {
   TnCheckboxHarness, TnChipInputHarness, TnFormFieldHarness, TnInputHarness,
 } from '@truenas/ui-components';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, map, throwError } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Group } from 'app/interfaces/group.interface';
@@ -26,7 +27,9 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/users/user-form/additional-details-section/additional-details-section.component';
 import { UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
+import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { StorageService } from 'app/services/storage.service';
 
 describe('AdditionalDetailsSectionComponent', () => {
   let spectator: Spectator<AdditionalDetailsSectionComponent>;
@@ -714,6 +717,49 @@ describe('AdditionalDetailsSectionComponent', () => {
           home_mode: '755',
         }),
       );
+    });
+
+    it('records the loaded permissions as the baseline when the home directory has no stat', () => {
+      spectator = createComponent({
+        props: { editingUser: mockUser },
+        providers: [
+          mockProvider(StorageService, {
+            filesystemStat: () => throwError(() => new ApiCallError({
+              data: { reason: '[ENOENT] /home/test: no such file or directory' },
+            } as JsonRpcError)),
+          }),
+        ],
+      });
+
+      // Without a baseline the untouched form would look like a permissions change on every save.
+      expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenCalledWith({ homeModeOldValue: '700' });
+    });
+
+    it('records the loaded permissions as the baseline for users without a real home directory', () => {
+      spectator = createComponent({
+        // An empty-home marker, so no stat is attempted at all. (`/var/empty` would land on the
+        // `defaultHomePath` branch instead, which has always recorded a baseline.)
+        props: { editingUser: { ...mockUser, home: '/nonexistent' } },
+      });
+
+      expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenCalledWith({ homeModeOldValue: '700' });
+    });
+
+    it('records the loaded permissions as the baseline when the permissions cannot be read', () => {
+      spectator = createComponent({
+        props: { editingUser: mockUser },
+        providers: [
+          mockProvider(StorageService, {
+            filesystemStat: () => throwError(() => new ApiCallError({
+              data: { reason: '[EPERM] /home/test: permission denied' },
+            } as JsonRpcError)),
+          }),
+        ],
+      });
+
+      // Left unset, a deliberate permissions change could never be told apart from an untouched
+      // form, so the user form would drop it from the payload.
+      expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenCalledWith({ homeModeOldValue: '700' });
     });
 
     it('hides permissions entirely for users with /var/empty home path', async () => {

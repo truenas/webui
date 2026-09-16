@@ -93,8 +93,15 @@ describe('UserFormComponent', () => {
     group: new FormControl(101),
     groups: new FormControl([101]),
     home: new FormControl('/home/test'),
+    home_create: new FormControl(false),
+    home_mode: new FormControl('700'),
     shell: new FormControl('/usr/bin/bash'),
   });
+
+  function lastUpdatePayload(api: ApiService): Record<string, unknown> {
+    const calls = (api.call as jest.Mock).mock.calls.filter(([method]) => method === 'user.update');
+    return calls[calls.length - 1][1][1] as Record<string, unknown>;
+  }
 
   MockInstance(AllowedAccessSectionComponent, () => ({
     form: allowedAccessForm as unknown as AllowedAccessSectionComponent['form'],
@@ -426,9 +433,24 @@ describe('UserFormComponent', () => {
     });
 
     describe('editing existing user', () => {
+      /** The component-level store instance the form actually reads its payload from. */
+      function store(): UserFormStore {
+        return spectator.fixture.debugElement.injector.get(UserFormStore);
+      }
+
       beforeEach(() => {
+        // The shared mock form is module-level, so restore it here rather than after each test,
+        // where a failing assertion would leak the mutated value into everything that follows.
+        additionalDetailsForm.patchValue({ home: '/home/test', home_create: false, home_mode: '700' });
+
         spectator = createComponent({ props: { editUser: mockUser } });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+        // The additional-details section is mocked, so its `valueChanges -> updateUserConfig` never
+        // runs. Stand in for it, or the home keys would be absent from the payload either way and
+        // the assertions below would not bite.
+        store().updateUserConfig({ home: mockUser.home, home_create: false, home_mode: '700' });
+        store().updateSetupDetails({ homeModeOldValue: '700' });
       });
 
       it('should call user.update API when saving changes', () => {
@@ -440,6 +462,39 @@ describe('UserFormComponent', () => {
             username: 'test',
           }),
         ]);
+      });
+
+      it('leaves the home directory out of the payload when it was not touched', () => {
+        // The home fields still hold what the record was loaded with, and `user.update` acts on
+        // every home key it is given — relocating the account and re-permissioning the directory.
+        spectator.component.submit();
+
+        const payload = lastUpdatePayload(spectator.inject(ApiService));
+        expect(payload).not.toHaveProperty('home');
+        expect(payload).not.toHaveProperty('home_create');
+        expect(payload).not.toHaveProperty('home_mode');
+      });
+
+      it('sends the home directory when it was changed', () => {
+        additionalDetailsForm.controls.home.setValue('/mnt/tank/elsewhere');
+
+        spectator.component.submit();
+
+        // The values are the seeded store's — what matters is that the keys survive.
+        const payload = lastUpdatePayload(spectator.inject(ApiService));
+        expect(payload).toHaveProperty('home');
+        expect(payload).toHaveProperty('home_create');
+        expect(payload).toHaveProperty('home_mode');
+      });
+
+      it('sends the home directory when its permissions were changed', () => {
+        additionalDetailsForm.controls.home_mode.setValue('755');
+
+        spectator.component.submit();
+
+        const payload = lastUpdatePayload(spectator.inject(ApiService));
+        expect(payload).toHaveProperty('home');
+        expect(payload).toHaveProperty('home_mode');
       });
 
       it('emits the updated user through the closed output after successful update', () => {
