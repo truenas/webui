@@ -135,12 +135,6 @@ export class TypedApiService {
     )),
   );
 
-  /** Whether the typed session is currently authenticated. */
-  readonly isAuthenticated$: Observable<boolean> = this.client$.pipe(
-    switchMap((client) => client.authenticator.authenticated$),
-    distinctUntilChanged(),
-  );
-
   constructor() {
     this.bridgeAuthentication();
   }

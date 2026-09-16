@@ -231,8 +231,14 @@ above. Each is a change for `truenas/api-client-ts`.
    (field validation), so `TypedApiService.call` does its own round trip over
    `client.connection` (`dispatchTypedCall`, shared with the spec double).
    `query*` and `job` still go through the client and so
-   throw plain `Error`s. Unchanged as of 6.0.3. Fix: a typed error class
-   carrying the full payload. Related and deliberate: `TypedApiService`
+   throw plain `Error`s: `ErrorParserService` takes its generic branch and
+   shows the reason alone, without the `errname`, `extra` and trace that the
+   legacy `call` path renders. A migrated `query` read is therefore a small
+   downgrade in error reporting today (`cloudsync.credentials.query`,
+   `keychaincredential.query`), and the first `job` site will inherit the
+   same. Unchanged as of 6.0.3. Fix: a typed error class carrying the full
+   payload; until then, route a query through `call` where the report
+   matters. Related and deliberate: `TypedApiService`
    throws `ENOTAUTHENTICATED` like any other error rather than logging the
    app out as `ApiService` does, because the typed session is secondary and
    the bridge re-establishes it; the legacy behaviour moves over with login

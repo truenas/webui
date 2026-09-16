@@ -1,4 +1,4 @@
-import { getMissingInjectionErrorFactory, getMissingInjectionErrorObservable } from 'app/core/testing/utils/missing-injection-factories';
+import { getMissingInjectionErrorFactory } from 'app/core/testing/utils/missing-injection-factories';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 /**
@@ -13,7 +13,6 @@ import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.servi
  * `mockProvider(TypedApiService, { query: jest.fn(() => of([])) })`.
  */
 export class EmptyTypedApiService {
-  readonly isAuthenticated$ = getMissingInjectionErrorObservable(TypedApiService.name);
   call = getMissingInjectionErrorFactory(TypedApiService.name);
   query = getMissingInjectionErrorFactory(TypedApiService.name);
   queryOne = getMissingInjectionErrorFactory(TypedApiService.name);

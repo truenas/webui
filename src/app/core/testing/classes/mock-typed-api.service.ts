@@ -61,8 +61,6 @@ export class MockTypedApiService implements OnDestroy {
     jest.fn,
   );
 
-  readonly isAuthenticated$ = this.client.authenticator.authenticated$.asObservable();
-
   readonly call = jest.fn((method: string, params?: unknown) => dispatchTypedCall(this.client, method, params));
 
   readonly query = jest.fn((method: string, filters?: unknown, options?: unknown) => {
