@@ -5,7 +5,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
-import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent,
@@ -15,6 +14,10 @@ import {
   combineLatest, map, shareReplay, startWith,
 } from 'rxjs';
 import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
+import {
+  PremiumFeatureDirective,
+} from 'app/directives/premium-feature/premium-feature.directive';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import {
   S3AuditMode,
@@ -46,9 +49,8 @@ import { serviceConfigSavedMessage } from 'app/pages/services/components/service
 import { createS3GrantFormGroup, S3GrantFormGroup, toS3Grants } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
 import { S3GrantsListComponent } from 'app/pages/sharing/s3/s3-grants-list/s3-grants-list.component';
 import { DatasetService } from 'app/services/dataset/dataset.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { AppState } from 'app/store';
-import { selectLicense } from 'app/store/system-info/system-info.selectors';
 
 type ListenerFormGroup = FormGroup<{
   address: FormControl<string>;
@@ -84,6 +86,7 @@ type S3ServiceFormValue = ReturnType<ReturnType<typeof createS3ServiceForm>['get
   templateUrl: './service-s3.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    PremiumFeatureDirective,
     ReactiveFormsModule,
     IxFormComponent,
     TnFormSectionComponent,
@@ -104,9 +107,9 @@ export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormVal
   private api = inject(ApiService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
+  private entitlements = inject(EntitlementsService);
   private systemGeneralService = inject(SystemGeneralService);
   private datasetService = inject(DatasetService);
-  private store$ = inject(Store<AppState>);
 
   protected readonly requiredRoles = [Role.SharingS3Write, Role.SharingWrite];
   protected readonly helptext = helptextSharingS3;
@@ -114,9 +117,11 @@ export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormVal
   protected readonly S3AuditMode = S3AuditMode;
 
   /**
-   * Auditing needs a license. Mirrors the middleware check (`system.license` is set).
+   * Auditing is a licensed feature, decided by middleware's entitlement engine rather than by
+   * the chassis: `S3_AUDIT` is a key-only rule, so an appliance and a community system with the
+   * same key are both entitled.
    */
-  protected readonly isLicensed = toSignal(this.store$.select(selectLicense).pipe(map((license) => !!license)));
+  protected readonly hasAudit = this.entitlements.entitledStrictly(EntitlementFeature.S3Audit);
 
   protected readonly form = createS3ServiceForm(this.fb);
 
@@ -210,7 +215,12 @@ export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormVal
       log_level: values.log_level,
       managed_root_dataset: values.managed_root_dataset,
       global_grants: toS3Grants(this.form.controls.global_grants.controls),
-      ...(this.isLicensed()
+      // Omitted rather than sent as the form's defaults when the appliance has no key:
+      // middleware rejects audit settings it is not entitled to, and the controls the user saw
+      // were inert, so nothing on screen was theirs to send. Only an outright denial omits it:
+      // `undefined` is the map still loading, and the fields are live on screen meanwhile, so
+      // dropping them then would silently discard what the user typed.
+      ...(this.hasAudit() !== false
         ? {
             default_audit: this.formToAuditMask(values.default_audit_mode, values.default_audit_actions),
             default_audit_overflow: values.default_audit_overflow,

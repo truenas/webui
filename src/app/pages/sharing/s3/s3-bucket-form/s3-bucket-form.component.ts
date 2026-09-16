@@ -11,9 +11,11 @@ import {
   InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnSelectComponent, type TnSelectOption,
 } from '@truenas/ui-components';
+import { merge, Observable, startWith } from 'rxjs';
 import {
-  map, merge, Observable, startWith,
-} from 'rxjs';
+  PremiumFeatureDirective,
+} from 'app/directives/premium-feature/premium-feature.directive';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import {
   S3AuditMode,
@@ -52,9 +54,9 @@ import { createS3GrantFormGroup, S3GrantFormGroup, toS3Grants } from 'app/pages/
 import { S3GrantsListComponent } from 'app/pages/sharing/s3/s3-grants-list/s3-grants-list.component';
 import { s3UserDirectoryOptions, s3UserFormPreset } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 import { DatasetService } from 'app/services/dataset/dataset.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
-import { selectLicense } from 'app/store/system-info/system-info.selectors';
 
 export const s3BucketNamePattern = /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/;
 
@@ -64,6 +66,7 @@ export const s3BucketNamePattern = /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/;
   styleUrls: ['./s3-bucket-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    PremiumFeatureDirective,
     ReactiveFormsModule,
     IxFormComponent,
     TnFormSectionComponent,
@@ -82,6 +85,7 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
+  private entitlements = inject(EntitlementsService);
   private datasetService = inject(DatasetService);
   private validatorsService = inject(IxValidatorsService);
   private store$ = inject(Store<AppState>);
@@ -98,10 +102,15 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
   protected readonly isAdvancedMode = signal(false);
 
   /**
-   * Auditing needs a license. Mirrors the middleware check (`system.license` is set) rather than
-   * the product type, which is not a licensing signal.
+   * Auditing and versioning are licensed features, decided by middleware's entitlement engine
+   * rather than by the chassis — `S3_AUDIT` and `S3_VERSIONING` are key-only rules, so an
+   * appliance and a community system with the same key are both entitled.
+   *
+   * Object lock rides on versioning: it is implemented with it, and middleware refuses to turn
+   * versioning on without the key, so a bucket cannot be locked without it either.
    */
-  protected readonly isLicensed = toSignal(this.store$.select(selectLicense).pipe(map((license) => !!license)));
+  protected readonly hasAudit = this.entitlements.entitledStrictly(EntitlementFeature.S3Audit);
+  protected readonly hasVersioning = this.entitlements.entitledStrictly(EntitlementFeature.S3Versioning);
 
   /**
    * Every dataset on the system. The bucket's dataset is created on submit and must not exist yet.
@@ -218,11 +227,26 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
    * Object lock is a primary option (backup targets), so it drives versioning rather than depending
    * on it: checking it switches versioning on and keeps it there. The one thing that rules it out is
    * the Multiprotocol permissions model, under which another protocol could rewrite a locked object.
+   *
+   * Deliberately NOT the versioning entitlement, though the section is tagged Premium without it.
+   * This clears the control when it turns false (see `syncObjectLockAvailability`), and a bucket that
+   * already has object lock keeps it: the dataset root latches the flag and middleware refuses to
+   * serve a bucket whose row contradicts the latch. Middleware gates the *transition* for the same
+   * reason, so an unentitled appliance saving such a bucket sends the value back unchanged.
    */
   protected readonly canUseObjectLock = computed(() => !this.isMultiprotocol());
 
+  /**
+   * Multiprotocol first, though both can be true at once: it is the reason `canUseObjectLock`
+   * actually cleared and disabled the control, and the one the user can do something about.
+   */
   protected readonly objectLockHint = computed(() => {
-    return this.canUseObjectLock() ? '' : this.translate.instant(this.helptext.objectLockMultiprotocolHint);
+    if (this.isMultiprotocol()) {
+      return this.translate.instant(this.helptext.objectLockMultiprotocolHint);
+    }
+    return this.hasVersioning() === false
+      ? this.translate.instant(this.helptext.objectLockVersioningHint)
+      : '';
   });
 
   protected readonly isObjectLockOn = computed(() => !!this.formValue().object_lock);
@@ -469,7 +493,12 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
       object_lock_default_days: hasDefaultRule ? values.object_lock_default_days : null,
     };
 
-    if (this.isLicensed()) {
+    // Omitted rather than sent as the form's defaults when the appliance has no key:
+    // middleware rejects audit settings it is not entitled to, and the controls the user saw
+    // were inert, so nothing on screen was theirs to send. Only an outright denial omits it:
+    // `undefined` is the map still loading, and the fields are live on screen meanwhile, so
+    // dropping them then would silently discard what the user typed.
+    if (this.hasAudit() !== false) {
       payload.audit = this.formToAuditMask(values.audit_mode, values.audit_actions);
       payload.audit_overflow = values.audit_overflow;
     }

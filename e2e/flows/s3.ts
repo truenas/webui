@@ -39,11 +39,21 @@ export interface CreateBucketOptions {
    * asserted, since a prompt over a running service would be the bug.
    */
   serviceRunning?: boolean;
+  /**
+   * Whether to turn object lock on. Defaults to true — it is the option the form leads with, and
+   * the thing the callers are mostly here for.
+   *
+   * Set false on an appliance without `S3_VERSIONING`, where the UI renders that section dimmed
+   * and inert. The rest of the journey — creating a bucket from the Shares dashboard, and the
+   * offer to start the service — does not depend on the entitlement, and is covered nowhere else
+   * in the suite, so it still runs there. The caller drops the object-lock assertions to match.
+   */
+  objectLock?: boolean;
 }
 
 /**
- * Creates a bucket with object lock from the Shares dashboard, and starts the
- * S3 service when the app offers to.
+ * Creates a bucket from the Shares dashboard — with object lock unless `objectLock` says
+ * otherwise — and starts the S3 service when the app offers to.
  *
  * Object lock is the basic-mode option the form leads with, because backup
  * targets are what S3 on a NAS is mostly for. Checking it is meant to do three
@@ -54,7 +64,7 @@ export interface CreateBucketOptions {
  * Starting the service matters for the same reason as SMB: a bucket on a
  * stopped service is configuration that serves nothing.
  */
-export async function createS3BucketWithObjectLock(
+export async function createS3Bucket(
   page: Page,
   bucket: NewS3Bucket,
   options: CreateBucketOptions = {},
@@ -71,13 +81,15 @@ export async function createS3BucketWithObjectLock(
 
   await pickUser(page, form.owner, form.ownerOption(bucket.owner), bucket.owner);
 
-  // The retention controls only render once object lock is on, so their
-  // appearance confirms the box went the intended way rather than blindly
-  // toggling whatever state it was in.
-  await page.locator(form.objectLock).click();
-  await expect(page.locator(form.defaultRetentionMode)).toBeVisible();
-  await expect(page.locator(form.defaultRetentionDays)).toBeVisible();
-  await page.locator(form.defaultRetentionDays).fill(String(bucket.retentionDays));
+  if (options.objectLock ?? true) {
+    // The retention controls only render once object lock is on, so their
+    // appearance confirms the box went the intended way rather than blindly
+    // toggling whatever state it was in.
+    await page.locator(form.objectLock).click();
+    await expect(page.locator(form.defaultRetentionMode)).toBeVisible();
+    await expect(page.locator(form.defaultRetentionDays)).toBeVisible();
+    await page.locator(form.defaultRetentionDays).fill(String(bucket.retentionDays));
+  }
 
   await page.locator(form.save).click();
 

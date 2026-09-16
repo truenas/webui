@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnAutocompleteHarness, TnCheckboxHarness, TnChipInputHarness, TnDialog, TnFormFieldHarness,
   TnFormListHarness, TnInputHarness, TnSelectHarness,
@@ -11,6 +11,8 @@ import {
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import {
   S3Access, S3MultipartEtag, S3ObjectLockMode, S3ObjectOwnership, S3PermissionsModel, S3PrincipalType, S3Versioning,
 } from 'app/enums/s3.enum';
@@ -28,10 +30,13 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { s3UserFormPreset } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 import { DatasetService } from 'app/services/dataset/dataset.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { AppState } from 'app/store';
+import { entitlementsLoadFailed } from 'app/store/entitlements/entitlements.actions';
+import { entitlementsReducer } from 'app/store/entitlements/entitlements.reducer';
+import { entitlementsStateKey } from 'app/store/entitlements/entitlements.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
-import { selectLicense } from 'app/store/system-info/system-info.selectors';
 
 describe('S3BucketFormComponent', () => {
   let spectator: Spectator<S3BucketFormComponent>;
@@ -106,6 +111,7 @@ describe('S3BucketFormComponent', () => {
         mockCall('group.query', [{ group: 'staff', gid: 1001 }] as Group[]),
       ]),
       mockAuth(),
+      mockEntitlements(),
       mockProvider(DatasetService, {
         getDatasetNodeProvider: () => () => of([]),
       }),
@@ -115,7 +121,6 @@ describe('S3BucketFormComponent', () => {
       provideMockStore({
         selectors: [
           { selector: selectServices, value: [] },
-          { selector: selectLicense, value: null },
         ],
       }),
       ...ixFormTestingProviders(),
@@ -149,7 +154,9 @@ describe('S3BucketFormComponent', () => {
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Object Ownership' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Versioning' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Multipart ETag' }))).toBe(true);
-      expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Audit' }))).toBe(false);
+      // Shown whatever the entitlement; what changes without one is the Premium tag and
+      // whether the controls respond. See the premium-features describe below.
+      expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Audit' }))).toBe(true);
     });
 
     it('turns versioning on and defaults to Compliance retention when object lock is enabled', async () => {
@@ -310,6 +317,8 @@ describe('S3BucketFormComponent', () => {
         snapshot_versions: [],
         snapshot_versions_max: 64,
         multipart_etag: S3MultipartEtag.Composite,
+        audit: null,
+        audit_overflow: null,
         object_lock: false,
         object_lock_default_mode: null,
         object_lock_default_days: null,
@@ -337,6 +346,190 @@ describe('S3BucketFormComponent', () => {
       expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
         dataset: 'tank/shared',
         grants: [{ principal_type: S3PrincipalType.Everyone, xid: null, access: S3Access.ReadOnly }],
+      })]);
+    });
+  });
+
+  describe('premium features', () => {
+    /**
+     * The point of the treatment: a denied feature is still on screen, so an
+     * administrator can see what the product offers. What changes is the tag
+     * and whether the controls respond.
+     */
+    function premiumBadge(heading: string): HTMLElement | null {
+      // By the section's own <legend> — the accessible name tn-form-section gives the group —
+      // rather than by a data-test id, so the assertion is about what is on screen.
+      const wrapper = spectator.queryAll('ix-premium-feature-wrapper').find((element) => {
+        return element.querySelector('legend')?.textContent?.includes(heading);
+      });
+      return wrapper?.querySelector('ix-premium-badge') ?? null;
+    }
+
+    it('leaves versioning, object lock and auditing untagged when the system is entitled', async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await clickAdvancedOptions();
+
+      expect(premiumBadge('Versioning')).toBeNull();
+      expect(premiumBadge('Object Lock')).toBeNull();
+      expect(premiumBadge('Auditing')).toBeNull();
+    });
+
+    it('tags them when the loaded map carries no S3 key at all', async () => {
+      // The reported case: middleware older than the S3 entries in its own POLICY answers
+      // `truenas.entitlements.info` without them. Run through the real service and selector
+      // rather than a mocked decision, because the absent key *is* what is under test.
+      spectator = createComponent({
+        providers: [{ provide: EntitlementsService, useClass: EntitlementsService }],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      // Nothing is tagged before the answer arrives, which is the other half of the contract.
+      expect(premiumBadge('Object Lock')).toBeNull();
+
+      const mockStore$ = spectator.inject(MockStore);
+      mockStore$.setState({ [entitlementsStateKey]: { entitlements: {} } });
+      mockStore$.refreshState();
+      spectator.detectChanges();
+
+      expect(premiumBadge('Object Lock')).not.toBeNull();
+
+      await clickAdvancedOptions();
+
+      expect(premiumBadge('Versioning')).not.toBeNull();
+      expect(premiumBadge('Auditing')).not.toBeNull();
+    });
+
+    it('tags nothing when the entitlement call failed, on a system that may well hold the key', () => {
+      // `entitlementsLoadFailed` resolves to a map carrying SUPPORT alone — the same shape as an
+      // older middleware, for the opposite reason. Denying on it would put a Premium tag on a
+      // licensed appliance and drop its audit settings from the create below.
+      spectator = createComponent({
+        providers: [{ provide: EntitlementsService, useClass: EntitlementsService }],
+      });
+      const mockStore$ = spectator.inject(MockStore);
+
+      mockStore$.setState({
+        [entitlementsStateKey]: {
+          entitlements: entitlementsReducer(undefined, entitlementsLoadFailed()).entitlements,
+          assumed: true,
+        },
+      });
+      mockStore$.refreshState();
+      spectator.detectChanges();
+
+      expect(premiumBadge('Object Lock')).toBeNull();
+    });
+
+    it('tags auditing without the S3_AUDIT key, and still shows it', async () => {
+      spectator = createComponent({
+        providers: [mockEntitlements([EntitlementFeature.S3Audit])],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await clickAdvancedOptions();
+
+      expect(premiumBadge('Auditing')).not.toBeNull();
+      expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Audit' }))).toBe(true);
+      // Versioning is a separate key, and is not implicated by this one.
+      expect(premiumBadge('Versioning')).toBeNull();
+    });
+
+    it('tags object lock as well as versioning without the S3_VERSIONING key', async () => {
+      // Object lock is implemented with versioning, so the one key gates both.
+      spectator = createComponent({
+        providers: [mockEntitlements([EntitlementFeature.S3Versioning])],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      expect(premiumBadge('Object Lock')).not.toBeNull();
+
+      await clickAdvancedOptions();
+
+      expect(premiumBadge('Versioning')).not.toBeNull();
+      expect(premiumBadge('Auditing')).toBeNull();
+    });
+
+    it('sends no audit settings without the key, rather than the form\'s defaults', async () => {
+      spectator = createComponent({
+        providers: [mockEntitlements([EntitlementFeature.S3Audit])],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      api = spectator.inject(ApiService);
+
+      await form.fillForm({
+        Name: 'videos',
+        'Parent Dataset': 'tank/buckets',
+        Owner: 'alice',
+      });
+      spectator.component.submit();
+
+      // Read off the actual call rather than matched in place: a
+      // `not.objectContaining` nested in the expected array passes whatever the
+      // payload holds, so the assertion would never have failed.
+      const createCall = jest.mocked(api.call).mock.calls
+        .find(([method]) => method === 'sharing.s3.create');
+      const payload = (createCall?.[1] as [Record<string, unknown>])[0];
+
+      expect(payload).not.toHaveProperty('audit');
+      expect(payload).not.toHaveProperty('audit_overflow');
+      expect(payload).toMatchObject({ name: 'videos' });
+    });
+
+    it('sends the audit settings on screen while the entitlement map is still loading', async () => {
+      // `undefined` is "not answered yet", and every gated section renders plainly meanwhile.
+      // Reading that as a denial would quietly drop fields the form is showing as live.
+      spectator = createComponent({
+        providers: [
+          mockProvider(EntitlementsService, {
+            entitled: () => () => undefined,
+            entitledStrictly: () => () => undefined,
+            entitled$: () => of(true),
+            entitlement: () => () => undefined,
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      api = spectator.inject(ApiService);
+
+      await form.fillForm({
+        Name: 'videos',
+        'Parent Dataset': 'tank/buckets',
+        Owner: 'alice',
+      });
+      spectator.component.submit();
+
+      const createCall = jest.mocked(api.call).mock.calls
+        .find(([method]) => method === 'sharing.s3.create');
+      const payload = (createCall?.[1] as [Record<string, unknown>])[0];
+
+      expect(payload).toHaveProperty('audit');
+      expect(payload).toHaveProperty('audit_overflow');
+    });
+
+    it('keeps the object lock a bucket already has when the versioning key is missing', () => {
+      // Middleware latches object lock on the dataset root and gates the transition rather than
+      // the state, so a bucket that has it keeps it on an unentitled appliance. Clearing the
+      // control here would turn a save of something else on the form into an attempt to unlock.
+      const lockedBucket = {
+        ...existingBucket,
+        object_lock: true,
+        object_lock_default_mode: S3ObjectLockMode.Compliance,
+        object_lock_default_days: 30,
+      } as S3Bucket;
+      spectator = createComponent({
+        props: { bucket: lockedBucket },
+        providers: [mockEntitlements([EntitlementFeature.S3Versioning])],
+      });
+      api = spectator.inject(ApiService);
+
+      spectator.component.submit();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.update', [7, expect.objectContaining({
+        object_lock: true,
+        object_lock_default_mode: S3ObjectLockMode.Compliance,
+        object_lock_default_days: 30,
       })]);
     });
   });
@@ -522,6 +715,8 @@ describe('S3BucketFormComponent', () => {
         snapshot_versions: ['auto-*'],
         snapshot_versions_max: 64,
         multipart_etag: S3MultipartEtag.Composite,
+        audit: null,
+        audit_overflow: null,
         object_lock: false,
         object_lock_default_mode: null,
         object_lock_default_days: null,

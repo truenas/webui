@@ -69,6 +69,27 @@ describe('EntitlementsService', () => {
     });
   });
 
+  describe('entitledStrictly', () => {
+    it('reads undefined while loading, so nothing is decided before the answer arrives', () => {
+      expect(spectator.service.entitledStrictly(EntitlementFeature.Kmip)()).toBeUndefined();
+    });
+
+    it('reads a key the loaded map does not carry as denied, where `entitled` reads it as granted', () => {
+      const strict = spectator.service.entitledStrictly(EntitlementFeature.Kmip);
+      const lenient = spectator.service.entitled(EntitlementFeature.Kmip);
+
+      loadWith({});
+
+      expect(strict()).toBe(false);
+      expect(lenient()).toBe(true);
+    });
+
+    it('caches per feature, like the lenient reading', () => {
+      expect(spectator.service.entitledStrictly(EntitlementFeature.Kmip))
+        .toBe(spectator.service.entitledStrictly(EntitlementFeature.Kmip));
+    });
+  });
+
   describe('entitlement', () => {
     it('exposes the reason and message so a caller can explain a denial', () => {
       loadWith({ [EntitlementFeature.Kmip]: denied });

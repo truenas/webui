@@ -7,10 +7,18 @@ import { entitlementsLoaded, entitlementsLoadFailed } from 'app/store/entitlemen
 export interface EntitlementsState {
   /** `null` until the first load resolves — distinct from an empty map. */
   entitlements: EntitlementMap | null;
+  /**
+   * Whether the map above is an assumption rather than an answer: true only while the sole map
+   * held is `failedLoadEntitlements`. A key absent from a real answer is a decision (middleware
+   * does not gate it); a key absent from an assumption was never asked about, and a gate that
+   * fails closed has to be able to tell those apart — see `selectIsEntitledStrictly`.
+   */
+  assumed: boolean;
 }
 
 const initialState: EntitlementsState = {
   entitlements: null,
+  assumed: false,
 };
 
 /**
@@ -31,7 +39,7 @@ const failedLoadEntitlements: EntitlementMap = {
 
 export const entitlementsReducer = createReducer(
   initialState,
-  on(entitlementsLoaded, (state, { entitlements }) => ({ ...state, entitlements })),
+  on(entitlementsLoaded, (state, { entitlements }) => ({ ...state, entitlements, assumed: false })),
   /**
    * A failed fetch is permissive (see `failedLoadEntitlements`) rather than a blackout of every
    * licensed surface. This follows the middleware contract for the endpoint (an absent key means
@@ -39,8 +47,7 @@ export const entitlementsReducer = createReducer(
    * `truenas.entitlements.info`. Keeps a previously loaded map so a failed refresh never
    * downgrades a good answer.
    */
-  on(entitlementsLoadFailed, (state) => ({
-    ...state,
-    entitlements: state.entitlements ?? failedLoadEntitlements,
-  })),
+  on(entitlementsLoadFailed, (state) => (state.entitlements
+    ? state
+    : { ...state, entitlements: failedLoadEntitlements, assumed: true })),
 );

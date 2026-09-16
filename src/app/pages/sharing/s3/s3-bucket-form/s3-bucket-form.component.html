@@ -52,7 +52,10 @@
     </tn-form-field>
   </tn-form-section>
 
-  <tn-form-section [heading]="'Object Lock' | translate">
+  <tn-form-section
+    *ixPremiumFeature="hasVersioning(); testId: 's3-object-lock'"
+    [heading]="'Object Lock' | translate"
+  >
     <tn-form-field [tooltip]="helptext.objectLockTooltip | translate" [hint]="objectLockHint()">
       <tn-checkbox formControlName="object_lock" [label]="'Enable Object Lock' | translate"></tn-checkbox>
     </tn-form-field>
@@ -82,7 +85,10 @@
   </tn-form-section>
 
   @if (isAdvancedMode()) {
-    <tn-form-section [heading]="'Versioning' | translate">
+    <tn-form-section
+      *ixPremiumFeature="hasVersioning(); testId: 's3-versioning'"
+      [heading]="'Versioning' | translate"
+    >
       <tn-form-field
         [label]="'Versioning' | translate"
         [tooltip]="helptext.versioningTooltip | translate"
@@ -154,33 +160,34 @@
       </tn-form-field>
     </tn-form-section>
 
-    @if (isLicensed()) {
-      <tn-form-section [heading]="'Auditing' | translate">
-        <tn-form-field
-          [label]="'Audit' | translate"
-          [tooltip]="helptext.auditTooltip | translate"
-          [required]="true"
-        >
-          <tn-select formControlName="audit_mode" [options]="auditModeOptions"></tn-select>
-        </tn-form-field>
+    <tn-form-section
+      *ixPremiumFeature="hasAudit(); testId: 's3-audit'"
+      [heading]="'Auditing' | translate"
+    >
+      <tn-form-field
+        [label]="'Audit' | translate"
+        [tooltip]="helptext.auditTooltip | translate"
+        [required]="true"
+      >
+        <tn-select formControlName="audit_mode" [options]="auditModeOptions"></tn-select>
+      </tn-form-field>
 
-        @if (form.controls.audit_mode.value === S3AuditMode.Selected) {
-          <tn-form-field [label]="'Audited Actions' | translate">
-            <tn-select
-              formControlName="audit_actions"
-              [options]="auditActionOptions()"
-              [multiple]="true"
-            ></tn-select>
-          </tn-form-field>
-        }
-
-        <tn-form-field
-          [label]="'Audit Overflow' | translate"
-          [tooltip]="helptext.auditOverflowTooltip | translate"
-        >
-          <tn-select formControlName="audit_overflow" [options]="auditOverflowOptions"></tn-select>
+      @if (form.controls.audit_mode.value === S3AuditMode.Selected) {
+        <tn-form-field [label]="'Audited Actions' | translate">
+          <tn-select
+            formControlName="audit_actions"
+            [options]="auditActionOptions()"
+            [multiple]="true"
+          ></tn-select>
         </tn-form-field>
-      </tn-form-section>
-    }
+      }
+
+      <tn-form-field
+        [label]="'Audit Overflow' | translate"
+        [tooltip]="helptext.auditOverflowTooltip | translate"
+      >
+        <tn-select formControlName="audit_overflow" [options]="auditOverflowOptions"></tn-select>
+      </tn-form-field>
+    </tn-form-section>
   }
 </ix-form>
