@@ -10,7 +10,7 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TYPED_API_CLIENT, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
-import { ApiCallError, FailedJobError } from 'app/services/errors/error.classes';
+import { ApiCallError, FailedJobError, TypedApiSessionError } from 'app/services/errors/error.classes';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 /** The fake answers frames on a microtask, as a socket would; let those land. */
@@ -154,19 +154,93 @@ describe('TypedApiService', () => {
       expect(loginTokens()).toEqual(['one-shot-token', 'one-shot-token']);
       expect(spectator.inject(ApiService).call).toHaveBeenCalledTimes(2);
     });
+  });
 
-    it('keeps bridging after a failed seed', async () => {
+  describe('authentication bridge after a failed login', () => {
+    const legacyDown = (): Error => new Error('legacy down');
+    const tick = (ms: number): Promise<void> => jest.advanceTimersByTimeAsync(ms);
+
+    beforeEach(() => {
+      jest.useFakeTimers();
       jest.spyOn(console, 'error').mockImplementation();
-      jest.mocked(spectator.inject(ApiService).call).mockReturnValueOnce(throwError(() => new Error('legacy down')));
-      await bringSessionUp();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('retries the login with backoff', async () => {
+      const legacyCall = jest.mocked(spectator.inject(ApiService).call);
+      legacyCall
+        .mockReturnValueOnce(throwError(legacyDown))
+        .mockReturnValueOnce(throwError(legacyDown));
+      client.connection.simulateOpen();
+      legacyAuthenticated$.next(true);
+      await tick(0);
+      expect(legacyCall).toHaveBeenCalledTimes(1);
       expect(client.authenticated).toBe(false);
 
-      await dropSocket();
-      client.connection.simulateOpen();
-      await settle();
+      await tick(1000);
+      expect(legacyCall).toHaveBeenCalledTimes(2);
+      expect(client.authenticated).toBe(false);
 
+      await tick(2000);
+      expect(legacyCall).toHaveBeenCalledTimes(3);
       expect(loginTokens()).toEqual(['one-shot-token']);
       expect(client.authenticated).toBe(true);
+    });
+
+    it('fails held and new requests once the retries are spent, instead of holding them forever', async () => {
+      const legacyCall = jest.mocked(spectator.inject(ApiService).call);
+      legacyCall.mockReturnValue(throwError(legacyDown));
+      const held = firstValueFrom(spectator.service.call('system.info'));
+      client.connection.simulateOpen();
+      legacyAuthenticated$.next(true);
+
+      await tick(1000 + 2000 + 4000);
+
+      expect(legacyCall).toHaveBeenCalledTimes(4);
+      expect(client.authenticated).toBe(false);
+      await expect(held).rejects.toBeInstanceOf(TypedApiSessionError);
+      await expect(firstValueFrom(spectator.service.call('system.info'))).rejects.toBeInstanceOf(TypedApiSessionError);
+    });
+
+    it('holds requests again and logs in on the next reconnect after giving up', async () => {
+      const legacyCall = jest.mocked(spectator.inject(ApiService).call);
+      legacyCall.mockReturnValue(throwError(legacyDown));
+      client.connection.simulateOpen();
+      legacyAuthenticated$.next(true);
+      await tick(1000 + 2000 + 4000);
+      expect(client.authenticated).toBe(false);
+
+      legacyCall.mockReturnValue(of('one-shot-token'));
+      client.connection.simulateClose();
+      const held = firstValueFrom(spectator.service.call('system.info'));
+      await tick(0);
+      expect(sentMethods()).not.toContain('system.info');
+
+      client.connection.simulateOpen();
+      await tick(0);
+
+      expect(client.authenticated).toBe(true);
+      expect(sentMethods()).toContain('system.info');
+      client.connection.reply('system.info', { version: 'TrueNAS-27.0.0' });
+      await tick(0);
+      expect(await held).toEqual({ version: 'TrueNAS-27.0.0' });
+    });
+
+    it('drops a pending retry when the legacy session ends', async () => {
+      const legacyCall = jest.mocked(spectator.inject(ApiService).call);
+      legacyCall.mockReturnValueOnce(throwError(legacyDown));
+      client.connection.simulateOpen();
+      legacyAuthenticated$.next(true);
+      await tick(0);
+
+      legacyAuthenticated$.next(false);
+      await tick(10_000);
+
+      expect(legacyCall).toHaveBeenCalledTimes(1);
+      expect(client.authenticated).toBe(false);
     });
   });
 

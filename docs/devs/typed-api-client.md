@@ -48,7 +48,10 @@ session logs the typed one out and drops the chain.
 Call sites never authenticate and never need to know which socket a method
 rides on. Every typed request is held until the typed session is
 authenticated, so a call made during startup or across a reconnect waits
-instead of being refused by middleware.
+instead of being refused by middleware. A login that fails is retried with
+backoff (1s, 2s, 4s); after that the bridge gives up and the held requests
+fail with `TypedApiSessionError` rather than hanging. The next socket reopen
+or legacy re-login starts a fresh attempt.
 
 ## Migrating a call site
 

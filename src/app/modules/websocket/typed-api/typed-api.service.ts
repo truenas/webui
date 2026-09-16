@@ -12,6 +12,7 @@ import {
   JobResult,
 } from '@truenas/api-client';
 import {
+  BehaviorSubject,
   catchError,
   combineLatest,
   defer,
@@ -22,10 +23,12 @@ import {
   map,
   Observable,
   of,
+  retry,
   switchMap,
   take,
   tap,
   throwError,
+  timer,
 } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
@@ -37,7 +40,7 @@ import {
   WebUiApiClient,
   WebUiApiDirectory,
 } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { ApiCallError } from 'app/services/errors/error.classes';
+import { ApiCallError, TypedApiSessionError } from 'app/services/errors/error.classes';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 type D = WebUiApiDirectory;
@@ -48,6 +51,14 @@ type ClientApi = WebUiApiClient['api'];
  * seconds. It is spent immediately, so this only has to cover the round trip.
  */
 const bridgeTokenTtlSeconds = 300;
+
+/**
+ * How many times a failed typed login is retried, and the base of the
+ * exponential backoff between attempts (1s, 2s, 4s). Enough to ride out a
+ * `middlewared` restart without holding a page's requests for long.
+ */
+const loginRetries = 3;
+const loginRetryBaseDelayMs = 1000;
 
 /**
  * Fully-typed API access, backed by `@truenas/api-client`.
@@ -70,6 +81,10 @@ const bridgeTokenTtlSeconds = 300;
  *
  * Call sites therefore never authenticate here and never need to care which
  * socket a method rides on. Migrate a call by swapping the injected service.
+ * Requests are held until the typed session is authenticated. If the login
+ * keeps failing they are refused with `TypedApiSessionError` once the bridge
+ * has exhausted its retries, so a page reports the failure instead of
+ * spinning forever.
  *
  * ## What is deliberately not here yet
  *
@@ -98,15 +113,27 @@ export class TypedApiService {
   private reconnectToken: string | null = null;
 
   /**
+   * Set when the bridge has given up logging the typed session in, and
+   * cleared as soon as it has a fresh reason to try again (the socket reopens
+   * or the legacy session comes back). While it is set, requests fail with
+   * it instead of waiting.
+   */
+  private readonly sessionFailure$ = new BehaviorSubject<TypedApiSessionError | null>(null);
+
+  /**
    * Emits the client once its socket is open *and* its session is
    * authenticated. Every request waits on this, so a call made during startup
-   * or across a reconnect is held rather than refused by middleware.
+   * or across a reconnect is held rather than refused by middleware. Errors
+   * instead when the bridge has given up, so held requests never hang.
    */
   private readonly ready$: Observable<WebUiApiClient> = this.client$.pipe(
-    switchMap((client) => client.authenticator.authenticated$.pipe(
-      filter(Boolean),
+    switchMap((client) => combineLatest([
+      client.authenticator.authenticated$,
+      this.sessionFailure$,
+    ]).pipe(
+      filter(([isAuthenticated, failure]) => isAuthenticated || failure !== null),
       take(1),
-      map(() => client),
+      switchMap(([isAuthenticated, failure]) => (isAuthenticated ? of(client) : throwError(() => failure))),
     )),
   );
 
@@ -252,6 +279,12 @@ export class TypedApiService {
    * them, which is a common reason the socket dropped at all. Both cases fall
    * back to minting a fresh one over the legacy socket, whose own token chain
    * `AuthService` has already repaired by then.
+   *
+   * A login that fails outright is retried with backoff. Nothing else would
+   * prompt another attempt while the socket stays open and the legacy session
+   * stays authenticated, and a single refused `auth.generate_token` must not
+   * hold every typed request until the next reconnect. Once the retries are
+   * spent the bridge gives up and fails the held requests instead.
    */
   private bridgeAuthentication(): void {
     this.client$.pipe(
@@ -260,6 +293,7 @@ export class TypedApiService {
         this.wsStatus.isAuthenticated$.pipe(distinctUntilChanged()),
       ]).pipe(
         switchMap(([isOpen, isLegacyAuthenticated]) => {
+          this.clearSessionFailure();
           if (!isOpen) {
             return EMPTY;
           }
@@ -269,15 +303,26 @@ export class TypedApiService {
           if (client.authenticated) {
             return EMPTY;
           }
-          return this.login(client).pipe(
+          return defer(() => this.login(client)).pipe(
+            retry({
+              count: loginRetries,
+              delay: (_, retryCount) => timer(loginRetryBaseDelayMs * 2 ** (retryCount - 1)),
+            }),
             catchError((error: unknown) => {
               console.error('Typed API session could not be established', error);
+              this.sessionFailure$.next(new TypedApiSessionError(error));
               return EMPTY;
             }),
           );
         }),
       )),
     ).subscribe();
+  }
+
+  private clearSessionFailure(): void {
+    if (this.sessionFailure$.value) {
+      this.sessionFailure$.next(null);
+    }
   }
 
   /**
