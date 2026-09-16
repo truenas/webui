@@ -42,6 +42,9 @@ describe('S3BucketListComponent', () => {
     },
   ] as S3Bucket[];
 
+  /** What `sharing.s3.query` answers, so a test can shape the row its action reads. */
+  let listedBuckets: S3Bucket[];
+
   const createComponent = createComponentFactory({
     component: S3BucketListComponent,
     providers: [
@@ -51,6 +54,7 @@ describe('S3BucketListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         confirmDelete: jest.fn(() => of(undefined)),
+        error: jest.fn(),
       }),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -59,7 +63,7 @@ describe('S3BucketListComponent', () => {
         selectors: [{ selector: selectPreferences, value: {} }],
       }),
       mockApi([
-        mockCall('sharing.s3.query', buckets),
+        mockCall('sharing.s3.query', () => listedBuckets),
         mockCall('sharing.s3.delete'),
         mockCall('sharing.s3.update'),
         mockCall('pool.query', [{ path: '/mnt/tank' }] as Pool[]),
@@ -74,6 +78,7 @@ describe('S3BucketListComponent', () => {
   }
 
   beforeEach(async () => {
+    listedBuckets = buckets;
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(TnTableHarness);
