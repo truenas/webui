@@ -19,7 +19,7 @@ describe('UserAccessCellComponent', () => {
 
   function setupTest(user: User): void {
     spectator = createComponent({
-      props: { user },
+      props: { user, uniqueRowTag: `user-${user.username}` },
     });
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -53,6 +53,25 @@ describe('UserAccessCellComponent', () => {
     setupTest({ ...mockUser, api_keys: [1] });
 
     expect(await loader.getHarness(TnIconHarness.with({ name: 'power-plug' }))).toBeTruthy();
+  });
+
+  it('tags every access indicator with the row it belongs to', () => {
+    setupTest({
+      ...mockUser,
+      smb: true,
+      webshare: true,
+      ssh_password_enabled: true,
+      api_keys: [1],
+      roles: [Role.FullAdmin],
+    });
+
+    expect(spectator.queryAll('tn-icon').map((icon) => icon.getAttribute('data-test'))).toEqual([
+      'icon-user-john-doe-truenas-access',
+      'icon-user-john-doe-smb-access',
+      'icon-user-john-doe-webshare-access',
+      'icon-user-john-doe-ssh-access',
+      'icon-user-john-doe-api-access',
+    ]);
   });
 
   it('checks when everything is enabled', () => {

@@ -10,6 +10,7 @@
     "build": "yarn run clean:dist && yarn tn-icons && yarn buildng && yarn tsx scripts/update-sw-version.ts",
     "build:prod": "yarn tn-icons && yarn buildng --configuration production --base-href /ui/ && yarn tsx scripts/update-sw-version.ts",
     "check-env": "cd $(git rev-parse --show-toplevel) && yarn run ui check-env",
+    "check-table-test-ids": "tsx scripts/check-table-test-ids.ts",
     "clean:coverage": "rimraf coverage",
     "clean:dist": "rimraf dist",
     "commitlint": "commitlint",

@@ -21,7 +21,11 @@
   <ng-container [tnColumnDef]="'service'" [sortable]="true">
     <ng-template tnHeaderCellDef>{{ 'Service' | translate }}</ng-template>
     <ng-template let-row tnCellDef>
-      <span class="cell-clamp">{{ row.service | auditServiceLabel | translate }}</span>
+      <span
+        class="cell-clamp"
+        tnTestIdType="text"
+        [tnTestId]="[('Service' | translate), uniqueRowTag(row), 'row-text']"
+      >{{ row.service | auditServiceLabel | translate }}</span>
     </ng-template>
   </ng-container>
 
@@ -31,7 +35,11 @@
       <div class="user-avatar" [tnTooltip]="row.username">
         <!-- Decorative identicon; the username is shown as text alongside it. -->
         <div aria-hidden="true" [innerHTML]="row.username | userAvatar"></div>
-        <span class="cell-clamp">{{ row.username || '-' }}</span>
+        <span
+          class="cell-clamp"
+          tnTestIdType="text"
+          [tnTestId]="[('User' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.username || '-' }}</span>
       </div>
     </ng-template>
   </ng-container>
@@ -40,7 +48,11 @@
     <ng-template tnHeaderCellDef>{{ 'Timestamp' | translate }}</ng-template>
     <ng-template let-row tnCellDef>
       <span class="cell-clamp">
-        <ix-date [date]="row.message_timestamp * 1000"></ix-date>
+        <ix-date
+          tnTestIdType="date"
+          [date]="row.message_timestamp * 1000"
+          [tnTestId]="[('Timestamp' | translate), uniqueRowTag(row), 'row-date']"
+        ></ix-date>
       </span>
     </ng-template>
   </ng-container>
@@ -53,7 +65,11 @@
         This is the exact value recorded in the audit database and forwarded to remote
         syslog, so users see the same string here that they search for remotely.
       -->
-      <span class="cell-clamp">{{ row.event || '-' }}</span>
+      <span
+        class="cell-clamp"
+        tnTestIdType="text"
+        [tnTestId]="[('Event' | translate), uniqueRowTag(row), 'row-text']"
+      >{{ row.event || '-' }}</span>
     </ng-template>
   </ng-container>
 
@@ -67,7 +83,11 @@
         } @else {
           <tn-icon class="status-icon error-color" name="close-circle" library="mdi"></tn-icon>
         }
-        <span class="cell-clamp">{{ importantData }}</span>
+        <span
+          class="cell-clamp"
+          tnTestIdType="text"
+          [tnTestId]="[('Event Data' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ importantData }}</span>
       </div>
     </ng-template>
   </ng-container>

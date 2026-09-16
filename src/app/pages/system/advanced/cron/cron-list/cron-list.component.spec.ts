@@ -131,6 +131,20 @@ describe('CronListComponent', () => {
     ]);
   });
 
+  it('tags every cell with the row it belongs to, so a row is addressable in e2e', () => {
+    const testIds = Array.from(spectator.queryAll('tbody tr:first-child [data-test]'))
+      .map((element) => element.getAttribute('data-test'));
+
+    expect(testIds).toEqual([
+      'text-users-cron-echo-hello-world-test-row-text',
+      'text-command-cron-echo-hello-world-test-row-text',
+      'text-description-cron-echo-hello-world-test-row-text',
+      'text-schedule-cron-echo-hello-world-test-row-text',
+      'text-enabled-cron-echo-hello-world-test-row-text',
+      'text-next-run-cron-echo-hello-world-test-row-text',
+    ]);
+  });
+
   it('opens the Add Cron Job form in a side panel when Add is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();

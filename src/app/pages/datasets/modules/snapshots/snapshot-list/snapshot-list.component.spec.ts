@@ -142,6 +142,26 @@ describe('SnapshotListComponent', () => {
     expect(await table.getCellText(0, 'referenced')).toBe('1.49 TiB');
   });
 
+  it('tags every cell with the row it belongs to, so a row is addressable in e2e', async () => {
+    const slideToggle = await loader.getHarness(TnSlideToggleHarness.with({ label: 'Show extra columns' }));
+    await slideToggle.toggle();
+    spectator.component.loadingExtraColumns$.next(false);
+    spectator.detectChanges();
+
+    const testIds = Array.from(spectator.queryAll('tbody tr:first-child [data-test]'))
+      .map((element) => element.getAttribute('data-test'));
+
+    expect(testIds).toEqual([
+      'text-dataset-snapshot-2-row-text',
+      'text-snapshot-snapshot-2-row-text',
+      'text-used-snapshot-2-row-size',
+      // `date-date-created-…` under `[ixTest]`: the library's composeTestId drops a base
+      // segment that repeats the type prefix, so this one id is a rename, not a restoration.
+      'date-created-snapshot-2-row-date',
+      'text-referenced-snapshot-2-row-size',
+    ]);
+  });
+
   it('snaps the extra-columns toggle back when the confirmation is cancelled', async () => {
     // Model the real async confirm dialog: the toggle flips on optimistically, then
     // the user cancels. tn-slide-toggle latches its visual state internally, so this

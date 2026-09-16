@@ -11,6 +11,12 @@ Pull request title must reference a ticket, for example:
 **Testing:**
 
 <!-- If necessary provide testing instructions or refer reviewer to ticket. -->
+<!--
+  Touching a table, list or form? Say what happened to its `data-test` values.
+  Removing one that already resolved is a breaking change for the downstream
+  suites and needs a replacement in this PR — see "Addressing a table row" in
+  e2e/CLAUDE.md.
+-->
 
 ### Downstream
 <!--- Note downstream areas that can be affected with a brief reasoning after "|" of each -->

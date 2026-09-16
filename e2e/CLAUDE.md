@@ -60,7 +60,7 @@ actually emitted — **components prefix the value with their element type**:
 | `<tn-select [testId]="'role'">` | `select-role` + `option-role-full-admin` |
 | `<tn-tree-node [testId]="['dataset', name]">` | `dataset-<name>` — no prefix |
 
-Three things that will catch you out:
+Four things that will catch you out:
 
 1. **An unset `testId` falls back to the bound control name.** `<tn-input
    formControlName="name">` emits `input-name` with nothing in the template.
@@ -74,6 +74,9 @@ Three things that will catch you out:
    hand-roll a third one.
 3. **A few components write the value verbatim**, with no type prefix — those
    applying the directive via `hostDirectives` without `tnTestIdType`.
+4. **The type prefix is not applied twice.** `composeTestId` leaves a base that
+   already starts with the type alone, so an `<ix-date>` in a column titled
+   "Date created" emits `date-created-…`, not `date-date-created-…`.
 
 When unsure, `yarn e2e:ui` and use the locator picker. It is faster than
 reading the template and it cannot be wrong.
@@ -83,9 +86,33 @@ or in `@truenas/ui-components` following the patterns in that library's
 `docs/test_ids.md`. Do not fall back to a fragile selector. Both repositories
 are in-house.
 
-Known gap: `tn-table` has no per-row test id, so table-row-driven journeys
-(deleting a pool, dataset or share from a list) cannot currently be automated
-without adding one.
+### Addressing a table row
+
+`tn-table` has no per-row test id of its own — nothing is written on the `<tr>`,
+and `ariaLabels` in a column model is no longer consumed — so **a row is reached
+through its cells**. Every list tags them with a row tag built from the row's
+identity, which is the value the old `<tbody ix-table-body>` put on the row
+itself:
+
+| Template | Emitted |
+|---|---|
+| `<ix-table-text-cell [title]="'Username'" [uniqueRowTag]="uniqueRowTag(row)">` | `text-username-user-<name>-row-text` |
+| `<ix-table-actions-cell [uniqueRowTag]="uniqueRowTag(row)">` | `<row tag>-<icon>-row-action` |
+
+So `[data-test="text-username-user-jane-row-text"]` selects the username cell of
+Jane's row, and clicking it activates the row exactly as clicking anywhere else
+in it would. For a value the test cannot know in advance, prefix-match the
+stable head of the id.
+
+**Two rules bind the webui side of this** — they are what keeps the above true,
+and both are enforced by `yarn check-table-test-ids` (a lint job step):
+
+- A column that renders a row identifier must tag its cell with the row tag. A
+  bare `<ng-template tnCellDef>{{ row.name }}</ng-template>` is not finished.
+- **Removing a resolved `data-test` is a breaking change.** A migration that
+  drops one owes a replacement in the same PR, and says so in the PR's Testing
+  row. Six tickets in a row — NAS-141047, NAS-141484, NAS-142069, NAS-141791,
+  NAS-141186, NAS-143804 — were this same defect, each found downstream.
 
 ## Waiting
 

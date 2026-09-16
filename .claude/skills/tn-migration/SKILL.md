@@ -624,6 +624,15 @@ What's available in 0.1.60:
 </tn-table>
 ```
 
+- **Per-row test IDs — the one thing this recipe loses silently.** `ix-table-body` tagged
+  every `<tr>` from the column model's `uniqueRowTag`; `tn-table` writes nothing on the row
+  and has no input for it, so a cell body that is bare interpolation leaves the row
+  unaddressable and the migration ships a table no e2e test can drive. Six accepted tickets
+  so far. Build the tag with `memoizedRowTag` (or `tnTableListHost(...).rowTag`) from
+  `app/modules/tn-table/utils`, keeping the legacy string, and carry it into every cell —
+  `<ix-table-text-cell [title] [uniqueRowTag]>` for text/yes-no columns,
+  `<ix-table-actions-cell [uniqueRowTag]>` for actions, `tnTestIdType` + `[tnTestId]` for
+  anything bespoke. `yarn check-table-test-ids` fails the lint job if you forget.
 - **Row interaction.** Prefer `(rowClick)` for navigation/details; use
   `[selectable] + (selectionChange)` for multi-select. Do not wrap rows in a `<button>` —
   `tn-table` handles row roles internally.

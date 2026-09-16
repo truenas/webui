@@ -11,7 +11,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnTooltipDirective, TnDialog, TnButtonComponent, TnSlideToggleComponent, TnSpinnerComponent,
   TnEmptyComponent, TnTableComponent, TnTableColumnDirective, TnHeaderCellDefDirective,
-  TnCellDefDirective, TnDetailRowDefDirective, TnTablePagerComponent, TnSortEvent,
+  TnCellDefDirective, TnDetailRowDefDirective, TnTablePagerComponent, TnTestIdDirective, TnSortEvent,
 } from '@truenas/ui-components';
 import {
   BehaviorSubject, Observable, combineLatest, of,
@@ -38,7 +38,8 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { TableFilter } from 'app/modules/tn-table/interfaces/table-filter.interface';
-import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
+import { mapTnSortToTableSort, memoizedRowTag } from 'app/modules/tn-table/utils';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialog } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
@@ -75,8 +76,10 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
     TnHeaderCellDefDirective,
     TnCellDefDirective,
     TnDetailRowDefDirective,
+    TableTextCellComponent,
     SnapshotDetailsRowComponent,
     TnTablePagerComponent,
+    TnTestIdDirective,
     UiSearchDirective,
     FileSizePipe,
     IxDateComponent,
@@ -140,6 +143,13 @@ export class SnapshotListComponent implements OnInit {
   });
 
   protected readonly trackBySnapshotId = (_: number, row: ZfsSnapshot): string => row.name;
+
+  /**
+   * Row tag behind every cell's test id, kept at the value the legacy `ix-table` row carried
+   * (`row-snapshot-<id>`) so the ids Release Engineering already selects on still resolve.
+   * tn-table has no per-row test id of its own, so the cells are the row's only handle.
+   */
+  protected readonly uniqueRowTag = memoizedRowTag<ZfsSnapshot>((snapshot) => `snapshot-${snapshot.id}`);
 
   /**
    * Selection identity. A snapshot's `name` carries both its dataset and its own name, so

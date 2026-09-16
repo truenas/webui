@@ -77,6 +77,19 @@ describe('AuditListComponent', () => {
     ]);
   });
 
+  it('tags every cell with the row it belongs to, so a row is addressable in e2e', () => {
+    const testIds = Array.from(spectator.queryAll('tbody tr:first-child [data-test]'))
+      .map((element) => element.getAttribute('data-test'));
+
+    expect(testIds).toEqual([
+      'text-service-audit-smb-administrator-authentication-1-row-text',
+      'text-user-audit-smb-administrator-authentication-1-row-text',
+      'date-timestamp-audit-smb-administrator-authentication-1-row-date',
+      'text-event-audit-smb-administrator-authentication-1-row-text',
+      'text-event-data-audit-smb-administrator-authentication-1-row-text',
+    ]);
+  });
+
   it('renders the table pager reporting the current range', async () => {
     const pager = await loader.getHarness(TnTablePagerHarness);
     expect(await pager.getRangeText()).toBe('1 – 2 of 2');
