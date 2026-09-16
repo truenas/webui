@@ -682,7 +682,10 @@ describe('S3BucketFormComponent', () => {
 
       // And the hint says where the deliberate way through lives.
       const field = await loader.getHarness(TnFormFieldHarness.with({ label: 'Versioning' }));
-      expect(await field.getHint()).toContain('Force Disable Versioning');
+      // Plain text: a form-field hint does not render markup, so a tag would show up literally.
+      const hint = await field.getHint();
+      expect(hint).toContain('force it off below');
+      expect(hint).not.toMatch(/<[a-z]/);
     });
 
     it('holds object lock on a bucket that already has it, which middleware will not lower', async () => {

@@ -28,8 +28,8 @@ export const helptextSharingS3 = {
   versioningOneWayLockedHint: T('Object lock keeps versioning on for as long as this bucket exists. Object\
  lock cannot be turned off either, so this cannot be changed.'),
   versioningOneWayHint: T('Versioning cannot be turned off once it has been on: the versions the bucket\
- already holds would go unreachable. Suspend it to stop new versions while keeping those. To destroy the history\
- and turn it off, use <b>Force Disable Versioning</b> in the bucket list.'),
+ already holds would go unreachable. Suspend it to stop new versions while keeping those, or force it off below,\
+ which destroys them.'),
   snapshotVersionsTooltip: T('Patterns over the names of the bucket dataset\'s ZFS snapshots, with <i>*</i> and\
  <i>?</i> as the only wildcards. Every matching snapshot serves each object\'s state as a read-only version.'),
   snapshotVersionsMaxTooltip: T('How many of the newest matching snapshots one version listing consults.'),
