@@ -105,34 +105,35 @@
         ></ix-s3-grants-list>
       </ix-fieldset>
 
-      @if (isLicensed()) {
-        <ix-fieldset [title]="'Auditing' | translate">
-          <ix-select
-            formControlName="default_audit_mode"
-            [label]="'Default Audit' | translate"
-            [tooltip]="helptext.defaultAuditTooltip | translate"
-            [options]="auditModeOptions$"
-            [required]="true"
-          ></ix-select>
+      <ix-fieldset
+        *ixPremiumFeature="hasAudit(); testId: 's3-service-audit'"
+        [title]="'Auditing' | translate"
+      >
+        <ix-select
+          formControlName="default_audit_mode"
+          [label]="'Default Audit' | translate"
+          [tooltip]="helptext.defaultAuditTooltip | translate"
+          [options]="auditModeOptions$"
+          [required]="true"
+        ></ix-select>
 
-          @if (form.controls.default_audit_mode.value === S3AuditMode.Selected) {
-            <ix-select
-              formControlName="default_audit_actions"
-              [label]="'Audited Actions' | translate"
-              [options]="auditActionOptions$"
-              [multiple]="true"
-            ></ix-select>
-          }
-
+        @if (form.controls.default_audit_mode.value === S3AuditMode.Selected) {
           <ix-select
-            formControlName="default_audit_overflow"
-            [label]="'Default Audit Overflow' | translate"
-            [tooltip]="helptext.auditOverflowTooltip | translate"
-            [options]="auditOverflowOptions$"
-            [required]="true"
+            formControlName="default_audit_actions"
+            [label]="'Audited Actions' | translate"
+            [options]="auditActionOptions$"
+            [multiple]="true"
           ></ix-select>
-        </ix-fieldset>
-      }
+        }
+
+        <ix-select
+          formControlName="default_audit_overflow"
+          [label]="'Default Audit Overflow' | translate"
+          [tooltip]="helptext.auditOverflowTooltip | translate"
+          [options]="auditOverflowOptions$"
+          [required]="true"
+        ></ix-select>
+      </ix-fieldset>
 
       <ix-form-actions>
         <button

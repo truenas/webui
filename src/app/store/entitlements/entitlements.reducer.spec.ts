@@ -11,7 +11,7 @@ const denied = {
 } as EntitlementEntry;
 
 describe('entitlementsReducer', () => {
-  const unloaded: EntitlementsState = { entitlements: null };
+  const unloaded: EntitlementsState = { entitlements: null, assumed: false };
 
   it('stores the loaded map', () => {
     const state = entitlementsReducer(
@@ -37,5 +37,25 @@ describe('entitlementsReducer', () => {
     const state = entitlementsReducer(loaded, entitlementsLoadFailed());
 
     expect(state.entitlements).toEqual({ [EntitlementFeature.Kmip]: denied });
+  });
+
+  it('marks the permissive fallback as an assumption when the first load fails', () => {
+    const state = entitlementsReducer(unloaded, entitlementsLoadFailed());
+
+    // Nothing is restricted, but the map is not an answer either — a fail-closed gate has to
+    // tell the two apart. See `selectIsEntitledStrictly`.
+    expect(state.entitlements).toEqual({});
+    expect(state.assumed).toBe(true);
+  });
+
+  it('marks a loaded map as an answer, including one that replaces the assumption', () => {
+    const assumedState = entitlementsReducer(unloaded, entitlementsLoadFailed());
+
+    const state = entitlementsReducer(
+      assumedState,
+      entitlementsLoaded({ entitlements: { [EntitlementFeature.Kmip]: denied } }),
+    );
+
+    expect(state.assumed).toBe(false);
   });
 });

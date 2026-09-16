@@ -12,7 +12,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   map, merge, Observable, of,
 } from 'rxjs';
+import { PremiumFeatureDirective } from 'app/directives/premium-feature/premium-feature.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import {
   S3AuditMode,
@@ -58,9 +60,9 @@ import {
   createS3UserPickerProvider, s3UserFormPreset,
 } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 import { DatasetService } from 'app/services/dataset/dataset.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
-import { selectLicense } from 'app/store/system-info/system-info.selectors';
 
 export const s3BucketNamePattern = /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/;
 
@@ -82,6 +84,7 @@ export const s3BucketNamePattern = /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/;
     IxChipsComponent,
     S3GrantsListComponent,
     FormActionsComponent,
+    PremiumFeatureDirective,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -97,6 +100,7 @@ export class S3BucketFormComponent implements OnInit {
   private datasetService = inject(DatasetService);
   private validatorsService = inject(IxValidatorsService);
   private store$ = inject(Store<AppState>);
+  private entitlements = inject(EntitlementsService);
   private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<S3Bucket | undefined, boolean>>(SlideInRef);
 
@@ -108,10 +112,13 @@ export class S3BucketFormComponent implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly isAdvancedMode = signal(false);
   /**
-   * Auditing needs a license. Mirrors the middleware check (`system.license` is set) rather than
-   * the product type, which is not a licensing signal.
+   * Both are licensed features, decided by middleware's entitlement engine rather than by the
+   * chassis: key-only rules, so an appliance and a community system with the same key are both
+   * entitled. Read strictly — a map without the key is a middleware that cannot enforce them
+   * either, and offering them unlocked would be the worse half of that guess.
    */
-  protected readonly isLicensed = toSignal(this.store$.select(selectLicense).pipe(map((license) => !!license)));
+  protected readonly hasAudit = this.entitlements.entitledStrictly(EntitlementFeature.S3Audit);
+  protected readonly hasVersioning = this.entitlements.entitledStrictly(EntitlementFeature.S3Versioning);
 
   /**
    * Every dataset on the system. The bucket's dataset is created on submit and must not exist yet.
@@ -209,8 +216,17 @@ export class S3BucketFormComponent implements OnInit {
     return this.isMultiprotocol() ? this.translate.instant(this.helptext.objectOwnershipMultiprotocolHint) : '';
   });
 
+  /**
+   * Multiprotocol first, though both can be true at once: it is the reason `canUseObjectLock`
+   * actually cleared and disabled the control, and the one the user can do something about.
+   */
   protected readonly objectLockHint = computed(() => {
-    return this.canUseObjectLock() ? '' : this.translate.instant(this.helptext.objectLockMultiprotocolHint);
+    if (this.isMultiprotocol()) {
+      return this.translate.instant(this.helptext.objectLockMultiprotocolHint);
+    }
+    return this.hasVersioning() === false
+      ? this.translate.instant(this.helptext.objectLockVersioningHint)
+      : '';
   });
 
   protected readonly isObjectLockOn = computed(() => !!this.formValue().object_lock);
@@ -457,7 +473,12 @@ export class S3BucketFormComponent implements OnInit {
       object_lock_default_days: hasDefaultRule ? values.object_lock_default_days : null,
     };
 
-    if (this.isLicensed()) {
+    // Omitted rather than sent as the form's defaults when the appliance has no key:
+    // middleware rejects audit settings it is not entitled to, and the controls the user saw
+    // were inert, so nothing on screen was theirs to send. Only an outright denial omits it:
+    // `undefined` is the map still loading, and the fields are live on screen meanwhile, so
+    // dropping them then would silently discard what the user typed.
+    if (this.hasAudit() !== false) {
       payload.audit = this.formToAuditMask(values.audit_mode, values.audit_actions);
       payload.audit_overflow = values.audit_overflow;
     }
