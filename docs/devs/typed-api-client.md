@@ -56,7 +56,8 @@ authenticated, so a call made during startup or across a reconnect waits
 instead of being refused by middleware. A login that fails is retried with
 backoff (1s, 2s, 4s); after that the bridge gives up and the held requests
 fail with `TypedApiSessionError` rather than hanging. The next socket reopen
-or legacy re-login starts a fresh attempt.
+or legacy re-login starts a fresh attempt, and so does the first request that
+arrives after a 30s cool-off, so a transient refusal does not cost a reload.
 
 ## Migrating a call site
 

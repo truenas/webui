@@ -253,6 +253,29 @@ describe('TypedApiService', () => {
       expect(await held).toEqual({ version: 'TrueNAS-27.0.0' });
     });
 
+    it('tries again for the first request that arrives after the cool-off', async () => {
+      const legacyCall = jest.mocked(spectator.inject(ApiService).call);
+      legacyCall.mockReturnValue(throwError(legacyDown));
+      client.connection.simulateOpen();
+      legacyAuthenticated$.next(true);
+      await tick(1000 + 2000 + 4000);
+      expect(legacyCall).toHaveBeenCalledTimes(4);
+
+      await expect(firstValueFrom(spectator.service.call('system.info'))).rejects.toBeInstanceOf(TypedApiSessionError);
+      expect(legacyCall).toHaveBeenCalledTimes(4);
+
+      legacyCall.mockReturnValue(of('one-shot-token'));
+      await tick(30_000);
+      const held = firstValueFrom(spectator.service.call('system.info'));
+      await tick(0);
+
+      expect(legacyCall).toHaveBeenCalledTimes(5);
+      expect(client.authenticated).toBe(true);
+      client.connection.reply('system.info', { version: 'TrueNAS-27.0.0' });
+      await tick(0);
+      expect(await held).toEqual({ version: 'TrueNAS-27.0.0' });
+    });
+
     it('drops a pending retry when the legacy session ends', async () => {
       const legacyCall = jest.mocked(spectator.inject(ApiService).call);
       legacyCall.mockReturnValueOnce(throwError(legacyDown));

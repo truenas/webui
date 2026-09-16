@@ -23,6 +23,8 @@ import {
   Observable,
   of,
   retry,
+  startWith,
+  Subject,
   switchMap,
   take,
   tap,
@@ -57,6 +59,19 @@ const bridgeTokenTtlSeconds = 300;
  */
 const loginRetries = 3;
 const loginRetryBaseDelayMs = 1000;
+
+/**
+ * Once the bridge has given up, how long requests fail outright before the
+ * next one prompts another round of login attempts. Long enough that a page
+ * retrying in a loop does not hammer middleware, short enough that a
+ * transient refusal does not cost the user a reload.
+ */
+const sessionRetryCooldownMs = 30_000;
+
+interface SessionFailure {
+  error: TypedApiSessionError;
+  at: number;
+}
 
 /**
  * Fully-typed API access, backed by `@truenas/api-client`.
@@ -112,11 +127,14 @@ export class TypedApiService {
 
   /**
    * Set when the bridge has given up logging the typed session in, and
-   * cleared as soon as it has a fresh reason to try again (the socket reopens
-   * or the legacy session comes back). While it is set, requests fail with
-   * it instead of waiting.
+   * cleared as soon as it has a fresh reason to try again: the socket
+   * reopens, the legacy session comes back, or a request arrives after the
+   * cool-off. While it is set, requests fail with it instead of waiting.
    */
-  private readonly sessionFailure$ = new BehaviorSubject<TypedApiSessionError | null>(null);
+  private readonly sessionFailure$ = new BehaviorSubject<SessionFailure | null>(null);
+
+  /** Fired by a request that found a cooled-down failure; the bridge tries again. */
+  private readonly retryRequested$ = new Subject<void>();
 
   /**
    * Emits the client once its socket is open *and* its session is
@@ -124,16 +142,19 @@ export class TypedApiService {
    * or across a reconnect is held rather than refused by middleware. Errors
    * instead when the bridge has given up, so held requests never hang.
    */
-  private readonly ready$: Observable<WebUiApiClient> = this.client$.pipe(
-    switchMap((client) => combineLatest([
-      client.authenticator.authenticated$,
-      this.sessionFailure$,
-    ]).pipe(
-      filter(([isAuthenticated, failure]) => isAuthenticated || failure !== null),
-      take(1),
-      switchMap(([isAuthenticated, failure]) => (isAuthenticated ? of(client) : throwError(() => failure))),
-    )),
-  );
+  private readonly ready$: Observable<WebUiApiClient> = defer(() => {
+    this.retryIfCooledDown();
+    return this.client$.pipe(
+      switchMap((client) => combineLatest([
+        client.authenticator.authenticated$,
+        this.sessionFailure$,
+      ]).pipe(
+        filter(([isAuthenticated, failure]) => isAuthenticated || failure !== null),
+        take(1),
+        switchMap(([isAuthenticated, failure]) => (isAuthenticated ? of(client) : throwError(() => failure.error))),
+      )),
+    );
+  });
 
   constructor() {
     this.bridgeAuthentication();
@@ -252,7 +273,9 @@ export class TypedApiService {
    * prompt another attempt while the socket stays open and the legacy session
    * stays authenticated, and a single refused `auth.generate_token` must not
    * hold every typed request until the next reconnect. Once the retries are
-   * spent the bridge gives up and fails the held requests instead.
+   * spent the bridge gives up and fails the held requests instead, until the
+   * socket reopens, the legacy session comes back, or a request arrives after
+   * the cool-off and asks for another round.
    *
    * Nothing else in the chain is expected to error, but the subscription has
    * an error handler all the same: a bridge that died silently would hold
@@ -264,6 +287,7 @@ export class TypedApiService {
       switchMap((client) => combineLatest([
         client.connection.opened.pipe(distinctUntilChanged()),
         this.wsStatus.isAuthenticated$.pipe(distinctUntilChanged()),
+        this.retryRequested$.pipe(startWith(undefined)),
       ]).pipe(
         switchMap(([isOpen, isLegacyAuthenticated]) => {
           this.clearSessionFailure();
@@ -283,7 +307,7 @@ export class TypedApiService {
             }),
             catchError((error: unknown) => {
               console.error('Typed API session could not be established', error);
-              this.sessionFailure$.next(new TypedApiSessionError(error));
+              this.recordSessionFailure(error);
               return EMPTY;
             }),
           );
@@ -292,14 +316,26 @@ export class TypedApiService {
     ).subscribe({
       error: (error: unknown) => {
         console.error('Typed API authentication bridge stopped', error);
-        this.sessionFailure$.next(new TypedApiSessionError(error));
+        this.recordSessionFailure(error);
       },
     });
+  }
+
+  private recordSessionFailure(error: unknown): void {
+    this.sessionFailure$.next({ error: new TypedApiSessionError(error), at: Date.now() });
   }
 
   private clearSessionFailure(): void {
     if (this.sessionFailure$.value) {
       this.sessionFailure$.next(null);
+    }
+  }
+
+  private retryIfCooledDown(): void {
+    const failure = this.sessionFailure$.value;
+    if (failure && Date.now() - failure.at >= sessionRetryCooldownMs) {
+      this.clearSessionFailure();
+      this.retryRequested$.next();
     }
   }
 

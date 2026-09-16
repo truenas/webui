@@ -254,7 +254,7 @@ describe('ErrorParserService', () => {
 
       expect(errorReport).toEqual({
         title: 'Connection Error',
-        message: 'Could not establish an authenticated connection to the server. Reload the page to try again.',
+        message: 'Could not establish an authenticated connection to the server. Try again in a moment or reload the page.',
       });
     });
 

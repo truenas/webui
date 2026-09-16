@@ -75,7 +75,7 @@ export class ErrorParserService {
       return {
         title: this.translate.instant('Connection Error'),
         message: this.translate.instant(
-          'Could not establish an authenticated connection to the server. Reload the page to try again.',
+          'Could not establish an authenticated connection to the server. Try again in a moment or reload the page.',
         ),
       };
     }
