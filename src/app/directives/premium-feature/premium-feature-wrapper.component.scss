@@ -23,9 +23,11 @@
   // disables, so those need it, but a blanket rule reaches the help text too.
   //
   // Named by host element because the sweep writes `disabled` onto a control's
-  // *inner* input, which leaves the component's own chrome undimmed. The
-  // trailing `[disabled]` catches anything rendered as a plain control.
+  // *inner* input, which leaves the component's own chrome undimmed.
   ::ng-deep {
+    // Dimmed on the component hosts only. WCAG 1.4.3 exempts inactive controls from the contrast
+    // minimum; the static text beside them is not exempt, and the heading, labels and hints are
+    // what an administrator is being shown a denied feature for.
     a,
     button,
     ix-checkbox,
@@ -41,28 +43,18 @@
     ix-radio-group,
     ix-select,
     ix-slide-toggle,
-    ix-textarea,
-    [disabled] {
-      // Dimmed here rather than over the whole region. WCAG 1.4.3 exempts inactive controls from
-      // the contrast minimum; the static text beside them is not exempt, and the heading, labels
-      // and hints are what an administrator is being shown a denied feature for.
+    ix-textarea {
       opacity: 0.5;
       pointer-events: none;
     }
 
-    // Material's checkbox and slide toggle paint a state layer behind the control, and every
-    // rule that would blank it is keyed on `.mat-mdc-checkbox-disabled` / `.mat-mdc-slide-toggle
-    // -disabled` — classes Angular Material applies from its own `[disabled]` *input*.
-    // `disableFocusableElements` writes the attribute onto the native <input> instead, by design:
-    // this wrapper is presentation only, and disabling the FormControl would drop the field from
-    // `valueChanges` and out of the saved payload. So the component never learns it is disabled,
-    // those rules stay inert, and the enabled state layer shows through as a tinted square.
-    // Removed here rather than recoloured, since a locked control has no state worth showing.
-    .mdc-checkbox__ripple,
-    .mat-mdc-checkbox-ripple,
-    .mat-mdc-slide-toggle .mat-ripple,
-    .mat-focus-indicator {
-      display: none;
+    // Whatever the sweep disabled loses the pointer too — but never opacity. A control library
+    // hides its native input behind its own markup with `opacity: 0` (Material:
+    // `.mdc-checkbox__native-control` is a 40px absolutely-positioned input), so giving that input
+    // 0.5 makes the *browser's* checkbox visible over the component's. Dimming a host that also
+    // contains a disabled descendant would compound to 0.25 for the same reason.
+    [disabled] {
+      pointer-events: none;
     }
 
     // Except the help, which explains rather than operates — the other half of `keepFocusable`
