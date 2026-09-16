@@ -93,8 +93,15 @@ describe('UserFormComponent', () => {
     group: new FormControl(101),
     groups: new FormControl([101]),
     home: new FormControl('/home/test'),
+    home_create: new FormControl(false),
+    home_mode: new FormControl('700'),
     shell: new FormControl('/usr/bin/bash'),
   });
+
+  function lastUpdatePayload(api: ApiService): Record<string, unknown> {
+    const calls = (api.call as jest.Mock).mock.calls.filter(([method]) => method === 'user.update');
+    return calls[calls.length - 1][1][1] as Record<string, unknown>;
+  }
 
   MockInstance(AllowedAccessSectionComponent, () => ({
     form: allowedAccessForm as unknown as AllowedAccessSectionComponent['form'],
@@ -440,6 +447,40 @@ describe('UserFormComponent', () => {
             username: 'test',
           }),
         ]);
+      });
+
+      it('leaves the home directory out of the payload when it was not touched', () => {
+        // The home fields still hold what the record was loaded with, and `user.update` acts on
+        // every home key it is given — relocating the account and re-permissioning the directory.
+        spectator.component.submit();
+
+        const payload = lastUpdatePayload(spectator.inject(ApiService));
+        expect(payload).not.toHaveProperty('home');
+        expect(payload).not.toHaveProperty('home_create');
+        expect(payload).not.toHaveProperty('home_mode');
+      });
+
+      it('sends the home directory when it was changed', () => {
+        additionalDetailsForm.controls.home.setValue('/mnt/tank/elsewhere');
+
+        spectator.component.submit();
+
+        expect(lastUpdatePayload(spectator.inject(ApiService))).toHaveProperty('home');
+
+        additionalDetailsForm.controls.home.setValue('/home/test');
+      });
+
+      it('sends the home directory when its permissions were changed', () => {
+        // UserFormStore is provided at the component level, so reach for that instance.
+        spectator.fixture.debugElement.injector.get(UserFormStore)
+          .updateSetupDetails({ homeModeOldValue: '700' });
+        additionalDetailsForm.controls.home_mode.setValue('755');
+
+        spectator.component.submit();
+
+        expect(lastUpdatePayload(spectator.inject(ApiService))).toHaveProperty('home');
+
+        additionalDetailsForm.controls.home_mode.setValue('700');
       });
 
       it('emits the updated user through the closed output after successful update', () => {

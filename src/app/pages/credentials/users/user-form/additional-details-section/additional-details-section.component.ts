@@ -481,6 +481,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
                 default_permissions: true,
               });
               this.form.controls.home_mode.disable();
+              this.userFormStore.updateSetupDetails({ homeModeOldValue: '700' });
             }
           });
       }
@@ -490,6 +491,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         default_permissions: true,
       });
       this.form.controls.home_mode.disable();
+      this.userFormStore.updateSetupDetails({ homeModeOldValue: '700' });
     }
 
     const ids = [...auxGroups];

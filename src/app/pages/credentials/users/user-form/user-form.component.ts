@@ -135,22 +135,37 @@ export class UserFormComponent extends IxFormHostForm<User> implements OnInit {
     ];
   }
 
-  protected getHomeCreateWarning(): TranslatedString {
+  /**
+   * Whether the edit form's home fields differ from what the record was loaded with.
+   *
+   * `user.update` acts on every home key it is given: a `home` that differs relocates the account
+   * and copies the old directory over (`user.do_home_copy`), and a `home_mode` re-applies
+   * permissions on it (`filesystem.setperm`, stripping ACLs). So an untouched home must leave the
+   * payload entirely — see {@link handleSubmit} — or saving an unrelated change would move and
+   * re-permission the user's home.
+   */
+  private hasHomeDirectoryChanges(editingUser: User): boolean {
     const homeCreate = this.formValues.home_create;
     const home = this.formValues.home;
     const homeMode = this.formValues.home_mode;
+    // Empty while the directory's current mode is still being read (or could not be read at all):
+    // permissions we never learned are not permissions the user changed.
+    const loadedHomeMode = this.userFormStore.homeModeOldValue();
+
+    return Boolean(homeCreate)
+      || home !== editingUser.home
+      || (!!homeMode && !!loadedHomeMode && loadedHomeMode !== homeMode);
+  }
+
+  protected getHomeCreateWarning(): TranslatedString {
+    const homeCreate = this.formValues.home_create;
+    const home = this.formValues.home;
     const editingUser = this.editingUser();
     if (editingUser) {
-      if (editingUser.immutable || isEmptyHomeDirectory(home)) {
+      if (editingUser.immutable || isEmptyHomeDirectory(home) || homeCreate) {
         return '';
       }
-      if (!homeCreate && editingUser.home !== home) {
-        return this.translate.instant(
-          'Operation will change permissions on path: {path}',
-          { path: `'${String(home)}'` },
-        );
-      }
-      if (!homeCreate && !!homeMode && this.userFormStore.homeModeOldValue() !== homeMode) {
+      if (this.hasHomeDirectoryChanges(editingUser)) {
         return this.translate.instant(
           'Operation will change permissions on path: {path}',
           { path: `'${String(home)}'` },
@@ -399,6 +414,16 @@ export class UserFormComponent extends IxFormHostForm<User> implements OnInit {
 
     if (!payload.password) {
       delete payload.password;
+    }
+
+    const editingUser = this.editingUser();
+    if (editingUser && !this.hasHomeDirectoryChanges(editingUser)) {
+      // Nothing home-related was touched, so say nothing about it: `user.update` would otherwise
+      // act on the keys it is handed, relocating and re-permissioning the home directory on a save
+      // that was only meant to change, say, shell access.
+      delete payload.home;
+      delete payload.home_create;
+      delete payload.home_mode;
     }
 
     return {
