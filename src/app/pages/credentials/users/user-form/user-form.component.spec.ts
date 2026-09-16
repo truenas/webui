@@ -433,9 +433,24 @@ describe('UserFormComponent', () => {
     });
 
     describe('editing existing user', () => {
+      /** The component-level store instance the form actually reads its payload from. */
+      function store(): UserFormStore {
+        return spectator.fixture.debugElement.injector.get(UserFormStore);
+      }
+
       beforeEach(() => {
+        // The shared mock form is module-level, so restore it here rather than after each test,
+        // where a failing assertion would leak the mutated value into everything that follows.
+        additionalDetailsForm.patchValue({ home: '/home/test', home_create: false, home_mode: '700' });
+
         spectator = createComponent({ props: { editUser: mockUser } });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+        // The additional-details section is mocked, so its `valueChanges -> updateUserConfig` never
+        // runs. Stand in for it, or the home keys would be absent from the payload either way and
+        // the assertions below would not bite.
+        store().updateUserConfig({ home: mockUser.home, home_create: false, home_mode: '700' });
+        store().updateSetupDetails({ homeModeOldValue: '700' });
       });
 
       it('should call user.update API when saving changes', () => {
@@ -465,22 +480,21 @@ describe('UserFormComponent', () => {
 
         spectator.component.submit();
 
-        expect(lastUpdatePayload(spectator.inject(ApiService))).toHaveProperty('home');
-
-        additionalDetailsForm.controls.home.setValue('/home/test');
+        // The values are the seeded store's — what matters is that the keys survive.
+        const payload = lastUpdatePayload(spectator.inject(ApiService));
+        expect(payload).toHaveProperty('home');
+        expect(payload).toHaveProperty('home_create');
+        expect(payload).toHaveProperty('home_mode');
       });
 
       it('sends the home directory when its permissions were changed', () => {
-        // UserFormStore is provided at the component level, so reach for that instance.
-        spectator.fixture.debugElement.injector.get(UserFormStore)
-          .updateSetupDetails({ homeModeOldValue: '700' });
         additionalDetailsForm.controls.home_mode.setValue('755');
 
         spectator.component.submit();
 
-        expect(lastUpdatePayload(spectator.inject(ApiService))).toHaveProperty('home');
-
-        additionalDetailsForm.controls.home_mode.setValue('700');
+        const payload = lastUpdatePayload(spectator.inject(ApiService));
+        expect(payload).toHaveProperty('home');
+        expect(payload).toHaveProperty('home_mode');
       });
 
       it('emits the updated user through the closed output after successful update', () => {

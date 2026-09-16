@@ -461,6 +461,13 @@ export class AdditionalDetailsSectionComponent implements OnInit {
                 return of(null);
               }
               this.errorHandler.showErrorModal(error);
+              // The mode could not be read, so the field keeps what the form was built with.
+              // Record that as the baseline anyway: left unset, an untouched form would look
+              // like a permissions change forever, and a deliberate one could not be told apart
+              // from it — see `hasHomeDirectoryChanges` in the user form.
+              this.userFormStore.updateSetupDetails({
+                homeModeOldValue: this.form.controls.home_mode.value,
+              });
               return EMPTY;
             }),
             takeUntilDestroyed(this.destroyRef),

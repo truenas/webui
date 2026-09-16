@@ -737,9 +737,28 @@ describe('AdditionalDetailsSectionComponent', () => {
 
     it('records the loaded permissions as the baseline for users without a real home directory', () => {
       spectator = createComponent({
-        props: { editingUser: { ...mockUser, home: '/var/empty' } },
+        // An empty-home marker, so no stat is attempted at all. (`/var/empty` would land on the
+        // `defaultHomePath` branch instead, which has always recorded a baseline.)
+        props: { editingUser: { ...mockUser, home: '/nonexistent' } },
       });
 
+      expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenCalledWith({ homeModeOldValue: '700' });
+    });
+
+    it('records the loaded permissions as the baseline when the permissions cannot be read', () => {
+      spectator = createComponent({
+        props: { editingUser: mockUser },
+        providers: [
+          mockProvider(StorageService, {
+            filesystemStat: () => throwError(() => new ApiCallError({
+              data: { reason: '[EPERM] /home/test: permission denied' },
+            } as JsonRpcError)),
+          }),
+        ],
+      });
+
+      // Left unset, a deliberate permissions change could never be told apart from an untouched
+      // form, so the user form would drop it from the payload.
       expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenCalledWith({ homeModeOldValue: '700' });
     });
 
