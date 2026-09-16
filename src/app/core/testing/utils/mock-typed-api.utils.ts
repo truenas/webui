@@ -1,4 +1,4 @@
-import { ExistingProvider, FactoryProvider, NgZone } from '@angular/core';
+import { ExistingProvider, FactoryProvider } from '@angular/core';
 import {
   JobMethod, JobResult, QueryEntity, QueryMethod,
 } from '@truenas/api-client';
@@ -38,15 +38,11 @@ export function mockTypedApi(mocks: MockTypedApiResponse[] = []): (FactoryProvid
   return [
     {
       provide: TypedApiService,
-      // Outside the zone: the real connection under the fake keeps a ping
-      // interval alive, and inside Angular's zone that pending timer keeps the
-      // fixture from ever becoming stable, so every harness call times out.
-      useFactory: (zone: NgZone) => zone.runOutsideAngular(() => {
+      useFactory: () => {
         const api = new MockTypedApiService();
         mocks.forEach((apply) => apply(api));
         return api;
-      }),
-      deps: [NgZone],
+      },
     },
     {
       provide: MockTypedApiService,

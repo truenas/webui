@@ -4498,12 +4498,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@truenas/api-client@npm:~6.0.2":
-  version: 6.0.2
-  resolution: "@truenas/api-client@npm:6.0.2"
+"@truenas/api-client@npm:~6.0.3":
+  version: 6.0.3
+  resolution: "@truenas/api-client@npm:6.0.3"
   peerDependencies:
     rxjs: ^7.8.0
-  checksum: 10/236ef75696ffbe9ff5ff6a2f72991918ad9f979e63b8716385254fc6b989614578afae47b6887eaa23ef23c8c2bfb79f11f91169516c6a4cc1e1a933cdf5f6f9
+  checksum: 10/96ac16407cefb4b1b55a6adf6c7c27789bee556c432d8a899167070643070440a17948c1f7507826b310b8f0a66eae6b270e89c7068e4eecbd78af3e438d854a
   languageName: node
   linkType: hard
 
@@ -16083,7 +16083,7 @@ __metadata:
     "@shopify/eslint-plugin": "npm:~50.0.0"
     "@smarttools/eslint-plugin-rxjs": "npm:~1.0.22"
     "@stylistic/eslint-plugin": "npm:~2.9.0"
-    "@truenas/api-client": "npm:~6.0.2"
+    "@truenas/api-client": "npm:~6.0.3"
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master"
     "@truenas/ui-components": "npm:~0.7.6"
     "@types/cheerio": "npm:~0.22.35"

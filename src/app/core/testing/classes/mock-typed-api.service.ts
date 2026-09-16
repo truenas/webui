@@ -104,7 +104,8 @@ export class MockTypedApiService implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // The real connection keeps a ping interval alive until it is closed.
+    // Ordinary teardown: a fake holds no timer or socket, but closing is what
+    // a consumer of the real client does, and the double should not differ.
     this.client.close();
   }
 

@@ -117,7 +117,7 @@
     "@shopify/eslint-plugin": "~50.0.0",
     "@smarttools/eslint-plugin-rxjs": "~1.0.22",
     "@stylistic/eslint-plugin": "~2.9.0",
-    "@truenas/api-client": "~6.0.2",
+    "@truenas/api-client": "~6.0.3",
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master",
     "@truenas/ui-components": "~0.7.6",
     "@types/cheerio": "~0.22.35",

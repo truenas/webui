@@ -225,12 +225,13 @@ above. Each is a change for `truenas/api-client-ts`.
    (`createFakeClient`, `mock.call` / `query` / `job` / `emit`, `withSpies`,
    `UnmockedCallError`, fixture builders), from
    `docs/devs/api-client-testing-proposal.md`. webui's `MockTypedApiService`
-   and `typed-api.service.spec.ts` run on it. Still open upstream: the
-   inherited 20-second ping timer lives until `close()`. Inside Angular's
-   zone that pending interval keeps a fixture from ever becoming stable, so
-   every harness call times out; `mockTypedApi()` therefore builds the client
-   with `NgZone.runOutsideAngular` and `MockTypedApiService` closes it in
-   `ngOnDestroy`. Both go away once the client gates the ping on `enabled`.
+   and `typed-api.service.spec.ts` run on it. One thing to know about it:
+   the fake answers frames on a microtask, as a socket would, so a spec that
+   asserts after `submit()` needs `await spectator.fixture.whenStable()`
+   first. The 6.0.2 release also had the base connection's 20-second ping
+   timer pending for every fake, which inside Angular's zone stopped
+   fixtures from ever settling; 6.0.3 derives that timer from the socket
+   stream (`truenas/api-client-ts#60`), so a fake holds no timer at all.
 8. **`crypto.randomUUID`.** The client falls back to `getRandomValues` on
    insecure origins, so plain-http dev boxes work. Noting it because it is the
    kind of thing that breaks quietly.
