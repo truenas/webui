@@ -5,8 +5,10 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnButtonHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
+import { CloudSyncCredentialEntry } from 'app/interfaces/cloudsync-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -28,14 +30,16 @@ describe('CloudSyncWizardComponent', () => {
     ],
     providers: [
       mockAuth(),
+      mockTypedApi([
+        mockTypedQuery('cloudsync.credentials.query', [googlePhotosCreds as CloudSyncCredentialEntry]),
+        mockTypedCall('cloudsync.credentials.create', googlePhotosCreds as CloudSyncCredentialEntry),
+        mockTypedCall('cloudsync.credentials.update', googlePhotosCreds as CloudSyncCredentialEntry),
+        mockTypedCall('cloudsync.credentials.delete', true),
+        mockTypedCall('cloudsync.providers', [googlePhotosProvider, storjProvider]),
+      ]),
       mockApi([
         mockCall('cloudsync.create'),
-        mockCall('cloudsync.credentials.query', [googlePhotosCreds]),
-        mockCall('cloudsync.credentials.create'),
-        mockCall('cloudsync.credentials.update'),
-        mockCall('cloudsync.credentials.delete'),
         mockCall('cloudsync.delete'),
-        mockCall('cloudsync.providers', [googlePhotosProvider, storjProvider]),
       ]),
       mockProvider(DialogService),
       mockProvider(SnackbarService),

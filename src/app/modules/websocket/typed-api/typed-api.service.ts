@@ -75,6 +75,10 @@ const bridgeTokenTtlSeconds = 300;
  *
  * - Calls are not intercepted by the WebSocket debug panel or its mocks.
  * - There is no concurrent-call limit.
+ * - An `ENOTAUTHENTICATED` error is thrown like any other, where the legacy
+ *   `ApiService` logs the app out. The typed session is secondary and
+ *   re-established by the bridge, so ending the legacy session over it would
+ *   be wrong; this becomes the legacy behaviour when login moves here.
  * - `query` / `queryOne` / `queryCount` are exposed straight from the client
  *   until the wrapper grows its own error handling for them.
  */

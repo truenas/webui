@@ -40,8 +40,6 @@ describe('CloudSyncProviderComponent', () => {
     providers: [
       mockProvider(TnStepperComponent),
       mockApi([
-        mockCall('cloudsync.providers', [storjProvider, googlePhotosProvider]),
-        mockCall('cloudsync.credentials.query', [googlePhotosCreds]),
         mockCall('cloudsync.credentials.verify', {
           valid: true,
         }),

@@ -113,7 +113,10 @@ Where things differ:
   The fake answers frames on a microtask, as a socket would, so a spec that
   asserts on the outcome of a submit needs `await spectator.fixture.whenStable()`
   after `submit()`; asserting that the call was made does not, since the frame
-  goes out synchronously.
+  goes out synchronously. The same applies before a submit when the component
+  loads data on init and gates saving on it: settle, then `detectChanges()`,
+  because a loading flag that flipped back on the microtask has not yet
+  crossed an input binding such as `<ix-form [externalLoading]>`.
 - **`TypedApiService`'s own spec** provides `TYPED_API_CLIENT` with a
   non-strict `createFakeClient` and answers frames by hand with
   `connection.reply` / `replyError`, which is how the auth bridge and the
@@ -133,7 +136,9 @@ Where things differ:
   `mockTypedQuery('x.query', ...)` instead, including specs of components
   that only embed a consumer. Before moving a service, grep for its methods'
   names in `mockCall(` across `src/app` and convert those specs in the same
-  change.
+  change. A spec's `mockProvider(TheService)` is not proof it is safe: a
+  component that lists the service in its own `providers: [...]` gets a fresh
+  real instance that the spec's mock never reaches, so grep for that too.
 - **A shared interface is retired by its last consumer.** Until then the
   service that fronts it is the one place that converts, with a named adapter
   rather than a cast at each call site (`CloudCredentialService`'s
@@ -214,7 +219,11 @@ above. Each is a change for `truenas/api-client-ts`.
    (field validation), so `TypedApiService.call` does its own round trip over
    `client.connection`. `query*` and `job` still go through the client and so
    throw plain `Error`s. Unchanged as of 6.0.3. Fix: a typed error class
-   carrying the full payload.
+   carrying the full payload. Related and deliberate: `TypedApiService`
+   throws `ENOTAUTHENTICATED` like any other error rather than logging the
+   app out as `ApiService` does, because the typed session is secondary and
+   the bridge re-establishes it; the legacy behaviour moves over with login
+   in Phase 2.
 2. **Token sessions are the caller's to re-login.** Since 3.0.5 (commit
    `8f7d6e0`, "add token re-authentication and reconnect tokens") the client
    has `loginWithToken` and asks for a `reconnect_token` on every v26+ login.
