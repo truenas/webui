@@ -25,6 +25,11 @@ export const helptextSharingS3 = {
   globalGrantsTooltip: T('Grants that apply to every bucket. A <b>Deny</b> here suspends the principal everywhere.'),
   versioningTooltip: T('Keep previous versions of objects. Object lock keeps versioning enabled.'),
   versioningLockedHint: T('Kept enabled while object lock is on.'),
+  versioningOneWayLockedHint: T('Object lock keeps versioning on for as long as this bucket exists. Object\
+ lock cannot be turned off either, so this cannot be changed.'),
+  versioningOneWayHint: T('Versioning cannot be turned off once it has been on: the versions the bucket\
+ already holds would go unreachable. Suspend it to stop new versions while keeping those, or force it off below,\
+ which destroys them.'),
   snapshotVersionsTooltip: T('Patterns over the names of the bucket dataset\'s ZFS snapshots, with <i>*</i> and \
  <i>?</i> as the only wildcards. Every matching snapshot serves each object\'s state as a read-only version.'),
   snapshotVersionsMaxTooltip: T('How many of the newest matching snapshots one version listing consults.'),
@@ -34,6 +39,9 @@ export const helptextSharingS3 = {
   objectLockTooltip: T('Protect objects from being overwritten or deleted for a retention period, as backup \
  targets expect. Turns on versioning, which object lock requires.'),
   objectLockVersioningHint: T('Object lock is built on versioning, which this system is not licensed for.'),
+  objectLockLatchedHint: T('Object lock cannot be turned off once it has been enabled.'),
+  objectLockPermanentWarning: T('Object lock is permanent once saved: it cannot be turned off, and the bucket\
+ keeps versioning and its version history for as long as it exists.'),
   objectLockMultiprotocolHint: T('Not available with the Multiprotocol permissions model: another protocol could \
  rewrite a locked object.'),
   objectLockDefaultModeTooltip: T('Retention mode applied to new objects. <b>Compliance</b> cannot be shortened or \
@@ -68,4 +76,13 @@ export const helptextSharingS3 = {
 
   deleteBucketMessage: T('The bucket\'s dataset and every object in it are left in place. \
  The S3 service simply stops serving them.'),
+
+  forceDisableVersioningMessage: T('Every earlier version of every object in this bucket, and every delete\
+ marker, is destroyed. Version history stops being served at once, and the S3 service reclaims the space in the\
+ background. This cannot be undone: turning versioning back on later starts a new history rather than restoring\
+ this one. The S3 service restarts to apply the change, so requests are interrupted briefly.'),
+  forceDisableVersioningConfirm: T('I understand that the version history of this bucket will be destroyed.'),
+  forceDisableVersioningObjectLock: T('A bucket with object lock keeps its version history for as long\
+ as the bucket exists.'),
+  forceDisableVersioningSuccess: T('Versioning is off and the version history is being reclaimed.'),
 };
