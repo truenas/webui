@@ -11,7 +11,7 @@
     <tn-form-field [label]="'Encryption' | translate">
       <!--
         Options are projected rather than passed via `[options]` so each one can carry the
-        legacy `radio-button-*` test id; see "Radio groups" in the tn-migration playbook.
+        legacy `radio-button-*` test id.
       -->
       <tn-radio-group formControlName="encryptionType">
         @for (option of encryptionTypeOptions(); track option.value) {

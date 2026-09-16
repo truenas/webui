@@ -80,19 +80,13 @@ export class UnlockSedDisksComponent {
   protected readonly updateGlobalSettingsHint = T('Save this password to the system configuration for future use with these disks.');
 
   /**
-   * `tn-checkbox` emits `label` as the input's `aria-label`, which overrides the projected content
-   * as the accessible name — so it has to carry the hint the projection renders below. Composed
-   * through a translatable pattern so clause order and punctuation stay in the translator's hands
-   * rather than being hard-coded as `+ '. ' +`.
+   * `tn-checkbox` emits `label` as the input's `aria-label`, overriding the projected content as the
+   * accessible name, so the label has to carry the hint too. Composed through a translatable pattern
+   * so translators control clause order and punctuation.
    *
-   * Folding the hint into the *name* rather than exposing it as an `aria-describedby`
-   * *description* is a downgrade, and the obvious fix — wrapping this in a `tn-form-field
-   * [hint]`, as the layout dropdowns do — does not work: in the pinned 0.3.26 only `tn-input`,
-   * `tn-select`, `tn-autocomplete` and `tn-chip-input` consume `TN_FORM_FIELD_CONTEXT`.
-   * `tn-checkbox`'s `aria-describedby` is hard-wired to its own error id, so a field-level hint
-   * would render visibly but reach no screen reader at all — strictly worse than this. See the
-   * tn-migration playbook's "Known upstream defects" table; revisit once tn-checkbox wires up
-   * the field context.
+   * A `tn-form-field [hint]` would be the proper fix, but `tn-checkbox` doesn't consume
+   * `TN_FORM_FIELD_CONTEXT` and hard-wires `aria-describedby` to its own error id, so that hint would
+   * reach no screen reader. Revisit once `tn-checkbox` wires up the field context.
    */
   protected readonly updateGlobalSettingsAriaLabel = translated((translate) => translate.instant(
     '{label}. {hint}',
