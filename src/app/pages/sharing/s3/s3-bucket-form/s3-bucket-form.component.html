@@ -48,7 +48,10 @@
         ></ix-checkbox>
       </ix-fieldset>
 
-      <ix-fieldset [title]="'Object Lock' | translate">
+      <ix-fieldset
+        *ixPremiumFeature="hasVersioning(); testId: 's3-object-lock'"
+        [title]="'Object Lock' | translate"
+      >
         <ix-checkbox
           formControlName="object_lock"
           [label]="'Enable Object Lock' | translate"
@@ -78,7 +81,10 @@
       </ix-fieldset>
 
       @if (isAdvancedMode()) {
-        <ix-fieldset [title]="'Versioning' | translate">
+        <ix-fieldset
+          *ixPremiumFeature="hasVersioning(); testId: 's3-versioning'"
+          [title]="'Versioning' | translate"
+        >
           <ix-select
             formControlName="versioning"
             [label]="'Versioning' | translate"
@@ -140,34 +146,35 @@
           ></ix-select>
         </ix-fieldset>
 
-        @if (isLicensed()) {
-          <ix-fieldset [title]="'Auditing' | translate">
-            <ix-select
-              formControlName="audit_mode"
-              [label]="'Audit' | translate"
-              [tooltip]="helptext.auditTooltip | translate"
-              [options]="auditModeOptions$"
-              [required]="true"
-            ></ix-select>
+        <ix-fieldset
+          *ixPremiumFeature="hasAudit(); testId: 's3-audit'"
+          [title]="'Auditing' | translate"
+        >
+          <ix-select
+            formControlName="audit_mode"
+            [label]="'Audit' | translate"
+            [tooltip]="helptext.auditTooltip | translate"
+            [options]="auditModeOptions$"
+            [required]="true"
+          ></ix-select>
 
-            @if (form.controls.audit_mode.value === S3AuditMode.Selected) {
-              <ix-select
-                formControlName="audit_actions"
-                [label]="'Audited Actions' | translate"
-                [options]="auditActionOptions$"
-                [multiple]="true"
-              ></ix-select>
-            }
-
+          @if (form.controls.audit_mode.value === S3AuditMode.Selected) {
             <ix-select
-              formControlName="audit_overflow"
-              [label]="'Audit Overflow' | translate"
-              [tooltip]="helptext.auditOverflowTooltip | translate"
-              [options]="auditOverflowOptions$"
-              [emptyLabel]="'Use service default' | translate"
+              formControlName="audit_actions"
+              [label]="'Audited Actions' | translate"
+              [options]="auditActionOptions$"
+              [multiple]="true"
             ></ix-select>
-          </ix-fieldset>
-        }
+          }
+
+          <ix-select
+            formControlName="audit_overflow"
+            [label]="'Audit Overflow' | translate"
+            [tooltip]="helptext.auditOverflowTooltip | translate"
+            [options]="auditOverflowOptions$"
+            [emptyLabel]="'Use service default' | translate"
+          ></ix-select>
+        </ix-fieldset>
       }
 
       <ix-form-actions>

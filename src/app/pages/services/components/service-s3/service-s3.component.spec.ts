@@ -8,6 +8,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import {
   S3Access, S3AuditOverflow, S3LogLevel, S3PrincipalType,
 } from 'app/enums/s3.enum';
@@ -71,6 +72,7 @@ describe('ServiceS3Component', () => {
         requireConfirmationWhen: jest.fn(),
       }),
       mockProvider(SnackbarService),
+      mockEntitlements(),
       provideMockStore({
         selectors: [{ selector: selectLicense, value: null }],
       }),
@@ -136,6 +138,8 @@ describe('ServiceS3Component', () => {
       log_level: S3LogLevel.Info,
       managed_root_dataset: 'tank/buckets',
       global_grants: [{ principal_type: S3PrincipalType.User, xid: 1000, access: S3Access.Deny }],
+      default_audit: [],
+      default_audit_overflow: S3AuditOverflow.Drop,
     }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Service configuration saved');
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
