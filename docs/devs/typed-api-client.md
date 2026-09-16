@@ -9,17 +9,22 @@ sync with middleware.
 The UI has its own client — `ApiService` over `WebSocketHandlerService` — with
 hand-written directories (`src/app/interfaces/api/*-directory.interface.ts`,
 about 1,350 lines describing 555 calls, 80 jobs and 31 events) that drift from
-middleware and are used from roughly 900 `call`, 110 `job` and 45 `subscribe`
-sites across 414 files. This document describes how the UI moves from one to
-the other without a big-bang rewrite.
+middleware. When the migration started on 2026-09-08 they were used from
+roughly 870 `call`, 110 `job` and 45 `subscribe` sites across 414 files. This
+document describes how the UI moves from one to the other without a big-bang
+rewrite. To see where it stands, count `inject(ApiService)` against
+`inject(TypedApiService)` in non-spec files.
 
 ## What is in place
 
 | Piece | Where |
 |---|---|
+| `@truenas/api-client` as a runtime dependency (6.0.3 at the time of writing) | `package.json` |
 | The client instance, typed against `v27.0.0` | `src/app/modules/websocket/typed-api/typed-api-client.token.ts` |
 | `TypedApiService`, the migration target for `ApiService` | `src/app/modules/websocket/typed-api/typed-api.service.ts` |
 | The version the UI is written against | `WebUiApiDirectory` in the token file |
+| `mockTypedApi()` and `MockTypedApiService`, the spec double | `src/app/core/testing/utils/mock-typed-api.utils.ts`, `src/app/core/testing/classes/mock-typed-api.service.ts` |
+| `EmptyTypedApiService`, the global guard against unmocked specs | `src/app/core/testing/utils/empty-typed-api.service.ts`, registered in `src/setup-jest.ts` |
 
 The typed client owns a **second WebSocket**, opened at startup in parallel
 with the legacy one (an app initializer in `main.ts` creates the service). That
@@ -105,6 +110,10 @@ Where things differ:
   `mockTypedQuery`, which feeds `query`, `queryOne` and `queryCount` from one
   set of rows. For connection-level scenarios reach the client itself:
   `spectator.inject(MockTypedApiService).client.connection.simulateClose()`.
+  The fake answers frames on a microtask, as a socket would, so a spec that
+  asserts on the outcome of a submit needs `await spectator.fixture.whenStable()`
+  after `submit()`; asserting that the call was made does not, since the frame
+  goes out synchronously.
 - **`TypedApiService`'s own spec** provides `TYPED_API_CLIENT` with a
   non-strict `createFakeClient` and answers frames by hand with
   `connection.reply` / `replyError`, which is how the auth bridge and the
@@ -143,6 +152,11 @@ Where things differ:
 - The Backup Credentials page, cloud credentials included, as the first whole
   feature area: eight components, `CloudCredentialService`,
   `KeychainCredentialService`, and the `mockTypedApi()` spec helper.
+- Its interfaces alias the client's generated types (`v27_0_0.*` where the
+  namespace names the type, derived from the directory where it does not);
+  `keychain-credential.interface.ts` is the pattern.
+- The global `EmptyTypedApiService` guard, added after the first service
+  migration hung six spec suites (see the spec rules above).
 - This document.
 
 ### Phase 1 — move call sites
@@ -199,7 +213,8 @@ above. Each is a change for `truenas/api-client-ts`.
    to its `reason` string. The UI needs `errname` (auth handling) and `extra`
    (field validation), so `TypedApiService.call` does its own round trip over
    `client.connection`. `query*` and `job` still go through the client and so
-   throw plain `Error`s. Fix: a typed error class carrying the full payload.
+   throw plain `Error`s. Unchanged as of 6.0.3. Fix: a typed error class
+   carrying the full payload.
 2. **Token sessions are the caller's to re-login.** Since 3.0.5 (commit
    `8f7d6e0`, "add token re-authentication and reconnect tokens") the client
    has `loginWithToken` and asks for a `reconnect_token` on every v26+ login.
@@ -212,9 +227,12 @@ above. Each is a change for `truenas/api-client-ts`.
 3. **Parameterised subscriptions.** `EventName` excludes events that take
    subscription params (`method:param` style, e.g. file tailing), which the
    legacy `subscribe` supports. Needed before Phase 1 step 4.
-4. **Query types are not exported.** `QueryFilters` and `QueryProjection`
-   are internal, so the wrapper forwards the query verbs through
-   `Parameters<>` rather than declaring them. Export them.
+4. **Query and message types are not exported.** `QueryFilters` and
+   `QueryProjection` are internal, so the wrapper forwards the query verbs
+   through `Parameters<>` rather than declaring them; `TrueNasMessage` and
+   the error-frame types are absent from the main entry too, so the wrapper's
+   own dispatch types the frame by hand (the `testing` entry does export
+   `TrueNasErrorFrame` and `TrueNasErrorData`). Unchanged as of 6.0.3.
 5. **No message hook.** The debug panel and mock responses intercept messages
    in `WebSocketHandlerService`; the client has no equivalent seam. Needed for
    Phase 2.
@@ -224,14 +242,11 @@ above. Each is a change for `truenas/api-client-ts`.
 7. **Test double** — shipped in 6.0 as `@truenas/api-client/testing`
    (`createFakeClient`, `mock.call` / `query` / `job` / `emit`, `withSpies`,
    `UnmockedCallError`, fixture builders; `truenas/api-client-ts` #54, #56,
-   #59). webui's `MockTypedApiService`
-   and `typed-api.service.spec.ts` run on it. One thing to know about it:
-   the fake answers frames on a microtask, as a socket would, so a spec that
-   asserts after `submit()` needs `await spectator.fixture.whenStable()`
-   first. The 6.0.2 release also had the base connection's 20-second ping
-   timer pending for every fake, which inside Angular's zone stopped
-   fixtures from ever settling; 6.0.3 derives that timer from the socket
-   stream (`truenas/api-client-ts#60`), so a fake holds no timer at all.
+   #59). webui's `MockTypedApiService` and `typed-api.service.spec.ts` run
+   on it. The 6.0.2 release had the base connection's 20-second ping timer
+   pending for every fake, which inside Angular's zone stopped fixtures from
+   ever settling; 6.0.3 derives that timer from the socket stream
+   (`truenas/api-client-ts#60`), so a fake holds no timer at all.
 8. **`crypto.randomUUID`.** The client falls back to `getRandomValues` on
    insecure origins, so plain-http dev boxes work. Noting it because it is the
    kind of thing that breaks quietly.
@@ -249,7 +264,8 @@ above. Each is a change for `truenas/api-client-ts`.
     and `signatures_v2` as `boolean & string`, which is `never`. Something in
     the schema for those fields (a `bool | str` coercion, most likely) is
     being emitted as an intersection rather than a union. Harmless until a
-    form tries to write those fields through the typed client.
+    form tries to write those fields through the typed client. Still so in
+    6.0.3.
 11. **Version namespaces are type-only and partial.** Generated model types
     are reachable as `v27_0_0.Name`, and that is how the UI's interface files
     now alias them (`keychain-credential.interface.ts` is the pattern). Two
@@ -259,9 +275,10 @@ above. Each is a change for `truenas/api-client-ts`.
     version namespace, and a later namespace carries only the types that
     changed in that version, so `SSHKeyPairEntry` and
     `CredentialsVerifyResult` exist under `v25_10_0` but not `v27_0_0`. Until
-    fixed: keep the UI's enums as value holders, and derive a missing type
-    from the directory (`CallResponse<D, 'keychaincredential.create'>`)
-    rather than importing it from an older version's namespace.
+    fixed (still so in 6.0.3): keep the UI's enums as value holders, and
+    derive a missing type from the directory
+    (`CallResponse<D, 'keychaincredential.create'>`) rather than importing it
+    from an older version's namespace.
 
 ## Version policy
 
