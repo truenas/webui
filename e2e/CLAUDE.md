@@ -86,6 +86,11 @@ or in `@truenas/ui-components` following the patterns in that library's
 `docs/test_ids.md`. Do not fall back to a fragile selector. Both repositories
 are in-house.
 
+You should rarely have to: `yarn check-test-ids` (a lint job step) fails the
+build when a plain element handles a click that no `[data-test]` can reach. The
+few that are deliberately unaddressable — a scrim, a container that only listens
+for Escape — are listed with their reason in `scripts/check-test-ids.ts`.
+
 ### Addressing a table row
 
 `tn-table` has no per-row test id of its own — nothing is written on the `<tr>`,
@@ -105,7 +110,7 @@ in it would. For a value the test cannot know in advance, prefix-match the
 stable head of the id.
 
 **Two rules bind the webui side of this** — they are what keeps the above true,
-and both are enforced by `yarn check-table-test-ids` (a lint job step):
+and both are enforced by `yarn check-test-ids` (a lint job step):
 
 - A column that renders a row identifier must tag its cell with the row tag. A
   bare `<ng-template tnCellDef>{{ row.name }}</ng-template>` is not finished.

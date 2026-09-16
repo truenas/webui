@@ -43,7 +43,9 @@
                       class="alert-docs-link"
                       target="_blank"
                       rel="noopener noreferrer"
+                      tnTestIdType="link"
                       [href]="alert.documentationUrl"
+                      [tnTestId]="['alert-docs', alert.expansionKey]"
                     >
                       {{ 'Learn More' | translate }}
                     </a>
@@ -55,8 +57,10 @@
               <button
                 type="button"
                 class="toggle-btn"
+                tnTestIdType="button"
                 [attr.aria-expanded]="expanded"
                 [attr.aria-controls]="expandableId"
+                [tnTestId]="['alert-details', alert.expansionKey]"
                 (click)="toggleExpansion(alert.expansionKey)"
               >
                 {{ (expanded ? 'Show Less' : 'Show More') | translate }}
@@ -68,8 +72,10 @@
         <button
           type="button"
           class="dismiss-btn"
+          tnTestIdType="button"
           [attr.aria-label]="alert.dismissAriaLabel"
           [tnTooltip]="alert.dismissTooltip"
+          [tnTestId]="['dismiss-alert', alert.expansionKey]"
           (click)="onDismiss(alert)"
         >
           <tn-icon name="clear" library="material" [attr.aria-hidden]="true"></tn-icon>

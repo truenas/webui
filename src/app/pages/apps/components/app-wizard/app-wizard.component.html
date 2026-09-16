@@ -68,7 +68,12 @@
             ></tn-autocomplete>
           </div>
           @for (section of dynamicSection; track section) {
-            <div class="section" (click)="onSectionClick(section.name)">
+            <div
+              class="section"
+              tnTestIdType="link"
+              [tnTestId]="['section', section.name]"
+              (click)="onSectionClick(section.name)"
+            >
               {{ section.name }}
               @if (checkSectionInvalid(section)) {
                 <tn-icon name="alert" library="mdi"></tn-icon>

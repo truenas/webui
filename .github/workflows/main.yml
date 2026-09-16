@@ -73,11 +73,11 @@ jobs:
         run: yarn run check-env
       - name: Run linter
         run: yarn lint
-      # A tn-table renders its cells from templates, so a migration can silently drop the
-      # per-row `data-test` the old `ix-table-body` emitted — six accepted tickets so far,
-      # each found downstream rather than here. See scripts/check-table-test-ids.ts.
-      - name: Check tn-table rows carry a test id
-        run: yarn check-table-test-ids
+      # Migrations drop `data-test` attributes silently — six accepted tickets so far, each
+      # found downstream rather than here. Checks that tn-table rows and clickable elements
+      # stay addressable. See scripts/check-test-ids.ts.
+      - name: Check test IDs
+        run: yarn check-test-ids
       # `e2e/` is outside the root tsconfig's project — the Playwright runner is
       # Node-hosted and cannot share the Angular compiler options (see
       # e2e/tsconfig.json). Without this step nothing type-checks the suite.

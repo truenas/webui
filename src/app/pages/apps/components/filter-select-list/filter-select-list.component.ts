@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 
@@ -16,6 +16,7 @@ type SelectListValue = string | number | null | (string | number | null)[];
     TnIconComponent,
     IxErrorsComponent,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class FilterSelectListComponent implements ControlValueAccessor {

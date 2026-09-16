@@ -632,7 +632,7 @@ What's available in 0.1.60:
   `app/modules/tn-table/utils`, keeping the legacy string, and carry it into every cell —
   `<ix-table-text-cell [title] [uniqueRowTag]>` for text/yes-no columns,
   `<ix-table-actions-cell [uniqueRowTag]>` for actions, `tnTestIdType` + `[tnTestId]` for
-  anything bespoke. `yarn check-table-test-ids` fails the lint job if you forget.
+  anything bespoke. `yarn check-test-ids` fails the lint job if you forget.
 - **Row interaction.** Prefer `(rowClick)` for navigation/details; use
   `[selectable] + (selectionChange)` for multi-select. Do not wrap rows in a `<button>` —
   `tn-table` handles row roles internally.

@@ -9,9 +9,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {
-  TnAutocompleteComponent, TnButtonComponent, TnDialog, TnIconComponent,
-} from '@truenas/ui-components';
+import { TnAutocompleteComponent, TnButtonComponent, TnDialog, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import {
   isArray, isEqual, isPlainObject, unset,
 } from 'lodash-es';
@@ -85,6 +83,7 @@ import { AppSchemaService } from 'app/services/schema/app-schema.service';
     ReactiveFormsModule,
     TnIconComponent,
     IxDynamicWizardComponent,
+    TnTestIdDirective,
   ],
 })
 export class AppWizardComponent implements OnInit, OnDestroy {

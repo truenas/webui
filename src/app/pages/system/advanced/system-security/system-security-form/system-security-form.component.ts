@@ -16,6 +16,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
   TnProgressBarComponent, TnSelectComponent, TnSlideToggleComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   filter, finalize, map, Observable, of, switchMap, tap, forkJoin, zip,
@@ -115,6 +116,7 @@ interface MissingStigRequirement {
     TnProgressBarComponent,
     TranslateModule,
     AsyncPipe,
+    TnTestIdDirective,
   ],
 })
 export class SystemSecurityFormComponent extends IxFormHostForm implements OnInit {

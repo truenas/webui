@@ -3,7 +3,7 @@ import {
   Component, ChangeDetectionStrategy, input, output,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconButtonComponent, TnProgressBarComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnProgressBarComponent, TnTooltipDirective, TnTestIdDirective } from '@truenas/ui-components';
 import { JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { getCredentialsCreationSource } from 'app/helpers/get-credentials-creation-source.utils';
@@ -27,6 +27,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
     JobStateDisplayPipe,
     MapValuePipe,
     DecimalPipe,
+    TnTestIdDirective,
   ],
 })
 export class JobItemComponent {

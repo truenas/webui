@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTooltipDirective, TnTestIdDirective } from '@truenas/ui-components';
 import { catchError, of, switchMap } from 'rxjs';
 import { SharingTierInfo } from 'app/interfaces/zfs-tier.interface';
 import {
@@ -25,6 +25,7 @@ import {
     TnIconComponent,
     TnTooltipDirective,
     NgClass,
+    TnTestIdDirective,
   ],
 })
 export class TierStatusComponent {

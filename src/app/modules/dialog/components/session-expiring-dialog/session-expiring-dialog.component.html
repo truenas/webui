@@ -5,7 +5,12 @@
 
       <p>
         {{ 'Change Session Timeout in' | translate }}
-        <button class="preferences-link" (click)="openPreferences()">
+        <button
+          class="preferences-link"
+          tnTestIdType="button"
+          [tnTestId]="'open-preferences'"
+          (click)="openPreferences()"
+        >
           {{ 'Preferences' | translate }}
         </button>
       </p>

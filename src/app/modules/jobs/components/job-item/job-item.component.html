@@ -5,7 +5,12 @@
   [tnTooltip]="job().state === JobState.Failed ? job().error : null"
   [tnTooltipPosition]="'left'"
 >
-  <div class="job-item-body" (click)="clickable() && open()">
+  <div
+    class="job-item-body"
+    tnTestIdType="row"
+    [tnTestId]="['job', job().description, job().method]"
+    (click)="clickable() && open()"
+  >
     <div class="description-line">
       <span class="job-description">
         {{ job().description ? job().description : job().method }}

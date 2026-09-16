@@ -10,7 +10,14 @@
       }
     </span>
 
-    <div #inputArea class="input-area" (focusin)="startSuggestionsCompletion()" (click)="startSuggestionsCompletion()">
+    <div
+      #inputArea
+      class="input-area"
+      tnTestIdType="input"
+      [tnTestId]="'advanced-search'"
+      (focusin)="startSuggestionsCompletion()"
+      (click)="startSuggestionsCompletion()"
+    >
       @if (showDatePicker$ | async) {
         <tn-card class="calendar" [padContent]="false">
           <tn-calendar (selectedChange)="dateSelected($event)"></tn-calendar>

@@ -2,7 +2,7 @@ import { NgClass } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, computed, HostBinding, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective, TnTestIdDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { getProductEnclosure, getProductImageSrc, getServerProduct } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 
@@ -17,6 +17,7 @@ import { getProductEnclosure, getProductImageSrc, getServerProduct } from 'app/p
     TnIconComponent,
     NgxSkeletonLoaderModule,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class ProductImageComponent {

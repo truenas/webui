@@ -7,6 +7,8 @@
   @if (stackTrace()) {
     <div
       class="more-info"
+      tnTestIdType="button"
+      [tnTestId]="'more-info'"
       (click)="toggleOpen()"
     >
       @if (isCloseMoreInfo) {

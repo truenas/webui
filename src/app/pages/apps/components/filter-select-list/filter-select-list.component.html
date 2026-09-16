@@ -3,7 +3,12 @@
 <div class="options">
   @for (option of options(); track option) {
     <div>
-      <div class="item" (click)="onItemChanged(option.value)">
+      <div
+        class="item"
+        tnTestIdType="option"
+        [tnTestId]="option.value"
+        (click)="onItemChanged(option.value)"
+      >
         {{ option.label | translate }}
         @if (isChecked(option.value)) {
           <tn-icon name="check-circle" library="mdi"></tn-icon>
