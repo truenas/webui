@@ -1,0 +1,69 @@
+:host {
+  display: block;
+}
+
+.premium-feature {
+  position: relative;
+}
+
+.premium-feature__badge {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+}
+
+.premium-feature__content {
+  cursor: not-allowed;
+
+  // The content is inert, not merely dim: `disableFocusableElements` takes the
+  // keyboard out, and this takes the pointer out. The controls rather than
+  // everything, as `missing-access-wrapper.component.scss` does: an ix-checkbox
+  // or ix-slide-toggle exposes a <label> rather than the <input> that directive
+  // disables, so those need it, but a blanket rule reaches the help text too.
+  //
+  // Named by host element because the sweep writes `disabled` onto a control's
+  // *inner* input, which leaves the component's own chrome undimmed.
+  ::ng-deep {
+    // Dimmed on the component hosts only. WCAG 1.4.3 exempts inactive controls from the contrast
+    // minimum; the static text beside them is not exempt, and the heading, labels and hints are
+    // what an administrator is being shown a denied feature for.
+    a,
+    button,
+    ix-checkbox,
+    ix-checkbox-list,
+    ix-chips,
+    ix-combobox,
+    ix-date-picker,
+    ix-explorer,
+    ix-file-input,
+    ix-input,
+    ix-ip-input-with-netmask,
+    ix-permissions,
+    ix-radio-group,
+    ix-select,
+    ix-slide-toggle,
+    ix-textarea {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    // Whatever the sweep disabled loses the pointer too — but never opacity. A control library
+    // hides its native input behind its own markup with `opacity: 0` (Material:
+    // `.mdc-checkbox__native-control` is a 40px absolutely-positioned input), so giving that input
+    // 0.5 makes the *browser's* checkbox visible over the component's. Dimming a host that also
+    // contains a disabled descendant would compound to 0.25 for the same reason.
+    [disabled] {
+      pointer-events: none;
+    }
+
+    // Except the help, which explains rather than operates — the other half of `keepFocusable`
+    // on the host. A more specific selector than the element rules above.
+    ix-tooltip,
+    ix-tooltip .tooltip-icon {
+      cursor: help;
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}

@@ -33,6 +33,7 @@ export const helptextSharingS3 = {
  writing the bucket reads its ETags, such as a backup target with its own checksums.'),
   objectLockTooltip: T('Protect objects from being overwritten or deleted for a retention period, as backup \
  targets expect. Turns on versioning, which object lock requires.'),
+  objectLockVersioningHint: T('Object lock is built on versioning, which this system is not licensed for.'),
   objectLockMultiprotocolHint: T('Not available with the Multiprotocol permissions model: another protocol could \
  rewrite a locked object.'),
   objectLockDefaultModeTooltip: T('Retention mode applied to new objects. <b>Compliance</b> cannot be shortened or \
