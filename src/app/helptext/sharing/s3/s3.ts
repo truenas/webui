@@ -39,6 +39,8 @@ export const helptextSharingS3 = {
   objectLockTooltip: T('Protect objects from being overwritten or deleted for a retention period, as backup\
  targets expect. Turns on versioning, which object lock requires.'),
   objectLockLatchedHint: T('Object lock cannot be turned off once it has been enabled.'),
+  objectLockPermanentWarning: T('Object lock is permanent once saved: it cannot be turned off, and the bucket\
+ keeps versioning and its version history for as long as it exists.'),
   objectLockMultiprotocolHint: T('Not available with the Multiprotocol permissions model: another protocol could\
  rewrite a locked object.'),
   objectLockVersioningHint: T('Object lock is built on versioning, which this system is not licensed for.'),

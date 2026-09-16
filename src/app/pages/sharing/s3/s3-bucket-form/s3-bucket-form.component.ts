@@ -10,7 +10,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnButtonComponent, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent,
   TnFormSectionComponent,
-  TnInputComponent, TnSelectComponent, type TnSelectOption,
+  TnInputComponent, TnSelectComponent, TnTooltipDirective, type TnSelectOption,
 } from '@truenas/ui-components';
 import {
   filter, map, merge, Observable, startWith, switchMap,
@@ -77,6 +77,7 @@ export const s3BucketNamePattern = /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/;
     RequiresRolesDirective,
     ReactiveFormsModule,
     TnButtonComponent,
+    TnTooltipDirective,
     IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
@@ -265,6 +266,10 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     if (this.objectLockIsLatched()) {
       return this.translate.instant(this.helptext.objectLockLatchedHint);
     }
+    // Said while the box is ticked but not yet saved: this is the last moment it can be undone.
+    if (this.isObjectLockOn()) {
+      return this.translate.instant(this.helptext.objectLockPermanentWarning);
+    }
     if (this.isMultiprotocol()) {
       return this.translate.instant(this.helptext.objectLockMultiprotocolHint);
     }
@@ -351,14 +356,12 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
   protected readonly objectLockIsLatched = computed(() => !!this.bucket()?.object_lock);
 
   /**
-   * Whether to offer the destructive way out of versioning, beside the option it unlocks.
+   * Whether to show the destructive way out of versioning, beside the option it unlocks.
    *
-   * Not on a locked bucket: middleware refuses those outright, since a bucket with object lock
-   * keeps its version history for as long as it exists, and the hint says so instead.
+   * Shown on a locked bucket too, disabled — middleware refuses those, and an absent button
+   * cannot say why. The reason belongs where someone looks for the action.
    */
-  protected readonly canForceDisableVersioning = computed(() => {
-    return this.versioningIsOneWay() && !this.bucket()?.object_lock;
-  });
+  protected readonly canForceDisableVersioning = computed(() => this.versioningIsOneWay());
 
   /** Off is offered but refused on such a bucket, the way Multiprotocol is under object lock. */
   protected readonly versioningOptions = computed<TnSelectOption<S3Versioning>[]>(() => {
@@ -369,6 +372,11 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
   });
 
   protected readonly versioningHint = computed(() => {
+    // The latch first: "kept enabled while object lock is on" would suggest that turning the lock
+    // off frees it, and a latched lock can never be turned off.
+    if (this.objectLockIsLatched()) {
+      return this.translate.instant(this.helptext.versioningOneWayLockedHint);
+    }
     if (this.isObjectLockOn()) {
       return this.translate.instant(this.helptext.versioningLockedHint);
     }

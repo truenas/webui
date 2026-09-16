@@ -179,6 +179,20 @@ describe('S3BucketFormComponent', () => {
       expect(await released.getDisplayText()).toBe('Off');
     });
 
+    it('warns that object lock is permanent while it is ticked but not yet saved', async () => {
+      const objectLockSection = (): string | undefined => spectator.queryAll('tn-form-section')
+        .find((element) => element.querySelector('legend')?.textContent?.includes('Object Lock'))
+        ?.textContent ?? undefined;
+
+      expect(objectLockSection()).not.toContain('permanent');
+
+      await (await getCheckbox('object_lock')).check();
+      expect(objectLockSection()).toContain('permanent once saved');
+
+      await (await getCheckbox('object_lock')).uncheck();
+      expect(objectLockSection()).not.toContain('permanent');
+    });
+
     it('creates a bucket with object lock, versioning and the Compliance default rule', async () => {
       await (await getInput('name')).setValue('backups');
       await form.fillForm({
@@ -705,17 +719,22 @@ describe('S3BucketFormComponent', () => {
       expect(spectator.component.form.controls.snapshot_versions.value).toEqual([]);
     });
 
-    it('does not offer it on a locked bucket, which keeps its history', async () => {
+    it('shows it disabled on a locked bucket, rather than leaving the absence to explain itself', async () => {
       spectator = createComponent({
         props: { bucket: { ...existingBucket, object_lock: true } as S3Bucket },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await clickAdvancedOptions();
 
-      // Middleware refuses those outright, so the hint carries the reason instead of a button.
-      expect(await loader.hasHarness(TnButtonHarness.with({ label: 'Force Disable Versioning' }))).toBe(false);
+      // Middleware refuses a locked bucket, but the reason has to be where someone looks for the
+      // action — a missing button cannot say why it is missing.
+      const force = await loader.getHarness(TnButtonHarness.with({ label: 'Force Disable Versioning' }));
+      expect(await force.isDisabled()).toBe(true);
+
+      // And the select says the state is permanent, not "while object lock is on" — the lock on
+      // such a bucket can never be turned off.
       const field = await loader.getHarness(TnFormFieldHarness.with({ label: 'Versioning' }));
-      expect(await field.getHint()).toContain('object lock');
+      expect(await field.getHint()).toContain('for as long as this bucket exists');
     });
 
     it('does not let a hidden snapshot listing limit block Save, and sends the stored limit instead', async () => {

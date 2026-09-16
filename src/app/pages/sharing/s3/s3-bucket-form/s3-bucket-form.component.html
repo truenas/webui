@@ -105,6 +105,8 @@
           color="warn"
           testId="force-disable-versioning"
           [label]="'Force Disable Versioning' | translate"
+          [disabled]="objectLockIsLatched()"
+          [tnTooltip]="objectLockIsLatched() ? (helptext.forceDisableVersioningObjectLock | translate) : ''"
           (onClick)="forceDisableVersioning()"
         ></tn-button>
       }
