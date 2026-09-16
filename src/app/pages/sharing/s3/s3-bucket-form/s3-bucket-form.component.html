@@ -99,16 +99,23 @@
       </tn-form-field>
 
       @if (canForceDisableVersioning()) {
-        <tn-button
-          *ixRequiresRoles="requiredRoles"
-          variant="outline"
-          color="warn"
-          testId="force-disable-versioning"
-          [label]="'Force Disable Versioning' | translate"
-          [disabled]="objectLockIsLatched()"
-          [tnTooltip]="objectLockIsLatched() ? (helptext.forceDisableVersioningObjectLock | translate) : ''"
-          (onClick)="forceDisableVersioning()"
-        ></tn-button>
+        <!-- The reason hangs on a wrapper: a disabled button emits no pointer events of its own, so a
+          tooltip on the button itself would never see the hover that should explain it. -->
+        <span
+          class="force-disable-versioning"
+          [tnTooltip]="helptext.forceDisableVersioningObjectLock | translate"
+          [tnTooltipDisabled]="!objectLockIsLatched()"
+        >
+          <tn-button
+            *ixRequiresRoles="requiredRoles"
+            variant="outline"
+            color="warn"
+            testId="force-disable-versioning"
+            [label]="'Force Disable Versioning' | translate"
+            [disabled]="objectLockIsLatched()"
+            (onClick)="forceDisableVersioning()"
+          ></tn-button>
+        </span>
       }
 
       @if (form.controls.versioning.value !== S3Versioning.Off) {

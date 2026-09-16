@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnDialog, TnFormFieldHarness,
-  TnFormListHarness, TnInputHarness, TnSelectHarness,
+  TnFormListHarness, TnInputHarness, TnSelectHarness, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -706,6 +706,8 @@ describe('S3BucketFormComponent', () => {
 
     it('offers the destructive way out beside the option it unlocks, and applies it', async () => {
       await clickAdvancedOptions();
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
 
       const force = await loader.getHarness(TnButtonHarness.with({ label: 'Force Disable Versioning' }));
       await force.click();
@@ -717,9 +719,9 @@ describe('S3BucketFormComponent', () => {
       );
       expect(api.call).toHaveBeenCalledWith('sharing.s3.force_disable_versioning', [7]);
 
-      // The open form follows the saved bucket, so a later Save cannot write the old values back.
-      expect(spectator.component.form.controls.versioning.value).toBe(S3Versioning.Off);
-      expect(spectator.component.form.controls.snapshot_versions.value).toEqual([]);
+      // Closed as a success, so the opener reloads. A stale row would reopen with versioning on, and
+      // an unrelated Save from it would re-enable versioning on the bucket just forced off.
+      expect(closed).toHaveBeenCalledWith(true);
     });
 
     it('shows it disabled on a locked bucket, rather than leaving the absence to explain itself', async () => {
@@ -733,6 +735,11 @@ describe('S3BucketFormComponent', () => {
       // action — a missing button cannot say why it is missing.
       const force = await loader.getHarness(TnButtonHarness.with({ label: 'Force Disable Versioning' }));
       expect(await force.isDisabled()).toBe(true);
+
+      // The reason sits on the wrapper, where a hover can reach it past the disabled button.
+      const reason = spectator.query('.force-disable-versioning', { read: TnTooltipDirective });
+      expect(reason?.message()).toContain('keeps its version history');
+      expect(reason?.disabled()).toBe(false);
 
       // And the select says the state is permanent, not "while object lock is on" — the lock on
       // such a bucket can never be turned off.

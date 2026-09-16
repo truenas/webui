@@ -305,10 +305,11 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     ).subscribe({
       next: () => {
         this.snackbar.success(this.translate.instant(this.helptext.forceDisableVersioningSuccess));
-        // Middleware clears both; mirrored here so the open form matches the saved bucket and a
-        // later Save does not write the old values back over it.
-        this.versioningForcedOff.set(true);
-        this.form.patchValue({ versioning: S3Versioning.Off, snapshot_versions: [] });
+        // Closed as a success, which is what makes the opener reload. Its row is what the next Edit
+        // opens with, so leaving it stale would bring back `versioning: Enabled` — and a later Save
+        // of anything else would send that, re-enabling versioning on the bucket whose history this
+        // just destroyed. Nothing is left to submit here: the change has already been applied.
+        this.closed.emit(true);
       },
       // Shown rather than swallowed: middleware also refuses a bucket whose dataset root carries
       // the object-lock latch even when the row does not say so, and that reason is worth reading.
@@ -333,16 +334,9 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
    * `sharing.s3.force_disable_versioning` is the deliberate way through, and it lives in the list.
    */
   private readonly versioningIsOneWay = computed(() => {
-    // Cleared once this form has forced it off, so the select and the hint follow immediately
-    // rather than waiting for the bucket to be re-read.
-    if (this.versioningForcedOff()) {
-      return false;
-    }
     const stored = this.bucket()?.versioning;
     return !!stored && stored !== S3Versioning.Off;
   });
-
-  private readonly versioningForcedOff = signal(false);
 
   /**
    * Object lock is latched on the dataset root and middleware refuses to lower it — "Object lock
