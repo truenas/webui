@@ -95,7 +95,7 @@
         [hint]="versioningHint()"
         [required]="true"
       >
-        <tn-select formControlName="versioning" [options]="versioningOptions"></tn-select>
+        <tn-select formControlName="versioning" [options]="versioningOptions()"></tn-select>
       </tn-form-field>
 
       @if (form.controls.versioning.value !== S3Versioning.Off) {

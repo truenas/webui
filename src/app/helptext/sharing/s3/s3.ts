@@ -25,6 +25,9 @@ export const helptextSharingS3 = {
   globalGrantsTooltip: T('Grants that apply to every bucket. A <b>Deny</b> here suspends the principal everywhere.'),
   versioningTooltip: T('Keep previous versions of objects. Object lock keeps versioning enabled.'),
   versioningLockedHint: T('Kept enabled while object lock is on.'),
+  versioningOneWayHint: T('Versioning cannot be turned off once it has been on: the versions the bucket\
+ already holds would go unreachable. Suspend it to stop new versions while keeping those. To destroy the history\
+ and turn it off, use <b>Force Disable Versioning</b> in the bucket list.'),
   snapshotVersionsTooltip: T('Patterns over the names of the bucket dataset\'s ZFS snapshots, with <i>*</i> and\
  <i>?</i> as the only wildcards. Every matching snapshot serves each object\'s state as a read-only version.'),
   snapshotVersionsMaxTooltip: T('How many of the newest matching snapshots one version listing consults.'),

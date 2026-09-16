@@ -123,7 +123,7 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
 
   private readonly permissionsModelBaseOptions = mapToOptions(s3PermissionsModelLabels, this.translate);
   protected readonly objectOwnershipOptions = mapToOptions(s3ObjectOwnershipLabels, this.translate);
-  protected readonly versioningOptions = mapToOptions(s3VersioningLabels, this.translate);
+  private readonly versioningBaseOptions = mapToOptions(s3VersioningLabels, this.translate);
   protected readonly multipartEtagOptions = mapToOptions(s3MultipartEtagLabels, this.translate);
   protected readonly objectLockModeOptions: TnSelectOption<S3ObjectLockMode | null>[] = [
     { label: this.translate.instant('No default rule'), value: null },
@@ -259,8 +259,32 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     }));
   });
 
+  /**
+   * Whether middleware would refuse a return to OFF: it gates the *transition*, so the stored value
+   * decides, not what the form currently shows. A bucket that arrived versioned can move between
+   * Enabled and Suspended but never back, since its stored versions would go unreachable.
+   * `sharing.s3.force_disable_versioning` is the deliberate way through, and it lives in the list.
+   */
+  private readonly versioningIsOneWay = computed(() => {
+    const stored = this.bucket()?.versioning;
+    return !!stored && stored !== S3Versioning.Off;
+  });
+
+  /** Off is offered but refused on such a bucket, the way Multiprotocol is under object lock. */
+  protected readonly versioningOptions = computed<TnSelectOption<S3Versioning>[]>(() => {
+    return this.versioningBaseOptions.map((option) => ({
+      ...option,
+      disabled: this.versioningIsOneWay() && option.value === S3Versioning.Off,
+    }));
+  });
+
   protected readonly versioningHint = computed(() => {
-    return this.isObjectLockOn() ? this.translate.instant(this.helptext.versioningLockedHint) : '';
+    if (this.isObjectLockOn()) {
+      return this.translate.instant(this.helptext.versioningLockedHint);
+    }
+    // Said in the form rather than left to the save: the select is where someone goes to turn it
+    // off, and middleware's refusal would otherwise be the first they hear of it.
+    return this.versioningIsOneWay() ? this.translate.instant(this.helptext.versioningOneWayHint) : '';
   });
 
   protected readonly objectOwnershipHint = computed(() => {

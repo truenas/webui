@@ -649,8 +649,37 @@ describe('S3BucketFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(true);
     });
 
-    it('does not let a hidden snapshot listing limit block Save, and sends the stored limit instead', async () => {
+    it('refuses to take versioning back to Off on a bucket that already has it', async () => {
       await clickAdvancedOptions();
+      const versioning = await getSelect('versioning');
+
+      // Middleware gates the transition, not the state: a bucket that arrived versioned may move
+      // between Enabled and Suspended, never back to Off. Said here rather than left to the save.
+      await versioning.selectOption('Off');
+      expect(await versioning.getDisplayText()).toBe('Enabled');
+      expect(spectator.component.form.controls.versioning.value).toBe(S3Versioning.Enabled);
+
+      // Suspended is still reachable — it keeps the stored versions.
+      await versioning.selectOption('Suspended');
+      expect(spectator.component.form.controls.versioning.value).toBe(S3Versioning.Suspended);
+
+      // And the hint says where the deliberate way through lives.
+      const field = await loader.getHarness(TnFormFieldHarness.with({ label: 'Versioning' }));
+      expect(await field.getHint()).toContain('Force Disable Versioning');
+    });
+
+    it('does not let a hidden snapshot listing limit block Save, and sends the stored limit instead', async () => {
+      // A bucket stored unversioned, because the one it is turned back off from has to be one the
+      // form still offers Off for: middleware gates the transition on the *stored* value, so a
+      // bucket that arrived versioned can never return to Off here.
+      spectator = createComponent({
+        props: { bucket: { ...existingBucket, versioning: S3Versioning.Off } as S3Bucket },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      api = spectator.inject(ApiService);
+
+      await clickAdvancedOptions();
+      await (await getSelect('versioning')).selectOption('Enabled');
       // The CDK harness cannot type an empty string, so an out-of-range value stands in for a blank one.
       await (await getInput('snapshot_versions_max')).setValue('0');
       expect(spectator.component.canSubmit()).toBe(false);
