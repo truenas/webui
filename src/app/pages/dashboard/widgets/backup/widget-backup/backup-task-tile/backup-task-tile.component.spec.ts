@@ -57,6 +57,24 @@ describe('BackupTaskTileComponent', () => {
       spectator.detectChanges();
 
       expect(spectator.query('.backup-actions')).toExist();
+      // The narrow, stacked layout trades title size for the room the actions need.
+      expect(spectator.query('.tile-content')).toHaveClass('with-actions');
+    });
+
+    it('should not show backup actions if the tile has send tasks of its own', () => {
+      const mockTile = {
+        title: 'Has Send Tasks',
+        totalSend: 1,
+        failedSend: 0,
+        totalReceive: 0,
+        failedReceive: 0,
+      };
+      spectator.setInput('tile', mockTile);
+      spectator.setInput('hasSendTasks', true);
+      spectator.detectChanges();
+
+      expect(spectator.query('.backup-actions')).not.toExist();
+      expect(spectator.query('.tile-content')).not.toHaveClass('with-actions');
     });
   });
 

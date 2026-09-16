@@ -323,6 +323,65 @@ describe('WidgetBackupComponent', () => {
     });
   });
 
+  describe('pull-only groups alongside a TrueCloud Backup task', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        props: {
+          size: SlotSize.Full,
+        },
+        providers: [
+          mockProvider(WidgetResourcesService, {
+            backups$: of([
+              [{
+                id: 1,
+                direction: Direction.Pull,
+                state: {
+                  state: TaskState.Error,
+                  datetime: { $date: currentDatetime.getTime() - 50000 },
+                },
+              } as ReplicationTask],
+              [{
+                id: 1,
+                direction: Direction.Push,
+                job: {
+                  state: JobState.Success,
+                  time_finished: { $date: currentDatetime.getTime() - 50000 },
+                },
+              }] as RsyncTask[],
+              [{
+                id: 1,
+                direction: Direction.Pull,
+                job: {
+                  state: JobState.Success,
+                  time_finished: { $date: currentDatetime.getTime() - 50000 },
+                },
+              }] as CloudSyncTask[],
+              [{
+                id: 1,
+                job: {
+                  state: JobState.Success,
+                  time_finished: { $date: currentDatetime.getTime() - 50000 },
+                },
+              }] as CloudBackup[],
+            ]),
+          }),
+        ],
+      });
+
+      widgetBackup = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, WidgetBackupHarness);
+    });
+
+    it('shows backup actions on every group that only receives', async () => {
+      expect(await widgetBackup.getBannerMessage()).toBeNull();
+      expect(await widgetBackup.getBackupActionMessages()).toEqual({
+        'Cloud Sync': 'Backup  to cloud  or  to another TrueNAS',
+        Replication: 'Backup  to cloud  or  to another TrueNAS',
+        Rsync: null,
+        'TrueCloud Backup': null,
+      });
+    });
+  });
+
   describe('disabled tasks', () => {
     beforeEach(async () => {
       spectator = createComponent({
