@@ -98,6 +98,17 @@
         <tn-select formControlName="versioning" [options]="versioningOptions()"></tn-select>
       </tn-form-field>
 
+      @if (canForceDisableVersioning()) {
+        <tn-button
+          *ixRequiresRoles="requiredRoles"
+          variant="outline"
+          color="warn"
+          testId="force-disable-versioning"
+          [label]="'Force Disable Versioning' | translate"
+          (onClick)="forceDisableVersioning()"
+        ></tn-button>
+      }
+
       @if (form.controls.versioning.value !== S3Versioning.Off) {
         <tn-form-field
           [label]="'Snapshot Versions' | translate"

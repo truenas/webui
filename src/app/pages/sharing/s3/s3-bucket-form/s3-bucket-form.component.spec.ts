@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnAutocompleteHarness, TnCheckboxHarness, TnChipInputHarness, TnDialog, TnFormFieldHarness,
+  TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnDialog, TnFormFieldHarness,
   TnFormListHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -20,6 +20,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { S3Bucket } from 'app/interfaces/s3.interface';
 import { User } from 'app/interfaces/user.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxUserComboboxComponent,
 } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
@@ -102,6 +103,7 @@ describe('S3BucketFormComponent', () => {
       mockApi([
         mockCall('sharing.s3.create'),
         mockCall('sharing.s3.update'),
+        mockCall('sharing.s3.force_disable_versioning'),
         mockCall('sharing.s3.audit_choices', { GetObject: 'GetObject', PutObject: 'PutObject' }),
         mockCall('pool.filesystem_choices', ['tank', 'tank/buckets', 'tank/buckets/photos']),
         mockCall('user.query', [
@@ -111,6 +113,7 @@ describe('S3BucketFormComponent', () => {
         mockCall('group.query', [{ group: 'staff', gid: 1001 }] as Group[]),
       ]),
       mockAuth(),
+      mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
       mockEntitlements(),
       mockProvider(DatasetService, {
         getDatasetNodeProvider: () => () => of([]),
@@ -666,6 +669,37 @@ describe('S3BucketFormComponent', () => {
       // And the hint says where the deliberate way through lives.
       const field = await loader.getHarness(TnFormFieldHarness.with({ label: 'Versioning' }));
       expect(await field.getHint()).toContain('Force Disable Versioning');
+    });
+
+    it('offers the destructive way out beside the option it unlocks, and applies it', async () => {
+      await clickAdvancedOptions();
+
+      const force = await loader.getHarness(TnButtonHarness.with({ label: 'Force Disable Versioning' }));
+      await force.click();
+
+      // A confirmation checkbox rather than a plain yes: `sharing.s3.update` refuses this
+      // transition precisely because the versions cannot survive it.
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+        expect.objectContaining({ confirmationCheckboxText: expect.any(String), buttonColor: 'warn' }),
+      );
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.force_disable_versioning', [7]);
+
+      // The open form follows the saved bucket, so a later Save cannot write the old values back.
+      expect(spectator.component.form.controls.versioning.value).toBe(S3Versioning.Off);
+      expect(spectator.component.form.controls.snapshot_versions.value).toEqual([]);
+    });
+
+    it('does not offer it on a locked bucket, which keeps its history', async () => {
+      spectator = createComponent({
+        props: { bucket: { ...existingBucket, object_lock: true } as S3Bucket },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await clickAdvancedOptions();
+
+      // Middleware refuses those outright, so the hint carries the reason instead of a button.
+      expect(await loader.hasHarness(TnButtonHarness.with({ label: 'Force Disable Versioning' }))).toBe(false);
+      const field = await loader.getHarness(TnFormFieldHarness.with({ label: 'Versioning' }));
+      expect(await field.getHint()).toContain('object lock');
     });
 
     it('does not let a hidden snapshot listing limit block Save, and sends the stored limit instead', async () => {
