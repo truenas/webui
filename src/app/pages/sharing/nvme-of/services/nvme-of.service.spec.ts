@@ -1,5 +1,5 @@
-import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
-import { firstValueFrom, of } from 'rxjs';
+import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { firstValueFrom } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
@@ -9,7 +9,6 @@ import {
 } from 'app/interfaces/nvme-of.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
-import { EntitlementsService } from 'app/services/entitlements.service';
 
 describe('NvmeOfService', () => {
   let spectator: SpectatorService<NvmeOfService>;
@@ -24,9 +23,6 @@ describe('NvmeOfService', () => {
         mockCall('rdma.capable_protocols', [RdmaProtocolName.Nvmet]),
         mockCall('nvmet.port_subsys.delete'),
       ]),
-      mockProvider(EntitlementsService, {
-        entitled$: () => of(false),
-      }),
     ],
   });
 
@@ -90,10 +86,25 @@ describe('NvmeOfService', () => {
   });
 
   describe('getSupportedTransports', () => {
-    it('should return supported transports based on license and RDMA', async () => {
+    it('returns TCP and RDMA when system is RDMA capable', async () => {
       const transports = await firstValueFrom(spectator.service.getSupportedTransports());
 
       expect(transports).toEqual([NvmeOfTransportType.Tcp, NvmeOfTransportType.Rdma]);
+    });
+
+    it('returns only TCP when system is not RDMA capable', async () => {
+      spectator.inject(MockApiService).mockCall('rdma.capable_protocols', []);
+
+      const newSpectator = createService();
+      const transports = await firstValueFrom(newSpectator.service.getSupportedTransports());
+
+      expect(transports).toEqual([NvmeOfTransportType.Tcp]);
+    });
+
+    it('never offers Fibre Channel, as it is not supported yet', async () => {
+      const transports = await firstValueFrom(spectator.service.getSupportedTransports());
+
+      expect(transports).not.toContain(NvmeOfTransportType.FibreChannel);
     });
   });
 
