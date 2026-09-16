@@ -31,7 +31,8 @@ export const helptextSharingS3 = {
  already holds would go unreachable. Suspend it to stop new versions while keeping those, or force it off below,\
  which destroys them.'),
   snapshotVersionsTooltip: T('Patterns over the names of the bucket dataset\'s ZFS snapshots, with <i>*</i> and\
- <i>?</i> as the only wildcards. Every matching snapshot serves each object\'s state as a read-only version.'),
+ <i>?</i> as the only wildcards. Every matching snapshot serves each object\'s state as a read-only version.\
+ Independent of versioning: works whether it is on or off. Leave empty to serve no snapshots.'),
   snapshotVersionsMaxTooltip: T('How many of the newest matching snapshots one version listing consults.'),
   multipartEtagTooltip: T('<b>Composite</b> is the standard S3 construction and costs an MD5 pass over every\
  part. <b>Minted</b> skips that pass and gives the object an opaque token. Choose Minted only where nothing\
@@ -79,7 +80,8 @@ export const helptextSharingS3 = {
   forceDisableVersioningMessage: T('Every earlier version of every object in this bucket, and every delete\
  marker, is destroyed. Version history stops being served at once, and the S3 service reclaims the space in the\
  background. This cannot be undone: turning versioning back on later starts a new history rather than restoring\
- this one. The S3 service restarts to apply the change, so requests are interrupted briefly.'),
+ this one. The snapshot version patterns are cleared as well, so snapshots stop being served as versions until\
+ they are set again. The S3 service restarts to apply the change, so requests are interrupted briefly.'),
   forceDisableVersioningConfirm: T('I understand that the version history of this bucket will be destroyed.'),
   forceDisableVersioningObjectLock: T('A bucket with object lock keeps its version history for as long\
  as the bucket exists.'),
