@@ -58,18 +58,13 @@ export class DiskSizeSelectsComponent implements OnChanges {
   protected readonly treatDiskSizeAsMinimumHint = T('If checked, disks of the selected size or larger will be used. If unchecked, only disks of the selected size will be used.');
 
   /**
-   * `tn-checkbox` emits `label` as the input's `aria-label`, which overrides the projected content
-   * as the accessible name — so it has to carry the hint the surrounding `tn-form-field` renders as
-   * a tooltip. Composed through a translatable pattern so clause order and punctuation stay in the
-   * translator's hands rather than being hard-coded as `+ '. ' +`.
+   * `tn-checkbox` emits `label` as the input's `aria-label`, overriding the projected content as the
+   * accessible name, so the label has to carry the hint the surrounding `tn-form-field` shows as a
+   * tooltip. Composed through a translatable pattern so translators control clause order and punctuation.
    *
-   * The field-level hint the pre-migration checkbox's `[tooltip]` provided cannot be restored as
-   * an `aria-describedby` *description*: in the pinned 0.3.26 only `tn-input`, `tn-select`,
-   * `tn-autocomplete` and `tn-chip-input` consume `TN_FORM_FIELD_CONTEXT`, and `tn-checkbox`'s
-   * `aria-describedby` is hard-wired to its own error id — so the tooltip reaches no screen reader
-   * on its own. Same trade-off, and same reference, as `UnlockSedDisksComponent`: see the
-   * tn-migration playbook's "Known upstream defects" table, and revisit once `tn-checkbox` wires
-   * up the field context.
+   * The tooltip can't be exposed as an `aria-describedby` description: `tn-checkbox` doesn't consume
+   * `TN_FORM_FIELD_CONTEXT` and hard-wires `aria-describedby` to its own error id. Same trade-off as
+   * `UnlockSedDisksComponent`; revisit once `tn-checkbox` wires up the field context.
    */
   protected readonly treatDiskSizeAsMinimumAriaLabel = translated((translate) => translate.instant(
     '{label}. {hint}',

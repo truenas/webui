@@ -32,7 +32,7 @@
     <tn-form-section>
       <tn-form-field [label]="'Add Disks To:' | translate">
         <!-- Options are projected, not passed as `[options]`, so each `<tn-radio>` can pin the
-             legacy `radio-button-*` id — see the radio-group test-id recipe in the tn playbook. -->
+             legacy `radio-button-*` id. -->
         <tn-radio-group formControlName="toPool">
           @for (option of toPoolOptions; track option.value) {
             <tn-radio

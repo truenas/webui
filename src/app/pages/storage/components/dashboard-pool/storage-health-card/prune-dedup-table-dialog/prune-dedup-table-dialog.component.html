@@ -2,7 +2,7 @@
 <form class="ix-form-container" [formGroup]="form" (submit)="submit()">
   <tn-form-field [label]="'Prune By' | translate" [required]="true">
     <!-- Options are projected, not passed as `[options]`, so each `<tn-radio>` can pin the
-         legacy `radio-button-*` id — see the radio-group test-id recipe in the tn playbook. -->
+         legacy `radio-button-*` id. -->
     <tn-radio-group formControlName="pruneBy">
       @for (option of pruneByOptions; track option.value) {
         <tn-radio

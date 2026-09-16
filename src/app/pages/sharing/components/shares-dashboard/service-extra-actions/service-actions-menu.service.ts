@@ -122,8 +122,7 @@ export class ServiceActionsMenuService {
    * Card-header status mapper shared by every service card. Maps `ServiceStatus`
    * to the `TnCardHeaderStatus` shape consumed by `tn-card`'s `[headerStatus]`
    * input. Kept here so all five service cards stay in sync on the `default`
-   * branch — divergence there is the easy, silent inconsistency the playbook
-   * warns about.
+   * branch, where divergence would be easy to miss.
    */
   buildCardHeaderStatus(service: Service | undefined): TnCardHeaderStatus | undefined {
     if (!service) {
