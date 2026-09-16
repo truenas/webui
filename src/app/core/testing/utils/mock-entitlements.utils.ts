@@ -25,6 +25,9 @@ export function mockEntitlements(
   return mockProvider(EntitlementsService, {
     entitled$: (feature: EntitlementFeature) => of(!(feature in reasons)),
     entitled: (feature: EntitlementFeature) => () => !(feature in reasons),
+    // The two differ only on a key the map does not carry, which `denied` cannot express:
+    // everything here is either granted or denied outright.
+    entitledStrictly: (feature: EntitlementFeature) => () => !(feature in reasons),
     entitlement: (feature: EntitlementFeature) => () => {
       const reason = reasons[feature];
       return reason

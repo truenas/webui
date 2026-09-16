@@ -1,0 +1,19 @@
+<!--
+  The name leads with the visible word and then explains: "Premium" alone tells
+  a screen-reader user nothing about why the controls beside it will not
+  respond, but dropping it breaks WCAG 2.5.3 Label in Name — a voice-control
+  user reading the tag says "click Premium", which has to match.
+
+  Composed from the two keys the button already uses rather than from one
+  interpolated key: both stay reactive, so a runtime language switch moves the
+  name with the visible word.
+-->
+<button
+  type="button"
+  class="premium-badge"
+  matTooltipPosition="above"
+  [ixTest]="[testId(), 'premium']"
+  [matTooltip]="explanation | translate"
+  [attr.aria-label]="('Premium' | translate) + ': ' + (explanation | translate)"
+  (click)="toggleExplanation()"
+>{{ 'Premium' | translate }}</button>

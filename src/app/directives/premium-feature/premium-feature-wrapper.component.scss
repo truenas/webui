@@ -1,0 +1,62 @@
+:host {
+  display: block;
+}
+
+.premium-feature {
+  position: relative;
+}
+
+.premium-feature__badge {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+}
+
+.premium-feature__content {
+  cursor: not-allowed;
+
+  // The content is inert, not merely dim: `disableFocusableElements` takes the
+  // keyboard out, and this takes the pointer out. The controls rather than
+  // everything, as `missing-access-wrapper.component.scss` does: an ix-checkbox
+  // or ix-slide-toggle exposes a <label> rather than the <input> that directive
+  // disables, so those need it, but a blanket rule reaches the help text too.
+  //
+  // Named by host element because the sweep writes `disabled` onto a control's
+  // *inner* input, which leaves the component's own chrome undimmed. The
+  // trailing `[disabled]` catches anything rendered as a plain control.
+  ::ng-deep {
+    a,
+    button,
+    ix-checkbox,
+    ix-checkbox-list,
+    ix-chips,
+    ix-combobox,
+    ix-date-picker,
+    ix-explorer,
+    ix-file-input,
+    ix-input,
+    ix-ip-input-with-netmask,
+    ix-permissions,
+    ix-radio-group,
+    ix-select,
+    ix-slide-toggle,
+    ix-textarea,
+    [disabled] {
+      // Dimmed here rather than over the whole region. WCAG 1.4.3 exempts inactive controls from
+      // the contrast minimum; the static text beside them is not exempt, and the heading, labels
+      // and hints are what an administrator is being shown a denied feature for.
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    // Except the help, which explains rather than operates — the other half of `keepFocusable`
+    // on the host. A more specific selector than the element rules above.
+    ix-tooltip,
+    ix-tooltip .tooltip-icon {
+      cursor: help;
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}

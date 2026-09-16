@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -12,8 +12,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, map, of, shareReplay,
 } from 'rxjs';
+import { PremiumFeatureDirective } from 'app/directives/premium-feature/premium-feature.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import {
@@ -54,11 +56,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { createS3GrantFormGroup, S3GrantFormGroup, toS3Grants } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
 import { S3GrantsListComponent } from 'app/pages/sharing/s3/s3-grants-list/s3-grants-list.component';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
-import { selectLicense } from 'app/store/system-info/system-info.selectors';
 
 type ListenerFormGroup = FormGroup<{
   address: FormControl<string>;
@@ -89,6 +91,7 @@ const defaultPort = 9000;
     WithManageCertificatesLinkComponent,
     S3GrantsListComponent,
     FormActionsComponent,
+    PremiumFeatureDirective,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -106,6 +109,7 @@ export class ServiceS3Component implements OnInit {
   private filesystemService = inject(FilesystemService);
   private validatorsService = inject(IxValidatorsService);
   private store$ = inject(Store<AppState>);
+  private entitlements = inject(EntitlementsService);
   private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
@@ -115,7 +119,13 @@ export class ServiceS3Component implements OnInit {
   /**
    * Auditing needs a license. Mirrors the middleware check (`system.license` is set).
    */
-  protected readonly isLicensed = toSignal(this.store$.select(selectLicense).pipe(map((license) => !!license)));
+  /**
+   * Auditing is a licensed feature, decided by middleware's entitlement engine rather than by
+   * the chassis: `S3_AUDIT` is a key-only rule, so an appliance and a community system with the
+   * same key are both entitled. Read strictly — a map without the key is a middleware that
+   * cannot enforce it either.
+   */
+  protected readonly hasAudit = this.entitlements.entitledStrictly(EntitlementFeature.S3Audit);
   protected readonly S3AuditMode = S3AuditMode;
 
   form = this.fb.group({
@@ -217,7 +227,11 @@ export class ServiceS3Component implements OnInit {
       log_level: values.log_level,
       managed_root_dataset: this.toDatasetName(values.managed_root_dataset),
       global_grants: toS3Grants(this.form.controls.global_grants.controls),
-      ...(this.isLicensed()
+      // Omitted rather than sent as the form's defaults when the appliance has no key:
+      // middleware rejects audit settings it is not entitled to, and the controls the user saw
+      // were inert, so nothing on screen was theirs to send. Only an outright denial omits it:
+      // `undefined` is the map still loading, and the fields are live on screen meanwhile.
+      ...(this.hasAudit() !== false
         ? {
             default_audit: this.formToAuditMask(values.default_audit_mode, values.default_audit_actions),
             default_audit_overflow: values.default_audit_overflow,

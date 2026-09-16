@@ -8,7 +8,9 @@ import { filter } from 'rxjs/operators';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementEntry } from 'app/interfaces/entitlement.interface';
 import { AppState } from 'app/store';
-import { selectEntitlement, selectIsEntitled } from 'app/store/entitlements/entitlements.selectors';
+import {
+  selectEntitlement, selectIsEntitled, selectIsEntitledStrictly,
+} from 'app/store/entitlements/entitlements.selectors';
 
 /**
  * Reads middleware's entitlement decisions; never recomputes them.
@@ -30,7 +32,11 @@ export class EntitlementsService {
     EntitlementFeature, MemoizedSelector<object, EntitlementEntry | undefined>
   >();
 
+  private readonly strictSelectors = new Map<EntitlementFeature, MemoizedSelector<object, boolean | undefined>>();
+
   private readonly entitledSignals = new Map<EntitlementFeature, Signal<boolean | undefined>>();
+
+  private readonly strictSignals = new Map<EntitlementFeature, Signal<boolean | undefined>>();
   private readonly entrySignals = new Map<EntitlementFeature, Signal<EntitlementEntry | undefined>>();
 
   /** `undefined` while loading, deliberately not `false`. Check for it if a surface needs
@@ -38,6 +44,18 @@ export class EntitlementsService {
   entitled(feature: EntitlementFeature): Signal<boolean | undefined> {
     return this.cached(this.entitledSignals, feature, () => toSignal(
       this.store$.select(this.entitledSelector(feature)),
+      { injector: this.injector },
+    ));
+  }
+
+  /**
+   * For a feature the UI will not offer without an affirmative grant: a loaded map missing the
+   * key reads as denied, not as ungated. `undefined` still means loading. See
+   * `selectIsEntitledStrictly` for when this is the right one to reach for.
+   */
+  entitledStrictly(feature: EntitlementFeature): Signal<boolean | undefined> {
+    return this.cached(this.strictSignals, feature, () => toSignal(
+      this.store$.select(this.strictSelector(feature)),
       { injector: this.injector },
     ));
   }
@@ -59,6 +77,10 @@ export class EntitlementsService {
 
   private entitledSelector(feature: EntitlementFeature): MemoizedSelector<object, boolean | undefined> {
     return this.cached(this.entitledSelectors, feature, () => selectIsEntitled(feature));
+  }
+
+  private strictSelector(feature: EntitlementFeature): MemoizedSelector<object, boolean | undefined> {
+    return this.cached(this.strictSelectors, feature, () => selectIsEntitledStrictly(feature));
   }
 
   private entrySelector(feature: EntitlementFeature): MemoizedSelector<object, EntitlementEntry | undefined> {
