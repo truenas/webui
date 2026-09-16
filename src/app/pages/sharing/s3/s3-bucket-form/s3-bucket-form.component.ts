@@ -7,10 +7,11 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  map, merge, Observable, of,
+  filter, map, merge, Observable, of, switchMap,
 } from 'rxjs';
 import { PremiumFeatureDirective } from 'app/directives/premium-feature/premium-feature.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -39,6 +40,7 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSharingS3 } from 'app/helptext/sharing';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { S3AuditMask, S3Bucket, S3BucketCreate } from 'app/interfaces/s3.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -61,6 +63,7 @@ import {
 } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
@@ -87,12 +90,15 @@ export const s3BucketNamePattern = /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/;
     PremiumFeatureDirective,
     RequiresRolesDirective,
     MatButton,
+    MatTooltip,
     TestDirective,
     TranslateModule,
   ],
 })
 export class S3BucketFormComponent implements OnInit {
   private api = inject(ApiService);
+  private dialog = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -109,6 +115,27 @@ export class S3BucketFormComponent implements OnInit {
 
   protected readonly existingBucket = this.slideInRef.getData();
   protected readonly isNew = !this.existingBucket;
+
+  /**
+   * Whether middleware would refuse a return to OFF: it gates the *transition*, so the stored value
+   * decides, not what the form currently shows. A bucket that arrived versioned can move between
+   * Enabled and Suspended but never back, since its stored versions would go unreachable.
+   * `sharing.s3.force_disable_versioning` is the deliberate way through, offered below the select.
+   */
+  private readonly versioningIsOneWay = !!this.existingBucket && this.existingBucket.versioning !== S3Versioning.Off;
+
+  /**
+   * Object lock is latched on the dataset root and middleware refuses to lower it — "Object lock
+   * cannot be disabled once enabled". So a bucket that arrived locked shows the box ticked and held,
+   * rather than letting it be unticked into a save that can only fail.
+   */
+  protected readonly objectLockIsLatched = !!this.existingBucket?.object_lock;
+
+  /**
+   * Whether to show the destructive way out of versioning. Shown on a locked bucket too, disabled:
+   * middleware refuses those, and an absent button cannot say why.
+   */
+  protected readonly canForceDisableVersioning = this.versioningIsOneWay;
   protected readonly isLoading = signal(false);
   protected readonly isAdvancedMode = signal(false);
   /**
@@ -131,7 +158,12 @@ export class S3BucketFormComponent implements OnInit {
 
   private readonly permissionsModelBaseOptions = mapToOptions(s3PermissionsModelLabels, this.translate);
   protected readonly objectOwnershipOptions$ = of(mapToOptions(s3ObjectOwnershipLabels, this.translate));
-  protected readonly versioningOptions$ = of(mapToOptions(s3VersioningLabels, this.translate));
+  /** Off is offered but refused on a bucket that already has versioning, the way Multiprotocol is under object lock. */
+  protected readonly versioningOptions$ = of(mapToOptions(s3VersioningLabels, this.translate).map((option) => ({
+    ...option,
+    disabled: this.versioningIsOneWay && option.value === S3Versioning.Off,
+  })));
+
   protected readonly multipartEtagOptions$ = of(mapToOptions(s3MultipartEtagLabels, this.translate));
   protected readonly objectLockModeOptions$ = of(mapToOptions(s3ObjectLockModeLabels, this.translate));
   protected readonly auditModeOptions$ = of(mapToOptions(s3AuditModeLabels, this.translate));
@@ -188,7 +220,16 @@ export class S3BucketFormComponent implements OnInit {
    */
   protected readonly datasetControl = new FormControl({ value: this.existingBucket?.dataset ?? '', disabled: true });
 
-  private readonly formValue = toSignal(this.form.valueChanges, { initialValue: this.form.value });
+  /**
+   * `getRawValue()` rather than the emitted value: a disabled control is omitted from
+   * `valueChanges`, and object lock is disabled to hold a latched bucket rather than to drop it.
+   * Reading the emitted value would make `isObjectLockOn()` go false the moment the latch disabled
+   * the box, and the sections that depend on it would follow.
+   */
+  private readonly formValue = toSignal(
+    this.form.valueChanges.pipe(map(() => this.form.getRawValue())),
+    { initialValue: this.form.getRawValue() },
+  );
 
   protected readonly datasetHint = computed(() => {
     if (!this.isNew) {
@@ -221,6 +262,13 @@ export class S3BucketFormComponent implements OnInit {
    * actually cleared and disabled the control, and the one the user can do something about.
    */
   protected readonly objectLockHint = computed(() => {
+    if (this.objectLockIsLatched) {
+      return this.translate.instant(this.helptext.objectLockLatchedHint);
+    }
+    // Said while the box is ticked but not yet saved: this is the last moment it can be undone.
+    if (this.isObjectLockOn()) {
+      return this.translate.instant(this.helptext.objectLockPermanentWarning);
+    }
     if (this.isMultiprotocol()) {
       return this.translate.instant(this.helptext.objectLockMultiprotocolHint);
     }
@@ -242,8 +290,55 @@ export class S3BucketFormComponent implements OnInit {
   );
 
   protected readonly versioningHint = computed(() => {
-    return this.isObjectLockOn() ? this.translate.instant(this.helptext.versioningLockedHint) : '';
+    // The latch first: "kept enabled while object lock is on" would suggest that turning the lock
+    // off frees it, and a latched lock can never be turned off.
+    if (this.objectLockIsLatched) {
+      return this.translate.instant(this.helptext.versioningOneWayLockedHint);
+    }
+    if (this.isObjectLockOn()) {
+      return this.translate.instant(this.helptext.versioningLockedHint);
+    }
+    // Said in the form rather than left to the save: the select is where someone goes to turn it
+    // off, and middleware's refusal would otherwise be the first they hear of it.
+    return this.versioningIsOneWay ? this.translate.instant(this.helptext.versioningOneWayHint) : '';
   });
+
+  /**
+   * The deliberate way out of versioning, offered beside the option it unlocks.
+   *
+   * `sharing.s3.update` refuses a return to OFF because the versions the bucket has accumulated
+   * cannot survive it, so middleware exposes this separately and the confirmation asks for the
+   * destruction explicitly rather than for a yes. It applies at once, independently of this form.
+   */
+  protected forceDisableVersioning(): void {
+    const bucket = this.existingBucket;
+    if (!bucket) {
+      return;
+    }
+
+    this.dialog.confirm({
+      title: this.translate.instant('Force disable versioning on "{name}"?', { name: bucket.name }),
+      message: this.translate.instant(this.helptext.forceDisableVersioningMessage),
+      confirmationCheckboxText: this.translate.instant(this.helptext.forceDisableVersioningConfirm),
+      buttonText: this.translate.instant('Force Disable'),
+      buttonColor: 'warn',
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => this.api.call('sharing.s3.force_disable_versioning', [bucket.id])),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: () => {
+        this.snackbar.success(this.translate.instant(this.helptext.forceDisableVersioningSuccess));
+        // Closed as a success, which is what makes the opener reload. Its row is what the next Edit
+        // opens with, so leaving it stale would bring back `versioning: Enabled` — and a later Save
+        // of anything else would send that, re-enabling versioning on the bucket just forced off.
+        this.slideInRef.close({ response: true });
+      },
+      // Shown rather than swallowed: middleware also refuses a bucket whose dataset root carries
+      // the object-lock latch even when the row does not say so, and that reason is worth reading.
+      error: (error: unknown) => this.errorHandler.showErrorModal(error),
+    });
+  }
 
   get title(): string {
     return this.isNew
@@ -434,6 +529,14 @@ export class S3BucketFormComponent implements OnInit {
 
   private syncObjectLockAvailability(): void {
     const control = this.form.controls.object_lock;
+    // Latched buckets keep the box ticked and inert: middleware refuses to lower object lock, so
+    // offering the untick would only produce a save that fails.
+    if (this.objectLockIsLatched) {
+      if (control.enabled) {
+        control.disable({ emitEvent: false });
+      }
+      return;
+    }
     if (this.canUseObjectLock()) {
       if (control.disabled) {
         control.enable({ emitEvent: false });

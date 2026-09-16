@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatTooltip } from '@angular/material/tooltip';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -17,6 +18,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { S3Bucket } from 'app/interfaces/s3.interface';
 import { User } from 'app/interfaces/user.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
@@ -80,12 +82,14 @@ describe('S3BucketFormComponent', () => {
         ] as User[]),
         mockCall('sharing.s3.create'),
         mockCall('sharing.s3.update'),
+        mockCall('sharing.s3.force_disable_versioning'),
         mockCall('sharing.s3.audit_choices', { GetObject: 'GetObject', PutObject: 'PutObject' }),
         mockCall('pool.filesystem_choices', ['tank', 'tank/buckets', 'tank/buckets/photos']),
         mockCall('group.query', [{ group: 'staff', gid: 1001 }] as Group[]),
       ]),
       mockAuth(),
       mockProvider(SnackbarService),
+      mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
       mockProvider(DatasetService, {
         getDatasetNodeProvider: () => () => of([]),
       }),
@@ -113,6 +117,13 @@ describe('S3BucketFormComponent', () => {
 
   const getCheckbox = async (label: string): Promise<IxCheckboxHarness> => {
     return await form.getControl(label) as IxCheckboxHarness;
+  };
+
+  /** A fieldset's text by its legend: the ix-* harnesses here do not expose hints. */
+  const sectionText = (title: string): string => {
+    return spectator.queryAll('ix-fieldset')
+      .find((element) => element.querySelector('legend')?.textContent?.includes(title))
+      ?.textContent ?? '';
   };
 
   describe('creating a bucket', () => {
@@ -156,6 +167,16 @@ describe('S3BucketFormComponent', () => {
       const released = await getSelect('Versioning');
       expect(await released.isDisabled()).toBe(false);
       expect(await released.getValue()).toBe('Off');
+    });
+
+    it('warns that object lock is permanent while it is ticked but not yet saved', async () => {
+      expect(sectionText('Object Lock')).not.toContain('permanent');
+
+      await form.fillForm({ 'Enable Object Lock': true });
+      expect(sectionText('Object Lock')).toContain('permanent once saved');
+
+      await form.fillForm({ 'Enable Object Lock': false });
+      expect(sectionText('Object Lock')).not.toContain('permanent');
     });
 
     it('creates a bucket with object lock, versioning and the Compliance default rule', async () => {
@@ -490,6 +511,37 @@ describe('S3BucketFormComponent', () => {
       }]);
     });
 
+    it('refuses to take versioning back to Off on a bucket that already has it', async () => {
+      await clickAdvancedOptions();
+      const versioning = await getSelect('Versioning');
+
+      // Middleware gates the transition, not the state: a bucket that arrived versioned may move
+      // between Enabled and Suspended, never back to Off. Said here rather than left to the save.
+      await versioning.setValue('Off');
+      expect(spectator.component.form.controls.versioning.value).toBe(S3Versioning.Enabled);
+
+      await versioning.setValue('Suspended');
+      expect(spectator.component.form.controls.versioning.value).toBe(S3Versioning.Suspended);
+
+      expect(sectionText('Versioning')).toContain('force it off below');
+    });
+
+    it('offers the destructive way out beside the option it unlocks, and applies it', async () => {
+      await clickAdvancedOptions();
+
+      await (await loader.getHarness(MatButtonHarness.with({ text: 'Force Disable Versioning' }))).click();
+
+      // A confirmation checkbox rather than a plain yes: `sharing.s3.update` refuses this transition
+      // precisely because the versions cannot survive it.
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+        expect.objectContaining({ confirmationCheckboxText: expect.any(String), buttonColor: 'warn' }),
+      );
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.force_disable_versioning', [7]);
+      // Closed as a success, so the opener reloads. A stale row would reopen with versioning on, and
+      // an unrelated Save from it would re-enable versioning on the bucket just forced off.
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+    });
+
     it('updates the bucket without sending the dataset', async () => {
       await form.fillForm({
         Owner: 'bob',
@@ -539,6 +591,39 @@ describe('S3BucketFormComponent', () => {
       await form.fillForm({ 'Enable Object Lock': true });
 
       expect(spectator.component.form.controls.object_lock_default_mode.value).toBeNull();
+    });
+  });
+
+  describe('editing a bucket that already has object lock', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ ...existingBucket, object_lock: true }) }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('holds object lock, which middleware will not lower', async () => {
+      const lock = await getCheckbox('Enable Object Lock');
+      expect(await lock.getValue()).toBe(true);
+      expect(await lock.isDisabled()).toBe(true);
+      expect(sectionText('Object Lock')).toContain('cannot be turned off');
+    });
+
+    it('shows Force Disable Versioning disabled, with the reason where a hover reaches it', async () => {
+      await clickAdvancedOptions();
+
+      const force = await loader.getHarness(MatButtonHarness.with({ text: 'Force Disable Versioning' }));
+      expect(await force.isDisabled()).toBe(true);
+
+      const reason = spectator.query('.force-disable-versioning', { read: MatTooltip });
+      expect(reason?.message).toContain('keeps its version history');
+      expect(reason?.disabled).toBe(false);
+
+      // And the select says the state is permanent, not "while object lock is on".
+      expect(sectionText('Versioning')).toContain('for as long as this bucket exists');
     });
   });
 
