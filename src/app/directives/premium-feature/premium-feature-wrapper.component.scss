@@ -50,6 +50,21 @@
       pointer-events: none;
     }
 
+    // Material's checkbox and slide toggle paint a state layer behind the control, and every
+    // rule that would blank it is keyed on `.mat-mdc-checkbox-disabled` / `.mat-mdc-slide-toggle
+    // -disabled` — classes Angular Material applies from its own `[disabled]` *input*.
+    // `disableFocusableElements` writes the attribute onto the native <input> instead, by design:
+    // this wrapper is presentation only, and disabling the FormControl would drop the field from
+    // `valueChanges` and out of the saved payload. So the component never learns it is disabled,
+    // those rules stay inert, and the enabled state layer shows through as a tinted square.
+    // Removed here rather than recoloured, since a locked control has no state worth showing.
+    .mdc-checkbox__ripple,
+    .mat-mdc-checkbox-ripple,
+    .mat-mdc-slide-toggle .mat-ripple,
+    .mat-focus-indicator {
+      display: none;
+    }
+
     // Except the help, which explains rather than operates — the other half of `keepFocusable`
     // on the host. A more specific selector than the element rules above.
     ix-tooltip,
