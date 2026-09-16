@@ -94,6 +94,29 @@
             [required]="true"
           ></ix-select>
 
+          @if (canForceDisableVersioning) {
+            <!-- The reason hangs on a wrapper: a disabled button emits no pointer events of its own,
+              so a tooltip on the button itself would never see the hover that should explain it. -->
+            <span
+              class="force-disable-versioning"
+              matTooltipPosition="above"
+              [matTooltip]="helptext.forceDisableVersioningObjectLock | translate"
+              [matTooltipDisabled]="!objectLockIsLatched"
+            >
+              <button
+                *ixRequiresRoles="requiredRoles"
+                mat-stroked-button
+                type="button"
+                color="warn"
+                ixTest="force-disable-versioning"
+                [disabled]="objectLockIsLatched"
+                (click)="forceDisableVersioning()"
+              >
+                {{ 'Force Disable Versioning' | translate }}
+              </button>
+            </span>
+          }
+
           @if (form.controls.versioning.value !== S3Versioning.Off) {
             <ix-chips
               formControlName="snapshot_versions"

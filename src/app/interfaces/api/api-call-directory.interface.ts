@@ -807,6 +807,7 @@ export interface ApiCallDirectory {
   'sharing.s3.audit_choices': { params: void; response: Choices };
   'sharing.s3.create': { params: [S3BucketCreate]; response: S3Bucket };
   'sharing.s3.delete': { params: [id: number]; response: boolean };
+  'sharing.s3.force_disable_versioning': { params: [id: number]; response: S3Bucket };
   'sharing.s3.query': { params: QueryParams<S3Bucket>; response: S3Bucket[] };
   'sharing.s3.update': { params: [id: number, update: S3BucketUpdate]; response: S3Bucket };
   'sharing.smb.create': { params: [Partial<SmbShare>]; response: SmbShare };
