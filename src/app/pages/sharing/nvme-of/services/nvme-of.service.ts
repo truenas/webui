@@ -1,49 +1,40 @@
 import { Injectable, inject } from '@angular/core';
 import {
-  combineLatest,
   from, mergeMap, Observable, of, switchMap, toArray,
 } from 'rxjs';
 import { catchError, map, shareReplay, take } from 'rxjs/operators';
-import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { NvmeOfHost, NvmeOfPort, NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { EntitlementsService } from 'app/services/entitlements.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NvmeOfService {
   private api = inject(ApiService);
-  private entitlements = inject(EntitlementsService);
 
   private maxConcurrentRequests = 15;
 
   private rdmaCapable$: Observable<boolean> | null = null;
 
+  /**
+   * Fibre Channel is deliberately not offered: NVMe-oF over FC is not supported yet,
+   * regardless of the Fibre Channel entitlement.
+   */
   getSupportedTransports(): Observable<NvmeOfTransportType[]> {
-    return combineLatest([
-      // Entitlement alone by design (NAS-143012): `fc.capable` is not consulted here.
-      this.entitlements.entitled$(EntitlementFeature.FibreChannel),
-      this.isRdmaCapable(),
-    ])
-      .pipe(
-        map(([hasFibreChannel, isRdmaCapable]) => {
-          const transports = [NvmeOfTransportType.Tcp];
+    return this.isRdmaCapable().pipe(
+      map((isRdmaCapable) => {
+        const transports = [NvmeOfTransportType.Tcp];
 
-          if (hasFibreChannel) {
-            transports.push(NvmeOfTransportType.FibreChannel);
-          }
+        if (isRdmaCapable) {
+          transports.push(NvmeOfTransportType.Rdma);
+        }
 
-          if (isRdmaCapable) {
-            transports.push(NvmeOfTransportType.Rdma);
-          }
-
-          return transports;
-        }),
-        take(1),
-      );
+        return transports;
+      }),
+      take(1),
+    );
   }
 
   isRdmaCapable(): Observable<boolean> {
