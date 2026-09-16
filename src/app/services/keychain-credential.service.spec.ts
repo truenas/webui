@@ -2,7 +2,9 @@ import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/sp
 import { of } from 'rxjs';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
-import { KeychainSshCredentials, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import {
+  KeychainCredentialUsedBy, KeychainSshCredentials, KeychainSshKeyPair,
+} from 'app/interfaces/keychain-credential.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { KeychainCredentialService } from './keychain-credential.service';
@@ -32,6 +34,10 @@ describe('KeychainCredentialService', () => {
     name: 'test',
   } as KeychainSshCredentials;
 
+  const usedBy = [
+    { title: 'Replication task', unbind_method: 'disable' },
+  ] as KeychainCredentialUsedBy[];
+
   const createService = createServiceFactory({
     service: KeychainCredentialService,
     providers: [
@@ -39,7 +45,7 @@ describe('KeychainCredentialService', () => {
         query: jest.fn((_, filters: [string, string, KeychainCredentialType][]) => {
           return of(filters[0][2] === KeychainCredentialType.SshKeyPair ? sshKeys : sshConnections);
         }),
-        call: jest.fn(() => of(newConnection)),
+        call: jest.fn((method: string) => of(method === 'keychaincredential.used_by' ? usedBy : newConnection)),
       }),
     ],
   });
@@ -70,6 +76,16 @@ describe('KeychainCredentialService', () => {
       expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('keychaincredential.query', [
         ['type', '=', KeychainCredentialType.SshCredentials],
       ]);
+    });
+  });
+
+  describe('getUsedBy', () => {
+    it('asks what depends on the credential', () => {
+      service.getUsedBy(2).subscribe((result) => {
+        expect(result).toEqual(usedBy);
+      });
+
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('keychaincredential.used_by', [2]);
     });
   });
 

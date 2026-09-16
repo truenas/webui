@@ -155,6 +155,8 @@ bootstrapApplication(AppComponent, {
     provideAppInitializer(() => {
       // Opens the typed API socket at startup, alongside the legacy one, so its
       // session is already authenticated when the first typed consumer appears.
+      // Unconditional on purpose: migrated pages run entirely on this socket,
+      // so there is no build in which it can be left closed.
       inject(TypedApiService);
     }),
     provideAppInitializer(() => {

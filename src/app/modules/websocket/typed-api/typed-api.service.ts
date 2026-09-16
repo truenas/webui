@@ -19,7 +19,6 @@ import {
   distinctUntilChanged,
   EMPTY,
   filter,
-  finalize,
   map,
   Observable,
   of,
@@ -30,17 +29,16 @@ import {
   throwError,
   timer,
 } from 'rxjs';
-import { v4 as uuidv4 } from 'uuid';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
-import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { dispatchTypedCall } from 'app/modules/websocket/typed-api/dispatch-typed-call';
 import {
   TYPED_API_CLIENT,
   WebUiApiClient,
   WebUiApiDirectory,
 } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { ApiCallError, TypedApiSessionError } from 'app/services/errors/error.classes';
+import { TypedApiSessionError } from 'app/services/errors/error.classes';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 type D = WebUiApiDirectory;
@@ -158,11 +156,12 @@ export class TypedApiService {
    *
    * Errors are thrown as `ApiCallError` carrying the full JSON-RPC error, the
    * same class the legacy `ApiService` throws, so `ErrorHandlerService` and
-   * form validation keep working unchanged.
+   * form validation keep working unchanged. See `dispatchTypedCall` for why
+   * this does not go through the client's own `call`.
    */
   call<M extends CallMethod<D>>(method: M, ...params: ArgsOf<CallParams<D, M>>): Observable<CallResponse<D, M>> {
     return this.ready$.pipe(
-      switchMap((client) => this.dispatch<CallResponse<D, M>>(client, method, params[0])),
+      switchMap((client) => dispatchTypedCall<CallResponse<D, M>>(client, method, params[0])),
     );
   }
 
@@ -227,42 +226,17 @@ export class TypedApiService {
   /**
    * Subscribe to a collection's change events.
    *
+   * Held until the typed session is authenticated like every other verb:
+   * middleware refuses `core.subscribe` on an unauthenticated session, and the
+   * refusal is silent and one-shot rather than retried.
+   *
    * The emitted union is discriminated on `msg`; narrow on it before reading
    * `fields`, since a removal carries only an `id`.
    */
   subscribe<E extends EventName<D>>(event: E): Observable<EventUnion<D, E>> {
-    return this.client$.pipe(
+    return this.ready$.pipe(
       switchMap((client) => client.api.events(event)),
     );
-  }
-
-  /**
-   * The request/response round trip, done here rather than through the
-   * client's `call` because the client reduces a JSON-RPC error to its reason
-   * string, and the UI needs the whole payload: `errname` drives
-   * authentication handling, `extra` carries field-level validation errors.
-   */
-  private dispatch<R>(client: WebUiApiClient, method: string, params: unknown): Observable<R> {
-    return defer(() => {
-      const id = uuidv4();
-      const reply$ = client.connection.messages().pipe(
-        filter((message) => message.id === id),
-        take(1),
-        switchMap((message) => {
-          if (message.error) {
-            return throwError(() => new ApiCallError(message.error as unknown as JsonRpcError));
-          }
-          return of(message.result as R);
-        }),
-      );
-      const sending = client.connection.send({
-        jsonrpc: '2.0',
-        id,
-        method,
-        params: params ?? [],
-      });
-      return reply$.pipe(finalize(() => sending.unsubscribe()));
-    });
   }
 
   /**

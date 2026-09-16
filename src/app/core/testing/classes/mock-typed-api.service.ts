@@ -3,11 +3,12 @@ import {
   CallMethod, CallParams, CallResponse, EventName, EventUnion, JobMethod, JobResult, QueryEntity, QueryMethod,
 } from '@truenas/api-client';
 import {
-  createFakeClient, FakeTrueNasClient, JobUpdate, withSpies,
+  createFakeClient, fakeApiError, FakeApiErrorOverrides, FakeTrueNasClient, JobUpdate, withSpies,
 } from '@truenas/api-client/testing';
 import { map, Observable } from 'rxjs';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Job } from 'app/interfaces/job.interface';
+import { dispatchTypedCall } from 'app/modules/websocket/typed-api/dispatch-typed-call';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 type D = WebUiApiDirectory;
@@ -27,7 +28,6 @@ export type TypedCallResponseOrFactory<M extends TypedCallMethod>
  * them the way they always have.
  */
 interface LooseApi {
-  call(method: string, params?: unknown): Observable<unknown>;
   query(method: string, filters?: unknown, options?: unknown): Observable<unknown[]>;
   queryOne(method: string, filters?: unknown, options?: unknown): Observable<unknown>;
   queryCount(method: string, filters?: unknown): Observable<number>;
@@ -46,6 +46,11 @@ interface LooseApi {
  * call nothing scripted fails with `UnmockedCallError` naming the method
  * rather than hanging.
  *
+ * `call` goes through the same `dispatchTypedCall` as `TypedApiService`, not
+ * the client's own `call`, so an error scripted with `mockCallError` surfaces
+ * as the `ApiCallError` production throws, `extra` and all, rather than the
+ * client's reduced `Error`.
+ *
  * Set it up with `mockTypedApi()`. For connection-level scenarios — a dropped
  * socket, a hand-written reply — reach the client through `client`.
  */
@@ -58,7 +63,7 @@ export class MockTypedApiService implements OnDestroy {
 
   readonly isAuthenticated$ = this.client.authenticator.authenticated$.asObservable();
 
-  readonly call = jest.fn((method: string, params?: unknown) => this.api.call(method, params));
+  readonly call = jest.fn((method: string, params?: unknown) => dispatchTypedCall(this.client, method, params));
 
   readonly query = jest.fn((method: string, filters?: unknown, options?: unknown) => {
     return this.api.query(method, filters, options);
@@ -84,6 +89,19 @@ export class MockTypedApiService implements OnDestroy {
 
   mockCall<M extends TypedCallMethod>(method: M, response: TypedCallResponseOrFactory<M>): void {
     this.client.mock.call(method, response);
+  }
+
+  /**
+   * Answers `method` with a JSON-RPC error frame, completed by the package's
+   * `fakeApiError`, which `call` throws as an `ApiCallError`. Use it for the
+   * error path of a form: `extra` carries the field-level validation errors.
+   */
+  mockCallError(method: TypedCallMethod, error: FakeApiErrorOverrides = {}): void {
+    const frame = fakeApiError(error);
+    this.client.connection.autoReply(method, ({ id }) => {
+      // On a microtask, as the package's own answers are.
+      queueMicrotask(() => this.client.connection.receive({ jsonrpc: '2.0', id, error: frame }));
+    });
   }
 
   /** Feeds `query`, `queryOne` (first row) and `queryCount` (row count) from one set of rows. */

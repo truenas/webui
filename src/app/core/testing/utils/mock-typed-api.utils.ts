@@ -2,7 +2,7 @@ import { ExistingProvider, FactoryProvider } from '@angular/core';
 import {
   JobMethod, JobResult, QueryEntity, QueryMethod,
 } from '@truenas/api-client';
-import { JobUpdate } from '@truenas/api-client/testing';
+import { FakeApiErrorOverrides, JobUpdate } from '@truenas/api-client/testing';
 import {
   MockTypedApiService, TypedCallMethod, TypedCallResponseOrFactory,
 } from 'app/core/testing/classes/mock-typed-api.service';
@@ -25,6 +25,7 @@ export type MockTypedApiResponse = (api: MockTypedApiService) => void;
  * providers: [
  *   mockTypedApi([
  *     mockTypedCall('system.info', { version: 'x' } as SystemInfoResult),
+ *     mockTypedCallError('user.delete', { errname: 'EINVAL', extra: [['user_delete.id', 'No such user', 22]] }),
  *     mockTypedQuery('user.query', [{ id: 1 } as UserEntry]),
  *     mockTypedJob('pool.dataset.export_key', [{ state: JobState.Success, result: 'key' }]),
  *   ]),
@@ -56,6 +57,11 @@ export function mockTypedCall<M extends TypedCallMethod>(
   response: TypedCallResponseOrFactory<M>,
 ): MockTypedApiResponse {
   return (api) => api.mockCall(method, response);
+}
+
+/** Answers `method` with a JSON-RPC error, thrown by `call` as an `ApiCallError`. */
+export function mockTypedCallError(method: TypedCallMethod, error: FakeApiErrorOverrides = {}): MockTypedApiResponse {
+  return (api) => api.mockCallError(method, error);
 }
 
 export function mockTypedQuery<M extends QueryMethod<D['call']>>(

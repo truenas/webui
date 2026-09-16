@@ -29,8 +29,13 @@ rewrite. To see where it stands, count `inject(ApiService)` against
 The typed client owns a **second WebSocket**, opened at startup in parallel
 with the legacy one (an app initializer in `main.ts` creates the service). That
 is intentional: the two coexist for the whole migration, and the legacy socket
-is removed last. Nothing is production-ready about running two sockets; this
-is a `master`-only arrangement.
+is removed last. The initializer is unconditional on purpose: the Backup
+Credentials page already runs entirely on the typed client, so gating the
+socket on a flag would break it. Every build of `master`, production builds
+included, therefore opens both sockets and holds two authenticated sessions
+per tab, which is visible in session lists and audit records. That is
+acceptable for `master` while the migration runs and is not something a
+release branch should ship until login has moved to the typed client.
 
 ### How the two sessions stay in step
 
@@ -101,8 +106,8 @@ Where things differ:
   requires them cannot receive the generated value; loosen it.
 - **Specs** use `mockTypedApi()` from
   `app/core/testing/utils/mock-typed-api.utils`, the typed counterpart of
-  `mockApi()`: `mockTypedCall`, `mockTypedQuery`, `mockTypedJob`, and
-  `MockTypedApiService` for adjusting answers on the fly. Behind it is a real
+  `mockApi()`: `mockTypedCall`, `mockTypedCallError`, `mockTypedQuery`,
+  `mockTypedJob`, and `MockTypedApiService` for adjusting answers on the fly. Behind it is a real
   `@truenas/api-client` running on the package's own fake connection
   (`@truenas/api-client/testing`, since 6.0), so the real dispatch, job
   correlation and subscriptions run and only the *answers* are scripted. The
@@ -111,7 +116,11 @@ Where things differ:
   generated entity (for example `CloudSyncCredentialEntry`), not the UI's
   reading of it. `mockTypedCall` refuses `.query` methods; script those with
   `mockTypedQuery`, which feeds `query`, `queryOne` and `queryCount` from one
-  set of rows. For connection-level scenarios reach the client itself:
+  set of rows. The double's `call` runs the same `dispatchTypedCall` as
+  `TypedApiService`, so an error scripted with `mockTypedCallError(method,
+  { errname, extra })` is thrown as the `ApiCallError` production throws,
+  `extra` included, which is what a form's error-path spec needs. For
+  connection-level scenarios reach the client itself:
   `spectator.inject(MockTypedApiService).client.connection.simulateClose()`.
   The fake answers frames on a microtask, as a socket would, so a spec that
   asserts on the outcome of a submit needs `await spectator.fixture.whenStable()`
@@ -220,7 +229,8 @@ above. Each is a change for `truenas/api-client-ts`.
 1. **Errors lose their payload.** `client.api.call` reduces a JSON-RPC error
    to its `reason` string. The UI needs `errname` (auth handling) and `extra`
    (field validation), so `TypedApiService.call` does its own round trip over
-   `client.connection`. `query*` and `job` still go through the client and so
+   `client.connection` (`dispatchTypedCall`, shared with the spec double).
+   `query*` and `job` still go through the client and so
    throw plain `Error`s. Unchanged as of 6.0.3. Fix: a typed error class
    carrying the full payload. Related and deliberate: `TypedApiService`
    throws `ENOTAUTHENTICATED` like any other error rather than logging the

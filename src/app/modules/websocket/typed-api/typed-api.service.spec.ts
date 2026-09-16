@@ -330,9 +330,13 @@ describe('TypedApiService', () => {
   });
 
   describe('subscribe', () => {
-    it('delivers events pushed to the client stream', async () => {
+    it('holds the subscription until the typed session is authenticated, then delivers events', async () => {
       const received = firstValueFrom(spectator.service.subscribe('alert.list'));
       await settle();
+      expect(sentMethods()).not.toContain('core.subscribe');
+
+      await bringSessionUp();
+      expect(sentMethods()).toContain('core.subscribe');
 
       client.mock.emit('alert.list', { msg: 'removed', id: 1 });
 
