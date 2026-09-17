@@ -11,9 +11,10 @@
  * Two rules, both deliberately shallow — these read templates as text, not as an Angular AST:
  *
  * 1. **Table rows.** `ix-table-body` tagged every `<tr>` from the column model's `uniqueRowTag`;
- *    `tn-table` writes nothing on the row, so a cell body that is bare interpolation leaves the
- *    row unaddressable. Asks only whether a table that renders cells tags *anything* with the
- *    row's identity — it cannot tell whether every column is tagged.
+ *    `tn-table` writes nothing on the row of its own, so a cell body that is bare interpolation
+ *    leaves the row unaddressable. Asks whether something that renders INSIDE the row — a cell
+ *    body, a row action, or `[rowTestId]` on the table — carries the row's identity. It cannot
+ *    tell whether every column is tagged, which stays a reviewer's job.
  * 2. **Clickables.** A plain element carrying a `(click)`/`(keydown)` handler is something a test
  *    has to click, so it needs an id on itself or on a descendant that receives the click.
  *    "Somewhere in its subtree" is the whole test, so an outer `<div (click)>` wrapping tagged
@@ -51,11 +52,16 @@ const rowTagInTemplate = [
  * (`tn-button`, `ix-icon`, `ng-container`), so "no hyphen" is the whole rule — an allowlist of
  * native tags would silently exempt the next `<pre (click)>` or `<nav (click)>` that shows up.
  *
- * Text, not an AST: this also matches inside an HTML comment and inside an attribute value that
- * contains `>`. Both would need a `(click)` in the same span to be reported, so the worst case is
- * a confusing false positive rather than a missed one.
+ * Quoted attribute values are consumed whole, so a `>` inside a binding — `[class.wide]="n > 3"`,
+ * a `@if` guard — does not end the tag. Stopping at the first bare `>` skipped the element
+ * entirely: everything after that binding, `(click)` included, fell outside the captured
+ * attributes, and `matchAll` resumed past it, so no later match saw the handler either. That is a
+ * false NEGATIVE, the direction this script cannot afford.
+ *
+ * Text, not an AST: this still matches inside an HTML comment, which would need a `(click)` in the
+ * same span to be reported — a confusing false positive, which is the affordable direction.
  */
-const clickableElements = /<([a-z][a-z0-9]*)(\s[^>]*?)?>/gs;
+const clickableElements = /<([a-z][a-z0-9]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"'])*)?)>/gs;
 const clickHandler = /\((click|keydown[^)]*)\)/;
 
 /**
@@ -102,20 +108,54 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/**
+ * The parts of a template that render INSIDE the `<tr>`: each column's cell body and the row
+ * actions. Deliberately not the whole file — a tag in the detail row satisfied the rule while
+ * leaving the row itself unaddressable, and a detail row can only be opened by first clicking a
+ * row a test cannot select. Each column is cut at its own `</ng-container>` so the last one does
+ * not run on into whatever follows the column list.
+ */
+function rowContents(contents: string): string[] {
+  const parts = contents.split(/(?=tnColumnDef)/).slice(1).map((chunk) => {
+    const end = chunk.indexOf('</ng-container>');
+    const column = end === -1 ? chunk : chunk.slice(0, end);
+    // From the `<ng-template>` that opens the cell body, so its `let-row` is still in the region.
+    const cell = column.indexOf('tnCellDef');
+    return cell === -1 ? '' : column.slice(column.lastIndexOf('<ng-template', cell));
+  });
+
+  const actions = contents.indexOf('tnRowActionsDef');
+  if (actions !== -1) {
+    const rest = contents.slice(contents.lastIndexOf('<ng-template', actions));
+    const end = rest.indexOf('</ng-template>');
+    parts.push(end === -1 ? rest : rest.slice(0, end));
+  }
+
+  return parts.filter(Boolean);
+}
+
 function tagsRowsWithIdentity(contents: string): boolean {
-  if (rowTagInTemplate.some((pattern) => pattern.test(contents))) {
+  // The whole row at once: `[rowTestId]` puts the tag on the `<tr>` itself, which is the one id
+  // that survives a column being dropped.
+  if (contents.includes('[rowTestId]')) {
     return true;
   }
 
-  // Otherwise the row has to reach a test id by name: `[testId]="[row.id, 'delete']"`. Matched on
-  // `row.`/`row)` rather than a bare word, so a static id that happens to contain "row" does not
-  // pass the check by accident. `(?<![\w$])` rather than `\b` for that boundary, because a name
-  // may legally start or end with `$` — `\b` sits between two word characters, so it never matches
-  // beside one, and `let-row$` would compile a pattern that can only fail.
-  const names = [...contents.matchAll(rowVariables)].map(([, name]) => name);
-  return names.some((name) => new RegExp(
-    `\\[(?:testId|tnTestId)\\]="[^"]*(?<![\\w$])${escapeRegExp(name)}\\s*[.)][^"]*"`,
-  ).test(contents));
+  return rowContents(contents).some((region) => {
+    if (rowTagInTemplate.some((pattern) => pattern.test(region))) {
+      return true;
+    }
+
+    // Otherwise the row has to reach a test id by name: `[testId]="[row.id, 'delete']"`. Matched
+    // on `row.`/`row)` rather than a bare word, so a static id that happens to contain "row" does
+    // not pass by accident. `(?<![\w$])` rather than `\b` for that boundary, because a name may
+    // legally start or end with `$` — `\b` sits between two word characters, so it never matches
+    // beside one, and `let-row$` would compile a pattern that can only fail.
+    const names = [...region.matchAll(rowVariables)].map(([, name]) => name);
+    return names.some((name) => new RegExp(
+      `\\[(?:testId|tnTestId)\\]="[^"]*(?<![\\w$])${escapeRegExp(name)}\\s*[.)][^"]*"`,
+    ).test(region));
+  });
 }
 
 /**
@@ -222,8 +262,10 @@ function main(): void {
     .map((key) => ({ file: key.split(':')[0], line: 1, what: `no clickable matches "${key}"` }));
 
   report('tn-table rows with no per-row test id:', untaggedRows, `
-Each of these renders table cells (\`tnCellDef\`) without tagging them with the row's identity, so
-an e2e test cannot address a row. Tag them — see \`memoizedRowTag\` /
+Each of these renders table cells (\`tnCellDef\`) with nothing inside the row carrying the row's
+identity, so an e2e test cannot address a row. A tag in the DETAIL row does not count: it is only
+reachable by first clicking a row that cannot be selected. Bind \`[rowTestId]\` on the table, or tag
+the cells — see \`memoizedRowTag\` /
 \`tnTableListHost(...).rowTag\` in src/app/modules/tn-table/utils.ts and the
 \`<ix-table-text-cell>\` renderer — rather than leaving a downstream suite to reach for a CSS or
 text selector. See "Addressing a table row" in e2e/CLAUDE.md.`);
