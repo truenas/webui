@@ -36,7 +36,9 @@
     @if (showSecurityWarning()) {
       <tn-banner
         type="warning"
+        tnTestIdType="banner"
         [bordered]="true"
+        [tnTestId]="'insecure-connection'"
         [heading]="'Connection is insecure' | translate"
         [message]="'You are using an insecure connection. Switch to HTTPS for secure access.' | translate"
       ></tn-banner>
@@ -51,7 +53,7 @@
       [disabled]="isFormDisabled()"
     ></tn-button>
     @if (isLastLoginAttemptFailed()) {
-      <div class="error">
+      <div class="error" tnTestIdType="text" [tnTestId]="'login-error'">
         <p [innerHTML]="lastLoginError()"></p>
       </div>
     }
