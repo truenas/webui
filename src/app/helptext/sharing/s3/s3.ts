@@ -34,9 +34,9 @@ export const helptextSharingS3 = {
  <i>?</i> as the only wildcards. Every matching snapshot serves each object\'s state as a read-only version. \
  Independent of versioning: works whether it is on or off. Leave empty to serve no snapshots.'),
   snapshotVersionsMaxTooltip: T('How many of the newest matching snapshots one version listing consults.'),
-  multipartEtagTooltip: T('<b>Composite</b> is the standard S3 construction and costs an MD5 pass over every \
- part. <b>Minted</b> skips that pass and gives the object an opaque token. Choose Minted only where nothing \
- writing the bucket reads its ETags, such as a backup target with its own checksums.'),
+  multipartEtagTooltip: T('<b>Minted</b>, the default, gives the object an opaque token and skips the MD5 pass \
+ over every part that the standard construction costs. Choose <b>Composite</b> where a client writing the bucket \
+ reads multipart ETags and expects the S3 standard construction.'),
   objectLockTooltip: T('Protect objects from being overwritten or deleted for a retention period, as backup \
  targets expect. Turns on versioning, which object lock requires.'),
   objectLockVersioningHint: T('Object lock is built on versioning, which this system is not licensed for.'),

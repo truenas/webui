@@ -152,6 +152,12 @@ describe('S3BucketFormComponent', () => {
       expect(advancedLabels).toContain('Audit');
     });
 
+    it('defaults a new bucket to the Minted multipart ETag', async () => {
+      await clickAdvancedOptions();
+
+      expect(await (await getSelect('Multipart ETag')).getValue()).toBe('Minted (opaque token)');
+    });
+
     it('turns versioning on and defaults to Compliance retention when object lock is enabled', async () => {
       await clickAdvancedOptions();
       expect(await (await getSelect('Versioning')).getValue()).toBe('Off');
@@ -367,7 +373,7 @@ describe('S3BucketFormComponent', () => {
         audit_overflow: null,
         snapshot_versions: [],
         snapshot_versions_max: 64,
-        multipart_etag: S3MultipartEtag.Composite,
+        multipart_etag: S3MultipartEtag.Minted,
         object_lock: false,
         object_lock_default_mode: null,
         object_lock_default_days: null,
