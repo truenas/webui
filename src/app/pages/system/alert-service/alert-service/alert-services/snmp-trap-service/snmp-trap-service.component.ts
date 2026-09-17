@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -40,6 +41,19 @@ export class SnmpTrapServiceComponent extends BaseAlertServiceForm {
     v3_privprotocol: [''],
     community: ['public'],
   });
+
+  constructor() {
+    super();
+
+    // `v3_username` is only required while the SNMPv3 fields are on screen, but its conditional
+    // validator doesn't re-run on its own when the checkbox flips — Angular revalidates a control
+    // when its own value changes, or when the `@if` registers it with the template. Checking the
+    // box therefore left a `required` error on an empty username that unchecking never cleared,
+    // and the form stayed invalid with nothing visible to fix. Revalidate on every flip.
+    this.form.controls.v3.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.form.controls.v3_username.updateValueAndValidity());
+  }
 
   readonly authProtocols$ = of([
     {
