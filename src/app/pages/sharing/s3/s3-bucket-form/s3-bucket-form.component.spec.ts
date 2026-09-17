@@ -162,6 +162,12 @@ describe('S3BucketFormComponent', () => {
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Audit' }))).toBe(true);
     });
 
+    it('defaults a new bucket to the Minted multipart ETag', async () => {
+      await clickAdvancedOptions();
+
+      expect(await (await getSelect('multipart_etag')).getDisplayText()).toBe('Minted (opaque token)');
+    });
+
     it('turns versioning on and defaults to Compliance retention when object lock is enabled', async () => {
       await clickAdvancedOptions();
       expect(await (await getSelect('versioning')).getDisplayText()).toBe('Off');
@@ -333,7 +339,7 @@ describe('S3BucketFormComponent', () => {
         versioning: S3Versioning.Off,
         snapshot_versions: [],
         snapshot_versions_max: 64,
-        multipart_etag: S3MultipartEtag.Composite,
+        multipart_etag: S3MultipartEtag.Minted,
         audit: null,
         audit_overflow: null,
         object_lock: false,

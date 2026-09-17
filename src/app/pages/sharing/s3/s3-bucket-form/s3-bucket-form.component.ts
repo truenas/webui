@@ -207,7 +207,7 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
         Validators.compose([Validators.required, Validators.min(1), Validators.max(36500)]),
       ),
     ]],
-    multipart_etag: [S3MultipartEtag.Composite],
+    multipart_etag: [S3MultipartEtag.Minted],
     audit_mode: [S3AuditMode.Inherit],
     audit_actions: [[] as string[]],
     audit_overflow: [null as S3AuditOverflow | null],
