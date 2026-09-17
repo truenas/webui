@@ -154,7 +154,6 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     { initialValue: [] },
   );
 
-  protected readonly S3Versioning = S3Versioning;
   protected readonly S3AuditMode = S3AuditMode;
 
   form = this.fb.group({
@@ -193,7 +192,7 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     // stale error on a hidden control would disable Save with nothing on screen to fix.
     snapshot_versions_max: [64, [
       this.validatorsService.validateOnCondition(
-        (control) => control.parent?.get('versioning')?.value !== S3Versioning.Off,
+        (control) => !!(control.parent?.get('snapshot_versions')?.value as string[] | undefined)?.length,
         Validators.compose([Validators.required, Validators.min(1)]),
       ),
     ]],
@@ -318,6 +317,9 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
   }
 
   protected readonly isObjectLockOn = computed(() => !!this.formValue().object_lock);
+
+  /** Whether any snapshot is selected: the listing limit applies to a selection and renders only beside one. */
+  protected readonly hasSnapshotVersions = computed(() => !!this.formValue().snapshot_versions.length);
 
   /** Multiprotocol cannot be picked while object lock is on, for the same reason. */
   protected readonly permissionsModelOptions = computed<TnSelectOption<S3PermissionsModel>[]>(() => {
@@ -506,7 +508,7 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.form.controls.object_lock_default_days.updateValueAndValidity();
     });
-    this.form.controls.versioning.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+    this.form.controls.snapshot_versions.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.form.controls.snapshot_versions_max.updateValueAndValidity();
     });
   }
@@ -610,12 +612,14 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
       object_ownership: values.object_ownership,
       grants: toS3Grants(this.form.controls.grants.controls),
       versioning: values.versioning,
-      snapshot_versions: values.versioning === S3Versioning.Off ? [] : values.snapshot_versions,
-      // The listing limit only applies with versioning; without it the field is hidden and its
+      // Independent of `versioning` since NAS-143800: a bucket that was never versioned can still
+      // serve its dataset's ZFS snapshots as read-only versions, and needs no entitlement to.
+      snapshot_versions: values.snapshot_versions,
+      // The listing limit only applies beside a selection; without one the field is hidden and its
       // validators are off, so send the value the bucket already has rather than whatever was left behind.
-      snapshot_versions_max: values.versioning === S3Versioning.Off
-        ? (this.bucket()?.snapshot_versions_max ?? 64)
-        : values.snapshot_versions_max,
+      snapshot_versions_max: values.snapshot_versions.length
+        ? values.snapshot_versions_max
+        : (this.bucket()?.snapshot_versions_max ?? 64),
       multipart_etag: values.multipart_etag,
       object_lock: objectLock,
       object_lock_default_mode: hasDefaultRule ? values.object_lock_default_mode : null,
