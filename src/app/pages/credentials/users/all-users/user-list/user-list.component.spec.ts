@@ -71,11 +71,13 @@ describe('UserListComponent', () => {
         .map((element) => element.getAttribute('data-test'));
 
       expect(testIds).toEqual([
+        'row-user-john-doe',
         'text-username-user-john-doe-row-text',
         'text-full-name-user-john-doe-row-text',
         'text-type-user-john-doe-row-text',
         'text-access-user-john-doe-row-text',
         'icon-user-john-doe-truenas-access',
+        'row-user-jane-smith',
         'text-username-user-jane-smith-row-text',
         'text-full-name-user-jane-smith-row-text',
         'text-type-user-jane-smith-row-text',

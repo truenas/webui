@@ -162,6 +162,12 @@ describe('SnapshotListComponent', () => {
     ]);
   });
 
+  it('tags the row itself with the snapshot it shows, so e2e can address the row rather than a cell', () => {
+    const row = spectator.query('tbody tr[data-test]');
+
+    expect(row?.getAttribute('data-test')).toBe('row-snapshot-2');
+  });
+
   it('snaps the extra-columns toggle back when the confirmation is cancelled', async () => {
     // Model the real async confirm dialog: the toggle flips on optimistically, then
     // the user cancels. tn-slide-toggle latches its visual state internally, so this

@@ -21,6 +21,7 @@
     [ixUiSearch]="searchableElements.elements.cron"
     [dataSource]="(dataProvider.currentPage$ | async) ?? []"
     [displayedColumns]="displayedColumns"
+    [rowTestId]="uniqueRowTag"
     [trackBy]="trackBy"
     [loading]="!!(dataProvider.isLoading$ | async)"
     [expandable]="true"

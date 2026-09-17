@@ -145,6 +145,12 @@ describe('CronListComponent', () => {
     ]);
   });
 
+  it('tags the row itself with the cron job it shows, so e2e can address the row rather than a cell', () => {
+    const row = spectator.query('tbody tr[data-test]');
+
+    expect(row?.getAttribute('data-test')).toBe('row-cron-echo-hello-world-test');
+  });
+
   it('opens the Add Cron Job form in a side panel when Add is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();

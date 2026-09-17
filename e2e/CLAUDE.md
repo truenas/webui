@@ -93,11 +93,22 @@ for Escape — are listed with their reason in `scripts/check-test-ids.ts`.
 
 ### Addressing a table row
 
-`tn-table` has no per-row test id of its own — nothing is written on the `<tr>`,
-and `ariaLabels` in a column model is no longer consumed — so **a row is reached
-through its cells**. Every list tags them with a row tag built from the row's
-identity, which is the value the old `<tbody ix-table-body>` put on the row
-itself:
+A row is addressable two ways, and they answer different questions.
+
+**The row itself.** A list that binds `[rowTestId]` puts the row tag on the
+`<tr>` — and on the card, in card mode — so `[data-test="row-user-jane"]` is the
+row. That is the handle for acting on a row: clicking it, opening it, reaching
+the controls inside it.
+
+| Template | Emitted |
+|---|---|
+| `<tn-table [rowTestId]="uniqueRowTag">` | `row-user-<name>` on the `<tr>` |
+
+**Its cells.** A row id says nothing about what a row *contains*, and descending
+into a column by `[data-column]` is a CSS selector, which rule 1 rules out — so
+reading or asserting one column still goes through that cell's own id. Every
+list tags its cells with the same row tag, which is the value the old
+`<tbody ix-table-body>` put on the row:
 
 | Template | Emitted |
 |---|---|
@@ -109,10 +120,17 @@ Jane's row, and clicking it activates the row exactly as clicking anywhere else
 in it would. For a value the test cannot know in advance, prefix-match the
 stable head of the id.
 
+`[rowTestId]` needs `@truenas/ui-components` ≥ the release carrying it
+(iXsystems/truenas-ui-components#318); a list that does not bind it is still
+reachable through its cells, which is why both halves are documented rather than
+one replacing the other.
+
 **Two rules bind the webui side of this** — they are what keeps the above true:
 
 - A column that renders a row identifier must tag its cell with the row tag. A
   bare `<ng-template tnCellDef>{{ row.name }}</ng-template>` is not finished.
+  A list that can bind `[rowTestId]` should do that too — it is one line, and it
+  is the only id that survives a column being dropped from the table.
 - **Removing a resolved `data-test` is a breaking change.** A migration that
   drops one owes a replacement in the same PR, and says so in the PR's Testing
   row. Six tickets in a row — NAS-141047, NAS-141484, NAS-142069, NAS-141791,

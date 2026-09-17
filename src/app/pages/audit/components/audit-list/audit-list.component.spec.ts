@@ -90,6 +90,12 @@ describe('AuditListComponent', () => {
     ]);
   });
 
+  it('tags the row itself with the audit entry it shows, so e2e can address the row rather than a cell', () => {
+    const row = spectator.query('tbody tr[data-test]');
+
+    expect(row?.getAttribute('data-test')).toBe('row-audit-smb-administrator-authentication-1');
+  });
+
   it('renders the table pager reporting the current range', async () => {
     const pager = await loader.getHarness(TnTablePagerHarness);
     expect(await pager.getRangeText()).toBe('1 – 2 of 2');

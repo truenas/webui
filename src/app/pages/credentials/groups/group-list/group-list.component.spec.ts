@@ -170,6 +170,17 @@ describe('GroupListComponent', () => {
     ]);
   });
 
+  it('tags the row itself with the group it shows, so e2e can address the row rather than a cell', () => {
+    store$.overrideSelector(selectPreferences, { hideBuiltinGroups: true } as Preferences);
+    store$.overrideSelector(selectGroups, fakeGroupDataSource);
+    store$.refreshState();
+    spectator.detectChanges();
+
+    const row = spectator.query('tbody tr[data-test]');
+
+    expect(row?.getAttribute('data-test')).toBe('row-group-mock');
+  });
+
   it('expands and collapses a row to reveal its details when the row is clicked', async () => {
     store$.overrideSelector(selectGroups, fakeGroupDataSource);
     store$.refreshState();

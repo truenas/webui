@@ -6,6 +6,7 @@
   [ixUiSearch]="searchableElements.elements.audit"
   [dataSource]="(dataProvider().currentPage$ | async) ?? []"
   [displayedColumns]="displayedColumns"
+  [rowTestId]="uniqueRowTag"
   [trackBy]="trackByAuditId"
   [clickable]="true"
   [fixedLayout]="true"
