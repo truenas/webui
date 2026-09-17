@@ -31,7 +31,7 @@ import { TableColumnPickerComponent } from 'app/modules/tn-table/components/tabl
 import { TableDetailsRowComponent } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
 import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
 import {
-  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
+  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, memoizedRowTag, toDisplayedColumns,
 } from 'app/modules/tn-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
@@ -388,13 +388,14 @@ export class DiskListComponent {
   }
 
   /**
-   * Row tag the detail row prints its values under. Distinct from {@link testIdTag}: the ids the
-   * detail row resolves predate the tn-table migration and carry the `disk-` prefix the ix-table
-   * column model gave them, so they keep it.
+   * The row's identity, for `[rowTestId]` on the table and for the ids the detail row prints its
+   * values under. Distinct from {@link testIdTag}: those ids predate the tn-table migration and
+   * carry the `disk-` prefix the ix-table column model gave them, so they keep it.
+   *
+   * A bound member rather than a method, because `[rowTestId]` takes the function itself — and
+   * memoized, since the detail row calls it per value.
    */
-  protected detailsRowTag(row: DiskRow): string {
-    return toUniqueRowTag(`disk-${row.name}`);
-  }
+  protected readonly rowTag = memoizedRowTag<DiskRow>((row) => `disk-${row.name}`);
 
   protected onSortChange(event: TnSortEvent): void {
     // Pass the column model so the derived columns keep sorting by their displayed

@@ -61,6 +61,7 @@
     [testId]="'table-table'"
     [dataSource]="rows()"
     [displayedColumns]="displayedColumns()"
+    [rowTestId]="rowTag"
     [trackBy]="trackByIdentifier"
     [selectable]="true"
     [expandable]="true"
@@ -137,7 +138,7 @@
       <ix-table-details-row
         [hiddenColumns]="hiddenColumns()"
         [row]="disk"
-        [uniqueRowTag]="detailsRowTag(disk)"
+        [uniqueRowTag]="rowTag(disk)"
       >
         <div class="table-details-row-actions">
           <tn-button
