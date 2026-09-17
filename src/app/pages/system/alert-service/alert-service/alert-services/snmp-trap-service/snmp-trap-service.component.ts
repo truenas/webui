@@ -45,14 +45,24 @@ export class SnmpTrapServiceComponent extends BaseAlertServiceForm {
   constructor() {
     super();
 
-    // `v3_username` is only required while the SNMPv3 fields are on screen, but its conditional
-    // validator doesn't re-run on its own when the checkbox flips — Angular revalidates a control
-    // when its own value changes, or when the `@if` registers it with the template. Checking the
-    // box therefore left a `required` error on an empty username that unchecking never cleared,
-    // and the form stayed invalid with nothing visible to fix. Revalidate on every flip.
+    // The SNMPv3 fields are only required while they are on screen. Unchecking the box removes
+    // them, and Angular drops the `required` validators the template put on their controls - but
+    // `cleanUpControl()` does that without revalidating, so the controls keep the `required`
+    // errors they picked up while visible and the form stays invalid with nothing left on screen
+    // to fix. Clear those errors when the fields go away.
     this.form.controls.v3.valueChanges
       .pipe(takeUntilDestroyed())
-      .subscribe(() => this.form.controls.v3_username.updateValueAndValidity());
+      .subscribe((isV3) => {
+        if (isV3) {
+          return;
+        }
+
+        [
+          this.form.controls.v3_username,
+          this.form.controls.v3_authprotocol,
+          this.form.controls.v3_privprotocol,
+        ].forEach((control) => control.setErrors(null));
+      });
   }
 
   readonly authProtocols$ = of([
