@@ -144,11 +144,10 @@ ul {
 // The default tile is a wide horizontal row built for full width. When the tile
 // itself gets narrow (e.g. the two-column layout that kicks in once every backup
 // type is configured), the horizontal row no longer fits: stack it vertically —
-// title, then task counts, then the "this week / last successful" activity — and
-// drop the inline backup-actions prompt, which has no room. Keyed off the tile's
-// own width via a container query, so wide tiles (single column, or two columns on
-// a large dashboard) keep the full layout. Scoped through `.tile` to outrank the
-// base `.tile-content` rules above.
+// title, then task counts, then the "this week / last successful" activity. Keyed
+// off the tile's own width via a container query, so wide tiles (single column, or
+// two columns on a large dashboard) keep the full layout. Scoped through `.tile` to
+// outrank the base `.tile-content` rules above.
 @container backup-tile (max-width: 400px) {
   .tile .tile-content {
     // Stretch rows to the full tile width so labels left-align and don't collapse
@@ -163,8 +162,13 @@ ul {
       display: none;
     }
 
+    // The prompt a pull-only group needs ("Backup to cloud or to another TrueNAS")
+    // stays, wrapped under the title rather than beside it. It only appears on
+    // groups with no send tasks, so trade the title's size for the room it needs
+    // instead of dropping the prompt.
     .backup-actions {
-      display: none;
+      line-height: 16px;
+      padding: 0;
     }
 
     // Full width so labels left-align and don't truncate when stacked.
@@ -202,9 +206,22 @@ ul {
       }
     }
 
-    // Match the neighbouring Storage widget's tile-header-title size.
+    // Match the neighbouring Storage widget's tile-header-title size, unless the
+    // tile also carries the backup prompt and needs the vertical space back.
     .title {
       font-size: 24px;
+    }
+
+    &.with-actions {
+      gap: 2px;
+
+      .title {
+        font-size: 18px;
+      }
+
+      li {
+        line-height: 18px;
+      }
     }
   }
 }
