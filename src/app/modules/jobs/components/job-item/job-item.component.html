@@ -8,7 +8,7 @@
   <div
     class="job-item-body"
     tnTestIdType="row"
-    [tnTestId]="['job', job().description, job().method]"
+    [tnTestId]="['job', job().id]"
     (click)="clickable() && open()"
   >
     <div class="description-line">

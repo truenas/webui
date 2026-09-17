@@ -16,14 +16,17 @@
  *    row's identity — it cannot tell whether every column is tagged.
  * 2. **Clickables.** A plain element carrying a `(click)`/`(keydown)` handler is something a test
  *    has to click, so it needs an id on itself or on a descendant that receives the click.
+ *    "Somewhere in its subtree" is the whole test, so an outer `<div (click)>` wrapping tagged
+ *    children passes even though the wrapper itself is unaddressable — a green run means no
+ *    clickable is *completely* unreachable, not that every click target has its own id.
  *
  * A false negative is the acceptable failure here and a false positive is not, so anything that
  * plausibly resolves an id counts, and the handful of elements that are genuinely not automation
  * targets are listed in {@link allowedClickables} with the reason.
  */
 
-import { readFileSync } from 'fs';
-import { globSync } from 'glob';
+import { readdirSync, readFileSync } from 'fs';
+import { sep } from 'path';
 
 const anyTestId = /\btestId\b|\btnTestId\b|\bixTest\b|data-test/;
 
@@ -47,6 +50,10 @@ const rowTagInTemplate = [
  * Plain elements, i.e. every native tag. A component selector always contains a hyphen
  * (`tn-button`, `ix-icon`, `ng-container`), so "no hyphen" is the whole rule — an allowlist of
  * native tags would silently exempt the next `<pre (click)>` or `<nav (click)>` that shows up.
+ *
+ * Text, not an AST: this also matches inside an HTML comment and inside an attribute value that
+ * contains `>`. Both would need a `(click)` in the same span to be reported, so the worst case is
+ * a confusing false positive rather than a missed one.
  */
 const clickableElements = /<([a-z][a-z0-9]*)(\s[^>]*?)?>/gs;
 const clickHandler = /\((click|keydown[^)]*)\)/;
@@ -54,9 +61,18 @@ const clickHandler = /\((click|keydown[^)]*)\)/;
 /**
  * A handler that only cancels the event (`(keydown.enter)="$event.preventDefault()"` on a form,
  * to stop Enter from submitting it) is a guard, not something a test clicks.
+ *
+ * Split on `;` and match each statement whole, rather than matching the sequence with one
+ * quantified pattern — a `(…)+` around an expression that can also match the empty string
+ * backtracks exponentially on a body that nearly matches.
  */
 const handlerBodies = /\((?:click|keydown[^)]*)\)="([^"]*)"/g;
-const cancelOnly = /^(?:\s*\$event\.(?:preventDefault|stopPropagation)\(\)\s*;?)+$/;
+const cancelCall = /^\$event\.(?:preventDefault|stopPropagation)\(\)$/;
+
+function isCancelOnly(body: string): boolean {
+  const statements = body.split(';').map((statement) => statement.trim()).filter(Boolean);
+  return statements.length > 0 && statements.every((statement) => cancelCall.test(statement));
+}
 
 /**
  * Clickables that are deliberately unaddressable, as `<file>:<class>`.
@@ -135,7 +151,7 @@ function untaggedClickables(file: string, src: string): Offender[] {
       continue;
     }
     const bodies = [...attributes.matchAll(handlerBodies)].map(([, body]) => body);
-    if (bodies.length && bodies.every((body) => cancelOnly.test(body))) {
+    if (bodies.length && bodies.every(isCancelOnly)) {
       continue;
     }
     if (anyTestId.test(outerBlock(src, match[1], match.index, match.index + match[0].length))) {
@@ -166,7 +182,9 @@ function report(title: string, offenders: Offender[], advice: string): void {
 }
 
 function main(): void {
-  const templates = globSync('src/app/**/*.html', { nodir: true })
+  const templates = readdirSync('src/app', { recursive: true, encoding: 'utf8' })
+    .filter((entry) => entry.endsWith('.html'))
+    .map((entry) => `src/app/${entry.split(sep).join('/')}`)
     .sort((left, right) => left.localeCompare(right))
     .map((file) => ({ file, src: readFileSync(file, 'utf8') }));
 

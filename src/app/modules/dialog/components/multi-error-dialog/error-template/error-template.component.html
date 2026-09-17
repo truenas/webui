@@ -8,7 +8,7 @@
     <div
       class="more-info"
       tnTestIdType="button"
-      [tnTestId]="'more-info'"
+      [tnTestId]="['more-info', title()]"
       (click)="toggleOpen()"
     >
       @if (isCloseMoreInfo) {

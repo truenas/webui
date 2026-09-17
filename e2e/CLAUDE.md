@@ -109,8 +109,7 @@ Jane's row, and clicking it activates the row exactly as clicking anywhere else
 in it would. For a value the test cannot know in advance, prefix-match the
 stable head of the id.
 
-**Two rules bind the webui side of this** — they are what keeps the above true,
-and both are enforced by `yarn check-test-ids` (a lint job step):
+**Two rules bind the webui side of this** — they are what keeps the above true:
 
 - A column that renders a row identifier must tag its cell with the row tag. A
   bare `<ng-template tnCellDef>{{ row.name }}</ng-template>` is not finished.
@@ -118,6 +117,15 @@ and both are enforced by `yarn check-test-ids` (a lint job step):
   drops one owes a replacement in the same PR, and says so in the PR's Testing
   row. Six tickets in a row — NAS-141047, NAS-141484, NAS-142069, NAS-141791,
   NAS-141186, NAS-143804 — were this same defect, each found downstream.
+
+`yarn check-test-ids` (a lint job step) mechanises the floor under those rules,
+not the rules themselves. It asks two things per template: a table that renders
+cells must tag *something* with the row's identity (not that every column does),
+and a plain clickable must resolve a `data-test` somewhere in its subtree (not
+that the element itself carries one). Neither the per-column half of the first
+rule nor the second rule — dropping the id from a `<tn-button testId>`, a detail
+row, or any component input — is checked. Those stay convention, and reviewing
+them is a reviewer's job.
 
 ## Waiting
 
