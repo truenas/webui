@@ -5,8 +5,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnAutocompleteHarness, TnCheckboxHarness, TnChipInputHarness, TnDialog, TnFormFieldHarness,
-  TnFormListHarness, TnInputHarness, TnSelectHarness,
+  TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnDialog, TnFormFieldHarness,
+  TnFormListHarness, TnInputHarness, TnSelectHarness, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -20,6 +20,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { S3Bucket } from 'app/interfaces/s3.interface';
 import { User } from 'app/interfaces/user.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxUserComboboxComponent,
 } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
@@ -102,6 +103,7 @@ describe('S3BucketFormComponent', () => {
       mockApi([
         mockCall('sharing.s3.create'),
         mockCall('sharing.s3.update'),
+        mockCall('sharing.s3.force_disable_versioning'),
         mockCall('sharing.s3.audit_choices', { GetObject: 'GetObject', PutObject: 'PutObject' }),
         mockCall('pool.filesystem_choices', ['tank', 'tank/buckets', 'tank/buckets/photos']),
         mockCall('user.query', [
@@ -111,6 +113,7 @@ describe('S3BucketFormComponent', () => {
         mockCall('group.query', [{ group: 'staff', gid: 1001 }] as Group[]),
       ]),
       mockAuth(),
+      mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
       mockEntitlements(),
       mockProvider(DatasetService, {
         getDatasetNodeProvider: () => () => of([]),
@@ -174,6 +177,20 @@ describe('S3BucketFormComponent', () => {
       const released = await getSelect('versioning');
       expect(await released.isDisabled()).toBe(false);
       expect(await released.getDisplayText()).toBe('Off');
+    });
+
+    it('warns that object lock is permanent while it is ticked but not yet saved', async () => {
+      const objectLockSection = (): string | undefined => spectator.queryAll('tn-form-section')
+        .find((element) => element.querySelector('legend')?.textContent?.includes('Object Lock'))
+        ?.textContent ?? undefined;
+
+      expect(objectLockSection()).not.toContain('permanent');
+
+      await (await getCheckbox('object_lock')).check();
+      expect(objectLockSection()).toContain('permanent once saved');
+
+      await (await getCheckbox('object_lock')).uncheck();
+      expect(objectLockSection()).not.toContain('permanent');
     });
 
     it('creates a bucket with object lock, versioning and the Compliance default rule', async () => {
@@ -649,8 +666,99 @@ describe('S3BucketFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(true);
     });
 
-    it('does not let a hidden snapshot listing limit block Save, and sends the stored limit instead', async () => {
+    it('refuses to take versioning back to Off on a bucket that already has it', async () => {
       await clickAdvancedOptions();
+      const versioning = await getSelect('versioning');
+
+      // Middleware gates the transition, not the state: a bucket that arrived versioned may move
+      // between Enabled and Suspended, never back to Off. Said here rather than left to the save.
+      await versioning.selectOption('Off');
+      expect(await versioning.getDisplayText()).toBe('Enabled');
+      expect(spectator.component.form.controls.versioning.value).toBe(S3Versioning.Enabled);
+
+      // Suspended is still reachable — it keeps the stored versions.
+      await versioning.selectOption('Suspended');
+      expect(spectator.component.form.controls.versioning.value).toBe(S3Versioning.Suspended);
+
+      // And the hint says where the deliberate way through lives.
+      const field = await loader.getHarness(TnFormFieldHarness.with({ label: 'Versioning' }));
+      // Plain text: a form-field hint does not render markup, so a tag would show up literally.
+      const hint = await field.getHint();
+      expect(hint).toContain('force it off below');
+      expect(hint).not.toMatch(/<[a-z]/);
+    });
+
+    it('holds object lock on a bucket that already has it, which middleware will not lower', async () => {
+      spectator = createComponent({
+        props: { bucket: { ...existingBucket, object_lock: true } as S3Bucket },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const lock = await getCheckbox('object_lock');
+      expect(await lock.isChecked()).toBe(true);
+      expect(await lock.isDisabled()).toBe(true);
+
+      // The object-lock field carries no label, so the section it sits in is the anchor.
+      const section = spectator.queryAll('tn-form-section')
+        .find((element) => element.querySelector('legend')?.textContent?.includes('Object Lock'));
+      expect(section?.textContent).toContain('cannot be turned off');
+    });
+
+    it('offers the destructive way out beside the option it unlocks, and applies it', async () => {
+      await clickAdvancedOptions();
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+
+      const force = await loader.getHarness(TnButtonHarness.with({ label: 'Force Disable Versioning' }));
+      await force.click();
+
+      // A confirmation checkbox rather than a plain yes: `sharing.s3.update` refuses this
+      // transition precisely because the versions cannot survive it.
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+        expect.objectContaining({ confirmationCheckboxText: expect.any(String), buttonColor: 'warn' }),
+      );
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.force_disable_versioning', [7]);
+
+      // Closed as a success, so the opener reloads. A stale row would reopen with versioning on, and
+      // an unrelated Save from it would re-enable versioning on the bucket just forced off.
+      expect(closed).toHaveBeenCalledWith(true);
+    });
+
+    it('shows it disabled on a locked bucket, rather than leaving the absence to explain itself', async () => {
+      spectator = createComponent({
+        props: { bucket: { ...existingBucket, object_lock: true } as S3Bucket },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await clickAdvancedOptions();
+
+      // Middleware refuses a locked bucket, but the reason has to be where someone looks for the
+      // action — a missing button cannot say why it is missing.
+      const force = await loader.getHarness(TnButtonHarness.with({ label: 'Force Disable Versioning' }));
+      expect(await force.isDisabled()).toBe(true);
+
+      // The reason sits on the wrapper, where a hover can reach it past the disabled button.
+      const reason = spectator.query('.force-disable-versioning', { read: TnTooltipDirective });
+      expect(reason?.message()).toContain('keeps its version history');
+      expect(reason?.disabled()).toBe(false);
+
+      // And the select says the state is permanent, not "while object lock is on" — the lock on
+      // such a bucket can never be turned off.
+      const field = await loader.getHarness(TnFormFieldHarness.with({ label: 'Versioning' }));
+      expect(await field.getHint()).toContain('for as long as this bucket exists');
+    });
+
+    it('does not let a hidden snapshot listing limit block Save, and sends the stored limit instead', async () => {
+      // A bucket stored unversioned, because the one it is turned back off from has to be one the
+      // form still offers Off for: middleware gates the transition on the *stored* value, so a
+      // bucket that arrived versioned can never return to Off here.
+      spectator = createComponent({
+        props: { bucket: { ...existingBucket, versioning: S3Versioning.Off } as S3Bucket },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      api = spectator.inject(ApiService);
+
+      await clickAdvancedOptions();
+      await (await getSelect('versioning')).selectOption('Enabled');
       // The CDK harness cannot type an empty string, so an out-of-range value stands in for a blank one.
       await (await getInput('snapshot_versions_max')).setValue('0');
       expect(spectator.component.canSubmit()).toBe(false);
