@@ -3,9 +3,18 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective,
-  TnCellDefDirective, TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent,
-  TnTooltipDirective, tnIconMarker, type TnSortEvent,
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCardHeaderDirective,
+  TnCellDefDirective,
+  TnHeaderCellDefDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+  tnIconMarker,
+  type TnSortEvent,
 } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
 import {
@@ -28,6 +37,7 @@ import { convertStringToId, dataProviderRows, mapTnSortToTableSort } from 'app/m
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
 import { interfacesCardElements } from 'app/pages/system/network/components/interfaces-card/interfaces-card.elements';
@@ -46,6 +56,8 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   styleUrls: ['./interfaces-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
+    TableTextCellComponent,
     TnCardComponent,
     TnCardHeaderDirective,
     TnCardFooterActionsDirective,

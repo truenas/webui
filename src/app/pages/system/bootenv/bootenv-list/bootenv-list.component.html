@@ -69,27 +69,56 @@
   >
     <ng-container [tnColumnDef]="'id'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.id }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.id"
+          [title]="'Name' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'active'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Active' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ activeLabel(row) }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="activeLabel(row)"
+          [title]="'Active' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'created'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Date Created' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.created.$date | formatDateTime }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Date Created' | translate), uniqueRowTag(row), 'row-date']"
+        >{{ row.created.$date | formatDateTime }}</span>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'used_bytes'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Used Space' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.used_bytes | ixFileSize }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Used Space' | translate), uniqueRowTag(row), 'row-size']"
+        >{{ row.used_bytes | ixFileSize }}</span>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'keep'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Keep' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.keep | yesNo | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.keep | yesNo | translate"
+          [title]="'Keep' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [testIdSuffix]="'row-yesno'"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'actions'" [width]="'160px'">

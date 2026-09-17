@@ -44,27 +44,57 @@
       >
         <ng-container [tnColumnDef]="'label'">
           <ng-template tnHeaderCellDef>{{ 'Label' | translate }}</ng-template>
-          <ng-template let-row tnCellDef>{{ row.label }}</ng-template>
+          <ng-template let-row tnCellDef>
+            <ix-table-text-cell
+              [value]="row.label"
+              [title]="'Label' | translate"
+              [uniqueRowTag]="uniqueRowTag(row)"
+            ></ix-table-text-cell>
+          </ng-template>
         </ng-container>
 
         <ng-container [tnColumnDef]="'os'">
           <ng-template tnHeaderCellDef>{{ 'OS' | translate }}</ng-template>
-          <ng-template let-row tnCellDef>{{ row.os }}</ng-template>
+          <ng-template let-row tnCellDef>
+            <ix-table-text-cell
+              [value]="row.os"
+              [title]="'OS' | translate"
+              [uniqueRowTag]="uniqueRowTag(row)"
+            ></ix-table-text-cell>
+          </ng-template>
         </ng-container>
 
         <ng-container [tnColumnDef]="'release'">
           <ng-template tnHeaderCellDef>{{ 'Release' | translate }}</ng-template>
-          <ng-template let-row tnCellDef>{{ row.release }}</ng-template>
+          <ng-template let-row tnCellDef>
+            <ix-table-text-cell
+              [value]="row.release"
+              [title]="'Release' | translate"
+              [uniqueRowTag]="uniqueRowTag(row)"
+            ></ix-table-text-cell>
+          </ng-template>
         </ng-container>
 
         <ng-container [tnColumnDef]="'archs'">
           <ng-template tnHeaderCellDef>{{ 'Archs' | translate }}</ng-template>
-          <ng-template let-row tnCellDef>{{ row.archs }}</ng-template>
+          <ng-template let-row tnCellDef>
+            <ix-table-text-cell
+              [value]="row.archs"
+              [title]="'Archs' | translate"
+              [uniqueRowTag]="uniqueRowTag(row)"
+            ></ix-table-text-cell>
+          </ng-template>
         </ng-container>
 
         <ng-container [tnColumnDef]="'variant'">
           <ng-template tnHeaderCellDef>{{ 'Variant' | translate }}</ng-template>
-          <ng-template let-row tnCellDef>{{ row.variant }}</ng-template>
+          <ng-template let-row tnCellDef>
+            <ix-table-text-cell
+              [value]="row.variant"
+              [title]="'Variant' | translate"
+              [uniqueRowTag]="uniqueRowTag(row)"
+            ></ix-table-text-cell>
+          </ng-template>
         </ng-container>
 
         <ng-container [tnColumnDef]="'actions'">

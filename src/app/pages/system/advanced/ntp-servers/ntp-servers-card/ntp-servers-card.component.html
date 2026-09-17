@@ -12,32 +12,71 @@
     >
       <ng-container [tnColumnDef]="'address'">
         <ng-template tnHeaderCellDef>{{ 'Address' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.address }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="row.address"
+            [title]="'Address' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'burst'">
         <ng-template tnHeaderCellDef>{{ 'Burst' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.burst | yesNo | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="row.burst | yesNo | translate"
+            [title]="'Burst' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [testIdSuffix]="'row-yesno'"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'iburst'">
         <ng-template tnHeaderCellDef>{{ 'IBurst' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.iburst | yesNo | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="row.iburst | yesNo | translate"
+            [title]="'IBurst' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [testIdSuffix]="'row-yesno'"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'prefer'">
         <ng-template tnHeaderCellDef>{{ 'Prefer' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.prefer | yesNo | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="row.prefer | yesNo | translate"
+            [title]="'Prefer' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [testIdSuffix]="'row-yesno'"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'minpoll'">
         <ng-template tnHeaderCellDef>{{ 'Min Poll' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.minpoll }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="row.minpoll"
+            [title]="'Min Poll' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'maxpoll'">
         <ng-template tnHeaderCellDef>{{ 'Max Poll' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.maxpoll }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="row.maxpoll"
+            [title]="'Max Poll' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'actions'" [width]="'80px'">

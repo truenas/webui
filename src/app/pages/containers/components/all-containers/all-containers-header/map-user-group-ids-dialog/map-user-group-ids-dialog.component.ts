@@ -17,6 +17,7 @@ import {
   TnSpinnerComponent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
   TnTooltipDirective,
 } from '@truenas/ui-components';
 import {
@@ -28,6 +29,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { toUniqueRowTag } from 'app/modules/tn-table/utils';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   IdMapping,
@@ -45,6 +47,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    TnTestIdDirective,
+    TableTextCellComponent,
     TnDialogShellComponent,
     FakeProgressBarComponent,
     TnIconComponent,

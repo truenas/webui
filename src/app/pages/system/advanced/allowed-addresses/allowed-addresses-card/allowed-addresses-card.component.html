@@ -20,7 +20,13 @@
     >
       <ng-container [tnColumnDef]="'address'">
         <ng-template tnHeaderCellDef>{{ 'Address' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.address }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="row.address"
+            [title]="'Address' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'actions'" [width]="'80px'">

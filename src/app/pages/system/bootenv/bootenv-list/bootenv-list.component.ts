@@ -15,6 +15,7 @@ import {
   TnTableColumnDirective,
   TnTableComponent,
   TnTablePagerComponent,
+  TnTestIdDirective,
   tnIconMarker,
 } from '@truenas/ui-components';
 import { filter, of, switchMap } from 'rxjs';
@@ -38,6 +39,7 @@ import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provi
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { BootPoolDeleteDialog } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { getBootenvFormConfig } from 'app/pages/system/bootenv/bootenv-form/bootenv.form-config';
@@ -51,6 +53,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./bootenv-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
+    TableTextCellComponent,
     PageHeaderComponent,
     BasicSearchComponent,
     RequiresRolesDirective,

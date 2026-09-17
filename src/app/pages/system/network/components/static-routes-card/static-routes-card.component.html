@@ -32,12 +32,24 @@
   >
     <ng-container [tnColumnDef]="'destination'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Destination' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.destination }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.destination"
+          [title]="'Destination' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'gateway'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Gateway' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.gateway }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.gateway"
+          [title]="'Gateway' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'actions'" [width]="'80px'">

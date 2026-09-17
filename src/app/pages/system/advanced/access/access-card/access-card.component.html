@@ -36,13 +36,23 @@
     >
       <ng-container [tnColumnDef]="'username'">
         <ng-template tnHeaderCellDef>{{ 'Username' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ getUsername(row) }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="getUsername(row)"
+            [title]="'Username' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'created_at'">
         <ng-template tnHeaderCellDef>{{ 'Start session time' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <ix-date [date]="row.created_at.$date"></ix-date>
+          <ix-date
+            tnTestIdType="date"
+            [date]="row.created_at.$date"
+            [tnTestId]="[('Start session time' | translate), uniqueRowTag(row), 'row-date']"
+          ></ix-date>
         </ng-template>
       </ng-container>
 

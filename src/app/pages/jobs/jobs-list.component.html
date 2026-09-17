@@ -45,7 +45,10 @@
   <ng-container [tnColumnDef]="'name'">
     <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
     <ng-template let-job tnCellDef>
-      <ix-job-name [job]="job"></ix-job-name>
+      <span
+        tnTestIdType="text"
+        [tnTestId]="[('Name' | translate), uniqueRowTag(job), 'row-text']"
+      ><ix-job-name [job]="job"></ix-job-name></span>
     </ng-template>
   </ng-container>
 

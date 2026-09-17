@@ -25,6 +25,7 @@ import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interf
 import {
   createTable, mapTnSortToProviderSorting, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/tn-table/utils';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { dockerRegistriesListElements } from 'app/pages/apps/components/docker-registries/docker-registries-list/docker-registries-list.elements';
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
@@ -34,6 +35,7 @@ import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-re
   templateUrl: './docker-registries-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TableTextCellComponent,
     PageHeaderComponent,
     TableColumnPickerComponent,
     RequiresRolesDirective,

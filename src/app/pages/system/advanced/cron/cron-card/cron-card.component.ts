@@ -36,6 +36,7 @@ import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-co
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { cronCardElements } from 'app/pages/system/advanced/cron/cron-card/cron-card.elements';
 import { CronDeleteDialog } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
@@ -50,6 +51,7 @@ import { TaskService } from 'app/services/task.service';
   templateUrl: './cron-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TableTextCellComponent,
     TnCardComponent,
     TnCardFooterActionsDirective,
     RequiresRolesDirective,

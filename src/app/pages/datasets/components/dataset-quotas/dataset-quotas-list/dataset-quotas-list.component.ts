@@ -41,6 +41,7 @@ import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DatasetQuotaAddFormComponent,
@@ -61,6 +62,7 @@ interface QuotaData {
   templateUrl: './dataset-quotas-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TableTextCellComponent,
     PageHeaderComponent,
     BasicSearchComponent,
     FormsModule,

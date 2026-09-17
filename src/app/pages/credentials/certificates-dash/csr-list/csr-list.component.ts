@@ -5,16 +5,17 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  tnIconMarker,
   TnButtonComponent,
   TnCardComponent,
   TnCardFooterActionsDirective,
   TnCellDefDirective,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
-  type TnSortEvent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
+  tnIconMarker,
+  type TnSortEvent,
 } from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -53,6 +54,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./csr-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnCardComponent,
     TnCardFooterActionsDirective,
     TnButtonComponent,

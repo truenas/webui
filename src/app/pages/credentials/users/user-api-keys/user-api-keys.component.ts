@@ -6,8 +6,15 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCellDefDirective, TnHeaderCellDefDirective, TnIconButtonComponent,
-  TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, type TnSortEvent,
+  TnButtonComponent,
+  TnCellDefDirective,
+  TnHeaderCellDefDirective,
+  TnIconButtonComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  TnTestIdDirective,
+  type TnSortEvent,
 } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import {
@@ -35,6 +42,7 @@ import { PaginationServerSide } from 'app/modules/tn-table/classes/api-data-prov
 import { SortingServerSide } from 'app/modules/tn-table/classes/api-data-provider/sorting-server-side.class';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/tn-table/utils';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/user-api-keys.elements';
@@ -45,6 +53,8 @@ import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/u
   styleUrls: ['./user-api-keys.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
+    TableTextCellComponent,
     SearchInputComponent,
     UiSearchDirective,
     RequiresRolesDirective,

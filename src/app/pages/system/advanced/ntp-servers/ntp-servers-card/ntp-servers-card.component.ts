@@ -26,6 +26,7 @@ import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-co
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ntpServersElements } from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.elements';
 import { getNtpServersFormConfig } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers.form-config';
@@ -35,6 +36,7 @@ import { getNtpServersFormConfig } from 'app/pages/system/advanced/ntp-servers/n
   templateUrl: './ntp-servers-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TableTextCellComponent,
     TnCardComponent,
     TnCardFooterActionsDirective,
     UiSearchDirective,

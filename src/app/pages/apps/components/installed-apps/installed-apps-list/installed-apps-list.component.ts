@@ -9,9 +9,18 @@ import {
 } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTooltipDirective,
-  TnCellDefDirective, TnHeaderCellDefDirective, TnIconButtonComponent,
-  TnSortEvent, TnTableColumnDirective, TnTableComponent } from '@truenas/ui-components';
+import {
+  TnCellDefDirective,
+  TnDialog,
+  TnHeaderCellDefDirective,
+  TnIconButtonComponent,
+  TnIconComponent,
+  TnSortEvent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
   combineLatest, filter, forkJoin, map, Observable, shareReplay, switchMap,
@@ -72,6 +81,7 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
   styleUrls: ['./installed-apps-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     InstalledAppsListBulkActionsComponent,
     FakeProgressBarComponent,
     BasicSearchComponent,

@@ -55,28 +55,42 @@
     <ng-container [tnColumnDef]="'name'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span class="name">{{ row.name }}</span>
+        <span
+          class="name"
+          tnTestIdType="text"
+          [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.name }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'status'" [width]="'15%'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Status' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <ix-container-status-cell [container]="row"></ix-container-status-cell>
+        <ix-container-status-cell
+          tnTestIdType="text"
+          [container]="row"
+          [tnTestId]="[('Status' | translate), uniqueRowTag(row), 'row-state']"
+        ></ix-container-status-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'autostart'" [width]="'11%'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Autostart' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        {{ row.autostart | yesNo }}
+        <ix-table-text-cell
+          [value]="row.autostart | yesNo"
+          [title]="'Autostart' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'cpu'" [width]="'10%'">
       <ng-template tnHeaderCellDef>{{ 'CPU' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [tnTooltip]="'Percentage of total core utilization' | translate">
+        <span tnTestIdType="text"
+          [tnTestId]="[('CPU' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTooltip]="'Percentage of total core utilization' | translate">
           @if (hasMetrics(row)) {
             {{ getMetrics(row)?.cpu.cpu_user_percentage.toFixed(0) }}%
           } @else {
@@ -89,7 +103,9 @@
     <ng-container [tnColumnDef]="'ram'" [width]="'10%'">
       <ng-template tnHeaderCellDef>{{ 'RAM' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [tnTooltip]="'Memory Usage' | translate">
+        <span tnTestIdType="text"
+          [tnTestId]="[('RAM' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTooltip]="'Memory Usage' | translate">
           @if (hasMetrics(row)) {
             {{ getMetrics(row)?.mem_usage.mem_usage_ram_mib.toFixed(0) }} MiB
           } @else {
@@ -102,7 +118,9 @@
     <ng-container [tnColumnDef]="'io'" [width]="'10%'">
       <ng-template tnHeaderCellDef>{{ 'Disk I/O' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span [tnTooltip]="'Disk I/O Full Pressure' | translate">
+        <span tnTestIdType="text"
+          [tnTestId]="[('Disk I/O' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTooltip]="'Disk I/O Full Pressure' | translate">
           @if (hasMetrics(row)) {
             {{ getMetrics(row)?.io_full_pressure.io_full_pressure_full_60_percentage.toFixed(0) }}%
           } @else {

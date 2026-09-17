@@ -32,7 +32,10 @@
     <ng-container [tnColumnDef]="'state'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Status' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <ix-service-status-cell [service]="row"></ix-service-status-cell>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Status' | translate), uniqueRowTag(row), 'row-state']"
+        ><ix-service-status-cell [service]="row"></ix-service-status-cell></span>
       </ng-template>
     </ng-container>
 
@@ -55,7 +58,9 @@
       <ng-template tnHeaderCellDef></ng-template>
       <ng-template let-row tnCellDef>
         <ix-service-actions-cell
+          tnTestIdType="text"
           [service]="row"
+          [tnTestId]="['actions', uniqueRowTag(row), 'row-text']"
           (configure)="openConfig($event)"
         ></ix-service-actions-cell>
       </ng-template>

@@ -34,6 +34,7 @@ import { convertStringToId, mapTnSortToTableSort } from 'app/modules/tn-table/ut
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getTunableFormConfig } from 'app/pages/system/advanced/tunable/tunable-form/tunable.form-config';
 import { tunableListElements } from 'app/pages/system/advanced/tunable/tunable-list/tunable-list.elements';
@@ -44,6 +45,7 @@ import { tunableListElements } from 'app/pages/system/advanced/tunable/tunable-l
   styleUrls: ['./tunable-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TableTextCellComponent,
     PageHeaderComponent,
     BasicSearchComponent,
     RequiresRolesDirective,

@@ -6,9 +6,16 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
-  TnCellDefDirective, TnEmptyComponent, TnHeaderCellDefDirective,
-  TnTableColumnDirective, TnTableComponent, tnIconMarker,
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTestIdDirective,
+  tnIconMarker,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import {
@@ -34,6 +41,7 @@ import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-co
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { accessCardElements } from 'app/pages/system/advanced/access/access-card/access-card.elements';
 import { getAccessFormConfig } from 'app/pages/system/advanced/access/access-form/access.form-config';
@@ -49,6 +57,8 @@ import { waitForAdvancedConfig, waitForGeneralConfig } from 'app/store/system-co
   templateUrl: './access-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
+    TableTextCellComponent,
     TnCardComponent,
     TnCardFooterActionsDirective,
     UiSearchDirective,

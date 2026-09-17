@@ -48,42 +48,90 @@
     >
       <ng-container [tnColumnDef]="'name'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ nameValue(row) }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="nameValue(row)"
+            [title]="'Name' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'id'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'ID' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.id }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="row.id"
+            [title]="'ID' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'quota'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Data Quota' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ quotaValue(row) }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="quotaValue(row)"
+            [title]="'Data Quota' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'used_bytes'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'DQ Used' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ usedBytesValue(row) }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="usedBytesValue(row)"
+            [title]="'DQ Used' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'used_percent'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'DQ % Used' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ usedPercentValue(row) }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="usedPercentValue(row)"
+            [title]="'DQ % Used' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'obj_quota'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Object Quota' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ objQuotaValue(row) }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="objQuotaValue(row)"
+            [title]="'Object Quota' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'obj_used'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'OQ Used' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ objUsedValue(row) }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="objUsedValue(row)"
+            [title]="'OQ Used' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'obj_used_percent'">
         <ng-template tnHeaderCellDef>{{ 'OQ % Used' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ objUsedPercentValue(row) }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="objUsedPercentValue(row)"
+            [title]="'OQ % Used' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
