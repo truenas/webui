@@ -1,5 +1,7 @@
 <pre
   #messageContainer
   class="messages"
+  tnTestIdType="button"
+  [tnTestId]="'console-messages'"
   (click)="onShowConsolePanel()"
 >{{ lastThreeLogLines$ | async }}</pre>

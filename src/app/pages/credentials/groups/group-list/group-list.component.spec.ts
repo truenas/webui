@@ -151,6 +151,36 @@ describe('GroupListComponent', () => {
     expect(await table.getCellText(1, 'roles')).toBe('Full Admin');
   });
 
+  it('tags every cell with the row it belongs to, so a row is addressable in e2e', () => {
+    store$.overrideSelector(selectPreferences, { hideBuiltinGroups: true } as Preferences);
+    store$.overrideSelector(selectGroups, fakeGroupDataSource);
+    store$.refreshState();
+    spectator.detectChanges();
+
+    const testIds = Array.from(spectator.queryAll('tbody tr:first-child [data-test]'))
+      .map((element) => element.getAttribute('data-test'));
+
+    expect(testIds).toEqual([
+      'text-group-group-mock-row-text',
+      'text-gid-group-mock-row-text',
+      'text-builtin-group-mock-row-yesno',
+      'text-allows-sudo-commands-group-mock-row-yesno',
+      'text-samba-authentication-group-mock-row-yesno',
+      'text-roles-group-mock-row-text',
+    ]);
+  });
+
+  it('tags the row itself with the group it shows, so e2e can address the row rather than a cell', () => {
+    store$.overrideSelector(selectPreferences, { hideBuiltinGroups: true } as Preferences);
+    store$.overrideSelector(selectGroups, fakeGroupDataSource);
+    store$.refreshState();
+    spectator.detectChanges();
+
+    const row = spectator.query('tbody tr[data-test]');
+
+    expect(row?.getAttribute('data-test')).toBe('row-group-mock');
+  });
+
   it('expands and collapses a row to reveal its details when the row is clicked', async () => {
     store$.overrideSelector(selectGroups, fakeGroupDataSource);
     store$.refreshState();

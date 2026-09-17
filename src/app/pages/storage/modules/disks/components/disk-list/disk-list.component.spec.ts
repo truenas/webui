@@ -173,6 +173,15 @@ describe('DiskListComponent', () => {
     ]);
   });
 
+  it('tags each row with the disk it shows, so e2e can select a row without opening it', () => {
+    // Before `[rowTestId]` the only row tag in this list lived in the detail row, which a test can
+    // only reach by clicking a row it has no way to address.
+    const rows = Array.from(spectator.queryAll('tbody tr[data-test]'))
+      .map((row) => row.getAttribute('data-test'));
+
+    expect(rows).toEqual(['row-disk-sda', 'row-disk-sdb', 'row-disk-sdc']);
+  });
+
   it('keeps the legacy row-action test ids after moving to tn-button', async () => {
     await table.toggleRowExpansion(2);
 

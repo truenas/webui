@@ -23,7 +23,8 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
-import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
+import { mapTnSortToTableSort, memoizedRowTag } from 'app/modules/tn-table/utils';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
 import { getGroupFormConfig } from 'app/pages/credentials/groups/group-form/group.form-config';
@@ -49,6 +50,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
     TnHeaderCellDefDirective,
     TnCellDefDirective,
     TnDetailRowDefDirective,
+    TableTextCellComponent,
     GroupDetailsRowComponent,
     TnTablePagerComponent,
     TranslateModule,
@@ -73,6 +75,13 @@ export class GroupListComponent implements OnInit {
 
   protected readonly displayedColumns = ['group', 'gid', 'builtin', 'sudo', 'smb', 'roles'];
   protected readonly trackById = (_: number, row: Group): number => row.id;
+
+  /**
+   * Row tag behind every cell's test id, kept at the value the legacy `ix-table` row carried
+   * (`row-group-<group>`) so the ids Release Engineering already selects on still resolve.
+   * tn-table has no per-row test id of its own, so the cells are the row's only handle.
+   */
+  protected readonly uniqueRowTag = memoizedRowTag<Group>((group) => `group-${group.group}`);
 
   private readonly hasAccountWrite = toSignal(this.authService.hasRole(this.requiredRoles), {
     initialValue: false,

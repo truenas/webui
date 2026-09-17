@@ -66,6 +66,26 @@ describe('UserListComponent', () => {
       ]);
     });
 
+    it('tags every cell with the row it belongs to, so a row is addressable in e2e', () => {
+      const testIds = Array.from(spectator.queryAll('tbody [data-test]'))
+        .map((element) => element.getAttribute('data-test'));
+
+      expect(testIds).toEqual([
+        'row-user-john-doe',
+        'text-username-user-john-doe-row-text',
+        'text-full-name-user-john-doe-row-text',
+        'text-type-user-john-doe-row-text',
+        'text-access-user-john-doe-row-text',
+        'icon-user-john-doe-truenas-access',
+        'row-user-jane-smith',
+        'text-username-user-jane-smith-row-text',
+        'text-full-name-user-jane-smith-row-text',
+        'text-type-user-jane-smith-row-text',
+        'text-access-user-jane-smith-row-text',
+        'icon-user-jane-smith-truenas-access',
+      ]);
+    });
+
     it('navigates to user details when a row is clicked', async () => {
       await table.clickRow(0);
 

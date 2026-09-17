@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent, tnIconMarker, TnTooltipDirective } from '@truenas/ui-components';
+import { TnIconComponent, tnIconMarker, TnTooltipDirective, TnTestIdDirective } from '@truenas/ui-components';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { stripQueryAndFragment } from 'app/helpers/url.helper';
 import { AlertWithDuplicates } from 'app/interfaces/smart-alert.interface';
@@ -76,6 +76,7 @@ function getSeverityOrder(level: AlertLevel): number {
     TnIconComponent,
     TnTooltipDirective,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class PageAlertsComponent {

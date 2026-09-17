@@ -7,7 +7,7 @@ import { Navigation, Router } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { InputType, TnButtonComponent, TnCardComponent, TnInputComponent } from '@truenas/ui-components';
+import { InputType, TnButtonComponent, TnCardComponent, TnInputComponent, TnTestIdDirective } from '@truenas/ui-components';
 import {
   firstValueFrom, lastValueFrom, switchMap,
 } from 'rxjs';
@@ -53,6 +53,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     StaticRoutesCardComponent,
     IpmiCardComponent,
     TranslateModule,
+    TnTestIdDirective,
   ],
   providers: [
     InterfacesStore,

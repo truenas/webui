@@ -14,7 +14,9 @@
       <div class="option-cards">
         <div
           class="option-card export-option"
+          tnTestIdType="option"
           [class.selected]="isExportSelected"
+          [tnTestId]="'export-pool'"
           (click)="selectOption(exportOption)"
         >
           <h3>{{ 'Export Pool' | translate }}</h3>
@@ -23,7 +25,9 @@
 
         <div
           class="option-card delete-option"
+          tnTestIdType="option"
           [class.selected]="isDeleteSelected"
+          [tnTestId]="'delete-pool'"
           (click)="selectOption(deleteOption)"
         >
           <h3>{{ 'Delete Pool' | translate }}</h3>

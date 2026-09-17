@@ -16,6 +16,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
   TnProgressBarComponent, TnSelectComponent, TnSlideToggleComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   filter, finalize, map, Observable, of, switchMap, tap, forkJoin, zip,
@@ -87,6 +88,8 @@ interface StigEnablementRequirements {
  * not be shown in the requirements list.
  */
 interface MissingStigRequirement {
+  /** stable, untranslated key for this requirement; the test id of its link is built on it */
+  id: string;
   /** what text to display on the action/navigation link */
   configureTitle: string;
   /** message to display when requirement is unfulfilled */
@@ -115,6 +118,7 @@ interface MissingStigRequirement {
     TnProgressBarComponent,
     TranslateModule,
     AsyncPipe,
+    TnTestIdDirective,
   ],
 })
 export class SystemSecurityFormComponent extends IxFormHostForm implements OnInit {
@@ -294,6 +298,7 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
 
       if (!enablementRequirements?.currentUserIsNotRoot) {
         requirements.push({
+          id: 'root-session',
           configureTitle: this.translate.instant('Log out'),
           message: this.translate.instant('You must log in as a user other than root with admin access, because root must have its password disabled.'),
           action: this.logout.bind(this),
@@ -302,6 +307,7 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
 
       if (!enablementRequirements?.twoFactorAuthGloballyEnabled) {
         requirements.push({
+          id: 'global-2fa',
           configureTitle: this.translate.instant('Enable'),
           message: this.translate.instant('Global Two-Factor Authentication must be enabled.'),
           action: this.openGlobalTwoFactorForm.bind(this, 'global'),
@@ -310,6 +316,7 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
 
       if (!enablementRequirements.twoFactorSshGloballyEnabled) {
         requirements.push({
+          id: 'ssh-2fa',
           configureTitle: this.translate.instant('Enable'),
           message: this.translate.instant('SSH Two-Factor Authentication must be enabled.'),
           action: this.openGlobalTwoFactorForm.bind(this, 'ssh'),
@@ -318,6 +325,7 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
 
       if (!enablementRequirements.dockerServiceDisabled) {
         requirements.push({
+          id: 'apps-service',
           configureTitle: this.translate.instant('Disable'),
           message: this.translate.instant('The apps service must be disabled and the pool unset.'),
           navigateTo: ['/apps'],
@@ -327,6 +335,7 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
 
       if (!enablementRequirements.rootPasswordDisabled[0]) {
         requirements.push({
+          id: 'root-password',
           configureTitle: this.translate.instant('Disable'),
           message: this.translate.instant('The root user must have their password disabled.'),
           action: this.openUserEditForm.bind(this, enablementRequirements.rootPasswordDisabled[1]),
@@ -335,6 +344,7 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
 
       if (!enablementRequirements.adminPasswordDisabled[0]) {
         requirements.push({
+          id: 'admin-password',
           configureTitle: this.translate.instant('Disable'),
           message: this.translate.instant('The truenas_admin user must have their password disabled.'),
           action: this.openUserEditForm.bind(this, enablementRequirements.adminPasswordDisabled[1]),
@@ -343,18 +353,21 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
 
       if (!enablementRequirements.currentUserIs2fa && !enablementRequirements.currentSessionIs2fa) {
         requirements.push({
+          id: 'current-user-2fa',
           configureTitle: this.translate.instant('Configure 2FA'),
           message: this.translate.instant('The current user must be logged in with 2FA. After configuring 2FA, you will have to log out and log back in again.'),
           navigateTo: ['/two-factor-auth'],
         });
       } else if (!enablementRequirements.currentUserIs2fa) {
         requirements.push({
+          id: 'user-2fa',
           configureTitle: this.translate.instant('Configure 2FA'),
           message: this.translate.instant('You must have 2FA configured for your user.'),
           navigateTo: ['/two-factor-auth'],
         });
       } else if (!enablementRequirements.currentSessionIs2fa) {
         requirements.push({
+          id: 'current-session-2fa',
           configureTitle: this.translate.instant('Log out'),
           message: this.translate.instant('You must be logged in with 2FA. If you have already configured 2FA, you will have to log out and back in again.'),
           action: this.logout.bind(this),
@@ -363,6 +376,7 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
 
       if (!enablementRequirements.allUsersHave2fa) {
         warnings.push({
+          id: 'all-users-2fa',
           configureTitle: this.translate.instant('Configure'),
           message: this.translate.instant('All users must have 2FA enabled and setup.'),
           navigateTo: ['/credentials/users'],

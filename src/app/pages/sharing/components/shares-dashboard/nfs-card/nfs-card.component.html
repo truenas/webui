@@ -104,7 +104,7 @@
       <ng-container [tnColumnDef]="'tier'">
         <ng-template tnHeaderCellDef>{{ 'Storage Tier' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <ix-tier-status [tier]="row.tier" />
+          <ix-tier-status [tier]="row.tier" [uniqueRowTag]="uniqueRowTag(row)" />
         </ng-template>
       </ng-container>
 

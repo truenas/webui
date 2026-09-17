@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnTooltipDirective, TnIconComponent } from '@truenas/ui-components';
+import { TnTooltipDirective, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { AclType } from 'app/enums/acl-type.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag } from 'app/enums/posix-acl.enum';
@@ -22,6 +22,7 @@ import {
     PermissionsItemComponent,
     TnTooltipDirective,
     TnIconComponent,
+    TnTestIdDirective,
     TranslateModule,
   ],
 })

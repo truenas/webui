@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, input, Signal, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { Job } from 'app/interfaces/job.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
@@ -16,6 +16,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnIconComponent,
     TnButtonComponent,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class ErrorTemplateComponent {
@@ -30,6 +31,13 @@ export class ErrorTemplateComponent {
   private readonly errorBtText: Signal<ElementRef<HTMLElement> | undefined> = viewChild('errorBtText', { read: ElementRef });
 
   readonly title = input.required<string>();
+
+  /**
+   * The dialog renders one of these per error and `title` is a translated string that is almost
+   * always 'Error', so the ids inside have to be scoped by the error's position in the list.
+   */
+  readonly index = input.required<number>();
+
   readonly message = input<string>();
   readonly stackTrace = input<string>();
   readonly logs = input<Job>();

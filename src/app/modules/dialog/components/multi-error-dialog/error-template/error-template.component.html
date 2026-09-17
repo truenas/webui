@@ -7,6 +7,8 @@
   @if (stackTrace()) {
     <div
       class="more-info"
+      tnTestIdType="button"
+      [tnTestId]="['more-info', index()]"
       (click)="toggleOpen()"
     >
       @if (isCloseMoreInfo) {
@@ -32,7 +34,7 @@
 </div>
 @if (logs()) {
   <tn-button
-    testId="download-logs"
+    [testId]="['download-logs', index()]"
     [label]="'Download Logs' | translate"
     (onClick)="downloadLogs()"
   ></tn-button>

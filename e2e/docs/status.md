@@ -71,9 +71,11 @@ a number. See `05-ci.md`.
 1. **Widen coverage.** Dataset ACL and manual snapshot are the two uncovered
    stories worth taking next. S3 is covered as a feature — create, configure,
    edit, toggle, rotate, delete — except auditing, which is licence-gated and
-   needs an Enterprise appliance. Deleting things through the UI is blocked: no
-   per-row test id on `tn-table`, so no list-driven journey can be automated
-   compliantly. Fixing that once unblocks every future one.
+   needs an Enterprise appliance. List-driven journeys (deleting a pool, dataset
+   or share from a list) are no longer blocked: `tn-table` still writes nothing
+   on the `<tr>`, but every list tags its cells with the row's identity and a
+   lint step keeps it that way — see "Addressing a table row" in `CLAUDE.md`
+   (NAS-143804).
 2. **CI is running.** `.github/workflows/e2e.yml` installs a nested TrueNAS VM
    on the lab runner (a TrueNAS box) with `tn_guest.py` from
    iXsystems/api-ci-testbed, runs the suite against it from Playwright's

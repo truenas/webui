@@ -33,7 +33,8 @@ import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
-import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
+import { mapTnSortToTableSort, memoizedRowTag } from 'app/modules/tn-table/utils';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CronDeleteDialog } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
@@ -58,6 +59,7 @@ import { TaskService } from 'app/services/task.service';
     TnHeaderCellDefDirective,
     TnCellDefDirective,
     TnDetailRowDefDirective,
+    TableTextCellComponent,
     TnEmptyComponent,
     TnTablePagerComponent,
     TranslateModule,
@@ -87,6 +89,14 @@ export class CronListComponent implements OnInit {
   protected readonly displayedColumns = ['user', 'command', 'description', 'schedule', 'enabled', 'next_run'];
 
   protected readonly trackBy = (_: number, row: CronjobRow): number => row.id;
+
+  /**
+   * Row tag behind every cell's test id, kept at the value the legacy `ix-table` row carried
+   * (`row-cron-<command>-<description>`) so the ids Release Engineering already selects on still
+   * resolve. The detail row's buttons were the only tagged thing left here, and a detail row can
+   * only be opened by clicking a row you first have to be able to find.
+   */
+  protected readonly uniqueRowTag = memoizedRowTag<CronjobRow>((row) => `cron-${row.command}-${row.description}`);
 
   protected getNextRun(row: CronjobRow): string {
     if (!row.enabled) {

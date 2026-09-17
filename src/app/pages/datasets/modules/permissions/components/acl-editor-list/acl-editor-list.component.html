@@ -10,8 +10,10 @@
     @for (ace of aces; track ace; let i = $index) {
       <div
         class="ace"
+        tnTestIdType="row"
         [class.ace-selected]="i === selectedAceIndex()"
         [class.fn-theme-red]="acesWithError().includes(i)"
+        [tnTestId]="['ace', i]"
         (click)="onAceSelected(i)"
       >
         @if (permissionItems[i]) {
@@ -23,7 +25,9 @@
         @if (acesWithError().includes(i)) {
           <span
             class="warning"
+            tnTestIdType="button"
             [tnTooltip]="'Ace has errors.' | translate"
+            [tnTestId]="['remove-ace-error', i]"
             (click)="onRemoveAcePressed(i)"
           >
             <tn-icon name="alert" library="mdi"></tn-icon>
@@ -32,7 +36,9 @@
         @if (canBeRemoved(ace)) {
           <span
             class="remove"
+            tnTestIdType="button"
             [attr.title]="'Close' | translate"
+            [tnTestId]="['remove-ace', i]"
             (click)="onRemoveAcePressed(i)"
           >
             <tn-icon name="close-circle" library="mdi"></tn-icon>

@@ -10,6 +10,7 @@ import {
   TnTableColumnDirective,
   TnTableComponent,
   TnTablePagerComponent,
+  TnTestIdDirective,
   TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
@@ -18,7 +19,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
+import { mapTnSortToTableSort, memoizedRowTag } from 'app/modules/tn-table/utils';
 import { auditElements } from 'app/pages/audit/audit.elements';
 import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/audit-search.component';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
@@ -66,6 +67,7 @@ const defaultEmptyIcon = 'mdi-format-list-text';
     TnTableColumnDirective,
     TnTableComponent,
     TnTablePagerComponent,
+    TnTestIdDirective,
     TnTooltipDirective,
     TranslateModule,
     UiSearchDirective,
@@ -88,6 +90,16 @@ export class AuditListComponent {
   }
 
   protected readonly trackByAuditId = (_index: number, row: AuditEntry): string => row.audit_id;
+
+  /**
+   * Row tag behind every cell's test id, kept at the value the legacy `ix-table` row carried
+   * (`row-audit-<service>-<username>-<event>-<audit id>`) so the ids Release Engineering already
+   * selects on still resolve. tn-table has no per-row test id of its own, so the cells are the
+   * row's only handle.
+   */
+  protected readonly uniqueRowTag = memoizedRowTag<AuditEntry>(
+    (row) => `audit-${row.service}-${row.username}-${row.event}-${row.audit_id}`,
+  );
 
   protected onSortChange(event: TnSortEvent): void {
     this.dataProvider().setSorting(mapTnSortToTableSort<AuditEntry>(event, this.displayedColumns));

@@ -3,14 +3,15 @@ import { Component, ChangeDetectionStrategy, output, input, inject } from '@angu
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnCellDefDirective, TnHeaderCellDefDirective, TnTableColumnDirective,
-  TnTableComponent, TnTablePagerComponent, type TnSortEvent,
+  TnTableComponent, TnTablePagerComponent, TnTestIdDirective, type TnSortEvent,
 } from '@truenas/ui-components';
 import { getUserType } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
+import { mapTnSortToTableSort, memoizedRowTag } from 'app/modules/tn-table/utils';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { UsersDataProvider } from 'app/pages/credentials/users/all-users/users-data-provider';
 import { UsersSearchComponent } from 'app/pages/credentials/users/all-users/users-search/users-search.component';
 import { UserAccessCellComponent } from './user-access-cell/user-access-cell.component';
@@ -27,6 +28,8 @@ import { UserAccessCellComponent } from './user-access-cell/user-access-cell.com
     TnHeaderCellDefDirective,
     TnCellDefDirective,
     TnTablePagerComponent,
+    TnTestIdDirective,
+    TableTextCellComponent,
     UsersSearchComponent,
     UserAccessCellComponent,
   ],
@@ -42,6 +45,13 @@ export class UserListComponent {
 
   protected readonly displayedColumns = ['username', 'full_name', 'builtin', 'roles'];
   protected readonly trackByUid = (_index: number, row: User): number => row.uid;
+
+  /**
+   * Row tag behind every cell's test id, kept at the value the legacy `ix-table` row carried
+   * (`row-user-<username>`) so the ids Release Engineering already selects on still resolve.
+   * tn-table has no per-row test id of its own, so the cells are the row's only handle.
+   */
+  protected readonly uniqueRowTag = memoizedRowTag<User>((user) => `user-${user.username}`);
 
   protected userType(row: User): string {
     return this.translate.instant(getUserType(row));

@@ -21,6 +21,7 @@
     [ixUiSearch]="searchableElements.elements.cron"
     [dataSource]="(dataProvider.currentPage$ | async) ?? []"
     [displayedColumns]="displayedColumns"
+    [rowTestId]="uniqueRowTag"
     [trackBy]="trackBy"
     [loading]="!!(dataProvider.isLoading$ | async)"
     [expandable]="true"
@@ -28,32 +29,69 @@
   >
     <ng-container [tnColumnDef]="'user'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Users' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.user }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.user"
+          [title]="'Users' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'command'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Command' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.command }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.command"
+          [title]="'Command' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'description'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.description }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.description"
+          [title]="'Description' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'schedule'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Schedule' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.schedule | scheduleDescription }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.schedule | scheduleDescription"
+          [title]="'Schedule' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'enabled'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.enabled | yesNo | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.enabled | yesNo | translate"
+          [title]="'Enabled' | translate"
+          [testIdSuffix]="'row-yesno'"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'next_run'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Next Run' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ getNextRun(row) }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="getNextRun(row)"
+          [title]="'Next Run' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-template let-cronjob tnDetailRowDef>

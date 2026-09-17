@@ -9,6 +9,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCheckboxComponent, TnDialog, TnDialogShellComponent, TnExpansionPanelComponent,
   TnFormFieldComponent, TnFormSectionComponent, TnIconComponent, TnInputComponent, TnProgressBarComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
@@ -61,6 +62,7 @@ export enum DisconnectOption {
     RequiresRolesDirective,
     TranslateModule,
     TnIconComponent,
+    TnTestIdDirective,
   ],
 })
 export class ExportDisconnectModalComponent implements OnInit {

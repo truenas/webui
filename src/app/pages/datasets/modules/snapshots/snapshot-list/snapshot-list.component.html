@@ -60,6 +60,7 @@
     [ixUiSearch]="searchableElements.elements.list"
     [dataSource]="currentPage()"
     [displayedColumns]="displayedColumns()"
+    [rowTestId]="uniqueRowTag"
     [trackBy]="trackBySnapshotId"
     [selectable]="true"
     [selectionKey]="snapshotSelectionKey"
@@ -73,31 +74,57 @@
   >
     <ng-container tnColumnDef="dataset" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Dataset' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.dataset }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.dataset"
+          [title]="'Dataset' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container tnColumnDef="snapshot_name" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Snapshot' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.snapshot_name }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.snapshot_name"
+          [title]="'Snapshot' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container tnColumnDef="used" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Used' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ getUsed(row) | ixFileSize }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Used' | translate), uniqueRowTag(row), 'row-size']"
+        >{{ getUsed(row) | ixFileSize }}</span>
+      </ng-template>
     </ng-container>
 
     <ng-container tnColumnDef="created" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Date created' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         @if (getCreated(row); as created) {
-          <ix-date [date]="created"></ix-date>
+          <ix-date
+            tnTestIdType="date"
+            [date]="created"
+            [tnTestId]="[('Date created' | translate), uniqueRowTag(row), 'row-date']"
+          ></ix-date>
         }
       </ng-template>
     </ng-container>
 
     <ng-container tnColumnDef="referenced" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Referenced' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ getReferenced(row) | ixFileSize }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Referenced' | translate), uniqueRowTag(row), 'row-size']"
+        >{{ getReferenced(row) | ixFileSize }}</span>
+      </ng-template>
     </ng-container>
 
     <ng-template let-snapshot tnDetailRowDef>

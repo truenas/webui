@@ -3,6 +3,7 @@
     @for (error of errors; track error) {
       <ix-error-template
         class="error-template"
+        [index]="$index"
         [title]="error.title"
         [message]="error.message"
         [stackTrace]="error.stackTrace"

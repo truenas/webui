@@ -25,7 +25,9 @@
       <button
         type="button"
         class="reset-icon reset-input"
+        tnTestIdType="button"
         [attr.aria-label]="'Clear search' | translate"
+        [tnTestId]="'clear-global-search'"
         (click)="resetInput()"
       >
         <tn-icon name="close-circle" library="mdi"></tn-icon>

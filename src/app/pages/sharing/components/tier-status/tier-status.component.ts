@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTooltipDirective, TnTestIdDirective } from '@truenas/ui-components';
 import { catchError, of, switchMap } from 'rxjs';
 import { SharingTierInfo } from 'app/interfaces/zfs-tier.interface';
 import {
@@ -25,6 +25,7 @@ import {
     TnIconComponent,
     TnTooltipDirective,
     NgClass,
+    TnTestIdDirective,
   ],
 })
 export class TierStatusComponent {
@@ -33,6 +34,14 @@ export class TierStatusComponent {
   private tierService = inject(SharingTierService);
 
   readonly tier = input<SharingTierInfo | null | undefined>();
+
+  /**
+   * The badge renders once per row in the share lists and cards, so a constant id would resolve to
+   * every row at once. Scoped to the row's tag there; left empty on the single-instance call site
+   * (dataset details), where an empty leading segment is dropped and the id stays
+   * `button-migration-status`.
+   */
+  readonly uniqueRowTag = input('');
 
   protected tierLabel = computed(() => {
     const key = getTierLabelKey(this.tier()?.tier_type);

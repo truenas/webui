@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, OnInit, Signal, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TnDialog } from '@truenas/ui-components';
+import { TnDialog, TnTestIdDirective } from '@truenas/ui-components';
 import { ConsoleMessagesStore } from 'app/modules/layout/console-footer/console-messages.store';
 import { ConsolePanelDialog } from 'app/modules/layout/console-footer/console-panel/console-panel-dialog.component';
 
@@ -10,7 +10,7 @@ import { ConsolePanelDialog } from 'app/modules/layout/console-footer/console-pa
   templateUrl: './console-footer.component.html',
   styleUrls: ['./console-footer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AsyncPipe],
+  imports: [AsyncPipe, TnTestIdDirective],
 })
 export class ConsoleFooterComponent implements OnInit {
   private tnDialog = inject(TnDialog);
