@@ -111,7 +111,8 @@ export class MyComponent {
 
 ## Branch and Commit Guidelines
 - Branch naming: `NAS-<issue number>` (e.g., `NAS-12345`)
-- Commit messages: `NAS-<issue number>: <description>`.
+- Commit messages: prefer `NAS-<issue number>: <description>`. No hook enforces or prepends it any more —
+  what lands on master is the PR title, set on GitHub.
 - Keep commit message short (to one line).
 
 ## Browser testing: which tool
