@@ -12,6 +12,7 @@
   } @else {
     <tn-table
       [testId]="'table-table'"
+      [rowTestId]="uniqueRowTag"
       [dataSource]="list.rows()"
       [displayedColumns]="list.displayedColumns()"
       [emptyMessage]="list.empty.message()"

@@ -27,6 +27,7 @@ import { directIdMapping } from 'app/interfaces/user.interface';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   IdMapping,
@@ -73,6 +74,8 @@ export class MapUserGroupIdsDialogComponent implements OnInit {
   private snackbar = inject(SnackbarService);
 
   protected readonly columns = ['name', 'hostUidOrGid', 'instanceUidOrGid', 'actions'];
+
+  protected readonly uniqueRowTag = (row: IdMapping): string => toUniqueRowTag(`mapping-${row.name}`);
   protected readonly helptext = containersHelptext;
 
   protected readonly isLoading = signal(true);

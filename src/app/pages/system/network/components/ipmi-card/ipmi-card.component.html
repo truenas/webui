@@ -15,6 +15,7 @@
 
     <tn-table
       class="table"
+      [rowTestId]="uniqueRowTag"
       [dataSource]="rows()"
       [displayedColumns]="displayedColumns"
       [loading]="isLoading()"

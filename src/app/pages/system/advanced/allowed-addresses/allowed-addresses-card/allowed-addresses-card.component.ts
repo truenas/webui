@@ -90,9 +90,7 @@ export class AllowedAddressesCardComponent implements OnInit {
     },
   ];
 
-  protected uniqueRowTag(row: AllowedAddressRow): string {
-    return 'allowed-address-' + row.address;
-  }
+  protected readonly uniqueRowTag = (row: AllowedAddressRow): string => 'allowed-address-' + row.address;
 
   protected ariaLabel(row: AllowedAddressRow): string {
     return [row.address, this.translate.instant('Allowed Address')].join(' ');

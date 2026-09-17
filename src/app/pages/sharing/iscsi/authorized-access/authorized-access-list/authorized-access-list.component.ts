@@ -134,9 +134,9 @@ export class AuthorizedAccessListComponent implements OnInit {
 
   protected readonly trackByAuthId = (_index: number, row: IscsiAuthAccess): number => row.id;
 
-  protected uniqueRowTag(row: IscsiAuthAccess): string {
-    return toUniqueRowTag('iscsi-authorized-access-' + row.user + '-' + row.peeruser);
-  }
+  protected readonly uniqueRowTag = (row: IscsiAuthAccess): string => (
+    toUniqueRowTag('iscsi-authorized-access-' + row.user + '-' + row.peeruser)
+  );
 
   protected ariaLabel(row: IscsiAuthAccess): string {
     return [row.user, this.translate.instant('Authorized Access')].join(' ');

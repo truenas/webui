@@ -38,6 +38,7 @@
 } @else {
   <tn-table
     class="containers-table"
+    [rowTestId]="uniqueRowTag"
     [dataSource]="filteredContainers()"
     [displayedColumns]="displayedColumns"
     [trackBy]="trackByContainerId"

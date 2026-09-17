@@ -90,9 +90,9 @@ export class InitShutdownListComponent implements OnInit {
     },
   ];
 
-  protected uniqueRowTag(row: InitShutdownScript): string {
-    return 'init-shutdown-' + row.command + '-' + row.type;
-  }
+  protected readonly uniqueRowTag = (row: InitShutdownScript): string => (
+    'init-shutdown-' + row.command + '-' + row.type
+  );
 
   protected ariaLabel(row: InitShutdownScript): string {
     return [row.command, this.translate.instant('Init/Shutdown Script')].join(' ');

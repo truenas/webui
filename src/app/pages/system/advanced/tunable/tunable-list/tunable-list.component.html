@@ -19,6 +19,7 @@
   <tn-table
     class="table"
     [ixUiSearch]="searchableElements.elements.tunables"
+    [rowTestId]="uniqueRowTag"
     [dataSource]="(dataProvider.currentPage$ | async) ?? []"
     [displayedColumns]="displayedColumns"
     [trackBy]="trackByTunableId"

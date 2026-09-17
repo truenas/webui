@@ -87,9 +87,7 @@ export class IpmiCardComponent implements OnInit {
     },
   ];
 
-  protected uniqueRowTag(row: Ipmi): string {
-    return convertStringToId(`ipmi-${row.channel}-${row.ip_address}`);
-  }
+  protected readonly uniqueRowTag = (row: Ipmi): string => convertStringToId(`ipmi-${row.channel}-${row.ip_address}`);
 
   protected ariaLabel(row: Ipmi): string {
     return [row.ip_address, this.translate.instant('IPMI')].join(' ');

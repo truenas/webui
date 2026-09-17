@@ -110,9 +110,7 @@ export class SmbSessionListComponent implements OnInit {
     });
   }
 
-  protected uniqueRowTag(row: SmbSession): string {
-    return toUniqueRowTag('smb-session-' + row.session_id);
-  }
+  protected readonly uniqueRowTag = (row: SmbSession): string => toUniqueRowTag('smb-session-' + row.session_id);
 
   protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {
     this.columns.set([...columns]);

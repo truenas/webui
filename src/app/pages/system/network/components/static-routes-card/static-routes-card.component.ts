@@ -103,9 +103,9 @@ export class StaticRoutesCardComponent implements OnInit {
     },
   ];
 
-  protected uniqueRowTag(row: StaticRoute): string {
-    return convertStringToId('static-route-' + row.destination + '-' + row.gateway);
-  }
+  protected readonly uniqueRowTag = (row: StaticRoute): string => (
+    convertStringToId('static-route-' + row.destination + '-' + row.gateway)
+  );
 
   protected ariaLabel(row: StaticRoute): string {
     return [row.description, this.translate.instant('Static Route')].join(' ');

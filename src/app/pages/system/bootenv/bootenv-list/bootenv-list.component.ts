@@ -180,9 +180,7 @@ export class BootEnvironmentListComponent implements OnInit {
     return this.translate.instant('No');
   }
 
-  protected uniqueRowTag(row: BootEnvironment): string {
-    return `bootenv-${row.id}`;
-  }
+  protected readonly uniqueRowTag = (row: BootEnvironment): string => `bootenv-${row.id}`;
 
   protected ariaLabel(row: BootEnvironment): string {
     return [row.id, this.translate.instant('Boot Environment')].join(' ');

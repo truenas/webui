@@ -56,6 +56,7 @@
   <tn-table
     class="table"
     [ixUiSearch]="searchableElements.elements.boot"
+    [rowTestId]="uniqueRowTag"
     [dataSource]="(dataProvider.currentPage$ | async) ?? []"
     [displayedColumns]="displayedColumns"
     [trackBy]="trackByBootenvId"

@@ -124,9 +124,7 @@ export class CertificateSigningRequestsListComponent {
     },
   ];
 
-  protected uniqueRowTag(row: Certificate): string {
-    return 'csr-' + row.name;
-  }
+  protected readonly uniqueRowTag = (row: Certificate): string => 'csr-' + row.name;
 
   protected ariaLabel(row: Certificate): string {
     return [row.name, this.translate.instant('CSR')].join(' ');

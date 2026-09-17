@@ -24,6 +24,7 @@
     [expandOnRowClick]="true"
     [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.vmwareSnapshots"
+    [rowTestId]="uniqueRowTag"
     [dataSource]="list.rows()"
     [displayedColumns]="list.displayedColumns()"
     [trackBy]="trackBySnapshotId"

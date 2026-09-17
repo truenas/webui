@@ -21,6 +21,7 @@
 
   <tn-table
     [ixUiSearch]="searchableElements.elements.exporters"
+    [rowTestId]="uniqueRowTag"
     [dataSource]="currentPage()"
     [displayedColumns]="displayedColumns"
     [trackBy]="trackById"

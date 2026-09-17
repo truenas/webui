@@ -37,6 +37,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
@@ -156,6 +157,8 @@ export class InstalledAppsListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly imagePlaceholder = appImagePlaceholder;
   protected readonly trackByAppId = (_: number, app: App): string => app.id;
+
+  protected readonly uniqueRowTag = (row: App): string => toUniqueRowTag(`app-${row.name}`);
 
   protected readonly displayedColumns = [
     SortableField.Application,

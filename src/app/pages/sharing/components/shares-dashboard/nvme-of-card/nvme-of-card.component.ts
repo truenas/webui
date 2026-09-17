@@ -171,9 +171,9 @@ export class NvmeOfCardComponent implements OnInit {
 
   protected readonly trackBySubsystemId = (_index: number, row: NvmeOfSubsystemDetails): number => row.id;
 
-  protected uniqueRowTag(row: NvmeOfSubsystemDetails): string {
-    return convertStringToId('nvmeof-subsys-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: NvmeOfSubsystemDetails): string => (
+    convertStringToId('nvmeof-subsys-' + row.name)
+  );
 
   protected ariaLabel(row: NvmeOfSubsystemDetails): string {
     return [row.name, this.translate.instant('Subsystem')].join(' ');

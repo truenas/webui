@@ -34,7 +34,7 @@ import { ApiDataProvider } from 'app/modules/tn-table/classes/api-data-provider/
 import { PaginationServerSide } from 'app/modules/tn-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/tn-table/classes/api-data-provider/sorting-server-side.class';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
+import { mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/user-api-keys.elements';
@@ -83,6 +83,8 @@ export class UserApiKeysComponent implements OnInit {
 
   protected readonly displayedColumns = ['name', 'username', 'local', 'revoked', 'created_at', 'expires_at', 'actions'];
   protected readonly trackById = (_index: number, row: ApiKey): number => row.id;
+
+  protected readonly uniqueRowTag = (row: ApiKey): string => toUniqueRowTag(`api-key-${row.name}`);
 
   private readonly canWriteApiKeys = toSignal(this.authService.hasRole([Role.ApiKeyWrite]));
   private readonly currentUsername = toSignal(

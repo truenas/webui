@@ -19,6 +19,7 @@
   <tn-table
     class="interfaces-table"
     [ixUiSearch]="searchableElements.interfaces"
+    [rowTestId]="uniqueRowTag"
     [dataSource]="rows()"
     [displayedColumns]="displayedColumns"
     [loading]="isLoading()"

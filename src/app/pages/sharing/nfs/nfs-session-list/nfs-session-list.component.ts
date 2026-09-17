@@ -164,13 +164,13 @@ export class NfsSessionListComponent implements OnInit {
     return stringToTitleCase(status);
   }
 
-  protected uniqueRowTag3(row: Nfs3Session): string {
-    return toUniqueRowTag('nfs3-session-' + row.export + '-' + row.ip);
-  }
+  protected readonly uniqueRowTag3 = (row: Nfs3Session): string => (
+    toUniqueRowTag('nfs3-session-' + row.export + '-' + row.ip)
+  );
 
-  protected uniqueRowTag4(row: Nfs4Session['info']): string {
-    return toUniqueRowTag(`nfs4-session-${row.address}-${row.clientid}`);
-  }
+  protected readonly uniqueRowTag4 = (row: Nfs4Session['info']): string => (
+    toUniqueRowTag(`nfs4-session-${row.address}-${row.clientid}`)
+  );
 
   ngOnInit(): void {
     this.loadData();

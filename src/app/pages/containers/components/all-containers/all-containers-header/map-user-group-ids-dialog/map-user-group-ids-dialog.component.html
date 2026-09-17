@@ -39,7 +39,12 @@
   } @else {
     <div class="table-wrapper">
       @if (mappings().length) {
-      <tn-table testId="table-mapping-table" [dataSource]="mappings()" [displayedColumns]="columns">
+      <tn-table
+        testId="table-mapping-table"
+        [rowTestId]="uniqueRowTag"
+        [dataSource]="mappings()"
+        [displayedColumns]="columns"
+      >
         <ng-container [tnColumnDef]="'name'">
           <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
           <ng-template let-mapping tnCellDef>{{ mapping.name }}</ng-template>

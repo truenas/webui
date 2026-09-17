@@ -118,9 +118,9 @@ export class RsyncTaskCardComponent extends JobTaskCardBase<RsyncTaskUi> {
     },
   ];
 
-  protected uniqueRowTag(row: RsyncTaskUi): string {
-    return convertStringToId('card-rsync-task-' + row.path + '-' + row.remotehost);
-  }
+  protected readonly uniqueRowTag = (row: RsyncTaskUi): string => (
+    convertStringToId('card-rsync-task-' + row.path + '-' + row.remotehost)
+  );
 
   protected ariaLabel(row: RsyncTaskUi): string {
     return [row.path, row.remotehost, this.translate.instant('Rsync Task')].join(' ');

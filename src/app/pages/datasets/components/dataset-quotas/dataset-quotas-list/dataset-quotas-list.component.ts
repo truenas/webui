@@ -172,9 +172,9 @@ export class DatasetQuotasListComponent implements OnInit {
     return this.emptyValue;
   }
 
-  protected uniqueRowTag(row: DatasetQuota): string {
-    return convertStringToId(`${this.helpTextKey}-quota-${row.name}${this.emptyValue}${row.obj_quota}`);
-  }
+  protected readonly uniqueRowTag = (row: DatasetQuota): string => (
+    convertStringToId(`${this.helpTextKey}-quota-${row.name}${this.emptyValue}${row.obj_quota}`)
+  );
 
   protected ariaLabel(row: DatasetQuota): string {
     return [row.name, this.translate.instant('Dataset Quota')].join(' ');

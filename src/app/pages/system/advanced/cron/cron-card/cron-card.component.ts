@@ -110,9 +110,7 @@ export class CronCardComponent implements OnInit {
     },
   ];
 
-  protected uniqueRowTag(row: CronjobRow): string {
-    return 'card-cron-' + row.command + '-' + row.user;
-  }
+  protected readonly uniqueRowTag = (row: CronjobRow): string => 'card-cron-' + row.command + '-' + row.user;
 
   protected ariaLabel(row: CronjobRow): string {
     return [row.command, this.translate.instant('Cron Job')].join(' ');

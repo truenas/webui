@@ -64,6 +64,7 @@
   } @else {
     <tn-table
       class="table"
+      [rowTestId]="uniqueRowTag"
       [dataSource]="rows()"
       [displayedColumns]="displayedColumns()"
       [trackBy]="trackByIscsiId"

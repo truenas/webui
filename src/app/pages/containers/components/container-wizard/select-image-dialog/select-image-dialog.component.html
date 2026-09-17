@@ -36,6 +36,7 @@
     <div class="table-wrapper">
       <tn-table
         testId="table-images-table"
+        [rowTestId]="uniqueRowTag"
         [dataSource]="filteredImages()"
         [displayedColumns]="columns"
         [loading]="isLoading()"

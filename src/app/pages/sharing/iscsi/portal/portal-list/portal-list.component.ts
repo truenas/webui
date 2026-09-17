@@ -130,9 +130,7 @@ export class PortalListComponent implements OnInit {
 
   protected readonly trackByPortalId = (_index: number, row: IscsiPortal): number => row.id;
 
-  protected uniqueRowTag(row: IscsiPortal): string {
-    return toUniqueRowTag('iscsi-portal-' + row.comment);
-  }
+  protected readonly uniqueRowTag = (row: IscsiPortal): string => toUniqueRowTag('iscsi-portal-' + row.comment);
 
   protected ariaLabel(row: IscsiPortal): string {
     return [row.comment, this.translate.instant('Portal')].join(' ');

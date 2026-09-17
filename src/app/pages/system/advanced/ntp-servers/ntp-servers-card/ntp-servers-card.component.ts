@@ -83,9 +83,9 @@ export class NtpServersCardComponent implements OnInit {
     },
   ];
 
-  protected uniqueRowTag(row: NtpServer): string {
-    return `ntp-server-${row.address}-${row.minpoll}-${row.maxpoll}`;
-  }
+  protected readonly uniqueRowTag = (row: NtpServer): string => (
+    `ntp-server-${row.address}-${row.minpoll}-${row.maxpoll}`
+  );
 
   protected ariaLabel(row: NtpServer): string {
     return [row.address, this.translate.instant('NTP Server')].join(' ');

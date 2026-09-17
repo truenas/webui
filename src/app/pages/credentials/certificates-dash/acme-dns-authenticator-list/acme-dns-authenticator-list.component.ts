@@ -92,9 +92,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
     },
   ];
 
-  protected uniqueRowTag(row: DnsAuthenticator): string {
-    return 'amce-dns-' + row.name;
-  }
+  protected readonly uniqueRowTag = (row: DnsAuthenticator): string => 'amce-dns-' + row.name;
 
   protected ariaLabel(row: DnsAuthenticator): string {
     return [row.name, this.translate.instant('ACME DNS Authenticator')].join(' ');

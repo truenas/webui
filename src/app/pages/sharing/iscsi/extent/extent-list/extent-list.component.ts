@@ -136,9 +136,7 @@ export class ExtentListComponent implements OnInit {
 
   protected readonly trackByExtentId = (_index: number, row: IscsiExtent): number => row.id;
 
-  protected uniqueRowTag(row: IscsiExtent): string {
-    return toUniqueRowTag('iscsi-extent-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: IscsiExtent): string => toUniqueRowTag('iscsi-extent-' + row.name);
 
   protected ariaLabel(row: IscsiExtent): string {
     return [row.name, this.translate.instant('iSCSI Extent')].join(' ');

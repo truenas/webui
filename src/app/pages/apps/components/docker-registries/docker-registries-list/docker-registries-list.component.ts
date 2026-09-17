@@ -22,7 +22,9 @@ import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provi
 import { column } from 'app/modules/tn-table/column-configs';
 import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
-import { createTable, mapTnSortToProviderSorting, toDisplayedColumns } from 'app/modules/tn-table/utils';
+import {
+  createTable, mapTnSortToProviderSorting, toDisplayedColumns, toUniqueRowTag,
+} from 'app/modules/tn-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { dockerRegistriesListElements } from 'app/pages/apps/components/docker-registries/docker-registries-list/docker-registries-list.elements';
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
@@ -49,6 +51,12 @@ import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-re
   ],
 })
 export class DockerRegistriesListComponent implements OnInit {
+  // The tag the ix-table column model resolved before the migration, so the row id is restored
+  // rather than renamed.
+  protected readonly uniqueRowTag = (row: DockerRegistry): string => (
+    toUniqueRowTag(`docker-registry-${row.uri}-${row.name}`)
+  );
+
   protected emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
   private api = inject(ApiService);

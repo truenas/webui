@@ -87,9 +87,7 @@ export class TunableCardComponent implements OnInit {
     },
   ];
 
-  protected uniqueRowTag(row: Tunable): string {
-    return `tunable-${row.var}-${row.value}`;
-  }
+  protected readonly uniqueRowTag = (row: Tunable): string => `tunable-${row.var}-${row.value}`;
 
   protected ariaLabel(row: Tunable): string {
     return [row.var, this.translate.instant('Tunable')].join(' ');

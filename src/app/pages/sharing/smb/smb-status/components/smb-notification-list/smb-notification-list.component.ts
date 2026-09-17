@@ -99,11 +99,11 @@ export class SmbNotificationListComponent implements OnInit {
     });
   }
 
-  protected uniqueRowTag(row: SmbNotificationInfo): string {
-    return normalizeTestIdString(
+  protected readonly uniqueRowTag = (row: SmbNotificationInfo): string => (
+    normalizeTestIdString(
       convertStringToId('smb-notification-' + row.creation_time + '-' + row.server_id.unique_id),
-    );
-  }
+    )
+  );
 
   protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {
     this.columns.set([...columns]);

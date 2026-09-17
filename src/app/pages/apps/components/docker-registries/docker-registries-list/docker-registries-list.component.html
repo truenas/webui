@@ -22,6 +22,7 @@
 <tn-table
   class="table"
   [ixUiSearch]="searchableElements.elements.dockerRegistriesList"
+  [rowTestId]="uniqueRowTag"
   [dataSource]="(dataProvider.currentPage$ | async) ?? []"
   [displayedColumns]="displayedColumns()"
   [loading]="!!(dataProvider.isLoading$ | async)"

@@ -35,6 +35,7 @@
 } @else {
   <tn-table
     class="apps-table"
+    [rowTestId]="uniqueRowTag"
     [dataSource]="filteredApps()"
     [displayedColumns]="displayedColumns"
     [trackBy]="trackByAppId"

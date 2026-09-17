@@ -39,6 +39,7 @@
   } @else {
     <tn-table
       class="table"
+      [rowTestId]="uniqueRowTag"
       [dataSource]="(dataProvider.currentPage$ | async) ?? []"
       [displayedColumns]="displayedColumns"
       [trackBy]="trackByQuotaId"

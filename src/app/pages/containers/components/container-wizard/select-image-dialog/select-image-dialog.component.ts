@@ -13,6 +13,7 @@ import { catchError, Observable, of } from 'rxjs';
 import { ContainerRemote, ContainerType } from 'app/enums/container.enum';
 import { ContainerImage, ContainerImageRegistryResponse } from 'app/interfaces/container.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -56,6 +57,8 @@ export class SelectImageDialog implements OnInit {
   }>(DIALOG_DATA);
 
   protected readonly columns = ['label', 'os', 'release', 'archs', 'variant', 'actions'];
+
+  protected readonly uniqueRowTag = (row: ContainerImageWithId): string => toUniqueRowTag(`image-${row.label}`);
   protected filterForm = this.fb.group({
     os: [''],
     variant: [''],

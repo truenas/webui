@@ -123,9 +123,7 @@ export class SshKeypairCardComponent implements OnInit {
     },
   ];
 
-  protected uniqueRowTag(row: KeychainSshKeyPair): string {
-    return 'ssh-keypair-' + row.name;
-  }
+  protected readonly uniqueRowTag = (row: KeychainSshKeyPair): string => 'ssh-keypair-' + row.name;
 
   protected ariaLabel(row: KeychainSshKeyPair): string {
     return [row.name, this.translate.instant('SSH Key Pair')].join(' ');

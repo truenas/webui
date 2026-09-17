@@ -134,9 +134,9 @@ export class AccessCardComponent implements OnInit {
     return '';
   }
 
-  protected uniqueRowTag(row: AuthSession): string {
-    return 'session-' + this.getUsername(row) + '-' + row.origin;
-  }
+  protected readonly uniqueRowTag = (row: AuthSession): string => (
+    'session-' + this.getUsername(row) + '-' + row.origin
+  );
 
   protected ariaLabel(row: AuthSession): string {
     return [this.getUsername(row), this.translate.instant('Session')].join(' ');

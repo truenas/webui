@@ -166,9 +166,9 @@ export class NfsCardComponent implements OnInit {
 
   protected readonly trackByNfsId = (_index: number, row: NfsShare): number => row.id;
 
-  protected uniqueRowTag(row: NfsShare): string {
-    return convertStringToId('card-nfs-share-' + row.path + '-' + row.comment);
-  }
+  protected readonly uniqueRowTag = (row: NfsShare): string => (
+    convertStringToId('card-nfs-share-' + row.path + '-' + row.comment)
+  );
 
   protected ariaLabel(row: NfsShare): string {
     return [row.path, this.translate.instant('NFS Share')].join(' ');

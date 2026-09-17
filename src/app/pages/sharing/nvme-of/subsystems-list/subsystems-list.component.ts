@@ -58,9 +58,9 @@ export class SubsystemsListComponent {
 
   protected readonly trackBySubsystemId = (_: number, row: NvmeOfSubsystemDetails): number => row.id;
 
-  protected uniqueRowTag(row: NvmeOfSubsystemDetails): string {
-    return toUniqueRowTag('nvmeof-subsys-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: NvmeOfSubsystemDetails): string => (
+    toUniqueRowTag('nvmeof-subsys-' + row.name)
+  );
 
   constructor() {
     setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 5);

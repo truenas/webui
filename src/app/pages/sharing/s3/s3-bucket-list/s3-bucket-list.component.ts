@@ -180,9 +180,7 @@ export class S3BucketListComponent implements OnInit {
 
   protected readonly trackByBucketId = (_index: number, row: S3Bucket): number => row.id;
 
-  protected uniqueRowTag(row: S3Bucket): string {
-    return toUniqueRowTag('s3-bucket-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: S3Bucket): string => toUniqueRowTag('s3-bucket-' + row.name);
 
   protected ariaLabel(row: S3Bucket): string {
     return [row.name, this.translate.instant('S3 Bucket')].join(' ');

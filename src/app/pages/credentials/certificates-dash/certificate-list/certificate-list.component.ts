@@ -120,9 +120,7 @@ export class CertificateListComponent {
     },
   ];
 
-  protected uniqueRowTag(row: Certificate): string {
-    return 'cert-' + row.name;
-  }
+  protected readonly uniqueRowTag = (row: Certificate): string => 'cert-' + row.name;
 
   protected ariaLabel(row: Certificate): string {
     return [row.name, this.translate.instant('Certificate')].join(' ');

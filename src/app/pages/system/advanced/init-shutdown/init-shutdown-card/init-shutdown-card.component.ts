@@ -89,9 +89,9 @@ export class InitShutdownCardComponent implements OnInit {
     },
   ];
 
-  protected uniqueRowTag(row: InitShutdownScript): string {
-    return `card-init-shutdown-${row.command}-${row.when}`;
-  }
+  protected readonly uniqueRowTag = (row: InitShutdownScript): string => (
+    `card-init-shutdown-${row.command}-${row.when}`
+  );
 
   protected ariaLabel(row: InitShutdownScript): string {
     return [row.command, this.translate.instant('Init/Shutdown Script')].join(' ');

@@ -142,9 +142,7 @@ export class ReplicationTaskCardComponent extends JobTaskCardBase<ReplicationTas
     },
   ];
 
-  protected uniqueRowTag(row: ReplicationTask): string {
-    return convertStringToId('replication-task-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: ReplicationTask): string => convertStringToId('replication-task-' + row.name);
 
   protected ariaLabel(row: ReplicationTask): string {
     return [row.name, this.translate.instant('Replication Task')].join(' ');

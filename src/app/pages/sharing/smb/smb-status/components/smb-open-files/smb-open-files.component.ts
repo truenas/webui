@@ -85,9 +85,9 @@ export class SmbOpenFilesComponent implements OnChanges {
     return `${row.username} (${row.uid})`;
   }
 
-  protected uniqueRowTag(row: SmbOpenInfo): string {
-    return toUniqueRowTag(`smb-open-file-${row.username}-${row.uid}`);
-  }
+  protected readonly uniqueRowTag = (row: SmbOpenInfo): string => (
+    toUniqueRowTag(`smb-open-file-${row.username}-${row.uid}`)
+  );
 
   private createProvider(): void {
     const provider = new AsyncDataProvider(of(this.files()));

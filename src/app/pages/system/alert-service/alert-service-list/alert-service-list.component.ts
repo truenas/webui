@@ -112,9 +112,7 @@ export class AlertServiceListComponent implements OnInit {
     return this.translate.instant('Unknown');
   }
 
-  protected uniqueRowTag(row: AlertService): string {
-    return convertStringToId('alert-service-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: AlertService): string => convertStringToId('alert-service-' + row.name);
 
   protected ariaLabel(row: AlertService): string {
     return [row.name, this.translate.instant('Alert Service')].join(' ');

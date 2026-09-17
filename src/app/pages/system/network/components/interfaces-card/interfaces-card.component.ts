@@ -129,9 +129,7 @@ export class InterfacesCardComponent implements OnInit {
     return row.description ? `${row.name} (${row.description})` : row.name;
   }
 
-  protected uniqueRowTag(row: NetworkInterface): string {
-    return convertStringToId('interface-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: NetworkInterface): string => convertStringToId('interface-' + row.name);
 
   protected ariaLabel(row: NetworkInterface): string {
     return [row.name, this.translate.instant('Interface')].join(' ');

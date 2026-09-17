@@ -18,7 +18,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
-import { mapTnSortToProviderSorting } from 'app/modules/tn-table/utils';
+import { mapTnSortToProviderSorting, toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerImageDeleteDialog } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { dockerImagesListElements } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.elements';
@@ -46,6 +46,8 @@ import { getPullImageFormConfig } from 'app/pages/apps/components/docker-images/
   ],
 })
 export class DockerImagesListComponent implements OnInit {
+  protected readonly uniqueRowTag = (row: ContainerImage): string => toUniqueRowTag(`docker-image-${row.id}`);
+
   protected emptyService = inject(EmptyService);
   private api = inject(ApiService);
   private tnDialog = inject(TnDialog);
