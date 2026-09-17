@@ -134,6 +134,31 @@ function rowContents(contents: string): string[] {
   return parts.filter(Boolean);
 }
 
+/** One column of a table template: its name and the markup of its cell body. */
+interface Column { name: string; body: string }
+
+/** The columns a template declares, each cut at its own `</ng-container>`. */
+function columnsOf(contents: string): Column[] {
+  return contents.split(/(?=tnColumnDef)/).slice(1).flatMap((chunk) => {
+    const end = chunk.indexOf('</ng-container>');
+    const column = end === -1 ? chunk : chunk.slice(0, end);
+    const cell = column.indexOf('tnCellDef');
+    if (cell === -1) {
+      return [];
+    }
+    const name = /tnColumnDef\]?="?'?([\w_.-]+)/.exec(column);
+    return [{
+      name: name?.[1] ?? '?',
+      body: column.slice(column.lastIndexOf('<ng-template', cell)),
+    }];
+  });
+}
+
+/** Whether a cell body renders anything an automated suite could select. */
+function cellIsTagged(body: string): boolean {
+  return anyTestId.test(body) || rowTagInTemplate.some((pattern) => pattern.test(body));
+}
+
 function tagsRowsWithIdentity(contents: string): boolean {
   // The whole row at once: `[rowTestId]` puts the tag on the `<tr>` itself, which is the one id
   // that survives a column being dropped.
@@ -243,6 +268,42 @@ function report(title: string, offenders: Offender[], advice: string): void {
   process.exitCode = 1;
 }
 
+/**
+ * `--report`: per-column coverage, which the rules themselves do not enforce.
+ *
+ * Rule 1 asks whether a row is addressable, not whether every column is — that stays a reviewer's
+ * job, and the number is worth watching rather than guessing. Prints and exits 0: this is a
+ * measurement, not a gate, so it can be run on a branch that is mid-way through fixing it.
+ */
+function reportColumnCoverage(tables: { file: string; src: string }[]): void {
+  const perTable = tables.map(({ file, src }) => {
+    const columns = columnsOf(src);
+    return {
+      file,
+      columns: columns.length,
+      untagged: columns.filter(({ body }) => !cellIsTagged(body)).map(({ name }) => name),
+      taggedRow: src.includes('[rowTestId]'),
+    };
+  });
+
+  const columns = perTable.reduce((sum, table) => sum + table.columns, 0);
+  const untagged = perTable.reduce((sum, table) => sum + table.untagged.length, 0);
+
+  for (const table of perTable.filter((entry) => entry.untagged.length).sort(
+    (left, right) => right.untagged.length - left.untagged.length,
+  )) {
+    console.info(`  ${String(table.untagged.length).padStart(2)}/${table.columns}  ${table.file}`);
+    console.info(`        ${table.untagged.join(', ')}`);
+  }
+
+  console.info(
+    `\n${tables.length} tn-table templates, ${columns} columns with a cell body.`
+    + `\n${untagged} carry no test id (${Math.round((untagged / columns) * 100)}%), `
+    + `in ${perTable.filter((entry) => entry.untagged.length).length} templates.`
+    + `\n${perTable.filter((entry) => entry.taggedRow).length} bind [rowTestId].`,
+  );
+}
+
 function main(): void {
   const templates = readdirSync('src/app', { recursive: true, encoding: 'utf8' })
     .filter((entry) => entry.endsWith('.html'))
@@ -251,6 +312,11 @@ function main(): void {
     .map((file) => ({ file, src: readFileSync(file, 'utf8') }));
 
   const tables = templates.filter(({ src }) => rendersRowCells.test(src));
+
+  if (process.argv.includes('--report')) {
+    reportColumnCoverage(tables);
+    return;
+  }
   const untaggedRows = tables
     .filter(({ src }) => !tagsRowsWithIdentity(src))
     .map(({ file }) => ({ file, line: 1, what: 'tn-table rows carry no test id' }));
