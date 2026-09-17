@@ -116,14 +116,21 @@
               </button>
             </span>
           }
+        </ix-fieldset>
 
-          @if (form.controls.versioning.value !== S3Versioning.Off) {
-            <ix-chips
-              formControlName="snapshot_versions"
-              [label]="'Snapshot Versions' | translate"
-              [tooltip]="helptext.snapshotVersionsTooltip | translate"
-            ></ix-chips>
+        <!--
+          Its own fieldset, outside the Premium gate above: serving ZFS snapshots as read-only versions is a
+          TrueNAS feature, independent of S3 protocol versioning and of the S3_VERSIONING entitlement, and it
+          composes with every versioning state — Off included.
+        -->
+        <ix-fieldset [title]="'ZFS Snapshots' | translate">
+          <ix-chips
+            formControlName="snapshot_versions"
+            [label]="'Snapshot Versions' | translate"
+            [tooltip]="helptext.snapshotVersionsTooltip | translate"
+          ></ix-chips>
 
+          @if (hasSnapshotVersions()) {
             <ix-input
               formControlName="snapshot_versions_max"
               type="number"

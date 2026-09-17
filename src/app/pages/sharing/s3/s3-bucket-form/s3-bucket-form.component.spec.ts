@@ -442,6 +442,36 @@ describe('S3BucketFormComponent', () => {
       expect(premiumBadge('Versioning')).toBeNull();
     });
 
+    it('keeps ZFS snapshot versions untagged and working without the S3_VERSIONING key', async () => {
+      // Serving snapshots as versions is a TrueNAS feature, decoupled from S3 protocol versioning
+      // and its entitlement in NAS-143800: a never-versioned bucket may still do it.
+      await renderWith([EntitlementFeature.S3Versioning]);
+      await clickAdvancedOptions();
+
+      expect(premiumBadge('Versioning')).not.toBeNull();
+      expect(sectionText('ZFS Snapshots')).toContain('Snapshot Versions');
+      expect(premiumBadge('ZFS Snapshots')).toBeNull();
+
+      // Offered with versioning Off, and the listing limit arrives with the first pattern.
+      expect(spectator.component.form.controls.versioning.value).toBe(S3Versioning.Off);
+      expect(await form.getLabels()).not.toContain('Snapshot Versions Listed');
+      await form.fillForm({ 'Snapshot Versions': ['auto-*'] });
+      expect(await form.getLabels()).toContain('Snapshot Versions Listed');
+
+      await form.fillForm({
+        Name: 'videos',
+        'Parent Dataset': 'tank/buckets',
+        Owner: 'alice',
+      });
+      await (await getSaveButton()).click();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+        versioning: S3Versioning.Off,
+        snapshot_versions: ['auto-*'],
+        snapshot_versions_max: 64,
+      })]);
+    });
+
     it('tags object lock as well as versioning without the S3_VERSIONING key', async () => {
       // Object lock is implemented with versioning, so the one key gates both.
       await renderWith([EntitlementFeature.S3Versioning]);
@@ -540,6 +570,27 @@ describe('S3BucketFormComponent', () => {
       // Closed as a success, so the opener reloads. A stale row would reopen with versioning on, and
       // an unrelated Save from it would re-enable versioning on the bucket just forced off.
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+    });
+
+    it('does not let a hidden snapshot listing limit block Save, and sends the stored limit instead', async () => {
+      await clickAdvancedOptions();
+      await form.fillForm({ 'Snapshot Versions Listed': 0 });
+      expect(await (await getSaveButton()).isDisabled()).toBe(true);
+
+      // The limit applies to a selection, so clearing the patterns hides it — and a hidden field
+      // must not keep Save disabled with nothing on screen to fix.
+      await form.fillForm({ 'Snapshot Versions': [] });
+
+      expect(await form.getLabels()).not.toContain('Snapshot Versions Listed');
+      expect(await (await getSaveButton()).isDisabled()).toBe(false);
+
+      await (await getSaveButton()).click();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.update', [7, expect.objectContaining({
+        versioning: S3Versioning.Enabled,
+        snapshot_versions: [],
+        snapshot_versions_max: 64,
+      })]);
     });
 
     it('updates the bucket without sending the dataset', async () => {
