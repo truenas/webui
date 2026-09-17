@@ -129,9 +129,7 @@ export class CloudBackupCardComponent extends JobTaskCardBase<CloudBackup> {
     },
   ];
 
-  protected uniqueRowTag(row: CloudBackup): string {
-    return convertStringToId('cloud-backup-' + row.description);
-  }
+  protected readonly uniqueRowTag = (row: CloudBackup): string => convertStringToId('cloud-backup-' + row.description);
 
   protected ariaLabel(row: CloudBackup): string {
     return [row.description, this.translate.instant('Cloud Backup')].join(' ');

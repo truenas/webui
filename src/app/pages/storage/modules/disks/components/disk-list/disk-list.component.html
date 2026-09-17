@@ -76,62 +76,134 @@
   >
     <ng-container [tnColumnDef]="'name'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.name }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.name"
+          [title]="'Name' | translate"
+          [uniqueRowTag]="rowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'serial'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Serial' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.serial }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.serial"
+          [title]="'Serial' | translate"
+          [uniqueRowTag]="rowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'size'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Disk Size' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.sizeText }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.sizeText"
+          [title]="'Disk Size' | translate"
+          [uniqueRowTag]="rowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'pool'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Pool' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.pool }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.pool"
+          [title]="'Pool' | translate"
+          [uniqueRowTag]="rowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'type'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Disk Type' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.type }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.type"
+          [title]="'Disk Type' | translate"
+          [uniqueRowTag]="rowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'description'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.description }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.description"
+          [title]="'Description' | translate"
+          [uniqueRowTag]="rowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'model'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Model' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.model }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.model"
+          [title]="'Model' | translate"
+          [uniqueRowTag]="rowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'transfermode'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Transfer Mode' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.transfermode }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.transfermode"
+          [title]="'Transfer Mode' | translate"
+          [uniqueRowTag]="rowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'rotationrate'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Rotation Rate (RPM)' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.rotationrate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.rotationrate"
+          [title]="'Rotation Rate (RPM)' | translate"
+          [uniqueRowTag]="rowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'hddstandby'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'HDD Standby' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.hddStandbyText }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.hddStandbyText"
+          [title]="'HDD Standby' | translate"
+          [uniqueRowTag]="rowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'advpowermgmt'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Adv. Power Management' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.advPowerManagementText }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.advPowerManagementText"
+          [title]="'Adv. Power Management' | translate"
+          [uniqueRowTag]="rowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'sed_status'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Self-Encrypting Drive (SED)' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.sedStatusText }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.sedStatusText"
+          [title]="'Self-Encrypting Drive (SED)' | translate"
+          [uniqueRowTag]="rowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
     </ng-container>
 
     <ng-template let-disk tnDetailRowDef>

@@ -122,9 +122,7 @@ export class InitiatorListComponent implements OnInit {
 
   protected readonly trackByInitiatorId = (_index: number, row: IscsiInitiatorGroup): number => row.id;
 
-  protected uniqueRowTag(row: IscsiInitiatorGroup): string {
-    return toUniqueRowTag(`iscsi-initiator-${row.id}`);
-  }
+  protected readonly uniqueRowTag = (row: IscsiInitiatorGroup): string => toUniqueRowTag(`iscsi-initiator-${row.id}`);
 
   protected ariaLabel(row: IscsiInitiatorGroup): string {
     return [row.id.toString(), this.translate.instant('iSCSI Initiator')].join(' ');

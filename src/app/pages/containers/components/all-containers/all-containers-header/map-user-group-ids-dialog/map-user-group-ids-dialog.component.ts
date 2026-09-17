@@ -17,6 +17,7 @@ import {
   TnSpinnerComponent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
   TnTooltipDirective,
 } from '@truenas/ui-components';
 import {
@@ -27,6 +28,8 @@ import { directIdMapping } from 'app/interfaces/user.interface';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { toUniqueRowTag } from 'app/modules/tn-table/utils';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   IdMapping,
@@ -44,6 +47,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    TnTestIdDirective,
+    TableTextCellComponent,
     TnDialogShellComponent,
     FakeProgressBarComponent,
     TnIconComponent,
@@ -73,6 +78,8 @@ export class MapUserGroupIdsDialogComponent implements OnInit {
   private snackbar = inject(SnackbarService);
 
   protected readonly columns = ['name', 'hostUidOrGid', 'instanceUidOrGid', 'actions'];
+
+  protected readonly uniqueRowTag = (row: IdMapping): string => toUniqueRowTag(`mapping-${row.name}`);
   protected readonly helptext = containersHelptext;
 
   protected readonly isLoading = signal(true);

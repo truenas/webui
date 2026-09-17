@@ -24,6 +24,7 @@
     class="table"
     [testId]="'table-table'"
     [expandable]="true"
+    [rowTestId]="uniqueRowTag"
     [dataSource]="rows()"
     [displayedColumns]="displayedColumns()"
     [trackBy]="trackByLock"

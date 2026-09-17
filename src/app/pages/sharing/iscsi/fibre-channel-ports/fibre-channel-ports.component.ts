@@ -93,9 +93,9 @@ export class FibreChannelPortsComponent implements OnInit {
 
   protected readonly trackByPortName = (_index: number, row: FibreChannelPortRow): string => row.name;
 
-  protected uniqueRowTag(row: FibreChannelPortRow): string {
-    return toUniqueRowTag('fibre-channel-port-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: FibreChannelPortRow): string => (
+    toUniqueRowTag('fibre-channel-port-' + row.name)
+  );
 
   protected ariaLabel(row: FibreChannelPortRow): string {
     return [row.name, this.translate.instant('Fibre Channel Port')].join(' ');

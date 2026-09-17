@@ -166,9 +166,7 @@ export class S3AccessKeyListComponent implements OnInit {
 
   protected readonly trackByKeyId = (_index: number, row: S3AccessKey): number => row.id;
 
-  protected uniqueRowTag(row: S3AccessKey): string {
-    return toUniqueRowTag('s3-access-key-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: S3AccessKey): string => toUniqueRowTag('s3-access-key-' + row.name);
 
   protected ariaLabel(row: S3AccessKey): string {
     return [row.name, this.translate.instant('S3 Access Key')].join(' ');

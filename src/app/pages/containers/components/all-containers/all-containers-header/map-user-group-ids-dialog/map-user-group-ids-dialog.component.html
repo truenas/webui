@@ -39,17 +39,34 @@
   } @else {
     <div class="table-wrapper">
       @if (mappings().length) {
-      <tn-table testId="table-mapping-table" [dataSource]="mappings()" [displayedColumns]="columns">
+      <tn-table
+        testId="table-mapping-table"
+        [rowTestId]="uniqueRowTag"
+        [dataSource]="mappings()"
+        [displayedColumns]="columns"
+      >
         <ng-container [tnColumnDef]="'name'">
           <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
-          <ng-template let-mapping tnCellDef>{{ mapping.name }}</ng-template>
+          <ng-template let-mapping tnCellDef>
+            <ix-table-text-cell
+              [value]="mapping.name"
+              [title]="'Name' | translate"
+              [uniqueRowTag]="uniqueRowTag(mapping)"
+            ></ix-table-text-cell>
+          </ng-template>
         </ng-container>
 
         <ng-container [tnColumnDef]="'hostUidOrGid'">
           <ng-template tnHeaderCellDef>
             {{ typeControl.value === ViewType.Users ? ('Host UID' | translate) : ('Host GID' | translate) }}
           </ng-template>
-          <ng-template let-mapping tnCellDef>{{ mapping.hostUidOrGid }}</ng-template>
+          <ng-template let-mapping tnCellDef>
+            <ix-table-text-cell
+              [value]="mapping.hostUidOrGid"
+              [title]="typeControl.value === ViewType.Users ? ('Host UID' | translate) : ('Host GID' | translate)"
+              [uniqueRowTag]="uniqueRowTag(mapping)"
+            ></ix-table-text-cell>
+          </ng-template>
         </ng-container>
 
         <ng-container [tnColumnDef]="'instanceUidOrGid'">
@@ -57,11 +74,16 @@
             {{ typeControl.value === ViewType.Users ? ('Container UID' | translate) : ('Container GID' | translate) }}
           </ng-template>
           <ng-template let-mapping tnCellDef>
-            @if (mapping.instanceUidOrGid === directIdMapping) {
-              {{ 'Same' | translate }}
-            } @else {
-              {{ mapping.instanceUidOrGid }}
-            }
+            <span
+              tnTestIdType="text"
+              [tnTestId]="['instance-uid-or-gid', uniqueRowTag(mapping), 'row-text']"
+            >
+              @if (mapping.instanceUidOrGid === directIdMapping) {
+                {{ 'Same' | translate }}
+              } @else {
+                {{ mapping.instanceUidOrGid }}
+              }
+            </span>
           </ng-template>
         </ng-container>
 

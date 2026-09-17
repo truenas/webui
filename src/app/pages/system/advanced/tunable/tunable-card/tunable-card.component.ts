@@ -29,6 +29,7 @@ import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-co
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { tunableCardElements } from 'app/pages/system/advanced/tunable/tunable-card/tunable-card.elements';
 import { getTunableFormConfig } from 'app/pages/system/advanced/tunable/tunable-form/tunable.form-config';
@@ -39,6 +40,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   templateUrl: './tunable-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TableTextCellComponent,
     TnCardComponent,
     TnCardFooterActionsDirective,
     UiSearchDirective,
@@ -87,9 +89,7 @@ export class TunableCardComponent implements OnInit {
     },
   ];
 
-  protected uniqueRowTag(row: Tunable): string {
-    return `tunable-${row.var}-${row.value}`;
-  }
+  protected readonly uniqueRowTag = (row: Tunable): string => `tunable-${row.var}-${row.value}`;
 
   protected ariaLabel(row: Tunable): string {
     return [row.var, this.translate.instant('Tunable')].join(' ');

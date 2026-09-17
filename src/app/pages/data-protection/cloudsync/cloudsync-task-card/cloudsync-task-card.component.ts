@@ -144,9 +144,9 @@ export class CloudSyncTaskCardComponent extends JobTaskCardBase<CloudSyncTaskUi>
     },
   ];
 
-  protected uniqueRowTag(row: CloudSyncTaskUi): string {
-    return convertStringToId('card-cloudsync-task-' + row.description);
-  }
+  protected readonly uniqueRowTag = (row: CloudSyncTaskUi): string => (
+    convertStringToId('card-cloudsync-task-' + row.description)
+  );
 
   protected ariaLabel(row: CloudSyncTaskUi): string {
     return [row.description, this.translate.instant('Cloud Sync Task')].join(' ');

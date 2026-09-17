@@ -193,9 +193,7 @@ export class SmbCardComponent implements OnInit {
 
   protected readonly trackBySmbId = (_index: number, row: SmbShare): number => row.id;
 
-  protected uniqueRowTag(row: SmbShare): string {
-    return convertStringToId('card-smb-share-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: SmbShare): string => convertStringToId('card-smb-share-' + row.name);
 
   protected ariaLabel(row: SmbShare): string {
     return [row.name, this.translate.instant('SMB Share')].join(' ');

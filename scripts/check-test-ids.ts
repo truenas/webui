@@ -8,22 +8,30 @@
  * downstream suite broke. `e2e/CLAUDE.md` already binds the *test author* to `[data-test]`
  * selectors; nothing bound the PR that removed the attribute. This does.
  *
- * Two rules, both deliberately shallow — these read templates as text, not as an Angular AST:
+ * Three rules, all deliberately shallow — these read templates as text, not as an Angular AST:
  *
  * 1. **Table rows.** `ix-table-body` tagged every `<tr>` from the column model's `uniqueRowTag`;
- *    `tn-table` writes nothing on the row of its own, so a cell body that is bare interpolation
- *    leaves the row unaddressable. Asks whether something that renders INSIDE the row — a cell
- *    body, a row action, or `[rowTestId]` on the table — carries the row's identity. It cannot
- *    tell whether every column is tagged, which stays a reviewer's job.
- * 2. **Clickables.** A plain element carrying a `(click)`/`(keydown)` handler is something a test
+ *    `tn-table` writes nothing on the row of its own, so a migrated list lost that id. Every list
+ *    now binds `[rowTestId]`, which puts it back, and this asks for exactly that — not for "some
+ *    element in the row is tagged", because a tag on a cell or an action button leaves with the
+ *    column or button it sits on, while the row's own id is what a suite selects a row by.
+ * 2. **Table columns.** A column whose cell body renders no id is a value no suite can read: the
+ *    row is addressable, that column of it is not, and `e2e/CLAUDE.md` allows no CSS or text
+ *    selector to reach the cell. Asks that each `tnCellDef` body resolve an id somewhere.
+ * 3. **Clickables.** A plain element carrying a `(click)`/`(keydown)` handler is something a test
  *    has to click, so it needs an id on itself or on a descendant that receives the click.
  *    "Somewhere in its subtree" is the whole test, so an outer `<div (click)>` wrapping tagged
  *    children passes even though the wrapper itself is unaddressable — a green run means no
  *    clickable is *completely* unreachable, not that every click target has its own id.
  *
+ * What none of them see is a *changed* id: a renamed `testId` still resolves to something. That
+ * stays a reviewer's job, as does whether a value matches what the column resolved pre-migration.
+ *
  * A false negative is the acceptable failure here and a false positive is not, so anything that
  * plausibly resolves an id counts, and the handful of elements that are genuinely not automation
  * targets are listed in {@link allowedClickables} with the reason.
+ *
+ * `--report` prints per-column coverage instead of gating, for tracking the number over time.
  */
 
 import { readdirSync, readFileSync } from 'fs';
@@ -33,9 +41,6 @@ const anyTestId = /\btestId\b|\btnTestId\b|\bixTest\b|data-test/;
 
 /** A template renders row cells if it declares a cell body for a column. */
 const rendersRowCells = /\btnCellDef\b/;
-
-/** `<ng-template let-row tnCellDef>` — the name a cell body binds the row to. */
-const rowVariables = /let-([A-Za-z_$][\w$]*)[^>]*?\btnCellDef\b/g;
 
 /**
  * Evidence that does not depend on the row variable's name: a shared cell renderer (each takes a
@@ -103,11 +108,6 @@ const allowedClickables = new Map<string, string>([
 /** Entries of {@link allowedClickables} that exempted an element this run. */
 const usedExemptions = new Set<string>();
 
-/** A row variable may contain `$`, which is an anchor rather than a literal inside a pattern. */
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
 /**
  * The parts of a template that render INSIDE the `<tr>`: each column's cell body and the row
  * actions. Deliberately not the whole file — a tag in the detail row satisfied the rule while
@@ -115,47 +115,39 @@ function escapeRegExp(value: string): string {
  * row a test cannot select. Each column is cut at its own `</ng-container>` so the last one does
  * not run on into whatever follows the column list.
  */
-function rowContents(contents: string): string[] {
-  const parts = contents.split(/(?=tnColumnDef)/).slice(1).map((chunk) => {
+/** One column of a table template: its name and the markup of its cell body. */
+interface Column { name: string; body: string }
+
+/** The columns a template declares, each cut at its own `</ng-container>`. */
+function columnsOf(contents: string): Column[] {
+  return contents.split(/(?=tnColumnDef)/).slice(1).flatMap((chunk) => {
     const end = chunk.indexOf('</ng-container>');
     const column = end === -1 ? chunk : chunk.slice(0, end);
-    // From the `<ng-template>` that opens the cell body, so its `let-row` is still in the region.
     const cell = column.indexOf('tnCellDef');
-    return cell === -1 ? '' : column.slice(column.lastIndexOf('<ng-template', cell));
+    if (cell === -1) {
+      return [];
+    }
+    const name = /tnColumnDef\]?="?'?([\w_.-]+)/.exec(column);
+    return [{
+      name: name?.[1] ?? '?',
+      body: column.slice(column.lastIndexOf('<ng-template', cell)),
+    }];
   });
-
-  const actions = contents.indexOf('tnRowActionsDef');
-  if (actions !== -1) {
-    const rest = contents.slice(contents.lastIndexOf('<ng-template', actions));
-    const end = rest.indexOf('</ng-template>');
-    parts.push(end === -1 ? rest : rest.slice(0, end));
-  }
-
-  return parts.filter(Boolean);
 }
 
+/** Whether a cell body renders anything an automated suite could select. */
+function cellIsTagged(body: string): boolean {
+  return anyTestId.test(body) || rowTagInTemplate.some((pattern) => pattern.test(body));
+}
+
+/**
+ * The row's own id. Every list binds `[rowTestId]`, so this asks for exactly that rather than for
+ * "something in the row is tagged": a tag on a cell or an action button is an id for that element,
+ * and it disappears with the column or the button it sits on, while the `<tr>`'s own id is what a
+ * suite selects a row by. One line on the table, from the same `uniqueRowTag` the cells use.
+ */
 function tagsRowsWithIdentity(contents: string): boolean {
-  // The whole row at once: `[rowTestId]` puts the tag on the `<tr>` itself, which is the one id
-  // that survives a column being dropped.
-  if (contents.includes('[rowTestId]')) {
-    return true;
-  }
-
-  return rowContents(contents).some((region) => {
-    if (rowTagInTemplate.some((pattern) => pattern.test(region))) {
-      return true;
-    }
-
-    // Otherwise the row has to reach a test id by name: `[testId]="[row.id, 'delete']"`. Matched
-    // on `row.`/`row)` rather than a bare word, so a static id that happens to contain "row" does
-    // not pass by accident. `(?<![\w$])` rather than `\b` for that boundary, because a name may
-    // legally start or end with `$` — `\b` sits between two word characters, so it never matches
-    // beside one, and `let-row$` would compile a pattern that can only fail.
-    const names = [...region.matchAll(rowVariables)].map(([, name]) => name);
-    return names.some((name) => new RegExp(
-      `\\[(?:testId|tnTestId)\\]="[^"]*(?<![\\w$])${escapeRegExp(name)}\\s*[.)][^"]*"`,
-    ).test(region));
-  });
+  return contents.includes('[rowTestId]');
 }
 
 /**
@@ -243,6 +235,42 @@ function report(title: string, offenders: Offender[], advice: string): void {
   process.exitCode = 1;
 }
 
+/**
+ * `--report`: per-column coverage, which the rules themselves do not enforce.
+ *
+ * Rule 1 asks whether a row is addressable, not whether every column is — that stays a reviewer's
+ * job, and the number is worth watching rather than guessing. Prints and exits 0: this is a
+ * measurement, not a gate, so it can be run on a branch that is mid-way through fixing it.
+ */
+function reportColumnCoverage(tables: { file: string; src: string }[]): void {
+  const perTable = tables.map(({ file, src }) => {
+    const columns = columnsOf(src);
+    return {
+      file,
+      columns: columns.length,
+      untagged: columns.filter(({ body }) => !cellIsTagged(body)).map(({ name }) => name),
+      taggedRow: src.includes('[rowTestId]'),
+    };
+  });
+
+  const columns = perTable.reduce((sum, table) => sum + table.columns, 0);
+  const untagged = perTable.reduce((sum, table) => sum + table.untagged.length, 0);
+
+  for (const table of perTable.filter((entry) => entry.untagged.length).sort(
+    (left, right) => right.untagged.length - left.untagged.length,
+  )) {
+    console.info(`  ${String(table.untagged.length).padStart(2)}/${table.columns}  ${table.file}`);
+    console.info(`        ${table.untagged.join(', ')}`);
+  }
+
+  console.info(
+    `\n${tables.length} tn-table templates, ${columns} columns with a cell body.`
+    + `\n${untagged} carry no test id (${Math.round((untagged / columns) * 100)}%), `
+    + `in ${perTable.filter((entry) => entry.untagged.length).length} templates.`
+    + `\n${perTable.filter((entry) => entry.taggedRow).length} bind [rowTestId].`,
+  );
+}
+
 function main(): void {
   const templates = readdirSync('src/app', { recursive: true, encoding: 'utf8' })
     .filter((entry) => entry.endsWith('.html'))
@@ -251,9 +279,22 @@ function main(): void {
     .map((file) => ({ file, src: readFileSync(file, 'utf8') }));
 
   const tables = templates.filter(({ src }) => rendersRowCells.test(src));
+
+  if (process.argv.includes('--report')) {
+    reportColumnCoverage(tables);
+    return;
+  }
   const untaggedRows = tables
     .filter(({ src }) => !tagsRowsWithIdentity(src))
-    .map(({ file }) => ({ file, line: 1, what: 'tn-table rows carry no test id' }));
+    .map(({ file }) => ({ file, line: 1, what: 'table does not bind [rowTestId]' }));
+
+  const untaggedColumns = tables.flatMap(({ file, src }) => columnsOf(src)
+    .filter(({ body }) => !cellIsTagged(body))
+    .map(({ name }) => ({
+      file,
+      line: src.slice(0, src.indexOf(`tnColumnDef]="'${name}'`)).split('\n').length,
+      what: `column "${name}" renders a cell with no test id`,
+    })));
 
   const clickables = templates.flatMap(({ file, src }) => untaggedClickables(file, src));
 
@@ -261,14 +302,22 @@ function main(): void {
     .filter((key) => !usedExemptions.has(key))
     .map((key) => ({ file: key.split(':')[0], line: 1, what: `no clickable matches "${key}"` }));
 
-  report('tn-table rows with no per-row test id:', untaggedRows, `
-Each of these renders table cells (\`tnCellDef\`) with nothing inside the row carrying the row's
-identity, so an e2e test cannot address a row. A tag in the DETAIL row does not count: it is only
-reachable by first clicking a row that cannot be selected. Bind \`[rowTestId]\` on the table, or tag
-the cells — see \`memoizedRowTag\` /
-\`tnTableListHost(...).rowTag\` in src/app/modules/tn-table/utils.ts and the
-\`<ix-table-text-cell>\` renderer — rather than leaving a downstream suite to reach for a CSS or
-text selector. See "Addressing a table row" in e2e/CLAUDE.md.`);
+  report('tn-table lists that do not bind [rowTestId]:', untaggedRows, `
+Each of these renders table cells (\`tnCellDef\`) without naming the row itself, so an e2e test has
+to reach a row through one of its cells — which disappears with the column. Bind
+\`[rowTestId]="uniqueRowTag"\` on the table, from the same row tag the cells pass (a bound property,
+not a method: the table takes the function itself). See \`memoizedRowTag\` and
+\`tnTableListHost(...).rowTag\` in src/app/modules/tn-table/utils.ts, and "Addressing a table row"
+in e2e/CLAUDE.md.`);
+
+  report('table columns with no test id:', untaggedColumns, `
+Each of these renders a value an e2e test cannot read: the row is addressable, but this column of
+it is not, and the suite is not allowed a CSS or text selector to reach the cell (\`[data-column]\`
+included). Render plain text through \`<ix-table-text-cell>\`, or put
+\`tnTestIdType\` + \`[tnTestId]="[title, <rowTag>(row), '<suffix>']"\` on whatever element holds the
+value. The suffix names the kind of cell — \`row-text\`, \`row-yesno\`, \`row-size\`, \`row-date\`,
+\`row-relative-date\`, \`row-state\`, \`row-schedule\` — and matches what the column resolved before
+the tn-table migration. See "Addressing a table row" in e2e/CLAUDE.md.`);
 
   report('exemptions in allowedClickables that match nothing:', staleExemptions, `
 Each of these names a clickable that no longer exists — the class was renamed, the element moved,
@@ -283,7 +332,7 @@ script with the reason. See "Finding a \`data-test\` value" in e2e/CLAUDE.md.`);
 
   if (!process.exitCode) {
     console.info(
-      `✅ ${tables.length} tn-table templates tag their rows; `
+      `✅ ${tables.length} tn-table templates tag their rows and every column; `
       + `${templates.length} templates carry no unaddressable clickable.`,
     );
   }

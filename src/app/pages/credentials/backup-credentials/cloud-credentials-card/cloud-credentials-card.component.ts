@@ -117,9 +117,7 @@ export class CloudCredentialsCardComponent implements OnInit {
     },
   ];
 
-  protected uniqueRowTag(row: CloudSyncCredential): string {
-    return 'cloud-cred-' + row.name;
-  }
+  protected readonly uniqueRowTag = (row: CloudSyncCredential): string => 'cloud-cred-' + row.name;
 
   protected ariaLabel(row: CloudSyncCredential): string {
     return [row.name, this.translate.instant('Cloud Credential')].join(' ');

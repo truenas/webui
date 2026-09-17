@@ -32,6 +32,7 @@
     class="table"
     [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.tasks"
+    [rowTestId]="uniqueRowTag"
     [dataSource]="list.rows()"
     [displayedColumns]="list.displayedColumns()"
     [trackBy]="trackByTaskId"

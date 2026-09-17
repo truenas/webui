@@ -36,6 +36,7 @@ import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { alertServiceListElements } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.elements';
@@ -46,6 +47,7 @@ import { alertServiceListElements } from 'app/pages/system/alert-service/alert-s
   styleUrls: ['./alert-service-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TableTextCellComponent,
     TnCardComponent,
     TnCardHeaderActionsDirective,
     UiSearchDirective,
@@ -112,9 +114,7 @@ export class AlertServiceListComponent implements OnInit {
     return this.translate.instant('Unknown');
   }
 
-  protected uniqueRowTag(row: AlertService): string {
-    return convertStringToId('alert-service-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: AlertService): string => convertStringToId('alert-service-' + row.name);
 
   protected ariaLabel(row: AlertService): string {
     return [row.name, this.translate.instant('Alert Service')].join(' ');

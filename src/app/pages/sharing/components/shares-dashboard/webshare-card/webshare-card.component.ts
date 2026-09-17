@@ -194,9 +194,7 @@ export class WebShareCardComponent implements OnInit {
 
   protected readonly trackByWebShareId = (_index: number, row: WebShareTableRow): number => row.id;
 
-  protected uniqueRowTag(row: WebShareTableRow): string {
-    return convertStringToId('card-webshare-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: WebShareTableRow): string => convertStringToId('card-webshare-' + row.name);
 
   protected ariaLabel(row: WebShareTableRow): string {
     return [row.name, this.translate.instant('WebShare')].join(' ');

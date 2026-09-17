@@ -5,22 +5,23 @@ import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  tnIconMarker,
   TnButtonComponent,
   TnCardComponent,
   TnCardFooterActionsDirective,
   TnCardHeaderActionsDirective,
   TnCardHeaderDirective,
   TnCellDefDirective,
+  TnDialog,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
   TnIconComponent,
   TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
   TnTooltipDirective,
+  tnIconMarker,
   type TnSortEvent,
-  TnDialog,
 } from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -63,6 +64,7 @@ import { selectService } from 'app/store/services/services.selectors';
   styleUrls: ['./nvme-of-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnButtonComponent,
     TnCardComponent,
     TnCardHeaderDirective,
@@ -171,9 +173,9 @@ export class NvmeOfCardComponent implements OnInit {
 
   protected readonly trackBySubsystemId = (_index: number, row: NvmeOfSubsystemDetails): number => row.id;
 
-  protected uniqueRowTag(row: NvmeOfSubsystemDetails): string {
-    return convertStringToId('nvmeof-subsys-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: NvmeOfSubsystemDetails): string => (
+    convertStringToId('nvmeof-subsys-' + row.name)
+  );
 
   protected ariaLabel(row: NvmeOfSubsystemDetails): string {
     return [row.name, this.translate.instant('Subsystem')].join(' ');

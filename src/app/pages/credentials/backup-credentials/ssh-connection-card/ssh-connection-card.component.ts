@@ -115,9 +115,7 @@ export class SshConnectionCardComponent implements OnInit {
     },
   ];
 
-  protected uniqueRowTag(row: KeychainSshCredentials): string {
-    return 'ssh-con-' + row.name;
-  }
+  protected readonly uniqueRowTag = (row: KeychainSshCredentials): string => 'ssh-con-' + row.name;
 
   protected ariaLabel(row: KeychainSshCredentials): string {
     return [row.name, this.translate.instant('SSH Connection')].join(' ');

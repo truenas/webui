@@ -61,9 +61,7 @@ export class ManageHostsDialog implements OnInit {
 
   protected readonly trackByHostId = (_: number, row: NvmeOfHostAndUsage): number => row.id;
 
-  protected uniqueRowTag(row: NvmeOfHostAndUsage): string {
-    return toUniqueRowTag('host-' + row.hostnqn);
-  }
+  protected readonly uniqueRowTag = (row: NvmeOfHostAndUsage): string => toUniqueRowTag('host-' + row.hostnqn);
 
   protected readonly actions: IconActionConfig<NvmeOfHostAndUsage>[] = [
     {

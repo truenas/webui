@@ -150,9 +150,7 @@ export class S3CardComponent implements OnInit {
 
   protected readonly trackByBucketId = (_index: number, row: S3Bucket): number => row.id;
 
-  protected uniqueRowTag(row: S3Bucket): string {
-    return convertStringToId('card-s3-bucket-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: S3Bucket): string => convertStringToId('card-s3-bucket-' + row.name);
 
   protected ariaLabel(row: S3Bucket): string {
     return [row.name, this.translate.instant('S3 Bucket')].join(' ');

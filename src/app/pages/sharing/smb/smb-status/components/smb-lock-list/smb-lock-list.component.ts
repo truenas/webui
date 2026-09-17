@@ -136,11 +136,11 @@ export class SmbLockListComponent implements OnInit {
     );
   }
 
-  protected uniqueRowTag(row: SmbLockInfo): string {
-    return normalizeTestIdString(
+  protected readonly uniqueRowTag = (row: SmbLockInfo): string => (
+    normalizeTestIdString(
       convertStringToId(`smb-lock-${row.filename}-${row.fileid.devid}-${row.fileid.extid}`),
-    );
-  }
+    )
+  );
 
   protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {
     this.columns.set([...columns]);

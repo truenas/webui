@@ -127,9 +127,7 @@ export class ServicesComponent implements OnInit {
 
   protected readonly trackByServiceId = (_index: number, row: ServiceRow): number => row.id;
 
-  protected uniqueRowTag(row: ServiceRow): string {
-    return 'service-' + row.name.replace(/\./g, '');
-  }
+  protected readonly uniqueRowTag = (row: ServiceRow): string => 'service-' + row.name.replace(/\./g, '');
 
   protected rolesToManage(row: ServiceRow): Role[] {
     return this.servicesService.getRolesRequiredToManage(row.service);

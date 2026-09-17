@@ -108,9 +108,9 @@ export class SmbShareListComponent implements OnInit {
     });
   }
 
-  protected uniqueRowTag(row: SmbShareInfo): string {
-    return toUniqueRowTag('smb-share-' + row.server_id.unique_id + '-' + row.machine);
-  }
+  protected readonly uniqueRowTag = (row: SmbShareInfo): string => (
+    toUniqueRowTag('smb-share-' + row.server_id.unique_id + '-' + row.machine)
+  );
 
   protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {
     this.columns.set([...columns]);
