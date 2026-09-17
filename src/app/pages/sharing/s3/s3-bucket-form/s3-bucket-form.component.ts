@@ -170,7 +170,6 @@ export class S3BucketFormComponent implements OnInit {
   protected readonly auditOverflowOptions$ = of(mapToOptions(s3AuditOverflowLabels, this.translate));
   protected readonly auditActionOptions$ = this.api.call('sharing.s3.audit_choices').pipe(choicesToOptions());
 
-  protected readonly S3Versioning = S3Versioning;
   protected readonly S3AuditMode = S3AuditMode;
 
   form = this.fb.group({
@@ -278,6 +277,9 @@ export class S3BucketFormComponent implements OnInit {
   });
 
   protected readonly isObjectLockOn = computed(() => !!this.formValue().object_lock);
+
+  /** Whether any snapshot is selected: the listing limit applies to a selection and renders only beside one. */
+  protected readonly hasSnapshotVersions = computed(() => !!this.formValue().snapshot_versions.length);
 
   /** Multiprotocol cannot be picked while object lock is on, for the same reason. */
   protected readonly permissionsModelOptions$: Observable<SelectOption<S3PermissionsModel>[]> = toObservable(
@@ -439,7 +441,7 @@ export class S3BucketFormComponent implements OnInit {
     merge(
       this.form.controls.object_lock.valueChanges,
       this.form.controls.object_lock_default_mode.valueChanges,
-      this.form.controls.versioning.valueChanges,
+      this.form.controls.snapshot_versions.valueChanges,
     ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.syncHiddenControls();
     });
@@ -480,8 +482,10 @@ export class S3BucketFormComponent implements OnInit {
    * screen to fix. A disabled control is excluded from validity regardless.
    */
   private syncHiddenControls(): void {
-    const { versioning, object_lock: objectLock, object_lock_default_mode: defaultMode } = this.form.controls;
-    this.setEnabled(this.form.controls.snapshot_versions_max, versioning.value !== S3Versioning.Off);
+    const {
+      snapshot_versions: snapshotVersions, object_lock: objectLock, object_lock_default_mode: defaultMode,
+    } = this.form.controls;
+    this.setEnabled(this.form.controls.snapshot_versions_max, !!snapshotVersions.value.length);
     this.setEnabled(this.form.controls.object_lock_default_days, !!objectLock.value && !!defaultMode.value);
   }
 
@@ -564,12 +568,14 @@ export class S3BucketFormComponent implements OnInit {
       object_ownership: values.object_ownership,
       grants: toS3Grants(this.form.controls.grants.controls),
       versioning: values.versioning,
-      snapshot_versions: values.versioning === S3Versioning.Off ? [] : values.snapshot_versions,
-      // The listing limit only applies with versioning; without it the field is hidden and disabled, so
-      // send the value the bucket already has rather than whatever was left behind.
-      snapshot_versions_max: values.versioning === S3Versioning.Off
-        ? (this.existingBucket?.snapshot_versions_max ?? 64)
-        : values.snapshot_versions_max,
+      // Independent of `versioning` since NAS-143800: a bucket that was never versioned can still
+      // serve its dataset's ZFS snapshots as read-only versions, and needs no entitlement to.
+      snapshot_versions: values.snapshot_versions,
+      // The listing limit only applies beside a selection; without one the field is hidden and disabled,
+      // so send the value the bucket already has rather than whatever was left behind.
+      snapshot_versions_max: values.snapshot_versions.length
+        ? values.snapshot_versions_max
+        : (this.existingBucket?.snapshot_versions_max ?? 64),
       multipart_etag: values.multipart_etag,
       object_lock: objectLock,
       object_lock_default_mode: hasDefaultRule ? values.object_lock_default_mode : null,
