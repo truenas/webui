@@ -57,6 +57,29 @@ describe('SnmpTrapServiceComponent', () => {
     });
   });
 
+  describe('v3 username validation', () => {
+    it('requires a username while the SNMPv3 security model is on', async () => {
+      await form.fillForm({
+        Hostname: 'truenas.com',
+        'SNMPv3 Security Model': true,
+      });
+
+      expect(spectator.component.form.valid).toBe(false);
+      expect(spectator.component.form.controls.v3_username.errors).toEqual({ required: true });
+    });
+
+    it('stops requiring a username when the SNMPv3 security model is turned back off', async () => {
+      await form.fillForm({
+        Hostname: 'truenas.com',
+        'SNMPv3 Security Model': true,
+      });
+      await form.fillForm({ 'SNMPv3 Security Model': false });
+
+      expect(spectator.component.form.controls.v3_username.errors).toBeNull();
+      expect(spectator.component.form.valid).toBe(true);
+    });
+  });
+
   describe('v3 security model', () => {
     it('renders a form with alert service values', async () => {
       spectator.component.form.patchValue({

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -40,6 +41,29 @@ export class SnmpTrapServiceComponent extends BaseAlertServiceForm {
     v3_privprotocol: [''],
     community: ['public'],
   });
+
+  constructor() {
+    super();
+
+    // The SNMPv3 fields are only required while they are on screen. Unchecking the box removes
+    // them, and Angular drops the `required` validators the template put on their controls - but
+    // `cleanUpControl()` does that without revalidating, so the controls keep the `required`
+    // errors they picked up while visible and the form stays invalid with nothing left on screen
+    // to fix. Clear those errors when the fields go away.
+    this.form.controls.v3.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((isV3) => {
+        if (isV3) {
+          return;
+        }
+
+        [
+          this.form.controls.v3_username,
+          this.form.controls.v3_authprotocol,
+          this.form.controls.v3_privprotocol,
+        ].forEach((control) => control.setErrors(null));
+      });
+  }
 
   readonly authProtocols$ = of([
     {
