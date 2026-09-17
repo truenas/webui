@@ -93,12 +93,15 @@ for Escape — are listed with their reason in `scripts/check-test-ids.ts`.
 
 ### Addressing a table row
 
-A row is addressable two ways, and they answer different questions.
+A row is addressable two ways, and they answer different questions. Both are now
+true of **every** list in the app, and `yarn check-test-ids` fails a PR that
+drops either.
 
-**The row itself.** A list that binds `[rowTestId]` puts the row tag on the
+**The row itself.** Every list binds `[rowTestId]`, which puts the row tag on the
 `<tr>` — and on the card, in card mode — so `[data-test="row-user-jane"]` is the
 row. That is the handle for acting on a row: clicking it, opening it, reaching
-the controls inside it.
+the controls inside it. It is also the id the pre-tn-table `<tbody ix-table-body>`
+wrote, so it is the same value the older suites used.
 
 | Template | Emitted |
 |---|---|
@@ -106,9 +109,9 @@ the controls inside it.
 
 **Its cells.** A row id says nothing about what a row *contains*, and descending
 into a column by `[data-column]` is a CSS selector, which rule 1 rules out — so
-reading or asserting one column still goes through that cell's own id. Every
-list tags its cells with the same row tag, which is the value the old
-`<tbody ix-table-body>` put on the row:
+reading or asserting one column goes through that cell's own id. Every column of
+every list carries one, built from the same row tag, at the value it resolved
+before the migration:
 
 | Template | Emitted |
 |---|---|
@@ -120,30 +123,33 @@ Jane's row, and clicking it activates the row exactly as clicking anywhere else
 in it would. For a value the test cannot know in advance, prefix-match the
 stable head of the id.
 
-`[rowTestId]` needs `@truenas/ui-components` ≥ the release carrying it
-(iXsystems/truenas-ui-components#318); a list that does not bind it is still
-reachable through its cells, which is why both halves are documented rather than
-one replacing the other.
+The suffix names the kind of cell, and it is not decoration: it is what the old
+column model resolved, so it is part of the id a suite already selects on —
+`row-text`, `row-yesno`, `row-size`, `row-date`, `row-relative-date`,
+`row-state`, `row-schedule`. Match the column's kind rather than defaulting
+everything to `row-text`.
+
+`yarn check-test-ids --report` prints the per-column coverage (columns with a
+cell body, how many carry no id, and where), which is how the 117 untagged
+columns NAS-143892 closed were found.
 
 **Two rules bind the webui side of this** — they are what keeps the above true:
 
-- A column that renders a row identifier must tag its cell with the row tag. A
-  bare `<ng-template tnCellDef>{{ row.name }}</ng-template>` is not finished.
-  A list that can bind `[rowTestId]` should do that too — it is one line, and it
-  is the only id that survives a column being dropped from the table.
+- Every column must tag its cell with the row tag, and the table must bind
+  `[rowTestId]`. A bare `<ng-template tnCellDef>{{ row.name }}</ng-template>` is
+  not finished. Both are checked.
 - **Removing a resolved `data-test` is a breaking change.** A migration that
   drops one owes a replacement in the same PR, and says so in the PR's Testing
   row. Six tickets in a row — NAS-141047, NAS-141484, NAS-142069, NAS-141791,
   NAS-141186, NAS-143804 — were this same defect, each found downstream.
 
-`yarn check-test-ids` (a lint job step) mechanises the floor under those rules,
-not the rules themselves. It asks two things per template: a table that renders
-cells must tag *something* with the row's identity (not that every column does),
-and a plain clickable must resolve a `data-test` somewhere in its subtree (not
-that the element itself carries one). Neither the per-column half of the first
-rule nor the second rule — dropping the id from a `<tn-button testId>`, a detail
-row, or any component input — is checked. Those stay convention, and reviewing
-them is a reviewer's job.
+`yarn check-test-ids` (a lint job step) mechanises most of that. It asks three
+things: a table that renders cells must bind `[rowTestId]`, every column of it
+must tag its cell, and a plain clickable must resolve a `data-test` somewhere in
+its subtree (not necessarily on the element itself). What it cannot see is a
+*changed* id — dropping or renaming the value on a `<tn-button testId>`, a detail
+row, or any component input still resolves to something, so it passes. That half
+stays convention, and reviewing it is a reviewer's job.
 
 ## Waiting
 
