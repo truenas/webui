@@ -43,9 +43,20 @@ const rowTagInTemplate = [
   /\bix-table-(text|actions|state|toggle|relative-date)-cell\b/,
 ];
 
-/** Plain elements, i.e. the ones that carry no test-id directive of their own. */
-const clickableElements = /<(a|div|span|li|td|tr|button|p|h\d|img|section|article|header|label)(\s[^>]*?)?>/gs;
+/**
+ * Plain elements, i.e. every native tag. A component selector always contains a hyphen
+ * (`tn-button`, `ix-icon`, `ng-container`), so "no hyphen" is the whole rule — an allowlist of
+ * native tags would silently exempt the next `<pre (click)>` or `<nav (click)>` that shows up.
+ */
+const clickableElements = /<([a-z][a-z0-9]*)(\s[^>]*?)?>/gs;
 const clickHandler = /\((click|keydown[^)]*)\)/;
+
+/**
+ * A handler that only cancels the event (`(keydown.enter)="$event.preventDefault()"` on a form,
+ * to stop Enter from submitting it) is a guard, not something a test clicks.
+ */
+const handlerBodies = /\((?:click|keydown[^)]*)\)="([^"]*)"/g;
+const cancelOnly = /^(?:\s*\$event\.(?:preventDefault|stopPropagation)\(\)\s*;?)+$/;
 
 /**
  * Clickables that are deliberately unaddressable, as `<file>:<class>`.
@@ -121,6 +132,10 @@ function untaggedClickables(file: string, src: string): Offender[] {
   for (const match of src.matchAll(clickableElements)) {
     const attributes = match[2] ?? '';
     if (!clickHandler.test(attributes) || anyTestId.test(attributes)) {
+      continue;
+    }
+    const bodies = [...attributes.matchAll(handlerBodies)].map(([, body]) => body);
+    if (bodies.length && bodies.every((body) => cancelOnly.test(body))) {
       continue;
     }
     if (anyTestId.test(outerBlock(src, match[1], match.index, match.index + match[0].length))) {

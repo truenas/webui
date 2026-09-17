@@ -76,6 +76,7 @@
         <ix-table-text-cell
           [value]="row.enabled | yesNo | translate"
           [title]="'Enabled' | translate"
+          [testIdSuffix]="'row-yesno'"
           [uniqueRowTag]="uniqueRowTag(row)"
         ></ix-table-text-cell>
       </ng-template>

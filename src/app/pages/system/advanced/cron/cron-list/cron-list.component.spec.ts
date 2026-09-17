@@ -140,7 +140,7 @@ describe('CronListComponent', () => {
       'text-command-cron-echo-hello-world-test-row-text',
       'text-description-cron-echo-hello-world-test-row-text',
       'text-schedule-cron-echo-hello-world-test-row-text',
-      'text-enabled-cron-echo-hello-world-test-row-text',
+      'text-enabled-cron-echo-hello-world-test-row-yesno',
       'text-next-run-cron-echo-hello-world-test-row-text',
     ]);
   });

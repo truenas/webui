@@ -30,7 +30,7 @@ describe('ConsoleFooterComponent', () => {
   });
 
   it('opens ConsolePanelDialogComponent when footer is clicked', () => {
-    spectator.click('.messages');
+    spectator.click('[data-test="button-console-messages"]');
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ConsolePanelDialog);
   });

@@ -1110,6 +1110,22 @@ describe('SystemSecurityFormComponent', () => {
         stigRequirementsNotMet: { message: 'STIG mode cannot be enabled until the requirements below are met.' },
       });
     });
+
+    it('gives every requirement link its own test id when several share a label', async () => {
+      const multipleDisablesSpectator = await setupStigRequirementTest(
+        createValidationComponent,
+        { dockerStatus: DockerStatus.Running, rootPasswordDisabled: false, adminPasswordDisabled: false },
+      );
+
+      const testIds = Array.from(multipleDisablesSpectator.queryAll('.stig-errors [data-test]'))
+        .map((element) => element.getAttribute('data-test'));
+
+      expect(testIds).toEqual([
+        'link-configure-apps-service',
+        'link-configure-root-password',
+        'link-configure-admin-password',
+      ]);
+    });
   });
 
   describe('STIG Error Navigation Links', () => {
