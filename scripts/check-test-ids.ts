@@ -97,6 +97,11 @@ const allowedClickables = new Map<string, string>([
 /** Entries of {@link allowedClickables} that exempted an element this run. */
 const usedExemptions = new Set<string>();
 
+/** A row variable may contain `$`, which is an anchor rather than a literal inside a pattern. */
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 function tagsRowsWithIdentity(contents: string): boolean {
   if (rowTagInTemplate.some((pattern) => pattern.test(contents))) {
     return true;
@@ -104,10 +109,12 @@ function tagsRowsWithIdentity(contents: string): boolean {
 
   // Otherwise the row has to reach a test id by name: `[testId]="[row.id, 'delete']"`. Matched on
   // `row.`/`row)` rather than a bare word, so a static id that happens to contain "row" does not
-  // pass the check by accident.
+  // pass the check by accident. `(?<![\w$])` rather than `\b` for that boundary, because a name
+  // may legally start or end with `$` — `\b` sits between two word characters, so it never matches
+  // beside one, and `let-row$` would compile a pattern that can only fail.
   const names = [...contents.matchAll(rowVariables)].map(([, name]) => name);
   return names.some((name) => new RegExp(
-    `\\[(?:testId|tnTestId)\\]="[^"]*\\b${name}\\s*[.)][^"]*"`,
+    `\\[(?:testId|tnTestId)\\]="[^"]*(?<![\\w$])${escapeRegExp(name)}\\s*[.)][^"]*"`,
   ).test(contents));
 }
 
@@ -162,14 +169,17 @@ function untaggedClickables(file: string, src: string): Offender[] {
     if (bodies.length && bodies.every(isCancelOnly)) {
       continue;
     }
-    if (anyTestId.test(outerBlock(src, match[1], match.index, match.index + match[0].length))) {
-      continue;
-    }
+    // Before the subtree check, so that an exemption counts as used whenever the element it names
+    // is still there. Testing the subtree first would retire the entry the moment the element
+    // gained a tagged descendant, and the run would fail saying the class matches nothing.
     const exemption = classNames(attributes)
       .map((name) => `${file}:${name}`)
       .find((key) => allowedClickables.has(key));
     if (exemption) {
       usedExemptions.add(exemption);
+      continue;
+    }
+    if (anyTestId.test(outerBlock(src, match[1], match.index, match.index + match[0].length))) {
       continue;
     }
     offenders.push({
