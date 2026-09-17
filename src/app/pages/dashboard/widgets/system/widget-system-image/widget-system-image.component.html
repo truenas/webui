@@ -6,6 +6,7 @@
 
     <div [class]="['container', size()]">
       <ix-product-image
+        testIdScope="system-image"
         [systemProduct]="systemInfo()?.platform"
         [hasEnclosureSupport]="!!hasEnclosureSupport()"
         [isHaLicensed]="!!isHaLicensed()"

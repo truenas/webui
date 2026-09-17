@@ -75,18 +75,27 @@ function isCancelOnly(body: string): boolean {
 }
 
 /**
- * Clickables that are deliberately unaddressable, as `<file>:<class>`.
+ * Clickables that are deliberately unaddressable, as `<repo-relative path>:<class>`.
+ *
+ * Keyed on the full path, not the basename: `overlay` is a generic enough class name that a
+ * basename key would silently wave through the next `<div class="overlay" (click)>` added to some
+ * other file — the one failure mode this script is meant not to have. An entry that matches
+ * nothing is reported too, so a class that gets renamed or deleted takes its exemption with it
+ * instead of leaving a stale one behind.
  *
  * Only two shapes belong here: something that is not a target (a scrim closing what is above it,
  * a container listening for Escape), and something already addressable through an ancestor that
  * carries the id. Anything a journey would click belongs in the template with an id, not here.
  */
 const allowedClickables = new Map<string, string>([
-  ['admin-layout.component.html:overlay', 'Scrim behind the secondary menu; a test closes the menu by clicking what opened it.'],
-  ['admin-layout.component.html:alert-panel-backdrop', 'Scrim behind the alerts panel, aria-hidden.'],
-  ['admin-layout.component.html:alert-panel-container', 'Panel container; listens for Escape. Its contents carry their own ids.'],
-  ['dataset-management.component.html:dataset-node-click', 'Inside <tn-tree-node [testId]="[\'dataset\', name]">, which is what a click on the row resolves to.'],
+  ['src/app/modules/layout/admin-layout/admin-layout.component.html:overlay', 'Scrim behind the secondary menu; a test closes the menu by clicking what opened it.'],
+  ['src/app/modules/layout/admin-layout/admin-layout.component.html:alert-panel-backdrop', 'Scrim behind the alerts panel, aria-hidden.'],
+  ['src/app/modules/layout/admin-layout/admin-layout.component.html:alert-panel-container', 'Panel container; listens for Escape. Its contents carry their own ids.'],
+  ['src/app/pages/datasets/components/dataset-management/dataset-management.component.html:dataset-node-click', 'Inside <tn-tree-node [testId]="[\'dataset\', name]">, which is what a click on the row resolves to.'],
 ]);
+
+/** Entries of {@link allowedClickables} that exempted an element this run. */
+const usedExemptions = new Set<string>();
 
 function tagsRowsWithIdentity(contents: string): boolean {
   if (rowTagInTemplate.some((pattern) => pattern.test(contents))) {
@@ -143,7 +152,6 @@ interface Offender { file: string; line: number; what: string }
 
 function untaggedClickables(file: string, src: string): Offender[] {
   const offenders: Offender[] = [];
-  const basename = file.split('/').pop() as string;
 
   for (const match of src.matchAll(clickableElements)) {
     const attributes = match[2] ?? '';
@@ -157,7 +165,11 @@ function untaggedClickables(file: string, src: string): Offender[] {
     if (anyTestId.test(outerBlock(src, match[1], match.index, match.index + match[0].length))) {
       continue;
     }
-    if (classNames(attributes).some((name) => allowedClickables.has(`${basename}:${name}`))) {
+    const exemption = classNames(attributes)
+      .map((name) => `${file}:${name}`)
+      .find((key) => allowedClickables.has(key));
+    if (exemption) {
+      usedExemptions.add(exemption);
       continue;
     }
     offenders.push({
@@ -195,12 +207,21 @@ function main(): void {
 
   const clickables = templates.flatMap(({ file, src }) => untaggedClickables(file, src));
 
+  const staleExemptions = [...allowedClickables.keys()]
+    .filter((key) => !usedExemptions.has(key))
+    .map((key) => ({ file: key.split(':')[0], line: 1, what: `no clickable matches "${key}"` }));
+
   report('tn-table rows with no per-row test id:', untaggedRows, `
 Each of these renders table cells (\`tnCellDef\`) without tagging them with the row's identity, so
 an e2e test cannot address a row. Tag them — see \`memoizedRowTag\` /
 \`tnTableListHost(...).rowTag\` in src/app/modules/tn-table/utils.ts and the
 \`<ix-table-text-cell>\` renderer — rather than leaving a downstream suite to reach for a CSS or
 text selector. See "Addressing a table row" in e2e/CLAUDE.md.`);
+
+  report('exemptions in allowedClickables that match nothing:', staleExemptions, `
+Each of these names a clickable that no longer exists — the class was renamed, the element moved,
+or it now carries an id of its own. Remove the entry from \`allowedClickables\` in this script, so
+the exemption cannot outlive what it was written for.`);
 
   report('clickable elements with no test id:', clickables, `
 Each of these handles a click that no \`[data-test]\` selector can reach. Add one —

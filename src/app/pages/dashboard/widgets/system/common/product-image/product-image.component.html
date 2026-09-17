@@ -5,7 +5,7 @@
         tnTooltipPosition="above"
         tnTestIdType="image"
         [tnTooltip]="'View Enclosure' | translate"
-        [tnTestId]="product()"
+        [tnTestId]="[testIdScope(), product()]"
         [id]="product()"
         [class.clickable]="hasEnclosureSupport()"
         [tnTooltipDisabled]="!hasEnclosureSupport()"

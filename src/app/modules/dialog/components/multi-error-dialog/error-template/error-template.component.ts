@@ -31,6 +31,13 @@ export class ErrorTemplateComponent {
   private readonly errorBtText: Signal<ElementRef<HTMLElement> | undefined> = viewChild('errorBtText', { read: ElementRef });
 
   readonly title = input.required<string>();
+
+  /**
+   * The dialog renders one of these per error and `title` is a translated string that is almost
+   * always 'Error', so the ids inside have to be scoped by the error's position in the list.
+   */
+  readonly index = input.required<number>();
+
   readonly message = input<string>();
   readonly stackTrace = input<string>();
   readonly logs = input<Job>();

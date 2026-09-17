@@ -35,6 +35,14 @@ export class TierStatusComponent {
 
   readonly tier = input<SharingTierInfo | null | undefined>();
 
+  /**
+   * The badge renders once per row in the share lists and cards, so a constant id would resolve to
+   * every row at once. Scoped to the row's tag there; left empty on the single-instance call site
+   * (dataset details), where an empty leading segment is dropped and the id stays
+   * `button-migration-status`.
+   */
+  readonly uniqueRowTag = input('');
+
   protected tierLabel = computed(() => {
     const key = getTierLabelKey(this.tier()?.tier_type);
     return key ? this.translate.instant(key) : '-';

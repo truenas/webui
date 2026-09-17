@@ -32,6 +32,13 @@ export class ProductImageComponent {
   isIxHardware = input.required<boolean>();
   showProductImageText = input<boolean>(true);
 
+  /**
+   * `product()` is the hardware model, not an instance: an HA dashboard renders this twice for the
+   * same model — once per controller — so the model alone does not address one image. Call sites
+   * that can appear alongside another pass what tells them apart.
+   */
+  testIdScope = input('');
+
   product = computed(() => getServerProduct(this.systemProduct()));
   productImage = computed(() => getProductImageSrc(this.systemProduct()));
   productEnclosure = computed(() => {
