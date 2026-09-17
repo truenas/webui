@@ -4,6 +4,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { App } from 'app/interfaces/app.interface';
 import { analyzeVersionChange } from 'app/pages/apps/utils/version-comparison.utils';
+import { resolveAppVersion } from 'app/pages/apps/utils/version-formatting.utils';
 
 @Component({
   selector: 'ix-app-update-cell',
@@ -20,6 +21,31 @@ export class AppUpdateCellComponent {
   hasUpdate = computed(() => this.app()?.upgrade_available);
 
   protected versionChange = computed(() => analyzeVersionChange(this.app()));
+
+  /**
+   * Multi-line tooltip listing what the update actually changes.
+   * Targets come from the latest_* fields, never from the currently installed
+   * human_version, which would render the update as a no-op.
+   */
+  protected updateTooltip = computed(() => {
+    const app = this.app();
+    const lines = [this.getUpdateMessage()];
+
+    if (this.versionChange().hasAppVersionChange && app.latest_app_version) {
+      const currentAppVersion = resolveAppVersion({
+        appVersion: app.metadata?.app_version,
+        humanVersion: app.human_version,
+        libraryVersion: app.version,
+      });
+      lines.push(`${this.translate.instant('Version')}: ${currentAppVersion} → ${app.latest_app_version}`);
+    }
+
+    if (this.versionChange().hasRevisionChange) {
+      lines.push(`${this.translate.instant('Revision')}: ${app.version} → ${app.latest_version}`);
+    }
+
+    return lines.join('\n');
+  });
 
   @HostBinding('class') get hostClasses(): string[] {
     return ['update', this.showIcon() ? 'has-icon' : 'has-cell'];
