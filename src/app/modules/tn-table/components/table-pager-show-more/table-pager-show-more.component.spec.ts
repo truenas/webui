@@ -30,7 +30,7 @@ describe('TablePagerShowMoreComponent', () => {
   beforeEach(() => {
     const dataProvider = new ArrayDataProvider<TestTableData>();
     spectator = createComponent({
-      props: { dataProvider, pageSize: 2, ixTestOverride: ['test'] },
+      props: { dataProvider, pageSize: 2, testId: ['test'] },
     });
     spectator.component.dataProvider().setRows(testTableData);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);

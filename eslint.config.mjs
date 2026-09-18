@@ -17,15 +17,15 @@ const projectOverrides = {
       ...baseRestrictedSyntax,
       {
         // `[ixTest]` and its `TestDirective` were deleted in NAS-143893; the library's
-        // `[tnTestId]` is the one directive that writes a `data-test`. Rejected here are every
+        // `[tnTestId]` is the one directive that writes a `data-test`. Rejected here is every
         // spelling that would revive it: a static attribute or CSS selector (`ixTest="…"`,
         // `[ixTest="…"]`), a property binding (`[ixTest]="…"`) — which an inline `template:` in a
         // `.ts` file is the one place that can appear, since `scripts/check-test-ids.ts` reads
-        // only `.html` — and a bare `'ixTest'`. All three require an `=`, so a prose `[ixTest]`
-        // naming the directive that was replaced is left alone (several comments and one test
-        // name do), and `\b` stops before `ixTestOverride`, an unrelated
-        // `<ix-table-pager-show-more>` input.
-        selector: "Literal[value=/\\bixTest=|\\[ixTest\\]=|^ixTest$/], TemplateElement[value.raw=/\\bixTest=|\\[ixTest\\]=/], Identifier[name='ixTest']",
+        // only `.html` — and any identifier starting `ixTest`, which also catches the retired
+        // `ixTestOverride` (now `<ix-table-pager-show-more>`'s `testId`). The attribute forms all
+        // require an `=`, so a prose `[ixTest]` naming the directive that was replaced is left
+        // alone; several comments and one test name do.
+        selector: "Literal[value=/\\bixTest=|\\[ixTest\\]=|^ixTest/], TemplateElement[value.raw=/\\bixTest=|\\[ixTest\\]=/], Identifier[name=/^ixTest/]",
         message: '`ixTest` is retired (NAS-143893). Tag elements with the library\'s `[tnTestId]` + `tnTestIdType`, and pre-normalize dynamic values with `normalizeTestIdString` / `normalizeTestIdParts` from app/modules/test-id/normalize-test-id.utils.ts.',
       },
       {

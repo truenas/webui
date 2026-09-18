@@ -43,10 +43,10 @@ const anyTestId = /\btestId\b|\btnTestId\b|data-test/;
  * `[ixTest]` is gone (NAS-143893): the one directive that writes a `data-test` is the library's
  * `[tnTestId]`. The local `TestDirective` is deleted, so an `ixTest` attribute would now emit
  * nothing at all — a silently untagged element, which is the exact defect the rules above exist
- * to catch. `\b` stops before `ixTestOverride`, which is an unrelated
- * `<ix-table-pager-show-more>` input and stays.
+ * to catch. Nothing named `ixTest*` survives, so this matches the prefix rather than the exact
+ * word: `ixTestOverride`, the last holdout, is now `<ix-table-pager-show-more>`'s `[testId]`.
  */
-const retiredIxTest = /\bixTest\b/g;
+const retiredIxTest = /\bixTest/g;
 
 /**
  * Blanks out HTML comments, keeping every newline so reported line numbers still line up.
