@@ -79,12 +79,16 @@ export function kebabTestSegment(part: string | number): string {
  *   pre-normalizes the whole tag this way before the library sees it — so a
  *   key named `e2e-s3-key` in the access key list renders as
  *   `text-name-s-3-access-key-e-2-e-s-3-key-row-text`.
- * - The *value cells* of the shares-dashboard cards, which normalize through
- *   `cellRowTag`. Those cards' `[rowTestId]` and action-button ids deliberately
- *   do not: they come from `uniqueRowTag`, which is `convertStringToId` alone,
- *   so the row and its cells disagree on a name with a letter/digit boundary
- *   (`row-card-smb-share-smb123` beside
- *   `text-name-card-smb-share-smb-123-row-text`).
+ * - Exactly those shares-dashboard card cells that carried a legacy id, which
+ *   normalize through their card's `cellRowTag`: NFS Path/Description, SMB
+ *   Name/Path/Description/Audit Logging, WebShare Name/Path, and NVMe-oF
+ *   Namespaces/Ports/Hosts. Nothing else on those cards does — `[rowTestId]`,
+ *   every action button, NVMe-oF's own Name cell, and the whole of `s3-card`
+ *   and `iscsi-card` come from `uniqueRowTag`, which is `convertStringToId`
+ *   alone. So a row and the cells inside it disagree on a name with a
+ *   letter/digit boundary: `row-card-smb-share-smb123` beside
+ *   `text-name-card-smb-share-smb-123-row-text`. Use {@link kebabTestSegment}
+ *   for the former and this for the latter.
  *
  * The two agree on anything with no letter/digit boundary, which is why most
  * locators can use {@link kebabTestSegment} without caring. Reach for this one

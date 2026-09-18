@@ -69,6 +69,8 @@
       <ng-container [tnColumnDef]="'name'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
+          <!-- `uniqueRowTag`, not `cellRowTag`: this cell never went through `[ixTest]`, so its id
+               has no lodash kebab to preserve. The three below did, and use `cellRowTag`. -->
           <ix-subsystem-name-cell
             tnTestIdType="text"
             [subsystem]="row"
