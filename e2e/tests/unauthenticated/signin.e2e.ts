@@ -20,17 +20,29 @@
  *
  * ## What is deliberately not here
  *
- * The first-time-setup form, the login banner, the session-expired toast, the
- * failover-validation errors and the disconnected state are all real states of
- * this page, and none can be reached on a working appliance without mocking the
- * API or rigging the box. This suite drives the UI against a real system, so
- * they are out of scope rather than faked.
+ * The first-time-setup form, the session-expired toast, the failover-validation
+ * errors and the disconnected state are all real states of this page, and none
+ * can be reached on a working appliance without mocking the API or rigging the
+ * box. This suite drives the UI against a real system, so they are out of scope
+ * rather than faked.
+ *
+ * The login banner is **not** in that group, though it was listed there once.
+ * `system.advanced.login_banner` is an ordinary config string, so the banner is
+ * an ordinary precondition. It is left for later on its cost rather than its
+ * reachability: it is global state, and a banner leaked by a failed teardown
+ * puts a full-screen dialog in front of every other test's sign-in.
  *
  * Two-factor is out of scope for now. Enabling it is a global setting
  * (`auth.twofactor.update`), so a teardown that failed to turn it off would
  * make every other test's sign-in — including the token bypass — demand an OTP.
  */
-import { attemptSignIn, expectSignInRefused, insecureSigninUrl } from '../../flows/auth';
+import {
+  ensureNoPrivilegeAccountPresent, ensureNoWebUiAccessAccountPresent, ensureRefusedAccountsAbsent,
+  refusedAccounts,
+} from '../../fixtures/users';
+import {
+  attemptSignIn, awaitAdminShell, expectSignInRefused, insecureSigninUrl, signIn, signOut, submitSignIn,
+} from '../../flows/auth';
 import { signinLocators } from '../../locators/signin';
 import { adminLayout } from '../../support/constants';
 import { expect, test } from '../../support/fixtures';
@@ -125,6 +137,120 @@ test('an unauthenticated visitor aiming at the shell lands on sign-in', async ({
   // under test, and it is how a bookmark or a stale tab arrives. `flows/
   // navigation.ts` exists for journeys *inside* the app, which this is not.
   await page.goto('./dashboard');
+
+  await expect(page.locator(signinLocators.username)).toBeEnabled();
+  await expect(page.locator(adminLayout)).toBeHidden();
+  await expect(page).toHaveURL(/\/signin/);
+});
+
+/**
+ * The authorization refusals need accounts made for them, and removed again
+ * whatever happens (R3.2). Cleanup runs before each test as well, so a run
+ * interrupted midway leaves the next one able to start (R3.5).
+ *
+ * The `api` fixture is worker-scoped, so both hooks share one connection rather
+ * than paying a sign-in each — and sign-ins are the scarce resource here, not
+ * queries.
+ */
+test.describe('accounts that may not use the UI', () => {
+  test.beforeEach(async ({ api }) => {
+    await ensureRefusedAccountsAbsent(api);
+  });
+
+  test.afterEach(async ({ api }) => {
+    await ensureRefusedAccountsAbsent(api);
+  });
+
+  /**
+   * The simpler of the two: middleware itself says no.
+   *
+   * An account with a valid password and no privilege gets `DENIED` from
+   * `auth.login_ex`, which the app maps to `LoginResult.Denied`. The message
+   * points at the actual remedy — grant the account a role — rather than
+   * implying the password was wrong, and that distinction is the whole value of
+   * the assertion. A regression to the generic wrong-username-or-password text
+   * would send an administrator to reset a password that was never the problem.
+   */
+  test('an account with no roles is told it needs roles, not that it mistyped', async ({ page, api }) => {
+    await ensureNoPrivilegeAccountPresent(api);
+
+    await attemptSignIn(page, refusedAccounts.noPrivilege.username, refusedAccounts.noPrivilege.password);
+    await expectSignInRefused(page, 'Login denied. Please ensure proper roles have been granted to the user.');
+  });
+
+  /**
+   * The one worth having: middleware says yes and the app must still say no.
+   *
+   * This account holds a privilege, so `auth.login_ex` answers `SUCCESS` with a
+   * real session — the credentials are right and the account is entitled to
+   * *something*. What it is not entitled to is this UI, and the only thing that
+   * notices is `auth.service.ts` reading `user_info.privilege.webui_access` and
+   * mapping a false to `LoginResult.NoAccess`.
+   *
+   * Nothing on the middleware side would catch that check being dropped: from
+   * there the login succeeded. That is what makes this worth an end-to-end test
+   * rather than a unit test of the mapping — the claim is about the whole path,
+   * from an account configured on a real appliance to what the browser shows.
+   */
+  test('an account middleware authenticates is still refused the UI it cannot use', async ({ page, api }) => {
+    await ensureNoWebUiAccessAccountPresent(api);
+
+    await attemptSignIn(page, refusedAccounts.noWebUiAccess.username, refusedAccounts.noWebUiAccess.password);
+    await expectSignInRefused(page, 'User is lacking permissions to access WebUI.');
+  });
+});
+
+/**
+ * Where you were going is where you end up.
+ *
+ * `AuthGuardService` stores the route it turned away (`state.url`) and
+ * `SigninStore.getRedirectUrl` reads it back after a successful login, so a
+ * bookmark or a stale tab survives the detour through sign-in. The existing
+ * deep-link test above covers only the outward half — that an unauthenticated
+ * visitor is bounced. This is the return trip, which is the half a user
+ * actually feels.
+ *
+ * Deliberately does *not* go through `signIn`, which navigates to `./signin`
+ * first. The visitor is already there, put there by the guard; navigating again
+ * would be a step nobody takes, in the one test where arriving by redirect is
+ * the premise.
+ */
+test('a deep link survives the detour through sign-in', async ({ page, config }) => {
+  // A guarded route, reached the way a bookmark reaches it. One of the two
+  // places this suite may navigate by URL, and for the same reason as the test
+  // above: typing a deep link is the thing under test.
+  await page.goto('./credentials/users');
+
+  await expect(page.locator(signinLocators.username)).toBeEnabled();
+  await expect(page).toHaveURL(/\/signin/);
+
+  await submitSignIn(page, config.username, config.password);
+  await awaitAdminShell(page, config.username);
+
+  // The point: not `/dashboard`, which is where every login that has nowhere
+  // else to go lands — so a broken redirect would still look like a clean sign-in.
+  await expect(page).toHaveURL(/\/credentials\/users/);
+});
+
+/**
+ * Signing out has to end the session, not merely leave the page.
+ *
+ * `admin-user.e2e.ts` signs out as a step of its journey, but nothing there
+ * asserts the session is *gone* — only that the form came back. A sign-out that
+ * navigated without clearing the token would satisfy that and still leave the
+ * appliance one Back button away from an authenticated shell.
+ *
+ * Going back is the honest way to ask. It replays the route the user was on
+ * from history, which is exactly what an abandoned browser on a shared desk
+ * does, and it puts the question to the auth guard rather than to the sign-out
+ * button's own bookkeeping.
+ *
+ */
+test('signing out ends the session, and going back does not resurrect it', async ({ page, config }) => {
+  await signIn(page, config.username, config.password);
+  await signOut(page);
+
+  await page.goBack();
 
   await expect(page.locator(signinLocators.username)).toBeEnabled();
   await expect(page.locator(adminLayout)).toBeHidden();
