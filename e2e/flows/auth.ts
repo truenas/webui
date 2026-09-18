@@ -147,16 +147,16 @@ export function insecureSigninUrl(uiBaseUrl: string): string {
 /**
  * Whether the UI is really served over plain HTTP at this address.
  *
- * Not every target has an HTTP origin. An appliance serves port 80 without
- * redirecting and the `branch` dev server is cleartext already, but CI serves
- * the built UI from an HTTPS-only container, where nginx answers a plain
- * request with "400 The plain HTTP request was sent to HTTPS port" — a page
- * Playwright loads happily, so the symptom is a missing banner, not an error.
+ * Two ways a target has no cleartext origin, and neither refuses the request:
+ * CI's HTTPS-only container answers "400 plain HTTP request sent to HTTPS
+ * port", and an appliance with `ui_httpsredirect` on answers a 301 to HTTPS.
+ * `request.get` follows redirects, so a status alone would call the second one
+ * a success — the scheme actually landed on is what settles it.
  */
 export async function servesUiOverHttp(request: APIRequestContext, url: string): Promise<boolean> {
   try {
     const response = await request.get(url, { timeout: httpProbeTimeoutMs, failOnStatusCode: false });
-    return response.ok();
+    return response.ok() && new URL(response.url()).protocol === 'http:';
   } catch {
     // Nothing listening, or TLS refused the cleartext request outright.
     return false;
