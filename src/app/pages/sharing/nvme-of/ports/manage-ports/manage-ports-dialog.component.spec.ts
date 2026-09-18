@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -73,6 +73,11 @@ describe('ManagePortsDialog', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: {} })),
       }),
+      // Only here so the assertions below can watch it: the dialog must NOT close itself when a
+      // form opens over it (NAS-143761).
+      mockProvider(MatDialogRef, {
+        close: jest.fn(),
+      }),
       mockAuth(),
     ],
   });
@@ -100,6 +105,9 @@ describe('ManagePortsDialog', () => {
       { data: expect.objectContaining(ports[0]) },
     );
     expect(spectator.inject(NvmeOfStore).reloadPorts).toHaveBeenCalled();
+    // The form opens in a slide-in stacked above this dialog, so the list is still there to
+    // return to once it closes — closing it would drop the user back on the subsystem (NAS-143761).
+    expect(spectator.inject(MatDialogRef).close).not.toHaveBeenCalled();
   });
 
   it('deletes the port with correct force flag based on subsystem usage', async () => {
@@ -130,5 +138,6 @@ describe('ManagePortsDialog', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PortFormComponent);
     expect(spectator.inject(NvmeOfStore).reloadPorts).toHaveBeenCalled();
+    expect(spectator.inject(MatDialogRef).close).not.toHaveBeenCalled();
   });
 });
