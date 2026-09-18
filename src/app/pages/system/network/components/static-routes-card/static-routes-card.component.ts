@@ -25,6 +25,7 @@ import {
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -39,6 +40,7 @@ import { staticRoutesCardElements } from 'app/pages/system/network/components/st
   styleUrls: ['./static-routes-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TableTextCellComponent,
     TnCardComponent,
     TnCardHeaderDirective,
     TnCardFooterActionsDirective,
@@ -103,9 +105,9 @@ export class StaticRoutesCardComponent implements OnInit {
     },
   ];
 
-  protected uniqueRowTag(row: StaticRoute): string {
-    return convertStringToId('static-route-' + row.destination + '-' + row.gateway);
-  }
+  protected readonly uniqueRowTag = (row: StaticRoute): string => (
+    convertStringToId('static-route-' + row.destination + '-' + row.gateway)
+  );
 
   protected ariaLabel(row: StaticRoute): string {
     return [row.description, this.translate.instant('Static Route')].join(' ');

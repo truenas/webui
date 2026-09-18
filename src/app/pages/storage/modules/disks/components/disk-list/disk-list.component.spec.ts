@@ -173,6 +173,17 @@ describe('DiskListComponent', () => {
     ]);
   });
 
+  /**
+   * Resolves the `data-test` of a button located by the label a user reads. tn-button puts
+   * `[testId]` on the inner `<button>` rather than on its host, which is where e2e locates it.
+   */
+  function getActionTestId(label: string): string | null {
+    const button = Array.from(spectator.queryAll('tn-button button'))
+      .find((element) => element.textContent?.trim() === label);
+
+    return button?.getAttribute('data-test') ?? null;
+  }
+
   it('tags each row with the disk it shows, so e2e can select a row without opening it', () => {
     // Before `[rowTestId]` the only row tag in this list lived in the detail row, which a test can
     // only reach by clicking a row it has no way to address.
@@ -185,9 +196,9 @@ describe('DiskListComponent', () => {
   it('keeps the legacy row-action test ids after moving to tn-button', async () => {
     await table.toggleRowExpansion(2);
 
-    expect(spectator.query('[data-test="button-sdc-edit"]')).toExist();
-    expect(spectator.query('[data-test="button-sdc-unlock"]')).toExist();
-    expect(spectator.query('[data-test="button-sdc-reset-sed"]')).toExist();
+    expect(getActionTestId('Edit')).toBe('button-sdc-edit');
+    expect(getActionTestId('Unlock')).toBe('button-sdc-unlock');
+    expect(getActionTestId('SED Reset')).toBe('button-sdc-reset-sed');
   });
 
   it('keeps splitting letter-digit boundaries in row-action test ids, as lodash kebab-case did', async () => {
@@ -202,15 +213,16 @@ describe('DiskListComponent', () => {
     await table.toggleRowExpansion(0);
 
     // Handing the raw name to the library's test-id kebab would resolve `button-nvme0n1-edit`.
-    expect(spectator.query('[data-test="button-nvme-0-n-1-edit"]')).toExist();
+    expect(getActionTestId('Edit')).toBe('button-nvme-0-n-1-edit');
   });
 
-  // The two assertions below query `data-test` on purpose: the e2e suite locates these buttons
-  // by the ids the pre-migration screen resolved, so preserving them is the assertion itself.
+  // The assertions above and below are about the resolved `data-test` on purpose: the e2e
+  // suite locates these buttons by the ids the pre-migration screen resolved, so preserving
+  // them is the assertion itself. The buttons themselves are found by their label.
   it('keeps the legacy batch-operations test id after moving to tn-button', async () => {
     await table.toggleRowSelection(0);
 
-    expect(spectator.query('[data-test="button-edit-selected"]')).toExist();
+    expect(getActionTestId('Edit Disk')).toBe('button-edit-selected');
   });
 
   it('keeps only one detail row open at a time', async () => {

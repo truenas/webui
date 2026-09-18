@@ -394,12 +394,14 @@ export interface S3VersioningOptions {
 }
 
 /**
- * Turns versioning on in the open bucket editor (Advanced Options) and fills
- * the options that appear with it, plus the ETag choice from "Other Options".
+ * Turns versioning on in the open bucket editor (Advanced Options), then fills
+ * the ZFS snapshot versions and the ETag choice from "Other Options".
  *
- * The snapshot controls render only once versioning is not Off, so their
- * appearance confirms the select took. Each pattern is typed and committed
- * with Enter; the chip input accepts free text (`allowCustomValue`).
+ * The snapshot controls live in their own section and render whatever the
+ * versioning state (NAS-143800), so their visibility says only that Advanced
+ * Options is open. Each pattern is typed and committed with Enter; the chip
+ * input accepts free text (`allowCustomValue`). The listing limit renders once
+ * the first pattern is committed.
  */
 export async function setBucketVersioningOptions(page: Page, options: S3VersioningOptions): Promise<void> {
   const { form } = s3BucketLocators;

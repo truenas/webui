@@ -32,6 +32,7 @@ import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InitShutdownFormComponent,
@@ -43,6 +44,7 @@ import { initShudownListElements } from 'app/pages/system/advanced/init-shutdown
   templateUrl: './init-shutdown-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TableTextCellComponent,
     PageHeaderComponent,
     RequiresRolesDirective,
     UiSearchDirective,
@@ -90,9 +92,9 @@ export class InitShutdownListComponent implements OnInit {
     },
   ];
 
-  protected uniqueRowTag(row: InitShutdownScript): string {
-    return 'init-shutdown-' + row.command + '-' + row.type;
-  }
+  protected readonly uniqueRowTag = (row: InitShutdownScript): string => (
+    'init-shutdown-' + row.command + '-' + row.type
+  );
 
   protected ariaLabel(row: InitShutdownScript): string {
     return [row.command, this.translate.instant('Init/Shutdown Script')].join(' ');

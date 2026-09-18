@@ -30,6 +30,7 @@ import { mapTnSortToProviderSorting } from 'app/modules/tn-table/utils';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { acmeDnsAuthenticatorListElements } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.elements';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/acmedns-form/acmedns-form.component';
@@ -40,6 +41,7 @@ import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/ac
   styleUrls: ['./acme-dns-authenticator-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TableTextCellComponent,
     TnCardComponent,
     TnCardFooterActionsDirective,
     UiSearchDirective,
@@ -92,9 +94,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
     },
   ];
 
-  protected uniqueRowTag(row: DnsAuthenticator): string {
-    return 'amce-dns-' + row.name;
-  }
+  protected readonly uniqueRowTag = (row: DnsAuthenticator): string => 'amce-dns-' + row.name;
 
   protected ariaLabel(row: DnsAuthenticator): string {
     return [row.name, this.translate.instant('ACME DNS Authenticator')].join(' ');

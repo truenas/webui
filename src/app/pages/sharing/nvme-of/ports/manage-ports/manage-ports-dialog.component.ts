@@ -62,9 +62,9 @@ export class ManagePortsDialog implements OnInit {
 
   protected readonly trackByPortId = (_: number, row: NvmeOfPortAndUsage): number => row.id;
 
-  protected uniqueRowTag(row: NvmeOfPortAndUsage): string {
-    return toUniqueRowTag(`port-${row.addr_trtype}-${row.addr_traddr}-${row.addr_trsvcid}`);
-  }
+  protected readonly uniqueRowTag = (row: NvmeOfPortAndUsage): string => (
+    toUniqueRowTag(`port-${row.addr_trtype}-${row.addr_traddr}-${row.addr_trsvcid}`)
+  );
 
   protected readonly actions: IconActionConfig<NvmeOfPortAndUsage>[] = [
     {

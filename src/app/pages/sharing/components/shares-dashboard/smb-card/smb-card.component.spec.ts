@@ -7,7 +7,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness,
   TnDialog,
-  TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
+  TnMenuHarness, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -25,6 +25,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   TablePagerShowMoreComponent,
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
+import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ServiceActionsMenuService,
@@ -39,9 +40,6 @@ describe('SmbCardComponent', () => {
   let spectator: Spectator<SmbCardComponent>;
   let loader: HarnessLoader;
   let table: TnTableHarness;
-
-  // The "⋮" row-action trigger test id, derived from the row's uniqueRowTag.
-  const rowMenuTrigger = '[data-test="button-card-smb-share-smb123-more-action"]';
 
   const smbShares = [
     {
@@ -118,9 +116,8 @@ describe('SmbCardComponent', () => {
     ],
   });
 
-  async function openRowMenu(): Promise<TnMenuHarness> {
-    spectator.click(rowMenuTrigger);
-    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  function openRowMenu(): Promise<TnMenuHarness> {
+    return openRowActionsMenu(spectator.fixture);
   }
 
   describe('with active pool shares', () => {

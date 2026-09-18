@@ -29,6 +29,7 @@ import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-co
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { initShutdownCardElements } from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.elements';
 import {
@@ -41,6 +42,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   templateUrl: './init-shutdown-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TableTextCellComponent,
     TnCardComponent,
     TnCardFooterActionsDirective,
     RequiresRolesDirective,
@@ -89,9 +91,9 @@ export class InitShutdownCardComponent implements OnInit {
     },
   ];
 
-  protected uniqueRowTag(row: InitShutdownScript): string {
-    return `card-init-shutdown-${row.command}-${row.when}`;
-  }
+  protected readonly uniqueRowTag = (row: InitShutdownScript): string => (
+    `card-init-shutdown-${row.command}-${row.when}`
+  );
 
   protected ariaLabel(row: InitShutdownScript): string {
     return [row.command, this.translate.instant('Init/Shutdown Script')].join(' ');

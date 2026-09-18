@@ -160,9 +160,7 @@ export class WebShareListComponent implements OnInit {
 
   protected readonly trackByWebShareId = (_index: number, row: WebShareTableRow): number => row.id;
 
-  protected uniqueRowTag(row: WebShareTableRow): string {
-    return toUniqueRowTag(row.name);
-  }
+  protected readonly uniqueRowTag = (row: WebShareTableRow): string => toUniqueRowTag(row.name);
 
   protected ariaLabel(row: WebShareTableRow): string {
     return [row.name, this.translate.instant('WebShare')].join(' ');

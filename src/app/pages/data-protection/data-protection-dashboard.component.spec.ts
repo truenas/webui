@@ -71,7 +71,8 @@ describe('DataProtectionDashboardComponent', () => {
 
     // The action is hosted outside tn-empty precisely to keep this id — see the template.
     it('keeps the legacy button-create-pool test id on the action', () => {
-      expect(spectator.query('[data-test="button-create-pool"]')).toExist();
+      // tn-button puts `[testId]` on the inner <button>, which is where e2e locates it.
+      expect(spectator.query('tn-button button')).toHaveAttribute('data-test', 'button-create-pool');
     });
   });
 });

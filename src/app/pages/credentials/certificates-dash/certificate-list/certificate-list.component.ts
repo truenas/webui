@@ -5,16 +5,17 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  tnIconMarker,
   TnButtonComponent,
   TnCardComponent,
   TnCardFooterActionsDirective,
   TnCellDefDirective,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
-  type TnSortEvent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
+  tnIconMarker,
+  type TnSortEvent,
 } from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -36,6 +37,7 @@ import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CertificateEditComponent,
@@ -53,6 +55,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./certificate-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
+    TableTextCellComponent,
     TnCardComponent,
     TnCardFooterActionsDirective,
     TnButtonComponent,
@@ -120,9 +124,7 @@ export class CertificateListComponent {
     },
   ];
 
-  protected uniqueRowTag(row: Certificate): string {
-    return 'cert-' + row.name;
-  }
+  protected readonly uniqueRowTag = (row: Certificate): string => 'cert-' + row.name;
 
   protected ariaLabel(row: Certificate): string {
     return [row.name, this.translate.instant('Certificate')].join(' ');

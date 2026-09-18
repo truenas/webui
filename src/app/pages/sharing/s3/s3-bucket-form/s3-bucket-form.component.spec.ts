@@ -162,6 +162,12 @@ describe('S3BucketFormComponent', () => {
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Audit' }))).toBe(true);
     });
 
+    it('defaults a new bucket to the Minted multipart ETag', async () => {
+      await clickAdvancedOptions();
+
+      expect(await (await getSelect('multipart_etag')).getDisplayText()).toBe('Minted (opaque token)');
+    });
+
     it('turns versioning on and defaults to Compliance retention when object lock is enabled', async () => {
       await clickAdvancedOptions();
       expect(await (await getSelect('versioning')).getDisplayText()).toBe('Off');
@@ -333,7 +339,7 @@ describe('S3BucketFormComponent', () => {
         versioning: S3Versioning.Off,
         snapshot_versions: [],
         snapshot_versions_max: 64,
-        multipart_etag: S3MultipartEtag.Composite,
+        multipart_etag: S3MultipartEtag.Minted,
         audit: null,
         audit_overflow: null,
         object_lock: false,
@@ -449,6 +455,43 @@ describe('S3BucketFormComponent', () => {
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Audit' }))).toBe(true);
       // Versioning is a separate key, and is not implicated by this one.
       expect(premiumBadge('Versioning')).toBeNull();
+    });
+
+    it('keeps ZFS snapshot versions untagged and working without the S3_VERSIONING key', async () => {
+      // Serving snapshots as versions is a TrueNAS feature, decoupled from S3 protocol versioning
+      // and its entitlement in NAS-143800: a never-versioned bucket may still do it.
+      spectator = createComponent({
+        providers: [mockEntitlements([EntitlementFeature.S3Versioning])],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      api = spectator.inject(ApiService);
+      await clickAdvancedOptions();
+
+      expect(premiumBadge('Versioning')).not.toBeNull();
+      expect(spectator.queryAll('tn-form-section').some((section) => {
+        return section.querySelector('legend')?.textContent?.includes('ZFS Snapshots');
+      })).toBe(true);
+      expect(premiumBadge('ZFS Snapshots')).toBeNull();
+
+      // Offered with versioning Off, and the listing limit arrives with the first pattern.
+      expect(spectator.component.form.controls.versioning.value).toBe(S3Versioning.Off);
+      expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Snapshot Versions Listed' }))).toBe(false);
+      const snapshotVersions = await loader.getHarness(
+        TnChipInputHarness.with({ testId: 'chip-input-snapshot-versions' }),
+      );
+      await snapshotVersions.addChip('auto-*');
+      expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Snapshot Versions Listed' }))).toBe(true);
+
+      await (await getInput('name')).setValue('videos');
+      await (await loader.getHarness(IxFormHarness)).fillForm({ 'Parent Dataset': 'tank/buckets' });
+      await setOwner('alice');
+      spectator.component.submit();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+        versioning: S3Versioning.Off,
+        snapshot_versions: ['auto-*'],
+        snapshot_versions_max: 64,
+      })]);
     });
 
     it('tags object lock as well as versioning without the S3_VERSIONING key', async () => {
@@ -748,30 +791,26 @@ describe('S3BucketFormComponent', () => {
     });
 
     it('does not let a hidden snapshot listing limit block Save, and sends the stored limit instead', async () => {
-      // A bucket stored unversioned, because the one it is turned back off from has to be one the
-      // form still offers Off for: middleware gates the transition on the *stored* value, so a
-      // bucket that arrived versioned can never return to Off here.
-      spectator = createComponent({
-        props: { bucket: { ...existingBucket, versioning: S3Versioning.Off } as S3Bucket },
-      });
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(ApiService);
-
       await clickAdvancedOptions();
-      await (await getSelect('versioning')).selectOption('Enabled');
       // The CDK harness cannot type an empty string, so an out-of-range value stands in for a blank one.
       await (await getInput('snapshot_versions_max')).setValue('0');
       expect(spectator.component.canSubmit()).toBe(false);
 
-      await (await getSelect('versioning')).selectOption('Off');
+      // The limit applies to a selection, so clearing the patterns hides it — and a hidden field
+      // must not keep Save disabled with nothing on screen to fix.
+      const snapshotVersions = await loader.getHarness(
+        TnChipInputHarness.with({ testId: 'chip-input-snapshot-versions' }),
+      );
+      await snapshotVersions.removeChip('auto-*');
 
+      expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Snapshot Versions Listed' }))).toBe(false);
       expect(spectator.component.form.controls.snapshot_versions_max.errors).toBeNull();
       expect(spectator.component.canSubmit()).toBe(true);
 
       spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('sharing.s3.update', [7, expect.objectContaining({
-        versioning: S3Versioning.Off,
+        snapshot_versions: [],
         snapshot_versions_max: 64,
       })]);
     });

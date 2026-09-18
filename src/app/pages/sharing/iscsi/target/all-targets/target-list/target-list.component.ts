@@ -87,9 +87,7 @@ export class TargetListComponent implements OnInit {
 
   protected readonly trackByTargetId = (_index: number, row: IscsiTarget): number => row.id;
 
-  protected uniqueRowTag(row: IscsiTarget): string {
-    return toUniqueRowTag('iscsi-target-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: IscsiTarget): string => toUniqueRowTag('iscsi-target-' + row.name);
 
   protected modeLabel(row: IscsiTarget): string {
     return this.translate.instant(iscsiTargetModeNames.get(row.mode) || row.mode) || '-';

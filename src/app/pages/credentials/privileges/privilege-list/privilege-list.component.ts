@@ -106,9 +106,7 @@ export class PrivilegeListComponent implements OnInit {
   private ariaLabelCache = new WeakMap<Privilege, string>();
   private rolesValueCache = new WeakMap<Privilege, string>();
 
-  protected uniqueRowTag(row: Privilege): string {
-    return 'privilege-' + row.name;
-  }
+  protected readonly uniqueRowTag = (row: Privilege): string => 'privilege-' + row.name;
 
   protected ariaLabel(row: Privilege): string {
     let label = this.ariaLabelCache.get(row);

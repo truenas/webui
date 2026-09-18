@@ -181,9 +181,7 @@ export class IscsiCardComponent implements OnInit {
 
   protected readonly trackByIscsiId = (_index: number, row: IscsiTarget): number => row.id;
 
-  protected uniqueRowTag(row: IscsiTarget): string {
-    return toUniqueRowTag('card-iscsi-target-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: IscsiTarget): string => toUniqueRowTag('card-iscsi-target-' + row.name);
 
   protected ariaLabel(row: IscsiTarget): string {
     return [row.name, this.translate.instant('iSCSI Target')].join(' ');

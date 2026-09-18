@@ -149,9 +149,7 @@ export class KerberosKeytabsListComponent implements OnInit {
     });
   }
 
-  protected uniqueRowTag(row: KerberosKeytab): string {
-    return convertStringToId('kerberos-keytab-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: KerberosKeytab): string => convertStringToId('kerberos-keytab-' + row.name);
 
   protected ariaLabel(row: KerberosKeytab): string {
     return [row.name, this.translate.instant('Kerberos Keytab')].join(' ');

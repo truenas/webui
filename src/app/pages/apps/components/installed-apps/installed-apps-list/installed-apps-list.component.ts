@@ -9,9 +9,18 @@ import {
 } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTooltipDirective,
-  TnCellDefDirective, TnHeaderCellDefDirective, TnIconButtonComponent,
-  TnSortEvent, TnTableColumnDirective, TnTableComponent } from '@truenas/ui-components';
+import {
+  TnCellDefDirective,
+  TnDialog,
+  TnHeaderCellDefDirective,
+  TnIconButtonComponent,
+  TnIconComponent,
+  TnSortEvent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
   combineLatest, filter, forkJoin, map, Observable, shareReplay, switchMap,
@@ -37,6 +46,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
@@ -71,6 +81,7 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
   styleUrls: ['./installed-apps-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     InstalledAppsListBulkActionsComponent,
     FakeProgressBarComponent,
     BasicSearchComponent,
@@ -156,6 +167,8 @@ export class InstalledAppsListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly imagePlaceholder = appImagePlaceholder;
   protected readonly trackByAppId = (_: number, app: App): string => app.id;
+
+  protected readonly uniqueRowTag = (row: App): string => toUniqueRowTag(`app-${row.name}`);
 
   protected readonly displayedColumns = [
     SortableField.Application,

@@ -15,6 +15,7 @@
 <div class="table-container" [ixUiSearch]="searchableElements.elements.jbof">
   <tn-table
     [testId]="'table-table'"
+    [rowTestId]="uniqueRowTag"
     [dataSource]="list.rows()"
     [displayedColumns]="list.displayedColumns()"
     [trackBy]="trackByJbofId"

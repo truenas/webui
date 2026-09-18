@@ -209,9 +209,7 @@ export class SmbListComponent implements OnInit {
 
   protected readonly trackBySmbId = (_index: number, row: SmbShare): number => row.id;
 
-  protected uniqueRowTag(row: SmbShare): string {
-    return toUniqueRowTag('smb-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: SmbShare): string => toUniqueRowTag('smb-' + row.name);
 
   protected ariaLabel(row: SmbShare): string {
     return [row.name, this.translate.instant('SMB Share')].join(' ');

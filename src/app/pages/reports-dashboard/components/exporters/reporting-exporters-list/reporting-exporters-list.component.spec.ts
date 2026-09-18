@@ -116,10 +116,15 @@ describe('ReportingExportersListComponent', () => {
   });
 
   it('synthesizes per-row test IDs from the exporter name', () => {
-    expect(spectator.query('[data-test="text-name-reporting-exporter-test-row-text"]')).toExist();
-    expect(spectator.query('[data-test="text-type-reporting-exporter-test-row-text"]')).toExist();
-    expect(spectator.query('[data-test="toggle-enabled-reporting-exporter-test-row-toggle"]')).toExist();
-    expect(spectator.query('[data-test="button-edit-reporting-exporter-test-row-action"]')).toExist();
-    expect(spectator.query('[data-test="button-delete-reporting-exporter-test-row-action"]')).toExist();
+    const testIds = Array.from(spectator.queryAll('tbody tr:first-child [data-test]'))
+      .map((element) => element.getAttribute('data-test'));
+
+    expect(testIds).toEqual([
+      'text-name-reporting-exporter-test-row-text',
+      'text-type-reporting-exporter-test-row-text',
+      'toggle-enabled-reporting-exporter-test-row-toggle',
+      'button-edit-reporting-exporter-test-row-action',
+      'button-delete-reporting-exporter-test-row-action',
+    ]);
   });
 });

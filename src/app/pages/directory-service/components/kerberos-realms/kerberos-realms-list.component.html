@@ -59,6 +59,7 @@
   @let emptyType = dataProvider.emptyType$ | async;
   <tn-table
     class="table"
+    [rowTestId]="uniqueRowTag"
     [dataSource]="(dataProvider.currentPage$ | async) ?? []"
     [displayedColumns]="displayedColumns"
     [trackBy]="trackByRealmId"

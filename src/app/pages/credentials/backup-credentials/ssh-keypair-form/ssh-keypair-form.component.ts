@@ -16,7 +16,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSshKeypairs } from 'app/helptext/system/ssh-keypairs';
-import { KeychainCredentialUpdate, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import { KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
@@ -26,7 +26,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import {
   SidePanelFooterMenu,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -48,7 +48,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class SshKeypairFormComponent extends IxFormHostForm {
   private fb = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
@@ -137,7 +137,7 @@ export class SshKeypairFormComponent extends IxFormHostForm {
 
   protected handleSubmit = (event: FormSubmitEvent): SubmitResult => {
     const values = this.form.value;
-    const commonBody: KeychainCredentialUpdate = {
+    const commonBody: Omit<KeychainSshKeyPair, 'id' | 'type'> = {
       name: values.name,
       attributes: {
         private_key: values.private_key,

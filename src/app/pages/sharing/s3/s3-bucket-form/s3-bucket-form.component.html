@@ -118,19 +118,27 @@
         </span>
       }
 
-      @if (form.controls.versioning.value !== S3Versioning.Off) {
-        <tn-form-field
-          [label]="'Snapshot Versions' | translate"
-          [tooltip]="helptext.snapshotVersionsTooltip | translate"
-        >
-          <tn-chip-input
-            testId="snapshot-versions"
-            formControlName="snapshot_versions"
-            [allowCustomValue]="true"
-            [addOnBlur]="true"
-          ></tn-chip-input>
-        </tn-form-field>
+    </tn-form-section>
 
+    <!--
+      Its own section, outside the Premium gate above: serving ZFS snapshots as read-only versions is a
+      TrueNAS feature, independent of S3 protocol versioning and of the S3_VERSIONING entitlement, and it
+      composes with every versioning state — Off included.
+    -->
+    <tn-form-section [heading]="'ZFS Snapshots' | translate">
+      <tn-form-field
+        [label]="'Snapshot Versions' | translate"
+        [tooltip]="helptext.snapshotVersionsTooltip | translate"
+      >
+        <tn-chip-input
+          testId="snapshot-versions"
+          formControlName="snapshot_versions"
+          [allowCustomValue]="true"
+          [addOnBlur]="true"
+        ></tn-chip-input>
+      </tn-form-field>
+
+      @if (hasSnapshotVersions()) {
         <tn-form-field
           [label]="'Snapshot Versions Listed' | translate"
           [tooltip]="helptext.snapshotVersionsMaxTooltip | translate"

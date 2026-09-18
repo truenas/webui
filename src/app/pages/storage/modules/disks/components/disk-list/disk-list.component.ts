@@ -33,6 +33,7 @@ import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interf
 import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, memoizedRowTag, toDisplayedColumns,
 } from 'app/modules/tn-table/utils';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent, DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
@@ -103,6 +104,7 @@ function toDisk(row: DiskRow): Disk {
   styleUrls: ['./disk-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TableTextCellComponent,
     PageHeaderComponent,
     BasicSearchComponent,
     TableColumnPickerComponent,

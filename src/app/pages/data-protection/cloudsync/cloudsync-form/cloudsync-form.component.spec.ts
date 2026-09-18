@@ -7,13 +7,15 @@ import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
-import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudSyncCredential, CloudSyncCredentialEntry } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
@@ -149,10 +151,8 @@ describe('CloudSyncFormComponent', () => {
         })),
         confirm: jest.fn(() => of(true)),
       }),
-      mockApi([
-        mockCall('cloudsync.create', existingTask),
-        mockCall('cloudsync.update', existingTask),
-        mockCall('cloudsync.credentials.query', [
+      mockTypedApi([
+        mockTypedQuery('cloudsync.credentials.query', [
           {
             id: 1,
             name: 'test1',
@@ -170,8 +170,8 @@ describe('CloudSyncFormComponent', () => {
               pass: 'password',
             },
           },
-        ]),
-        mockCall('cloudsync.providers', [{
+        ] as CloudSyncCredentialEntry[]),
+        mockTypedCall('cloudsync.providers', [{
           name: CloudSyncProviderName.Http,
           title: 'Http',
           buckets: false,
@@ -188,7 +188,11 @@ describe('CloudSyncFormComponent', () => {
           task_schema: [],
           credentials_schema: [],
           credentials_oauth: null,
-        }]),
+        }] as CloudSyncProvider[]),
+      ]),
+      mockApi([
+        mockCall('cloudsync.create', existingTask),
+        mockCall('cloudsync.update', existingTask),
       ]),
       ...ixFormTestingProviders(),
       mockProvider(FilesystemService),
@@ -196,13 +200,16 @@ describe('CloudSyncFormComponent', () => {
   });
 
   describe('adds a new cloudsync', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       spectator = createComponent();
+      // The typed client answers the credential and provider loads on a microtask; let them land.
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
       closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('adds a new cloudsync task when new form is saved', () => {
+    it('adds a new cloudsync task when new form is saved', async () => {
       spectator.component.form.patchValue({
         description: 'New Cloud Sync Task',
         credentials: 1,
@@ -210,6 +217,10 @@ describe('CloudSyncFormComponent', () => {
 
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
+      // The typed client answers on a microtask: let the loads land, then let change detection
+      // carry the host's `isLoading()` into `<ix-form>`'s `externalLoading` input.
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
       spectator.component.submit();
 
       spectator.detectChanges();
@@ -245,8 +256,11 @@ describe('CloudSyncFormComponent', () => {
   });
 
   describe('edits a new cloudsync', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       spectator = createComponent({ props: { taskToEdit: existingTask } });
+      // The typed client answers the credential and provider loads on a microtask; let them land.
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
       closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
@@ -277,7 +291,7 @@ describe('CloudSyncFormComponent', () => {
       });
     });
 
-    it('saves updated cloudsync task when form opened for edit is saved', () => {
+    it('saves updated cloudsync task when form opened for edit is saved', async () => {
       // TODO: Rewrite to interact with controls instead of setting form directly.
       spectator.component.form.patchValue({
         description: 'Edited description',
@@ -290,6 +304,10 @@ describe('CloudSyncFormComponent', () => {
 
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
+      // The typed client answers on a microtask: let the loads land, then let change detection
+      // carry the host's `isLoading()` into `<ix-form>`'s `externalLoading` input.
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
       spectator.component.submit();
 
       spectator.detectChanges();
@@ -369,19 +387,26 @@ describe('CloudSyncFormComponent', () => {
   });
 
   describe('host-driven submit', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       spectator = createComponent({
         props: {
           taskToEdit: existingTask,
         },
       });
+      // The typed client answers the credential and provider loads on a microtask; let them land.
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
       closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('emits closed and updates when saved via the host submit() entry point', () => {
+    it('emits closed and updates when saved via the host submit() entry point', async () => {
       closedSpy = jest.spyOn(spectator.component.closed, 'emit');
 
+      // The typed client answers on a microtask: let the loads land, then let change detection
+      // carry the host's `isLoading()` into `<ix-form>`'s `externalLoading` input.
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
       spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.update', [1, expect.anything()]);

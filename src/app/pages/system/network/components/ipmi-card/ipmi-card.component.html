@@ -15,6 +15,7 @@
 
     <tn-table
       class="table"
+      [rowTestId]="uniqueRowTag"
       [dataSource]="rows()"
       [displayedColumns]="displayedColumns"
       [loading]="isLoading()"
@@ -24,7 +25,10 @@
       <ng-container [tnColumnDef]="'channel'">
         <ng-template tnHeaderCellDef></ng-template>
         <ng-template let-row tnCellDef>
-          {{ 'Channel {n}' | translate: { n: row.channel } }}
+          <span
+            tnTestIdType="text"
+            [tnTestId]="['channel', uniqueRowTag(row), 'row-text']"
+          >{{ 'Channel {n}' | translate: { n: row.channel } }}</span>
         </ng-template>
       </ng-container>
 

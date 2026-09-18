@@ -18,6 +18,7 @@ import {
   TnSortEvent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
   TnTooltipDirective,
 } from '@truenas/ui-components';
 import {
@@ -35,6 +36,8 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
+import { toUniqueRowTag } from 'app/modules/tn-table/utils';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerListBulkActionsComponent } from 'app/pages/containers/components/all-containers/container-list/container-list-bulk-actions/container-list-bulk-actions.component';
 import { ContainerStatusCellComponent } from 'app/pages/containers/components/all-containers/container-list/container-status-cell/container-status-cell.component';
@@ -64,6 +67,8 @@ function sameContainers(a: Container[], b: Container[]): boolean {
   styleUrls: ['./container-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
+    TableTextCellComponent,
     TranslateModule,
     BasicSearchComponent,
     FakeProgressBarComponent,
@@ -116,6 +121,8 @@ export class ContainerListComponent {
 
   protected readonly displayedColumns = ['name', 'status', 'autostart', 'cpu', 'ram', 'io', 'controls'];
   protected readonly trackByContainerId = (_: number, container: Container): number => container.id;
+
+  protected readonly uniqueRowTag = (row: Container): string => toUniqueRowTag(`container-${row.name}`);
 
   // Track the selection as ids and derive checkedContainers from the live list so
   // the bulk-action getters always read current state for the selected ids rather

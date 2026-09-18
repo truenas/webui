@@ -17,9 +17,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
-import { CloudCredentialService } from 'app/services/cloud-credential.service';
+import { CloudCredentialProviderPayload, CloudCredentialService } from 'app/services/cloud-credential.service';
 
 @Component({
   selector: 'ix-cloudsync-provider',
@@ -36,7 +35,6 @@ import { CloudCredentialService } from 'app/services/cloud-credential.service';
   ],
 })
 export class CloudSyncProviderComponent implements OnInit {
-  private api = inject(ApiService);
   private formBuilder = inject(FormBuilder);
   private formPanel = inject(FormSidePanelService);
   private cdr = inject(ChangeDetectorRef);
@@ -115,8 +113,11 @@ export class CloudSyncProviderComponent implements OnInit {
     }
     this.loading.emit(true);
 
-    const payload = this.existingCredential.provider;
-    this.api.call('cloudsync.credentials.verify', [payload]).pipe(
+    // The UI's credential bag types `provider` loosely; on the wire it is the
+    // same object the typed payload describes. The cast goes with the bag when
+    // the cloudsync area migrates.
+    const payload = this.existingCredential.provider as unknown as CloudCredentialProviderPayload;
+    this.cloudCredentialService.verifyCredential(payload).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (response) => {

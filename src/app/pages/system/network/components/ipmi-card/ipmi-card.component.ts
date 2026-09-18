@@ -1,7 +1,19 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective, TnCellDefDirective, TnDialog, TnHeaderCellDefDirective, tnIconMarker, TnTableColumnDirective, TnTableComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCardHeaderDirective,
+  TnCellDefDirective,
+  TnDialog,
+  TnHeaderCellDefDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTestIdDirective,
+  tnIconMarker,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -29,6 +41,7 @@ import { IpmiFormComponent } from 'app/pages/system/network/components/ipmi-card
   styleUrls: ['./ipmi-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnCardComponent,
     TnCardHeaderDirective,
     TnCardFooterActionsDirective,
@@ -87,9 +100,7 @@ export class IpmiCardComponent implements OnInit {
     },
   ];
 
-  protected uniqueRowTag(row: Ipmi): string {
-    return convertStringToId(`ipmi-${row.channel}-${row.ip_address}`);
-  }
+  protected readonly uniqueRowTag = (row: Ipmi): string => convertStringToId(`ipmi-${row.channel}-${row.ip_address}`);
 
   protected ariaLabel(row: Ipmi): string {
     return [row.ip_address, this.translate.instant('IPMI')].join(' ');

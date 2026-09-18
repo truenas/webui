@@ -29,6 +29,7 @@
     <tn-table
       class="table"
       [testId]="'table-table'"
+      [rowTestId]="uniqueRowTag"
       [dataSource]="rows()"
       [displayedColumns]="displayedColumns"
       [trackBy]="trackBySubsystemId"
@@ -40,7 +41,11 @@
       <ng-container [tnColumnDef]="'name'">
         <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <ix-subsystem-name-cell [subsystem]="row"></ix-subsystem-name-cell>
+          <ix-subsystem-name-cell
+            tnTestIdType="text"
+            [subsystem]="row"
+            [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+          ></ix-subsystem-name-cell>
         </ng-template>
       </ng-container>
 

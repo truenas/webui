@@ -69,7 +69,7 @@ describe('DiskSizeSelectsComponent', () => {
       // `gi-b`, not `gib`: the library's kebab normalizer splits `GiB` at the lower→upper
       // boundary. Ugly but stable, and each id stays distinct, which is what this test is for.
       await diskSizeSelect.open();
-      const ids = Array.from(document.querySelectorAll('[data-test^="option-size-and-type-"]'))
+      const ids = Array.from(document.querySelectorAll('.tn-select-option'))
         .map((option) => option.getAttribute('data-test'));
 
       expect(ids).toEqual([

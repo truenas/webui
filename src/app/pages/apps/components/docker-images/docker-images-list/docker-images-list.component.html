@@ -30,6 +30,7 @@
 
 <tn-table
   class="table"
+  [rowTestId]="uniqueRowTag"
   [dataSource]="(dataProvider.currentPage$ | async) ?? []"
   [displayedColumns]="displayedColumns"
   [selectable]="true"
@@ -42,18 +43,34 @@
 >
   <ng-container [tnColumnDef]="'id'" [sortable]="true">
     <ng-template tnHeaderCellDef>{{ 'Image ID' | translate }}</ng-template>
-    <ng-template let-row tnCellDef>{{ row.id }}</ng-template>
+    <ng-template let-row tnCellDef>
+      <ix-table-text-cell
+        [value]="row.id"
+        [title]="'Image ID' | translate"
+        [uniqueRowTag]="uniqueRowTag(row)"
+      ></ix-table-text-cell>
+    </ng-template>
   </ng-container>
 
   <ng-container [tnColumnDef]="'repo_tags'" [sortable]="true">
     <ng-template tnHeaderCellDef>{{ 'Tags' | translate }}</ng-template>
-    <ng-template let-row tnCellDef>{{ row.repo_tags.join(', ') }}</ng-template>
+    <ng-template let-row tnCellDef>
+      <ix-table-text-cell
+        [value]="row.repo_tags.join(', ')"
+        [title]="'Tags' | translate"
+        [uniqueRowTag]="uniqueRowTag(row)"
+      ></ix-table-text-cell>
+    </ng-template>
   </ng-container>
 
   <ng-container [tnColumnDef]="'size'" [sortable]="true">
     <ng-template tnHeaderCellDef>{{ 'Image Size' | translate }}</ng-template>
     <ng-template let-row tnCellDef>
-      {{ row.size ? (row.size | ixFileSize) : ('Unknown' | translate) }}
+      <ix-table-text-cell
+        [value]="row.size ? (row.size | ixFileSize) : ('Unknown' | translate)"
+        [title]="'Image Size' | translate"
+        [uniqueRowTag]="uniqueRowTag(row)"
+      ></ix-table-text-cell>
     </ng-template>
   </ng-container>
 

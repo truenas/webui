@@ -9,6 +9,7 @@
   } @else {
     <tn-table
       class="table"
+      [rowTestId]="uniqueRowTag"
       [dataSource]="(dataProvider.currentPage$ | async) ?? []"
       [displayedColumns]="displayedColumns"
       [trackBy]="trackBy"
@@ -16,27 +17,58 @@
     >
       <ng-container [tnColumnDef]="'command'">
         <ng-template tnHeaderCellDef>{{ 'Command / Script' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.script || row.command }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="row.script || row.command"
+            [title]="'Command / Script' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'comment'">
         <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.comment }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="row.comment"
+            [title]="'Description' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'when'">
         <ng-template tnHeaderCellDef>{{ 'When' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.when }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="row.when"
+            [title]="'When' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'enabled'">
         <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.enabled | yesNo | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="row.enabled | yesNo | translate"
+            [title]="'Enabled' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [testIdSuffix]="'row-yesno'"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'timeout'">
         <ng-template tnHeaderCellDef>{{ 'Timeout' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.timeout }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="row.timeout"
+            [title]="'Timeout' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'actions'" [width]="'80px'">

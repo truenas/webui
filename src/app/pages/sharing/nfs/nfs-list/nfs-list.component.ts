@@ -192,9 +192,9 @@ export class NfsListComponent implements OnInit {
 
   protected readonly trackByNfsId = (_index: number, row: NfsShare): number => row.id;
 
-  protected uniqueRowTag(row: NfsShare): string {
-    return toUniqueRowTag('nfs-share-' + row.path + '-' + row.comment);
-  }
+  protected readonly uniqueRowTag = (row: NfsShare): string => (
+    toUniqueRowTag('nfs-share-' + row.path + '-' + row.comment)
+  );
 
   protected ariaLabel(row: NfsShare): string {
     return [row.path, this.translate.instant('NFS Share')].join(' ');

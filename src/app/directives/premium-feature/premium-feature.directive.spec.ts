@@ -39,7 +39,7 @@ describe('PremiumFeatureDirective', () => {
     spectator.detectComponentChanges();
   }
 
-  const badge = (): HTMLElement | null => spectator.query('[data-test="button-thing-premium"]');
+  const badge = (): HTMLElement | null => spectator.query('ix-premium-badge button');
   const action = (): HTMLElement | null => spectator.query('input.action');
   /**
    * Located by what the user reaches for — the help button the library renders for a `[tooltip]`

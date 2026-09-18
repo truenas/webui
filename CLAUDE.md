@@ -104,14 +104,15 @@ export class MyComponent {
 - Cover main happy paths.
 - Write tests using Jest and Spectator.
 - You MUST use harnesses over spectator when possible, including native Angular harnesses and our custom harnesses like IxFormHarness or IxIconHarness.
-- Never rely on ixTest attributes for locating elements.
+- Never locate elements by their `data-test` id — that attribute is for the e2e suite under `e2e/`. Use a harness, or a semantic query (by role, accessible name, visible text, or component selector). Enforced by `no-restricted-syntax` on `src/**/*.spec.ts`; asserting on the attribute (`toHaveAttribute('data-test', ...)`) and dumping the ids a row renders (`queryAll('[data-test]')`) stay allowed.
 - When mocking data, always provide minimally sufficient number of properties in the object and use `as Interface` casting. Do NOT provide full objects.
 - When mocking services, `mockProvider(MyService)` without mocking specific methods is usually enough.
 - Do not use done callbacks - use async/await
 
 ## Branch and Commit Guidelines
 - Branch naming: `NAS-<issue number>` (e.g., `NAS-12345`)
-- Commit messages: `NAS-<issue number>: <description>`.
+- Commit messages: prefer `NAS-<issue number>: <description>`. No hook enforces or prepends it any more —
+  what lands on master is the PR title, set on GitHub.
 - Keep commit message short (to one line).
 
 ## Browser testing: which tool

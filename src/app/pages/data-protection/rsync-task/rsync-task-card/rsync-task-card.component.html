@@ -28,6 +28,7 @@
     <tn-table
       class="table"
       [minWidth]="'420px'"
+      [rowTestId]="uniqueRowTag"
       [dataSource]="(dataProvider.currentPage$ | async) ?? []"
       [displayedColumns]="displayedColumns"
       [trackBy]="trackByTaskId"

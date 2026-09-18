@@ -4,14 +4,7 @@ import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import {
-  TnButtonHarness,
-  TnDialog,
-  TnMenuHarness,
-  TnMenuTesting,
-  TnSlideToggleHarness,
-  TnTableHarness,
-} from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnMenuHarness, TnSlideToggleHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -22,6 +15,7 @@ import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboard/nvme-of-card/nvme-of-card.component';
 import {
@@ -36,9 +30,6 @@ describe('NvmeOfCardComponent', () => {
   let spectator: Spectator<NvmeOfCardComponent>;
   let loader: HarnessLoader;
   let table: TnTableHarness;
-
-  // The "⋮" row-action trigger test id, derived from the row's uniqueRowTag.
-  const rowMenuTrigger = '[data-test="button-nvmeof-subsys-subsys-1-more-action"]';
 
   const mockSubsystems = [
     {
@@ -102,9 +93,8 @@ describe('NvmeOfCardComponent', () => {
     table = await loader.getHarness(TnTableHarness);
   });
 
-  async function openRowMenu(): Promise<TnMenuHarness> {
-    spectator.click(rowMenuTrigger);
-    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  function openRowMenu(): Promise<TnMenuHarness> {
+    return openRowActionsMenu(spectator.fixture);
   }
 
   it('should initialize store on init', () => {

@@ -1,9 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import {
-  TnButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
-} from '@truenas/ui-components';
+import { TnButtonHarness, TnMenuHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { BehaviorSubject, of, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -17,6 +15,7 @@ import {
 } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/system/network/components/interfaces-card/interfaces-card.component';
@@ -103,9 +102,12 @@ describe('InterfacesCardComponent', () => {
     ],
   });
 
-  async function openRowMenu(rowTag: string): Promise<TnMenuHarness> {
-    spectator.click(`[data-test="button-${rowTag}-more-action"]`);
-    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  // Rows render in the order the interfaces are returned: eno1, eno2, vlan1.
+  const eno1Row = 0;
+  const vlan1Row = 2;
+
+  function openRowMenu(rowIndex: number): Promise<TnMenuHarness> {
+    return openRowActionsMenu(spectator.fixture, rowIndex);
   }
 
   beforeEach(() => {
@@ -155,7 +157,7 @@ describe('InterfacesCardComponent', () => {
   });
 
   it('shows form to edit an existing interface when Edit icon is pressed', async () => {
-    const menu = await openRowMenu('interface-eno1');
+    const menu = await openRowMenu(eno1Row);
     await menu.clickItem({ label: 'Edit' });
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(InterfaceFormComponent, {
@@ -167,7 +169,7 @@ describe('InterfacesCardComponent', () => {
   });
 
   it('deletes a network interface with confirmation when Delete icon is pressed', async () => {
-    const menu = await openRowMenu('interface-vlan1');
+    const menu = await openRowMenu(vlan1Row);
     await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
@@ -182,7 +184,7 @@ describe('InterfacesCardComponent', () => {
   });
 
   it('resets a network interface when Reset icon is pressed on a physical interface', async () => {
-    const menu = await openRowMenu('interface-eno1');
+    const menu = await openRowMenu(eno1Row);
     await menu.clickItem({ label: 'Reset configuration' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
@@ -200,7 +202,7 @@ describe('InterfacesCardComponent', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     expect(await addButton.isDisabled()).toBe(true);
 
-    const menu = await openRowMenu('interface-vlan1');
+    const menu = await openRowMenu(vlan1Row);
     expect(await menu.isItemDisabled({ label: helptextInterfaces.haEnabledDeleteMessage })).toBe(true);
   });
 
@@ -208,7 +210,7 @@ describe('InterfacesCardComponent', () => {
     failoverConfig$.next({ disabled: false });
     spectator.detectChanges();
 
-    const menu = await openRowMenu('interface-eno1');
+    const menu = await openRowMenu(eno1Row);
     expect(await menu.isItemDisabled({ label: helptextInterfaces.haEnabledResetMessage })).toBe(true);
   });
 

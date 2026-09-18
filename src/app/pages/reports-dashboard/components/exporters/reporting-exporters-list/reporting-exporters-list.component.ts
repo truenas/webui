@@ -77,9 +77,9 @@ export class ReportingExporterListComponent implements OnInit {
   protected readonly displayedColumns = ['name', 'type', 'enabled', 'actions'];
   protected readonly trackById = (_: number, row: ReportingExporter): number => row.id;
 
-  protected uniqueRowTag(row: ReportingExporter): string {
-    return convertStringToId('reporting-exporter-' + row.name);
-  }
+  protected readonly uniqueRowTag = (row: ReportingExporter): string => (
+    convertStringToId('reporting-exporter-' + row.name)
+  );
 
   protected readonly searchQuery = signal('');
   protected readonly dataProvider = new ArrayDataProvider<ReportingExporter>();

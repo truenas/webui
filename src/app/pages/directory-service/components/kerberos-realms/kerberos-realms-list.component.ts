@@ -139,9 +139,7 @@ export class KerberosRealmsListComponent implements OnInit {
     });
   }
 
-  protected uniqueRowTag(row: KerberosRealmRow): string {
-    return convertStringToId('kerberos-realm-' + row.realm);
-  }
+  protected readonly uniqueRowTag = (row: KerberosRealmRow): string => convertStringToId('kerberos-realm-' + row.realm);
 
   protected ariaLabel(row: KerberosRealmRow): string {
     return [row.realm, this.translate.instant('Kerberos Realm')].join(' ');
