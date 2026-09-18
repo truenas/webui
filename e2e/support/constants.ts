@@ -43,8 +43,9 @@ export const errorDialog = 'ix-error-dialog';
  * The development build's concurrency diagnostic, by its own test ID.
  *
  * `websocket-handler.service.ts` raises it when 20 middleware calls are in
- * flight at once, naming it `concurrent-calls` so its title carries an id of
- * its own — both open the same component. Gated on `!environment.production`,
+ * flight at once, naming itself `concurrent-calls` there so its title carries
+ * an id of its own — both open the same component. That name is spelled in both
+ * places and nothing links them, so a rename there needs one here. Gated on `!environment.production`,
  * so only `branch` sees it.
  *
  * A real signal, but about the *page*, not the journey a test asserts, so the
