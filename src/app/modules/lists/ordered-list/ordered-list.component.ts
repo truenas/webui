@@ -23,7 +23,7 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 interface OrderedOption extends Option {
   /**
    * Options here are interface names (`eth0`, `bond0`), which the library would
-   * leave as-is where `[ixTest]` produced `eth-0`. Normalizing once, when the
+   * leave as-is where the existing id is `eth-0`. Normalizing once, when the
    * options arrive, keeps `toggle-lag-ports-eth-0` intact without rebuilding the
    * array on every change detection pass. The `toggle` prefix comes from
    * `tn-slide-toggle`. See {@link normalizeTestIdParts}.

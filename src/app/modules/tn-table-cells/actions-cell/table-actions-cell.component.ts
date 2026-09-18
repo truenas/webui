@@ -28,7 +28,7 @@ import { stopRowActivationKeys } from 'app/modules/tn-table-cells/stop-row-activ
  *
  * Test IDs are produced by each tn component's native `testId` input, which the
  * library prefixes with its element type via `composeTestId` — `button-…` for both
- * the icon buttons and the menu items, matching the legacy `ixTest` output.
+ * the icon buttons and the menu items, matching the ids these replaced.
  */
 @Component({
   selector: 'ix-table-actions-cell',

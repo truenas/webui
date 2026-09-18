@@ -30,8 +30,8 @@ export class TablePagerShowMoreComponent<T> implements OnInit {
   /**
    * Test-id base for the pager's two buttons, which scope off it as
    * `button-<base>-show-more` / `-show-less`. Named for the library's convention: it was
-   * `ixTestOverride` until NAS-143893, which reads as the retired `[ixTestOverride]` directive
-   * but never was one — nothing here overrides a nested id, it supplies the base.
+   * named after a directive retired in NAS-143893 until that ticket renamed it, and it never
+   * was one — nothing here overrides a nested id, it supplies the base.
    */
   testId = input.required<string[]>();
 

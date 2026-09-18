@@ -38,7 +38,7 @@ export class SimilarIssuesComponent implements OnChanges {
 
   /**
    * Issue keys carry digits (`NAS-143893`), and the library's kebab-casing does not split a
-   * letter→digit boundary the way `[ixTest]` did — so the key is pre-normalized here to keep
+   * letter→digit boundary the way lodash does — so the key is pre-normalized here to keep
    * `link-similar-issue-nas-143893` byte-identical. Normalizing as the issues arrive, rather than
    * from the template, also keeps the array out of every change-detection pass.
    * See {@link normalizeTestIdParts}.

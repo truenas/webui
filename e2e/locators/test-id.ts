@@ -39,7 +39,7 @@ import { kebabCase } from 'lodash-es';
  *
  * ## Not the only normalizer
  *
- * webui's legacy `[ixTest]` directive and controls declaring
+ * webui's own `normalizeTestIdString` and controls declaring
  * `[optionTestIdKey]="optionTestIdByKebabLabel"` use **lodash** `kebabCase`
  * instead, which splits letters from digits: `RAIDZ2` becomes `raidz-2` there
  * and `raidz2` here. Derive option ids from the extractor the control actually
@@ -66,10 +66,10 @@ export function kebabTestSegment(part: string | number): string {
  * The ESM build, because Playwright loads the suite as ES modules and a named
  * import from the CommonJS `lodash` fails there.
  *
- * The `[ixTest]` directive this preserved the output of is gone (NAS-143893);
- * every call site that used it now pre-normalizes with `normalizeTestIdString`
- * or `normalizeTestIdParts` and hands the result to the library, so the ids are
- * unchanged and this is still the normalizer to reach for.
+ * The local directive that minted these ids is gone (NAS-143893); every call site
+ * now pre-normalizes with `normalizeTestIdString` or `normalizeTestIdParts` and
+ * hands the result to the library, so the ids are unchanged and this is still the
+ * normalizer to reach for.
  *
  * Where it applies:
  *

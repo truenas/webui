@@ -39,7 +39,7 @@ export class UserLastActionComponent implements OnChanges {
 
   /**
    * User names carry digits (`admin2`), and the library's kebab-casing does not split a
-   * letter→digit boundary the way `[ixTest]` did — so the name is pre-normalized here to keep
+   * letter→digit boundary the way lodash does — so the name is pre-normalized here to keep
    * `link-search-logs-admin-2` byte-identical. See {@link normalizeTestIdParts}.
    */
   protected testId = computed(() => normalizeTestIdParts(['search-logs', this.username()]));

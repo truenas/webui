@@ -42,9 +42,9 @@ export function convertStringToId(inputString: string): string {
  * spelling of it — every migrated table calls this rather than composing the two helpers by
  * hand, so a change to how row tags are normalized lands everywhere at once.
  *
- * Pre-normalizes through {@link normalizeTestIdString} so the tag resolves identically through
- * the legacy `[ixTest]` directive and the library's `[tnTestId]` — see that helper for why the
- * two kebab implementations disagree.
+ * Pre-normalizes through {@link normalizeTestIdString} so the tag matches the id the list
+ * already had before it moved to `[tnTestId]` — see that helper for why the two kebab
+ * implementations disagree.
  */
 export function toUniqueRowTag(value: string): string {
   return normalizeTestIdString(convertStringToId(value));
@@ -326,7 +326,7 @@ function columnSortBy<T>(column: TableColumn<T> | undefined): RowSortValue<T> | 
 /**
  * Builds the test id for a detail-row action button. Pre-splits with lodash
  * `kebabCase`: it breaks letter–digit boundaries ('esxi1' → 'esxi-1') while the
- * library's kebab does not, so the id matches what `[ixTest]` used to resolve to.
+ * library's kebab does not, so the id matches the one the button already had.
  */
 export function detailActionTestId(parts: (string | number | undefined)[], action: string): string {
   return kebabCase([...parts, action].join('-'));

@@ -16,7 +16,7 @@
  * rather than the library's own:
  *
  * - The grants list's principal picker is still `ix-combobox`, a Material
- *   autocomplete behind webui's legacy `[ixTest]`, so its options are
+ *   autocomplete whose ids predate the library, so its options are
  *   `option-xid-<label>` with the label split at letter/digit boundaries.
  * - The access key list's row tag goes through `toUniqueRowTag`, which
  *   pre-normalizes the same way — while the dashboard card's tag does not. Both

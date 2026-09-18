@@ -104,7 +104,7 @@ export class MyComponent {
 - Cover main happy paths.
 - Write tests using Jest and Spectator.
 - You MUST use harnesses over spectator when possible, including native Angular harnesses and our custom harnesses like IxFormHarness or IxIconHarness.
-- Never rely on ixTest attributes for locating elements.
+- Never rely on `data-test` attributes for locating elements; that is the e2e suite's contract, not unit tests'.
 - When mocking data, always provide minimally sufficient number of properties in the object and use `as Interface` casting. Do NOT provide full objects.
 - When mocking services, `mockProvider(MyService)` without mocking specific methods is usually enough.
 - Do not use done callbacks - use async/await

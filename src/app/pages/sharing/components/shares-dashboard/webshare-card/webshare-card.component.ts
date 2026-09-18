@@ -200,8 +200,8 @@ export class WebShareCardComponent implements OnInit {
   protected readonly uniqueRowTag = (row: WebShareTableRow): string => convertStringToId(this.rawRowTag(row));
 
   /**
-   * `uniqueRowTag` for the cells that used to resolve through `[ixTest]`, which lodash-kebabed
-   * whatever it was handed — exactly what {@link memoizedRowTag} produces, cached per row.
+   * `uniqueRowTag` for the cells whose ids were minted with lodash kebab-casing — exactly what
+   * {@link memoizedRowTag} produces, cached per row.
    * `uniqueRowTag` itself stays un-normalized: `[rowTestId]` and the shared cell components emit
    * it as it is, and re-normalizing would rename the row and action ids.
    */

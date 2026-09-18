@@ -275,7 +275,7 @@ describe('ServiceActionsMenuService', () => {
   });
 
   describe('test id helpers', () => {
-    it('builds a menu item test id matching the legacy ixTest value', () => {
+    it('builds a menu item test id matching the value the icon-button had', () => {
       expect(spectator.service.menuItemTestId(
         service({ service: ServiceName.Iscsi }),
         'Config Service',

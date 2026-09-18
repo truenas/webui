@@ -88,7 +88,7 @@ export class AppUpdateDialog {
     this.updateVersionInfo();
   }
 
-  // The option value is the version map key, but the legacy ixTest discriminator
+  // The option value is the version map key, but the existing discriminator
   // keyed each option by its human version (`option-versions-<human_version>`).
   // Keep that test-id parity for automation.
   protected versionOptionTestId = (option: TnSelectOption<string>): string => {

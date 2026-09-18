@@ -10,7 +10,7 @@ interface SummaryRow {
   item: SummaryItem;
   /**
    * Labels carry digits (`IPv4 Address`, `Disk 2`), and the library's kebab-casing does not split
-   * a letter→digit boundary the way `[ixTest]` did — so the label is pre-normalized here to keep
+   * a letter→digit boundary the way lodash does — so the label is pre-normalized here to keep
    * `row-summary-i-pv-4-address` byte-identical. Normalizing once, when the sections arrive, also
    * keeps the array out of every change-detection pass. See {@link normalizeTestIdParts}.
    */

@@ -16,17 +16,19 @@ const projectOverrides = {
       'error',
       ...baseRestrictedSyntax,
       {
-        // `[ixTest]` and its `TestDirective` were deleted in NAS-143893; the library's
-        // `[tnTestId]` is the one directive that writes a `data-test`. Rejected here is every
-        // spelling that would revive it: a static attribute or CSS selector (`ixTest="…"`,
-        // `[ixTest="…"]`), a property binding (`[ixTest]="…"`) — which an inline `template:` in a
+        // The directive named in this pattern, and its override companion, were deleted in
+        // NAS-143893; the library's `[tnTestId]` is the only one that writes a `data-test` now.
+        // Rejected is every spelling that would revive it: a static attribute or CSS selector
+        // (`…="…"`, `[…="…"]`), a property binding (`[…]="…"`) — which an inline `template:` in a
         // `.ts` file is the one place that can appear, since `scripts/check-test-ids.ts` reads
-        // only `.html` — and any identifier starting `ixTest`, which also catches the retired
-        // `ixTestOverride` (now `<ix-table-pager-show-more>`'s `testId`). The attribute forms all
-        // require an `=`, so a prose `[ixTest]` naming the directive that was replaced is left
-        // alone; several comments and one test name do.
+        // only `.html` — and any identifier with the prefix. The attribute forms all require an
+        // `=`, so prose naming the retired directive stays legal; no comment does any more, but
+        // nothing should have to.
+        //
+        // This and `retiredIxTest` in `scripts/check-test-ids.ts` are the only two places the
+        // retired name is written; a rule has to spell what it rejects.
         selector: "Literal[value=/\\bixTest=|\\[ixTest\\]=|^ixTest/], TemplateElement[value.raw=/\\bixTest=|\\[ixTest\\]=/], Identifier[name=/^ixTest/]",
-        message: '`ixTest` is retired (NAS-143893). Tag elements with the library\'s `[tnTestId]` + `tnTestIdType`, and pre-normalize dynamic values with `normalizeTestIdString` / `normalizeTestIdParts` from app/modules/test-id/normalize-test-id.utils.ts.',
+        message: 'This directive is retired (NAS-143893). Tag elements with the library\'s `[tnTestId]` + `tnTestIdType`, and pre-normalize dynamic values with `normalizeTestIdString` / `normalizeTestIdParts` from app/modules/test-id/normalize-test-id.utils.ts.',
       },
       {
         // The .scss half of this is enforced by `selector-disallowed-list` in
@@ -68,17 +70,17 @@ const projectOverrides = {
 
 /**
  * `angular-test-ids/require-test-id` comes from the shared base config, where it is still keyed to
- * the `ixTest` attribute NAS-143893 retired.
+ * the attribute NAS-143893 retired.
  *
  * It enforces nothing either way today: `eslint-plugin-angular-test-ids` builds its selector as
  * `Element$1[name=…]`, which no longer matches the node type angular-eslint 20's template parser
  * emits, so it matches no element at all. That is why nothing complained about the hundreds of
- * native `<button>`/`<a>`/`<tr>` elements in this repo that never carried `ixTest`. Turning it off
+ * native `<button>`/`<a>`/`<tr>` elements in this repo that never carried it. Turning it off
  * rather than re-keying it is deliberate: a dependency bump that fixes the selector would
  * otherwise turn a dead rule into a repo-wide failure in whichever PR happens to bump it.
  *
- * To bring it back, both halves have to change together: set `attribute: 'tnTestId'` (never
- * `ixTest` — the directive is gone) and expect a large, separate sweep, because the rule only
+ * To bring it back, both halves have to change together: set `attribute: 'tnTestId'` (never the
+ * retired name — that directive is gone) and expect a large, separate sweep, because the rule only
  * looks for an attribute on the element and cannot see the `testId` *input* that every tn-*
  * component carries its id on. Until then `scripts/check-test-ids.ts` is the gate that actually
  * runs, over exactly the elements that need an id.

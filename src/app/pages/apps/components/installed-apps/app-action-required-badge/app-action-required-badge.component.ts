@@ -20,7 +20,7 @@ export class AppActionRequiredBadgeComponent {
 
   /**
    * App names carry digits (`n8n`, `netbox3`), and the library's kebab-casing does not split a
-   * letter→digit boundary the way `[ixTest]` did — so the name is pre-normalized here to keep
+   * letter→digit boundary the way lodash does — so the name is pre-normalized here to keep
    * `button-n-8-n-action-required` byte-identical. See {@link normalizeTestIdParts}.
    */
   protected testId = computed(() => normalizeTestIdParts([this.app().name, 'action-required']));

@@ -39,7 +39,7 @@ export class AppDetailsSimilarComponent implements OnChanges {
 
   /**
    * App names carry digits (`n8n`, `netbox3`), and the library's kebab-casing does not split a
-   * letter→digit boundary the way `[ixTest]` did — so the name is pre-normalized here to keep
+   * letter→digit boundary the way lodash does — so the name is pre-normalized here to keep
    * `link-open-stable-n-8-n` byte-identical. Normalizing once, when the apps arrive, also keeps
    * the array out of every change-detection pass. See {@link normalizeTestIdParts}.
    */
