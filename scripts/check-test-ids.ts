@@ -48,13 +48,13 @@ const anyTestId = /\btestId\b|\btnTestId\b|data-test/;
  * This and the `no-restricted-syntax` entry in `eslint.config.mjs` are the only two places the
  * retired name is written; a rule has to spell what it rejects.
  */
-const retiredIxTest = /\bixTest/g;
+const retiredDirective = /\bixTest/g;
 
 /**
  * Blanks out HTML comments, keeping every newline so reported line numbers still line up.
  *
  * The rules above read templates as text and tolerate matching inside a comment, because a false
- * positive there needs a `(click)` in the same span to be reported at all. {@link retiredIxTest}
+ * positive there needs a `(click)` in the same span to be reported at all. {@link retiredDirective}
  * has no such second condition, so a comment that quoted the retired name — none do now, but the
  * cheapest way to keep it that way is not to depend on it — would read as a revived directive.
  */
@@ -321,7 +321,9 @@ function main(): void {
 
   const clickables = templates.flatMap(({ file, src }) => untaggedClickables(file, src));
 
-  const revivedIxTest = templates.flatMap(({ file, src }) => [...withoutComments(src).matchAll(retiredIxTest)].map(
+  const revivedDirective = templates.flatMap(({ file, src }) => [
+    ...withoutComments(src).matchAll(retiredDirective),
+  ].map(
     (match) => ({
       file,
       line: src.slice(0, match.index).split('\n').length,
@@ -356,7 +358,7 @@ Each of these names a clickable that no longer exists — the class was renamed,
 or it now carries an id of its own. Remove the entry from \`allowedClickables\` in this script, so
 the exemption cannot outlive what it was written for.`);
 
-  report('templates reviving the retired test-id directive:', revivedIxTest, `
+  report('templates reviving the retired test-id directive:', revivedDirective, `
 That directive was deleted in NAS-143893, so the attribute now writes no \`data-test\` at all. Use
 the library's instead: \`tnTestIdType="<element type>"\` plus \`[tnTestId]="…"\` — and pre-normalize a
 *dynamic* value with \`normalizeTestIdString\` / \`normalizeTestIdParts\`

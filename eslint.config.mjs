@@ -21,7 +21,7 @@ const projectRestrictedSyntax = [
     // only `.html` — and any identifier with the prefix. The attribute forms all require an
     // `=`, so prose naming the retired directive stays legal.
     //
-    // This and `retiredIxTest` in `scripts/check-test-ids.ts` are the only two places the
+    // This and `retiredDirective` in `scripts/check-test-ids.ts` are the only two places the
     // retired name is written; a rule has to spell what it rejects.
     selector: "Literal[value=/\\bixTest=|\\[ixTest\\]=|^ixTest/], TemplateElement[value.raw=/\\bixTest=|\\[ixTest\\]=/], Identifier[name=/^ixTest/]",
     message: 'This directive is retired (NAS-143893). Tag elements with the library\'s `[tnTestId]` + `tnTestIdType`, and pre-normalize dynamic values with `normalizeTestIdString` / `normalizeTestIdParts` from app/modules/test-id/normalize-test-id.utils.ts.',
