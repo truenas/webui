@@ -24,7 +24,7 @@ import { buildTokenLoginUrl, generateAuthToken } from './auth/token';
 import { keepTestData } from './cleanup';
 import { loadTargetConfig, type TargetConfig } from './config';
 import {
-  adminLayout, concurrentCallsDialogTitle, errorDialogClose, errorDialogRole,
+  adminLayout, concurrentCallsDialogTitle, errorDialog, errorDialogClose,
 } from './constants';
 import { type EntitlementDecisions, readEntitlements } from '../fixtures/entitlements';
 import { poolLifecycle } from '../fixtures/pool';
@@ -69,11 +69,16 @@ function remainingOf(deadline: number): number {
  */
 async function dismissConcurrencyDialogs(page: Page): Promise<void> {
   const concurrencyDialog = page
-    .getByRole(errorDialogRole)
+    .locator(errorDialog)
     .filter({ hasText: concurrentCallsDialogTitle });
 
+  // Dismissed through the dialog that triggered the handler, not through every
+  // close button on the page: a real middleware error open at the same time
+  // would otherwise be the one closed, or match alongside it and fail strict
+  // mode. Scoped to the whole dialog because the footer holding Close sits
+  // outside the message block that carries the alertdialog role.
   await page.addLocatorHandler(concurrencyDialog, async () => {
-    await page.locator(errorDialogClose).click();
+    await concurrencyDialog.locator(errorDialogClose).click();
   });
 }
 

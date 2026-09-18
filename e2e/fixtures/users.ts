@@ -181,7 +181,9 @@ export const refusedAccounts = {
   noWebUiAccess: {
     username: 'e2e_no_webui_access',
     password: 'E2E-NoUi-Passw0rd!',
-    groupName: 'e2e_no_webui_access',
+    // Distinct from `username`: `user.create` runs with `group_create`, so an
+    // identical name would leave two groups for the name-keyed lookups here.
+    groupName: 'e2e_no_webui_access_grp',
     privilegeName: 'e2e_no_webui_access',
     role: 'SHARING_SMB_WRITE',
   },

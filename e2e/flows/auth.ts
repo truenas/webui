@@ -132,14 +132,9 @@ export function insecureSigninUrl(uiBaseUrl: string): string {
     return url.toString();
   }
 
+  // `URL` drops a default port at parse time, so an explicit `:443` is already
+  // gone by here and a port that means something else is carried over untouched.
   url.protocol = 'http:';
-
-  // Only an explicit `:443` is dropped, and only because it would otherwise
-  // become a cleartext request to the TLS port. A port that means something
-  // else is the caller's and is left alone.
-  if (url.port === '443') {
-    url.port = '';
-  }
 
   return url.toString();
 }

@@ -38,6 +38,16 @@ export const errorDialogClose = '[data-test="button-close-error-dialog"]';
 export const errorDialogRole = 'alertdialog';
 
 /**
+ * webui's error dialog, as a whole.
+ *
+ * Wider than {@link errorDialogRole}, which is on the message block and stops
+ * short of the footer — so the Close button is a sibling of it, not a
+ * descendant. Anything scoping a dismissal to one dialog has to match here.
+ * A component selector, on the same footing as {@link adminLayout}.
+ */
+export const errorDialog = 'ix-error-dialog';
+
+/**
  * Title of the development build's concurrency diagnostic.
  *
  * `websocket-handler.service.ts` raises it when 20 middleware calls are in
