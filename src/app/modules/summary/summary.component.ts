@@ -30,7 +30,13 @@ interface SummaryRow {
 export class SummaryComponent {
   readonly summary = input.required<SummarySection[]>();
 
-  protected readonly sections = computed<SummaryRow[][]>(() => this.summary().map(
+  /**
+   * `?? []` despite the input being typed non-nullable: both wizards that render this declare
+   * `summary: SummarySection[]` with no initializer and only assign it when their Confirm step
+   * runs, so the first render binds `undefined`. `@for` normalizes a nullish collection to empty
+   * and absorbed that silently; mapping here does not.
+   */
+  protected readonly sections = computed<SummaryRow[][]>(() => (this.summary() ?? []).map(
     (section) => section.map((item) => ({ item, testId: normalizeTestIdParts(['summary', item.label]) })),
   ));
 }

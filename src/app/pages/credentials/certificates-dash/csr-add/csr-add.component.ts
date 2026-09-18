@@ -84,7 +84,7 @@ export class CsrAddComponent implements SidePanelHostCloseable {
   protected readonly requiredRoles = [Role.CertificateWrite];
 
   protected isLoading = signal(false);
-  protected summary: SummarySection[];
+  protected summary: SummarySection[] = [];
 
   hasUnsavedChanges(): boolean {
     return Boolean(this.identifierAndType()?.form?.dirty);
