@@ -29,7 +29,7 @@ import { kebabCase } from 'lodash-es';
 export const optionTestIdByLabel = (option: TnSelectOption): string => option.label;
 
 /**
- * As {@link optionTestIdByLabel}, but kebab-cased the way the existing ids were normalized.
+ * As {@link optionTestIdByLabel}, but kebab-cased with lodash, the way the existing ids were.
  *
  * Use this when the legacy id had already collapsed spaces or mixed case that the label still
  * carries — e.g. `RAIDZ1` resolved to `option-layout-raidz-1`, which the library's own
