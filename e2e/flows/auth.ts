@@ -8,23 +8,10 @@
 import { expect, type APIRequestContext, type Page } from '@playwright/test';
 import { signinLocators } from '../locators/signin';
 import { topbarLocators } from '../locators/topbar';
-import {
-  adminLayout, concurrentCallsDialogTitle, errorDialogClose, errorDialogRole,
-} from '../support/constants';
+import { adminLayout, errorDialogClose, errorDialogRole } from '../support/constants';
 
 /** Generous: a cold sign-in on this app runs to roughly 15 seconds. */
 const signInTimeoutMs = 60_000;
-
-/**
- * How many times the development concurrency dialog may be dismissed before the
- * harness gives up and says so.
- *
- * One is the normal case — it re-arms on close, but the burst that raised it is
- * over by then. More than a couple means the page is issuing calls faster than
- * the connection retires them for a sustained period, which is a finding rather
- * than something to keep clicking through.
- */
-const maxConcurrentCallsDismissals = 3;
 
 /** Short: this only asks whether an origin answers at all. */
 const httpProbeTimeoutMs = 10_000;
@@ -74,69 +61,34 @@ export async function awaitAdminShell(page: Page, username: string): Promise<voi
   const shell = page.locator(adminLayout);
   const errorDialog = page.locator(errorDialogClose);
 
-  // Bounded rather than `while`, because the dialog re-arms when dismissed
-  // (`showingConcurrentCallsError` resets in its close handler). A page chatty
-  // enough to raise it indefinitely should report that, not spin here.
-  for (let dismissals = 0; dismissals <= maxConcurrentCallsDismissals; dismissals++) {
-    await expect(shell.or(errorDialog).first()).toBeVisible({ timeout: signInTimeoutMs });
+  await expect(shell.or(errorDialog).first()).toBeVisible({ timeout: signInTimeoutMs });
 
-    if (!await errorDialog.isVisible()) {
-      await expect(shell).toBeVisible();
-      return;
-    }
-
+  // The development build's concurrency dialog does not reach here: the handler
+  // in `support/fixtures.ts` dismisses it during the wait above, and stops at
+  // its cap so an unrelenting one still surfaces as the failure below.
+  if (await errorDialog.isVisible()) {
     const details = (await page.getByRole(errorDialogRole).innerText()).trim();
-
-    // The development build's concurrency diagnostic is not a failed sign-in.
-    // It is raised through the same `DialogService.error` as a real middleware
-    // failure and carries the same id, so its words are the only thing telling
-    // them apart — and when it appears the shell is typically already behind
-    // it, the login having worked. Dismiss it and carry on; anything else is
-    // still a failure, and still reported with the message it came with.
-    if (!details.includes(concurrentCallsDialogTitle)) {
-      throw new Error(
-        `Sign-in as "${username}" failed with a middleware error:\n\n${details}\n\n`
-        + 'If this is "[EBUSY] Rate Limit Exceeded": middleware allows 20 unauthenticated '
-        + 'calls per method per IP per 60s (RateLimitConfig). Authenticated calls are exempt, '
-        + 'so the budget is spent on sign-ins. Wait a minute, or reduce logins per run.',
-      );
-    }
-
-    await errorDialog.click();
-    await expect(errorDialog).toBeHidden();
+    throw new Error(
+      `Sign-in as "${username}" failed with a middleware error:\n\n${details}\n\n`
+      + 'If this is "[EBUSY] Rate Limit Exceeded": middleware allows 20 unauthenticated '
+      + 'calls per method per IP per 60s (RateLimitConfig). Authenticated calls are exempt, '
+      + 'so the budget is spent on sign-ins. Wait a minute, or reduce logins per run.',
+    );
   }
 
-  throw new Error(
-    `Sign-in as "${username}" reached the app, but the "${concurrentCallsDialogTitle}" dialog was `
-    + `raised more than ${maxConcurrentCallsDismissals} times and kept blocking the page. The UI is `
-    + 'saturating its own 20-call concurrency window repeatedly, which is worth investigating on the '
-    + 'page rather than working around here.',
-  );
+  await expect(shell).toBeVisible();
 }
 
 /**
- * The same sign-in page, over plain HTTP.
+ * The sign-in page on the target's cleartext origin.
  *
- * The warning is decided at construction from `window.location.protocol`, so
- * the only honest way to see it is to load over HTTP — which the appliance
- * serves on port 80 without redirecting. Derived from the run's own base URL so
- * it follows the configured target, including a `TN_UI_BASE_URL` override.
+ * The warning is decided from `window.location.protocol`, so the only honest
+ * way to see it is to load over HTTP. Which address that is belongs to
+ * `support/config.ts`, the one place this suite resolves URLs — it is not
+ * always the same host and port as the HTTPS one.
  */
-export function insecureSigninUrl(uiBaseUrl: string): string {
-  const url = new URL('signin', uiBaseUrl);
-
-  // Already cleartext — the `branch` profile's dev server, or a `TN_UI_BASE_URL`
-  // pointing at one. Nothing to rewrite, and rewriting anyway is how this first
-  // went wrong: blanking the port sent `http://localhost:4200/` to port 80.
-  if (url.protocol === 'http:') {
-    return url.toString();
-  }
-
-  // `URL` drops a default port at parse time, so an explicit `:443` is already
-  // gone by here and a port that means something else is carried over untouched.
-  url.protocol = 'http:';
-
-  return url.toString();
+export function insecureSigninUrl(insecureUiBaseUrl: string): string {
+  return new URL('signin', insecureUiBaseUrl).toString();
 }
 
 /**

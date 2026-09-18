@@ -60,7 +60,7 @@ test('the form refuses bad credentials without saying which half was wrong', asy
  * with it, reporting a passing assertion as never run.
  */
 test('signing in over HTTP warns that the connection is insecure', async ({ page, config, request }) => {
-  const insecureUrl = insecureSigninUrl(config.uiBaseUrl);
+  const insecureUrl = insecureSigninUrl(config.insecureUiBaseUrl);
 
   // Skipped where the target has no cleartext origin to load. An appliance
   // serves port 80 and the `branch` dev server is cleartext already, but CI

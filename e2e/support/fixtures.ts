@@ -67,6 +67,8 @@ function remainingOf(deadline: number): number {
  * every error dialog shares one test ID (truenas-ui-components#319) — and
  * scoped to this one so real errors still fail.
  */
+const maxConcurrentCallsDismissals = 3;
+
 async function dismissConcurrencyDialogs(page: Page): Promise<void> {
   const concurrencyDialog = page
     .locator(errorDialog)
@@ -77,9 +79,12 @@ async function dismissConcurrencyDialogs(page: Page): Promise<void> {
   // would otherwise be the one closed, or match alongside it and fail strict
   // mode. Scoped to the whole dialog because the footer holding Close sits
   // outside the message block that carries the alertdialog role.
+  // Capped, because the dialog re-arms when dismissed. Past the cap it stays on
+  // screen and `awaitAdminShell` reports it, which is the right outcome for a
+  // page issuing calls faster than the connection retires them for that long.
   await page.addLocatorHandler(concurrencyDialog, async () => {
     await concurrencyDialog.locator(errorDialogClose).click();
-  });
+  }, { times: maxConcurrentCallsDismissals });
 }
 
 /**

@@ -57,6 +57,16 @@ export interface TargetConfig {
    * `/ui/` for `shipped`, whatever the local build is served at for `branch`.
    */
   readonly uiBaseUrl: string;
+  /**
+   * Base URL the UI is served from over plain HTTP, for the one test whose
+   * subject is the scheme the page was loaded with.
+   *
+   * Derived from {@link uiBaseUrl} by swapping the scheme, which is right
+   * wherever the same address serves both. `TN_UI_BASE_URL_HTTP` overrides it
+   * for a target that serves cleartext somewhere else — CI publishes the two
+   * on separate ports, so there the derived guess would reach the TLS socket.
+   */
+  readonly insecureUiBaseUrl: string;
   /** Middleware host, `host` or `host:port`. No scheme — the client adds `wss://`. */
   readonly middlewareHost: string;
   /** How {@link middlewareHost} was resolved, for the startup banner. */
@@ -90,6 +100,24 @@ const defaultBranchUiBaseUrl = 'http://localhost:4200/';
  * `shipped` only.
  */
 const shippedUiPath = '/ui/';
+
+/**
+ * The same address over plain HTTP.
+ *
+ * `URL` drops a default port at parse time, so an explicit `:443` is already
+ * gone and any other port is carried over untouched. A base that is cleartext
+ * already — the `branch` dev server — comes back unchanged.
+ */
+function toCleartext(uiBaseUrl: string): string {
+  try {
+    const url = new URL(uiBaseUrl);
+    url.protocol = 'http:';
+    return url.toString();
+  } catch {
+    // Invalid URLs are reported by validateUiBaseUrl; nothing to add here.
+    return uiBaseUrl;
+  }
+}
 
 class ConfigError extends Error {
   constructor(problems: string[]) {
@@ -301,6 +329,7 @@ export function loadTargetConfig(env: NodeJS.ProcessEnv = process.env): TargetCo
     // Trailing slash guaranteed by validateUiBaseUrl, so `new URL(path, base)`
     // resolves beneath the base rather than replacing its last segment.
     uiBaseUrl,
+    insecureUiBaseUrl: env.TN_UI_BASE_URL_HTTP || toCleartext(uiBaseUrl),
     middlewareHost,
     hostSource,
     username,
