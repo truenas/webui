@@ -68,6 +68,8 @@ describe('ManageHostsDialog', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: {} })),
       }),
+      // Injected by the template's `matDialogClose` button; asserted on below to pin that the
+      // dialog is NOT closed when a form is opened from it.
       mockProvider(MatDialogRef, {
         close: jest.fn(),
       }),
@@ -98,6 +100,9 @@ describe('ManageHostsDialog', () => {
       { data: expect.objectContaining(hosts[0]) },
     );
     expect(spectator.inject(NvmeOfStore).reloadHosts).toHaveBeenCalled();
+    // The form opens in a slide-in stacked above this dialog, so the list is still there to
+    // return to once it closes — closing it dropped the user back on the subsystem (NAS-143761).
+    expect(spectator.inject(MatDialogRef).close).not.toHaveBeenCalled();
   });
 
   it('deletes the port with correct force flag based on subsystem usage', async () => {
@@ -128,5 +133,6 @@ describe('ManageHostsDialog', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(HostFormComponent);
     expect(spectator.inject(NvmeOfStore).reloadHosts).toHaveBeenCalled();
+    expect(spectator.inject(MatDialogRef).close).not.toHaveBeenCalled();
   });
 });

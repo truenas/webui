@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
-  MatDialog, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
+  MatDialog, MatDialogClose, MatDialogContent, MatDialogTitle,
 } from '@angular/material/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
@@ -68,7 +68,6 @@ export class ManageHostsDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private matDialog = inject(MatDialog);
-  private dialogRef = inject(MatDialogRef<ManageHostsDialog>);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
@@ -129,16 +128,21 @@ export class ManageHostsDialog implements OnInit {
   }
 
   onAdd(): void {
-    // Close the dialog immediately to prevent it from appearing behind the slide-in form.
-    this.dialogRef.close();
-    // Note: takeUntilDestroyed(this.destroyRef) is intentionally NOT used here.
-    // The dialog closes immediately (destroying this component), but we need the subscription
-    // to remain active to handle the slide-in response. The slide-in observable completes
-    // naturally when the form is submitted or cancelled, so there's no memory leak.
+    // The dialog stays open behind the form — closing it first dropped the user back on the
+    // subsystem, with the Hosts list gone as soon as the form closed (NAS-143761).
+    //
+    // It was closed here because the form did render behind it, back when MatDialog's overlay
+    // went into the browser's top layer (CDK 21 opts every overlay into the Popover API by
+    // default) while `SlideIn` opted out of it — a layer no z-index can reach past. Since
+    // NAS-139998 `main.ts` turns the Popover API off for ALL overlays, so dialog and slide-in
+    // are ordinary siblings in the CDK overlay container at the same z-index, and the one
+    // appended later — the slide-in — paints on top. Same as the Ports dialog, which never
+    // needed the workaround.
     this.slideIn
       .open(HostFormComponent)
       .pipe(
         filter((response) => Boolean(response.response)),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Host Added'));
@@ -147,15 +151,10 @@ export class ManageHostsDialog implements OnInit {
   }
 
   onEdit(host: NvmeOfHostAndUsage): void {
-    // Close the dialog immediately to prevent it from appearing behind the slide-in form.
-    this.dialogRef.close();
-    // Note: takeUntilDestroyed(this.destroyRef) is intentionally NOT used here.
-    // The dialog closes immediately (destroying this component), but we need the subscription
-    // to remain active to handle the slide-in response. The slide-in observable completes
-    // naturally when the form is submitted or cancelled, so there's no memory leak.
     this.slideIn.open(HostFormComponent, { data: host })
       .pipe(
         filter((response) => Boolean(response.response)),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Host Updated'));
