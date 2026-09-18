@@ -104,8 +104,16 @@ describe('DatasetDetailsCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
 
+  /**
+   * tn-card renders its header menu trigger with `[headerMenuTriggerAriaLabel]` as the
+   * accessible name, and omits it entirely when the card has no actions.
+   */
+  function getCardMenuTrigger(): HTMLElement | null {
+    return spectator.query('button[aria-label="Dataset actions"]');
+  }
+
   async function openCardMenu(): Promise<TnMenuHarness> {
-    spectator.click(spectator.query('[data-test="button-dataset-actions"]')!);
+    spectator.click(getCardMenuTrigger()!);
     return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
   }
 
@@ -250,7 +258,7 @@ describe('DatasetDetailsCardComponent', () => {
     it('does not show a Promote Dataset action when dataset cannot be promoted', () => {
       setupTest({ dataset });
 
-      expect(spectator.query('[data-test="button-dataset-actions"]')).toBeNull();
+      expect(getCardMenuTrigger()).toBeNull();
     });
 
     it('promotes dataset when dataset can be promoted and Promote action is pressed', async () => {

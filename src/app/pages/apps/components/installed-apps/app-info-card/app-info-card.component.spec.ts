@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting,
+  TnButtonHarness, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockJob, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -124,7 +124,10 @@ describe('AppInfoCardComponent', () => {
   }
 
   async function openMenu(): Promise<TnMenuHarness> {
-    spectator.click('[data-test="button-app-info-menu"]');
+    const trigger = await loader.getHarness(
+      TnIconButtonHarness.with({ name: 'dots-vertical', library: 'mdi' }),
+    );
+    await trigger.click();
     return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
   }
 

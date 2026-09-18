@@ -55,18 +55,17 @@ describe('BasicSearchComponent', () => {
   });
 
   describe('accessibility', () => {
-    it('exposes an accessible clear action when the field has a value', () => {
+    it('exposes an accessible clear action when the field has a value', async () => {
       spectator.setInput('query', 'test');
 
-      const clearButton = spectator.query('[data-test="button-clear-search"]');
-      expect(clearButton).toExist();
-      expect(clearButton.tagName.toLowerCase()).toBe('button');
-      expect(clearButton.getAttribute('aria-label')).toBe('Clear search');
+      expect(await (await searchHarness.getInput()).hasSuffixAction()).toBe(true);
+      // Reachable as a button named "Clear search", not just as some clickable icon.
+      expect(await searchHarness.getClearAction()).not.toBeNull();
     });
 
-    it('hides the clear action when the field is empty', () => {
-      const clearButton = spectator.query('[data-test="button-clear-search"]');
-      expect(clearButton).not.toExist();
+    it('hides the clear action when the field is empty', async () => {
+      expect(await (await searchHarness.getInput()).hasSuffixAction()).toBe(false);
+      expect(await searchHarness.getClearAction()).toBeNull();
     });
   });
 });

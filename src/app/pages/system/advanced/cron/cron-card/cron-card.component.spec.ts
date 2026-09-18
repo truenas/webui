@@ -3,9 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import {
-  TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting, TnTableHarness,
-} from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnMenuHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { invalidDate } from 'app/constants/invalid-date';
@@ -17,6 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
 import { CronDeleteDialog } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
@@ -107,9 +106,8 @@ describe('CronCardComponent', () => {
     ],
   });
 
-  async function openFirstRowMenu(): Promise<TnMenuHarness> {
-    spectator.click(spectator.query('[data-test$="more-action"]') as HTMLElement);
-    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  function openFirstRowMenu(): Promise<TnMenuHarness> {
+    return openRowActionsMenu(spectator.fixture);
   }
 
   beforeEach(async () => {

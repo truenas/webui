@@ -73,7 +73,7 @@ describe('DiskHealthCardComponent', () => {
 
     expect(await manageDisksButton.getHref()).toBe('/storage/disks');
     // Id is host-pinned, not passed through `[testId]` — see the note in the template.
-    expect(spectator.query('[data-test="link-view-disks"]')).toExist();
+    expect(await (await manageDisksButton.host()).getAttribute('data-test')).toBe('link-view-disks');
   });
 
   describe('Temperatures', () => {

@@ -3,11 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import {
-  TnButtonHarness,
-  TnDialog,
-  TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
-} from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnMenuHarness, TnSlideToggleHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -25,6 +21,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   TablePagerShowMoreComponent,
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
+import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
 import {
@@ -38,10 +35,6 @@ describe('NfsCardComponent', () => {
   let spectator: Spectator<NfsCardComponent>;
   let loader: HarnessLoader;
   let table: TnTableHarness;
-
-  // The "⋮" row-action trigger test id, derived from the row's uniqueRowTag
-  // (path + comment, normalized: /mnt/x + sweet -> card-nfs-share-mnt-x-sweet).
-  const rowMenuTrigger = '[data-test="button-card-nfs-share-mnt-x-sweet-more-action"]';
 
   const nfsShares = [
     {
@@ -119,9 +112,8 @@ describe('NfsCardComponent', () => {
     ],
   });
 
-  async function openRowMenu(): Promise<TnMenuHarness> {
-    spectator.click(rowMenuTrigger);
-    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  function openRowMenu(): Promise<TnMenuHarness> {
+    return openRowActionsMenu(spectator.fixture);
   }
 
   describe('with active pool shares', () => {

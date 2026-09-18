@@ -90,6 +90,9 @@ describe('FocusService', () => {
         setTimeout(resolve, 250);
       });
       expect(mockDocument.querySelector).toHaveBeenCalledWith('.cdk-overlay-backdrop');
+      // Not a lookup by test id — FocusService itself re-finds the element by its
+      // `data-test` after a re-render, and this asserts the selector it builds.
+      // eslint-disable-next-line no-restricted-syntax
       expect(mockDocument.querySelector).toHaveBeenCalledWith('[data-test="test-element"]');
       expect(dataTestElement.focus).toHaveBeenCalled();
     });

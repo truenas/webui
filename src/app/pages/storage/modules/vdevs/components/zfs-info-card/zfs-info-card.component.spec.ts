@@ -93,7 +93,9 @@ describe('ZfsInfoCardComponent', () => {
   });
 
   async function openCardMenu(): Promise<TnMenuHarness> {
-    spectator.click(spectator.query('[data-test="button-zfs-actions"]')!);
+    // tn-card renders its header menu trigger with `[headerMenuTriggerAriaLabel]` as the
+    // accessible name, which is what a user reaches for.
+    spectator.click(spectator.query('button[aria-label="ZFS Info actions"]')!);
     return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
   }
 

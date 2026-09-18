@@ -2,9 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import {
-  TnButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
-} from '@truenas/ui-components';
+import { TnButtonHarness, TnMenuHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import {
@@ -18,6 +16,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TunableListComponent } from 'app/pages/system/advanced/tunable/tunable-list/tunable-list.component';
 
@@ -123,9 +122,11 @@ describe('TunableListComponent', () => {
     ],
   });
 
-  async function openRowMenu(uniqueRowTag: string): Promise<TnMenuHarness> {
-    spectator.click(spectator.query(`[data-test="button-${uniqueRowTag}-more-action"]`) as HTMLElement);
-    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  // Rows are sorted by variable name, so `kernel.hostname` is the first of them.
+  const kernelHostnameRow = 0;
+
+  function openRowMenu(rowIndex: number): Promise<TnMenuHarness> {
+    return openRowActionsMenu(spectator.fixture, rowIndex);
   }
 
   beforeEach(async () => {
@@ -158,7 +159,7 @@ describe('TunableListComponent', () => {
   });
 
   it('opens the Edit Tunable form with the selected row when Edit is pressed', async () => {
-    const menu = await openRowMenu('tunable-kernel-hostname-truenas');
+    const menu = await openRowMenu(kernelHostnameRow);
     await menu.clickItem({ label: 'Edit' });
 
     expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
@@ -171,7 +172,7 @@ describe('TunableListComponent', () => {
   });
 
   it('shows confirmation when Delete button is pressed', async () => {
-    const menu = await openRowMenu('tunable-kernel-hostname-truenas');
+    const menu = await openRowMenu(kernelHostnameRow);
     await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({

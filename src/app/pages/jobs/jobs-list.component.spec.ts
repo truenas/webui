@@ -145,8 +145,14 @@ describe('JobsListComponent', () => {
     store$.refreshState();
     spectator.detectChanges();
 
-    expect(spectator.query('[data-test="date-started-job-446-row-date"]')).toExist();
-    expect(spectator.query('[data-test="text-finished-job-446-row-date"]')).toExist();
+    const testIds = Array.from(spectator.queryAll('tbody tr:first-child [data-test]'))
+      .map((element) => element.getAttribute('data-test'));
+
+    expect(testIds).toEqual([
+      'button-state-job-446-row-state',
+      'date-started-job-446-row-date',
+      'text-finished-job-446-row-date',
+    ]);
   });
 
   it('should have empty message when loaded and datasource is empty', async () => {

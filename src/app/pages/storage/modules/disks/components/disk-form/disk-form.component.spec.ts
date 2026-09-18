@@ -105,9 +105,10 @@ describe('DiskFormComponent', () => {
     it('keeps the legacy label-derived option test ids for advanced power management', async () => {
       await (await getSelect('advpowermgmt')).open();
 
-      expect(document.querySelector(
-        '[data-test="option-advpowermgmt-level-127-maximum-power-usage-with-standby"]',
-      )).toBeTruthy();
+      const optionTestIds = Array.from(document.querySelectorAll('.tn-select-option'))
+        .map((option) => option.getAttribute('data-test'));
+
+      expect(optionTestIds).toContain('option-advpowermgmt-level-127-maximum-power-usage-with-standby');
     });
 
     it('sets disk settings when form is opened', async () => {

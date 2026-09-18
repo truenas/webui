@@ -61,7 +61,7 @@ describe('TableDetailsRowComponent', () => {
   it('carries the row tag in the printed value test id, matching the table cells', () => {
     setColumns([{ title: 'Name', propertyName: 'name' }]);
 
-    expect(spectator.query('[data-test="text-name-row-first-row-text"]')).toExist();
+    expect(spectator.query('.table-hidden-columns dd')).toHaveAttribute('data-test', 'text-name-row-first-row-text');
   });
 
   // The ix cell components tagged a value by cell kind, so a hidden Yes/No or relative-date
@@ -75,7 +75,8 @@ describe('TableDetailsRowComponent', () => {
       testIdSuffix: 'row-yesno',
     }]);
 
-    expect(spectator.query('[data-test="text-recursive-row-first-row-yesno"]')).toExist();
+    expect(spectator.query('.table-hidden-columns dd'))
+      .toHaveAttribute('data-test', 'text-recursive-row-first-row-yesno');
   });
 
   it('renders nothing when every column is visible', () => {
