@@ -502,9 +502,9 @@ export interface S3ServiceSettings {
  * default a TLS listener is meant to work with, and it is the choice that has
  * no picker option id of its own (its value is `null`).
  *
- * The form loads its configuration after opening, so the Servers input
- * appearing is what confirms it is ready to be driven. The listener row's
- * controls fall back to their control names and so would match every row; the
+ * Opening is not enough to type into it — see `openS3ServiceConfig` for what
+ * readiness costs here. The listener row's controls fall back to their control
+ * names and so would match every row; the
  * fixture clears the listeners beforehand, and this still scopes to the last
  * row — the one just added — so a leftover row breaks the assertion, not the
  * locator.

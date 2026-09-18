@@ -58,6 +58,8 @@ function remainingOf(deadline: number): number {
   return Math.min(tokenLoginAttemptTimeoutMs, remainingMs);
 }
 
+const maxConcurrentCallsDismissals = 3;
+
 /**
  * Dismisses the development build's concurrency diagnostic wherever it appears.
  *
@@ -67,8 +69,6 @@ function remainingOf(deadline: number): number {
  * every error dialog shares one test ID (truenas-ui-components#319) — and
  * scoped to this one so real errors still fail.
  */
-const maxConcurrentCallsDismissals = 3;
-
 async function dismissConcurrencyDialogs(page: Page): Promise<void> {
   const concurrencyDialog = page
     .locator(errorDialog)

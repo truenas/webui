@@ -102,13 +102,6 @@ const defaultBranchUiBaseUrl = 'http://localhost:4200/';
 const shippedUiPath = '/ui/';
 
 /**
- * The same address over plain HTTP.
- *
- * `URL` drops a default port at parse time, so an explicit `:443` is already
- * gone and any other port is carried over untouched. A base that is cleartext
- * already — the `branch` dev server — comes back unchanged.
- */
-/**
  * Holds `TN_UI_BASE_URL_HTTP` to the same trailing-slash rule as the HTTPS one.
  *
  * Same reason as {@link validateUiBaseUrl}: `new URL('signin', 'http://h/ui')`
@@ -141,6 +134,13 @@ function validateInsecureUiBaseUrl(raw: string | undefined, problems: string[]):
   }
 }
 
+/**
+ * The same address over plain HTTP.
+ *
+ * `URL` drops a default port at parse time, so an explicit `:443` is already
+ * gone and any other port is carried over untouched. A base that is cleartext
+ * already — the `branch` dev server — comes back unchanged.
+ */
 function toCleartext(uiBaseUrl: string): string {
   try {
     const url = new URL(uiBaseUrl);
