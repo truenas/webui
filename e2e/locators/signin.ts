@@ -29,9 +29,10 @@ export const signinLocators = {
   /**
    * The warning shown when the page was not served over HTTPS.
    *
-   * `tn-banner` has no `testId` input in `@truenas/ui-components` 0.7.6, so
-   * webui applies the directive to the host element itself
-   * (`tnTestIdType="banner"`). Worth replacing with a real input upstream.
+   * `<tn-banner testId="insecure-connection">`. The library emits this on the
+   * banner root, which is also what carries the live-region role — so the
+   * element asserted on is the one assistive tech announces. Needs
+   * `@truenas/ui-components` >= 0.7.8 (#319).
    */
   insecureConnectionBanner: '[data-test="banner-insecure-connection"]',
   /**
