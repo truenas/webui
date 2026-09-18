@@ -47,7 +47,7 @@ differ per appliance. Prefix, never bare role or class: the prefix is what keeps
 the match scoped to one control, so a CDK overlay that has not finished
 detaching cannot be picked up instead.
 
-Search the component template for `testId` or `ixTest`, then work out what is
+Search the component template for `testId` or `tnTestId`, then work out what is
 actually emitted — **components prefix the value with their element type**:
 
 | Template | Emitted |
