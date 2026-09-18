@@ -3,7 +3,7 @@
     class="edit-trigger"
     type="button"
     tnTestIdType="button"
-    [tnTestId]="[normalizedValueText(), 'edit']"
+    [tnTestId]="testId()"
     [attr.aria-label]="ariaLabel()"
     [class.edit-trigger-empty]="isEmpty()"
     [class.readonly]="readonly()"

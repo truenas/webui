@@ -197,12 +197,10 @@ export class SmbCardComponent implements OnInit {
   protected readonly uniqueRowTag = (row: SmbShare): string => convertStringToId('card-smb-share-' + row.name);
 
   /**
-   * Row tag for the cell test ids that used to resolve through `[ixTest]`, which kebab-cased with
-   * lodash — splitting a letter→digit boundary (`card-smb-share-smb123`) the library's kebab leaves alone.
-   * Pre-normalized here so those ids stay byte-identical. `uniqueRowTag` itself is deliberately left
-   * un-normalized: `[rowTestId]` and the shared cell components already emit it as it is, and
-   * re-normalizing it would rename the row and action ids Release Engineering selects on.
-   * See {@link normalizeTestIdString}.
+   * `uniqueRowTag` for the cells that used to resolve through `[ixTest]`, which lodash-kebabed
+   * whatever it was handed. Pre-normalized so those ids stay byte-identical; `uniqueRowTag` itself
+   * is left alone because `[rowTestId]` and the shared cell components emit it as it is, and
+   * re-normalizing would rename the row and action ids. See {@link normalizeTestIdString}.
    */
   protected readonly cellRowTag = (row: SmbShare): string => normalizeTestIdString(this.uniqueRowTag(row));
 

@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { sortBy, uniqBy } from 'lodash-es';
 import {
-  BehaviorSubject, Observable, debounceTime, distinctUntilChanged, filter, pairwise, switchMap,
+  BehaviorSubject, Observable, debounceTime, distinctUntilChanged, filter, map, pairwise, switchMap,
 } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { SimilarIssue } from 'app/modules/feedback/interfaces/file-ticket.interface';
@@ -36,17 +36,22 @@ export class SimilarIssuesComponent implements OnChanges {
 
   protected readonly jiraHostname = 'https://ixsystems.atlassian.net';
 
-  constructor() {
-    this.listenForQueryChanges();
-  }
-
   /**
    * Issue keys carry digits (`NAS-143893`), and the library's kebab-casing does not split a
    * letter→digit boundary the way `[ixTest]` did — so the key is pre-normalized here to keep
-   * `link-similar-issue-nas-143893` byte-identical. See {@link normalizeTestIdParts}.
+   * `link-similar-issue-nas-143893` byte-identical. Normalizing as the issues arrive, rather than
+   * from the template, also keeps the array out of every change-detection pass.
+   * See {@link normalizeTestIdParts}.
    */
-  protected issueTestId(issue: SimilarIssue): string[] {
-    return normalizeTestIdParts(['similar-issue', issue.id]);
+  protected readonly similarIssueLinks$ = this.similarIssues$.pipe(
+    map((issues) => issues.map((issue) => ({
+      issue,
+      testId: normalizeTestIdParts(['similar-issue', issue.id]),
+    }))),
+  );
+
+  constructor() {
+    this.listenForQueryChanges();
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {

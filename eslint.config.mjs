@@ -17,12 +17,13 @@ const projectOverrides = {
       ...baseRestrictedSyntax,
       {
         // `[ixTest]` and its `TestDirective` were deleted in NAS-143893; the library's
-        // `[tnTestId]` is the one directive that writes a `data-test`. The pattern only rejects
-        // the attribute/selector spellings (`[ixTest]`, `ixTest=`, a bare `'ixTest'`) so the
-        // comments that explain what the legacy directive used to resolve to still read fine,
-        // and `\b` stops before `ixTestOverride`, an unrelated `<ix-table-pager-show-more>`
-        // input. Templates are covered by `scripts/check-test-ids.ts`.
-        selector: "Literal[value=/\\[ixTest[\\]=]|\\bixTest=|^ixTest$/], TemplateElement[value.raw=/\\[ixTest[\\]=]|\\bixTest=/], Identifier[name='ixTest']",
+        // `[tnTestId]` is the one directive that writes a `data-test`. Only the spellings that
+        // would actually revive it are rejected: an attribute or selector that assigns a value
+        // (`ixTest="…"`, `[ixTest="…"]`) and a bare `'ixTest'`. A prose `[ixTest]` with no `=`
+        // is left alone — several strings and test names legitimately name the directive they
+        // replaced — and `\b` stops before `ixTestOverride`, an unrelated
+        // `<ix-table-pager-show-more>` input. Templates are covered by `scripts/check-test-ids.ts`.
+        selector: "Literal[value=/\\bixTest=|^ixTest$/], TemplateElement[value.raw=/\\bixTest=/], Identifier[name='ixTest']",
         message: '`ixTest` is retired (NAS-143893). Tag elements with the library\'s `[tnTestId]` + `tnTestIdType`, and pre-normalize dynamic values with `normalizeTestIdString` / `normalizeTestIdParts` from app/modules/test-id/normalize-test-id.utils.ts.',
       },
       {

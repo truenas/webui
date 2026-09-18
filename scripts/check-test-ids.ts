@@ -354,7 +354,6 @@ Each of these names a clickable that no longer exists — the class was renamed,
 or it now carries an id of its own. Remove the entry from \`allowedClickables\` in this script, so
 the exemption cannot outlive what it was written for.`);
 
-  // eslint-disable-next-line no-restricted-syntax -- the advice has to spell out what it replaces.
   report('templates using the retired ixTest directive:', revivedIxTest, `
 \`[ixTest]\` and its \`TestDirective\` were deleted in NAS-143893, so this attribute now writes no
 \`data-test\` at all. Use the library's directive instead: \`tnTestIdType="<element type>"\` plus

@@ -5,7 +5,7 @@ import { TnCheckboxComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { PosixPermission } from 'app/enums/posix-acl.enum';
 import { parseMode } from 'app/helpers/mode.helper';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
-import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.utils';
 
 @Component({
   selector: 'ix-permissions',
@@ -49,13 +49,14 @@ export class IxPermissionsComponent implements ControlValueAccessor {
   private formatRe = /^[0-7][0-7][0-7]$/;
 
   /**
-   * Test-id base for the permission rows. The bound control name is kebab-cased here rather than
-   * left to the library: `[ixTest]` normalized with lodash, which splits a letter→digit boundary
-   * the library's kebab leaves alone, so a control called `mode2` has to keep resolving to
-   * `row-mode-2-user-permissions`. See {@link normalizeTestIdString}.
+   * Id for one of the four permission rows, scoped by the bound control's name. Normalized here
+   * rather than left to the library for both halves of the legacy behaviour: lodash splits a
+   * letter→digit boundary the library's kebab leaves alone (`mode2` →
+   * `row-mode-2-user-permissions`), and an unnamed control contributes no segment at all rather
+   * than a literal `null`. See {@link normalizeTestIdParts}.
    */
-  protected get testIdBase(): string {
-    return normalizeTestIdString(this.controlDirective.name ?? '');
+  protected rowTestId(row: string): string[] {
+    return normalizeTestIdParts([this.controlDirective.name, row]);
   }
 
   constructor() {

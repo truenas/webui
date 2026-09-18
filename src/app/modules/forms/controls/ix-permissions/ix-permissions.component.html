@@ -1,6 +1,6 @@
 <div class="permissions-container">
   <table tnTestId="permissions-table" tnTestIdType="table" [class.disabled]="isDisabled">
-    <tr tnTestIdType="row" [tnTestId]="[testIdBase, 'permissions-header']">
+    <tr tnTestIdType="row" [tnTestId]="rowTestId('permissions-header')">
       <td></td>
       <td>
         <span class="header-label">{{ 'Read' | translate }}</span>
@@ -12,7 +12,7 @@
         <span class="header-label">{{ 'Execute' | translate }}</span>
       </td>
     </tr>
-    <tr tnTestIdType="row" [tnTestId]="[testIdBase, 'user-permissions']">
+    <tr tnTestIdType="row" [tnTestId]="rowTestId('user-permissions')">
       <td>
         <span class="header-label">{{ 'User' | translate }}</span>
       </td>
@@ -47,7 +47,7 @@
         ></tn-checkbox>
       </td>
     </tr>
-    <tr tnTestIdType="row" [tnTestId]="[testIdBase, 'group-permissions']">
+    <tr tnTestIdType="row" [tnTestId]="rowTestId('group-permissions')">
       <td>
         <span class="header-label">{{ 'Group' | translate }}</span>
       </td>
@@ -83,7 +83,7 @@
       </td>
     </tr>
     @if (!hideOthersPermissions()) {
-      <tr tnTestIdType="row" [tnTestId]="[testIdBase, 'other-permissions']">
+      <tr tnTestIdType="row" [tnTestId]="rowTestId('other-permissions')">
         <td>
           <span class="header-label">{{ 'Other' | translate }}</span>
         </td>

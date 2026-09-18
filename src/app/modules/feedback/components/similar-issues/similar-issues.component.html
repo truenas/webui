@@ -1,6 +1,6 @@
-@if (similarIssues$ | async; as issues) {
+@if (similarIssueLinks$ | async; as links) {
   <div class="similar-issues">
-    @if (issues.length) {
+    @if (links.length) {
       <div class="similar-issues-header">
         <div class="similar-issues-title">
           {{ 'The following issues were already reported.' | translate }}
@@ -14,19 +14,19 @@
       class="similar-issues-body"
       [class.outdated]="isLoading$ | async"
     >
-      @for (issue of issues; track issue) {
+      @for (link of links; track link.issue) {
         <a
           class="similar-issue"
           target="_blank"
           tnTestIdType="link"
-          [href]="issue.url"
-          [tnTestId]="issueTestId(issue)"
+          [href]="link.issue.url"
+          [tnTestId]="link.testId"
         >
           <span
             class="issue-type-icon"
-            [style.background-image]="'url(' + jiraHostname + issue.img + ')'"
+            [style.background-image]="'url(' + jiraHostname + link.issue.img + ')'"
           ></span>
-          <span class="issue-summary">{{ issue.summaryText }}</span>
+          <span class="issue-summary">{{ link.issue.summaryText }}</span>
           <tn-icon name="open-in-new" library="mdi" size="sm" style="margin-top: -2px"></tn-icon>
         </a>
       }

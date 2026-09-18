@@ -1,14 +1,14 @@
 <table tnTestId="summary-table" tnTestIdType="table">
-  @for (section of summary(); track section) {
-    @for (item of section; track item; let i = $index) {
+  @for (section of sections(); track section) {
+    @for (row of section; track row.item; let i = $index) {
       <tr
         class="summary-line"
         tnTestIdType="row"
-        [tnTestId]="rowTestId(item)"
+        [tnTestId]="row.testId"
         [class.section-start]="i === 0"
       >
-        <td class="summary-line-label">{{ item.label | translate }}:</td>
-        <td class="summary-line-value">{{ item.value | translate }}</td>
+        <td class="summary-line-label">{{ row.item.label | translate }}:</td>
+        <td class="summary-line-value">{{ row.item.value | translate }}</td>
       </tr>
     }
   }

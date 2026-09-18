@@ -61,20 +61,30 @@ export function kebabTestSegment(part: string | number): string {
  * webui's *legacy* normalizer, for the ids that still go through it.
  *
  * Not a copy: it is lodash `kebabCase` itself, from `lodash-es` — the same
- * import webui's `[ixTest]` directive and its `normalizeTestIdString` helper
- * use, so there is no third implementation to keep in step (see the "Not the
- * only normalizer" note above). The ESM build, because Playwright loads the
- * suite as ES modules and a named import from the CommonJS `lodash` fails there.
+ * import webui's `normalizeTestIdString` helper uses, so there is no third
+ * implementation to keep in step (see the "Not the only normalizer" note above).
+ * The ESM build, because Playwright loads the suite as ES modules and a named
+ * import from the CommonJS `lodash` fails there.
+ *
+ * The `[ixTest]` directive this preserved the output of is gone (NAS-143893);
+ * every call site that used it now pre-normalizes with `normalizeTestIdString`
+ * or `normalizeTestIdParts` and hands the result to the library, so the ids are
+ * unchanged and this is still the normalizer to reach for.
  *
  * Where it applies:
  *
- * - `ix-user-picker`, `ix-combobox` and every other `[ixTest]` control — their
- *   options are `option-<control>-<label>` with the label run through this.
+ * - `ix-user-picker`, `ix-combobox` and every other control whose options are
+ *   `option-<control>-<label>`, with the label run through this.
  * - Table row tags built with `toUniqueRowTag` (`tn-table/utils.ts`), which
  *   pre-normalizes the whole tag this way before the library sees it — so a
  *   key named `e2e-s3-key` in the access key list renders as
- *   `text-name-s-3-access-key-e-2-e-s-3-key-row-text`. Cards that build the tag
- *   with `convertStringToId` alone (the shares dashboard) do not split digits.
+ *   `text-name-s-3-access-key-e-2-e-s-3-key-row-text`.
+ * - The *value cells* of the shares-dashboard cards, which normalize through
+ *   `cellRowTag`. Those cards' `[rowTestId]` and action-button ids deliberately
+ *   do not: they come from `uniqueRowTag`, which is `convertStringToId` alone,
+ *   so the row and its cells disagree on a name with a letter/digit boundary
+ *   (`row-card-smb-share-smb123` beside
+ *   `text-name-card-smb-share-smb-123-row-text`).
  *
  * The two agree on anything with no letter/digit boundary, which is why most
  * locators can use {@link kebabTestSegment} without caring. Reach for this one

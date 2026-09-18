@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnChanges, signal,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, OnChanges, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
@@ -40,11 +40,13 @@ export class AppDetailsSimilarComponent implements OnChanges {
   /**
    * App names carry digits (`n8n`, `netbox3`), and the library's kebab-casing does not split a
    * letter→digit boundary the way `[ixTest]` did — so the name is pre-normalized here to keep
-   * `link-open-stable-n-8-n` byte-identical. See {@link normalizeTestIdParts}.
+   * `link-open-stable-n-8-n` byte-identical. Normalizing once, when the apps arrive, also keeps
+   * the array out of every change-detection pass. See {@link normalizeTestIdParts}.
    */
-  protected appTestId(app: AvailableApp): string[] {
-    return normalizeTestIdParts(['open', app.train, app.name]);
-  }
+  protected readonly similarAppLinks = computed(() => this.similarApps().map((app) => ({
+    app,
+    testId: normalizeTestIdParts(['open', app.train, app.name]),
+  })));
 
   ngOnChanges(): void {
     this.loadSimilarApps();

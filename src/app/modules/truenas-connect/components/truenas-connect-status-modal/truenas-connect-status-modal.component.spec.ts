@@ -18,12 +18,16 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
 
 /**
  * The status headline and its explanation are rendered by `ix-truenas-connect-status-display`, one
- * pair of elements per state. Each pair is named by its own class, so these unions read "whichever
- * state is on screen" without going through a `data-test` attribute — unit tests do not select on
- * those. A state with no headline (waiting) matches nothing, which is what the `toBeNull()`
- * assertions below are checking.
+ * pair of elements per state. These select them structurally rather than through a `data-test`
+ * attribute — unit tests do not select on those.
+ *
+ * `statusHeader` deliberately reaches the fallback state's unclassed `<span>` too, via
+ * `.status-header > span`: only the waiting state renders no headline at all, so the `toBeNull()`
+ * assertions below fail if a status that should reach waiting falls through to the fallback
+ * instead. `statusReason` lists only the states this spec drives; a fallthrough resolves to null
+ * there and fails the assertion, which is the safe direction.
  */
-const statusHeader = '.active-header, .failed-header, .connecting-header';
+const statusHeader = '.status-header > span, .connecting-header';
 const statusReason = '.active-description, .failed-description, .connecting-description, .waiting-state-text';
 
 describe('TruenasConnectStatusModalComponent', () => {
