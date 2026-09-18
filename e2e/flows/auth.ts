@@ -11,7 +11,7 @@ import { topbarLocators } from '../locators/topbar';
 import { adminLayout, errorDialogClose, errorDialogRole } from '../support/constants';
 
 /** Generous: a cold sign-in on this app runs to roughly 15 seconds. */
-const signInTimeoutMs = 60_000;
+export const signInTimeoutMs = 60_000;
 
 /** Short: this only asks whether an origin answers at all. */
 const httpProbeTimeoutMs = 10_000;

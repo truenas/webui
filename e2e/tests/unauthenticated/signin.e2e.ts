@@ -12,8 +12,8 @@ import {
   refusedAccounts,
 } from '../../fixtures/users';
 import {
-  attemptSignIn, awaitAdminShell, expectSignInRefused, insecureSigninUrl, servesUiOverHttp, signIn, signOut,
-  submitSignIn,
+  attemptSignIn, awaitAdminShell, expectSignInRefused, insecureSigninUrl, servesUiOverHttp, signIn,
+  signInTimeoutMs, signOut, submitSignIn,
 } from '../../flows/auth';
 import { signinLocators } from '../../locators/signin';
 import { adminLayout } from '../../support/constants';
@@ -78,7 +78,7 @@ test('signing in over HTTP warns that the connection is insecure', async ({ page
   await page.goto(insecureUrl);
 
   const banner = page.locator(signinLocators.insecureConnectionBanner);
-  await expect(banner).toBeVisible();
+  await expect(banner).toBeVisible({ timeout: signInTimeoutMs });
   await expect(banner).toContainText('Switch to HTTPS for secure access.');
 });
 
@@ -93,7 +93,7 @@ test('signing in over HTTPS shows no such warning', async ({ page, config }) => 
 
   await page.goto('./signin');
 
-  await expect(page.locator(signinLocators.username)).toBeEnabled();
+  await expect(page.locator(signinLocators.username)).toBeEnabled({ timeout: signInTimeoutMs });
   await expect(page.locator(signinLocators.insecureConnectionBanner)).toBeHidden();
 });
 
@@ -101,7 +101,7 @@ test('the password is hidden until the user asks to see it', async ({ page }) =>
   await page.goto('./signin');
 
   const password = page.locator(signinLocators.password);
-  await expect(password).toBeEnabled();
+  await expect(password).toBeEnabled({ timeout: signInTimeoutMs });
   await password.fill('hunter2');
 
   // The input's type is what actually hides the characters, and it is what a
@@ -122,7 +122,7 @@ test('an unauthenticated visitor aiming at the shell lands on sign-in', async ({
   // navigation.ts` exists for journeys *inside* the app, which this is not.
   await page.goto('./dashboard');
 
-  await expect(page.locator(signinLocators.username)).toBeEnabled();
+  await expect(page.locator(signinLocators.username)).toBeEnabled({ timeout: signInTimeoutMs });
   await expect(page.locator(adminLayout)).toBeHidden();
   await expect(page).toHaveURL(/\/signin/);
 });
@@ -187,7 +187,7 @@ test('a deep link survives the detour through sign-in', async ({ page, config })
   // above: typing a deep link is the thing under test.
   await page.goto('./credentials/users');
 
-  await expect(page.locator(signinLocators.username)).toBeEnabled();
+  await expect(page.locator(signinLocators.username)).toBeEnabled({ timeout: signInTimeoutMs });
   await expect(page).toHaveURL(/\/signin/);
 
   await submitSignIn(page, config.username, config.password);
@@ -213,7 +213,7 @@ test('signing out ends the session, and going back does not resurrect it', async
 
   await page.goBack();
 
-  await expect(page.locator(signinLocators.username)).toBeEnabled();
+  await expect(page.locator(signinLocators.username)).toBeEnabled({ timeout: signInTimeoutMs });
   await expect(page.locator(adminLayout)).toBeHidden();
   await expect(page).toHaveURL(/\/signin/);
 });
