@@ -206,7 +206,7 @@ export class ServiceActionsMenuService {
 
   /**
    * Mirrors the value the old `[service.service, 'actions-menu', label]`
-   * directive used to produce on the old `<button mat-menu-item>` element, including the
+   * id used to resolve to on the old `<button mat-menu-item>` element, including the
    * `button-` element-type prefix the old directive auto-added. Each part is kebab-cased
    * to match the directive's normalization, so e.g. service `iscsi.target` with label
    * `Config Service` yields `button-iscsi-target-actions-menu-config-service`.

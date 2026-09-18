@@ -45,7 +45,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
-import { convertStringToId, mapTnSortToTableSort, memoizedRowTag } from 'app/modules/tn-table/utils';
+import { mapTnSortToTableSort, rowTagPair } from 'app/modules/tn-table/utils';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -194,18 +194,11 @@ export class WebShareCardComponent implements OnInit {
 
   protected readonly trackByWebShareId = (_index: number, row: WebShareTableRow): number => row.id;
 
-  /** The raw row tag, normalized two different ways below. */
-  private readonly rawRowTag = (row: WebShareTableRow): string => 'card-webshare-' + row.name;
+  private readonly rowTags = rowTagPair<WebShareTableRow>((row) => `card-webshare-${row.name}`);
 
-  protected readonly uniqueRowTag = (row: WebShareTableRow): string => convertStringToId(this.rawRowTag(row));
+  protected readonly uniqueRowTag = this.rowTags.uniqueRowTag;
 
-  /**
-   * `uniqueRowTag` for the cells whose ids were minted with lodash kebab-casing — exactly what
-   * {@link memoizedRowTag} produces, cached per row.
-   * `uniqueRowTag` itself stays un-normalized: `[rowTestId]` and the shared cell components emit
-   * it as it is, and re-normalizing would rename the row and action ids.
-   */
-  protected readonly cellRowTag = memoizedRowTag<WebShareTableRow>((row) => this.rawRowTag(row));
+  protected readonly cellRowTag = this.rowTags.cellRowTag;
 
   protected ariaLabel(row: WebShareTableRow): string {
     return [row.name, this.translate.instant('WebShare')].join(' ');

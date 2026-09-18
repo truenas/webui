@@ -40,9 +40,13 @@ export class TablePagerShowMoreComponent<T> implements OnInit {
   expanded = signal(false);
   protected collapsible = computed(() => this.totalItems() > this.pageSize());
 
-  dataTest(key: string): (string | number | null | undefined)[] {
-    return scopeTestId(this.testId(), key);
-  }
+  /**
+   * Resolved once per `testId` change rather than per binding: a method in the template reruns
+   * `scopeTestId` on every change-detection pass, which is what the rest of NAS-143893 moved out
+   * of templates.
+   */
+  protected readonly showMoreTestId = computed(() => scopeTestId(this.testId(), 'show-more'));
+  protected readonly showLessTestId = computed(() => scopeTestId(this.testId(), 'show-less'));
 
   ngOnInit(): void {
     this.dataProvider().setPagination({

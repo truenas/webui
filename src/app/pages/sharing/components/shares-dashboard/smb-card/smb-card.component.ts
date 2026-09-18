@@ -46,7 +46,7 @@ import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provi
 import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
-import { convertStringToId, mapTnSortToTableSort, memoizedRowTag } from 'app/modules/tn-table/utils';
+import { mapTnSortToTableSort, rowTagPair } from 'app/modules/tn-table/utils';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -193,18 +193,11 @@ export class SmbCardComponent implements OnInit {
 
   protected readonly trackBySmbId = (_index: number, row: SmbShare): number => row.id;
 
-  /** The raw row tag, normalized two different ways below. */
-  private readonly rawRowTag = (row: SmbShare): string => 'card-smb-share-' + row.name;
+  private readonly rowTags = rowTagPair<SmbShare>((row) => `card-smb-share-${row.name}`);
 
-  protected readonly uniqueRowTag = (row: SmbShare): string => convertStringToId(this.rawRowTag(row));
+  protected readonly uniqueRowTag = this.rowTags.uniqueRowTag;
 
-  /**
-   * `uniqueRowTag` for the cells whose ids were minted with lodash kebab-casing — exactly what
-   * {@link memoizedRowTag} produces, cached per row.
-   * `uniqueRowTag` itself stays un-normalized: `[rowTestId]` and the shared cell components emit
-   * it as it is, and re-normalizing would rename the row and action ids.
-   */
-  protected readonly cellRowTag = memoizedRowTag<SmbShare>((row) => this.rawRowTag(row));
+  protected readonly cellRowTag = this.rowTags.cellRowTag;
 
   protected ariaLabel(row: SmbShare): string {
     return [row.name, this.translate.instant('SMB Share')].join(' ');

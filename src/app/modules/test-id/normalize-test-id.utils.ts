@@ -5,9 +5,9 @@ export type SupportedTestId = number | string | null | undefined | (string | num
 /**
  * Normalizes one already-joined test id with lodash `kebabCase`.
  *
- * This is the repo's *second* test-id normalizer and it exists for one reason:
- * `@truenas/ui-components` kebab-cases `testId` values too, but it does not split a
- * letter→digit boundary, so `eth0` stays `eth0` where lodash gives `eth-0`. Thousands
+ * `@truenas/ui-components` kebab-cases `testId` values too, but not the same way: it
+ * does not split a letter→digit boundary, so `eth0` stays `eth0` where lodash gives
+ * `eth-0`. This exists to bridge that one difference, and nothing else. Thousands
  * of `data-test` values that Release Engineering and the e2e suite select on were
  * minted through lodash and cannot move, so a *dynamic* value destined for a tn-*
  * `testId` input is pre-normalized here and passes through the library unchanged.
@@ -20,8 +20,8 @@ export type SupportedTestId = number | string | null | undefined | (string | num
  * kebab-cased with lodash, and the library's directive replaced it (NAS-141021,
  * NAS-143893). Nothing is left to migrate — what remains is the id values themselves,
  * which are a Release Engineering contract. Every call site that says "normalized the
- * old way" means this helper; there is no second implementation.
- * `e2e/locators/test-id.ts` carries the mirror of it for the suite side.
+ * old way" means this helper; there is no second lodash copy in `src/`.
+ * `e2e/locators/test-id.ts` carries the suite's mirror of it.
  */
 export function normalizeTestIdString(id: string | number): string {
   return kebabCase(String(id));

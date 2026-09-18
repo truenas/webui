@@ -2,7 +2,7 @@
   <tn-button
     variant="outline"
     [label]="'View All' | translate"
-    [testId]="dataTest('show-more')"
+    [testId]="showMoreTestId()"
     (onClick)="showMore()"
   ></tn-button>
 }
@@ -10,7 +10,7 @@
   <tn-button
     variant="outline"
     [label]="'Collapse' | translate"
-    [testId]="dataTest('show-less')"
+    [testId]="showLessTestId()"
     (onClick)="showLess()"
   ></tn-button>
 }

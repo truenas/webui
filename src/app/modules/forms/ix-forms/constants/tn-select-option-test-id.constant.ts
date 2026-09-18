@@ -5,8 +5,8 @@ import { kebabCase } from 'lodash-es';
  * Ready-made `optionTestIdKey` callbacks for `tn-select` / `tn-autocomplete`.
  *
  * With no key, the library's `optionTestId()` derives an option's id from its **value** when that
- * value is a `string` or a `number`, and falls back to the **label** for anything else. The legacy
- * existing ids always derive it from the label, so a select whose label and value differ
+ * value is a `string` or a `number`, and falls back to the **label** for anything else. The ids
+ * these replaced always came from the label, so a select whose label and value differ
  * *and* whose value is a primitive — `<name> | <guid>` vs the bare guid, an enclosure name vs its
  * id — silently renames every option id on migration unless the key is pinned back to the label.
  * Object- or array-valued options (`{ size, type }`) already land on the label unaided and need no

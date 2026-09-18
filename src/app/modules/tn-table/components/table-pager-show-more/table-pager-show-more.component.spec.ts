@@ -37,6 +37,19 @@ describe('TablePagerShowMoreComponent', () => {
     spectator.fixture.detectChanges();
   });
 
+  // The one place in NAS-143893 where id composition moved from repo code into a library helper
+  // (`[...base, key]` → `scopeTestId`), so the emitted value is pinned rather than assumed: this is
+  // what would catch a library-side change to that contract across the 19 cards that bind it.
+  it('scopes both button ids off the testId base', async () => {
+    // Located by component selector, asserted on the attribute — only one of the two renders at a
+    // time, and `tn-button` writes the id on the inner <button> rather than its host.
+    expect(spectator.query('tn-button button')).toHaveAttribute('data-test', 'button-test-show-more');
+
+    await (await loader.getHarness(TnButtonHarness.with({ text: 'View All' }))).click();
+
+    expect(spectator.query('tn-button button')).toHaveAttribute('data-test', 'button-test-show-less');
+  });
+
   it('checks "View All" and "Collapse" buttons is present', async () => {
     const showMoreButton = await loader.getHarness(TnButtonHarness.with({ text: 'View All' }));
     expect(showMoreButton).toExist();

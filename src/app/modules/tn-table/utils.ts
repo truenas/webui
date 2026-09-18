@@ -85,6 +85,30 @@ export function memoizedRowTag<T extends object>(build: (row: T) => string): (ro
 }
 
 /**
+ * One raw row tag resolved the two ways a shares-dashboard card needs it.
+ *
+ * `uniqueRowTag` is the un-normalized form, and it is the contract: `[rowTestId]` and every shared
+ * cell component (`ix-table-actions-cell`, `ix-table-toggle-cell`, `ix-tier-status`) emit it as it
+ * is, so re-normalizing it would rename the row and action ids. `cellRowTag` is the lodash-kebabed
+ * form, for the value cells whose ids were minted that way and cannot move — see
+ * {@link normalizeTestIdString} for why the two kebabs disagree. It memoizes per row.
+ *
+ * Stated here rather than in each card so the pair cannot drift apart, and so a card declares the
+ * raw tag once: four of them had the same three members and the same docblock copied verbatim.
+ *
+ * @param build the raw, un-kebab-ed tag for a row, e.g. ``(row) => `card-smb-share-${row.name}` ``.
+ */
+export function rowTagPair<T extends object>(build: (row: T) => string): {
+  uniqueRowTag: (row: T) => string;
+  cellRowTag: (row: T) => string;
+} {
+  return {
+    uniqueRowTag: (row: T) => convertStringToId(build(row)),
+    cellRowTag: memoizedRowTag(build),
+  };
+}
+
+/**
  * Dev-mode guard for a migrated tn-table's column model. The model no longer renders the visible
  * cells, so a missing `getValue` only shows up in the detail row and in sorting — both easy to
  * miss. Reports rather than throws: this catches a mis-declared column model, not a broken

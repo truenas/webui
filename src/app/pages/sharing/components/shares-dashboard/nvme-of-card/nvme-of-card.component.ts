@@ -38,7 +38,7 @@ import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provi
 import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
-import { convertStringToId, mapTnSortToTableSort, memoizedRowTag } from 'app/modules/tn-table/utils';
+import { mapTnSortToTableSort, rowTagPair } from 'app/modules/tn-table/utils';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -171,18 +171,11 @@ export class NvmeOfCardComponent implements OnInit {
 
   protected readonly trackBySubsystemId = (_index: number, row: NvmeOfSubsystemDetails): number => row.id;
 
-  /** The raw row tag, normalized two different ways below. */
-  private readonly rawRowTag = (row: NvmeOfSubsystemDetails): string => 'nvmeof-subsys-' + row.name;
+  private readonly rowTags = rowTagPair<NvmeOfSubsystemDetails>((row) => `nvmeof-subsys-${row.name}`);
 
-  protected readonly uniqueRowTag = (row: NvmeOfSubsystemDetails): string => convertStringToId(this.rawRowTag(row));
+  protected readonly uniqueRowTag = this.rowTags.uniqueRowTag;
 
-  /**
-   * `uniqueRowTag` for the cells whose ids were minted with lodash kebab-casing — exactly what
-   * {@link memoizedRowTag} produces, cached per row.
-   * `uniqueRowTag` itself stays un-normalized: `[rowTestId]` and the shared cell components emit
-   * it as it is, and re-normalizing would rename the row and action ids.
-   */
-  protected readonly cellRowTag = memoizedRowTag<NvmeOfSubsystemDetails>((row) => this.rawRowTag(row));
+  protected readonly cellRowTag = this.rowTags.cellRowTag;
 
   protected ariaLabel(row: NvmeOfSubsystemDetails): string {
     return [row.name, this.translate.instant('Subsystem')].join(' ');

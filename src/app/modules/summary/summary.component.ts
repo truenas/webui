@@ -31,10 +31,12 @@ export class SummaryComponent {
   readonly summary = input.required<SummarySection[]>();
 
   /**
-   * `?? []` despite the input being typed non-nullable: both wizards that render this declare
-   * `summary: SummarySection[]` with no initializer and only assign it when their Confirm step
-   * runs, so the first render binds `undefined`. `@for` normalizes a nullish collection to empty
-   * and absorbed that silently; mapping here does not.
+   * `?? []` despite the input being typed non-nullable. Both wizards that render this used to
+   * declare `summary: SummarySection[]` with no initializer and assign it only when their Confirm
+   * step ran, so the first render bound `undefined` — which `@for` absorbs by normalizing a
+   * nullish collection to empty, and mapping here does not. NAS-143893 initialized both fields, so
+   * nothing binds `undefined` today; this stays as a guard for the next caller that forgets, and
+   * the "renders nothing when the summary has not been built yet" spec pins it.
    */
   protected readonly sections = computed<SummaryRow[][]>(() => (this.summary() ?? []).map(
     (section) => section.map((item) => ({ item, testId: normalizeTestIdParts(['summary', item.label]) })),
