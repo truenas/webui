@@ -23,7 +23,9 @@ import { connectAndLogin } from './api/client';
 import { buildTokenLoginUrl, generateAuthToken } from './auth/token';
 import { keepTestData } from './cleanup';
 import { loadTargetConfig, type TargetConfig } from './config';
-import { adminLayout } from './constants';
+import {
+  adminLayout, concurrentCallsDialogTitle, errorDialogClose, errorDialogRole,
+} from './constants';
 import { type EntitlementDecisions, readEntitlements } from '../fixtures/entitlements';
 import { poolLifecycle } from '../fixtures/pool';
 
@@ -54,6 +56,51 @@ function remainingOf(deadline: number): number {
     throw new Error('the login budget ran out before the admin shell could be awaited');
   }
   return Math.min(tokenLoginAttemptTimeoutMs, remainingMs);
+}
+
+/**
+ * Dismisses the development build's concurrency diagnostic wherever it appears.
+ *
+ * `websocket-handler.service.ts` raises a modal when the app saturates its own
+ * 20-call concurrency window. It is gated on `!environment.production`, so it
+ * exists only under the `branch` profile — and the dashboard's own startup is
+ * enough to trigger it. Being modal, it then blocks every interaction that
+ * follows.
+ *
+ * This lives on the page rather than in a sign-in helper, and that distinction
+ * is the whole point. A first attempt handled it in `awaitAdminShell`, which
+ * covers the *form* sign-in — and the entire `authenticated` project does not
+ * use the form. It enters through the token URL, which lands on `/dashboard`,
+ * raises the dialog on top of an admin shell that is genuinely there, and so
+ * satisfies the wait for the shell and returns happily. Every action after that
+ * hit the modal instead of the page, and twelve S3 tests timed out one after
+ * another with nothing naming the cause. The dialog can appear during any
+ * chatty page, not only at login, so anything narrower than page scope is a
+ * workaround waiting to be found insufficient again.
+ *
+ * `addLocatorHandler` is Playwright's mechanism for exactly this: it runs
+ * before actionability checks, so the modal is cleared as part of whatever the
+ * test was already trying to do rather than by a polling loop racing it.
+ *
+ * Matched on the dialog's own words, because it is raised through the generic
+ * `DialogService.error` and carries the same test ID as a real middleware
+ * failure — the two are not otherwise distinguishable. That is the fragile part
+ * and it is deliberate: iXsystems/truenas-ui-components#319 asks for a test ID
+ * on a dialog's title so this can stop matching prose. Scoped to this one
+ * message so a real error dialog is left alone and still fails the test.
+ *
+ * It only dismisses. Capturing it as a signal — which page, which calls were in
+ * flight — is a real and separate piece of work, deliberately not smuggled in
+ * here.
+ */
+async function dismissConcurrencyDialogs(page: Page): Promise<void> {
+  const concurrencyDialog = page
+    .getByRole(errorDialogRole)
+    .filter({ hasText: concurrentCallsDialogTitle });
+
+  await page.addLocatorHandler(concurrencyDialog, async () => {
+    await page.locator(errorDialogClose).click();
+  });
 }
 
 /**
@@ -245,6 +292,9 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
   page: async ({
     page, authenticate, api, config,
   }, use) => {
+    // Registered before the sign-in, because the sign-in is where it first bites.
+    await dismissConcurrencyDialogs(page);
+
     if (authenticate) {
       await signInWithToken(page, api, config);
     }
