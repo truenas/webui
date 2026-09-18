@@ -156,27 +156,13 @@ export async function ensureGroupAbsent(client: E2eApiClient, name: string): Pro
 }
 
 /**
- * Two accounts the sign-in page must turn away, and the difference between them.
+ * Two accounts the sign-in page must turn away. Both have working passwords —
+ * these are the *authorization* refusals, not wrong credentials.
  *
- * Both have a working password. Neither is a wrong-credentials case — that is
- * authentication, and it is covered elsewhere. These are the *authorization*
- * refusals, and middleware answers them at two different points:
- *
- * | Account | `auth.login_ex` answers | The app maps it to |
- * |---|---|---|
- * | {@link refusedAccounts.noPrivilege} | `DENIED` | `LoginResult.Denied` |
- * | {@link refusedAccounts.noWebUiAccess} | `SUCCESS`, `webui_access: false` | `LoginResult.NoAccess` |
- *
- * The second row is the one worth the fixture. Middleware *authenticated* that
- * account — it returned SUCCESS and a usable session — and the only thing
- * between it and the admin shell is `auth.service.ts` reading
- * `user_info.privilege.webui_access` and refusing. Nothing on the middleware
- * side would notice that check going missing.
- *
- * Both shapes were confirmed against a v27 appliance rather than reasoned about:
- * `webui_access` is not an input on `privilege.create` and does not appear in
- * the API types at all, so whether any configuration produces it was a question
- * only the appliance could answer.
+ * `noPrivilege` gets `DENIED` from `auth.login_ex`; `noWebUiAccess` gets
+ * `SUCCESS` with `webui_access: false`, so only the app refuses it. Confirmed
+ * against a v27 appliance: `webui_access` is no input on `privilege.create`
+ * and appears nowhere in the API types.
  */
 export const refusedAccounts = {
   /** Can sign in; holds no privilege at all, so middleware refuses outright. */

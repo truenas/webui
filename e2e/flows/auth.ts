@@ -46,16 +46,10 @@ export async function signIn(page: Page, username: string, password: string): Pr
 /**
  * Fills the sign-in form already on screen, and submits it.
  *
- * Split out from {@link signIn} because one journey must not navigate: a
- * visitor the auth guard bounced to sign-in is already on the page, and the
- * deep link it stored on the way is the thing under test. A `page.goto` in the
- * middle of that would be a step no user takes, in a test about what happens
- * when they do not take it.
- *
- * Waits for the username field to be *enabled* rather than merely present. The
- * page renders before the websocket connects and the whole form is disabled
- * until it does (`canLogin$` in `signin.store.ts`), so filling too early lands
- * in a disabled control and the click that follows does nothing.
+ * Split from {@link signIn} for the one journey that must not navigate: a
+ * visitor the auth guard bounced here is already on the page, and the deep link
+ * it stored is the thing under test. Waits for the field to be *enabled* — the
+ * form is disabled until the websocket connects (`canLogin$` in signin.store).
  */
 export async function submitSignIn(page: Page, username: string, password: string): Promise<void> {
   const usernameField = page.locator(signinLocators.username);
@@ -69,13 +63,9 @@ export async function submitSignIn(page: Page, username: string, password: strin
 /**
  * Waits for the admin shell, failing usefully when middleware objects instead.
  *
- * Waits on the shell rather than a URL change: the redirect happens before the
- * app is usable, so asserting on it would let the next action race the render.
- *
- * Races the shell against the middleware error dialog. Without that, a failed
- * login spends the full timeout and then reports `ix-admin-layout` missing —
- * true, but useless, while a dialog naming the real cause sits on screen. The
- * rate limit is the common case and reads as a total non-sequitur.
+ * The shell rather than a URL change: the redirect lands before the app is
+ * usable. Raced against the error dialog, so a failed login reports the real
+ * cause instead of spending the timeout and blaming a missing layout.
  */
 export async function awaitAdminShell(page: Page, username: string): Promise<void> {
   const shell = page.locator(adminLayout);
@@ -124,14 +114,10 @@ export async function awaitAdminShell(page: Page, username: string): Promise<voi
 /**
  * The same sign-in page, over plain HTTP.
  *
- * The insecure-connection warning is decided once, at construction, by
- * `window.location.protocol !== 'https:'` — so the only honest way to see it is
- * to load the page over HTTP, which the appliance serves on port 80 without
- * redirecting.
- *
- * Derived from the run's own base URL rather than built from `TN_HOST`, so this
- * follows the target the rest of the suite was pointed at, including a
- * `TN_UI_BASE_URL` override.
+ * The warning is decided at construction from `window.location.protocol`, so
+ * the only honest way to see it is to load over HTTP — which the appliance
+ * serves on port 80 without redirecting. Derived from the run's own base URL so
+ * it follows the configured target, including a `TN_UI_BASE_URL` override.
  */
 export function insecureSigninUrl(uiBaseUrl: string): string {
   const url = new URL('signin', uiBaseUrl);
@@ -158,14 +144,11 @@ export function insecureSigninUrl(uiBaseUrl: string): string {
 /**
  * Submits the sign-in form and returns, whatever happens next.
  *
- * The counterpart to {@link signIn} for tests *about* rejection. `signIn` waits
- * for the admin shell and throws on the middleware error dialog, so a test
- * asserting a refusal cannot use it: the outcome it is looking for is the one
- * that helper treats as a failure.
+ * The counterpart to {@link signIn} for tests *about* rejection, which cannot
+ * use it: the outcome they look for is the one it treats as a failure.
  *
- * Deliberately asserts nothing itself. What a rejected attempt should show —
- * the inline message, the form still standing, no session — belongs in the test
- * that is making the claim, not hidden in a flow.
+ * Asserts nothing itself — what a refusal should show belongs in the test
+ * making the claim, not hidden in a flow.
  */
 export async function attemptSignIn(page: Page, username: string, password: string): Promise<void> {
   await page.goto('./signin');
@@ -175,13 +158,10 @@ export async function attemptSignIn(page: Page, username: string, password: stri
 /**
  * Asserts an attempt was refused: the message says so, and no session exists.
  *
- * Both halves matter. The message alone would pass if the app displayed an
- * error and signed the user in anyway, and the absence of a shell alone would
- * pass if the form silently did nothing.
- *
- * Reads the inline error rather than the toast. Both carry the same words, but
- * the toast dismisses itself after four seconds, so an assertion on it races a
- * timer for no benefit.
+ * Both halves matter — the message alone would pass if the app errored and
+ * signed the user in anyway; a missing shell alone would pass if the form did
+ * nothing. Reads the inline error, not the toast, which self-dismisses after
+ * four seconds and would race a timer for no benefit.
  */
 export async function expectSignInRefused(page: Page, message: string | RegExp): Promise<void> {
   await expect(page.locator(signinLocators.error)).toContainText(message, { timeout: signInTimeoutMs });

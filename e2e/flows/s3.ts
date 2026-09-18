@@ -535,23 +535,11 @@ export async function configureS3Service(page: Page, serviceId: number, settings
 /**
  * Opens the S3 service configuration from the dashboard card's header menu.
  *
- * Waits for the form to be *populated*, not merely present. The form renders
- * empty and patches every control once `s3.config` answers, so a field typed
- * into before that lands is silently overwritten by the stored value — and the
- * save then writes what the config already held rather than what was typed.
- * Visibility is no protection: the inputs are there throughout.
- *
- * Save is the signal, because `canSubmit` is false while the host's config load
- * is in flight (`ix-form.component.ts`), so the button is disabled for exactly
- * as long as the form is unsafe to type into. No *field* can stand in for that:
- * the controls are visible and editable throughout, and their defaults are
- * already non-empty — `servers` opens on 1 — so a populated-looking input says
- * nothing about whether the patch has landed.
- *
- * Cost a full-suite failure to find, on an appliance slow enough to lose the
- * race (the assertion read back `""`), while CI and a hand-driven browser both
- * won it. The trace is what named it: Save was still `disabled` when the click
- * arrived, three retries after the field had been filled.
+ * Waits for the form to be *populated*, not merely present: it renders empty
+ * and patches every control once `s3.config` answers, silently overwriting
+ * anything typed before that. Save is the only honest signal — `canSubmit` is
+ * false for exactly as long as the form is unsafe to type into. No field works:
+ * the controls are editable throughout and `servers` opens non-empty on 1.
  */
 async function openS3ServiceConfig(page: Page, serviceId: number): Promise<void> {
   await goToShares(page);

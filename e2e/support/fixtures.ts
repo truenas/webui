@@ -61,37 +61,11 @@ function remainingOf(deadline: number): number {
 /**
  * Dismisses the development build's concurrency diagnostic wherever it appears.
  *
- * `websocket-handler.service.ts` raises a modal when the app saturates its own
- * 20-call concurrency window. It is gated on `!environment.production`, so it
- * exists only under the `branch` profile — and the dashboard's own startup is
- * enough to trigger it. Being modal, it then blocks every interaction that
- * follows.
- *
- * This lives on the page rather than in a sign-in helper, and that distinction
- * is the whole point. A first attempt handled it in `awaitAdminShell`, which
- * covers the *form* sign-in — and the entire `authenticated` project does not
- * use the form. It enters through the token URL, which lands on `/dashboard`,
- * raises the dialog on top of an admin shell that is genuinely there, and so
- * satisfies the wait for the shell and returns happily. Every action after that
- * hit the modal instead of the page, and twelve S3 tests timed out one after
- * another with nothing naming the cause. The dialog can appear during any
- * chatty page, not only at login, so anything narrower than page scope is a
- * workaround waiting to be found insufficient again.
- *
- * `addLocatorHandler` is Playwright's mechanism for exactly this: it runs
- * before actionability checks, so the modal is cleared as part of whatever the
- * test was already trying to do rather than by a polling loop racing it.
- *
- * Matched on the dialog's own words, because it is raised through the generic
- * `DialogService.error` and carries the same test ID as a real middleware
- * failure — the two are not otherwise distinguishable. That is the fragile part
- * and it is deliberate: iXsystems/truenas-ui-components#319 asks for a test ID
- * on a dialog's title so this can stop matching prose. Scoped to this one
- * message so a real error dialog is left alone and still fails the test.
- *
- * It only dismisses. Capturing it as a signal — which page, which calls were in
- * flight — is a real and separate piece of work, deliberately not smuggled in
- * here.
+ * Page scope, not sign-in scope: it blocks any chatty page, and the
+ * `authenticated` project enters by token URL onto `/dashboard`, not the form.
+ * `addLocatorHandler` runs before actionability checks. Matched on words —
+ * every error dialog shares one test ID (truenas-ui-components#319) — and
+ * scoped to this one so real errors still fail.
  */
 async function dismissConcurrencyDialogs(page: Page): Promise<void> {
   const concurrencyDialog = page

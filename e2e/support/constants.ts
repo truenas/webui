@@ -40,22 +40,10 @@ export const errorDialogRole = 'alertdialog';
 /**
  * Title of the development build's concurrency diagnostic.
  *
- * `websocket-handler.service.ts` caps itself at 20 concurrent middleware calls
- * and raises this dialog when it saturates that window. The whole block is
- * wrapped in `if (!environment.production)`, so a shipped build cannot produce
- * it — it exists only under the `branch` profile, whose UI is a dev build.
- *
- * It is matched by text rather than by a `data-test` value because it has none
- * of its own: it is raised through the generic `DialogService.error`, so it
- * carries the same id as every other error dialog and only its words tell the
- * two apart. A dedicated id would be better and belongs upstream.
- *
- * Worth being clear about what dismissing it means. The dialog is a real signal
- * — the UI asked for more than the connection could retire, which is felt as
- * slowness on a loaded appliance — but it is a statement about the *page*, not
- * about the journey a test is asserting. Failing a sign-out test because the
- * dashboard is chatty conflates two findings and loses both. So the harness
- * dismisses it and carries on, and capturing it as a reportable signal is
- * deliberately left as its own piece of work rather than smuggled in here.
+ * `websocket-handler.service.ts` raises it when 20 middleware calls are in
+ * flight at once. Gated on `!environment.production`, so only `branch` sees it.
+ * A real signal, but about the *page*, not the journey a test asserts — so the
+ * harness dismisses it rather than failing. Matched by text: it carries the
+ * same test ID as every other error dialog.
  */
 export const concurrentCallsDialogTitle = 'Max Concurrent Calls';
