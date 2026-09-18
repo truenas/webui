@@ -64,7 +64,9 @@ describe('UploadConfigDialogComponent', () => {
     // is pinned on the HOST instead. `TnFileInputHarness.getTestId()` reads the container (null
     // here, which is what keeps exactly one id in the DOM), so the host is asserted directly.
     expect(spectator.query('tn-file-input').getAttribute('data-test')).toBe('input-config');
-    expect(spectator.queryAll('[data-test="input-config"]')).toHaveLength(1);
+    const allTestIds = Array.from(spectator.queryAll('[data-test]'))
+      .map((element) => element.getAttribute('data-test'));
+    expect(allTestIds.filter((id) => id === 'input-config')).toHaveLength(1);
 
     selectFile(file);
 

@@ -2,9 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import {
-  TnButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
-} from '@truenas/ui-components';
+import { TnButtonHarness, TnMenuHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
@@ -13,6 +11,7 @@ import { ConfirmDeleteJobOptions } from 'app/interfaces/dialog.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { TunableCardComponent } from './tunable-card.component';
@@ -67,9 +66,8 @@ describe('TunableCardComponent', () => {
     ],
   });
 
-  async function openFirstRowMenu(): Promise<TnMenuHarness> {
-    spectator.click(spectator.query('[data-test$="more-action"]') as HTMLElement);
-    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  function openFirstRowMenu(): Promise<TnMenuHarness> {
+    return openRowActionsMenu(spectator.fixture);
   }
 
   beforeEach(async () => {

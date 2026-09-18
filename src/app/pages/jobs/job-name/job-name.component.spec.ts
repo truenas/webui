@@ -116,7 +116,9 @@ describe('JobNameComponent', () => {
     it('keeps the abort button test id derived from the job description', () => {
       spectator.setInput('job', { ...runningJob, description: 'Scrub Pool 1' });
 
-      expect(spectator.query('[data-test="button-abort-job-scrub-pool-1"]')).toBeTruthy();
+      // tn-icon-button puts `[testId]` on the inner <button>, which is where e2e locates it.
+      expect(spectator.query('tn-icon-button button'))
+        .toHaveAttribute('data-test', 'button-abort-job-scrub-pool-1');
     });
 
     it('allows to abort a job when it is in running state and is abortable', async () => {

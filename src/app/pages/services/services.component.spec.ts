@@ -6,7 +6,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnSlideToggleHarness, TnTableHarness,
+  TnIconButtonHarness, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -115,8 +115,22 @@ describe('ServicesComponent', () => {
     expect(api.call).toHaveBeenCalledWith('service.update', [0, { enable: true }]);
   });
 
-  it('opens the iSCSI global configuration form in a side panel', () => {
-    spectator.click('[data-test="button-service-iscsitarget-edit-service"]');
+  /**
+   * Presses the edit action of the row for `serviceName`. Every row renders exactly one
+   * `pencil` icon button, so the Nth trigger belongs to the Nth row.
+   */
+  async function editService(serviceName: string): Promise<void> {
+    const rowIndex = (await table.getAllRowTexts()).findIndex(([name]) => name === serviceName);
+    expect(rowIndex).toBeGreaterThanOrEqual(0);
+
+    const editButtons = await loader.getAllHarnesses(
+      TnIconButtonHarness.with({ name: 'pencil', library: 'mdi', ancestor: 'tn-table' }),
+    );
+    await editButtons[rowIndex].click();
+  }
+
+  it('opens the iSCSI global configuration form in a side panel', async () => {
+    await editService('iSCSI');
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       GlobalTargetConfigurationComponent,
@@ -124,8 +138,8 @@ describe('ServicesComponent', () => {
     );
   });
 
-  it('opens the matching config form in a side panel when a service is edited', () => {
-    spectator.click('[data-test="button-service-ftp-edit-service"]');
+  it('opens the matching config form in a side panel when a service is edited', async () => {
+    await editService('FTP');
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       ServiceFtpComponent,

@@ -306,9 +306,15 @@ describe('SourceSectionComponent', () => {
     });
 
     it('keeps the legacy radio-group test ids', () => {
-      expect(spectator.query('[data-test="radio-group-schema-or-regex"]')).toExist();
-      expect(spectator.query('[data-test="radio-button-schema-or-regex-matching-naming-schema"]')).toExist();
-      expect(spectator.query('[data-test="radio-button-schema-or-regex-matching-regular-expression"]')).toExist();
+      const group = spectator.query('tn-radio-group[formControlName="schema_or_regex"]')!;
+      const testIds = Array.from(group.querySelectorAll('[data-test]'))
+        .map((element) => element.getAttribute('data-test'));
+
+      expect(testIds).toEqual([
+        'radio-group-schema-or-regex',
+        'radio-button-schema-or-regex-matching-naming-schema',
+        'radio-button-schema-or-regex-matching-regular-expression',
+      ]);
     });
   });
 

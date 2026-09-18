@@ -3,9 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import {
-  TnButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
-} from '@truenas/ui-components';
+import { TnButtonHarness, TnMenuHarness, TnSlideToggleHarness, TnTableHarness } from '@truenas/ui-components';
 import { delay, of, throwError } from 'rxjs';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -21,6 +19,7 @@ import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CloudBackupCardComponent,
@@ -37,8 +36,6 @@ describe('CloudBackupCardComponent', () => {
   let spectator: Spectator<CloudBackupCardComponent>;
   let loader: HarnessLoader;
   let table: TnTableHarness;
-
-  const rowMenuTrigger = '[data-test="button-cloud-backup-test-one-more-action"]';
 
   beforeEach(() => fakeDate(new Date('2026-01-20T00:00:00Z')));
   afterEach(() => restoreDate());
@@ -122,9 +119,8 @@ describe('CloudBackupCardComponent', () => {
     ],
   });
 
-  async function openRowMenu(): Promise<TnMenuHarness> {
-    spectator.click(rowMenuTrigger);
-    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  function openRowMenu(): Promise<TnMenuHarness> {
+    return openRowActionsMenu(spectator.fixture);
   }
 
   beforeEach(async () => {

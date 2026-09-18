@@ -1,9 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import {
-  TnButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
-} from '@truenas/ui-components';
+import { TnButtonHarness, TnMenuHarness, TnTableHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
@@ -13,6 +11,7 @@ import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interfac
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InitShutdownFormComponent,
@@ -62,9 +61,8 @@ describe('InitShutdownListComponent', () => {
     ],
   });
 
-  async function openFirstRowMenu(): Promise<TnMenuHarness> {
-    spectator.click(spectator.query('[data-test$="more-action"]') as HTMLElement);
-    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  function openFirstRowMenu(): Promise<TnMenuHarness> {
+    return openRowActionsMenu(spectator.fixture);
   }
 
   beforeEach(async () => {

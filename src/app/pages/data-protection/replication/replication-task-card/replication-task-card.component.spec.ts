@@ -3,9 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import {
-  TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
-} from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnMenuHarness, TnSlideToggleHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
@@ -19,6 +17,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationRestoreDialog } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
@@ -32,8 +31,6 @@ describe('ReplicationTaskCardComponent', () => {
   let spectator: Spectator<ReplicationTaskCardComponent>;
   let loader: HarnessLoader;
   let table: TnTableHarness;
-
-  const rowMenuTrigger = '[data-test="button-replication-task-apps-test2-apps-test3-more-action"]';
 
   beforeEach(() => fakeDate(new Date('2026-01-20T00:00:00Z')));
   afterEach(() => restoreDate());
@@ -121,9 +118,8 @@ describe('ReplicationTaskCardComponent', () => {
     ],
   });
 
-  async function openRowMenu(): Promise<TnMenuHarness> {
-    spectator.click(rowMenuTrigger);
-    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  function openRowMenu(): Promise<TnMenuHarness> {
+    return openRowActionsMenu(spectator.fixture);
   }
 
   beforeEach(async () => {

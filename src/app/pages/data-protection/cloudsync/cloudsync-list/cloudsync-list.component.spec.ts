@@ -202,9 +202,14 @@ describe('CloudSyncListComponent', () => {
 
     // Each printed value keeps the suffix its own cell resolves, so a selector aimed at a value
     // survives the user hiding the column.
-    expect(spectator.query('[data-test="text-frequency-cloudsync-task-custom-cloudlist-row-schedule"]')).toExist();
-    expect(spectator.query('[data-test="text-enabled-cloudsync-task-custom-cloudlist-row-yesno"]')).toExist();
-    expect(spectator.query('[data-test="text-state-cloudsync-task-custom-cloudlist-row-state"]')).toExist();
+    const testIds = Array.from(detailsRow!.querySelectorAll('[data-test]'))
+      .map((element) => element.getAttribute('data-test'));
+
+    expect(testIds).toEqual(expect.arrayContaining([
+      'text-frequency-cloudsync-task-custom-cloudlist-row-schedule',
+      'text-enabled-cloudsync-task-custom-cloudlist-row-yesno',
+      'text-state-cloudsync-task-custom-cloudlist-row-state',
+    ]));
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {

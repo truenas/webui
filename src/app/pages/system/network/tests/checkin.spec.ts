@@ -6,8 +6,14 @@ import {
   mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import {
-  TnButtonComponent, TnButtonHarness, TnCardComponent, TnCellDefDirective, TnHeaderCellDefDirective,
-  TnInputComponent, TnMenuHarness, TnMenuTesting, TnTableColumnDirective, TnTableComponent,
+  TnButtonComponent,
+  TnButtonHarness,
+  TnCardComponent,
+  TnCellDefDirective,
+  TnHeaderCellDefDirective,
+  TnInputComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
 } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
@@ -25,6 +31,7 @@ import {
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -145,11 +152,20 @@ describe('NetworkComponent', () => {
     wasEditMade = false;
   });
 
+  /**
+   * The pending-changes buttons, by the label a user reads. `TnButtonHarness` cannot be used
+   * for these: pressing Test Changes starts a 1s checkin countdown interval, and a harness
+   * never stabilizes against a running timer (see NAS-141040) — so they are clicked natively.
+   */
+  function getPendingChangesButton(label: string): HTMLButtonElement | null {
+    return Array.from(spectator.queryAll<HTMLButtonElement>('tn-button button'))
+      .find((element) => element.textContent?.trim() === label) ?? null;
+  }
+
   async function makeEdit(): Promise<void> {
     wasEditMade = true;
 
-    spectator.click('[data-test="button-interface-eno1-more-action"]');
-    const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+    const menu = await openRowActionsMenu(spectator.fixture);
     await menu.clickItem({ label: 'Edit' });
     await spectator.fixture.whenStable();
     await new Promise<void>((resolve) => {
@@ -181,10 +197,7 @@ describe('NetworkComponent', () => {
   it('shows testing prompt with a countdown when Test Changes is pressed', async () => {
     await makeEdit();
 
-    // Native click: pressing Test Changes starts a 1s checkin countdown interval, and
-    // TnButtonHarness cannot stabilize against the running timer. data-test is the preserved
-    // test contract (tn-button [testId]). Do not switch this back to the harness. See NAS-141040.
-    const testChangesButton = spectator.query<HTMLButtonElement>('[data-test="button-test-changes"]');
+    const testChangesButton = getPendingChangesButton('Test Changes');
     testChangesButton!.click();
     spectator.detectChanges();
     // Small delay to allow async operations to complete without waiting for zone stability
@@ -210,9 +223,7 @@ describe('NetworkComponent', () => {
   it('saves network interface changes when user presses Save Changes in second prompt', async () => {
     await makeEdit();
 
-    // Native click: Test Changes starts a 1s checkin countdown interval that prevents
-    // TnButtonHarness from stabilizing. data-test is the preserved test contract. See NAS-141040.
-    const testChangesButton = spectator.query<HTMLButtonElement>('[data-test="button-test-changes"]');
+    const testChangesButton = getPendingChangesButton('Test Changes');
     testChangesButton!.click();
     spectator.detectChanges();
     await new Promise<void>((resolve) => {
@@ -220,9 +231,7 @@ describe('NetworkComponent', () => {
     });
     spectator.detectChanges();
 
-    // Native click: Save Changes is rendered during the running countdown, so the harness
-    // cannot stabilize. data-test is the preserved test contract. See NAS-141040.
-    const saveChangesButton = spectator.query<HTMLButtonElement>('[data-test="button-save-changes"]');
+    const saveChangesButton = getPendingChangesButton('Save Changes');
     saveChangesButton!.click();
     spectator.detectChanges();
     await new Promise<void>((resolve) => {
@@ -236,9 +245,7 @@ describe('NetworkComponent', () => {
   it('stops testing changes and goes back to first prompt when another edit is made while the first one is being tested', async () => {
     await makeEdit();
 
-    // Native click: Test Changes starts a 1s checkin countdown interval that prevents
-    // TnButtonHarness from stabilizing. data-test is the preserved test contract. See NAS-141040.
-    const testChangesButton = spectator.query<HTMLButtonElement>('[data-test="button-test-changes"]');
+    const testChangesButton = getPendingChangesButton('Test Changes');
     testChangesButton!.click();
     spectator.detectChanges();
     await new Promise<void>((resolve) => {

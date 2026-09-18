@@ -113,10 +113,15 @@ describe('PoolsDashboardComponent', () => {
     expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Disks' }))).not.toBeNull();
   });
 
-  it('renders the header navigations as links under their legacy link-* test ids', () => {
+  it('renders the header navigations as links under their legacy link-* test ids', async () => {
+    const disks = await loader.getHarness(TnButtonHarness.with({ label: 'Disks' }));
+    const createPool = await loader.getHarness(TnButtonHarness.with({ label: 'Create Pool' }));
+
+    expect(await disks.getHref()).toBe('/storage/disks');
+    expect(await createPool.getHref()).toBe('/storage/create');
     // Ids are host-pinned, not passed through `[testId]` — see the note in the template.
-    expect(spectator.query('[data-test="link-disks"] a')).toHaveAttribute('href', '/storage/disks');
-    expect(spectator.query('[data-test="link-create-pool"] a')).toHaveAttribute('href', '/storage/create');
+    expect(await (await disks.host()).getAttribute('data-test')).toBe('link-disks');
+    expect(await (await createPool.host()).getAttribute('data-test')).toBe('link-create-pool');
   });
 
   it('shows the pool list and hides the empty state when pools exist', async () => {
