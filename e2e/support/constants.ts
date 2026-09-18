@@ -40,6 +40,17 @@ export const errorDialogClose = '[data-test="button-close-error-dialog"]';
 export const errorDialog = 'ix-error-dialog';
 
 /**
+ * The two parts of an error dialog worth quoting in a failure.
+ *
+ * Together they are the title and the message and nothing else. Reading the
+ * whole dialog instead drags in its chrome — the close glyph renders as literal
+ * text, and the footer adds Close, Download Logs and any action labels — which
+ * is noise in the one place a failure has to be legible (R6.2).
+ */
+export const errorDialogHeading = 'ix-error-dialog h2';
+export const errorDialogBody = 'ix-error-dialog [role="alertdialog"]';
+
+/**
  * The development build's concurrency diagnostic, by its own test ID.
  *
  * `websocket-handler.service.ts` raises it when 20 middleware calls are in
