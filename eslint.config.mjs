@@ -16,6 +16,16 @@ const projectOverrides = {
       'error',
       ...baseRestrictedSyntax,
       {
+        // `[ixTest]` and its `TestDirective` were deleted in NAS-143893; the library's
+        // `[tnTestId]` is the one directive that writes a `data-test`. The pattern only rejects
+        // the attribute/selector spellings (`[ixTest]`, `ixTest=`, a bare `'ixTest'`) so the
+        // comments that explain what the legacy directive used to resolve to still read fine,
+        // and `\b` stops before `ixTestOverride`, an unrelated `<ix-table-pager-show-more>`
+        // input. Templates are covered by `scripts/check-test-ids.ts`.
+        selector: "Literal[value=/\\[ixTest[\\]=]|\\bixTest=|^ixTest$/], TemplateElement[value.raw=/\\[ixTest[\\]=]|\\bixTest=/], Identifier[name='ixTest']",
+        message: '`ixTest` is retired (NAS-143893). Tag elements with the library\'s `[tnTestId]` + `tnTestIdType`, and pre-normalize dynamic values with `normalizeTestIdString` / `normalizeTestIdParts` from app/modules/test-id/normalize-test-id.utils.ts.',
+      },
+      {
         // The .scss half of this is enforced by `selector-disallowed-list` in
         // .stylelintrc.json; this keeps the invariant from leaking through TypeScript
         // (spec queries, host bindings, class-name strings).
@@ -54,6 +64,22 @@ const projectOverrides = {
 };
 
 /**
+ * `angular-test-ids/require-test-id` comes from the shared base config, where it is still keyed to
+ * the `ixTest` attribute NAS-143893 retired. It enforces nothing either way — the plugin's selector
+ * (`Element$1[name=…]`) no longer matches the node type angular-eslint 20's template parser emits,
+ * so the rule matches no element at all — but leaving it pointed at a deleted directive would make
+ * it demand `ixTest` back the day the plugin is fixed. It is also the wrong shape for tn-*: those
+ * carry their id on a component `testId` input the plugin cannot see. `scripts/check-test-ids.ts`
+ * is the gate that actually runs, over exactly the elements that need one.
+ */
+const templateOverrides = {
+  files: ['**/*.html'],
+  rules: {
+    'angular-test-ids/require-test-id': ['off'],
+  },
+};
+
+/**
  * The Playwright suite is plain Node TypeScript, not Angular, so the base
  * config's Angular expectations do not apply to it.
  *
@@ -88,5 +114,6 @@ export default [
   },
   ...baseConfig,
   projectOverrides,
+  templateOverrides,
   e2eOverrides,
 ];

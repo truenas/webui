@@ -45,8 +45,6 @@ import {
   WithLoadingStateDirective,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WarningComponent } from 'app/modules/warning/warning.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -129,8 +127,6 @@ defineGlobalsInjections({
     UiSearchDirective,
     RequiresRolesDirective,
     TnTablePagerComponent,
-    TestDirective,
-    TestOverrideDirective,
     WithLoadingStateDirective,
     TranslateModule.forRoot({
       defaultLanguage,

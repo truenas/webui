@@ -2,7 +2,8 @@
   <button
     class="edit-trigger"
     type="button"
-    [ixTest]="[valueAsText(), 'edit']"
+    tnTestIdType="button"
+    [tnTestId]="[normalizedValueText(), 'edit']"
     [attr.aria-label]="ariaLabel()"
     [class.edit-trigger-empty]="isEmpty()"
     [class.readonly]="readonly()"

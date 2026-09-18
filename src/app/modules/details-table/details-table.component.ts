@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TnTestIdDirective } from '@truenas/ui-components';
 
 /**
  * Renders table with key on the left and value on the right.
@@ -22,7 +22,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrl: './details-table.component.scss',
   standalone: true,
   imports: [
-    TestDirective,
+    TnTestIdDirective,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

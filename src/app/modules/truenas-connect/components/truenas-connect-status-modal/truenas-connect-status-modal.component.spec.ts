@@ -16,6 +16,16 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
+/**
+ * The status headline and its explanation are rendered by `ix-truenas-connect-status-display`, one
+ * pair of elements per state. Each pair is named by its own class, so these unions read "whichever
+ * state is on screen" without going through a `data-test` attribute — unit tests do not select on
+ * those. A state with no headline (waiting) matches nothing, which is what the `toBeNull()`
+ * assertions below are checking.
+ */
+const statusHeader = '.active-header, .failed-header, .connecting-header';
+const statusReason = '.active-description, .failed-description, .connecting-description, .waiting-state-text';
+
 describe('TruenasConnectStatusModalComponent', () => {
   let spectator: Spectator<TruenasConnectStatusModalComponent>;
   let loader: HarnessLoader;
@@ -96,18 +106,18 @@ describe('TruenasConnectStatusModalComponent', () => {
   });
 
   it('should display the status as ACTIVE', () => {
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('TrueNAS Connect - Status Healthy');
-    expect(spectator.query('[ixTest="tnc-status-reason"]').textContent).toContain('Your system is linked with TrueNAS Connect');
+    expect(spectator.query(statusHeader).textContent).toContain('TrueNAS Connect - Status Healthy');
+    expect(spectator.query(statusReason).textContent).toContain('Your system is linked with TrueNAS Connect');
   });
 
   it('should display the status as WAITING', () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.ClaimTokenMissing }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]')).toBeNull();
+    expect(spectator.query(statusHeader)).toBeNull();
 
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationWaiting }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]')).toBeNull();
+    expect(spectator.query(statusHeader)).toBeNull();
   });
 
   it('should show "Get Connected" button in waiting state', async () => {
@@ -276,55 +286,55 @@ describe('TruenasConnectStatusModalComponent', () => {
   it('should display the status as CONNECTING with custom text', () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationSuccess }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up TrueNAS Connect');
-    expect(spectator.query('[ixTest="tnc-status-reason"]').textContent).toContain('Your system is setting up with TrueNAS Connect');
+    expect(spectator.query(statusHeader).textContent).toContain('Setting up TrueNAS Connect');
+    expect(spectator.query(statusReason).textContent).toContain('Your system is setting up with TrueNAS Connect');
     expect(spectator.query('ix-truenas-connect-spinner')).toBeTruthy();
 
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertGenerationInProgress }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up TrueNAS Connect');
+    expect(spectator.query(statusHeader).textContent).toContain('Setting up TrueNAS Connect');
 
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertGenerationSuccess }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up TrueNAS Connect');
+    expect(spectator.query(statusHeader).textContent).toContain('Setting up TrueNAS Connect');
 
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertRenewalInProgress }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up TrueNAS Connect');
+    expect(spectator.query(statusHeader).textContent).toContain('Setting up TrueNAS Connect');
 
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertRenewalSuccess }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up TrueNAS Connect');
+    expect(spectator.query(statusHeader).textContent).toContain('Setting up TrueNAS Connect');
   });
 
   it('should display custom error message for FAILED state', () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationFailed }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Connection Failed...');
-    expect(spectator.query('[ixTest="tnc-status-reason"]').textContent).toContain('Something went wrong!');
+    expect(spectator.query(statusHeader).textContent).toContain('Connection Failed...');
+    expect(spectator.query(statusReason).textContent).toContain('Something went wrong!');
 
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationTimeout }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Connection Failed...');
-    expect(spectator.query('[ixTest="tnc-status-reason"]').textContent).toContain("Registration wasn't completed in time");
+    expect(spectator.query(statusHeader).textContent).toContain('Connection Failed...');
+    expect(spectator.query(statusReason).textContent).toContain("Registration wasn't completed in time");
 
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertGenerationFailed }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Connection Failed...');
+    expect(spectator.query(statusHeader).textContent).toContain('Connection Failed...');
 
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertConfigurationFailure }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Connection Failed...');
+    expect(spectator.query(statusHeader).textContent).toContain('Connection Failed...');
 
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertRenewalFailure }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Connection Failed...');
+    expect(spectator.query(statusHeader).textContent).toContain('Connection Failed...');
   });
 
   it('should display disabled status as WAITING (shows Get Connected button)', () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Disabled }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Power Up your TrueNAS Experience! Link your system with TrueNAS Connect now for additional security, alerting, and other features.');
+    expect(spectator.query(statusReason)).toHaveText('Power Up your TrueNAS Experience! Link your system with TrueNAS Connect now for additional security, alerting, and other features.');
   });
 
   it('should not automatically enable service when dialog opens (removed behavior)', () => {
@@ -392,8 +402,8 @@ describe('TruenasConnectStatusModalComponent', () => {
       config.update((conf) => ({ ...conf, status }));
       spectator.detectChanges();
 
-      const statusElement = spectator.query('[ixTest="tnc-status"]');
-      const statusReasonElement = spectator.query('[ixTest="tnc-status-reason"]');
+      const statusElement = spectator.query(statusHeader);
+      const statusReasonElement = spectator.query(statusReason);
 
       expect(statusElement).toBeNull();
       expect(statusReasonElement).toBeTruthy();
@@ -414,7 +424,7 @@ describe('TruenasConnectStatusModalComponent', () => {
       config.update((conf) => ({ ...conf, status }));
       spectator.detectChanges();
 
-      const statusElement = spectator.query('[ixTest="tnc-status"]');
+      const statusElement = spectator.query(statusHeader);
       expect(statusElement).toBeTruthy();
       expect(statusElement?.textContent).toContain('Setting up TrueNAS Connect');
     });
@@ -433,7 +443,7 @@ describe('TruenasConnectStatusModalComponent', () => {
       config.update((conf) => ({ ...conf, status }));
       spectator.detectChanges();
 
-      const statusElement = spectator.query('[ixTest="tnc-status"]');
+      const statusElement = spectator.query(statusHeader);
       expect(statusElement).toBeTruthy();
       expect(statusElement?.textContent).toContain('Connection Failed...');
     });
@@ -443,7 +453,7 @@ describe('TruenasConnectStatusModalComponent', () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
     spectator.detectChanges();
 
-    const statusElement = spectator.query('[ixTest="tnc-status"]');
+    const statusElement = spectator.query(statusHeader);
     expect(statusElement).toBeTruthy();
     expect(statusElement?.textContent).toContain('TrueNAS Connect - Status Healthy');
   });
@@ -453,7 +463,7 @@ describe('TruenasConnectStatusModalComponent', () => {
     spectator.detectChanges();
 
     // Disabled status now maps to waiting which shows different content
-    const statusElement = spectator.query('[ixTest="tnc-status-reason"]');
+    const statusElement = spectator.query(statusReason);
     expect(statusElement).toBeTruthy();
     expect(statusElement?.textContent).toContain('Power Up your TrueNAS Experience!');
   });
@@ -489,7 +499,7 @@ describe('TruenasConnectStatusModalComponent', () => {
     spectator.detectChanges();
 
     // Undefined status maps to waiting (default case)
-    const statusElement = spectator.query('[ixTest="tnc-status-reason"]');
+    const statusElement = spectator.query(statusReason);
     expect(statusElement).toBeTruthy();
     expect(statusElement!.textContent).toContain('Power Up your TrueNAS Experience!');
   });

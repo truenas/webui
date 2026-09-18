@@ -34,9 +34,9 @@ export function normalizeTestIdString(id: string | number): string {
  * optional value itself (`kebabCase(String(maybeUndefined))`) loses its literal
  * `undefined` segment here. See `addPortTestId` in add-port-menu.
  *
- * `[ixTest]` itself filters on plain falsiness, so it also drops a numeric `0`. That
- * legacy quirk stays inside `TestDirective` rather than here, so brand-new tn-* call
- * sites don't inherit it.
+ * `[ixTest]` itself filtered on plain falsiness, so it also dropped a numeric `0`. That quirk
+ * was never copied here, and went with the directive in NAS-143893: no call site that reached
+ * the retirement passed an index segment, so nothing depended on it.
  */
 export function normalizeTestIdParts(segments: SupportedTestId): string[] {
   return (Array.isArray(segments) ? segments : [segments])

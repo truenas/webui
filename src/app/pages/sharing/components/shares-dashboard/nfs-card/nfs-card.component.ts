@@ -21,6 +21,7 @@ import {
   TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
   TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
@@ -36,7 +37,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
@@ -75,7 +76,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TnCardFooterActionsDirective,
     TnSlideToggleComponent,
     RequiresRolesDirective,
-    TestDirective,
+    TnTestIdDirective,
     TnIconComponent,
     TnTooltipDirective,
     TnTableComponent,
@@ -169,6 +170,16 @@ export class NfsCardComponent implements OnInit {
   protected readonly uniqueRowTag = (row: NfsShare): string => (
     convertStringToId('card-nfs-share-' + row.path + '-' + row.comment)
   );
+
+  /**
+   * Row tag for the cell test ids that used to resolve through `[ixTest]`, which kebab-cased with
+   * lodash — splitting a letter→digit boundary (`/mnt/pool/share1`) the library's kebab leaves alone.
+   * Pre-normalized here so those ids stay byte-identical. `uniqueRowTag` itself is deliberately left
+   * un-normalized: `[rowTestId]` and the shared cell components already emit it as it is, and
+   * re-normalizing it would rename the row and action ids Release Engineering selects on.
+   * See {@link normalizeTestIdString}.
+   */
+  protected readonly cellRowTag = (row: NfsShare): string => normalizeTestIdString(this.uniqueRowTag(row));
 
   protected ariaLabel(row: NfsShare): string {
     return [row.path, this.translate.instant('NFS Share')].join(' ');

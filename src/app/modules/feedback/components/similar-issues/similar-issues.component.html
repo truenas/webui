@@ -18,8 +18,9 @@
         <a
           class="similar-issue"
           target="_blank"
+          tnTestIdType="link"
           [href]="issue.url"
-          [ixTest]="['similar-issue', issue.id]"
+          [tnTestId]="issueTestId(issue)"
         >
           <span
             class="issue-type-icon"

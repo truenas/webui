@@ -10,7 +10,8 @@
   <div tnCardHeader class="card-header-title">
     <a
       class="card-title-link"
-      [ixTest]="['webshare', 'open-in-new']"
+      tnTestIdType="link"
+      [tnTestId]="['webshare', 'open-in-new']"
       [routerLink]="['/sharing', 'webshare']"
       [tnTooltip]="'Open WebShare list in full page' | translate"
     >
@@ -102,7 +103,8 @@
           <span class="webshare-name-container">
             <span
               role="text"
-              [ixTest]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+              tnTestIdType="text"
+              [tnTestId]="[('Name' | translate), cellRowTag(row), 'row-text']"
               [attr.aria-label]="'WebShare name: ' + row.name"
             >{{ row.name }}</span>
             @if (row.isHomeBase) {
@@ -121,7 +123,8 @@
         <ng-template tnHeaderCellDef>{{ 'Path' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
+            tnTestIdType="text"
+            [tnTestId]="[('Path' | translate), cellRowTag(row), 'row-text']"
             [tnTooltip]="row.path ? (row.path | translate) : ''"
           >{{ row.path }}</span>
         </ng-template>

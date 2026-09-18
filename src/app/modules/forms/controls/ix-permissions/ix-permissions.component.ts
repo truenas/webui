@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCheckboxComponent } from '@truenas/ui-components';
+import { TnCheckboxComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { PosixPermission } from 'app/enums/posix-acl.enum';
 import { parseMode } from 'app/helpers/mode.helper';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 
 @Component({
   selector: 'ix-permissions',
@@ -16,7 +16,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TnCheckboxComponent,
     ReactiveFormsModule,
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
   ],
   hostDirectives: [
     { ...registeredDirectiveConfig },
@@ -47,6 +47,16 @@ export class IxPermissionsComponent implements ControlValueAccessor {
   private other = 0;
 
   private formatRe = /^[0-7][0-7][0-7]$/;
+
+  /**
+   * Test-id base for the permission rows. The bound control name is kebab-cased here rather than
+   * left to the library: `[ixTest]` normalized with lodash, which splits a letter→digit boundary
+   * the library's kebab leaves alone, so a control called `mode2` has to keep resolving to
+   * `row-mode-2-user-permissions`. See {@link normalizeTestIdString}.
+   */
+  protected get testIdBase(): string {
+    return normalizeTestIdString(this.controlDirective.name ?? '');
+  }
 
   constructor() {
     this.controlDirective.valueAccessor = this;

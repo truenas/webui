@@ -9,7 +9,8 @@
   <a
     tnCardHeader
     class="card-title-link"
-    [ixTest]="['smb-share', 'open-in-new']"
+    tnTestIdType="link"
+    [tnTestId]="['smb-share', 'open-in-new']"
     [routerLink]="['/sharing', 'smb']"
     [tnTooltip]="'Open SMB list in full page' | translate"
   >
@@ -70,7 +71,8 @@
         <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+            tnTestIdType="text"
+            [tnTestId]="[('Name' | translate), cellRowTag(row), 'row-text']"
             [tnTooltip]="row.name ? (row.name | translate) : ''"
           >{{ row.name }}</span>
         </ng-template>
@@ -81,7 +83,8 @@
         <ng-template let-row tnCellDef>
           @let path = getPathValue(row);
           <span
-            [ixTest]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
+            tnTestIdType="text"
+            [tnTestId]="[('Path' | translate), cellRowTag(row), 'row-text']"
             [tnTooltip]="path ? (path | translate) : ''"
           >{{ path }}</span>
         </ng-template>
@@ -91,8 +94,9 @@
         <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
+            tnTestIdType="text"
             [class.empty-value]="!row.comment"
-            [ixTest]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="[('Description' | translate), cellRowTag(row), 'row-text']"
             [tnTooltip]="row.comment ? (row.comment | translate) : ''"
             [attr.aria-label]="row.comment ? null : ('No description' | translate)"
           >{{ row.comment || '—' }}</span>
@@ -120,7 +124,8 @@
         <ng-template tnHeaderCellDef>{{ 'Audit Logging' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Audit Logging' | translate), uniqueRowTag(row), 'row-yesno']"
+            tnTestIdType="text"
+            [tnTestId]="[('Audit Logging' | translate), cellRowTag(row), 'row-yesno']"
           >{{ !!row.audit?.enable | yesNo | translate }}</span>
         </ng-template>
       </ng-container>

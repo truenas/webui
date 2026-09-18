@@ -1,9 +1,10 @@
-<table ixTest="summary-table">
+<table tnTestId="summary-table" tnTestIdType="table">
   @for (section of summary(); track section) {
     @for (item of section; track item; let i = $index) {
       <tr
         class="summary-line"
-        [ixTest]="['summary', item.label]"
+        tnTestIdType="row"
+        [tnTestId]="rowTestId(item)"
         [class.section-start]="i === 0"
       >
         <td class="summary-line-label">{{ item.label | translate }}:</td>

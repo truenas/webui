@@ -21,6 +21,7 @@ import {
   TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
   TnTooltipDirective,
   type TnCardAction,
   type TnSortEvent,
@@ -41,7 +42,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
@@ -80,7 +81,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TnTooltipDirective,
     RouterLink,
     TnIconComponent,
-    TestDirective,
+    TnTestIdDirective,
     TranslateModule,
     TnEmptyComponent,
     TnTableComponent,
@@ -195,6 +196,16 @@ export class WebShareCardComponent implements OnInit {
   protected readonly trackByWebShareId = (_index: number, row: WebShareTableRow): number => row.id;
 
   protected readonly uniqueRowTag = (row: WebShareTableRow): string => convertStringToId('card-webshare-' + row.name);
+
+  /**
+   * Row tag for the cell test ids that used to resolve through `[ixTest]`, which kebab-cased with
+   * lodash — splitting a letter→digit boundary (`card-webshare-share1`) the library's kebab leaves alone.
+   * Pre-normalized here so those ids stay byte-identical. `uniqueRowTag` itself is deliberately left
+   * un-normalized: `[rowTestId]` and the shared cell components already emit it as it is, and
+   * re-normalizing it would rename the row and action ids Release Engineering selects on.
+   * See {@link normalizeTestIdString}.
+   */
+  protected readonly cellRowTag = (row: WebShareTableRow): string => normalizeTestIdString(this.uniqueRowTag(row));
 
   protected ariaLabel(row: WebShareTableRow): string {
     return [row.name, this.translate.instant('WebShare')].join(' ');

@@ -28,7 +28,6 @@ import { ExplorerCreateAction } from 'app/modules/forms/ix-forms/components/ix-e
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
-import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
@@ -41,7 +40,6 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
     IxLabelComponent,
     IxErrorsComponent,
     ReactiveFormsModule,
-    TestOverrideDirective,
     TnFilePickerComponent,
   ],
   hostDirectives: [

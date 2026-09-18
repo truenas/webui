@@ -37,7 +37,28 @@
 import { readdirSync, readFileSync } from 'fs';
 import { sep } from 'path';
 
-const anyTestId = /\btestId\b|\btnTestId\b|\bixTest\b|data-test/;
+const anyTestId = /\btestId\b|\btnTestId\b|data-test/;
+
+/**
+ * `[ixTest]` is gone (NAS-143893): the one directive that writes a `data-test` is the library's
+ * `[tnTestId]`. The local `TestDirective` is deleted, so an `ixTest` attribute would now emit
+ * nothing at all — a silently untagged element, which is the exact defect the rules above exist
+ * to catch. `\b` stops before `ixTestOverride`, which is an unrelated
+ * `<ix-table-pager-show-more>` input and stays.
+ */
+const retiredIxTest = /\bixTest\b/g;
+
+/**
+ * Blanks out HTML comments, keeping every newline so reported line numbers still line up.
+ *
+ * The rules above read templates as text and tolerate matching inside a comment, because a false
+ * positive there needs a `(click)` in the same span to be reported at all. {@link retiredIxTest} has
+ * no such second condition, and several templates carry a comment saying what the legacy `[ixTest]`
+ * on that element resolved to — notes worth keeping, and not a revived directive.
+ */
+function withoutComments(src: string): string {
+  return src.replace(/<!--[\s\S]*?-->/g, (comment) => comment.replace(/[^\n]/g, ' '));
+}
 
 /** A template renders row cells if it declares a cell body for a column. */
 const rendersRowCells = /\btnCellDef\b/;
@@ -298,6 +319,15 @@ function main(): void {
 
   const clickables = templates.flatMap(({ file, src }) => untaggedClickables(file, src));
 
+  const revivedIxTest = templates.flatMap(({ file, src }) => [...withoutComments(src).matchAll(retiredIxTest)].map(
+    (match) => ({
+      file,
+      line: src.slice(0, match.index).split('\n').length,
+      // eslint-disable-next-line no-restricted-syntax -- the rule this script is, naming what it bans.
+      what: 'ixTest',
+    }),
+  ));
+
   const staleExemptions = [...allowedClickables.keys()]
     .filter((key) => !usedExemptions.has(key))
     .map((key) => ({ file: key.split(':')[0], line: 1, what: `no clickable matches "${key}"` }));
@@ -324,6 +354,14 @@ Each of these names a clickable that no longer exists — the class was renamed,
 or it now carries an id of its own. Remove the entry from \`allowedClickables\` in this script, so
 the exemption cannot outlive what it was written for.`);
 
+  // eslint-disable-next-line no-restricted-syntax -- the advice has to spell out what it replaces.
+  report('templates using the retired ixTest directive:', revivedIxTest, `
+\`[ixTest]\` and its \`TestDirective\` were deleted in NAS-143893, so this attribute now writes no
+\`data-test\` at all. Use the library's directive instead: \`tnTestIdType="<element type>"\` plus
+\`[tnTestId]="…"\` — and pre-normalize a *dynamic* value with \`normalizeTestIdString\` /
+\`normalizeTestIdParts\` (app/modules/test-id/normalize-test-id.utils.ts), which splits a
+letter→digit boundary the library's kebab-casing leaves alone.`);
+
   report('clickable elements with no test id:', clickables, `
 Each of these handles a click that no \`[data-test]\` selector can reach. Add one —
 \`tnTestIdType="button" [tnTestId]="'…'"\` on the element (or on the descendant that receives the
@@ -333,7 +371,7 @@ script with the reason. See "Finding a \`data-test\` value" in e2e/CLAUDE.md.`);
   if (!process.exitCode) {
     console.info(
       `✅ ${tables.length} tn-table templates tag their rows and every column; `
-      + `${templates.length} templates carry no unaddressable clickable.`,
+      + `${templates.length} templates carry no unaddressable clickable and no revived ixTest.`,
     );
   }
 }

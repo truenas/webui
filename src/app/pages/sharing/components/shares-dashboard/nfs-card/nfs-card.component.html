@@ -9,7 +9,8 @@
   <a
     tnCardHeader
     class="card-title-link"
-    [ixTest]="['nfs-share', 'open-in-new']"
+    tnTestIdType="link"
+    [tnTestId]="['nfs-share', 'open-in-new']"
     [routerLink]="['/sharing', 'nfs']"
     [tnTooltip]="'Open NFS list in full page' | translate"
   >
@@ -69,7 +70,8 @@
         <ng-template tnHeaderCellDef>{{ 'Path' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
+            tnTestIdType="text"
+            [tnTestId]="[('Path' | translate), cellRowTag(row), 'row-text']"
             [tnTooltip]="row.path ? (row.path | translate) : ''"
           >{{ row.path }}</span>
         </ng-template>
@@ -79,7 +81,8 @@
         <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
+            tnTestIdType="text"
+            [tnTestId]="[('Description' | translate), cellRowTag(row), 'row-text']"
             [tnTooltip]="row.comment ? (row.comment | translate) : ''"
           >{{ row.comment }}</span>
         </ng-template>

@@ -11,8 +11,9 @@
   <div class="similar-apps">
     @for (app of similarApps(); track trackByAppId($index, app)) {
       <a
+        tnTestIdType="link"
         [routerLink]="['/apps', 'available', app.train, app.name]"
-        [ixTest]="['open', app.train, app.name]"
+        [tnTestId]="appTestId(app)"
       >
         <ix-app-card [app]="app"></ix-app-card>
       </a>

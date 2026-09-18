@@ -34,7 +34,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
 import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
@@ -72,7 +72,6 @@ import { selectService } from 'app/store/services/services.selectors';
     TnCardFooterActionsDirective,
     TnSlideToggleComponent,
     RequiresRolesDirective,
-    TestDirective,
     TnIconComponent,
     TnTooltipDirective,
     TnTableComponent,
@@ -175,6 +174,18 @@ export class NvmeOfCardComponent implements OnInit {
 
   protected readonly uniqueRowTag = (row: NvmeOfSubsystemDetails): string => (
     convertStringToId('nvmeof-subsys-' + row.name)
+  );
+
+  /**
+   * Row tag for the cell test ids that used to resolve through `[ixTest]`, which kebab-cased with
+   * lodash — splitting a letter→digit boundary (`nvmeof-subsys-subsys1`) the library's kebab leaves alone.
+   * Pre-normalized here so those ids stay byte-identical. `uniqueRowTag` itself is deliberately left
+   * un-normalized: `[rowTestId]` and the shared cell components already emit it as it is, and
+   * re-normalizing it would rename the row and action ids Release Engineering selects on.
+   * See {@link normalizeTestIdString}.
+   */
+  protected readonly cellRowTag = (row: NvmeOfSubsystemDetails): string => (
+    normalizeTestIdString(this.uniqueRowTag(row))
   );
 
   protected ariaLabel(row: NvmeOfSubsystemDetails): string {

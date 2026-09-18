@@ -38,8 +38,8 @@ describe('normalizeTestIdParts', () => {
   });
 
   // A numeric 0 carries a value — a control at index 0 of a FormArray, say — so it must
-  // survive, or two siblings would resolve to the same id. `[ixTest]`'s own falsy filter
-  // does drop it, but that quirk lives in TestDirective, not here.
+  // survive, or two siblings would resolve to the same id. `[ixTest]`'s own falsy filter did
+  // drop it, but that quirk was never copied here and went with the directive in NAS-143893.
   it('keeps a numeric 0 segment', () => {
     expect(normalizeTestIdParts(['port', 0, 'edit'])).toEqual(['port', '0', 'edit']);
   });

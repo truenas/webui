@@ -3,11 +3,11 @@ import { DOCUMENT } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, computed, contentChildren, ElementRef, input, OnDestroy, output, signal, viewChild, inject, afterNextRender, Injector } from '@angular/core';
 import { AbstractControl, NgControl } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { combineLatest, fromEvent, Subject, Subscription, timer } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, startWith, takeUntil } from 'rxjs/operators';
 import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { FocusService } from 'app/services/focus.service';
 
 /**
@@ -36,7 +36,7 @@ import { FocusService } from 'app/services/focus.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconComponent,
-    TestDirective,
+    TnTestIdDirective,
     TranslateModule,
     CdkObserveContent,
   ],
@@ -85,6 +85,14 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   protected isEmpty = computed(() => {
     return !this.valueAsText();
   });
+
+  /**
+   * The displayed value scopes the trigger's id, and it is kebab-cased here rather than left to
+   * the library: `[ixTest]` normalized with lodash, which splits a letter→digit boundary the
+   * library's kebab leaves alone, so a value of `eth0` has to keep resolving to
+   * `button-eth-0-edit`. See {@link normalizeTestIdString}.
+   */
+  protected normalizedValueText = computed(() => normalizeTestIdString(this.valueAsText()));
 
   protected checkVisibleValue(): void {
     const newValue = this.triggerValue()?.nativeElement?.textContent?.trim();
