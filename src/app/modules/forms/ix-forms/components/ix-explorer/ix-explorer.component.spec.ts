@@ -180,6 +180,23 @@ describe('IxExplorerComponent', () => {
       expect(label.required()).toBe(true);
       expect(label.tooltip()).toBe('Enter the location of the system.');
     });
+
+    // Until NAS-143893 the label carried a test-id override that leaked, through the element
+    // injector, into the tooltip nested inside it — so the tooltip's *title* resolved to the
+    // control's name rather than its own id (a bare `text` here, where the control is anonymous;
+    // `text-anonpath` on Service FTP, and so on for the 21 other explorers with a tooltip).
+    // Dumping the ids rather than selecting by one: this is about which ids exist.
+    it('no longer overrides the nested tooltip test id with the control name', () => {
+      spectator.setHostInput('label', 'Select dataset');
+      spectator.setHostInput('tooltip', 'Enter the location of the system.');
+      spectator.detectComponentChanges();
+
+      const ids = spectator.queryAll('ix-tooltip [data-test]')
+        .map((element) => element.getAttribute('data-test'));
+
+      expect(ids).toContain('text-tooltip-title');
+      expect(ids).not.toContain('text');
+    });
   });
 
   describe('form control – multiple=false', () => {
