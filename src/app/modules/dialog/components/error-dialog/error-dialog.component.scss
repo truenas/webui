@@ -24,15 +24,6 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
   gap: 12px;
 }
 
-.err-title-row {
-  align-items: center;
-  display: flex;
-  font-size: 20px;
-  font-weight: 600;
-  gap: 8px;
-  margin: 0;
-}
-
 .details-panel {
   border: 0;
   max-height: 0;
@@ -127,10 +118,6 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
 
 .title-container {
   display: inline-block;
-}
-
-.err-title {
-  align-items: center;
 }
 
 .more-info {

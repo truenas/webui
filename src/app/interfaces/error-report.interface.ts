@@ -34,7 +34,6 @@ export interface ErrorReport {
   hint?: string;
   stackTrace?: string;
   logs?: Job;
-  icon?: string;
   actions?: ErrorReportAction[];
   details?: ErrorDetails[];
 }

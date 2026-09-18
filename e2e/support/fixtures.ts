@@ -24,7 +24,7 @@ import { buildTokenLoginUrl, generateAuthToken } from './auth/token';
 import { keepTestData } from './cleanup';
 import { loadTargetConfig, type TargetConfig } from './config';
 import {
-  adminLayout, concurrentCallsDialogClose, errorDialog, errorDialogClose,
+  adminLayout, concurrentCallsDialogTitle, errorDialog, errorDialogClose,
 } from './constants';
 import { type EntitlementDecisions, readEntitlements } from '../fixtures/entitlements';
 import { poolLifecycle } from '../fixtures/pool';
@@ -68,13 +68,13 @@ const maxConcurrentCallsDismissals = 3;
  * `addLocatorHandler` runs before actionability checks.
  */
 async function dismissConcurrencyDialogs(page: Page): Promise<void> {
-  // Found by the dialog's own id, not its wording. Every error opens the same
-  // component, so this one names itself `concurrent-calls` (`ErrorReport.testId`)
-  // — which is what keeps a reworded or translated message from silently
-  // stopping this from matching, and keeps a real error out of its way.
+  // Found by its title's id, not its wording. Every error opens the same
+  // component, so this one names itself `concurrent-calls`
+  // (`ErrorReport.testId`), which is what keeps a reworded or translated
+  // message from silently stopping this matching.
   const concurrencyDialog = page
     .locator(errorDialog)
-    .filter({ has: page.locator(concurrentCallsDialogClose) });
+    .filter({ has: page.locator(concurrentCallsDialogTitle) });
 
   // Dismissed through the dialog that triggered the handler rather than every
   // close button on the page, and through the whole dialog because the footer
