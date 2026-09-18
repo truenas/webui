@@ -111,7 +111,7 @@ describe('ErrorDialog', () => {
   });
 
   describe('naming a dialog for automation', () => {
-    it('keeps its heading when the error names the dialog', async () => {
+    it('composes the title id from the error\'s testId', async () => {
       spectator = createComponent({
         providers: [
           {
@@ -122,13 +122,15 @@ describe('ErrorDialog', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      // That the id composes to `dialog-title-concurrent-calls` is the E2E
-      // suite's to assert: unit specs here may not select on `data-test`, and
-      // `TnDialogHarness` has no `testId` filter to go through instead. What is
-      // checkable here is that naming a dialog does not cost it its heading —
-      // the binding feeds the same input the title's id derives from.
       const dialog = await loader.getHarness(TnDialogHarness);
       expect(await dialog.getTitle()).toBe(baseError.title);
+
+      // Asserting the attribute is allowed where selecting by it is not, so the
+      // id the E2E harness depends on is pinned here rather than only there: a
+      // library change to how the shell composes it fails in this repo instead
+      // of surfacing as a hung suite against an appliance.
+      expect(spectator.query('tn-dialog-shell h2'))
+        .toHaveAttribute('data-test', 'dialog-title-concurrent-calls');
     });
   });
 

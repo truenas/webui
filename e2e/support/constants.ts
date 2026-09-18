@@ -28,22 +28,14 @@ export const adminLayout = 'ix-admin-layout';
  */
 export const errorDialogClose = '[data-test="button-close-error-dialog"]';
 
-/**
- * The error dialog's own container, for reading the message out.
- *
- * Role-based rather than `data-test`, so a documented exception to R5.1 on the
- * same grounds as {@link adminLayout}: this is diagnostic text extraction for
- * a failure message, not a test assertion or interaction.
- */
-export const errorDialogRole = 'alertdialog';
 
 /**
  * webui's error dialog, as a whole.
  *
- * Wider than {@link errorDialogRole}, which is on the message block and stops
- * short of the footer — so the Close button is a sibling of it, not a
- * descendant. Anything scoping a dismissal to one dialog has to match here.
- * A component selector, on the same footing as {@link adminLayout}.
+ * The whole dialog: the shell's header carrying the title, the message block,
+ * and the footer with Close. Anything scoping a dismissal to one dialog, or
+ * reading what a dialog said, has to match here. A component selector, on the
+ * same footing as {@link adminLayout}.
  */
 export const errorDialog = 'ix-error-dialog';
 

@@ -8,7 +8,7 @@
 import { expect, type APIRequestContext, type Page } from '@playwright/test';
 import { signinLocators } from '../locators/signin';
 import { topbarLocators } from '../locators/topbar';
-import { adminLayout, errorDialogClose, errorDialogRole } from '../support/constants';
+import { adminLayout, errorDialog, errorDialogClose } from '../support/constants';
 
 /** Generous: a cold sign-in on this app runs to roughly 15 seconds. */
 export const signInTimeoutMs = 60_000;
@@ -59,15 +59,20 @@ export async function submitSignIn(page: Page, username: string, password: strin
  */
 export async function awaitAdminShell(page: Page, username: string): Promise<void> {
   const shell = page.locator(adminLayout);
-  const errorDialog = page.locator(errorDialogClose);
+  // The close button rather than the dialog, because it is what resolves first
+  // and unambiguously; the dialog itself is read below for the message.
+  const closeButton = page.locator(errorDialogClose);
 
-  await expect(shell.or(errorDialog).first()).toBeVisible({ timeout: signInTimeoutMs });
+  await expect(shell.or(closeButton).first()).toBeVisible({ timeout: signInTimeoutMs });
 
   // The development build's concurrency dialog does not reach here: the handler
   // in `support/fixtures.ts` dismisses it during the wait above, and stops at
   // its cap so an unrelenting one still surfaces as the failure below.
-  if (await errorDialog.isVisible()) {
-    const details = (await page.getByRole(errorDialogRole).innerText()).trim();
+  if (await closeButton.isVisible()) {
+    // The whole dialog, not the message block: the title moved into the shell's
+    // header, which sits outside it, and the title is the line that names what
+    // went wrong.
+    const details = (await page.locator(errorDialog).innerText()).trim();
     throw new Error(
       `Sign-in as "${username}" failed with a middleware error:\n\n${details}\n\n`
       + 'If this is "[EBUSY] Rate Limit Exceeded": middleware allows 20 unauthenticated '
