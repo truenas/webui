@@ -58,4 +58,4 @@ export const errorDialog = 'ix-error-dialog';
  * A real signal, but about the *page*, not the journey a test asserts, so the
  * harness dismisses it rather than failing.
  */
-export const concurrentCallsDialogTitle = '[data-test="dialog-title-concurrent-calls"]';
+export const concurrentCallsDialogTitleId = '[data-test="dialog-title-concurrent-calls"]';

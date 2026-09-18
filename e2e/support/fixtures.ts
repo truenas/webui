@@ -24,7 +24,7 @@ import { buildTokenLoginUrl, generateAuthToken } from './auth/token';
 import { keepTestData } from './cleanup';
 import { loadTargetConfig, type TargetConfig } from './config';
 import {
-  adminLayout, concurrentCallsDialogTitle, errorDialog, errorDialogClose,
+  adminLayout, concurrentCallsDialogTitleId, errorDialog, errorDialogClose,
 } from './constants';
 import { type EntitlementDecisions, readEntitlements } from '../fixtures/entitlements';
 import { poolLifecycle } from '../fixtures/pool';
@@ -74,7 +74,7 @@ async function dismissConcurrencyDialogs(page: Page): Promise<void> {
   // message from silently stopping this matching.
   const concurrencyDialog = page
     .locator(errorDialog)
-    .filter({ has: page.locator(concurrentCallsDialogTitle) });
+    .filter({ has: page.locator(concurrentCallsDialogTitleId) });
 
   // Dismissed through the dialog that triggered the handler rather than every
   // close button on the page, and through the whole dialog because the footer

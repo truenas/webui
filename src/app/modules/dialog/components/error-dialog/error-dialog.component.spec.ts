@@ -110,6 +110,28 @@ describe('ErrorDialog', () => {
     });
   });
 
+  describe('naming a dialog for automation', () => {
+    it('keeps its heading when the error names the dialog', async () => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: DIALOG_DATA,
+            useValue: { ...baseError, testId: 'concurrent-calls' } as ErrorReport,
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      // That the id composes to `dialog-title-concurrent-calls` is the E2E
+      // suite's to assert: unit specs here may not select on `data-test`, and
+      // `TnDialogHarness` has no `testId` filter to go through instead. What is
+      // checkable here is that naming a dialog does not cost it its heading —
+      // the binding feeds the same input the title's id derives from.
+      const dialog = await loader.getHarness(TnDialogHarness);
+      expect(await dialog.getTitle()).toBe(baseError.title);
+    });
+  });
+
   describe('hint display', () => {
     it('shows hint when provided', () => {
       const errorWithHint = {
