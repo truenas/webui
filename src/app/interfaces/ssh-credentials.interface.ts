@@ -1,9 +1,4 @@
-export interface SshCredentials {
-  id?: string;
-  host: string;
-  port: number;
-  username: string;
-  private_key: number;
-  remote_host_key: string;
-  connect_timeout: number;
-}
+import { v27_0_0 } from '@truenas/api-client';
+
+/** Attributes of an SSH connection credential. `port`, `username` and `connect_timeout` default on the appliance. */
+export type SshCredentials = v27_0_0.SSHCredentials;

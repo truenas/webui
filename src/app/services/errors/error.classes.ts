@@ -40,3 +40,14 @@ export class AbortedJobError extends Error {
     this.name = 'AbortedJob';
   }
 }
+
+/**
+ * The typed API session could not be established, so the requests waiting on
+ * it are refused rather than held. `cause` is the last login failure.
+ */
+export class TypedApiSessionError extends Error {
+  constructor(cause: unknown) {
+    super('Typed API session could not be established', { cause });
+    this.name = 'TypedApiSessionError';
+  }
+}

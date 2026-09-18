@@ -172,12 +172,16 @@ describe('ServiceS3Component', () => {
       return wrapper?.querySelector('ix-premium-badge') ?? null;
     };
 
-    it('leaves auditing untagged when the system is entitled', () => {
+    function getAuditModeSelect(): Promise<TnSelectHarness | null> {
+      return loader.getHarnessOrNull(TnSelectHarness.with({ selector: '[formControlName="default_audit_mode"]' }));
+    }
+
+    it('leaves auditing untagged when the system is entitled', async () => {
       expect(auditBadge()).toBeNull();
-      expect(spectator.query('[data-test="select-default-audit-mode"]')).not.toBeNull();
+      expect(await getAuditModeSelect()).not.toBeNull();
     });
 
-    it('tags auditing without the S3_AUDIT key, and still shows it', () => {
+    it('tags auditing without the S3_AUDIT key, and still shows it', async () => {
       // Revoked on the live component rather than rebuilt: the outer
       // `beforeEach` has already instantiated the TestBed, and overriding a
       // provider after that throws.
@@ -185,7 +189,7 @@ describe('ServiceS3Component', () => {
       spectator.detectChanges();
 
       expect(auditBadge()).not.toBeNull();
-      expect(spectator.query('[data-test="select-default-audit-mode"]')).not.toBeNull();
+      expect(await getAuditModeSelect()).not.toBeNull();
     });
 
     it('sends no audit settings without the key, rather than the form\'s defaults', () => {

@@ -6,6 +6,11 @@ export class BasicSearchHarness extends ComponentHarness {
 
   getInput = this.locatorFor(TnInputHarness);
   getSwitchLink = this.locatorForOptional('.switch-link');
+  /**
+   * The tn-input suffix action, located by the role and accessible name a user reaches
+   * for rather than by the markup the library happens to render it as.
+   */
+  getClearAction = this.locatorForOptional('button[aria-label="Clear search"]');
 
   async getValue(): Promise<string> {
     return (await this.getInput()).getValue();

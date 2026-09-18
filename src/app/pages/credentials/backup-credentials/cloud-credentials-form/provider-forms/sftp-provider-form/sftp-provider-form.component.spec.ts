@@ -4,10 +4,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { lastValueFrom } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
-import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   SftpProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/sftp-provider-form/sftp-provider-form.component';
@@ -21,18 +21,18 @@ describe('SftpProviderFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockCall('keychaincredential.query', [
+      mockTypedApi([
+        mockTypedQuery('keychaincredential.query', [
           { id: 1, name: 'Key 1' },
           { id: 2, name: 'Key 2' },
-        ] as KeychainCredential[]),
-        mockCall('keychaincredential.generate_ssh_key_pair', {
+        ] as KeychainSshKeyPair[]),
+        mockTypedCall('keychaincredential.generate_ssh_key_pair', {
           public_key: 'public key',
           private_key: 'private key',
         }),
-        mockCall('keychaincredential.create', {
+        mockTypedCall('keychaincredential.create', {
           id: 7,
-        } as KeychainCredential),
+        } as KeychainSshKeyPair),
       ]),
     ],
   });
@@ -93,7 +93,7 @@ describe('SftpProviderFormComponent', () => {
 
     await lastValueFrom(spectator.component.beforeSubmit());
 
-    const api = spectator.inject(ApiService);
+    const api = spectator.inject(TypedApiService);
     expect(api.call).toHaveBeenCalledWith('keychaincredential.generate_ssh_key_pair');
     expect(api.call).toHaveBeenCalledWith('keychaincredential.create', [{
       attributes: {

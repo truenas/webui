@@ -7,7 +7,9 @@ import {
   CollectionUpdateMessage, SuccessfulResponse, NotifyUnsubscribedMessage,
 } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { AbortedJobError, ApiCallError, FailedJobError } from 'app/services/errors/error.classes';
+import {
+  AbortedJobError, ApiCallError, FailedJobError, TypedApiSessionError,
+} from 'app/services/errors/error.classes';
 
 export function isApiCallError(something: unknown): something is ApiCallError {
   return something instanceof ApiCallError;
@@ -29,6 +31,10 @@ export function isFailedJobError(obj: unknown): obj is FailedJobError {
 
 export function isAbortedJobError(obj: unknown): obj is AbortedJobError {
   return obj instanceof AbortedJobError;
+}
+
+export function isTypedApiSessionError(obj: unknown): obj is TypedApiSessionError {
+  return obj instanceof TypedApiSessionError;
 }
 
 export function isFailedJob(obj: unknown): obj is Job {

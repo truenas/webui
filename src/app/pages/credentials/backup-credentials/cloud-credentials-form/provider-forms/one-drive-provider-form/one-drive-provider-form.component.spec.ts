@@ -3,11 +3,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { OneDriveType } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   OauthProviderComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
@@ -27,8 +27,8 @@ describe('OneDriveProviderFormComponent', () => {
     ],
     providers: [
       mockProvider(DialogService),
-      mockApi([
-        mockCall('cloudsync.onedrive_list_drives', [
+      mockTypedApi([
+        mockTypedCall('cloudsync.onedrive_list_drives', [
           {
             drive_type: OneDriveType.Business,
             drive_id: 'business1',
@@ -81,7 +81,7 @@ describe('OneDriveProviderFormComponent', () => {
       token: 'newtoken',
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.onedrive_list_drives', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloudsync.onedrive_list_drives', [{
       client_id: '',
       client_secret: '',
       token: 'newtoken',

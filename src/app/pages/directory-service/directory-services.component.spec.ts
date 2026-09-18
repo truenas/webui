@@ -35,15 +35,15 @@ describe('DirectoryServicesComponent', () => {
   let mockServicesStatus: DirectoryServicesStatus;
   let consoleWarnSpy: jest.SpyInstance;
 
-  const menuTrigger = '[data-test="button-directory-services-actions-menu"]';
-
   /**
    * Opens the data card's kebab menu and returns the overlay harness. The menu is
    * rendered in a document-root overlay, so it must be loaded via the root loader.
    */
   async function openCardMenu(): Promise<TnMenuHarness> {
     const rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
-    spectator.click(menuTrigger);
+    // tn-card renders its header menu trigger with `[headerMenuTriggerAriaLabel]` as the
+    // accessible name.
+    spectator.click(spectator.query('button[aria-label="More Actions"]')!);
     return rootLoader.getHarness(TnMenuHarness);
   }
 

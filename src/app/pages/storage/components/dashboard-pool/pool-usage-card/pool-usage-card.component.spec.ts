@@ -212,7 +212,7 @@ describe('PoolUsageCardComponent', () => {
 
     expect(await link.getHref()).toBe('/datasets/bingo');
     // Id is host-pinned, not passed through `[testId]` — see the note in the template.
-    expect(spectator.query('[data-test="link-bingo-view-datasets"]')).toExist();
+    expect(await (await link.host()).getAttribute('data-test')).toBe('link-bingo-view-datasets');
   });
 
   it('does not show tier breakdown when tiering is disabled', () => {

@@ -120,13 +120,14 @@ describe('HardwareDiskEncryptionComponent', () => {
         .toHaveBeenCalledWith(['/system', 'advanced'], 'sed-card', { inset: false });
     });
 
-    // The one place a `data-test` selector is the right tool, despite CLAUDE.md's rule against
-    // locating elements by them: the resolved id *is* what's under test here. Both links moved
-    // to the library's directive, and e2e locators still key on these exact
-    // values — the tests above locate by text, as everything else should.
+    // Both links moved to the library's test-id directive, and e2e locators still key on these
+    // exact values — so the resolved id is asserted here, on links located by their text the
+    // same way the tests above locate them.
     it('keeps the legacy link test ids after moving to the library test-id directive', () => {
-      expect(spectator.query('[data-test="link-manage-sed-password"]')).toExist();
-      expect(spectator.query('[data-test="link-manage-global-sed-password"]')).toExist();
+      expect(spectator.query(byText('Manage SED Password')))
+        .toHaveAttribute('data-test', 'link-manage-sed-password');
+      expect(spectator.query(byText('Manage Global SED Password')))
+        .toHaveAttribute('data-test', 'link-manage-global-sed-password');
     });
   });
 });

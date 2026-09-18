@@ -12,7 +12,7 @@ import {
   CloudSyncOneDriveDrive,
 } from 'app/interfaces/cloudsync-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   OauthProviderComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
@@ -41,7 +41,7 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
 
   private errorHandler = inject(ErrorHandlerService);
   private formBuilder = inject(NonNullableFormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
@@ -50,7 +50,8 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
   form = this.formBuilder.group({
     token: ['', Validators.required],
     drives: [''],
-    drive_type: [OneDriveType.Personal],
+    // Typed as the wire literal so a drive read from the API can be patched in.
+    drive_type: [OneDriveType.Personal as `${OneDriveType}`],
     drive_id: ['', Validators.required],
   });
 
