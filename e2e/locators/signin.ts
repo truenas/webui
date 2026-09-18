@@ -18,4 +18,30 @@ export const signinLocators = {
   password: '[data-test="input-password"]',
   /** `<tn-button [testId]="'log-in'">` */
   submit: '[data-test="button-log-in"]',
+  /**
+   * The eye toggle inside the password field.
+   *
+   * `<tn-input suffixActionTestId="toggle-password-password">`, and the suffix
+   * button carries `tnTestIdType="button"` — hence the doubled word, which is
+   * the field's own id (`password`) inside the action's (`toggle-password`).
+   */
+  passwordToggle: '[data-test="button-toggle-password-password"]',
+  /**
+   * The warning shown when the page was not served over HTTPS.
+   *
+   * `<tn-banner testId="insecure-connection">`. The library emits this on the
+   * banner root, which is also what carries the live-region role — so the
+   * element asserted on is the one assistive tech announces. Needs
+   * `@truenas/ui-components` >= 0.7.8 (#319).
+   */
+  insecureConnectionBanner: '[data-test="banner-insecure-connection"]',
+  /**
+   * The failure message under the submit button.
+   *
+   * Inline, and *not* a form-field error: the component renders a plain block
+   * holding whatever `SigninStore.getLoginErrorMessage` returned. A toast
+   * carries the same words, but it clears itself after four seconds, so the
+   * inline copy is the one an assertion can rely on.
+   */
+  error: '[data-test="text-login-error"]',
 } as const;

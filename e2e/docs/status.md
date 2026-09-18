@@ -46,10 +46,28 @@ directory carries `sharing.s3.*` and `s3.accesskey.*`, and pulled the shared
 pieces out: `fixtures/services.ts` (one service-stop protocol for SMB and S3)
 and `support/cleanup.ts` (the run-every-step teardown).
 
-The framework is done and the coverage is not. Eleven tests — ten journeys and
-the smoke — against 19 top-level feature areas. What the work bought is that the next twenty tests are cheap: the
-target seam, auth, fixtures, unconditional teardown, selector discipline and
-failure legibility are all built and proven against three different appliances.
+Sign-in came next, in `tests/unauthenticated/signin.e2e.ts`: the refusals and
+warnings the front door had no coverage of. Two of them are the authorization
+half rather than the authentication one, and both were probed against a v27
+appliance rather than reasoned about — an account with no privilege is refused
+by middleware (`DENIED`), while an account holding a privilege that grants no UI
+access is *authenticated* (`SUCCESS`, `webui_access: false`) and refused by the
+app alone. The suite grew a page-scoped dismissal for the development build's
+concurrency dialog at the same time; it is modal, the dashboard's own startup
+raises it, and without that it blocked every interaction after sign-in.
+
+The framework is done and the coverage is not. Twenty-seven tests — twenty-six
+journeys and the smoke — against 19 top-level feature areas. What the work
+bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
+unconditional teardown, selector discipline and failure legibility are all built
+and proven against three different appliances.
+
+**Flake rate has a number now.** Six consecutive full-suite runs on one
+appliance, zero failures and zero flaky — three from a golden snapshot and three
+back to back without one, which also showed teardown leaving no pool, dataset,
+user, share or running service behind. That bounds the per-test rate under ~2%
+and the per-run rate only under ~39%; D1's gating decision wants more runs than
+six, but it is no longer resting on nothing.
 
 **Total runtime is measured:** the suite takes ~1.5 minutes on one worker
 against a nested VM, and the whole CI job ~6 minutes of which ~3.5 is the
@@ -65,6 +83,12 @@ a number. See `05-ci.md`.
   serials readily — set distinct ones.
 - An admin account **without** two-factor. The suite cannot answer the challenge.
 - Fully booted, no first-boot wizard, no EULA.
+- **A cleartext origin for the UI.** One test asserts the insecure-connection
+  warning, which is decided from the scheme the page was loaded with, so it
+  needs an address that is really `http:`. An appliance serves port 80 without
+  redirecting; CI publishes one beside the TLS port and names it in
+  `TN_UI_BASE_URL_HTTP`. Where neither exists the test skips rather than fails,
+  and the id it asserts then has no cover on that target.
 
 ## Next steps
 

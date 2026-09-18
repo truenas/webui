@@ -57,6 +57,16 @@ export interface TargetConfig {
    * `/ui/` for `shipped`, whatever the local build is served at for `branch`.
    */
   readonly uiBaseUrl: string;
+  /**
+   * Base URL the UI is served from over plain HTTP, for the one test whose
+   * subject is the scheme the page was loaded with.
+   *
+   * Derived from {@link uiBaseUrl} by swapping the scheme, which is right
+   * wherever the same address serves both. `TN_UI_BASE_URL_HTTP` overrides it
+   * for a target that serves cleartext somewhere else — CI publishes the two
+   * on separate ports, so there the derived guess would reach the TLS socket.
+   */
+  readonly insecureUiBaseUrl: string;
   /** Middleware host, `host` or `host:port`. No scheme — the client adds `wss://`. */
   readonly middlewareHost: string;
   /** How {@link middlewareHost} was resolved, for the startup banner. */
@@ -90,6 +100,57 @@ const defaultBranchUiBaseUrl = 'http://localhost:4200/';
  * `shipped` only.
  */
 const shippedUiPath = '/ui/';
+
+/**
+ * Holds `TN_UI_BASE_URL_HTTP` to the same trailing-slash rule as the HTTPS one.
+ *
+ * Same reason as {@link validateUiBaseUrl}: `new URL('signin', 'http://h/ui')`
+ * resolves to `http://h/signin`, which loads something unintended rather than
+ * failing. The derived value needs no check — it inherits a validated base.
+ */
+function validateInsecureUiBaseUrl(raw: string | undefined, problems: string[]): void {
+  if (!raw) {
+    return;
+  }
+
+  let parsed: URL;
+  try {
+    parsed = new URL(raw);
+  } catch {
+    problems.push(`TN_UI_BASE_URL_HTTP is not a valid absolute URL: "${raw}"`);
+    return;
+  }
+
+  if (parsed.protocol !== 'http:') {
+    problems.push(`TN_UI_BASE_URL_HTTP must be an http:// URL (got "${parsed.protocol}//")`);
+  }
+
+  if (!parsed.pathname.endsWith('/')) {
+    problems.push(
+      `TN_UI_BASE_URL_HTTP must end with "/" (got "${parsed.pathname}"). Without it, relative `
+      + 'navigation drops the last path segment: "signin" would resolve to '
+      + `"${new URL('signin', parsed).pathname}".`,
+    );
+  }
+}
+
+/**
+ * The same address over plain HTTP.
+ *
+ * `URL` drops a default port at parse time, so an explicit `:443` is already
+ * gone and any other port is carried over untouched. A base that is cleartext
+ * already — the `branch` dev server — comes back unchanged.
+ */
+function toCleartext(uiBaseUrl: string): string {
+  try {
+    const url = new URL(uiBaseUrl);
+    url.protocol = 'http:';
+    return url.toString();
+  } catch {
+    // Invalid URLs are reported by validateUiBaseUrl; nothing to add here.
+    return uiBaseUrl;
+  }
+}
 
 class ConfigError extends Error {
   constructor(problems: string[]) {
@@ -281,6 +342,7 @@ export function loadTargetConfig(env: NodeJS.ProcessEnv = process.env): TargetCo
 
   if (uiBaseUrl && profile) {
     validateUiBaseUrl(uiBaseUrl, profile, uiBaseUrlOverridden, problems);
+    validateInsecureUiBaseUrl(env.TN_UI_BASE_URL_HTTP, problems);
   } else if (profile) {
     problems.push('TN_UI_BASE_URL could not be resolved (TN_HOST is required to derive it)');
   }
@@ -301,6 +363,7 @@ export function loadTargetConfig(env: NodeJS.ProcessEnv = process.env): TargetCo
     // Trailing slash guaranteed by validateUiBaseUrl, so `new URL(path, base)`
     // resolves beneath the base rather than replacing its last segment.
     uiBaseUrl,
+    insecureUiBaseUrl: env.TN_UI_BASE_URL_HTTP || toCleartext(uiBaseUrl),
     middlewareHost,
     hostSource,
     username,

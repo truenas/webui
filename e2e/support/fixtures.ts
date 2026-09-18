@@ -23,7 +23,9 @@ import { connectAndLogin } from './api/client';
 import { buildTokenLoginUrl, generateAuthToken } from './auth/token';
 import { keepTestData } from './cleanup';
 import { loadTargetConfig, type TargetConfig } from './config';
-import { adminLayout } from './constants';
+import {
+  adminLayout, concurrentCallsDialogTitle, errorDialog, errorDialogClose,
+} from './constants';
 import { type EntitlementDecisions, readEntitlements } from '../fixtures/entitlements';
 import { poolLifecycle } from '../fixtures/pool';
 
@@ -54,6 +56,35 @@ function remainingOf(deadline: number): number {
     throw new Error('the login budget ran out before the admin shell could be awaited');
   }
   return Math.min(tokenLoginAttemptTimeoutMs, remainingMs);
+}
+
+const maxConcurrentCallsDismissals = 3;
+
+/**
+ * Dismisses the development build's concurrency diagnostic wherever it appears.
+ *
+ * Page scope, not sign-in scope: it blocks any chatty page, and the
+ * `authenticated` project enters by token URL onto `/dashboard`, not the form.
+ * `addLocatorHandler` runs before actionability checks. Matched on words —
+ * every error dialog shares one test ID (truenas-ui-components#319) — and
+ * scoped to this one so real errors still fail.
+ */
+async function dismissConcurrencyDialogs(page: Page): Promise<void> {
+  const concurrencyDialog = page
+    .locator(errorDialog)
+    .filter({ hasText: concurrentCallsDialogTitle });
+
+  // Dismissed through the dialog that triggered the handler, not through every
+  // close button on the page: a real middleware error open at the same time
+  // would otherwise be the one closed, or match alongside it and fail strict
+  // mode. Scoped to the whole dialog because the footer holding Close sits
+  // outside the message block that carries the alertdialog role.
+  // Capped, because the dialog re-arms when dismissed. Past the cap it stays on
+  // screen and `awaitAdminShell` reports it, which is the right outcome for a
+  // page issuing calls faster than the connection retires them for that long.
+  await page.addLocatorHandler(concurrencyDialog, async () => {
+    await concurrencyDialog.locator(errorDialogClose).click();
+  }, { times: maxConcurrentCallsDismissals });
 }
 
 /**
@@ -245,6 +276,9 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
   page: async ({
     page, authenticate, api, config,
   }, use) => {
+    // Registered before the sign-in, because the sign-in is where it first bites.
+    await dismissConcurrencyDialogs(page);
+
     if (authenticate) {
       await signInWithToken(page, api, config);
     }

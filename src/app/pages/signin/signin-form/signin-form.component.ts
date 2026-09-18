@@ -5,7 +5,8 @@ import {
 } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnBannerComponent, TnButtonComponent, TnFormFieldComponent, TnInputComponent, tnIconMarker,
+  InputType, TnBannerComponent, TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnTestIdDirective,
+  tnIconMarker,
 } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import {
@@ -35,6 +36,7 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
     TnButtonComponent,
     TnFormFieldComponent,
     TnInputComponent,
+    TnTestIdDirective,
     TranslateModule,
   ],
 })

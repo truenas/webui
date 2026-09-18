@@ -36,3 +36,24 @@ export const errorDialogClose = '[data-test="button-close-error-dialog"]';
  * a failure message, not a test assertion or interaction.
  */
 export const errorDialogRole = 'alertdialog';
+
+/**
+ * webui's error dialog, as a whole.
+ *
+ * Wider than {@link errorDialogRole}, which is on the message block and stops
+ * short of the footer — so the Close button is a sibling of it, not a
+ * descendant. Anything scoping a dismissal to one dialog has to match here.
+ * A component selector, on the same footing as {@link adminLayout}.
+ */
+export const errorDialog = 'ix-error-dialog';
+
+/**
+ * Title of the development build's concurrency diagnostic.
+ *
+ * `websocket-handler.service.ts` raises it when 20 middleware calls are in
+ * flight at once. Gated on `!environment.production`, so only `branch` sees it.
+ * A real signal, but about the *page*, not the journey a test asserts — so the
+ * harness dismisses it rather than failing. Matched by text: it carries the
+ * same test ID as every other error dialog.
+ */
+export const concurrentCallsDialogTitle = 'Max Concurrent Calls';
