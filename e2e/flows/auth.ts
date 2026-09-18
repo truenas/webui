@@ -8,10 +8,23 @@
 import { expect, type Page } from '@playwright/test';
 import { signinLocators } from '../locators/signin';
 import { topbarLocators } from '../locators/topbar';
-import { adminLayout, errorDialogClose, errorDialogRole } from '../support/constants';
+import {
+  adminLayout, concurrentCallsDialogTitle, errorDialogClose, errorDialogRole,
+} from '../support/constants';
 
 /** Generous: a cold sign-in on this app runs to roughly 15 seconds. */
 const signInTimeoutMs = 60_000;
+
+/**
+ * How many times the development concurrency dialog may be dismissed before the
+ * harness gives up and says so.
+ *
+ * One is the normal case — it re-arms on close, but the burst that raised it is
+ * over by then. More than a couple means the page is issuing calls faster than
+ * the connection retires them for a sustained period, which is a finding rather
+ * than something to keep clicking through.
+ */
+const maxConcurrentCallsDismissals = 3;
 
 /**
  * Signs in through the form and waits for the admin shell.
@@ -26,27 +39,86 @@ const signInTimeoutMs = 60_000;
  */
 export async function signIn(page: Page, username: string, password: string): Promise<void> {
   await page.goto('./signin');
+  await submitSignIn(page, username, password);
+  await awaitAdminShell(page, username);
+}
 
-  await page.locator(signinLocators.username).fill(username);
+/**
+ * Fills the sign-in form already on screen, and submits it.
+ *
+ * Split out from {@link signIn} because one journey must not navigate: a
+ * visitor the auth guard bounced to sign-in is already on the page, and the
+ * deep link it stored on the way is the thing under test. A `page.goto` in the
+ * middle of that would be a step no user takes, in a test about what happens
+ * when they do not take it.
+ *
+ * Waits for the username field to be *enabled* rather than merely present. The
+ * page renders before the websocket connects and the whole form is disabled
+ * until it does (`canLogin$` in `signin.store.ts`), so filling too early lands
+ * in a disabled control and the click that follows does nothing.
+ */
+export async function submitSignIn(page: Page, username: string, password: string): Promise<void> {
+  const usernameField = page.locator(signinLocators.username);
+  await expect(usernameField).toBeEnabled({ timeout: signInTimeoutMs });
+
+  await usernameField.fill(username);
   await page.locator(signinLocators.password).fill(password);
   await page.locator(signinLocators.submit).click();
+}
 
+/**
+ * Waits for the admin shell, failing usefully when middleware objects instead.
+ *
+ * Waits on the shell rather than a URL change: the redirect happens before the
+ * app is usable, so asserting on it would let the next action race the render.
+ *
+ * Races the shell against the middleware error dialog. Without that, a failed
+ * login spends the full timeout and then reports `ix-admin-layout` missing —
+ * true, but useless, while a dialog naming the real cause sits on screen. The
+ * rate limit is the common case and reads as a total non-sequitur.
+ */
+export async function awaitAdminShell(page: Page, username: string): Promise<void> {
   const shell = page.locator(adminLayout);
   const errorDialog = page.locator(errorDialogClose);
 
-  await expect(shell.or(errorDialog).first()).toBeVisible({ timeout: signInTimeoutMs });
+  // Bounded rather than `while`, because the dialog re-arms when dismissed
+  // (`showingConcurrentCallsError` resets in its close handler). A page chatty
+  // enough to raise it indefinitely should report that, not spin here.
+  for (let dismissals = 0; dismissals <= maxConcurrentCallsDismissals; dismissals++) {
+    await expect(shell.or(errorDialog).first()).toBeVisible({ timeout: signInTimeoutMs });
 
-  if (await errorDialog.isVisible()) {
+    if (!await errorDialog.isVisible()) {
+      await expect(shell).toBeVisible();
+      return;
+    }
+
     const details = (await page.getByRole(errorDialogRole).innerText()).trim();
-    throw new Error(
-      `Sign-in as "${username}" failed with a middleware error:\n\n${details}\n\n`
-      + 'If this is "[EBUSY] Rate Limit Exceeded": middleware allows 20 unauthenticated '
-      + 'calls per method per IP per 60s (RateLimitConfig). Authenticated calls are exempt, '
-      + 'so the budget is spent on sign-ins. Wait a minute, or reduce logins per run.',
-    );
+
+    // The development build's concurrency diagnostic is not a failed sign-in.
+    // It is raised through the same `DialogService.error` as a real middleware
+    // failure and carries the same id, so its words are the only thing telling
+    // them apart — and when it appears the shell is typically already behind
+    // it, the login having worked. Dismiss it and carry on; anything else is
+    // still a failure, and still reported with the message it came with.
+    if (!details.includes(concurrentCallsDialogTitle)) {
+      throw new Error(
+        `Sign-in as "${username}" failed with a middleware error:\n\n${details}\n\n`
+        + 'If this is "[EBUSY] Rate Limit Exceeded": middleware allows 20 unauthenticated '
+        + 'calls per method per IP per 60s (RateLimitConfig). Authenticated calls are exempt, '
+        + 'so the budget is spent on sign-ins. Wait a minute, or reduce logins per run.',
+      );
+    }
+
+    await errorDialog.click();
+    await expect(errorDialog).toBeHidden();
   }
 
-  await expect(shell).toBeVisible();
+  throw new Error(
+    `Sign-in as "${username}" reached the app, but the "${concurrentCallsDialogTitle}" dialog was `
+    + `raised more than ${maxConcurrentCallsDismissals} times and kept blocking the page. The UI is `
+    + 'saturating its own 20-call concurrency window repeatedly, which is worth investigating on the '
+    + 'page rather than working around here.',
+  );
 }
 
 /**
@@ -94,21 +166,10 @@ export function insecureSigninUrl(uiBaseUrl: string): string {
  * Deliberately asserts nothing itself. What a rejected attempt should show —
  * the inline message, the form still standing, no session — belongs in the test
  * that is making the claim, not hidden in a flow.
- *
- * Waits for the username field to be *enabled* rather than merely present: the
- * page renders before the websocket connects and the whole form is disabled
- * until it does (`canLogin$` in `signin.store.ts`), so filling too early lands
- * in a disabled control.
  */
 export async function attemptSignIn(page: Page, username: string, password: string): Promise<void> {
   await page.goto('./signin');
-
-  const usernameField = page.locator(signinLocators.username);
-  await expect(usernameField).toBeEnabled({ timeout: signInTimeoutMs });
-
-  await usernameField.fill(username);
-  await page.locator(signinLocators.password).fill(password);
-  await page.locator(signinLocators.submit).click();
+  await submitSignIn(page, username, password);
 }
 
 /**
