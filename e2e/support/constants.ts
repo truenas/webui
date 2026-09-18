@@ -48,12 +48,14 @@ export const errorDialogRole = 'alertdialog';
 export const errorDialog = 'ix-error-dialog';
 
 /**
- * Title of the development build's concurrency diagnostic.
+ * The development build's concurrency diagnostic, by its own test ID.
  *
  * `websocket-handler.service.ts` raises it when 20 middleware calls are in
- * flight at once. Gated on `!environment.production`, so only `branch` sees it.
- * A real signal, but about the *page*, not the journey a test asserts — so the
- * harness dismisses it rather than failing. Matched by text: it carries the
- * same test ID as every other error dialog.
+ * flight at once, naming it `concurrent-calls` so it is separable from a real
+ * middleware error — both open the same component. Gated on
+ * `!environment.production`, so only `branch` sees it.
+ *
+ * A real signal, but about the *page*, not the journey a test asserts, so the
+ * harness dismisses it rather than failing.
  */
-export const concurrentCallsDialogTitle = 'Max Concurrent Calls';
+export const concurrentCallsDialogClose = '[data-test="button-close-concurrent-calls"]';
