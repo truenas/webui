@@ -34,12 +34,11 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
 import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
-import { convertStringToId, mapTnSortToTableSort } from 'app/modules/tn-table/utils';
+import { convertStringToId, mapTnSortToTableSort, memoizedRowTag } from 'app/modules/tn-table/utils';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -172,19 +171,18 @@ export class NvmeOfCardComponent implements OnInit {
 
   protected readonly trackBySubsystemId = (_index: number, row: NvmeOfSubsystemDetails): number => row.id;
 
-  protected readonly uniqueRowTag = (row: NvmeOfSubsystemDetails): string => (
-    convertStringToId('nvmeof-subsys-' + row.name)
-  );
+  /** The raw row tag, normalized two different ways below. */
+  private readonly rawRowTag = (row: NvmeOfSubsystemDetails): string => 'nvmeof-subsys-' + row.name;
+
+  protected readonly uniqueRowTag = (row: NvmeOfSubsystemDetails): string => convertStringToId(this.rawRowTag(row));
 
   /**
    * `uniqueRowTag` for the cells that used to resolve through `[ixTest]`, which lodash-kebabed
-   * whatever it was handed. Pre-normalized so those ids stay byte-identical; `uniqueRowTag` itself
-   * is left alone because `[rowTestId]` and the shared cell components emit it as it is, and
-   * re-normalizing would rename the row and action ids. See {@link normalizeTestIdString}.
+   * whatever it was handed — exactly what {@link memoizedRowTag} produces, cached per row.
+   * `uniqueRowTag` itself stays un-normalized: `[rowTestId]` and the shared cell components emit
+   * it as it is, and re-normalizing would rename the row and action ids.
    */
-  protected readonly cellRowTag = (row: NvmeOfSubsystemDetails): string => (
-    normalizeTestIdString(this.uniqueRowTag(row))
-  );
+  protected readonly cellRowTag = memoizedRowTag<NvmeOfSubsystemDetails>((row) => this.rawRowTag(row));
 
   protected ariaLabel(row: NvmeOfSubsystemDetails): string {
     return [row.name, this.translate.instant('Subsystem')].join(' ');

@@ -42,12 +42,11 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
-import { convertStringToId, mapTnSortToTableSort } from 'app/modules/tn-table/utils';
+import { convertStringToId, mapTnSortToTableSort, memoizedRowTag } from 'app/modules/tn-table/utils';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -194,15 +193,18 @@ export class SmbCardComponent implements OnInit {
 
   protected readonly trackBySmbId = (_index: number, row: SmbShare): number => row.id;
 
-  protected readonly uniqueRowTag = (row: SmbShare): string => convertStringToId('card-smb-share-' + row.name);
+  /** The raw row tag, normalized two different ways below. */
+  private readonly rawRowTag = (row: SmbShare): string => 'card-smb-share-' + row.name;
+
+  protected readonly uniqueRowTag = (row: SmbShare): string => convertStringToId(this.rawRowTag(row));
 
   /**
    * `uniqueRowTag` for the cells that used to resolve through `[ixTest]`, which lodash-kebabed
-   * whatever it was handed. Pre-normalized so those ids stay byte-identical; `uniqueRowTag` itself
-   * is left alone because `[rowTestId]` and the shared cell components emit it as it is, and
-   * re-normalizing would rename the row and action ids. See {@link normalizeTestIdString}.
+   * whatever it was handed — exactly what {@link memoizedRowTag} produces, cached per row.
+   * `uniqueRowTag` itself stays un-normalized: `[rowTestId]` and the shared cell components emit
+   * it as it is, and re-normalizing would rename the row and action ids.
    */
-  protected readonly cellRowTag = (row: SmbShare): string => normalizeTestIdString(this.uniqueRowTag(row));
+  protected readonly cellRowTag = memoizedRowTag<SmbShare>((row) => this.rawRowTag(row));
 
   protected ariaLabel(row: SmbShare): string {
     return [row.name, this.translate.instant('SMB Share')].join(' ');

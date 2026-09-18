@@ -68,12 +68,20 @@ const projectOverrides = {
 
 /**
  * `angular-test-ids/require-test-id` comes from the shared base config, where it is still keyed to
- * the `ixTest` attribute NAS-143893 retired. It enforces nothing either way — the plugin's selector
- * (`Element$1[name=…]`) no longer matches the node type angular-eslint 20's template parser emits,
- * so the rule matches no element at all — but leaving it pointed at a deleted directive would make
- * it demand `ixTest` back the day the plugin is fixed. It is also the wrong shape for tn-*: those
- * carry their id on a component `testId` input the plugin cannot see. `scripts/check-test-ids.ts`
- * is the gate that actually runs, over exactly the elements that need one.
+ * the `ixTest` attribute NAS-143893 retired.
+ *
+ * It enforces nothing either way today: `eslint-plugin-angular-test-ids` builds its selector as
+ * `Element$1[name=…]`, which no longer matches the node type angular-eslint 20's template parser
+ * emits, so it matches no element at all. That is why nothing complained about the hundreds of
+ * native `<button>`/`<a>`/`<tr>` elements in this repo that never carried `ixTest`. Turning it off
+ * rather than re-keying it is deliberate: a dependency bump that fixes the selector would
+ * otherwise turn a dead rule into a repo-wide failure in whichever PR happens to bump it.
+ *
+ * To bring it back, both halves have to change together: set `attribute: 'tnTestId'` (never
+ * `ixTest` — the directive is gone) and expect a large, separate sweep, because the rule only
+ * looks for an attribute on the element and cannot see the `testId` *input* that every tn-*
+ * component carries its id on. Until then `scripts/check-test-ids.ts` is the gate that actually
+ * runs, over exactly the elements that need an id.
  */
 const templateOverrides = {
   files: ['**/*.html'],
