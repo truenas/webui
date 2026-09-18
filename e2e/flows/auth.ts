@@ -5,7 +5,7 @@
  * `support/auth` — a test of authentication that authenticates by side channel
  * tests nothing (R4.2).
  */
-import { expect, type Page } from '@playwright/test';
+import { expect, type APIRequestContext, type Page } from '@playwright/test';
 import { signinLocators } from '../locators/signin';
 import { topbarLocators } from '../locators/topbar';
 import {
@@ -25,6 +25,9 @@ const signInTimeoutMs = 60_000;
  * than something to keep clicking through.
  */
 const maxConcurrentCallsDismissals = 3;
+
+/** Short: this only asks whether an origin answers at all. */
+const httpProbeTimeoutMs = 10_000;
 
 /**
  * Signs in through the form and waits for the admin shell.
@@ -139,6 +142,25 @@ export function insecureSigninUrl(uiBaseUrl: string): string {
   }
 
   return url.toString();
+}
+
+/**
+ * Whether the UI is really served over plain HTTP at this address.
+ *
+ * Not every target has an HTTP origin. An appliance serves port 80 without
+ * redirecting and the `branch` dev server is cleartext already, but CI serves
+ * the built UI from an HTTPS-only container, where nginx answers a plain
+ * request with "400 The plain HTTP request was sent to HTTPS port" — a page
+ * Playwright loads happily, so the symptom is a missing banner, not an error.
+ */
+export async function servesUiOverHttp(request: APIRequestContext, url: string): Promise<boolean> {
+  try {
+    const response = await request.get(url, { timeout: httpProbeTimeoutMs, failOnStatusCode: false });
+    return response.ok();
+  } catch {
+    // Nothing listening, or TLS refused the cleartext request outright.
+    return false;
+  }
 }
 
 /**

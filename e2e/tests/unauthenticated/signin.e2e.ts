@@ -12,7 +12,8 @@ import {
   refusedAccounts,
 } from '../../fixtures/users';
 import {
-  attemptSignIn, awaitAdminShell, expectSignInRefused, insecureSigninUrl, signIn, signOut, submitSignIn,
+  attemptSignIn, awaitAdminShell, expectSignInRefused, insecureSigninUrl, servesUiOverHttp, signIn, signOut,
+  submitSignIn,
 } from '../../flows/auth';
 import { signinLocators } from '../../locators/signin';
 import { adminLayout } from '../../support/constants';
@@ -58,11 +59,23 @@ test('the form refuses bad credentials without saying which half was wrong', asy
  * whole test from wherever it is called — inside a step it took the HTTP case
  * with it, reporting a passing assertion as never run.
  */
-test('signing in over HTTP warns that the connection is insecure', async ({ page, config }) => {
+test('signing in over HTTP warns that the connection is insecure', async ({ page, config, request }) => {
+  const insecureUrl = insecureSigninUrl(config.uiBaseUrl);
+
+  // Skipped where the target has no cleartext origin to load. An appliance
+  // serves port 80 and the `branch` dev server is cleartext already, but CI
+  // serves the built UI from an HTTPS-only container — and nginx answers the
+  // plain request with a 400 page rather than refusing it, so without this the
+  // failure reads as a missing banner instead of a target that cannot show one.
+  test.skip(
+    !await servesUiOverHttp(request, insecureUrl),
+    `${insecureUrl} does not serve the UI over plain HTTP, so the warning cannot be raised there`,
+  );
+
   // One of the two places this suite may navigate by URL: entering the app. The
   // point of the test is the scheme the page was loaded with, which no amount
   // of clicking can change.
-  await page.goto(insecureSigninUrl(config.uiBaseUrl));
+  await page.goto(insecureUrl);
 
   const banner = page.locator(signinLocators.insecureConnectionBanner);
   await expect(banner).toBeVisible();
