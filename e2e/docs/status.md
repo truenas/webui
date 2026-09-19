@@ -65,8 +65,27 @@ appliance did it". Writing them turned up a real gap: the duplicate-username
 validator was wired only on the edit form, so a new user learned the name was
 taken only after submitting. Fixed in the same change.
 
-The framework is done and the coverage is not. Thirty-four tests — thirty-three
-journeys and the smoke — against 19 top-level feature areas. What the work
+Groups came after, in `tests/groups-form.e2e.ts`, `tests/groups-members.e2e.ts`
+and `tests/groups-deletion.e2e.ts`. Two of those cover the same ground the user
+specs do — a form with a conditional field and a list that deletes the row you
+opened — and the third covers the thing groups have that users do not:
+membership, which lives on a route of its own and which the *list* reads back to
+decide whether Delete is offered at all. Editing one screen changing what another
+will permit is the only cross-screen rule on these pages, and nothing below E2E
+can see it. Two smaller notes came out of writing them: the group form's
+`Allow All Sudo Commands` checkbox is not an API field, so what it stores
+(`sudo_commands: ['ALL']`) is only observable through `group.query`; and
+`group.users` holds *auxiliary* members, not only the accounts whose primary
+group it is — confirmed against a v27 appliance, and the reason a group with any
+member at all cannot be deleted from the list.
+
+The members picker had no per-record test id, so no test could name one user
+among the hundreds a stock appliance lists. Added in the same change
+(`list-item-available-<name>` / `list-item-selected-<name>`), which also unblocks
+the only other consumer of that control, the iSCSI initiator form.
+
+The framework is done and the coverage is not. Forty-one tests — forty journeys
+and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
@@ -154,6 +173,12 @@ a number. See `05-ci.md`.
   call and a few seconds per test.
 - **Fixed names** (`bob`, `e2e_tank`, `e2e_shared_tank`, the S3 specs' owners) mean two runs against one appliance
   collide. Fine for one-appliance-per-run; run-scoped naming is the fix.
+- **The delete-group dialog's "delete these users too" checkbox is unreachable**,
+  and so has no test. It renders when the group has members, while the button
+  that opens the dialog is disabled for exactly that reason — two rules that
+  contradict each other, added at different times. Deciding which one is right
+  is a product call rather than a test one; the tooltip ("Groups with privileges
+  or members cannot be deleted") reads like the deliberate half.
 - **`AuthResponseType` is declared but not exported** while
   `AuthResponse.response_type` is typed as it, so `support/api/client.ts` checks
   a successful login by comparing `String(...)` against `'SUCCESS'`. Still true

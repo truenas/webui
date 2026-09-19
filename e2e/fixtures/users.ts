@@ -7,6 +7,7 @@
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
+import { ensureGroupAbsent, ensureGroupPresent, findGroup } from './groups';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
@@ -152,42 +153,6 @@ export async function ensureUserPresent(
 }
 
 /**
- * Creates a plain local group if absent, for grants to name.
- *
- * Same reasoning as {@link ensureUserPresent}: the S3 grant pickers list
- * non-builtin principals only, and a group is a precondition rather than the
- * thing under test.
- */
-export async function ensureGroupPresent(client: E2eApiClient, name: string): Promise<void> {
-  const [existing] = await firstValueFrom(
-    client.api.query('group.query', [['group', '=', name]]).pipe(timeout(readTimeoutMs)),
-  );
-
-  if (existing) {
-    return;
-  }
-
-  await firstValueFrom(
-    client.api.call('group.create', [{ name, smb: false }]).pipe(timeout(slowCallTimeoutMs)),
-  );
-}
-
-/** Removes a group if present, by name. Succeeds when the group does not exist. */
-export async function ensureGroupAbsent(client: E2eApiClient, name: string): Promise<void> {
-  const [existing] = await firstValueFrom(
-    client.api.query('group.query', [['group', '=', name]]).pipe(timeout(readTimeoutMs)),
-  );
-
-  if (!existing) {
-    return;
-  }
-
-  await firstValueFrom(
-    client.api.call('group.delete', [existing.id]).pipe(timeout(slowCallTimeoutMs)),
-  );
-}
-
-/**
  * Two accounts the sign-in page must turn away. Both have working passwords —
  * these are the *authorization* refusals, not wrong credentials.
  *
@@ -303,21 +268,6 @@ export async function ensureRefusedAccountsAbsent(client: E2eApiClient): Promise
   }
 
   await ensureGroupAbsent(client, account.groupName);
-}
-
-/**
- * A group by name, or undefined. What the deletion tests ask to find out
- * whether a user's primary group went with it.
- */
-export async function findGroup(
-  client: E2eApiClient,
-  name: string,
-): Promise<{ id: number; gid: number } | undefined> {
-  const [group] = await firstValueFrom(
-    client.api.query('group.query', [['group', '=', name]]).pipe(timeout(readTimeoutMs)),
-  );
-
-  return group ? { id: group.id, gid: group.gid } : undefined;
 }
 
 /**

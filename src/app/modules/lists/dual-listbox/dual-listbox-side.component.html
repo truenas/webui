@@ -58,10 +58,19 @@
     (cdkDropListDropped)="dropped.emit($event)"
   >
     @for (item of side().visibleItems(); track trackByKey($index, item); let idx = $index) {
+      <!--
+        The item is the only handle on a single record: the move buttons act on
+        whatever is selected, so a test or a script that wants one particular
+        user has to be able to click it. `listType` is part of the id because
+        the two sides render the same records, and which side one is on is
+        exactly the thing worth asserting.
+      -->
       <tn-list-item
         #listItem
         cdkDrag
+        tnTestIdType="list-item"
         [wrap]="true"
+        [tnTestId]="[listType(), side().displayOf(item)]"
         [attr.role]="'option'"
         [attr.aria-selected]="side().isSelected(item)"
         [attr.tabindex]="idx === side().tabStop() ? 0 : -1"

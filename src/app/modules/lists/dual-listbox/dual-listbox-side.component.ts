@@ -16,7 +16,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnIconButtonComponent, TnIconComponent, TnInputComponent, TnListComponent, TnListIconDirective,
-  TnListItemComponent, tnIconMarker,
+  TnListItemComponent, TnTestIdDirective, tnIconMarker,
 } from '@truenas/ui-components';
 import { translated } from 'app/helpers/translated.helper';
 import { DualListBoxSide, ListType, SelectionModifiers } from 'app/modules/lists/dual-listbox/dual-listbox-side';
@@ -45,6 +45,7 @@ const typeAheadResetTimeout = 800;
     TnListComponent,
     TnListIconDirective,
     TnListItemComponent,
+    TnTestIdDirective,
     TranslateModule,
   ],
 })

@@ -12,12 +12,13 @@
  * a bucket leaves its dataset in place — the promise the delete dialog makes.
  */
 import { firstValueFrom, timeout } from 'rxjs';
+import { ensureGroupAbsent, ensureGroupPresent } from '../fixtures/groups';
 import {
   ensureDatasetAbsent, ensureDatasetPresent, ensureS3AccessKeysAbsent, ensureS3BucketAbsent,
   ensureS3BucketPresent, ensureS3ServiceStopped, findS3Bucket,
 } from '../fixtures/s3';
 import {
-  ensureGroupAbsent, ensureGroupPresent, ensureUserAbsent, ensureUserPresent,
+  ensureUserAbsent, ensureUserPresent,
 } from '../fixtures/users';
 import {
   addBucketGrant, deleteBucketFromDashboard, openBucketEditor, saveBucketEditor, showAdvancedBucketOptions,

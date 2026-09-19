@@ -16,6 +16,7 @@ export const navLocators = {
   /** A slide-out, not a link — opens a submenu rather than navigating. */
   credentials: '[data-test="link-credentials-menu"]',
   users: '[data-test="link-users"]',
+  groups: '[data-test="link-groups"]',
   /** `S3 Access Keys` under Credentials; the submenu writes the raw item name. */
   s3AccessKeys: '[data-test="link-s3-access-keys"]',
 } as const;
