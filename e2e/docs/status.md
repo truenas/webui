@@ -56,7 +56,16 @@ app alone. The suite grew a page-scoped dismissal for the development build's
 concurrency dialog at the same time; it is modal, the dashboard's own startup
 raises it, and without that it blocked every interaction after sign-in.
 
-The framework is done and the coverage is not. Twenty-seven tests — twenty-six
+Users followed, in `tests/users-form.e2e.ts` and `tests/users-deletion.e2e.ts`:
+the add-user form's conditional role control and its two refusals, and deleting
+a user — the row it was told to, and both branches of the primary-group
+checkbox. Every saved or deleted account is checked through `user.query` rather
+than the list, which is what separates "the screen believed it" from "the
+appliance did it". Writing them turned up a real gap: the duplicate-username
+validator was wired only on the edit form, so a new user learned the name was
+taken only after submitting. Fixed in the same change.
+
+The framework is done and the coverage is not. Thirty-four tests — thirty-three
 journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built

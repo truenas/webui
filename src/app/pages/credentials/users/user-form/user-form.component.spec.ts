@@ -6,7 +6,7 @@ import {
   FormControl, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnFormFieldComponent, TnFormFieldHarness, TnInputComponent, TnInputHarness,
@@ -293,6 +293,34 @@ describe('UserFormComponent', () => {
       }
       return loader.getHarness(TnFormFieldHarness.with({ label: 'Username' }));
     }
+
+    it('should show error when the username is already taken', async () => {
+      // The edit form has always refused a name in use; a new user was left to
+      // find out from middleware after submitting.
+      const store$ = spectator.inject(MockStore);
+      store$.overrideSelector(selectUsers, [{ username: 'existing_user' } as User]);
+      store$.refreshState();
+
+      const usernameField = await setUsername('existing_user');
+      expect(await usernameField.getErrorMessage()).toBe('The name "existing_user" is already in use.');
+    });
+
+    it('stops forbidding a name once it is no longer in use', async () => {
+      const store$ = spectator.inject(MockStore);
+      store$.overrideSelector(selectUsers, [{ username: 'existing_user' } as User]);
+      store$.refreshState();
+      await setUsername('existing_user');
+
+      // The list reloads without that account. A validator that stacked rather
+      // than replaced would go on forbidding a name nobody holds.
+      store$.overrideSelector(selectUsers, []);
+      store$.refreshState();
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
+
+      const usernameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Username' }));
+      expect(await usernameField.getErrorMessage()).toBeNull();
+    });
 
     it('should show error when username is empty', async () => {
       const usernameField = await setUsername('');

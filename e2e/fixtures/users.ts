@@ -5,8 +5,9 @@
  * R3.1: a test must not use the API to perform the action it is testing, and
  * must not use the UI to establish state it merely depends on.
  */
+import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
-import type { E2eApiClient } from '../support/api/client';
+import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 /**
@@ -64,6 +65,37 @@ export async function ensureUserAbsent(client: E2eApiClient, username: string): 
     client.api.call('user.delete', [existing.id]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
+
+/**
+ * The appliance's own record of a user, or undefined.
+ *
+ * What a form test asserts against. The list showing a row says the screen
+ * believed the save; this says the appliance did it, and carries the fields the
+ * form never displays back — the uid it allocated, the primary group it made,
+ * the roles it resolved.
+ */
+export async function findUser(
+  client: E2eApiClient,
+  username: string,
+): Promise<UserRecord | undefined> {
+  const [user] = await firstValueFrom(
+    client.api.query('user.query', [['username', '=', username]]).pipe(timeout(readTimeoutMs)),
+  );
+
+  return user as UserRecord | undefined;
+}
+
+/**
+ * A user record with its primary group narrowed.
+ *
+ * Only `group` needs naming: the generated `UserEntry` types it as an open
+ * record, while everything else these tests read — `uid`, `roles`, `locked` —
+ * it already describes. Re-declaring those here would restate the API from
+ * memory, and would quietly promote its optional fields to required.
+ */
+type UserEntry = Extract<CallResponse<E2eApiDirectory, 'user.query'>, unknown[]>[number];
+
+export type UserRecord = UserEntry & { group: { bsdgrp_group: string } };
 
 /**
  * Creates a plain local user if absent, for S3 to run as.
@@ -273,7 +305,11 @@ export async function ensureRefusedAccountsAbsent(client: E2eApiClient): Promise
   await ensureGroupAbsent(client, account.groupName);
 }
 
-async function findGroup(
+/**
+ * A group by name, or undefined. What the deletion tests ask to find out
+ * whether a user's primary group went with it.
+ */
+export async function findGroup(
   client: E2eApiClient,
   name: string,
 ): Promise<{ id: number; gid: number } | undefined> {
