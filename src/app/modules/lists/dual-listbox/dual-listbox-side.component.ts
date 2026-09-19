@@ -101,6 +101,18 @@ export class DualListBoxSideComponent<T> {
     });
   }
 
+  /**
+   * The `data-test` an item carries, as one string.
+   *
+   * Joined here rather than passed as segments so the binding compares by value
+   * — see the note in the template. `kebabTestSegment` splits on every
+   * non-alphanumeric run, so joining with `-` and normalizing once produces the
+   * same id as normalizing each segment and joining would.
+   */
+  protected itemTestId(item: T): string {
+    return `${this.listType()}-${this.side().displayOf(item)}`;
+  }
+
   protected trackByKey(index: number, item: T): unknown {
     return this.side().keyOf(item);
   }

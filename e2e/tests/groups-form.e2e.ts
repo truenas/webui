@@ -100,18 +100,21 @@ test('the form will not submit a group name that is already taken', async ({ pag
   await ensureGroupPresent(api, existingGroup);
 
   await openAddGroupForm(page);
-  await page.locator(groupsLocators.form.name).fill(existingGroup);
 
-  // Refusing is the absence of an action: `canSubmit` blocks while the form is
-  // INVALID, so Save never becomes clickable rather than erroring on click.
-  // The check is asynchronous — it waits on a cached `group.query` — so the
-  // assertion has to be one that retries.
-  await expect(page.locator(groupsLocators.form.save)).toBeDisabled();
-
-  // And it is the name Save was waiting on. Without this the test would pass
-  // against a form that never enables Save at all.
+  // A free name first, and Save proven live on it. Asserting the refusal
+  // straight away would prove nothing: the form opens with an empty required
+  // name, so Save is *already* disabled, and `toBeDisabled` would pass on its
+  // first poll without the validator having run at all.
   await page.locator(groupsLocators.form.name).fill(newGroup);
   await expect(page.locator(groupsLocators.form.save)).toBeEnabled();
+
+  // Now the taken one. Refusing is the absence of an action: `canSubmit` blocks
+  // while the form is INVALID, so Save goes back to unclickable rather than
+  // erroring on click — and having watched it enable, that can only be this
+  // name. The check is asynchronous, against a cached `group.query`, so the
+  // assertion has to be one that retries.
+  await page.locator(groupsLocators.form.name).fill(existingGroup);
+  await expect(page.locator(groupsLocators.form.save)).toBeDisabled();
 
   // Left open deliberately: closing a dirty form raises the unsaved-changes
   // confirmation, and nothing here needs the panel gone. The page is

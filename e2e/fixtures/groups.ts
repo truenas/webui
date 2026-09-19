@@ -43,10 +43,12 @@ export async function findGroup(client: E2eApiClient, name: string): Promise<Gro
 /**
  * Creates a plain local group if absent.
  *
- * No members, no privileges, no sudo commands — which is not incidental. The
- * list refuses to delete a group holding any of those (see
- * {@link setGroupMembers}), so a group made here is one a deletion test can
- * actually drive through the UI.
+ * No members and no privileges — which is not incidental. The list disables
+ * Delete for a group holding either (`isDeleteDisabled` in
+ * `group-details-row.component.ts`, which also covers non-local groups; sudo
+ * commands are not part of it), so a group made here is one a deletion test can
+ * actually drive through the UI. See {@link setGroupMembers} for the other
+ * side of that.
  */
 export async function ensureGroupPresent(client: E2eApiClient, name: string): Promise<void> {
   if (await findGroup(client, name)) {
