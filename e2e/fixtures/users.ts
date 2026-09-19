@@ -66,6 +66,44 @@ export async function ensureUserAbsent(client: E2eApiClient, username: string): 
 }
 
 /**
+ * The appliance's own record of a user, or undefined.
+ *
+ * What a form test asserts against. The list showing a row says the screen
+ * believed the save; this says the appliance did it, and carries the fields the
+ * form never displays back — the uid it allocated, the primary group it made,
+ * the roles it resolved.
+ */
+export async function findUser(
+  client: E2eApiClient,
+  username: string,
+): Promise<UserRecord | undefined> {
+  const [user] = await firstValueFrom(
+    client.api.query('user.query', [['username', '=', username]]).pipe(timeout(readTimeoutMs)),
+  );
+
+  return user as UserRecord | undefined;
+}
+
+/**
+ * The parts of a user record these tests assert on.
+ *
+ * Narrowed by hand because the generated directory does not describe
+ * `user.query`'s response beyond a loose shape, so the fields are named here
+ * rather than inferred.
+ */
+export interface UserRecord {
+  username: string;
+  uid: number;
+  full_name: string;
+  shell: string;
+  home: string;
+  locked: boolean;
+  password_disabled: boolean;
+  roles: string[];
+  group: { bsdgrp_group: string };
+}
+
+/**
  * Creates a plain local user if absent, for S3 to run as.
  *
  * The S3 bucket owner and access-key user pickers list non-builtin accounts

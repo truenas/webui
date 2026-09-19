@@ -206,6 +206,11 @@ export class UserFormComponent extends IxFormHostForm<User> implements OnInit {
 
     if (this.editingUser()) {
       this.setupEditUserForm(this.editingUser());
+    } else {
+      // A new user has no name of its own to exclude, which is what the
+      // optional argument is for. Without this the clash is only caught by
+      // middleware, after a round trip — the edit form catches it as you type.
+      this.setNamesInUseValidator();
     }
   }
 

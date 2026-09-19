@@ -6,9 +6,31 @@
  *
  * See `signin.ts` for a note on the type-prefixing that produces these values.
  */
+import { legacyKebabTestSegment } from './test-id';
+
 export const usersLocators = {
   /** `<tn-button testId="create-new-user">` in all-users-header */
   addUser: '[data-test="button-create-new-user"]',
+
+  /**
+   * A user's row in the list.
+   *
+   * `memoizedRowTag` runs lodash `kebabCase`, not the library's
+   * `kebabTestSegment`, so this needs the legacy normalizer: `e2e_form_user`
+   * becomes `e-2-e-form-user`, not `e2e-form-user`. The two agree on names
+   * without a letter-digit boundary — `truenas_admin` is the same either way,
+   * which is what makes picking the wrong one easy to miss.
+   */
+  row: (username: string): string => `[data-test="row-user-${legacyKebabTestSegment(username)}"]`,
+
+  /**
+   * Any user row, for waiting on the list rather than on a particular account.
+   *
+   * A prefix match because no single username is guaranteed: the list hides
+   * built-in users behind a toggle that is off by default, so `root` is not
+   * there, and the account the run signs in as differs between targets.
+   */
+  anyRow: '[data-test^="row-user-"]',
 
   form: {
     /** `<tn-input [testId]="'username'">` in user-form.component.html */
@@ -31,5 +53,7 @@ export const usersLocators = {
     passwordConfirm: '[data-test="input-password-confirm"]',
     /** `<tn-button [testId]="'save'">` on the side panel container */
     save: '[data-test="button-save"]',
+    /** Closes the panel without saving. */
+    close: '[data-test="button-close-side-panel"]',
   },
 } as const;
