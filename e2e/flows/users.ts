@@ -41,7 +41,7 @@ export async function createTrueNasAdminUser(page: Page, user: NewAdminUser): Pr
  * Opens the add-user side panel, from the sidebar as a user would.
  *
  * Waits for a row in the list before opening it, and that wait is load-bearing
- * rather than cosmetic: the username control gains its \"already in use\"
+ * rather than cosmetic: the username control gains its "already in use"
  * validator from a store subscription (`setNamesInUseValidator`), so a name
  * typed before the list has loaded can be accepted by a validator that has not
  * been added yet.

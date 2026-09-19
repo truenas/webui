@@ -305,6 +305,23 @@ describe('UserFormComponent', () => {
       expect(await usernameField.getErrorMessage()).toBe('The name "existing_user" is already in use.');
     });
 
+    it('stops forbidding a name once it is no longer in use', async () => {
+      const store$ = spectator.inject(MockStore);
+      store$.overrideSelector(selectUsers, [{ username: 'existing_user' } as User]);
+      store$.refreshState();
+      await setUsername('existing_user');
+
+      // The list reloads without that account. A validator that stacked rather
+      // than replaced would go on forbidding a name nobody holds.
+      store$.overrideSelector(selectUsers, []);
+      store$.refreshState();
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
+
+      const usernameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Username' }));
+      expect(await usernameField.getErrorMessage()).toBeNull();
+    });
+
     it('should show error when username is empty', async () => {
       const usernameField = await setUsername('');
       expect(await usernameField.getErrorMessage()).toBe('Field is required');

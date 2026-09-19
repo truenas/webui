@@ -5,8 +5,9 @@
  * R3.1: a test must not use the API to perform the action it is testing, and
  * must not use the UI to establish state it merely depends on.
  */
+import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
-import type { E2eApiClient } from '../support/api/client';
+import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 /**
@@ -85,23 +86,16 @@ export async function findUser(
 }
 
 /**
- * The parts of a user record these tests assert on.
+ * A user record with its primary group narrowed.
  *
- * Narrowed by hand because the generated directory does not describe
- * `user.query`'s response beyond a loose shape, so the fields are named here
- * rather than inferred.
+ * Only `group` needs naming: the generated `UserEntry` types it as an open
+ * record, while everything else these tests read — `uid`, `roles`, `locked` —
+ * it already describes. Re-declaring those here would restate the API from
+ * memory, and would quietly promote its optional fields to required.
  */
-export interface UserRecord {
-  username: string;
-  uid: number;
-  full_name: string;
-  shell: string;
-  home: string;
-  locked: boolean;
-  password_disabled: boolean;
-  roles: string[];
-  group: { bsdgrp_group: string };
-}
+type UserEntry = Extract<CallResponse<E2eApiDirectory, 'user.query'>, unknown[]>[number];
+
+export type UserRecord = UserEntry & { group: { bsdgrp_group: string } };
 
 /**
  * Creates a plain local user if absent, for S3 to run as.

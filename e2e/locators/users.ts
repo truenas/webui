@@ -48,7 +48,6 @@ export const usersLocators = {
     deletePrimaryGroup: '[data-test="checkbox-delete-primary-group"]',
     /** Exact match, so it does not collide with the pane's `button-delete-<username>`. */
     confirm: '[data-test="button-delete"]',
-    cancel: '[data-test="button-cancel"]',
   },
 
   form: {

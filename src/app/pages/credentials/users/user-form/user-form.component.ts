@@ -2,7 +2,9 @@ import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, input, OnInit, signal, viewChild, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormGroup, NonNullableFormBuilder, ReactiveFormsModule, ValidatorFn, Validators,
+} from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnFormFieldComponent, TnFormSectionComponent, TnInputComponent } from '@truenas/ui-components';
@@ -253,13 +255,33 @@ export class UserFormComponent extends IxFormHostForm<User> implements OnInit {
     this.setNamesInUseValidator(user.username);
   }
 
+  /** The last names-in-use validator added, so the next emission can replace it. */
+  private namesInUseValidator: ValidatorFn | undefined;
+
   private setNamesInUseValidator(currentName?: string): void {
     this.store$.select(selectUsers).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((users) => {
       let forbiddenNames = users.map((user) => user.username);
       if (currentName) {
         forbiddenNames = forbiddenNames.filter((name) => name !== currentName);
       }
-      this.form.controls.username.addValidators(forbiddenValues(forbiddenNames));
+
+      const username = this.form.controls.username;
+
+      // Replace rather than append: the list emits again whenever it reloads,
+      // and a stacked validator goes on forbidding names that have since been
+      // deleted. Revalidate too, because the list can land after a name has
+      // already been typed — on the create form, before the user reaches Save.
+      //
+      // Events are emitted, not suppressed: `ix-errors` renders from
+      // `statusChanges`, so a silent update clears the error without clearing
+      // the message. The value is unchanged, so the `valueChanges` that comes
+      // with it re-pushes the same username and is absorbed downstream.
+      if (this.namesInUseValidator) {
+        username.removeValidators(this.namesInUseValidator);
+      }
+      this.namesInUseValidator = forbiddenValues(forbiddenNames);
+      username.addValidators(this.namesInUseValidator);
+      username.updateValueAndValidity();
     });
   }
 
