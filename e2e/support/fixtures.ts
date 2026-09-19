@@ -24,7 +24,7 @@ import { buildTokenLoginUrl, generateAuthToken } from './auth/token';
 import { keepTestData } from './cleanup';
 import { loadTargetConfig, type TargetConfig } from './config';
 import {
-  adminLayout, concurrentCallsDialogTitle, errorDialog, errorDialogClose,
+  adminLayout, concurrentCallsDialogTitleId, errorDialog, errorDialogClose,
 } from './constants';
 import { type EntitlementDecisions, readEntitlements } from '../fixtures/entitlements';
 import { poolLifecycle } from '../fixtures/pool';
@@ -65,20 +65,21 @@ const maxConcurrentCallsDismissals = 3;
  *
  * Page scope, not sign-in scope: it blocks any chatty page, and the
  * `authenticated` project enters by token URL onto `/dashboard`, not the form.
- * `addLocatorHandler` runs before actionability checks. Matched on words —
- * every error dialog shares one test ID (truenas-ui-components#319) — and
- * scoped to this one so real errors still fail.
+ * `addLocatorHandler` runs before actionability checks.
  */
 async function dismissConcurrencyDialogs(page: Page): Promise<void> {
+  // Found by its title's id, not its wording. Every error opens the same
+  // component, so this one names itself `concurrent-calls`
+  // (`ErrorReport.testId`), which is what keeps a reworded or translated
+  // message from silently stopping this matching.
   const concurrencyDialog = page
     .locator(errorDialog)
-    .filter({ hasText: concurrentCallsDialogTitle });
+    .filter({ has: page.locator(concurrentCallsDialogTitleId) });
 
-  // Dismissed through the dialog that triggered the handler, not through every
-  // close button on the page: a real middleware error open at the same time
-  // would otherwise be the one closed, or match alongside it and fail strict
-  // mode. Scoped to the whole dialog because the footer holding Close sits
-  // outside the message block that carries the alertdialog role.
+  // Dismissed through the dialog that triggered the handler rather than every
+  // close button on the page, and through the whole dialog because the footer
+  // holding Close sits outside the block carrying the alertdialog role.
+  //
   // Capped, because the dialog re-arms when dismissed. Past the cap it stays on
   // screen and `awaitAdminShell` reports it, which is the right outcome for a
   // page issuing calls faster than the connection retires them for that long.

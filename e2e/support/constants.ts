@@ -28,32 +28,38 @@ export const adminLayout = 'ix-admin-layout';
  */
 export const errorDialogClose = '[data-test="button-close-error-dialog"]';
 
-/**
- * The error dialog's own container, for reading the message out.
- *
- * Role-based rather than `data-test`, so a documented exception to R5.1 on the
- * same grounds as {@link adminLayout}: this is diagnostic text extraction for
- * a failure message, not a test assertion or interaction.
- */
-export const errorDialogRole = 'alertdialog';
 
 /**
  * webui's error dialog, as a whole.
  *
- * Wider than {@link errorDialogRole}, which is on the message block and stops
- * short of the footer — so the Close button is a sibling of it, not a
- * descendant. Anything scoping a dismissal to one dialog has to match here.
- * A component selector, on the same footing as {@link adminLayout}.
+ * The whole dialog: the shell's header carrying the title, the message block,
+ * and the footer with Close. Anything scoping a dismissal to one dialog, or
+ * reading what a dialog said, has to match here. A component selector, on the
+ * same footing as {@link adminLayout}.
  */
 export const errorDialog = 'ix-error-dialog';
 
 /**
- * Title of the development build's concurrency diagnostic.
+ * The two parts of an error dialog worth quoting in a failure.
+ *
+ * Together they are the title and the message and nothing else. Reading the
+ * whole dialog instead drags in its chrome — the close glyph renders as literal
+ * text, and the footer adds Close, Download Logs and any action labels — which
+ * is noise in the one place a failure has to be legible (R6.2).
+ */
+export const errorDialogHeading = 'ix-error-dialog h2';
+export const errorDialogBody = 'ix-error-dialog [role="alertdialog"]';
+
+/**
+ * The development build's concurrency diagnostic, by its own test ID.
  *
  * `websocket-handler.service.ts` raises it when 20 middleware calls are in
- * flight at once. Gated on `!environment.production`, so only `branch` sees it.
- * A real signal, but about the *page*, not the journey a test asserts — so the
- * harness dismisses it rather than failing. Matched by text: it carries the
- * same test ID as every other error dialog.
+ * flight at once, naming itself `concurrent-calls` there so its title carries
+ * an id of its own — both open the same component. That name is spelled in both
+ * places and nothing links them, so a rename there needs one here. Gated on `!environment.production`,
+ * so only `branch` sees it.
+ *
+ * A real signal, but about the *page*, not the journey a test asserts, so the
+ * harness dismisses it rather than failing.
  */
-export const concurrentCallsDialogTitle = 'Max Concurrent Calls';
+export const concurrentCallsDialogTitleId = '[data-test="dialog-title-concurrent-calls"]';
