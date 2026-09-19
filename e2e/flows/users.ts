@@ -13,7 +13,6 @@ export interface NewAdminUser {
 /** User creation is a job on the appliance and is not instant. */
 const saveTimeoutMs = 60_000;
 
-
 /**
  * Creates a user with TrueNAS UI access and the Full Admin role, through the
  * add-user side panel.

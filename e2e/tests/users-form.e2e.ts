@@ -31,6 +31,7 @@ const existingUser = 'e2e_form_taken';
 test.beforeEach(async ({ api }) => {
   await ensureUserAbsent(api, newUser.username);
   await ensureUserAbsent(api, newAdmin.username);
+  await ensureUserAbsent(api, existingUser);
 });
 
 test.afterEach(async ({ api }) => {

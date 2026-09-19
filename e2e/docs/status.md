@@ -65,7 +65,7 @@ appliance did it". Writing them turned up a real gap: the duplicate-username
 validator was wired only on the edit form, so a new user learned the name was
 taken only after submitting. Fixed in the same change.
 
-The framework is done and the coverage is not. Thirty-six tests — thirty-five
+The framework is done and the coverage is not. Thirty-four tests — thirty-three
 journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
