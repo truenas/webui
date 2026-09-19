@@ -7,11 +7,11 @@
  * field types. That is why the ids below read like API parameters
  * (`sudo_commands_all`) rather than like labels.
  *
- * Only what the specs select on. The screen carries more — the built-ins
- * toggle, the privileges chips, the SMB checkbox, the picker's search fields —
- * and those ids are deliberately absent until a test needs one, because an
- * entry here reads as a verified fact about the screen and an unexercised one
- * is only a guess at it. `locators/users.ts` holds to the same line.
+ * Only what the specs select on. The screen carries more — the privileges
+ * chips, the SMB checkbox, the picker's search fields — and those ids are
+ * deliberately absent until a test needs one, because an entry here reads as a
+ * verified fact about the screen and an unexercised one is only a guess at it.
+ * `locators/users.ts` holds to the same line.
  *
  * See `signin.ts` for a note on the type-prefixing that produces these values.
  */
@@ -20,6 +20,15 @@ import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 export const groupsLocators = {
   /** `<tn-button [testId]="'add-group'">` in the page header. */
   addGroup: '[data-test="button-add-group"]',
+
+  /**
+   * `<tn-slide-toggle [testId]="'show-built-in-groups'">`, off by default.
+   *
+   * Not view state: it writes the `hideBuiltinGroups` *preference* on the
+   * account, so it is still set on the next visit. `tests/preferences.e2e.ts`
+   * covers that; the group specs rely on the default holding.
+   */
+  showBuiltIns: '[data-test="toggle-show-built-in-groups"]',
 
   /**
    * A group's row in the list.

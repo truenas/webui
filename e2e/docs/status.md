@@ -89,8 +89,32 @@ consumer, the iSCSI initiator form, does *not*: it displays
 `<initiator> (<address>)`, so an id there would carry a client IP that moves.
 Addressing that picker needs a discriminator of its own first.
 
-The framework is done and the coverage is not. Forty-one tests — forty journeys
-and the smoke — against 19 top-level feature areas. What the work
+Preferences came next, in `tests/preferences.e2e.ts` and one spec under
+`tests/unauthenticated/`. It is the only area covered so far whose defining claim
+is unreachable below this layer: a unit test can prove the reducer built a new
+object and the effect called `auth.set_attribute`, but only a browser against an
+appliance can say the value came back. So each test asserts twice — the screen
+re-rendered, *and* `auth.me` holds it — and the session spec signs out, clears
+`localStorage` (where the theme is also cached) and signs back in, which is the
+only way to ask the question the feature actually answers.
+
+Its teardown is unlike anything else here and is worth reading before copying:
+preferences are a blob hanging off the account the whole suite signs in as, so
+there is nothing to delete and a per-field undo is not enough. `fixtures/
+preferences.ts` snapshots the whole blob and puts it back verbatim. Two facts
+found while writing it: the applied theme is a class on `<html>` under the
+*library's* name (`ix-dark` is stored, `tn-dark` renders — the map lives in
+`theme.service.ts`), while `<body>` carries a static `ix-dark` from
+`src/index.html` that nothing ever updates, so a test asserting on the body class
+would pass against any theme at all.
+
+The groups built-ins toggle turns out to be one of these — account state wearing
+the clothes of view state — which is also the "page one" gap below. The
+preferences spec met that gap head-on: `builtin_administrators` is 79th of 93
+groups by GID, so with a 50-row page it is not in the DOM at all.
+
+The framework is done and the coverage is not. Forty-six tests — forty-five
+journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
@@ -185,7 +209,9 @@ a number. See `05-ci.md`.
   spec times out against a screen that is working. No code here flips that
   preference and the golden snapshot has it off, so nothing fails today. The fix
   is a shared "find this row" flow that filters first, across the user specs as
-  well as the group ones.
+  well as the group ones. **This has now bitten once**, in the preferences spec,
+  which turns built-ins on deliberately: it asserts on `wheel` (GID 0) precisely
+  because `builtin_administrators` is 79th of 93 and therefore on page two.
 - **The delete-group dialog's "delete these users too" checkbox is unreachable**,
   and so has no test. It renders when the group has members, while the button
   that opens the dialog is disabled for exactly that reason — two rules that

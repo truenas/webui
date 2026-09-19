@@ -10,6 +10,8 @@ export const topbarLocators = {
    * signed-in user's name is rendered.
    */
   userMenu: '[data-test="button-user-menu"]',
+  /** `<tn-menu-item [testId]="'preferences'">` inside the user menu */
+  preferences: '[data-test="button-preferences"]',
   /** `<tn-menu-item [testId]="'log-out'">` inside the user menu */
   logOut: '[data-test="button-log-out"]',
 } as const;
