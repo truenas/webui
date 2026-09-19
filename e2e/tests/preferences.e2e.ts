@@ -25,6 +25,7 @@
  * change and its restore would leave the next run measuring from somewhere
  * nobody chose. See `fixtures/preferences.ts`.
  */
+import { ensureGroupAbsent, ensureGroupPresent } from '../fixtures/groups';
 import {
   establishPreferenceBaseline, preferenceBaseline, readPreference, restorePreferences,
 } from '../fixtures/preferences';
@@ -58,15 +59,31 @@ const testTheme = { label: 'Paper', value: 'paper' };
  */
 const builtinGroup = 'wheel';
 
+/**
+ * A non-builtin group, created solely so the list has something to render.
+ *
+ * Without it the "built-ins are hidden" assertion is unfalsifiable: `goToGroups`
+ * resolves on the route activating, the rows arrive over the socket a beat
+ * later, and `toBeHidden` is satisfied by an empty table. A regression that
+ * stopped filtering built-ins entirely would still pass. Waiting for *this* row
+ * first is what proves the list had loaded when `wheel` was found absent — and
+ * it has to be a row the test made, because with built-ins hidden a stock
+ * appliance's list can legitimately be empty.
+ */
+const anchorGroup = 'e2e_prefs_anchor';
+
 /** What `beforeEach` wrote, and therefore exactly what `afterEach` must undo to. */
 let baseline: PreferencesBlob;
 
 test.beforeEach(async ({ api }) => {
   baseline = await establishPreferenceBaseline(api);
+  await ensureGroupAbsent(api, anchorGroup);
+  await ensureGroupPresent(api, anchorGroup);
 });
 
 test.afterEach(async ({ api }) => {
   await restorePreferences(api, baseline);
+  await ensureGroupAbsent(api, anchorGroup);
 });
 
 test('a theme change outlives the page that made it', async ({ page, api }) => {
@@ -133,12 +150,16 @@ test('syncing the theme with the OS replaces the theme picker with a pair', asyn
 
 test('the groups list remembers that built-ins were shown', async ({ page, api }) => {
   // Hidden to start with because `beforeEach` put it that way — not because the
-  // appliance was asked and agreed. That is what makes this re-runnable after an
-  // interrupted run that left the toggle on, which is precisely the state this
-  // test creates.
-  expect(preferenceBaseline.hideBuiltinGroups).toBe(true);
+  // appliance was asked and agreed. Read back from the appliance rather than
+  // asserted against the constant that was just written, which would only be
+  // the test agreeing with itself.
+  expect(await readPreference(api, 'hideBuiltinGroups')).toBe(true);
 
   await goToGroups(page);
+
+  // The anchor first: it is what makes the next line an observation rather than
+  // a race with an empty table. See the note on `anchorGroup`.
+  await expect(page.locator(groupsLocators.row(anchorGroup))).toBeVisible();
   await expect(page.locator(groupsLocators.row(builtinGroup))).toBeHidden();
 
   await page.locator(groupsLocators.showBuiltIns).click();

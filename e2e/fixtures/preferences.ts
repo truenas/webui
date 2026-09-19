@@ -61,9 +61,10 @@ export const preferenceBaseline = {
  * `sidenavStatus`. Writing a partial blob onto such an account would put it in
  * that second state permanently, for this run and every later one.
  *
- * So when there is nothing to merge into, this is what gets merged into. It
- * mirrors `defaultPreferences` in webui, and
- * `src/app/modules/theme/theme.service.spec.ts` holds it to that shape.
+ * So this sits underneath every merge. It mirrors `defaultPreferences` in webui,
+ * and `src/app/store/preferences/e2e-default-preferences-parity.spec.ts` holds
+ * it to that set of keys — the silent drift being a field added to webui and not
+ * here.
  */
 export const fullDefaultPreferences: PreferencesBlob = {
   userTheme: 'ix-dark',
@@ -130,7 +131,13 @@ export async function restorePreferences(client: E2eApiClient, preferences: Pref
  */
 export async function establishPreferenceBaseline(client: E2eApiClient): Promise<PreferencesBlob> {
   const existing = await readPreferences(client);
-  const baseline = { ...(existing ?? fullDefaultPreferences), ...preferenceBaseline };
+
+  // Defaults underneath rather than only when there is nothing on top. Written
+  // as `existing ?? fullDefaultPreferences` this would repair a *missing* blob
+  // and write a merely short one straight back — and the whole reason absence is
+  // kept distinct above is that a partial blob is the state worth never
+  // creating. Ordered this way the fixture cannot write one, whatever it found.
+  const baseline = { ...fullDefaultPreferences, ...(existing ?? {}), ...preferenceBaseline };
 
   await restorePreferences(client, baseline);
 

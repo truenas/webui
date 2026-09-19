@@ -212,6 +212,12 @@ a number. See `05-ci.md`.
   well as the group ones. **This has now bitten once**, in the preferences spec,
   which turns built-ins on deliberately: it asserts on `wheel` (GID 0) precisely
   because `builtin_administrators` is 79th of 93 and therefore on page two.
+- **The preferences fixture cannot restore an account that had none.** Middleware
+  exposes `auth.set_attribute` and no way to unset an attribute, so on an account
+  that has never saved a preference `establishPreferenceBaseline` leaves one
+  behind — webui's own defaults, which is what that account was already being
+  given at runtime, but now written down rather than inferred. Harmless in
+  practice and irreversible, so it is recorded rather than worked around.
 - **The delete-group dialog's "delete these users too" checkbox is unreachable**,
   and so has no test. It renders when the group has members, while the button
   that opens the dialog is disabled for exactly that reason — two rules that
