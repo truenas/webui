@@ -6,7 +6,7 @@
  *
  * See `signin.ts` for a note on the type-prefixing that produces these values.
  */
-import { legacyKebabTestSegment } from './test-id';
+import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 
 export const usersLocators = {
   /** `<tn-button testId="create-new-user">` in all-users-header */
@@ -31,6 +31,25 @@ export const usersLocators = {
    * there, and the account the run signs in as differs between targets.
    */
   anyRow: '[data-test^="row-user-"]',
+
+  /**
+   * Delete, in the details pane for the selected user.
+   *
+   * `<tn-button [testId]="['delete', user().username]">`, so this one goes
+   * through the *library's* normalizer — unlike {@link row} beside it, which
+   * the table pre-kebabs with lodash. Same username, two spellings.
+   */
+  deleteUser: (username: string): string => `[data-test="button-delete-${kebabTestSegment(username)}"]`,
+
+  /** The confirmation raised by that button. `<tn-dialog-shell testId="delete-user">`. */
+  deleteDialog: {
+    title: '[data-test="dialog-title-delete-user"]',
+    /** Offered only when the user is the last member of its primary group. */
+    deletePrimaryGroup: '[data-test="checkbox-delete-primary-group"]',
+    /** Exact match, so it does not collide with the pane's `button-delete-<username>`. */
+    confirm: '[data-test="button-delete"]',
+    cancel: '[data-test="button-cancel"]',
+  },
 
   form: {
     /** `<tn-input [testId]="'username'">` in user-form.component.html */

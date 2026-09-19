@@ -311,7 +311,11 @@ export async function ensureRefusedAccountsAbsent(client: E2eApiClient): Promise
   await ensureGroupAbsent(client, account.groupName);
 }
 
-async function findGroup(
+/**
+ * A group by name, or undefined. What the deletion tests ask to find out
+ * whether a user's primary group went with it.
+ */
+export async function findGroup(
   client: E2eApiClient,
   name: string,
 ): Promise<{ id: number; gid: number } | undefined> {

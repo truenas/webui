@@ -70,3 +70,24 @@ export async function saveUserForm(page: Page): Promise<void> {
   await page.locator(usersLocators.form.save).click();
   await expect(page.locator(usersLocators.form.save)).toBeHidden({ timeout: saveTimeoutMs });
 }
+
+/**
+ * Selects a user in the list and opens the delete confirmation for it.
+ *
+ * Selecting first is what makes this a row-targeting test: the pane's Delete
+ * belongs to whichever user the list has selected, so clicking the wrong row
+ * deletes the wrong account with no other symptom.
+ */
+export async function openDeleteUserDialog(page: Page, username: string): Promise<void> {
+  await goToUsers(page);
+
+  await page.locator(usersLocators.row(username)).click();
+  await page.locator(usersLocators.deleteUser(username)).click();
+  await expect(page.locator(usersLocators.deleteDialog.title)).toBeVisible();
+}
+
+/** Confirms the open delete dialog and waits for it to go. */
+export async function confirmUserDeletion(page: Page): Promise<void> {
+  await page.locator(usersLocators.deleteDialog.confirm).click();
+  await expect(page.locator(usersLocators.deleteDialog.title)).toBeHidden({ timeout: saveTimeoutMs });
+}
