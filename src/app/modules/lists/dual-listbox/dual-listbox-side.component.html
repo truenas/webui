@@ -58,10 +58,36 @@
     (cdkDropListDropped)="dropped.emit($event)"
   >
     @for (item of side().visibleItems(); track trackByKey($index, item); let idx = $index) {
+      <!--
+        The item is the only handle on a single record: the move buttons act on
+        whatever is selected, so a test or a script that wants one particular
+        user has to be able to click it. `listType` is part of the id because
+        the two sides render the same records, and which side one is on is
+        exactly the thing worth asserting.
+
+        Built from the *display* value rather than `keyOf`, which is the side's
+        declared identity. That is deliberate and it is a trade: the key is
+        whatever the host names (`key="id"` in both consumers), so it is an id
+        the appliance allocates and a caller cannot know in advance — useless
+        for addressing a record. The display is knowable, at the cost of being
+        unique only as far as displayed names are. Fine for usernames; a host
+        whose display is derived or may repeat gets colliding ids here, and
+        should be given a discriminator of its own before relying on them.
+
+        A joined string, not the `[type, display]` array the segments would
+        suggest: an array literal is a new reference every pass, which defeats
+        the binding's `Object.is` guard and re-runs the test-id directive's
+        effect for every rendered item on every check — on a list this one is
+        built to keep O(n) work off. A string compares by value, so the write
+        happens once. The composed id is unchanged either way; see
+        `itemTestId`.
+      -->
       <tn-list-item
         #listItem
         cdkDrag
+        tnTestIdType="list-item"
         [wrap]="true"
+        [tnTestId]="itemTestId(item)"
         [attr.role]="'option'"
         [attr.aria-selected]="side().isSelected(item)"
         [attr.tabindex]="idx === side().tabStop() ? 0 : -1"

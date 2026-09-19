@@ -6,9 +6,8 @@
  * that was not asked for. Both are checked through the API — the list no longer
  * showing a row is not evidence the account is gone.
  */
-import {
-  ensureGroupAbsent, ensureUserAbsent, ensureUserPresent, findGroup, findUser,
-} from '../fixtures/users';
+import { ensureGroupAbsent, findGroup } from '../fixtures/groups';
+import { ensureUserAbsent, ensureUserPresent, findUser } from '../fixtures/users';
 import { confirmUserDeletion, openDeleteUserDialog } from '../flows/users';
 import { usersLocators } from '../locators/users';
 import { expect, test } from '../support/fixtures';

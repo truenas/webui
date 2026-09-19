@@ -16,7 +16,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnIconButtonComponent, TnIconComponent, TnInputComponent, TnListComponent, TnListIconDirective,
-  TnListItemComponent, tnIconMarker,
+  TnListItemComponent, TnTestIdDirective, tnIconMarker,
 } from '@truenas/ui-components';
 import { translated } from 'app/helpers/translated.helper';
 import { DualListBoxSide, ListType, SelectionModifiers } from 'app/modules/lists/dual-listbox/dual-listbox-side';
@@ -45,6 +45,7 @@ const typeAheadResetTimeout = 800;
     TnListComponent,
     TnListIconDirective,
     TnListItemComponent,
+    TnTestIdDirective,
     TranslateModule,
   ],
 })
@@ -98,6 +99,18 @@ export class DualListBoxSideComponent<T> {
         clearTimeout(this.typeAheadTimeoutId);
       }
     });
+  }
+
+  /**
+   * The `data-test` an item carries, as one string.
+   *
+   * Joined here rather than passed as segments so the binding compares by value
+   * — see the note in the template. `kebabTestSegment` splits on every
+   * non-alphanumeric run, so joining with `-` and normalizing once produces the
+   * same id as normalizing each segment and joining would.
+   */
+  protected itemTestId(item: T): string {
+    return `${this.listType()}-${this.side().displayOf(item)}`;
   }
 
   protected trackByKey(index: number, item: T): unknown {

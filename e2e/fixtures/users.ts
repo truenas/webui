@@ -7,6 +7,7 @@
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
+import { ensureGroupAbsent, ensureGroupPresent, findGroup } from './groups';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
@@ -86,16 +87,23 @@ export async function findUser(
 }
 
 /**
- * A user record with its primary group narrowed.
+ * A user record with its primary group and its id narrowed.
  *
- * Only `group` needs naming: the generated `UserEntry` types it as an open
- * record, while everything else these tests read — `uid`, `roles`, `locked` —
- * it already describes. Re-declaring those here would restate the API from
- * memory, and would quietly promote its optional fields to required.
+ * Two fields, for two different reasons. `group` because the generated
+ * `UserEntry` types it as an open record. `id` because the generated result
+ * declares it optional, so a record read back out of a query cannot be handed
+ * to anything that wants a number — which forced callers to re-check a field
+ * every row certainly has. `fixtures/groups.ts` narrows `GroupRecord` the same
+ * way and for the same reason; the two files should not answer this
+ * differently.
+ *
+ * Nothing else is named here. Everything the specs read — `uid`, `roles`,
+ * `locked` — the package already describes, and re-declaring those would
+ * restate the API from memory while quietly promoting more optional fields.
  */
 type UserEntry = Extract<CallResponse<E2eApiDirectory, 'user.query'>, unknown[]>[number];
 
-export type UserRecord = UserEntry & { group: { bsdgrp_group: string } };
+export type UserRecord = UserEntry & { id: number; group: { bsdgrp_group: string } };
 
 /**
  * Creates a plain local user if absent, for S3 to run as.
@@ -148,42 +156,6 @@ export async function ensureUserPresent(
       password_disabled: true,
       smb: false,
     }]).pipe(timeout(slowCallTimeoutMs)),
-  );
-}
-
-/**
- * Creates a plain local group if absent, for grants to name.
- *
- * Same reasoning as {@link ensureUserPresent}: the S3 grant pickers list
- * non-builtin principals only, and a group is a precondition rather than the
- * thing under test.
- */
-export async function ensureGroupPresent(client: E2eApiClient, name: string): Promise<void> {
-  const [existing] = await firstValueFrom(
-    client.api.query('group.query', [['group', '=', name]]).pipe(timeout(readTimeoutMs)),
-  );
-
-  if (existing) {
-    return;
-  }
-
-  await firstValueFrom(
-    client.api.call('group.create', [{ name, smb: false }]).pipe(timeout(slowCallTimeoutMs)),
-  );
-}
-
-/** Removes a group if present, by name. Succeeds when the group does not exist. */
-export async function ensureGroupAbsent(client: E2eApiClient, name: string): Promise<void> {
-  const [existing] = await firstValueFrom(
-    client.api.query('group.query', [['group', '=', name]]).pipe(timeout(readTimeoutMs)),
-  );
-
-  if (!existing) {
-    return;
-  }
-
-  await firstValueFrom(
-    client.api.call('group.delete', [existing.id]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
 
@@ -303,21 +275,6 @@ export async function ensureRefusedAccountsAbsent(client: E2eApiClient): Promise
   }
 
   await ensureGroupAbsent(client, account.groupName);
-}
-
-/**
- * A group by name, or undefined. What the deletion tests ask to find out
- * whether a user's primary group went with it.
- */
-export async function findGroup(
-  client: E2eApiClient,
-  name: string,
-): Promise<{ id: number; gid: number } | undefined> {
-  const [group] = await firstValueFrom(
-    client.api.query('group.query', [['group', '=', name]]).pipe(timeout(readTimeoutMs)),
-  );
-
-  return group ? { id: group.id, gid: group.gid } : undefined;
 }
 
 /**

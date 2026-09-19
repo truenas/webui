@@ -19,6 +19,7 @@ const expectedRoute = {
   datasets: /\/datasets/,
   shares: /\/sharing/,
   users: /\/credentials\/users/,
+  groups: /\/credentials\/groups\/?$/,
   s3AccessKeys: /\/credentials\/s3-access-keys/,
 } as const;
 
@@ -59,6 +60,18 @@ export async function goToShares(page: Page): Promise<void> {
 export async function goToUsers(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.credentials).click();
   await clickAndArrive(page, navLocators.users, expectedRoute.users);
+}
+
+/**
+ * Groups sits beside Users under the same Credentials slide-out.
+ *
+ * The route is anchored to the end because the members picker lives under
+ * `/credentials/groups/:pk/members` — without that, a test still sitting on the
+ * members page would read as having arrived at the list.
+ */
+export async function goToGroups(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.credentials).click();
+  await clickAndArrive(page, navLocators.groups, expectedRoute.groups);
 }
 
 /**
