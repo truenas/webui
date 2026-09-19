@@ -9,7 +9,9 @@
  * One test, deliberately. Every submitted form spends from the unauthenticated
  * rate limit (20 per method per IP per 60s), and this one spends two.
  */
-import { readPreference, readPreferences, restorePreferences } from '../../fixtures/preferences';
+import {
+  establishPreferenceBaseline, readPreference, restorePreferences,
+} from '../../fixtures/preferences';
 import type { PreferencesBlob } from '../../fixtures/preferences';
 import { signIn, signOut } from '../../flows/auth';
 import {
@@ -20,10 +22,10 @@ import { expect, test } from '../../support/fixtures';
 /** Light, where the appliance ships dark — see the note in `preferences.e2e.ts`. */
 const testTheme = { label: 'Paper', value: 'paper' };
 
-let snapshot: PreferencesBlob;
+let baseline: PreferencesBlob;
 
 test.beforeEach(async ({ api }) => {
-  snapshot = await readPreferences(api);
+  baseline = await establishPreferenceBaseline(api);
 });
 
 /**
@@ -32,7 +34,7 @@ test.beforeEach(async ({ api }) => {
  * ran under.
  */
 test.afterEach(async ({ api }) => {
-  await restorePreferences(api, snapshot);
+  await restorePreferences(api, baseline);
 });
 
 test('a preference set in one session is there in the next', async ({ page, api, config }) => {
@@ -47,15 +49,24 @@ test('a preference set in one session is there in the next', async ({ page, api,
 
   await signOut(page);
 
-  // The app also caches the theme in `localStorage`, so a second sign-in in this
-  // same browser would come up in Paper whether or not the appliance had kept
-  // anything. Clearing it is what makes the next sign-in a *different browser*
-  // in every way that matters, and so what makes this a test of the account
-  // rather than of the tab.
-  // Bare `localStorage`, not `window.localStorage`: this callback is serialized
-  // and runs in the page, where the lint rule's advice (inject Angular's WINDOW)
-  // has nothing to refer to.
-  await page.evaluate(() => localStorage.clear());
+  // The theme is cached in the browser as well as stored on the account —
+  // `TnThemeService` reads `localStorage` at startup and applies the class
+  // before anything has asked the appliance, and webui keeps its own copy in
+  // `sessionStorage` (`theme.service.ts`). Left in place, a second sign-in here
+  // would come up in Paper whether or not the appliance had kept a thing, and
+  // this test would prove nothing.
+  //
+  // Both, not just the one that happens to be load-bearing today: which of the
+  // two wins is a detail of startup ordering, and a test whose meaning depends
+  // on that ordering is a test that goes quietly vacuous when it changes.
+  //
+  // Bare globals rather than `window.*`: this callback is serialized and runs in
+  // the page, where the lint rule's advice (inject Angular's WINDOW) has nothing
+  // to refer to.
+  await page.evaluate(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  });
 
   await signIn(page, config.username, config.password);
 

@@ -8,6 +8,15 @@
  * The two ids that open it — the topbar trigger and the menu entry — live in
  * `topbar.ts` with the rest of that menu, not here.
  *
+ * Only what the specs select on: the session timeout, language, date and time
+ * format controls are on this form and deliberately absent below, because an
+ * entry here reads as a verified fact about the screen and an unexercised one is
+ * only a guess at it. Two warnings for whoever adds them. **Session Timeout
+ * drops an idle session** — a test that lowers it and does not put it back ends
+ * every later test in the run at the sign-in page. **Language translates the
+ * whole app**, which is survivable for `data-test` selectors and not for any
+ * assertion on text.
+ *
  * See `signin.ts` for a note on the type-prefixing that produces these values.
  */
 import { kebabTestSegment } from './test-id';
@@ -35,12 +44,6 @@ export const preferencesLocators = {
      * survivable right up until it isn't.)
      */
     themeOption: (label: string): string => `[data-test="option-theme-${kebabTestSegment(label)}"]`,
-
-    /** Seconds before an idle session is dropped. Never lower this in a test. */
-    sessionTimeout: '[data-test="input-token-lifetime"]',
-    language: '[data-test="autocomplete-language"]',
-    dateFormat: '[data-test="select-date-format"]',
-    timeFormat: '[data-test="select-time-format"]',
 
     save: '[data-test="button-save"]',
     /** The panel's dismiss control; raises the unsaved-changes confirmation. */
@@ -73,7 +76,7 @@ export const preferencesLocators = {
  * other observable, and a `data-test` mirroring a CSS class would be a second
  * source of truth for one fact.
  */
-const themeClassByStoredName: Record<string, string> = {
+export const themeClassByStoredName: Record<string, string> = {
   'ix-dark': 'tn-dark',
   'ix-blue': 'tn-blue',
   dracula: 'tn-dracula',

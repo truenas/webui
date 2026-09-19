@@ -11,15 +11,23 @@
  * stored it. A preference that only ever reached the store would satisfy the
  * first and fail the second, which is exactly the bug worth catching.
  *
- * ## Why the teardown is unusual
+ * ## Why the setup and teardown are unusual
  *
  * Preferences hang off the account the whole suite signs in as, so a test that
  * leaves one behind changes what every later test sees — a date format changes
  * the text in every date cell, a language translates the app. There is nothing
- * to delete, so `afterEach` puts the snapshot back whole rather than undoing a
- * field. See `fixtures/preferences.ts`.
+ * to delete, so `beforeEach` writes a known baseline and `afterEach` writes the
+ * same one back.
+ *
+ * Written rather than observed, which matters more here than it first looks: a
+ * test that read its starting theme off the appliance would be asserting a
+ * precondition instead of establishing one, and a run interrupted between a
+ * change and its restore would leave the next run measuring from somewhere
+ * nobody chose. See `fixtures/preferences.ts`.
  */
-import { readPreference, readPreferences, restorePreferences } from '../fixtures/preferences';
+import {
+  establishPreferenceBaseline, preferenceBaseline, readPreference, restorePreferences,
+} from '../fixtures/preferences';
 import type { PreferencesBlob } from '../fixtures/preferences';
 import { goToGroups } from '../flows/navigation';
 import {
@@ -50,22 +58,15 @@ const testTheme = { label: 'Paper', value: 'paper' };
  */
 const builtinGroup = 'wheel';
 
-/**
- * The account's preferences as this test found them, restored afterwards.
- *
- * Read per test rather than once for the file: `beforeEach` in a suite that
- * restores in `afterEach` always sees the original, and a shared snapshot would
- * quietly become "whatever the first test happened to observe" if one ever
- * failed mid-change.
- */
-let snapshot: PreferencesBlob;
+/** What `beforeEach` wrote, and therefore exactly what `afterEach` must undo to. */
+let baseline: PreferencesBlob;
 
 test.beforeEach(async ({ api }) => {
-  snapshot = await readPreferences(api);
+  baseline = await establishPreferenceBaseline(api);
 });
 
 test.afterEach(async ({ api }) => {
-  await restorePreferences(api, snapshot);
+  await restorePreferences(api, baseline);
 });
 
 test('a theme change outlives the page that made it', async ({ page, api }) => {
@@ -86,10 +87,11 @@ test('a theme change outlives the page that made it', async ({ page, api }) => {
 });
 
 test('a previewed theme is put back when the panel is dismissed', async ({ page, api }) => {
-  // Whatever the account was already on, not a literal: this test is about a
-  // value returning to where it started, so hardcoding the start would make it
-  // a different test on an appliance configured differently.
-  const original = snapshot.userTheme as string;
+  // The baseline `beforeEach` wrote, so "where it started" is a place this test
+  // chose rather than one it found. Reading it off the appliance instead would
+  // make the test pass trivially on an account already sitting on the theme it
+  // previews.
+  const original = preferenceBaseline.userTheme;
   await expectTheme(page, original);
 
   await openPreferencesForm(page);
@@ -130,10 +132,11 @@ test('syncing the theme with the OS replaces the theme picker with a pair', asyn
 });
 
 test('the groups list remembers that built-ins were shown', async ({ page, api }) => {
-  // Hidden by default, which is why the groups specs never see a built-in row —
-  // and why a reader of those specs would not guess this is a *preference*
-  // rather than a per-visit toggle.
-  expect(snapshot.hideBuiltinGroups).toBe(true);
+  // Hidden to start with because `beforeEach` put it that way — not because the
+  // appliance was asked and agreed. That is what makes this re-runnable after an
+  // interrupted run that left the toggle on, which is precisely the state this
+  // test creates.
+  expect(preferenceBaseline.hideBuiltinGroups).toBe(true);
 
   await goToGroups(page);
   await expect(page.locator(groupsLocators.row(builtinGroup))).toBeHidden();

@@ -35,10 +35,18 @@ export async function chooseTheme(page: Page, label: string): Promise<void> {
  * Saves the form and waits for the panel to close.
  *
  * The panel closing is the app's own signal that it took the change.
+ *
+ * Waits on **Save**, not on the theme select. The select lives inside the
+ * `!isSyncWithOs()` branch of the template, so a caller that saves with
+ * "Sync Theme With OS" ticked has already made it disappear — and the wait would
+ * pass instantly, against a panel still open and a save still in flight. Save is
+ * the one control present in both branches.
  */
 export async function savePreferences(page: Page): Promise<void> {
-  await page.locator(preferencesLocators.form.save).click();
-  await expect(page.locator(preferencesLocators.form.theme)).toBeHidden({ timeout: saveTimeoutMs });
+  const save = page.locator(preferencesLocators.form.save);
+
+  await save.click();
+  await expect(save).toBeHidden({ timeout: saveTimeoutMs });
 }
 
 /**
@@ -55,7 +63,7 @@ export async function discardPreferences(page: Page): Promise<void> {
   await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
   await page.locator(confirmDialogLocators.confirm).click();
 
-  await expect(page.locator(preferencesLocators.form.theme)).toBeHidden({ timeout: saveTimeoutMs });
+  await expect(page.locator(preferencesLocators.form.save)).toBeHidden({ timeout: saveTimeoutMs });
 }
 
 /** Asserts which theme the document is currently showing. */
