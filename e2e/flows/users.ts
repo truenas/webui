@@ -39,15 +39,13 @@ export async function createTrueNasAdminUser(page: Page, user: NewAdminUser): Pr
 /**
  * Opens the add-user side panel, from the sidebar as a user would.
  *
- * Waits for a row in the list before opening it, and that wait is load-bearing
- * rather than cosmetic: the username control gains its "already in use"
- * validator from a store subscription (`setNamesInUseValidator`), so a name
- * typed before the list has loaded can be accepted by a validator that has not
- * been added yet.
+ * Deliberately waits on nothing but the form. The names-in-use validator is fed
+ * by a `user.query` the *store* runs (`userPageEntered`), separate from the one
+ * the list renders from, so a visible row would not order it — and the form
+ * revalidates when that response lands, so nothing needs to.
  */
 export async function openAddUserForm(page: Page): Promise<void> {
   await goToUsers(page);
-  await expect(page.locator(usersLocators.anyRow).first()).toBeVisible();
 
   await page.locator(usersLocators.addUser).click();
   await expect(page.locator(usersLocators.form.username)).toBeVisible();

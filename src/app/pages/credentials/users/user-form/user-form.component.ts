@@ -212,6 +212,11 @@ export class UserFormComponent extends IxFormHostForm<User> implements OnInit {
       // A new user has no name of its own to exclude, which is what the
       // optional argument is for. Without this the clash is only caught by
       // middleware, after a round trip — the edit form catches it as you type.
+      //
+      // Only covers the Users page: the list it reads is filled by
+      // `userPageEntered`, so opening this form from a user picker
+      // (`UserDirectoryService.createUser`) still leaves it inert. Closing that
+      // gap means an async validator over `user.query` rather than the store.
       this.setNamesInUseValidator();
     }
   }

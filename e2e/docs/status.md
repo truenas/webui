@@ -91,9 +91,6 @@ a number. See `05-ci.md`.
   filtered out by the wizard and do not count. Hypervisors hand out blank
   serials readily — set distinct ones.
 - An admin account **without** two-factor. The suite cannot answer the challenge.
-- **At least one non-builtin local user**, which the admin account itself
-  satisfies. The users list hides built-ins behind a toggle that is off by
-  default, and the add-user flow waits for a row before opening the form.
 - Fully booted, no first-boot wizard, no EULA.
 - **A cleartext origin for the UI.** One test asserts the insecure-connection
   warning, which is decided from the scheme the page was loaded with, so it

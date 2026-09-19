@@ -24,15 +24,6 @@ export const usersLocators = {
   row: (username: string): string => `[data-test="row-user-${legacyKebabTestSegment(username)}"]`,
 
   /**
-   * Any user row, for waiting on the list rather than on a particular account.
-   *
-   * A prefix match because no single username is guaranteed: the list hides
-   * built-in users behind a toggle that is off by default, so `root` is not
-   * there, and the account the run signs in as differs between targets.
-   */
-  anyRow: '[data-test^="row-user-"]',
-
-  /**
    * Delete, in the details pane for the selected user.
    *
    * `<tn-button [testId]="['delete', user().username]">`, so this one goes
