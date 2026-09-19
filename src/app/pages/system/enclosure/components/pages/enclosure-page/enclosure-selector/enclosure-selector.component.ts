@@ -28,7 +28,7 @@ export class EnclosureSelectorComponent {
 
   /**
    * Enclosure models carry digits (`M50`, `MINI-3.0-E`), and the library's kebab-casing does not
-   * split a letter→digit boundary the way `[ixTest]` did — so the id is pre-normalized here to
+   * split a letter→digit boundary the way lodash does — so the id is pre-normalized here to
    * keep `link-select-enclosure-m-50` byte-identical. See {@link normalizeTestIdParts}.
    */
   protected readonly selectorLinks = computed(() => this.enclosures().map((enclosure) => ({

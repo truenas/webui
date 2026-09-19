@@ -2,9 +2,11 @@ import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnIconComponent,
+  TnTestIdDirective,
+} from '@truenas/ui-components';
 import { NgxPopperjsModule, NgxPopperjsPlacements, NgxPopperjsTriggers } from 'ngx-popperjs';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-tooltip',
@@ -15,7 +17,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     NgxPopperjsModule,
     TranslateModule,
     TnIconComponent,
-    TestDirective,
+    TnTestIdDirective,
   ],
 })
 export class TooltipComponent {

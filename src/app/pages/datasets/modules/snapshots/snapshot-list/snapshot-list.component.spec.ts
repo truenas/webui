@@ -155,7 +155,7 @@ describe('SnapshotListComponent', () => {
       'text-dataset-snapshot-2-row-text',
       'text-snapshot-snapshot-2-row-text',
       'text-used-snapshot-2-row-size',
-      // `date-date-created-…` under `[ixTest]`: the library's composeTestId drops a base
+      // `date-date-created-…` before the migration: the library's composeTestId drops a base
       // segment that repeats the type prefix, so this one id is a rename, not a restoration.
       'date-created-snapshot-2-row-date',
       'text-referenced-snapshot-2-row-size',

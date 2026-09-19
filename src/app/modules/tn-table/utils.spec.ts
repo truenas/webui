@@ -752,7 +752,7 @@ describe('tnTableListHost', () => {
     const makeTag = (): (row: Row) => string => tnTableListHost<Row>(provider, { displayedColumns: ['name'] })
       .rowTag((row) => 'replication-task-' + row.name);
 
-    it('kebab-cases the base so the tag resolves the same as the legacy [ixTest] directive', () => {
+    it('kebab-cases the base so the tag keeps the id the list already had', () => {
       TestBed.runInInjectionContext(() => {
         expect(makeTag()({ name: 'My Task' })).toBe('replication-task-my-task');
       });
@@ -901,7 +901,7 @@ describe('memoizedRowTag', () => {
     const tag = memoizedRowTag<Row>((row) => `virtual-machine-${row.name}`);
 
     expect(tag({ name: 'My VM1' })).toBe(toUniqueRowTag('virtual-machine-My VM1'));
-    // Letter-digit boundary is split, matching what the legacy [ixTest] directive resolved to.
+    // Letter-digit boundary is split, matching the id the row already had.
     expect(tag({ name: 'My VM1' })).toBe('virtual-machine-my-vm-1');
   });
 

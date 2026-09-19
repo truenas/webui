@@ -13,7 +13,8 @@
         (columnsChange)="onColumnsChange($event)"
       ></ix-table-column-picker>
 
-      <!-- testId preserves the legacy ixTest value (`button-add-target`), which e2e selects on. -->
+      <!-- `add-target` on the Extents screen is a historical misnomer. Frozen rather than fixed:
+           a `data-test` is a Release Engineering contract, so don't tidy it. -->
       <tn-button
         *ixRequiresRoles="requiredRoles"
         color="primary"

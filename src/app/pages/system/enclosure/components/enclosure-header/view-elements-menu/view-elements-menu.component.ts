@@ -16,7 +16,7 @@ export interface ViewOption {
   label: string;
   /**
    * Pre-normalized so the id keeps resolving off the untranslated source label, exactly as
-   * `[ixTest]="view.label"` did before the label gained a `translate` pipe.
+   * the id did before the label gained a `translate` pipe.
    */
   testId: string;
 }

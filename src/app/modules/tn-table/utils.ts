@@ -42,9 +42,9 @@ export function convertStringToId(inputString: string): string {
  * spelling of it — every migrated table calls this rather than composing the two helpers by
  * hand, so a change to how row tags are normalized lands everywhere at once.
  *
- * Pre-normalizes through {@link normalizeTestIdString} so the tag resolves identically through
- * the legacy `[ixTest]` directive and the library's `[tnTestId]` — see that helper for why the
- * two kebab implementations disagree.
+ * Pre-normalizes through {@link normalizeTestIdString} so the tag matches the id the list
+ * already had before it moved to `[tnTestId]` — see that helper for why the two kebab
+ * implementations disagree.
  */
 export function toUniqueRowTag(value: string): string {
   return normalizeTestIdString(convertStringToId(value));
@@ -81,6 +81,30 @@ export function memoizedRowTag<T extends object>(build: (row: T) => string): (ro
       cache.set(row, tag);
     }
     return tag;
+  };
+}
+
+/**
+ * One raw row tag resolved the two ways a shares-dashboard card needs it.
+ *
+ * `uniqueRowTag` is the un-normalized form, and it is the contract: `[rowTestId]` and every shared
+ * cell component (`ix-table-actions-cell`, `ix-table-toggle-cell`, `ix-tier-status`) emit it as it
+ * is, so re-normalizing it would rename the row and action ids. `cellRowTag` is the lodash-kebabed
+ * form, for the value cells whose ids were minted that way and cannot move — see
+ * {@link normalizeTestIdString} for why the two kebabs disagree. It memoizes per row.
+ *
+ * Stated here rather than in each card so the pair cannot drift apart, and so a card declares the
+ * raw tag once: four of them had the same three members and the same docblock copied verbatim.
+ *
+ * @param build the raw, un-kebab-ed tag for a row, e.g. ``(row) => `card-smb-share-${row.name}` ``.
+ */
+export function rowTagPair<T extends object>(build: (row: T) => string): {
+  uniqueRowTag: (row: T) => string;
+  cellRowTag: (row: T) => string;
+} {
+  return {
+    uniqueRowTag: (row: T) => convertStringToId(build(row)),
+    cellRowTag: memoizedRowTag(build),
   };
 }
 
@@ -326,7 +350,7 @@ function columnSortBy<T>(column: TableColumn<T> | undefined): RowSortValue<T> | 
 /**
  * Builds the test id for a detail-row action button. Pre-splits with lodash
  * `kebabCase`: it breaks letter–digit boundaries ('esxi1' → 'esxi-1') while the
- * library's kebab does not, so the id matches what `[ixTest]` used to resolve to.
+ * library's kebab does not, so the id matches the one the button already had.
  */
 export function detailActionTestId(parts: (string | number | undefined)[], action: string): string {
   return kebabCase([...parts, action].join('-'));

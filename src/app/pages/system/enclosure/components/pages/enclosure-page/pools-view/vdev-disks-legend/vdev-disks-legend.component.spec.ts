@@ -37,8 +37,8 @@ describe('VdevDisksLegendComponent', () => {
     expect(diskNames[2]).toHaveText('sdc');
   });
 
-  // Device names carry digits, which the library's kebab-casing does not split the way the
-  // legacy `[ixTest]` directive did — pinned so a regression in the normalization is caught.
+  // Device names carry digits, which the library's kebab-casing does not split the way
+  // lodash does — pinned so a regression in the normalization is caught.
   it('keeps the legacy per-disk test id', () => {
     spectator.setInput('selectedSlot', {
       dev: 'nvme0n1',

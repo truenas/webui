@@ -1,5 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
+import { SummarySection } from 'app/modules/summary/summary.interface';
 
 describe('SummaryComponent', () => {
   let spectator: Spectator<SummaryComponent>;
@@ -63,6 +64,15 @@ describe('SummaryComponent', () => {
       selector: '.summary-line-value',
       text: '27',
     });
+  });
+
+  // Both wizards that render this bind a field they only assign when their Confirm step runs, so
+  // the first render binds undefined. `@for` absorbed that; the precomputed rows have to too.
+  it('renders nothing when the summary has not been built yet', () => {
+    spectator.setInput('summary', undefined as unknown as SummarySection[]);
+    spectator.detectChanges();
+
+    expect(spectator.queryAll('.summary-line')).toHaveLength(0);
   });
 
   it('shows summary sections separately', () => {

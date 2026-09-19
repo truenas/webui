@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, input, inject } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCheckboxComponent } from '@truenas/ui-components';
+import { TnCheckboxComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { PosixPermission } from 'app/enums/posix-acl.enum';
 import { parseMode } from 'app/helpers/mode.helper';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.utils';
 
 @Component({
   selector: 'ix-permissions',
@@ -16,13 +16,13 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TnCheckboxComponent,
     ReactiveFormsModule,
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
   ],
   hostDirectives: [
     { ...registeredDirectiveConfig },
   ],
 })
-export class IxPermissionsComponent implements ControlValueAccessor {
+export class IxPermissionsComponent implements OnInit, ControlValueAccessor {
   controlDirective = inject(NgControl);
   private cdr = inject(ChangeDetectorRef);
 
@@ -48,8 +48,31 @@ export class IxPermissionsComponent implements ControlValueAccessor {
 
   private formatRe = /^[0-7][0-7][0-7]$/;
 
+  /**
+   * Ids for the four permission rows, scoped by the bound control's name. Built once in
+   * {@link ngOnInit} — `NgControl.name` comes from the `formControlName` binding, so it is set
+   * before then and does not change — rather than from the template, which would rebuild four
+   * arrays on every change-detection pass.
+   *
+   * Normalized rather than left to the library for both halves of the legacy behaviour: lodash
+   * splits a letter→digit boundary the library's kebab leaves alone (`mode2` →
+   * `row-mode-2-user-permissions`), and an unnamed control contributes no segment at all rather
+   * than a literal `null`. See {@link normalizeTestIdParts}.
+   */
+  protected rowTestIds: Record<'header' | 'user' | 'group' | 'other', string[]>;
+
   constructor() {
     this.controlDirective.valueAccessor = this;
+  }
+
+  ngOnInit(): void {
+    const name = this.controlDirective.name;
+    this.rowTestIds = {
+      header: normalizeTestIdParts([name, 'permissions-header']),
+      user: normalizeTestIdParts([name, 'user-permissions']),
+      group: normalizeTestIdParts([name, 'group-permissions']),
+      other: normalizeTestIdParts([name, 'other-permissions']),
+    };
   }
 
   writeValue(value: string): void {

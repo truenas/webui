@@ -5,7 +5,7 @@
   store, so a `role="status"` region would announce unprompted rather than only confirm an action
   taken from this card. The label carries the same copy as the tooltip, which is pointer-only now
   that the readout is not focusable. `tnTestIdType="button"` pins the legacy
-  `button-service-status-*` id that `[ixTest]` on the old `<button>` resolved to. -->
+  `button-service-status-*` id the old `<button>` resolved to. -->
 @let statusLabel = 'The {name} service is {status}' | translate: {
   name: service()?.service | mapValue: serviceNames,
   status: service()?.state | lowercase

@@ -3,7 +3,7 @@ import { TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import { TableCellTestIdSuffix } from 'app/modules/tn-table/interfaces/table-column.interface';
 
 /**
- * The test-id suffix the legacy `[ixTest]` directive resolved for each kind of
+ * The test-id suffix the pre-tn-table column model resolved for each kind of
  * plain-text cell. `ix-cell-text` and `ix-cell-schedule` rendered the value as
  * text but tagged it differently, and `ix-cell-yes-no` tagged a translated
  * Yes/No the same way again — so the caller picks the shape rather than the

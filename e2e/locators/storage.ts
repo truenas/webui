@@ -9,7 +9,7 @@
  *    `data-test="input-name"` with nothing declared in the template.
  * 2. Select options are `option-<base>-<key>`, kebab-cased by the library's own
  *    `kebabTestSegment` — which is NOT lodash. `RAIDZ2` normalizes to `raidz2`,
- *    not `raidz-2`. webui's legacy `[ixTest]` does use lodash and would differ.
+ *    not `raidz-2`. webui's own normalizer does use lodash and would differ.
  */
 import { confirmDialogLocators } from './dialogs';
 import { kebabTestSegment } from './test-id';

@@ -48,7 +48,7 @@ export class AssociatedExtentsCardComponent {
 
   readonly target = input.required<IscsiTarget>();
 
-  // No convertStringToId here: the legacy path was a raw [ixTest] array (no table config),
+  // No convertStringToId here: the pre-migration path was a raw id array (no table config),
   // and its lowercasing would destroy the camelCase boundaries lodash kebab splits on.
   protected readonly targetTestIdSlug = computed(() => normalizeTestIdString(this.target().name));
 

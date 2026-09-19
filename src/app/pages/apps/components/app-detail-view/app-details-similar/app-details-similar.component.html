@@ -9,12 +9,13 @@
   <h4 class="no-similar">{{ 'Error when loading similar apps.' | translate }}</h4>
 } @else if (similarApps().length) {
   <div class="similar-apps">
-    @for (app of similarApps(); track trackByAppId($index, app)) {
+    @for (link of similarAppLinks(); track trackByAppId($index, link.app)) {
       <a
-        [routerLink]="['/apps', 'available', app.train, app.name]"
-        [ixTest]="['open', app.train, app.name]"
+        tnTestIdType="link"
+        [routerLink]="['/apps', 'available', link.app.train, link.app.name]"
+        [tnTestId]="link.testId"
       >
-        <ix-app-card [app]="app"></ix-app-card>
+        <ix-app-card [app]="link.app"></ix-app-card>
       </a>
     }
   </div>

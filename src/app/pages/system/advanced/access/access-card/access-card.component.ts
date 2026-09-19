@@ -34,7 +34,6 @@ import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-lo
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
@@ -73,7 +72,6 @@ import { waitForAdvancedConfig, waitForGeneralConfig } from 'app/store/system-co
     TableActionsCellComponent,
     IxDateComponent,
     TablePagerShowMoreComponent,
-    TestOverrideDirective,
     TranslateModule,
     YesNoPipe,
     AsyncPipe,

@@ -44,7 +44,7 @@ export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<Widg
 
   protected poolOptions = toSignal(this.poolOptions$, { initialValue: [] });
 
-  // Legacy [ixTest] discriminated options by kebab-cased label (pool name), not value (pool id).
+  // The existing ids discriminate options by kebab-cased label (pool name), not value (pool id).
   protected poolOptionTestId = optionTestIdByKebabLabel;
 
   private firstOption = toSignal(this.poolOptions$.pipe(map((opts) => opts[0]?.value)));

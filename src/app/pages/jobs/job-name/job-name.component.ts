@@ -40,7 +40,7 @@ export class JobNameComponent {
   protected isRunning = computed(() => this.job().state === JobState.Running);
 
   // Pre-normalized so the dynamic description segment keeps resolving to the same
-  // `data-test` the legacy `[ixTest]` directive produced — the library's kebab-casing
+  // `data-test` this job name already had — the library's kebab-casing
   // does not split letter→digit boundaries the way lodash does.
   protected abortTestId = computed(() => normalizeTestIdParts(['abort-job', this.job().description]));
 

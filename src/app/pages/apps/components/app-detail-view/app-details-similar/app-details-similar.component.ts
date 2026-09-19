@@ -1,12 +1,13 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnChanges, signal,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, OnChanges, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.utils';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
@@ -20,7 +21,7 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
     NgxSkeletonLoaderModule,
     AppCardComponent,
     RouterLink,
-    TestDirective,
+    TnTestIdDirective,
   ],
 })
 export class AppDetailsSimilarComponent implements OnChanges {
@@ -35,6 +36,17 @@ export class AppDetailsSimilarComponent implements OnChanges {
   protected loadingError = signal<unknown>(null);
 
   private readonly maxSimilarApps = 6;
+
+  /**
+   * App names carry digits (`n8n`, `netbox3`), and the library's kebab-casing does not split a
+   * letter→digit boundary the way lodash does — so the name is pre-normalized here to keep
+   * `link-open-stable-n-8-n` byte-identical. Normalizing once, when the apps arrive, also keeps
+   * the array out of every change-detection pass. See {@link normalizeTestIdParts}.
+   */
+  protected readonly similarAppLinks = computed(() => this.similarApps().map((app) => ({
+    app,
+    testId: normalizeTestIdParts(['open', app.train, app.name]),
+  })));
 
   ngOnChanges(): void {
     this.loadSimilarApps();
