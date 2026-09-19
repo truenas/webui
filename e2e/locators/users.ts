@@ -71,7 +71,5 @@ export const usersLocators = {
     passwordConfirm: '[data-test="input-password-confirm"]',
     /** `<tn-button [testId]="'save'">` on the side panel container */
     save: '[data-test="button-save"]',
-    /** Closes the panel without saving. */
-    close: '[data-test="button-close-side-panel"]',
   },
 } as const;
