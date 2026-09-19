@@ -213,10 +213,12 @@ export class UserFormComponent extends IxFormHostForm<User> implements OnInit {
       // optional argument is for. Without this the clash is only caught by
       // middleware, after a round trip — the edit form catches it as you type.
       //
-      // Only covers the Users page: the list it reads is filled by
-      // `userPageEntered`, so opening this form from a user picker
-      // (`UserDirectoryService.createUser`) still leaves it inert. Closing that
-      // gap means an async validator over `user.query` rather than the store.
+      // The list it reads is filled by `userPageEntered`, which only the Users
+      // page dispatches. Opened from a picker (`UserDirectoryService.createUser`)
+      // it validates against whatever that left in the root store — nothing at
+      // all in a session that never visited the page, otherwise a list kept
+      // current only by the add/change/remove actions. An async validator over
+      // `user.query` would answer for both entry points.
       this.setNamesInUseValidator();
     }
   }
@@ -277,10 +279,11 @@ export class UserFormComponent extends IxFormHostForm<User> implements OnInit {
       // deleted. Revalidate too, because the list can land after a name has
       // already been typed — on the create form, before the user reaches Save.
       //
-      // Events are emitted, not suppressed: `ix-errors` renders from
-      // `statusChanges`, so a silent update clears the error without clearing
-      // the message. The value is unchanged, so the `valueChanges` that comes
-      // with it re-pushes the same username and is absorbed downstream.
+      // Events are emitted, not suppressed: the field's error message renders
+      // off `statusChanges`, so a silent update clears the error without
+      // clearing the message. The value is unchanged, so the `valueChanges`
+      // that comes with it re-pushes the same username and is absorbed
+      // downstream.
       if (this.namesInUseValidator) {
         username.removeValidators(this.namesInUseValidator);
       }
