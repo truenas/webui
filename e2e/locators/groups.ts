@@ -5,7 +5,13 @@
  * (`group.form-config.ts`) rather than a hand-written template, so every field's
  * id is its *control name* — the renderer binds `[testId]="field.name"` for all
  * field types. That is why the ids below read like API parameters
- * (`sudo_commands_nopasswd_all`) rather than like labels.
+ * (`sudo_commands_all`) rather than like labels.
+ *
+ * Only what the specs select on. The screen carries more — the built-ins
+ * toggle, the privileges chips, the SMB checkbox, the picker's search fields —
+ * and those ids are deliberately absent until a test needs one, because an
+ * entry here reads as a verified fact about the screen and an unexercised one
+ * is only a guess at it. `locators/users.ts` holds to the same line.
  *
  * See `signin.ts` for a note on the type-prefixing that produces these values.
  */
@@ -14,9 +20,6 @@ import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 export const groupsLocators = {
   /** `<tn-button [testId]="'add-group'">` in the page header. */
   addGroup: '[data-test="button-add-group"]',
-
-  /** `<tn-slide-toggle [testId]="'show-built-in-groups'">`; off by default. */
-  showBuiltIns: '[data-test="toggle-show-built-in-groups"]',
 
   /**
    * A group's row in the list.
@@ -42,7 +45,6 @@ export const groupsLocators = {
    */
   rowAction: {
     members: (group: string): string => `[data-test="button-${kebabTestSegment(group)}-members"]`,
-    edit: (group: string): string => `[data-test="button-${kebabTestSegment(group)}-edit"]`,
     delete: (group: string): string => `[data-test="button-${kebabTestSegment(group)}-delete"]`,
   },
 
@@ -57,18 +59,9 @@ export const groupsLocators = {
     gid: '[data-test="input-gid"]',
     name: '[data-test="input-name"]',
     /** A `tn-chip-input`, whose id sits on the text field inside it. */
-    privileges: '[data-test="chip-input-privileges"]',
-    /**
-     * Options are scoped by the chip input's base and labelled by privilege
-     * name, so `Read-Only Administrator` normalizes to this.
-     */
-    privilegeReadOnly: '[data-test="option-privileges-read-only-administrator"]',
     sudoCommands: '[data-test="chip-input-sudo-commands"]',
     /** Disables {@link sudoCommands} rather than hiding it — `enabledWhen`, not `visibleWhen`. */
     sudoCommandsAll: '[data-test="checkbox-sudo-commands-all"]',
-    sudoCommandsNoPasswd: '[data-test="chip-input-sudo-commands-nopasswd"]',
-    sudoCommandsNoPasswdAll: '[data-test="checkbox-sudo-commands-nopasswd-all"]',
-    smb: '[data-test="checkbox-smb"]',
     /** `<tn-button [testId]="'save'">` on the side panel container. */
     save: '[data-test="button-save"]',
   },
@@ -80,16 +73,18 @@ export const groupsLocators = {
    * `selected` side, and the arrow buttons move whatever is selected between
    * them. Which side a user is on is the entire state of the screen, so the
    * per-item ids below are how a test reads it.
+   *
+   * Those ids are built from each record's *display* value — the username here
+   * — because that is the only part of a record a test can know in advance; the
+   * picker's own key is a numeric user id the appliance allocates. So they are
+   * unique exactly as far as displayed names are, which for usernames is
+   * always. See the note in `dual-listbox-side.component.html`.
    */
   members: {
     available: (username: string): string => `[data-test="list-item-available-${kebabTestSegment(username)}"]`,
     selected: (username: string): string => `[data-test="list-item-selected-${kebabTestSegment(username)}"]`,
     moveRight: '[data-test="button-move-selected-right"]',
     moveLeft: '[data-test="button-move-selected-left"]',
-    /** Filters the available side; the move-all buttons act on what it leaves. */
-    searchAvailable: '[data-test="input-search-available"]',
-    hideBuiltInUsers: '[data-test="checkbox-hide-builtin-users"]',
     save: '[data-test="button-save"]',
-    cancel: '[data-test="button-cancel"]',
   },
 } as const;

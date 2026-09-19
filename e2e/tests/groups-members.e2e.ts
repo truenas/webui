@@ -60,10 +60,8 @@ test('a group cannot be deleted until its members are taken off it', async ({ pa
   await ensureGroupPresent(api, group);
   await ensureUserPresent(api, member);
 
-  // `user.id` rather than `user`: the generated query result declares every
-  // field optional, so having a record is not yet having an id to seed with.
   const user = await findUser(api, member);
-  if (user?.id === undefined) {
+  if (!user) {
     throw new Error(`Precondition failed: user "${member}" was created but cannot be found.`);
   }
   await setGroupMembers(api, group, [user.id]);
