@@ -34,12 +34,11 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
 import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
-import { convertStringToId, mapTnSortToTableSort } from 'app/modules/tn-table/utils';
+import { mapTnSortToTableSort, rowTagPair } from 'app/modules/tn-table/utils';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -72,7 +71,6 @@ import { selectService } from 'app/store/services/services.selectors';
     TnCardFooterActionsDirective,
     TnSlideToggleComponent,
     RequiresRolesDirective,
-    TestDirective,
     TnIconComponent,
     TnTooltipDirective,
     TnTableComponent,
@@ -173,9 +171,11 @@ export class NvmeOfCardComponent implements OnInit {
 
   protected readonly trackBySubsystemId = (_index: number, row: NvmeOfSubsystemDetails): number => row.id;
 
-  protected readonly uniqueRowTag = (row: NvmeOfSubsystemDetails): string => (
-    convertStringToId('nvmeof-subsys-' + row.name)
-  );
+  private readonly rowTags = rowTagPair<NvmeOfSubsystemDetails>((row) => `nvmeof-subsys-${row.name}`);
+
+  protected readonly uniqueRowTag = this.rowTags.uniqueRowTag;
+
+  protected readonly cellRowTag = this.rowTags.cellRowTag;
 
   protected ariaLabel(row: NvmeOfSubsystemDetails): string {
     return [row.name, this.translate.instant('Subsystem')].join(' ');

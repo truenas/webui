@@ -3,11 +3,11 @@ import { DOCUMENT } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, computed, contentChildren, ElementRef, input, OnDestroy, output, signal, viewChild, inject, afterNextRender, Injector } from '@angular/core';
 import { AbstractControl, NgControl } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { combineLatest, fromEvent, Subject, Subscription, timer } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, startWith, takeUntil } from 'rxjs/operators';
 import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.utils';
 import { FocusService } from 'app/services/focus.service';
 
 /**
@@ -36,7 +36,7 @@ import { FocusService } from 'app/services/focus.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconComponent,
-    TestDirective,
+    TnTestIdDirective,
     TranslateModule,
     CdkObserveContent,
   ],
@@ -85,6 +85,15 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   protected isEmpty = computed(() => {
     return !this.valueAsText();
   });
+
+  /**
+   * The displayed value scopes the trigger's id. Normalized here rather than left to the library
+   * for both halves of the legacy behaviour: lodash splits a letter→digit boundary the library's
+   * kebab leaves alone (`eth0` → `button-eth-0-edit`), and an editable showing its empty state has
+   * no value at all, which has to drop out rather than render as a segment (`button-edit`).
+   * See {@link normalizeTestIdParts}.
+   */
+  protected testId = computed(() => normalizeTestIdParts([this.valueAsText(), 'edit']));
 
   protected checkVisibleValue(): void {
     const newValue = this.triggerValue()?.nativeElement?.textContent?.trim();

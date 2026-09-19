@@ -1,9 +1,21 @@
 import {
-  ChangeDetectionStrategy, Component, input,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { SummarySection } from 'app/modules/summary/summary.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TnTestIdDirective } from '@truenas/ui-components';
+import { SummaryItem, SummarySection } from 'app/modules/summary/summary.interface';
+import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.utils';
+
+interface SummaryRow {
+  item: SummaryItem;
+  /**
+   * Labels carry digits (`IPv4 Address`, `Disk 2`), and the library's kebab-casing does not split
+   * a letter→digit boundary the way lodash does — so the label is pre-normalized here to keep
+   * `row-summary-i-pv-4-address` byte-identical. Normalizing once, when the sections arrive, also
+   * keeps the array out of every change-detection pass. See {@link normalizeTestIdParts}.
+   */
+  testId: string[];
+}
 
 @Component({
   selector: 'ix-summary',
@@ -12,9 +24,21 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
   ],
 })
 export class SummaryComponent {
   readonly summary = input.required<SummarySection[]>();
+
+  /**
+   * `?? []` despite the input being typed non-nullable. Both wizards that render this used to
+   * declare `summary: SummarySection[]` with no initializer and assign it only when their Confirm
+   * step ran, so the first render bound `undefined` — which `@for` absorbs by normalizing a
+   * nullish collection to empty, and mapping here does not. NAS-143893 initialized both fields, so
+   * nothing binds `undefined` today; this stays as a guard for the next caller that forgets, and
+   * the "renders nothing when the summary has not been built yet" spec pins it.
+   */
+  protected readonly sections = computed<SummaryRow[][]>(() => (this.summary() ?? []).map(
+    (section) => section.map((item) => ({ item, testId: normalizeTestIdParts(['summary', item.label]) })),
+  ));
 }

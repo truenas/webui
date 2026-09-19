@@ -118,7 +118,7 @@ export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
   }
 
   protected readonly isLoading = signal(false);
-  summary: SummarySection[];
+  summary: SummarySection[] = [];
 
   /**
    * Host hook (`<tn-side-panel>` closeGuard): any dirty step means there are edits to confirm

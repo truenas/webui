@@ -21,7 +21,7 @@ export class VdevDisksLegendComponent {
 
   /**
    * Device names carry digits (`nvme0n1`), and the library's kebab-casing does not split a
-   * letter→digit boundary the way `[ixTest]` did — so the id is pre-normalized here to keep
+   * letter→digit boundary the way lodash does — so the id is pre-normalized here to keep
    * `link-select-disk-nvme-0-n-1` byte-identical. See {@link normalizeTestIdParts}.
    */
   protected readonly vdevDisks = computed(() => (

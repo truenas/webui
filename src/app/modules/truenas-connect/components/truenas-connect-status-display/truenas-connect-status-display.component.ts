@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnIconComponent,
+  TnTestIdDirective,
+} from '@truenas/ui-components';
 import {
   TncStatus, TruenasConnectFailureDescription, TruenasConnectStatus, TruenasConnectStatusReason,
 } from 'app/enums/truenas-connect-status.enum';
 import { TruenasConnectTier } from 'app/enums/truenas-connect-tier.enum';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
 import { tierDisplayConfig } from 'app/modules/truenas-connect/truenas-connect-tier.utils';
 
@@ -15,7 +17,7 @@ import { tierDisplayConfig } from 'app/modules/truenas-connect/truenas-connect-t
   imports: [
     TnIconComponent,
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
     TruenasConnectSpinnerComponent,
   ],
   templateUrl: './truenas-connect-status-display.component.html',

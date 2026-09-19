@@ -142,7 +142,7 @@ export class ServiceActionsMenuService {
 
   /**
    * Stable test ID for the card-header menu trigger. Matches the legacy
-   * `[ixTest]="[service.id, 'actions-menu']"` value the old icon-button used.
+   * `[service.id, 'actions-menu']` value the old icon-button used.
    */
   cardHeaderMenuTriggerTestId(service: Service | undefined): string | undefined {
     return service ? `button-${service.id}-actions-menu` : undefined;
@@ -205,9 +205,9 @@ export class ServiceActionsMenuService {
   }
 
   /**
-   * Mirrors the value the legacy `[ixTest]="[service.service, 'actions-menu', label]"`
-   * directive used to produce on the old `<button mat-menu-item>` element, including the
-   * `button-` element-type prefix that `[ixTest]` would auto-add. Each part is kebab-cased
+   * Mirrors the value the old `[service.service, 'actions-menu', label]`
+   * id used to resolve to on the old `<button mat-menu-item>` element, including the
+   * `button-` element-type prefix the old directive auto-added. Each part is kebab-cased
    * to match the directive's normalization, so e.g. service `iscsi.target` with label
    * `Config Service` yields `button-iscsi-target-actions-menu-config-service`.
    */

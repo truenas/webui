@@ -57,7 +57,7 @@ export class AppControlsComponent {
     return this.portalEntries().filter((entry) => entry !== main);
   });
 
-  // Test IDs preserve the values previously produced by [ixTest]="['apps-web-portal', portal.label]".
+  // Test IDs preserve the values previously produced by ['apps-web-portal', portal.label].
   portalMenuItems = computed<TnMenuItem[]>(() => {
     return this.otherPortals().map((portal) => ({
       id: portal.label,

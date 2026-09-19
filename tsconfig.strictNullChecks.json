@@ -428,8 +428,6 @@
     "./src/app/modules/summary/summary.component.ts",
     "./src/app/modules/summary/summary.interface.ts",
     "./src/app/modules/terminal/xterm-attach-addon.ts",
-    "./src/app/modules/test-id/test-override/test-override.directive.ts",
-    "./src/app/modules/test-id/test.directive.ts",
     "./src/app/modules/tn-table/classes/api-data-provider/pagination-server-side.class.ts",
     "./src/app/modules/tn-table/classes/api-data-provider/sorting-server-side.class.ts",
     "./src/app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component.ts",

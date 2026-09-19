@@ -5,8 +5,8 @@ import { kebabCase } from 'lodash-es';
  * Ready-made `optionTestIdKey` callbacks for `tn-select` / `tn-autocomplete`.
  *
  * With no key, the library's `optionTestId()` derives an option's id from its **value** when that
- * value is a `string` or a `number`, and falls back to the **label** for anything else. The legacy
- * `[ixTest]` directive always derived it from the label, so a select whose label and value differ
+ * value is a `string` or a `number`, and falls back to the **label** for anything else. The ids
+ * these replaced always came from the label, so a select whose label and value differ
  * *and* whose value is a primitive — `<name> | <guid>` vs the bare guid, an enclosure name vs its
  * id — silently renames every option id on migration unless the key is pinned back to the label.
  * Object- or array-valued options (`{ size, type }`) already land on the label unaided and need no
@@ -22,14 +22,14 @@ import { kebabCase } from 'lodash-es';
  *
  * **Sharp edge:** a label-derived id is locale-dependent — the option ids shift with the active
  * language, so a test pinned to `option-pool-my-pool` in English will not resolve under another
- * locale. Legacy `[ixTest]="[name, option.label]"` had exactly the same property, so pinning the
+ * locale. The ids these replaced had exactly the same property, so pinning the
  * key is parity-preserving rather than a new hazard; but where an id must be stable across
  * languages, key off a locale-independent field of the option value instead.
  */
 export const optionTestIdByLabel = (option: TnSelectOption): string => option.label;
 
 /**
- * As {@link optionTestIdByLabel}, but kebab-cased the way `[ixTest]` normalized its input.
+ * As {@link optionTestIdByLabel}, but kebab-cased with lodash, the way the existing ids were.
  *
  * Use this when the legacy id had already collapsed spaces or mixed case that the label still
  * carries — e.g. `RAIDZ1` resolved to `option-layout-raidz-1`, which the library's own

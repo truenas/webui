@@ -15,7 +15,7 @@ import { stopRowActivationKeys } from 'app/modules/tn-table-cells/stop-row-activ
  *
  * The test ID is produced by `tn-slide-toggle`'s native `testId` input, which
  * the library prefixes with `toggle-` via `composeTestId` — byte-identical to
- * the legacy `ixTest` output on `mat-slide-toggle`.
+ * the ids the old `mat-slide-toggle` emitted.
  */
 @Component({
   selector: 'ix-table-toggle-cell',

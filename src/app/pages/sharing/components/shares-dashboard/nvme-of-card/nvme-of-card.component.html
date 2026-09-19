@@ -9,7 +9,8 @@
   <a
     tnCardHeader
     class="card-title-link"
-    [ixTest]="['nvme-of', 'open-in-new']"
+    tnTestIdType="link"
+    [tnTestId]="['nvme-of', 'open-in-new']"
     [routerLink]="['/sharing', 'nvme-of']"
     [tnTooltip]="'Open NVMe-oF list in full page' | translate"
   >
@@ -68,6 +69,8 @@
       <ng-container [tnColumnDef]="'name'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
+          <!-- `uniqueRowTag`, not `cellRowTag`: this cell was minted after the move to
+               `[tnTestId]`, so its id has no lodash kebab to preserve. The three below do. -->
           <ix-subsystem-name-cell
             tnTestIdType="text"
             [subsystem]="row"
@@ -79,21 +82,21 @@
       <ng-container [tnColumnDef]="'namespaces'">
         <ng-template tnHeaderCellDef>{{ 'Namespaces' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span [ixTest]="[('Namespaces' | translate), uniqueRowTag(row), 'row-text']">{{ row.namespaces.length }}</span>
+          <span tnTestIdType="text" [tnTestId]="[('Namespaces' | translate), cellRowTag(row), 'row-text']">{{ row.namespaces.length }}</span>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'ports'">
         <ng-template tnHeaderCellDef>{{ 'Ports' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span [ixTest]="[('Ports' | translate), uniqueRowTag(row), 'row-text']">{{ row.ports.length }}</span>
+          <span tnTestIdType="text" [tnTestId]="[('Ports' | translate), cellRowTag(row), 'row-text']">{{ row.ports.length }}</span>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'hosts'">
         <ng-template tnHeaderCellDef>{{ 'Hosts' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span [ixTest]="[('Hosts' | translate), uniqueRowTag(row), 'row-text']">{{ row.hosts.length }}</span>
+          <span tnTestIdType="text" [tnTestId]="[('Hosts' | translate), cellRowTag(row), 'row-text']">{{ row.hosts.length }}</span>
         </ng-template>
       </ng-container>
 
@@ -113,7 +116,7 @@
     <ix-table-pager-show-more
       [pageSize]="4"
       [dataProvider]="dataProvider()"
-      [ixTestOverride]="['nvme-of']"
+      [testId]="['nvme-of']"
       [routerLink]="['/sharing', 'nvme-of']"
     ></ix-table-pager-show-more>
   }

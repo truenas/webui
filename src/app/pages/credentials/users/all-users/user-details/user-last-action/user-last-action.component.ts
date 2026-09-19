@@ -2,12 +2,13 @@ import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, OnChan
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { finalize, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
@@ -19,7 +20,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
-    TestDirective,
+    TnTestIdDirective,
     NgxSkeletonLoaderModule,
     RouterLink,
     IxDateComponent,
@@ -35,6 +36,13 @@ export class UserLastActionComponent implements OnChanges {
 
   protected isLoading = signal(true);
   protected lastAction = signal<AuditEntry | null>(null);
+
+  /**
+   * User names carry digits (`admin2`), and the library's kebab-casing does not split a
+   * letter→digit boundary the way lodash does — so the name is pre-normalized here to keep
+   * `link-search-logs-admin-2` byte-identical. See {@link normalizeTestIdParts}.
+   */
+  protected testId = computed(() => normalizeTestIdParts(['search-logs', this.username()]));
 
   protected auditLink = computed(() => {
     return this.urlOptions.buildUrl('/system/audit', {

@@ -2,7 +2,7 @@
   <popper-content #popperTooltip class="fn-theme-tooltip">
     <div class="tooltip-header">
       <div class="title-wrapper">
-        <div [ixTest]="['tooltip', 'title']">
+        <div tnTestIdType="text" [tnTestId]="['tooltip', 'title']">
           <h5 class="tooltip-title">
             {{ 'Help' | translate }}{{ header() ? ': ' : '' }}
             <i>{{ header() ? (header() | translate) : '' }}</i>
@@ -22,7 +22,8 @@
     </div>
     <div
       class="tooltip-message"
-      ixTest="tooltip-message"
+      tnTestId="tooltip-message"
+      tnTestIdType="text"
       [innerHTML]="message() | translate"
     ></div>
   </popper-content>

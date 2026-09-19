@@ -2,15 +2,15 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { sortBy, uniqBy } from 'lodash-es';
 import {
-  BehaviorSubject, Observable, debounceTime, distinctUntilChanged, filter, pairwise, switchMap,
+  BehaviorSubject, Observable, debounceTime, distinctUntilChanged, filter, map, pairwise, switchMap,
 } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { SimilarIssue } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.utils';
 
 @Component({
   selector: 'ix-similar-issues',
@@ -18,7 +18,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './similar-issues.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TestDirective,
+    TnTestIdDirective,
     TnIconComponent,
     TranslateModule,
     AsyncPipe,
@@ -35,6 +35,20 @@ export class SimilarIssuesComponent implements OnChanges {
   private query$ = new BehaviorSubject<string>('');
 
   protected readonly jiraHostname = 'https://ixsystems.atlassian.net';
+
+  /**
+   * Issue keys carry digits (`NAS-143893`), and the library's kebab-casing does not split a
+   * letter→digit boundary the way lodash does — so the key is pre-normalized here to keep
+   * `link-similar-issue-nas-143893` byte-identical. Normalizing as the issues arrive, rather than
+   * from the template, also keeps the array out of every change-detection pass.
+   * See {@link normalizeTestIdParts}.
+   */
+  protected readonly similarIssueLinks$ = this.similarIssues$.pipe(
+    map((issues) => issues.map((issue) => ({
+      issue,
+      testId: normalizeTestIdParts(['similar-issue', issue.id]),
+    }))),
+  );
 
   constructor() {
     this.listenForQueryChanges();

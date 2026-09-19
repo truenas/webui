@@ -120,9 +120,9 @@ describe('HardwareDiskEncryptionComponent', () => {
         .toHaveBeenCalledWith(['/system', 'advanced'], 'sed-card', { inset: false });
     });
 
-    // Both links moved from `[ixTest]` to the library's test-id directive, and e2e locators
-    // still key on these exact values — so the resolved id is asserted here, on links located
-    // by their text the same way the tests above locate them.
+    // Both links moved to the library's test-id directive, and e2e locators still key on these
+    // exact values — so the resolved id is asserted here, on links located by their text the
+    // same way the tests above locate them.
     it('keeps the legacy link test ids after moving to the library test-id directive', () => {
       expect(spectator.query(byText('Manage SED Password')))
         .toHaveAttribute('data-test', 'link-manage-sed-password');

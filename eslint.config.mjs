@@ -13,6 +13,20 @@ const baseRestrictedSyntax = baseConfig.flatMap((config) => {
 // again, or it stops applying to those files.
 const projectRestrictedSyntax = [
   {
+    // The directive named in this pattern, and its override companion, were deleted in
+    // NAS-143893; the library's `[tnTestId]` is the only one that writes a `data-test` now.
+    // Rejected is every spelling that would revive it: a static attribute or CSS selector
+    // (`…="…"`, `[…="…"]`), a property binding (`[…]="…"`) — which an inline `template:` in a
+    // `.ts` file is the one place that can appear, since `scripts/check-test-ids.ts` reads
+    // only `.html` — and any identifier with the prefix. The attribute forms all require an
+    // `=`, so prose naming the retired directive stays legal.
+    //
+    // This and `retiredDirective` in `scripts/check-test-ids.ts` are the only two places the
+    // retired name is written; a rule has to spell what it rejects.
+    selector: "Literal[value=/\\bixTest=|\\[ixTest\\]=|^ixTest/], TemplateElement[value.raw=/\\bixTest=|\\[ixTest\\]=/], Identifier[name=/^ixTest/]",
+    message: 'This directive is retired (NAS-143893). Tag elements with the library\'s `[tnTestId]` + `tnTestIdType`, and pre-normalize dynamic values with `normalizeTestIdString` / `normalizeTestIdParts` from app/modules/test-id/normalize-test-id.utils.ts.',
+  },
+  {
     // The .scss half of this is enforced by `selector-disallowed-list` in
     // .stylelintrc.json; this keeps the invariant from leaking through TypeScript
     // (spec queries, host bindings, class-name strings).
@@ -89,6 +103,30 @@ const e2eOverrides = {
 };
 
 /**
+ * `angular-test-ids/require-test-id` comes from the shared base config, where it is still keyed to
+ * the attribute NAS-143893 retired.
+ *
+ * It enforces nothing either way today: `eslint-plugin-angular-test-ids` builds its selector as
+ * `Element$1[name=…]`, which no longer matches the node type angular-eslint 20's template parser
+ * emits, so it matches no element at all. That is why nothing complained about the hundreds of
+ * native `<button>`/`<a>`/`<tr>` elements in this repo that never carried it. Turning it off
+ * rather than re-keying it is deliberate: a dependency bump that fixes the selector would
+ * otherwise turn a dead rule into a repo-wide failure in whichever PR happens to bump it.
+ *
+ * To bring it back, both halves have to change together: set `attribute: 'tnTestId'` (never the
+ * retired name — that directive is gone) and expect a large, separate sweep, because the rule only
+ * looks for an attribute on the element and cannot see the `testId` *input* that every tn-*
+ * component carries its id on. Until then `scripts/check-test-ids.ts` is the gate that actually
+ * runs, over exactly the elements that need an id.
+ */
+const templateOverrides = {
+  files: ['**/*.html'],
+  rules: {
+    'angular-test-ids/require-test-id': ['off'],
+  },
+};
+
+/**
  * `data-test` exists for the Playwright suite under `e2e/`. Unit specs have component
  * harnesses instead, so locating an element by its test ID here couples the spec to a
  * string it does not own: regenerate or rename the ID and specs that have nothing to do
@@ -122,6 +160,7 @@ export default [
   },
   ...baseConfig,
   projectOverrides,
+  templateOverrides,
   specOverrides,
   e2eOverrides,
 ];

@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, computed, input, inject } from '@an
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import { tnIconMarker, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { AppState } from 'app/store';
@@ -15,6 +15,7 @@ import { selectProductType } from 'app/store/system-info/system-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconComponent,
+    TnTestIdDirective,
     RouterLink,
   ],
 })

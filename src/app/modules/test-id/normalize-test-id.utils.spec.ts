@@ -5,7 +5,7 @@ describe('normalizeTestIdString', () => {
     expect(normalizeTestIdString('nfs-share-mnt-pool-data')).toBe('nfs-share-mnt-pool-data');
   });
 
-  // This is the behaviour `[ixTest]` has always had, and the reason tn-* `testId`
+  // This is the behaviour the existing ids were minted with, and the reason tn-* `testId`
   // values are pre-normalized with this helper rather than left to the library.
   it('splits letter to digit boundaries the way lodash does', () => {
     expect(normalizeTestIdString('nfs-share-mnt-pool1-data')).toBe('nfs-share-mnt-pool-1-data');
@@ -38,8 +38,8 @@ describe('normalizeTestIdParts', () => {
   });
 
   // A numeric 0 carries a value — a control at index 0 of a FormArray, say — so it must
-  // survive, or two siblings would resolve to the same id. `[ixTest]`'s own falsy filter
-  // does drop it, but that quirk lives in TestDirective, not here.
+  // survive, or two siblings would resolve to the same id. The minting path dropped a numeric
+  // 0 along with the empties; that quirk was never copied here and nothing depends on it.
   it('keeps a numeric 0 segment', () => {
     expect(normalizeTestIdParts(['port', 0, 'edit'])).toEqual(['port', '0', 'edit']);
   });

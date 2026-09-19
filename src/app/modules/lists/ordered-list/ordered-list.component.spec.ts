@@ -63,7 +63,7 @@ describe('OrderedListboxComponent', () => {
     expect(await Promise.all(toggles.map((toggle) => toggle.getLabelText()))).toEqual(['eth2', 'eth0', 'eth1']);
   });
 
-  // `[ixTest]` on the old `<mat-slide-toggle>` resolved to `toggle-<control>-<option>`,
+  // The old `<mat-slide-toggle>` resolved to `toggle-<control>-<option>`,
   // kebab-cased with a letter→digit split the library does not do on its own. The
   // `toggle` prefix is the library's now, so pin the whole resolved value.
   it('keeps the legacy test ids on the toggles', async () => {

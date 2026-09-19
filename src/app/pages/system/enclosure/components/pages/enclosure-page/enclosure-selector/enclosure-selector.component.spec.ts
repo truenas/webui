@@ -57,8 +57,8 @@ describe('EnclosureSelectorComponent', () => {
     expect(enclosureElements[1]).not.toHaveClass('active');
   });
 
-  // The model carries digits, which the library's kebab-casing does not split the way the
-  // legacy `[ixTest]` directive did — pinned so a regression in the normalization is caught.
+  // The model carries digits, which the library's kebab-casing does not split the way
+  // lodash does — pinned so a regression in the normalization is caught.
   it('keeps the legacy per-enclosure test id', () => {
     const enclosureElements = spectator.queryAll('.enclosure');
 

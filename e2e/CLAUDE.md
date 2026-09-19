@@ -47,7 +47,7 @@ differ per appliance. Prefix, never bare role or class: the prefix is what keeps
 the match scoped to one control, so a CDK overlay that has not finished
 detaching cannot be picked up instead.
 
-Search the component template for `testId` or `ixTest`, then work out what is
+Search the component template for `testId` or `tnTestId`, then work out what is
 actually emitted — **components prefix the value with their element type**:
 
 | Template | Emitted |
@@ -143,10 +143,12 @@ columns NAS-143892 closed were found.
   row. Six tickets in a row — NAS-141047, NAS-141484, NAS-142069, NAS-141791,
   NAS-141186, NAS-143804 — were this same defect, each found downstream.
 
-`yarn check-test-ids` (a lint job step) mechanises most of that. It asks three
+`yarn check-test-ids` (a lint job step) mechanises most of that. It asks four
 things: a table that renders cells must bind `[rowTestId]`, every column of it
-must tag its cell, and a plain clickable must resolve a `data-test` somewhere in
-its subtree (not necessarily on the element itself). What it cannot see is a
+must tag its cell, a plain clickable must resolve a `data-test` somewhere in its
+subtree (not necessarily on the element itself), and no template may revive the
+test-id directive retired in NAS-143893 — which would now emit no attribute at
+all. What it cannot see is a
 *changed* id — dropping or renaming the value on a `<tn-button testId>`, a detail
 row, or any component input still resolves to something, so it passes. That half
 stays convention, and reviewing it is a reviewer's job.

@@ -46,7 +46,7 @@ describe('ServiceStateButtonComponent', () => {
     expect(getStatus()).toHaveAttribute('aria-roledescription', 'Service status');
     // The tooltip is pointer-only, so the same copy has to reach the accessibility tree.
     expect(getStatus()).toHaveAttribute('aria-label', 'The NFS service is running');
-    // Preserved verbatim from the `<button [ixTest]>` this readout replaced.
+    // Preserved verbatim from the `<button>` this readout replaced.
     expect(getStatus()).toHaveAttribute('data-test', 'button-service-status-nfs');
   });
 });

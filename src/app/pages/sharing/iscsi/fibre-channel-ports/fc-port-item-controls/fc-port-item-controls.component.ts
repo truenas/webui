@@ -56,7 +56,7 @@ export class FcPortItemControlsComponent implements OnInit {
 
   /**
    * Port labels ('fc0/1') carry a letter→digit boundary that the library's kebab does not split
-   * but lodash — and therefore the legacy `[ixTest]` — did. Keying off the kebab-cased label keeps
+   * but lodash — and therefore the id this replaced — did. Keying off the kebab-cased label keeps
    * `option-…-fc-0-1` and, for the host select, keeps the id off `host.id`, a per-appliance DB row
    * id that no test could rely on.
    */

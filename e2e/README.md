@@ -152,7 +152,7 @@ identity; those run without the token bypass. Everything else goes in `tests/`
 and starts already signed in.
 
 **2. Add selectors to `locators/`, never inline in the test.** Find the
-`data-test` value by searching the template for `testId` or `ixTest`, then work
+`data-test` value by searching the template for `testId` or `tnTestId`, then work
 out what is emitted — components prefix by type, so
 `<tn-input [testId]="'username'">` becomes `data-test="input-username"`:
 

@@ -1,8 +1,8 @@
 import { Component, ChangeDetectionStrategy, computed, effect, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { MarketingMessage, getMarketingMessages } from 'app/constants/marketing-messages.constant';
 import { hashMessage } from 'app/helpers/hash-message';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
 const lastShownDateKey = 'marketingMessageLastShownDate';
@@ -14,7 +14,7 @@ const lastMessageHashKey = 'marketingMessageLastHash';
   styleUrls: ['./use-enterprise-marketing-link.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TestDirective,
+    TnTestIdDirective,
     TranslateModule,
   ],
 })
