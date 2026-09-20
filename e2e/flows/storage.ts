@@ -4,7 +4,9 @@
 import { expect, type Page } from '@playwright/test';
 import { goToDatasets, goToShares, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
-import { datasetLocators, deleteDatasetDialogLocators, poolWizardLocators, smbLocators } from '../locators/storage';
+import {
+  datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolWizardLocators, smbLocators,
+} from '../locators/storage';
 
 /**
  * Pool creation is a long-running middleware job that formats every member
@@ -236,4 +238,35 @@ export async function fillDatasetDeletionConfirmation(page: Page, name: string):
   await page.locator(deleteDatasetDialogLocators.confirm).click();
 
   await expect(page.locator(deleteDatasetDialogLocators.submit)).toBeEnabled();
+}
+
+/**
+ * Opens a pool's Disconnect dialog from the storage dashboard.
+ *
+ * Through the sidebar rather than a `page.goto`, so the card the button lives
+ * on is the one a user would have clicked.
+ */
+export async function openPoolDisconnectDialog(page: Page, pool: string): Promise<void> {
+  await goToStorage(page);
+
+  const open = page.locator(poolDisconnectLocators.open(pool));
+  await expect(open).toBeVisible({ timeout: saveTimeoutMs });
+  await open.click();
+
+  await expect(page.locator(poolDisconnectLocators.title)).toBeVisible();
+}
+
+/**
+ * Puts the open Disconnect dialog into its most destructive state: "Delete
+ * Pool" chosen, which sets `destroy` and reveals the name field.
+ *
+ * Stops short of the gates. This is the state in which `pool.export` would run
+ * with `destroy: true`, and the tests differ only in what they do next.
+ */
+export async function chooseDeletePool(page: Page): Promise<void> {
+  await page.locator(poolDisconnectLocators.deleteOption).click();
+
+  // The name field appearing is how we know `destroy` actually went on — the
+  // option card is a plain div, so its click has no other readback.
+  await expect(page.locator(poolDisconnectLocators.name)).toBeVisible();
 }

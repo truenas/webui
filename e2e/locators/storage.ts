@@ -122,6 +122,52 @@ export const datasetLocators = {
  * tn-dialog migration put the actions outside `<form>`, no submit button at all,
  * which is exactly the shape the HTML spec submits on Enter.
  */
+/**
+ * The Disconnect Pool dialog, reached from a pool card on the storage dashboard.
+ *
+ * The most destructive dialog in the app: picking "Delete Pool" and ticking
+ * "Destroy data on this pool" runs `pool.export` with `destroy: true`, which
+ * wipes every member disk. It gates on a Confirm tick and, once destroy is
+ * chosen, the pool's name typed back — and its handler had no validity check of
+ * any kind, so the Enter that submits this form reached `pool.export`
+ * regardless. See `tests/pool-disconnect.e2e.ts`.
+ */
+export const poolDisconnectLocators = {
+  /**
+   * "Disconnect" on the pool card — `[testId]="['disconnect', pool()?.name]"`,
+   * so the pool's name is part of the id and has to be normalized the same way.
+   */
+  open: (pool: string) => `[data-test="button-disconnect-${kebabTestSegment(pool)}"]`,
+
+  /** `<tn-dialog-shell testId="export-disconnect">`. What to wait on. */
+  title: '[data-test="dialog-title-export-disconnect"]',
+
+  /**
+   * The two option cards. Plain `<div>`s carrying `tnTestIdType="option"`, so
+   * they are `option-…` rather than `button-…`. Picking "Delete Pool" is what
+   * sets `destroy`, which in turn reveals the name field.
+   */
+  exportOption: '[data-test="option-export-pool"]',
+  deleteOption: '[data-test="option-delete-pool"]',
+
+  /** `<tn-checkbox testId="confirm">` — "Confirm Export Pool" / "Confirm Delete Pool". */
+  confirm: '[data-test="checkbox-confirm"]',
+  /**
+   * `<tn-input testId="name-input">` — the name gate, rendered only while
+   * "Delete Pool" is the chosen option. Note the doubled word: the control name
+   * is `nameInput` and the declared `testId` is `name-input`, so the emitted id
+   * is `input-name-input` rather than the `input-name` the form field suggests.
+   */
+  name: '[data-test="input-name-input"]',
+
+  /**
+   * The dialog's own "Disconnect". `testId="disconnect"` with no pool name, so
+   * it does not collide with the card button that opened it.
+   */
+  submit: '[data-test="button-disconnect"]',
+  cancel: '[data-test="button-cancel"]',
+} as const;
+
 export const deleteDatasetDialogLocators = {
   /**
    * "Delete" on the dataset details card — `testId: 'delete-dataset'` in

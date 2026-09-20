@@ -180,7 +180,7 @@ export async function requireUnusedDisks(client: E2eApiClient, needed: number): 
   );
 }
 
-async function findPool(client: E2eApiClient, name: string): Promise<NamedPool | undefined> {
+export async function findPool(client: E2eApiClient, name: string): Promise<NamedPool | undefined> {
   // `query` rather than `queryOne`: the latter sends `get: true`, which makes
   // middleware error when nothing matches. Every caller here treats "no such
   // pool" as a normal answer — `ensurePoolAbsent` succeeds when the pool is
@@ -347,6 +347,9 @@ export async function ensureSmbServiceStopped(client: E2eApiClient): Promise<voi
  * `destroy: true` wipes the member disks so they return to the unused
  * inventory; `cascade` removes attachments (shares, tasks) that would otherwise
  * block the export.
+ *
+ * Absent is tolerated *after* the query as well as before it — see the comment
+ * on the catch below.
  */
 export async function ensurePoolAbsent(client: E2eApiClient, name: string): Promise<void> {
   const pool = await findPool(client, name);
@@ -354,10 +357,26 @@ export async function ensurePoolAbsent(client: E2eApiClient, name: string): Prom
     return;
   }
 
+  try {
+    await exportPool(client, pool.id, name);
+  } catch (error) {
+    // A journey whose subject *is* disconnecting a pool has an export in
+    // flight when this runs, so the pool can go between the query above and
+    // this one — middleware then fails the job with `[ENOENT] … does not
+    // exist`. Re-ask rather than pattern-match the message: the pool being
+    // gone is the state this function exists to reach, however it got there.
+    // Anything else, including an export that genuinely failed, still throws.
+    if (await findPool(client, name)) {
+      throw error;
+    }
+  }
+}
+
+async function exportPool(client: E2eApiClient, id: number, name: string): Promise<void> {
   await runJob(
     client,
     () => client.api.callAndGetJobId('pool.export', [
-      pool.id,
+      id,
       { cascade: true, restart_services: true, destroy: true },
     ]),
     {
@@ -458,13 +477,10 @@ export async function ensureDatasetAbsent(client: E2eApiClient, name: string): P
         .pipe(timeout(slowCallTimeoutMs)),
     );
   } catch (error) {
-    if (!isNotFoundError(error)) {
+    // Same race as `ensurePoolAbsent`, and answered the same way: a UI-driven
+    // deletion can remove the row between the query above and this call.
+    if (await findDataset(client, name)) {
       throw error;
     }
   }
-}
-
-/** Middleware's answer when the thing was removed by someone else first. */
-function isNotFoundError(error: unknown): boolean {
-  return error instanceof Error && /not found|ENOENT/i.test(error.message);
 }
