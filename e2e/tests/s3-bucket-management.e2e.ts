@@ -14,9 +14,10 @@
 import { firstValueFrom, timeout } from 'rxjs';
 import { ensureGroupAbsent, ensureGroupPresent } from '../fixtures/groups';
 import {
-  ensureDatasetAbsent, ensureDatasetPresent, ensureS3AccessKeysAbsent, ensureS3BucketAbsent,
+  ensureS3AccessKeysAbsent, ensureS3BucketAbsent,
   ensureS3BucketPresent, ensureS3ServiceStopped, findS3Bucket,
 } from '../fixtures/s3';
+import { ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
 import {
   ensureUserAbsent, ensureUserPresent,
 } from '../fixtures/users';

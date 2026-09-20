@@ -14,9 +14,10 @@
 import { entitlementFeature, isEntitled } from '../fixtures/entitlements';
 import { findOnlinePool } from '../fixtures/pool';
 import {
-  ensureDatasetAbsent, ensureDatasetPresent, ensureS3AccessKeysAbsent, ensureS3BucketAbsent,
+  ensureS3AccessKeysAbsent, ensureS3BucketAbsent,
   ensureS3ServiceStopped, findS3AccessKeys, findS3Bucket, queryS3Service,
 } from '../fixtures/s3';
+import { ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';
 import { createS3AccessKey, createS3Bucket } from '../flows/s3';
 import type { E2eApiClient } from '../support/api/client';

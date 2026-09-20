@@ -6,7 +6,7 @@
  * of the inventory it needs (R2.2, R3.2). That is the failure R3.2 exists to
  * prevent, and storage is where it actually bites.
  */
-import type { CallResponse } from '@truenas/api-client';
+import type { CallResponse, QueryEntity } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
 import { ensureServiceStopped } from './services';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
@@ -378,4 +378,93 @@ export async function ensurePoolAbsent(client: E2eApiClient, name: string): Prom
       // sharing services, not middlewared itself.
     },
   );
+}
+
+/** One row of `pool.dataset.query`, typed from the client's own directory. */
+export type DatasetEntry = QueryEntity<E2eApiDirectory['call'], 'pool.dataset.query'>;
+
+/**
+ * A dataset or zvol by its full name (`pool/child`), or undefined when absent.
+ *
+ * `query`, not `queryOne` — absence is the ordinary answer here, and `queryOne`
+ * errors rather than returning nothing (see `CLAUDE.md`, "Talking to
+ * middleware").
+ */
+export async function findDataset(
+  client: E2eApiClient,
+  name: string,
+): Promise<DatasetEntry | undefined> {
+  const [dataset] = await firstValueFrom(
+    client.api.query('pool.dataset.query', [['id', '=', name]]).pipe(timeout(readTimeoutMs)),
+  );
+
+  return dataset;
+}
+
+/** Creates a plain filesystem dataset by full name (`pool/name`) if absent. */
+export async function ensureDatasetPresent(client: E2eApiClient, name: string): Promise<void> {
+  if (await findDataset(client, name)) {
+    return;
+  }
+
+  await firstValueFrom(
+    client.api.call('pool.dataset.create', [{ name, type: 'FILESYSTEM' }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
+ * Creates a zvol by full name if absent.
+ *
+ * Sparse and small: nothing here writes to it, and a thick 64MiB volume would
+ * reserve that much from a pool the suite may have built from a single disk.
+ * The size is the smallest ZFS accepts comfortably at the default block size.
+ */
+export async function ensureZvolPresent(client: E2eApiClient, name: string): Promise<void> {
+  if (await findDataset(client, name)) {
+    return;
+  }
+
+  await firstValueFrom(
+    client.api
+      .call('pool.dataset.create', [{
+        name, type: 'VOLUME', volsize: 64 * 1024 * 1024, sparse: true,
+      }])
+      .pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
+ * Deletes a dataset or zvol and everything under it, if present.
+ *
+ * `force` because a zvol the UI has merely displayed can still be held briefly
+ * after the page that showed it is gone, and teardown must not fail on that.
+ *
+ * The already-gone case is tolerated *after* the query as well as before it.
+ * A test that drove a deletion through the UI has a delete in flight when this
+ * runs, so the row can disappear between the two calls and middleware answers
+ * the second with `[ENOENT] … not found`. Teardown reporting that as a failure
+ * buries whatever the test was actually saying — which is how this was found.
+ * Anything else still throws.
+ */
+export async function ensureDatasetAbsent(client: E2eApiClient, name: string): Promise<void> {
+  if (!await findDataset(client, name)) {
+    return;
+  }
+
+  try {
+    await firstValueFrom(
+      client.api
+        .call('pool.dataset.delete', [name, { recursive: true, force: true }])
+        .pipe(timeout(slowCallTimeoutMs)),
+    );
+  } catch (error) {
+    if (!isNotFoundError(error)) {
+      throw error;
+    }
+  }
+}
+
+/** Middleware's answer when the thing was removed by someone else first. */
+function isNotFoundError(error: unknown): boolean {
+  return error instanceof Error && /not found|ENOENT/i.test(error.message);
 }

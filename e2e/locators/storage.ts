@@ -112,6 +112,46 @@ export const datasetLocators = {
   save: '[data-test="button-save"]',
 } as const;
 
+/**
+ * The delete-dataset dialog, which guards a destructive action with two gates:
+ * the dataset's own name typed back, and a Confirm tick box.
+ *
+ * Both gates are the point. The dialog is reached from the details card's
+ * "Delete", and until NAS-000000 pressing Enter in the name field submitted the
+ * form past both of them — the form has a single text input and, since the
+ * tn-dialog migration put the actions outside `<form>`, no submit button at all,
+ * which is exactly the shape the HTML spec submits on Enter.
+ */
+export const deleteDatasetDialogLocators = {
+  /**
+   * "Delete" on the dataset details card — `testId: 'delete-dataset'` in
+   * `dataset-details-card.component.ts`, prefixed `button-` by the card's
+   * footer actions.
+   */
+  open: '[data-test="button-delete-dataset"]',
+
+  /** `<tn-dialog-shell testId="delete-dataset">`. What to wait on. */
+  title: '[data-test="dialog-title-delete-dataset"]',
+
+  /** `<tn-input testId="confirm-dataset-name">` — the name gate. */
+  name: '[data-test="input-confirm-dataset-name"]',
+  /** `<tn-checkbox testId="confirm">` — the tick gate. */
+  confirm: '[data-test="checkbox-confirm"]',
+
+  /**
+   * The dialog's own "Delete Dataset" / "Delete Zvol".
+   *
+   * `dialog-`-namespaced deliberately. It used to declare `testId="delete-dataset"`,
+   * the *same* value the details card behind it emits, so with the dialog open
+   * `[data-test="button-delete-dataset"]` matched two elements and every
+   * locator for either had to guess. Renamed to follow the convention webui's
+   * shared confirm dialog already uses for its actions (`button-dialog-confirm`,
+   * `button-dialog-cancel`).
+   */
+  submit: '[data-test="button-dialog-delete-dataset"]',
+  cancel: '[data-test="button-cancel"]',
+} as const;
+
 export const smbLocators = {
   /**
    * "Add" in the Windows (SMB) Shares card on the Shares dashboard —

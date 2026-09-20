@@ -13,9 +13,10 @@
  */
 import { entitlementFeature, isEntitled } from '../fixtures/entitlements';
 import {
-  ensureDatasetAbsent, ensureDatasetPresent, ensureS3BucketAbsent, ensureS3BucketPresent, ensureS3ServiceStopped,
+  ensureS3BucketAbsent, ensureS3BucketPresent, ensureS3ServiceStopped,
   findS3Bucket,
 } from '../fixtures/s3';
+import { ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';
 import {
   expectObjectOwnershipShown, openBucketEditor, saveBucketEditor, setBucketPermissionsModel,
