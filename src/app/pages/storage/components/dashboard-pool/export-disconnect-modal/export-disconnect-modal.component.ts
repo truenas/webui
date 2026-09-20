@@ -164,6 +164,12 @@ export class ExportDisconnectModalComponent implements OnInit {
   }
 
   startExportDisconnectJob(): void {
+    // Enter in the confirmation field submits the form natively (the dialog's
+    // action buttons live outside it), so the gate must be enforced here too.
+    if (this.form.invalid) {
+      return;
+    }
+
     const value = this.form.getRawValue();
 
     const job$ = this.api.job('pool.export', [

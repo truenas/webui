@@ -776,4 +776,18 @@ describe('ExportDisconnectModalComponent', () => {
       expect(systemDatasetPanel).toExist();
     });
   });
+
+  it('does not export the pool when the form is submitted natively while invalid', async () => {
+    // With "Delete Pool" + destroy selected the pool-name field is the form's
+    // only text input, so the browser submits it on Enter with nothing filled.
+    spectator.component.selectOption(DisconnectOption.Delete);
+    spectator.component.form.patchValue({ destroy: true });
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
+
+    spectator.query('form')!.dispatchEvent(new Event('submit'));
+
+    expect(spectator.inject(ApiService).job).not.toHaveBeenCalledWith('pool.export', expect.anything());
+  });
 });
