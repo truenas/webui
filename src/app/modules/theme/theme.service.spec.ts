@@ -4,6 +4,7 @@ import { TnThemeService, TnTheme } from '@truenas/ui-components';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
+import { themeClassByStoredName as e2eThemeClassByStoredName } from '../../../../e2e/locators/preferences';
 
 describe('ThemeService', () => {
   let spectator: SpectatorService<ThemeService>;
@@ -78,6 +79,23 @@ describe('ThemeService', () => {
         spectator.service.onThemeChanged(webuiTheme);
         expect(tnThemeService.setTheme).toHaveBeenCalledWith(tnTheme);
       });
+    });
+
+    /**
+     * Holds the E2E suite's copy of this map to this one.
+     *
+     * `e2e/locators/preferences.ts` duplicates it rather than importing
+     * `ThemeService`, because the Playwright runner is a Node process with no
+     * Angular platform — the same reason `e2e/locators/test-id.ts` copies
+     * `kebabTestSegment`, and guarded the same way, here under `src/` because
+     * Jest ignores `e2e/`.
+     *
+     * Without this, a theme renamed on either side desynchronizes silently and
+     * surfaces as an E2E assertion about a CSS class failing twenty minutes into
+     * a run, pointing at the preferences form rather than at a stale map.
+     */
+    it('matches the map the E2E suite asserts theme classes with', () => {
+      expect(e2eThemeClassByStoredName).toStrictEqual(spectator.service.webuiToComponentLibraryThemeMap);
     });
 
     it('does not call TnThemeService.setTheme for unmapped themes', () => {

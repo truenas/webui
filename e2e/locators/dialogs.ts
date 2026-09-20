@@ -17,6 +17,9 @@ export const confirmDialogLocators = {
    */
   checkbox: '[data-test="checkbox-confirm"]',
 
+  /** `<tn-dialog-shell testId="confirm">`. What to wait on before acting on it. */
+  title: '[data-test="dialog-title-confirm"]',
+
   confirm: '[data-test="button-dialog-confirm"]',
   cancel: '[data-test="button-dialog-cancel"]',
 } as const;
