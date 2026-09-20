@@ -34,7 +34,12 @@ test.beforeEach(async ({ api }) => {
  * ran under.
  */
 test.afterEach(async ({ api }) => {
-  await restorePreferences(api, baseline);
+  // Guarded because Playwright runs this even when `beforeEach` threw, and an
+  // unguarded call would write `undefined` — serialized as `null` — over the
+  // attribute, on top of a failure that already has a cause worth reading.
+  if (baseline) {
+    await restorePreferences(api, baseline);
+  }
 });
 
 test('a preference set in one session is there in the next', async ({ page, api, config }) => {

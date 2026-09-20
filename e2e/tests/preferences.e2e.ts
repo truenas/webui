@@ -77,13 +77,15 @@ let baseline: PreferencesBlob;
 
 test.beforeEach(async ({ api }) => {
   baseline = await establishPreferenceBaseline(api);
-  await ensureGroupAbsent(api, anchorGroup);
-  await ensureGroupPresent(api, anchorGroup);
 });
 
 test.afterEach(async ({ api }) => {
-  await restorePreferences(api, baseline);
-  await ensureGroupAbsent(api, anchorGroup);
+  // Guarded: Playwright runs this even when `beforeEach` threw, and an
+  // unguarded call would then write `undefined` — serialized as `null` — over
+  // the attribute, on top of a failure that already has a cause worth reading.
+  if (baseline) {
+    await restorePreferences(api, baseline);
+  }
 });
 
 test('a theme change outlives the page that made it', async ({ page, api }) => {
@@ -97,8 +99,14 @@ test('a theme change outlives the page that made it', async ({ page, api }) => {
   // wait on, so this polls rather than reads once.
   await expect.poll(() => readPreference(api, 'userTheme')).toBe(testTheme.value);
 
-  // And the part a store-only change would fail: the app is rebuilt from
-  // scratch and still comes back in the chosen theme.
+  // The app is rebuilt and comes back on the same theme. Worth stating what this
+  // does *not* prove: the theme is cached in the browser too — webui under
+  // `theme` in both `localStorage` and `sessionStorage`, the library under
+  // `tn-theme` — and a reload keeps all three, so this would still pass for a
+  // change that never reached the appliance. The line above is what covers that,
+  // and `unauthenticated/preferences-session.e2e.ts` is what proves a new
+  // browser gets it from the account. Clearing the caches here instead would
+  // take the session token with them.
   await page.reload();
   await expectTheme(page, testTheme.value);
 });
@@ -148,29 +156,47 @@ test('syncing the theme with the OS replaces the theme picker with a pair', asyn
   await expect.poll(() => readPreference(api, 'syncThemeWithOS')).toBe(true);
 });
 
-test('the groups list remembers that built-ins were shown', async ({ page, api }) => {
-  // Hidden to start with because `beforeEach` put it that way — not because the
-  // appliance was asked and agreed. Read back from the appliance rather than
-  // asserted against the constant that was just written, which would only be
-  // the test agreeing with itself.
-  expect(await readPreference(api, 'hideBuiltinGroups')).toBe(true);
+/**
+ * Scoped to the one test that needs a row.
+ *
+ * At file level this cost the three theme tests six `group.*` round trips they
+ * had no use for, and coupled them to an API they never touch: a `group.create`
+ * that failed would have failed every preference test, reporting groups.
+ */
+test.describe('with a group of its own in the list', () => {
+  test.beforeEach(async ({ api }) => {
+    await ensureGroupAbsent(api, anchorGroup);
+    await ensureGroupPresent(api, anchorGroup);
+  });
 
-  await goToGroups(page);
+  test.afterEach(async ({ api }) => {
+    await ensureGroupAbsent(api, anchorGroup);
+  });
 
-  // The anchor first: it is what makes the next line an observation rather than
-  // a race with an empty table. See the note on `anchorGroup`.
-  await expect(page.locator(groupsLocators.row(anchorGroup))).toBeVisible();
-  await expect(page.locator(groupsLocators.row(builtinGroup))).toBeHidden();
+  test('the groups list remembers that built-ins were shown', async ({ page, api }) => {
+    // Hidden to start with because `beforeEach` put it that way — not because the
+    // appliance was asked and agreed. Read back from the appliance rather than
+    // asserted against the constant that was just written, which would only be
+    // the test agreeing with itself.
+    expect(await readPreference(api, 'hideBuiltinGroups')).toBe(true);
 
-  await page.locator(groupsLocators.showBuiltIns).click();
-  await expect(page.locator(groupsLocators.row(builtinGroup))).toBeVisible();
+    await goToGroups(page);
 
-  await expect.poll(() => readPreference(api, 'hideBuiltinGroups')).toBe(false);
+    // The anchor first: it is what makes the next line an observation rather than
+    // a race with an empty table. See the note on `anchorGroup`.
+    await expect(page.locator(groupsLocators.row(anchorGroup))).toBeVisible();
+    await expect(page.locator(groupsLocators.row(builtinGroup))).toBeHidden();
 
-  // The reason this one is worth a test: a toggle that looks like view state is
-  // account state, and it is still on for this admin on their next visit. That
-  // is also what puts a newly created group on page two of a list a spec
-  // expects it on page one of — recorded under Known gaps in docs/status.md.
-  await page.reload();
-  await expect(page.locator(groupsLocators.row(builtinGroup))).toBeVisible();
+    await page.locator(groupsLocators.showBuiltIns).click();
+    await expect(page.locator(groupsLocators.row(builtinGroup))).toBeVisible();
+
+    await expect.poll(() => readPreference(api, 'hideBuiltinGroups')).toBe(false);
+
+    // The reason this one is worth a test: a toggle that looks like view state is
+    // account state, and it is still on for this admin on their next visit. That
+    // is also what puts a newly created group on page two of a list a spec
+    // expects it on page one of — recorded under Known gaps in docs/status.md.
+    await page.reload();
+    await expect(page.locator(groupsLocators.row(builtinGroup))).toBeVisible();
+  });
 });

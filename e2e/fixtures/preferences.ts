@@ -34,9 +34,6 @@ import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
  */
 export type PreferencesBlob = Record<string, unknown>;
 
-/** What a single preference can be, for the handful the specs read back. */
-export type PreferenceValue = string | number | boolean | null | undefined;
-
 /**
  * The state every preference test starts from.
  *
@@ -66,7 +63,7 @@ export const preferenceBaseline = {
  * it to that set of keys — the silent drift being a field added to webui and not
  * here.
  */
-export const fullDefaultPreferences: PreferencesBlob = {
+export const fullDefaultPreferences = {
   userTheme: 'ix-dark',
   syncThemeWithOS: false,
   lightTheme: 'ix-blue',
@@ -83,6 +80,15 @@ export const fullDefaultPreferences: PreferencesBlob = {
   language: 'en',
   terminalFontSize: 14,
 };
+
+/**
+ * Every preference the suite knows how to seed.
+ *
+ * Keyed to {@link fullDefaultPreferences} rather than left as `string`, so a
+ * typo is a compile error instead of an `undefined` that quietly fails an
+ * assertion about the wrong thing.
+ */
+export type PreferenceKey = keyof typeof fullDefaultPreferences;
 
 /**
  * The signed-in account's preferences, or undefined when it has none.
@@ -150,9 +156,14 @@ export async function establishPreferenceBaseline(client: E2eApiClient): Promise
  * The assertion a UI change is checked against: the screen re-rendering says it
  * believed the change, this says the appliance stored it. Fresh every call so it
  * can be polled — the save is a socket round trip the UI does not wait on.
+ *
+ * `unknown` rather than a scalar union: two of the fifteen preferences are not
+ * scalars (`sidenavStatus` is an object, `tableDisplayedColumns` an array), so a
+ * signature promising `string | number | boolean` would be lying about them.
+ * `expect` and `expect.poll` take `unknown` happily.
  */
-export async function readPreference(client: E2eApiClient, key: string): Promise<PreferenceValue> {
+export async function readPreference(client: E2eApiClient, key: PreferenceKey): Promise<unknown> {
   const preferences = await readPreferences(client);
 
-  return preferences?.[key] as PreferenceValue;
+  return preferences?.[key];
 }

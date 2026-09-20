@@ -95,14 +95,22 @@ is unreachable below this layer: a unit test can prove the reducer built a new
 object and the effect called `auth.set_attribute`, but only a browser against an
 appliance can say the value came back. So each test asserts twice — the screen
 re-rendered, *and* `auth.me` holds it — and the session spec signs out, clears
-`localStorage` (where the theme is also cached) and signs back in, which is the
-only way to ask the question the feature actually answers.
+both `localStorage` and `sessionStorage` (the theme is cached in each, under
+webui's key and the library's) and signs back in, which is the only way to ask
+the question the feature actually answers.
 
-Its teardown is unlike anything else here and is worth reading before copying:
-preferences are a blob hanging off the account the whole suite signs in as, so
-there is nothing to delete and a per-field undo is not enough. `fixtures/
-preferences.ts` snapshots the whole blob and puts it back verbatim. Two facts
-found while writing it: the applied theme is a class on `<html>` under the
+Its setup and teardown are unlike anything else here and are worth reading before
+copying: preferences are a blob hanging off the account the whole suite signs in
+as, so there is nothing to delete and a per-field undo is not enough.
+`fixtures/preferences.ts` therefore *establishes* a known baseline before each
+test and hands back exactly what `afterEach` must write. It does not snapshot
+and restore what it found — that would make every test's precondition "whatever
+the appliance happened to be set to", and a run interrupted between a change and
+its restore would leave the next one measuring from somewhere nobody chose. One
+subtlety it turns on: an absent `preferences` attribute is not an empty one, and
+writing `{}` over an account that had none leaves the app with no `lifetime`, no
+`language` and no `sidenavStatus`. Two facts found while writing it: the applied
+theme is a class on `<html>` under the
 *library's* name (`ix-dark` is stored, `tn-dark` renders — the map lives in
 `theme.service.ts`), while `<body>` carries a static `ix-dark` from
 `src/index.html` that nothing ever updates, so a test asserting on the body class
