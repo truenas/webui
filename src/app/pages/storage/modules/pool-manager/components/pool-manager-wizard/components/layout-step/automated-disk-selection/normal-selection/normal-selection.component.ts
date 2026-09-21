@@ -105,10 +105,17 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
     )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.form.setValue({
+        // `reset`, not `setValue`: the controls are `Validators.required`, so a plain value
+        // change leaves them touched and keeps rendering "Field is required" after the user
+        // asked for the step to be cleared.
+        this.form.reset({
           width: null,
           vdevsNumber: null,
         });
+        // `reset` alone is not enough: `ix-errors` re-marks any control that still has errors as
+        // touched while the reset's own status change is delivered, so the required errors would
+        // come straight back. Clearing them once that has run is what makes the reset stick.
+        this.form.markAsUntouched();
       });
   }
 
@@ -123,6 +130,20 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
     });
   }
 
+  /**
+   * Log/Spare/Cache never show the "Number of VDEVs" control — a single vdev is implied — so the
+   * count is derived from the width instead. It has to stay `null` while the width is unset:
+   * a category with no width but `vdevsNumber: 1` reads as partially configured to
+   * PoolManagerValidationService, which blocks pool creation on an optional step the user only
+   * glanced at (or has just cleared with Reset Step) and never actually configured.
+   */
+  private vdevsNumberFor(width: number | null | undefined, vdevsNumber: number | null | undefined): number | null {
+    if (!this.isNumberOfVdevsLimitedToOne()) {
+      return vdevsNumber ?? null;
+    }
+    return width == null ? null : 1;
+  }
+
   private updateControlOptionsOnChanges(): void {
     this.form.controls.width.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.updateNumberOptions();
@@ -135,7 +156,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
 
       this.store.setAutomaticTopologyCategory(this.type(), {
         width: values.width,
-        vdevsNumber: this.isNumberOfVdevsLimitedToOne() ? 1 : values.vdevsNumber,
+        vdevsNumber: this.vdevsNumberFor(values.width, values.vdevsNumber),
       });
     });
   }

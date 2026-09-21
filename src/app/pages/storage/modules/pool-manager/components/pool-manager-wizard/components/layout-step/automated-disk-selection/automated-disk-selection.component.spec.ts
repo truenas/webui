@@ -109,6 +109,16 @@ describe('AutomatedDiskSelection', () => {
     expect(await layoutSelect!.getValue()).toBe('');
   });
 
+  it('clears the required error raised by opening the layout dropdown when the step is reset', () => {
+    spectator.setInput('type', VDevType.Log);
+    spectator.component.layoutControl.markAsTouched();
+
+    resetStep$.next(VDevType.Log);
+
+    expect(spectator.component.layoutControl.touched).toBe(false);
+    expect(spectator.component.layoutControl.value).toBeNull();
+  });
+
   it('keeps the sole allowed layout selected after a reset when parity-locked', () => {
     spectator.setInput('limitLayouts', [CreateVdevLayout.Raidz2]);
 
