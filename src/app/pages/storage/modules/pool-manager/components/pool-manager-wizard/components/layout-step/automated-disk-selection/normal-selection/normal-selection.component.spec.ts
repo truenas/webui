@@ -78,7 +78,7 @@ describe('NormalSelectionComponent', () => {
     },
   ] as DetailsDisk[];
   const startOver$ = new Subject<void>();
-  const resetStep$ = new Subject<void>();
+  const resetStep$ = new Subject<VDevType>();
 
   const createComponent = createComponentFactory({
     component: NormalSelectionComponent,
@@ -244,6 +244,29 @@ describe('NormalSelectionComponent', () => {
 
     expect(await widthSelect.getValue()).toBe('');
     expect(await vdevsSelect.getValue()).toBe('');
+  });
+
+  it('clears the category in the store when a single-vdev step is reset', async () => {
+    spectator.setInput('type', VDevType.Log);
+    spectator.setInput('layout', CreateVdevLayout.Mirror);
+    await sizeSelect.setValue('12 TiB (HDD)');
+    await widthSelect.setValue('2');
+
+    const poolManagerStore = spectator.inject(PoolManagerStore);
+    expect(poolManagerStore.setAutomaticTopologyCategory).toHaveBeenLastCalledWith(VDevType.Log, {
+      width: 2,
+      vdevsNumber: 1,
+    });
+
+    resetStep$.next(VDevType.Log);
+
+    // Not `vdevsNumber: 1` — a count with no width leaves the optional step looking
+    // partially configured, which keeps blocking pool creation after the reset.
+    expect(poolManagerStore.setAutomaticTopologyCategory).toHaveBeenLastCalledWith(VDevType.Log, {
+      width: null,
+      vdevsNumber: null,
+    });
+    expect(spectator.component.form.touched).toBe(false);
   });
 
   it('calls store.openManualSelectionDialog when button clicked', async () => {
