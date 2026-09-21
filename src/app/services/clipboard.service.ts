@@ -56,12 +56,13 @@ export class ClipboardService {
       }
 
       // Reports a refused copy by returning false rather than throwing, so
-      // without this the fallback would always claim success.
-      if (!this.fallback.copy(text)) {
-        throw new Error('Copying to the clipboard was refused');
-      }
-
-      return Promise.resolve();
+      // without this the fallback would always claim success. The CDK catches
+      // whatever `execCommand` throws and folds it into that same `false`, so
+      // a refusal and a thrown copy are indistinguishable from here — callers
+      // render one generic message either way.
+      return this.fallback.copy(text)
+        ? Promise.resolve()
+        : Promise.reject(new Error('Copying to the clipboard was refused'));
     } catch (error) {
       return Promise.reject(error instanceof Error ? error : new Error(String(error)));
     }

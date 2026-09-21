@@ -30,7 +30,11 @@ describe('ClipboardService', () => {
     if (originalClipboard) {
       Object.defineProperty(navigator, 'clipboard', originalClipboard);
     } else {
-      setClipboardApi(undefined);
+      // jsdom has no `navigator.clipboard` at all, so there is nothing to put
+      // back — it has to be removed, or the property this spec defined stays
+      // behind as `{ value: undefined }` and the next file's `jest.spyOn`
+      // fails on a primitive.
+      delete (navigator as { clipboard?: unknown }).clipboard;
     }
     document.execCommand = originalExecCommand;
     jest.restoreAllMocks();

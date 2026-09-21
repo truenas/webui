@@ -48,6 +48,11 @@ describe('SysInfoComponent', () => {
   afterEach(() => {
     if (originalClipboard) {
       Object.defineProperty(navigator, 'clipboard', originalClipboard);
+    } else {
+      // jsdom defines no `navigator.clipboard`, so restoring means removing
+      // the one these tests defined — an `if` alone leaves it as
+      // `{ value: undefined }` and the next test to spy on it fails.
+      delete (navigator as { clipboard?: unknown }).clipboard;
     }
     // eslint-disable-next-line sonarjs/deprecation
     document.execCommand = originalExecCommand;
@@ -305,6 +310,14 @@ describe('SysInfoComponent', () => {
 
       expect(document.execCommand).toHaveBeenCalledWith('copy');
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Copied to clipboard');
+    });
+
+    it('leaves navigator.clipboard as it found it for whatever runs next', () => {
+      // Guards the afterEach above. jsdom defines no `navigator.clipboard`, so
+      // an `if (originalClipboard)` restore is dead code and the deleted-API
+      // state leaks into every later test in the file — which is what this
+      // spec's own plain-HTTP test would otherwise do to its neighbours.
+      expect(Object.getOwnPropertyDescriptor(navigator, 'clipboard')).toBeUndefined();
     });
   });
 });

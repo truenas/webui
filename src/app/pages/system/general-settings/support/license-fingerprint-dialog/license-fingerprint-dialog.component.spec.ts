@@ -73,6 +73,11 @@ describe('LicenseFingerprintDialog', () => {
   afterEach(() => {
     if (originalClipboard) {
       Object.defineProperty(navigator, 'clipboard', originalClipboard);
+    } else {
+      // jsdom defines no `navigator.clipboard`, so restoring means removing
+      // the one these tests defined — an `if` alone leaves it as
+      // `{ value: undefined }` and the next test to spy on it fails.
+      delete (navigator as { clipboard?: unknown }).clipboard;
     }
     // eslint-disable-next-line sonarjs/deprecation
     document.execCommand = originalExecCommand;
