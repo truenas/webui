@@ -15,6 +15,7 @@ import { LicenseFingerprintValue } from 'app/interfaces/system-info.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ClipboardService } from 'app/services/clipboard.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface FingerprintField {
@@ -115,6 +116,7 @@ export class LicenseFingerprintDialog implements OnInit {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
+  private clipboard = inject(ClipboardService);
 
   protected readonly isLoading = signal(true);
   protected readonly fingerprintRaw = signal<string | null>(null);
@@ -165,7 +167,7 @@ export class LicenseFingerprintDialog implements OnInit {
     if (!raw) {
       return;
     }
-    navigator.clipboard.writeText(raw).then(
+    this.clipboard.copy(raw).then(
       () => this.snackbar.success(this.translate.instant('Copied to clipboard')),
       () => this.snackbar.error(this.translate.instant('Failed to copy to clipboard')),
     );

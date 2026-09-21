@@ -26,6 +26,7 @@ import {
 } from 'app/pages/system/general-settings/support/license-fingerprint-dialog/license-fingerprint-dialog.component';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
+import { ClipboardService } from 'app/services/clipboard.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -53,6 +54,7 @@ export class SysInfoComponent {
   private translate = inject(TranslateService);
   private matDialog = inject(MatDialog);
   private destroyRef = inject(DestroyRef);
+  private clipboard = inject(ClipboardService);
 
   readonly hasLicense = input<boolean>();
   readonly licenseInfo = input<LicenseInfoInSupport>();
@@ -86,7 +88,7 @@ export class SysInfoComponent {
   protected copyFingerprint(): void {
     this.loadFingerprint().subscribe({
       next: (raw) => {
-        navigator.clipboard.writeText(raw).then(
+        this.clipboard.copy(raw).then(
           () => this.snackbar.success(this.translate.instant('Copied to clipboard')),
           () => this.snackbar.error(this.translate.instant('Failed to copy to clipboard')),
         );
