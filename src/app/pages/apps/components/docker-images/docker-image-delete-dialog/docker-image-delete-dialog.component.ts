@@ -86,7 +86,7 @@ export class DockerImageDeleteDialog {
     // [disabled]="form.invalid" cannot stop a native form submission. Only the
     // absence of a text field keeps Enter from reaching here today, which is a
     // property of the markup rather than a decision. Enforce the gate here.
-    if (this.form.invalid) {
+    if (this.form.invalid || this.runningCount) {
       return;
     }
 

@@ -95,7 +95,13 @@ test('typing the wrong name and pressing Enter does not delete the dataset', asy
 
   await page.locator(deleteDatasetDialogLocators.name).press('Enter');
 
-  await fillDatasetDeletionConfirmation(page, dataset);
+  // Confirm is already ticked here, so correcting the name is round trip
+  // enough — and `fillDatasetDeletionConfirmation` must NOT be used, because
+  // its own click would toggle that tick back off. Reaching an enabled button
+  // proves the dialog survived the keypress.
+  await page.locator(deleteDatasetDialogLocators.name).fill(dataset);
+  await expect(page.locator(deleteDatasetDialogLocators.submit)).toBeEnabled();
+
   expect(await findDataset(api, dataset)).toBeDefined();
 });
 

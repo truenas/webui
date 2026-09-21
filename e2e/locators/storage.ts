@@ -113,24 +113,15 @@ export const datasetLocators = {
 } as const;
 
 /**
- * The delete-dataset dialog, which guards a destructive action with two gates:
- * the dataset's own name typed back, and a Confirm tick box.
- *
- * Both gates are the point. The dialog is reached from the details card's
- * "Delete", and until NAS-000000 pressing Enter in the name field submitted the
- * form past both of them — the form has a single text input and, since the
- * tn-dialog migration put the actions outside `<form>`, no submit button at all,
- * which is exactly the shape the HTML spec submits on Enter.
- */
-/**
  * The Disconnect Pool dialog, reached from a pool card on the storage dashboard.
  *
- * The most destructive dialog in the app: picking "Delete Pool" and ticking
- * "Destroy data on this pool" runs `pool.export` with `destroy: true`, which
- * wipes every member disk. It gates on a Confirm tick and, once destroy is
- * chosen, the pool's name typed back — and its handler had no validity check of
- * any kind, so the Enter that submits this form reached `pool.export`
- * regardless. See `tests/pool-disconnect.e2e.ts`.
+ * The most destructive dialog in the app: choosing the "Delete Pool" card runs
+ * `pool.export` with `destroy: true`, which wipes every member disk. There is
+ * no separate "destroy" tick — `selectOption()` sets `destroy` from which card
+ * was picked, and picking Delete is what reveals the name field. It gates on a
+ * "Confirm Delete Pool" tick and that name typed back, and its handler had no
+ * validity check of any kind, so the Enter that submits this form reached
+ * `pool.export` regardless. See `tests/pool-disconnect.e2e.ts`.
  */
 export const poolDisconnectLocators = {
   /**
@@ -143,11 +134,10 @@ export const poolDisconnectLocators = {
   title: '[data-test="dialog-title-export-disconnect"]',
 
   /**
-   * The two option cards. Plain `<div>`s carrying `tnTestIdType="option"`, so
-   * they are `option-…` rather than `button-…`. Picking "Delete Pool" is what
-   * sets `destroy`, which in turn reveals the name field.
+   * The "Delete Pool" option card. A plain `<div>` carrying
+   * `tnTestIdType="option"`, so it is `option-…` rather than `button-…`.
+   * Picking it is what sets `destroy`, which in turn reveals the name field.
    */
-  exportOption: '[data-test="option-export-pool"]',
   deleteOption: '[data-test="option-delete-pool"]',
 
   /** `<tn-checkbox testId="confirm">` — "Confirm Export Pool" / "Confirm Delete Pool". */
@@ -168,6 +158,16 @@ export const poolDisconnectLocators = {
   cancel: '[data-test="button-cancel"]',
 } as const;
 
+/**
+ * The delete-dataset dialog, which guards a destructive action with two gates:
+ * the dataset's own name typed back, and a Confirm tick box.
+ *
+ * Both gates are the point. The dialog is reached from the details card's
+ * "Delete", and pressing Enter in the name field used to submit the form past
+ * both of them — the form has a single text input and, since the tn-dialog
+ * migration put the actions outside `<form>`, no submit button at all, which is
+ * exactly the shape the HTML spec submits on Enter.
+ */
 export const deleteDatasetDialogLocators = {
   /**
    * "Delete" on the dataset details card — `testId: 'delete-dataset'` in

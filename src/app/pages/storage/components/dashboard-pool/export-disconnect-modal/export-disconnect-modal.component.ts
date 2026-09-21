@@ -166,7 +166,11 @@ export class ExportDisconnectModalComponent implements OnInit {
   startExportDisconnectJob(): void {
     // Enter in the confirmation field submits the form natively (the dialog's
     // action buttons live outside it), so the gate must be enforced here too.
-    if (this.form.invalid) {
+    // `canProceed()`, not `form.invalid`: the button is disabled on the wider
+    // condition, and the HA branch of this dialog promises in so many words
+    // that it "will remain disabled until HA is turned off" — a valid form on
+    // the last pool of an HA system must not get past that on the keyboard.
+    if (!this.canProceed()) {
       return;
     }
 
