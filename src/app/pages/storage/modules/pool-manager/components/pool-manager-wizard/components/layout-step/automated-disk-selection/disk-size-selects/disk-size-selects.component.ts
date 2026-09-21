@@ -112,7 +112,9 @@ export class DiskSizeSelectsComponent implements OnChanges {
     )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.form.setValue({
+        // `reset`, not `setValue`: `sizeAndType` is `Validators.required`, so a plain value change
+        // leaves it touched and keeps rendering "Field is required" after a Reset Step.
+        this.form.reset({
           sizeAndType: null,
           treatDiskSizeAsMinimum: false,
         });

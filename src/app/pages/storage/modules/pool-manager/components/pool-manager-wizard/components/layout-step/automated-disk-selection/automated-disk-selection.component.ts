@@ -164,15 +164,18 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
     // data layout is still set. Reading limitLayouts here would observe the
     // pre-reset value (the store state update follows startOver$.next()).
     this.store.startOver$.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.layoutControl.setValue(null));
+      .subscribe(() => this.layoutControl.reset(null));
 
     // Reset-step only clears this category; re-apply the current lock so a
     // parity-locked step preserves its forced layout after the user resets it.
+    // `reset` rather than `setValue` so the control also goes back to untouched —
+    // otherwise the `required` error raised by merely opening and dismissing the
+    // dropdown on an optional step survives the reset the user asked for.
     this.store.resetStep$.pipe(
       filter((vdevType) => vdevType === this.type()),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
-      this.layoutControl.setValue(this.forcedLayoutFor(this.limitLayouts()));
+      this.layoutControl.reset(this.forcedLayoutFor(this.limitLayouts()));
     });
   }
 
