@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TnButtonHarness, TnIconButtonHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   buildFingerprintField,
   formatFingerprintLabel,
@@ -72,6 +73,7 @@ describe('LicenseFingerprintDialog', () => {
       mockAuth(),
       mockApi([mockCall('truenas.license.fingerprint', base64)]),
       mockProvider(DialogRef),
+      mockProvider(SnackbarService),
     ],
   });
 
@@ -96,6 +98,21 @@ describe('LicenseFingerprintDialog', () => {
     await copyButton.click();
 
     expect(writeText).toHaveBeenCalledWith(base64);
+  });
+
+  it('still copies over plain HTTP, where navigator.clipboard does not exist', async () => {
+    // The dialog is the thumbprint's other copy path, and had the same defect
+    // as the settings-page button: over http:// the Clipboard API is undefined.
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: undefined });
+    // eslint-disable-next-line sonarjs/deprecation
+    document.execCommand = jest.fn(() => true);
+
+    const copyButton = await loader.getHarness(TnIconButtonHarness);
+    await copyButton.click();
+
+
+    expect(document.execCommand).toHaveBeenCalledWith('copy');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Copied to clipboard');
   });
 
   it('closes the dialog when the Close button is clicked', async () => {

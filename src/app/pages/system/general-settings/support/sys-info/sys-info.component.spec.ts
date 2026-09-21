@@ -9,6 +9,7 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LicenseType } from 'app/enums/license-type.enum';
 import { ContractType } from 'app/interfaces/system-info.interface';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   LicenseFingerprintDialog,
@@ -44,6 +45,7 @@ describe('SysInfoComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(TnDialog, { open: jest.fn() }),
+      mockProvider(SnackbarService),
       mockApi([mockCall('truenas.license.fingerprint', fingerprintBase64)]),
     ],
   });
@@ -270,6 +272,24 @@ describe('SysInfoComponent', () => {
         .filter((args) => args[0] === 'truenas.license.fingerprint');
       expect(fingerprintCalls).toHaveLength(1);
       expect(writeText).toHaveBeenCalledTimes(2);
+    });
+
+    it('still copies when served over plain HTTP, where navigator.clipboard does not exist', async () => {
+      // The reported bug. `navigator.clipboard` is gated on a secure context,
+      // so over http:// it is undefined and reading `.writeText` off it threw —
+      // synchronously, before any promise existed, so the component's own error
+      // handler never ran either and the user got a raw TypeError.
+      spectator.setInput({ hasLicense: true, licenseInfo, isProactiveSupportAvailable: true });
+      Object.defineProperty(navigator, 'clipboard', { configurable: true, value: undefined });
+      // eslint-disable-next-line sonarjs/deprecation
+      document.execCommand = jest.fn(() => true);
+
+      const copyButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'content-copy' }));
+      await copyButton.click();
+
+
+      expect(document.execCommand).toHaveBeenCalledWith('copy');
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Copied to clipboard');
     });
   });
 });
