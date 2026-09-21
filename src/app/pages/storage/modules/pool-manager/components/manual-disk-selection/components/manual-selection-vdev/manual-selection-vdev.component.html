@@ -7,7 +7,7 @@
   <div
     dndDropzone
     class="drag-container"
-    [tnTestId]="['vdev-dropzone', layout()]"
+    [tnTestId]="['vdev-dropzone', layout(), position()]"
     [ngClass]="{'drag-active': (dragToggleStore$.dragActive$ | async)}"
     (dndDrop)="onDrop($event)"
   >

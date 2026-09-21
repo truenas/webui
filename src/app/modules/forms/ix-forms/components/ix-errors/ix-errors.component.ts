@@ -1,10 +1,11 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnDestroy, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, input, OnChanges, OnDestroy, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import type { TnTestIdValue } from '@truenas/ui-components';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
@@ -35,6 +36,21 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
   readonly label = input<string>();
 
   readonly ixManualValidateError = ixManualValidateErrorKey;
+
+  /**
+   * The dismiss icon's test id, scoped to the control this instance reports on.
+   *
+   * One `ix-errors` is mounted per control — `allowed-access-section` alone renders five on a page
+   * — and manual validate errors usually arrive together from one failed save, so a static id put
+   * several identical `icon-dismiss-error` elements on screen and a suite could not say which
+   * field's error it was dismissing.
+   *
+   * Keyed on the control's name rather than {@link label}, which is translated: the id has to hold
+   * still across locales. Falls back to the label for a control with no parent to name it.
+   */
+  protected readonly dismissErrorTestId = computed<TnTestIdValue>(
+    () => ['dismiss-error', this.controlName() ?? this.label()],
+  );
 
   private statusChangeSubscription: Subscription;
   messages: string[] = [];
@@ -100,6 +116,17 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
       return this.translate.instant(message, { maxLength });
     },
   };
+
+  /** This control's name within its parent group, the way `editable.component.ts` resolves it. */
+  private controlName(): string | undefined {
+    const control = this.control();
+    const parent = control.parent;
+    if (!parent || !('controls' in parent)) {
+      return undefined;
+    }
+    const controls = parent.controls as Record<string, AbstractControl>;
+    return Object.keys(controls).find((name) => controls[name] === control);
+  }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if ('control' in changes && this.control()) {
