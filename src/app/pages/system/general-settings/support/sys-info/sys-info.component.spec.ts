@@ -38,6 +38,21 @@ describe('SysInfoComponent', () => {
   };
   const fingerprintBase64 = btoa(JSON.stringify({ system_serial: 'A1' }));
 
+  // Several tests here replace `navigator.clipboard` and `document.execCommand`
+  // wholesale. Restored after each, so a test added later does not inherit an
+  // undefined Clipboard API and fail for a reason of its own.
+  const originalClipboard = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
+  // eslint-disable-next-line sonarjs/deprecation
+  const originalExecCommand = document.execCommand;
+
+  afterEach(() => {
+    if (originalClipboard) {
+      Object.defineProperty(navigator, 'clipboard', originalClipboard);
+    }
+    // eslint-disable-next-line sonarjs/deprecation
+    document.execCommand = originalExecCommand;
+  });
+
   let spectator: Spectator<SysInfoComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({

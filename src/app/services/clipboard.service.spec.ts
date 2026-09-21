@@ -1,7 +1,7 @@
 /*
  * `document.execCommand` is deprecated, and exercising it is the point: it is
  * the only clipboard route available in an insecure context, so the fallback
- * has to be tested through the same API the service is obliged to call.
+ * has to be tested through the same API the CDK is obliged to call.
  */
 /* eslint-disable sonarjs/deprecation */
 import { TestBed } from '@angular/core/testing';
@@ -10,10 +10,11 @@ import { ClipboardService } from 'app/services/clipboard.service';
 describe('ClipboardService', () => {
   let service: ClipboardService;
   const originalClipboard = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
+  const originalExecCommand = document.execCommand;
 
   /**
    * `navigator.clipboard` is absent, not merely restricted, outside a secure
-   * context — so the insecure case has to be modelled by deleting it, not by
+   * context — so the insecure case has to be modelled by removing it, not by
    * making `writeText` reject.
    */
   function setClipboardApi(value: Pick<Clipboard, 'writeText'> | undefined): void {
@@ -31,6 +32,7 @@ describe('ClipboardService', () => {
     } else {
       setClipboardApi(undefined);
     }
+    document.execCommand = originalExecCommand;
     jest.restoreAllMocks();
   });
 
@@ -44,10 +46,15 @@ describe('ClipboardService', () => {
       expect(writeText).toHaveBeenCalledWith('thumbprint');
     });
 
-    it('rejects when the Clipboard API does', async () => {
+    it('rejects when the Clipboard API does, rather than falling back', async () => {
+      // A rejection here means the document was not focused or the permission
+      // was refused — conditions execCommand is subject to as well — so the
+      // failure is reported rather than retried into a silent one.
       setClipboardApi({ writeText: jest.fn(() => Promise.reject(new Error('denied'))) });
+      document.execCommand = jest.fn(() => true);
 
       await expect(service.copy('thumbprint')).rejects.toThrow('denied');
+      expect(document.execCommand).not.toHaveBeenCalled();
     });
   });
 
@@ -55,12 +62,16 @@ describe('ClipboardService', () => {
     beforeEach(() => setClipboardApi(undefined));
 
     it('still copies, via the execCommand fallback', async () => {
-      const execCommand = jest.fn(() => true);
-      document.execCommand = execCommand;
+      let copiedValue: string | undefined;
+      document.execCommand = jest.fn(() => {
+        copiedValue = document.querySelector('textarea')?.value;
+        return true;
+      });
 
       await expect(service.copy('thumbprint')).resolves.toBeUndefined();
 
-      expect(execCommand).toHaveBeenCalledWith('copy');
+      expect(document.execCommand).toHaveBeenCalledWith('copy');
+      expect(copiedValue).toBe('thumbprint');
     });
 
     it('rejects rather than throwing at the caller', async () => {
@@ -72,40 +83,20 @@ describe('ClipboardService', () => {
       await expect(service.copy('thumbprint')).rejects.toThrow('refused');
     });
 
-    it('puts the text on the page for the copy, and cleans up afterwards', async () => {
-      let valueAtCopyTime: string | undefined;
-      document.execCommand = jest.fn(() => {
-        valueAtCopyTime = document.querySelector('textarea')?.value;
-        return true;
-      });
-
-      await service.copy('thumbprint');
-
-      expect(valueAtCopyTime).toBe('thumbprint');
-      expect(document.querySelector('textarea')).toBeNull();
-    });
-
-    it('leaves focus where it found it', async () => {
-      // Two of the call sites are dialogs with a focus trap, and the fallback
-      // has to steal focus to select the text.
-      const button = document.createElement('button');
-      document.body.appendChild(button);
-      button.focus();
+    it('leaves no textarea behind, whether the copy works or not', async () => {
       document.execCommand = jest.fn(() => true);
-
       await service.copy('thumbprint');
+      expect(document.querySelector('textarea')).toBeNull();
 
-      expect(document.activeElement).toBe(button);
-      button.remove();
-    });
-
-    it('removes the textarea even when the copy throws', async () => {
-      document.execCommand = jest.fn(() => {
-        throw new Error('boom');
-      });
-
-      await expect(service.copy('thumbprint')).rejects.toThrow('boom');
+      document.execCommand = jest.fn(() => false);
+      await expect(service.copy('thumbprint')).rejects.toThrow();
       expect(document.querySelector('textarea')).toBeNull();
     });
+
+    // Focus restoration is deliberately not asserted here. The CDK's
+    // `PendingCopy` does it, and jsdom's `textarea.select()` does not move
+    // focus in the first place — so a test would either be exercising the
+    // CDK's code or passing because nothing ever moved, which an earlier
+    // version of this spec did.
   });
 });

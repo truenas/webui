@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { inject, Injectable } from '@angular/core';
 
 /**
  * Copies text to the clipboard, including over plain HTTP.
@@ -14,14 +15,21 @@ import { Injectable } from '@angular/core';
  * redirecting, and `localhost` counts as a secure context, so the modern API
  * works all through development and fails the moment the UI is opened by IP.
  *
- * So: use the real API wherever it exists — HTTPS, and localhost — and fall
- * back to `document.execCommand('copy')`, which predates secure-context gating
- * and still works without one. Verified against a v27 appliance over
- * `http://` (2026-09-21): the fallback returns true and the text genuinely
- * reaches the system clipboard.
+ * So: prefer the real API, and fall back to the CDK's `Clipboard`, which is
+ * built on `document.execCommand('copy')` — deprecated, but it predates
+ * secure-context gating and still works without one.
  */
 @Injectable({ providedIn: 'root' })
 export class ClipboardService {
+  /**
+   * The insecure-context path, and the repo's existing answer to copying text:
+   * four components already inject this directly. It owns the off-screen
+   * textarea, the selection, the `execCommand` call, restoring focus to
+   * whatever had it, and removing the textarea afterwards — so none of that is
+   * reimplemented here.
+   */
+  private fallback = inject(Clipboard);
+
   /**
    * Resolves once the text is on the clipboard, and rejects if it is not.
    *
@@ -34,6 +42,12 @@ export class ClipboardService {
    * API's own promise, so it settles on exactly the tick it always did —
    * `async` would insert a microtask and move every caller's snackbar one tick
    * later, which is a behaviour change nobody asked for in the working case.
+   *
+   * The fallback is reached only when the API is *absent*, not when a write
+   * rejects. A rejection in a secure context means the document was not
+   * focused or the permission was refused, and `execCommand` is subject to the
+   * same conditions — retrying through it would mostly convert a reported
+   * failure into a silent one.
    */
   copy(text: string): Promise<void> {
     try {
@@ -41,44 +55,15 @@ export class ClipboardService {
         return navigator.clipboard.writeText(text);
       }
 
-      this.copyViaDeprecatedExecCommand(text);
+      // Reports a refused copy by returning false rather than throwing, so
+      // without this the fallback would always claim success.
+      if (!this.fallback.copy(text)) {
+        throw new Error('Copying to the clipboard was refused');
+      }
+
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error instanceof Error ? error : new Error(String(error)));
-    }
-  }
-
-  /**
-   * The insecure-context path: put the text in an off-screen `<textarea>`,
-   * select it, and let the browser copy the selection.
-   *
-   * `document.execCommand` is deprecated but implemented everywhere and has no
-   * announced removal; it is the floor here, not the default. Kept synchronous
-   * because it is — the promise comes from {@link copy} being `async`.
-   */
-  private copyViaDeprecatedExecCommand(text: string): void {
-    const textArea = document.createElement('textarea');
-    Object.assign(textArea.style, { position: 'fixed', left: '-9999px', top: '-9999px' });
-    textArea.value = text;
-    document.body.appendChild(textArea);
-
-    // Where focus was, so a dialog with a focus trap does not end up with the
-    // caret somewhere the user did not put it once the textarea is gone.
-    const previouslyFocused = document.activeElement as HTMLElement | null;
-
-    try {
-      textArea.select();
-      // eslint-disable-next-line sonarjs/deprecation
-      const isCopied = document.execCommand('copy');
-
-      // `execCommand` reports a refused copy by returning false rather than
-      // throwing, so without this the fallback would always claim success.
-      if (!isCopied) {
-        throw new Error('document.execCommand("copy") was refused');
-      }
-    } finally {
-      textArea.remove();
-      previouslyFocused?.focus?.();
     }
   }
 }

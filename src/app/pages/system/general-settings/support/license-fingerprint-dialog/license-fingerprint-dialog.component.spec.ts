@@ -64,6 +64,20 @@ describe('LicenseFingerprintDialog', () => {
   };
   const base64 = btoa(JSON.stringify(payload));
 
+  // Two tests here replace `navigator.clipboard` and `document.execCommand`
+  // wholesale; restored so later tests in this file are unaffected.
+  const originalClipboard = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
+  // eslint-disable-next-line sonarjs/deprecation
+  const originalExecCommand = document.execCommand;
+
+  afterEach(() => {
+    if (originalClipboard) {
+      Object.defineProperty(navigator, 'clipboard', originalClipboard);
+    }
+    // eslint-disable-next-line sonarjs/deprecation
+    document.execCommand = originalExecCommand;
+  });
+
   let spectator: Spectator<LicenseFingerprintDialog>;
   let loader: HarnessLoader;
 
