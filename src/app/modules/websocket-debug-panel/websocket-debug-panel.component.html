@@ -31,10 +31,10 @@
         class="panel-tabs"
         [selectedIndex]="selectedTabIndex()"
         (selectedIndexChange)="onTabChange($event)">
-        <tn-tab testId="messages" [label]="'Messages' | translate"></tn-tab>
-        <tn-tab testId="mock-configurations" [label]="'Mock Configurations' | translate"></tn-tab>
-        <tn-tab testId="enclosure-mock" [label]="'Enclosure Mock' | translate"></tn-tab>
-        <tn-tab testId="alert-classes" [label]="'Alert Classes' | translate"></tn-tab>
+        <tn-tab [testId]="'messages'" [label]="'Messages' | translate"></tn-tab>
+        <tn-tab [testId]="'mock-configurations'" [label]="'Mock Configurations' | translate"></tn-tab>
+        <tn-tab [testId]="'enclosure-mock'" [label]="'Enclosure Mock' | translate"></tn-tab>
+        <tn-tab [testId]="'alert-classes'" [label]="'Alert Classes' | translate"></tn-tab>
 
         <tn-tab-panel>
           <ix-websocket-tab></ix-websocket-tab>

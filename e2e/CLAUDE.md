@@ -156,12 +156,14 @@ columns NAS-143892 closed were found.
   row. Six tickets in a row — NAS-141047, NAS-141484, NAS-142069, NAS-141791,
   NAS-141186, NAS-143804 — were this same defect, each found downstream.
 
-`yarn check-test-ids` (a lint job step) mechanises most of that. It asks five
+`yarn check-test-ids` (a lint job step) mechanises most of that. It asks six
 things: a table that renders cells must bind `[rowTestId]`, every column of it
 must tag its cell, a plain element that is *acted on* must resolve a `data-test`
 somewhere in its subtree (not necessarily on the element itself), an interactive
-`tn-*` component must resolve one too, and no template may revive the test-id
-directive retired in NAS-143893 — which would now emit no attribute at all.
+`tn-*` component must resolve one too, every template that writes `tnTestId`
+must be declared by a component that imports `TnTestIdDirective`, and no
+template may revive the test-id directive retired in NAS-143893 — which would
+now emit no attribute at all.
 
 "Acted on" is wider than "has a `(click)`", because a handler is not the only way
 an element acts: a link navigates on its own (`href`/`routerLink`, no handler to
@@ -170,6 +172,12 @@ triggers, and a drag source or drop zone (`dnd*`, `cdkDrag*`, `mousedown`) is
 something a journey does. Eleven external links, a tooltip trigger and six
 drag targets in the pool-manager layout had no id while the rule asked only
 about clicks.
+
+The `tnTestId` rule is the one nothing else reports. `tnTestId` is a directive,
+not an attribute Angular knows: write it in a template whose component never put
+`TnTestIdDirective` in its `imports` and it emits *nothing at all*, silently —
+the attribute is right there in the markup and no `data-test` reaches the DOM.
+Two components can share one template, and then both of them owe the import.
 
 The `tn-*` rule is the newest and the least obvious. A library component emits an
 id only where one is passed: an unset `[testId]` is an *absent* attribute, not a

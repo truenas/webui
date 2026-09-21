@@ -209,7 +209,11 @@ const componentTags = /<([a-z][a-z0-9]*-[a-z0-9-]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"
  * internal evidence and must be tagged at the call site. That is the intended asymmetry.
  */
 interface ComponentScan {
-  /** Selector → the component's own template, for resolving an id across the component boundary. */
+  /**
+   * Selector → the component's own template, for resolving an id across the component boundary.
+   * Comment-stripped at the source, for the reason in {@link withoutComments}: a comment that
+   * mentions `data-test` is not an id, and four templates in this repo have exactly that shape.
+   */
   templateBySelector: Map<string, string>;
   /**
    * Template path → every `.ts` that declares it, for rule 5. A list rather than one file because
@@ -263,7 +267,7 @@ function scanComponents(): ComponentScan {
         const template = resolvePath(directory, url[1]);
         selectorByTemplate.set(template, selector);
         try {
-          templateBySelector.set(selector, readFileSync(template, 'utf8'));
+          templateBySelector.set(selector, withoutComments(readFileSync(template, 'utf8')));
         } catch {
           templateBySelector.set(selector, '');
         }
@@ -271,7 +275,7 @@ function scanComponents(): ComponentScan {
       }
       const inline = /template:\s*`([\s\S]*?)`/.exec(decorator);
       if (inline) {
-        templateBySelector.set(selector, inline[1]);
+        templateBySelector.set(selector, withoutComments(inline[1]));
       }
     }
   }
@@ -607,8 +611,12 @@ function readsData(text: string): boolean {
     .some((head) => head.length > 0 && !/^'[^']*'$/.test(head) && !/^"[^"]*"$/.test(head));
 }
 
-const elementBoundaries = /<([a-z][a-z0-9-]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"'])*)?)(\/?)>|<\/([a-z][a-z0-9-]*)>/gs;
-const selfClosingTags = new Set(['input', 'img', 'br', 'hr', 'source', 'track', 'meta', 'link']);
+const elementBoundaries = /<([a-z][a-z0-9-]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"'])*)?)\/?>|<\/([a-z][a-z0-9-]*)>/gs;
+/** Every HTML void element, so the first one added to a template does not sit on the stack. */
+const selfClosingTags = new Set([
+  'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
+  'link', 'meta', 'param', 'source', 'track', 'wbr',
+]);
 
 function valueCount(block: string): number {
   return [...block.matchAll(leafValue)].filter(([, , , text]) => readsData(text)).length;
@@ -627,18 +635,18 @@ function taggedAncestorBlock(src: string, at: number): string | null {
     if (match.index >= at) {
       break;
     }
-    if (match[4]) {
+    if (match[3]) {
       for (let i = open.length - 1; i >= 0; i -= 1) {
-        if (open[i].tag === match[4]) {
+        if (open[i].tag === match[3]) {
           open.splice(i);
           break;
         }
       }
       continue;
     }
-    // `match[3]` cannot be trusted for this: the attribute group accepts `/`, so it swallows the
-    // slash of `<ix-foo … />` and the group captures nothing. Reading the matched text is exact,
-    // and it matters — a self-closing tag left on the stack becomes a "nearest ancestor" with no
+    // Read the slash off the matched text rather than capturing it: the attribute group accepts
+    // `/`, so it swallows the slash of `<ix-foo … />` and a capture group there would be empty.
+    // It matters — a self-closing tag left on the stack becomes a "nearest ancestor" with no
     // closing tag, whose block then runs to the end of the file.
     const selfClosing = match[0].endsWith('/>') || selfClosingTags.has(match[1]);
     if (!selfClosing) {
@@ -733,7 +741,7 @@ function reportReadoutCoverage(templates: { file: string; src: string }[]): void
   const { templateBySelector, selectorByTemplate } = scanComponents();
   const singleValue = new Set(
     [...templateBySelector]
-      .filter(([, template]) => valueCount(withoutComments(template)) === 1)
+      .filter(([, template]) => valueCount(template) === 1)
       .map(([selector]) => selector),
   );
 

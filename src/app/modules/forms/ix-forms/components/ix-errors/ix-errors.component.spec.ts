@@ -1,5 +1,5 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { createHostFactory, mockProvider, SpectatorHost } from '@ngneat/spectator/jest';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 
@@ -134,6 +134,22 @@ describe('IxErrorsComponent', () => {
       manualErrorOn(new FormControl(''));
 
       expect(dismissIconTestId()).toBe('icon-dismiss-error-name');
+    });
+
+    // A control inside a FormArray is named by its index, and the array can renumber it without
+    // the `control` input ever changing identity. Reading the name per change detection is what
+    // keeps the id current; a cached one would leave two rows claiming the same index.
+    it('follows the control when its array renumbers it', () => {
+      const array = new FormArray([new FormControl(''), new FormControl('')]);
+
+      manualErrorOn(array.at(1) as FormControl);
+
+      expect(dismissIconTestId()).toBe('icon-dismiss-error-1');
+
+      array.removeAt(0);
+      spectator.detectComponentChanges();
+
+      expect(dismissIconTestId()).toBe('icon-dismiss-error-0');
     });
   });
 });

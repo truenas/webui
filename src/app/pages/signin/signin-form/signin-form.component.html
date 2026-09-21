@@ -36,7 +36,7 @@
     @if (showSecurityWarning()) {
       <tn-banner
         type="warning"
-        testId="insecure-connection"
+        [testId]="'insecure-connection'"
         [bordered]="true"
         [heading]="'Connection is insecure' | translate"
         [message]="'You are using an insecure connection. Switch to HTTPS for secure access.' | translate"

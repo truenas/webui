@@ -1,5 +1,5 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, input, OnChanges, OnDestroy, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnDestroy, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
@@ -47,10 +47,18 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
    *
    * Keyed on the control's name rather than {@link label}, which is translated: the id has to hold
    * still across locales. Falls back to the label for a control with no parent to name it.
+   *
+   * A method, not a `computed()`: {@link controlName} reads `control.parent.controls`, which is
+   * plain reactive-forms state and not a signal, so a `computed` would track only the `control`
+   * and `label` inputs and cache a name that the form can change underneath it. A `FormGroup`
+   * living in a `FormArray` is named by its index — remove the item before it and the surviving
+   * instance keeps the input reference it was created with, so the cached id would still say the
+   * old index while a newly appended item claimed it. Re-reading per change detection costs a
+   * `find` over the parent's controls.
    */
-  protected readonly dismissErrorTestId = computed<TnTestIdValue>(
-    () => ['dismiss-error', this.controlName() ?? this.label()],
-  );
+  protected dismissErrorTestId(): TnTestIdValue {
+    return ['dismiss-error', this.controlName() ?? this.label()];
+  }
 
   private statusChangeSubscription: Subscription;
   messages: string[] = [];
