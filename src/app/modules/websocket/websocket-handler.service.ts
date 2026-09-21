@@ -271,6 +271,12 @@ export class WebSocketHandlerService {
       this.dialogService.error({
         message: this.translate.instant('Max concurrent calls limit reached.\nThere are more than 20 calls queued.\nSee queued calls in the browser\'s console logs'),
         title: this.translate.instant('Max Concurrent Calls'),
+        // Named so the E2E harness can dismiss this development-only diagnostic
+        // without matching its wording, and without touching a real error.
+        // The name is spelled again in `e2e/support/constants.ts`
+        // (`concurrentCallsDialogTitleId`); changing it here means changing it
+        // there, or the harness stops recognising this dialog.
+        testId: 'concurrent-calls',
       }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
           this.showingConcurrentCallsError = false;

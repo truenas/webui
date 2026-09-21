@@ -150,9 +150,9 @@ export class DialogService {
     }
     return this.tnDialog.open<ErrorDialog, ErrorReport, boolean>(ErrorDialog, {
       data: report,
-      // error/info dialogs render their title in the body and hide the shell
-      // header (see _tn-styles.scss), so name the dialog container explicitly.
-      ariaLabel: report.title ? this.translate.instant(report.title) : undefined,
+      // No `ariaLabel`: this dialog passes its title to the shell, which names
+      // the container from the heading it renders. `info`/`warn` below still
+      // need theirs — they keep their own body heading and pass no title.
     }).closed.pipe(map((result) => result ?? false));
   }
 

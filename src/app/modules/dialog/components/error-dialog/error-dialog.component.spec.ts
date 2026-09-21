@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnIconHarness, tnIconMarker } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
@@ -65,18 +65,14 @@ describe('ErrorDialog', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('shows error title', () => {
-      expect(spectator.query('.err-title')).toHaveText(baseError.title);
+    it('shows error title', async () => {
+      const dialog = await loader.getHarness(TnDialogHarness);
+      expect(await dialog.getTitle()).toBe(baseError.title);
     });
 
     it('shows error message', () => {
       const message = spectator.query('.err-message-wrapper');
       expect(message).toHaveText(baseError.message);
-    });
-
-    it('shows default error icon when no custom icon provided', async () => {
-      const icon = await loader.getHarnessOrNull(TnIconHarness.with({ name: 'alert-circle' }));
-      expect(icon).not.toBeNull();
     });
 
     it('does not show hint section when not provided', () => {
@@ -114,26 +110,27 @@ describe('ErrorDialog', () => {
     });
   });
 
-  describe('custom icon', () => {
-    it('shows custom icon when provided', async () => {
-      const errorWithIcon = {
-        ...baseError,
-        icon: tnIconMarker('cloud-off', 'custom'),
-      } as ErrorReport;
-
+  describe('naming a dialog for automation', () => {
+    it('composes the title id from the error\'s testId', async () => {
       spectator = createComponent({
         providers: [
           {
             provide: DIALOG_DATA,
-            useValue: errorWithIcon,
+            useValue: { ...baseError, testId: 'concurrent-calls' } as ErrorReport,
           },
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      const icon = await loader.getHarnessOrNull(TnIconHarness);
-      expect(icon).not.toBeNull();
-      expect(await icon.getName()).toBe('app-cloud-off');
+      const dialog = await loader.getHarness(TnDialogHarness);
+      expect(await dialog.getTitle()).toBe(baseError.title);
+
+      // Asserting the attribute is allowed where selecting by it is not, so the
+      // id the E2E harness depends on is pinned here rather than only there: a
+      // library change to how the shell composes it fails in this repo instead
+      // of surfacing as a hung suite against an appliance.
+      expect(spectator.query('tn-dialog-shell h2'))
+        .toHaveAttribute('data-test', 'dialog-title-concurrent-calls');
     });
   });
 

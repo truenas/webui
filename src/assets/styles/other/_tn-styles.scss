@@ -354,15 +354,18 @@ ix-premium-feature-wrapper + ix-premium-feature-wrapper {
   min-width: 0;
 }
 
-// The error / info / warn dialogs render their icon + title as a body heading,
-// because tn-dialog-shell's title is text-only and can't show an icon. The shell
-// still renders an (otherwise empty) header bar with a close button, leaving a
-// stray strip above the content. Collapse it. A global tag-scoped rule is used
-// because the components' own `:host ::ng-deep .tn-dialog__header` does not
+// The info dialog renders its icon + title as a body heading, because
+// tn-dialog-shell's title is text-only and can't show an icon. The shell still
+// renders an (otherwise empty) header bar with a close button, leaving a stray
+// strip above the content. Collapse it. A global tag-scoped rule is used
+// because the component's own `:host ::ng-deep .tn-dialog__header` does not
 // reliably pierce into the projected tn-dialog-shell.
+//
+// `ix-error-dialog` was here for the same reason and is deliberately not any
+// more: it gave up its body heading and passes a real `title` to the shell, so
+// hiding the header would hide the only title it has.
 // TEMP: until @truenas/ui-components ships an icon/custom title for
 // tn-dialog-shell. Tracked under NAS-141021.
-ix-error-dialog .tn-dialog__header,
 ix-info-dialog .tn-dialog__header {
   display: none;
 }

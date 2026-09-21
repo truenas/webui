@@ -12,25 +12,12 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
   @media (min-width: $breakpoint-tablet) {
     min-width: 480px;
   }
-
-  // The empty shell header is collapsed globally via the
-  // `ix-error-dialog .tn-dialog__header` rule in _tn-styles.scss — the
-  // component-scoped ::ng-deep did not pierce into tn-dialog-shell reliably.
 }
 
 .err-content {
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
-
-.err-title-row {
-  align-items: center;
-  display: flex;
-  font-size: 20px;
-  font-weight: 600;
-  gap: 8px;
-  margin: 0;
 }
 
 .details-panel {
@@ -123,14 +110,6 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
 
 #err-md-content {
   overflow-y: auto !important;
-}
-
-.title-container {
-  display: inline-block;
-}
-
-.err-title {
-  align-items: center;
 }
 
 .more-info {

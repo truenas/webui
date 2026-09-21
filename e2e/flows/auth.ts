@@ -8,7 +8,9 @@
 import { expect, type APIRequestContext, type Page } from '@playwright/test';
 import { signinLocators } from '../locators/signin';
 import { topbarLocators } from '../locators/topbar';
-import { adminLayout, errorDialogClose, errorDialogRole } from '../support/constants';
+import {
+  adminLayout, errorDialogBody, errorDialogClose, errorDialogHeading,
+} from '../support/constants';
 
 /** Generous: a cold sign-in on this app runs to roughly 15 seconds. */
 export const signInTimeoutMs = 60_000;
@@ -59,15 +61,22 @@ export async function submitSignIn(page: Page, username: string, password: strin
  */
 export async function awaitAdminShell(page: Page, username: string): Promise<void> {
   const shell = page.locator(adminLayout);
-  const errorDialog = page.locator(errorDialogClose);
+  // The close button rather than the dialog, because it is what resolves first
+  // and unambiguously; the dialog itself is read below for the message.
+  const closeButton = page.locator(errorDialogClose);
 
-  await expect(shell.or(errorDialog).first()).toBeVisible({ timeout: signInTimeoutMs });
+  await expect(shell.or(closeButton).first()).toBeVisible({ timeout: signInTimeoutMs });
 
   // The development build's concurrency dialog does not reach here: the handler
   // in `support/fixtures.ts` dismisses it during the wait above, and stops at
   // its cap so an unrelenting one still surfaces as the failure below.
-  if (await errorDialog.isVisible()) {
-    const details = (await page.getByRole(errorDialogRole).innerText()).trim();
+  if (await closeButton.isVisible()) {
+    // Title and message, joined. The title names what went wrong and lives in
+    // the shell's header, outside the message block — but reading the whole
+    // dialog to get it would quote its buttons too.
+    const details = (await Promise.all(
+      [errorDialogHeading, errorDialogBody].map((part) => page.locator(part).innerText()),
+    )).map((part) => part.trim()).filter(Boolean).join('\n\n');
     throw new Error(
       `Sign-in as "${username}" failed with a middleware error:\n\n${details}\n\n`
       + 'If this is "[EBUSY] Rate Limit Exceeded": middleware allows 20 unauthenticated '
