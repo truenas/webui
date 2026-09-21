@@ -29,12 +29,20 @@ import { loginBannerUpdated } from 'app/store/system-config/system-config.action
 
 interface SigninState {
   isLoading: boolean;
+  /**
+   * True once the user has actually submitted credentials, until the login either
+   * completes or fails. Distinct from `isLoading`, which is also true while the
+   * signin page boots (admin-password check, login banner) and must not make the
+   * page claim a login is in progress.
+   */
+  isLoggingIn: boolean;
   wasAdminSet: boolean;
   loginBanner: string | null;
 }
 
 const initialState: SigninState = {
   isLoading: false,
+  isLoggingIn: false,
   wasAdminSet: true,
   loginBanner: null,
 };
@@ -62,6 +70,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   loginBanner$ = this.select((state) => state.loginBanner);
   wasAdminSet$ = this.select((state) => state.wasAdminSet);
   isLoading$ = this.select((state) => state.isLoading);
+  isLoggingIn$ = this.select((state) => state.isLoggingIn);
 
   canLogin$ = this.wsStatus.isConnected$;
 
@@ -93,6 +102,8 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   setLoadingState = this.updater((state, isLoading: boolean) => ({ ...state, isLoading }));
+
+  setLoggingInState = this.updater((state, isLoggingIn: boolean) => ({ ...state, isLoggingIn }));
 
   init = this.effect((trigger$: Observable<void>) => trigger$.pipe(
     tap(() => {
@@ -144,6 +155,10 @@ export class SigninStore extends ComponentStore<SigninState> {
   handleSuccessfulLogin = this.effect((trigger$: Observable<void>) => trigger$.pipe(
     tap(() => {
       this.setLoadingState(true);
+      // The post-login sequence (failover checks, session init, boot calls, navigation) can take
+      // many seconds on a freshly installed system, so keep the "Logging in..." card up until the
+      // dashboard takes over.
+      this.setLoggingInState(true);
       this.snackbar.dismiss();
     }),
     // Perform failover checks before completing login
@@ -154,6 +169,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     switchMap(() => from(this.router.navigateByUrl(this.getRedirectUrl()))),
     catchError((error: unknown) => {
       this.setLoadingState(false);
+      this.setLoggingInState(false);
       this.errorHandler.showErrorModal(error);
       return EMPTY;
     }),
@@ -279,6 +295,7 @@ export class SigninStore extends ComponentStore<SigninState> {
         }
 
         this.setLoadingState(false);
+        this.setLoggingInState(false);
         this.snackbar.error(
           (result.error as TranslatedString) || this.translate.instant('Failover validation failed.'),
         );
@@ -286,6 +303,7 @@ export class SigninStore extends ComponentStore<SigninState> {
       }),
       catchError(() => {
         this.setLoadingState(false);
+        this.setLoggingInState(false);
         const errorMsg = this.translate.instant(
           'Unable to check failover status. Please try again later or contact the system administrator.',
         );
@@ -303,11 +321,13 @@ export class SigninStore extends ComponentStore<SigninState> {
           // The navigation and cleanup is already handled in the handleSuccessfulLogin effect
         } else {
           this.setLoadingState(false);
+          this.setLoggingInState(false);
           this.snackbar.error(this.translate.instant('Failed to initialize session.'));
         }
       }),
       catchError(() => {
         this.setLoadingState(false);
+        this.setLoggingInState(false);
         this.snackbar.error(this.translate.instant('Failed to initialize session.'));
         return of(LoginResult.NoAccess);
       }),

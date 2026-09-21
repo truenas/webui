@@ -61,6 +61,13 @@ export class SigninFormComponent implements OnInit {
 
   protected isPasswordVisible = signal(false);
 
+  /**
+   * Set while a submitted login is in flight. Local to the form (rather than the store's
+   * `isLoading`, which is also true while the page boots) so the button can show progress
+   * during the credential round trip, before the card switches to "Logging in...".
+   */
+  protected isSubmitting = signal(false);
+
   protected readonly tnIconMarker = tnIconMarker;
   protected readonly InputType = InputType;
 
@@ -124,6 +131,7 @@ export class SigninFormComponent implements OnInit {
     performance.mark('Login Start');
     this.isLastLoginAttemptFailed.set(false);
     this.signinStore.setLoadingState(true);
+    this.isSubmitting.set(true);
     const formValues = this.form.getRawValue();
     this.authService.login(formValues.username, formValues.password).pipe(
       takeUntilDestroyed(this.destroyRef),
@@ -133,12 +141,14 @@ export class SigninFormComponent implements OnInit {
           this.signinStore.handleSuccessfulLogin();
         } else {
           this.signinStore.setLoadingState(false);
+          this.isSubmitting.set(false);
           this.handleFailedLogin(loginResult, loginResponse);
         }
       },
       error: (error: unknown) => {
         this.errorHandler.handleValidationErrors(error, this.form);
         this.signinStore.setLoadingState(false);
+        this.isSubmitting.set(false);
       },
     });
   }
@@ -194,6 +204,7 @@ export class SigninFormComponent implements OnInit {
   protected loginWithOtp(event?: Event): void {
     event?.preventDefault();
     this.signinStore.setLoadingState(true);
+    this.isSubmitting.set(true);
     const formValues = this.form.getRawValue();
     this.authService.login(formValues.username, formValues.password, formValues.otp).pipe(
       takeUntilDestroyed(this.destroyRef),
@@ -204,11 +215,13 @@ export class SigninFormComponent implements OnInit {
         } else {
           this.handleFailedOtpLogin(loginResult);
           this.signinStore.setLoadingState(false);
+          this.isSubmitting.set(false);
         }
       },
       error: (error: unknown) => {
         this.errorHandler.handleValidationErrors(error, this.form);
         this.signinStore.setLoadingState(false);
+        this.isSubmitting.set(false);
       },
     });
   }
@@ -219,6 +232,7 @@ export class SigninFormComponent implements OnInit {
 
   protected handleError(errorMessage: TranslatedString): void {
     this.signinStore.setLoadingState(false);
+    this.isSubmitting.set(false);
     this.lastLoginError.set(errorMessage);
     this.isLastLoginAttemptFailed.set(true);
     this.snackbar.error(errorMessage);

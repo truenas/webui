@@ -48,6 +48,12 @@ export class SetAdminPasswordFormComponent {
   protected isPasswordVisible = signal(false);
   protected isPassword2Visible = signal(false);
 
+  /**
+   * Set while the submitted setup + login is in flight, so the button shows progress during the
+   * round trip that precedes the card switching to "Logging in...".
+   */
+  protected isSubmitting = signal(false);
+
   protected readonly tnIconMarker = tnIconMarker;
   protected readonly InputType = InputType;
 
@@ -85,6 +91,7 @@ export class SetAdminPasswordFormComponent {
   protected onSubmit(): void {
     const { username, password } = this.form.getRawValue();
     this.signinStore.setLoadingState(true);
+    this.isSubmitting.set(true);
 
     const request$ = this.api.call('user.setup_local_administrator', [username, password]);
 
@@ -93,17 +100,19 @@ export class SetAdminPasswordFormComponent {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ({ loginResult }) => {
-        this.signinStore.setLoadingState(false);
-
         if (loginResult === LoginResult.Success) {
           this.signinStore.handleSuccessfulLogin();
-        } else {
-          this.snackbar.error(this.translate.instant('Login error. Please try again.'));
+          return;
         }
+
+        this.signinStore.setLoadingState(false);
+        this.isSubmitting.set(false);
+        this.snackbar.error(this.translate.instant('Login error. Please try again.'));
       },
       error: (error: unknown) => {
         this.errorHandler.handleValidationErrors(error, this.form);
         this.signinStore.setLoadingState(false);
+        this.isSubmitting.set(false);
       },
     });
   }

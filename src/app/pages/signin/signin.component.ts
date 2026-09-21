@@ -53,6 +53,7 @@ export class SigninComponent implements OnInit {
   protected isTokenWithinTimeline$ = this.tokenLastUsedService.isTokenWithinTimeline$;
 
   readonly wasAdminSet$ = this.signinStore.wasAdminSet$;
+  readonly isLoggingIn$ = this.signinStore.isLoggingIn$;
   readonly canLogin$ = this.signinStore.canLogin$;
   readonly isConnected$ = this.wsStatus.isConnected$;
   isConnectedDelayed$: Observable<boolean> = of(null).pipe(

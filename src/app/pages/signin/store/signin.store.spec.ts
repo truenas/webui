@@ -118,6 +118,7 @@ describe('SigninStore', () => {
     const initialState = {
       wasAdminSet: true,
       isLoading: false,
+      isLoggingIn: false,
       loginBanner: '',
     };
     beforeEach(() => {
@@ -138,6 +139,14 @@ describe('SigninStore', () => {
 
     it('canLogin$', async () => {
       expect(await firstValueFrom(spectator.service.canLogin$)).toBe(true);
+    });
+
+    it('isLoggingIn$', async () => {
+      expect(await firstValueFrom(spectator.service.isLoggingIn$)).toBe(false);
+
+      spectator.service.setLoggingInState(true);
+
+      expect(await firstValueFrom(spectator.service.isLoggingIn$)).toBe(true);
     });
   });
 
@@ -160,6 +169,19 @@ describe('SigninStore', () => {
 
       // Just verify the method can be called without errors
       expect(spectator.service.handleSuccessfulLogin).toBeDefined();
+    });
+
+    it('clears the "logging in" state when the login cannot be completed', async () => {
+      // Failover validation fails here, so the effect must drop back to the form rather than
+      // leaving the page stuck on "Logging in...".
+      const authServiceLocal = spectator.inject(AuthService);
+      Object.defineProperty(authServiceLocal, 'user$', {
+        value: of(mockLoggedInUser),
+      });
+
+      spectator.service.handleSuccessfulLogin();
+
+      expect(await firstValueFrom(spectator.service.isLoggingIn$)).toBe(false);
     });
 
     it('redirects user to url stored in sessionStorage', () => {

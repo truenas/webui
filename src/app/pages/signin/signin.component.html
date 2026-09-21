@@ -10,7 +10,7 @@
         <ix-disconnected-message></ix-disconnected-message>
       </tn-card>
     } @else if (isConnected$ | async) {
-        @if (hasAuthToken && (isTokenWithinTimeline$ | async)) {
+        @if ((isLoggingIn$ | async) || (hasAuthToken && (isTokenWithinTimeline$ | async))) {
           <tn-card [padContent]="false">
             <tn-progress-bar
               class="session-progress"
