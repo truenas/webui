@@ -3,6 +3,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { RedirectDialogData } from 'app/modules/dialog/components/redirect-dialog/redirect-dialog-data.interface';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RedirectDialog } from './redirect-dialog.component';
 
 describe('RedirectDialogComponent', () => {
@@ -19,6 +20,7 @@ describe('RedirectDialogComponent', () => {
         } as RedirectDialogData,
       },
       mockProvider(MatDialogRef),
+      mockProvider(SnackbarService),
     ],
   });
 
@@ -46,5 +48,34 @@ describe('RedirectDialogComponent', () => {
     await button.click();
 
     expect(writeTextSpy).toHaveBeenCalledWith('http://10.24.30.2/redirect');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Copied to clipboard');
+  });
+
+  it('still copies over plain HTTP, where navigator.clipboard does not exist', async () => {
+    // This dialog is raised *because* the user is on http://, so the insecure
+    // context is its normal case rather than an edge one.
+    delete (navigator as { clipboard?: unknown }).clipboard;
+    // eslint-disable-next-line sonarjs/deprecation
+    document.execCommand = jest.fn(() => true);
+
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Copy URL' }));
+    await button.click();
+
+
+    expect(document.execCommand).toHaveBeenCalledWith('copy');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Copied to clipboard');
+  });
+
+  it('says so when the copy is refused, rather than failing silently', async () => {
+    delete (navigator as { clipboard?: unknown }).clipboard;
+    // eslint-disable-next-line sonarjs/deprecation
+    document.execCommand = jest.fn(() => false);
+
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Copy URL' }));
+    await button.click();
+
+    expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith('Failed to copy to clipboard');
   });
 });
