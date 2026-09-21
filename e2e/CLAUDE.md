@@ -88,11 +88,15 @@ or in `@truenas/ui-components` following the patterns in that library's
 `docs/test_ids.md`. Do not fall back to a fragile selector. Both repositories
 are in-house.
 
-`tn-list-item` is the one component with no id input at all as of 0.7.8: the
-input is on the library's `main`, unreleased, so the two clickable list rows in
-the app (the dual-listbox option, the inspect-VDEVs type selector) are listed in
-`allowedClickables` until it ships. Tag them and delete the entries then — the
-script fails on an exemption that matches nothing, so it will ask.
+**A missing `testId` input is not a blocker.** `[tnTestId]` is a directive, so it
+applies to any host element — a component that exposes no `testId` of its own is
+still taggable from the call site with `tnTestIdType="…"` plus `[tnTestId]`, as
+long as that component imports `TnTestIdDirective`. `tn-list-item` takes no
+`testId` input in 0.7.8 and both clickable list rows (the dual-listbox option,
+the inspect-VDEVs type selector) are tagged exactly that way. Reach for a
+library change when the element you need is one the library *renders* and your
+template cannot touch — a table row, a dialog's chrome — not merely because an
+input is missing.
 
 You should rarely have to: `yarn check-test-ids` (a lint job step) fails the
 build when a plain element or an interactive `tn-*` component is clicked,
@@ -179,10 +183,10 @@ anonymous `tn-slide-toggle` all ended up unreachable at once.
 Two limits are worth knowing. Both rules read the comment-stripped template, so
 prose describing markup is not markup — two templates explain what the
 `<button>` they replaced used to render, and both were reported before that.
-And an `ix-*` component tag is never checked: it may render ids inside its own
-template, which a script reading one template at a time cannot see. Its
-*internals* are checked when that template is read on its own, but an `ix-*` tag
-the consumer drags or clicks is on you.
+And an `ix-*` tag *is* checked, but weakly: the script resolves the component's
+own template (selector → `templateUrl`) and accepts an id **anywhere inside** it
+as evidence, which does not prove that id sits on the element receiving the
+click. So `<ix-foo (click)>` passes as soon as its template tags anything.
 
 What it still cannot see is a
 *changed* id — dropping or renaming the value on a `<tn-button testId>`, a detail
@@ -193,7 +197,7 @@ stays convention, and reviewing it is a reviewer's job.
 
 A table cell is covered (rule 2, and every column of every list has an id). A value rendered
 anywhere else — a card's detail line, a widget's number, a dialog's message — is not, and
-`yarn check-test-ids --report` counts what is left: **611 readouts across the app** that no suite
+`yarn check-test-ids --report` counts what is left: **610 readouts across the app** that no suite
 can read, listed per area.
 
 It is a *measurement, not a gate*, because unlike a table column the set is not bounded and some

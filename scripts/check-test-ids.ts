@@ -8,7 +8,7 @@
  * downstream suite broke. `e2e/CLAUDE.md` already binds the *test author* to `[data-test]`
  * selectors; nothing bound the PR that removed the attribute. This does.
  *
- * Three rules, all deliberately shallow — these read templates as text, not as an Angular AST:
+ * Five rules, all deliberately shallow — these read templates as text, not as an Angular AST:
  *
  * 1. **Table rows.** `ix-table-body` tagged every `<tr>` from the column model's `uniqueRowTag`;
  *    `tn-table` writes nothing on the row of its own, so a migrated list lost that id. Every list
@@ -50,7 +50,8 @@
  * plausibly resolves an id counts, and the handful of elements that are genuinely not automation
  * targets are listed in {@link allowedClickables} with the reason.
  *
- * `--report` prints per-column coverage instead of gating, for tracking the number over time.
+ * `--report` prints per-column coverage and the count of unreadable value readouts instead of
+ * gating, for tracking both numbers over time.
  */
 
 import { readdirSync, readFileSync } from 'fs';
@@ -199,35 +200,75 @@ const componentTags = /<([a-z][a-z0-9]*-[a-z0-9-]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"
  * A `tn-*` selector is absent from this map (the library lives in node_modules), so it resolves no
  * internal evidence and must be tagged at the call site. That is the intended asymmetry.
  */
-function ownComponentTemplates(): Map<string, string> {
-  const templates = new Map<string, string>();
+interface ComponentScan {
+  /** Selector → the component's own template, for resolving an id across the component boundary. */
+  templateBySelector: Map<string, string>;
+  /** Template path → the `.ts` that declares it, for rule 5. */
+  componentByTemplate: Map<string, string>;
+}
+
+let scanned: ComponentScan | undefined;
+
+/**
+ * One walk of `src`, producing everything the rules need from our own components.
+ *
+ * Memoized because it is not cheap — every non-spec `.ts` plus every template they reference — and
+ * three call sites wanted it: rule 4's cross-boundary lookup, rule 5's declaring component, and
+ * the readout report's single-value components. It used to be three separate walks.
+ */
+function scanComponents(): ComponentScan {
+  if (scanned) {
+    return scanned;
+  }
+  const templateBySelector = new Map<string, string>();
+  const componentByTemplate = new Map<string, string>();
   const sources = readdirSync('src', { recursive: true, encoding: 'utf8' })
     .filter((entry) => entry.endsWith('.ts') && !entry.endsWith('.spec.ts'))
     .map((entry) => `src/${entry.split(sep).join('/')}`);
 
   for (const file of sources) {
     const src = readFileSync(file, 'utf8');
+    const directory = file.slice(0, file.lastIndexOf('/'));
+
+    for (const match of src.matchAll(/templateUrl:\s*'([^']+)'/g)) {
+      componentByTemplate.set(resolvePath(directory, match[1]), file);
+    }
+
     for (const match of src.matchAll(/selector:\s*'([a-z][a-z0-9-]*)'/g)) {
       const [, selector] = match;
-      if (templates.has(selector)) {
+      if (templateBySelector.has(selector)) {
         continue;
       }
       const rest = src.slice(match.index);
       const url = /templateUrl:\s*'([^']+)'/.exec(rest);
       const inline = /template:\s*`([\s\S]*?)`/.exec(rest);
       if (url && (!inline || url.index < inline.index)) {
-        const path = `${file.slice(0, file.lastIndexOf('/'))}/${url[1]}`;
         try {
-          templates.set(selector, readFileSync(path, 'utf8'));
+          templateBySelector.set(selector, readFileSync(resolvePath(directory, url[1]), 'utf8'));
         } catch {
-          templates.set(selector, '');
+          templateBySelector.set(selector, '');
         }
       } else if (inline) {
-        templates.set(selector, inline[1]);
+        templateBySelector.set(selector, inline[1]);
       }
     }
   }
-  return templates;
+
+  scanned = { templateBySelector, componentByTemplate };
+  return scanned;
+}
+
+/** Resolves a `templateUrl` against its component's directory, without pulling in `path`. */
+function resolvePath(directory: string, relative: string): string {
+  const resolved: string[] = [];
+  for (const part of `${directory}/${relative}`.split('/')) {
+    if (part === '..') {
+      resolved.pop();
+    } else if (part !== '.') {
+      resolved.push(part);
+    }
+  }
+  return resolved.join('/');
 }
 
 /**
@@ -247,26 +288,19 @@ const componentTestIdInput = /TestId\b/;
  * instead of leaving a stale one behind.
  *
  * A component tag carries no class of its own to key on, so `<path>:<tag>` is accepted as well.
- * That is coarser — it exempts every `tn-list-item` in the file, not one — which suits the only
- * thing it is currently used for: a whole file waiting on a library release.
+ * That is coarser — it exempts every tag of that name in the file, not one — so prefer a class.
  *
- * Only three shapes belong here: something that is not a target (a scrim closing what is above it,
- * a container listening for Escape), something already addressable through an ancestor that
- * carries the id, and — keyed by tag, and only until the release lands — an element whose
- * component has no id input yet. Anything a journey would click belongs in the template with an
- * id, not here.
+ * Only two shapes belong here: something that is not a target (a scrim closing what is above it,
+ * a container listening for Escape), and something already addressable through an ancestor that
+ * carries the id. Anything a journey would click belongs in the template with an id, not here —
+ * and "the component has no `testId` input" is not a reason, because `[tnTestId]` is a directive
+ * and applies to any host element. That is how the two `tn-list-item` rows are tagged.
  */
 const allowedClickables = new Map<string, string>([
   ['src/app/modules/layout/admin-layout/admin-layout.component.html:overlay', 'Scrim behind the secondary menu; a test closes the menu by clicking what opened it.'],
   ['src/app/modules/layout/admin-layout/admin-layout.component.html:alert-panel-backdrop', 'Scrim behind the alerts panel, aria-hidden.'],
   ['src/app/modules/layout/admin-layout/admin-layout.component.html:alert-panel-container', 'Panel container; listens for Escape. Its contents carry their own ids.'],
   ['src/app/pages/datasets/components/dataset-management/dataset-management.component.html:dataset-node-click', 'Inside <tn-tree-node [testId]="[\'dataset\', name]">, which is what a click on the row resolves to.'],
-  // Both wait on the same release, and the rule above is what will make us come back: once
-  // @truenas/ui-components ships the `tn-list-item` [testId] input (added on the library's main,
-  // unreleased as of 0.7.8), tag these two and delete these entries — the staleness check fails
-  // the build if they outlive the elements they name.
-  ['src/app/modules/lists/dual-listbox/dual-listbox-side.component.html:tn-list-item', 'Clickable option row. tn-list-item takes no [testId] in 0.7.8; tag it when the input ships.'],
-  ['src/app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component.html:tn-list-item', 'VDEV-type selector row. Same: awaiting the tn-list-item [testId] input.'],
 ]);
 
 /** Entries of {@link allowedClickables} that exempted an element this run. */
@@ -420,8 +454,15 @@ function untaggedComponents(
     if (!interactive || hasId) {
       continue;
     }
+    // Cancel-only applies only when click/keydown is the *sole* interactive signal: `handlerBodies`
+    // reads those two events, while `componentClickHandler` also matches `(itemClick)`, `(toggle)`,
+    // `(dndStart)` and the rest. Without this guard a node carrying
+    // `(click)="$event.stopPropagation()" (toggle)="onToggle()"` looked cancel-only and was skipped
+    // while `(toggle)` was a real action.
     const bodies = [...attributes.matchAll(handlerBodies)].map(([, body]) => body);
-    if (bodies.length && bodies.every(isCancelOnly) && !presentedAsControl.test(attributes)) {
+    const nonClickSignal = componentClickHandler.test(attributes.replace(handlerBodies, ''))
+      || presentedAsControl.test(attributes);
+    if (bodies.length && bodies.every(isCancelOnly) && !nonClickSignal) {
       continue;
     }
     // Our own component: an id anywhere in its template makes it reachable, so the call site owes
@@ -459,37 +500,12 @@ function untaggedComponents(
  * `template:` lives in the same file as its imports, so it cannot drift this way.
  */
 function inertTestIds(templates: { file: string; src: string }[]): Offender[] {
-  const declaredBy = new Map<string, string>();
-  const sources = readdirSync('src', { recursive: true, encoding: 'utf8' })
-    .filter((entry) => entry.endsWith('.ts') && !entry.endsWith('.spec.ts'))
-    .map((entry) => `src/${entry.split(sep).join('/')}`);
-
-  for (const file of sources) {
-    const src = readFileSync(file, 'utf8');
-    const directory = file.slice(0, file.lastIndexOf('/'));
-    for (const match of src.matchAll(/templateUrl:\s*'([^']+)'/g)) {
-      // Resolve the relative path without importing `path`: these are all plain `./x.html` or
-      // `x.html` siblings, or a `../` hop.
-      const parts = `${directory}/${match[1]}`.split('/');
-      const resolved: string[] = [];
-      for (const part of parts) {
-        if (part === '.') {
-          continue;
-        }
-        if (part === '..') {
-          resolved.pop();
-        } else {
-          resolved.push(part);
-        }
-      }
-      declaredBy.set(resolved.join('/'), file);
-    }
-  }
+  const { componentByTemplate } = scanComponents();
 
   return templates
     .filter(({ src }) => /\btnTestId\b/.test(withoutComments(src)))
     .flatMap(({ file, src }) => {
-      const component = declaredBy.get(file);
+      const component = componentByTemplate.get(file);
       if (component && /\bTnTestIdDirective\b/.test(readFileSync(component, 'utf8'))) {
         return [];
       }
@@ -553,7 +569,7 @@ function valueCount(block: string): number {
  * the one value inside is what the element says.
  */
 function taggedAncestorBlock(src: string, at: number): string | null {
-  const open: { tag: string; attributes: string; start: number }[] = [];
+  const open: { tag: string; attributes: string; start: number; openEnd: number }[] = [];
   for (const match of src.matchAll(elementBoundaries)) {
     if (match.index >= at) {
       break;
@@ -565,15 +581,28 @@ function taggedAncestorBlock(src: string, at: number): string | null {
           break;
         }
       }
-    } else if (match[3] !== '/' && !selfClosingTags.has(match[1])) {
-      open.push({ tag: match[1], attributes: match[2] ?? '', start: match.index });
+      continue;
+    }
+    // `match[3]` cannot be trusted for this: the attribute group accepts `/`, so it swallows the
+    // slash of `<ix-foo … />` and the group captures nothing. Reading the matched text is exact,
+    // and it matters — a self-closing tag left on the stack becomes a "nearest ancestor" with no
+    // closing tag, whose block then runs to the end of the file.
+    const selfClosing = match[0].endsWith('/>') || selfClosingTags.has(match[1]);
+    if (!selfClosing) {
+      open.push({
+        tag: match[1],
+        attributes: match[2] ?? '',
+        start: match.index,
+        openEnd: match.index + match[0].length,
+      });
     }
   }
   for (let i = open.length - 1; i >= 0; i -= 1) {
     if (anyTestId.test(open[i].attributes)) {
-      const rest = src.slice(open[i].start);
-      const close = rest.indexOf(`</${open[i].tag}>`);
-      return close === -1 ? rest : rest.slice(0, close);
+      // `outerBlock` counts depth, so a nested element of the same name does not end the block
+      // early — `indexOf('</div>')` used to cut `<div><div>label</div>{{ value }}</div>` at the
+      // inner close, miss the value, and count the readout as unreachable.
+      return outerBlock(src, open[i].tag, open[i].start, open[i].openEnd);
     }
   }
   return null;
@@ -648,13 +677,14 @@ function reportColumnCoverage(tables: { file: string; src: string }[]): void {
 /** `--report`: untagged value readouts per area, the tracked-but-not-gated number. */
 function reportReadoutCoverage(templates: { file: string; src: string }[]): void {
   // A template whose component renders exactly one value is addressed from its call sites.
+  const { templateBySelector } = scanComponents();
   const singleValue = new Set(
-    [...ownComponentTemplates()]
+    [...templateBySelector]
       .filter(([, template]) => valueCount(withoutComments(template)) === 1)
       .map(([selector]) => selector),
   );
   const ownTemplateFiles = new Map<string, string>();
-  for (const [selector, template] of ownComponentTemplates()) {
+  for (const [selector, template] of templateBySelector) {
     ownTemplateFiles.set(template, selector);
   }
 
@@ -709,7 +739,7 @@ function main(): void {
     ({ file, src }) => untaggedClickables(file, withoutComments(src)),
   );
 
-  const ownTemplates = ownComponentTemplates();
+  const ownTemplates = scanComponents().templateBySelector;
   const components = templates.flatMap(
     ({ file, src }) => untaggedComponents(file, withoutComments(src), ownTemplates),
   );
