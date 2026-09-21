@@ -29,7 +29,7 @@
  */
 import type { Page } from '@playwright/test';
 import { ensurePoolPresent } from '../fixtures/pool';
-import { ensurePoolAbsent, findPool } from '../fixtures/storage';
+import { ensurePoolAbsent, findPool, getSelectableDisks } from '../fixtures/storage';
 import { goToStorage } from '../flows/navigation';
 import { chooseDeletePool, openPoolDisconnectDialog } from '../flows/storage';
 import { poolDisconnectLocators } from '../locators/storage';
@@ -78,6 +78,10 @@ test('pressing Enter with the wrong pool name does not destroy the pool', async 
 });
 
 test('a fully confirmed delete really does destroy the pool', async ({ page, api }) => {
+  // Counted while the pool still holds its disk, so the wait at the end has
+  // something to compare against.
+  const disksWhileClaimed = (await getSelectableDisks(api)).length;
+
   await openPoolDisconnectDialog(page, target);
   await chooseDeletePool(page);
 
@@ -93,6 +97,16 @@ test('a fully confirmed delete really does destroy the pool', async ({ page, api
   await expect
     .poll(() => findPool(api, target), { timeout: 3 * 60_000 })
     .toBeUndefined();
+
+  // The row going is not the end of the work. `destroy: true` keeps wiping the
+  // member disk after `pool.query` stops listing the pool, and `CLAUDE.md` is
+  // explicit that inferring a job's success from that side effect is how this
+  // suite has been bitten before. Leaving here mid-wipe starves
+  // `requireUnusedDisks`, which `fresh-install` depends on — so wait for the
+  // disk to actually come back, which is the observable end of the export.
+  await expect
+    .poll(() => getSelectableDisks(api).then((disks) => disks.length), { timeout: 6 * 60_000 })
+    .toBeGreaterThan(disksWhileClaimed);
 });
 
 /**

@@ -195,7 +195,6 @@ export const deleteDatasetDialogLocators = {
    * `button-dialog-cancel`).
    */
   submit: '[data-test="button-dialog-delete-dataset"]',
-  cancel: '[data-test="button-cancel"]',
 } as const;
 
 export const smbLocators = {
