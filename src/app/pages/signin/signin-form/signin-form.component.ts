@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, effect, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, effect, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   Validators, FormsModule, ReactiveFormsModule, NonNullableFormBuilder,
@@ -70,6 +70,15 @@ export class SigninFormComponent implements OnInit {
   protected isLoading = toSignal(this.signinStore.isLoading$);
   readonly isFormDisabled = computed(() => this.disabled() || this.isLoading());
 
+  /**
+   * True from the moment credentials are submitted until the store leaves its loading state -
+   * either because the login failed, or because the card took over with "Logging in...".
+   * Derived rather than cleared by hand so no failure path can leave the button mid-flight;
+   * gated on `hasSubmitted` because `isLoading` is also true while the page boots.
+   */
+  private hasSubmitted = signal(false);
+  protected isSubmitting = computed(() => this.hasSubmitted() && Boolean(this.isLoading()));
+
   constructor() {
     effect(() => {
       if (this.isFormDisabled()) {
@@ -116,6 +125,7 @@ export class SigninFormComponent implements OnInit {
     performance.mark('Login Start');
     this.isLastLoginAttemptFailed = false;
     this.signinStore.setLoadingState(true);
+    this.hasSubmitted.set(true);
     const formValues = this.form.getRawValue();
     this.cdr.markForCheck();
     this.authService.login(formValues.username, formValues.password).pipe(
@@ -189,6 +199,7 @@ export class SigninFormComponent implements OnInit {
   protected loginWithOtp(event?: Event): void {
     event?.preventDefault();
     this.signinStore.setLoadingState(true);
+    this.hasSubmitted.set(true);
     const formValues = this.form.getRawValue();
     this.authService.login(formValues.username, formValues.password, formValues.otp).pipe(
       takeUntilDestroyed(this.destroyRef),

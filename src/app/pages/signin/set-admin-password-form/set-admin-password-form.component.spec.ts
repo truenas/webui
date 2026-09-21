@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { BehaviorSubject, of, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
@@ -21,6 +21,7 @@ describe('SetAdminPasswordFormComponent', () => {
   let spectator: Spectator<SetAdminPasswordFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  const isLoading$ = new BehaviorSubject(false);
   const createComponent = createComponentFactory({
     component: SetAdminPasswordFormComponent,
     imports: [
@@ -32,9 +33,10 @@ describe('SetAdminPasswordFormComponent', () => {
         mockCall('user.setup_local_administrator'),
       ]),
       mockProvider(SigninStore, {
-        setLoadingState: jest.fn(),
+        // Kept live, like the real store, so the submit button's in-flight label can be asserted.
+        setLoadingState: jest.fn((isLoading: boolean) => isLoading$.next(isLoading)),
         handleSuccessfulLogin: jest.fn(),
-        isLoading$: of(false),
+        isLoading$,
       }),
       mockProvider(AuthService, {
         login: jest.fn(() => of({
@@ -47,6 +49,7 @@ describe('SetAdminPasswordFormComponent', () => {
   });
 
   beforeEach(async () => {
+    isLoading$.next(false);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
@@ -76,6 +79,29 @@ describe('SetAdminPasswordFormComponent', () => {
     const signinStore = spectator.inject(SigninStore);
     expect(signinStore.setLoadingState).toHaveBeenCalledWith(true);
     expect(signinStore.handleSuccessfulLogin).toHaveBeenCalled();
+  });
+
+  it('shows progress on the submit button while the setup is in flight', async () => {
+    const login$ = new Subject<{ loginResult: LoginResult }>();
+    jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(login$);
+
+    await form.fillForm({
+      Password: '12345678',
+      'Reenter Password': '12345678',
+    });
+    await (await loader.getHarness(MatButtonHarness.with({ text: 'Sign In' }))).click();
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    expect(await loader.getHarness(MatButtonHarness.with({ text: 'Logging in...' }))).toBeTruthy();
+
+    // A failure must hand the form back, rather than leave "Logging in..." over an idle form.
+    login$.next({ loginResult: LoginResult.NoToken });
+    login$.complete();
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    expect(await loader.getHarness(MatButtonHarness.with({ text: 'Sign In' }))).toBeTruthy();
   });
 
   it('shows error message when login fails', async () => {
