@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
-  MatDialog, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
+  MatDialog, MatDialogClose, MatDialogContent, MatDialogTitle,
 } from '@angular/material/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
@@ -68,7 +68,6 @@ export class ManageHostsDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private matDialog = inject(MatDialog);
-  private dialogRef = inject(MatDialogRef<ManageHostsDialog>);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
@@ -129,16 +128,15 @@ export class ManageHostsDialog implements OnInit {
   }
 
   onAdd(): void {
-    // Close the dialog immediately to prevent it from appearing behind the slide-in form.
-    this.dialogRef.close();
-    // Note: takeUntilDestroyed(this.destroyRef) is intentionally NOT used here.
-    // The dialog closes immediately (destroying this component), but we need the subscription
-    // to remain active to handle the slide-in response. The slide-in observable completes
-    // naturally when the form is submitted or cancelled, so there's no memory leak.
+    // The slide-in is a CDK overlay created after this dialog's, so it is a later sibling in the
+    // overlay container and paints above it — the dialog can stay open behind, exactly as the
+    // Manage Ports dialog already does. Closing it first left the user on the subsystem screen
+    // instead of back on the host list once the form closed (NAS-143761).
     this.slideIn
       .open(HostFormComponent)
       .pipe(
         filter((response) => Boolean(response.response)),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Host Added'));
@@ -147,15 +145,11 @@ export class ManageHostsDialog implements OnInit {
   }
 
   onEdit(host: NvmeOfHostAndUsage): void {
-    // Close the dialog immediately to prevent it from appearing behind the slide-in form.
-    this.dialogRef.close();
-    // Note: takeUntilDestroyed(this.destroyRef) is intentionally NOT used here.
-    // The dialog closes immediately (destroying this component), but we need the subscription
-    // to remain active to handle the slide-in response. The slide-in observable completes
-    // naturally when the form is submitted or cancelled, so there's no memory leak.
+    // Stays open behind the slide-in, for the same reason as onAdd() above.
     this.slideIn.open(HostFormComponent, { data: host })
       .pipe(
         filter((response) => Boolean(response.response)),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Host Updated'));
