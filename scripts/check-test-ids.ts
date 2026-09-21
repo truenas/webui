@@ -163,12 +163,20 @@ const componentClickHandler = new RegExp(
 );
 
 /**
- * An element *presented* as a control is one whether or not it carries a handler: the two help
+ * A declared control role. Rules 3 and 4 both treat it as an interactive signal: the two help
  * icons in the containers dialogs are `role="button"` with `tabindex="0"`, and their only handlers
  * cancel the key — the thing a suite reaches them for is the tooltip they raise on focus. Without
  * this they read as cancel-only and were skipped.
  */
-const presentedAsControl = /\brole="(button|link|option|menuitem|tab|switch|checkbox|radio)"|\btabindex=/;
+const controlRole = /\brole="(button|link|option|menuitem|tab|switch|checkbox|radio)"/;
+/**
+ * Rule 4's wider form, which also counts a bare `tabindex`. That widening belongs to `tn-*` tags
+ * only: there it is a consumer putting a library component into the tab order, while on a native
+ * tag it is as often a non-control made keyboard-reachable — `tabindex="-1"` on the heading a
+ * splash screen moves focus to, `tabindex="0"` on a `role="list"` that scrolls (WCAG 2.1.1).
+ * Neither is something a suite clicks, so rule 3 asks for {@link controlRole} alone.
+ */
+const presentedAsControl = new RegExp(`${controlRole.source}|\\btabindex=`);
 
 /**
  * Library form controls, which are the exception to "an unset `testId` means no id": each derives
@@ -203,8 +211,17 @@ const componentTags = /<([a-z][a-z0-9]*-[a-z0-9-]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"
 interface ComponentScan {
   /** Selector → the component's own template, for resolving an id across the component boundary. */
   templateBySelector: Map<string, string>;
-  /** Template path → the `.ts` that declares it, for rule 5. */
-  componentByTemplate: Map<string, string>;
+  /**
+   * Template path → every `.ts` that declares it, for rule 5. A list rather than one file because
+   * two components can share a template — `directory-chips.component.html` is declared by both
+   * `ix-user-chips` and `ix-group-chips`, and `directory-autocomplete.component.html` by both
+   * comboboxes. Keeping only the last one scanned made rule 5 depend on `readdirSync` order, and
+   * in the passing case the *other* component rendered `tnTestId` inert with nothing reported —
+   * the exact defect rule 5 exists to catch.
+   */
+  componentByTemplate: Map<string, string[]>;
+  /** Template path → the selector that renders it, for the `--report` readout discount. */
+  selectorByTemplate: Map<string, string>;
 }
 
 let scanned: ComponentScan | undefined;
@@ -221,7 +238,8 @@ function scanComponents(): ComponentScan {
     return scanned;
   }
   const templateBySelector = new Map<string, string>();
-  const componentByTemplate = new Map<string, string>();
+  const componentByTemplate = new Map<string, string[]>();
+  const selectorByTemplate = new Map<string, string>();
   const sources = readdirSync('src', { recursive: true, encoding: 'utf8' })
     .filter((entry) => entry.endsWith('.ts') && !entry.endsWith('.spec.ts'))
     .map((entry) => `src/${entry.split(sep).join('/')}`);
@@ -231,31 +249,53 @@ function scanComponents(): ComponentScan {
     const directory = file.slice(0, file.lastIndexOf('/'));
 
     for (const match of src.matchAll(/templateUrl:\s*'([^']+)'/g)) {
-      componentByTemplate.set(resolvePath(directory, match[1]), file);
+      const template = resolvePath(directory, match[1]);
+      componentByTemplate.set(template, [...(componentByTemplate.get(template) ?? []), file]);
     }
 
-    for (const match of src.matchAll(/selector:\s*'([a-z][a-z0-9-]*)'/g)) {
-      const [, selector] = match;
-      if (templateBySelector.has(selector)) {
+    for (const decorator of decoratorBodies(src)) {
+      const selector = /selector:\s*'([a-z][a-z0-9-]*)'/.exec(decorator)?.[1];
+      if (!selector || templateBySelector.has(selector)) {
         continue;
       }
-      const rest = src.slice(match.index);
-      const url = /templateUrl:\s*'([^']+)'/.exec(rest);
-      const inline = /template:\s*`([\s\S]*?)`/.exec(rest);
-      if (url && (!inline || url.index < inline.index)) {
+      const url = /templateUrl:\s*'([^']+)'/.exec(decorator);
+      if (url) {
+        const template = resolvePath(directory, url[1]);
+        selectorByTemplate.set(template, selector);
         try {
-          templateBySelector.set(selector, readFileSync(resolvePath(directory, url[1]), 'utf8'));
+          templateBySelector.set(selector, readFileSync(template, 'utf8'));
         } catch {
           templateBySelector.set(selector, '');
         }
-      } else if (inline) {
+        continue;
+      }
+      const inline = /template:\s*`([\s\S]*?)`/.exec(decorator);
+      if (inline) {
         templateBySelector.set(selector, inline[1]);
       }
     }
   }
 
-  scanned = { templateBySelector, componentByTemplate };
+  scanned = { templateBySelector, componentByTemplate, selectorByTemplate };
   return scanned;
+}
+
+/**
+ * The body of each `@Component({…})` in a file, cut at the class it decorates.
+ *
+ * The pairing used to read forward from the `selector:` match to the end of the file, which made
+ * it depend on `selector` preceding `templateUrl` inside the decorator. That holds everywhere in
+ * this repo today and nothing enforces it: a component written the other way round would drop out
+ * of `templateBySelector` entirely, and rule 4 would then report its call sites rather than the
+ * cause. Cutting at `class` — a decorator always sits immediately above the class it applies to —
+ * scopes the search without needing to balance braces through an inline template.
+ */
+function decoratorBodies(src: string): string[] {
+  return [...src.matchAll(/@Component\(\s*\{/g)].map((match) => {
+    const body = src.slice(match.index);
+    const end = body.search(/\n\s*(?:export\s+)?(?:abstract\s+)?class\s/);
+    return end === -1 ? body : body.slice(0, end);
+  });
 }
 
 /** Resolves a `templateUrl` against its component's directory, without pulling in `path`. */
@@ -392,12 +432,19 @@ function untaggedClickables(file: string, src: string): Offender[] {
 
   for (const match of src.matchAll(clickableElements)) {
     const attributes = match[2] ?? '';
-    const acts = clickHandler.test(attributes) || actsWithoutHandler(match[1], attributes);
+    // A declared control role counts here for the same reason it counts in rule 4: a `<div
+    // role="button" tabindex="0">` is a control to everyone who meets it, whether or not it
+    // carries a handler this script can see. Without it the cancel-only escape hatch below waved
+    // through exactly the shape rule 4 catches on a `tn-*` tag, purely because the tag was native.
+    const acts = clickHandler.test(attributes)
+      || actsWithoutHandler(match[1], attributes)
+      || controlRole.test(attributes);
     if (!acts || anyTestId.test(attributes)) {
       continue;
     }
     const bodies = [...attributes.matchAll(handlerBodies)].map(([, body]) => body);
-    if (bodies.length && bodies.every(isCancelOnly) && !actsWithoutHandler(match[1], attributes)) {
+    const nonClickSignal = actsWithoutHandler(match[1], attributes) || controlRole.test(attributes);
+    if (bodies.length && bodies.every(isCancelOnly) && !nonClickSignal) {
       continue;
     }
     // Before the subtree check, so that an exemption counts as used whenever the element it names
@@ -505,8 +552,13 @@ function inertTestIds(templates: { file: string; src: string }[]): Offender[] {
   return templates
     .filter(({ src }) => /\btnTestId\b/.test(withoutComments(src)))
     .flatMap(({ file, src }) => {
-      const component = componentByTemplate.get(file);
-      if (component && /\bTnTestIdDirective\b/.test(readFileSync(component, 'utf8'))) {
+      // *Every* declaring component has to import it, not just one: the attribute is inert in
+      // each component that does not, and the template cannot tell them apart.
+      const components = componentByTemplate.get(file) ?? [];
+      const missing = components.filter(
+        (component) => !/\bTnTestIdDirective\b/.test(readFileSync(component, 'utf8')),
+      );
+      if (components.length && !missing.length) {
         return [];
       }
       const stripped = withoutComments(src);
@@ -514,8 +566,9 @@ function inertTestIds(templates: { file: string; src: string }[]): Offender[] {
       return [{
         file,
         line: stripped.slice(0, at).split('\n').length,
-        what: component
-          ? `${component.split('/').pop()} does not import TnTestIdDirective`
+        what: missing.length
+          ? `${missing.map((component) => component.split('/').pop()).join(', ')} `
+          + 'does not import TnTestIdDirective'
           : 'no component declares this template',
       }];
     });
@@ -677,20 +730,19 @@ function reportColumnCoverage(tables: { file: string; src: string }[]): void {
 /** `--report`: untagged value readouts per area, the tracked-but-not-gated number. */
 function reportReadoutCoverage(templates: { file: string; src: string }[]): void {
   // A template whose component renders exactly one value is addressed from its call sites.
-  const { templateBySelector } = scanComponents();
+  const { templateBySelector, selectorByTemplate } = scanComponents();
   const singleValue = new Set(
     [...templateBySelector]
       .filter(([, template]) => valueCount(withoutComments(template)) === 1)
       .map(([selector]) => selector),
   );
-  const ownTemplateFiles = new Map<string, string>();
-  for (const [selector, template] of templateBySelector) {
-    ownTemplateFiles.set(template, selector);
-  }
 
   const perArea = new Map<string, number>();
   for (const { file, src } of templates) {
-    const selector = ownTemplateFiles.get(src);
+    // By path, from the same scan that resolved the `templateUrl`. Keying this on the template's
+    // *contents* made two byte-identical templates collide, so the discount was applied for the
+    // wrong selector — and it hashed every template in `src` in full to do it.
+    const selector = selectorByTemplate.get(file);
     const count = untaggedReadouts(src, !!selector && singleValue.has(selector));
     if (!count) {
       continue;
