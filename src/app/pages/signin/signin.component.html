@@ -16,13 +16,18 @@
       </mat-card>
     } @else if (isConnected$ | async) {
         @if (hasAuthToken && (isTokenWithinTimeline$ | async)) {
-          <mat-card>
-            <mat-card-content>
-              <h3 class="logging-in">{{ 'Logging in...' | translate }}</h3>
-            </mat-card-content>
-          </mat-card>
+          <ng-container [ngTemplateOutlet]="loggingInCard"></ng-container>
         } @else {
-          <mat-card>
+          @if (isLoggingIn$ | async) {
+            <ng-container [ngTemplateOutlet]="loggingInCard"></ng-container>
+          }
+
+          <!--
+            Hidden rather than removed while logging in: a post-login failure (failover check,
+            session init) drops back to this form, and re-creating it would wipe what the user
+            already got through - including a passed two-factor step.
+          -->
+          <mat-card class="form-card" [class.hidden]="isLoggingIn$ | async">
             <mat-card-content>
               <div>
                 <div class="logo-wrapper">
@@ -55,3 +60,12 @@
     }
   </div>
 </div>
+
+<ng-template #loggingInCard>
+  <mat-card>
+    <mat-card-content>
+      <!-- Focusable and announced: it replaces the submit button that held focus. -->
+      <h3 class="logging-in" role="status" tabindex="-1">{{ 'Logging in...' | translate }}</h3>
+    </mat-card-content>
+  </mat-card>
+</ng-template>
