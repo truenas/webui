@@ -153,7 +153,21 @@ describe('SigninComponent', () => {
       const loggingInMessage = spectator.query('.logging-in');
       expect(loggingInMessage).toExist();
       expect(loggingInMessage).toHaveText('Logging in...');
-      expect(spectator.query(SigninFormComponent)).not.toExist();
+      // Announced and focusable, since it replaces the submit button that held focus.
+      expect(loggingInMessage).toHaveAttribute('role', 'status');
+      expect(loggingInMessage).toHaveAttribute('tabindex', '-1');
+    });
+
+    it('keeps the sign-in form alive, but hidden, while a submitted login is completing', () => {
+      // A post-login failure comes back to this form, so it must not lose the entered
+      // credentials or a two-factor step the user already passed.
+      isTokenWithinTimeline$.next(false);
+      isLoggingIn$.next(true);
+
+      spectator.detectChanges();
+
+      expect(spectator.query(SigninFormComponent)).toExist();
+      expect(spectator.query('.form-card')).toHaveClass('hidden');
     });
 
     it('checks login banner and shows full dialog if set', () => {

@@ -35,6 +35,12 @@ tn-card {
   @include tn-card-webui-palette;
 }
 
+// The form card stays in the DOM while logging in so it keeps its state; display: none also
+// keeps it out of the tab order and the accessibility tree.
+.form-card.hidden {
+  display: none;
+}
+
 // TEMP: until @truenas/ui-components ships a full-width input on tn-button.
 // Covers the submit buttons of both child forms.
 :host ::ng-deep .submit-button button {

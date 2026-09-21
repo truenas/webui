@@ -171,17 +171,40 @@ describe('SigninStore', () => {
       expect(spectator.service.handleSuccessfulLogin).toBeDefined();
     });
 
-    it('clears the "logging in" state when the login cannot be completed', async () => {
-      // Failover validation fails here, so the effect must drop back to the form rather than
-      // leaving the page stuck on "Logging in...".
-      const authServiceLocal = spectator.inject(AuthService);
-      Object.defineProperty(authServiceLocal, 'user$', {
+    it('clears the "logging in" state when failover validation rejects the login', async () => {
+      // Navigation is mocked so that a `from(undefined)` throw can't clear the flag through the
+      // catchError and hide a missing reset on the failure path.
+      jest.spyOn(spectator.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+      jest.spyOn(spectator.inject(FailoverValidationService), 'validateFailover').mockReturnValueOnce(
+        of({ success: false, error: 'Failover check failed', isHaLicensed: true }),
+      );
+
+      spectator.service.handleSuccessfulLogin();
+
+      expect(await firstValueFrom(spectator.service.isLoggingIn$)).toBe(false);
+      expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith('Failover check failed');
+    });
+
+    it('clears the "logging in" state when the session cannot be initialized', async () => {
+      jest.spyOn(spectator.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+      jest.spyOn(spectator.inject(AuthService), 'initializeSession')
+        .mockReturnValueOnce(of(LoginResult.NoAccess));
+
+      spectator.service.handleSuccessfulLogin();
+
+      expect(await firstValueFrom(spectator.service.isLoggingIn$)).toBe(false);
+      expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith('Failed to initialize session.');
+    });
+
+    it('keeps the "logging in" state up until the dashboard takes over', async () => {
+      jest.spyOn(spectator.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+      Object.defineProperty(spectator.inject(AuthService), 'user$', {
         value: of(mockLoggedInUser),
       });
 
       spectator.service.handleSuccessfulLogin();
 
-      expect(await firstValueFrom(spectator.service.isLoggingIn$)).toBe(false);
+      expect(await firstValueFrom(spectator.service.isLoggingIn$)).toBe(true);
     });
 
     it('redirects user to url stored in sessionStorage', () => {
