@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, Validators, FormsModule, ReactiveFormsModule,
@@ -48,6 +48,14 @@ export class SetAdminPasswordFormComponent {
   protected isPasswordVisible = signal(false);
   protected isPassword2Visible = signal(false);
 
+  /**
+   * True from the moment the form is submitted until the store leaves its loading state - either
+   * because the setup or login failed, or because the card took over with "Logging in...".
+   * Derived rather than cleared by hand so no failure path can leave the button mid-flight.
+   */
+  private hasSubmitted = signal(false);
+  protected isSubmitting = computed(() => this.hasSubmitted() && this.isLoading());
+
   protected readonly tnIconMarker = tnIconMarker;
   protected readonly InputType = InputType;
 
@@ -85,6 +93,7 @@ export class SetAdminPasswordFormComponent {
   protected onSubmit(): void {
     const { username, password } = this.form.getRawValue();
     this.signinStore.setLoadingState(true);
+    this.hasSubmitted.set(true);
 
     const request$ = this.api.call('user.setup_local_administrator', [username, password]);
 
@@ -93,13 +102,13 @@ export class SetAdminPasswordFormComponent {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ({ loginResult }) => {
-        this.signinStore.setLoadingState(false);
-
         if (loginResult === LoginResult.Success) {
           this.signinStore.handleSuccessfulLogin();
-        } else {
-          this.snackbar.error(this.translate.instant('Login error. Please try again.'));
+          return;
         }
+
+        this.signinStore.setLoadingState(false);
+        this.snackbar.error(this.translate.instant('Login error. Please try again.'));
       },
       error: (error: unknown) => {
         this.errorHandler.handleValidationErrors(error, this.form);

@@ -48,7 +48,7 @@
       type="submit"
       color="primary"
       [testId]="'log-in'"
-      [label]="'Log In' | translate"
+      [label]="isSubmitting() ? ('Logging in...' | translate) : ('Log In' | translate)"
       [disabled]="isFormDisabled()"
     ></tn-button>
     @if (isLastLoginAttemptFailed()) {
@@ -88,7 +88,7 @@
         type="submit"
         color="primary"
         [testId]="'log-in'"
-        [label]="'Proceed' | translate"
+        [label]="isSubmitting() ? ('Logging in...' | translate) : ('Proceed' | translate)"
         [disabled]="isFormDisabled()"
       ></tn-button>
       <tn-button

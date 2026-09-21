@@ -73,6 +73,15 @@ export class SigninFormComponent implements OnInit {
   protected isLoading = toSignal(this.signinStore.isLoading$);
   readonly isFormDisabled = computed(() => this.disabled() || this.isLoading());
 
+  /**
+   * True from the moment credentials are submitted until the store leaves its loading state -
+   * either because the login failed, or because the card took over with "Logging in...".
+   * Derived rather than cleared by hand so no failure path can leave the button mid-flight;
+   * gated on `hasSubmitted` because `isLoading` is also true while the page boots.
+   */
+  private hasSubmitted = signal(false);
+  protected isSubmitting = computed(() => this.hasSubmitted() && Boolean(this.isLoading()));
+
   protected readonly otpErrorMessages = {
     required: this.translate.instant('{field} is required', {
       field: this.translate.instant('Two-Factor Authentication Code'),
@@ -124,6 +133,7 @@ export class SigninFormComponent implements OnInit {
     performance.mark('Login Start');
     this.isLastLoginAttemptFailed.set(false);
     this.signinStore.setLoadingState(true);
+    this.hasSubmitted.set(true);
     const formValues = this.form.getRawValue();
     this.authService.login(formValues.username, formValues.password).pipe(
       takeUntilDestroyed(this.destroyRef),
@@ -194,6 +204,7 @@ export class SigninFormComponent implements OnInit {
   protected loginWithOtp(event?: Event): void {
     event?.preventDefault();
     this.signinStore.setLoadingState(true);
+    this.hasSubmitted.set(true);
     const formValues = this.form.getRawValue();
     this.authService.login(formValues.username, formValues.password, formValues.otp).pipe(
       takeUntilDestroyed(this.destroyRef),

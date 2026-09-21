@@ -1,4 +1,4 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
@@ -35,6 +35,7 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
     TrueCommandStatusComponent,
     DisconnectedMessageComponent,
     AsyncPipe,
+    NgTemplateOutlet,
     TranslateModule,
     CopyrightLineComponent,
   ],
@@ -53,6 +54,7 @@ export class SigninComponent implements OnInit {
   protected isTokenWithinTimeline$ = this.tokenLastUsedService.isTokenWithinTimeline$;
 
   readonly wasAdminSet$ = this.signinStore.wasAdminSet$;
+  readonly isLoggingIn$ = this.signinStore.isLoggingIn$;
   readonly canLogin$ = this.signinStore.canLogin$;
   readonly isConnected$ = this.wsStatus.isConnected$;
   isConnectedDelayed$: Observable<boolean> = of(null).pipe(
@@ -98,6 +100,15 @@ export class SigninComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.focusFirstInput();
+    });
+
+    this.signinStore.isLoggingIn$.pipe(
+      filter(Boolean),
+      // Let the message render before reaching for it.
+      delay(0),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.window.document.querySelector<HTMLElement>('.logging-in')?.focus();
     });
 
     this.hasLoadingIndicator$
