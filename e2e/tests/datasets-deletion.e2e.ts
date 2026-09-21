@@ -114,7 +114,7 @@ test('a fully confirmed deletion removes the dataset', async ({ page, api, pool 
   await fillDatasetDeletionConfirmation(page, dataset);
   await page.locator(deleteDatasetDialogLocators.submit).click();
 
-  await expect.poll(() => findDataset(api, dataset)).toBeUndefined();
+  await expect.poll(() => tolerating(() => findDataset(api, dataset))).toBeUndefined();
   // Deleting is recursive; it must still stop at the dataset it was given.
   expect(await findDataset(api, `${pool}/${bystander}`)).toBeDefined();
 });
@@ -131,5 +131,23 @@ test('Enter still submits once both gates are satisfied', async ({ page, api, po
   // keyboard.
   await page.locator(deleteDatasetDialogLocators.name).press('Enter');
 
-  await expect.poll(() => findDataset(api, dataset)).toBeUndefined();
+  await expect.poll(() => tolerating(() => findDataset(api, dataset))).toBeUndefined();
 });
+
+/**
+ * Runs a poll generator, turning a rejection into "no answer yet".
+ *
+ * Playwright awaits an `expect.poll` generator *outside* its own try/catch, so
+ * a rejected call aborts the poll rather than costing one attempt — the same
+ * trap `readServiceState` documents in
+ * `tests/unauthenticated/fresh-install.e2e.ts`. A recursive dataset delete is
+ * brief, but it is still a call that can reject, and a transport blip should
+ * not be reported as "the dataset is still there".
+ */
+async function tolerating<T>(read: () => Promise<T>): Promise<T | undefined> {
+  try {
+    return await read();
+  } catch {
+    return undefined;
+  }
+}

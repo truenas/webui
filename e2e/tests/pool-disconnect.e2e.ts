@@ -42,11 +42,18 @@ import { expect, test } from '../support/fixtures';
  */
 const target = 'e2e_disconnect_target';
 
+/** Set by {@link tolerating} so a persistent query fault reaches the run log. */
+let lastPollError: unknown;
+
 test.beforeEach(async ({ api }) => {
   await ensurePoolPresent(api, target);
 });
 
 test.afterEach(async ({ api }) => {
+  if (lastPollError) {
+    console.warn('A polled read kept failing; last error:', lastPollError);
+    lastPollError = undefined;
+  }
   await ensurePoolAbsent(api, target);
 });
 
@@ -95,7 +102,7 @@ test('a fully confirmed delete really does destroy the pool', async ({ page, api
   // submission would satisfy them both and leave nobody able to remove a pool.
   // Polled: `pool.export` is a job, so the row goes some time after the click.
   await expect
-    .poll(() => findPool(api, target), { timeout: 3 * 60_000 })
+    .poll(() => tolerating(() => findPool(api, target)), { timeout: 3 * 60_000 })
     .toBeUndefined();
 
   // The row going is not the end of the work. `destroy: true` keeps wiping the
@@ -104,8 +111,16 @@ test('a fully confirmed delete really does destroy the pool', async ({ page, api
   // suite has been bitten before. Leaving here mid-wipe starves
   // `requireUnusedDisks`, which `fresh-install` depends on — so wait for the
   // disk to actually come back, which is the observable end of the export.
+  //
+  // A count rather than this pool's own `devname`, which is sound only because
+  // `playwright.config.ts` pins `workers: 1` / `fullyParallel: false` — nothing
+  // else can be freeing a disk while this waits. Said out loud because that
+  // guarantee lives three files away.
   await expect
-    .poll(() => getSelectableDisks(api).then((disks) => disks.length), { timeout: 6 * 60_000 })
+    .poll(
+      () => tolerating(() => getSelectableDisks(api).then((disks) => disks.length)),
+      { timeout: 6 * 60_000 },
+    )
     .toBeGreaterThan(disksWhileClaimed);
 });
 
@@ -131,4 +146,28 @@ async function expectPoolSurvived(page: Page, api: E2eApiClient, pool: string): 
 
   await expect(page.locator(poolDisconnectLocators.open(pool))).toBeVisible();
   expect(await findPool(api, pool)).toBeDefined();
+}
+
+/**
+ * Runs a poll generator, turning a rejection into "no answer yet".
+ *
+ * Required, not defensive. Playwright awaits an `expect.poll` generator
+ * *outside* its own try/catch, so a rejected call aborts the whole poll rather
+ * than costing one attempt — the same trap `readServiceState` documents in
+ * `tests/unauthenticated/fresh-install.e2e.ts`. Both polls here run across a
+ * `pool.export`, which `support/jobs.ts` records as dropping the connection it
+ * is asked over, so a transient rejection is an ordinary step on the way to the
+ * answer rather than a failure.
+ *
+ * The last failure is kept so a *persistently* broken query names itself in the
+ * log instead of hiding behind "the pool never went away".
+ */
+async function tolerating<T>(read: () => Promise<T>): Promise<T | undefined> {
+  try {
+    lastPollError = undefined;
+    return await read();
+  } catch (error) {
+    lastPollError = error;
+    return undefined;
+  }
 }
