@@ -171,6 +171,15 @@ export class SnapshotRollbackDialog implements OnInit {
   }
 
   onSubmit(): void {
+    // Nothing inside this <form> is a submit button — the dialog's actions are
+    // projected outside it and tn-button renders type="button" — so
+    // [disabled]="form.invalid" cannot stop a native form submission. Only the
+    // absence of a text field keeps Enter from reaching here today, which is a
+    // property of the markup rather than a decision. Enforce the gate here.
+    if (this.form.invalid) {
+      return;
+    }
+
     const snapshot = this.snapshot;
     if (!snapshot) {
       return;

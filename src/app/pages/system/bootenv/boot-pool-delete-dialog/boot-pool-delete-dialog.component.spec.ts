@@ -109,4 +109,10 @@ describe('BootPoolDeleteDialogComponent', () => {
     const closeButton = await loader.getHarness(TnButtonHarness.with({ label: 'Close' }));
     await closeButton.click();
   });
+
+  it('does not delete boot environments when the form is submitted natively while invalid', () => {
+    spectator.query('form')!.dispatchEvent(new Event('submit'));
+
+    expect(spectator.inject(ApiService).job).not.toHaveBeenCalledWith('core.bulk', expect.anything());
+  });
 });
