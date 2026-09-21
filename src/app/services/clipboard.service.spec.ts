@@ -32,11 +32,19 @@ describe('ClipboardService', () => {
     } else {
       // jsdom has no `navigator.clipboard` at all, so there is nothing to put
       // back — it has to be removed, or the property this spec defined stays
-      // behind as `{ value: undefined }` and the next file's `jest.spyOn`
-      // fails on a primitive.
+      // behind as `{ value: undefined }` and the next *test* to spy on it
+      // fails on a primitive. (Jest gives each file its own jsdom, so the leak
+      // stops at the file boundary.)
       delete (navigator as { clipboard?: unknown }).clipboard;
     }
-    document.execCommand = originalExecCommand;
+    if (originalExecCommand) {
+      document.execCommand = originalExecCommand;
+    } else {
+      // Same not-really-a-restore as the clipboard one above: jsdom defines no
+      // `document.execCommand` either, so assigning `undefined` back installs
+      // the property rather than removing it.
+      delete (document as { execCommand?: unknown }).execCommand;
+    }
     jest.restoreAllMocks();
   });
 

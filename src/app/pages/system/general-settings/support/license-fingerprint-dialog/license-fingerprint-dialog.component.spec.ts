@@ -79,8 +79,15 @@ describe('LicenseFingerprintDialog', () => {
       // `{ value: undefined }` and the next test to spy on it fails.
       delete (navigator as { clipboard?: unknown }).clipboard;
     }
-    // eslint-disable-next-line sonarjs/deprecation
-    document.execCommand = originalExecCommand;
+    if (originalExecCommand) {
+      // eslint-disable-next-line sonarjs/deprecation
+      document.execCommand = originalExecCommand;
+    } else {
+      // Same not-really-a-restore as the clipboard one above: jsdom defines no
+      // `document.execCommand` either, so assigning `undefined` back installs
+      // the property rather than removing it.
+      delete (document as { execCommand?: unknown }).execCommand;
+    }
   });
 
   let spectator: Spectator<LicenseFingerprintDialog>;
