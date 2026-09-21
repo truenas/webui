@@ -224,4 +224,34 @@ describe('PoolManagerComponent – wizard step reset', () => {
       'Total Raw Capacity:': '0 B',
     });
   });
+
+  it('stops blocking pool creation once a half-configured optional step is reset', async () => {
+    await wizard.fillStep({ Name: 'testpool' });
+    await wizard.clickNext();
+    await wizard.clickNext();
+
+    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Data');
+    await wizard.fillStep({
+      Layout: 'Stripe',
+      'Disk Size': '20 GiB (HDD)',
+      Width: '1',
+      'Number of VDEVs': '1',
+    });
+    await wizard.clickNext();
+
+    // Picking a layout on the optional Log step auto-fills the sole disk size, which leaves the
+    // category half-configured and blocks Create Pool until the step is completed or reset.
+    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Log (Optional)');
+    await wizard.fillStep({ Layout: 'Stripe' });
+
+    const resetLogButton = await (await wizard.getActiveStep())
+      .getHarness(TnButtonHarness.with({ label: 'Reset Step' }));
+    await resetLogButton.click();
+
+    const goToReviewButton = await (await wizard.getActiveStep())
+      .getHarness(TnButtonHarness.with({ label: 'Go to Review' }));
+    await goToReviewButton.click();
+
+    expect(await (await wizard.getCreatePoolButton()).isDisabled()).toBe(false);
+  });
 });
