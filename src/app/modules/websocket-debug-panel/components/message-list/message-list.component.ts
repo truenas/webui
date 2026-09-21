@@ -19,6 +19,7 @@ import { scrollToBottomDelayMs } from 'app/modules/websocket-debug-panel/constan
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 import { clearMessages, createMockFromResponse, toggleDuplicateNotifications, toggleMessageExpansion } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 import { selectDuplicateNotificationsEnabled, selectMessages } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
+import { ClipboardService } from 'app/services/clipboard.service';
 
 interface FormattedWebSocketDebugMessage extends WebSocketDebugMessage {
   formattedTime: string;
@@ -55,6 +56,7 @@ export class MessageListComponent implements AfterViewInit {
   private destroyRef = inject(DestroyRef);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
+  private clipboard = inject(ClipboardService);
 
   @ViewChild('messageViewport', { read: ElementRef }) protected messageViewport?: ElementRef<HTMLDivElement>;
   protected messages$: Observable<WebSocketDebugMessage[]> = this.store$.select(selectMessages);
@@ -110,7 +112,7 @@ export class MessageListComponent implements AfterViewInit {
 
   protected copyMessage(message: WebSocketDebugMessage): void {
     const messageContent = JSON.stringify(message.message, null, 2);
-    navigator.clipboard.writeText(messageContent)
+    this.clipboard.copy(messageContent)
       .then(() => {
         this.snackbar.success(this.translate.instant('Message copied to clipboard'));
       })
