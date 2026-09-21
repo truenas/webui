@@ -84,10 +84,16 @@ export class DiskSizeSelectsComponent implements OnChanges {
     )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.form.setValue({
+        // `reset`, not `setValue`: `sizeAndType` is `Validators.required`, so a plain value change
+        // leaves it touched and keeps rendering "Field is required" after a Reset Step.
+        this.form.reset({
           sizeAndType: [null, null],
           treatDiskSizeAsMinimum: false,
         });
+        // `reset` alone is not enough: `ix-errors` re-marks any control that still has errors as
+        // touched while the reset's own status change is delivered, so the required error would
+        // come straight back. Clearing it once that has run is what makes the reset stick.
+        this.form.markAsUntouched();
       });
   }
 
