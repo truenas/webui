@@ -37,6 +37,7 @@
           <tn-nested-tree-node
             *cdkTreeNodeDef="let topologyItem"
             routerLinkActive="selected"
+            [testId]="['vdev', topologyItem.guid]"
             [class.selected]="topologyItem.guid === selectedNode?.guid"
             [routerLink]="['/storage', poolId(), 'vdevs', topologyItem.guid]"
             (click)="viewDetails(poolId(), topologyItem.guid); $event.stopPropagation()"
@@ -57,6 +58,7 @@
             *cdkTreeNodeDef="let group; when: isVdevGroup"
             hideToggle
             class="vdev-group-row"
+            [testId]="['vdev-group', group.guid]"
             (click)="onRowGroupSelected(group, $event)"
           >
             <ix-vdev-group-node [vdevGroup]="group | cast">
@@ -76,6 +78,7 @@
           <tn-nested-tree-node
             *cdkTreeNodeDef="let vdev; when: hasNestedChild"
             routerLinkActive="selected"
+            [testId]="['vdev', vdev.guid]"
             [toggleAriaLabel]="'Toggle {row}' | translate: { row: vdev.guid }"
             [toggleTestId]="['toggle', vdev.guid]"
             [class.selected]="vdev.guid === selectedNode?.guid"

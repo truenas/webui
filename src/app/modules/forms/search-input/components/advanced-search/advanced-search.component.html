@@ -20,7 +20,7 @@
     >
       @if (showDatePicker$ | async) {
         <tn-card class="calendar" [padContent]="false">
-          <tn-calendar (selectedChange)="dateSelected($event)"></tn-calendar>
+          <tn-calendar testId="advanced-search" (selectedChange)="dateSelected($event)"></tn-calendar>
         </tn-card>
       }
     </div>

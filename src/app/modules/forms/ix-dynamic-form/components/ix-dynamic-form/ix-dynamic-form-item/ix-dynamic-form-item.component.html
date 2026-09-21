@@ -28,6 +28,8 @@
                   <button
                     type="button"
                     class="tooltip"
+                    tnTestIdType="button"
+                    [tnTestId]="['tooltip', dictSchema.controlName]"
                     [attr.aria-label]="dictSchema.tooltip"
                     [tnTooltip]="dictSchema.tooltip"
                   >

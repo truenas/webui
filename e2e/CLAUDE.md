@@ -59,6 +59,8 @@ actually emitted — **components prefix the value with their element type**:
 | `<tn-checkbox formControlName="create_smb">` | `checkbox-create-smb` |
 | `<tn-select [testId]="'role'">` | `select-role` + `option-role-full-admin` |
 | `<tn-tree-node [testId]="['dataset', name]">` | `dataset-<name>` — no prefix |
+| `<tn-nested-tree-node [testId]="['vdev', guid]">` | `vdev-<guid>` — no prefix, and its toggle becomes `button-toggle-vdev-<guid>` |
+| `<tn-banner testId="no-webshare-users">` | `banner-no-webshare-users` |
 
 Four things that will catch you out:
 
@@ -86,10 +88,17 @@ or in `@truenas/ui-components` following the patterns in that library's
 `docs/test_ids.md`. Do not fall back to a fragile selector. Both repositories
 are in-house.
 
+`tn-list-item` is the one component with no id input at all as of 0.7.8: the
+input is on the library's `main`, unreleased, so the two clickable list rows in
+the app (the dual-listbox option, the inspect-VDEVs type selector) are listed in
+`allowedClickables` until it ships. Tag them and delete the entries then — the
+script fails on an exemption that matches nothing, so it will ask.
+
 You should rarely have to: `yarn check-test-ids` (a lint job step) fails the
-build when a plain element handles a click that no `[data-test]` can reach. The
-few that are deliberately unaddressable — a scrim, a container that only listens
-for Escape — are listed with their reason in `scripts/check-test-ids.ts`.
+build when a plain element or an interactive `tn-*` component is clicked,
+navigated or dragged and no `[data-test]` can reach it. The few that are deliberately unaddressable — a
+scrim, a container that only listens for Escape — are listed with their reason in
+`scripts/check-test-ids.ts`.
 
 ### Addressing a table row
 
@@ -143,15 +152,65 @@ columns NAS-143892 closed were found.
   row. Six tickets in a row — NAS-141047, NAS-141484, NAS-142069, NAS-141791,
   NAS-141186, NAS-143804 — were this same defect, each found downstream.
 
-`yarn check-test-ids` (a lint job step) mechanises most of that. It asks four
+`yarn check-test-ids` (a lint job step) mechanises most of that. It asks five
 things: a table that renders cells must bind `[rowTestId]`, every column of it
-must tag its cell, a plain clickable must resolve a `data-test` somewhere in its
-subtree (not necessarily on the element itself), and no template may revive the
-test-id directive retired in NAS-143893 — which would now emit no attribute at
-all. What it cannot see is a
+must tag its cell, a plain element that is *acted on* must resolve a `data-test`
+somewhere in its subtree (not necessarily on the element itself), an interactive
+`tn-*` component must resolve one too, and no template may revive the test-id
+directive retired in NAS-143893 — which would now emit no attribute at all.
+
+"Acted on" is wider than "has a `(click)`", because a handler is not the only way
+an element acts: a link navigates on its own (`href`/`routerLink`, no handler to
+find), a native `<button>` can act through the form it submits or a tooltip it
+triggers, and a drag source or drop zone (`dnd*`, `cdkDrag*`, `mousedown`) is
+something a journey does. Eleven external links, a tooltip trigger and six
+drag targets in the pool-manager layout had no id while the rule asked only
+about clicks.
+
+The `tn-*` rule is the newest and the least obvious. A library component emits an
+id only where one is passed: an unset `[testId]` is an *absent* attribute, not a
+derived one. The single exception is a form control, which falls back to its
+`formControlName` — so a control bound anonymously through `[ngModel]` or
+`[formControl]` has nothing to fall back to and needs `[testId]` spelled out.
+Until that rule existed nothing looked at `tn-*` tags at all, which is how a
+clickable `tn-banner`, five `tn-nested-tree-node` rows, five `tn-tab`s and an
+anonymous `tn-slide-toggle` all ended up unreachable at once.
+
+Two limits are worth knowing. Both rules read the comment-stripped template, so
+prose describing markup is not markup — two templates explain what the
+`<button>` they replaced used to render, and both were reported before that.
+And an `ix-*` component tag is never checked: it may render ids inside its own
+template, which a script reading one template at a time cannot see. Its
+*internals* are checked when that template is read on its own, but an `ix-*` tag
+the consumer drags or clicks is on you.
+
+What it still cannot see is a
 *changed* id — dropping or renaming the value on a `<tn-button testId>`, a detail
 row, or any component input still resolves to something, so it passes. That half
 stays convention, and reviewing it is a reviewer's job.
+
+### Reading a value that is not in a table
+
+A table cell is covered (rule 2, and every column of every list has an id). A value rendered
+anywhere else — a card's detail line, a widget's number, a dialog's message — is not, and
+`yarn check-test-ids --report` counts what is left: **611 readouts across the app** that no suite
+can read, listed per area.
+
+It is a *measurement, not a gate*, because unlike a table column the set is not bounded and some
+members are genuinely not automation targets (a gauge's sublabel, prose inside a tooltip). Driving
+it down per area is the plan, the way the 117 untagged columns were closed.
+
+Two things do NOT need an id of their own, and the report already discounts them:
+
+- **A tagged ancestor holding just that value.** The suite selects the ancestor and reads its text.
+- **A shared component whose whole template renders one value.** `<ix-date>` is the example: every
+  call site tags the tag, so the value inside is what that element says. Putting a static id inside
+  such a component would be worse than nothing — it would repeat on every instance in the page.
+
+When you do tag a readout, the convention is `tnTestIdType="text"` with the base named after the
+**label beside it**, not the expression behind it: a row labelled "Last Scrub Date" should emit
+`text-last-scrub-date`, because that is what a test author looks for. `pool().scan.end_time.$date`
+is how it is computed, which is nobody's search term.
 
 ## Waiting
 

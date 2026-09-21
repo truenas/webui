@@ -2,7 +2,13 @@
   Panel-hosted only: the title and progress bar live on the `<tn-side-panel>` host, which is
   opened `footerless` because the stepper below owns its own Back/Save actions.
 -->
-<tn-stepper #stepper orientation="vertical" [linear]="true" (selectionChange)="updateSummary()">
+<tn-stepper
+  #stepper
+  orientation="vertical"
+  testId="vm-wizard"
+  [linear]="true"
+  (selectionChange)="updateSummary()"
+>
   <tn-step [label]="'Operating System' | translate" [completed]="osStep().completed()">
     <ix-os-step></ix-os-step>
   </tn-step>

@@ -4,7 +4,12 @@
     [class.open]="isOpen"
     [style.width.px]="panelWidth">
 
-    <div class="resize-handle" (mousedown)="onResizeStart($event)"></div>
+    <div
+      class="resize-handle"
+      tnTestId="resize-debug-panel"
+      tnTestIdType="button"
+      (mousedown)="onResizeStart($event)"
+    ></div>
 
     <div class="panel-content">
       <div class="panel-header">
@@ -26,10 +31,10 @@
         class="panel-tabs"
         [selectedIndex]="selectedTabIndex()"
         (selectedIndexChange)="onTabChange($event)">
-        <tn-tab [label]="'Messages' | translate"></tn-tab>
-        <tn-tab [label]="'Mock Configurations' | translate"></tn-tab>
-        <tn-tab [label]="'Enclosure Mock' | translate"></tn-tab>
-        <tn-tab [label]="'Alert Classes' | translate"></tn-tab>
+        <tn-tab testId="messages" [label]="'Messages' | translate"></tn-tab>
+        <tn-tab testId="mock-configurations" [label]="'Mock Configurations' | translate"></tn-tab>
+        <tn-tab testId="enclosure-mock" [label]="'Enclosure Mock' | translate"></tn-tab>
+        <tn-tab testId="alert-classes" [label]="'Alert Classes' | translate"></tn-tab>
 
         <tn-tab-panel>
           <ix-websocket-tab></ix-websocket-tab>

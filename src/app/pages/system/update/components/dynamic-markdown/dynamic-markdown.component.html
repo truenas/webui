@@ -4,7 +4,7 @@
   } @else if (section.type === 'tabs' && section.tabs) {
     <tn-tabs>
       @for (tab of section.tabs; track tab.label) {
-        <tn-tab [label]="tab.label"></tn-tab>
+        <tn-tab [label]="tab.label" [testId]="tab.label"></tn-tab>
       }
       @for (tab of section.tabs; track tab.label) {
         <tn-tab-panel [label]="tab.label">

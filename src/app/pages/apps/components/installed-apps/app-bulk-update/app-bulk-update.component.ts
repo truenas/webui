@@ -8,8 +8,13 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnDialogShellComponent, TnExpansionPanelComponent, TnFormFieldComponent,
-  TnIconComponent, TnSelectComponent,
+  TnButtonComponent,
+  TnDialogShellComponent,
+  TnExpansionPanelComponent,
+  TnFormFieldComponent,
+  TnIconComponent,
+  TnSelectComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -41,6 +46,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     AsyncPipe,
     TnDialogShellComponent,
     ReactiveFormsModule,
+    TnTestIdDirective,
     TranslateModule,
     TnExpansionPanelComponent,
     FakeProgressBarComponent,

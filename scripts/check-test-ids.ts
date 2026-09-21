@@ -20,9 +20,28 @@
  *    selector to reach the cell. Asks that each `tnCellDef` body resolve an id somewhere.
  * 3. **Clickables.** A plain element carrying a `(click)`/`(keydown)` handler is something a test
  *    has to click, so it needs an id on itself or on a descendant that receives the click.
+ *    A handler is not the only way an element acts, so three more shapes count: a link that
+ *    navigates (`href`/`routerLink` — the browser does the work, there is no handler to find), a
+ *    native `<button>` with no handler of its own (a tooltip trigger, a form's submit), and a drag
+ *    source or drop zone (`dnd*`, `cdkDrag*`, `mousedown`). Each was invisible while the rule
+ *    asked only about clicks, which is how eleven external links, a tooltip trigger and six drag
+ *    targets in the pool-manager layout ended up with no id.
  *    "Somewhere in its subtree" is the whole test, so an outer `<div (click)>` wrapping tagged
  *    children passes even though the wrapper itself is unaddressable — a green run means no
  *    clickable is *completely* unreachable, not that every click target has its own id.
+ * 4. **Interactive library components.** Rule 3 is scoped to hyphen-free tags, so no `tn-*` tag was
+ *    ever examined — and a library component writes an id only where the consumer passes one.
+ *    Nothing derives it: `[testId]` unset, the id is simply absent (a *form control* falls back to
+ *    its `formControlName`, so only a control bound anonymously through `[ngModel]` /
+ *    `[formControl]` is at risk). That gap held a clickable `tn-banner`, five `tn-nested-tree-node`
+ *    rows, five `tn-tab`s and an anonymous `tn-slide-toggle`, none of them reachable. Same subtree
+ *    test as rule 3, and the same exemption map.
+ *
+ * 5. **Inert ids.** `tnTestId` is a directive, not an attribute Angular knows: write it in a
+ *    template whose component does not import `TnTestIdDirective` and it emits *nothing at all*,
+ *    silently — the same failure the retired directive left behind, and the one a template check
+ *    cannot see because the attribute is right there in the markup. So every template that writes
+ *    it must be declared by a component that imports the directive.
  *
  * What none of them see is a *changed* id: a renamed `testId` still resolves to something. That
  * stays a reviewer's job, as does whether a value matches what the column resolved pre-migration.
@@ -53,10 +72,12 @@ const retiredDirective = /\bixTest/g;
 /**
  * Blanks out HTML comments, keeping every newline so reported line numbers still line up.
  *
- * The rules above read templates as text and tolerate matching inside a comment, because a false
- * positive there needs a `(click)` in the same span to be reported at all. {@link retiredDirective}
- * has no such second condition, so a comment that quoted the retired name — none do now, but the
- * cheapest way to keep it that way is not to depend on it — would read as a revived directive.
+ * Rule 3 used to tolerate matching inside a comment, because a false positive there needed a
+ * `(click)` in the same span to be reported at all. That stopped being true once a bare `<button>`
+ * became an offender on its own: two templates explain in prose what the `<button>` they replaced
+ * used to render, and both were reported. So rule 3 reads the comment-stripped source too, as
+ * {@link retiredDirective} already did — it has no second condition either, and a comment quoting
+ * the retired name would otherwise read as a revived directive.
  */
 function withoutComments(src: string): string {
   return src.replace(/<!--[\s\S]*?-->/g, (comment) => comment.replace(/[^\n]/g, ' '));
@@ -86,11 +107,34 @@ const rowTagInTemplate = [
  * attributes, and `matchAll` resumed past it, so no later match saw the handler either. That is a
  * false NEGATIVE, the direction this script cannot afford.
  *
- * Text, not an AST: this still matches inside an HTML comment, which would need a `(click)` in the
- * same span to be reported — a confusing false positive, which is the affordable direction.
+ * Text, not an AST — so the caller passes the comment-stripped source (see
+ * {@link withoutComments}): prose describing markup is not markup.
  */
 const clickableElements = /<([a-z][a-z0-9]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"'])*)?)>/gs;
 const clickHandler = /\((click|keydown[^)]*)\)/;
+
+/**
+ * Acting without a handler.
+ *
+ * `<a href>` / `<a routerLink>` navigates on its own, so there is no handler for `clickHandler` to
+ * find — and a suite still has to click it. `<a>` with neither is a styled span, not a link.
+ *
+ * A native `<button>` may act through something other than a click binding (a tooltip it triggers
+ * on focus, the submit of the form it sits in). `<input>` is deliberately NOT here: the bare
+ * `<input>`s in this repo are library host elements — a `tnSliderThumb`, a control's inner input —
+ * whose id is on the component wrapping them, which is an ancestor and so not in the subtree this
+ * rule inspects. Those are rule 4's business.
+ *
+ * A drag source and a drop zone are both things a journey does, and neither needs a click.
+ */
+const navigates = /\brouterLink\b|\bhref\b/;
+const dragOrPointerHandler = /\((dblclick|mousedown|mouseup|dragstart|dnd[A-Z]\w*|cdkDrag\w*)\)/;
+
+function actsWithoutHandler(tag: string, attributes: string): boolean {
+  return (tag === 'a' && navigates.test(attributes))
+    || tag === 'button'
+    || dragOrPointerHandler.test(attributes);
+}
 
 /**
  * A handler that only cancels the event (`(keydown.enter)="$event.preventDefault()"` on a form,
@@ -109,6 +153,91 @@ function isCancelOnly(body: string): boolean {
 }
 
 /**
+ * A library component is interactive when it declares a handler for something a person does to it.
+ * `onClick` is `tn-button`'s output and `itemClick` is `tn-list-item`'s; the rest are shared.
+ */
+const componentClickHandler = new RegExp(
+  '\\((click|keydown[^)]*|dblclick|mousedown|itemClick|onClick|selectedChange|selectionChange'
+  + '|selectedIndexChange|toggle|dnd[A-Z]\\w*|cdkDrag\\w*)\\)',
+);
+
+/**
+ * An element *presented* as a control is one whether or not it carries a handler: the two help
+ * icons in the containers dialogs are `role="button"` with `tabindex="0"`, and their only handlers
+ * cancel the key — the thing a suite reaches them for is the tooltip they raise on focus. Without
+ * this they read as cancel-only and were skipped.
+ */
+const presentedAsControl = /\brole="(button|link|option|menuitem|tab|switch|checkbox|radio)"|\btabindex=/;
+
+/**
+ * Library form controls, which are the exception to "an unset `testId` means no id": each derives
+ * one from the `formControlName` it is bound to. Only the anonymous bindings below leave a control
+ * with nothing to derive from, and those are what this list is checked against.
+ */
+const libraryFormControls = new Set([
+  'tn-input', 'tn-select', 'tn-checkbox', 'tn-checkbox-group', 'tn-radio-group', 'tn-slide-toggle',
+  'tn-autocomplete', 'tn-chip-input', 'tn-button-toggle-group', 'tn-slider', 'tn-file-picker',
+  'tn-file-input', 'tn-date-input', 'tn-date-range-input', 'tn-time-input',
+]);
+const anonymousValueBinding = /\[?\(?(ngModel|formControl|checked)\)?\]?\s*=/;
+const derivesFromControlName = /\bformControlName\b/;
+
+/** Every tag with a hyphen is a component: `tn-*` from the library, `ix-*` (and a few others) ours. */
+const componentTags = /<([a-z][a-z0-9]*-[a-z0-9-]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"'])*)?)>/gs;
+
+/**
+ * Our own components' templates, by selector, so this rule can ask whether a component resolves an
+ * id *inside itself* — `<ix-job-item (click)>` carries no id at its call site and needs none,
+ * because its own template tags six elements.
+ *
+ * Without this, checking `ix-*` at all would have been a false positive machine, and skipping it
+ * left the hole that `ix-permissions-item` sat in: no id here, none inside, nothing to notice.
+ * "Renders some id" is weak evidence — it does not prove the id is on the element that receives
+ * the click — but it is exactly the standard rule 3 already applies to a subtree, and the strong
+ * version needs an AST and a resolver this script deliberately does not have.
+ *
+ * A `tn-*` selector is absent from this map (the library lives in node_modules), so it resolves no
+ * internal evidence and must be tagged at the call site. That is the intended asymmetry.
+ */
+function ownComponentTemplates(): Map<string, string> {
+  const templates = new Map<string, string>();
+  const sources = readdirSync('src', { recursive: true, encoding: 'utf8' })
+    .filter((entry) => entry.endsWith('.ts') && !entry.endsWith('.spec.ts'))
+    .map((entry) => `src/${entry.split(sep).join('/')}`);
+
+  for (const file of sources) {
+    const src = readFileSync(file, 'utf8');
+    for (const match of src.matchAll(/selector:\s*'([a-z][a-z0-9-]*)'/g)) {
+      const [, selector] = match;
+      if (templates.has(selector)) {
+        continue;
+      }
+      const rest = src.slice(match.index);
+      const url = /templateUrl:\s*'([^']+)'/.exec(rest);
+      const inline = /template:\s*`([\s\S]*?)`/.exec(rest);
+      if (url && (!inline || url.index < inline.index)) {
+        const path = `${file.slice(0, file.lastIndexOf('/'))}/${url[1]}`;
+        try {
+          templates.set(selector, readFileSync(path, 'utf8'));
+        } catch {
+          templates.set(selector, '');
+        }
+      } else if (inline) {
+        templates.set(selector, inline[1]);
+      }
+    }
+  }
+  return templates;
+}
+
+/**
+ * Id evidence for a component tag. Wider than {@link anyTestId} by the inputs whose names merely
+ * *end* in `TestId` — `[rowTestId]` on a table, `[toggleTestId]` on a tree node,
+ * `[closeButtonTestId]` on a side panel — each of which resolves an id for the element it names.
+ */
+const componentTestIdInput = /TestId\b/;
+
+/**
  * Clickables that are deliberately unaddressable, as `<repo-relative path>:<class>`.
  *
  * Keyed on the full path, not the basename: `overlay` is a generic enough class name that a
@@ -117,15 +246,27 @@ function isCancelOnly(body: string): boolean {
  * nothing is reported too, so a class that gets renamed or deleted takes its exemption with it
  * instead of leaving a stale one behind.
  *
- * Only two shapes belong here: something that is not a target (a scrim closing what is above it,
- * a container listening for Escape), and something already addressable through an ancestor that
- * carries the id. Anything a journey would click belongs in the template with an id, not here.
+ * A component tag carries no class of its own to key on, so `<path>:<tag>` is accepted as well.
+ * That is coarser — it exempts every `tn-list-item` in the file, not one — which suits the only
+ * thing it is currently used for: a whole file waiting on a library release.
+ *
+ * Only three shapes belong here: something that is not a target (a scrim closing what is above it,
+ * a container listening for Escape), something already addressable through an ancestor that
+ * carries the id, and — keyed by tag, and only until the release lands — an element whose
+ * component has no id input yet. Anything a journey would click belongs in the template with an
+ * id, not here.
  */
 const allowedClickables = new Map<string, string>([
   ['src/app/modules/layout/admin-layout/admin-layout.component.html:overlay', 'Scrim behind the secondary menu; a test closes the menu by clicking what opened it.'],
   ['src/app/modules/layout/admin-layout/admin-layout.component.html:alert-panel-backdrop', 'Scrim behind the alerts panel, aria-hidden.'],
   ['src/app/modules/layout/admin-layout/admin-layout.component.html:alert-panel-container', 'Panel container; listens for Escape. Its contents carry their own ids.'],
   ['src/app/pages/datasets/components/dataset-management/dataset-management.component.html:dataset-node-click', 'Inside <tn-tree-node [testId]="[\'dataset\', name]">, which is what a click on the row resolves to.'],
+  // Both wait on the same release, and the rule above is what will make us come back: once
+  // @truenas/ui-components ships the `tn-list-item` [testId] input (added on the library's main,
+  // unreleased as of 0.7.8), tag these two and delete these entries — the staleness check fails
+  // the build if they outlive the elements they name.
+  ['src/app/modules/lists/dual-listbox/dual-listbox-side.component.html:tn-list-item', 'Clickable option row. tn-list-item takes no [testId] in 0.7.8; tag it when the input ships.'],
+  ['src/app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component.html:tn-list-item', 'VDEV-type selector row. Same: awaiting the tn-list-item [testId] input.'],
 ]);
 
 /** Entries of {@link allowedClickables} that exempted an element this run. */
@@ -217,11 +358,12 @@ function untaggedClickables(file: string, src: string): Offender[] {
 
   for (const match of src.matchAll(clickableElements)) {
     const attributes = match[2] ?? '';
-    if (!clickHandler.test(attributes) || anyTestId.test(attributes)) {
+    const acts = clickHandler.test(attributes) || actsWithoutHandler(match[1], attributes);
+    if (!acts || anyTestId.test(attributes)) {
       continue;
     }
     const bodies = [...attributes.matchAll(handlerBodies)].map(([, body]) => body);
-    if (bodies.length && bodies.every(isCancelOnly)) {
+    if (bodies.length && bodies.every(isCancelOnly) && !actsWithoutHandler(match[1], attributes)) {
       continue;
     }
     // Before the subtree check, so that an exemption counts as used whenever the element it names
@@ -246,6 +388,123 @@ function untaggedClickables(file: string, src: string): Offender[] {
   return offenders;
 }
 
+/**
+ * Rule 4. Same shape as {@link untaggedClickables}, over `tn-*` tags instead of native ones, and
+ * with a component's own id inputs counting as evidence.
+ *
+ * A control bound through `[formControlName]` is skipped before anything else: the library derives
+ * its id from the control's name, so it is addressable with nothing in the template at all — which
+ * is most of the form controls in this repo.
+ *
+ * Reads the comment-stripped source, for the reason in {@link withoutComments}: a comment
+ * explaining a `(itemClick)` is not one.
+ */
+function untaggedComponents(
+  file: string,
+  src: string,
+  ownTemplates: Map<string, string>,
+): Offender[] {
+  const offenders: Offender[] = [];
+
+  for (const match of src.matchAll(componentTags)) {
+    const [tag, attributes = ''] = [match[1], match[2]];
+    const hasId = anyTestId.test(attributes) || componentTestIdInput.test(attributes);
+    const isControl = libraryFormControls.has(tag);
+
+    if (isControl && derivesFromControlName.test(attributes)) {
+      continue;
+    }
+    const interactive = componentClickHandler.test(attributes)
+      || presentedAsControl.test(attributes)
+      || (isControl && anonymousValueBinding.test(attributes));
+    if (!interactive || hasId) {
+      continue;
+    }
+    const bodies = [...attributes.matchAll(handlerBodies)].map(([, body]) => body);
+    if (bodies.length && bodies.every(isCancelOnly) && !presentedAsControl.test(attributes)) {
+      continue;
+    }
+    // Our own component: an id anywhere in its template makes it reachable, so the call site owes
+    // nothing. A library tag is never in this map and so never satisfied this way.
+    const own = ownTemplates.get(tag);
+    if (own !== undefined && (anyTestId.test(own) || componentTestIdInput.test(own))) {
+      continue;
+    }
+    // Same order as rule 3: an exemption is spent before the subtree is consulted, so the entry
+    // retires with the element it names rather than with the element's descendants.
+    const exemption = [...classNames(attributes), tag]
+      .map((name) => `${file}:${name}`)
+      .find((key) => allowedClickables.has(key));
+    if (exemption) {
+      usedExemptions.add(exemption);
+      continue;
+    }
+    const block = outerBlock(src, tag, match.index, match.index + match[0].length);
+    if (anyTestId.test(block) || componentTestIdInput.test(block)) {
+      continue;
+    }
+    offenders.push({
+      file,
+      line: src.slice(0, match.index).split('\n').length,
+      what: `<${tag}${isControl ? ' (bound with no formControlName)' : ''}>`,
+    });
+  }
+  return offenders;
+}
+
+/**
+ * Rule 5: a template writing `tnTestId` whose component never imported the directive.
+ *
+ * Keyed on `templateUrl`, which is how every component in this repo declares its markup; an inline
+ * `template:` lives in the same file as its imports, so it cannot drift this way.
+ */
+function inertTestIds(templates: { file: string; src: string }[]): Offender[] {
+  const declaredBy = new Map<string, string>();
+  const sources = readdirSync('src', { recursive: true, encoding: 'utf8' })
+    .filter((entry) => entry.endsWith('.ts') && !entry.endsWith('.spec.ts'))
+    .map((entry) => `src/${entry.split(sep).join('/')}`);
+
+  for (const file of sources) {
+    const src = readFileSync(file, 'utf8');
+    const directory = file.slice(0, file.lastIndexOf('/'));
+    for (const match of src.matchAll(/templateUrl:\s*'([^']+)'/g)) {
+      // Resolve the relative path without importing `path`: these are all plain `./x.html` or
+      // `x.html` siblings, or a `../` hop.
+      const parts = `${directory}/${match[1]}`.split('/');
+      const resolved: string[] = [];
+      for (const part of parts) {
+        if (part === '.') {
+          continue;
+        }
+        if (part === '..') {
+          resolved.pop();
+        } else {
+          resolved.push(part);
+        }
+      }
+      declaredBy.set(resolved.join('/'), file);
+    }
+  }
+
+  return templates
+    .filter(({ src }) => /\btnTestId\b/.test(withoutComments(src)))
+    .flatMap(({ file, src }) => {
+      const component = declaredBy.get(file);
+      if (component && /\bTnTestIdDirective\b/.test(readFileSync(component, 'utf8'))) {
+        return [];
+      }
+      const stripped = withoutComments(src);
+      const at = stripped.search(/\btnTestId\b/);
+      return [{
+        file,
+        line: stripped.slice(0, at).split('\n').length,
+        what: component
+          ? `${component.split('/').pop()} does not import TnTestIdDirective`
+          : 'no component declares this template',
+      }];
+    });
+}
+
 function report(title: string, offenders: Offender[], advice: string): void {
   if (!offenders.length) {
     return;
@@ -256,6 +515,98 @@ function report(title: string, offenders: Offender[], advice: string): void {
   }
   console.error(advice);
   process.exitCode = 1;
+}
+
+/**
+ * A value an e2e suite reads: a LEAF element whose own text renders an *interpolation*, since that
+ * is what a suite asserts on — a status, a size, a count, a name. A translated literal
+ * (`{{ 'Name' | translate }}`) is a label, not a value, and is not counted; anything reading data
+ * is.
+ *
+ * Not a gate. A table column is one (rule 2) because the set is bounded and the id it owes is
+ * knowable; a free-form readout is not — some are genuinely not automation targets (a gauge's
+ * sublabel, prose inside a tooltip), and a rule that cannot tell those apart would either fail the
+ * build for noise or need hundreds of exemptions. Measured here so the number is visible and can
+ * be driven down per area, which is how the 117 untagged columns were closed.
+ */
+const leafValue = /<([a-z][a-z0-9-]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"'])*)?)>([^<]*\{\{[^<]*)<\/\1>/gs;
+const interpolations = /\{\{([^}]*)\}\}/g;
+
+function readsData(text: string): boolean {
+  return [...text.matchAll(interpolations)]
+    .map(([, body]) => body.split('|')[0].trim())
+    .some((head) => head.length > 0 && !/^'[^']*'$/.test(head) && !/^"[^"]*"$/.test(head));
+}
+
+const elementBoundaries = /<([a-z][a-z0-9-]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"'])*)?)(\/?)>|<\/([a-z][a-z0-9-]*)>/gs;
+const selfClosingTags = new Set(['input', 'img', 'br', 'hr', 'source', 'track', 'meta', 'link']);
+
+function valueCount(block: string): number {
+  return [...block.matchAll(leafValue)].filter(([, , , text]) => readsData(text)).length;
+}
+
+/**
+ * The markup enclosed by the nearest ancestor that carries an id, or null if none does.
+ *
+ * A readout needs no id of its own when such an ancestor holds *only* that value: a suite selects
+ * the ancestor and reads its text, which is how `<ix-date>` works — its consumer tags the tag, and
+ * the one value inside is what the element says.
+ */
+function taggedAncestorBlock(src: string, at: number): string | null {
+  const open: { tag: string; attributes: string; start: number }[] = [];
+  for (const match of src.matchAll(elementBoundaries)) {
+    if (match.index >= at) {
+      break;
+    }
+    if (match[4]) {
+      for (let i = open.length - 1; i >= 0; i -= 1) {
+        if (open[i].tag === match[4]) {
+          open.splice(i);
+          break;
+        }
+      }
+    } else if (match[3] !== '/' && !selfClosingTags.has(match[1])) {
+      open.push({ tag: match[1], attributes: match[2] ?? '', start: match.index });
+    }
+  }
+  for (let i = open.length - 1; i >= 0; i -= 1) {
+    if (anyTestId.test(open[i].attributes)) {
+      const rest = src.slice(open[i].start);
+      const close = rest.indexOf(`</${open[i].tag}>`);
+      return close === -1 ? rest : rest.slice(0, close);
+    }
+  }
+  return null;
+}
+
+/**
+ * Readouts in this template that no suite can read, discounting the two ways one is already
+ * addressable without an id of its own: a tagged ancestor holding just that value (above), and a
+ * shared component whose whole template renders one value — every consumer tags the tag, so an id
+ * inside would be both redundant and repeated on every instance in the page.
+ */
+function untaggedReadouts(src: string, isSingleValueComponent: boolean): number {
+  if (isSingleValueComponent) {
+    return 0;
+  }
+  const stripped = withoutComments(src);
+  let count = 0;
+  for (const match of stripped.matchAll(leafValue)) {
+    const [, , attributes = '', text] = match;
+    if (anyTestId.test(attributes) || !readsData(text)) {
+      continue;
+    }
+    // A cell body is rule 2's business, and already fully covered.
+    if (stripped.slice(Math.max(0, match.index - 400), match.index).includes('tnCellDef')) {
+      continue;
+    }
+    const ancestor = taggedAncestorBlock(stripped, match.index);
+    if (ancestor && valueCount(ancestor) === 1) {
+      continue;
+    }
+    count += 1;
+  }
+  return count;
 }
 
 /**
@@ -294,6 +645,40 @@ function reportColumnCoverage(tables: { file: string; src: string }[]): void {
   );
 }
 
+/** `--report`: untagged value readouts per area, the tracked-but-not-gated number. */
+function reportReadoutCoverage(templates: { file: string; src: string }[]): void {
+  // A template whose component renders exactly one value is addressed from its call sites.
+  const singleValue = new Set(
+    [...ownComponentTemplates()]
+      .filter(([, template]) => valueCount(withoutComments(template)) === 1)
+      .map(([selector]) => selector),
+  );
+  const ownTemplateFiles = new Map<string, string>();
+  for (const [selector, template] of ownComponentTemplates()) {
+    ownTemplateFiles.set(template, selector);
+  }
+
+  const perArea = new Map<string, number>();
+  for (const { file, src } of templates) {
+    const selector = ownTemplateFiles.get(src);
+    const count = untaggedReadouts(src, !!selector && singleValue.has(selector));
+    if (!count) {
+      continue;
+    }
+    const area = file.split('/').slice(0, 4).join('/');
+    perArea.set(area, (perArea.get(area) ?? 0) + count);
+  }
+
+  const total = [...perArea.values()].reduce((sum, count) => sum + count, 0);
+  console.info(
+    `\n${total} value readouts are unreadable to a suite (no id of their own, and no tagged`
+    + ' ancestor holding just that value), by area:',
+  );
+  for (const [area, count] of [...perArea].sort((left, right) => right[1] - left[1])) {
+    console.info(`  ${String(count).padStart(4)}  ${area}`);
+  }
+}
+
 function main(): void {
   const templates = readdirSync('src/app', { recursive: true, encoding: 'utf8' })
     .filter((entry) => entry.endsWith('.html'))
@@ -305,6 +690,7 @@ function main(): void {
 
   if (process.argv.includes('--report')) {
     reportColumnCoverage(tables);
+    reportReadoutCoverage(templates);
     return;
   }
   const untaggedRows = tables
@@ -319,7 +705,14 @@ function main(): void {
       what: `column "${name}" renders a cell with no test id`,
     })));
 
-  const clickables = templates.flatMap(({ file, src }) => untaggedClickables(file, src));
+  const clickables = templates.flatMap(
+    ({ file, src }) => untaggedClickables(file, withoutComments(src)),
+  );
+
+  const ownTemplates = ownComponentTemplates();
+  const components = templates.flatMap(
+    ({ file, src }) => untaggedComponents(file, withoutComments(src), ownTemplates),
+  );
 
   const revivedDirective = templates.flatMap(({ file, src }) => [
     ...withoutComments(src).matchAll(retiredDirective),
@@ -331,6 +724,8 @@ function main(): void {
       what: 'ixTest',
     }),
   ));
+
+  const inert = inertTestIds(templates);
 
   const staleExemptions = [...allowedClickables.keys()]
     .filter((key) => !usedExemptions.has(key))
@@ -353,6 +748,12 @@ value. The suffix names the kind of cell — \`row-text\`, \`row-yesno\`, \`row-
 \`row-relative-date\`, \`row-state\`, \`row-schedule\` — and matches what the column resolved before
 the tn-table migration. See "Addressing a table row" in e2e/CLAUDE.md.`);
 
+  report('templates whose tnTestId emits nothing:', inert, `
+\`tnTestId\` is a directive. Written in a template whose component does not import
+\`TnTestIdDirective\`, it is an inert attribute: no \`data-test\`, no error, nothing — which is
+exactly what the directive retired in NAS-143893 does now. Add \`TnTestIdDirective\` (from
+\`@truenas/ui-components\`) to that component's \`imports\`.`);
+
   report('exemptions in allowedClickables that match nothing:', staleExemptions, `
 Each of these names a clickable that no longer exists — the class was renamed, the element moved,
 or it now carries an id of its own. Remove the entry from \`allowedClickables\` in this script, so
@@ -365,8 +766,18 @@ the library's instead: \`tnTestIdType="<element type>"\` plus \`[tnTestId]="…"
 (app/modules/test-id/normalize-test-id.utils.ts), which splits a letter→digit boundary the
 library's kebab-casing leaves alone.`);
 
-  report('clickable elements with no test id:', clickables, `
-Each of these handles a click that no \`[data-test]\` selector can reach. Add one —
+  report('interactive components with no test id:', components, `
+Each of these is a component a test has to act on, with no id at the call site and none rendered
+inside it either. A library component writes an id only where one is passed: an unset
+\`[testId]\` is an absent attribute, not a derived one. Pass \`[testId]\` —
+the bare semantic base, the element-type prefix is the library's — or, for a form control, bind it
+with \`formControlName\` instead of \`[ngModel]\`/\`[formControl]\` and the id follows the control's
+name. See "Finding a \`data-test\` value" in e2e/CLAUDE.md, and the coverage table in the library's
+\`docs/test_ids.md\` for which input each component takes.`);
+
+  report('action elements with no test id:', clickables, `
+Each of these is acted on — a click, a navigation, a drag — and no \`[data-test]\` selector can
+reach it. Add one —
 \`tnTestIdType="button" [tnTestId]="'…'"\` on the element (or on the descendant that receives the
 click) — or, if it is genuinely not an automation target, list it in \`allowedClickables\` in this
 script with the reason. See "Finding a \`data-test\` value" in e2e/CLAUDE.md.`);
@@ -374,7 +785,8 @@ script with the reason. See "Finding a \`data-test\` value" in e2e/CLAUDE.md.`);
   if (!process.exitCode) {
     console.info(
       `✅ ${tables.length} tn-table templates tag their rows and every column; `
-      + `${templates.length} templates carry no unaddressable clickable and no retired directive.`,
+      + `${templates.length} templates carry no unaddressable action element, no untagged `
+      + 'interactive component, no inert tnTestId and no retired directive.',
     );
   }
 }

@@ -5,6 +5,7 @@
 
 <div
   class="dnd-wrapper"
+  tnTestId="unused-disks-dropzone"
   dndDropzone
   [ngClass]="{'drag-active': (dragToggleStore$.dragActive$ | async)}"
   (dndDrop)="onDrop($event)">
@@ -18,10 +19,12 @@
       <tn-nested-tree-node
         *cdkTreeNodeDef="let disk"
         hideToggle
+        [testId]="['unused-disk', asDisk(disk).name]"
         (click)="$event.stopPropagation()"
       >
         <div
           class="unused-disk"
+          [tnTestId]="['drag-unused-disk', asDisk(disk).name]"
           [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async }"
           [dndDraggable]="asDisk(disk)"
           [dndEffectAllowed]="'move'"
@@ -50,6 +53,7 @@
       <tn-nested-tree-node
         *cdkTreeNodeDef="let group; when: isGroup"
         hideToggle
+        [testId]="['disk-group', asEnclosureGroup(group).group]"
         (click)="toggleGroup(group)"
         (keydown.enter)="toggleGroup(group)"
         (keydown.space)="$event.preventDefault(); toggleGroup(group)"

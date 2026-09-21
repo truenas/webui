@@ -6,8 +6,17 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UntypedFormArray, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnAutocompleteComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormListComponent,
-  TnFormListItemComponent, TnIconComponent, TnInputComponent, TnSelectComponent, TnTooltipDirective,
+  InputType,
+  TnAutocompleteComponent,
+  TnCheckboxComponent,
+  TnFormFieldComponent,
+  TnFormListComponent,
+  TnFormListItemComponent,
+  TnIconComponent,
+  TnInputComponent,
+  TnSelectComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
 } from '@truenas/ui-components';
 import { BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, filter, map, take } from 'rxjs/operators';
@@ -43,6 +52,7 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
     TnFormListItemComponent,
     ReactiveFormsModule,
     SchedulerComponent,
+    TnTestIdDirective,
     TnTooltipDirective,
     TnIconComponent,
     IxCodeEditorComponent,
