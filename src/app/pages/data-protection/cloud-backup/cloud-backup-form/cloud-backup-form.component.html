@@ -16,10 +16,24 @@
       [heading]="helptext.introHeading | translate"
       [message]="helptext.introMessage | translate"
     >
-      <a target="_blank" rel="noopener noreferrer" tnBannerAction [href]="storjAccountUrl">
+      <a
+        tnTestId="create-storj-account"
+        tnTestIdType="link"
+        target="_blank"
+        rel="noopener noreferrer"
+        tnBannerAction
+        [href]="storjAccountUrl"
+      >
         {{ helptext.createStorjAccountLink | translate }}
       </a>
-      <a target="_blank" rel="noopener noreferrer" tnBannerAction [href]="documentationUrl">
+      <a
+        tnTestId="view-documentation"
+        tnTestIdType="link"
+        target="_blank"
+        rel="noopener noreferrer"
+        tnBannerAction
+        [href]="documentationUrl"
+      >
         {{ helptext.viewDocumentationLink | translate }}
       </a>
     </tn-banner>

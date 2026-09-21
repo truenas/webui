@@ -1,6 +1,7 @@
 <div class="alert-classes-tab">
   <div class="enable-section">
     <tn-checkbox
+      testId="auto-check-alert-classes"
       [label]="'Auto-check alert class sync on open' | translate"
       [ngModel]="autoCheck()"
       (ngModelChange)="autoCheck.set($event)"
@@ -10,6 +11,7 @@
   <div class="actions">
     <tn-button
       color="primary"
+      testId="check-alert-classes"
       [disabled]="loading() || !isAuthenticated()"
       [label]="loading() ? ('Checking...' | translate) : ('Check Now' | translate)"
       (onClick)="runComparison()"

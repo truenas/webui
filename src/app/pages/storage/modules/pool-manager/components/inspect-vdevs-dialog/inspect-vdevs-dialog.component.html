@@ -5,7 +5,9 @@
       @for (type of presentTypes; track type) {
         <tn-list-item
           class="vdev-type"
+          tnTestIdType="list-item"
           [clickable]="true"
+          [tnTestId]="['vdev-type', type]"
           [class.selected]="type === selectedType"
           (itemClick)="selectType(type)"
         >{{ getTypeLabel(type) | translate }}</tn-list-item>

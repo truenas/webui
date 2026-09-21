@@ -57,6 +57,7 @@
           <div class="config-item" [class.enabled]="config.enabled">
             <tn-slide-toggle
               [checked]="config.enabled"
+              [testId]="['mock-config', config.methodName]"
               [ariaLabel]="(config.enabled ? 'Disable mock for {name}' : 'Enable mock for {name}') | translate: { name: config.methodName }"
               [tnTooltip]="config.enabled ? ('Disable' | translate) : ('Enable' | translate)"
               (change)="toggleConfig(config.id)"

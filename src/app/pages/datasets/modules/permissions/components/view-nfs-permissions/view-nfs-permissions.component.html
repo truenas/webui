@@ -12,6 +12,7 @@
       <ix-permissions-item
         class="accordion-item-header"
         [item]="permissionItems[i]"
+        [tnTestId]="['acl-item', permissionItems[i].name]"
         (click)="accordionItem.toggle()"
       ></ix-permissions-item>
       @if (permissionDetails[i]; as details) {

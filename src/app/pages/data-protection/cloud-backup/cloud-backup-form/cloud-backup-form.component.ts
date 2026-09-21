@@ -8,14 +8,15 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
-  TnBannerComponent,
   TnBannerActionDirective,
+  TnBannerComponent,
   TnCheckboxComponent,
   TnChipInputComponent,
   TnFormFieldComponent,
   TnFormSectionComponent,
   TnInputComponent,
   TnSelectComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   Observable, debounceTime, distinctUntilChanged, filter, map, of,
@@ -68,6 +69,7 @@ type FormValue = CloudBackupFormComponent['form']['value'];
     ExplorerCreateDatasetComponent,
     CloudCredentialsSelectComponent,
     SchedulerComponent,
+    TnTestIdDirective,
     TranslateModule,
     TnBannerComponent,
     TnBannerActionDirective,

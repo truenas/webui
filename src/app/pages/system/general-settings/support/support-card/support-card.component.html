@@ -41,6 +41,8 @@
         [message]="'You will be unable to contact support after {date}. Contact your account team to renew.' | translate: { date: licenseInfo.expirationDateDisplay }"
       >
         <a
+          tnTestId="contact-us"
+          tnTestIdType="link"
           tnBannerAction
           href="https://www.truenas.com/contact-us/"
           target="_blank"
@@ -81,6 +83,8 @@
           [heading]="'Need help? Looking for support?' | translate"
         >
           <a
+            tnTestId="explore-support-options"
+            tnTestIdType="link"
             tnBannerAction
             href="https://www.truenas.com/support/"
             target="_blank"
@@ -100,6 +104,8 @@
         [message]="'Get support and join discussions on our forums.' | translate"
       >
         <a
+          tnTestId="join-community"
+          tnTestIdType="link"
           tnBannerAction
           href="https://forums.truenas.com/"
           target="_blank"
@@ -125,6 +131,8 @@
     <!-- LINKS -->
     <div class="links-row">
       <a
+        tnTestId="documentation"
+        tnTestIdType="link"
         href="https://www.truenas.com/docs/hub/"
         target="_blank"
         rel="noopener noreferrer"
@@ -133,6 +141,8 @@
       >{{ 'Documentation' | translate }}</a>
       <span class="link-separator">•</span>
       <a
+        tnTestId="forums"
+        tnTestIdType="link"
         href="https://forums.truenas.com/"
         target="_blank"
         rel="noopener noreferrer"
@@ -141,6 +151,8 @@
       >{{ 'Forums' | translate }}</a>
       <span class="link-separator">•</span>
       <a
+        tnTestId="licensing"
+        tnTestIdType="link"
         href="https://www.ixsystems.com/support/truenas-arrays/"
         target="_blank"
         rel="noopener noreferrer"

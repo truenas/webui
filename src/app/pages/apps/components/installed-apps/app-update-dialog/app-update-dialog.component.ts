@@ -3,7 +3,12 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnDialogShellComponent, TnIconComponent, TnSelectComponent, TnSelectOption,
+  TnButtonComponent,
+  TnDialogShellComponent,
+  TnIconComponent,
+  TnSelectComponent,
+  TnSelectOption,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
@@ -27,6 +32,7 @@ type Version = Pick<AppUpgradeSummary, 'latest_version' | 'latest_human_version'
     ImgFallbackModule,
     TnSelectComponent,
     FormsModule,
+    TnTestIdDirective,
     TranslateModule,
     FormActionsComponent,
     TnButtonComponent,

@@ -5,6 +5,7 @@ import { AbstractControl } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import type { TnTestIdValue } from '@truenas/ui-components';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
@@ -35,6 +36,29 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
   readonly label = input<string>();
 
   readonly ixManualValidateError = ixManualValidateErrorKey;
+
+  /**
+   * The dismiss icon's test id, scoped to the control this instance reports on.
+   *
+   * One `ix-errors` is mounted per control — `allowed-access-section` alone renders five on a page
+   * — and manual validate errors usually arrive together from one failed save, so a static id put
+   * several identical `icon-dismiss-error` elements on screen and a suite could not say which
+   * field's error it was dismissing.
+   *
+   * Keyed on the control's name rather than {@link label}, which is translated: the id has to hold
+   * still across locales. Falls back to the label for a control with no parent to name it.
+   *
+   * A method, not a `computed()`: {@link controlName} reads `control.parent.controls`, which is
+   * plain reactive-forms state and not a signal, so a `computed` would track only the `control`
+   * and `label` inputs and cache a name that the form can change underneath it. A `FormGroup`
+   * living in a `FormArray` is named by its index — remove the item before it and the surviving
+   * instance keeps the input reference it was created with, so the cached id would still say the
+   * old index while a newly appended item claimed it. Re-reading per change detection costs a
+   * `find` over the parent's controls.
+   */
+  protected dismissErrorTestId(): TnTestIdValue {
+    return ['dismiss-error', this.controlName() ?? this.label()];
+  }
 
   private statusChangeSubscription: Subscription;
   messages: string[] = [];
@@ -100,6 +124,17 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
       return this.translate.instant(message, { maxLength });
     },
   };
+
+  /** This control's name within its parent group, the way `editable.component.ts` resolves it. */
+  private controlName(): string | undefined {
+    const control = this.control();
+    const parent = control.parent;
+    if (!parent || !('controls' in parent)) {
+      return undefined;
+    }
+    const controls = parent.controls as Record<string, AbstractControl>;
+    return Object.keys(controls).find((name) => controls[name] === control);
+  }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if ('control' in changes && this.control()) {

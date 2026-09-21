@@ -1,5 +1,5 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { createHostFactory, mockProvider, SpectatorHost } from '@ngneat/spectator/jest';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 
@@ -102,5 +102,54 @@ describe('IxErrorsComponent', () => {
     spectator.detectComponentChanges();
 
     expect(invalidControl.touched).toBe(false);
+  });
+
+  // One ix-errors is mounted per control and manual errors usually arrive together from a single
+  // failed save, so a static id on the dismiss icon put several identical elements on one page.
+  describe('the dismiss icon\'s test id', () => {
+    function manualErrorOn(errored: FormControl): void {
+      errored.setErrors({ ixManualValidateError: { message: 'Custom error' } });
+      // The whole block is behind `touched || dirty`, so an untouched control renders nothing.
+      errored.markAsTouched();
+      spectator.setHostInput('control', errored);
+      spectator.detectComponentChanges();
+    }
+
+    /** `tn-icon` writes the id on the element inside its host, so read it from there. */
+    function dismissIconTestId(): string | null | undefined {
+      return spectator.query('.close-icon')
+        ?.querySelector('[data-test]')
+        ?.getAttribute('data-test');
+    }
+
+    it('is scoped to the name of the control it reports on', () => {
+      const form = new FormGroup({ smb_shares: new FormControl('') });
+
+      manualErrorOn(form.controls.smb_shares);
+
+      expect(dismissIconTestId()).toBe('icon-dismiss-error-smb-shares');
+    });
+
+    it('falls back to the label when the control has no parent to name it', () => {
+      manualErrorOn(new FormControl(''));
+
+      expect(dismissIconTestId()).toBe('icon-dismiss-error-name');
+    });
+
+    // A control inside a FormArray is named by its index, and the array can renumber it without
+    // the `control` input ever changing identity. Reading the name per change detection is what
+    // keeps the id current; a cached one would leave two rows claiming the same index.
+    it('follows the control when its array renumbers it', () => {
+      const array = new FormArray([new FormControl(''), new FormControl('')]);
+
+      manualErrorOn(array.at(1) as FormControl);
+
+      expect(dismissIconTestId()).toBe('icon-dismiss-error-1');
+
+      array.removeAt(0);
+      spectator.detectComponentChanges();
+
+      expect(dismissIconTestId()).toBe('icon-dismiss-error-0');
+    });
   });
 });

@@ -6,7 +6,11 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnIconButtonComponent, TnTabsComponent, TnTabComponent, TnTabPanelComponent,
+  TnIconButtonComponent,
+  TnTabComponent,
+  TnTabPanelComponent,
+  TnTabsComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { map } from 'rxjs/operators';
 import { EnclosureMockService } from 'app/services/enclosure-mock.service';
@@ -38,6 +42,7 @@ const retryIntervalMs = 100;
     TnTabComponent,
     TnTabPanelComponent,
     TnIconButtonComponent,
+    TnTestIdDirective,
     WebSocketTabComponent,
     MockConfigurationsTabComponent,
     EnclosureMockTabComponent,

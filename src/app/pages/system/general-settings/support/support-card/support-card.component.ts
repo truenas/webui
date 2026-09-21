@@ -13,6 +13,7 @@ import {
   TnCardFooterActionsDirective,
   TnCardHeaderDirective,
   TnDialog,
+  TnTestIdDirective,
   TnTooltipDirective,
 } from '@truenas/ui-components';
 import { Observable, of, switchMap } from 'rxjs';
@@ -60,6 +61,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   styleUrls: ['./support-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     UiSearchDirective,
     SysInfoComponent,
     RequiresRolesDirective,

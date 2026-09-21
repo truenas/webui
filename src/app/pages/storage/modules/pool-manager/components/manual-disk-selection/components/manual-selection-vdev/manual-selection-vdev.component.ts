@@ -1,7 +1,7 @@
 import { NgClass, AsyncPipe, KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnChanges, inject } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent, TnIconButtonComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnIconButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { keyBy } from 'lodash-es';
 import { DndDropEvent, DndDropzoneDirective, DndDraggableDirective } from 'ngx-drag-drop';
 import { MiB } from 'app/constants/bytes.constant';
@@ -35,6 +35,7 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
     DiskIconComponent,
     DndDraggableDirective,
     TnIconButtonComponent,
+    TnTestIdDirective,
     IxLabelComponent,
     TranslateModule,
     FileSizePipe,

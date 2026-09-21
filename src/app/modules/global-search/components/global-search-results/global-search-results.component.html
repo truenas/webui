@@ -29,6 +29,7 @@
                     class="icon"
                     color="accent"
                     [attr.tabindex]="sectionResults.length + i + 1"
+                    [testId]="['remove-recent-search', result.hierarchy?.join('-')]"
                     [attr.aria-label]="'Remove {value} from recent searches' | translate:{ value: result.hierarchy?.[result.hierarchy?.length - 1] }"
                     (click)="removeRecentSearch($event, result)"
                     (keydown.enter)="removeRecentSearch($event, result)"

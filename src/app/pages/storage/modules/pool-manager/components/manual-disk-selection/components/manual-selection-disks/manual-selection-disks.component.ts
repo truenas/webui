@@ -4,14 +4,15 @@ import { ChangeDetectionStrategy, Component, DestroyRef, input, OnInit, inject }
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
+  createNestedTreeControl,
   TnIconComponent,
   TnNestedTreeDataSource,
   TnNestedTreeNodeComponent,
+  TnTestIdDirective,
   TnTooltipDirective,
   TnTreeComponent,
   TnTreeExpansion,
   TnTreeNodeOutletDirective,
-  createNestedTreeControl,
 } from '@truenas/ui-components';
 import {
   DndDropEvent, DndDropzoneDirective, DndDraggableDirective, DndDragImageRefDirective,
@@ -61,6 +62,7 @@ const noEnclosureId = 'no-enclosure';
     DndDragImageRefDirective,
     DiskInfoComponent,
     TnIconComponent,
+    TnTestIdDirective,
     TnTooltipDirective,
     TranslateModule,
     AsyncPipe,

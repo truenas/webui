@@ -1,7 +1,7 @@
 import { CdkAccordion, CdkAccordionItem } from '@angular/cdk/accordion';
 import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import {
   NfsAdvancedFlag, nfsAdvancedFlagLabels,
   NfsAdvancedPermission, nfsAdvancedPermissionLabels, nfsBasicFlagLabels, nfsBasicPermissionLabels,
@@ -33,6 +33,7 @@ interface PermissionDetails {
     CdkAccordionItem,
     PermissionsItemComponent,
     TnIconComponent,
+    TnTestIdDirective,
     TranslateModule,
   ],
 })

@@ -2,7 +2,7 @@ import { DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnDialogShellComponent, TnDividerComponent, TnListComponent, TnListItemComponent,
+  TnDialogShellComponent, TnDividerComponent, TnListComponent, TnListItemComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { CreateVdevLayout, VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
@@ -28,6 +28,7 @@ import {
     TnDialogShellComponent,
     TnListComponent,
     TnListItemComponent,
+    TnTestIdDirective,
     TnDividerComponent,
     ManualSelectionVdevComponent,
     TranslateModule,

@@ -79,9 +79,11 @@
             <div class="changelog-link">
               <span class="changelog-label">{{ 'Changelog' | translate }}:</span>
               <a
+                tnTestIdType="link"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="changelog-url"
+                [tnTestId]="['changelog', bulkItem.key]"
                 [href]="bulkItem.value.item.metadata.changelog_url"
                 [attr.aria-label]="'View Upstream Release Notes (opens in new window)' | translate"
               >
