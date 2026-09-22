@@ -324,12 +324,12 @@ describe('SessionTimeoutService', () => {
   }));
 
   it('re-arms the timer with the configured lifetime when preferences load after start', fakeAsync(() => {
-    const dialogService = spectator.inject(DialogService);
+    const matDialog = spectator.inject(MatDialog);
     const store$ = spectator.inject(MockStore);
-    jest.spyOn(dialogService, 'sessionExpiring').mockReturnValue({
-      closed: new Subject<boolean>(),
+    jest.spyOn(matDialog, 'open').mockReturnValue({
+      afterClosed: () => new Subject<boolean>(),
       close: jest.fn(),
-    } as unknown as ReturnType<typeof dialogService.sessionExpiring>);
+    } as unknown as ReturnType<typeof matDialog.open>);
 
     store$.overrideSelector(selectPreferences, null);
     store$.refreshState();
@@ -343,10 +343,10 @@ describe('SessionTimeoutService', () => {
     tick(0);
 
     tick(300 * 1000);
-    expect(dialogService.sessionExpiring).not.toHaveBeenCalled();
+    expect(matDialog.open).not.toHaveBeenCalled();
 
     tick(14400 * 1000 - 300 * 1000);
-    expect(dialogService.sessionExpiring).toHaveBeenCalled();
+    expect(matDialog.open).toHaveBeenCalledWith(SessionExpiringDialog, expect.any(Object));
 
     spectator.service.stop();
   }));
