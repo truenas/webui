@@ -30,6 +30,7 @@ describe('SigninComponent', () => {
   const loginBanner$ = new BehaviorSubject<string>('');
   const isTokenWithinTimeline$ = new BehaviorSubject<boolean>(true);
   const isLoading$ = new BehaviorSubject<boolean>(false);
+  const isLoggingIn$ = new BehaviorSubject<boolean>(false);
   const isReconnectAllowed$ = new BehaviorSubject<boolean>(false);
   const isFailoverRestart$ = new BehaviorSubject<boolean>(false);
 
@@ -50,6 +51,7 @@ describe('SigninComponent', () => {
         canLogin$,
         loginBanner$,
         isLoading$,
+        isLoggingIn$,
         init: jest.fn(),
       }),
     ],
@@ -80,6 +82,7 @@ describe('SigninComponent', () => {
     loginBanner$.next('');
     isTokenWithinTimeline$.next(false);
     isLoading$.next(false);
+    isLoggingIn$.next(false);
 
     spectator = createComponent();
   });
@@ -137,6 +140,34 @@ describe('SigninComponent', () => {
       const loggingInMessage = spectator.query('.logging-in');
       expect(loggingInMessage).toExist();
       expect(loggingInMessage).toHaveText('Logging in...');
+    });
+
+    it('shows "Logging in..." message while a submitted login is still completing', () => {
+      // A first login has no auth token yet, so this state is the only thing covering the
+      // post-login sequence - otherwise the sign-in form sits there looking idle.
+      isTokenWithinTimeline$.next(false);
+      isLoggingIn$.next(true);
+
+      spectator.detectChanges();
+
+      const loggingInMessage = spectator.query('.logging-in');
+      expect(loggingInMessage).toExist();
+      expect(loggingInMessage).toHaveText('Logging in...');
+      // Announced and focusable, since it replaces the submit button that held focus.
+      expect(loggingInMessage).toHaveAttribute('role', 'status');
+      expect(loggingInMessage).toHaveAttribute('tabindex', '-1');
+    });
+
+    it('keeps the sign-in form alive, but hidden, while a submitted login is completing', () => {
+      // A post-login failure comes back to this form, so it must not lose the entered
+      // credentials or a two-factor step the user already passed.
+      isTokenWithinTimeline$.next(false);
+      isLoggingIn$.next(true);
+
+      spectator.detectChanges();
+
+      expect(spectator.query(SigninFormComponent)).toExist();
+      expect(spectator.query('.form-card')).toHaveClass('hidden');
     });
 
     it('checks login banner and shows full dialog if set', () => {

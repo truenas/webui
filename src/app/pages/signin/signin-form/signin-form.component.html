@@ -30,7 +30,7 @@
       ixTest="log-in"
       [disabled]="isFormDisabled()"
     >
-      {{ 'Log In' | translate }}
+      {{ isSubmitting() ? ('Logging in...' | translate) : ('Log In' | translate) }}
     </button>
     @if (isLastLoginAttemptFailed) {
       <div class="error">
@@ -64,7 +64,7 @@
         ixTest="log-in"
         [disabled]="isFormDisabled()"
       >
-        {{ 'Proceed' | translate }}
+        {{ isSubmitting() ? ('Logging in...' | translate) : ('Proceed' | translate) }}
       </button>
       <button
         class="submit-button"
