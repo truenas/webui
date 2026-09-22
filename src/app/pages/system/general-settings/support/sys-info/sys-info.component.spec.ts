@@ -8,6 +8,7 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LicenseType } from 'app/enums/license-type.enum';
 import { ContractType } from 'app/interfaces/system-info.interface';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   LicenseFingerprintDialog,
@@ -36,6 +37,33 @@ describe('SysInfoComponent', () => {
   };
   const fingerprintBase64 = btoa(JSON.stringify({ system_serial: 'A1' }));
 
+  // Several tests here replace `navigator.clipboard` and `document.execCommand`
+  // wholesale. Restored after each, so a test added later does not inherit an
+  // undefined Clipboard API and fail for a reason of its own.
+  const originalClipboard = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
+  // eslint-disable-next-line sonarjs/deprecation
+  const originalExecCommand = document.execCommand;
+
+  afterEach(() => {
+    if (originalClipboard) {
+      Object.defineProperty(navigator, 'clipboard', originalClipboard);
+    } else {
+      // jsdom defines no `navigator.clipboard`, so restoring means removing
+      // the one these tests defined — an `if` alone leaves it as
+      // `{ value: undefined }` and the next test to spy on it fails.
+      delete (navigator as { clipboard?: unknown }).clipboard;
+    }
+    if (originalExecCommand) {
+      // eslint-disable-next-line sonarjs/deprecation
+      document.execCommand = originalExecCommand;
+    } else {
+      // Same not-really-a-restore as the clipboard one above: jsdom defines no
+      // `document.execCommand` either, so assigning `undefined` back installs
+      // the property rather than removing it.
+      delete (document as { execCommand?: unknown }).execCommand;
+    }
+  });
+
   let spectator: Spectator<SysInfoComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
@@ -43,6 +71,7 @@ describe('SysInfoComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(MatDialog, { open: jest.fn() }),
+      mockProvider(SnackbarService),
       mockApi([mockCall('truenas.license.fingerprint', fingerprintBase64)]),
     ],
   });
@@ -281,6 +310,34 @@ describe('SysInfoComponent', () => {
         .filter((args) => args[0] === 'truenas.license.fingerprint');
       expect(fingerprintCalls).toHaveLength(1);
       expect(writeText).toHaveBeenCalledTimes(2);
+    });
+
+    it('still copies when served over plain HTTP, where navigator.clipboard does not exist', async () => {
+      // The reported bug. `navigator.clipboard` is gated on a secure context,
+      // so over http:// it is undefined and reading `.writeText` off it threw —
+      // synchronously, before any promise existed, so the component's own error
+      // handler never ran either and the user got a raw TypeError.
+      spectator.setInput({ hasLicense: true, licenseInfo, isProactiveSupportAvailable: true });
+      Object.defineProperty(navigator, 'clipboard', { configurable: true, value: undefined });
+      // eslint-disable-next-line sonarjs/deprecation
+      document.execCommand = jest.fn(() => true);
+
+      const copyButton = await loader.getHarness(
+        MatButtonHarness.with({ selector: '[ixTest="copy-fingerprint"]' }),
+      );
+      await copyButton.click();
+
+
+      expect(document.execCommand).toHaveBeenCalledWith('copy');
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Copied to clipboard');
+    });
+
+    it('leaves navigator.clipboard as it found it for whatever runs next', () => {
+      // Guards the afterEach above. jsdom defines no `navigator.clipboard`, so
+      // an `if (originalClipboard)` restore is dead code and the deleted-API
+      // state leaks into every later test in the file — which is what this
+      // spec's own plain-HTTP test would otherwise do to its neighbours.
+      expect(Object.getOwnPropertyDescriptor(navigator, 'clipboard')).toBeUndefined();
     });
   });
 });
