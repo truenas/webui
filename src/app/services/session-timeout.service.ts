@@ -134,14 +134,24 @@ export class SessionTimeoutService {
       )
       .subscribe((preferences) => {
         const lifetime = preferences.lifetime || this.defaultLifetime;
-        if (this.currentLifetime !== lifetime) {
-          const shouldResetTimeout = this.currentLifetime !== null;
-          this.currentLifetime = lifetime;
-          this.tokenLastUsedService.updateTokenLifetime(lifetime);
-          if (shouldResetTimeout) {
-            this.resetTimer();
-          }
+
+        // Re-assert the stored lifetime on every emission, not only when it changes.
+        // `clearAuthToken()` wipes it from local storage on every sign-out and session
+        // expiry, and this service is `providedIn: 'root'` — so on a second sign-in within
+        // the same page load `currentLifetime` still holds the old value, nothing would
+        // rewrite it, and `isTokenWithinTimeline$` would silently measure the session
+        // against its own five-minute default instead of the configured lifetime.
+        this.tokenLastUsedService.updateTokenLifetime(lifetime);
+
+        if (this.currentLifetime === lifetime) {
+          return;
         }
+
+        // Reset on the first value too: `start()` arms the timer before preferences have
+        // necessarily reached the store, and that first timer runs on `defaultLifetime`.
+        // Leaving it armed keeps a five-minute countdown on a four-hour session.
+        this.currentLifetime = lifetime;
+        this.resetTimer();
       });
   }
 
