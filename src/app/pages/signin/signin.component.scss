@@ -45,6 +45,12 @@
   padding: 0 0 18px !important;
 }
 
+// The form card stays in the DOM while logging in so it keeps its state; display: none also
+// keeps it out of the tab order and the accessibility tree.
+.form-card.hidden {
+  display: none;
+}
+
 .mat-mdc-card .mat-mdc-card-content>div {
   padding: 0;
 }
