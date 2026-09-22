@@ -79,7 +79,7 @@ describe('SessionTimeoutService', () => {
     expect(tokenLastUsedService.updateTokenLifetime).toHaveBeenCalledWith(300);
   }));
 
-  it('only updates token lifetime when value changes', fakeAsync(() => {
+  it('does not touch the stored token lifetime on user activity alone', fakeAsync(() => {
     const tokenLastUsedService = spectator.inject(TokenLastUsedService);
     const window = spectator.inject<Window>(WINDOW);
 
@@ -98,8 +98,28 @@ describe('SessionTimeoutService', () => {
       tick(1000);
     }
 
-    // Should still be 1 because lifetime hasn't changed
+    // Still 1 — only a preferences emission writes the lifetime
     expect(tokenLastUsedService.updateTokenLifetime).toHaveBeenCalledTimes(1);
+  }));
+
+  it('rewrites the stored token lifetime on every start, even when the preference is unchanged', fakeAsync(() => {
+    const tokenLastUsedService = spectator.inject(TokenLastUsedService);
+
+    spectator.service.start();
+    tick(0);
+    expect(tokenLastUsedService.updateTokenLifetime).toHaveBeenCalledWith(300);
+
+    // Signing out clears the stored lifetime, so signing back in has to write it again -
+    // the service is a singleton and still remembers the same preference value.
+    spectator.service.stop();
+    jest.mocked(tokenLastUsedService.updateTokenLifetime).mockClear();
+
+    spectator.service.start();
+    tick(0);
+
+    expect(tokenLastUsedService.updateTokenLifetime).toHaveBeenCalledWith(300);
+
+    spectator.service.stop();
   }));
 
   it('pauses session timeout', fakeAsync(() => {
@@ -293,6 +313,34 @@ describe('SessionTimeoutService', () => {
     expect(dialogCloseSpy).toHaveBeenCalled();
 
     // Clean up
+    spectator.service.stop();
+  }));
+
+  it('re-arms the timer with the configured lifetime when preferences load after start', fakeAsync(() => {
+    const dialogService = spectator.inject(DialogService);
+    const store$ = spectator.inject(MockStore);
+    jest.spyOn(dialogService, 'sessionExpiring').mockReturnValue({
+      closed: new Subject<boolean>(),
+      close: jest.fn(),
+    } as unknown as ReturnType<typeof dialogService.sessionExpiring>);
+
+    store$.overrideSelector(selectPreferences, null);
+    store$.refreshState();
+
+    // Preferences are not in the store yet, so start() arms the timer on the 300 second default.
+    spectator.service.start();
+    tick(0);
+
+    store$.overrideSelector(selectPreferences, { lifetime: 14400 } as Preferences);
+    store$.refreshState();
+    tick(0);
+
+    tick(300 * 1000);
+    expect(dialogService.sessionExpiring).not.toHaveBeenCalled();
+
+    tick(14400 * 1000 - 300 * 1000);
+    expect(dialogService.sessionExpiring).toHaveBeenCalled();
+
     spectator.service.stop();
   }));
 });
