@@ -5,6 +5,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconButtonComponent } from '@truenas/ui-components';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ClipboardService } from 'app/services/clipboard.service';
 
 @Component({
   selector: 'ix-copy-button',
@@ -24,6 +25,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class CopyButtonComponent {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
+  private clipboard = inject(ClipboardService);
 
   readonly text = input.required<string>();
   readonly jsonText = input<unknown>();
@@ -34,34 +36,22 @@ export class CopyButtonComponent {
     this.snackbar.success(this.translate.instant('Copied to clipboard'));
   }
 
-  private copyViaDeprecatedExecCommand(text: string): Promise<void> {
-    return new Promise((resolve) => {
-      const textArea = document.createElement('textarea');
-      Object.assign(textArea.style, { position: 'fixed', left: '-9999px', top: '-9999px' });
-      textArea.value = text;
-      document.body.appendChild(textArea);
-      textArea.select();
-      // Fallback for browsers that don't support navigator.clipboard
-      // eslint-disable-next-line sonarjs/deprecation
-      document.execCommand('copy');
-      textArea.remove();
-      resolve();
-    });
-  }
-
-  private handleCopyToClipboard(text: string): Promise<void> {
-    if (navigator.clipboard) {
-      return navigator.clipboard.writeText(text);
-    }
-
-    return this.copyViaDeprecatedExecCommand(text);
+  // The copy can fail with nothing else to report it: `writeText` rejects when
+  // the document isn't focused or the permission is denied, and the
+  // insecure-context fallback reports a refusal by returning false.
+  private showErrorMessage(): void {
+    this.snackbar.error(this.translate.instant('Failed to copy to clipboard'));
   }
 
   copyToClipboard(): void {
-    this.handleCopyToClipboard(this.text()).then(() => this.showSuccessMessage());
+    this.clipboard.copy(this.text())
+      .then(() => this.showSuccessMessage())
+      .catch(() => this.showErrorMessage());
   }
 
   copyJsonToClipboard(): void {
-    this.handleCopyToClipboard(JSON.stringify(this.jsonText(), null, 2)).then(() => this.showSuccessMessage());
+    this.clipboard.copy(JSON.stringify(this.jsonText(), null, 2))
+      .then(() => this.showSuccessMessage())
+      .catch(() => this.showErrorMessage());
   }
 }
