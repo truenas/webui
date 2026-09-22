@@ -12,8 +12,7 @@ about 1,350 lines describing 555 calls, 80 jobs and 31 events) that drift from
 middleware. When the migration started on 2026-09-08 they were used from
 roughly 870 `call`, 110 `job` and 45 `subscribe` sites across 414 files. This
 document describes how the UI moves from one to the other without a big-bang
-rewrite. To see where it stands, count `inject(ApiService)` against
-`inject(TypedApiService)` in non-spec files.
+rewrite. To see where it stands, run `yarn check-api-migration --report`.
 
 ## What is in place
 
@@ -194,12 +193,25 @@ in isolation.
 As the last consumer of a method moves, delete its entry from the hand-written
 directory. The shrinking directories are the progress bar.
 
-Guardrails to add early in this phase:
+Guardrails, in place since NAS-143991 and both keyed to one list of finished
+paths (`scripts/api-migration-areas.mjs`):
 
-- A script that counts remaining `inject(ApiService)` sites per top-level
-  folder, so progress is visible and regressions are obvious.
-- A path-scoped `no-restricted-imports` rule for `ApiService` in folders that
-  have finished migrating, so they cannot slide back.
+- `yarn check-api-migration` counts remaining legacy dependants per area, and
+  runs in CI's lint job. `--report` prints the breakdown; the gate itself only
+  fails on the list going stale — an entry that matches nothing, an entry that
+  imports the legacy client again, or an area that has finished migrating and
+  has not been pinned. It counts *files that import the client*, not `inject()`
+  sites: about twenty dependants take `api: ApiService` as a parameter instead
+  (the `*.form-config.ts` helpers, `ApiDataProvider`), and the import is what
+  the lint rule below keys on, so the two agree on what "moved" means.
+- A path-scoped `no-restricted-imports` (`migratedApiOverrides` in
+  `eslint.config.mjs`) bans `ApiService` and `mockApi` in those same paths, so
+  a finished area cannot slide back.
+
+Adding a path is the last step of migrating it: once the area's last legacy
+import goes, `check-api-migration` fails until it is listed. Infrastructure
+that owns both clients by definition — `modules/websocket`, `core/testing`,
+and `interfaces`, which only aliases generated types — is exempt.
 
 ### Phase 2 — move the infrastructure
 

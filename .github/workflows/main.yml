@@ -78,6 +78,12 @@ jobs:
       # stay addressable. See scripts/check-test-ids.ts.
       - name: Check test IDs
         run: yarn check-test-ids
+      # The typed-API-client migration runs for months across hundreds of PRs. `yarn lint` pins the
+      # areas that have finished (see migratedApiOverrides in eslint.config.mjs); this proves that
+      # list still covers the repo, and prints what is left per area. See
+      # scripts/check-api-migration.ts and docs/devs/typed-api-client.md.
+      - name: Check API client migration
+        run: yarn check-api-migration
       # `e2e/` is outside the root tsconfig's project — the Playwright runner is
       # Node-hosted and cannot share the Angular compiler options (see
       # e2e/tsconfig.json). Without this step nothing type-checks the suite.

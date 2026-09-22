@@ -1,4 +1,5 @@
 import baseConfig from '@truenas/common-typescript/eslint.config';
+import { legacyApiImportPatterns, migratedApiFilePatterns } from './scripts/api-migration-areas.mjs';
 
 // ESLint replaces a rule's options wholesale rather than merging them, so the base
 // config's `no-restricted-syntax` entries have to be carried over explicitly. Read them
@@ -35,6 +36,33 @@ const projectRestrictedSyntax = [
   },
 ];
 
+// Lifted out of the rule so the migrated-path override below can repeat them: `no-restricted-imports`
+// is replaced wholesale too, and an override that forgot these would let Angular Material and the
+// raw DatePipe back into exactly the areas that are otherwise the most closely guarded.
+const restrictedImportPatterns = [
+  {
+    // `@angular/material` is gone from package.json entirely (NAS-141025), so a
+    // stray import already fails to resolve. This keeps the failure legible — and
+    // stops someone re-adding the dependency to "fix" it.
+    //
+    // Deliberately repo-wide rather than scoped to `src/app/modules/forms/**` plus
+    // the migrated sections (NAS-142358): every section is migrated now, so a list
+    // of paths would only be a list that goes stale. The `.scss` half is covered by
+    // `selector-disallowed-list` in .stylelintrc.json, and `mat-*` elements in
+    // templates are already a compile error now that the package is gone.
+    group: ['@angular/material', '@angular/material/*'],
+    message: "Angular Material has been fully replaced by @truenas/ui-components (NAS-141025). Use the `tn-*` equivalent; for dialogs, go through `DialogService` (app/modules/dialog/dialog.service.ts) or inject `TnDialog` from '@truenas/ui-components'.",
+  },
+];
+
+const restrictedImportPaths = [
+  {
+    name: '@angular/common',
+    importNames: ['DatePipe'],
+    message: "Do not use Angular's DatePipe directly. It bypasses user datetime format preferences. Use FormatDateTimePipe from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe' or LocaleService methods instead. For fixed formats (like filenames), use date-fns directly.",
+  },
+];
+
 // Project-specific overrides
 const projectOverrides = {
   files: ['**/*.ts'],
@@ -46,29 +74,37 @@ const projectOverrides = {
     ],
     'no-restricted-imports': [
       'error',
+      { patterns: restrictedImportPatterns, paths: restrictedImportPaths },
+    ],
+  },
+};
+
+/**
+ * The regression half of the typed-API-client migration (`docs/devs/typed-api-client.md`).
+ *
+ * An area that has finished moving to `TypedApiService` is pinned: nothing below it may import
+ * the legacy `ApiService` or its `mockApi` spec double again. The migration runs for months
+ * across hundreds of PRs, so "finished" areas are otherwise only as finished as the next author
+ * happens to notice — and the legacy import is one line that compiles and passes its own spec.
+ *
+ * The paths come from `scripts/api-migration-areas.mjs`, which `yarn check-api-migration` reads
+ * as well: that script fails the build when an entry here has gone stale, and when an area has
+ * finished migrating without being added, so the list cannot quietly stop covering the repo.
+ */
+const migratedApiOverrides = {
+  files: migratedApiFilePatterns(),
+  rules: {
+    'no-restricted-imports': [
+      'error',
       {
         patterns: [
+          ...restrictedImportPatterns,
           {
-            // `@angular/material` is gone from package.json entirely (NAS-141025), so a
-            // stray import already fails to resolve. This keeps the failure legible — and
-            // stops someone re-adding the dependency to "fix" it.
-            //
-            // Deliberately repo-wide rather than scoped to `src/app/modules/forms/**` plus
-            // the migrated sections (NAS-142358): every section is migrated now, so a list
-            // of paths would only be a list that goes stale. The `.scss` half is covered by
-            // `selector-disallowed-list` in .stylelintrc.json, and `mat-*` elements in
-            // templates are already a compile error now that the package is gone.
-            group: ['@angular/material', '@angular/material/*'],
-            message: "Angular Material has been fully replaced by @truenas/ui-components (NAS-141025). Use the `tn-*` equivalent; for dialogs, go through `DialogService` (app/modules/dialog/dialog.service.ts) or inject `TnDialog` from '@truenas/ui-components'.",
+            group: legacyApiImportPatterns,
+            message: 'This area has finished migrating to the typed API client. Inject `TypedApiService` (app/modules/websocket/typed-api/typed-api.service) and script specs with `mockTypedApi()`; see docs/devs/typed-api-client.md. If the legacy client is genuinely needed here again, remove the path from `migratedApiPaths` in scripts/api-migration-areas.mjs and say why.',
           },
         ],
-        paths: [
-          {
-            name: '@angular/common',
-            importNames: ['DatePipe'],
-            message: "Do not use Angular's DatePipe directly. It bypasses user datetime format preferences. Use FormatDateTimePipe from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe' or LocaleService methods instead. For fixed formats (like filenames), use date-fns directly.",
-          },
-        ],
+        paths: restrictedImportPaths,
       },
     ],
   },
@@ -160,6 +196,7 @@ export default [
   },
   ...baseConfig,
   projectOverrides,
+  migratedApiOverrides,
   templateOverrides,
   specOverrides,
   e2eOverrides,

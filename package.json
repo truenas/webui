@@ -9,6 +9,7 @@
     "buildng": "node ./setup-production-env.js && NODE_OPTIONS=--max-old-space-size=8192 yarn ng build",
     "build": "yarn run clean:dist && yarn tn-icons && yarn buildng && yarn tsx scripts/update-sw-version.ts",
     "build:prod": "yarn tn-icons && yarn buildng --configuration production --base-href /ui/ && yarn tsx scripts/update-sw-version.ts",
+    "check-api-migration": "tsx scripts/check-api-migration.ts",
     "check-env": "cd $(git rev-parse --show-toplevel) && yarn run ui check-env",
     "check-test-ids": "tsx scripts/check-test-ids.ts",
     "clean:coverage": "rimraf coverage",
