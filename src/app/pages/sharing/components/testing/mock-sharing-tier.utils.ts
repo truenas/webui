@@ -8,7 +8,7 @@ import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.se
 
 interface TierRow {
   tier?: SharingTierInfo | null;
-  locked?: boolean;
+  locked?: boolean | null;
 }
 
 interface MockOpts {
@@ -47,5 +47,6 @@ export function mockSharingTierService(opts: MockOpts = {}): ReturnType<typeof m
       jobUpdates$.subscribe(() => wireOpts.reload());
     },
     createChangeTierAction: buildAction,
+    createChangeDatasetTierAction: buildAction,
   });
 }

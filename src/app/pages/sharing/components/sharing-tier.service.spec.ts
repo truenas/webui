@@ -136,6 +136,37 @@ describe('SharingTierService', () => {
     });
   });
 
+  describe('createChangeDatasetTierAction', () => {
+    const destroyRef = { onDestroy: jest.fn() } as unknown as DestroyRef;
+
+    it('opens the dialog for the row dataset without parsing a mount path, then reloads', () => {
+      const reload = jest.fn();
+      const action = spectator.service.createChangeDatasetTierAction({ destroyRef, reload });
+
+      action.onClick({
+        dataset: 'tank/buckets/photos',
+        tier: { tier_type: DatasetTier.Performance, tier_job: null },
+      });
+
+      expect(matDialogOpen).toHaveBeenCalledWith(ChangeTierDialogComponent, {
+        data: {
+          datasetName: 'tank/buckets/photos',
+          currentTier: DatasetTier.Performance,
+          poolName: 'tank',
+        },
+      });
+      expect(reload).toHaveBeenCalled();
+    });
+
+    it('does not open the dialog when the row has no tier info', () => {
+      const action = spectator.service.createChangeDatasetTierAction({ destroyRef, reload: jest.fn() });
+
+      action.onClick({ dataset: 'tank/buckets/photos', tier: null });
+
+      expect(matDialogOpen).not.toHaveBeenCalled();
+    });
+  });
+
   describe('job wiring', () => {
     const destroyRef = { onDestroy: jest.fn() } as unknown as DestroyRef;
     let jobUpdates$: Subject<{ fields: unknown }>;

@@ -63,7 +63,7 @@
       class="table"
       [rowTestId]="uniqueRowTag"
       [dataSource]="(dataProvider.currentPage$ | async) ?? []"
-      [displayedColumns]="displayedColumns"
+      [displayedColumns]="displayedColumns()"
       [trackBy]="trackByBucketId"
       [loading]="!!(dataProvider.isLoading$ | async)"
       (sortChange)="onSortChange($event)"
@@ -114,6 +114,13 @@
             [requiredRoles]="requiredRoles"
             (toggled)="onChangeEnabledState(row, enabledToggle)"
           ></ix-table-toggle-cell>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'tier'">
+        <ng-template tnHeaderCellDef>{{ 'Storage Tier' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-tier-status [tier]="row.tier" [uniqueRowTag]="uniqueRowTag(row)" />
         </ng-template>
       </ng-container>
 

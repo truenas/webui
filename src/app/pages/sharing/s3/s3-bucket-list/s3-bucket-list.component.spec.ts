@@ -9,14 +9,18 @@ import {
 import { Subject, of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { S3ObjectOwnership, S3PermissionsModel, S3Versioning } from 'app/enums/s3.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { S3Bucket } from 'app/interfaces/s3.interface';
+import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { S3BucketListComponent } from 'app/pages/sharing/s3/s3-bucket-list/s3-bucket-list.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -45,30 +49,32 @@ describe('S3BucketListComponent', () => {
   /** What `sharing.s3.query` answers, so a test can shape the row its action reads. */
   let listedBuckets: S3Bucket[];
 
+  const commonProviders = [
+    mockAuth(),
+    mockProvider(EmptyService),
+    mockProvider(ErrorHandlerService),
+    mockProvider(DialogService, {
+      confirm: jest.fn(() => of(true)),
+      confirmDelete: jest.fn(() => of(undefined)),
+      error: jest.fn(),
+    }),
+    mockProvider(FormSidePanelService, {
+      open: jest.fn(() => SlideInResult.empty()),
+    }),
+    provideMockStore({
+      selectors: [{ selector: selectPreferences, value: {} }],
+    }),
+    mockApi([
+      mockCall('sharing.s3.query', () => listedBuckets),
+      mockCall('sharing.s3.delete'),
+      mockCall('sharing.s3.update'),
+      mockCall('pool.query', [{ path: '/mnt/tank' }] as Pool[]),
+    ]),
+  ];
+
   const createComponent = createComponentFactory({
     component: S3BucketListComponent,
-    providers: [
-      mockAuth(),
-      mockProvider(EmptyService),
-      mockProvider(ErrorHandlerService),
-      mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
-        confirmDelete: jest.fn(() => of(undefined)),
-        error: jest.fn(),
-      }),
-      mockProvider(FormSidePanelService, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
-      provideMockStore({
-        selectors: [{ selector: selectPreferences, value: {} }],
-      }),
-      mockApi([
-        mockCall('sharing.s3.query', () => listedBuckets),
-        mockCall('sharing.s3.delete'),
-        mockCall('sharing.s3.update'),
-        mockCall('pool.query', [{ path: '/mnt/tank' }] as Pool[]),
-      ]),
-    ],
+    providers: [...commonProviders, mockSharingTierService({ enabled: false })],
   });
 
   async function openRowMenu(): Promise<TnMenuHarness> {
@@ -154,5 +160,62 @@ describe('S3BucketListComponent', () => {
 
     expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
     expect(await toggle.isChecked()).toBe(true);
+  });
+
+  it('does not offer Change Storage Tier when tiering is disabled', async () => {
+    const menu = await openRowMenu();
+    expect(await menu.getItemLabels()).not.toContain('Change Storage Tier');
+  });
+
+  describe('with tiering enabled', () => {
+    const jobUpdates$ = new Subject<ZfsTierRewriteJobEntry>();
+    const tier = { tier_type: DatasetTier.Performance, tier_job: null };
+
+    const createTierComponent = createComponentFactory({
+      component: S3BucketListComponent,
+      providers: [...commonProviders, mockSharingTierService({ enabled: true, jobUpdates$ })],
+    });
+
+    async function createWithBuckets(rows: S3Bucket[]): Promise<void> {
+      listedBuckets = rows;
+      spectator = createTierComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(TnTableHarness);
+    }
+
+    it('shows the Storage Tier column before the actions column', async () => {
+      await createWithBuckets([{ ...buckets[0], tier }]);
+
+      expect(await table.getHeaderTexts()).toEqual([
+        'Name', 'Dataset', 'Owner', 'Permissions Model', 'Versioning', 'Object Lock', 'Enabled', 'Storage Tier', '',
+      ]);
+      expect(await table.getAllRowTexts()).toEqual([
+        ['backups', 'tank/buckets/backups', 'bob', 'S3', 'Enabled', 'Yes', '', 'Performance', ''],
+      ]);
+    });
+
+    it('offers Change Storage Tier for a bucket with tier info', async () => {
+      await createWithBuckets([{ ...buckets[0], tier }]);
+
+      const menu = await openRowMenu();
+      expect(await menu.getItemLabels()).toContain('Change Storage Tier');
+    });
+
+    it('does not offer Change Storage Tier for a locked bucket', async () => {
+      await createWithBuckets([{ ...buckets[0], tier, locked: true }]);
+
+      const menu = await openRowMenu();
+      expect(await menu.getItemLabels()).not.toContain('Change Storage Tier');
+    });
+
+    it('reloads buckets when a tier job update is emitted', async () => {
+      await createWithBuckets([{ ...buckets[0], tier }]);
+      const loadSpy = jest.spyOn(AsyncDataProvider.prototype, 'load');
+
+      jobUpdates$.next({ tier_job_id: 'job-1' } as ZfsTierRewriteJobEntry);
+
+      expect(loadSpy).toHaveBeenCalled();
+      loadSpy.mockRestore();
+    });
   });
 });
