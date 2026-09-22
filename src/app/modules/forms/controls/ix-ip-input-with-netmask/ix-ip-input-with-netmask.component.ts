@@ -68,6 +68,10 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   writeValue(ipWithNetmask: string): void {
     this.setAddressAndNetmask(ipWithNetmask);
     this.setNetmaskOptions();
+    // The forms directive calls this outside of any binding this view listens to, so an OnPush
+    // view stays clean and keeps rendering the old address/netmask. Any patch that lands after
+    // the first render — the config a form loads from the API, say — needs this to show up.
+    this.cdr.markForCheck();
   }
 
   registerOnChange(onChange: (value: string) => void): void {
