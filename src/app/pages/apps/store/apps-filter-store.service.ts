@@ -120,6 +120,19 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
     };
   });
 
+  /**
+   * Drops the category/sort filters but keeps the search query, so that it survives the trip
+   * between the Discover page and a category view in either direction.
+   */
+  resetFiltersKeepingSearch = this.updater((state: AppsFilterState): AppsFilterState => {
+    return {
+      ...state,
+      isFilterApplied: false,
+      filteredApps: [],
+      filter: filterInitialValues,
+    };
+  });
+
   applySearchQuery = this.updater((state: AppsFilterState, searchQuery: string): AppsFilterState => {
     return {
       ...state,
@@ -131,6 +144,24 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
 
   readonly searchQuery$ = this.select((state) => state.searchQuery);
   readonly filterValues$ = this.select((state) => state.filter);
+
+  /**
+   * The apps a category view shows: the server-filtered list narrowed down by the search query.
+   * Unlike {@link searchedApps$} it stays a flat list, because a category view renders one grid.
+   */
+  readonly searchedFilteredApps$: Observable<AvailableApp[]> = this.select(
+    this.filteredApps$,
+    this.searchQuery$,
+    (filteredApps, searchQuery) => {
+      if (!searchQuery) {
+        return filteredApps;
+      }
+
+      return filteredApps
+        .filter((app) => this.doesAppContainString(searchQuery, app))
+        .sort(this.sortAppsByTitleAndSearchQuery);
+    },
+  );
 
   constructor() {
     super(initialState);
@@ -343,7 +374,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
   }
 
   private sortAppsByTitleAndSearchQuery = (a: AvailableApp, b: AvailableApp): number => {
-    const searchQuery = this.state().searchQuery;
+    const searchQuery = this.state().searchQuery.toLocaleLowerCase();
     const aStartsWithQuery = a.title.toLocaleLowerCase().startsWith(searchQuery);
     const bStartsWithQuery = b.title.toLocaleLowerCase().startsWith(searchQuery);
 

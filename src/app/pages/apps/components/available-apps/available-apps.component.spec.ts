@@ -1,6 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { By } from '@angular/platform-browser';
+import { RouterLink } from '@angular/router';
 import {
   Spectator, mockProvider, createComponentFactory,
 } from '@ngneat/spectator/jest';
@@ -64,10 +66,13 @@ describe('Finding app', () => {
         appsCategories$: of([]),
       }),
       mockProvider(AppsFilterStore, {
+        appsPerCategory: 6,
         isFilterApplied$: of(false),
         filterValues$: of({}),
         applySearchQuery: jest.fn(),
-        searchedApps$: of([{ apps: appsResponse }]),
+        searchedApps$: of([{
+          apps: appsResponse, title: 'community', category: 'community', totalApps: 10,
+        }]),
         searchQuery$: of('webdav'),
       }),
       mockAuth(),
@@ -86,6 +91,12 @@ describe('Finding app', () => {
     expect(spectator.inject(AppsFilterStore).applySearchQuery).toHaveBeenLastCalledWith('webdav');
 
     expect(spectator.query('.section-title')!.textContent!.trim()).toBe('Search Results for «webdav»');
+  });
+
+  it('carries the search term into the category the View All button links to', () => {
+    const viewAll = spectator.debugElement.query(By.css('.view-all tn-button'));
+
+    expect(viewAll.injector.get(RouterLink).queryParams).toEqual({ search: 'webdav' });
   });
 
   it('redirect to details app when app card is pressed', () => {
