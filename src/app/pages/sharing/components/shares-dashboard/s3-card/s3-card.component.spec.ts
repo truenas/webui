@@ -44,6 +44,8 @@ describe('S3CardComponent', () => {
       owner: 'alice',
       enabled: true,
       locked: false,
+      // Carries tier info so the tiering-disabled test below pins that clause, not a missing tier.
+      tier: { tier_type: DatasetTier.Regular, tier_job: null },
     },
   ] as S3Bucket[];
 
@@ -177,13 +179,12 @@ describe('S3CardComponent', () => {
   });
 
   describe('with tiering enabled', () => {
-    const jobUpdates$ = new Subject<ZfsTierRewriteJobEntry>();
     const tier = { tier_type: DatasetTier.Regular, tier_job: null };
 
     const createTierComponent = createComponentFactory({
       component: S3CardComponent,
       imports: [TablePagerShowMoreComponent],
-      providers: [...commonProviders, mockSharingTierService({ enabled: true, jobUpdates$ })],
+      providers: [...commonProviders, mockSharingTierService({ enabled: true })],
     });
 
     async function createWithBuckets(rows: S3Bucket[]): Promise<void> {

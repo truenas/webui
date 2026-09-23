@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { tnIconMarker } from '@truenas/ui-components';
-import { Observable, of } from 'rxjs';
+import { Observable, map, of } from 'rxjs';
 import { SharingTierInfo, ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
@@ -39,12 +39,15 @@ export function mockSharingTierService(opts: MockOpts = {}): ReturnType<typeof m
     onClick: () => actionOpts.reload(),
   });
 
-  // Mirrors the real factory's extra `!row.dataset` clause, so component specs exercise the
-  // same hide rules the service applies.
-  const buildDatasetAction = <T extends DatasetTierRow>(actionOpts: { reload: () => void }): IconActionConfig<T> => ({
-    ...buildAction<T>(actionOpts),
-    hidden: (row) => of(!enabled || !row.tier || Boolean(row.locked) || !row.dataset),
-  });
+  // Mirrors the real factory, which composes its extra `!row.dataset` clause on top of the shared
+  // hide rules rather than restating them, so the two cannot drift apart.
+  const buildDatasetAction = <T extends DatasetTierRow>(actionOpts: { reload: () => void }): IconActionConfig<T> => {
+    const base = buildAction<T>(actionOpts);
+    return {
+      ...base,
+      hidden: (row) => base.hidden(row).pipe(map((hidden) => hidden || !row.dataset)),
+    };
+  };
 
   return mockProvider(SharingTierService, {
     tierEnabled: signal(enabled).asReadonly(),
