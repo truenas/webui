@@ -26,6 +26,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
@@ -42,6 +43,8 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { storageTierColumn } from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { s3BucketListElements } from 'app/pages/sharing/s3/s3-bucket-list/s3-bucket-list.elements';
 import { bucketDataPath, bucketToShareRow } from 'app/pages/sharing/s3/utils/s3-bucket.utils';
@@ -91,6 +94,7 @@ export class S3BucketListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
   private poolStoreService = inject(poolStore);
+  private tierService = inject(SharingTierService);
 
   requiredRoles = [Role.SharingS3Write, Role.SharingWrite];
   protected readonly searchableElements = s3BucketListElements;
@@ -103,6 +107,12 @@ export class S3BucketListComponent implements OnInit {
   buckets: S3Bucket[] = [];
   /** null = pools not yet loaded; string[] once pool.query completes */
   private activePoolPaths = signal<string[] | null>(null);
+
+  private tierAction: IconActionConfig<S3Bucket> = this.tierService.createChangeDatasetTierAction<S3Bucket>({
+    destroyRef: this.destroyRef,
+    reload: () => this.refresh(),
+    requiredRoles: this.requiredRoles,
+  });
 
   columns = createTable<S3Bucket>([
     textColumn({
@@ -151,6 +161,10 @@ export class S3BucketListComponent implements OnInit {
         getUnavailableReason(bucketToShareRow(row), this.activePoolPaths()),
       ),
     }),
+    storageTierColumn({
+      title: this.translate.instant('Storage Tier'),
+      hidden: true,
+    }),
     actionsWithMenuColumn({
       actions: [
         {
@@ -167,6 +181,7 @@ export class S3BucketListComponent implements OnInit {
           ),
           onClick: (row) => this.doFilesystemAclEdit(row),
         },
+        this.tierAction,
         {
           iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
@@ -213,6 +228,14 @@ export class S3BucketListComponent implements OnInit {
       error: () => {
         this.refresh();
       },
+    });
+
+    this.tierService.attachTierToShareList<S3Bucket>({
+      destroyRef: this.destroyRef,
+      cdr: this.cdr,
+      getColumns: () => this.columns,
+      setColumns: (columns) => { this.columns = columns; },
+      reload: () => this.refresh(),
     });
   }
 

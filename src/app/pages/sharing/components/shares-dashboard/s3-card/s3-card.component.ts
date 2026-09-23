@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
@@ -27,6 +27,7 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
@@ -42,6 +43,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { storageTierColumn } from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { bucketDataPath, bucketToShareRow } from 'app/pages/sharing/s3/utils/s3-bucket.utils';
 import {
@@ -91,6 +94,8 @@ export class S3CardComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
   private poolStoreService = inject(poolStore);
+  private cdr = inject(ChangeDetectorRef);
+  private tierService = inject(SharingTierService);
 
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
   requiredRoles = [Role.SharingS3Write, Role.SharingWrite];
@@ -100,6 +105,12 @@ export class S3CardComponent implements OnInit {
   private activePoolPaths = signal<string[] | null>(null);
   protected readonly emptyConfig = s3CardEmptyConfig;
   protected readonly cardMenuPath = ['sharing', 's3'];
+
+  private tierAction: IconActionConfig<S3Bucket> = this.tierService.createChangeDatasetTierAction<S3Bucket>({
+    destroyRef: this.destroyRef,
+    reload: () => this.dataProvider.load(),
+    requiredRoles: this.requiredRoles,
+  });
 
   columns = createTable<S3Bucket>([
     textColumn({
@@ -125,6 +136,10 @@ export class S3CardComponent implements OnInit {
         getUnavailableReason(bucketToShareRow(row), this.activePoolPaths()),
       ),
     }),
+    storageTierColumn({
+      title: this.translate.instant('Storage Tier'),
+      hidden: true,
+    }),
     actionsWithMenuColumn({
       cssClass: 'tight-actions',
       actions: [
@@ -142,6 +157,7 @@ export class S3CardComponent implements OnInit {
           ),
           onClick: (row) => this.doFilesystemAclEdit(row),
         },
+        this.tierAction,
         {
           iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
@@ -170,6 +186,14 @@ export class S3CardComponent implements OnInit {
       error: () => {
         this.dataProvider.load();
       },
+    });
+
+    this.tierService.attachTierToShareList<S3Bucket>({
+      destroyRef: this.destroyRef,
+      cdr: this.cdr,
+      getColumns: () => this.columns,
+      setColumns: (columns) => { this.columns = columns; },
+      reload: () => this.dataProvider.load(),
     });
   }
 

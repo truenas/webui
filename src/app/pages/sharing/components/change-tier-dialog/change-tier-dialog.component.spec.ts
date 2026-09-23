@@ -35,6 +35,7 @@ describe('ChangeTierDialogComponent — share usage list', () => {
         mockCall('sharing.smb.query', []),
         mockCall('sharing.nfs.query', []),
         mockCall('sharing.webshare.query', []),
+        mockCall('sharing.s3.query', []),
       ]),
       { provide: MAT_DIALOG_DATA, useValue: dialogData },
       mockProvider(MatDialogRef),
@@ -45,11 +46,13 @@ describe('ChangeTierDialogComponent — share usage list', () => {
     smb?: { id: number; name: string }[];
     nfs?: { id: number }[];
     webshare?: { id: number; name: string }[];
+    s3?: { id: number; name: string }[];
   }): void {
     const mockService = spectator.inject(MockApiService);
     mockService.mockCall('sharing.smb.query', shares.smb ?? []);
     mockService.mockCall('sharing.nfs.query', shares.nfs ?? []);
     mockService.mockCall('sharing.webshare.query', shares.webshare ?? []);
+    mockService.mockCall('sharing.s3.query', shares.s3 ?? []);
   }
 
   beforeEach(() => {
@@ -81,6 +84,17 @@ describe('ChangeTierDialogComponent — share usage list', () => {
     expect(block.textContent).toContain('3 shares');
     expect(block.textContent).toContain('WebShare');
     expect(block.textContent).toContain('projects');
+  });
+
+  it('lists S3 buckets that live on the dataset', async () => {
+    setShares({ s3: [{ id: 1, name: 'photos' }] });
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    const block = spectator.query('.share-usage');
+    expect(block).not.toBeNull();
+    expect(block.textContent).toContain('S3 Bucket');
+    expect(block.textContent).toContain('photos');
   });
 
   it('pluralizes a single NFS share as "1 share"', async () => {
@@ -123,6 +137,7 @@ describe('ChangeTierDialogComponent — load failure', () => {
         mockCall('sharing.smb.query', []),
         mockCall('sharing.nfs.query', []),
         mockCall('sharing.webshare.query', []),
+        mockCall('sharing.s3.query', []),
       ]),
       { provide: MAT_DIALOG_DATA, useValue: dialogData },
       mockProvider(MatDialogRef),
@@ -183,6 +198,7 @@ describe('ChangeTierDialogComponent — loadDetails parsing', () => {
         mockCall('sharing.smb.query', []),
         mockCall('sharing.nfs.query', []),
         mockCall('sharing.webshare.query', []),
+        mockCall('sharing.s3.query', []),
       ]),
       { provide: MAT_DIALOG_DATA, useValue: dialogData },
       mockProvider(MatDialogRef),
@@ -235,6 +251,7 @@ describe('ChangeTierDialogComponent — tier change warning', () => {
         mockCall('sharing.smb.query', []),
         mockCall('sharing.nfs.query', []),
         mockCall('sharing.webshare.query', []),
+        mockCall('sharing.s3.query', []),
       ]),
       { provide: MAT_DIALOG_DATA, useValue: dialogData },
       mockProvider(MatDialogRef),
