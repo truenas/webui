@@ -20,6 +20,17 @@ export class TokenLastUsedService {
 
   private tokenLastUsed$ = new BehaviorSubject<string | null>(this.window.localStorage.getItem('tokenLastUsed'));
   private readonly defaultLifetimeSeconds = 300; // 5 minutes default
+  private tokenLifetime$ = new BehaviorSubject<number>(this.getStoredLifetime());
+
+  /**
+   * The configured session timeout, seeded from storage so that a page load knows it before
+   * preferences have been read back from the server. `AuthService` renews the authentication
+   * token against this, which keeps the token a refresh spends as long-lived as the session it
+   * belongs to.
+   */
+  get lifetime$(): Observable<number> {
+    return this.tokenLifetime$.asObservable();
+  }
 
   /**
    * Check if token was used within the configured session timeout
@@ -31,9 +42,7 @@ export class TokenLastUsedService {
           return false;
         }
 
-        const storedLifetime = this.window.localStorage.getItem('tokenLifetime');
-        const lifetimeSeconds = storedLifetime ? Number(storedLifetime) : this.defaultLifetimeSeconds;
-        const tokenRecentUsageLifetime = lifetimeSeconds * 1000;
+        const tokenRecentUsageLifetime = this.getStoredLifetime() * 1000;
         const tokenLastUsedTime = new Date(tokenLastUsed).getTime();
         const currentTime = Date.now();
 
@@ -47,6 +56,7 @@ export class TokenLastUsedService {
    */
   updateTokenLifetime(lifetimeSeconds: number): void {
     this.window.localStorage.setItem('tokenLifetime', String(lifetimeSeconds));
+    this.tokenLifetime$.next(lifetimeSeconds);
   }
 
   setupTokenLastUsedValue(user$: Observable<LoggedInUser | null>): void {
@@ -69,5 +79,11 @@ export class TokenLastUsedService {
     this.tokenLastUsed$.next(null);
     this.window.localStorage.removeItem('tokenLastUsed');
     this.window.localStorage.removeItem('tokenLifetime');
+    this.tokenLifetime$.next(this.defaultLifetimeSeconds);
+  }
+
+  private getStoredLifetime(): number {
+    const storedLifetime = Number(this.window.localStorage.getItem('tokenLifetime'));
+    return storedLifetime > 0 ? storedLifetime : this.defaultLifetimeSeconds;
   }
 }

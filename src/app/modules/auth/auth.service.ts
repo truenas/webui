@@ -8,6 +8,8 @@ import {
   catchError,
   combineLatest,
   defaultIfEmpty,
+  distinctUntilChanged,
+  EMPTY,
   filter,
   map,
   Observable,
@@ -16,10 +18,12 @@ import {
   switchMap,
   take,
   tap,
+  timer,
 } from 'rxjs';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
+import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LoginExMechanism, LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
@@ -53,6 +57,9 @@ export class AuthService implements OnDestroy {
 
   // Flag to prevent premature adminUiInitialized dispatch
   private sessionInitialized = false;
+
+  /** The shortest Session Timeout the preferences form accepts. */
+  private readonly minSessionLifetimeSeconds = 30;
 
   private latestTokenGenerated$ = new ReplaySubject<string | null>(1);
   get authToken$(): Observable<string> {
@@ -117,6 +124,7 @@ export class AuthService implements OnDestroy {
     this.setupAuthenticationUpdate();
     this.setupWsConnectionUpdate();
     this.setupTokenUpdate();
+    this.setupTokenRenewal();
   }
 
   getGlobalTwoFactorConfig(): Observable<GlobalTwoFactorConfig> {
@@ -388,6 +396,48 @@ export class AuthService implements OnDestroy {
     ).subscribe((token) => {
       this.token = token;
     });
+  }
+
+  /**
+   * The token minted at login carries an absolute TTL: it dies that many seconds after it was
+   * issued, however busy the session was in between. The Session Timeout preference it is cut
+   * from is an *inactivity* timeout, which `SessionTimeoutService` enforces on its own clock —
+   * and nothing has kept the two in step since the periodic regeneration was dropped in favour
+   * of the single token `auth.login_ex` hands back. So refreshing a page the user has been
+   * working in all along lands on the sign-in page with "Session expired" as soon as that
+   * deadline passes: five minutes in on a default install, twenty on a session configured for
+   * twenty.
+   *
+   * Minting a replacement on a timer keeps a usable token in storage for as long as the session
+   * is entitled to live, and re-minting when the preference changes lets a new Session Timeout
+   * govern re-authentication without signing out first.
+   */
+  private setupTokenRenewal(): void {
+    this.tokenLastUsedService.lifetime$.pipe(
+      distinctUntilChanged(),
+      switchMap((lifetime) => timer(0, this.getTokenRenewalInterval(lifetime)).pipe(map(() => lifetime))),
+      filterAsync(() => this.wsStatus.isAuthenticated$),
+      // A session middleware declined to hand a reconnect token to (an API key, a one-time
+      // password) holds none, and must not be given one here. `auth.generate_token` refuses
+      // those sessions as well, so the decision stays with middleware either way.
+      filter(() => this.hasAuthToken),
+      switchMap((lifetime) => this.api.call('auth.generate_token', [lifetime, {}, true, true]).pipe(
+        catchError((error: unknown) => {
+          console.error('Failed to renew the authentication token', error);
+          return EMPTY;
+        }),
+      )),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((token) => this.latestTokenGenerated$.next(token));
+  }
+
+  /**
+   * Half the session lifetime, so every refresh finds a token with time left on it. A lifetime
+   * below the shortest one the form accepts counts as that minimum, so a value set outside the
+   * UI cannot turn renewal into a stream of calls.
+   */
+  private getTokenRenewalInterval(lifetime: number): number {
+    return Math.max(lifetime, this.minSessionLifetimeSeconds) / 2 * 1000;
   }
 
   ngOnDestroy(): void {
