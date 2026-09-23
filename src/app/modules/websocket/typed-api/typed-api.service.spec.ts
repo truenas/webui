@@ -334,6 +334,47 @@ describe('TypedApiService', () => {
       await expect(lent).resolves.toBeUndefined();
     });
 
+    it('does not end a session that replaced the one it was borrowing for', async () => {
+      // The ladder can run for the better part of a minute. The app can bounce to
+      // the sign-in page and come back on a new session inside that, and the old
+      // attempt exhausting must not then log the new one out.
+      const legacyCall = jest.mocked(legacyApi().call);
+      legacyCall.mockReturnValue(NEVER);
+      client.connection.simulateOpen();
+      signIn();
+      legacyConnected$.next(true);
+      await tick(0);
+
+      client.authenticator.authenticated$.next(false);
+      client.authenticator.authenticated$.next(true);
+      legacyCall.mockReturnValue(of({ response_type: LoginExResponseType.Success } as LoginExResponse));
+      jest.mocked(wsStatus.setLoginStatus).mockClear();
+
+      await tick(4 * 10_000 + 1000 + 2000 + 4000);
+
+      expect(wsStatus.setLoginStatus).not.toHaveBeenCalledWith(false);
+    });
+
+    it('frees the reactive borrow for the session that replaced it', async () => {
+      // The abandoned attempt must also release `exhaustMap`, or nothing can
+      // borrow for the new session until the old ladder finally runs out.
+      const legacyCall = jest.mocked(legacyApi().call);
+      legacyCall.mockReturnValue(NEVER);
+      client.connection.simulateOpen();
+      signIn();
+      legacyConnected$.next(true);
+      await tick(0);
+      const beforeReplacement = mintedTokenCount();
+
+      client.authenticator.authenticated$.next(false);
+      client.authenticator.authenticated$.next(true);
+      legacyCall.mockReturnValue(of({ response_type: LoginExResponseType.Success } as LoginExResponse));
+      legacyApi().sessionLost.next();
+      await tick(600);
+
+      expect(mintedTokenCount()).toBeGreaterThan(beforeReplacement);
+    });
+
     it('gives up even while refusals keep arriving', async () => {
       jest.mocked(legacyApi().call).mockReturnValue(throwError(() => new Error('legacy down')));
       client.connection.simulateOpen();

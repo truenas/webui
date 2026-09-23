@@ -12,6 +12,7 @@ import {
   JobResult,
 } from '@truenas/api-client';
 import {
+  BehaviorSubject,
   catchError,
   combineLatest,
   defaultIfEmpty,
@@ -29,6 +30,7 @@ import {
   startWith,
   switchMap,
   take,
+  takeUntil,
   throttleTime,
   throwError,
   timeout,
@@ -60,7 +62,17 @@ const borrowTokenTtlSeconds = 300;
 /**
  * How many times a failed borrow is retried, and the base of the exponential
  * backoff between attempts (1s, 2s, 4s). Enough to ride out a `middlewared`
- * restart without holding a sign-in for long.
+ * restart, which is what a borrow usually fails for and clears within a second
+ * or two.
+ *
+ * The backoff is not the ceiling. Each of the four attempts can also spend
+ * {@link borrowAnswerTimeoutMs} waiting to settle, so a borrow against an
+ * appliance that answers nothing at all takes ~47s to give up — and
+ * `AuthService.processLoginResult` awaits it before reporting a sign-in as
+ * successful. That is the pathological case rather than the failing one: a
+ * refusal or a closed socket fails its attempt at once and only the backoff
+ * applies. The timeout is deliberately generous, because a borrow abandoned
+ * early on a slow appliance costs a sign-in that would have worked.
  */
 const borrowRetries = 3;
 const borrowRetryBaseDelayMs = 1000;
@@ -143,9 +155,10 @@ export class TypedApiService {
   /**
    * Which typed session the in-flight borrow belongs to. Bumped on every change
    * of `authenticated$`, so an attempt is only ever shared with callers that
-   * want a borrow of the same session.
+   * want a borrow of the same session — and so one that outlives its session can
+   * be told apart from one still working for the current one.
    */
-  private sessionEpoch = 0;
+  private readonly sessionEpoch$ = new BehaviorSubject(0);
 
   /** The in-flight borrow, and the session it was started for. */
   private borrowInFlight: { epoch: number; borrow$: Observable<void> } | null = null;
@@ -270,9 +283,9 @@ export class TypedApiService {
       // An attempt that started under a session that has since been replaced is
       // running against conditions that no longer hold, and joining it would
       // report its failure to a sign-in that a fresh borrow would have served.
-      if (!this.borrowInFlight || this.borrowInFlight.epoch !== this.sessionEpoch) {
+      if (!this.borrowInFlight || this.borrowInFlight.epoch !== this.sessionEpoch$.value) {
         this.borrowInFlight = {
-          epoch: this.sessionEpoch,
+          epoch: this.sessionEpoch$.value,
           // `share()` resets once the borrow settles, so the next caller starts
           // a fresh one rather than replaying this one's outcome.
           borrow$: defer(() => this.borrowSession()).pipe(share()),
@@ -296,7 +309,7 @@ export class TypedApiService {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (isAuthenticated) => {
-        this.sessionEpoch += 1;
+        this.sessionEpoch$.next(this.sessionEpoch$.value + 1);
         this.wsStatus.setSessionStatus(isAuthenticated);
       },
       error: (error: unknown) => console.error('Typed API session status could not be tracked', error),
@@ -356,12 +369,26 @@ export class TypedApiService {
           return EMPTY;
         }
 
+        const borrowingFor = this.sessionEpoch$.value;
+
         return this.lendSessionToLegacySocket().pipe(
+          // An attempt can outlive the session it was for: every leg is bounded,
+          // but the ladder can take the better part of a minute, and the app may
+          // have bounced to the sign-in page and come back on a new session in
+          // that time. Letting it go when its session is replaced does two
+          // things — its outcome no longer decides anything for a session it
+          // knows nothing about, and `exhaustMap` is freed to start the borrow
+          // the new session needs.
           catchError((error: unknown) => {
             console.error('Legacy socket could not borrow the typed session', error);
-            this.wsStatus.setLoginStatus(false);
+            if (this.sessionEpoch$.value === borrowingFor) {
+              this.wsStatus.setLoginStatus(false);
+            }
             return EMPTY;
           }),
+          // Last, as the lint rule requires. The guard above covers the case this
+          // cannot: an attempt that fails in the same tick its session is replaced.
+          takeUntil(this.sessionEpoch$.pipe(filter((epoch) => epoch !== borrowingFor))),
         );
       }),
       takeUntilDestroyed(this.destroyRef),
