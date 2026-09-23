@@ -5,12 +5,14 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { S3ObjectOwnership, S3PermissionsModel, S3Versioning } from 'app/enums/s3.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { S3Bucket } from 'app/interfaces/s3.interface';
+import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -21,6 +23,7 @@ import {
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { S3BucketListComponent } from 'app/pages/sharing/s3/s3-bucket-list/s3-bucket-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -45,7 +48,10 @@ describe('S3BucketListComponent', () => {
     },
   ] as S3Bucket[];
 
-  const createComponent = createComponentFactory({
+  const buildFactory = (
+    rows: S3Bucket[],
+    tierOpts: Parameters<typeof mockSharingTierService>[0] = {},
+  ): ReturnType<typeof createComponentFactory<S3BucketListComponent>> => createComponentFactory({
     component: S3BucketListComponent,
     imports: [
       BasicSearchComponent,
@@ -55,6 +61,7 @@ describe('S3BucketListComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(EmptyService),
+      mockSharingTierService(tierOpts),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -65,13 +72,15 @@ describe('S3BucketListComponent', () => {
         selectors: [{ selector: selectPreferences, value: {} }],
       }),
       mockApi([
-        mockCall('sharing.s3.query', buckets),
+        mockCall('sharing.s3.query', rows),
         mockCall('sharing.s3.delete'),
         mockCall('sharing.s3.update'),
         mockCall('pool.query', [{ path: '/mnt/tank' }] as Pool[]),
       ]),
     ],
   });
+
+  const createComponent = buildFactory(buckets);
 
   beforeEach(async () => {
     spectator = createComponent();
@@ -129,5 +138,70 @@ describe('S3BucketListComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.s3.delete', [1]);
+  });
+
+  describe('storage tier', () => {
+    const tier = { tier_type: DatasetTier.Performance, tier_job: null };
+
+    async function tierMenuItems(): Promise<string[]> {
+      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+      await menu.open();
+      const items = await menu.getItems({ text: /Change Storage Tier/ });
+      return Promise.all(items.map((item) => item.getText()));
+    }
+
+    describe('with a tiered bucket', () => {
+      const createTierComponent = buildFactory([{ ...buckets[0], tier }], { enabled: true });
+
+      beforeEach(() => {
+        spectator = createTierComponent();
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      });
+
+      it('shows Change Storage Tier in the action menu', async () => {
+        expect(await tierMenuItems()).toEqual(['Change Storage Tier']);
+      });
+    });
+
+    describe('with a bucket that has no tier info', () => {
+      const createNoTierComponent = buildFactory([{ ...buckets[0], tier: null }], { enabled: true });
+
+      beforeEach(() => {
+        spectator = createNoTierComponent();
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      });
+
+      it('does not show Change Storage Tier in the action menu', async () => {
+        expect(await tierMenuItems()).toEqual([]);
+      });
+    });
+
+    describe('with a locked bucket', () => {
+      const createLockedComponent = buildFactory([{ ...buckets[0], locked: true, tier }], { enabled: true });
+
+      beforeEach(() => {
+        spectator = createLockedComponent();
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      });
+
+      it('does not show Change Storage Tier in the action menu', async () => {
+        expect(await tierMenuItems()).toEqual([]);
+      });
+    });
+
+    describe('tier job refresh', () => {
+      const jobUpdates$ = new Subject<ZfsTierRewriteJobEntry>();
+      const createRefreshComponent = buildFactory(buckets, { enabled: true, jobUpdates$ });
+
+      beforeEach(() => {
+        spectator = createRefreshComponent();
+      });
+
+      it('reloads buckets when a tier job update is emitted', () => {
+        const loadSpy = jest.spyOn(spectator.component.dataProvider, 'load');
+        jobUpdates$.next({ tier_job_id: 'job-1' } as ZfsTierRewriteJobEntry);
+        expect(loadSpy).toHaveBeenCalled();
+      });
+    });
   });
 });
