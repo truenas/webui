@@ -122,11 +122,10 @@ describe('CategoryViewComponent', () => {
   });
 
   it('applies a term typed on the page and mirrors it in the url', async () => {
+    // The harness stabilizes the fixture after typing, and the debounce timer is scheduled inside
+    // the Angular zone, so awaiting setValue already waits the term out - no sleep needed.
     const searchInput = await loader.getHarness(TnInputHarness.with({ placeholder: 'Search' }));
     await searchInput.setValue('plex');
-    await new Promise((resolve) => {
-      setTimeout(resolve, 300);
-    });
 
     expect(store$.applySearchQuery).toHaveBeenLastCalledWith('plex');
     expect(spectator.inject(Router).navigate).toHaveBeenLastCalledWith([], expect.objectContaining({
@@ -161,6 +160,39 @@ describe('CategoryViewComponent - search handed over from Discover', () => {
     const searchInput = await loader.getHarness(TnInputHarness.with({ placeholder: 'Search' }));
 
     expect(await searchInput.getValue()).toBe('plex');
+  });
+});
+
+describe('CategoryViewComponent - entered without the query parameter', () => {
+  let spectator: SpectatorRouting<CategoryViewComponent>;
+  let loader: HarnessLoader;
+
+  // Show All and the Available Apps count both link to /apps/available/all bare.
+  const createComponent = createRoutingFactory({
+    ...sharedOptions,
+    providers: [...sharedOptions.providers, mockFilterStore('plex', categoryApps)],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    spectator.fixture.detectChanges();
+  });
+
+  it('inherits the term already being searched for instead of clearing it', async () => {
+    expect(spectator.inject(AppsFilterStore).applySearchQuery).toHaveBeenCalledWith('plex');
+
+    const searchInput = await loader.getHarness(TnInputHarness.with({ placeholder: 'Search' }));
+
+    expect(await searchInput.getValue()).toBe('plex');
+  });
+
+  it('writes the inherited term into the url', () => {
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith([], expect.objectContaining({
+      queryParams: { search: 'plex' },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    }));
   });
 });
 

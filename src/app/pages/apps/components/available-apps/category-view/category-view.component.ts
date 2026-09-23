@@ -16,7 +16,7 @@ import {
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   BehaviorSubject,
-  combineLatest, debounceTime, distinctUntilChanged, map, Observable,
+  combineLatest, debounceTime, distinctUntilChanged, map, Observable, take,
 } from 'rxjs';
 import { noSearchResultsConfig } from 'app/constants/empty-configs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -29,6 +29,9 @@ import {
 import { CustomAppButtonComponent } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+
+/** Matches the debounce the Discover header's search box uses. */
+const searchDebounceMs = 200;
 
 @Component({
   selector: 'ix-category-view',
@@ -60,16 +63,16 @@ export class CategoryViewComponent implements OnInit, OnDestroy {
   private destroyRef = inject(DestroyRef);
 
   protected readonly category = toSignal(this.activatedRoute.params.pipe(map((params) => params['category'] as string)));
-  pageTitle$ = new BehaviorSubject('Category');
-  apps$ = this.appsFilterStore.searchedFilteredApps$;
-  searchQuery$ = this.appsFilterStore.searchQuery$;
+  protected pageTitle$ = new BehaviorSubject('Category');
+  protected apps$ = this.appsFilterStore.searchedFilteredApps$;
+  protected searchQuery$ = this.appsFilterStore.searchQuery$;
 
   /**
    * Both stores have to be counted in: the catalog load, and the category fetch `applyFilters()`
    * kicks off. Watching only the catalog leaves the page blank - no skeletons, no cards, just the
    * "Back to Discover Page" button - for as long as the category request is in flight.
    */
-  isLoading$: Observable<boolean> = combineLatest([
+  protected isLoading$: Observable<boolean> = combineLatest([
     this.applicationsStore.isLoading$,
     this.appsFilterStore.isFiltering$,
   ]).pipe(
@@ -100,31 +103,51 @@ export class CategoryViewComponent implements OnInit, OnDestroy {
     this.appsFilterStore.resetFiltersKeepingSearch();
   }
 
-  trackByAppId(id: number, app: AvailableApp): string {
+  protected trackByAppId(id: number, app: AvailableApp): string {
     return `${app.latest_version}-${app.train}-${app.name}`;
   }
 
   /**
-   * The query parameter is the single source of truth here: it carries the term over from the
-   * Discover page, survives a reload and makes a searched category shareable as a link.
+   * The query parameter is the source of truth here: it carries the term over from the Discover
+   * page, survives a reload and makes a searched category shareable as a link. Where the URL
+   * carries no parameter the term already in the store is inherited instead, so the entry points
+   * that do not set one - `Show All` and the `Available Apps` count, which both link to
+   * `/apps/available/all` bare - narrow the category rather than silently throwing the term away
+   * (and dropping it for Discover too, on the way back). The inherited term is written into the
+   * URL straight away, so the box, the grid and the address bar never disagree.
    */
   private setUpSearch(): void {
-    const searchQuery = this.activatedRoute.snapshot.queryParamMap.get(categorySearchParam) || '';
-    this.searchControl.setValue(searchQuery, { emitEvent: false });
-    this.appsFilterStore.applySearchQuery(searchQuery);
+    this.appsFilterStore.searchQuery$.pipe(
+      take(1),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((storedQuery) => {
+      const paramQuery = this.activatedRoute.snapshot.queryParamMap.get(categorySearchParam);
+      const searchQuery = paramQuery ?? storedQuery;
+
+      this.searchControl.setValue(searchQuery, { emitEvent: false });
+      this.appsFilterStore.applySearchQuery(searchQuery);
+
+      if (paramQuery === null && searchQuery) {
+        this.writeSearchQueryToUrl(searchQuery);
+      }
+    });
 
     this.searchControl.valueChanges.pipe(
-      debounceTime(200),
+      debounceTime(searchDebounceMs),
       distinctUntilChanged(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((query) => {
       this.appsFilterStore.applySearchQuery(query);
-      this.router.navigate([], {
-        relativeTo: this.activatedRoute,
-        queryParams: { [categorySearchParam]: query || null },
-        queryParamsHandling: 'merge',
-        replaceUrl: true,
-      });
+      this.writeSearchQueryToUrl(query);
+    });
+  }
+
+  private writeSearchQueryToUrl(searchQuery: string): void {
+    this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: { [categorySearchParam]: searchQuery || null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
     });
   }
 
