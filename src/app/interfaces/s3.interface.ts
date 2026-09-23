@@ -11,6 +11,7 @@ import {
   S3Versioning,
 } from 'app/enums/s3.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+import { SharingTierInfo } from 'app/interfaces/zfs-tier.interface';
 
 /**
  * A list of audit action names, or the literal `ALL`.
@@ -83,9 +84,13 @@ export interface S3Bucket {
   audit: S3AuditMask | null;
   audit_overflow: S3AuditOverflow | null;
   locked: boolean | null;
+  /**
+   * `null` when TrueNAS is unlicensed, tiering is disabled, or the pool has no SPECIAL vdev. Read only.
+   */
+  tier?: SharingTierInfo | null;
 }
 
-export interface S3BucketCreate extends Partial<Omit<S3Bucket, 'id' | 'owner_uid' | 'grants' | 'locked'>> {
+export interface S3BucketCreate extends Partial<Omit<S3Bucket, 'id' | 'owner_uid' | 'grants' | 'locked' | 'tier'>> {
   name: string;
   /**
    * Omitted, the dataset is created under the service's `managed_root_dataset` and named after the bucket.
