@@ -256,6 +256,27 @@ describe('AuthService', () => {
       expect(await firstValueFrom(spectator.service.user$)).toBeNull();
     });
 
+    it('clears the stored token before the typed logout, so the sign-in page cannot reuse it', async () => {
+      // `authenticator.logout()` drops `authenticated$` at the call, which walks the
+      // app to the sign-in page synchronously. If the token were still there, that
+      // page would auto-log-in and the sign-out would not stick.
+      armLogin({ reconnect_token: 'DUMMY_TOKEN' });
+      await firstValueFrom(spectator.service.login('dummy', 'secret'));
+      await firstValueFrom(spectator.service.initializeSession());
+      expect(spectator.service.hasAuthToken).toBe(true);
+
+      let tokenWhenSessionEnded: boolean | null = null;
+      jest.spyOn(client.authenticator, 'logout').mockImplementation(() => {
+        tokenWhenSessionEnded = spectator.service.hasAuthToken;
+        return of(true);
+      });
+
+      await firstValueFrom(spectator.service.logout());
+
+      expect(tokenWhenSessionEnded).toBe(false);
+      expect(spectator.service.hasAuthToken).toBe(false);
+    });
+
     it('does not wait for the appliance to acknowledge the typed logout', async () => {
       // The frame is on the wire and the session is already down by the time the
       // authenticator returns, so a socket going down must not hang the sign-out —

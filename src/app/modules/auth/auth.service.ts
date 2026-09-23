@@ -290,37 +290,49 @@ export class AuthService implements OnDestroy {
    * the legacy socket borrowed from it. The borrowed session would otherwise
    * outlive the sign-out and keep answering calls on that socket.
    *
+   * The stored token goes first, before either call. `authenticator.logout()`
+   * drops `authenticated$` at the call rather than when middleware answers, and
+   * that walks the app to the sign-in page synchronously — which auto-logs-in
+   * from the stored token. Clearing first leaves it nothing to log in with.
+   *
    * The legacy logout is best effort. It is a session nothing will use again,
    * and a socket that is already down must not turn signing out into an error.
    */
   logout(): Observable<void> {
     return this.client$.pipe(
-      switchMap((client) => client.authenticator.logout().pipe(
-        // The authenticator ends the session at the call — credentials cleared,
-        // `authenticated$` down, frame already on the wire — and what it returns
-        // only waits for middleware's acknowledgement. Waiting for that would hang
-        // the sign-out on a socket that is going down, and leave the stored token
-        // behind for the sign-in page to log straight back in with.
-        startWith(true),
-        take(1),
-      )),
+      take(1),
+      switchMap((client) => {
+        this.endLocalSession();
+
+        return client.authenticator.logout().pipe(
+          // What the authenticator returns only waits for middleware's
+          // acknowledgement; the session is already over and the frame is already
+          // on the wire. Waiting for it would hang the sign-out on a socket that
+          // is going down.
+          startWith(true),
+          take(1),
+        );
+      }),
       switchMap(() => this.api.call('auth.logout').pipe(
         catchError((error: unknown) => {
           console.warn('Borrowed legacy session could not be logged out', error);
           return of(undefined);
         }),
       )),
-      tap(() => {
-        this.clearAuthToken();
-        this.hasPasswordChangedSinceLastLogin$.next(false);
-        this.wsStatus.setLoginStatus(false);
-        this.api.clearSubscriptions();
-        this.sessionInitialized = false;
-        this.pendingAuthData = null;
-        this.loggedInUser$.next(null); // Clear user data on logout
-        this.cachedGlobalTwoFactorConfig$.next(null); // Clear cached 2FA config
-      }),
+      map((): undefined => undefined),
     );
+  }
+
+  /** Drops everything this tab knows about the session it was signed in on. */
+  private endLocalSession(): void {
+    this.clearAuthToken();
+    this.hasPasswordChangedSinceLastLogin$.next(false);
+    this.wsStatus.setLoginStatus(false);
+    this.api.clearSubscriptions();
+    this.sessionInitialized = false;
+    this.pendingAuthData = null;
+    this.loggedInUser$.next(null); // Clear user data on logout
+    this.cachedGlobalTwoFactorConfig$.next(null); // Clear cached 2FA config
   }
 
   requiredPasswordChanged(): void {
