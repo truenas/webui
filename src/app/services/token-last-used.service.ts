@@ -1,8 +1,8 @@
 import { DestroyRef, Injectable, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
+  auditTime,
   BehaviorSubject,
-  debounceTime,
   filter, map, Observable, switchMap, tap,
 } from 'rxjs';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -20,6 +20,7 @@ export class TokenLastUsedService {
 
   private tokenLastUsed$ = new BehaviorSubject<string | null>(this.window.localStorage.getItem('tokenLastUsed'));
   private readonly defaultLifetimeSeconds = 300; // 5 minutes default
+  private readonly stampIntervalMs = 5000;
   private tokenLifetime$ = new BehaviorSubject<number>(this.getStoredLifetime());
 
   /**
@@ -63,7 +64,12 @@ export class TokenLastUsedService {
     user$.pipe(
       filter(Boolean),
       tapOnce(() => this.updateTokenLastUsed()),
-      switchMap(() => this.wsHandler.responses$.pipe(debounceTime(5000))),
+      // `auditTime`, not `debounceTime`. A socket that never falls quiet for five seconds — the
+      // dashboard streams reporting data continuously — never lets a debounce emit at all, so the
+      // stamp froze at sign-in on exactly the pages that are busiest, and the sign-in page then
+      // read the session as expired however long the user had been working in it. Auditing stamps
+      // at most once per interval whether the traffic is a trickle or a stream.
+      switchMap(() => this.wsHandler.responses$.pipe(auditTime(this.stampIntervalMs))),
       tap(() => this.updateTokenLastUsed()),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();
