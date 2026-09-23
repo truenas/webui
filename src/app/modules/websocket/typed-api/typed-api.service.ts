@@ -14,7 +14,6 @@ import {
 import {
   catchError,
   combineLatest,
-  debounceTime,
   defaultIfEmpty,
   defer,
   distinctUntilChanged,
@@ -29,6 +28,7 @@ import {
   startWith,
   switchMap,
   take,
+  throttleTime,
   throwError,
   timer,
 } from 'rxjs';
@@ -64,9 +64,9 @@ const borrowRetries = 3;
 const borrowRetryBaseDelayMs = 1000;
 
 /**
- * How long refusals on the legacy socket are collected before they are treated
- * as one lapsed session. A socket that comes back unauthenticated has every
- * queued call refused at once, and that is one borrow to make, not one each.
+ * How long refusals on the legacy socket are treated as one lapsed session. A
+ * socket that comes back unauthenticated has every queued call refused at once,
+ * and that is one borrow to make, not one each.
  */
 const refusalBurstWindowMs = 500;
 
@@ -277,12 +277,18 @@ export class TypedApiService {
    * and without it the legacy socket would come back unauthenticated and stay
    * that way.
    *
-   * `sessionLost` is debounced because it fires once per refused call, not once
-   * per lapsed session, and the ordinary case is a burst: the socket comes back,
-   * the borrow starts, and every call already queued onto the still-unauthorised
-   * socket is refused a moment later. Undebounced, each of those would cancel the
-   * borrow they are waiting for and abandon a token it had already minted. The
-   * `startWith` is after the debounce so the first borrow is not delayed by it.
+   * `sessionLost` fires once per refused call, not once per lapsed session, and
+   * the ordinary case is a burst: the socket comes back, the borrow starts, and
+   * every call already queued onto the still-unauthorised socket is refused a
+   * moment later. Unthrottled, each of those would cancel the borrow they are
+   * waiting for and abandon a token it had already minted.
+   *
+   * Throttled on the leading edge rather than debounced, so the first refusal
+   * starts the borrow at once and the rest of the burst is ignored. A trailing
+   * debounce would delay every re-borrow by the window, and would never fire at
+   * all while refusals keep arriving faster than it — which is exactly what a
+   * page polling on an unauthenticated socket produces. The `startWith` is after
+   * it so the first borrow of all does not depend on a refusal.
    *
    * A borrow that has genuinely given up ends the app's session. That is the
    * outcome `ApiService` used to produce directly from `ENOTAUTHENTICATED`, and
@@ -296,7 +302,10 @@ export class TypedApiService {
       switchMap((client) => combineLatest([
         client.authenticator.authenticated$.pipe(distinctUntilChanged()),
         this.wsStatus.isConnected$.pipe(distinctUntilChanged()),
-        this.legacyApi.sessionLost.pipe(debounceTime(refusalBurstWindowMs), startWith(undefined)),
+        this.legacyApi.sessionLost.pipe(
+          throttleTime(refusalBurstWindowMs, undefined, { leading: true, trailing: false }),
+          startWith(undefined),
+        ),
       ])),
       switchMap(([isAuthenticated, isLegacyConnected]) => {
         if (!isAuthenticated || !isLegacyConnected) {

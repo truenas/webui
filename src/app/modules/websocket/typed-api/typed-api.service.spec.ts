@@ -122,10 +122,7 @@ describe('TypedApiService', () => {
       await bringSessionUp();
 
       legacyApi().sessionLost.next();
-      // Past the window refusals are collected in; see `refusalBurstWindowMs`.
-      await new Promise((resolve) => {
-        setTimeout(resolve, 700);
-      });
+      await settle();
 
       expect(legacyLogins()).toHaveLength(2);
     });
@@ -242,6 +239,38 @@ describe('TypedApiService', () => {
       await tick(600);
 
       expect(mintedTokenCount()).toBe(afterFirstBorrow + 1);
+    });
+
+    it('re-borrows on the first refusal rather than waiting out the burst', async () => {
+      await tick(0);
+      client.connection.simulateOpen();
+      signIn();
+      legacyConnected$.next(true);
+      await tick(0);
+      const afterFirstBorrow = mintedTokenCount();
+
+      // Trailing-edge debouncing delayed every re-borrow by the window, and
+      // starved it entirely while refusals kept arriving faster than that.
+      legacyApi().sessionLost.next();
+      await tick(0);
+
+      expect(mintedTokenCount()).toBe(afterFirstBorrow + 1);
+    });
+
+    it('keeps re-borrowing across successive bursts', async () => {
+      await tick(0);
+      client.connection.simulateOpen();
+      signIn();
+      legacyConnected$.next(true);
+      await tick(0);
+      const afterFirstBorrow = mintedTokenCount();
+
+      legacyApi().sessionLost.next();
+      await tick(600);
+      legacyApi().sessionLost.next();
+      await tick(600);
+
+      expect(mintedTokenCount()).toBe(afterFirstBorrow + 2);
     });
 
     it('starts a fresh borrow the next time one is asked for', async () => {
