@@ -255,6 +255,15 @@ export class ApiService {
         }
 
         if (message?.error?.data?.errname === ApiErrorName.NotAuthenticated) {
+          // The refused call itself is lost, as it always was here. What changed
+          // is what followed: dropping the session used to bounce the tab to
+          // /signin, which re-ran the page and re-issued the call, where the
+          // re-borrow now repairs the session in the background and leaves the
+          // caller on an unresolved loading state. The usual lapse still arrives
+          // with a socket drop, which redirects as before, so this is bounded to
+          // a session lapsing on a socket that stays up. Re-issuing the call
+          // would need a replay buffer this service has never had, and it is
+          // retired with the socket in Phase 3.
           this.sessionLost$.next();
           return EMPTY;
         }

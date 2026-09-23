@@ -31,6 +31,7 @@ import {
   take,
   throttleTime,
   throwError,
+  timeout,
   timer,
 } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api.enum';
@@ -70,6 +71,20 @@ const borrowRetryBaseDelayMs = 1000;
  * and that is one borrow to make, not one each.
  */
 const refusalBurstWindowMs = 500;
+
+/**
+ * How long one borrow attempt waits to settle before it counts as failed.
+ *
+ * Neither leg is guaranteed to answer or to fail. `ApiService.call` in
+ * particular can do neither: its `responses$` merges the socket stream with a
+ * `Subject` that never completes, so a socket closing cleanly — which completes
+ * the stream rather than erroring it — leaves the reply waiting forever. A
+ * borrow stuck like that would pin every later one, since `exhaustMap` holds
+ * the subscription and `share()` never resets while it does. Bounding the
+ * attempt turns it into an ordinary failure the retry ladder and the give-up
+ * path already know how to handle.
+ */
+const borrowAnswerTimeoutMs = 10_000;
 
 /**
  * Fully-typed API access, backed by `@truenas/api-client`.
@@ -366,6 +381,9 @@ export class TypedApiService {
         }
         return of(undefined);
       }),
+      // Before `retry`, so each attempt gets its own budget, and covering both
+      // legs rather than only the one known to be able to hang.
+      timeout(borrowAnswerTimeoutMs),
       retry({
         count: borrowRetries,
         delay: (_, retryCount) => timer(borrowRetryBaseDelayMs * 2 ** (retryCount - 1)),

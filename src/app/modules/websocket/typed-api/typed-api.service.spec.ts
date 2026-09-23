@@ -4,7 +4,7 @@ import {
   createFakeClient, fakeApiError, fakeJob, FakeTrueNasClient, withSpies,
 } from '@truenas/api-client/testing';
 import {
-  BehaviorSubject, defaultIfEmpty, EMPTY, firstValueFrom, lastValueFrom, of, throwError,
+  BehaviorSubject, defaultIfEmpty, EMPTY, firstValueFrom, lastValueFrom, NEVER, of, throwError,
 } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -271,6 +271,38 @@ describe('TypedApiService', () => {
       await tick(600);
 
       expect(mintedTokenCount()).toBe(afterFirstBorrow + 2);
+    });
+
+    it('gives up on a borrow whose answer never comes, rather than hanging on it', async () => {
+      // `ApiService.call` can neither emit, complete nor error when the socket
+      // closes cleanly mid-call: its `responses$` merges the socket stream with a
+      // Subject that never completes.
+      jest.mocked(legacyApi().call).mockReturnValue(NEVER);
+      client.connection.simulateOpen();
+      signIn();
+
+      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
+      await tick(4 * 10_000 + 1000 + 2000 + 4000);
+
+      await expect(lent).rejects.toBeInstanceOf(TypedApiSessionError);
+    });
+
+    it('does not let a hung borrow pin the ones after it', async () => {
+      // `exhaustMap` holds the subscription and `share()` cannot reset while it
+      // does, so a borrow that never settles would swallow every later trigger
+      // and leave the legacy socket unauthenticated for the life of the tab.
+      const legacyCall = jest.mocked(legacyApi().call);
+      legacyCall.mockReturnValue(NEVER);
+      client.connection.simulateOpen();
+      signIn();
+      legacyConnected$.next(true);
+      await tick(4 * 10_000 + 1000 + 2000 + 4000);
+
+      legacyCall.mockReturnValue(of({ response_type: LoginExResponseType.Success } as LoginExResponse));
+      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
+      await tick(0);
+
+      await expect(lent).resolves.toBeUndefined();
     });
 
     it('gives up even while refusals keep arriving', async () => {

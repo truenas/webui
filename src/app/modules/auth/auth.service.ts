@@ -17,6 +17,7 @@ import {
   switchMap,
   take,
   tap,
+  timeout,
 } from 'rxjs';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
@@ -35,6 +36,9 @@ import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
+
+/** How long the typed logout waits for middleware's acknowledgement before giving up on it. */
+const logoutAckTimeoutMs = 10_000;
 
 @Injectable({
   providedIn: 'root',
@@ -308,7 +312,13 @@ export class AuthService implements OnDestroy {
         // returns. What it returns only carries middleware's acknowledgement,
         // which a socket on its way down may never send — so it is subscribed for
         // its errors rather than waited on, and the sign-out cannot hang on it.
-        client.authenticator.logout().subscribe({
+        client.authenticator.logout().pipe(
+          // The acknowledgement may never come — the socket going down is the
+          // case this is written for — so the wait is bounded rather than left
+          // open for the life of the service.
+          timeout(logoutAckTimeoutMs),
+          takeUntilDestroyed(this.destroyRef),
+        ).subscribe({
           error: (error: unknown) => console.warn('Typed session logout was not acknowledged', error),
         });
 
