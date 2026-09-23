@@ -57,8 +57,16 @@ it with `ENOTAUTHENTICATED`, and it is deleted with the legacy socket.
 Signing in waits for the borrow before it reports success
 (`lendSessionToLegacySocket()`), because everything the sign-in flow does next
 — the failover checks, `auth.me`, the boot calls — still rides the legacy
-socket. A borrow is retried with backoff (1s, 2s, 4s); after that it fails with
-`TypedApiSessionError`, which the error handler renders as a connection error.
+socket. A borrow is retried with backoff (1s, 2s, 4s), and each of the four
+attempts is also bounded by a 10s timeout, because neither leg is guaranteed to
+answer *or* to fail — `ApiService.call` in particular does neither when the
+socket closes cleanly mid-call. So a borrow against an appliance that answers
+nothing takes ~47s to give up, where one that is refused fails its attempt at
+once and only the backoff applies. After that it fails with
+`TypedApiSessionError`, which the error handler renders as a connection error,
+and the reactive borrow ends the app's session so the sign-in page can
+re-establish both sides — but only if the session it was borrowing for is still
+the current one.
 
 Call sites never authenticate and never need to know which socket a method
 rides on. Every typed request is held until the typed session is
