@@ -52,6 +52,8 @@
   column-gap: 40px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
+  // Matches .apps, so the grid does not jump when the skeletons are replaced by the cards.
+  margin-top: 15px;
   row-gap: 16px;
 
   @media (max-width: $breakpoint-xs) {

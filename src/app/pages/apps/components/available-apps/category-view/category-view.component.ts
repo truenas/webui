@@ -16,7 +16,7 @@ import {
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   BehaviorSubject,
-  debounceTime, distinctUntilChanged, map,
+  combineLatest, debounceTime, distinctUntilChanged, map, Observable,
 } from 'rxjs';
 import { noSearchResultsConfig } from 'app/constants/empty-configs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -62,8 +62,19 @@ export class CategoryViewComponent implements OnInit, OnDestroy {
   protected readonly category = toSignal(this.activatedRoute.params.pipe(map((params) => params['category'] as string)));
   pageTitle$ = new BehaviorSubject('Category');
   apps$ = this.appsFilterStore.searchedFilteredApps$;
-  isLoading$ = this.applicationsStore.isLoading$;
   searchQuery$ = this.appsFilterStore.searchQuery$;
+
+  /**
+   * Both stores have to be counted in: the catalog load, and the category fetch `applyFilters()`
+   * kicks off. Watching only the catalog leaves the page blank - no skeletons, no cards, just the
+   * "Back to Discover Page" button - for as long as the category request is in flight.
+   */
+  isLoading$: Observable<boolean> = combineLatest([
+    this.applicationsStore.isLoading$,
+    this.appsFilterStore.isFiltering$,
+  ]).pipe(
+    map(([isCatalogLoading, isFiltering]) => isCatalogLoading || isFiltering),
+  );
 
   protected searchControl = this.fb.nonNullable.control('');
 

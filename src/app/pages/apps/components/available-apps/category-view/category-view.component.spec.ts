@@ -35,6 +35,7 @@ function mockFilterStore(searchQuery: string, apps: AvailableApp[]): ReturnType<
       categories: [],
     }),
     isFilterApplied$: of(false),
+    isFiltering$: of(false),
     searchQuery$: of(searchQuery),
     searchedFilteredApps$: of(apps) as Observable<AvailableApp[]>,
     applySearchQuery: jest.fn(),
@@ -45,6 +46,7 @@ function mockFilterStore(searchQuery: string, apps: AvailableApp[]): ReturnType<
 }
 
 const appsStoreProvider = mockProvider(AppsStore, {
+  isLoading$: of(false),
   appsCategories$: of(['storage', 'crypto', 'media', 'torrent', 'new-and-updated']),
   availableApps$: of([{
     categories: ['storage', 'crypto', 'new-and-updated'],
@@ -159,6 +161,40 @@ describe('CategoryViewComponent - search handed over from Discover', () => {
     const searchInput = await loader.getHarness(TnInputHarness.with({ placeholder: 'Search' }));
 
     expect(await searchInput.getValue()).toBe('plex');
+  });
+});
+
+describe('CategoryViewComponent - category still being fetched', () => {
+  let spectator: SpectatorRouting<CategoryViewComponent>;
+
+  const createComponent = createRoutingFactory({
+    ...sharedOptions,
+    providers: [
+      ...sharedOptions.providers,
+      mockProvider(AppsFilterStore, {
+        filterValues$: of({ sort: null, categories: [] }),
+        isFilterApplied$: of(false),
+        isFiltering$: of(true),
+        searchQuery$: of('plex'),
+        searchedFilteredApps$: of([]) as Observable<AvailableApp[]>,
+        applySearchQuery: jest.fn(),
+        applyFilters: jest.fn(),
+        resetFilters: jest.fn(),
+        resetFiltersKeepingSearch: jest.fn(),
+      }),
+    ],
+    queryParams: { search: 'plex' },
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+    spectator.fixture.detectChanges();
+  });
+
+  it('shows skeletons rather than an empty page or a premature no-results state', () => {
+    expect(spectator.query('ngx-skeleton-loader')).toBeTruthy();
+    expect(spectator.query(EmptyComponent)).toBeNull();
+    expect(spectator.query('.view-all')).toBeNull();
   });
 });
 
