@@ -39,6 +39,16 @@
             </ul>
           </li>
         }
+        @if (shareUsage().s3.length) {
+          <li>
+            <span class="service-name">{{ 'S3 Bucket' | translate }}:</span>
+            <ul class="service-shares">
+              @for (name of shareUsage().s3; track name) {
+                <li>{{ name }}</li>
+              }
+            </ul>
+          </li>
+        }
       </ul>
     </div>
   }

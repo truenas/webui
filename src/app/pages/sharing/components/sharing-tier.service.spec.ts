@@ -4,9 +4,11 @@ import {
   createServiceFactory, mockProvider, SpectatorService,
 } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, of } from 'rxjs';
+import { Subject, firstValueFrom, of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
+import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -137,6 +139,50 @@ describe('SharingTierService', () => {
 
       expect(matDialogOpen).not.toHaveBeenCalled();
       expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+    });
+  });
+
+  describe('createChangeDatasetTierAction', () => {
+    const destroyRef = { onDestroy: jest.fn() } as unknown as DestroyRef;
+
+    it('opens the dialog for the row dataset without parsing a mount path, then reloads', () => {
+      const reload = jest.fn();
+      const action = spectator.service.createChangeDatasetTierAction({ destroyRef, reload });
+
+      action.onClick({
+        dataset: 'tank/buckets/photos',
+        tier: { tier_type: DatasetTier.Performance, tier_job: null },
+      });
+
+      expect(matDialogOpen).toHaveBeenCalledWith(ChangeTierDialogComponent, {
+        data: {
+          datasetName: 'tank/buckets/photos',
+          currentTier: DatasetTier.Performance,
+          poolName: 'tank',
+        },
+      });
+      expect(reload).toHaveBeenCalled();
+    });
+
+    it('does not open the dialog when the row has no tier info', () => {
+      const action = spectator.service.createChangeDatasetTierAction({ destroyRef, reload: jest.fn() });
+
+      action.onClick({ dataset: 'tank/buckets/photos', tier: null });
+
+      expect(matDialogOpen).not.toHaveBeenCalled();
+    });
+
+    it('hides the action for a row the dialog could not act on', async () => {
+      const api = spectator.inject(MockApiService);
+      api.mockCall('zfs.tier.config', { enabled: true } as ZfsTierConfig);
+      await firstValueFrom(spectator.service.getTierConfig());
+      const action = spectator.service.createChangeDatasetTierAction({ destroyRef, reload: jest.fn() });
+      const tier = { tier_type: DatasetTier.Regular, tier_job: null };
+
+      expect(await firstValueFrom(action.hidden({ dataset: 'tank/buckets/photos', tier }))).toBe(false);
+      expect(await firstValueFrom(action.hidden({ dataset: '', tier }))).toBe(true);
+      expect(await firstValueFrom(action.hidden({ dataset: 'tank/x', tier, locked: true }))).toBe(true);
+      expect(await firstValueFrom(action.hidden({ dataset: 'tank/x', tier: null }))).toBe(true);
     });
   });
 

@@ -68,15 +68,16 @@ export class ChangeTierDialogComponent implements OnInit {
   // SMB and Webshare carry a user-visible `name`; NFS shares only have an
   // `id` + the same `path` already shown in the dialog header, so listing
   // names would just be a column of duplicate paths — show a count instead.
-  protected shareUsage = signal<{ smb: string[]; nfs: number; webshare: string[] }>({
+  protected shareUsage = signal<{ smb: string[]; nfs: number; webshare: string[]; s3: string[] }>({
     smb: [],
     nfs: 0,
     webshare: [],
+    s3: [],
   });
 
   protected hasAnyShares = computed(() => {
     const usage = this.shareUsage();
-    return usage.smb.length + usage.nfs + usage.webshare.length > 0;
+    return usage.smb.length + usage.nfs + usage.webshare.length + usage.s3.length > 0;
   });
 
   get newTier(): DatasetTier {
@@ -174,16 +175,19 @@ export class ChangeTierDialogComponent implements OnInit {
       this.api.call('sharing.smb.query', [[['path', '=', mountpoint]], { select: ['id', 'name'] }]),
       this.api.call('sharing.nfs.query', [[['path', '=', mountpoint]], { select: ['id'] }]),
       this.api.call('sharing.webshare.query', [[['path', '=', mountpoint]], { select: ['id', 'name'] }]),
+      // S3 buckets are keyed by dataset name rather than by mount path.
+      this.api.call('sharing.s3.query', [[['dataset', '=', this.data.datasetName]], { select: ['id', 'name'] }]),
     ]).pipe(
       tap({ error: () => this.loadFailed.set(true) }),
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: ([smb, nfs, webshare]) => {
+      next: ([smb, nfs, webshare, s3]) => {
         this.shareUsage.set({
           smb: smb.map((share) => share.name),
           nfs: nfs.length,
           webshare: webshare.map((share) => share.name),
+          s3: s3.map((bucket) => bucket.name),
         });
       },
     });
