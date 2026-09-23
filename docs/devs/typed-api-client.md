@@ -18,7 +18,7 @@ rewrite. To see where it stands, run `yarn check-api-migration --report`.
 
 | Piece | Where |
 |---|---|
-| `@truenas/api-client` as a runtime dependency (6.0.3 at the time of writing) | `package.json` |
+| `@truenas/api-client` as a runtime dependency (7.0.1 at the time of writing) | `package.json` |
 | The client instance, typed against `v27.0.0` | `src/app/modules/websocket/typed-api/typed-api-client.token.ts` |
 | `TypedApiService`, the migration target for `ApiService` | `src/app/modules/websocket/typed-api/typed-api.service.ts` |
 | The version the UI is written against | `WebUiApiDirectory` in the token file |
@@ -233,7 +233,11 @@ Once most call sites are typed, move what still depends on the legacy socket:
   client.
 - **Connection UX.** Reconnect, shutdown, failover and password-change flows
   that reach into `WebSocketHandlerService` directly (about ten files) move to
-  `client.connection` (`opened$`, `hasConnectionError$`, `setEnabled`).
+  `client.connection` (`opened$`, `hasConnectionError$`, `setEnabled`). 7.0.1
+  added the three this needs that were missing: `ReconnectOptions` (retry pacing
+  on `createTrueNasClient`), `ConnectionClose` (the close code, for telling a
+  shutdown from a dropped link), and `setEndpoint` (re-pointing at another
+  hostname at runtime, which is what a failover switch does).
 - **Debug panel and mocks.** Need a hook on the client (see gaps).
 
 ### Phase 3 — remove the legacy client
@@ -257,7 +261,7 @@ above. Each is a change for `truenas/api-client-ts`.
    legacy `call` path renders. A migrated `query` read is therefore a small
    downgrade in error reporting today (`cloudsync.credentials.query`,
    `keychaincredential.query`), and the first `job` site will inherit the
-   same. Unchanged as of 6.0.3. Fix: a typed error class carrying the full
+   same. Unchanged as of 7.0.1. Fix: a typed error class carrying the full
    payload; until then, route a query through `call` where the report
    matters. `call` is also the only verb that can act on `ENOTAUTHENTICATED`,
    which is why ending the app's session on that refusal lives there.
@@ -279,22 +283,28 @@ above. Each is a change for `truenas/api-client-ts`.
    `Denied` reach no UI from `loginWithToken`, only from the interactive login,
    which is unaffected because a password login throws on `AUTH_ERR` alone), so
    this is a fidelity gap rather than a broken flow. A `response` on the error,
-   or a non-throwing variant, would close it.
+   or a non-throwing variant, would close it. Still so in 7.0.1.
 4. **A password login is cached in the authenticator.** `loginWithUserPass`
    keeps the plaintext password on the authenticator and replays it on every
    reconnect. The UI never wanted that — it keeps a single-use token instead —
    and there is no way to decline it. Worth closing in the library; until then
    a password session re-logs itself in on reconnect, racing the sign-in
-   page's token login, which the authenticator's epoch guard resolves.
+   page's token login, which the authenticator's epoch guard resolves. Still so
+   in 7.0.1.
 5. **Parameterised subscriptions.** `EventName` excludes events that take
    subscription params (`method:param` style, e.g. file tailing), which the
    legacy `subscribe` supports. Needed before Phase 1 step 4.
 6. **Query and message types are not exported.** `QueryFilters` and
    `QueryProjection` are internal, so the wrapper forwards the query verbs
-   through `Parameters<>` rather than declaring them; `TrueNasMessage` and
-   the error-frame types are absent from the main entry too, so the wrapper's
-   own dispatch types the frame by hand (the `testing` entry does export
-   `TrueNasErrorFrame` and `TrueNasErrorData`). Unchanged as of 6.0.3.
+   through `Parameters<>` rather than declaring them; `TrueNasMessage` is absent
+   from the main entry too. Still so in 7.0.1.
+
+   Partly closed there: 7.0.1 exports `TrueNasErrorFrame` and `TrueNasErrorData`
+   from the main entry, where 6.x had them only under `testing`. The wrapper's
+   own dispatch still types the frame by hand, but for a different reason now —
+   `TrueNasErrorFrame` extends the *client's* `JsonRpcError` and carries
+   `TrueNasErrorData`, while `ApiCallError` takes the UI's `JsonRpcError` with
+   `ApiErrorDetails`. Converging those two is what would retire the cast.
 7. **No message hook.** The debug panel and mock responses intercept messages
    in `WebSocketHandlerService`; the client has no equivalent seam. Needed for
    Phase 2.
@@ -327,7 +337,7 @@ above. Each is a change for `truenas/api-client-ts`.
     the schema for those fields (a `bool | str` coercion, most likely) is
     being emitted as an intersection rather than a union. Harmless until a
     form tries to write those fields through the typed client. Still so in
-    6.0.3.
+    7.0.1, which regenerated the types.
 13. **Version namespaces are type-only and partial.** Generated model types
     are reachable as `v27_0_0.Name`, and that is how the UI's interface files
     now alias them (`keychain-credential.interface.ts` is the pattern). Two
@@ -337,7 +347,7 @@ above. Each is a change for `truenas/api-client-ts`.
     version namespace, and a later namespace carries only the types that
     changed in that version, so `SSHKeyPairEntry` and
     `CredentialsVerifyResult` exist under `v25_10_0` but not `v27_0_0`. Until
-    fixed (still so in 6.0.3): keep the UI's enums as value holders, and
+    fixed (still so in 7.0.1): keep the UI's enums as value holders, and
     derive a missing type from the directory
     (`CallResponse<D, 'keychaincredential.create'>`) rather than importing it
     from an older version's namespace.
