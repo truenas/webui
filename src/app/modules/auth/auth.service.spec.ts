@@ -695,15 +695,47 @@ describe('AuthService', () => {
       spectator.service.setQueryToken('DUMMY_TOKEN');
       (mockWsStatus.isAuthenticated$ as BehaviorSubject<boolean>).next(true);
 
-      sessionLifetime$.next(600);
+      sessionLifetime$.next(120);
+      jest.advanceTimersByTime(0);
+      expect(generateTokenCalls()).toHaveLength(1);
+
+      jest.advanceTimersByTime(60 * 1000);
+      expect(generateTokenCalls()).toHaveLength(2);
+
+      jest.advanceTimersByTime(60 * 1000);
+      expect(generateTokenCalls()).toHaveLength(3);
+    });
+
+    it('renews on the five minute ceiling for a lifetime middleware may not grant in full', () => {
+      jest.useFakeTimers();
+      spectator.service.setQueryToken('DUMMY_TOKEN');
+      (mockWsStatus.isAuthenticated$ as BehaviorSubject<boolean>).next(true);
+
+      // A day-long Session Timeout is within what the preferences form accepts, but the token
+      // middleware grants is capped at the appliance's maximum session age.
+      sessionLifetime$.next(86400);
       jest.advanceTimersByTime(0);
       expect(generateTokenCalls()).toHaveLength(1);
 
       jest.advanceTimersByTime(300 * 1000);
       expect(generateTokenCalls()).toHaveLength(2);
+    });
 
-      jest.advanceTimersByTime(300 * 1000);
-      expect(generateTokenCalls()).toHaveLength(3);
+    it('drops a renewal that comes back after the user has signed out', async () => {
+      const renewal$ = new Subject<string>();
+      (spectator.inject(ApiService).call as jest.Mock).mockReturnValueOnce(renewal$);
+      spectator.service.setQueryToken('DUMMY_TOKEN');
+      (mockWsStatus.isAuthenticated$ as BehaviorSubject<boolean>).next(true);
+
+      sessionLifetime$.next(1200);
+      await new Promise((resolve) => {
+        setTimeout(resolve);
+      });
+
+      spectator.service.clearAuthToken();
+      renewal$.next('LATE_TOKEN');
+
+      expect(spectator.service.hasAuthToken).toBe(false);
     });
 
     it('leaves a session that holds no token alone', async () => {

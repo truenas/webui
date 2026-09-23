@@ -34,6 +34,7 @@ import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
+import { minSessionLifetime } from 'app/store/preferences/default-preferences.constant';
 
 @Injectable({
   providedIn: 'root',
@@ -58,8 +59,14 @@ export class AuthService implements OnDestroy {
   // Flag to prevent premature adminUiInitialized dispatch
   private sessionInitialized = false;
 
-  /** The shortest Session Timeout the preferences form accepts. */
-  private readonly minSessionLifetimeSeconds = 30;
+  /**
+   * A ceiling on the renewal interval. Middleware cuts the token's TTL from the configured
+   * lifetime, but caps it at the authenticator assurance level's maximum session age — thirteen
+   * minutes at the strictest level — and `auth.generate_token` hands back only the token, never
+   * the TTL it granted. Renewing at least this often keeps the stored token live under any cap
+   * the appliance applies, at the cost of one call every five minutes on a long session.
+   */
+  private readonly maxRenewalIntervalSeconds = 300;
 
   private latestTokenGenerated$ = new ReplaySubject<string | null>(1);
   get authToken$(): Observable<string> {
@@ -428,16 +435,27 @@ export class AuthService implements OnDestroy {
         }),
       )),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((token) => this.latestTokenGenerated$.next(token));
+    ).subscribe((token) => {
+      // The gates above ran before the call went out. A sign-out in the meantime has already
+      // swapped `latestTokenGenerated$`, so publishing here would put a live credential back in
+      // storage after the user asked to leave.
+      if (!this.hasAuthToken) {
+        return;
+      }
+
+      this.latestTokenGenerated$.next(token);
+    });
   }
 
   /**
    * Half the session lifetime, so every refresh finds a token with time left on it. A lifetime
    * below the shortest one the form accepts counts as that minimum, so a value set outside the
-   * UI cannot turn renewal into a stream of calls.
+   * UI cannot turn renewal into a stream of calls, and a long one is still renewed on the
+   * ceiling above rather than on a deadline middleware may never have granted.
    */
   private getTokenRenewalInterval(lifetime: number): number {
-    return Math.max(lifetime, this.minSessionLifetimeSeconds) / 2 * 1000;
+    const halfLifetime = Math.max(lifetime, minSessionLifetime) / 2;
+    return Math.min(halfLifetime, this.maxRenewalIntervalSeconds) * 1000;
   }
 
   ngOnDestroy(): void {
