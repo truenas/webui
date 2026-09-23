@@ -215,14 +215,27 @@ describe('S3CardComponent', () => {
       const menu = await openRowMenu();
       expect(await menu.getItemLabels()).not.toContain('Change Storage Tier');
     });
+  });
 
-    it('reloads buckets when a tier job update is emitted', async () => {
-      await createWithBuckets([{ ...buckets[0], tier }]);
+  // Its own block with its own Subject: the mock's job subscription outlives the component,
+  // so a Subject shared with other tests would keep their destroyed components subscribed.
+  describe('tier job refresh', () => {
+    const tierJobUpdates$ = new Subject<ZfsTierRewriteJobEntry>();
+
+    const createTierJobComponent = createComponentFactory({
+      component: S3CardComponent,
+      imports: [TablePagerShowMoreComponent],
+      providers: [...commonProviders, mockSharingTierService({ enabled: true, jobUpdates$: tierJobUpdates$ })],
+    });
+
+    it('reloads buckets when a tier job update is emitted', () => {
+      listedBuckets = [{ ...buckets[0], tier: { tier_type: DatasetTier.Regular, tier_job: null } }];
+      spectator = createTierJobComponent();
       const loadSpy = jest.spyOn(spectator.component.dataProvider, 'load');
 
-      jobUpdates$.next({ tier_job_id: 'job-1' } as ZfsTierRewriteJobEntry);
+      tierJobUpdates$.next({ tier_job_id: 'job-1' } as ZfsTierRewriteJobEntry);
 
-      expect(loadSpy).toHaveBeenCalled();
+      expect(loadSpy).toHaveBeenCalledTimes(1);
     });
   });
 });

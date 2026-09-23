@@ -4,9 +4,11 @@ import {
 } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { TnDialog } from '@truenas/ui-components';
-import { Subject, of } from 'rxjs';
+import { Subject, firstValueFrom, of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
+import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ChangeTierDialogComponent,
@@ -164,6 +166,19 @@ describe('SharingTierService', () => {
       action.onClick({ dataset: 'tank/buckets/photos', tier: null });
 
       expect(matDialogOpen).not.toHaveBeenCalled();
+    });
+
+    it('hides the action for a row the dialog could not act on', async () => {
+      const api = spectator.inject(MockApiService);
+      api.mockCall('zfs.tier.config', { enabled: true } as ZfsTierConfig);
+      await firstValueFrom(spectator.service.getTierConfig());
+      const action = spectator.service.createChangeDatasetTierAction({ destroyRef, reload: jest.fn() });
+      const tier = { tier_type: DatasetTier.Regular, tier_job: null };
+
+      expect(await firstValueFrom(action.hidden({ dataset: 'tank/buckets/photos', tier }))).toBe(false);
+      expect(await firstValueFrom(action.hidden({ dataset: '', tier }))).toBe(true);
+      expect(await firstValueFrom(action.hidden({ dataset: 'tank/x', tier, locked: true }))).toBe(true);
+      expect(await firstValueFrom(action.hidden({ dataset: 'tank/x', tier: null }))).toBe(true);
     });
   });
 

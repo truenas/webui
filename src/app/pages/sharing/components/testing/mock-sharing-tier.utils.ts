@@ -11,6 +11,10 @@ interface TierRow {
   locked?: boolean | null;
 }
 
+interface DatasetTierRow extends TierRow {
+  dataset?: string;
+}
+
 interface MockOpts {
   enabled?: boolean;
   jobUpdates$?: Observable<ZfsTierRewriteJobEntry>;
@@ -35,6 +39,13 @@ export function mockSharingTierService(opts: MockOpts = {}): ReturnType<typeof m
     onClick: () => actionOpts.reload(),
   });
 
+  // Mirrors the real factory's extra `!row.dataset` clause, so component specs exercise the
+  // same hide rules the service applies.
+  const buildDatasetAction = <T extends DatasetTierRow>(actionOpts: { reload: () => void }): IconActionConfig<T> => ({
+    ...buildAction<T>(actionOpts),
+    hidden: (row) => of(!enabled || !row.tier || Boolean(row.locked) || !row.dataset),
+  });
+
   return mockProvider(SharingTierService, {
     tierEnabled: signal(enabled).asReadonly(),
     getTierConfig: () => of({ enabled }),
@@ -47,6 +58,6 @@ export function mockSharingTierService(opts: MockOpts = {}): ReturnType<typeof m
       jobUpdates$.subscribe(() => wireOpts.reload());
     },
     createChangeTierAction: buildAction,
-    createChangeDatasetTierAction: buildAction,
+    createChangeDatasetTierAction: buildDatasetAction,
   });
 }
