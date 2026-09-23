@@ -139,6 +139,27 @@ describe('ImageVirtualSizeValidatorService', () => {
       });
     });
 
+    it('quotes a required size that is actually large enough, rounding the image size up', async () => {
+      // An image a hair over 50 GiB renders as `50 GiB` when rounded to the nearest
+      // hundredth of a unit — a size this very validator then rejects.
+      mockGetVirtualSize.mockReturnValue(of(50 * GiB + 4096));
+
+      form.patchValue({
+        import_image: true,
+        image_source: '/mnt/pool/test.qcow2',
+      });
+
+      const validator = spectator.service.validateVolsize(form, mockGetVirtualSize);
+      const control = new FormControl(50 * GiB);
+      const result = await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+
+      expect(result).toEqual({
+        insufficientSize: {
+          message: 'Disk size must be at least 50.01 GiB to accommodate the imported image',
+        },
+      });
+    });
+
     it('handles API error gracefully when getVirtualSize returns null', async () => {
       mockGetVirtualSize.mockReturnValue(of(null));
 
@@ -269,6 +290,31 @@ describe('ImageVirtualSizeValidatorService', () => {
       expect(result).toEqual({
         insufficientZvolSize: {
           message: expect.stringContaining('Selected zvol'),
+        },
+      });
+    });
+
+    it('quotes a required zvol size that is actually large enough', async () => {
+      mockGetVirtualSize.mockReturnValue(of(50 * GiB + 4096));
+      mockQueryDataset.mockReturnValue(of([
+        {
+          type: DatasetType.Volume,
+          volsize: { parsed: 50 * GiB },
+        } as Dataset,
+      ]));
+
+      form.patchValue({
+        import_image: true,
+        image_source: '/mnt/pool/test.qcow2',
+      });
+
+      const validator = spectator.service.validateHddPath(form, mockGetVirtualSize, mockQueryDataset);
+      const control = new FormControl('/dev/zvol/poolio/test-zvol');
+      const result = await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+
+      expect(result).toEqual({
+        insufficientZvolSize: {
+          message: 'Selected zvol (50 GiB) is too small for the imported image (requires 50.01 GiB)',
         },
       });
     });
