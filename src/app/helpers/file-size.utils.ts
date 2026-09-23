@@ -1,6 +1,4 @@
-import {
-  Gb, kb, Mb, Tb, Pb, Eb, Zb, Yb,
-} from 'app/constants/bits.constant';
+import { kb, Yb } from 'app/constants/bits.constant';
 import {
   GiB, KiB, MiB, PiB, TiB, EiB, ZiB, YiB,
 } from 'app/constants/bytes.constant';
@@ -19,6 +17,31 @@ export function buildNormalizedFileSize(
   base: 10 | 2 = 2,
 ): string {
   const [formatted, unit] = normalizeFileSize(value, baseUnit, base);
+  return `${formatted} ${unit}`;
+}
+
+/**
+ * {@link buildNormalizedFileSize}, except the rendering is never smaller than `value`.
+ *
+ * `buildNormalizedFileSize` rounds to the nearest hundredth of a unit, so a size a
+ * hair above a round one reads as that round one: 50 GiB + 4 KiB renders as `50 GiB`.
+ * That is fine to read, but wrong to quote as a minimum — it names a size that is
+ * still too small. Rounding the last shown digit up keeps the rendering a size that
+ * actually covers `value`.
+ */
+export function buildRoundedUpFileSize(
+  value: number,
+  baseUnit: 'b' | 'B' = 'B',
+  base: 10 | 2 = 2,
+): string {
+  const [increment, unit] = pickFileSizeUnit(value, baseUnit, base);
+
+  let formatted = Math.ceil((value / increment) * 100) / 100;
+  // The quotient is a float, so the ceiling can still land a hundredth short.
+  while (formatted * increment < value) {
+    formatted = Math.round((formatted + 0.01) * 100) / 100;
+  }
+
   return `${formatted} ${unit}`;
 }
 
@@ -64,61 +87,36 @@ export function convertStringDiskSizeToBytes(input: string): number | null {
 }
 
 function normalizeFileSizeBase2(value: number, baseUnit: 'b' | 'B'): [formatted: number, unit: string] {
-  let formatted = value;
-  let increment = 1;
-  while (formatted >= KiB && increment < YiB) {
-    increment *= KiB;
-    formatted = value / increment;
-  }
-  formatted = Math.round((formatted + Number.EPSILON) * 100) / 100;
-  switch (increment) {
-    case KiB:
-      return [formatted, 'Ki' + baseUnit];
-    case MiB:
-      return [formatted, 'Mi' + baseUnit];
-    case GiB:
-      return [formatted, 'Gi' + baseUnit];
-    case TiB:
-      return [formatted, 'Ti' + baseUnit];
-    case PiB:
-      return [formatted, 'Pi' + baseUnit];
-    case EiB:
-      return [formatted, 'Ei' + baseUnit];
-    case ZiB:
-      return [formatted, 'Zi' + baseUnit];
-    case YiB:
-      return [formatted, 'Yi' + baseUnit];
-    default:
-      return [formatted, baseUnit];
-  }
+  return normalizeAgainstUnit(value, baseUnit, 2);
 }
 
 function normalizeFileSizeBase10(value: number, baseUnit: 'b' | 'B'): [formatted: number, unit: string] {
-  let formatted = value;
+  return normalizeAgainstUnit(value, baseUnit, 10);
+}
+
+function normalizeAgainstUnit(value: number, baseUnit: 'b' | 'B', base: 10 | 2): [number, string] {
+  const [increment, unit] = pickFileSizeUnit(value, baseUnit, base);
+  const formatted = Math.round(((value / increment) + Number.EPSILON) * 100) / 100;
+  return [formatted, unit];
+}
+
+/**
+ * Picks the largest unit `value` still reads as at least one of, and returns how many
+ * bytes (or bits) that unit is worth alongside its symbol.
+ */
+function pickFileSizeUnit(value: number, baseUnit: 'b' | 'B', base: 10 | 2): [increment: number, unit: string] {
+  const step = base === 10 ? kb : KiB;
+  const largest = base === 10 ? Yb : YiB;
+  const prefixes = base === 10
+    ? ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
+    : ['Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi'];
+
   let increment = 1;
-  while (formatted >= kb && increment < Yb) {
-    increment *= kb;
-    formatted = value / increment;
+  let steps = 0;
+  while (value / increment >= step && increment < largest) {
+    increment *= step;
+    steps++;
   }
-  formatted = Math.round((formatted + Number.EPSILON) * 100) / 100;
-  switch (increment) {
-    case kb:
-      return [formatted, 'k' + baseUnit];
-    case Mb:
-      return [formatted, 'M' + baseUnit];
-    case Gb:
-      return [formatted, 'G' + baseUnit];
-    case Tb:
-      return [formatted, 'T' + baseUnit];
-    case Pb:
-      return [formatted, 'P' + baseUnit];
-    case Eb:
-      return [formatted, 'E' + baseUnit];
-    case Zb:
-      return [formatted, 'Z' + baseUnit];
-    case Yb:
-      return [formatted, 'Y' + baseUnit];
-    default:
-      return [formatted, baseUnit];
-  }
+
+  return [increment, (steps ? prefixes[steps - 1] : '') + baseUnit];
 }
