@@ -147,6 +147,13 @@
         </ng-template>
       </ng-container>
 
+      <ng-container [tnColumnDef]="'tier'" [width]="'160px'">
+        <ng-template tnHeaderCellDef>{{ 'Storage Tier' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-tier-status [tier]="row.tier" [uniqueRowTag]="uniqueRowTag(row)" />
+        </ng-template>
+      </ng-container>
+
       <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
         <ng-template tnHeaderCellDef></ng-template>
         <ng-template let-row tnCellDef>

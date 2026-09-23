@@ -48,6 +48,8 @@ import { ServiceS3Component } from 'app/pages/services/components/service-s3/ser
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { TierStatusComponent } from 'app/pages/sharing/components/tier-status/tier-status.component';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { bucketDataPath, bucketToShareRow } from 'app/pages/sharing/s3/utils/s3-bucket.utils';
 import {
@@ -86,6 +88,7 @@ import { selectService } from 'app/store/services/services.selectors';
     CardAlertBadgeComponent,
     TableToggleCellComponent,
     TableActionsCellComponent,
+    TierStatusComponent,
   ],
 })
 export class S3CardComponent implements OnInit {
@@ -101,6 +104,7 @@ export class S3CardComponent implements OnInit {
   private poolStoreService = inject(poolStore);
   private authService = inject(AuthService);
   protected actionsMenu = inject(ServiceActionsMenuService);
+  private tierService = inject(SharingTierService);
   private snackbar = inject(SnackbarService);
 
   requiredRoles = [Role.SharingS3Write, Role.SharingWrite];
@@ -123,6 +127,12 @@ export class S3CardComponent implements OnInit {
   private activePoolPaths = signal<string[] | null>(null);
   protected readonly cardMenuPath = ['sharing', 's3'];
 
+  private tierAction: IconActionConfig<S3Bucket> = this.tierService.createChangeDatasetTierAction<S3Bucket>({
+    destroyRef: this.destroyRef,
+    reload: () => this.dataProvider.load(),
+    requiredRoles: this.requiredRoles,
+  });
+
   protected readonly actions: IconActionConfig<S3Bucket>[] = [
     {
       iconName: tnIconMarker('pencil', 'mdi'),
@@ -138,6 +148,7 @@ export class S3CardComponent implements OnInit {
       ),
       onClick: (row) => this.doFilesystemAclEdit(row),
     },
+    this.tierAction,
     {
       iconName: tnIconMarker('delete', 'mdi'),
       tooltip: this.translate.instant('Delete'),
@@ -146,7 +157,15 @@ export class S3CardComponent implements OnInit {
     },
   ];
 
-  protected readonly displayedColumns = ['name', 'dataset', 'owner', 'enabled', 'actions'];
+  /** The `tier` column is only displayed when tiering is enabled. */
+  protected readonly displayedColumns = computed<string[]>(() => {
+    const columns = ['name', 'dataset', 'owner', 'enabled'];
+    if (this.tierService.tierEnabled()) {
+      columns.push('tier');
+    }
+    columns.push('actions');
+    return columns;
+  });
 
   protected readonly trackByBucketId = (_index: number, row: S3Bucket): number => row.id;
 
@@ -167,7 +186,7 @@ export class S3CardComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<S3Bucket>(event, this.displayedColumns));
+    this.dataProvider.setSorting(mapTnSortToTableSort<S3Bucket>(event, this.displayedColumns()));
   }
 
   ngOnInit(): void {
@@ -185,6 +204,14 @@ export class S3CardComponent implements OnInit {
       error: () => {
         this.dataProvider.load();
       },
+    });
+
+    // Prime the tier config so `displayedColumns` reactively reveals the tier
+    // column when tiering is enabled, and reload the list on tier-job ticks.
+    this.tierService.getTierConfig().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    this.tierService.wireTierJobRefresh({
+      destroyRef: this.destroyRef,
+      reload: () => this.dataProvider.load(),
     });
   }
 

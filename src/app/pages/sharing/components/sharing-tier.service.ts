@@ -22,8 +22,21 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface TierRow {
   path: string;
-  locked?: boolean;
+  locked?: boolean | null;
   tier?: SharingTierInfo | null;
+}
+
+/** A row that names its dataset directly (e.g. an S3 bucket) rather than a share path under /mnt. */
+interface DatasetTierRow {
+  dataset: string;
+  locked?: boolean | null;
+  tier?: SharingTierInfo | null;
+}
+
+interface ChangeTierActionOptions {
+  destroyRef: DestroyRef;
+  reload: () => void;
+  requiredRoles?: Role[];
 }
 
 @Injectable({
@@ -106,7 +119,7 @@ export class SharingTierService {
    * progresses. Useful for share/dataset lists that show tier job progress.
    *
    * A tn-table list shows its tier column by putting `'tier'` in `displayedColumns` while
-   * `tierEnabled()` is set — see the NFS and SMB cards — so there is no column array to mutate
+   * `tierEnabled()` is set — see the share cards and lists — so there is no column array to mutate
    * here; prime the config with `getTierConfig()` and the membership follows.
    */
   wireTierJobRefresh(opts: { destroyRef: DestroyRef; reload: () => void }): void {
@@ -117,22 +130,25 @@ export class SharingTierService {
    * Factory for the "Change Storage Tier" menu action used in share list/card components.
    * The action is hidden when tiering is off, the row has no tier info, or the row is locked.
    */
-  createChangeTierAction<T extends TierRow>(opts: {
-    destroyRef: DestroyRef;
-    reload: () => void;
-    requiredRoles?: Role[];
-  }): IconActionConfig<T> {
-    return {
-      iconName: tnIconMarker('swap-horizontal', 'mdi'),
-      tooltip: this.translate.instant(T('Change Storage Tier')),
-      requiredRoles: opts.requiredRoles,
-      hidden: (row) => of(!this.tierEnabled() || !row.tier || Boolean(row.locked)),
-      onClick: (row) => {
-        this.openChangeTierDialog(row).pipe(
-          takeUntilDestroyed(opts.destroyRef),
-        ).subscribe(() => opts.reload());
-      },
-    };
+  createChangeTierAction<T extends TierRow>(opts: ChangeTierActionOptions): IconActionConfig<T> {
+    return this.buildChangeTierAction<T>(opts, (row) => this.openChangeTierDialog(row));
+  }
+
+  /**
+   * Same as `createChangeTierAction`, for rows that carry their dataset name instead of a
+   * share path, so there is no mount path to parse.
+   */
+  createChangeDatasetTierAction<T extends DatasetTierRow>(opts: ChangeTierActionOptions): IconActionConfig<T> {
+    return this.buildChangeTierAction<T>(opts, (row) => {
+      if (!row.tier || !row.dataset) {
+        return EMPTY;
+      }
+      return this.openChangeTierDialogForDataset({
+        datasetName: row.dataset,
+        currentTier: row.tier.tier_type,
+        poolName: row.dataset.split('/')[0],
+      });
+    }, (row) => !row.dataset);
   }
 
   /**
@@ -196,6 +212,28 @@ export class SharingTierService {
     return this.tnDialog.open(ChangeTierDialogComponent, {
       data,
     }).closed.pipe(filter(Boolean));
+  }
+
+  /**
+   * `alsoHidden` lets a caller hide the action for rows its dialog could not act on, so the menu
+   * never offers an item that would do nothing.
+   */
+  private buildChangeTierAction<T extends { locked?: boolean | null; tier?: SharingTierInfo | null }>(
+    opts: ChangeTierActionOptions,
+    openDialog: (row: T) => Observable<unknown>,
+    alsoHidden: (row: T) => boolean = () => false,
+  ): IconActionConfig<T> {
+    return {
+      iconName: tnIconMarker('swap-horizontal', 'mdi'),
+      tooltip: this.translate.instant(T('Change Storage Tier')),
+      requiredRoles: opts.requiredRoles,
+      hidden: (row) => of(!this.tierEnabled() || !row.tier || Boolean(row.locked) || alsoHidden(row)),
+      onClick: (row) => {
+        openDialog(row).pipe(
+          takeUntilDestroyed(opts.destroyRef),
+        ).subscribe(() => opts.reload());
+      },
+    };
   }
 
   private datasetFromMountPath(path: string): string[] {
