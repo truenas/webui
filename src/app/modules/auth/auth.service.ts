@@ -14,7 +14,6 @@ import {
   Observable,
   of,
   ReplaySubject,
-  startWith,
   switchMap,
   take,
   tap,
@@ -304,21 +303,22 @@ export class AuthService implements OnDestroy {
       switchMap((client) => {
         this.endLocalSession();
 
-        return client.authenticator.logout().pipe(
-          // What the authenticator returns only waits for middleware's
-          // acknowledgement; the session is already over and the frame is already
-          // on the wire. Waiting for it would hang the sign-out on a socket that
-          // is going down.
-          startWith(true),
-          take(1),
+        // Calling this is what ends the typed session: the authenticator clears
+        // its credentials, drops `authenticated$` and writes the frame before it
+        // returns. What it returns only carries middleware's acknowledgement,
+        // which a socket on its way down may never send — so it is subscribed for
+        // its errors rather than waited on, and the sign-out cannot hang on it.
+        client.authenticator.logout().subscribe({
+          error: (error: unknown) => console.warn('Typed session logout was not acknowledged', error),
+        });
+
+        return this.api.call('auth.logout').pipe(
+          catchError((error: unknown) => {
+            console.warn('Borrowed legacy session could not be logged out', error);
+            return of(undefined);
+          }),
         );
       }),
-      switchMap(() => this.api.call('auth.logout').pipe(
-        catchError((error: unknown) => {
-          console.warn('Borrowed legacy session could not be logged out', error);
-          return of(undefined);
-        }),
-      )),
       map((): undefined => undefined),
     );
   }

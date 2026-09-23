@@ -4,7 +4,7 @@ import {
   createFakeClient, fakeApiError, fakeJob, FakeTrueNasClient, withSpies,
 } from '@truenas/api-client/testing';
 import {
-  BehaviorSubject, defaultIfEmpty, firstValueFrom, lastValueFrom, of, throwError,
+  BehaviorSubject, defaultIfEmpty, EMPTY, firstValueFrom, lastValueFrom, of, throwError,
 } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -65,6 +65,7 @@ describe('TypedApiService', () => {
   });
 
   const sentMethods = (): string[] => client.connection.sent.map((frame) => String(frame.method));
+  const mintedTokenCount = (): number => sentMethods().filter((method) => method === 'auth.generate_token').length;
   const legacyApi = (): MockApiService => spectator.inject(MockApiService);
   const legacyLogins = (): unknown[] => jest.mocked(legacyApi().call).mock.calls
     .filter(([method]) => method === 'auth.login_ex')
@@ -121,7 +122,10 @@ describe('TypedApiService', () => {
       await bringSessionUp();
 
       legacyApi().sessionLost.next();
-      await settle();
+      // Past the window refusals are collected in; see `refusalBurstWindowMs`.
+      await new Promise((resolve) => {
+        setTimeout(resolve, 700);
+      });
 
       expect(legacyLogins()).toHaveLength(2);
     });
@@ -192,6 +196,52 @@ describe('TypedApiService', () => {
       await tick(1000 + 2000 + 4000);
 
       await expect(lent).rejects.toBeInstanceOf(TypedApiSessionError);
+    });
+
+    it('ends the app session once the reactive borrow has given up', async () => {
+      // `ApiService` used to drop the session directly on ENOTAUTHENTICATED. Without
+      // this the admin shell keeps rendering as signed in while every legacy call
+      // fails, with no route back to the sign-in page that would repair it.
+      jest.mocked(legacyApi().call).mockReturnValue(throwError(() => new Error('legacy down')));
+      client.connection.simulateOpen();
+      signIn();
+      legacyConnected$.next(true);
+
+      await tick(1000 + 2000 + 4000);
+
+      expect(wsStatus.setLoginStatus).toHaveBeenCalledWith(false);
+    });
+
+    it('treats a legacy answer that never comes as a failed borrow', async () => {
+      // `ApiService.call` completes without emitting on ENOTAUTHENTICATED. Carried
+      // through, that would finish a sign-in without a result or an error.
+      jest.mocked(legacyApi().call).mockReturnValue(EMPTY);
+      client.connection.simulateOpen();
+      signIn();
+
+      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
+      await tick(1000 + 2000 + 4000);
+
+      await expect(lent).rejects.toBeInstanceOf(TypedApiSessionError);
+    });
+
+    it('makes one borrow for a burst of refusals, not one per refused call', async () => {
+      await tick(0);
+      client.connection.simulateOpen();
+      signIn();
+      legacyConnected$.next(true);
+      await tick(0);
+      const afterFirstBorrow = mintedTokenCount();
+
+      // A socket that comes back unauthenticated has every queued call refused at
+      // once; each refusal cancelling the borrow they are all waiting on would
+      // abandon a token it had already minted.
+      legacyApi().sessionLost.next();
+      legacyApi().sessionLost.next();
+      legacyApi().sessionLost.next();
+      await tick(600);
+
+      expect(mintedTokenCount()).toBe(afterFirstBorrow + 1);
     });
 
     it('starts a fresh borrow the next time one is asked for', async () => {

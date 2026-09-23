@@ -14,6 +14,8 @@ import {
 import {
   catchError,
   combineLatest,
+  debounceTime,
+  defaultIfEmpty,
   defer,
   distinctUntilChanged,
   EMPTY,
@@ -60,6 +62,13 @@ const borrowTokenTtlSeconds = 300;
  */
 const borrowRetries = 3;
 const borrowRetryBaseDelayMs = 1000;
+
+/**
+ * How long refusals on the legacy socket are collected before they are treated
+ * as one lapsed session. A socket that comes back unauthenticated has every
+ * queued call refused at once, and that is one borrow to make, not one each.
+ */
+const refusalBurstWindowMs = 500;
 
 /**
  * Fully-typed API access, backed by `@truenas/api-client`.
@@ -267,13 +276,27 @@ export class TypedApiService {
    * itself, and the two share one borrow — but a reconnect has no such caller,
    * and without it the legacy socket would come back unauthenticated and stay
    * that way.
+   *
+   * `sessionLost` is debounced because it fires once per refused call, not once
+   * per lapsed session, and the ordinary case is a burst: the socket comes back,
+   * the borrow starts, and every call already queued onto the still-unauthorised
+   * socket is refused a moment later. Undebounced, each of those would cancel the
+   * borrow they are waiting for and abandon a token it had already minted. The
+   * `startWith` is after the debounce so the first borrow is not delayed by it.
+   *
+   * A borrow that has genuinely given up ends the app's session. That is the
+   * outcome `ApiService` used to produce directly from `ENOTAUTHENTICATED`, and
+   * without it a legacy socket that cannot get a session leaves the admin shell
+   * rendering as though it were signed in while every call on it fails. Dropping
+   * the session instead routes the user to the sign-in page, which re-establishes
+   * both sides from the stored token.
    */
   private lendOnDemand(): void {
     this.client$.pipe(
       switchMap((client) => combineLatest([
         client.authenticator.authenticated$.pipe(distinctUntilChanged()),
         this.wsStatus.isConnected$.pipe(distinctUntilChanged()),
-        this.legacyApi.sessionLost.pipe(startWith(undefined)),
+        this.legacyApi.sessionLost.pipe(debounceTime(refusalBurstWindowMs), startWith(undefined)),
       ])),
       switchMap(([isAuthenticated, isLegacyConnected]) => {
         if (!isAuthenticated || !isLegacyConnected) {
@@ -283,6 +306,7 @@ export class TypedApiService {
         return this.lendSessionToLegacySocket().pipe(
           catchError((error: unknown) => {
             console.error('Legacy socket could not borrow the typed session', error);
+            this.wsStatus.setLoginStatus(false);
             return EMPTY;
           }),
         );
@@ -308,10 +332,19 @@ export class TypedApiService {
       switchMap((token) => this.legacyApi.call('auth.login_ex', [{
         mechanism: LoginExMechanism.TokenPlain,
         token,
-      }])),
+      }]).pipe(
+        // `ApiService.call` completes without emitting when the appliance refuses
+        // a call for want of a session — the very refusal a borrow exists to
+        // repair. Left as an empty completion it would carry through to the
+        // sign-in waiting on this, which would finish having reported neither a
+        // result nor an error, leaving the button spinning. A borrow that got no
+        // answer is a borrow that failed.
+        defaultIfEmpty(null),
+      )),
       switchMap((response) => {
-        if (response.response_type !== LoginExResponseType.Success) {
-          return throwError(() => new Error(`Legacy socket refused the borrowed token (${response.response_type})`));
+        if (response?.response_type !== LoginExResponseType.Success) {
+          const outcome = response?.response_type ?? 'no answer';
+          return throwError(() => new Error(`Legacy socket refused the borrowed token (${outcome})`));
         }
         return of(undefined);
       }),

@@ -11,7 +11,7 @@ import {
 } from 'ngx-webstorage';
 import {
   BehaviorSubject, firstValueFrom,
-  of, throwError,
+  of, Subject, throwError,
 } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
@@ -32,6 +32,7 @@ import { PendingTwoFactorService } from 'app/modules/auth/pending-two-factor.ser
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TYPED_API_CLIENT, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { TypedApiSessionError } from 'app/services/errors/error.classes';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
@@ -60,12 +61,21 @@ describe('AuthService', () => {
     ],
   } as LoggedInUser;
 
+  // Complete enough for the service to subscribe to all of it. An absent stream
+  // here is not a loud failure: `setupWsConnectionUpdate` merges two of them, and
+  // `merge(stream, undefined)` reports its TypeError asynchronously, where jsdom
+  // logs it and the suite goes on passing with that subscription dead.
   const mockWsStatus = {
     setLoginStatus: jest.fn(),
     setConnectionStatus: jest.fn(),
+    setSessionStatus: jest.fn(),
     isConnected$: new BehaviorSubject(true),
+    isSessionEstablished$: new BehaviorSubject(true),
     isAuthenticated$: new BehaviorSubject(false),
   } as unknown as WebSocketStatusService;
+
+  const connected$ = (): BehaviorSubject<boolean> => mockWsStatus.isConnected$ as BehaviorSubject<boolean>;
+  const sessionUp$ = (): BehaviorSubject<boolean> => mockWsStatus.isSessionEstablished$ as BehaviorSubject<boolean>;
 
   /**
    * What middleware sends back for a successful login. The authenticator's own
@@ -124,6 +134,8 @@ describe('AuthService', () => {
   });
 
   beforeEach(() => {
+    connected$().next(true);
+    sessionUp$().next(true);
     client = withSpies(createFakeClient({ version: 'v27.0.0', authenticated: false }), jest.fn);
     // The authenticator waits for an answer to its `auth.logout` frame.
     client.connection.autoReply('auth.logout', ({ id }) => {
@@ -197,11 +209,38 @@ describe('AuthService', () => {
     });
 
     it('lends the session to the legacy socket before reporting a login as successful', async () => {
+      // Everything the sign-in flow does next rides the legacy socket, so the
+      // borrow has to have finished — not merely started — before success is
+      // reported. Driven through a subject the spec completes by hand, so a
+      // fire-and-forget borrow would fail here.
+      const borrow$ = new Subject<undefined>();
+      jest.mocked(spectator.inject(MockTypedApiService).lendSessionToLegacySocket)
+        .mockReturnValue(borrow$.asObservable());
       armLogin();
 
-      await firstValueFrom(spectator.service.login('dummy', 'secret'));
+      let loginResult: LoginResult | null = null;
+      spectator.service.login('dummy', 'secret').subscribe((result) => {
+        loginResult = result.loginResult;
+      });
+      await Promise.resolve();
 
       expect(spectator.inject(MockTypedApiService).lendSessionToLegacySocket).toHaveBeenCalled();
+      expect(loginResult).toBeNull();
+
+      borrow$.next(undefined);
+      borrow$.complete();
+      await Promise.resolve();
+
+      expect(loginResult).toBe(LoginResult.Success);
+    });
+
+    it('reports a login as failed when the legacy socket cannot borrow the session', async () => {
+      jest.mocked(spectator.inject(MockTypedApiService).lendSessionToLegacySocket)
+        .mockReturnValue(throwError(() => new TypedApiSessionError(new Error('legacy down'))));
+      armLogin();
+
+      await expect(firstValueFrom(spectator.service.login('dummy', 'secret')))
+        .rejects.toBeInstanceOf(TypedApiSessionError);
     });
 
     // The authenticator reports a refused credential by throwing rather than by
@@ -683,7 +722,43 @@ describe('AuthService', () => {
     });
   });
 
-  // Note: Tests for setupAuthenticationUpdate, setupWsConnectionUpdate, and ngOnDestroy
-  // have been removed as they test private/protected implementation details.
-  // The behavior of these methods is tested indirectly through the public API.
+  describe('losing what the app needs from either socket', () => {
+    async function signIn(): Promise<void> {
+      armLogin();
+      await firstValueFrom(spectator.service.login('dummy', 'secret'));
+      await firstValueFrom(spectator.service.initializeSession());
+      jest.mocked(mockWsStatus.setLoginStatus).mockClear();
+    }
+
+    it('drops the signed-in state when the typed session ends', async () => {
+      await signIn();
+
+      sessionUp$().next(false);
+
+      expect(mockWsStatus.setLoginStatus).toHaveBeenCalledWith(false);
+      expect(await firstValueFrom(spectator.service.user$)).toBeNull();
+    });
+
+    // The legacy socket carries most of the app's calls; losing it is still a
+    // reason to go back to sign-in, even while the typed session is fine.
+    it('drops the signed-in state when the legacy socket disconnects', async () => {
+      await signIn();
+
+      connected$().next(false);
+
+      expect(mockWsStatus.setLoginStatus).toHaveBeenCalledWith(false);
+      expect(await firstValueFrom(spectator.service.user$)).toBeNull();
+    });
+
+    it('lets the session be initialized again once both are back', async () => {
+      await signIn();
+      sessionUp$().next(false);
+
+      sessionUp$().next(true);
+      armLogin();
+      await firstValueFrom(spectator.service.login('dummy', 'secret'));
+
+      expect(await firstValueFrom(spectator.service.initializeSession())).toBe(LoginResult.Success);
+    });
+  });
 });

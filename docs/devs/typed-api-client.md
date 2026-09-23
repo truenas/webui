@@ -270,28 +270,38 @@ above. Each is a change for `truenas/api-client-ts`.
    returns, and the sign-in page spends it after a reconnect. Middleware holds
    tokens in memory for 600s and a `middlewared` restart voids them, so a
    reconnect across a restart lands back on the password prompt.
-3. **A password login is cached in the authenticator.** `loginWithUserPass`
+3. **`AuthError` does not carry the response it came from.** `loginWithToken`
+   throws on every non-success, with the `response_type` interpolated into the
+   message and nowhere else. `recoverLoginFailure` therefore has to read all of
+   them back as `AUTH_ERR`, which collapses `EXPIRED`, `DENIED` and `REDIRECT`
+   into one outcome on the token path — the path every reconnect takes. Only the
+   message the sign-in page shows differs today (`LoginResult.Redirect` and
+   `Denied` reach no UI from `loginWithToken`, only from the interactive login,
+   which is unaffected because a password login throws on `AUTH_ERR` alone), so
+   this is a fidelity gap rather than a broken flow. A `response` on the error,
+   or a non-throwing variant, would close it.
+4. **A password login is cached in the authenticator.** `loginWithUserPass`
    keeps the plaintext password on the authenticator and replays it on every
    reconnect. The UI never wanted that — it keeps a single-use token instead —
    and there is no way to decline it. Worth closing in the library; until then
    a password session re-logs itself in on reconnect, racing the sign-in
    page's token login, which the authenticator's epoch guard resolves.
-4. **Parameterised subscriptions.** `EventName` excludes events that take
+5. **Parameterised subscriptions.** `EventName` excludes events that take
    subscription params (`method:param` style, e.g. file tailing), which the
    legacy `subscribe` supports. Needed before Phase 1 step 4.
-5. **Query and message types are not exported.** `QueryFilters` and
+6. **Query and message types are not exported.** `QueryFilters` and
    `QueryProjection` are internal, so the wrapper forwards the query verbs
    through `Parameters<>` rather than declaring them; `TrueNasMessage` and
    the error-frame types are absent from the main entry too, so the wrapper's
    own dispatch types the frame by hand (the `testing` entry does export
    `TrueNasErrorFrame` and `TrueNasErrorData`). Unchanged as of 6.0.3.
-6. **No message hook.** The debug panel and mock responses intercept messages
+7. **No message hook.** The debug panel and mock responses intercept messages
    in `WebSocketHandlerService`; the client has no equivalent seam. Needed for
    Phase 2.
-7. **Job type drift.** The client's `Job` is honest about `result` and
+8. **Job type drift.** The client's `Job` is honest about `result` and
    `time_started` being `null` before a job starts; the UI's is not. The
    wrapper narrows for now; the UI should adopt the client's type.
-8. **Test double** — shipped in 6.0 as `@truenas/api-client/testing`
+9. **Test double** — shipped in 6.0 as `@truenas/api-client/testing`
    (`createFakeClient`, `mock.call` / `query` / `job` / `emit`, `withSpies`,
    `UnmockedCallError`, fixture builders; `truenas/api-client-ts` #54, #56,
    #59). webui's `MockTypedApiService` and `typed-api.service.spec.ts` run
@@ -299,10 +309,10 @@ above. Each is a change for `truenas/api-client-ts`.
    pending for every fake, which inside Angular's zone stopped fixtures from
    ever settling; 6.0.3 derives that timer from the socket stream
    (`truenas/api-client-ts#60`), so a fake holds no timer at all.
-9. **`crypto.randomUUID`.** The client falls back to `getRandomValues` on
+10. **`crypto.randomUUID`.** The client falls back to `getRandomValues` on
    insecure origins, so plain-http dev boxes work. Noting it because it is the
    kind of thing that breaks quietly.
-10. **Properties named `title` were dropped** — fixed in 5.0.1. The
+11. **Properties named `title` were dropped** — fixed in 5.0.1. The
    generator's `stripNestedTitles` removed every non-root `title` key to stop
    `json-schema-to-typescript` hoisting aliases, taking real fields of that
    name with it: no generated interface had a `title` property while thirteen
@@ -312,13 +322,13 @@ above. Each is a change for `truenas/api-client-ts`.
    The UI's casts for `cloudsync.providers` and `keychaincredential.used_by`
    are gone; the one that remains on providers is for `name`, which
    middleware types as a plain string and the UI narrows to its enum.
-11. **Impossible intersections.** `S3CredentialsModel` types `skip_region`
+12. **Impossible intersections.** `S3CredentialsModel` types `skip_region`
     and `signatures_v2` as `boolean & string`, which is `never`. Something in
     the schema for those fields (a `bool | str` coercion, most likely) is
     being emitted as an intersection rather than a union. Harmless until a
     form tries to write those fields through the typed client. Still so in
     6.0.3.
-12. **Version namespaces are type-only and partial.** Generated model types
+13. **Version namespaces are type-only and partial.** Generated model types
     are reachable as `v27_0_0.Name`, and that is how the UI's interface files
     now alias them (`keychain-credential.interface.ts` is the pattern). Two
     limits, both in the client's `.d.ts` bundling: the const objects the
