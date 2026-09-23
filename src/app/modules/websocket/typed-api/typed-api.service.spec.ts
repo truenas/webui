@@ -128,12 +128,20 @@ describe('TypedApiService', () => {
     });
 
     it('mints one token when a sign-in and the reconnect both ask for the borrow', async () => {
-      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
+      // The order production runs in: the session comes up first (the
+      // authenticator raises `authenticated$` before the login response reaches
+      // `processLoginResult`), and the sign-in asks for the borrow after it.
+      client.connection.simulateOpen();
+      signIn();
+      await settle();
+      expect(mintedTokenCount()).toBe(0);
 
-      await bringSessionUp();
+      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
+      legacyConnected$.next(true);
+      await settle();
 
       await expect(lent).resolves.toBeUndefined();
-      expect(sentMethods().filter((method) => method === 'auth.generate_token')).toHaveLength(1);
+      expect(mintedTokenCount()).toBe(1);
       expect(legacyLogins()).toHaveLength(1);
     });
   });
@@ -299,6 +307,27 @@ describe('TypedApiService', () => {
       await tick(4 * 10_000 + 1000 + 2000 + 4000);
 
       legacyCall.mockReturnValue(of({ response_type: LoginExResponseType.Success } as LoginExResponse));
+      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
+      await tick(0);
+
+      await expect(lent).resolves.toBeUndefined();
+    });
+
+    it('does not let a sign-in join a borrow started for a session since replaced', async () => {
+      // The attempt was made under conditions that no longer hold; joining it
+      // would report its failure to a sign-in a fresh borrow would have served.
+      const legacyCall = jest.mocked(legacyApi().call);
+      legacyCall.mockReturnValue(throwError(() => new Error('legacy down')));
+      client.connection.simulateOpen();
+      signIn();
+      legacyConnected$.next(true);
+      await tick(0);
+
+      // The session is replaced while that attempt is still in its ladder.
+      client.authenticator.authenticated$.next(false);
+      client.authenticator.authenticated$.next(true);
+      legacyCall.mockReturnValue(of({ response_type: LoginExResponseType.Success } as LoginExResponse));
+
       const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
       await tick(0);
 

@@ -234,6 +234,22 @@ describe('AuthService', () => {
       expect(loginResult).toBe(LoginResult.Success);
     });
 
+    it('keeps the stored token when a token login is undone by a failed borrow', async () => {
+      // The typed login succeeded and minted the next token; a borrow that failed
+      // afterwards is not a credential problem. Reporting it as a login result
+      // would have the sign-in page clear the token, costing the next auto-login.
+      spectator.service.setQueryToken('DUMMY_TOKEN');
+      armLogin({ reconnect_token: 'NEXT_TOKEN' });
+      jest.mocked(spectator.inject(MockTypedApiService).lendSessionToLegacySocket)
+        .mockReturnValue(throwError(() => new TypedApiSessionError(new Error('legacy down'))));
+
+      await expect(firstValueFrom(spectator.service.loginWithToken()))
+        .rejects.toBeInstanceOf(TypedApiSessionError);
+
+      expect(spectator.service.hasAuthToken).toBe(true);
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
+    });
+
     it('reports a login as failed when the legacy socket cannot borrow the session', async () => {
       jest.mocked(spectator.inject(MockTypedApiService).lendSessionToLegacySocket)
         .mockReturnValue(throwError(() => new TypedApiSessionError(new Error('legacy down'))));

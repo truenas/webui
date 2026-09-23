@@ -255,15 +255,24 @@ export class ApiService {
         }
 
         if (message?.error?.data?.errname === ApiErrorName.NotAuthenticated) {
-          // The refused call itself is lost, as it always was here. What changed
-          // is what followed: dropping the session used to bounce the tab to
-          // /signin, which re-ran the page and re-issued the call, where the
-          // re-borrow now repairs the session in the background and leaves the
-          // caller on an unresolved loading state. The usual lapse still arrives
-          // with a socket drop, which redirects as before, so this is bounded to
-          // a session lapsing on a socket that stays up. Re-issuing the call
-          // would need a replay buffer this service has never had, and it is
-          // retired with the socket in Phase 3.
+          // Two things have to happen, and an earlier revision of this branch did
+          // only the second.
+          //
+          // The call is dropped here, as it always was, so something has to bring
+          // it back. Ending the session is what does: `AppComponent` turns that
+          // into a bounce to /signin, an auto-login, and a navigation back to the
+          // stored `redirectUrl`, which re-creates the component and re-issues
+          // the call. Repairing the borrow silently instead left the caller on a
+          // loading state that never resolved — and since this path is *detected
+          // by* a refused call, there is one such caller every time it runs. It
+          // also made the two sockets answer the same refusal differently, where
+          // `TypedApiService.endSessionOnRefusal` still ends the session.
+          //
+          // Re-borrowing as well is what makes the legacy socket usable again by
+          // the time that navigation lands. Keeping the call itself alive across
+          // the lapse would need a replay buffer this service has never had; it
+          // retires with the socket in Phase 3.
+          this.wsStatus.setLoginStatus(false);
           this.sessionLost$.next();
           return EMPTY;
         }

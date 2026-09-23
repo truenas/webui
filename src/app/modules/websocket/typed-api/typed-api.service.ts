@@ -141,13 +141,14 @@ export class TypedApiService {
   ));
 
   /**
-   * Logs the legacy socket in to the typed session's account.
-   *
-   * `share()` rather than a plain `defer`, so the reactive borrow and a
-   * sign-in waiting on the same borrow cannot mint two single-use tokens for
-   * it. It resets when the borrow settles, so the next one starts fresh.
+   * Which typed session the in-flight borrow belongs to. Bumped on every change
+   * of `authenticated$`, so an attempt is only ever shared with callers that
+   * want a borrow of the same session.
    */
-  private readonly borrow$ = defer(() => this.borrowSession()).pipe(share());
+  private sessionEpoch = 0;
+
+  /** The in-flight borrow, and the session it was started for. */
+  private borrowInFlight: { epoch: number; borrow$: Observable<void> } | null = null;
 
   constructor() {
     this.projectSessionStatus();
@@ -263,7 +264,23 @@ export class TypedApiService {
    * it: an app whose legacy socket has no session cannot proceed.
    */
   lendSessionToLegacySocket(): Observable<void> {
-    return this.borrow$;
+    return defer(() => {
+      // Shared, so the reactive borrow and a sign-in waiting on the same one
+      // cannot mint two single-use tokens for it — but only within a session.
+      // An attempt that started under a session that has since been replaced is
+      // running against conditions that no longer hold, and joining it would
+      // report its failure to a sign-in that a fresh borrow would have served.
+      if (!this.borrowInFlight || this.borrowInFlight.epoch !== this.sessionEpoch) {
+        this.borrowInFlight = {
+          epoch: this.sessionEpoch,
+          // `share()` resets once the borrow settles, so the next caller starts
+          // a fresh one rather than replaying this one's outcome.
+          borrow$: defer(() => this.borrowSession()).pipe(share()),
+        };
+      }
+
+      return this.borrowInFlight.borrow$;
+    });
   }
 
   /**
@@ -278,7 +295,10 @@ export class TypedApiService {
       distinctUntilChanged(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: (isAuthenticated) => this.wsStatus.setSessionStatus(isAuthenticated),
+      next: (isAuthenticated) => {
+        this.sessionEpoch += 1;
+        this.wsStatus.setSessionStatus(isAuthenticated);
+      },
       error: (error: unknown) => console.error('Typed API session status could not be tracked', error),
     });
   }

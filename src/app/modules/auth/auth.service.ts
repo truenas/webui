@@ -17,6 +17,7 @@ import {
   switchMap,
   take,
   tap,
+  throwError,
   timeout,
 } from 'rxjs';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
@@ -32,6 +33,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { TYPED_API_CLIENT } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { TypedApiSessionError } from 'app/services/errors/error.classes';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
@@ -180,6 +182,13 @@ export class AuthService implements OnDestroy {
     otp: string | null = null,
   ): Observable<{ loginResult: LoginResult; loginResponse: LoginExResponse }> {
     const loginCall$ = this.client$.pipe(
+      // `loginWithUserPass` keeps the plaintext password on the authenticator and
+      // replays it on every reconnect, and offers no way to decline. That is new
+      // for this app, not just for the library: until the session moved here the
+      // UI never held the password past the login frame, only the single-use
+      // `reconnect_token` below. A password-backed session now carries the
+      // credential in tab memory for its whole life. See the known-gaps list in
+      // `docs/devs/typed-api-client.md`.
       switchMap((client) => (otp
         ? client.authenticator.loginWithOtp(otp)
         : client.authenticator.loginWithUserPass(username, password))),
@@ -260,6 +269,15 @@ export class AuthService implements OnDestroy {
       asLoginExResponse(),
       switchMap((loginResult) => this.processLoginResult(loginResult)),
       catchError((error: unknown) => {
+        // A borrow that failed is not a credential that failed. The typed login
+        // already succeeded and minted the next token a moment ago, so reporting
+        // this as a login result would have the sign-in page clear that token and
+        // send the user back to the password prompt on the next reload. Letting
+        // it through leaves the token alone; the page still reports it.
+        if (error instanceof TypedApiSessionError) {
+          return throwError(() => error);
+        }
+
         this.errorHandler.showErrorModal(error);
         return of(LoginResult.NoAccess);
       }),
