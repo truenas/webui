@@ -1,4 +1,7 @@
-import { buildNormalizedFileSize, convertStringDiskSizeToBytes } from 'app/helpers/file-size.utils';
+import { GiB } from 'app/constants/bytes.constant';
+import {
+  buildNormalizedFileSize, buildRoundedDownFileSize, buildRoundedUpFileSize, convertStringDiskSizeToBytes,
+} from 'app/helpers/file-size.utils';
 
 describe('buildNormalizedFileSize with base 2', () => {
   it('converts 1000 bytes to 1000 B with base 2', () => {
@@ -81,6 +84,65 @@ describe('buildNormalizedFileSize with base 10', () => {
 
   it('converts 1000^9 bits to 1000 Yb with base 10', () => {
     expect(buildNormalizedFileSize(1000 ** 9, 'b', 10)).toBe('1000 Yb');
+  });
+});
+
+// What a size field makes of a rendering: the number times its unit, to whole bytes.
+const unitsInBytes: Record<string, number> = {
+  B: 1, KiB: 1024, MiB: 1024 ** 2, GiB: 1024 ** 3, TiB: 1024 ** 4,
+};
+
+describe('buildRoundedUpFileSize', () => {
+  it('leaves a size that a unit states exactly alone', () => {
+    expect(buildRoundedUpFileSize(50 * GiB)).toBe('50 GiB');
+    expect(buildRoundedUpFileSize(1024)).toBe('1 KiB');
+    expect(buildRoundedUpFileSize(0)).toBe('0 B');
+  });
+
+  it('rounds up rather than to the nearest hundredth of a unit', () => {
+    expect(buildRoundedUpFileSize(50 * GiB + 4096)).toBe('50.01 GiB');
+    expect(buildRoundedUpFileSize(50 * GiB + 1)).toBe('50.01 GiB');
+    expect(buildNormalizedFileSize(50 * GiB + 4096)).toBe('50 GiB');
+  });
+
+  it('never renders a size smaller than the one given', () => {
+    const sizes = [0, 1, 1023, 1025, 12345678, 50 * GiB - 1, 50 * GiB, 50 * GiB + 4096, 1024 ** 4 + 7];
+
+    sizes.forEach((size) => {
+      const [amount, unit] = buildRoundedUpFileSize(size).split(' ');
+      expect(Math.round(Number(amount) * unitsInBytes[unit])).toBeGreaterThanOrEqual(size);
+    });
+  });
+
+  it('rounds up in base 10 as well', () => {
+    expect(buildRoundedUpFileSize(1000 ** 3 + 1, 'b', 10)).toBe('1.01 Gb');
+  });
+});
+
+describe('buildRoundedDownFileSize', () => {
+  it('leaves a size that a unit states exactly alone', () => {
+    expect(buildRoundedDownFileSize(50 * GiB)).toBe('50 GiB');
+    expect(buildRoundedDownFileSize(1024)).toBe('1 KiB');
+    expect(buildRoundedDownFileSize(0)).toBe('0 B');
+  });
+
+  it('rounds down rather than to the nearest hundredth of a unit', () => {
+    expect(buildRoundedDownFileSize(50 * GiB - 1)).toBe('49.99 GiB');
+    expect(buildRoundedDownFileSize(50 * GiB - 4096)).toBe('49.99 GiB');
+    expect(buildNormalizedFileSize(50 * GiB - 1)).toBe('50 GiB');
+  });
+
+  it('never renders a size larger than the one given', () => {
+    const sizes = [0, 1, 1023, 1025, 12345678, 50 * GiB - 1, 50 * GiB, 50 * GiB + 4096, 1024 ** 4 - 7];
+
+    sizes.forEach((size) => {
+      const [amount, unit] = buildRoundedDownFileSize(size).split(' ');
+      expect(Math.round(Number(amount) * unitsInBytes[unit])).toBeLessThanOrEqual(size);
+    });
+  });
+
+  it('rounds down in base 10 as well', () => {
+    expect(buildRoundedDownFileSize(1000 ** 3 - 1, 'b', 10)).toBe('999.99 Mb');
   });
 });
 
