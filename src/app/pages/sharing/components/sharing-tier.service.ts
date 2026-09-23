@@ -22,7 +22,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface TierRow {
   path: string;
-  locked?: boolean;
+  locked?: boolean | null;
   tier?: SharingTierInfo | null;
 }
 
@@ -119,7 +119,7 @@ export class SharingTierService {
    * progresses. Useful for share/dataset lists that show tier job progress.
    *
    * A tn-table list shows its tier column by putting `'tier'` in `displayedColumns` while
-   * `tierEnabled()` is set — see the NFS and SMB cards — so there is no column array to mutate
+   * `tierEnabled()` is set — see the share cards and lists — so there is no column array to mutate
    * here; prime the config with `getTierConfig()` and the membership follows.
    */
   wireTierJobRefresh(opts: { destroyRef: DestroyRef; reload: () => void }): void {
@@ -148,7 +148,7 @@ export class SharingTierService {
         currentTier: row.tier.tier_type,
         poolName: row.dataset.split('/')[0],
       });
-    });
+    }, (row) => !row.dataset);
   }
 
   /**
@@ -214,15 +214,20 @@ export class SharingTierService {
     }).closed.pipe(filter(Boolean));
   }
 
+  /**
+   * `alsoHidden` lets a caller hide the action for rows its dialog could not act on, so the menu
+   * never offers an item that would do nothing.
+   */
   private buildChangeTierAction<T extends { locked?: boolean | null; tier?: SharingTierInfo | null }>(
     opts: ChangeTierActionOptions,
     openDialog: (row: T) => Observable<unknown>,
+    alsoHidden: (row: T) => boolean = () => false,
   ): IconActionConfig<T> {
     return {
       iconName: tnIconMarker('swap-horizontal', 'mdi'),
       tooltip: this.translate.instant(T('Change Storage Tier')),
       requiredRoles: opts.requiredRoles,
-      hidden: (row) => of(!this.tierEnabled() || !row.tier || Boolean(row.locked)),
+      hidden: (row) => of(!this.tierEnabled() || !row.tier || Boolean(row.locked) || alsoHidden(row)),
       onClick: (row) => {
         openDialog(row).pipe(
           takeUntilDestroyed(opts.destroyRef),
