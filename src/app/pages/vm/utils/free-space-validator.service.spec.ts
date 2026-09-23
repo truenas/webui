@@ -1,7 +1,8 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { firstValueFrom } from 'rxjs';
-import { TiB } from 'app/constants/bytes.constant';
+import { firstValueFrom, of } from 'rxjs';
+import { GiB, TiB } from 'app/constants/bytes.constant';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
@@ -20,6 +21,26 @@ describe('FreeSpaceValidatorService', () => {
   });
 
   beforeEach(() => spectator = createService());
+
+  it('quotes a maximum that is actually available, rounding the free space down', async () => {
+    // Free space a hair under 50 GiB renders as `50 GiB` when rounded to the nearest
+    // hundredth of a unit — a size this very validator then rejects.
+    const api = spectator.inject(MockApiService);
+    jest.spyOn(api, 'call').mockReturnValue(of({ free_bytes: 50 * GiB - 1 } as Statfs));
+
+    const formGroup = new FormGroup({
+      datastore: new FormControl('tighto'),
+      volsize: new FormControl(50 * GiB),
+    });
+
+    await firstValueFrom(spectator.service.validate(formGroup));
+
+    expect(formGroup.controls.volsize.errors).toEqual({
+      invalidFreeSpace: {
+        message: 'Not enough free space. Maximum available: 49.99 GiB',
+      },
+    });
+  });
 
   it('returns a validator that takes a form group and checks if volsize in a datastore path fits free space', async () => {
     const formGroup = new FormGroup({

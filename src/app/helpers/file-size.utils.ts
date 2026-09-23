@@ -34,15 +34,23 @@ export function buildRoundedUpFileSize(
   baseUnit: 'b' | 'B' = 'B',
   base: 10 | 2 = 2,
 ): string {
-  const [increment, unit] = pickFileSizeUnit(value, baseUnit, base);
+  return buildRoundedFileSize(value, baseUnit, base, 1);
+}
 
-  let formatted = Math.ceil((value / increment) * 100) / 100;
-  // The quotient is a float, so the ceiling can still land a hundredth short.
-  while (formatted * increment < value) {
-    formatted = Math.round((formatted + 0.01) * 100) / 100;
-  }
-
-  return `${formatted} ${unit}`;
+/**
+ * {@link buildNormalizedFileSize}, except the rendering is never larger than `value`.
+ *
+ * The mirror of {@link buildRoundedUpFileSize}, for a size quoted as a maximum: rounding
+ * 50 GiB - 1 to the nearest hundredth of a unit advertises `50 GiB` as the ceiling, and
+ * 50 GiB is over it. Rounding the last shown digit down keeps the rendering a size that
+ * `value` actually allows.
+ */
+export function buildRoundedDownFileSize(
+  value: number,
+  baseUnit: 'b' | 'B' = 'B',
+  base: 10 | 2 = 2,
+): string {
+  return buildRoundedFileSize(value, baseUnit, base, -1);
 }
 
 export function convertStringDiskSizeToBytes(input: string): number | null {
@@ -119,4 +127,21 @@ function pickFileSizeUnit(value: number, baseUnit: 'b' | 'B', base: 10 | 2): [in
   }
 
   return [increment, (steps ? prefixes[steps - 1] : '') + baseUnit];
+}
+
+/**
+ * Renders `value` to a hundredth of a unit, rounding away from the bound it is quoted as:
+ * `direction` 1 never renders below `value`, -1 never renders above it.
+ */
+function buildRoundedFileSize(value: number, baseUnit: 'b' | 'B', base: 10 | 2, direction: 1 | -1): string {
+  const [increment, unit] = pickFileSizeUnit(value, baseUnit, base);
+
+  const scaled = (value / increment) * 100;
+  let hundredths = direction > 0 ? Math.ceil(scaled) : Math.floor(scaled);
+  // The quotient is a float, so the rounding can still land on the wrong side of `value`.
+  while ((hundredths / 100) * increment * direction < value * direction) {
+    hundredths += direction;
+  }
+
+  return `${hundredths / 100} ${unit}`;
 }
