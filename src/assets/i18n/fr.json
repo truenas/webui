@@ -441,7 +441,7 @@
   "Not Available": "",
   "Not available with the Multiprotocol permissions model: another protocol could rewrite a locked object.": "",
   "Note": "",
-  "Number of servers handling the listen addresses, at most eight and no more than the system has CPUs. Each server carries its own connection pool and buffering, so more of them cost memory.": "",
+  "Number of servers handling the listen addresses, at most twelve and no more than the system has CPUs. Each server carries its own connection pool and buffering, so more of them cost memory.": "",
   "NVMe over Fabrics": "",
   "NVMe-oF actions": "",
   "Object Lock": "",

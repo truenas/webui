@@ -802,7 +802,7 @@
   "Not available with the Multiprotocol permissions model: another protocol could rewrite a locked object.": "",
   "Nothing destroyed this way can be recovered. Releasing a snapshot hold can also break a replication task that depends on it.": "",
   "Number of password-based key derivation function 2 (PBKDF2) iterations to use for reducing vulnerability to brute-force attacks. Entering a number of at least <i>1300000</i> is required. See <a href=\"https://en.wikipedia.org/wiki/PBKDF2\" target=\"_blank\">PBKDF2</a> for more details.": "",
-  "Number of servers handling the listen addresses, at most eight and no more than the system has CPUs. Each server carries its own connection pool and buffering, so more of them cost memory.": "",
+  "Number of servers handling the listen addresses, at most twelve and no more than the system has CPUs. Each server carries its own connection pool and buffering, so more of them cost memory.": "",
   "NVDIMM errors indicate issues with non-volatile memory modules. These can affect system stability and data integrity. Contact support for hardware diagnostics.": "",
   "NVIDIA Driver Settings": "",
   "NVIDIA Drivers": "",

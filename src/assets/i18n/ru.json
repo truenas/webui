@@ -1,4 +1,5 @@
 {
+  "Number of servers handling the listen addresses, at most twelve and no more than the system has CPUs. Each server carries its own connection pool and buffering, so more of them cost memory.": "",
   "0": "0",
   "<b>Minted</b>, the default, gives the object an opaque token and skips the MD5 pass over every part that the standard construction costs. Choose <b>Composite</b> where a client writing the bucket reads multipart ETags and expects the S3 standard construction.": "",
   "<b>S3</b>: the S3 service is the only door to the dataset. Its filesystem permissions are ignored, and the grants decide access.<br> <b>Multiprotocol</b>: SMB or NFS share the tree, so its filesystem ACL is enforced for S3 callers as well as the grants. S3 ACLs are not supported on such a bucket.": "",
@@ -3924,7 +3925,6 @@
   "Number of previous passwords to remember. Must be between 1 and 10.": "Количество предыдущих паролей, которые необходимо запомнить. Должно быть от 1 до 10.",
   "Number of retries for failed replications": "Количество попыток неудачной репликации",
   "Number of seconds to wait after a network failure before triggering a failover. <i>0</i> means a failover occurs immediately, or after two seconds when the system is using a link aggregation.": "Количество секунд ожидания после сбоя в сети, прежде чем запустить аварийное переключение. <i>0</i> означает, что аварийное переключение происходит немедленно или через две секунды, когда система использует агрегацию каналов.",
-  "Number of servers handling the listen addresses, at most eight and no more than the system has CPUs. Each server carries its own connection pool and buffering, so more of them cost memory.": "Количество серверов, обрабатывающих адреса прослушивания, не более восьми и не больше, чем количество процессоров в системе. Каждый сервер имеет собственный пул соединений и буферизацию, поэтому их больше требует памяти.",
   "Number of simultaneous file transfers. Enter a number based on the available bandwidth and destination system performance. See <a href=\"https://rclone.org/docs/#transfers-int\" target=\"_blank\">rclone --transfers</a>.": "Количество одновременных передач файлов. Введите число в зависимости от доступной пропускной способности и производительности системы назначения. Смотрите <a href=\"https://rclone.org/docs/\\#transfers-n\" target=\"_blank\">rclone --transfers</a>.",
   "Number of times the replication is attempted before stopping and marking the task as failed.": "Число попыток репликации перед остановкой и пометкой задания как неудачной.",
   "Number of VDEVs": "Количество виртуальных дисков",
