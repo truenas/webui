@@ -1,4 +1,5 @@
 {
+  "Number of servers handling the listen addresses, at most twelve and no more than the system has CPUs. Each server carries its own connection pool and buffering, so more of them cost memory.": "",
   "0": "0",
   "<b>Minted</b>, the default, gives the object an opaque token and skips the MD5 pass over every part that the standard construction costs. Choose <b>Composite</b> where a client writing the bucket reads multipart ETags and expects the S3 standard construction.": "",
   "<b>S3</b>: the S3 service is the only door to the dataset. Its filesystem permissions are ignored, and the grants decide access.<br> <b>Multiprotocol</b>: SMB or NFS share the tree, so its filesystem ACL is enforced for S3 callers as well as the grants. S3 ACLs are not supported on such a bucket.": "",
@@ -3924,7 +3925,6 @@
   "Number of previous passwords to remember. Must be between 1 and 10.": "Hatırlanacak önceki parolalarin sayısı. 1 ile 10 arasında olmalıdır.",
   "Number of retries for failed replications": "Başarısız çoğaltmalar için yeniden deneme sayısı",
   "Number of seconds to wait after a network failure before triggering a failover. <i>0</i> means a failover occurs immediately, or after two seconds when the system is using a link aggregation.": "Bir failover'ı tetiklemeden önce bir ağ arızasından sonra beklenecek saniye sayısı. <i>0</i>, sistem bağlantı toplama kullanıyorsa iki saniye sonra veya hemen bir failover gerçekleştiği anlamına gelir.",
-  "Number of servers handling the listen addresses, at most eight and no more than the system has CPUs. Each server carries its own connection pool and buffering, so more of them cost memory.": "Dinleme adreslerini işleyen sunucu sayısı, en fazla sekiz ve sistemdeki CPU sayısını geçmeyecek şekilde. Her sunucunun kendi bağlantı havuzu ve arabelleklemesi vardır, bu yüzden sayısı arttıkça bellek tüketimi artar.",
   "Number of simultaneous file transfers. Enter a number based on the available bandwidth and destination system performance. See <a href=\"https://rclone.org/docs/#transfers-int\" target=\"_blank\">rclone --transfers</a>.": "Eşzamanlı dosya aktarımı sayısı. Kullanılabilir bant genişliğine ve hedef sistem performansına göre bir sayı girin. Bkz. <a href=\"https://rclone.org/docs/#transfers-int\" target=\"_blank\">rclone --transfers</a>.",
   "Number of times the replication is attempted before stopping and marking the task as failed.": "Durdurmadan ve görevi başarısız olarak işaretlemeden önce çoğaltmanın kaç kez denenceği.",
   "Number of VDEVs": "VDEV Sayısı",

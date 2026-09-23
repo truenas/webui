@@ -1,4 +1,5 @@
 {
+  "Number of servers handling the listen addresses, at most twelve and no more than the system has CPUs. Each server carries its own connection pool and buffering, so more of them cost memory.": "",
   "0": "0",
   "<b>Minted</b>, the default, gives the object an opaque token and skips the MD5 pass over every part that the standard construction costs. Choose <b>Composite</b> where a client writing the bucket reads multipart ETags and expects the S3 standard construction.": "",
   "A bucket with object lock keeps its version history for as long as the bucket exists.": "",
@@ -3901,7 +3902,6 @@
   "Number of previous passwords to remember. Must be between 1 and 10.": "過去に使用したパスワードを記憶する数。1から10の間でなければなりません。",
   "Number of retries for failed replications": "レプリケーション失敗時の再試行回数",
   "Number of seconds to wait after a network failure before triggering a failover. <i>0</i> means a failover occurs immediately, or after two seconds when the system is using a link aggregation.": "ネットワーク障害発生後、フェイルオーバーをトリガーするまでの待機秒数。 <i>0</i> はフェイルオーバーが即座に発生することを意味し、システムがリンクアグリゲーションを使用している場合は2秒後に発生します。",
-  "Number of servers handling the listen addresses, at most eight and no more than the system has CPUs. Each server carries its own connection pool and buffering, so more of them cost memory.": "リッスンアドレスを処理するサーバーの数。最大 8 つで、システムの CPU 数を超えてはなりません。各サーバーは独自の接続プールとバッファリングを実行するため、より多くのメモリを消費します。",
   "Number of simultaneous file transfers. Enter a number based on the available bandwidth and destination system performance. See <a href=\"https://rclone.org/docs/#transfers-int\" target=\"_blank\">rclone --transfers</a>.": "同時ファイル転送の数。使用可能な帯域幅と宛先システムのパフォーマンスに基づいて数値を入力します。 <a href=\"https://rclone.org/docs/\\#transfers-n\" target=\"_blank\">rclone --transfers</a>を参照してください。",
   "Number of times the replication is attempted before stopping and marking the task as failed.": "タスクを停止して失敗とマークするまでにレプリケーションを試行する回数。",
   "Number of VDEVs": "VDEVの数",

@@ -67,7 +67,7 @@ function createS3ServiceForm(fb: NonNullableFormBuilder) {
   return fb.group({
     listeners: fb.array<ListenerFormGroup>([]),
     certificate: [null as number | null],
-    servers: [1, [Validators.required, rangeValidator(1, 8)]],
+    servers: [1, [Validators.required, rangeValidator(1, 12)]],
     region: [''],
     log_level: [S3LogLevel.Notice, Validators.required],
     // Optional: empty refuses S3 protocol CreateBucket requests.
