@@ -1,5 +1,22 @@
 @import 'scss-imports/variables';
 
+.category-search {
+  border-bottom: 1px solid var(--lines);
+  padding: 0 10px 20px;
+}
+
+.section-title {
+  background: var(--bg1);
+  color: var(--fg1);
+  margin: 0;
+  padding: 15px 0;
+  text-transform: capitalize;
+
+  ~ .apps {
+    margin-top: 0;
+  }
+}
+
 .apps {
   column-gap: 40px;
   display: grid;

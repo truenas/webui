@@ -185,6 +185,46 @@ describe('AppsFilterStore', () => {
     });
   });
 
+  it('narrows the filtered apps down by the search query for a category view', () => {
+    spectator.service.applyFilters({
+      categories: ['media'],
+      sort: null,
+    });
+
+    testScheduler.run(({ expectObservable }) => {
+      expectObservable(spectator.service.searchedFilteredApps$).toBe('a', {
+        a: [...availableApps],
+      });
+    });
+
+    spectator.service.applySearchQuery('Plex');
+
+    testScheduler.run(({ expectObservable }) => {
+      expectObservable(spectator.service.searchedFilteredApps$).toBe('a', {
+        a: [{ ...plexApp }],
+      });
+    });
+  });
+
+  it('keeps the search query when only the category filters are reset', () => {
+    spectator.service.applySearchQuery('plex');
+    spectator.service.applyFilters({
+      categories: ['media'],
+      sort: null,
+    });
+
+    spectator.service.resetFiltersKeepingSearch();
+
+    testScheduler.run(({ expectObservable }) => {
+      expectObservable(spectator.service.state$).toBe('a', {
+        a: {
+          ...initialState,
+          searchQuery: 'plex',
+        } as AppsFilterState,
+      });
+    });
+  });
+
   it('emits the correct filter values when they are updated', () => {
     testScheduler.run(({ expectObservable }) => {
       spectator.service.applyFilters({

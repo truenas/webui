@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  Router, NavigationSkipped,
+  Router, NavigationSkipped, Params,
   RouterLink,
 } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -20,6 +20,9 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import { AvailableAppsHeaderComponent } from 'app/pages/apps/components/available-apps/available-apps-header/available-apps-header.component';
 import { availableAppsElements } from 'app/pages/apps/components/available-apps/available-apps.elements';
+import {
+  categorySearchParam,
+} from 'app/pages/apps/components/available-apps/category-search-param.constant';
 import { CustomAppButtonComponent } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
@@ -70,6 +73,14 @@ export class AvailableAppsComponent implements OnInit {
 
   isLoading$ = this.applicationsStore.isLoading$;
   isFiltering$ = this.appsFilterStore.isFiltering$;
+
+  /**
+   * Carries the search term into the category view the "View All" buttons link to, so that
+   * drilling into a category does not throw the search away.
+   */
+  protected searchQueryParams$: Observable<Params> = this.appsFilterStore.searchQuery$.pipe(
+    map((searchQuery) => (searchQuery ? { [categorySearchParam]: searchQuery } : {})),
+  );
 
   ngOnInit(): void {
     // For clicking the breadcrumbs link to this page

@@ -5,6 +5,15 @@
   <ix-custom-app-button></ix-custom-app-button>
 </ix-page-header>
 
+<div class="category-search">
+  <tn-input
+    testId="search"
+    [prefixIcon]="tnIconMarker('magnify', 'mdi')"
+    [formControl]="searchControl"
+    [placeholder]="'Search' | translate"
+  ></tn-input>
+</div>
+
 @if (isLoading$ | async) {
   <ngx-skeleton-loader
     class="fake-apps"
@@ -12,17 +21,29 @@
     [animation]="false"
   ></ngx-skeleton-loader>
 } @else {
-  <div class="apps">
-    @for (app of apps$ | async; track trackByAppId($index, app)) {
-      <a
-        tnTestIdType="link"
-        [routerLink]="['/apps', 'available', app.train, app.name]"
-        [tnTestId]="['open', app.train, app.name]"
-      >
-        <ix-app-card [app]="app"></ix-app-card>
-      </a>
+  @if (searchQuery$ | async; as searchQuery) {
+    <h3 class="section-title">
+      {{ 'Search Results for «{query}»' | translate: { query: searchQuery } }}
+    </h3>
+  }
+
+  @if (apps$ | async; as apps) {
+    @if (apps.length) {
+      <div class="apps">
+        @for (app of apps; track trackByAppId($index, app)) {
+          <a
+            tnTestIdType="link"
+            [routerLink]="['/apps', 'available', app.train, app.name]"
+            [tnTestId]="['open', app.train, app.name]"
+          >
+            <ix-app-card [app]="app"></ix-app-card>
+          </a>
+        }
+      </div>
+    } @else if (searchQuery$ | async) {
+      <ix-empty [conf]="noSearchResultsConfig"></ix-empty>
     }
-  </div>
+  }
 
   <div class="view-all">
     <tn-button
@@ -32,4 +53,3 @@
     ></tn-button>
   </div>
 }
-

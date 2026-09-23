@@ -75,6 +75,7 @@
         [testId]="[appSection.title, 'view-all']"
         [label]="('View All' | translate) + ' ' + (appSection.title | translate)"
         [routerLink]="['/apps', 'available', appSection.category]"
+        [queryParams]="(searchQueryParams$ | async) || {}"
       ></tn-button>
     </div>
   }
