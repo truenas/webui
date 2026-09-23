@@ -1,7 +1,7 @@
-import { inject, Injectable } from '@angular/core';
+import { DestroyRef, inject, Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ArgsOf,
-  AuthResponse,
   CallMethod,
   CallParams,
   CallResponse,
@@ -12,7 +12,6 @@ import {
   JobResult,
 } from '@truenas/api-client';
 import {
-  BehaviorSubject,
   catchError,
   combineLatest,
   defer,
@@ -20,18 +19,20 @@ import {
   EMPTY,
   filter,
   map,
+  MonoTypeOperatorFunction,
   Observable,
   of,
   retry,
+  share,
   startWith,
-  Subject,
   switchMap,
   take,
-  tap,
   throwError,
   timer,
 } from 'rxjs';
+import { ApiErrorName } from 'app/enums/api.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
+import { LoginExMechanism, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { dispatchTypedCall } from 'app/modules/websocket/typed-api/dispatch-typed-call';
@@ -40,44 +41,25 @@ import {
   WebUiApiClient,
   WebUiApiDirectory,
 } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiSessionError } from 'app/services/errors/error.classes';
+import { ApiCallError, TypedApiSessionError } from 'app/services/errors/error.classes';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 type D = WebUiApiDirectory;
 type ClientApi = WebUiApiClient['api'];
 
 /**
- * How long the one-shot token minted for the typed socket stays valid, in
+ * How long the one-shot token minted for the legacy socket stays valid, in
  * seconds. It is spent immediately, so this only has to cover the round trip.
  */
-const bridgeTokenTtlSeconds = 300;
+const borrowTokenTtlSeconds = 300;
 
 /**
- * How many times a failed typed login is retried, and the base of the
- * exponential backoff between attempts (1s, 2s, 4s). Enough to ride out a
- * `middlewared` restart without holding a page's requests for long.
+ * How many times a failed borrow is retried, and the base of the exponential
+ * backoff between attempts (1s, 2s, 4s). Enough to ride out a `middlewared`
+ * restart without holding a sign-in for long.
  */
-const loginRetries = 3;
-const loginRetryBaseDelayMs = 1000;
-
-/**
- * Once the bridge has given up, how long requests fail outright before the
- * next one prompts another round of login attempts. Long enough that a page
- * retrying in a loop does not hammer middleware, short enough that a
- * transient refusal does not cost the user a reload.
- */
-const sessionRetryCooldownMs = 30_000;
-
-interface SessionFailure {
-  error: TypedApiSessionError;
-  at: number;
-  /**
-   * The bridge itself has stopped, so no attempt can follow. Such a failure
-   * never cools down: clearing it would leave requests waiting on a login
-   * nothing will make.
-   */
-  terminal: boolean;
-}
+const borrowRetries = 3;
+const borrowRetryBaseDelayMs = 1000;
 
 /**
  * Fully-typed API access, backed by `@truenas/api-client`.
@@ -89,30 +71,25 @@ interface SessionFailure {
  *
  * ## Coexistence with `ApiService`
  *
- * The typed client owns a second WebSocket. The legacy socket still carries
- * login, the jobs store, the debug panel and every call that has not moved yet.
- * This service borrows authentication from it once: when the typed socket is
- * open and the legacy session is authenticated, it mints a single-use token on
- * the legacy socket and logs the typed socket in with it. From then on the
- * typed session keeps its own token chain, the way `AuthService` does for the
- * legacy one, and only borrows again if that chain breaks. Logging out of the
- * legacy session logs the typed session out too.
+ * The typed client owns a second WebSocket, and it is the one the user is
+ * logged in on: `AuthService` drives `client.authenticator`, so the typed
+ * session holds the credentials, the reconnect-token chain and the session's
+ * roles. The legacy socket still carries the jobs store, the debug panel and
+ * every call that has not moved yet, and it is now the *borrower* — once the
+ * typed session is authenticated this service mints a single-use token on it
+ * and logs the legacy socket in with that. The borrow is repeated whenever the
+ * legacy socket reconnects or middleware refuses a call on it for want of a
+ * session, and it goes away entirely once the legacy socket does.
  *
  * Call sites therefore never authenticate here and never need to care which
  * socket a method rides on. Migrate a call by swapping the injected service.
- * Requests are held until the typed session is authenticated. If the login
- * keeps failing they are refused with `TypedApiSessionError` once the bridge
- * has exhausted its retries, so a page reports the failure instead of
- * spinning forever.
+ * Requests are held until the typed session is authenticated, which is what a
+ * page loaded before sign-in, or one caught mid-reconnect, is waiting for.
  *
  * ## What is deliberately not here yet
  *
  * - Calls are not intercepted by the WebSocket debug panel or its mocks.
  * - There is no concurrent-call limit.
- * - An `ENOTAUTHENTICATED` error is thrown like any other, where the legacy
- *   `ApiService` logs the app out. The typed session is secondary and
- *   re-established by the bridge, so ending the legacy session over it would
- *   be wrong; this becomes the legacy behaviour when login moves here.
  * - `query` / `queryOne` / `queryCount` are exposed straight from the client
  *   until the wrapper grows its own error handling for them.
  */
@@ -123,47 +100,33 @@ export class TypedApiService {
   private client$ = inject(TYPED_API_CLIENT);
   private legacyApi = inject(ApiService);
   private wsStatus = inject(WebSocketStatusService);
+  private destroyRef = inject(DestroyRef);
 
   /**
-   * The single-use token the typed session's last login minted for its next
-   * one. Cleared the moment it is spent, since middleware consumes it whether
-   * or not the login succeeds.
+   * Emits the client once its session is authenticated. Every request waits on
+   * this, so a call made before sign-in or across a reconnect is held rather
+   * than refused by middleware.
    */
-  private reconnectToken: string | null = null;
+  private readonly ready$: Observable<WebUiApiClient> = defer(() => this.client$.pipe(
+    switchMap((client) => client.authenticator.authenticated$.pipe(
+      filter(Boolean),
+      take(1),
+      map(() => client),
+    )),
+  ));
 
   /**
-   * Set when the bridge has given up logging the typed session in, and
-   * cleared as soon as it has a fresh reason to try again: the socket
-   * reopens, the legacy session comes back, or a request arrives after the
-   * cool-off. While it is set, requests fail with it instead of waiting.
+   * Logs the legacy socket in to the typed session's account.
+   *
+   * `share()` rather than a plain `defer`, so the reactive borrow and a
+   * sign-in waiting on the same borrow cannot mint two single-use tokens for
+   * it. It resets when the borrow settles, so the next one starts fresh.
    */
-  private readonly sessionFailure$ = new BehaviorSubject<SessionFailure | null>(null);
-
-  /** Fired by a request that found a cooled-down failure; the bridge tries again. */
-  private readonly retryRequested$ = new Subject<void>();
-
-  /**
-   * Emits the client once its socket is open *and* its session is
-   * authenticated. Every request waits on this, so a call made during startup
-   * or across a reconnect is held rather than refused by middleware. Errors
-   * instead when the bridge has given up, so held requests never hang.
-   */
-  private readonly ready$: Observable<WebUiApiClient> = defer(() => {
-    this.retryIfCooledDown();
-    return this.client$.pipe(
-      switchMap((client) => combineLatest([
-        client.authenticator.authenticated$,
-        this.sessionFailure$,
-      ]).pipe(
-        filter(([isAuthenticated, failure]) => isAuthenticated || failure !== null),
-        take(1),
-        switchMap(([isAuthenticated, failure]) => (isAuthenticated ? of(client) : throwError(() => failure.error))),
-      )),
-    );
-  });
+  private readonly borrow$ = defer(() => this.borrowSession()).pipe(share());
 
   constructor() {
-    this.bridgeAuthentication();
+    this.projectSessionStatus();
+    this.lendOnDemand();
   }
 
   /**
@@ -183,6 +146,7 @@ export class TypedApiService {
   call<M extends CallMethod<D>>(method: M, ...params: ArgsOf<CallParams<D, M>>): Observable<CallResponse<D, M>> {
     return this.ready$.pipe(
       switchMap((client) => dispatchTypedCall<CallResponse<D, M>>(client, method, params[0])),
+      this.endSessionOnRefusal(),
     );
   }
 
@@ -261,133 +225,122 @@ export class TypedApiService {
   }
 
   /**
-   * Keeps the typed session in step with the legacy one.
+   * Log the legacy socket in to the typed session's account, and emit once it
+   * is in.
    *
-   * The client re-authenticates by itself only for password and API-key
-   * sessions; a token session is the caller's to re-login, by design, because
-   * the token is single-use. This is that caller, and it mirrors what
-   * `AuthService` does for the legacy socket: every login asks middleware for
-   * the next token, and every reconnect spends it.
+   * `AuthService` awaits this before it reports a login as successful: the
+   * post-login sequence — failover checks, `auth.me`, the boot calls — still
+   * rides the legacy socket, and every one of them would be refused on a
+   * socket that has not borrowed yet.
    *
-   * The chain has to be seeded, and re-seeded when it breaks. Tokens live in
-   * middleware memory for a few minutes and a `middlewared` restart voids
-   * them, which is a common reason the socket dropped at all. Both cases fall
-   * back to minting a fresh one over the legacy socket, whose own token chain
-   * `AuthService` has already repaired by then.
-   *
-   * A login that fails outright is retried with backoff. Nothing else would
-   * prompt another attempt while the socket stays open and the legacy session
-   * stays authenticated, and a single refused `auth.generate_token` must not
-   * hold every typed request until the next reconnect. Once the retries are
-   * spent the bridge gives up and fails the held requests instead, until the
-   * socket reopens, the legacy session comes back, or a request arrives after
-   * the cool-off and asks for another round.
-   *
-   * Nothing else in the chain is expected to error, but the subscription has
-   * an error handler all the same: a bridge that died silently would hold
-   * every request for the life of the tab, which is the one outcome this
-   * service exists to avoid.
+   * Errors with `TypedApiSessionError` when the borrow fails, which the error
+   * handler renders as a connection error. There is nothing else to do with
+   * it: an app whose legacy socket has no session cannot proceed.
    */
-  private bridgeAuthentication(): void {
+  lendSessionToLegacySocket(): Observable<void> {
+    return this.borrow$;
+  }
+
+  /**
+   * Keeps `WebSocketStatusService` in step with the session the app runs on.
+   *
+   * Pushed rather than pulled so that service does not have to own the typed
+   * client; see the note on `setSessionStatus`.
+   */
+  private projectSessionStatus(): void {
     this.client$.pipe(
-      switchMap((client) => combineLatest([
-        client.connection.opened.pipe(distinctUntilChanged()),
-        this.wsStatus.isAuthenticated$.pipe(distinctUntilChanged()),
-        this.retryRequested$.pipe(startWith(undefined)),
-      ]).pipe(
-        switchMap(([isOpen, isLegacyAuthenticated]) => {
-          this.clearSessionFailure();
-          if (!isOpen) {
-            return EMPTY;
-          }
-          if (!isLegacyAuthenticated) {
-            return this.endSession(client);
-          }
-          if (client.authenticated) {
-            return EMPTY;
-          }
-          return defer(() => this.login(client)).pipe(
-            retry({
-              count: loginRetries,
-              delay: (_, retryCount) => timer(loginRetryBaseDelayMs * 2 ** (retryCount - 1)),
-            }),
-            catchError((error: unknown) => {
-              console.error('Typed API session could not be established', error);
-              this.recordSessionFailure(error);
-              return EMPTY;
-            }),
-          );
-        }),
-      )),
+      switchMap((client) => client.authenticator.authenticated$),
+      distinctUntilChanged(),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      error: (error: unknown) => {
-        console.error('Typed API authentication bridge stopped', error);
-        this.recordSessionFailure(error, { terminal: true });
-      },
+      next: (isAuthenticated) => this.wsStatus.setSessionStatus(isAuthenticated),
+      error: (error: unknown) => console.error('Typed API session status could not be tracked', error),
     });
   }
 
-  private recordSessionFailure(error: unknown, { terminal = false } = {}): void {
-    this.sessionFailure$.next({ error: new TypedApiSessionError(error), at: Date.now(), terminal });
-  }
-
-  private clearSessionFailure(): void {
-    if (this.sessionFailure$.value) {
-      this.sessionFailure$.next(null);
-    }
-  }
-
-  private retryIfCooledDown(): void {
-    const failure = this.sessionFailure$.value;
-    if (failure && !failure.terminal && Date.now() - failure.at >= sessionRetryCooldownMs) {
-      this.clearSessionFailure();
-      this.retryRequested$.next();
-    }
-  }
-
   /**
-   * Spends the chained token when there is one, and falls back to a fresh
-   * token from the legacy session when there is not, or when middleware
-   * refuses it.
+   * Re-lends the session to the legacy socket whenever that socket needs one
+   * again: it reconnected, or middleware refused one of its calls for want of
+   * a session.
+   *
+   * A sign-in does not rely on this — it awaits `lendSessionToLegacySocket()`
+   * itself, and the two share one borrow — but a reconnect has no such caller,
+   * and without it the legacy socket would come back unauthenticated and stay
+   * that way.
    */
-  private login(client: WebUiApiClient): Observable<AuthResponse> {
-    const chained = this.reconnectToken;
-    this.reconnectToken = null;
+  private lendOnDemand(): void {
+    this.client$.pipe(
+      switchMap((client) => combineLatest([
+        client.authenticator.authenticated$.pipe(distinctUntilChanged()),
+        this.wsStatus.isConnected$.pipe(distinctUntilChanged()),
+        this.legacyApi.sessionLost.pipe(startWith(undefined)),
+      ])),
+      switchMap(([isAuthenticated, isLegacyConnected]) => {
+        if (!isAuthenticated || !isLegacyConnected) {
+          return EMPTY;
+        }
 
-    const login$ = chained
-      ? client.authenticator.loginWithToken(chained).pipe(
-          catchError(() => this.loginWithLegacyToken(client)),
-        )
-      : this.loginWithLegacyToken(client);
-
-    return login$.pipe(
-      tap((response) => {
-        this.reconnectToken = response.reconnect_token ?? null;
+        return this.lendSessionToLegacySocket().pipe(
+          catchError((error: unknown) => {
+            console.error('Legacy socket could not borrow the typed session', error);
+            return EMPTY;
+          }),
+        );
       }),
-    );
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      error: (error: unknown) => console.error('Legacy socket session borrowing stopped', error),
+    });
   }
 
-  private loginWithLegacyToken(client: WebUiApiClient): Observable<AuthResponse> {
-    return this.legacyApi.call('auth.generate_token', [bridgeTokenTtlSeconds, {}, true, true]).pipe(
-      switchMap((token) => client.authenticator.loginWithToken(token)),
+  /**
+   * Mints a single-use token on the typed session and spends it on the legacy
+   * socket.
+   *
+   * Retried with backoff, because the two reasons a borrow fails — middleware
+   * still coming up after a restart, and a token voided by that same restart —
+   * both clear on their own within a second or two.
+   */
+  private borrowSession(): Observable<void> {
+    return this.client$.pipe(
+      take(1),
+      switchMap((client) => client.api.generateToken(borrowTokenTtlSeconds, true, true)),
+      switchMap((token) => this.legacyApi.call('auth.login_ex', [{
+        mechanism: LoginExMechanism.TokenPlain,
+        token,
+      }])),
+      switchMap((response) => {
+        if (response.response_type !== LoginExResponseType.Success) {
+          return throwError(() => new Error(`Legacy socket refused the borrowed token (${response.response_type})`));
+        }
+        return of(undefined);
+      }),
+      retry({
+        count: borrowRetries,
+        delay: (_, retryCount) => timer(borrowRetryBaseDelayMs * 2 ** (retryCount - 1)),
+      }),
+      catchError((error: unknown) => throwError(() => new TypedApiSessionError(error))),
     );
   }
 
   /**
-   * Best effort. The typed socket may itself be going down, or middleware may
-   * already have voided the session after a restart; a logout that fails
-   * leaves nothing to clean up and must not end the bridge.
+   * Ends the app's session when middleware refuses a typed call for want of
+   * one, the way `ApiService` used to for the legacy socket: swallow the
+   * error, drop the session, and let the app fall back to the sign-in page,
+   * which logs straight back in when the stored token is still good.
+   *
+   * Only `call` gets this. It is the one verb that keeps the whole JSON-RPC
+   * error — the client's own verbs reduce it to a reason string, and
+   * `errname` is what distinguishes this refusal from any other.
    */
-  private endSession(client: WebUiApiClient): Observable<boolean> {
-    this.reconnectToken = null;
-    if (!client.authenticated) {
-      return EMPTY;
-    }
-    return client.authenticator.logout().pipe(
-      catchError((error: unknown) => {
-        console.warn('Typed API session could not be logged out', error);
+  private endSessionOnRefusal<T>(): MonoTypeOperatorFunction<T> {
+    return catchError((error: unknown) => {
+      if (error instanceof ApiCallError && error.error?.data?.errname === ApiErrorName.NotAuthenticated) {
+        this.wsStatus.setLoginStatus(false);
         return EMPTY;
-      }),
-    );
+      }
+
+      return throwError(() => error);
+    });
   }
 }

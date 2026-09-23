@@ -20,4 +20,5 @@ export class EmptyTypedApiService {
   job = getMissingInjectionErrorFactory(TypedApiService.name);
   startJob = getMissingInjectionErrorFactory(TypedApiService.name);
   subscribe = getMissingInjectionErrorFactory(TypedApiService.name);
+  lendSessionToLegacySocket = getMissingInjectionErrorFactory(TypedApiService.name);
 }

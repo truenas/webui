@@ -57,6 +57,24 @@ export class ApiService {
 
   readonly clearSubscriptions$ = new Subject<void>();
 
+  private readonly sessionLost$ = new Subject<void>();
+
+  /**
+   * Fires when the appliance refuses a call on this socket for want of a
+   * session.
+   *
+   * This socket no longer holds a session of its own: it borrows one from the
+   * typed client, which is where the user actually logs in. So an
+   * `ENOTAUTHENTICATED` here says the borrow lapsed — middleware restarted, or
+   * the token session was terminated — and the answer is to borrow again, not
+   * to log the app out. `TypedApiService` listens and re-lends.
+   *
+   * Exposed as a stream rather than handled here because `TypedApiService`
+   * already injects this service; injecting it back would be a dependency
+   * cycle.
+   */
+  readonly sessionLost = this.sessionLost$.asObservable();
+
   private store$: Store<JobSlice> = inject<Store<JobSlice>>(Store<JobSlice>);
   private jobApiErrors = new Map<string, ApiCallError>();
 
@@ -237,7 +255,7 @@ export class ApiService {
         }
 
         if (message?.error?.data?.errname === ApiErrorName.NotAuthenticated) {
-          this.wsStatus.setLoginStatus(false);
+          this.sessionLost$.next();
           return EMPTY;
         }
 

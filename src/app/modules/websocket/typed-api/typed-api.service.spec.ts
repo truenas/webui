@@ -1,13 +1,15 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { JobState, TrueNasAuthMechanism } from '@truenas/api-client';
+import { JobState } from '@truenas/api-client';
 import {
   createFakeClient, fakeApiError, fakeJob, FakeTrueNasClient, withSpies,
 } from '@truenas/api-client/testing';
 import {
-  BehaviorSubject, firstValueFrom, lastValueFrom, of, throwError,
+  BehaviorSubject, defaultIfEmpty, firstValueFrom, lastValueFrom, of, throwError,
 } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { ApiErrorName } from 'app/enums/api.enum';
+import { LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { TYPED_API_CLIENT, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ApiCallError, FailedJobError, TypedApiSessionError } from 'app/services/errors/error.classes';
@@ -21,13 +23,14 @@ const settle = (): Promise<void> => new Promise((resolve) => {
 describe('TypedApiService', () => {
   let spectator: SpectatorService<TypedApiService>;
   let client: FakeTrueNasClient<WebUiApiDirectory>;
-  let legacyAuthenticated$: BehaviorSubject<boolean>;
+  let legacyConnected$: BehaviorSubject<boolean>;
+  let wsStatus: WebSocketStatusService;
 
   const createService = createServiceFactory({
     service: TypedApiService,
     providers: [
       mockApi([
-        mockCall('auth.generate_token', 'one-shot-token'),
+        mockCall('auth.login_ex', { response_type: LoginExResponseType.Success } as LoginExResponse),
       ]),
       {
         provide: TYPED_API_CLIENT,
@@ -35,7 +38,7 @@ describe('TypedApiService', () => {
       },
       {
         provide: WebSocketStatusService,
-        useFactory: () => ({ isAuthenticated$: legacyAuthenticated$ }),
+        useFactory: () => wsStatus,
       },
     ],
   });
@@ -46,7 +49,13 @@ describe('TypedApiService', () => {
       createFakeClient({ version: 'v27.0.0', authenticated: false, opened: false }),
       jest.fn,
     );
-    legacyAuthenticated$ = new BehaviorSubject(false);
+    client.mock.call('auth.generate_token', 'one-shot-token');
+    legacyConnected$ = new BehaviorSubject(false);
+    wsStatus = {
+      isConnected$: legacyConnected$,
+      setSessionStatus: jest.fn(),
+      setLoginStatus: jest.fn(),
+    } as unknown as WebSocketStatusService;
 
     spectator = createService();
   });
@@ -56,132 +65,79 @@ describe('TypedApiService', () => {
   });
 
   const sentMethods = (): string[] => client.connection.sent.map((frame) => String(frame.method));
-  const loginTokens = (): string[] => client.authenticator.logins
-    .filter((login) => login.mechanism === TrueNasAuthMechanism.Token)
-    .map((login) => login.credential);
+  const legacyApi = (): MockApiService => spectator.inject(MockApiService);
+  const legacyLogins = (): unknown[] => jest.mocked(legacyApi().call).mock.calls
+    .filter(([method]) => method === 'auth.login_ex')
+    .map(([, params]) => params);
+
+  function signIn(): void {
+    client.authenticator.authenticated$.next(true);
+  }
 
   async function bringSessionUp(): Promise<void> {
     client.connection.simulateOpen();
-    legacyAuthenticated$.next(true);
+    signIn();
+    legacyConnected$.next(true);
     await settle();
   }
 
-  async function dropSocket(): Promise<void> {
-    client.connection.simulateClose();
-    await settle();
-  }
-
-  describe('authentication bridge', () => {
-    it('logs the typed socket in with a one-shot token from the legacy session once both are up', async () => {
+  describe('lending the session to the legacy socket', () => {
+    it('mints a one-shot token and logs the legacy socket in with it once both are up', async () => {
       client.connection.simulateOpen();
-      expect(loginTokens()).toEqual([]);
+      signIn();
+      await settle();
+      expect(legacyLogins()).toEqual([]);
 
-      legacyAuthenticated$.next(true);
+      legacyConnected$.next(true);
       await settle();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.generate_token', [300, {}, true, true]);
-      expect(loginTokens()).toEqual(['one-shot-token']);
-      expect(client.authenticated).toBe(true);
+      expect(client.connection.sent).toContainEqual(expect.objectContaining({
+        method: 'auth.generate_token',
+        params: [300, {}, true, true],
+      }));
+      expect(legacyLogins()).toEqual([[{ mechanism: 'TOKEN_PLAIN', token: 'one-shot-token' }]]);
     });
 
-    it('does not mint a token while the typed socket is closed', async () => {
-      legacyAuthenticated$.next(true);
+    it('does not lend anything while the typed session is not signed in', async () => {
+      client.connection.simulateOpen();
+      legacyConnected$.next(true);
       await settle();
 
-      expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
-      expect(loginTokens()).toEqual([]);
+      expect(sentMethods()).not.toContain('auth.generate_token');
+      expect(legacyLogins()).toEqual([]);
     });
 
-    it('logs the typed session out when the legacy session ends', async () => {
+    it('lends again when the legacy socket reconnects', async () => {
       await bringSessionUp();
 
-      legacyAuthenticated$.next(false);
+      legacyConnected$.next(false);
+      legacyConnected$.next(true);
+      await settle();
 
-      expect(sentMethods()).toContain('auth.logout');
-      expect(client.authenticated).toBe(false);
+      expect(legacyLogins()).toHaveLength(2);
     });
 
-    it('spends the reconnect token from the previous login when the typed socket reconnects', async () => {
-      client.authenticator.succeedNextLogin({ reconnect_token: 'chained-1' });
+    it('lends again when middleware refuses a call on the legacy socket for want of a session', async () => {
       await bringSessionUp();
-      await dropSocket();
 
-      client.connection.simulateOpen();
+      legacyApi().sessionLost.next();
       await settle();
 
-      expect(loginTokens()).toEqual(['one-shot-token', 'chained-1']);
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledTimes(1);
+      expect(legacyLogins()).toHaveLength(2);
     });
 
-    it('keeps chaining across several reconnects', async () => {
-      client.authenticator.succeedNextLogin({ reconnect_token: 'chained-1' });
+    it('mints one token when a sign-in and the reconnect both ask for the borrow', async () => {
+      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
+
       await bringSessionUp();
-      client.authenticator.succeedNextLogin({ reconnect_token: 'chained-2' });
-      await dropSocket();
-      client.connection.simulateOpen();
-      await settle();
-      await dropSocket();
 
-      client.connection.simulateOpen();
-      await settle();
-
-      expect(loginTokens()).toEqual(['one-shot-token', 'chained-1', 'chained-2']);
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledTimes(1);
-    });
-
-    it('falls back to a fresh legacy token when middleware refuses the chained one', async () => {
-      client.authenticator.succeedNextLogin({ reconnect_token: 'chained-1' });
-      await bringSessionUp();
-      await dropSocket();
-      client.authenticator.failNextLogin();
-
-      client.connection.simulateOpen();
-      await settle();
-
-      expect(loginTokens()).toEqual(['one-shot-token', 'chained-1', 'one-shot-token']);
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledTimes(2);
-      expect(client.authenticated).toBe(true);
-    });
-
-    it('keeps bridging when logging the typed session out fails', async () => {
-      jest.spyOn(console, 'warn').mockImplementation();
-      await bringSessionUp();
-      jest.spyOn(client.authenticator, 'logout').mockReturnValueOnce(throwError(() => new Error('socket gone')));
-
-      legacyAuthenticated$.next(false);
-      legacyAuthenticated$.next(true);
-      await dropSocket();
-      client.connection.simulateOpen();
-      await settle();
-
-      expect(loginTokens()).toEqual(['one-shot-token', 'one-shot-token']);
-      expect(client.authenticated).toBe(true);
-    });
-
-    it('fails requests instead of holding them if the bridge itself stops', async () => {
-      jest.spyOn(console, 'error').mockImplementation();
-      const held = firstValueFrom(spectator.service.call('system.info'));
-
-      legacyAuthenticated$.error(new Error('status stream broke'));
-
-      await expect(held).rejects.toBeInstanceOf(TypedApiSessionError);
-    });
-
-    it('starts a new chain after the legacy session ends and comes back', async () => {
-      client.authenticator.succeedNextLogin({ reconnect_token: 'chained-1' });
-      await bringSessionUp();
-      legacyAuthenticated$.next(false);
-
-      legacyAuthenticated$.next(true);
-      await settle();
-
-      expect(loginTokens()).toEqual(['one-shot-token', 'one-shot-token']);
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledTimes(2);
+      await expect(lent).resolves.toBeUndefined();
+      expect(sentMethods().filter((method) => method === 'auth.generate_token')).toHaveLength(1);
+      expect(legacyLogins()).toHaveLength(1);
     });
   });
 
-  describe('authentication bridge after a failed login', () => {
-    const legacyDown = (): Error => new Error('legacy down');
+  describe('lending after a failed borrow', () => {
     const tick = (ms: number): Promise<void> => jest.advanceTimersByTimeAsync(ms);
 
     beforeEach(() => {
@@ -193,112 +149,77 @@ describe('TypedApiService', () => {
       jest.useRealTimers();
     });
 
-    it('retries the login with backoff', async () => {
-      const legacyCall = jest.mocked(spectator.inject(ApiService).call);
+    it('retries with backoff and succeeds without bothering the caller', async () => {
+      const legacyCall = jest.mocked(legacyApi().call);
+      const legacyDown = (): Error => new Error('legacy down');
       legacyCall
         .mockReturnValueOnce(throwError(legacyDown))
         .mockReturnValueOnce(throwError(legacyDown));
       client.connection.simulateOpen();
-      legacyAuthenticated$.next(true);
+      signIn();
+
+      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
       await tick(0);
       expect(legacyCall).toHaveBeenCalledTimes(1);
-      expect(client.authenticated).toBe(false);
 
       await tick(1000);
       expect(legacyCall).toHaveBeenCalledTimes(2);
-      expect(client.authenticated).toBe(false);
 
       await tick(2000);
+      await expect(lent).resolves.toBeUndefined();
       expect(legacyCall).toHaveBeenCalledTimes(3);
-      expect(loginTokens()).toEqual(['one-shot-token']);
-      expect(client.authenticated).toBe(true);
     });
 
-    it('fails held and new requests once the retries are spent, instead of holding them forever', async () => {
-      const legacyCall = jest.mocked(spectator.inject(ApiService).call);
-      legacyCall.mockReturnValue(throwError(legacyDown));
-      const held = firstValueFrom(spectator.service.call('system.info'));
+    it('reports the failure once the retries are spent', async () => {
+      const legacyCall = jest.mocked(legacyApi().call);
+      legacyCall.mockReturnValue(throwError(() => new Error('legacy down')));
       client.connection.simulateOpen();
-      legacyAuthenticated$.next(true);
+      signIn();
 
+      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
       await tick(1000 + 2000 + 4000);
 
+      await expect(lent).rejects.toBeInstanceOf(TypedApiSessionError);
       expect(legacyCall).toHaveBeenCalledTimes(4);
-      expect(client.authenticated).toBe(false);
-      await expect(held).rejects.toBeInstanceOf(TypedApiSessionError);
-      await expect(firstValueFrom(spectator.service.call('system.info'))).rejects.toBeInstanceOf(TypedApiSessionError);
     });
 
-    it('holds requests again and logs in on the next reconnect after giving up', async () => {
-      const legacyCall = jest.mocked(spectator.inject(ApiService).call);
-      legacyCall.mockReturnValue(throwError(legacyDown));
+    it('reports a borrow the legacy socket refuses', async () => {
+      legacyApi().mockCall('auth.login_ex', { response_type: LoginExResponseType.AuthErr } as LoginExResponse);
       client.connection.simulateOpen();
-      legacyAuthenticated$.next(true);
+      signIn();
+
+      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
       await tick(1000 + 2000 + 4000);
-      expect(client.authenticated).toBe(false);
 
-      legacyCall.mockReturnValue(of('one-shot-token'));
-      client.connection.simulateClose();
-      const held = firstValueFrom(spectator.service.call('system.info'));
-      await tick(0);
-      expect(sentMethods()).not.toContain('system.info');
-
-      client.connection.simulateOpen();
-      await tick(0);
-
-      expect(client.authenticated).toBe(true);
-      expect(sentMethods()).toContain('system.info');
-      client.connection.reply('system.info', { version: 'TrueNAS-27.0.0' });
-      await tick(0);
-      expect(await held).toEqual({ version: 'TrueNAS-27.0.0' });
+      await expect(lent).rejects.toBeInstanceOf(TypedApiSessionError);
     });
 
-    it('tries again for the first request that arrives after the cool-off', async () => {
-      const legacyCall = jest.mocked(spectator.inject(ApiService).call);
-      legacyCall.mockReturnValue(throwError(legacyDown));
+    it('starts a fresh borrow the next time one is asked for', async () => {
+      const legacyCall = jest.mocked(legacyApi().call);
+      legacyCall.mockReturnValue(throwError(() => new Error('legacy down')));
       client.connection.simulateOpen();
-      legacyAuthenticated$.next(true);
+      signIn();
+      const failed = firstValueFrom(spectator.service.lendSessionToLegacySocket());
       await tick(1000 + 2000 + 4000);
-      expect(legacyCall).toHaveBeenCalledTimes(4);
+      await expect(failed).rejects.toBeInstanceOf(TypedApiSessionError);
 
-      await expect(firstValueFrom(spectator.service.call('system.info'))).rejects.toBeInstanceOf(TypedApiSessionError);
-      expect(legacyCall).toHaveBeenCalledTimes(4);
-
-      legacyCall.mockReturnValue(of('one-shot-token'));
-      await tick(30_000);
-      const held = firstValueFrom(spectator.service.call('system.info'));
+      legacyCall.mockReturnValue(of({ response_type: LoginExResponseType.Success } as LoginExResponse));
+      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
       await tick(0);
 
-      expect(legacyCall).toHaveBeenCalledTimes(5);
-      expect(client.authenticated).toBe(true);
-      client.connection.reply('system.info', { version: 'TrueNAS-27.0.0' });
-      await tick(0);
-      expect(await held).toEqual({ version: 'TrueNAS-27.0.0' });
+      await expect(lent).resolves.toBeUndefined();
     });
+  });
 
-    it('keeps failing requests fast after the cool-off once the bridge itself has stopped', async () => {
-      legacyAuthenticated$.error(new Error('status stream broke'));
-      await tick(0);
-      await expect(firstValueFrom(spectator.service.call('system.info'))).rejects.toBeInstanceOf(TypedApiSessionError);
+  describe('session status', () => {
+    it('projects the typed session onto the status service', async () => {
+      expect(wsStatus.setSessionStatus).toHaveBeenCalledWith(false);
 
-      await tick(60_000);
+      await bringSessionUp();
+      expect(wsStatus.setSessionStatus).toHaveBeenCalledWith(true);
 
-      await expect(firstValueFrom(spectator.service.call('system.info'))).rejects.toBeInstanceOf(TypedApiSessionError);
-      expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
-    });
-
-    it('drops a pending retry when the legacy session ends', async () => {
-      const legacyCall = jest.mocked(spectator.inject(ApiService).call);
-      legacyCall.mockReturnValueOnce(throwError(legacyDown));
-      client.connection.simulateOpen();
-      legacyAuthenticated$.next(true);
-      await tick(0);
-
-      legacyAuthenticated$.next(false);
-      await tick(10_000);
-
-      expect(legacyCall).toHaveBeenCalledTimes(1);
-      expect(client.authenticated).toBe(false);
+      client.authenticator.authenticated$.next(false);
+      expect(wsStatus.setSessionStatus).toHaveBeenLastCalledWith(false);
     });
   });
 
@@ -354,6 +275,18 @@ describe('TypedApiService', () => {
           },
         },
       });
+    });
+
+    it('ends the app session when the appliance refuses the call for want of one', async () => {
+      await bringSessionUp();
+      const result = firstValueFrom(
+        spectator.service.call('system.info').pipe(defaultIfEmpty('refused')),
+      );
+
+      client.connection.replyError('system.info', fakeApiError({ errname: ApiErrorName.NotAuthenticated }));
+
+      expect(await result).toBe('refused');
+      expect(wsStatus.setLoginStatus).toHaveBeenCalledWith(false);
     });
   });
 

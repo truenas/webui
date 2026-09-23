@@ -33,30 +33,37 @@ Credentials page already runs entirely on the typed client, so gating the
 socket on a flag would break it. Every build of `master`, production builds
 included, therefore opens both sockets and holds two authenticated sessions
 per tab, which is visible in session lists and audit records. That is
-acceptable for `master` while the migration runs and is not something a
-release branch should ship until login has moved to the typed client.
+acceptable for `master` while the migration runs, and the second session goes
+away with the legacy socket in Phase 3.
 
 ### How the two sessions stay in step
 
-The legacy socket still carries login, the jobs store, the debug panel and
-every call that has not moved. `TypedApiService` borrows authentication from
-it once: when the typed socket is open and the legacy session is
-authenticated, it mints a single-use token on the legacy socket
-(`auth.generate_token`) and logs the typed socket in with it. From then on the
-typed session runs the same token chain `AuthService` runs for the legacy one:
-every login asks middleware for the next `reconnect_token`, and every
-reconnect spends it. If middleware refuses the chained token, or the seed
-failed, it borrows from the legacy session again. Logging out of the legacy
-session logs the typed one out and drops the chain.
+The user signs in on the **typed** client. `AuthService` drives
+`client.authenticator` (`loginWithUserPass`, `loginWithOtp`, `loginWithToken`,
+`logout`), so the typed session holds the credentials, the session's roles and
+the `reconnect_token` chain — every login asks middleware for the next token,
+and the sign-in page spends it on the next reconnect. `WebSocketStatusService`
+projects `authenticator.authenticated$`, so "the app is authenticated" is a
+statement about that session and not about either socket being up.
+
+The legacy socket still carries the jobs store, the debug panel and every call
+that has not moved, and it has no session of its own: it **borrows** the typed
+one. Once the typed session is authenticated and the legacy socket is
+connected, `TypedApiService` mints a single-use token on the typed session
+(`auth.generate_token`) and logs the legacy socket in with it. The borrow is
+repeated whenever the legacy socket reconnects, or middleware refuses a call on
+it with `ENOTAUTHENTICATED`, and it is deleted with the legacy socket.
+
+Signing in waits for the borrow before it reports success
+(`lendSessionToLegacySocket()`), because everything the sign-in flow does next
+— the failover checks, `auth.me`, the boot calls — still rides the legacy
+socket. A borrow is retried with backoff (1s, 2s, 4s); after that it fails with
+`TypedApiSessionError`, which the error handler renders as a connection error.
 
 Call sites never authenticate and never need to know which socket a method
 rides on. Every typed request is held until the typed session is
-authenticated, so a call made during startup or across a reconnect waits
-instead of being refused by middleware. A login that fails is retried with
-backoff (1s, 2s, 4s); after that the bridge gives up and the held requests
-fail with `TypedApiSessionError` rather than hanging. The next socket reopen
-or legacy re-login starts a fresh attempt, and so does the first request that
-arrives after a 30s cool-off, so a transient refusal does not cost a reload.
+authenticated, so a call made before sign-in or across a reconnect waits
+instead of being refused by middleware.
 
 ## Migrating a call site
 
@@ -217,10 +224,11 @@ and `interfaces`, which only aliases generated types — is exempt.
 
 Once most call sites are typed, move what still depends on the legacy socket:
 
-- **Login.** `AuthService` moves to `client.authenticator`
-  (`loginWithUserPass`, `loginWithOtp`, `loginWithToken`, `logout`). At that
-  point the token bridge in `TypedApiService` is deleted and the typed session
-  becomes the primary one.
+- **Login.** Done (NAS-143988). `AuthService` drives `client.authenticator`
+  (`loginWithUserPass`, `loginWithOtp`, `loginWithToken`, `logout`), the typed
+  session is the primary one, and the bridge runs the other way: the legacy
+  socket borrows a single-use token from the typed session. That borrow is
+  deleted with the legacy socket in Phase 3.
 - **Jobs store.** `job.effects.ts` subscribes to `core.get_jobs` on the typed
   client.
 - **Connection UX.** Reconnect, shutdown, failover and password-change flows
@@ -251,36 +259,39 @@ above. Each is a change for `truenas/api-client-ts`.
    `keychaincredential.query`), and the first `job` site will inherit the
    same. Unchanged as of 6.0.3. Fix: a typed error class carrying the full
    payload; until then, route a query through `call` where the report
-   matters. Related and deliberate: `TypedApiService`
-   throws `ENOTAUTHENTICATED` like any other error rather than logging the
-   app out as `ApiService` does, because the typed session is secondary and
-   the bridge re-establishes it; the legacy behaviour moves over with login
-   in Phase 2.
+   matters. `call` is also the only verb that can act on `ENOTAUTHENTICATED`,
+   which is why ending the app's session on that refusal lives there.
 2. **Token sessions are the caller's to re-login.** Since 3.0.5 (commit
    `8f7d6e0`, "add token re-authentication and reconnect tokens") the client
    has `loginWithToken` and asks for a `reconnect_token` on every v26+ login.
    By design it re-authenticates automatically only for password and API-key
    sessions; a token session is not covered, because the token is single-use.
-   The bridge is that caller: it chains the `reconnect_token` each typed
-   login returns and falls back to a fresh token from the legacy socket when
-   the chain breaks, since middleware holds tokens in memory for 600s and a
-   `middlewared` restart voids them. Nothing to change in the library.
-3. **Parameterised subscriptions.** `EventName` excludes events that take
+   `AuthService` is that caller: it stores the `reconnect_token` every login
+   returns, and the sign-in page spends it after a reconnect. Middleware holds
+   tokens in memory for 600s and a `middlewared` restart voids them, so a
+   reconnect across a restart lands back on the password prompt.
+3. **A password login is cached in the authenticator.** `loginWithUserPass`
+   keeps the plaintext password on the authenticator and replays it on every
+   reconnect. The UI never wanted that — it keeps a single-use token instead —
+   and there is no way to decline it. Worth closing in the library; until then
+   a password session re-logs itself in on reconnect, racing the sign-in
+   page's token login, which the authenticator's epoch guard resolves.
+4. **Parameterised subscriptions.** `EventName` excludes events that take
    subscription params (`method:param` style, e.g. file tailing), which the
    legacy `subscribe` supports. Needed before Phase 1 step 4.
-4. **Query and message types are not exported.** `QueryFilters` and
+5. **Query and message types are not exported.** `QueryFilters` and
    `QueryProjection` are internal, so the wrapper forwards the query verbs
    through `Parameters<>` rather than declaring them; `TrueNasMessage` and
    the error-frame types are absent from the main entry too, so the wrapper's
    own dispatch types the frame by hand (the `testing` entry does export
    `TrueNasErrorFrame` and `TrueNasErrorData`). Unchanged as of 6.0.3.
-5. **No message hook.** The debug panel and mock responses intercept messages
+6. **No message hook.** The debug panel and mock responses intercept messages
    in `WebSocketHandlerService`; the client has no equivalent seam. Needed for
    Phase 2.
-6. **Job type drift.** The client's `Job` is honest about `result` and
+7. **Job type drift.** The client's `Job` is honest about `result` and
    `time_started` being `null` before a job starts; the UI's is not. The
    wrapper narrows for now; the UI should adopt the client's type.
-7. **Test double** — shipped in 6.0 as `@truenas/api-client/testing`
+8. **Test double** — shipped in 6.0 as `@truenas/api-client/testing`
    (`createFakeClient`, `mock.call` / `query` / `job` / `emit`, `withSpies`,
    `UnmockedCallError`, fixture builders; `truenas/api-client-ts` #54, #56,
    #59). webui's `MockTypedApiService` and `typed-api.service.spec.ts` run
@@ -288,10 +299,10 @@ above. Each is a change for `truenas/api-client-ts`.
    pending for every fake, which inside Angular's zone stopped fixtures from
    ever settling; 6.0.3 derives that timer from the socket stream
    (`truenas/api-client-ts#60`), so a fake holds no timer at all.
-8. **`crypto.randomUUID`.** The client falls back to `getRandomValues` on
+9. **`crypto.randomUUID`.** The client falls back to `getRandomValues` on
    insecure origins, so plain-http dev boxes work. Noting it because it is the
    kind of thing that breaks quietly.
-9. **Properties named `title` were dropped** — fixed in 5.0.1. The
+10. **Properties named `title` were dropped** — fixed in 5.0.1. The
    generator's `stripNestedTitles` removed every non-root `title` key to stop
    `json-schema-to-typescript` hoisting aliases, taking real fields of that
    name with it: no generated interface had a `title` property while thirteen
@@ -301,13 +312,13 @@ above. Each is a change for `truenas/api-client-ts`.
    The UI's casts for `cloudsync.providers` and `keychaincredential.used_by`
    are gone; the one that remains on providers is for `name`, which
    middleware types as a plain string and the UI narrows to its enum.
-10. **Impossible intersections.** `S3CredentialsModel` types `skip_region`
+11. **Impossible intersections.** `S3CredentialsModel` types `skip_region`
     and `signatures_v2` as `boolean & string`, which is `never`. Something in
     the schema for those fields (a `bool | str` coercion, most likely) is
     being emitted as an intersection rather than a union. Harmless until a
     form tries to write those fields through the typed client. Still so in
     6.0.3.
-11. **Version namespaces are type-only and partial.** Generated model types
+12. **Version namespaces are type-only and partial.** Generated model types
     are reachable as `v27_0_0.Name`, and that is how the UI's interface files
     now alias them (`keychain-credential.interface.ts` is the pattern). Two
     limits, both in the client's `.d.ts` bundling: the const objects the

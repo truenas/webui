@@ -10,9 +10,11 @@ import {
   defaultIfEmpty,
   filter,
   map,
+  merge,
   Observable,
   of,
   ReplaySubject,
+  startWith,
   switchMap,
   take,
   tap,
@@ -21,11 +23,14 @@ import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { LoginExMechanism, LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
+import { LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { PendingTwoFactorService } from 'app/modules/auth/pending-two-factor.service';
+import { asLoginExResponse } from 'app/modules/auth/typed-login-response';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { TYPED_API_CLIENT } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -38,6 +43,8 @@ import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 export class AuthService implements OnDestroy {
   private store$ = inject<Store<AppState>>(Store);
   private api = inject(ApiService);
+  private client$ = inject(TYPED_API_CLIENT);
+  private typedApi = inject(TypedApiService);
   private tokenLastUsedService = inject(TokenLastUsedService);
   private wsStatus = inject(WebSocketStatusService);
   private errorHandler = inject(ErrorHandlerService);
@@ -156,16 +163,25 @@ export class AuthService implements OnDestroy {
     this.setupTokenUpdate();
   }
 
+  /**
+   * Signs in on the typed client, which is where the app's session lives.
+   *
+   * The authenticator speaks `auth.login_ex` and owns the reconnect-token
+   * chain, so a password login mints the token the next reconnect spends. It
+   * reports a refused credential by throwing rather than by answering, which
+   * `asLoginExResponse` puts back as the `AUTH_ERR` the UI already handles.
+   */
   login(
     username: string,
     password: string,
     otp: string | null = null,
   ): Observable<{ loginResult: LoginResult; loginResponse: LoginExResponse }> {
-    const loginCall$ = otp
-      ? this.api.call('auth.login_ex_continue', [{ mechanism: LoginExMechanism.OtpToken, otp_token: otp }])
-      : this.api.call('auth.login_ex', [{
-          mechanism: LoginExMechanism.PasswordPlain, username, password, login_options: { reconnect_token: true },
-        }]);
+    const loginCall$ = this.client$.pipe(
+      switchMap((client) => (otp
+        ? client.authenticator.loginWithOtp(otp)
+        : client.authenticator.loginWithUserPass(username, password))),
+      asLoginExResponse(),
+    );
 
     return loginCall$.pipe(
       tap((result) => {
@@ -221,17 +237,24 @@ export class AuthService implements OnDestroy {
     this.token = token;
   }
 
+  /**
+   * Spends the stored reconnect token on the typed client.
+   *
+   * Tokens are single-use, so every login mints the next one; `processLoginResult`
+   * stores it. A token session is the one the client will not restore by itself
+   * after a reconnect — by design, since the token it held has been spent — which
+   * is why the sign-in page comes back through here on every reconnect.
+   */
   loginWithToken(): Observable<LoginResult> {
-    if (!this.token) {
+    const token = this.token;
+    if (!token) {
       return of(LoginResult.NoToken);
     }
 
     performance.mark('Login Start');
-    return this.api.call('auth.login_ex', [{
-      mechanism: LoginExMechanism.TokenPlain,
-      token: this.token,
-      login_options: { reconnect_token: true },
-    }]).pipe(
+    return this.client$.pipe(
+      switchMap((client) => client.authenticator.loginWithToken(token)),
+      asLoginExResponse(),
       switchMap((loginResult) => this.processLoginResult(loginResult)),
       catchError((error: unknown) => {
         this.errorHandler.showErrorModal(error);
@@ -262,8 +285,31 @@ export class AuthService implements OnDestroy {
     );
   }
 
+  /**
+   * Ends both sessions: the typed one the user is signed in on, and the one
+   * the legacy socket borrowed from it. The borrowed session would otherwise
+   * outlive the sign-out and keep answering calls on that socket.
+   *
+   * The legacy logout is best effort. It is a session nothing will use again,
+   * and a socket that is already down must not turn signing out into an error.
+   */
   logout(): Observable<void> {
-    return this.api.call('auth.logout').pipe(
+    return this.client$.pipe(
+      switchMap((client) => client.authenticator.logout().pipe(
+        // The authenticator ends the session at the call — credentials cleared,
+        // `authenticated$` down, frame already on the wire — and what it returns
+        // only waits for middleware's acknowledgement. Waiting for that would hang
+        // the sign-out on a socket that is going down, and leave the stored token
+        // behind for the sign-in page to log straight back in with.
+        startWith(true),
+        take(1),
+      )),
+      switchMap(() => this.api.call('auth.logout').pipe(
+        catchError((error: unknown) => {
+          console.warn('Borrowed legacy session could not be logged out', error);
+          return of(undefined);
+        }),
+      )),
       tap(() => {
         this.clearAuthToken();
         this.hasPasswordChangedSinceLastLogin$.next(false);
@@ -341,8 +387,13 @@ export class AuthService implements OnDestroy {
             this.latestTokenGenerated$.next(result.reconnect_token);
           }
 
-          // Return success but session is not initialized
-          return of(LoginResult.Success);
+          // The session is on the typed socket; everything that happens next —
+          // the failover checks, `auth.me`, the boot calls — is still on the
+          // legacy one, which has no session of its own. Lend it this one
+          // before reporting success, or all of it is refused.
+          return this.typedApi.lendSessionToLegacySocket().pipe(
+            map(() => LoginResult.Success),
+          );
         }
 
         // Don't set login status for error cases - it should remain false
@@ -388,9 +439,20 @@ export class AuthService implements OnDestroy {
     });
   }
 
+  /**
+   * Drops the signed-in state when either socket loses what the app needs from
+   * it: the typed session it is signed in on, or the legacy socket that still
+   * carries most of its calls.
+   *
+   * Both end the same way — back to the sign-in page, which logs straight in
+   * again when the stored token is still good.
+   */
   protected setupWsConnectionUpdate(): void {
-    this.wsStatus.isConnected$.pipe(
-      filter((isConnected) => !isConnected),
+    merge(
+      this.wsStatus.isConnected$,
+      this.wsStatus.isSessionEstablished$,
+    ).pipe(
+      filter((isUp) => !isUp),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.wsStatus.setLoginStatus(false);
