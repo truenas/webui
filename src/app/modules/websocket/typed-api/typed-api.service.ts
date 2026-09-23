@@ -18,6 +18,7 @@ import {
   defer,
   distinctUntilChanged,
   EMPTY,
+  exhaustMap,
   filter,
   map,
   MonoTypeOperatorFunction,
@@ -296,6 +297,14 @@ export class TypedApiService {
    * rendering as though it were signed in while every call on it fails. Dropping
    * the session instead routes the user to the sign-in page, which re-establishes
    * both sides from the stored token.
+   *
+   * `exhaustMap`, not `switchMap`, so a trigger that lands while a borrow is
+   * running is dropped rather than restarting it. Restarting looks harmless and
+   * is not: the borrow's retry ladder takes seconds to exhaust, and every
+   * restart hands it a fresh one, so under refusals that keep arriving — a page
+   * polling on a socket that has no session — it would never reach the give-up
+   * path above. The throttle alone does not close that, because it still lets
+   * one refusal through per window.
    */
   private lendOnDemand(): void {
     this.client$.pipe(
@@ -307,7 +316,7 @@ export class TypedApiService {
           startWith(undefined),
         ),
       ])),
-      switchMap(([isAuthenticated, isLegacyConnected]) => {
+      exhaustMap(([isAuthenticated, isLegacyConnected]) => {
         if (!isAuthenticated || !isLegacyConnected) {
           return EMPTY;
         }

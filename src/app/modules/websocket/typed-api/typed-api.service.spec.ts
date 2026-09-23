@@ -273,6 +273,24 @@ describe('TypedApiService', () => {
       expect(mintedTokenCount()).toBe(afterFirstBorrow + 2);
     });
 
+    it('gives up even while refusals keep arriving', async () => {
+      jest.mocked(legacyApi().call).mockReturnValue(throwError(() => new Error('legacy down')));
+      client.connection.simulateOpen();
+      signIn();
+      legacyConnected$.next(true);
+
+      // A page polling on a socket with no session produces a refusal well inside
+      // the retry ladder's ~7s. Each one restarting the borrow would hand it a
+      // fresh ladder, so it would never exhaust and the give-up path would never
+      // run — the session would stay up with every legacy call failing.
+      for (let index = 0; index < 16; index += 1) {
+        legacyApi().sessionLost.next();
+        await tick(600);
+      }
+
+      expect(wsStatus.setLoginStatus).toHaveBeenCalledWith(false);
+    });
+
     it('starts a fresh borrow the next time one is asked for', async () => {
       const legacyCall = jest.mocked(legacyApi().call);
       legacyCall.mockReturnValue(throwError(() => new Error('legacy down')));
