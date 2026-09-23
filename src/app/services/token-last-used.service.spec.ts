@@ -41,6 +41,8 @@ describe('TokenLastUsedService', () => {
 
   beforeEach(() => {
     fakeDate(new Date('2026-01-20T00:00:00Z'));
+    // The storage mock is shared, and the service reads the stored lifetime as it is built.
+    mockLocalStorage.getItem.mockReset();
     spectator = createService();
   });
 
@@ -120,6 +122,18 @@ describe('TokenLastUsedService', () => {
     it('should store lifetime in localStorage', () => {
       spectator.service.updateTokenLifetime(600);
       expect(mockLocalStorage.setItem).toHaveBeenCalledWith('tokenLifetime', '600');
+    });
+
+    it('publishes the new lifetime, which is what the token renewal runs on', () => {
+      const lifetimes: number[] = [];
+      spectator.service.lifetime$.subscribe((lifetime) => lifetimes.push(lifetime));
+
+      spectator.service.updateTokenLifetime(1200);
+      spectator.service.clearTokenLastUsed();
+
+      // Seeded from storage (nothing stored, so the 5 minute default), then the configured
+      // lifetime, then back to the default once the session is signed out.
+      expect(lifetimes).toEqual([300, 1200, 300]);
     });
   });
 
