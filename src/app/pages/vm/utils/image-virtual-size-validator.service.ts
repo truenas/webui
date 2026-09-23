@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
-import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { buildNormalizedFileSize, buildRoundedUpFileSize } from 'app/helpers/file-size.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 
@@ -55,7 +55,9 @@ export class ImageVirtualSizeValidatorService {
             'insufficientSize',
             this.translate.instant(
               'Disk size must be at least {required} to accommodate the imported image',
-              { required: buildNormalizedFileSize(virtualSize) },
+              // Rounded UP: this size is quoted for the user to enter, and the rounded-to-nearest
+              // rendering of e.g. 50 GiB + 4 KiB is `50 GiB`, which this same check then rejects.
+              { required: buildRoundedUpFileSize(virtualSize) },
             ),
           );
         }),
@@ -128,7 +130,7 @@ export class ImageVirtualSizeValidatorService {
                   'Selected zvol ({current}) is too small for the imported image (requires {required})',
                   {
                     current: buildNormalizedFileSize(zvolSize),
-                    required: buildNormalizedFileSize(virtualSize),
+                    required: buildRoundedUpFileSize(virtualSize),
                   },
                 ),
               );
