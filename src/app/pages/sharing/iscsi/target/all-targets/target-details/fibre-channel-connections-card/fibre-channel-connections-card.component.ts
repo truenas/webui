@@ -3,7 +3,7 @@ import {
   computed,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
 import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
 
@@ -16,6 +16,7 @@ import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/ca
     TnCardComponent,
     CardExpandCollapseComponent,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class FibreChannelConnectionsCardComponent {

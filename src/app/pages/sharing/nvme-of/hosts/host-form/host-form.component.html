@@ -36,7 +36,7 @@
       <ix-details-table class="authentication-details">
         <ix-details-item [label]="'Hash' | translate">
           <ix-editable>
-            <div view>
+            <div view tnTestId="hash" tnTestIdType="text">
               {{ form.value.dhchap_hash }}
             </div>
 
@@ -100,7 +100,7 @@
             [label]="'DH Group' | translate"
           >
             <ix-editable>
-              <div view>
+              <div view tnTestId="dh-group" tnTestIdType="text">
                 {{ form.value.dhchap_dhgroup || (helptext.noDhText | translate) }}
               </div>
 

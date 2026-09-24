@@ -24,8 +24,16 @@
       >
         @if (host.description) {
           <div class="host-item">
-            <div class="description">{{ host.description }}</div>
-            <div class="hostnqn">{{ host.hostnqn }}</div>
+            <div
+              class="description"
+              tnTestIdType="text"
+              [tnTestId]="['add-host', hostTestIdSlug(host), 'description']"
+            >{{ host.description }}</div>
+            <div
+              class="hostnqn"
+              tnTestIdType="text"
+              [tnTestId]="['add-host', hostTestIdSlug(host), 'hostnqn']"
+            >{{ host.hostnqn }}</div>
           </div>
         } @else {
           {{ host.hostnqn }}

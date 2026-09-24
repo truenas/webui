@@ -7,12 +7,14 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { forkJoin, tap } from 'rxjs';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getTierLabelKey } from 'app/pages/sharing/components/tier-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -36,6 +38,7 @@ export interface ChangeTierDialogData {
     TnCheckboxComponent,
     TnFormFieldComponent,
     TnBannerComponent,
+    TnTestIdDirective,
   ],
 })
 export class ChangeTierDialogComponent implements OnInit {
@@ -108,6 +111,16 @@ export class ChangeTierDialogComponent implements OnInit {
   ngOnInit(): void {
     this.loadDetails();
     this.loadShareUsage();
+  }
+
+  /**
+   * A share name is a runtime value, so it goes through the lodash normalizer the rest of the
+   * app's dynamic ids were minted with rather than the library's kebab-caser — the two disagree
+   * on a letter→digit boundary, and `share1` has one. Only the name: the literal segment beside
+   * it stays as written, or `s3-bucket` would come back as `s-3-bucket`.
+   */
+  protected shareTestId(name: string): string {
+    return normalizeTestIdString(name);
   }
 
   protected onApply(): void {

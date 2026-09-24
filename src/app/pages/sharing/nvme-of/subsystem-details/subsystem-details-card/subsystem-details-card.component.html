@@ -7,7 +7,7 @@
         [disabled]="isSaving()"
         (closed)="updateField('name')"
       >
-        <div view>
+        <div view tnTestId="name" tnTestIdType="text">
           {{ subsystem().name }}
         </div>
 
@@ -28,7 +28,7 @@
         [disabled]="isSaving()"
         (closed)="updateField('subnqn')"
       >
-        <div view>
+        <div view tnTestId="nqn" tnTestIdType="text">
           {{ subsystem().subnqn }}
         </div>
 

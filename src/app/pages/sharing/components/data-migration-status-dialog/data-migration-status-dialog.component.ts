@@ -5,7 +5,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent, TnProgressBarComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnProgressBarComponent, TnTestIdDirective,
+} from '@truenas/ui-components';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
@@ -36,6 +38,7 @@ export interface DataMigrationStatusDialogData {
     NgClass,
     FormatDateTimePipe,
     FileSizePipe,
+    TnTestIdDirective,
   ],
 })
 export class DataMigrationStatusDialogComponent implements OnInit {

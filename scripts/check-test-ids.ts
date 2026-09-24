@@ -51,7 +51,8 @@
  * targets are listed in {@link allowedClickables} with the reason.
  *
  * `--report` prints per-column coverage and the count of unreadable value readouts instead of
- * gating, for tracking both numbers over time.
+ * gating, for tracking both numbers over time. Add a path — `--report src/app/pages/sharing` — to
+ * also list that area's readouts one per line, which is the working list for closing one.
  */
 
 import { readdirSync, readFileSync } from 'fs';
@@ -594,7 +595,7 @@ function report(title: string, offenders: Offender[], advice: string): void {
  * A value an e2e suite reads: a LEAF element whose own text renders an *interpolation*, since that
  * is what a suite asserts on — a status, a size, a count, a name. A translated literal
  * (`{{ 'Name' | translate }}`) is a label, not a value, and is not counted; anything reading data
- * is.
+ * is — with one indirection counted as the literal it stands for, below.
  *
  * Not a gate. A table column is one (rule 2) because the set is bounded and the id it owes is
  * knowable; a free-form readout is not — some are genuinely not automation targets (a gauge's
@@ -605,10 +606,30 @@ function report(title: string, offenders: Offender[], advice: string): void {
 const leafValue = /<([a-z][a-z0-9-]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"'])*)?)>([^<]*\{\{[^<]*)<\/\1>/gs;
 const interpolations = /\{\{([^}]*)\}\}/g;
 
+/**
+ * A message hoisted out of the template into a `helptext` constant and translated at the call site.
+ *
+ * `{{ 'Name' | translate }}` is already excluded as a label; moving that same literal into a
+ * constants file does not turn it into a value, and all 50 of these read
+ * `{{ helptext.<path> | translate }}` — several of them literally named `.label`. Counting them
+ * asked ten paragraphs of dialog prose under `pages/sharing` alone to carry an id no suite would
+ * select, which is noise in a number meant to be driven to zero per area.
+ *
+ * Both halves are required: the root has to be `helptext` (the only such root in `src`, and a
+ * naming convention the repo keeps) and the value has to go through `translate`, so a dynamic
+ * label that merely passes through the pipe — `{{ currentTierLabel | translate }}`, the tier chip
+ * in change-tier-dialog — still counts.
+ */
+const helptextConstant = /^helptext\b/;
+const translatePipe = /^translate\b/;
+
 function readsData(text: string): boolean {
   return [...text.matchAll(interpolations)]
-    .map(([, body]) => body.split('|')[0].trim())
-    .some((head) => head.length > 0 && !/^'[^']*'$/.test(head) && !/^"[^"]*"$/.test(head));
+    .map(([, body]) => body.split('|').map((part) => part.trim()))
+    .some(([head, ...pipes]) => head.length > 0
+      && !/^'[^']*'$/.test(head)
+      && !/^"[^"]*"$/.test(head)
+      && !(helptextConstant.test(head) && pipes.some((pipe) => translatePipe.test(pipe))));
 }
 
 const elementBoundaries = /<([a-z][a-z0-9-]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"'])*)?)\/?>|<\/([a-z][a-z0-9-]*)>/gs;
@@ -674,13 +695,17 @@ function taggedAncestorBlock(src: string, at: number): string | null {
  * addressable without an id of its own: a tagged ancestor holding just that value (above), and a
  * shared component whose whole template renders one value — every consumer tags the tag, so an id
  * inside would be both redundant and repeated on every instance in the page.
+ *
+ * Returns the line of each, not a count, so `--report <path>` can name them. Closing an area means
+ * opening each one, and a bare per-area total says only how many are left, not where — every area
+ * ticket would otherwise start by re-deriving this list by hand.
  */
-function untaggedReadouts(src: string, isSingleValueComponent: boolean): number {
+function untaggedReadouts(src: string, isSingleValueComponent: boolean): number[] {
   if (isSingleValueComponent) {
-    return 0;
+    return [];
   }
   const stripped = withoutComments(src);
-  let count = 0;
+  const lines: number[] = [];
   for (const match of stripped.matchAll(leafValue)) {
     const [, , attributes = '', text] = match;
     if (anyTestId.test(attributes) || !readsData(text)) {
@@ -694,9 +719,9 @@ function untaggedReadouts(src: string, isSingleValueComponent: boolean): number 
     if (ancestor && valueCount(ancestor) === 1) {
       continue;
     }
-    count += 1;
+    lines.push(stripped.slice(0, match.index).split('\n').length);
   }
-  return count;
+  return lines;
 }
 
 /**
@@ -735,8 +760,13 @@ function reportColumnCoverage(tables: { file: string; src: string }[]): void {
   );
 }
 
-/** `--report`: untagged value readouts per area, the tracked-but-not-gated number. */
-function reportReadoutCoverage(templates: { file: string; src: string }[]): void {
+/**
+ * `--report`: untagged value readouts per area, the tracked-but-not-gated number.
+ *
+ * A path given alongside `--report` also lists each readout under it as `file:line  <markup>`,
+ * which is the working list for closing one area.
+ */
+function reportReadoutCoverage(templates: { file: string; src: string }[], listing?: string): void {
   // A template whose component renders exactly one value is addressed from its call sites.
   const { templateBySelector, selectorByTemplate } = scanComponents();
   const singleValue = new Set(
@@ -751,12 +781,18 @@ function reportReadoutCoverage(templates: { file: string; src: string }[]): void
     // *contents* made two byte-identical templates collide, so the discount was applied for the
     // wrong selector — and it hashed every template in `src` in full to do it.
     const selector = selectorByTemplate.get(file);
-    const count = untaggedReadouts(src, !!selector && singleValue.has(selector));
-    if (!count) {
+    const lines = untaggedReadouts(src, !!selector && singleValue.has(selector));
+    if (!lines.length) {
       continue;
     }
+    if (listing && file.startsWith(listing)) {
+      const sourceLines = src.split('\n');
+      for (const line of lines) {
+        console.info(`  ${file}:${line}  ${sourceLines[line - 1].trim()}`);
+      }
+    }
     const area = file.split('/').slice(0, 4).join('/');
-    perArea.set(area, (perArea.get(area) ?? 0) + count);
+    perArea.set(area, (perArea.get(area) ?? 0) + lines.length);
   }
 
   const total = [...perArea.values()].reduce((sum, count) => sum + count, 0);
@@ -780,7 +816,7 @@ function main(): void {
 
   if (process.argv.includes('--report')) {
     reportColumnCoverage(tables);
-    reportReadoutCoverage(templates);
+    reportReadoutCoverage(templates, process.argv.slice(2).find((arg) => !arg.startsWith('--')));
     return;
   }
   const untaggedRows = tables
