@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject, viewChild, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialog } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog, TnTestIdDirective } from '@truenas/ui-components';
 import {
   filter,
   tap,
@@ -30,6 +30,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     TargetDetailsComponent,
     RequiresRolesDirective,
     TnButtonComponent,
+    TnTestIdDirective,
   ],
 })
 export class AllTargetsComponent implements OnInit {

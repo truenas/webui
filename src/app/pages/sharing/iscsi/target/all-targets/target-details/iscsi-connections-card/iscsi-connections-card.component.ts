@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, input, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import uniqBy from 'lodash-es/uniqBy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { finalize, take } from 'rxjs';
@@ -20,6 +20,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     TnCardComponent,
     NgxSkeletonLoaderModule,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class IscsiConnectionsCardComponent {

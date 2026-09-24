@@ -1,6 +1,6 @@
 <tn-card class="card" padding="small" [title]="'iSCSI Authorized Networks' | translate">
   @for (network of target().auth_networks; track network) {
-    <div class="network">
+    <div class="network" tnTestIdType="text" [tnTestId]="['authorized-network', $index]">
       {{ network }}
     </div>
   } @empty {

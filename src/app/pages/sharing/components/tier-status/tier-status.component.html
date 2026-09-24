@@ -1,4 +1,8 @@
-<span class="tier-label">{{ tierLabel() }}</span>
+<span
+  class="tier-label"
+  tnTestIdType="text"
+  [tnTestId]="[uniqueRowTag(), 'tier']"
+>{{ tierLabel() }}</span>
 
 @if (tierJob(); as job) {
   @if (jobIcon(); as icon) {

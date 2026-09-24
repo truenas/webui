@@ -54,7 +54,7 @@
         ></ix-protocol-options-wizard-step>
 
         @if (isFibreChannelMode && validateFcPorts().length > 0) {
-          <div class="fc-port-error" role="alert">
+          <div class="fc-port-error" role="alert" tnTestId="fc-port-error" tnTestIdType="text">
             {{ validateFcPorts().join(', ') }}
           </div>
         }

@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnBannerComponent, TnCardComponent, TnCardFooterActionsDirective, TnIconButtonComponent, TnIconComponent,
-  TnTooltipDirective,
+  TnTestIdDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -37,6 +37,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     AddHostMenuComponent,
     UiSearchDirective,
     RequiresRolesDirective,
+    TnTestIdDirective,
   ],
 })
 export class SubsystemHostsCardComponent {

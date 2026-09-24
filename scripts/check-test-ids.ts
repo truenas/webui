@@ -604,24 +604,34 @@ function report(title: string, offenders: Offender[], advice: string): void {
  * be driven down per area, which is how the 117 untagged columns were closed.
  */
 const leafValue = /<([a-z][a-z0-9-]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"'])*)?)>([^<]*\{\{[^<]*)<\/\1>/gs;
-const interpolations = /\{\{([^}]*)\}\}/g;
+/**
+ * An interpolation's expression, which may itself contain a single `}` — a pipe argument is an
+ * object literal (`| translate: { x: n() }`), and `[^}]*` stopped dead at its first brace, matched
+ * nothing at all, and left the whole readout invisible to {@link readsData}. 20 readouts app-wide
+ * were unseen that way. A literal `}}` inside the expression still cuts early: only the ICU plural
+ * strings have one, and an Angular parser is the only thing that would read those correctly.
+ */
+const interpolations = /\{\{((?:[^}]|\}(?!\}))*)\}\}/g;
 
 /**
  * A message hoisted out of the template into a `helptext` constant and translated at the call site.
  *
  * `{{ 'Name' | translate }}` is already excluded as a label; moving that same literal into a
- * constants file does not turn it into a value, and all 50 of these read
+ * constants file does not turn it into a value, and 47 of the 50 in `src` read
  * `{{ helptext.<path> | translate }}` — several of them literally named `.label`. Counting them
  * asked ten paragraphs of dialog prose under `pages/sharing` alone to carry an id no suite would
  * select, which is noise in a number meant to be driven to zero per area.
  *
- * Both halves are required: the root has to be `helptext` (the only such root in `src`, and a
- * naming convention the repo keeps) and the value has to go through `translate`, so a dynamic
- * label that merely passes through the pipe — `{{ currentTierLabel | translate }}`, the tier chip
- * in change-tier-dialog — still counts.
+ * Three conditions, and the third is what the other three of the 50 fail. The root has to be
+ * `helptext` (the only such root in `src`, and a naming convention the repo keeps); the value has
+ * to go through `translate`, so a dynamic label that merely passes through the pipe —
+ * `{{ currentTierLabel | translate }}`, the tier chip in change-tier-dialog — still counts; and
+ * that `translate` must carry no arguments. `{{ helptext.pendingCheckinText | translate: { x:
+ * checkinRemaining() } }}` is a live countdown interpolated into the message: the constant is
+ * static, what it renders is not, and a suite would plausibly assert on it.
  */
 const helptextConstant = /^helptext\b/;
-const translatePipe = /^translate\b/;
+const translatePipe = /^translate$/;
 
 function readsData(text: string): boolean {
   return [...text.matchAll(interpolations)]
@@ -761,17 +771,48 @@ function reportColumnCoverage(tables: { file: string; src: string }[]): void {
 }
 
 /**
+ * Selectors that are written as a tag somewhere and carry an id at *every* such call site.
+ *
+ * Read off the templates rather than guessed: a component opened through a route, a dialog or
+ * `FormSidePanelService` appears as a tag nowhere at all, and one whose consumers tag it only
+ * sometimes is unaddressable from the untagged ones.
+ */
+function taggedCallSites(templates: { file: string; src: string }[]): Set<string> {
+  const uses = new Map<string, { total: number; tagged: number }>();
+  for (const { src } of templates) {
+    for (const match of withoutComments(src).matchAll(componentTags)) {
+      const attributes = match[2] ?? '';
+      const entry = uses.get(match[1]) ?? { total: 0, tagged: 0 };
+      entry.total += 1;
+      if (anyTestId.test(attributes) || componentTestIdInput.test(attributes)) {
+        entry.tagged += 1;
+      }
+      uses.set(match[1], entry);
+    }
+  }
+  return new Set(
+    [...uses].filter(([, { total, tagged }]) => total > 0 && total === tagged).map(([tag]) => tag),
+  );
+}
+
+/**
  * `--report`: untagged value readouts per area, the tracked-but-not-gated number.
  *
  * A path given alongside `--report` also lists each readout under it as `file:line  <markup>`,
  * which is the working list for closing one area.
  */
 function reportReadoutCoverage(templates: { file: string; src: string }[], listing?: string): void {
-  // A template whose component renders exactly one value is addressed from its call sites.
   const { templateBySelector, selectorByTemplate } = scanComponents();
+  const tagged = taggedCallSites(templates);
+  // A shared leaf presenter: one value, and every call site puts an id on the tag — which is the
+  // whole reason the value inside needs none. Both halves are load-bearing. "One value" alone
+  // discounted twelve templates under `pages/sharing`, among them three wizards and two panel
+  // forms: a routed page is never written as a tag, so no call site tags it and nothing addresses
+  // the value it renders. Their readouts were hidden rather than absent, which is how this area
+  // read as closed while `ix-target-form` and `ix-s3-bucket-form` still owed ids.
   const singleValue = new Set(
     [...templateBySelector]
-      .filter(([, template]) => valueCount(template) === 1)
+      .filter(([selector, template]) => valueCount(template) === 1 && tagged.has(selector))
       .map(([selector]) => selector),
   );
 

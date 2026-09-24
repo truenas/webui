@@ -40,7 +40,7 @@
     </tn-form-list>
 
     @if (fcPortValidationErrors().length > 0) {
-      <div class="fc-port-error" role="alert">
+      <div class="fc-port-error" role="alert" tnTestId="fc-port-error" tnTestIdType="text">
         {{ fcPortValidationErrors().join(', ') }}
       </div>
     }

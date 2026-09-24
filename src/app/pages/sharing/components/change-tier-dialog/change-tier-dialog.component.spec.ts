@@ -58,6 +58,16 @@ describe('ChangeTierDialogComponent — share usage list', () => {
     spectator = createComponent({ detectChanges: false });
   });
 
+  // The value moved into its own <span> to carry a test id, which left a whitespace-only text node
+  // between it and the label — and `preserveWhitespaces: false` deletes those, rendering
+  // "Dataset:tank/SHARE". `&ngsp;` on the </strong> is what keeps the space.
+  it('renders the dataset name separated from its label', async () => {
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    expect(spectator.query('.dataset-name')).toHaveText('Dataset: tank/SHARE');
+  });
+
   it('does not render the share usage block when no shares use the dataset', async () => {
     spectator.detectChanges();
     await spectator.fixture.whenStable();

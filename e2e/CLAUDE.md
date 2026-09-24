@@ -205,7 +205,7 @@ stays convention, and reviewing it is a reviewer's job.
 
 A table cell is covered (rule 2, and every column of every list has an id). A value rendered
 anywhere else — a card's detail line, a widget's number, a dialog's message — is not, and
-`yarn check-test-ids --report` counts what is left: **541 readouts across the app** that no suite
+`yarn check-test-ids --report` counts what is left: **651 readouts across the app** that no suite
 can read, listed per area. `src/app/pages/sharing` is the first area off that list (NAS-143970).
 
 It is a *measurement, not a gate*, because unlike a table column the set is not bounded and some
@@ -218,9 +218,12 @@ Three things do NOT need an id of their own, and the report already discounts th
   The ancestor has to be in the *same* template — an id rendered by the component around it is
   invisible to this, which is why `<div view>` inside an `ix-editable` still counts (and should:
   the editable's trigger id is derived from the value itself, so it cannot be used to find it).
-- **A shared component whose whole template renders one value.** `<ix-date>` is the example: every
-  call site tags the tag, so the value inside is what that element says. Putting a static id inside
-  such a component would be worse than nothing — it would repeat on every instance in the page.
+- **A shared leaf presenter: one value, and an id at every call site.** `<ix-date>` is the example
+  — its consumers tag the tag, so the value inside is what that element says, and a static id
+  inside would repeat on every instance in the page. Both halves are checked, because "renders one
+  value" alone discounted twelve templates under `pages/sharing`, three wizards and two panel forms
+  among them: a routed page is written as a tag nowhere, so nothing tags it and nothing can address
+  the value it renders.
 - **A message hoisted into a `helptext` constant**, i.e. `{{ helptext.<path> | translate }}`.
   `{{ 'Name' | translate }}` was never counted; moving the same literal into a constants file does
   not make it a value. Both halves are required, so a dynamic label that merely passes through the

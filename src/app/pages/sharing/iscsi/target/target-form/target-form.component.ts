@@ -8,7 +8,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnFormSectionComponent, TnInputComponent,
-  TnRadioGroupComponent, TnSelectComponent,
+  TnRadioGroupComponent, TnSelectComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import { Observable, of } from 'rxjs';
@@ -64,6 +64,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     TranslateModule,
     TranslateOptionsPipe,
     AsyncPipe,
+    TnTestIdDirective,
   ],
 })
 export class TargetFormComponent extends IxFormHostForm implements OnInit {

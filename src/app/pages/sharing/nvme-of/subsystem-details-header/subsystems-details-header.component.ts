@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialog } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog, TnTestIdDirective } from '@truenas/ui-components';
 import {
   filter, switchMap,
 } from 'rxjs';
@@ -21,6 +21,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
+    TnTestIdDirective,
   ],
   templateUrl: './subsystems-details-header.component.html',
   styleUrl: './subsystems-details-header.component.scss',
