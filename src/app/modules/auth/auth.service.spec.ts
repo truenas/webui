@@ -38,8 +38,12 @@ describe('AuthService', () => {
 
   /**
    * Silent until a test pushes a value, so only the renewal tests build the timer.
+   *
+   * Replaced for every test: the services this suite builds outlive the test that
+   * built them, and a shared subject would hand a renewal tick to every one of
+   * them at once — each writing its own answer over the stored token.
    */
-  const sessionLifetime$ = new Subject<number>();
+  let sessionLifetime$: Subject<number>;
 
   const authMeUser = {
     pw_dir: 'dir',
@@ -114,15 +118,16 @@ describe('AuthService', () => {
       }),
       {
         provide: TokenLastUsedService,
-        useValue: {
+        useFactory: () => ({
           ...createSpyObject(TokenLastUsedService),
           lifetime$: sessionLifetime$,
-        },
+        }),
       },
     ],
   });
 
   beforeEach(() => {
+    sessionLifetime$ = new Subject<number>();
     spectator = createService();
     testScheduler = new TestScheduler((actual, expected) => {
       expect(actual).toEqual(expected);
