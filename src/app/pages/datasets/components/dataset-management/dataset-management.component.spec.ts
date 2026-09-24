@@ -9,6 +9,7 @@ import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -27,7 +28,7 @@ describe('DatasetsManagementComponent', () => {
   const datasets$ = new BehaviorSubject([
     { id: 'first', name: 'First Dataset' },
     { id: 'second', name: 'Second Dataset' },
-  ]);
+  ] as DatasetDetails[]);
 
   const error$ = new BehaviorSubject<unknown>(null);
 
@@ -124,5 +125,34 @@ describe('DatasetsManagementComponent', () => {
     // white-box: TnEmptyHarness has no getter for icon / action text
     expect(spectator.query(TnEmptyComponent)!.icon()).toBe('dataset-root');
     expect(spectator.query(TnEmptyComponent)!.actionText()).toBe('Create Pool');
+  });
+
+  describe('horizontal scroll width', () => {
+    // The tree is virtualized, so the scroll range must not be measured from the rendered
+    // rows - scrolling vertically would then reset the horizontal position (NAS-144025).
+    // It is reserved from the deepest level the tree currently shows instead.
+    function reservedWidth(): string {
+      return spectator.query<HTMLElement>('.table-container')!.style.getPropertyValue('--ix-tree-content-width');
+    }
+
+    beforeEach(() => {
+      error$.next(null);
+      datasets$.next([
+        { id: 'pool', name: 'pool', children: [{ id: 'pool/child' }] },
+        { id: 'pool/child', name: 'pool/child', children: [] },
+      ] as DatasetDetails[]);
+      spectator.detectChanges();
+    });
+
+    it('reserves room for the value columns only while the tree is collapsed', () => {
+      expect(reservedWidth()).toBe('615px');
+    });
+
+    it('reserves one more indent once a deeper row becomes visible', () => {
+      spectator.component.treeControl.expand(spectator.component.treeControl.dataNodes[0]);
+      spectator.detectChanges();
+
+      expect(reservedWidth()).toBe('655px');
+    });
   });
 });
