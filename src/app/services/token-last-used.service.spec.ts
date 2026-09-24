@@ -1,5 +1,5 @@
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
-import { of, Subject } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { oneMinuteMillis } from 'app/constants/time.constant';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
@@ -41,6 +41,8 @@ describe('TokenLastUsedService', () => {
 
   beforeEach(() => {
     fakeDate(new Date('2026-01-20T00:00:00Z'));
+    // The storage mock is shared, and the service reads the stored lifetime as it is built.
+    mockLocalStorage.getItem.mockReset();
     spectator = createService();
   });
 
@@ -121,6 +123,18 @@ describe('TokenLastUsedService', () => {
       spectator.service.updateTokenLifetime(600);
       expect(mockLocalStorage.setItem).toHaveBeenCalledWith('tokenLifetime', '600');
     });
+
+    it('publishes the new lifetime, which is what the token renewal runs on', () => {
+      const lifetimes: number[] = [];
+      spectator.service.lifetime$.subscribe((lifetime) => lifetimes.push(lifetime));
+
+      spectator.service.updateTokenLifetime(1200);
+      spectator.service.clearTokenLastUsed();
+
+      // Seeded from storage (nothing stored, so the 5 minute default), then the configured
+      // lifetime, then back to the default once the session is signed out.
+      expect(lifetimes).toEqual([300, 1200, 300]);
+    });
   });
 
   describe('clearTokenLastUsed', () => {
@@ -132,6 +146,30 @@ describe('TokenLastUsedService', () => {
   });
 
   describe('setupTokenLastUsedValue', () => {
+    it('keeps stamping on a socket that never falls quiet', () => {
+      const responses$ = new Subject<IncomingMessage>();
+      // `mockApi()` hands out a plain object for the handler, so give it the stream directly.
+      (spectator.inject(WebSocketHandlerService) as { responses$: Observable<IncomingMessage> })
+        .responses$ = responses$;
+      const updateTokenLastUsedSpy = jest.spyOn(spectator.service, 'updateTokenLastUsed');
+
+      spectator.service.setupTokenLastUsedValue(of({} as LoggedInUser));
+      // The first stamp comes from the user emission; this is about the traffic that follows.
+      updateTokenLastUsedSpy.mockClear();
+      // `fakeDate` installs a clock that deliberately leaves timers real; swap it for one that
+      // fakes them, so the audit interval can be driven here.
+      jest.useRealTimers();
+      jest.useFakeTimers();
+
+      // A response every second, as the dashboard produces: never a five second gap.
+      for (let i = 0; i < 12; i++) {
+        responses$.next({ jsonrpc: '2.0', id: String(i), result: '' });
+        jest.advanceTimersByTime(1000);
+      }
+
+      expect(updateTokenLastUsedSpy).toHaveBeenCalledTimes(2);
+    });
+
     it('should update tokenLastUsed in localStorage on user and WebSocket activity', () => {
       const user$ = spectator.inject(AuthService).user$ as Subject<LoggedInUser>;
       const updateTokenLastUsedSpy = jest.spyOn(spectator.service, 'updateTokenLastUsed');
