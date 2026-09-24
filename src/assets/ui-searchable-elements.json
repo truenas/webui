@@ -1164,7 +1164,7 @@
       "System",
       "Advanced Settings",
       "System Security",
-      "Enable General Purpose OS STIG compatibility mode"
+      "Enable TrueNAS STIG compatibility mode"
     ],
     "synonyms": [
       "FIPS",
@@ -1181,7 +1181,7 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "enable-general-purpose-os-stig-compatibility-mode",
+    "anchor": "enable-truenas-stig-compatibility-mode",
     "triggerAnchor": null,
     "section": "ui"
   },
