@@ -167,7 +167,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     FipsProvider: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['system', 'advanced'],
-      contextualHelp: T('FIPS mode is enabled but the FIPS cryptographic provider is not active. A system restart is required to activate FIPS. FIPS 140-2 compliance requires the provider to be active.'),
+      contextualHelp: T('FIPS mode is enabled but the FIPS cryptographic provider is not active. A system restart is required to activate FIPS. FIPS 140-3 compliance requires the provider to be active.'),
       actions: [
         {
           label: T('System Security Settings'),
