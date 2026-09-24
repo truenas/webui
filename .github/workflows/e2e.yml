@@ -56,6 +56,10 @@ on:
       - 'playwright.config.ts'
       - 'package.json'
       - 'yarn.lock'
+      # How the built UI is served here. A route missing from it is invisible
+      # to every local profile — they serve the UI from the dev server or the
+      # appliance — so this job is the only thing that can catch one.
+      - 'docker/nginx.conf'
       - '.github/workflows/e2e.yml'
   # Pull requests that change the suite or the pipeline itself.
   pull_request:
@@ -68,6 +72,7 @@ on:
       - '!e2e/CLAUDE.md'
       - '!e2e/README.md'
       - 'playwright.config.ts'
+      - 'docker/nginx.conf'
       - '.github/workflows/e2e.yml'
   # The opt-in for any other branch: `gh workflow run e2e.yml --ref <branch>`.
   workflow_dispatch:
