@@ -27,6 +27,25 @@ ix-dataset-details-panel {
   }
 }
 
+// Reserve the tree's horizontal scroll range, and stretch the sticky header over it so its
+// labels sit above their columns. `--ix-tree-content-width` is set on `.table-container`
+// from the component (see `treeContentWidth`) and is wide enough for the deepest visible
+// row; without it the range was whatever the currently-rendered (virtualized) rows
+// happened to need, so scrolling vertically reset the horizontal position (NAS-144025).
+//
+// Only above the tablet breakpoint: below it the row grid collapses to a name-only column
+// (`minmax(0, 1fr) 0 0 0 0`) and the header hides its labels, so reserving the value
+// columns' width would put a horizontal scrollbar under a phone-width list.
+@media (min-width: $breakpoint-tablet + 1px) {
+  .tree-inner {
+    min-width: var(--ix-tree-content-width, fit-content);
+  }
+
+  .tree-header {
+    width: var(--ix-tree-content-width, 100%);
+  }
+}
+
 .tree-header {
   // Value columns are kept narrow (and must match .tree-node-grid exactly, so the labels
   // stay above their values) to leave the dataset name as much of the table as possible.
