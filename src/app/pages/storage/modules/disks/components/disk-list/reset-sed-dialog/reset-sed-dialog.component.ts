@@ -52,6 +52,12 @@ export class ResetSedDialog {
   });
 
   protected onSubmit(): void {
+    // Enter in the confirmation field submits the form natively (the dialog's
+    // action buttons live outside it), so the gate must be enforced here too.
+    if (this.form.invalid) {
+      return;
+    }
+
     this.api.call('disk.reset_sed', [{ name: this.data.diskName, psid: this.form.getRawValue().psid }])
       .pipe(
         this.loader.withLoader(),

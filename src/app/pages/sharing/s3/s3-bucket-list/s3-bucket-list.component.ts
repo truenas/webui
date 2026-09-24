@@ -34,6 +34,8 @@ import {
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { TierStatusComponent } from 'app/pages/sharing/components/tier-status/tier-status.component';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { s3BucketListElements } from 'app/pages/sharing/s3/s3-bucket-list/s3-bucket-list.elements';
 import { bucketDataPath, bucketToShareRow } from 'app/pages/sharing/s3/utils/s3-bucket.utils';
@@ -70,6 +72,7 @@ import { poolStore } from 'app/services/global-store/stores.constant';
     TnTooltipDirective,
     TranslateModule,
     YesNoPipe,
+    TierStatusComponent,
   ],
 })
 export class S3BucketListComponent implements OnInit {
@@ -82,6 +85,7 @@ export class S3BucketListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
   private poolStoreService = inject(poolStore);
+  private tierService = inject(SharingTierService);
 
   protected readonly requiredRoles = [Role.SharingS3Write, Role.SharingWrite];
   protected readonly searchableElements = s3BucketListElements;
@@ -104,6 +108,12 @@ export class S3BucketListComponent implements OnInit {
   /** null = pools not yet loaded; string[] once pool.query completes */
   private activePoolPaths = signal<string[] | null>(null);
 
+  private tierAction: IconActionConfig<S3Bucket> = this.tierService.createChangeDatasetTierAction<S3Bucket>({
+    destroyRef: this.destroyRef,
+    reload: () => this.refresh(),
+    requiredRoles: this.requiredRoles,
+  });
+
   protected readonly actions: IconActionConfig<S3Bucket>[] = [
     {
       iconName: tnIconMarker('pencil', 'mdi'),
@@ -119,6 +129,7 @@ export class S3BucketListComponent implements OnInit {
       ),
       onClick: (row) => this.doFilesystemAclEdit(row),
     },
+    this.tierAction,
     {
       iconName: tnIconMarker('delete', 'mdi'),
       tooltip: this.translate.instant('Delete'),
@@ -134,7 +145,8 @@ export class S3BucketListComponent implements OnInit {
   ];
 
   // Column model retained purely to drive <ix-table-column-picker>; tn-table renders
-  // cells from the template and derives `displayedColumns` from these.
+  // cells from the template and derives `displayedColumns` from these. The
+  // `tier` column is reactive (see `displayedColumns`), not picker-managed.
   protected readonly columns = signal(createTable<S3Bucket>([
     column({
       title: this.translate.instant('Name'),
@@ -176,7 +188,15 @@ export class S3BucketListComponent implements OnInit {
     actionsColumn(),
   ]));
 
-  protected readonly displayedColumns = computed<string[]>(() => toDisplayedColumns(this.columns()));
+  protected readonly displayedColumns = computed<string[]>(() => {
+    const columns = toDisplayedColumns(this.columns());
+    if (this.tierService.tierEnabled()) {
+      const actionsIndex = columns.indexOf('actions');
+      const insertAt = actionsIndex >= 0 ? actionsIndex : columns.length;
+      columns.splice(insertAt, 0, 'tier');
+    }
+    return columns;
+  });
 
   protected readonly trackByBucketId = (_index: number, row: S3Bucket): number => row.id;
 
@@ -224,6 +244,14 @@ export class S3BucketListComponent implements OnInit {
       error: () => {
         this.refresh();
       },
+    });
+
+    // Prime the tier config so `displayedColumns` reactively reveals the tier
+    // column when tiering is enabled, and reload the list on tier-job ticks.
+    this.tierService.getTierConfig().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    this.tierService.wireTierJobRefresh({
+      destroyRef: this.destroyRef,
+      reload: () => this.refresh(),
     });
   }
 

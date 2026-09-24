@@ -57,6 +57,24 @@ export class ApiService {
 
   readonly clearSubscriptions$ = new Subject<void>();
 
+  private readonly sessionLost$ = new Subject<void>();
+
+  /**
+   * Fires when the appliance refuses a call on this socket for want of a
+   * session.
+   *
+   * This socket no longer holds a session of its own: it borrows one from the
+   * typed client, which is where the user actually logs in. So an
+   * `ENOTAUTHENTICATED` here says the borrow lapsed — middleware restarted, or
+   * the token session was terminated — and the answer is to borrow again, not
+   * to log the app out. `TypedApiService` listens and re-lends.
+   *
+   * Exposed as a stream rather than handled here because `TypedApiService`
+   * already injects this service; injecting it back would be a dependency
+   * cycle.
+   */
+  readonly sessionLost = this.sessionLost$.asObservable();
+
   private store$: Store<JobSlice> = inject<Store<JobSlice>>(Store<JobSlice>);
   private jobApiErrors = new Map<string, ApiCallError>();
 
@@ -237,7 +255,25 @@ export class ApiService {
         }
 
         if (message?.error?.data?.errname === ApiErrorName.NotAuthenticated) {
+          // Two things have to happen, and an earlier revision of this branch did
+          // only the second.
+          //
+          // The call is dropped here, as it always was, so something has to bring
+          // it back. Ending the session is what does: `AppComponent` turns that
+          // into a bounce to /signin, an auto-login, and a navigation back to the
+          // stored `redirectUrl`, which re-creates the component and re-issues
+          // the call. Repairing the borrow silently instead left the caller on a
+          // loading state that never resolved — and since this path is *detected
+          // by* a refused call, there is one such caller every time it runs. It
+          // also made the two sockets answer the same refusal differently, where
+          // `TypedApiService.endSessionOnRefusal` still ends the session.
+          //
+          // Re-borrowing as well is what makes the legacy socket usable again by
+          // the time that navigation lands. Keeping the call itself alive across
+          // the lapse would need a replay buffer this service has never had; it
+          // retires with the socket in Phase 3.
           this.wsStatus.setLoginStatus(false);
+          this.sessionLost$.next();
           return EMPTY;
         }
 

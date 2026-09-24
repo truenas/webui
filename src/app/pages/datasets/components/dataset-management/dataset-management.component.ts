@@ -93,10 +93,34 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
 
   private readonly ixTreeHeader = viewChild<ElementRef<HTMLElement>>('ixTreeHeader');
   private readonly ixTree = viewChild<ElementRef<HTMLElement>>('ixTree');
-  // Width the sticky header is stretched to (the tree's full horizontally-scrollable
-  // content width) so its columns line up with the rows and scroll along with them.
-  protected ixTreeHeaderWidth: number | null = null;
   private treeHeaderEl: HTMLElement | null = null;
+
+  // Row geometry the scrollable width below is built from. These mirror the row grid in
+  // dataset-node.component.scss and the node chrome this component's stylesheet overrides
+  // — keep them in step with those rules.
+  /** `[cdkTreeNodePaddingIndent]`: how far each tree level indents a row. */
+  protected readonly treeIndentPerLevel = 40;
+  /** `.tn-tree-node__content`'s left padding (9px) plus the expand-toggle column (24px). */
+  private readonly rowContentOffset = 33;
+  /** The four fixed value columns (4 × 100px) plus the row grid's four 8px gaps. */
+  private readonly valueColumnsWidth = 432;
+  /** Floor for the name column, so the deepest row's name can't be squeezed to nothing. */
+  private readonly minNameColumnWidth = 150;
+
+  /**
+   * Width of the tree's horizontally scrollable content. Fed to the CSS as
+   * `--ix-tree-content-width`: it both reserves the scroll range and stretches the sticky
+   * header over it, so the header labels track the columns as you scroll right.
+   *
+   * It deliberately is NOT measured from the rendered rows. The tree is virtualized, so
+   * only a window of rows exists at any moment and the deepest-indented of them used to
+   * decide the scroll range. Scrolling vertically swaps that window; when shallower rows
+   * came in the range shrank and the browser clamped `scrollLeft` back to 0, which left
+   * the right-hand columns (Usage) unreachable for the rows at the top of a long list
+   * (NAS-144025). Deriving it from the deepest *visible* level keeps the range constant
+   * for as long as the tree shows the same nodes.
+   */
+  protected readonly treeContentWidth = signal<string | null>(null);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
   protected readonly searchableElements = datasetManagementElements;
@@ -239,23 +263,47 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
     return dataset.name.split('/').length === 1 && this.systemDataset() === dataset.name;
   }
 
-  // Keep the sticky column header the same width as the tree's scrollable content and
-  // scrolled to the same horizontal offset, so the header labels track the columns as you
-  // scroll right. The tree scrolls VERTICALLY with the page (.rightside-content-hold); its
-  // own `.tree-wrapper` (overflow: auto) owns only the HORIZONTAL scroll, so the header is
-  // synced to the wrapper's scrollLeft.
-  //
-  // TEMP (NAS-141021): this reads the tn-tree's internal CDK viewport
-  // (`cdk-virtual-scroll-viewport`) to measure the scrollable content width — a coupling
-  // to library-internal DOM. Remove/replace once tn-tree-virtual-scroll-view owns the
-  // sticky-header + horizontal-scroll sync (or exposes a content-width output).
-  private syncHeaderWidth(): void {
-    const viewport = this.ixTree()?.nativeElement?.querySelector<HTMLElement>('cdk-virtual-scroll-viewport');
-    if (viewport) {
-      this.ixTreeHeaderWidth = viewport.scrollWidth;
-    }
+  /**
+   * Widest row the tree can show = the deepest visible indent plus everything a row always
+   * needs. Recomputed only when the shown nodes change (new data, expand/collapse), never
+   * while scrolling — see {@link treeContentWidth}.
+   *
+   * Filtering is not a trigger on purpose: it can only remove nodes, so the visible depth
+   * can only shrink, and a width left over from the unfiltered tree stays a safe (never
+   * too small) reservation that is already correct again once the search is cleared.
+   */
+  private updateTreeContentWidth(): void {
+    const width = this.maxVisibleLevel() * this.treeIndentPerLevel
+      + this.rowContentOffset + this.valueColumnsWidth + this.minNameColumnWidth;
+
+    this.treeContentWidth.set(`${width}px`);
   }
 
+  /** Deepest level among the nodes the tree actually renders — collapsed subtrees skipped. */
+  private maxVisibleLevel(): number {
+    const nodes = this.treeControl.dataNodes || [];
+    let maxLevel = 0;
+    // The nodes are in depth-first order, so everything deeper than a collapsed node and
+    // ahead of it is that node's hidden descendants. Infinity while nothing is collapsed.
+    let collapsedAtLevel = Number.POSITIVE_INFINITY;
+
+    for (const node of nodes) {
+      const level = this.getLevel(node);
+      if (level > collapsedAtLevel) {
+        continue;
+      }
+
+      collapsedAtLevel = this.treeControl.isExpanded(node) ? Number.POSITIVE_INFINITY : level;
+      maxLevel = Math.max(maxLevel, level);
+    }
+
+    return maxLevel;
+  }
+
+  // Keep the sticky column header scrolled to the same horizontal offset as the rows, so
+  // the header labels track the columns as you scroll right. The tree scrolls VERTICALLY
+  // with the page (.rightside-content-hold); its own `.tree-wrapper` (overflow: auto) owns
+  // only the HORIZONTAL scroll, so the header is synced to the wrapper's scrollLeft.
   protected datasetTreeWrapperScrolled(): void {
     const tree = this.ixTree()?.nativeElement;
     // Cache the header element to avoid a DOM query on every scroll event; re-query only
@@ -270,11 +318,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
       // wrapper's horizontal scroll to keep the column labels above their rows.
       treeHeader.style.transform = `translateX(${-tree.scrollLeft}px)`;
     }
-  }
-
-  protected datasetTreeWidthChanged(): void {
-    this.syncHeaderWidth();
-    this.cdr.markForCheck();
   }
 
   protected onListFiltered(query: string): void {
@@ -308,10 +351,18 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
       next: (datasets) => {
         this.createDataSource(datasets);
         this.expandDatasetBranch();
+        this.updateTreeContentWidth();
         this.cdr.markForCheck();
       },
       error: (error: unknown) => this.errorHandler.showErrorModal(error),
     });
+
+    this.treeControl.expansionModel.changed
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.updateTreeContentWidth();
+        this.cdr.markForCheck();
+      });
 
     this.datasetStore.selectedBranch$
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))

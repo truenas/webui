@@ -3,7 +3,7 @@ import { FormGroup, ValidationErrors } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { buildRoundedDownFileSize } from 'app/helpers/file-size.utils';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 
@@ -79,7 +79,9 @@ export class FreeSpaceValidatorService {
     return this.validators.makeErrorMessage(
       'invalidFreeSpace',
       this.translate.instant('Not enough free space. Maximum available: {space}', {
-        space: buildNormalizedFileSize(freeSpace),
+        // Rounded DOWN: this size is quoted as a ceiling, and the rounded-to-nearest
+        // rendering of e.g. 50 GiB - 1 is `50 GiB`, which this same check then rejects.
+        space: buildRoundedDownFileSize(freeSpace),
       }),
     );
   }
