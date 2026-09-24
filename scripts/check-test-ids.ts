@@ -55,7 +55,7 @@
  * also list that area's readouts one per line, which is the working list for closing one.
  */
 
-import { readdirSync, readFileSync } from 'fs';
+import { existsSync, readdirSync, readFileSync } from 'fs';
 import { sep } from 'path';
 
 const anyTestId = /\btestId\b|\btnTestId\b|data-test/;
@@ -657,8 +657,8 @@ function valueCount(block: string): number {
  * The markup enclosed by the nearest ancestor that carries an id, or null if none does.
  *
  * A readout needs no id of its own when such an ancestor holds *only* that value: a suite selects
- * the ancestor and reads its text, which is how `<ix-date>` works — its consumer tags the tag, and
- * the one value inside is what the element says.
+ * the ancestor and reads its text. `<ix-table-text-cell>` is the shape — the consumer tags the
+ * tag, and the one value inside is what the element says.
  */
 function taggedAncestorBlock(src: string, at: number): string | null {
   const open: { tag: string; attributes: string; start: number; openEnd: number }[] = [];
@@ -703,8 +703,9 @@ function taggedAncestorBlock(src: string, at: number): string | null {
 /**
  * Readouts in this template that no suite can read, discounting the two ways one is already
  * addressable without an id of its own: a tagged ancestor holding just that value (above), and a
- * shared component whose whole template renders one value — every consumer tags the tag, so an id
- * inside would be both redundant and repeated on every instance in the page.
+ * shared leaf presenter — one value, and an id at every call site, so the value inside needs none
+ * and a static id there would repeat on every instance in the page. See {@link taggedCallSites}
+ * for why the second half of that is checked rather than assumed.
  *
  * Returns the line of each, not a count, so `--report <path>` can name them. Closing an area means
  * opening each one, and a bare per-area total says only how many are left, not where — every area
@@ -771,6 +772,18 @@ function reportColumnCoverage(tables: { file: string; src: string }[]): void {
 }
 
 /**
+ * Whether a template is the listing path or sits under it.
+ *
+ * A bare `startsWith` is a string prefix, not a path one: `--report src/app/pages/share` listed
+ * everything under `sharing/` while naming a directory that does not exist, which reads as though
+ * the tool had found the area and it was nearly closed.
+ */
+function isUnder(file: string, listing: string): boolean {
+  const base = listing.replace(/\/+$/, '');
+  return file === base || file.startsWith(`${base}/`);
+}
+
+/**
  * Selectors that are written as a tag somewhere and carry an id at *every* such call site.
  *
  * Read off the templates rather than guessed: a component opened through a route, a dialog or
@@ -810,6 +823,12 @@ function reportReadoutCoverage(templates: { file: string; src: string }[], listi
   // forms: a routed page is never written as a tag, so no call site tags it and nothing addresses
   // the value it renders. Their readouts were hidden rather than absent, which is how this area
   // read as closed while `ix-target-form` and `ix-s3-bucket-form` still owed ids.
+  //
+  // What earns it today is the table cells — `ix-task-state-cell`, `ix-subsystem-name-cell` and
+  // three more — whose every call site passes a row-scoped id. `<ix-date>` is the same *shape* and
+  // does not qualify: ten of its fourteen call sites pass no id, so its readout is counted and
+  // `modules/dates` is on the list until those call sites are tagged. That is the condition doing
+  // its job, not a false positive.
   const singleValue = new Set(
     [...templateBySelector]
       .filter(([selector, template]) => valueCount(template) === 1 && tagged.has(selector))
@@ -826,7 +845,7 @@ function reportReadoutCoverage(templates: { file: string; src: string }[], listi
     if (!lines.length) {
       continue;
     }
-    if (listing && file.startsWith(listing)) {
+    if (listing && isUnder(file, listing)) {
       const sourceLines = src.split('\n');
       for (const line of lines) {
         console.info(`  ${file}:${line}  ${sourceLines[line - 1].trim()}`);
@@ -856,8 +875,17 @@ function main(): void {
   const tables = templates.filter(({ src }) => rendersRowCells.test(src));
 
   if (process.argv.includes('--report')) {
+    const listing = process.argv.slice(2).find((arg) => !arg.startsWith('--'));
+    // A path that does not exist is a typo, and silently listing a prefix of it — or switching the
+    // listing on for a stray argument — is worse than saying so: both look like an answer.
+    if (listing !== undefined && !existsSync(listing)) {
+      console.error(`\n❌ ${listing} does not exist.\n\nPass \`--report\` a path to list that area's`
+        + ' readouts, e.g. `--report src/app/pages/sharing`, or no path at all for the totals.');
+      process.exitCode = 1;
+      return;
+    }
     reportColumnCoverage(tables);
-    reportReadoutCoverage(templates, process.argv.slice(2).find((arg) => !arg.startsWith('--')));
+    reportReadoutCoverage(templates, listing);
     return;
   }
   const untaggedRows = tables

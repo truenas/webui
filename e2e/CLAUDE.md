@@ -218,12 +218,15 @@ Three things do NOT need an id of their own, and the report already discounts th
   The ancestor has to be in the *same* template — an id rendered by the component around it is
   invisible to this, which is why `<div view>` inside an `ix-editable` still counts (and should:
   the editable's trigger id is derived from the value itself, so it cannot be used to find it).
-- **A shared leaf presenter: one value, and an id at every call site.** `<ix-date>` is the example
-  — its consumers tag the tag, so the value inside is what that element says, and a static id
-  inside would repeat on every instance in the page. Both halves are checked, because "renders one
-  value" alone discounted twelve templates under `pages/sharing`, three wizards and two panel forms
-  among them: a routed page is written as a tag nowhere, so nothing tags it and nothing can address
-  the value it renders.
+- **A shared leaf presenter: one value, and an id at every call site.** The table cells are the
+  example — `<ix-task-state-cell>`, `<ix-subsystem-name-cell>` and three more, each tagged with a
+  row-scoped id wherever it is used, so the value inside needs none and a static id there would
+  repeat on every row. Both halves are checked, because "renders one value" alone discounted twelve
+  templates under `pages/sharing`, three wizards and two panel forms among them: a routed page is
+  written as a tag nowhere, so nothing tags it and nothing can address the value it renders.
+  `<ix-date>` is the same shape and currently does **not** qualify — ten of its fourteen call sites
+  pass no id — so its readout is counted and `modules/dates` stays on the list until they are
+  tagged. That is the condition working, not a false positive.
 - **A message hoisted into a `helptext` constant**, i.e. `{{ helptext.<path> | translate }}`.
   `{{ 'Name' | translate }}` was never counted; moving the same literal into a constants file does
   not make it a value. Both halves are required, so a dynamic label that merely passes through the

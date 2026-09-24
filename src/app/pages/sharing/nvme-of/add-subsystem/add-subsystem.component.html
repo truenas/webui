@@ -14,7 +14,9 @@
           [tooltip]="helptext.subsystemNqn | translate"
         >
           <ix-editable>
-            <div view tnTestId="nqn" tnTestIdType="text">
+            <!-- Not a bare `nqn`: the panel opens over a still-mounted subsystem-details card,
+              whose own NQN readout is `text-nqn`, so an unscoped id would match both. -->
+            <div view tnTestId="add-subsystem-nqn" tnTestIdType="text">
               {{ form.value.subnqn || ('Generate from global settings' | translate) }}
             </div>
 
