@@ -135,6 +135,38 @@ describe('SubscriptionManagerService', () => {
     });
   });
 
+  // The unsubscribe rides this socket, so what matters is whether this socket can
+  // carry it. `isAuthenticated` used to answer that and no longer does: since the
+  // session moved to the typed client it describes a different socket entirely.
+  it('sends the unsubscribe whenever the socket is up, whatever the app session is doing', () => {
+    const wsStatus = spectator.inject(WebSocketStatusService);
+    Object.defineProperty(wsStatus, 'isConnected', { value: true, configurable: true });
+    Object.defineProperty(wsStatus, 'isAuthenticated', { value: false, configurable: true });
+
+    const subscription = spectator.service.subscribe('disk.query').subscribe();
+    responses$.next({ jsonrpc: '2.0', id: '1', result: 'backend-subscription-id' });
+    subscription.unsubscribe();
+
+    expect(wsHandler.scheduleCall).toHaveBeenCalledWith({
+      id: expect.any(String),
+      method: 'core.unsubscribe',
+      params: ['backend-subscription-id'],
+    });
+  });
+
+  it('does not send the unsubscribe when the socket is down', () => {
+    const wsStatus = spectator.inject(WebSocketStatusService);
+    Object.defineProperty(wsStatus, 'isConnected', { value: false, configurable: true });
+
+    const subscription = spectator.service.subscribe('disk.query').subscribe();
+    responses$.next({ jsonrpc: '2.0', id: '1', result: 'backend-subscription-id' });
+    subscription.unsubscribe();
+
+    expect(wsHandler.scheduleCall).not.toHaveBeenCalledWith(expect.objectContaining({
+      method: 'core.unsubscribe',
+    }));
+  });
+
   it(`waits for subscription to be established before unsubscribing
     if consumer unsubscribes before backend subscription has been established`, () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports

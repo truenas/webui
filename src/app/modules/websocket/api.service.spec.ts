@@ -3,8 +3,9 @@ import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/sp
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   BehaviorSubject,
-  firstValueFrom, of,
+  firstValueFrom, of, Subscription,
 } from 'rxjs';
+import { ApiErrorName } from 'app/enums/api.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import {
   IncomingMessage,
@@ -19,6 +20,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ApiCallError, FailedJobError } from 'app/services/errors/error.classes';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('ApiService', () => {
   let spectator: SpectatorService<ApiService>;
@@ -104,6 +106,57 @@ describe('ApiService', () => {
       await expect(call).rejects.toBeInstanceOf(ApiCallError);
       await expect(call).rejects.toMatchObject({
         error: someError,
+      });
+    });
+
+    describe('when the appliance refuses the call for want of a session', () => {
+      const uuid = 'fakeUUID';
+
+      /**
+       * Subscribes a call that the appliance refuses, and returns the
+       * subscription. The call is not awaited: a refusal is swallowed inside a
+       * `switchMap`, which leaves the outer chain open rather than completing
+       * it, so the caller is left hanging — which is the whole reason ending the
+       * session has to bring it back.
+       */
+      function refuseNextCall(): Subscription {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        jest.spyOn(require('uuid'), 'v4').mockReturnValue(uuid);
+        responses$.next({
+          id: uuid,
+          jsonrpc: '2.0',
+          error: { message: 'Not authenticated', data: { errname: ApiErrorName.NotAuthenticated } } as JsonRpcError,
+        });
+
+        return spectator.service.call('cloudsync.providers').subscribe();
+      }
+
+      // This socket only borrows its session now, so a refusal means the borrow
+      // lapsed and `TypedApiService` re-lends off this signal.
+      it('asks for the session to be lent again', () => {
+        const lapses: number[] = [];
+        const watching = spectator.service.sessionLost.subscribe(() => lapses.push(1));
+
+        const call = refuseNextCall();
+
+        expect(lapses).toHaveLength(1);
+        call.unsubscribe();
+        watching.unsubscribe();
+      });
+
+      // The refused call is dropped, so something has to bring it back: ending
+      // the session bounces the tab to /signin and back, which re-issues it.
+      // Without this the caller sits on a loading state that never resolves.
+      it('ends the session, as the typed socket does for the same refusal', () => {
+        const wsStatus = spectator.inject(WebSocketStatusService);
+        wsStatus.setSessionStatus(true);
+        wsStatus.setLoginStatus(true);
+        expect(wsStatus.isAuthenticated).toBe(true);
+
+        const call = refuseNextCall();
+
+        expect(wsStatus.isAuthenticated).toBe(false);
+        call.unsubscribe();
       });
     });
   });

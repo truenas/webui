@@ -42,8 +42,9 @@ export class AbortedJobError extends Error {
 }
 
 /**
- * The typed API session could not be established, so the requests waiting on
- * it are refused rather than held. `cause` is the last login failure.
+ * The legacy socket could not borrow the typed session, so the calls that
+ * still ride it have nothing to authenticate with. `cause` is the last
+ * failure of the borrow.
  */
 export class TypedApiSessionError extends Error {
   constructor(cause: unknown) {

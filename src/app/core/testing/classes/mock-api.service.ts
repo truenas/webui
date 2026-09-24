@@ -48,6 +48,12 @@ export class MockApiService {
   callAndSubscribe: jest.Mock;
   clearSubscriptions$ = new Subject<void>();
 
+  /**
+   * Stands in for the real service's `sessionLost`. Push to it to simulate
+   * middleware refusing a call on this socket for want of a session.
+   */
+  readonly sessionLost = new Subject<void>();
+
   private mockCalls = new Map<ApiCallMethod, CallResponseOrFactory<ApiCallMethod>>();
   private mockJobs = new Map<ApiJobMethod, JobResponseOrFactory<ApiJobMethod>>();
 

@@ -40,6 +40,7 @@ describe('WebSocketStatusSerice', () => {
   });
 
   it('updates login status and auth status also updates', () => {
+    spectator.service.setSessionStatus(true);
     spectator.service.setConnectionStatus(true);
     spectator.service.setLoginStatus(true);
 
@@ -54,6 +55,7 @@ describe('WebSocketStatusSerice', () => {
   });
 
   it('reverses auth status when logout', () => {
+    spectator.service.setSessionStatus(true);
     spectator.service.setConnectionStatus(true);
     spectator.service.setLoginStatus(true);
 
@@ -78,28 +80,40 @@ describe('WebSocketStatusSerice', () => {
     expect(spectator.service.isConnected).toBe(true);
   });
 
-  it('reverses auth status when connection closes', () => {
+  // The app is authenticated because the typed session is, not because the legacy
+  // socket happens to be up: that socket only borrows the session now.
+  it('reverses auth status when the typed session ends', () => {
+    spectator.service.setSessionStatus(true);
+    spectator.service.setConnectionStatus(true);
+    spectator.service.setLoginStatus(true);
+
+    expect(spectator.service.isAuthenticated).toBe(true);
+
+    spectator.service.setSessionStatus(false);
+
+    testScheduler.run(({ expectObservable }) => {
+      expectObservable(spectator.service.isAuthenticated$).toBe('a', { a: false });
+    });
+    expect(spectator.service.isAuthenticated).toBe(false);
+    expect(spectator.service.isConnected).toBe(true);
+  });
+
+  it('does not count the app as authenticated while only the legacy socket is up', () => {
     spectator.service.setConnectionStatus(true);
     spectator.service.setLoginStatus(true);
 
     testScheduler.run(({ expectObservable }) => {
-      expectObservable(spectator.service.isAuthenticated$).toBe('a', { a: true });
-    });
-    testScheduler.run(({ expectObservable }) => {
-      expectObservable(spectator.service.isConnected$).toBe('a', { a: true });
-    });
-    expect(spectator.service.isAuthenticated).toBe(true);
-    expect(spectator.service.isConnected).toBe(true);
-
-    spectator.service.setConnectionStatus(false);
-    testScheduler.run(({ expectObservable }) => {
       expectObservable(spectator.service.isAuthenticated$).toBe('a', { a: false });
     });
-    testScheduler.run(({ expectObservable }) => {
-      expectObservable(spectator.service.isConnected$).toBe('a', { a: false });
-    });
     expect(spectator.service.isAuthenticated).toBe(false);
-    expect(spectator.service.isConnected).toBe(false);
+  });
+
+  it('exposes the typed session state on its own', () => {
+    spectator.service.setSessionStatus(true);
+
+    testScheduler.run(({ expectObservable }) => {
+      expectObservable(spectator.service.isSessionEstablished$).toBe('a', { a: true });
+    });
   });
 
   it('allows reconnect when setReconnect is called with true', () => {
@@ -116,9 +130,9 @@ describe('WebSocketStatusSerice', () => {
     });
   });
 
-  it('emits true for isActiveSession$ when both connection and login statuses are true', () => {
+  it('emits true for isActiveSession$ when both session and login statuses are true', () => {
     testScheduler.run(({ expectObservable }) => {
-      spectator.service.setConnectionStatus(true);
+      spectator.service.setSessionStatus(true);
       spectator.service.setLoginStatus(true);
 
       expectObservable(spectator.service.isActiveSession$).toBe('a', { a: true });
