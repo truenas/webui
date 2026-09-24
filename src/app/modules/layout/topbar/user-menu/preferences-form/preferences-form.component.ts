@@ -25,7 +25,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
-import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
+import { defaultPreferences, minSessionLifetime } from 'app/store/preferences/default-preferences.constant';
 import { guiFormSubmitted, lifetimeTokenUpdated,
   localizationFormSubmitted, themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -70,7 +70,7 @@ export class PreferencesFormComponent implements OnInit {
     time_format: [''],
     token_lifetime: [defaultPreferences.lifetime, [
       Validators.required,
-      Validators.min(30),
+      Validators.min(minSessionLifetime),
       Validators.max(2147482),
     ]],
   });
