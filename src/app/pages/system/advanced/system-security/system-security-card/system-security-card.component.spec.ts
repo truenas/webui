@@ -59,7 +59,7 @@ describe('SystemSecurityCardComponent', () => {
 
     expect(texts).toEqual([
       'Enable FIPS: No',
-      'Enable General Purpose OS STIG compatibility mode: No',
+      'Enable TrueNAS STIG compatibility mode: No',
       'Min Password Age: 5 days',
       'Max Password Age: 30 days',
       'Password Complexity Ruleset: Upper, Number',
