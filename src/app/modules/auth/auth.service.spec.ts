@@ -1,4 +1,4 @@
-import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
+import { createServiceFactory, createSpyObject, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { AuthResponse, AuthResponseType } from '@truenas/api-client';
 import { createFakeClient, FakeTrueNasClient, withSpies } from '@truenas/api-client/testing';
@@ -11,7 +11,7 @@ import {
 } from 'ngx-webstorage';
 import {
   BehaviorSubject, firstValueFrom,
-  of, throwError,
+  of, Subject, throwError,
 } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -31,12 +31,22 @@ import { PendingTwoFactorService } from 'app/modules/auth/pending-two-factor.ser
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TYPED_API_CLIENT, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 describe('AuthService', () => {
   let spectator: SpectatorService<AuthService>;
   let client: FakeTrueNasClient<WebUiApiDirectory>;
+
+  /**
+   * Silent until a test pushes a value, so only the renewal tests build the timer.
+   *
+   * Replaced for every test: the services this suite builds outlive the test that
+   * built them, and a shared subject would hand a renewal tick to every one of
+   * them at once — each writing its own answer over the stored token.
+   */
+  let sessionLifetime$: Subject<number>;
 
   const authMeUser = {
     pw_dir: 'dir',
@@ -101,6 +111,7 @@ describe('AuthService', () => {
       mockApi([
         mockCall('auth.me', authMeUser),
         mockCall('auth.logout'),
+        mockCall('auth.generate_token', 'RENEWED_TOKEN'),
         mockCall('auth.twofactor.config', {
           enabled: true,
           id: 1,
@@ -128,10 +139,18 @@ describe('AuthService', () => {
       mockProvider(Store, {
         dispatch: jest.fn(),
       }),
+      {
+        provide: TokenLastUsedService,
+        useFactory: () => ({
+          ...createSpyObject(TokenLastUsedService),
+          lifetime$: sessionLifetime$,
+        }),
+      },
     ],
   });
 
   beforeEach(() => {
+    sessionLifetime$ = new Subject<number>();
     connected$().next(true);
     sessionUp$().next(true);
     client = withSpies(createFakeClient({ version: 'v27.0.0', authenticated: false }), jest.fn);
@@ -722,6 +741,106 @@ describe('AuthService', () => {
       await firstValueFrom(spectator.service.login('dummy', 'secret'));
 
       expect(await firstValueFrom(spectator.service.initializeSession())).toBe(LoginResult.Success);
+    });
+  });
+
+  describe('token renewal', () => {
+    function generateTokenCalls(): unknown[][] {
+      const call = spectator.inject(ApiService).call as jest.Mock;
+      return call.mock.calls.filter(([method]) => method === 'auth.generate_token');
+    }
+
+    afterEach(() => {
+      jest.useRealTimers();
+      (mockWsStatus.isAuthenticated$ as BehaviorSubject<boolean>).next(false);
+    });
+
+    it('mints a replacement token for the configured session lifetime', async () => {
+      spectator.service.setQueryToken('DUMMY_TOKEN');
+      (mockWsStatus.isAuthenticated$ as BehaviorSubject<boolean>).next(true);
+
+      sessionLifetime$.next(1200);
+      await new Promise((resolve) => {
+        setTimeout(resolve);
+      });
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'auth.generate_token',
+        [1200, {}, true, true],
+      );
+      expect(await firstValueFrom(spectator.service.authToken$)).toBe('RENEWED_TOKEN');
+    });
+
+    it('keeps minting one twice per lifetime, so a refresh always has a live token', () => {
+      jest.useFakeTimers();
+      spectator.service.setQueryToken('DUMMY_TOKEN');
+      (mockWsStatus.isAuthenticated$ as BehaviorSubject<boolean>).next(true);
+
+      sessionLifetime$.next(120);
+      jest.advanceTimersByTime(0);
+      expect(generateTokenCalls()).toHaveLength(1);
+
+      jest.advanceTimersByTime(60 * 1000);
+      expect(generateTokenCalls()).toHaveLength(2);
+
+      jest.advanceTimersByTime(60 * 1000);
+      expect(generateTokenCalls()).toHaveLength(3);
+    });
+
+    it('renews on the five minute ceiling for a lifetime middleware may not grant in full', () => {
+      jest.useFakeTimers();
+      spectator.service.setQueryToken('DUMMY_TOKEN');
+      (mockWsStatus.isAuthenticated$ as BehaviorSubject<boolean>).next(true);
+
+      // A day-long Session Timeout is within what the preferences form accepts, but the token
+      // middleware grants is capped at the appliance's maximum session age.
+      sessionLifetime$.next(86400);
+      jest.advanceTimersByTime(0);
+      expect(generateTokenCalls()).toHaveLength(1);
+
+      jest.advanceTimersByTime(300 * 1000);
+      expect(generateTokenCalls()).toHaveLength(2);
+    });
+
+    it('drops a renewal that comes back after the user has signed out', async () => {
+      const renewal$ = new Subject<string>();
+      (spectator.inject(ApiService).call as jest.Mock).mockReturnValueOnce(renewal$);
+      spectator.service.setQueryToken('DUMMY_TOKEN');
+      (mockWsStatus.isAuthenticated$ as BehaviorSubject<boolean>).next(true);
+
+      sessionLifetime$.next(1200);
+      await new Promise((resolve) => {
+        setTimeout(resolve);
+      });
+
+      spectator.service.clearAuthToken();
+      renewal$.next('LATE_TOKEN');
+
+      expect(spectator.service.hasAuthToken).toBe(false);
+    });
+
+    it('leaves a session that holds no token alone', async () => {
+      // Storage is shared across the suite, so drop whatever an earlier test left in it.
+      spectator.service.clearAuthToken();
+      (mockWsStatus.isAuthenticated$ as BehaviorSubject<boolean>).next(true);
+
+      sessionLifetime$.next(1200);
+      await new Promise((resolve) => {
+        setTimeout(resolve);
+      });
+
+      expect(generateTokenCalls()).toHaveLength(0);
+    });
+
+    it('does not renew until the session is authenticated', async () => {
+      spectator.service.setQueryToken('DUMMY_TOKEN');
+
+      sessionLifetime$.next(1200);
+      await new Promise((resolve) => {
+        setTimeout(resolve);
+      });
+
+      expect(generateTokenCalls()).toHaveLength(0);
     });
   });
 });

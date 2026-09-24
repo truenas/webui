@@ -2,7 +2,7 @@ import {
   ExistingProvider, FactoryProvider, forwardRef, ValueProvider,
 } from '@angular/core';
 import { createSpyObject } from '@ngneat/spectator/jest';
-import { Observable } from 'rxjs';
+import { NEVER, Observable } from 'rxjs';
 import { DeepPartial } from 'utility-types';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
@@ -37,7 +37,12 @@ export function mockAuth(
   return [
     {
       provide: TokenLastUsedService,
-      useValue: createSpyObject(TokenLastUsedService),
+      useValue: {
+        ...createSpyObject(TokenLastUsedService),
+        // `createSpyObject` only stubs methods, and `AuthService` renews the session token off
+        // this stream. `NEVER` keeps that renewal quiet unless a spec supplies its own value.
+        lifetime$: NEVER,
+      },
     },
     {
       provide: ErrorHandlerService,
