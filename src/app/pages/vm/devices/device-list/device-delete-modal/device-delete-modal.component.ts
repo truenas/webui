@@ -101,6 +101,12 @@ export class DeviceDeleteModalComponent implements OnInit {
   }
 
   onSubmit(): void {
+    // Enter in the confirmation field submits the form natively (the dialog's
+    // action buttons live outside it), so the gate must be enforced here too.
+    if (this.form.invalid) {
+      return;
+    }
+
     const value = this.form.value as VmDeviceDelete;
     this.api.call('vm.device.delete', [
       this.device.id,

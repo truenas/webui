@@ -151,4 +151,12 @@ describe('DeleteDatasetDialogComponent', () => {
     }));
     expect(api.call).toHaveBeenCalledWith('pool.dataset.delete', ['lab1', { recursive: true, force: true }]);
   });
+
+  it('does not delete the dataset when the form is submitted natively while invalid', () => {
+    // The action buttons sit outside the <form>, so a lone text field makes the
+    // browser submit on Enter. The handler must re-check validity.
+    spectator.query('form')!.dispatchEvent(new Event('submit'));
+
+    expect(api.call).not.toHaveBeenCalledWith('pool.dataset.delete', expect.anything());
+  });
 });

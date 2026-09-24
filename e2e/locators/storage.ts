@@ -112,6 +112,91 @@ export const datasetLocators = {
   save: '[data-test="button-save"]',
 } as const;
 
+/**
+ * The Disconnect Pool dialog, reached from a pool card on the storage dashboard.
+ *
+ * The most destructive dialog in the app: choosing the "Delete Pool" card runs
+ * `pool.export` with `destroy: true`, which wipes every member disk. There is
+ * no separate "destroy" tick — `selectOption()` sets `destroy` from which card
+ * was picked, and picking Delete is what reveals the name field. It gates on a
+ * "Confirm Delete Pool" tick and that name typed back, and its handler had no
+ * validity check of any kind, so the Enter that submits this form reached
+ * `pool.export` regardless. See `tests/pool-disconnect.e2e.ts`.
+ */
+export const poolDisconnectLocators = {
+  /**
+   * "Disconnect" on the pool card — `[testId]="['disconnect', pool()?.name]"`,
+   * so the pool's name is part of the id and has to be normalized the same way.
+   */
+  open: (pool: string) => `[data-test="button-disconnect-${kebabTestSegment(pool)}"]`,
+
+  /** `<tn-dialog-shell testId="export-disconnect">`. What to wait on. */
+  title: '[data-test="dialog-title-export-disconnect"]',
+
+  /**
+   * The "Delete Pool" option card. A plain `<div>` carrying
+   * `tnTestIdType="option"`, so it is `option-…` rather than `button-…`.
+   * Picking it is what sets `destroy`, which in turn reveals the name field.
+   */
+  deleteOption: '[data-test="option-delete-pool"]',
+
+  /** `<tn-checkbox testId="confirm">` — "Confirm Export Pool" / "Confirm Delete Pool". */
+  confirm: '[data-test="checkbox-confirm"]',
+  /**
+   * `<tn-input testId="name-input">` — the name gate, rendered only while
+   * "Delete Pool" is the chosen option. Note the doubled word: the control name
+   * is `nameInput` and the declared `testId` is `name-input`, so the emitted id
+   * is `input-name-input` rather than the `input-name` the form field suggests.
+   */
+  name: '[data-test="input-name-input"]',
+
+  /**
+   * The dialog's own "Disconnect". `testId="disconnect"` with no pool name, so
+   * it does not collide with the card button that opened it.
+   */
+  submit: '[data-test="button-disconnect"]',
+  cancel: '[data-test="button-cancel"]',
+} as const;
+
+/**
+ * The delete-dataset dialog, which guards a destructive action with two gates:
+ * the dataset's own name typed back, and a Confirm tick box.
+ *
+ * Both gates are the point. The dialog is reached from the details card's
+ * "Delete", and pressing Enter in the name field used to submit the form past
+ * both of them — the form has a single text input and, since the tn-dialog
+ * migration put the actions outside `<form>`, no submit button at all, which is
+ * exactly the shape the HTML spec submits on Enter.
+ */
+export const deleteDatasetDialogLocators = {
+  /**
+   * "Delete" on the dataset details card — `testId: 'delete-dataset'` in
+   * `dataset-details-card.component.ts`, prefixed `button-` by the card's
+   * footer actions.
+   */
+  open: '[data-test="button-delete-dataset"]',
+
+  /** `<tn-dialog-shell testId="delete-dataset">`. What to wait on. */
+  title: '[data-test="dialog-title-delete-dataset"]',
+
+  /** `<tn-input testId="confirm-dataset-name">` — the name gate. */
+  name: '[data-test="input-confirm-dataset-name"]',
+  /** `<tn-checkbox testId="confirm">` — the tick gate. */
+  confirm: '[data-test="checkbox-confirm"]',
+
+  /**
+   * The dialog's own "Delete Dataset" / "Delete Zvol".
+   *
+   * `dialog-`-namespaced deliberately. It used to declare `testId="delete-dataset"`,
+   * the *same* value the details card behind it emits, so with the dialog open
+   * `[data-test="button-delete-dataset"]` matched two elements and every
+   * locator for either had to guess. Renamed to follow the convention webui's
+   * shared confirm dialog already uses for its actions (`button-dialog-confirm`,
+   * `button-dialog-cancel`).
+   */
+  submit: '[data-test="button-dialog-delete-dataset"]',
+} as const;
+
 export const smbLocators = {
   /**
    * "Add" in the Windows (SMB) Shares card on the Shares dashboard —

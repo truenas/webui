@@ -776,4 +776,41 @@ describe('ExportDisconnectModalComponent', () => {
       expect(systemDatasetPanel).toExist();
     });
   });
+
+  it('does not export the pool when the form is submitted natively while invalid', async () => {
+    // With "Delete Pool" + destroy selected the pool-name field is the form's
+    // only text input, so the browser submits it on Enter with nothing filled.
+    // `selectOption` sets `destroy` from the chosen card, which is what reveals
+    // the name field — so no separate patch is needed or wanted here.
+    spectator.component.selectOption(DisconnectOption.Delete);
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
+
+    spectator.query('form')!.dispatchEvent(new Event('submit'));
+
+    expect(spectator.inject(ApiService).job).not.toHaveBeenCalledWith('pool.export', expect.anything());
+  });
+
+  it('does not export the last pool of an HA system even with the form fully valid', async () => {
+    // The dialog tells the user the button "will remain disabled until HA is
+    // turned off", and that condition lives in `canProceed()`, not in
+    // `form.invalid` — so a guard checking only validity would let a completed
+    // form through on the keyboard and destroy the last pool on an HA system.
+    spectator.component.totalPoolCount = 1;
+    spectator.component.isHaEnabled = true;
+    spectator.component.failoverConfig = fakeFailoverConfig;
+    spectator.component.selectOption(DisconnectOption.Delete);
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
+
+    spectator.component.form.patchValue({ confirm: true, nameInput: fakePool.name });
+    spectator.detectChanges();
+    expect(spectator.component.form.valid).toBe(true);
+
+    spectator.query('form')!.dispatchEvent(new Event('submit'));
+
+    expect(spectator.inject(ApiService).job).not.toHaveBeenCalledWith('pool.export', expect.anything());
+  });
 });

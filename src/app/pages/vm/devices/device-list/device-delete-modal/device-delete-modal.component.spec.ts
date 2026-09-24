@@ -72,6 +72,17 @@ describe('DeviceDeleteModalComponent', () => {
       });
     });
 
+    it('does not delete the device when the form is submitted natively while invalid', async () => {
+      // Ticking "Delete zvol device" reveals the zvol name confirmation field,
+      // leaving the form as a lone text input that the browser submits on Enter.
+      const zvolCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Delete zvol device' }));
+      await zvolCheckbox.check();
+
+      spectator.query('form')!.dispatchEvent(new Event('submit'));
+
+      expect(api.call).not.toHaveBeenCalledWith('vm.device.delete', expect.anything());
+    });
+
     [
       { filledValues: { zvol: false, force: false }, expectedValues: { zvol: false, raw_file: false, force: false } },
       { filledValues: { zvol: false, force: true }, expectedValues: { zvol: false, raw_file: false, force: true } },

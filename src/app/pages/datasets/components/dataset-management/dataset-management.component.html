@@ -2,7 +2,16 @@
   <ng-container [ngTemplateOutlet]="empty"></ng-container>
 } @else {
   <div class="container">
-    <div class="table-container">
+    <!--
+      The tree's scrollable content width. Set here, as a custom property, rather than as
+      an inline width on the header and the tree: the stylesheet only applies it above the
+      tablet breakpoint, below which the value columns collapse and a reserved width would
+      put a horizontal scrollbar under a phone-width list.
+    -->
+    <div
+      class="table-container"
+      [style.--ix-tree-content-width]="treeContentWidth()"
+    >
       @if (!showMobileDetails) {
         <ix-fake-progress-bar
           class="loader-bar"
@@ -20,7 +29,7 @@
         #ixTreeHeader
         class="sticky-header"
       >
-        <div class="tree-header" [style.width.px]="ixTreeHeaderWidth">
+        <div class="tree-header">
           <div>
             <span class="name-header">
               {{ 'Dataset' | translate }}
@@ -69,14 +78,13 @@
             [maxBufferPx]="52"
             [nodeTrackBy]="trackById"
             [scrollToTopLabel]="'Scroll to top' | translate"
-            (viewportResized)="datasetTreeWidthChanged()"
           >
               <tn-tree-node
                 *cdkTreeNodeDef="let dataset"
                 class="dataset-tree-node"
                 routerLinkActive="selected"
                 cdkTreeNodePadding
-                [cdkTreeNodePaddingIndent]="40"
+                [cdkTreeNodePaddingIndent]="treeIndentPerLevel"
                 [routerLink]="['/datasets', dataset.id]"
                 [testId]="['dataset', dataset.name]"
               >
