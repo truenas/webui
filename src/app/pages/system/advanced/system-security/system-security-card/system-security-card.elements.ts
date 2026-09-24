@@ -20,7 +20,7 @@ export const systemSecurityCardElements = {
       hierarchy: [T('Enable FIPS')],
     },
     enableGposStig: {
-      hierarchy: [T('Enable General Purpose OS STIG compatibility mode')],
+      hierarchy: [T('Enable TrueNAS STIG compatibility mode')],
       synonyms: [T('STIG')],
     },
     minPasswordAge: {

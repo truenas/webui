@@ -7,7 +7,7 @@
 >
   <tn-form-section>
     <tn-form-field
-      [tooltip]="'Enforce the use of FIPS 140-2 compliant algorithms' | translate"
+      [tooltip]="'Enforce the use of FIPS 140-3 certified algorithms' | translate"
     >
       <tn-slide-toggle
         formControlName="enable_fips"
@@ -20,7 +20,7 @@
     >
       <tn-slide-toggle
         formControlName="enable_gpos_stig"
-        [label]="'Enable General Purpose OS STIG compatibility mode' | translate"
+        [label]="'Enable TrueNAS STIG compatibility mode' | translate"
       ></tn-slide-toggle>
     </tn-form-field>
 
