@@ -136,7 +136,7 @@ async function setupStigRequirementTest(
   validationSpectator.detectChanges();
 
   await validationForm.fillForm({
-    'Enable General Purpose OS STIG compatibility mode': true,
+    'Enable TrueNAS STIG compatibility mode': true,
   });
 
   await validationSpectator.fixture.whenStable();
@@ -221,7 +221,7 @@ describe('SystemSecurityFormComponent', () => {
     it('saves full system security config when Save is clicked', async () => {
       await form.fillForm({
         'Enable FIPS': true,
-        'Enable General Purpose OS STIG compatibility mode': false,
+        'Enable TrueNAS STIG compatibility mode': false,
         'Min Password Age': 15,
         'Max Password Age': 120,
         'Min Password Length': 10,
@@ -318,7 +318,7 @@ describe('SystemSecurityFormComponent', () => {
     it('handles empty array password_complexity_ruleset when saving', async () => {
       await form.fillForm({
         'Enable FIPS': true,
-        'Enable General Purpose OS STIG compatibility mode': false,
+        'Enable TrueNAS STIG compatibility mode': false,
         'Min Password Age': 15,
         'Max Password Age': 120,
         'Min Password Length': 10,
@@ -345,7 +345,7 @@ describe('SystemSecurityFormComponent', () => {
 
       expect(values).toEqual({
         'Enable FIPS': false,
-        'Enable General Purpose OS STIG compatibility mode': false,
+        'Enable TrueNAS STIG compatibility mode': false,
         'Min Password Age': '10',
         'Max Password Age': '90',
         'Password Complexity Ruleset': ['Upper', 'Lower'],
@@ -364,7 +364,7 @@ describe('SystemSecurityFormComponent', () => {
       });
 
       await form.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       const values = await form.getValues();
@@ -388,7 +388,7 @@ describe('SystemSecurityFormComponent', () => {
       });
 
       await form.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       const values = await form.getValues();
@@ -412,7 +412,7 @@ describe('SystemSecurityFormComponent', () => {
       });
 
       await form.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       const values = await form.getValues();
@@ -429,11 +429,11 @@ describe('SystemSecurityFormComponent', () => {
     it('does not disable FIPS when STIG is disabled first', async () => {
       await form.fillForm({
         'Enable FIPS': true,
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       await form.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': false,
+        'Enable TrueNAS STIG compatibility mode': false,
       });
 
       expect(await form.getValues()).toMatchObject({
@@ -443,7 +443,7 @@ describe('SystemSecurityFormComponent', () => {
 
     it('clears auth token when STIG is enabled', async () => {
       await form.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -455,7 +455,7 @@ describe('SystemSecurityFormComponent', () => {
     it('validates STIG requirements when STIG mode is enabled', async () => {
       // Enable STIG mode to activate validation
       await form.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       // Try to set values below STIG requirements
@@ -475,7 +475,7 @@ describe('SystemSecurityFormComponent', () => {
     it('allows editing password settings when STIG is disabled', async () => {
       // Form starts with STIG disabled
       expect(await form.getValues()).toMatchObject({
-        'Enable General Purpose OS STIG compatibility mode': false,
+        'Enable TrueNAS STIG compatibility mode': false,
       });
 
       // Set values that would be invalid under STIG
@@ -506,7 +506,7 @@ describe('SystemSecurityFormComponent', () => {
 
     it('displays STIG info message when STIG mode is enabled', async () => {
       await stigForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       stigSpectator.detectChanges();
@@ -519,7 +519,7 @@ describe('SystemSecurityFormComponent', () => {
     it('validates password complexity with partial rules when STIG is enabled', async () => {
       // Enable STIG mode first
       await stigForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       // Wait for the form to process the STIG toggle and update values
@@ -551,7 +551,7 @@ describe('SystemSecurityFormComponent', () => {
     it('validates each field type correctly with STIG validator', async () => {
       // Enable STIG mode
       await stigForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       // Test min_password_age validation
@@ -598,7 +598,7 @@ describe('SystemSecurityFormComponent', () => {
     it('returns null for valid values when STIG is enabled', async () => {
       // Enable STIG mode
       await stigForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       // Set valid values
@@ -632,7 +632,7 @@ describe('SystemSecurityFormComponent', () => {
     it('handles null values in STIG validator', async () => {
       // Enable STIG mode
       await stigForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       // Set null values
@@ -677,7 +677,7 @@ describe('SystemSecurityFormComponent', () => {
 
       // Enable STIG mode
       await warningForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -700,7 +700,7 @@ describe('SystemSecurityFormComponent', () => {
 
       // Enable STIG mode
       await warningForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -720,7 +720,7 @@ describe('SystemSecurityFormComponent', () => {
 
       // Enable STIG mode
       await warningForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -739,7 +739,7 @@ describe('SystemSecurityFormComponent', () => {
 
       // Enable STIG mode
       await warningForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -798,7 +798,7 @@ describe('SystemSecurityFormComponent', () => {
 
       // Enable STIG mode
       await warningForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -832,7 +832,7 @@ describe('SystemSecurityFormComponent', () => {
 
       // Disable STIG mode
       await warningForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': false,
+        'Enable TrueNAS STIG compatibility mode': false,
       });
 
       const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -908,7 +908,7 @@ describe('SystemSecurityFormComponent', () => {
       });
 
       await validationForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       // Wait for async operations to complete
@@ -962,7 +962,7 @@ describe('SystemSecurityFormComponent', () => {
       });
 
       await validationForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       // Wait for async operations to complete
@@ -1010,7 +1010,7 @@ describe('SystemSecurityFormComponent', () => {
 
       // Enable STIG to trigger the error
       await validationForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       await validationSpectator.fixture.whenStable();
@@ -1027,10 +1027,10 @@ describe('SystemSecurityFormComponent', () => {
 
       // Toggle STIG off and on to trigger re-check with new mocks
       await validationForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': false,
+        'Enable TrueNAS STIG compatibility mode': false,
       });
       await validationForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
+        'Enable TrueNAS STIG compatibility mode': true,
       });
 
       await validationSpectator.fixture.whenStable();
