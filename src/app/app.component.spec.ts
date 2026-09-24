@@ -8,7 +8,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { PingService } from 'app/modules/websocket/ping.service';
 import { selectIsPanelOpen } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 import { DetectBrowserService } from 'app/services/detect-browser.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -34,9 +33,6 @@ describe('AppComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(FormSidePanelService, {
         closeAll: jest.fn(),
-      }),
-      mockProvider(PingService, {
-        initializePingService: jest.fn(),
       }),
       provideMockStore({
         selectors: [

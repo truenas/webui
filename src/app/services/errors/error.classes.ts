@@ -40,15 +40,3 @@ export class AbortedJobError extends Error {
     this.name = 'AbortedJob';
   }
 }
-
-/**
- * The legacy socket could not borrow the typed session, so the calls that
- * still ride it have nothing to authenticate with. `cause` is the last
- * failure of the borrow.
- */
-export class TypedApiSessionError extends Error {
-  constructor(cause: unknown) {
-    super('Typed API session could not be established', { cause });
-    this.name = 'TypedApiSessionError';
-  }
-}

@@ -24,13 +24,12 @@ export class WebSocketStatusService {
   private readonly isLoggedIn$ = new BehaviorSubject<boolean>(false);
 
   /**
-   * Whether the typed client's session is authenticated.
+   * Whether the app's session is authenticated.
    *
-   * That session is the app's session now: `AuthService` logs in on the typed
-   * client, and the legacy socket borrows a token from it. So authentication
-   * is projected from `authenticator.authenticated$` rather than derived from
-   * the legacy socket being up, which is only ever a statement about a
-   * borrower.
+   * There is one session and one socket, both the typed client's, so this is
+   * projected from `authenticator.authenticated$` rather than derived from a
+   * socket being up — a connection that is up says nothing about whether
+   * anyone has signed in on it.
    *
    * Pushed in by `TypedApiService` rather than read from the client here.
    * Reading it here would make every consumer of connection status — which is

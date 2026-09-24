@@ -137,7 +137,9 @@ describe('TokenLastUsedService', () => {
       const updateTokenLastUsedSpy = jest.spyOn(spectator.service, 'updateTokenLastUsed');
       const responses$ = new Subject<IncomingMessage>();
 
-      jest.spyOn(WebSocketHandlerService.prototype, 'responses$', 'get').mockReturnValue(responses$);
+      // `responses$` is a field on the borrowed connection's stream, not a
+      // getter, so the seam is the provided double rather than the prototype.
+      Object.defineProperty(spectator.inject(WebSocketHandlerService), 'responses$', { value: responses$ });
 
       spectator.service.setupTokenLastUsedValue(of({} as LoggedInUser));
 

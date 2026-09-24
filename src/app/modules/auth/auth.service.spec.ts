@@ -11,10 +11,9 @@ import {
 } from 'ngx-webstorage';
 import {
   BehaviorSubject, firstValueFrom,
-  of, Subject, throwError,
+  of, throwError,
 } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
@@ -32,7 +31,6 @@ import { PendingTwoFactorService } from 'app/modules/auth/pending-two-factor.ser
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TYPED_API_CLIENT, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { TypedApiSessionError } from 'app/services/errors/error.classes';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
@@ -208,57 +206,6 @@ describe('AuthService', () => {
       expect(loginCredentials()).toEqual(['123456']);
     });
 
-    it('lends the session to the legacy socket before reporting a login as successful', async () => {
-      // Everything the sign-in flow does next rides the legacy socket, so the
-      // borrow has to have finished — not merely started — before success is
-      // reported. Driven through a subject the spec completes by hand, so a
-      // fire-and-forget borrow would fail here.
-      const borrow$ = new Subject<undefined>();
-      jest.mocked(spectator.inject(MockTypedApiService).lendSessionToLegacySocket)
-        .mockReturnValue(borrow$.asObservable());
-      armLogin();
-
-      let loginResult: LoginResult | null = null;
-      spectator.service.login('dummy', 'secret').subscribe((result) => {
-        loginResult = result.loginResult;
-      });
-      await Promise.resolve();
-
-      expect(spectator.inject(MockTypedApiService).lendSessionToLegacySocket).toHaveBeenCalled();
-      expect(loginResult).toBeNull();
-
-      borrow$.next(undefined);
-      borrow$.complete();
-      await Promise.resolve();
-
-      expect(loginResult).toBe(LoginResult.Success);
-    });
-
-    it('keeps the stored token when a token login is undone by a failed borrow', async () => {
-      // The typed login succeeded and minted the next token; a borrow that failed
-      // afterwards is not a credential problem. Reporting it as a login result
-      // would have the sign-in page clear the token, costing the next auto-login.
-      spectator.service.setQueryToken('DUMMY_TOKEN');
-      armLogin({ reconnect_token: 'NEXT_TOKEN' });
-      jest.mocked(spectator.inject(MockTypedApiService).lendSessionToLegacySocket)
-        .mockReturnValue(throwError(() => new TypedApiSessionError(new Error('legacy down'))));
-
-      await expect(firstValueFrom(spectator.service.loginWithToken()))
-        .rejects.toBeInstanceOf(TypedApiSessionError);
-
-      expect(spectator.service.hasAuthToken).toBe(true);
-      expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
-    });
-
-    it('reports a login as failed when the legacy socket cannot borrow the session', async () => {
-      jest.mocked(spectator.inject(MockTypedApiService).lendSessionToLegacySocket)
-        .mockReturnValue(throwError(() => new TypedApiSessionError(new Error('legacy down'))));
-      armLogin();
-
-      await expect(firstValueFrom(spectator.service.login('dummy', 'secret')))
-        .rejects.toBeInstanceOf(TypedApiSessionError);
-    });
-
     // The authenticator reports a refused credential by throwing rather than by
     // answering, which would otherwise reach the sign-in form as an error modal.
     it('reads a refused password back as a failed login', async () => {
@@ -297,7 +244,7 @@ describe('AuthService', () => {
   });
 
   describe('Logout', () => {
-    it('ends the typed session and the one the legacy socket borrowed, and clears the token', async () => {
+    it('ends the session once, and clears the token', async () => {
       armLogin();
       await firstValueFrom(spectator.service.login('dummy', 'secret'));
       await firstValueFrom(spectator.service.initializeSession());
@@ -306,7 +253,8 @@ describe('AuthService', () => {
 
       expect(client.connection.sent).toContainEqual(expect.objectContaining({ method: 'auth.logout' }));
       expect(client.authenticator.authenticated$.value).toBe(false);
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.logout');
+      // One socket, one session: there is no second `auth.logout` to send.
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.logout');
       expect(mockWsStatus.setLoginStatus).toHaveBeenCalledWith(false);
       expect(await firstValueFrom(spectator.service.user$)).toBeNull();
     });
@@ -697,7 +645,6 @@ describe('AuthService', () => {
       // Verify session cannot be initialized after NoAccess
       const initResult = await firstValueFrom(spectator.service.initializeSession());
       expect(initResult).toBe(LoginResult.NoToken);
-      expect(spectator.inject(MockTypedApiService).lendSessionToLegacySocket).not.toHaveBeenCalled();
     });
 
     it('handles OTP required response', async () => {

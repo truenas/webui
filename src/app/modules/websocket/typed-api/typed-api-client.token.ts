@@ -26,10 +26,9 @@ export type WebUiApiClient = TrueNasApiClient<WebUiApiDirectory>;
 /**
  * The `@truenas/api-client` instance behind {@link TypedApiService}.
  *
- * It owns its own WebSocket, opened in parallel to the legacy
- * `WebSocketHandlerService` connection. That is deliberate for the migration
- * period: the two clients coexist until every call site has moved, and the
- * legacy socket goes away last.
+ * It owns the tab's only WebSocket. `WebSocketHandlerService` borrows this
+ * client's `connection` rather than opening one of its own, so the calls that
+ * have not been migrated yet ride the same socket and the same session.
  *
  * Injected as an observable because the factory is asynchronous. It resolves
  * once and replays. The socket opens as soon as the client exists

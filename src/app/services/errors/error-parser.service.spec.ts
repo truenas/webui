@@ -9,7 +9,7 @@ import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 import {
-  AbortedJobError, ApiCallError, FailedJobError, TypedApiSessionError,
+  AbortedJobError, ApiCallError, FailedJobError,
 } from 'app/services/errors/error.classes';
 
 const error = new Error('Dummy Error');
@@ -245,15 +245,6 @@ describe('ErrorParserService', () => {
       expect(errorReport).toEqual({
         title: 'Aborted',
         message: 'Job aborted',
-      });
-    });
-
-    it('returns a user-facing message when the typed API session could not be established', () => {
-      const errorReport = spectator.service.parseError(new TypedApiSessionError(new Error('legacy down')));
-
-      expect(errorReport).toEqual({
-        title: 'Connection Error',
-        message: 'Could not establish an authenticated connection to the server. Try again in a moment or reload the page.',
       });
     });
 

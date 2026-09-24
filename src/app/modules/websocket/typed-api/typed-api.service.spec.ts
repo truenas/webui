@@ -3,16 +3,11 @@ import { JobState } from '@truenas/api-client';
 import {
   createFakeClient, fakeApiError, fakeJob, FakeTrueNasClient, withSpies,
 } from '@truenas/api-client/testing';
-import {
-  BehaviorSubject, defaultIfEmpty, EMPTY, firstValueFrom, lastValueFrom, NEVER, of, throwError,
-} from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { defaultIfEmpty, firstValueFrom, lastValueFrom, of } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api.enum';
-import { LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { TYPED_API_CLIENT, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
-import { ApiCallError, FailedJobError, TypedApiSessionError } from 'app/services/errors/error.classes';
+import { ApiCallError, FailedJobError } from 'app/services/errors/error.classes';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 /** The fake answers frames on a microtask, as a socket would; let those land. */
@@ -23,15 +18,11 @@ const settle = (): Promise<void> => new Promise((resolve) => {
 describe('TypedApiService', () => {
   let spectator: SpectatorService<TypedApiService>;
   let client: FakeTrueNasClient<WebUiApiDirectory>;
-  let legacyConnected$: BehaviorSubject<boolean>;
   let wsStatus: WebSocketStatusService;
 
   const createService = createServiceFactory({
     service: TypedApiService,
     providers: [
-      mockApi([
-        mockCall('auth.login_ex', { response_type: LoginExResponseType.Success } as LoginExResponse),
-      ]),
       {
         provide: TYPED_API_CLIENT,
         useFactory: () => of(client),
@@ -49,10 +40,7 @@ describe('TypedApiService', () => {
       createFakeClient({ version: 'v27.0.0', authenticated: false, opened: false }),
       jest.fn,
     );
-    client.mock.call('auth.generate_token', 'one-shot-token');
-    legacyConnected$ = new BehaviorSubject(false);
     wsStatus = {
-      isConnected$: legacyConnected$,
       setSessionStatus: jest.fn(),
       setLoginStatus: jest.fn(),
     } as unknown as WebSocketStatusService;
@@ -65,11 +53,6 @@ describe('TypedApiService', () => {
   });
 
   const sentMethods = (): string[] => client.connection.sent.map((frame) => String(frame.method));
-  const mintedTokenCount = (): number => sentMethods().filter((method) => method === 'auth.generate_token').length;
-  const legacyApi = (): MockApiService => spectator.inject(MockApiService);
-  const legacyLogins = (): unknown[] => jest.mocked(legacyApi().call).mock.calls
-    .filter(([method]) => method === 'auth.login_ex')
-    .map(([, params]) => params);
 
   function signIn(): void {
     client.authenticator.authenticated$.next(true);
@@ -78,337 +61,8 @@ describe('TypedApiService', () => {
   async function bringSessionUp(): Promise<void> {
     client.connection.simulateOpen();
     signIn();
-    legacyConnected$.next(true);
     await settle();
   }
-
-  describe('lending the session to the legacy socket', () => {
-    it('mints a one-shot token and logs the legacy socket in with it once both are up', async () => {
-      client.connection.simulateOpen();
-      signIn();
-      await settle();
-      expect(legacyLogins()).toEqual([]);
-
-      legacyConnected$.next(true);
-      await settle();
-
-      expect(client.connection.sent).toContainEqual(expect.objectContaining({
-        method: 'auth.generate_token',
-        params: [300, {}, true, true],
-      }));
-      expect(legacyLogins()).toEqual([[{ mechanism: 'TOKEN_PLAIN', token: 'one-shot-token' }]]);
-    });
-
-    it('does not lend anything while the typed session is not signed in', async () => {
-      client.connection.simulateOpen();
-      legacyConnected$.next(true);
-      await settle();
-
-      expect(sentMethods()).not.toContain('auth.generate_token');
-      expect(legacyLogins()).toEqual([]);
-    });
-
-    it('lends again when the legacy socket reconnects', async () => {
-      await bringSessionUp();
-
-      legacyConnected$.next(false);
-      legacyConnected$.next(true);
-      await settle();
-
-      expect(legacyLogins()).toHaveLength(2);
-    });
-
-    it('lends again when middleware refuses a call on the legacy socket for want of a session', async () => {
-      await bringSessionUp();
-
-      legacyApi().sessionLost.next();
-      await settle();
-
-      expect(legacyLogins()).toHaveLength(2);
-    });
-
-    it('mints one token when a sign-in and the reconnect both ask for the borrow', async () => {
-      // The order production runs in: the session comes up first (the
-      // authenticator raises `authenticated$` before the login response reaches
-      // `processLoginResult`), and the sign-in asks for the borrow after it.
-      client.connection.simulateOpen();
-      signIn();
-      await settle();
-      expect(mintedTokenCount()).toBe(0);
-
-      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
-      legacyConnected$.next(true);
-      await settle();
-
-      await expect(lent).resolves.toBeUndefined();
-      expect(mintedTokenCount()).toBe(1);
-      expect(legacyLogins()).toHaveLength(1);
-    });
-  });
-
-  describe('lending after a failed borrow', () => {
-    const tick = (ms: number): Promise<void> => jest.advanceTimersByTimeAsync(ms);
-
-    beforeEach(() => {
-      jest.useFakeTimers();
-      jest.spyOn(console, 'error').mockImplementation();
-    });
-
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
-    it('retries with backoff and succeeds without bothering the caller', async () => {
-      const legacyCall = jest.mocked(legacyApi().call);
-      const legacyDown = (): Error => new Error('legacy down');
-      legacyCall
-        .mockReturnValueOnce(throwError(legacyDown))
-        .mockReturnValueOnce(throwError(legacyDown));
-      client.connection.simulateOpen();
-      signIn();
-
-      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
-      await tick(0);
-      expect(legacyCall).toHaveBeenCalledTimes(1);
-
-      await tick(1000);
-      expect(legacyCall).toHaveBeenCalledTimes(2);
-
-      await tick(2000);
-      await expect(lent).resolves.toBeUndefined();
-      expect(legacyCall).toHaveBeenCalledTimes(3);
-    });
-
-    it('reports the failure once the retries are spent', async () => {
-      const legacyCall = jest.mocked(legacyApi().call);
-      legacyCall.mockReturnValue(throwError(() => new Error('legacy down')));
-      client.connection.simulateOpen();
-      signIn();
-
-      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
-      await tick(1000 + 2000 + 4000);
-
-      await expect(lent).rejects.toBeInstanceOf(TypedApiSessionError);
-      expect(legacyCall).toHaveBeenCalledTimes(4);
-    });
-
-    it('reports a borrow the legacy socket refuses', async () => {
-      legacyApi().mockCall('auth.login_ex', { response_type: LoginExResponseType.AuthErr } as LoginExResponse);
-      client.connection.simulateOpen();
-      signIn();
-
-      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
-      await tick(1000 + 2000 + 4000);
-
-      await expect(lent).rejects.toBeInstanceOf(TypedApiSessionError);
-    });
-
-    it('ends the app session once the reactive borrow has given up', async () => {
-      // `ApiService` used to drop the session directly on ENOTAUTHENTICATED. Without
-      // this the admin shell keeps rendering as signed in while every legacy call
-      // fails, with no route back to the sign-in page that would repair it.
-      jest.mocked(legacyApi().call).mockReturnValue(throwError(() => new Error('legacy down')));
-      client.connection.simulateOpen();
-      signIn();
-      legacyConnected$.next(true);
-
-      await tick(1000 + 2000 + 4000);
-
-      expect(wsStatus.setLoginStatus).toHaveBeenCalledWith(false);
-    });
-
-    it('treats a legacy answer that never comes as a failed borrow', async () => {
-      // `ApiService.call` completes without emitting on ENOTAUTHENTICATED. Carried
-      // through, that would finish a sign-in without a result or an error.
-      jest.mocked(legacyApi().call).mockReturnValue(EMPTY);
-      client.connection.simulateOpen();
-      signIn();
-
-      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
-      await tick(1000 + 2000 + 4000);
-
-      await expect(lent).rejects.toBeInstanceOf(TypedApiSessionError);
-    });
-
-    it('makes one borrow for a burst of refusals, not one per refused call', async () => {
-      await tick(0);
-      client.connection.simulateOpen();
-      signIn();
-      legacyConnected$.next(true);
-      await tick(0);
-      const afterFirstBorrow = mintedTokenCount();
-
-      // A socket that comes back unauthenticated has every queued call refused at
-      // once; each refusal cancelling the borrow they are all waiting on would
-      // abandon a token it had already minted.
-      legacyApi().sessionLost.next();
-      legacyApi().sessionLost.next();
-      legacyApi().sessionLost.next();
-      await tick(600);
-
-      expect(mintedTokenCount()).toBe(afterFirstBorrow + 1);
-    });
-
-    it('re-borrows on the first refusal rather than waiting out the burst', async () => {
-      await tick(0);
-      client.connection.simulateOpen();
-      signIn();
-      legacyConnected$.next(true);
-      await tick(0);
-      const afterFirstBorrow = mintedTokenCount();
-
-      // Trailing-edge debouncing delayed every re-borrow by the window, and
-      // starved it entirely while refusals kept arriving faster than that.
-      legacyApi().sessionLost.next();
-      await tick(0);
-
-      expect(mintedTokenCount()).toBe(afterFirstBorrow + 1);
-    });
-
-    it('keeps re-borrowing across successive bursts', async () => {
-      await tick(0);
-      client.connection.simulateOpen();
-      signIn();
-      legacyConnected$.next(true);
-      await tick(0);
-      const afterFirstBorrow = mintedTokenCount();
-
-      legacyApi().sessionLost.next();
-      await tick(600);
-      legacyApi().sessionLost.next();
-      await tick(600);
-
-      expect(mintedTokenCount()).toBe(afterFirstBorrow + 2);
-    });
-
-    it('gives up on a borrow whose answer never comes, rather than hanging on it', async () => {
-      // `ApiService.call` can neither emit, complete nor error when the socket
-      // closes cleanly mid-call: its `responses$` merges the socket stream with a
-      // Subject that never completes.
-      jest.mocked(legacyApi().call).mockReturnValue(NEVER);
-      client.connection.simulateOpen();
-      signIn();
-
-      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
-      await tick(4 * 10_000 + 1000 + 2000 + 4000);
-
-      await expect(lent).rejects.toBeInstanceOf(TypedApiSessionError);
-    });
-
-    it('does not let a hung borrow pin the ones after it', async () => {
-      // `exhaustMap` holds the subscription and `share()` cannot reset while it
-      // does, so a borrow that never settles would swallow every later trigger
-      // and leave the legacy socket unauthenticated for the life of the tab.
-      const legacyCall = jest.mocked(legacyApi().call);
-      legacyCall.mockReturnValue(NEVER);
-      client.connection.simulateOpen();
-      signIn();
-      legacyConnected$.next(true);
-      await tick(4 * 10_000 + 1000 + 2000 + 4000);
-
-      legacyCall.mockReturnValue(of({ response_type: LoginExResponseType.Success } as LoginExResponse));
-      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
-      await tick(0);
-
-      await expect(lent).resolves.toBeUndefined();
-    });
-
-    it('does not let a sign-in join a borrow started for a session since replaced', async () => {
-      // The attempt was made under conditions that no longer hold; joining it
-      // would report its failure to a sign-in a fresh borrow would have served.
-      const legacyCall = jest.mocked(legacyApi().call);
-      legacyCall.mockReturnValue(throwError(() => new Error('legacy down')));
-      client.connection.simulateOpen();
-      signIn();
-      legacyConnected$.next(true);
-      await tick(0);
-
-      // The session is replaced while that attempt is still in its ladder.
-      client.authenticator.authenticated$.next(false);
-      client.authenticator.authenticated$.next(true);
-      legacyCall.mockReturnValue(of({ response_type: LoginExResponseType.Success } as LoginExResponse));
-
-      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
-      await tick(0);
-
-      await expect(lent).resolves.toBeUndefined();
-    });
-
-    it('does not end a session that replaced the one it was borrowing for', async () => {
-      // The ladder can run for the better part of a minute. The app can bounce to
-      // the sign-in page and come back on a new session inside that, and the old
-      // attempt exhausting must not then log the new one out.
-      const legacyCall = jest.mocked(legacyApi().call);
-      legacyCall.mockReturnValue(NEVER);
-      client.connection.simulateOpen();
-      signIn();
-      legacyConnected$.next(true);
-      await tick(0);
-
-      client.authenticator.authenticated$.next(false);
-      client.authenticator.authenticated$.next(true);
-      legacyCall.mockReturnValue(of({ response_type: LoginExResponseType.Success } as LoginExResponse));
-      jest.mocked(wsStatus.setLoginStatus).mockClear();
-
-      await tick(4 * 10_000 + 1000 + 2000 + 4000);
-
-      expect(wsStatus.setLoginStatus).not.toHaveBeenCalledWith(false);
-    });
-
-    it('frees the reactive borrow for the session that replaced it', async () => {
-      // The abandoned attempt must also release `exhaustMap`, or nothing can
-      // borrow for the new session until the old ladder finally runs out.
-      const legacyCall = jest.mocked(legacyApi().call);
-      legacyCall.mockReturnValue(NEVER);
-      client.connection.simulateOpen();
-      signIn();
-      legacyConnected$.next(true);
-      await tick(0);
-      const beforeReplacement = mintedTokenCount();
-
-      client.authenticator.authenticated$.next(false);
-      client.authenticator.authenticated$.next(true);
-      legacyCall.mockReturnValue(of({ response_type: LoginExResponseType.Success } as LoginExResponse));
-      legacyApi().sessionLost.next();
-      await tick(600);
-
-      expect(mintedTokenCount()).toBeGreaterThan(beforeReplacement);
-    });
-
-    it('gives up even while refusals keep arriving', async () => {
-      jest.mocked(legacyApi().call).mockReturnValue(throwError(() => new Error('legacy down')));
-      client.connection.simulateOpen();
-      signIn();
-      legacyConnected$.next(true);
-
-      // A page polling on a socket with no session produces a refusal well inside
-      // the retry ladder's ~7s. Each one restarting the borrow would hand it a
-      // fresh ladder, so it would never exhaust and the give-up path would never
-      // run — the session would stay up with every legacy call failing.
-      for (let index = 0; index < 16; index += 1) {
-        legacyApi().sessionLost.next();
-        await tick(600);
-      }
-
-      expect(wsStatus.setLoginStatus).toHaveBeenCalledWith(false);
-    });
-
-    it('starts a fresh borrow the next time one is asked for', async () => {
-      const legacyCall = jest.mocked(legacyApi().call);
-      legacyCall.mockReturnValue(throwError(() => new Error('legacy down')));
-      client.connection.simulateOpen();
-      signIn();
-      const failed = firstValueFrom(spectator.service.lendSessionToLegacySocket());
-      await tick(1000 + 2000 + 4000);
-      await expect(failed).rejects.toBeInstanceOf(TypedApiSessionError);
-
-      legacyCall.mockReturnValue(of({ response_type: LoginExResponseType.Success } as LoginExResponse));
-      const lent = firstValueFrom(spectator.service.lendSessionToLegacySocket());
-      await tick(0);
-
-      await expect(lent).resolves.toBeUndefined();
-    });
-  });
 
   describe('session status', () => {
     it('projects the typed session onto the status service', async () => {
