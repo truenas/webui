@@ -29,44 +29,6 @@ export type S3ConfigEntry = CallResponse<E2eApiDirectory, 's3.config'>;
  */
 export const s3ServiceName = 's3';
 
-/** Creates a plain filesystem dataset by full name (`pool/name`) if absent. */
-export async function ensureDatasetPresent(client: E2eApiClient, name: string): Promise<void> {
-  const [existing] = await firstValueFrom(
-    client.api.query('pool.dataset.query', [['id', '=', name]]).pipe(timeout(readTimeoutMs)),
-  );
-
-  if (existing) {
-    return;
-  }
-
-  await firstValueFrom(
-    client.api.call('pool.dataset.create', [{ name, type: 'FILESYSTEM' }]).pipe(timeout(slowCallTimeoutMs)),
-  );
-}
-
-/**
- * Deletes a dataset and everything under it, if present.
- *
- * Recursive because the bucket's own dataset is created under the parent the
- * test provides, and removing the bucket does not remove it — the share
- * deletion leaves data in place by design.
- */
-export async function ensureDatasetAbsent(client: E2eApiClient, name: string): Promise<void> {
-  const [existing] = await firstValueFrom(
-    client.api.query('pool.dataset.query', [['id', '=', name]]).pipe(timeout(readTimeoutMs)),
-  );
-
-  if (!existing) {
-    return;
-  }
-
-  await firstValueFrom(
-    client.api
-      .call('pool.dataset.delete', [name, { recursive: true, force: true }])
-      .pipe(timeout(slowCallTimeoutMs)),
-  );
-}
-
 export async function findS3Bucket(client: E2eApiClient, name: string): Promise<S3BucketEntry | undefined> {
   // `query`, not `queryOne` — absence is an ordinary answer here.
   const [bucket] = await firstValueFrom(

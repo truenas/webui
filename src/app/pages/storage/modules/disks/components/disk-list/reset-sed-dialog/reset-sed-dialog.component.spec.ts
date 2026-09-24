@@ -99,4 +99,10 @@ describe('ResetSedDialog', () => {
     const resetButton = await loader.getHarness(TnButtonHarness.with({ label: 'Perform SED Reset' }));
     expect(await resetButton.isDisabled()).toBe(true);
   });
+
+  it('does not reset the disk when the form is submitted natively while invalid', () => {
+    spectator.query('form')!.dispatchEvent(new Event('submit'));
+
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('disk.reset_sed', expect.anything());
+  });
 });

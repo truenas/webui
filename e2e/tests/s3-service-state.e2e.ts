@@ -14,9 +14,10 @@
  */
 import { entitlementFeature, isEntitled } from '../fixtures/entitlements';
 import {
-  ensureDatasetAbsent, ensureDatasetPresent, ensureS3BucketAbsent, ensureS3BucketPresent, ensureS3ServiceRunning,
+  ensureS3BucketAbsent, ensureS3BucketPresent, ensureS3ServiceRunning,
   ensureS3ServiceStopped, queryS3Service, readS3Config, setS3ManagedRootDataset,
 } from '../fixtures/s3';
+import { ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';
 import { createS3Bucket, setS3ManagedRootDatasetFromCard, toggleS3ServiceFromCard } from '../flows/s3';
 import type { E2eApiClient } from '../support/api/client';

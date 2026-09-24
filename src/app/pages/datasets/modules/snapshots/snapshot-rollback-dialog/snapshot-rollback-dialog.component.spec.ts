@@ -204,4 +204,17 @@ describe('SnapshotRollbackDialog', () => {
     ]);
     expect(spectator.fixture.nativeElement).toHaveText('Dataset rolled back to snapshot first-snapshot.');
   });
+
+  it('does not roll back when the form is submitted natively while invalid', () => {
+    setupDialog();
+
+    // Rollback destroys every snapshot newer than the target, and the only
+    // thing gating it is a checkbox. The form has no text field, so a browser
+    // will not submit it on Enter today — but that is a property of the markup,
+    // not a guard, so the handler must refuse an invalid form itself.
+    spectator.query('form')!.dispatchEvent(new Event('submit'));
+
+    expect(spectator.inject(ApiService).call)
+      .not.toHaveBeenCalledWith('pool.snapshot.rollback', expect.anything());
+  });
 });

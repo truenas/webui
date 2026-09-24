@@ -11,7 +11,7 @@
  * so a worker builds it once however many specs ask.
  */
 import { firstValueFrom, timeout } from 'rxjs';
-import { ensurePoolAbsent, getSelectableDisks } from './storage';
+import { ensurePoolAbsent, findPool, getSelectableDisks } from './storage';
 import type { E2eApiClient } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs } from '../support/timeouts';
@@ -65,31 +65,78 @@ async function providePool(client: E2eApiClient, onBuild: () => void): Promise<s
     return existing;
   }
 
+  onBuild();
+  await buildStripePool(
+    client,
+    suiteOwnedPoolName,
+    'so there is nowhere to put the datasets.',
+  );
+
+  return suiteOwnedPoolName;
+}
+
+/**
+ * Builds a one-disk striped pool by name.
+ *
+ * The shared fixture above and any spec that needs a pool of its own both end
+ * up here, so the topology, the timeout and the choice of disk are decided in
+ * one place. Striped and single-disk on purpose: nothing stored in a pool the
+ * suite built matters, and a wider one would claim disks `fresh-install` needs.
+ *
+ * `whatItCosts` completes the sentence "Pool X was not created, …" for the job
+ * failure, and names the same consequence when there is no disk to build from —
+ * the two failures are the same problem for the caller.
+ */
+async function buildStripePool(
+  client: E2eApiClient,
+  name: string,
+  whatItCosts: string,
+): Promise<void> {
   // The wizard's own view of the inventory, so the disk chosen here is one the
   // UI would have offered too — see `getSelectableDisks` for what it excludes.
   const [disk] = await getSelectableDisks(client);
 
   if (!disk) {
     throw new Error(
-      'This journey needs a pool, and the appliance has neither an online pool nor an unused disk '
-      + 'to build one from.',
+      `The appliance has no unused disk to build pool "${name}" from, ${whatItCosts}`,
     );
   }
 
-  onBuild();
   await runJob(
     client,
     () => client.api.callAndGetJobId('pool.create', [{
-      name: suiteOwnedPoolName,
+      name,
       topology: { data: [{ type: 'STRIPE', disks: [disk.devname] }] },
     }]),
     {
       timeoutMs: poolCreateTimeoutMs,
-      whatItCosts: `Pool "${suiteOwnedPoolName}" was not created, so there is nowhere to put the datasets.`,
+      whatItCosts: `Pool "${name}" was not created, ${whatItCosts}`,
     },
   );
+}
 
-  return suiteOwnedPoolName;
+/**
+ * Builds a pool of the spec's own, if it is not already there.
+ *
+ * For journeys whose subject is *destroying* a pool. They must not use the
+ * worker-scoped `pool` fixture: that pool is shared with every other spec in
+ * the worker, so a test that exports it — or fails partway through trying —
+ * takes the rest of the run with it. A pool of one's own keeps the blast radius
+ * to the spec that asked for it.
+ *
+ * The caller owns the removal, and it has to be unconditional. `findOnlinePool`
+ * prefers any pool over the suite's own, so a pool left behind here would be
+ * handed to a later spec as *its* pool and then exported underneath it.
+ */
+export async function ensurePoolPresent(client: E2eApiClient, name: string): Promise<void> {
+  // By name, not `findOnlinePool` — that answers "which pool should a spec
+  // use", which is a different question and would report this one present
+  // whenever any other pool was.
+  if (await findPool(client, name)) {
+    return;
+  }
+
+  await buildStripePool(client, name, 'so the journey has no pool to act on.');
 }
 
 /**

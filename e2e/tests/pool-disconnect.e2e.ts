@@ -1,0 +1,173 @@
+/**
+ * Story: a pool cannot be destroyed without meaning it.
+ *
+ * This is the same confirmation-bypass class as `datasets-deletion.e2e.ts` and
+ * the most expensive place in the app to get it wrong. Choosing "Delete Pool"
+ * and confirming runs `pool.export` with `destroy: true`, which wipes every
+ * member disk — there is no undo and no snapshot to fall back to.
+ *
+ * Its handler was worse than the dataset dialog's: `startExportDisconnectJob()`
+ * read the form and started the job with no validity check whatsoever. The only
+ * thing standing between a keypress and a destroyed pool was a disabled button
+ * that the browser's implicit form submission does not consult — and once
+ * "Delete Pool" is chosen, the name field it reveals is the form's single text
+ * input, which is exactly the shape Enter submits.
+ *
+ * Each claim is settled through `pool.query`. A dialog that stayed open is not
+ * evidence the pool survived, and the pool row disappears while the disk wipe
+ * is still running, so the screen is not evidence either way.
+ *
+ * ## Why this spec builds its own pool
+ *
+ * It must not use the worker-scoped `pool` fixture. That pool is shared with
+ * every other spec in the worker, and a test whose subject is destroying a pool
+ * would take the rest of the run with it the moment it regressed — the failure
+ * would arrive as a dozen unrelated specs breaking. `ensurePoolPresent` builds
+ * one disk's worth of pool under a name of this spec's own, and `afterEach`
+ * removes it unconditionally: left behind, `findOnlinePool` would hand it to a
+ * later spec as *its* pool.
+ */
+import type { Page } from '@playwright/test';
+import { ensurePoolPresent } from '../fixtures/pool';
+import { ensurePoolAbsent, findPool, getSelectableDisks } from '../fixtures/storage';
+import { goToStorage } from '../flows/navigation';
+import { chooseDeletePool, openPoolDisconnectDialog } from '../flows/storage';
+import { poolDisconnectLocators } from '../locators/storage';
+import type { E2eApiClient } from '../support/api/client';
+import { expect, test } from '../support/fixtures';
+
+/**
+ * This spec's own pool. Not `e2e_shared_tank` — see the note above — and not a
+ * name any other spec looks for.
+ */
+const target = 'e2e_disconnect_target';
+
+/** Set by {@link tolerating} so a persistent query fault reaches the run log. */
+let lastPollError: unknown;
+
+test.beforeEach(async ({ api }) => {
+  await ensurePoolPresent(api, target);
+});
+
+test.afterEach(async ({ api }) => {
+  if (lastPollError) {
+    console.warn('A polled read kept failing; last error:', lastPollError);
+    lastPollError = undefined;
+  }
+  await ensurePoolAbsent(api, target);
+});
+
+test('pressing Enter does not destroy a pool with the confirmation empty', async ({ page, api }) => {
+  await openPoolDisconnectDialog(page, target);
+  await chooseDeletePool(page);
+
+  // Nothing typed, nothing ticked: the state the dialog is in the moment
+  // "Delete Pool" is chosen, and the state in which the bug destroyed the pool.
+  await expect(page.locator(poolDisconnectLocators.submit)).toBeDisabled();
+  await page.locator(poolDisconnectLocators.name).press('Enter');
+
+  await expectPoolSurvived(page, api, target);
+});
+
+test('pressing Enter with the wrong pool name does not destroy the pool', async ({ page, api }) => {
+  await openPoolDisconnectDialog(page, target);
+  await chooseDeletePool(page);
+
+  // Both gates touched, neither satisfied: the tick is on, but the name is not
+  // this pool's. A guard that only checked for an empty field would pass this.
+  await page.locator(poolDisconnectLocators.confirm).click();
+  await page.locator(poolDisconnectLocators.name).fill(`${target}-not-really`);
+  await expect(page.locator(poolDisconnectLocators.submit)).toBeDisabled();
+
+  await page.locator(poolDisconnectLocators.name).press('Enter');
+
+  await expectPoolSurvived(page, api, target);
+});
+
+test('a fully confirmed delete really does destroy the pool', async ({ page, api }) => {
+  // Counted while the pool still holds its disk, so the wait at the end has
+  // something to compare against.
+  const disksWhileClaimed = (await getSelectableDisks(api)).length;
+
+  await openPoolDisconnectDialog(page, target);
+  await chooseDeletePool(page);
+
+  await page.locator(poolDisconnectLocators.confirm).click();
+  await page.locator(poolDisconnectLocators.name).fill(target);
+  await expect(page.locator(poolDisconnectLocators.submit)).toBeEnabled();
+
+  await page.locator(poolDisconnectLocators.submit).click();
+
+  // The counterweight to the two tests above. A guard that refused every
+  // submission would satisfy them both and leave nobody able to remove a pool.
+  // Polled: `pool.export` is a job, so the row goes some time after the click.
+  await expect
+    .poll(() => tolerating(() => findPool(api, target)), { timeout: 3 * 60_000 })
+    .toBeUndefined();
+
+  // The row going is not the end of the work. `destroy: true` keeps wiping the
+  // member disk after `pool.query` stops listing the pool, and `CLAUDE.md` is
+  // explicit that inferring a job's success from that side effect is how this
+  // suite has been bitten before. Leaving here mid-wipe starves
+  // `requireUnusedDisks`, which `fresh-install` depends on — so wait for the
+  // disk to actually come back, which is the observable end of the export.
+  //
+  // A count rather than this pool's own `devname`, which is sound only because
+  // `playwright.config.ts` pins `workers: 1` / `fullyParallel: false` — nothing
+  // else can be freeing a disk while this waits. Said out loud because that
+  // guarantee lives three files away.
+  await expect
+    .poll(
+      () => tolerating(() => getSelectableDisks(api).then((disks) => disks.length)),
+      { timeout: 6 * 60_000 },
+    )
+    .toBeGreaterThan(disksWhileClaimed);
+});
+
+/**
+ * Asserts that whatever just happened in the dialog did not start an export.
+ *
+ * Getting this right took two attempts, and the first one passed against the
+ * *broken* build. Unlike the delete-dataset dialog, this one does not close
+ * when it submits — it hands off to a job dialog and closes later — so neither
+ * "the dialog is still open" nor "the form still accepts input" says anything
+ * about whether `pool.export` was called. Asking `pool.query` straight away is
+ * no better: it races the job.
+ *
+ * So the readback is the dashboard itself. Dismissing the dialog and coming
+ * back to the pool list is a full navigation, which cannot resolve before the
+ * app has sent everything the keypress queued on the same socket; and an
+ * export that did start takes the pool off that page. The appliance is then
+ * asked directly, which is the claim that actually matters.
+ */
+async function expectPoolSurvived(page: Page, api: E2eApiClient, pool: string): Promise<void> {
+  await page.locator(poolDisconnectLocators.cancel).click();
+  await goToStorage(page);
+
+  await expect(page.locator(poolDisconnectLocators.open(pool))).toBeVisible();
+  expect(await findPool(api, pool)).toBeDefined();
+}
+
+/**
+ * Runs a poll generator, turning a rejection into "no answer yet".
+ *
+ * Required, not defensive. Playwright awaits an `expect.poll` generator
+ * *outside* its own try/catch, so a rejected call aborts the whole poll rather
+ * than costing one attempt — the same trap `readServiceState` documents in
+ * `tests/unauthenticated/fresh-install.e2e.ts`. Both polls here run across a
+ * `pool.export`, which `support/jobs.ts` records as dropping the connection it
+ * is asked over, so a transient rejection is an ordinary step on the way to the
+ * answer rather than a failure.
+ *
+ * The last failure is kept so a *persistently* broken query names itself in the
+ * log instead of hiding behind "the pool never went away".
+ */
+async function tolerating<T>(read: () => Promise<T>): Promise<T | undefined> {
+  try {
+    lastPollError = undefined;
+    return await read();
+  } catch (error) {
+    lastPollError = error;
+    return undefined;
+  }
+}

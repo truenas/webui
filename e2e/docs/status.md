@@ -116,12 +116,76 @@ theme is a class on `<html>` under the
 `src/index.html` that nothing ever updates, so a test asserting on the body class
 would pass against any theme at all.
 
+Dataset deletion came next, in `tests/datasets-deletion.e2e.ts`, and it is here
+for a reason the other specs are not: it covers a bug that *shipped to
+nightlies*. The delete-dataset dialog gates on the dataset's name typed back and
+a Confirm tick, and disables its button until it has both — but the tn-dialog
+migration moved the dialog's actions outside `<form>`, and `tn-button` renders
+`type="button"`, so the form was left with one text input and no submit button
+at all. That is exactly the shape the HTML spec submits when Enter is pressed in
+a text field, and the handler did not re-check validity. Enter in the name field
+destroyed the dataset with both gates untouched.
+
+Nothing below E2E could see it, and that is the point of the spec. The unit
+tests asserted the confirm button was disabled and it genuinely was; the browser
+submitted the form regardless. Only a real browser driving a real dialog can ask
+whether the *keyboard* can reach a destructive call, so the claims are about
+Enter rather than about the button, and each is settled through
+`pool.dataset.query` — a dialog left open is not evidence the dataset survived.
+The fifth test is the counterweight: a guard that swallowed Enter unconditionally
+would satisfy the other four and quietly break deletion for anyone not reaching
+for the mouse.
+
+Writing it turned up a `data-test` collision. The dialog's confirm button
+declared `testId="delete-dataset"`, the same value the details card behind it
+emits, so with the dialog open `[data-test="button-delete-dataset"]` matched two
+elements. Renamed to `dialog-delete-dataset`, following the convention webui's
+shared confirm dialog already uses (`button-dialog-confirm`). The generic
+dataset fixtures moved to `fixtures/storage.ts` at the same time — they had been
+sitting in `fixtures/s3.ts`, which is not their home and is not where anyone
+would look for them.
+
+Pool disconnect followed immediately, in `tests/pool-disconnect.e2e.ts`, because
+it is the same defect somewhere far more expensive: "Delete Pool" plus the
+destroy tick runs `pool.export` with `destroy: true`, which wipes every member
+disk with no undo — and `startExportDisconnectJob()` had no validity check of
+any kind, not even the dataset dialog's reliance on a disabled button.
+
+Two things about it are worth copying and one is worth not repeating. It builds
+**its own pool** rather than using the worker-scoped `pool` fixture: a spec whose
+subject is destroying a pool would otherwise take the rest of the worker's run
+with it the moment it regressed, surfacing as a dozen unrelated specs failing.
+`ensurePoolPresent` in `fixtures/pool.ts` is the extraction that made that cheap
+— `providePool` had the only API pool-builder in the suite, hardcoded to
+`e2e_shared_tank`, and both now share `buildStripePool`.
+
+The thing not to repeat: the first version of its negative assertion **passed
+against the broken build**. The delete-dataset dialog closes when it submits, so
+"the dialog is still usable" is a sound tell there; this one hands off to a job
+dialog and closes later, so the same reasoning proved nothing while looking
+identical. The readback had to become the dashboard — dismiss, navigate back,
+and require the pool's own card — which is a full round trip and cannot resolve
+before the app has sent what the keypress queued. Any negative assertion in this
+suite should be checked by running it against a build with the bug still in;
+both of these were, and the second one is the reason to insist on it.
+
+That work also hardened both `ensurePoolAbsent` and `ensureDatasetAbsent`: a
+journey that drives a deletion through the UI has one in flight when teardown
+runs, so the row can go between the query and the delete, and middleware answers
+with `[ENOENT]`. Both now re-ask whether the thing is gone rather than matching
+on the message, and only then let the failure pass.
+
+Three sibling dialogs remain uncovered here: app delete, SED reset and VM device
+delete. All are guarded in the same change with Jest regression tests, but an
+appliance-level journey needs an installed app, SED hardware and a VM
+respectively.
+
 The groups built-ins toggle turns out to be one of these — account state wearing
 the clothes of view state — which is also the "page one" gap below. The
 preferences spec met that gap head-on: `builtin_administrators` is 79th of 93
 groups by GID, so with a 50-row page it is not in the DOM at all.
 
-The framework is done and the coverage is not. Forty-six tests — forty-five
+The framework is done and the coverage is not. Fifty-four tests — fifty-three
 journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
@@ -158,7 +222,9 @@ a number. See `05-ci.md`.
 ## Next steps
 
 1. **Widen coverage.** Dataset ACL and manual snapshot are the two uncovered
-   stories worth taking next. S3 is covered as a feature — create, configure,
+   stories worth taking next. The confirmation-bypass class is now covered
+   everywhere this suite can reach it — datasets, zvols and pool disconnect;
+   what is left needs an app, SED hardware or a VM. S3 is covered as a feature — create, configure,
    edit, toggle, rotate, delete — except auditing, which is licence-gated and
    needs an Enterprise appliance. List-driven journeys (deleting a pool, dataset
    or share from a list) are no longer blocked: `tn-table` still writes nothing

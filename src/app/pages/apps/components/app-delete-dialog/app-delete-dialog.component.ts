@@ -44,6 +44,12 @@ export class AppDeleteDialog {
   });
 
   onSubmit(): void {
+    // Enter in the confirmation field submits the form natively (the dialog's
+    // action buttons live outside it), so the gate must be enforced here too.
+    if (this.form.invalid) {
+      return;
+    }
+
     this.dialogRef.close(this.form.getRawValue());
   }
 }

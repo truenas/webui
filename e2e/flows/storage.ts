@@ -4,7 +4,9 @@
 import { expect, type Page } from '@playwright/test';
 import { goToDatasets, goToShares, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
-import { datasetLocators, poolWizardLocators, smbLocators } from '../locators/storage';
+import {
+  datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolWizardLocators, smbLocators,
+} from '../locators/storage';
 
 /**
  * Pool creation is a long-running middleware job that formats every member
@@ -195,4 +197,76 @@ export async function createSmbShare(page: Page, path: string, name: string): Pr
   await startService.click();
 
   await expect(page.locator(smbLocators.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Selects a dataset or zvol in the tree and opens its delete dialog.
+ *
+ * `name` is the full dataset id (`pool/child`) — the tree node's id is built
+ * from `dataset.name`, which middleware reports as the full path, so the leaf
+ * alone does not address it.
+ *
+ * "Delete" lives on the details card, which renders for whatever the tree has
+ * selected, so the selection has to land before the click.
+ */
+export async function openDeleteDatasetDialog(page: Page, name: string): Promise<void> {
+  await goToDatasets(page);
+
+  const node = page.locator(datasetLocators.treeNode(name));
+  await expect(node).toBeVisible();
+  await node.click();
+
+  const open = page.locator(deleteDatasetDialogLocators.open);
+  await expect(open).toBeVisible();
+  await open.click();
+
+  // Asserted, not probed: `isVisible()` does not wait, and acting on a dialog
+  // that has not rendered silently skips the interaction.
+  await expect(page.locator(deleteDatasetDialogLocators.title)).toBeVisible();
+}
+
+/**
+ * Satisfies both gates of the open delete-dataset dialog — the name typed back
+ * and the Confirm tick — without submitting.
+ *
+ * Separate from the submit so a test can choose *how* to submit, which is the
+ * whole subject of `datasets-deletion.e2e.ts`: the button and the Enter key
+ * have to agree, and for a long time they did not.
+ */
+export async function fillDatasetDeletionConfirmation(page: Page, name: string): Promise<void> {
+  await page.locator(deleteDatasetDialogLocators.name).fill(name);
+  await page.locator(deleteDatasetDialogLocators.confirm).click();
+
+  await expect(page.locator(deleteDatasetDialogLocators.submit)).toBeEnabled();
+}
+
+/**
+ * Opens a pool's Disconnect dialog from the storage dashboard.
+ *
+ * Through the sidebar rather than a `page.goto`, so the card the button lives
+ * on is the one a user would have clicked.
+ */
+export async function openPoolDisconnectDialog(page: Page, pool: string): Promise<void> {
+  await goToStorage(page);
+
+  const open = page.locator(poolDisconnectLocators.open(pool));
+  await expect(open).toBeVisible({ timeout: saveTimeoutMs });
+  await open.click();
+
+  await expect(page.locator(poolDisconnectLocators.title)).toBeVisible();
+}
+
+/**
+ * Puts the open Disconnect dialog into its most destructive state: "Delete
+ * Pool" chosen, which sets `destroy` and reveals the name field.
+ *
+ * Stops short of the gates. This is the state in which `pool.export` would run
+ * with `destroy: true`, and the tests differ only in what they do next.
+ */
+export async function chooseDeletePool(page: Page): Promise<void> {
+  await page.locator(poolDisconnectLocators.deleteOption).click();
+
+  // The name field appearing is how we know `destroy` actually went on — the
+  // option card is a plain div, so its click has no other readback.
+  await expect(page.locator(poolDisconnectLocators.name)).toBeVisible();
 }

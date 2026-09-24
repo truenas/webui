@@ -78,4 +78,12 @@ describe('AppDeleteDialogComponent', () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     expect(await deleteButton.isDisabled()).toBe(true);
   });
+
+  it('does not close with a result when the form is submitted natively while invalid', () => {
+    // Enter in the confirmation field submits the form; the caller only checks
+    // that the dialog result is truthy, so an invalid submit must not close it.
+    spectator.query('form')!.dispatchEvent(new Event('submit'));
+
+    expect(spectator.inject(DialogRef).close).not.toHaveBeenCalled();
+  });
 });
