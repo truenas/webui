@@ -1,12 +1,12 @@
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
+import { createFakeClient, FakeTrueNasClient } from '@truenas/api-client/testing';
 import { environment } from 'environments/environment';
 import { of } from 'rxjs';
-import { WEBSOCKET } from 'app/helpers/websocket.helper';
-import { WINDOW } from 'app/helpers/window.helper';
 import { RequestMessage } from 'app/interfaces/api-message.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { TYPED_API_CLIENT, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { MockResponseService } from 'app/modules/websocket-debug-panel/services/mock-response.service';
 import { WebSocketDebugService } from 'app/modules/websocket-debug-panel/services/websocket-debug.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -22,12 +22,13 @@ interface WebSocketHandlerServicePrivate {
   activeCalls: number;
   pendingCalls: Map<string, ApiCall>;
   triggerNextCall$: { next: () => void };
-  wsConnection: { send: (call: unknown) => void };
+  sendOverConnection(call: ApiCall): void;
 }
 
 describe('WebSocketHandlerService Error Handling', () => {
   let spectator: SpectatorService<WebSocketHandlerService>;
   let service: WebSocketHandlerService;
+  let client: FakeTrueNasClient<WebUiApiDirectory>;
 
   const createService = createServiceFactory({
     service: WebSocketHandlerService,
@@ -49,17 +50,8 @@ describe('WebSocketHandlerService Error Handling', () => {
       mockProvider(MockResponseService),
       mockProvider(WebSocketDebugService),
       {
-        provide: WEBSOCKET,
-        useValue: 'ws://localhost:80/websocket',
-      },
-      {
-        provide: WINDOW,
-        useValue: {
-          location: {
-            protocol: 'http:',
-            host: 'localhost:80',
-          },
-        },
+        provide: TYPED_API_CLIENT,
+        useFactory: () => of(client),
       },
     ],
   });
@@ -69,8 +61,9 @@ describe('WebSocketHandlerService Error Handling', () => {
     const env = environment as { debugPanel?: { enabled: boolean } };
     env.debugPanel = { enabled: false };
 
-    // Prevent WebSocket connection
-    jest.spyOn(WebSocketHandlerService.prototype as unknown as { setupWebSocket: () => void }, 'setupWebSocket').mockImplementation();
+    // Closed, so nothing this spec schedules reaches the wire: every test here
+    // drives the private paths directly.
+    client = createFakeClient({ version: 'v27.0.0', opened: false });
 
     spectator = createService();
     service = spectator.service;
@@ -187,9 +180,8 @@ describe('WebSocketHandlerService Error Handling', () => {
 
   describe('Error type distinction', () => {
     it('should use WebSocketSendError for connection errors', () => {
-      // Mock wsConnection send method
       const privateService = service as unknown as WebSocketHandlerServicePrivate;
-      jest.spyOn(privateService.wsConnection, 'send').mockImplementation(() => {
+      jest.spyOn(client.connection, 'send').mockImplementation(() => {
         throw new Error('Network error');
       });
 
@@ -200,7 +192,7 @@ describe('WebSocketHandlerService Error Handling', () => {
         id: '1',
         jsonrpc: '2.0' as const,
       };
-      expect(() => privateService.wsConnection.send(call)).toThrow();
+      expect(() => privateService.sendOverConnection(call)).toThrow();
 
       // The service would wrap this in WebSocketSendError
       const wrappedError = new WebSocketSendError(

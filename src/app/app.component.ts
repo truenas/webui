@@ -9,7 +9,6 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { PingService } from 'app/modules/websocket/ping.service';
 import { WebSocketDebugPanelComponent } from 'app/modules/websocket-debug-panel/websocket-debug-panel.component';
 import { DetectBrowserService } from 'app/services/detect-browser.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -29,7 +28,6 @@ export class AppComponent implements OnInit {
   private dialog = inject(DialogService);
   private window = inject<Window>(WINDOW);
   private formPanel = inject(FormSidePanelService);
-  private pingService = inject(PingService);
   private destroyRef = inject(DestroyRef);
 
   isAuthenticated = false;
@@ -38,9 +36,6 @@ export class AppComponent implements OnInit {
   constructor() {
     const window = this.window;
 
-    // Ensure PingService is instantiated so it can listen for WebSocket connections
-    // and automatically set up ping when connection is established
-    this.pingService.initializePingService();
     this.wsStatus.isAuthenticated$.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((isAuthenticated) => {

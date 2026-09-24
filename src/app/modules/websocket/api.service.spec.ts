@@ -131,23 +131,10 @@ describe('ApiService', () => {
         return spectator.service.call('cloudsync.providers').subscribe();
       }
 
-      // This socket only borrows its session now, so a refusal means the borrow
-      // lapsed and `TypedApiService` re-lends off this signal.
-      it('asks for the session to be lent again', () => {
-        const lapses: number[] = [];
-        const watching = spectator.service.sessionLost.subscribe(() => lapses.push(1));
-
-        const call = refuseNextCall();
-
-        expect(lapses).toHaveLength(1);
-        call.unsubscribe();
-        watching.unsubscribe();
-      });
-
       // The refused call is dropped, so something has to bring it back: ending
       // the session bounces the tab to /signin and back, which re-issues it.
       // Without this the caller sits on a loading state that never resolves.
-      it('ends the session, as the typed socket does for the same refusal', () => {
+      it('ends the session, as a typed call does for the same refusal', () => {
         const wsStatus = spectator.inject(WebSocketStatusService);
         wsStatus.setSessionStatus(true);
         wsStatus.setLoginStatus(true);

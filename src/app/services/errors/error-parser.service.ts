@@ -10,7 +10,6 @@ import {
   isErrorResponse,
   isFailedJob,
   isFailedJobError,
-  isTypedApiSessionError,
 } from 'app/helpers/api.helper';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
@@ -70,15 +69,6 @@ export class ErrorParserService {
         message: this.translate.instant('Job aborted'),
       };
     }
-    if (isTypedApiSessionError(error)) {
-      return {
-        title: this.translate.instant('Connection Error'),
-        message: this.translate.instant(
-          'Could not establish an authenticated connection to the server. Try again in a moment or reload the page.',
-        ),
-      };
-    }
-
     if (this.isHttpError(error)) {
       return this.parseHttpError(error);
     }

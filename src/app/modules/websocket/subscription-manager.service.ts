@@ -151,10 +151,9 @@ export class SubscriptionManagerService {
 
   private cancelSubscription(method: Method): void {
     const backendSubscriptionId = this.establishedSubscriptions.get(method);
-    // Whether this socket is up, not whether the app has a session. Those were
-    // the same question until the session moved to the typed client; now
-    // `isAuthenticated` describes a socket this call is not sent on, and an
-    // unsubscribe is worth sending whenever the socket can carry it.
+    // Whether the connection is up, not whether the app has a session:
+    // `isAuthenticated` is about the session, and an unsubscribe is worth
+    // sending whenever the socket can carry it.
     if (this.wsStatus.isConnected) {
       this.wsHandler.scheduleCall({
         id: uuidv4(),

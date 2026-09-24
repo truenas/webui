@@ -5,7 +5,7 @@ import {
 import {
   createFakeClient, fakeApiError, FakeApiErrorOverrides, FakeTrueNasClient, JobUpdate, withSpies,
 } from '@truenas/api-client/testing';
-import { map, Observable, of } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { dispatchTypedCall } from 'app/modules/websocket/typed-api/dispatch-typed-call';
@@ -84,12 +84,6 @@ export class MockTypedApiService implements OnDestroy {
   readonly startJob = jest.fn((method: string, params?: unknown) => this.api.callAndGetJobId(method, params));
 
   readonly subscribe = jest.fn((event: string) => this.api.events(event));
-
-  /**
-   * A no-op success: the double has no legacy socket to lend the session to,
-   * and every caller only waits for the borrow to settle.
-   */
-  readonly lendSessionToLegacySocket = jest.fn(() => of(undefined));
 
   mockCall<M extends TypedCallMethod>(method: M, response: TypedCallResponseOrFactory<M>): void {
     this.client.mock.call(method, response);

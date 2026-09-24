@@ -25,51 +25,44 @@ rewrite. To see where it stands, run `yarn check-api-migration --report`.
 | `mockTypedApi()` and `MockTypedApiService`, the spec double | `src/app/core/testing/utils/mock-typed-api.utils.ts`, `src/app/core/testing/classes/mock-typed-api.service.ts` |
 | `EmptyTypedApiService`, the global guard against unmocked specs | `src/app/core/testing/utils/empty-typed-api.service.ts`, registered in `src/setup-jest.ts` |
 
-The typed client owns a **second WebSocket**, opened at startup in parallel
-with the legacy one (an app initializer in `main.ts` creates the service). That
-is intentional: the two coexist for the whole migration, and the legacy socket
-is removed last. The initializer is unconditional on purpose: the Backup
-Credentials page already runs entirely on the typed client, so gating the
-socket on a flag would break it. Every build of `master`, production builds
-included, therefore opens both sockets and holds two authenticated sessions
-per tab, which is visible in session lists and audit records. That is
-acceptable for `master` while the migration runs, and the second session goes
-away with the legacy socket in Phase 3.
+The typed client owns **the** WebSocket — one per tab, on `/api/v27.0.0`. It
+is opened at startup by an app initializer in `main.ts`, unconditionally on
+purpose: migrated pages run entirely on it, so there is no build in which it
+can be left closed.
 
-### How the two sessions stay in step
+Since NAS-143989 the legacy client has no socket of its own. Everything still
+riding `ApiService` — the jobs store, the debug panel, every call that has not
+moved — goes over the same connection: `WebSocketHandlerService.responses$` is
+`client.connection.messages()`, and `scheduleCall` writes through
+`client.connection.send()`. Phase 0 and 1 ran two sockets and two sessions per
+tab, which showed up as two entries in `auth.sessions` and every audited call
+recorded twice. That is gone.
 
-The user signs in on the **typed** client. `AuthService` drives
+What the handler still owns is what the client has no seam for: the call queue
+and its 20-concurrent ceiling, the debug panel's logging, and its mock
+interception. What it lost with the socket: the reconnect timer (the client's
+connection retries on its own), `core.set_options` on open (the client sends
+it), and the ping timer (the client pings every 20s, so `PingService` is
+gone too).
+
+### One session
+
+The user signs in on the typed client. `AuthService` drives
 `client.authenticator` (`loginWithUserPass`, `loginWithOtp`, `loginWithToken`,
-`logout`), so the typed session holds the credentials, the session's roles and
-the `reconnect_token` chain — every login asks middleware for the next token,
-and the sign-in page spends it on the next reconnect. `WebSocketStatusService`
+`logout`), so the session holds the credentials, the session's roles and the
+`reconnect_token` chain — every login asks middleware for the next token, and
+the sign-in page spends it on the next reconnect. `WebSocketStatusService`
 projects `authenticator.authenticated$`, so "the app is authenticated" is a
-statement about that session and not about either socket being up.
+statement about that session.
 
-The legacy socket still carries the jobs store, the debug panel and every call
-that has not moved, and it has no session of its own: it **borrows** the typed
-one. Once the typed session is authenticated and the legacy socket is
-connected, `TypedApiService` mints a single-use token on the typed session
-(`auth.generate_token`) and logs the legacy socket in with it. The borrow is
-repeated whenever the legacy socket reconnects, or middleware refuses a call on
-it with `ENOTAUTHENTICATED`, and it is deleted with the legacy socket.
+One socket means one session: a login authenticates the legacy calls as much as
+the typed ones, and there is nothing to keep in step. An `ENOTAUTHENTICATED`
+refusal on either path therefore means the same thing — the session lapsed —
+and both answer it the same way: drop the call, end the app's session, and let
+`AppComponent` bounce the tab to /signin, which logs straight back in from the
+stored token and navigates back to `redirectUrl`.
 
-Signing in waits for the borrow before it reports success
-(`lendSessionToLegacySocket()`), because everything the sign-in flow does next
-— the failover checks, `auth.me`, the boot calls — still rides the legacy
-socket. A borrow is retried with backoff (1s, 2s, 4s), and each of the four
-attempts is also bounded by a 10s timeout, because neither leg is guaranteed to
-answer *or* to fail — `ApiService.call` in particular does neither when the
-socket closes cleanly mid-call. So a borrow against an appliance that answers
-nothing takes ~47s to give up, where one that is refused fails its attempt at
-once and only the backoff applies. After that it fails with
-`TypedApiSessionError`, which the error handler renders as a connection error,
-and the reactive borrow ends the app's session so the sign-in page can
-re-establish both sides — but only if the session it was borrowing for is still
-the current one.
-
-Call sites never authenticate and never need to know which socket a method
-rides on. Every typed request is held until the typed session is
+Call sites never authenticate. Every typed request is held until the session is
 authenticated, so a call made before sign-in or across a reconnect waits
 instead of being refused by middleware.
 
@@ -233,19 +226,22 @@ and `interfaces`, which only aliases generated types — is exempt.
 Once most call sites are typed, move what still depends on the legacy socket:
 
 - **Login.** Done (NAS-143988). `AuthService` drives `client.authenticator`
-  (`loginWithUserPass`, `loginWithOtp`, `loginWithToken`, `logout`), the typed
-  session is the primary one, and the bridge runs the other way: the legacy
-  socket borrows a single-use token from the typed session. That borrow is
-  deleted with the legacy socket in Phase 3.
+  (`loginWithUserPass`, `loginWithOtp`, `loginWithToken`, `logout`) and the
+  typed session is the app's session.
+- **The socket.** Done (NAS-143989). `WebSocketHandlerService` borrows
+  `client.connection` instead of opening a socket, which retired the second
+  session along with `WebSocketConnection`, `PingService`, the reconnect timer
+  and the token-borrowing bridge NAS-143988 had put in as a stopgap.
 - **Jobs store.** `job.effects.ts` subscribes to `core.get_jobs` on the typed
   client.
-- **Connection UX.** Reconnect, shutdown, failover and password-change flows
-  that reach into `WebSocketHandlerService` directly (about ten files) move to
-  `client.connection` (`opened$`, `hasConnectionError$`, `setEnabled`). 7.0.1
-  added the three this needs that were missing: `ReconnectOptions` (retry pacing
-  on `createTrueNasClient`), `ConnectionClose` (the close code, for telling a
-  shutdown from a dropped link), and `setEndpoint` (re-pointing at another
-  hostname at runtime, which is what a failover switch does).
+- **Connection UX.** Half done. `WebSocketHandlerService` now reads the typed
+  connection for all of it — `opened$` feeds `isClosed$` and
+  `WebSocketStatusService`, `closes$.refused` feeds `isAccessRestricted$`,
+  `reconnect()` cycles `setEnabled`, and `setupConnectionUrl()` calls
+  `setEndpoint`. What is left is the ten or so files that reach for the
+  *handler* to get at them (`reconnect`, `prepareShutdown`,
+  `isSystemShuttingDown`); those move to `client.connection` directly when the
+  handler goes.
 - **Debug panel and mocks.** Need a hook on the client (see gaps).
 
 ### Phase 3 — remove the legacy client
@@ -302,10 +298,12 @@ above. Each is a change for `truenas/api-client-ts`.
 5. **Parameterised subscriptions.** `EventName` excludes events that take
    subscription params (`method:param` style, e.g. file tailing), which the
    legacy `subscribe` supports. Needed before Phase 1 step 4.
-6. **Query and message types are not exported.** `QueryFilters` and
-   `QueryProjection` are internal, so the wrapper forwards the query verbs
-   through `Parameters<>` rather than declaring them; `TrueNasMessage` is absent
-   from the main entry too. Still so in 7.0.1.
+6. **Query, message and connection types are not exported.** `QueryFilters`
+   and `QueryProjection` are internal, so the wrapper forwards the query verbs
+   through `Parameters<>` rather than declaring them; `TrueNasMessage` and
+   `TrueNasConnection` are absent from the main entry too, so
+   `WebSocketHandlerService` names the connection as
+   `WebUiApiClient['connection']`. Still so in 7.0.1.
 
    Partly closed there: 7.0.1 exports `TrueNasErrorFrame` and `TrueNasErrorData`
    from the main entry, where 6.x had them only under `testing`. The wrapper's
@@ -314,8 +312,11 @@ above. Each is a change for `truenas/api-client-ts`.
    `TrueNasErrorData`, while `ApiCallError` takes the UI's `JsonRpcError` with
    `ApiErrorDetails`. Converging those two is what would retire the cast.
 7. **No message hook.** The debug panel and mock responses intercept messages
-   in `WebSocketHandlerService`; the client has no equivalent seam. Needed for
-   Phase 2.
+   in `WebSocketHandlerService`; the client has no equivalent seam. Since
+   NAS-143989 the panel's *incoming* log is complete anyway — the handler reads
+   the shared connection, so typed replies pass through it — but outgoing typed
+   frames are still invisible, and a mock can only intercept a call scheduled
+   through the handler. Needed before the handler can be deleted.
 8. **Job type drift.** The client's `Job` is honest about `result` and
    `time_started` being `null` before a job starts; the UI's is not. The
    wrapper narrows for now; the UI should adopt the client's type.

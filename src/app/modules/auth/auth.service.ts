@@ -19,7 +19,6 @@ import {
   switchMap,
   take,
   tap,
-  throwError,
   timeout,
   timer,
 } from 'rxjs';
@@ -35,9 +34,7 @@ import { PendingTwoFactorService } from 'app/modules/auth/pending-two-factor.ser
 import { asLoginExResponse } from 'app/modules/auth/typed-login-response';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TYPED_API_CLIENT } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { TypedApiSessionError } from 'app/services/errors/error.classes';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
@@ -54,7 +51,6 @@ export class AuthService implements OnDestroy {
   private store$ = inject<Store<AppState>>(Store);
   private api = inject(ApiService);
   private client$ = inject(TYPED_API_CLIENT);
-  private typedApi = inject(TypedApiService);
   private tokenLastUsedService = inject(TokenLastUsedService);
   private wsStatus = inject(WebSocketStatusService);
   private errorHandler = inject(ErrorHandlerService);
@@ -284,15 +280,6 @@ export class AuthService implements OnDestroy {
       asLoginExResponse(),
       switchMap((loginResult) => this.processLoginResult(loginResult)),
       catchError((error: unknown) => {
-        // A borrow that failed is not a credential that failed. The typed login
-        // already succeeded and minted the next token a moment ago, so reporting
-        // this as a login result would have the sign-in page clear that token and
-        // send the user back to the password prompt on the next reload. Letting
-        // it through leaves the token alone; the page still reports it.
-        if (error instanceof TypedApiSessionError) {
-          return throwError(() => error);
-        }
-
         this.errorHandler.showErrorModal(error);
         return of(LoginResult.NoAccess);
       }),
@@ -322,47 +309,40 @@ export class AuthService implements OnDestroy {
   }
 
   /**
-   * Ends both sessions: the typed one the user is signed in on, and the one
-   * the legacy socket borrowed from it. The borrowed session would otherwise
-   * outlive the sign-out and keep answering calls on that socket.
+   * Ends the session. There is one — the socket is shared — so one
+   * `auth.logout` ends it for the typed calls and the legacy ones alike.
    *
-   * The stored token goes first, before either call. `authenticator.logout()`
+   * The stored token goes first, before the call. `authenticator.logout()`
    * drops `authenticated$` at the call rather than when middleware answers, and
    * that walks the app to the sign-in page synchronously — which auto-logs-in
    * from the stored token. Clearing first leaves it nothing to log in with.
    *
-   * The legacy logout is best effort. It is a session nothing will use again,
-   * and a socket that is already down must not turn signing out into an error.
+   * Emits as soon as the frame is written rather than when it is acknowledged.
+   * Every caller navigates to /signin on that emission, and the acknowledgement
+   * may never come: a socket on its way down is the case this is written for.
+   * The session is over locally either way — `endLocalSession` has already run
+   * — so waiting would only decide how long the user stares at a menu.
    */
   logout(): Observable<void> {
     return this.client$.pipe(
       take(1),
-      switchMap((client) => {
+      map((client): undefined => {
         this.endLocalSession();
 
-        // Calling this is what ends the typed session: the authenticator clears
-        // its credentials, drops `authenticated$` and writes the frame before it
+        // Calling this is what ends the session: the authenticator clears its
+        // credentials, drops `authenticated$` and writes the frame before it
         // returns. What it returns only carries middleware's acknowledgement,
-        // which a socket on its way down may never send — so it is subscribed for
-        // its errors rather than waited on, and the sign-out cannot hang on it.
+        // so it is subscribed for its errors alone.
         client.authenticator.logout().pipe(
-          // The acknowledgement may never come — the socket going down is the
-          // case this is written for — so the wait is bounded rather than left
-          // open for the life of the service.
+          // Bounded rather than left open for the life of the service.
           timeout(logoutAckTimeoutMs),
           takeUntilDestroyed(this.destroyRef),
         ).subscribe({
-          error: (error: unknown) => console.warn('Typed session logout was not acknowledged', error),
+          error: (error: unknown) => console.warn('Session logout was not acknowledged', error),
         });
 
-        return this.api.call('auth.logout').pipe(
-          catchError((error: unknown) => {
-            console.warn('Borrowed legacy session could not be logged out', error);
-            return of(undefined);
-          }),
-        );
+        return undefined;
       }),
-      map((): undefined => undefined),
     );
   }
 
@@ -442,13 +422,7 @@ export class AuthService implements OnDestroy {
             this.latestTokenGenerated$.next(result.reconnect_token);
           }
 
-          // The session is on the typed socket; everything that happens next —
-          // the failover checks, `auth.me`, the boot calls — is still on the
-          // legacy one, which has no session of its own. Lend it this one
-          // before reporting success, or all of it is refused.
-          return this.typedApi.lendSessionToLegacySocket().pipe(
-            map(() => LoginResult.Success),
-          );
+          return of(LoginResult.Success);
         }
 
         // Don't set login status for error cases - it should remain false
@@ -495,9 +469,8 @@ export class AuthService implements OnDestroy {
   }
 
   /**
-   * Drops the signed-in state when either socket loses what the app needs from
-   * it: the typed session it is signed in on, or the legacy socket that still
-   * carries most of its calls.
+   * Drops the signed-in state when the app loses what it needs: the session it
+   * is signed in on, or the connection that carries every call.
    *
    * Both end the same way — back to the sign-in page, which logs straight in
    * again when the stored token is still good.
