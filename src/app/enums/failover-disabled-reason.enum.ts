@@ -60,8 +60,8 @@ export const failoverDisabledReasonLabels = new Map<FailoverDisabledReason, stri
   [FailoverDisabledReason.RemoteFipsRebootRequired, T('Reboot of the other node is required for FIPS changes.')],
   [FailoverDisabledReason.LocalDatasetMigrationInProgress, T('This node is currently configuring the system dataset.')],
   [FailoverDisabledReason.RemoteDatasetMigrationInProgress, T('Other node is currently configuring the system dataset.')],
-  [FailoverDisabledReason.LocalGposStigRebootRequired, T('Reboot of this node is required for GPOS STIG changes.')],
-  [FailoverDisabledReason.RemoteGposStigRebootRequired, T('Reboot of the other node is required for GPOS STIG changes.')],
+  [FailoverDisabledReason.LocalGposStigRebootRequired, T('Reboot of this node is required for STIG changes.')],
+  [FailoverDisabledReason.RemoteGposStigRebootRequired, T('Reboot of the other node is required for STIG changes.')],
   [FailoverDisabledReason.LocalUpgradeRebootRequired, T('Reboot of this node is required to complete the system upgrade.')],
   [FailoverDisabledReason.RemoteUpgradeRebootRequired, T('Reboot of the other node is required to complete the system upgrade.')],
 ]);
