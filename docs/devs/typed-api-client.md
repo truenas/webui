@@ -234,7 +234,7 @@ work is. Typed fixtures are checked against the generated directory, so a UI
 interface cast (`as Pool[]` where the query returns `PoolEntry`) or a
 `mockTypedCall('x', null)` for a method that returns something fails to
 compile. Each of those is drift the legacy mocks were hiding. Run on all of
-`src/app` at the time of writing, it rewrote 444 specs and flagged 66 for
+`src/app` at the time of writing, it rewrote 444 specs and flagged 72 for
 hand conversion.
 
 As the last consumer of a method moves, delete its entry from the hand-written
