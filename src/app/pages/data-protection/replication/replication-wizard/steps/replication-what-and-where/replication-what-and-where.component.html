@@ -57,7 +57,12 @@
         </tn-form-field>
       }
       @if (snapshotsText) {
-        <span class="snapshots-text" [class.warning]="isSnapshotsWarning">{{ snapshotsText }}</span>
+        <span
+          class="snapshots-text"
+          tnTestId="snapshots"
+          tnTestIdType="text"
+          [class.warning]="isSnapshotsWarning"
+        >{{ snapshotsText }}</span>
       }
       @if (form.controls.custom_snapshots.enabled) {
         <tn-form-field [tooltip]="helptext.customSnapshotsTooltip | translate">

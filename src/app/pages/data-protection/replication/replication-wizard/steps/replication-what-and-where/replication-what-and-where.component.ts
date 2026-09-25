@@ -9,6 +9,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent, TnStepperNextDirective,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { format } from 'date-fns';
 import {
@@ -74,6 +75,7 @@ import { ReplicationService } from 'app/services/replication.service';
     FormActionsComponent,
     TnButtonComponent,
     TnStepperNextDirective,
+    TnTestIdDirective,
     TranslateModule,
   ],
 })

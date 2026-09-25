@@ -1,5 +1,5 @@
 <tn-card class="card" [title]="'Excluded Paths' | translate">
   @for (item of backup().exclude; track item) {
-    <p>{{ item }}</p>
+    <p tnTestIdType="text" [tnTestId]="['excluded-path', excludedPathTestId(item)]">{{ item }}</p>
   }
 </tn-card>
