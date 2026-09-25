@@ -156,7 +156,61 @@ describe('transformSpec', () => {
 
     expect(output).toContain("spectator.inject(MockApiService).mockCall('user.delete', null);");
     expect(output).toContain("expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.delete', [1]);");
-    expect(notes).toEqual([{ line: 6, message: expect.stringContaining('references were not renamed') }]);
+    // Both references belong to the kept method, so nothing is left ambiguous.
+    expect(notes).toEqual([]);
+  });
+
+  it('leaves an assertion on a method it could not convert pointed at the legacy double', () => {
+    const source = lines(
+      "import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';",
+      "import { ApiService } from 'app/modules/websocket/api.service';",
+      '',
+      "expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('audit.query', [[], { count: true }]);",
+      'providers: [',
+      '  mockApi([',
+      "    mockCall('audit.query', (params) => []),",
+      "    mockCall('system.info', {}),",
+      '  ]),',
+      '];',
+    );
+
+    const { output } = transformSpec(source, 'x.spec.ts');
+
+    expect(output).toContain(
+      "expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('audit.query', [[], { count: true }]);",
+    );
+  });
+
+  it('moves the double with a method scripted on it in a split spec', () => {
+    const source = lines(
+      "import { MockApiService } from 'app/core/testing/classes/mock-api.service';",
+      '',
+      "spectator.inject(MockApiService).mockCall('keychaincredential.query', []);",
+      "spectator.inject(MockApiService).mockCall('user.delete', null);",
+    );
+
+    const { output } = transformSpec(source, 'x.spec.ts', {
+      keepLegacy: (method) => !method.startsWith('keychaincredential.'),
+    });
+
+    expect(output).toBe(lines(
+      "import { MockApiService } from 'app/core/testing/classes/mock-api.service';",
+      "import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';",
+      '',
+      "spectator.inject(MockTypedApiService).mockQuery('keychaincredential.query', []);",
+      "spectator.inject(MockApiService).mockCall('user.delete', null);",
+    ));
+  });
+
+  it('does not flag a call-count assertion when only mutations moved', () => {
+    const source = lines(
+      "import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';",
+      '',
+      "providers: [mockApi([mockCall('pool.update')])];",
+      'expect(api.call).toHaveBeenCalledTimes(1);',
+    );
+
+    expect(transformSpec(source, 'x.spec.ts').notes).toEqual([]);
   });
 
   it('keeps a bare mockApi() when the run names what moved', () => {

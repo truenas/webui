@@ -116,6 +116,16 @@ class SpecTransformer {
   private movedQuery = false;
   /** Anything this pass left on the legacy double, deliberately or not. */
   private keepsLegacy = false;
+  /**
+   * The methods behind `keepsLegacy`: named by `keepLegacy`, or mocked in a shape this could not
+   * convert. An assertion on one of them stays pointed at the legacy double.
+   */
+  private leftBehind = new Set<string>();
+  /**
+   * `toHaveBeenCalledWith` assertions, handled after the walk so every mock — wherever it sits in the
+   * file — has already said whether its method moved.
+   */
+  private assertions: [ts.CallExpression, ts.PropertyAccessExpression][] = [];
   private importedNames = new Map<string, string>();
   /** The `x` of each `expect(x.call).toHaveBeenCalledWith(<moved method>, ...)`. */
   private inspected: ts.Expression[] = [];
@@ -133,6 +143,7 @@ class SpecTransformer {
   run(): string {
     const { text } = this.sourceFile;
     this.visit(this.sourceFile);
+    this.assertions.forEach(([call, matcher]) => this.convertAssertion(call, matcher));
     if (this.keepsLegacy) {
       this.inspected.forEach((expression) => this.renameInspectedService(expression));
     }
@@ -142,6 +153,16 @@ class SpecTransformer {
     }
     this.reportLeftovers(this.sourceFile);
     return applyEdits(text, this.edits);
+  }
+
+  /** Records that `method` stays on the legacy double. */
+  private leaveBehind(method: string): void {
+    this.keepsLegacy = true;
+    this.leftBehind.add(method);
+  }
+
+  private staysLegacy(method: string): boolean {
+    return this.keepLegacy(method) || this.leftBehind.has(method);
   }
 
   private note(node: ts.Node, message: string): void {
@@ -212,14 +233,14 @@ class SpecTransformer {
       return false;
     }
     if (this.keepLegacy(method)) {
-      this.keepsLegacy = true;
+      this.leaveBehind(method);
       return false;
     }
     const response = call.arguments[1];
     if (isQueryMethod(method)) {
       if (response && isFunctionLike(response)) {
         this.note(call, `\`mockCall('${method}', factory)\`: \`mockTypedQuery\` takes rows, not a factory; convert by hand.`);
-        this.keepsLegacy = true;
+        this.leaveBehind(method);
         return false;
       }
       this.movedQuery = true;
@@ -245,14 +266,14 @@ class SpecTransformer {
       return false;
     }
     if (this.keepLegacy(method)) {
-      this.keepsLegacy = true;
+      this.leaveBehind(method);
       return false;
     }
     const update = this.jobUpdateFor(call.arguments[1]);
     if (update === null) {
       this.note(call, `\`mockJob('${method}', ...)\`: only \`fakeSuccessfulJob()\` responses convert; `
       + 'script the typed job as `JobUpdate`s by hand.');
-      this.keepsLegacy = true;
+      this.leaveBehind(method);
       return false;
     }
     this.movedMutation = true;
@@ -370,7 +391,7 @@ class SpecTransformer {
     if (name === 'mockCall' || name === 'mockJob') {
       this.convertServiceMock(call, callee);
     } else if (calledWithMatchers.has(name)) {
-      this.convertAssertion(call, callee);
+      this.assertions.push([call, callee]);
     }
   }
 
@@ -380,16 +401,20 @@ class SpecTransformer {
       return;
     }
     if (this.keepLegacy(method)) {
-      this.keepsLegacy = true;
+      this.leaveBehind(method);
+      this.inspectedLegacy.push(callee.expression);
       return;
     }
     if (callee.name.text === 'mockJob') {
       const update = this.jobUpdateFor(call.arguments[1]);
       if (update === null) {
         this.note(call, `\`.mockJob('${method}', ...)\`: only \`fakeSuccessfulJob()\` responses convert; convert by hand.`);
-        this.keepsLegacy = true;
+        this.leaveBehind(method);
+        this.inspectedLegacy.push(callee.expression);
         return;
       }
+      // The double moves with the method, as an assertion's service does.
+      this.inspected.push(callee.expression);
       this.movedMutation = true;
       if (call.arguments[1]) {
         this.replace(call.arguments[1], update);
@@ -403,15 +428,18 @@ class SpecTransformer {
     if (isQueryMethod(method)) {
       if (response && isFunctionLike(response)) {
         this.note(call, `\`.mockCall('${method}', factory)\`: \`mockQuery\` takes rows, not a factory; convert by hand.`);
-        this.keepsLegacy = true;
+        this.leaveBehind(method);
+        this.inspectedLegacy.push(callee.expression);
         return;
       }
+      this.inspected.push(callee.expression);
       this.movedQuery = true;
       this.replace(callee.name, 'mockQuery');
       if (!response) {
         this.edits.push({ start: call.arguments[0].getEnd(), end: call.arguments[0].getEnd(), text: ', []' });
       }
     } else {
+      this.inspected.push(callee.expression);
       this.movedMutation = true;
       if (!response) {
         this.edits.push({ start: call.arguments[0].getEnd(), end: call.arguments[0].getEnd(), text: ', null' });
@@ -448,11 +476,11 @@ class SpecTransformer {
     if (!spied || !ts.isPropertyAccessExpression(spied)) {
       return;
     }
-    if (this.keepLegacy(method)) {
+    if (this.staysLegacy(method)) {
       // Only an API verb says the method is one of the client's; `expect(dialog.open)` does not.
       if (apiVerbs.has(spied.name.text)) {
         this.inspectedLegacy.push(spied.expression);
-        this.keepsLegacy = true;
+        this.leaveBehind(method);
       }
       return;
     }
@@ -662,7 +690,7 @@ class SpecTransformer {
   /** Shapes that need a person, found after the rewrite so they are reported once. */
   private reportLeftovers(root: ts.Node): void {
     const visit = (node: ts.Node): void => {
-      if (this.edits.length && ts.isCallExpression(node) && isMethodlessCallAssertion(node)) {
+      if (this.movedQuery && ts.isCallExpression(node) && isMethodlessCallAssertion(node)) {
         this.note(node, `\`${this.text(node).slice(0, 70)}\` names no method: a query the code under test moved to `
         + '`query` / `queryOne` / `queryCount` no longer reaches `call`, so this can pass whatever happens. '
         + 'Assert on the verb it now uses.');
