@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
-import { TnBannerComponent } from '@truenas/ui-components';
+import { TnBannerComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { CloudSyncProviderName, cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
@@ -12,7 +12,7 @@ import { cloudsyncProviderDescriptionMap } from 'app/pages/data-protection/cloud
   templateUrl: './cloudsync-provider-description.component.html',
   styleUrls: ['./cloudsync-provider-description.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TnBannerComponent, ImgFallbackModule],
+  imports: [TnBannerComponent, TnTestIdDirective, ImgFallbackModule],
 })
 export class CloudSyncProviderDescriptionComponent {
   readonly provider = input.required<CloudSyncProviderName>();

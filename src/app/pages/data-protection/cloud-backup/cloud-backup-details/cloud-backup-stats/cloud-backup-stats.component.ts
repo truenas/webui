@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { cloudsyncTransferSettingLabels } from 'app/enums/cloudsync-transfer-setting.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
@@ -15,6 +15,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
+    TnTestIdDirective,
     TranslateModule,
     MapValuePipe,
   ],

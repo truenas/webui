@@ -6,6 +6,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { merge, of } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
@@ -64,6 +65,7 @@ import { ReplicationService } from 'app/services/replication.service';
     SourceSectionComponent,
     TargetSectionComponent,
     ScheduleSectionComponent,
+    TnTestIdDirective,
     TranslateModule,
   ],
 })

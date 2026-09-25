@@ -129,7 +129,7 @@
           <div class="retention-warning">
             <p class="warning-text">
               {{ 'Warning: This change will affect the retention of' | translate }}
-              <strong>{{ affectedSnapshots().length }}</strong>
+              <strong tnTestId="affected-snapshots" tnTestIdType="text">{{ affectedSnapshots().length }}</strong>
               {{ 'existing snapshot(s)' | translate }}.
             </p>
             <tn-form-field [tooltip]="tooltips.fixate_removal_date | translate">

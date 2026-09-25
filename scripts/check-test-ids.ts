@@ -722,6 +722,14 @@ function untaggedReadouts(src: string, isSingleValueComponent: boolean): number[
     if (anyTestId.test(attributes) || !readsData(text)) {
       continue;
     }
+    // A column header is the column's title — a label, like `{{ 'Name' | translate }}`, even when
+    // it comes out of a `translated()` signal so the column picker can share it. The look-behind
+    // below skipped most of them only by accident: it saw the *previous* column's `tnCellDef`
+    // within 400 characters, so a header counted only when the column above it was short or it
+    // was the first, which put 11 column titles on the `pages/data-protection` list.
+    if (/\btnHeaderCellDef\b/.test(attributes)) {
+      continue;
+    }
     // A cell body is rule 2's business, and already fully covered.
     if (stripped.slice(Math.max(0, match.index - 400), match.index).includes('tnCellDef')) {
       continue;

@@ -205,14 +205,15 @@ stays convention, and reviewing it is a reviewer's job.
 
 A table cell is covered (rule 2, and every column of every list has an id). A value rendered
 anywhere else — a card's detail line, a widget's number, a dialog's message — is not, and
-`yarn check-test-ids --report` counts what is left: **651 readouts across the app** that no suite
-can read, listed per area. `src/app/pages/sharing` is the first area off that list (NAS-143970).
+`yarn check-test-ids --report` counts what is left: **619 readouts across the app** that no suite
+can read, listed per area. `src/app/pages/sharing` was the first area off that list (NAS-143970),
+`src/app/pages/data-protection` the second (NAS-143971).
 
 It is a *measurement, not a gate*, because unlike a table column the set is not bounded and some
 members are genuinely not automation targets (a gauge's sublabel, prose inside a tooltip). Driving
 it down per area is the plan, the way the 117 untagged columns were closed.
 
-Three things do NOT need an id of their own, and the report already discounts them:
+Four things do NOT need an id of their own, and the report already discounts them:
 
 - **A tagged ancestor holding just that value.** The suite selects the ancestor and reads its text.
   The ancestor has to be in the *same* template — an id rendered by the component around it is
@@ -231,6 +232,8 @@ Three things do NOT need an id of their own, and the report already discounts th
   `{{ 'Name' | translate }}` was never counted; moving the same literal into a constants file does
   not make it a value. Both halves are required, so a dynamic label that merely passes through the
   pipe still counts.
+- **A column header**, i.e. a `tnHeaderCellDef` body. It is the column's title, even when it reads
+  `{{ titles().name }}` out of a `translated()` signal the column picker shares.
 
 `yarn check-test-ids --report src/app/pages/<area>` lists that area's readouts one per line, with
 the markup, which is the working list for closing one.

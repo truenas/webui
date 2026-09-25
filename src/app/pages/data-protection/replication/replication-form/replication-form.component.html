@@ -37,6 +37,8 @@
   @if (eligibleSnapshotsMessage) {
     <div
       class="eligible-snapshots"
+      tnTestId="eligible-snapshots"
+      tnTestIdType="text"
       [class.danger]="isEligibleSnapshotsMessageRed"
     >
       {{ eligibleSnapshotsMessage | translate }}

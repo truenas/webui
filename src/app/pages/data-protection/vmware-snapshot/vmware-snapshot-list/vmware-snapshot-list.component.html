@@ -84,10 +84,11 @@
     <ng-container [tnColumnDef]="'state'" [sortable]="true" [width]="'140px'">
       <ng-template tnHeaderCellDef>{{ titles().state }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
+        <ix-vmware-status-cell
           tnTestIdType="text"
           [tnTestId]="[titles().state, uniqueRowTag(row), 'row-text']"
-        ><ix-vmware-status-cell [state]="row.state"></ix-vmware-status-cell></span>
+          [state]="row.state"
+        ></ix-vmware-status-cell>
       </ng-template>
     </ng-container>
 

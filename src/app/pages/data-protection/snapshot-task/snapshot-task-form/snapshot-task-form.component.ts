@@ -7,7 +7,7 @@ import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angula
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
-  TnInputComponent, TnSelectComponent,
+  TnInputComponent, TnSelectComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   Observable, of, switchMap, debounceTime, combineLatest, startWith,
@@ -46,6 +46,7 @@ import { TaskService } from 'app/services/task.service';
     TnChipInputComponent,
     TnCheckboxComponent,
     TnInputComponent,
+    TnTestIdDirective,
     SchedulerComponent,
     TranslateModule,
   ],

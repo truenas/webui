@@ -1,16 +1,19 @@
 <!-- No info as stats currently available on the Cloud Backup interface -->
 <tn-card class="card" [title]="'Details' | translate">
-  <p>{{ 'Path' | translate }}: {{ backup().path || '-' }}</p>
-  <p>{{ 'Cache Path' | translate }}: {{ backup().cache_path || '-' }}</p>
-  <p>{{ 'Credentials' | translate }}: {{ backup().credentials.name || '-' }}</p>
-  <p>{{ 'Bucket' | translate }}: {{ backup().attributes.bucket || '-' }}</p>
-  <p>{{ 'Folder' | translate }}: {{ backup().attributes.folder || '-' }}</p>
-  <p>{{ 'Keep Last' | translate }}: {{ backup().keep_last || '-' }}</p>
-  <p>{{ 'Rate Limit' | translate }}: @if (backup().rate_limit) {{{ formatRateLimit(backup().rate_limit) }}} @else {{{ 'No limit' | translate }}}</p>
+  <p>{{ 'Path' | translate }}: <span tnTestId="path" tnTestIdType="text">{{ backup().path || '-' }}</span></p>
+  <p>{{ 'Cache Path' | translate }}: <span tnTestId="cache-path" tnTestIdType="text">{{ backup().cache_path || '-' }}</span></p>
+  <p>{{ 'Credentials' | translate }}: <span tnTestId="credentials" tnTestIdType="text">{{ backup().credentials.name || '-' }}</span></p>
+  <p>{{ 'Bucket' | translate }}: <span tnTestId="bucket" tnTestIdType="text">{{ backup().attributes.bucket || '-' }}</span></p>
+  <p>{{ 'Folder' | translate }}: <span tnTestId="folder" tnTestIdType="text">{{ backup().attributes.folder || '-' }}</span></p>
+  <p>{{ 'Keep Last' | translate }}: <span tnTestId="keep-last" tnTestIdType="text">{{ backup().keep_last || '-' }}</span></p>
+  <p>
+    {{ 'Rate Limit' | translate }}:
+    <span tnTestId="rate-limit" tnTestIdType="text">@if (backup().rate_limit) {{{ formatRateLimit(backup().rate_limit) }}} @else {{{ 'No limit' | translate }}}</span>
+  </p>
   <p>
     {{ 'Transfer Setting' | translate }}:
-    {{ (backup().transfer_setting | mapValue: cloudsyncTransferSettingLabels) || '-' }}
+    <span tnTestId="transfer-setting" tnTestIdType="text">{{ (backup().transfer_setting | mapValue: cloudsyncTransferSettingLabels) || '-' }}</span>
   </p>
-  <p>{{ 'Post Script' | translate }}: {{ backup().post_script || '-' }}</p>
-  <p>{{ 'Pre Script' | translate }}: {{ backup().pre_script || '-' }}</p>
+  <p>{{ 'Post Script' | translate }}: <span tnTestId="post-script" tnTestIdType="text">{{ backup().post_script || '-' }}</span></p>
+  <p>{{ 'Pre Script' | translate }}: <span tnTestId="pre-script" tnTestIdType="text">{{ backup().pre_script || '-' }}</span></p>
 </tn-card>
