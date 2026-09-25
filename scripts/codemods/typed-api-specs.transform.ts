@@ -42,6 +42,11 @@ import ts from 'typescript';
 export interface TransformOptions {
   /** Methods that stay on `ApiService` / `mockApi`, because the code under test has not moved them yet. */
   keepLegacy?: (method: string) => boolean;
+  /**
+   * Which text note lines count in: `output` (the default) when the result will be written, `source`
+   * when it will not — a dry run — so each `file:line` resolves in the file as it is on disk.
+   */
+  linesIn?: 'output' | 'source';
 }
 
 export interface TransformNote {
@@ -76,7 +81,7 @@ interface PendingNote {
 function mapPosition(pos: number, edits: Edit[]): number {
   let delta = 0;
   for (const edit of [...edits].sort((a, b) => a.start - b.start || a.end - b.end)) {
-    if (edit.end <= pos && !(edit.start === pos && edit.end > pos)) {
+    if (edit.end <= pos) {
       delta += edit.text.length - (edit.end - edit.start);
     } else if (edit.start < pos && pos < edit.end) {
       const anchor = (edit.anchors ?? []).findLast((candidate) => candidate.from <= pos);
@@ -181,7 +186,11 @@ class SpecTransformer {
     if (this.movedMutation) {
       this.settleAfterSubmits(this.sourceFile);
     }
-    this.reportLeftovers(this.sourceFile);
+    // A spec the run left alone (under `--only` / `--keep-legacy`) is correct on the legacy double as it
+    // is; telling it to move off `failApiCall` and friends would be work that does not exist.
+    if (this.edits.length) {
+      this.reportLeftovers(this.sourceFile);
+    }
     return applyEdits(this.sourceFile.text, this.edits);
   }
 
@@ -1020,7 +1029,10 @@ export function transformSpec(source: string, fileName: string, options: Transfo
     };
   }
 
-  // Notes point into the written file, not the one that was read.
+  // Notes point into the written file, not the one that was read — unless nothing will be written.
+  if (options.linesIn === 'source') {
+    return { output: imports.output, changed: imports.output !== source, notes: toNotes((pos) => lineAt(source, pos)) };
+  }
   const lineOf = (pos: number): number => {
     return lineAt(imports.output, mapPosition(mapPosition(pos, transformer.edits), imports.edits));
   };

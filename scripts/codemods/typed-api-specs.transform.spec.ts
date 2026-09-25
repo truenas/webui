@@ -461,6 +461,39 @@ describe('transformSpec', () => {
     });
   });
 
+  it('counts note lines in the source when nothing will be written', () => {
+    const source = lines(
+      "import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';",
+      '',
+      'providers: [',
+      '  mockApi([',
+      "    mockCall('audit.query', (params) => []),",
+      "    mockCall('system.info', {}),",
+      '  ]),',
+      '];',
+    );
+
+    // Line 5 on disk; line 9 once the split and the typed import are written.
+    expect(transformSpec(source, 'x.spec.ts').notes.map((note) => note.line)).toEqual([9]);
+    expect(transformSpec(source, 'x.spec.ts', { linesIn: 'source' }).notes.map((note) => note.line)).toEqual([5]);
+  });
+
+  it('does not tell a spec the run left alone to move off the legacy double', () => {
+    const source = lines(
+      "import { mockProvider } from '@ngneat/spectator/jest';",
+      "import { failApiCall, mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';",
+      "import { ApiService } from 'app/modules/websocket/api.service';",
+      '',
+      "providers: [mockApi([mockCall('user.update', null)]), mockProvider(ApiService)];",
+      "failApiCall(api, 'user.update');",
+      "api.emitSubscribeEvent({ collection: 'user.query' });",
+    );
+
+    expect(transformSpec(source, 'x.spec.ts', { keepLegacy: () => true })).toEqual({
+      output: source, changed: false, notes: [],
+    });
+  });
+
   it('does not flag a mockProvider that already stubs the query verbs', () => {
     const source = lines(
       "import { mockProvider } from '@ngneat/spectator/jest';",

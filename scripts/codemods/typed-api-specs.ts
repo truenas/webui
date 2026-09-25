@@ -97,7 +97,8 @@ function main(): void {
       return;
     }
     const isPartial = args.only.length > 0 || args.keepLegacy.length > 0;
-    const result = transformSpec(source, file, isPartial ? { keepLegacy } : {});
+    const linesIn = args.dryRun ? 'source' : 'output';
+    const result = transformSpec(source, file, isPartial ? { keepLegacy, linesIn } : { linesIn });
     if (result.changed) {
       changed++;
       if (!args.dryRun) {
