@@ -112,6 +112,8 @@ class SpecTransformer {
    * double's microtask; a spec that moved only its queries still saves through the legacy one.
    */
   private movedMutation = false;
+  /** Whether a query mock or assertion moved to the query verbs; a `call` stub may then be stubbing nothing. */
+  private movedQuery = false;
   /** Anything this pass left on the legacy double, deliberately or not. */
   private keepsLegacy = false;
   private importedNames = new Map<string, string>();
@@ -220,6 +222,7 @@ class SpecTransformer {
         this.keepsLegacy = true;
         return false;
       }
+      this.movedQuery = true;
       this.replace(call.expression, 'mockTypedQuery');
       if (!response) {
         this.edits.push({ start: call.arguments[0].getEnd(), end: call.arguments[0].getEnd(), text: ', []' });
@@ -403,6 +406,7 @@ class SpecTransformer {
         this.keepsLegacy = true;
         return;
       }
+      this.movedQuery = true;
       this.replace(callee.name, 'mockQuery');
       if (!response) {
         this.edits.push({ start: call.arguments[0].getEnd(), end: call.arguments[0].getEnd(), text: ', []' });
@@ -465,6 +469,7 @@ class SpecTransformer {
       return;
     }
     const [verb, args] = verbAndArgs;
+    this.movedQuery = true;
     this.replace(spied.name, verb);
     if (params && args.length) {
       this.replace(params, args.join(', '));
@@ -666,9 +671,15 @@ class SpecTransformer {
         const callee = node.expression;
         const [first, second] = node.arguments;
         if (ts.isIdentifier(callee) && callee.text === 'mockProvider' && first && ts.isIdentifier(first)
-          && (first.text === 'ApiService' || first.text === 'TypedApiService') && second) {
-          this.note(node, '`mockProvider(ApiService, {...})`: query methods move from `call` to '
-          + '`query` / `queryOne` / `queryCount`; check the stubs.');
+          && (first.text === 'ApiService' || first.text === 'TypedApiService')) {
+          this.note(node, `\`${this.text(node).slice(0, 40)}\`: \`query\` / \`queryOne\` / \`queryCount\` are instance `
+          + 'properties on `TypedApiService`, so a spy object leaves them undefined unless stubbed here; '
+          + 'use `mockTypedApi()`, or stub the query verbs and move query stubs off `call`.');
+        }
+        if (this.movedQuery && ts.isPropertyAccessExpression(callee) && callee.name.text === 'spyOn'
+          && second && ts.isStringLiteralLike(second) && second.text === 'call') {
+          this.note(node, '`jest.spyOn(..., \'call\')` in a spec whose queries moved: a stub for a `.query` method '
+          + 'belongs on `query` / `queryOne` / `queryCount` now.');
         }
         if (ts.isIdentifier(callee) && callee.text === 'failApiCall') {
           this.note(node, '`failApiCall()` drives the legacy double; use `mockTypedCallError()` instead.');
@@ -704,9 +715,11 @@ class SpecTransformer {
   }
 }
 
-/** `expect(<x>.call).toHaveBeenCalled()`, with or without `.not`. */
+const countMatchers = new Set(['toHaveBeenCalled', 'toHaveBeenCalledTimes']);
+
+/** `expect(<x>.call).toHaveBeenCalled()` / `.toHaveBeenCalledTimes(n)`, with or without `.not`. */
 function isMethodlessCallAssertion(call: ts.CallExpression): boolean {
-  if (!ts.isPropertyAccessExpression(call.expression) || call.expression.name.text !== 'toHaveBeenCalled') {
+  if (!ts.isPropertyAccessExpression(call.expression) || !countMatchers.has(call.expression.name.text)) {
     return false;
   }
   let receiver = call.expression.expression;

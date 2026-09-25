@@ -178,11 +178,32 @@ describe('transformSpec', () => {
       '',
       "providers: [mockApi([mockCall('user.query', [])])];",
       'expect(api.call).not.toHaveBeenCalled();',
+      'expect(api.call).toHaveBeenCalledTimes(0);',
       'expect(dialog.open).not.toHaveBeenCalled();',
     );
 
     expect(transformSpec(source, 'x.spec.ts').notes).toEqual([
       { line: 4, message: expect.stringContaining('names no method') },
+      { line: 5, message: expect.stringContaining('names no method') },
+    ]);
+  });
+
+  it('reports a bare mockProvider(ApiService) and a call stub once queries moved', () => {
+    const source = lines(
+      "import { mockProvider } from '@ngneat/spectator/jest';",
+      "import { ApiService } from 'app/modules/websocket/api.service';",
+      '',
+      'providers: [mockProvider(ApiService)];',
+      "jest.spyOn(api, 'call').mockReturnValue(of([]));",
+      "expect(api.call).toHaveBeenCalledWith('group.query', [[]]);",
+    );
+
+    const { output, notes } = transformSpec(source, 'x.spec.ts');
+
+    expect(output).toContain("expect(api.query).toHaveBeenCalledWith('group.query', []);");
+    expect(notes).toEqual([
+      { line: 4, message: expect.stringContaining('a spy object leaves them undefined') },
+      { line: 5, message: expect.stringContaining("`jest.spyOn(..., 'call')` in a spec whose queries moved") },
     ]);
   });
 
@@ -212,7 +233,7 @@ describe('transformSpec', () => {
     expect(notes.map((note) => note.message)).toEqual([
       expect.stringContaining('takes rows, not a factory'),
       expect.stringContaining('`ApiService` / `MockApiService` references were not renamed'),
-      expect.stringContaining('`mockProvider(ApiService, {...})`'),
+      expect.stringContaining('a spy object leaves them undefined'),
       expect.stringContaining('`failApiCall()`'),
       expect.stringContaining("Hand-written dispatch on `method === 'user.query'`"),
       expect.stringContaining('move it to `query` / `queryOne` / `queryCount` by hand'),

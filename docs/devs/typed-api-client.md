@@ -214,10 +214,11 @@ It rewrites `mockApi` / `mockCall` / `mockJob` to `mockTypedApi` /
 `query` / `queryOne` / `queryCount`, adds `await spectator.fixture.whenStable()`
 after `spectator.component.submit()`, and fixes the imports. It prints
 `file:line` for what it left alone: query factories, `mockProvider(ApiService)`
-stubs, hand-written `method === 'x.query'` dispatch, `failApiCall`,
+(bare or with stubs: a spy object leaves the query verbs undefined), `jest.spyOn(api, 'call')`
+in a spec whose queries moved, hand-written `method === 'x.query'` dispatch, `failApiCall`,
 `emitSubscribeEvent`, `mockCallOnce`, `callAndSubscribe`,
-`expect(api.call).not.toHaveBeenCalled()` (which names no method, so it
-passes once a query has moved to `query`), and, under `--only` /
+`expect(api.call).not.toHaveBeenCalled()` / `.toHaveBeenCalledTimes(n)` (which name no method, so they
+pass once a query has moved to `query`), and, under `--only` /
 `--keep-legacy`, a bare `mockApi()`, since nothing in it says whether the
 spec's calls moved.
 
@@ -234,7 +235,7 @@ work is. Typed fixtures are checked against the generated directory, so a UI
 interface cast (`as Pool[]` where the query returns `PoolEntry`) or a
 `mockTypedCall('x', null)` for a method that returns something fails to
 compile. Each of those is drift the legacy mocks were hiding. Run on all of
-`src/app` at the time of writing, it rewrote 444 specs and flagged 72 for
+`src/app` at the time of writing, it rewrote 444 specs and flagged 92 for
 hand conversion.
 
 As the last consumer of a method moves, delete its entry from the hand-written
