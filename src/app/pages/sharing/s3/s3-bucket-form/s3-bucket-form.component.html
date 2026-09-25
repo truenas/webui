@@ -23,7 +23,7 @@
         [required]="true"
       ></ix-explorer>
       @if (datasetHint(); as hint) {
-        <p class="dataset-hint">{{ hint }}</p>
+        <p class="dataset-hint" tnTestId="dataset-hint" tnTestIdType="text">{{ hint }}</p>
       }
     } @else {
       <tn-form-field [label]="'Dataset' | translate">

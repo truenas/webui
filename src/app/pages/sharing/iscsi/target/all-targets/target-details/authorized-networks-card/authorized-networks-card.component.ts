@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 
 @Component({
@@ -11,6 +11,7 @@ import { IscsiTarget } from 'app/interfaces/iscsi.interface';
   imports: [
     TnCardComponent,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class AuthorizedNetworksCardComponent {

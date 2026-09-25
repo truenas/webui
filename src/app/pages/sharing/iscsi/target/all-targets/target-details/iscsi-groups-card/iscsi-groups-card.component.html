@@ -2,24 +2,44 @@
   @for (group of targetGroups(); track $index) {
       <div class="group">
         <div class="group-header">
-          <h4 class="group-title">{{ 'Group' | translate }} {{ $index + 1 }}</h4>
+          <h4
+            class="group-title"
+            tnTestIdType="text"
+            [tnTestId]="['group', $index]"
+          >{{ 'Group' | translate }} {{ $index + 1 }}</h4>
         </div>
         <div class="group-content">
           <div class="attribute-row">
             <span class="attribute-label">{{ 'Portal Group ID' | translate }}:</span>
-            <span class="attribute-value">{{ group.portalLabel ?? '-' }}</span>
+            <span
+              class="attribute-value"
+              tnTestIdType="text"
+              [tnTestId]="['portal-group-id', $index]"
+            >{{ group.portalLabel ?? '-' }}</span>
           </div>
           <div class="attribute-row">
             <span class="attribute-label">{{ 'Initiator Group ID' | translate }}:</span>
-            <span class="attribute-value">{{ group.initiatorLabel ?? '-' }}</span>
+            <span
+              class="attribute-value"
+              tnTestIdType="text"
+              [tnTestId]="['initiator-group-id', $index]"
+            >{{ group.initiatorLabel ?? '-' }}</span>
           </div>
           <div class="attribute-row">
             <span class="attribute-label">{{ 'Authentication Method' | translate }}:</span>
-            <span class="attribute-value">{{ group.authmethod ?? '-' }}</span>
+            <span
+              class="attribute-value"
+              tnTestIdType="text"
+              [tnTestId]="['authentication-method', $index]"
+            >{{ group.authmethod ?? '-' }}</span>
           </div>
           <div class="attribute-row">
             <span class="attribute-label">{{ 'Authentication Group Number' | translate }}:</span>
-            <span class="attribute-value">{{ group.auth ?? '-' }}</span>
+            <span
+              class="attribute-value"
+              tnTestIdType="text"
+              [tnTestId]="['authentication-group-number', $index]"
+            >{{ group.auth ?? '-' }}</span>
           </div>
         </div>
       </div>

@@ -5,7 +5,7 @@
     } @else {
       @if (sessions()?.length > 0) {
         @for (session of sessions(); track session.initiator_addr) {
-          <div class="connection">
+          <div class="connection" tnTestIdType="text" [tnTestId]="['connection', $index]">
             {{ session.initiator }} | {{ session.initiator_addr }}
           </div>
         }

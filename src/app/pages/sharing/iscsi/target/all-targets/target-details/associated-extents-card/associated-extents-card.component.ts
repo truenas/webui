@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnDialog, TnIconButtonComponent,
-  TnTooltipDirective,
+  TnTestIdDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -35,6 +35,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     RequiresRolesDirective,
     TnTooltipDirective,
     NgxSkeletonLoaderModule,
+    TnTestIdDirective,
   ],
 })
 export class AssociatedExtentsCardComponent {

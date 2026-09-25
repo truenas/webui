@@ -205,19 +205,35 @@ stays convention, and reviewing it is a reviewer's job.
 
 A table cell is covered (rule 2, and every column of every list has an id). A value rendered
 anywhere else — a card's detail line, a widget's number, a dialog's message — is not, and
-`yarn check-test-ids --report` counts what is left: **610 readouts across the app** that no suite
-can read, listed per area.
+`yarn check-test-ids --report` counts what is left: **651 readouts across the app** that no suite
+can read, listed per area. `src/app/pages/sharing` is the first area off that list (NAS-143970).
 
 It is a *measurement, not a gate*, because unlike a table column the set is not bounded and some
 members are genuinely not automation targets (a gauge's sublabel, prose inside a tooltip). Driving
 it down per area is the plan, the way the 117 untagged columns were closed.
 
-Two things do NOT need an id of their own, and the report already discounts them:
+Three things do NOT need an id of their own, and the report already discounts them:
 
 - **A tagged ancestor holding just that value.** The suite selects the ancestor and reads its text.
-- **A shared component whose whole template renders one value.** `<ix-date>` is the example: every
-  call site tags the tag, so the value inside is what that element says. Putting a static id inside
-  such a component would be worse than nothing — it would repeat on every instance in the page.
+  The ancestor has to be in the *same* template — an id rendered by the component around it is
+  invisible to this, which is why `<div view>` inside an `ix-editable` still counts (and should:
+  the editable's trigger id is derived from the value itself, so it cannot be used to find it).
+- **A shared leaf presenter: one value, and an id at every call site.** The table cells are the
+  example — `<ix-task-state-cell>`, `<ix-subsystem-name-cell>` and three more, each tagged with a
+  row-scoped id wherever it is used, so the value inside needs none and a static id there would
+  repeat on every row. Both halves are checked, because "renders one value" alone discounted twelve
+  templates under `pages/sharing`, three wizards and two panel forms among them: a routed page is
+  written as a tag nowhere, so nothing tags it and nothing can address the value it renders.
+  `<ix-date>` is the same shape and currently does **not** qualify — ten of its fourteen call sites
+  pass no id — so its readout is counted and `modules/dates` stays on the list until they are
+  tagged. That is the condition working, not a false positive.
+- **A message hoisted into a `helptext` constant**, i.e. `{{ helptext.<path> | translate }}`.
+  `{{ 'Name' | translate }}` was never counted; moving the same literal into a constants file does
+  not make it a value. Both halves are required, so a dynamic label that merely passes through the
+  pipe still counts.
+
+`yarn check-test-ids --report src/app/pages/<area>` lists that area's readouts one per line, with
+the markup, which is the working list for closing one.
 
 When you do tag a readout, the convention is `tnTestIdType="text"` with the base named after the
 **label beside it**, not the expression behind it: a row labelled "Last Scrub Date" should emit

@@ -2,6 +2,8 @@
 <div class="status-row">
   <span
     class="status-badge"
+    tnTestId="status"
+    tnTestIdType="text"
     [ngClass]="statusClass()"
   >
     {{ statusLabel() }}
@@ -10,24 +12,28 @@
 
 <div>
   <div class="dataset-name">
-    <strong>{{ 'Dataset' | translate }}:</strong> {{ job().dataset_name }}
+    <strong>{{ 'Dataset' | translate }}:</strong>&ngsp;
+    <span tnTestId="dataset-name" tnTestIdType="text">{{ job().dataset_name }}</span>
   </div>
 
   <div class="migration-direction">
-    <span class="tier-label">{{ sourceTier() }}</span>
+    <span class="tier-label" tnTestId="source-tier" tnTestIdType="text">{{ sourceTier() }}</span>
     <span aria-hidden="true" class="arrow">&rarr;</span>
-    <span class="tier-label">{{ targetTierLabel() }}</span>
+    <span class="tier-label" tnTestId="target-tier" tnTestIdType="text">{{ targetTierLabel() }}</span>
   </div>
 
   <div class="time-info">
     @if (startTime(); as start) {
-      <span>{{ 'Started' | translate }}: {{ start | formatDateTime }}</span>
+      <span tnTestId="started" tnTestIdType="text">{{ 'Started' | translate }}: {{ start | formatDateTime }}</span>
     }
     @if (endTime(); as ended) {
-      <span>{{ endTimeLabel() }}: {{ ended | formatDateTime }}</span>
+      <span tnTestId="ended" tnTestIdType="text">{{ endTimeLabel() }}: {{ ended | formatDateTime }}</span>
     } @else if (estimatedCompletion(); as eta) {
       @if (isRunning()) {
-        <span>{{ 'Est. completion' | translate }}: {{ eta | formatDateTime }}</span>
+        <span
+          tnTestId="est-completion"
+          tnTestIdType="text"
+        >{{ 'Est. completion' | translate }}: {{ eta | formatDateTime }}</span>
       }
     }
   </div>
@@ -46,23 +52,31 @@
       <div class="stat-card">
         <div class="stat-label">{{ 'Data Scanned' | translate }}</div>
         <div class="stat-value">
-          <span class="stat-part">{{ stats.count_bytes | ixFileSize }} /</span>&ngsp;
-          <span class="stat-part">{{ stats.total_bytes | ixFileSize }}</span>
+          <span
+            class="stat-part"
+            tnTestId="data-scanned"
+            tnTestIdType="text"
+          >{{ stats.count_bytes | ixFileSize }} /</span>&ngsp;
+          <span
+            class="stat-part"
+            tnTestId="data-scanned-total"
+            tnTestIdType="text"
+          >{{ stats.total_bytes | ixFileSize }}</span>
         </div>
       </div>
 
       <div class="stat-card">
         <div class="stat-label">{{ 'Items Succeeded' | translate }}</div>
         <div class="stat-value">
-          <span class="stat-part">{{ stats.success }} /</span>&ngsp;
-          <span class="stat-part">{{ stats.total_items }}</span>
+          <span class="stat-part" tnTestId="items-succeeded" tnTestIdType="text">{{ stats.success }} /</span>&ngsp;
+          <span class="stat-part" tnTestId="items-succeeded-total" tnTestIdType="text">{{ stats.total_items }}</span>
         </div>
       </div>
 
       <div class="stat-card">
         <div class="stat-label">{{ 'Failures' | translate }}</div>
         <div class="stat-value">
-          <span class="stat-part">{{ stats.failures }}</span>
+          <span class="stat-part" tnTestId="failures" tnTestIdType="text">{{ stats.failures }}</span>
         </div>
       </div>
     </div>

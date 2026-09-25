@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnCardComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -14,6 +14,7 @@ import { IscsiService } from 'app/services/iscsi.service';
   imports: [
     TnCardComponent,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class IscsiGroupsCardComponent implements OnInit {

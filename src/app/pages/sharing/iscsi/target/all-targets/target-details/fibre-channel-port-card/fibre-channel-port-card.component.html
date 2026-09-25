@@ -5,15 +5,21 @@
     @if (ports().length > 0) {
       @for (port of ports(); track port.id) {
         <div class="port-group">
-          <p>{{ 'Port' | translate }}: {{ port.port }}</p>
+          <p tnTestIdType="text" [tnTestId]="['port', $index]">{{ 'Port' | translate }}: {{ port.port }}</p>
 
           <ng-container *isHa="true">
-            <p>{{ 'Controller A WWPN' | translate }}: {{ port.wwpn }}</p>
-            <p>{{ 'Controller B WWPN' | translate }}: {{ port.wwpn_b }}</p>
+            <p
+              tnTestIdType="text"
+              [tnTestId]="['controller-a-wwpn', $index]"
+            >{{ 'Controller A WWPN' | translate }}: {{ port.wwpn }}</p>
+            <p
+              tnTestIdType="text"
+              [tnTestId]="['controller-b-wwpn', $index]"
+            >{{ 'Controller B WWPN' | translate }}: {{ port.wwpn_b }}</p>
           </ng-container>
 
           <ng-container *isHa="false">
-            <p>{{ 'WWPN' | translate }}: {{ port.wwpn }}</p>
+            <p tnTestIdType="text" [tnTestId]="['wwpn', $index]">{{ 'WWPN' | translate }}: {{ port.wwpn }}</p>
           </ng-container>
         </div>
       }

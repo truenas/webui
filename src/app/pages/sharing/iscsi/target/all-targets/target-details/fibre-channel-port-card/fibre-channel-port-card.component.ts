@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { IsHaDirective } from 'app/directives/is-ha/is-ha.directive';
 import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
@@ -17,6 +17,7 @@ import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
     TranslateModule,
     NgxSkeletonLoaderModule,
     IsHaDirective,
+    TnTestIdDirective,
   ],
 })
 export class FibreChannelPortCardComponent {

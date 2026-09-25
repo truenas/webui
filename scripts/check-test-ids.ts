@@ -51,10 +51,11 @@
  * targets are listed in {@link allowedClickables} with the reason.
  *
  * `--report` prints per-column coverage and the count of unreadable value readouts instead of
- * gating, for tracking both numbers over time.
+ * gating, for tracking both numbers over time. Add a path — `--report src/app/pages/sharing` — to
+ * also list that area's readouts one per line, which is the working list for closing one.
  */
 
-import { readdirSync, readFileSync } from 'fs';
+import { existsSync, readdirSync, readFileSync } from 'fs';
 import { sep } from 'path';
 
 const anyTestId = /\btestId\b|\btnTestId\b|data-test/;
@@ -594,7 +595,7 @@ function report(title: string, offenders: Offender[], advice: string): void {
  * A value an e2e suite reads: a LEAF element whose own text renders an *interpolation*, since that
  * is what a suite asserts on — a status, a size, a count, a name. A translated literal
  * (`{{ 'Name' | translate }}`) is a label, not a value, and is not counted; anything reading data
- * is.
+ * is — with one indirection counted as the literal it stands for, below.
  *
  * Not a gate. A table column is one (rule 2) because the set is bounded and the id it owes is
  * knowable; a free-form readout is not — some are genuinely not automation targets (a gauge's
@@ -603,12 +604,42 @@ function report(title: string, offenders: Offender[], advice: string): void {
  * be driven down per area, which is how the 117 untagged columns were closed.
  */
 const leafValue = /<([a-z][a-z0-9-]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"'])*)?)>([^<]*\{\{[^<]*)<\/\1>/gs;
-const interpolations = /\{\{([^}]*)\}\}/g;
+/**
+ * An interpolation's expression, which may itself contain a single `}` — a pipe argument is an
+ * object literal (`| translate: { x: n() }`), and `[^}]*` stopped dead at its first brace, matched
+ * nothing at all, and left the whole readout invisible to {@link readsData}. 20 readouts app-wide
+ * were unseen that way. A literal `}}` inside the expression still cuts early: only the ICU plural
+ * strings have one, and an Angular parser is the only thing that would read those correctly.
+ */
+const interpolations = /\{\{((?:[^}]|\}(?!\}))*)\}\}/g;
+
+/**
+ * A message hoisted out of the template into a `helptext` constant and translated at the call site.
+ *
+ * `{{ 'Name' | translate }}` is already excluded as a label; moving that same literal into a
+ * constants file does not turn it into a value, and 47 of the 50 in `src` read
+ * `{{ helptext.<path> | translate }}` — several of them literally named `.label`. Counting them
+ * asked ten paragraphs of dialog prose under `pages/sharing` alone to carry an id no suite would
+ * select, which is noise in a number meant to be driven to zero per area.
+ *
+ * Three conditions, and the third is what the other three of the 50 fail. The root has to be
+ * `helptext` (the only such root in `src`, and a naming convention the repo keeps); the value has
+ * to go through `translate`, so a dynamic label that merely passes through the pipe —
+ * `{{ currentTierLabel | translate }}`, the tier chip in change-tier-dialog — still counts; and
+ * that `translate` must carry no arguments. `{{ helptext.pendingCheckinText | translate: { x:
+ * checkinRemaining() } }}` is a live countdown interpolated into the message: the constant is
+ * static, what it renders is not, and a suite would plausibly assert on it.
+ */
+const helptextConstant = /^helptext\b/;
+const translatePipe = /^translate$/;
 
 function readsData(text: string): boolean {
   return [...text.matchAll(interpolations)]
-    .map(([, body]) => body.split('|')[0].trim())
-    .some((head) => head.length > 0 && !/^'[^']*'$/.test(head) && !/^"[^"]*"$/.test(head));
+    .map(([, body]) => body.split('|').map((part) => part.trim()))
+    .some(([head, ...pipes]) => head.length > 0
+      && !/^'[^']*'$/.test(head)
+      && !/^"[^"]*"$/.test(head)
+      && !(helptextConstant.test(head) && pipes.some((pipe) => translatePipe.test(pipe))));
 }
 
 const elementBoundaries = /<([a-z][a-z0-9-]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"'])*)?)\/?>|<\/([a-z][a-z0-9-]*)>/gs;
@@ -626,8 +657,8 @@ function valueCount(block: string): number {
  * The markup enclosed by the nearest ancestor that carries an id, or null if none does.
  *
  * A readout needs no id of its own when such an ancestor holds *only* that value: a suite selects
- * the ancestor and reads its text, which is how `<ix-date>` works — its consumer tags the tag, and
- * the one value inside is what the element says.
+ * the ancestor and reads its text. `<ix-table-text-cell>` is the shape — the consumer tags the
+ * tag, and the one value inside is what the element says.
  */
 function taggedAncestorBlock(src: string, at: number): string | null {
   const open: { tag: string; attributes: string; start: number; openEnd: number }[] = [];
@@ -672,15 +703,20 @@ function taggedAncestorBlock(src: string, at: number): string | null {
 /**
  * Readouts in this template that no suite can read, discounting the two ways one is already
  * addressable without an id of its own: a tagged ancestor holding just that value (above), and a
- * shared component whose whole template renders one value — every consumer tags the tag, so an id
- * inside would be both redundant and repeated on every instance in the page.
+ * shared leaf presenter — one value, and an id at every call site, so the value inside needs none
+ * and a static id there would repeat on every instance in the page. See {@link taggedCallSites}
+ * for why the second half of that is checked rather than assumed.
+ *
+ * Returns the line of each, not a count, so `--report <path>` can name them. Closing an area means
+ * opening each one, and a bare per-area total says only how many are left, not where — every area
+ * ticket would otherwise start by re-deriving this list by hand.
  */
-function untaggedReadouts(src: string, isSingleValueComponent: boolean): number {
+function untaggedReadouts(src: string, isSingleValueComponent: boolean): number[] {
   if (isSingleValueComponent) {
-    return 0;
+    return [];
   }
   const stripped = withoutComments(src);
-  let count = 0;
+  const lines: number[] = [];
   for (const match of stripped.matchAll(leafValue)) {
     const [, , attributes = '', text] = match;
     if (anyTestId.test(attributes) || !readsData(text)) {
@@ -694,9 +730,9 @@ function untaggedReadouts(src: string, isSingleValueComponent: boolean): number 
     if (ancestor && valueCount(ancestor) === 1) {
       continue;
     }
-    count += 1;
+    lines.push(stripped.slice(0, match.index).split('\n').length);
   }
-  return count;
+  return lines;
 }
 
 /**
@@ -735,13 +771,67 @@ function reportColumnCoverage(tables: { file: string; src: string }[]): void {
   );
 }
 
-/** `--report`: untagged value readouts per area, the tracked-but-not-gated number. */
-function reportReadoutCoverage(templates: { file: string; src: string }[]): void {
-  // A template whose component renders exactly one value is addressed from its call sites.
+/**
+ * Whether a template is the listing path or sits under it.
+ *
+ * A bare `startsWith` is a string prefix, not a path one: `--report src/app/pages/share` listed
+ * everything under `sharing/` while naming a directory that does not exist, which reads as though
+ * the tool had found the area and it was nearly closed.
+ */
+function isUnder(file: string, listing: string): boolean {
+  const base = listing.replace(/\/+$/, '');
+  return file === base || file.startsWith(`${base}/`);
+}
+
+/**
+ * Selectors that are written as a tag somewhere and carry an id at *every* such call site.
+ *
+ * Read off the templates rather than guessed: a component opened through a route, a dialog or
+ * `FormSidePanelService` appears as a tag nowhere at all, and one whose consumers tag it only
+ * sometimes is unaddressable from the untagged ones.
+ */
+function taggedCallSites(templates: { file: string; src: string }[]): Set<string> {
+  const uses = new Map<string, { total: number; tagged: number }>();
+  for (const { src } of templates) {
+    for (const match of withoutComments(src).matchAll(componentTags)) {
+      const attributes = match[2] ?? '';
+      const entry = uses.get(match[1]) ?? { total: 0, tagged: 0 };
+      entry.total += 1;
+      if (anyTestId.test(attributes) || componentTestIdInput.test(attributes)) {
+        entry.tagged += 1;
+      }
+      uses.set(match[1], entry);
+    }
+  }
+  return new Set(
+    [...uses].filter(([, { total, tagged }]) => total > 0 && total === tagged).map(([tag]) => tag),
+  );
+}
+
+/**
+ * `--report`: untagged value readouts per area, the tracked-but-not-gated number.
+ *
+ * A path given alongside `--report` also lists each readout under it as `file:line  <markup>`,
+ * which is the working list for closing one area.
+ */
+function reportReadoutCoverage(templates: { file: string; src: string }[], listing?: string): void {
   const { templateBySelector, selectorByTemplate } = scanComponents();
+  const tagged = taggedCallSites(templates);
+  // A shared leaf presenter: one value, and every call site puts an id on the tag — which is the
+  // whole reason the value inside needs none. Both halves are load-bearing. "One value" alone
+  // discounted twelve templates under `pages/sharing`, among them three wizards and two panel
+  // forms: a routed page is never written as a tag, so no call site tags it and nothing addresses
+  // the value it renders. Their readouts were hidden rather than absent, which is how this area
+  // read as closed while `ix-target-form` and `ix-s3-bucket-form` still owed ids.
+  //
+  // What earns it today is the table cells — `ix-task-state-cell`, `ix-subsystem-name-cell` and
+  // three more — whose every call site passes a row-scoped id. `<ix-date>` is the same *shape* and
+  // does not qualify: ten of its fourteen call sites pass no id, so its readout is counted and
+  // `modules/dates` is on the list until those call sites are tagged. That is the condition doing
+  // its job, not a false positive.
   const singleValue = new Set(
     [...templateBySelector]
-      .filter(([, template]) => valueCount(template) === 1)
+      .filter(([selector, template]) => valueCount(template) === 1 && tagged.has(selector))
       .map(([selector]) => selector),
   );
 
@@ -751,12 +841,18 @@ function reportReadoutCoverage(templates: { file: string; src: string }[]): void
     // *contents* made two byte-identical templates collide, so the discount was applied for the
     // wrong selector — and it hashed every template in `src` in full to do it.
     const selector = selectorByTemplate.get(file);
-    const count = untaggedReadouts(src, !!selector && singleValue.has(selector));
-    if (!count) {
+    const lines = untaggedReadouts(src, !!selector && singleValue.has(selector));
+    if (!lines.length) {
       continue;
     }
+    if (listing && isUnder(file, listing)) {
+      const sourceLines = src.split('\n');
+      for (const line of lines) {
+        console.info(`  ${file}:${line}  ${sourceLines[line - 1].trim()}`);
+      }
+    }
     const area = file.split('/').slice(0, 4).join('/');
-    perArea.set(area, (perArea.get(area) ?? 0) + count);
+    perArea.set(area, (perArea.get(area) ?? 0) + lines.length);
   }
 
   const total = [...perArea.values()].reduce((sum, count) => sum + count, 0);
@@ -779,8 +875,17 @@ function main(): void {
   const tables = templates.filter(({ src }) => rendersRowCells.test(src));
 
   if (process.argv.includes('--report')) {
+    const listing = process.argv.slice(2).find((arg) => !arg.startsWith('--'));
+    // A path that does not exist is a typo, and silently listing a prefix of it — or switching the
+    // listing on for a stray argument — is worse than saying so: both look like an answer.
+    if (listing !== undefined && !existsSync(listing)) {
+      console.error(`\n❌ ${listing} does not exist.\n\nPass \`--report\` a path to list that area's`
+        + ' readouts, e.g. `--report src/app/pages/sharing`, or no path at all for the totals.');
+      process.exitCode = 1;
+      return;
+    }
     reportColumnCoverage(tables);
-    reportReadoutCoverage(templates);
+    reportReadoutCoverage(templates, listing);
     return;
   }
   const untaggedRows = tables

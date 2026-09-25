@@ -9,8 +9,8 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnButtonComponent, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent,
-  TnFormSectionComponent,
-  TnInputComponent, TnSelectComponent, TnTooltipDirective, type TnSelectOption,
+  TnFormSectionComponent, TnInputComponent, TnSelectComponent, TnTestIdDirective, TnTooltipDirective,
+  type TnSelectOption,
 } from '@truenas/ui-components';
 import {
   filter, map, merge, Observable, startWith, switchMap,
@@ -89,6 +89,7 @@ export const s3BucketNamePattern = /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/;
     IxUserComboboxComponent,
     S3GrantsListComponent,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class S3BucketFormComponent extends IxFormHostForm implements OnInit {

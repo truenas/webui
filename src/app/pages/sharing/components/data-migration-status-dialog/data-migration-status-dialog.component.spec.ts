@@ -68,6 +68,15 @@ describe('DataMigrationStatusDialogComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
 
+  // Same reason as the `&ngsp;` between the stat parts below: the value sits in its own <span> to
+  // carry a test id, so the text node holding the space is whitespace-only, and
+  // `preserveWhitespaces: false` deletes those outright.
+  it('renders the dataset name separated from its label', () => {
+    build({ ...baseJob });
+
+    expect(spectator.query('.dataset-name')).toHaveText('Dataset: pool1/ds');
+  });
+
   describe('stats', () => {
     it('splits each pair into its own unbreakable part, so a long value wraps instead of overlapping', () => {
       build({ ...baseJob, stats: { ...baseStats } });

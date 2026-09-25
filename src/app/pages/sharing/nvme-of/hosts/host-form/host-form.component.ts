@@ -9,7 +9,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
-  TnSelectComponent, TnTooltipDirective,
+  TnSelectComponent, TnTestIdDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { omit } from 'lodash-es';
 import { finalize, switchMap } from 'rxjs';
@@ -47,6 +47,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     DetailsTableComponent,
     DetailsItemComponent,
     TnTooltipDirective,
+    TnTestIdDirective,
     AsyncPipe,
   ],
 })

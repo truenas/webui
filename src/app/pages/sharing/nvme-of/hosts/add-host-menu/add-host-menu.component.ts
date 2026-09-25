@@ -4,7 +4,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialog, TnDividerComponent, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective,
-  tnIconMarker,
+  TnTestIdDirective, tnIconMarker,
 } from '@truenas/ui-components';
 import { sortBy } from 'lodash-es';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -29,6 +29,7 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
     TnDividerComponent,
     TranslateModule,
     RequiresRolesDirective,
+    TnTestIdDirective,
   ],
 })
 export class AddHostMenuComponent {

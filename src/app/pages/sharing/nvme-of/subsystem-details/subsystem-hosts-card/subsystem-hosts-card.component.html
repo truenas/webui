@@ -22,7 +22,11 @@
       @for (host of subsystem().hosts; track host.id) {
         <li>
           <span class="host">
-            <span class="host-description">
+            <span
+              class="host-description"
+              tnTestIdType="text"
+              [tnTestId]="['host', hostTestIdSlug(host)]"
+            >
               @if (host.description) {
                 <strong>{{ host.description }}</strong> - {{ host.hostnqn }}
               } @else {

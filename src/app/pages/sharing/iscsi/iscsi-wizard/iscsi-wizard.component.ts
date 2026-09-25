@@ -7,8 +7,8 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnStepComponent, TnStepperComponent, TnStepperNextDirective,
-  TnStepperPreviousDirective,
+  TnButtonComponent, TnStepComponent, TnStepperComponent, TnStepperNextDirective, TnStepperPreviousDirective,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   lastValueFrom, forkJoin,
@@ -75,6 +75,7 @@ import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wiz
     ProtocolOptionsWizardStepComponent,
     RequiresRolesDirective,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<IscsiTarget> {

@@ -4,8 +4,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent,
-  TnStepComponent, TnStepperComponent, TnStepperNextDirective, TnStepperPreviousDirective,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnStepComponent,
+  TnStepperComponent, TnStepperNextDirective, TnStepperPreviousDirective, TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   catchError,
@@ -66,6 +66,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
     DetailsItemComponent,
     DetailsTableComponent,
     EditableComponent,
+    TnTestIdDirective,
   ],
 })
 export class AddSubsystemComponent implements SidePanelHostCloseable<NvmeOfSubsystem> {

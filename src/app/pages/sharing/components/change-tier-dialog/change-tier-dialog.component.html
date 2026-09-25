@@ -1,7 +1,8 @@
 <tn-dialog-shell testId="change-tier" [title]="'Change Storage Tier' | translate">
 <div>
   <div class="dataset-name">
-    <strong>{{ 'Dataset' | translate }}:</strong> {{ data.datasetName }}
+    <strong>{{ 'Dataset' | translate }}:</strong>&ngsp;
+    <span tnTestId="dataset-name" tnTestIdType="text">{{ data.datasetName }}</span>
   </div>
 
   @if (hasAnyShares()) {
@@ -13,7 +14,7 @@
             <span class="service-name">{{ 'SMB Share' | translate }}:</span>
             <ul class="service-shares">
               @for (name of shareUsage().smb; track name) {
-                <li>{{ name }}</li>
+                <li tnTestIdType="text" [tnTestId]="['smb-share', shareTestId(name)]">{{ name }}</li>
               }
             </ul>
           </li>
@@ -22,7 +23,7 @@
           <li>
             <span class="service-name">{{ 'NFS Share' | translate }}:</span>
             <ul class="service-shares">
-              <li>
+              <li tnTestId="nfs-share" tnTestIdType="text">
                 {{ '{count, plural, =1 {1 share} other {# shares}}' | translate: { count: shareUsage().nfs } }}
               </li>
             </ul>
@@ -33,7 +34,7 @@
             <span class="service-name">{{ 'WebShare' | translate }}:</span>
             <ul class="service-shares">
               @for (name of shareUsage().webshare; track name) {
-                <li>{{ name }}</li>
+                <li tnTestIdType="text" [tnTestId]="['webshare', shareTestId(name)]">{{ name }}</li>
               }
             </ul>
           </li>
@@ -43,7 +44,7 @@
             <span class="service-name">{{ 'S3 Bucket' | translate }}:</span>
             <ul class="service-shares">
               @for (name of shareUsage().s3; track name) {
-                <li>{{ name }}</li>
+                <li tnTestIdType="text" [tnTestId]="['s3-bucket', shareTestId(name)]">{{ name }}</li>
               }
             </ul>
           </li>
@@ -54,16 +55,32 @@
 
   <div class="tier-change">
     <div class="tier-column">
-      <span class="tier-chip current">{{ currentTierLabel | translate }}</span>
+      <span
+        class="tier-chip current"
+        tnTestId="current-tier"
+        tnTestIdType="text"
+      >{{ currentTierLabel | translate }}</span>
       @if (currentTierSpace(); as space) {
-        <span class="tier-space">{{ space }} {{ 'available' | translate }}</span>
+        <span
+          class="tier-space"
+          tnTestId="current-tier-space"
+          tnTestIdType="text"
+        >{{ space }} {{ 'available' | translate }}</span>
       }
     </div>
     <span aria-hidden="true" class="arrow">&rarr;</span>
     <div class="tier-column">
-      <span class="tier-chip new">{{ newTierLabel | translate }}</span>
+      <span
+        class="tier-chip new"
+        tnTestId="new-tier"
+        tnTestIdType="text"
+      >{{ newTierLabel | translate }}</span>
       @if (newTierSpace(); as space) {
-        <span class="tier-space">{{ space }} {{ 'available' | translate }}</span>
+        <span
+          class="tier-space"
+          tnTestId="new-tier-space"
+          tnTestIdType="text"
+        >{{ space }} {{ 'available' | translate }}</span>
       }
     </div>
   </div>
@@ -79,7 +96,7 @@
 
     @if (form.value.moveExistingData) {
       @if (estimatedRewriteSize(); as size) {
-        <div class="rewrite-size">
+        <div class="rewrite-size" tnTestId="estimated-rewrite-size" tnTestIdType="text">
           {{ 'Estimated rewrite size: up to {size}' | translate: { size } }}
         </div>
       }

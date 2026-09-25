@@ -24,7 +24,7 @@
   } @else {
     @for (extent of mappedTargetExtents(); track extent.extent) {
       <div class="mapped-extent">
-        <p>
+        <p tnTestIdType="text" [tnTestId]="['extent', extent.extent]">
           {{ 'LUN ID' | translate }}: {{ extent.lunid }} |
           {{ extent.name }} |
           {{ extent.path }}
