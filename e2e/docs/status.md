@@ -185,6 +185,25 @@ the clothes of view state — which is also the "page one" gap below. The
 preferences spec met that gap head-on: `builtin_administrators` is 79th of 93
 groups by GID, so with a 50-row page it is not in the DOM at all.
 
+ZFS tiering came next, in `tests/tiering-config.e2e.ts` and
+`tests/tiering-dataset.e2e.ts`: turning tiering on and editing its limits from
+the Tiering panel on the storage dashboard, and moving a dataset to the
+performance tier from its details card, with and without migrating its data.
+Both skip on an appliance without the `ZFSTIER` key, because `zfs.tier.update`
+refuses there, so for now they run only where someone has uploaded a licence.
+The dataset spec builds its own pool (`e2e_tier_tank`, one data and one special
+disk), because a dataset has no tier at all on a pool without a special vdev,
+and it removes that pool in `afterAll`.
+
+Writing it turned up a middleware defect: a rewrite job is keyed by dataset
+*name* and never forgotten. A dataset created under a name that was migrated
+before (deleted since, even on a pool destroyed and rebuilt since) comes back
+`REGULAR` while carrying the old job, `COMPLETE`, so the UI shows a finished
+migration on a dataset that never had one. The spec names its datasets per run
+to stay clear of it. The readout ids the dataset spec asserts on (`text-tier`
+and the dialogs' values) arrived in NAS-143970 on 2026-09-25, so a `shipped`
+run needs a nightly built after that.
+
 The framework is done and the coverage is not. Fifty-four tests — fifty-three
 journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
@@ -224,7 +243,8 @@ a number. See `05-ci.md`.
 1. **Widen coverage.** Dataset ACL and manual snapshot are the two uncovered
    stories worth taking next. The confirmation-bypass class is now covered
    everywhere this suite can reach it — datasets, zvols and pool disconnect;
-   what is left needs an app, SED hardware or a VM. S3 is covered as a feature — create, configure,
+   what is left needs an app, SED hardware or a VM. ZFS tiering's configuration and a dataset's tier change are covered;
+   the share-list tier action and the tier gating are next. S3 is covered as a feature — create, configure,
    edit, toggle, rotate, delete — except auditing, which is licence-gated and
    needs an Enterprise appliance. List-driven journeys (deleting a pool, dataset
    or share from a list) are no longer blocked: `tn-table` still writes nothing
