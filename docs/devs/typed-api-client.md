@@ -40,7 +40,8 @@ recorded twice. That is gone.
 
 What the handler still owns is what the client has no seam for: the call queue
 and its 20-concurrent ceiling, the debug panel's logging, and its mock
-interception. What it lost with the socket: the reconnect timer (the client's
+interception. Connection state — open, closed, refused, shutting down — is
+`ConnectionService`'s (NAS-143990). What it lost with the socket: the reconnect timer (the client's
 connection retries on its own), `core.set_options` on open (the client sends
 it), and the ping timer (the client pings every 20s, so `PingService` is
 gone too).
@@ -234,14 +235,15 @@ Once most call sites are typed, move what still depends on the legacy socket:
   and the token-borrowing bridge NAS-143988 had put in as a stopgap.
 - **Jobs store.** `job.effects.ts` subscribes to `core.get_jobs` on the typed
   client.
-- **Connection UX.** Half done. `WebSocketHandlerService` now reads the typed
-  connection for all of it — `opened$` feeds `isClosed$` and
+- **Connection UX.** Done (NAS-143990). `ConnectionService` is a thin layer
+  over `client.connection`: `opened$` feeds `isClosed$` and
   `WebSocketStatusService`, `closes$.refused` feeds `isAccessRestricted$`,
-  `reconnect()` cycles `setEnabled`, and `setupConnectionUrl()` calls
-  `setEndpoint`. What is left is the ten or so files that reach for the
-  *handler* to get at them (`reconnect`, `prepareShutdown`,
-  `isSystemShuttingDown`); those move to `client.connection` directly when the
-  handler goes.
+  `reconnect()` cycles `setEnabled`, and `setEndpoint()` re-points it. It also
+  holds the two UI-level flags with no counterpart on the connection —
+  `prepareShutdown()` / `isSystemShuttingDown` and the access-restricted
+  acknowledgement. The guard, the shutdown / restart / failover / config-reset
+  pages, the GUI form and the forced password change read it instead of the
+  handler, which is now only the legacy call queue and the debug panel.
 - **Debug panel and mocks.** Need a hook on the client (see gaps).
 
 ### Phase 3 — remove the legacy client
@@ -302,8 +304,8 @@ above. Each is a change for `truenas/api-client-ts`.
    and `QueryProjection` are internal, so the wrapper forwards the query verbs
    through `Parameters<>` rather than declaring them; `TrueNasMessage` and
    `TrueNasConnection` are absent from the main entry too, so
-   `WebSocketHandlerService` names the connection as
-   `WebUiApiClient['connection']`. Still so in 7.0.1.
+   `ConnectionService` names the connection as
+   `WebUiApiClient['connection']` (`TypedConnection`). Still so in 7.0.1.
 
    Partly closed there: 7.0.1 exports `TrueNasErrorFrame` and `TrueNasErrorData`
    from the main entry, where 6.x had them only under `testing`. The wrapper's

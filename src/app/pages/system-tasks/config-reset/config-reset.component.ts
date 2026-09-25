@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { ConnectionService } from 'app/modules/websocket/connection.service';
 import { SystemTaskRedirectService } from 'app/pages/system-tasks/services/system-task-redirect.service';
 import { SystemTaskSplashComponent } from 'app/pages/system-tasks/system-task-splash/system-task-splash.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -19,7 +19,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ConfigResetComponent implements OnInit {
-  private wsManager = inject(WebSocketHandlerService);
+  private connection = inject(ConnectionService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
@@ -50,7 +50,7 @@ export class ConfigResetComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.wsManager.prepareShutdown();
+        this.connection.prepareShutdown();
         this.redirect.goToSigninWhenSystemIsBack(this.destroyRef);
       });
   }

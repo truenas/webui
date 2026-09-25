@@ -26,9 +26,9 @@ describe('WebSocketHandlerService', () => {
         provide: TYPED_API_CLIENT,
         useFactory: () => of(client),
       },
-      // The real one, so the status this service publishes on opening is the
-      // status its own call queue waits for. That loop is the subject of half
-      // of these tests.
+      // The real one, so the status `ConnectionService` publishes on opening
+      // is the status this service's call queue waits for. That loop is the
+      // subject of half of these tests.
       WebSocketStatusService,
       mockProvider(DialogService),
       mockProvider(WebSocketDebugService),
@@ -67,20 +67,6 @@ describe('WebSocketHandlerService', () => {
     });
   });
 
-  it('reports the connection as open and closed as the borrowed socket comes and goes', async () => {
-    const wsStatus = spectator.inject(WebSocketStatusService);
-
-    client.connection.simulateOpen();
-    await settle();
-    expect(wsStatus.isConnected).toBe(true);
-    await expect(firstValueFrom(spectator.service.isClosed$)).resolves.toBe(false);
-
-    client.connection.simulateClose();
-    await settle();
-    expect(wsStatus.isConnected).toBe(false);
-    await expect(firstValueFrom(spectator.service.isClosed$)).resolves.toBe(true);
-  });
-
   it('holds calls made while the connection is down and sends them when it comes back', async () => {
     client.connection.simulateOpen();
     spectator.service.scheduleCall({ id: 'message-1', method: 'truenas.get_eula', params: [] });
@@ -113,47 +99,5 @@ describe('WebSocketHandlerService', () => {
     client.connection.receive({ jsonrpc: '2.0', id: 'message-1', result: 'eula' });
 
     await expect(answer).resolves.toMatchObject({ id: 'message-1', result: 'eula' });
-  });
-
-  it('flags access as restricted when the appliance refuses the client', async () => {
-    client.connection.simulateOpen();
-    await settle();
-
-    client.connection.simulateClose(1008);
-    await settle();
-
-    await expect(firstValueFrom(spectator.service.isAccessRestricted$)).resolves.toBe(true);
-  });
-
-  it('clears the shutdown flag when the connection comes back', async () => {
-    spectator.service.prepareShutdown();
-    expect(spectator.service.isSystemShuttingDown).toBe(true);
-
-    client.connection.simulateOpen();
-    await settle();
-
-    expect(spectator.service.isSystemShuttingDown).toBe(false);
-  });
-
-  it('asks the connection for a new socket on reconnect', async () => {
-    const setEnabled = jest.spyOn(client.connection, 'setEnabled');
-
-    spectator.service.reconnect();
-    await settle();
-
-    // The round trip through `false` is what asks: the gate is distinct.
-    expect(setEnabled.mock.calls).toEqual([[false], [true]]);
-  });
-
-  it('re-points the connection when the appliance moves address', async () => {
-    const setEndpoint = jest.spyOn(client.connection, 'setEndpoint');
-
-    spectator.service.setupConnectionUrl('https:', 'truenas.local:444');
-    await settle();
-
-    expect(setEndpoint).toHaveBeenCalledWith({
-      hostnames: ['truenas.local:444'],
-      protocol: 'https:',
-    });
   });
 });

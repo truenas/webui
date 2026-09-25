@@ -2,14 +2,12 @@ import { DestroyRef, Injectable, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { ConnectionService } from 'app/modules/websocket/connection.service';
 import { waitForWebSocketReconnect } from 'app/pages/system-tasks/utils/wait-for-websocket-reconnect';
-import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @Injectable({ providedIn: 'root' })
 export class SystemTaskRedirectService {
-  private wsStatus = inject(WebSocketStatusService);
-  private wsManager = inject(WebSocketHandlerService);
+  private connection = inject(ConnectionService);
   private authService = inject(AuthService);
   private router = inject(Router);
 
@@ -23,7 +21,7 @@ export class SystemTaskRedirectService {
    * injection context.
    */
   goToSigninWhenSystemIsBack(destroyRef: DestroyRef): void {
-    waitForWebSocketReconnect(this.wsStatus, this.wsManager)
+    waitForWebSocketReconnect(this.connection)
       .pipe(takeUntilDestroyed(destroyRef))
       .subscribe(() => {
         this.authService.clearAuthToken();

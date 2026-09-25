@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { ConnectionService } from 'app/modules/websocket/connection.service';
 import { SystemTaskRedirectService } from 'app/pages/system-tasks/services/system-task-redirect.service';
 import { SystemTaskSplashComponent } from 'app/pages/system-tasks/system-task-splash/system-task-splash.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -26,7 +26,7 @@ import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 export class FailoverComponent implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private wsManager = inject(WebSocketHandlerService);
+  private connection = inject(ConnectionService);
   private wsStatus = inject(WebSocketStatusService);
   private router = inject(Router);
   private dialogService = inject(DialogService);
@@ -53,7 +53,7 @@ export class FailoverComponent implements OnInit {
       complete: () => { // show restart screen
         this.store$.dispatch(passiveNodeReplaced());
 
-        this.wsManager.prepareShutdown();
+        this.connection.prepareShutdown();
         this.redirect.goToSigninWhenSystemIsBack(this.destroyRef);
       },
     });

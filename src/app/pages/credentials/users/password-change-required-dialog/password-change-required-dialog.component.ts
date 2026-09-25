@@ -7,7 +7,7 @@ import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-component
 import { AuthService } from 'app/modules/auth/auth.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { ChangePasswordFormComponent } from 'app/modules/layout/topbar/change-password-dialog/change-password-form/change-password-form.component';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { ConnectionService } from 'app/modules/websocket/connection.service';
 
 @Component({
   selector: 'ix-password-change-required-dialog',
@@ -26,7 +26,7 @@ export class PasswordChangeRequiredDialog {
   protected authService = inject(AuthService);
   protected dialogRef = inject<DialogRef<unknown, PasswordChangeRequiredDialog>>(DialogRef);
   private router = inject(Router);
-  private wsHandler = inject(WebSocketHandlerService);
+  private connection = inject(ConnectionService);
   private destroyRef = inject(DestroyRef);
 
   protected isPasswordChangeRequired = toSignal(
@@ -41,7 +41,7 @@ export class PasswordChangeRequiredDialog {
     this.authService.logout()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.wsHandler.reconnect();
+        this.connection.reconnect();
         this.router.navigate(['/signin']);
         this.dialogRef.close();
       });
