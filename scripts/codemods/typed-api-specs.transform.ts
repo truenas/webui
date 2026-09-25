@@ -108,6 +108,8 @@ class SpecTransformer {
   private importedNames = new Map<string, string>();
   /** The `x` of each `expect(x.call).toHaveBeenCalledWith(<moved method>, ...)`. */
   private inspected: ts.Expression[] = [];
+  /** Test callbacks `settleAfter` has already made async. */
+  private madeAsync = new Set<ts.Node>();
   /** The same, for methods kept on the legacy client: their `ApiService` is meant. */
   private inspectedLegacy: ts.Expression[] = [];
 
@@ -362,7 +364,10 @@ class SpecTransformer {
       if (update === null) {
         this.note(call, `\`.mockJob('${method}', ...)\`: only \`fakeSuccessfulJob()\` responses convert; convert by hand.`);
         this.keepsLegacy = true;
-      } else if (call.arguments[1]) {
+        return;
+      }
+      this.movedMutation = true;
+      if (call.arguments[1]) {
         this.replace(call.arguments[1], update);
       } else {
         this.edits.push({ start: call.arguments[0].getEnd(), end: call.arguments[0].getEnd(), text: `, ${update}` });
@@ -381,8 +386,11 @@ class SpecTransformer {
       if (!response) {
         this.edits.push({ start: call.arguments[0].getEnd(), end: call.arguments[0].getEnd(), text: ', []' });
       }
-    } else if (!response) {
-      this.edits.push({ start: call.arguments[0].getEnd(), end: call.arguments[0].getEnd(), text: ', null' });
+    } else {
+      this.movedMutation = true;
+      if (!response) {
+        this.edits.push({ start: call.arguments[0].getEnd(), end: call.arguments[0].getEnd(), text: ', null' });
+      }
     }
   }
 
@@ -469,6 +477,10 @@ class SpecTransformer {
     const nameOf = (property: ts.ObjectLiteralElementLike): string => {
       return property.name && ts.isIdentifier(property.name) ? property.name.text : '';
     };
+    // A spread, computed or quoted key has no name to match on; a person moves those.
+    if (options.properties.some((property) => !property.name || !ts.isIdentifier(property.name))) {
+      return null;
+    }
     const isTrue = (property: ts.ObjectLiteralElementLike): boolean => {
       return ts.isPropertyAssignment(property) && property.initializer.kind === ts.SyntaxKind.TrueKeyword;
     };
@@ -607,7 +619,11 @@ class SpecTransformer {
         + `microtask, so callers need \`${settle}\` before asserting on the result.`);
         return;
       }
-      this.edits.push({ start: fn.getStart(this.sourceFile), end: fn.getStart(this.sourceFile), text: 'async ' });
+      // Once per callback, however many submits it holds: `isAsync` reads the untouched AST.
+      if (!this.madeAsync.has(fn)) {
+        this.madeAsync.add(fn);
+        this.edits.push({ start: fn.getStart(this.sourceFile), end: fn.getStart(this.sourceFile), text: 'async ' });
+      }
     }
     const indent = lineIndentAt(this.sourceFile.text, statement.getStart(this.sourceFile));
     this.edits.push({ start: statement.getEnd(), end: statement.getEnd(), text: `\n${indent}${settle}` });
@@ -760,7 +776,14 @@ function fixImports(source: string, fileName: string): string {
     const start = declaration.getStart(sourceFile);
     if (!all.length) {
       // Drop the line, newline included.
-      edits.push({ start, end: source.indexOf('\n', declaration.getEnd()) + 1, text: '' });
+      const lineEnd = source.indexOf('\n', declaration.getEnd());
+      if (lineEnd === -1) {
+        // The file's last line: take the newline before it instead.
+        const previous = source.lastIndexOf('\n', start);
+        edits.push({ start: Math.max(previous, 0), end: source.length, text: '' });
+      } else {
+        edits.push({ start, end: lineEnd + 1, text: '' });
+      }
     } else if (added.length || all.length !== bindings.elements.length) {
       edits.push({ start, end: declaration.getEnd(), text: importLine(module, all) });
     }
@@ -778,12 +801,16 @@ function fixImports(source: string, fileName: string): string {
     const relative = imports.find((declaration) => (declaration.moduleSpecifier as ts.StringLiteral).text.startsWith('.'));
     const last = imports[imports.length - 1];
     let position = 0;
+    let text = `${line}\n`;
     if (after ?? relative) {
       position = (after ?? relative).getStart(sourceFile);
     } else if (last) {
-      position = source.indexOf('\n', last.getEnd()) + 1;
+      const lineEnd = source.indexOf('\n', last.getEnd());
+      // The last import can be the file's last line, with no newline to start after.
+      position = lineEnd === -1 ? source.length : lineEnd + 1;
+      text = lineEnd === -1 ? `\n${line}\n` : text;
     }
-    edits.push({ start: position, end: position, text: `${line}\n` });
+    edits.push({ start: position, end: position, text });
   });
 
   return applyEdits(source, edits);

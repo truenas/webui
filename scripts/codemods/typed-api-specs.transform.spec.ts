@@ -196,6 +196,7 @@ describe('transformSpec', () => {
       "it('saves', () => {",
       '  spectator.component.submit();',
       '  expect(closed).toHaveBeenCalled();',
+      '  spectator.component.submit();',
       '});',
       "it('saves again', async () => {",
       '  spectator.component.submit();',
@@ -216,6 +217,8 @@ describe('transformSpec', () => {
       '  spectator.component.submit();',
       '  await spectator.fixture.whenStable();',
       '  expect(closed).toHaveBeenCalled();',
+      '  spectator.component.submit();',
+      '  await spectator.fixture.whenStable();',
       '});',
       "it('saves again', async () => {",
       '  spectator.component.submit();',
@@ -225,7 +228,59 @@ describe('transformSpec', () => {
       '  spectator.component.submit();',
       '}',
     ));
-    expect(notes).toEqual([{ line: 13, message: expect.stringContaining('outside a test callback') }]);
+    expect(notes).toEqual([{ line: 14, message: expect.stringContaining('outside a test callback') }]);
+  });
+
+  it('lets a submit land when the mutation is scripted on the double rather than in the list', () => {
+    const source = lines(
+      "import { MockApiService } from 'app/core/testing/classes/mock-api.service';",
+      "import { mockApi } from 'app/core/testing/utils/mock-api.utils';",
+      '',
+      'providers: [mockApi()];',
+      "it('saves', () => {",
+      "  spectator.inject(MockApiService).mockCall('pool.update', null);",
+      '  spectator.component.submit();',
+      '});',
+    );
+
+    expect(transformSpec(source, 'x.spec.ts').output).toContain(lines(
+      "it('saves', async () => {",
+      "  spectator.inject(MockTypedApiService).mockCall('pool.update', null);",
+      '  spectator.component.submit();',
+      '  await spectator.fixture.whenStable();',
+      '});',
+    ));
+  });
+
+  it('reports query options it cannot name rather than dropping them', () => {
+    const source = lines(
+      "import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';",
+      '',
+      "providers: [mockApi([mockCall('user.query', [])])];",
+      "expect(api.call).toHaveBeenCalledWith('user.query', [[], { ...pageOptions, order_by: ['name'] }]);",
+      "expect(api.call).toHaveBeenCalledWith('user.query', [[], { 'order_by': ['name'] }]);",
+    );
+
+    const { output, notes } = transformSpec(source, 'x.spec.ts');
+
+    expect(output).toContain(lines(
+      "expect(api.call).toHaveBeenCalledWith('user.query', [[], { ...pageOptions, order_by: ['name'] }]);",
+      "expect(api.call).toHaveBeenCalledWith('user.query', [[], { 'order_by': ['name'] }]);",
+    ));
+    expect(notes.map((note) => note.line)).toEqual([4, 5]);
+    expect(notes[0].message).toContain('move it to `query` / `queryOne` / `queryCount` by hand');
+  });
+
+  it('drops a legacy import on the last line of a file with no trailing newline', () => {
+    const source = [
+      "providers: [mockApi([mockCall('system.info', {})])];",
+      "import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';",
+    ].join('\n');
+
+    expect(transformSpec(source, 'x.spec.ts').output).toBe(lines(
+      "providers: [mockTypedApi([mockTypedCall('system.info', {})])];",
+      "import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';",
+    ));
   });
 
   it('leaves a spec with nothing to convert alone', () => {
