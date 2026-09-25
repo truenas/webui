@@ -139,6 +139,53 @@ describe('transformSpec', () => {
     expect(notes).toEqual([]);
   });
 
+  it('keeps a method named by keepLegacy on the legacy double even when only its assertions name it', () => {
+    const source = lines(
+      "import { MockApiService } from 'app/core/testing/classes/mock-api.service';",
+      "import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';",
+      "import { ApiService } from 'app/modules/websocket/api.service';",
+      '',
+      "providers: [mockApi([mockCall('user.query', [])])];",
+      "spectator.inject(MockApiService).mockCall('user.delete', null);",
+      "expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.delete', [1]);",
+    );
+
+    const { output, notes } = transformSpec(source, 'x.spec.ts', {
+      keepLegacy: (method) => method === 'user.delete',
+    });
+
+    expect(output).toContain("spectator.inject(MockApiService).mockCall('user.delete', null);");
+    expect(output).toContain("expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.delete', [1]);");
+    expect(notes).toEqual([{ line: 6, message: expect.stringContaining('references were not renamed') }]);
+  });
+
+  it('keeps a bare mockApi() when the run names what moved', () => {
+    const source = lines(
+      "import { mockApi } from 'app/core/testing/utils/mock-api.utils';",
+      '',
+      'providers: [mockApi()];',
+    );
+
+    const { output, notes } = transformSpec(source, 'x.spec.ts', { keepLegacy: () => true });
+
+    expect(output).toBe(source);
+    expect(notes).toEqual([{ line: 3, message: expect.stringContaining('Bare `mockApi()` kept') }]);
+  });
+
+  it('reports a call assertion that names no method', () => {
+    const source = lines(
+      "import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';",
+      '',
+      "providers: [mockApi([mockCall('user.query', [])])];",
+      'expect(api.call).not.toHaveBeenCalled();',
+      'expect(dialog.open).not.toHaveBeenCalled();',
+    );
+
+    expect(transformSpec(source, 'x.spec.ts').notes).toEqual([
+      { line: 4, message: expect.stringContaining('names no method') },
+    ]);
+  });
+
   it('leaves what it cannot translate on the legacy double and says where', () => {
     const source = lines(
       "import { mockProvider } from '@ngneat/spectator/jest';",

@@ -96,7 +96,8 @@ function main(): void {
     if (isExemptPath(name) || (!source.includes('mock-api.utils') && !source.includes('websocket/api.service'))) {
       return;
     }
-    const result = transformSpec(source, file, { keepLegacy });
+    const isPartial = args.only.length > 0 || args.keepLegacy.length > 0;
+    const result = transformSpec(source, file, isPartial ? { keepLegacy } : {});
     if (result.changed) {
       changed++;
       if (!args.dryRun) {

@@ -215,7 +215,20 @@ It rewrites `mockApi` / `mockCall` / `mockJob` to `mockTypedApi` /
 after `spectator.component.submit()`, and fixes the imports. It prints
 `file:line` for what it left alone: query factories, `mockProvider(ApiService)`
 stubs, hand-written `method === 'x.query'` dispatch, `failApiCall`,
-`emitSubscribeEvent`, `mockCallOnce`, `callAndSubscribe`. Follow it with
+`emitSubscribeEvent`, `mockCallOnce`, `callAndSubscribe`,
+`expect(api.call).not.toHaveBeenCalled()` (which names no method, so it
+passes once a query has moved to `query`), and, under `--only` /
+`--keep-legacy`, a bare `mockApi()`, since nothing in it says whether the
+spec's calls moved.
+
+`mockTypedApi()` is not a drop-in for everything `mockApi()` provided.
+`mockApi()` also stubs `WebSocketStatusService`, `WebSocketHandlerService`,
+`SubscriptionManagerService` and its own ICU-aware `TranslateService`. After
+conversion a spec gets `setup-jest.ts`'s global `TranslateModule` instead. A
+spec whose component injects one of those websocket services needs its own
+`mockProvider`. The specs checked so far already have one.
+
+Follow it with
 `yarn lint:fix` on the changed files, then `tsc`. `tsc` is where the real
 work is. Typed fixtures are checked against the generated directory, so a UI
 interface cast (`as Pool[]` where the query returns `PoolEntry`) or a

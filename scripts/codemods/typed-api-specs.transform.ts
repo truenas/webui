@@ -27,6 +27,12 @@
  * conversion should surface. Nor can it see timing — the typed double answers on a microtask, so a
  * spec that asserted on a load synchronously now needs `await spectator.fixture.whenStable()`.
  *
+ * The two helpers are not provider-equivalent. `mockApi()` also stubs `WebSocketStatusService`,
+ * `WebSocketHandlerService`, `SubscriptionManagerService` and a hand-rolled ICU `TranslateService`;
+ * `mockTypedApi()` provides only `TypedApiService` and `MockTypedApiService`. A converted spec gets
+ * the global `TranslateModule` from `setup-jest.ts` instead, and one whose component injects one of the
+ * websocket services needs its own `mockProvider` (the specs checked so far already have one).
+ *
  * Methods the component under test still calls on `ApiService` can be kept on the legacy double
  * with `keepLegacy`; the `mockApi([...])` array is then split in two, and `ApiService` references
  * are only renamed where an assertion names a method that moved.
@@ -64,6 +70,7 @@ const typedMockServiceModule = 'app/core/testing/classes/mock-typed-api.service'
 const jobStateModule = 'app/enums/job-state.enum';
 const fakeJobModule = 'app/core/testing/utils/fake-job.utils';
 
+const apiVerbs = new Set(['call', 'job', 'startJob', 'subscribe', 'callAndSubscribe']);
 const calledWithMatchers = new Set(['toHaveBeenCalledWith', 'toHaveBeenLastCalledWith', 'toHaveBeenNthCalledWith']);
 
 function isQueryMethod(method: string): boolean {
@@ -98,6 +105,8 @@ class SpecTransformer {
   private edits: Edit[] = [];
   readonly notes: TransformNote[] = [];
   private readonly keepLegacy: (method: string) => boolean;
+  /** Whether the run names what moved (`--only` / `--keep-legacy`), so some of the file may be meant to stay. */
+  private readonly isPartial: boolean;
   /**
    * Whether a call or job moved to the typed double. Only then can a submit be waiting on the typed
    * double's microtask; a spec that moved only its queries still saves through the legacy one.
@@ -115,6 +124,7 @@ class SpecTransformer {
 
   constructor(private sourceFile: ts.SourceFile, options: TransformOptions) {
     this.keepLegacy = options.keepLegacy ?? (() => false);
+    this.isPartial = Boolean(options.keepLegacy);
     this.collectImports();
   }
 
@@ -282,6 +292,13 @@ class SpecTransformer {
   private visitMockApi(call: ts.CallExpression): void {
     const [list] = call.arguments;
     if (!list) {
+      if (this.isPartial) {
+        // Nothing here names a method, so nothing says whether this spec's calls moved.
+        this.note(call, 'Bare `mockApi()` kept because `--only` / `--keep-legacy` is in effect; add `mockTypedApi()` '
+        + 'if the code under test now injects `TypedApiService`.');
+        this.keepsLegacy = true;
+        return;
+      }
       this.replace(call.expression, 'mockTypedApi');
       return;
     }
@@ -356,7 +373,11 @@ class SpecTransformer {
 
   private convertServiceMock(call: ts.CallExpression, callee: ts.PropertyAccessExpression): void {
     const method = this.methodOf(call);
-    if (method === null || this.keepLegacy(method)) {
+    if (method === null) {
+      return;
+    }
+    if (this.keepLegacy(method)) {
+      this.keepsLegacy = true;
       return;
     }
     if (callee.name.text === 'mockJob') {
@@ -424,7 +445,11 @@ class SpecTransformer {
       return;
     }
     if (this.keepLegacy(method)) {
-      this.inspectedLegacy.push(spied.expression);
+      // Only an API verb says the method is one of the client's; `expect(dialog.open)` does not.
+      if (apiVerbs.has(spied.name.text)) {
+        this.inspectedLegacy.push(spied.expression);
+        this.keepsLegacy = true;
+      }
       return;
     }
     this.inspected.push(spied.expression);
@@ -632,6 +657,11 @@ class SpecTransformer {
   /** Shapes that need a person, found after the rewrite so they are reported once. */
   private reportLeftovers(root: ts.Node): void {
     const visit = (node: ts.Node): void => {
+      if (this.edits.length && ts.isCallExpression(node) && isMethodlessCallAssertion(node)) {
+        this.note(node, `\`${this.text(node).slice(0, 70)}\` names no method: a query the code under test moved to `
+        + '`query` / `queryOne` / `queryCount` no longer reaches `call`, so this can pass whatever happens. '
+        + 'Assert on the verb it now uses.');
+      }
       if (ts.isCallExpression(node)) {
         const callee = node.expression;
         const [first, second] = node.arguments;
@@ -672,6 +702,22 @@ class SpecTransformer {
     };
     visit(root);
   }
+}
+
+/** `expect(<x>.call).toHaveBeenCalled()`, with or without `.not`. */
+function isMethodlessCallAssertion(call: ts.CallExpression): boolean {
+  if (!ts.isPropertyAccessExpression(call.expression) || call.expression.name.text !== 'toHaveBeenCalled') {
+    return false;
+  }
+  let receiver = call.expression.expression;
+  if (ts.isPropertyAccessExpression(receiver) && receiver.name.text === 'not') {
+    receiver = receiver.expression;
+  }
+  if (!ts.isCallExpression(receiver) || !ts.isIdentifier(receiver.expression) || receiver.expression.text !== 'expect') {
+    return false;
+  }
+  const [spied] = receiver.arguments;
+  return Boolean(spied) && ts.isPropertyAccessExpression(spied) && spied.name.text === 'call';
 }
 
 /** `spectator` for a `spectator.component.submit();` statement, else null. */
