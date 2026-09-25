@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { ConnectionService } from 'app/modules/websocket/connection.service';
 import { SystemTaskRedirectService } from 'app/pages/system-tasks/services/system-task-redirect.service';
 import { SystemTaskSplashComponent } from 'app/pages/system-tasks/system-task-splash/system-task-splash.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -26,7 +26,7 @@ import { selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info
 })
 export class RestartComponent implements OnInit {
   private api = inject(ApiService);
-  private wsManager = inject(WebSocketHandlerService);
+  private connection = inject(ConnectionService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private errorHandler = inject(ErrorHandlerService);
@@ -61,13 +61,13 @@ export class RestartComponent implements OnInit {
         if (this.isHaLicensed() && this.isHaEnabled()) {
           this.wsStatus.setReconnectAllowed(false);
         }
-        this.wsManager.prepareShutdown();
+        this.connection.prepareShutdown();
         // Keep the splash up for the whole reboot instead of a fixed few seconds - a reboot
         // takes minutes, so the old timer dropped the user on a sign-in page that could not
         // reach middleware yet.
         //
         // Deliberately no `reconnect()` here: `system.reboot` returns as soon as the reboot is
-        // scheduled, so closing the socket ourselves would start the handler's 5s retry loop
+        // scheduled, so closing the socket ourselves would make the connection retry at once
         // while middleware is still answering, and that early retry would be read as "the
         // system is back". The reboot tearing the connection down schedules a reconnect on its
         // own, which is the one we actually want to wait for.

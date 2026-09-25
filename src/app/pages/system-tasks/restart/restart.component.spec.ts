@@ -10,7 +10,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { ConnectionService } from 'app/modules/websocket/connection.service';
 import { RestartComponent } from 'app/pages/system-tasks/restart/restart.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -19,7 +19,7 @@ import { selectIsEnterprise, selectProductType } from 'app/store/system-info/sys
 
 describe('RestartComponent', () => {
   let spectator: Spectator<RestartComponent>;
-  let isConnected$: BehaviorSubject<boolean>;
+  let isClosed$: BehaviorSubject<boolean>;
   const createComponent = createComponentFactory({
     component: RestartComponent,
     providers: [
@@ -42,12 +42,6 @@ describe('RestartComponent', () => {
         closeAllDialogs: jest.fn(),
       }),
       mockProvider(ErrorHandlerService),
-      mockProvider(WebSocketHandlerService, {
-        prepareShutdown: jest.fn(),
-        reconnect: jest.fn(),
-        // The flag prepareShutdown() raises, which stays up until a new connection opens.
-        isSystemShuttingDown: true,
-      }),
       // AuthService is injected by SystemTaskRedirectService rather than by the component,
       // so it is easy to miss - mock it anyway to keep this spec off the real implementation.
       mockProvider(AuthService, {
@@ -66,11 +60,17 @@ describe('RestartComponent', () => {
    * actually restarts. Created per test so no state is left behind by an earlier run.
    */
   function createRestart(providers: Provider[] = []): void {
-    isConnected$ = new BehaviorSubject(true);
+    isClosed$ = new BehaviorSubject(false);
     spectator = createComponent({
       providers: [
+        mockProvider(ConnectionService, {
+          isClosed$,
+          prepareShutdown: jest.fn(),
+          reconnect: jest.fn(),
+          // The flag prepareShutdown() raises, which stays up until a new connection opens.
+          isSystemShuttingDown: true,
+        }),
         mockProvider(WebSocketStatusService, {
-          isConnected$,
           setReconnectAllowed: jest.fn(),
         }),
         ...providers,
@@ -100,20 +100,20 @@ describe('RestartComponent', () => {
       expect(spectator.query('ix-system-task-splash .message')).toHaveText('System is restarting...');
     });
 
-    // Not reconnect(): forcing the socket down would start the handler's retry loop while
+    // Not reconnect(): forcing the socket down would start the connection's retries while
     // middleware is still up, and a successful early retry would read as a finished reboot.
     it('marks the connection as shutting down once the reboot job returns', () => {
-      expect(spectator.inject(WebSocketHandlerService).prepareShutdown).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketHandlerService).reconnect).not.toHaveBeenCalled();
+      expect(spectator.inject(ConnectionService).prepareShutdown).toHaveBeenCalled();
+      expect(spectator.inject(ConnectionService).reconnect).not.toHaveBeenCalled();
     });
 
     it('stays on the splash screen until the websocket comes back after the reboot', () => {
       expect(spectator.inject(Router).navigate).not.toHaveBeenCalled();
 
-      // Mirrors the reboot dropping the socket and the handler opening a new connection.
-      isConnected$.next(false);
-      Object.assign(spectator.inject(WebSocketHandlerService), { isSystemShuttingDown: false });
-      isConnected$.next(true);
+      // Mirrors the reboot dropping the socket and a new one opening once the box is back.
+      isClosed$.next(true);
+      Object.assign(spectator.inject(ConnectionService), { isSystemShuttingDown: false });
+      isClosed$.next(false);
 
       expect(spectator.inject(AuthService).clearAuthToken).toHaveBeenCalled();
       expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/signin']);

@@ -8,7 +8,7 @@ import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { ConnectionService } from 'app/modules/websocket/connection.service';
 import { ShutdownComponent, blackoutDelay } from 'app/pages/system-tasks/shutdown/shutdown.component';
 import { selectIsEnterprise, selectProductType } from 'app/store/system-info/system-info.selectors';
 
@@ -27,7 +27,7 @@ describe('ShutdownComponent', () => {
         mockJob('system.shutdown', fakeSuccessfulJob()),
       ]),
       mockProvider(Location),
-      mockProvider(WebSocketHandlerService, {
+      mockProvider(ConnectionService, {
         prepareShutdown: jest.fn(),
       }),
       mockProvider(AuthService, {
@@ -59,7 +59,7 @@ describe('ShutdownComponent', () => {
   it('tears down the websocket connection once the shutdown job completes', fakeAsync(() => {
     spectator = createComponent();
 
-    expect(spectator.inject(WebSocketHandlerService).prepareShutdown).toHaveBeenCalled();
+    expect(spectator.inject(ConnectionService).prepareShutdown).toHaveBeenCalled();
     expect(spectator.inject(AuthService).clearAuthToken).toHaveBeenCalled();
   }));
 

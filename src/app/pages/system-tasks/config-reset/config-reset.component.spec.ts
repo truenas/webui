@@ -9,14 +9,13 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { ConnectionService } from 'app/modules/websocket/connection.service';
 import { ConfigResetComponent } from 'app/pages/system-tasks/config-reset/config-reset.component';
-import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { selectIsEnterprise, selectProductType } from 'app/store/system-info/system-info.selectors';
 
 describe('ConfigResetComponent', () => {
   let spectator: Spectator<ConfigResetComponent>;
-  let isConnected$: BehaviorSubject<boolean>;
+  let isClosed$: BehaviorSubject<boolean>;
   const createComponent = createComponentFactory({
     component: ConfigResetComponent,
     providers: [
@@ -30,11 +29,6 @@ describe('ConfigResetComponent', () => {
         mockJob('config.reset', fakeSuccessfulJob()),
       ]),
       mockProvider(Location),
-      mockProvider(WebSocketHandlerService, {
-        prepareShutdown: jest.fn(),
-        // The flag prepareShutdown() raises, which stays up until a new connection opens.
-        isSystemShuttingDown: true,
-      }),
       // AuthService is injected by SystemTaskRedirectService rather than by the component,
       // so it is easy to miss - mock it anyway to keep this spec off the real implementation.
       mockProvider(AuthService, {
@@ -50,20 +44,25 @@ describe('ConfigResetComponent', () => {
     ],
   });
 
-  /** Mirrors the reboot dropping the socket and WebSocketHandlerService opening a new one. */
+  /** Mirrors the reboot dropping the socket and a new one opening once the box is back. */
   function simulateSystemComingBack(): void {
-    isConnected$.next(false);
-    Object.assign(spectator.inject(WebSocketHandlerService), { isSystemShuttingDown: false });
-    isConnected$.next(true);
+    isClosed$.next(true);
+    Object.assign(spectator.inject(ConnectionService), { isSystemShuttingDown: false });
+    isClosed$.next(false);
   }
 
   beforeEach(() => {
     // The connection is still live when config.reset returns - it only drops once the box
     // actually restarts. Created per test so no state is left behind by an earlier run.
-    isConnected$ = new BehaviorSubject(true);
+    isClosed$ = new BehaviorSubject(false);
     spectator = createComponent({
       providers: [
-        mockProvider(WebSocketStatusService, { isConnected$ }),
+        mockProvider(ConnectionService, {
+          isClosed$,
+          prepareShutdown: jest.fn(),
+          // The flag prepareShutdown() raises, which stays up until a new connection opens.
+          isSystemShuttingDown: true,
+        }),
       ],
     });
   });
@@ -79,7 +78,7 @@ describe('ConfigResetComponent', () => {
   it('resets config when user visits the page and waits for websocket to reconnect', () => {
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('config.reset', [{ reboot: true }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketHandlerService).prepareShutdown).toHaveBeenCalled();
+    expect(spectator.inject(ConnectionService).prepareShutdown).toHaveBeenCalled();
   });
 
   it('takes user to sign-in page when new websocket connection is established after config reset', () => {

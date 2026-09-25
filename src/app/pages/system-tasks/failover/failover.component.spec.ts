@@ -8,7 +8,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { ConnectionService } from 'app/modules/websocket/connection.service';
 import { FailoverComponent } from 'app/pages/system-tasks/failover/failover.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
@@ -17,7 +17,7 @@ import { selectIsEnterprise, selectProductType } from 'app/store/system-info/sys
 describe('FailoverComponent', () => {
   let spectator: Spectator<FailoverComponent>;
   let dispatchSpy: jest.SpyInstance;
-  let isConnected$: BehaviorSubject<boolean>;
+  let isClosed$: BehaviorSubject<boolean>;
   const createComponent = createComponentFactory({
     component: FailoverComponent,
     providers: [
@@ -34,11 +34,6 @@ describe('FailoverComponent', () => {
       mockProvider(DialogService, {
         closeAllDialogs: jest.fn(),
       }),
-      mockProvider(WebSocketHandlerService, {
-        prepareShutdown: jest.fn(),
-        // The flag prepareShutdown() raises, which stays up until a new connection opens.
-        isSystemShuttingDown: true,
-      }),
       // AuthService is injected by SystemTaskRedirectService rather than by the component,
       // so it is easy to miss - mock it anyway to keep this spec off the real implementation.
       mockProvider(AuthService, {
@@ -48,23 +43,28 @@ describe('FailoverComponent', () => {
     ],
   });
 
-  /** Mirrors the handover dropping the socket and WebSocketHandlerService opening a new one. */
+  /** Mirrors the handover dropping the socket and a new one opening on the other controller. */
   function simulateSystemComingBack(): void {
-    isConnected$.next(false);
-    Object.assign(spectator.inject(WebSocketHandlerService), { isSystemShuttingDown: false });
-    isConnected$.next(true);
+    isClosed$.next(true);
+    Object.assign(spectator.inject(ConnectionService), { isSystemShuttingDown: false });
+    isClosed$.next(false);
   }
 
   beforeEach(() => {
     // The connection is still live when become_passive returns - it only drops once the other
     // controller takes over. Created per test so no state is left behind by an earlier run.
-    isConnected$ = new BehaviorSubject(true);
+    isClosed$ = new BehaviorSubject(false);
     // ngOnInit dispatches on the store, so the spy has to be in place before it runs.
     spectator = createComponent({
       detectChanges: false,
       providers: [
+        mockProvider(ConnectionService, {
+          isClosed$,
+          prepareShutdown: jest.fn(),
+          // The flag prepareShutdown() raises, which stays up until a new connection opens.
+          isSystemShuttingDown: true,
+        }),
         mockProvider(WebSocketStatusService, {
-          isConnected$,
           setReconnectAllowed: jest.fn(),
           setFailoverStatus: jest.fn(),
         }),
@@ -90,7 +90,7 @@ describe('FailoverComponent', () => {
 
   it('marks the passive node as replaced and tears down the connection once failover completes', () => {
     expect(dispatchSpy).toHaveBeenCalledWith(passiveNodeReplaced());
-    expect(spectator.inject(WebSocketHandlerService).prepareShutdown).toHaveBeenCalled();
+    expect(spectator.inject(ConnectionService).prepareShutdown).toHaveBeenCalled();
   });
 
   it('takes user to sign-in page once the websocket comes back after the failover', () => {

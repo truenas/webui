@@ -16,7 +16,7 @@ import {
 } from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { ConnectionService } from 'app/modules/websocket/connection.service';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -64,7 +64,7 @@ describe('GuiFormComponent', () => {
           enable_gpos_stig: false,
         } as SystemSecurityConfig),
       ]),
-      mockProvider(WebSocketHandlerService),
+      mockProvider(ConnectionService),
       mockProvider(WebSocketStatusService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

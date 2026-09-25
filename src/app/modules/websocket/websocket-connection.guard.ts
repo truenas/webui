@@ -6,11 +6,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { isSigninUrl } from 'app/helpers/url.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { ConnectionService } from 'app/modules/websocket/connection.service';
 
 @Injectable({ providedIn: 'root' })
 export class WebSocketConnectionGuard {
-  private wsManager = inject(WebSocketHandlerService);
+  private connection = inject(ConnectionService);
   protected router = inject(Router);
   private location = inject(Location);
   private dialogService = inject(DialogService);
@@ -20,26 +20,23 @@ export class WebSocketConnectionGuard {
 
   isConnected = false;
   constructor() {
-    this.wsManager.isClosed$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isClosed) => {
+    this.connection.isClosed$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isClosed) => {
       if (isClosed) {
         this.resetUi();
-        // TODO: Test why manually changing close status is needed
-        // Test a shutdown function to see how UI acts when this isn't done
-        // this.wsManager.isClosed$ = false;
       }
     });
 
-    this.wsManager.isAccessRestricted$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isRestricted) => {
+    this.connection.isAccessRestricted$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isRestricted) => {
       if (isRestricted) {
         this.showAccessRestrictedDialog();
-        this.wsManager.isAccessRestricted = false;
+        this.connection.acknowledgeAccessRestricted();
       }
     });
   }
 
   private resetUi(): void {
     this.dialogService.closeAllDialogs();
-    if (!this.wsManager.isSystemShuttingDown) {
+    if (!this.connection.isSystemShuttingDown) {
       // Store current URL before redirecting to signin so user can return after login
       // Use location.path() which returns the path without base href and includes query params
       const currentUrl = this.location.path();
@@ -59,7 +56,7 @@ export class WebSocketConnectionGuard {
       message: this.translate.instant('Access from your IP is restricted'),
     }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
-        this.wsManager.reconnect();
+        this.connection.reconnect();
       },
     });
   }

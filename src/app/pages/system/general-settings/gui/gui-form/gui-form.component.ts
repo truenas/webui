@@ -25,7 +25,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { ConnectionService } from 'app/modules/websocket/connection.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -54,7 +54,7 @@ export class GuiFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private sysGeneralService = inject(SystemGeneralService);
   private api = inject(ApiService);
-  private wsManager = inject(WebSocketHandlerService);
+  private connection = inject(ConnectionService);
   private wsStatus = inject(WebSocketStatusService);
   private dialog = inject(DialogService);
   private loader = inject(LoaderService);
@@ -224,11 +224,11 @@ export class GuiFormComponent implements OnInit {
       href = protocol + '//' + hostname + ':' + port + this.window.location.pathname;
 
       this.loader.open();
-      this.wsManager.prepareShutdown();
+      this.connection.prepareShutdown();
       this.api.call('system.general.ui_restart').subscribe({
         next: () => {
-          this.wsManager.setupConnectionUrl(protocol, hostname + ':' + port);
-          this.wsManager.reconnect();
+          this.connection.setEndpoint(protocol, hostname + ':' + port);
+          this.connection.reconnect();
           this.replaceHrefWhenWsConnected(href);
         },
         error: (error: unknown) => {

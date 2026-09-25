@@ -3,11 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import {
-  BehaviorSubject,
   combineLatest,
-  distinctUntilChanged,
   filter,
-  map,
   merge,
   mergeMap,
   Observable,
@@ -25,7 +22,7 @@ import {
   RequestMessage, IncomingMessage,
 } from 'app/interfaces/api-message.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TYPED_API_CLIENT, WebUiApiClient } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { ConnectionService, TypedConnection } from 'app/modules/websocket/connection.service';
 import { MockResponseService } from 'app/modules/websocket-debug-panel/services/mock-response.service';
 import { WebSocketDebugService } from 'app/modules/websocket-debug-panel/services/websocket-debug.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -35,15 +32,6 @@ import {
 } from './errors';
 
 type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>> & { jsonrpc: '2.0' };
-
-/**
- * The typed client's connection.
- *
- * Named off the client rather than imported, because `TrueNasConnection` is
- * not exported from the package's main entry — see gap 6 in
- * `docs/devs/typed-api-client.md`.
- */
-type TypedConnection = WebUiApiClient['connection'];
 
 /**
  * The legacy JSON-RPC client's transport.
@@ -58,9 +46,10 @@ type TypedConnection = WebUiApiClient['connection'];
  * the calls still riding this service depend on:
  *
  * - the call queue and its 20-concurrent-call ceiling,
- * - the WebSocket debug panel's logging and its mock interception,
- * - the connection status the app's reconnect, shutdown and failover flows
- *   read (`isClosed$`, `isAccessRestricted$`, `isSystemShuttingDown`).
+ * - the WebSocket debug panel's logging and its mock interception.
+ *
+ * The connection status the app's reconnect, shutdown and failover flows read
+ * moved to `ConnectionService` (NAS-143990), which reads the connection itself.
  *
  * What went with the socket: the reconnect timer (the client's connection
  * retries on its own), `core.set_options` on open (the client sends it), and
@@ -73,7 +62,7 @@ type TypedConnection = WebUiApiClient['connection'];
   providedIn: 'root',
 })
 export class WebSocketHandlerService {
-  private client$ = inject(TYPED_API_CLIENT);
+  private connectionService = inject(ConnectionService);
   private wsStatus = inject(WebSocketStatusService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
@@ -81,39 +70,17 @@ export class WebSocketHandlerService {
   private mockResponseService = inject(MockResponseService);
   private destroyRef = inject(DestroyRef);
 
-  private readonly connection$: Observable<TypedConnection> = this.client$.pipe(
-    map((client) => client.connection),
-    shareReplay({ bufferSize: 1, refCount: false }),
-  );
+  private readonly connection$ = this.connectionService.connection$;
 
   /**
    * The connection, once the client has been built, for the synchronous paths
    * that cannot wait for it: `processCall` only ever runs behind
-   * `isConnected$`, which this service itself raises from the connection, so
+   * `isConnected$`, which `ConnectionService` raises from the connection, so
    * by then it is here.
    */
   private connection: TypedConnection | undefined;
 
   private readonly maxConcurrentCalls = 20;
-
-  private shutDownInProgress = false;
-  get isSystemShuttingDown(): boolean {
-    return this.shutDownInProgress;
-  }
-
-  private readonly hasRestrictedError$ = new BehaviorSubject(false);
-  set isAccessRestricted(value: boolean) {
-    this.hasRestrictedError$.next(value);
-  }
-
-  get isAccessRestricted$(): Observable<boolean> {
-    return this.hasRestrictedError$.asObservable();
-  }
-
-  private readonly isConnectionLive$ = new BehaviorSubject(false);
-  get isClosed$(): Observable<boolean> {
-    return this.isConnectionLive$.pipe(map((isLive) => !isLive));
-  }
 
   private readonly triggerNextCall$ = new Subject<void>();
   private activeCalls = 0;
@@ -121,9 +88,6 @@ export class WebSocketHandlerService {
   private readonly pendingCalls = new Map<string, ApiCall>();
   private showingConcurrentCallsError = false;
   private callsInConcurrentCallsError = new Set<string>();
-
-  /** Measured once, on the first socket of the tab. */
-  private hasMeasuredFirstConnection = false;
 
   /**
    * Every message the appliance sends, merged with the debug panel's mocked
@@ -155,17 +119,13 @@ export class WebSocketHandlerService {
   );
 
   constructor() {
-    performance.mark('WS Init');
     this.trackConnection();
     this.setupScheduledCalls();
   }
 
   /**
-   * Projects the borrowed connection's state onto the surface the app reads.
-   *
-   * A refusal (1008, e.g. the client's IP is not in Allowed IP Addresses) is
-   * the one close the connection does not retry after; `reconnect()` is how
-   * `WebSocketConnectionGuard` asks again once the user has acknowledged it.
+   * Keeps the connection at hand for `processCall`, and drops the calls in
+   * flight whenever the socket is lost: their answers went with it.
    */
   private trackConnection(): void {
     this.connection$.pipe(
@@ -174,25 +134,10 @@ export class WebSocketHandlerService {
       this.connection = connection;
     });
 
-    this.connection$.pipe(
-      switchMap((connection) => connection.opened$),
-      distinctUntilChanged(),
+    this.connectionService.isClosed$.pipe(
+      filter(Boolean),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((isOpen) => {
-      if (isOpen) {
-        this.onOpen();
-      } else {
-        this.onClose();
-      }
-    });
-
-    this.connection$.pipe(
-      switchMap((connection) => connection.closes$),
-      filter((close) => close.refused),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.isAccessRestricted = true;
-    });
+    ).subscribe(() => this.onClose());
   }
 
   private setupScheduledCalls(): void {
@@ -374,9 +319,6 @@ export class WebSocketHandlerService {
   }
 
   private onClose(): void {
-    this.wsStatus.setConnectionStatus(false);
-    this.isConnectionLive$.next(false);
-
     // Clean up pending calls when connection closes
     this.activeCalls = 0;
     this.pendingCalls.clear();
@@ -384,62 +326,9 @@ export class WebSocketHandlerService {
     // Note: queuedCalls are kept so they can be processed when connection reopens
   }
 
-  private onOpen(): void {
-    this.shutDownInProgress = false;
-    this.wsStatus.setConnectionStatus(true);
-    this.isConnectionLive$.next(true);
-
-    performance.mark('WS Connected');
-    if (!this.hasMeasuredFirstConnection) {
-      this.hasMeasuredFirstConnection = true;
-      performance.measure('Establishing WS connection', 'WS Init', 'WS Connected');
-    }
-  }
-
   scheduleCall(payload: Pick<ApiCall, 'id' | 'method' | 'params'>): void {
     const message = makeRequestMessage(payload);
     this.queuedCalls.push(message as ApiCall);
     this.triggerNextCall$.next();
-  }
-
-  prepareShutdown(): void {
-    this.shutDownInProgress = true;
-  }
-
-  /**
-   * Asks the connection for another socket.
-   *
-   * The round trip through `false` is what asks: the connection's gate is
-   * `distinctUntilChanged`, so re-asserting `true` on a connection that
-   * believes it is enabled — which is every connection that has merely lost
-   * its socket, and every connection the appliance has refused — does nothing.
-   */
-  reconnect(): void {
-    this.withConnection((connection) => {
-      connection.setEnabled(false);
-      connection.setEnabled(true);
-    });
-  }
-
-  /**
-   * Re-points the socket at another address, as a GUI address or port change
-   * does. The API path is the client's and does not change with it.
-   */
-  setupConnectionUrl(protocol: string, remote: string): void {
-    this.withConnection((connection) => {
-      connection.setEndpoint({
-        hostnames: [remote],
-        // `location.protocol` is a plain string that can be `file:` or
-        // `chrome-extension:`, so this narrows rather than casts.
-        protocol: protocol === 'http:' ? 'http:' : 'https:',
-      });
-    });
-  }
-
-  private withConnection(action: (connection: TypedConnection) => void): void {
-    this.connection$.pipe(
-      take(1),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(action);
   }
 }

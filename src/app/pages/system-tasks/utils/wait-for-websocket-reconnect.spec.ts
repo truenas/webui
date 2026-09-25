@@ -1,7 +1,6 @@
-import { BehaviorSubject } from 'rxjs';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { BehaviorSubject, map } from 'rxjs';
+import { ConnectionService } from 'app/modules/websocket/connection.service';
 import { waitForWebSocketReconnect } from 'app/pages/system-tasks/utils/wait-for-websocket-reconnect';
-import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('waitForWebSocketReconnect', () => {
   let isConnected$: BehaviorSubject<boolean>;
@@ -9,17 +8,17 @@ describe('waitForWebSocketReconnect', () => {
   let emissions: number;
 
   function subscribeToReconnect(): void {
-    const wsStatus = { isConnected$ } as WebSocketStatusService;
-    const wsManager = {
+    const connection = {
+      isClosed$: isConnected$.pipe(map((isConnected) => !isConnected)),
       get isSystemShuttingDown(): boolean {
         return isSystemShuttingDown;
       },
-    } as WebSocketHandlerService;
+    } as ConnectionService;
 
-    waitForWebSocketReconnect(wsStatus, wsManager).subscribe(() => emissions += 1);
+    waitForWebSocketReconnect(connection).subscribe(() => emissions += 1);
   }
 
-  /** What `WebSocketHandlerService` does when a new connection opens. */
+  /** What `ConnectionService` does when a new socket opens. */
   function reconnect(): void {
     isSystemShuttingDown = false;
     isConnected$.next(true);

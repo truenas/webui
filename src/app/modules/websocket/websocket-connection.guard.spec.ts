@@ -1,11 +1,11 @@
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ConnectionService } from 'app/modules/websocket/connection.service';
 import { WebSocketConnectionGuard } from 'app/modules/websocket/websocket-connection.guard';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 
 describe('WebSocketConnectionGuard', () => {
   let spectator: SpectatorService<WebSocketConnectionGuard>;
@@ -17,6 +17,7 @@ describe('WebSocketConnectionGuard', () => {
     providers: [
       mockProvider(DialogService, {
         closeAllDialogs: jest.fn(),
+        fullScreenDialog: jest.fn(() => of(true)),
       }),
       mockProvider(Location),
       mockProvider(Router),
@@ -38,10 +39,12 @@ describe('WebSocketConnectionGuard', () => {
     isAccessRestricted$ = new BehaviorSubject(false);
     spectator = createService({
       providers: [
-        mockProvider(WebSocketHandlerService, {
+        mockProvider(ConnectionService, {
           isClosed$,
           isAccessRestricted$,
           isSystemShuttingDown: false,
+          acknowledgeAccessRestricted: jest.fn(),
+          reconnect: jest.fn(),
         }),
       ],
     });
@@ -128,6 +131,21 @@ describe('WebSocketConnectionGuard', () => {
       isClosed$.next(true);
 
       expect(spectator.inject(DialogService).closeAllDialogs).toHaveBeenCalled();
+    });
+  });
+
+  describe('access restricted', () => {
+    it('tells the user their IP is refused, and asks for another socket once they acknowledge it', () => {
+      const connection = spectator.inject(ConnectionService);
+
+      isAccessRestricted$.next(true);
+
+      expect(spectator.inject(DialogService).fullScreenDialog).toHaveBeenCalledWith({
+        title: 'Access restricted',
+        message: 'Access from your IP is restricted',
+      });
+      expect(connection.acknowledgeAccessRestricted).toHaveBeenCalled();
+      expect(connection.reconnect).toHaveBeenCalled();
     });
   });
 

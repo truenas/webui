@@ -8,7 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { timer } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { ConnectionService } from 'app/modules/websocket/connection.service';
 import { SystemTaskSplashComponent } from 'app/pages/system-tasks/system-task-splash/system-task-splash.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -27,7 +27,7 @@ export const blackoutDelay = 60 * 1000;
 })
 export class ShutdownComponent implements OnInit {
   private api = inject(ApiService);
-  private wsManager = inject(WebSocketHandlerService);
+  private connection = inject(ConnectionService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -52,7 +52,7 @@ export class ShutdownComponent implements OnInit {
           });
       },
       complete: () => {
-        this.wsManager.prepareShutdown();
+        this.connection.prepareShutdown();
         this.authService.clearAuthToken();
       },
     });
