@@ -199,6 +199,45 @@ reports, update the spec's mock, and verify against a box. Prefer several
 narrow PRs to one wide one; the diff per file is mechanical and easy to review
 in isolation.
 
+The spec half has a codemod. Once an area's production code injects
+`TypedApiService`, run
+
+```bash
+yarn codemod:typed-api-specs src/app/pages/<area>
+yarn codemod:typed-api-specs --only 'keychaincredential.*' src/app/pages/<consumers>   # a shared service moved
+yarn codemod:typed-api-specs --keep-legacy 'cloudsync.create' src/app/pages/<area>    # some calls stay legacy
+```
+
+It rewrites `mockApi` / `mockCall` / `mockJob` to `mockTypedApi` /
+`mockTypedCall` / `mockTypedQuery` / `mockTypedJob`, renames `ApiService` and
+`MockApiService`, moves `call('x.query', [filters, options])` assertions to
+`query` / `queryOne` / `queryCount`, adds `await spectator.fixture.whenStable()`
+after `spectator.component.submit()`, and fixes the imports. It prints
+`file:line` for what it left alone: query factories, `mockProvider(ApiService)`
+(bare or with stubs: a spy object leaves the query verbs undefined), `jest.spyOn(api, 'call')`
+in a spec whose queries moved, hand-written `method === 'x.query'` dispatch, `failApiCall`,
+`emitSubscribeEvent`, `mockCallOnce`, `callAndSubscribe`,
+`expect(api.call).not.toHaveBeenCalled()` / `.toHaveBeenCalledTimes(n)` (which name no method, so they
+pass once a query has moved to `query`), and, under `--only` /
+`--keep-legacy`, a bare `mockApi()`, since nothing in it says whether the
+spec's calls moved.
+
+`mockTypedApi()` is not a drop-in for everything `mockApi()` provided.
+`mockApi()` also stubs `WebSocketStatusService`, `WebSocketHandlerService`,
+`SubscriptionManagerService` and its own ICU-aware `TranslateService`. After
+conversion a spec gets `setup-jest.ts`'s global `TranslateModule` instead. A
+spec whose component injects one of those websocket services needs its own
+`mockProvider`. The specs checked so far already have one.
+
+Follow it with
+`yarn lint:fix` on the changed files, then `tsc`. `tsc` is where the real
+work is. Typed fixtures are checked against the generated directory, so a UI
+interface cast (`as Pool[]` where the query returns `PoolEntry`) or a
+`mockTypedCall('x', null)` for a method that returns something fails to
+compile. Each of those is drift the legacy mocks were hiding. Run on all of
+`src/app` at the time of writing, it rewrote 444 specs and flagged 84 for
+hand conversion.
+
 As the last consumer of a method moves, delete its entry from the hand-written
 directory. The shrinking directories are the progress bar.
 
