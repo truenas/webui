@@ -59,6 +59,37 @@ interface Edit {
   start: number;
   end: number;
   text: string;
+  /**
+   * For a replacement that moves source text around (the `mockApi` split): where each moved piece
+   * starts in the source and in `text`, so a note inside it still finds its line.
+   */
+  anchors?: { from: number; to: number }[];
+}
+
+/** A note against a position in the source, turned into an output line once the edits are known. */
+interface PendingNote {
+  pos: number;
+  message: string;
+}
+
+/** Where source position `pos` lands once `edits` are applied. */
+function mapPosition(pos: number, edits: Edit[]): number {
+  let delta = 0;
+  for (const edit of [...edits].sort((a, b) => a.start - b.start || a.end - b.end)) {
+    if (edit.end <= pos && !(edit.start === pos && edit.end > pos)) {
+      delta += edit.text.length - (edit.end - edit.start);
+    } else if (edit.start < pos && pos < edit.end) {
+      const anchor = (edit.anchors ?? []).findLast((candidate) => candidate.from <= pos);
+      return edit.start + delta + (anchor ? anchor.to + pos - anchor.from : 0);
+    } else {
+      break;
+    }
+  }
+  return pos + delta;
+}
+
+function lineAt(text: string, pos: number): number {
+  return text.slice(0, pos).split('\n').length;
 }
 
 const legacyUtilsModule = 'app/core/testing/utils/mock-api.utils';
@@ -102,8 +133,8 @@ function lineIndentAt(text: string, pos: number): string {
 }
 
 class SpecTransformer {
-  private edits: Edit[] = [];
-  readonly notes: TransformNote[] = [];
+  edits: Edit[] = [];
+  readonly notes: PendingNote[] = [];
   private readonly keepLegacy: (method: string) => boolean;
   /** Whether the run names what moved (`--only` / `--keep-legacy`), so some of the file may be meant to stay. */
   private readonly isPartial: boolean;
@@ -141,7 +172,6 @@ class SpecTransformer {
   }
 
   run(): string {
-    const { text } = this.sourceFile;
     this.visit(this.sourceFile);
     this.assertions.forEach(([call, matcher]) => this.convertAssertion(call, matcher));
     if (this.keepsLegacy) {
@@ -152,7 +182,7 @@ class SpecTransformer {
       this.settleAfterSubmits(this.sourceFile);
     }
     this.reportLeftovers(this.sourceFile);
-    return applyEdits(text, this.edits);
+    return applyEdits(this.sourceFile.text, this.edits);
   }
 
   /** Records that `method` stays on the legacy double. */
@@ -166,8 +196,7 @@ class SpecTransformer {
   }
 
   private note(node: ts.Node, message: string): void {
-    const { line } = this.sourceFile.getLineAndCharacterOfPosition(node.getStart(this.sourceFile));
-    this.notes.push({ line: line + 1, message });
+    this.notes.push({ pos: node.getStart(this.sourceFile), message });
   }
 
   private collectImports(): void {
@@ -360,13 +389,47 @@ class SpecTransformer {
     };
     const outer = lineIndentAt(text, start);
     const inner = lineIndentAt(text, list.elements[0].getStart(this.sourceFile));
-    const array = (elements: ts.Expression[]): string => {
-      const items = elements.map((element) => `${inner}${render(element)},`);
-      return `[\n${items.join('\n')}\n${outer}]`;
+
+    // Two calls where there was one: as siblings in the array that held it, spread twice where it
+    // was spread, and otherwise (`const p = mockApi(...)`, `providers: mockApi(...)`) wrapped in an
+    // array of their own — Angular flattens nested provider arrays, and a bare `a, b` there would
+    // not parse.
+    const { parent } = call;
+    const isSpread = ts.isSpreadElement(parent) && ts.isArrayLiteralExpression(parent.parent);
+    const isSibling = ts.isArrayLiteralExpression(parent);
+    const replaced = isSpread ? parent : call;
+    const replacedStart = replaced.getStart(this.sourceFile);
+    const spread = isSpread ? '...' : '';
+    let split = '';
+    const anchors: { from: number; to: number }[] = [];
+    const append = (piece: string, from?: number): void => {
+      if (from !== undefined) {
+        anchors.push({ from, to: split.length });
+      }
+      split += piece;
     };
-    const split = `mockTypedApi(${array(typed)}),\n${outer}mockApi(${array(legacy)})`;
-    this.edits = this.edits.filter((edit) => edit.start < start || edit.end > end);
-    this.edits.push({ start, end, text: split });
+    const array = (elements: ts.Expression[], indent: string): void => {
+      append('[\n');
+      elements.forEach((element) => {
+        append(indent);
+        append(`${render(element)},\n`, element.getStart(this.sourceFile));
+      });
+    };
+    const wrapped = !isSpread && !isSibling;
+    const callIndent = wrapped ? `${outer}  ` : outer;
+    const itemIndent = wrapped ? `${inner}  ` : inner;
+    append(wrapped ? `[\n${callIndent}` : '');
+    append(`${spread}mockTypedApi(`);
+    array(typed, itemIndent);
+    append(`${callIndent}]),\n${callIndent}${spread}mockApi(`);
+    array(legacy, itemIndent);
+    append(`${callIndent}])`);
+    append(wrapped ? `,\n${outer}]` : '');
+
+    this.edits = this.edits.filter((edit) => edit.start < replacedStart || edit.end > end);
+    this.edits.push({
+      start: replacedStart, end, text: split, anchors,
+    });
   }
 
   private convertElement(element: ts.Expression): boolean {
@@ -626,7 +689,8 @@ class SpecTransformer {
       ts.forEachChild(node, visit);
     };
     visit(this.sourceFile);
-    if (ambiguous) {
+    // Only a spec where something moved is split; one the run left alone has nothing to point elsewhere.
+    if (ambiguous && (this.movedMutation || this.movedQuery)) {
       this.note(ambiguous, 'Spec keeps legacy mocks, so `ApiService` / `MockApiService` references were not renamed; '
       + 'point each at the service the method now lives on.');
     }
@@ -699,7 +763,7 @@ class SpecTransformer {
         const callee = node.expression;
         const [first, second] = node.arguments;
         if (ts.isIdentifier(callee) && callee.text === 'mockProvider' && first && ts.isIdentifier(first)
-          && (first.text === 'ApiService' || first.text === 'TypedApiService')) {
+          && (first.text === 'ApiService' || first.text === 'TypedApiService') && !stubsQueryVerbs(second)) {
           this.note(node, `\`${this.text(node).slice(0, 40)}\`: \`query\` / \`queryOne\` / \`queryCount\` are instance `
           + 'properties on `TypedApiService`, so a spy object leaves them undefined unless stubbed here; '
           + 'use `mockTypedApi()`, or stub the query verbs and move query stubs off `call`.');
@@ -744,6 +808,15 @@ class SpecTransformer {
 }
 
 const countMatchers = new Set(['toHaveBeenCalled', 'toHaveBeenCalledTimes']);
+
+const queryVerbs = new Set(['query', 'queryOne', 'queryCount']);
+
+/** Whether a `mockProvider` stub object already provides one of the query verbs, i.e. was converted. */
+function stubsQueryVerbs(stubs: ts.Expression | undefined): boolean {
+  return Boolean(stubs) && ts.isObjectLiteralExpression(stubs) && stubs.properties.some((property) => {
+    return property.name !== undefined && ts.isIdentifier(property.name) && queryVerbs.has(property.name.text);
+  });
+}
 
 /** `expect(<x>.call).toHaveBeenCalled()` / `.toHaveBeenCalledTimes(n)`, with or without `.not`. */
 function isMethodlessCallAssertion(call: ts.CallExpression): boolean {
@@ -790,8 +863,14 @@ function isReference(node: ts.Identifier): boolean {
     || ts.isPropertySignature(parent) || ts.isMethodSignature(parent)) && parent.name === node);
 }
 
+function firstSyntaxError(source: string, fileName: string): string | null {
+  const { diagnostics } = ts.transpileModule(source, { fileName, reportDiagnostics: true });
+  const [first] = diagnostics ?? [];
+  return first ? ts.flattenDiagnosticMessageText(first.messageText, ' ') : null;
+}
+
 /** Rewrites the import block of already-transformed source to match what it now references. */
-function fixImports(source: string, fileName: string): string {
+function fixImports(source: string, fileName: string): { output: string; edits: Edit[] } {
   const sourceFile = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
   const used = new Set<string>();
   const collect = (node: ts.Node): void => {
@@ -900,7 +979,7 @@ function fixImports(source: string, fileName: string): string {
     edits.push({ start: position, end: position, text });
   });
 
-  return applyEdits(source, edits);
+  return { output: applyEdits(source, edits), edits };
 }
 
 function sortNames(names: string[]): string[] {
@@ -921,8 +1000,29 @@ export function transformSpec(source: string, fileName: string, options: Transfo
   const sourceFile = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
   const transformer = new SpecTransformer(sourceFile, options);
   const rewritten = transformer.run();
-  const output = rewritten === source ? source : fixImports(rewritten, fileName);
-  const notes = [...transformer.notes];
-  notes.sort((a, b) => a.line - b.line);
-  return { output, changed: output !== source, notes };
+  const imports = rewritten === source ? { output: source, edits: [] } : fixImports(rewritten, fileName);
+  const toNotes = (lineOf: (pos: number) => number): TransformNote[] => {
+    const notes = transformer.notes.map((note) => ({ line: lineOf(note.pos), message: note.message }));
+    notes.sort((a, b) => a.line - b.line);
+    return notes;
+  };
+
+  // Never hand back a file that does not parse: it would be written to disk as is.
+  const syntaxError = firstSyntaxError(imports.output, fileName);
+  if (syntaxError !== null) {
+    return {
+      output: source,
+      changed: false,
+      notes: [
+        { line: 1, message: `The rewrite would not parse (${syntaxError}); left unchanged, convert by hand.` },
+        ...toNotes((pos) => lineAt(source, pos)),
+      ],
+    };
+  }
+
+  // Notes point into the written file, not the one that was read.
+  const lineOf = (pos: number): number => {
+    return lineAt(imports.output, mapPosition(mapPosition(pos, transformer.edits), imports.edits));
+  };
+  return { output: imports.output, changed: imports.output !== source, notes: toNotes(lineOf) };
 }

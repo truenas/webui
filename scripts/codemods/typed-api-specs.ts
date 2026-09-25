@@ -93,7 +93,7 @@ function main(): void {
     const name = relative(process.cwd(), file);
     const source = readFileSync(file, 'utf8');
     // The two clients' own modules and doubles test the legacy client on purpose.
-    if (isExemptPath(name) || (!source.includes('mock-api.utils') && !source.includes('websocket/api.service'))) {
+    if (isExemptPath(name) || !['mock-api.utils', 'mock-api.service', 'websocket/api.service'].some((module) => source.includes(module))) {
       return;
     }
     const isPartial = args.only.length > 0 || args.keepLegacy.length > 0;

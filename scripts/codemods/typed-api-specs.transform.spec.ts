@@ -283,7 +283,8 @@ describe('transformSpec', () => {
 
     expect(output).toContain("mockTypedApi([\n    mockTypedCall('system.info', {}),\n  ]),\n  mockApi([\n    mockCall('audit.query'");
     expect(output).toContain("import { failApiCall, mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';");
-    expect(notes.map((note) => note.line)).toEqual([7, 10, 10, 12, 13, 14]);
+    // Lines in the written file, which the split and the added import have moved down.
+    expect(notes.map((note) => note.line)).toEqual([11, 13, 13, 15, 16, 17]);
     expect(notes.map((note) => note.message)).toEqual([
       expect.stringContaining('takes rows, not a factory'),
       expect.stringContaining('`ApiService` / `MockApiService` references were not renamed'),
@@ -350,7 +351,8 @@ describe('transformSpec', () => {
       '  spectator.component.submit();',
       '}',
     ));
-    expect(notes).toEqual([{ line: 14, message: expect.stringContaining('outside a test callback') }]);
+    // Line 16 of the output, below the three inserted `whenStable()` lines.
+    expect(notes).toEqual([{ line: 16, message: expect.stringContaining('outside a test callback') }]);
   });
 
   it('lets a submit land when the mutation is scripted on the double rather than in the list', () => {
@@ -403,6 +405,76 @@ describe('transformSpec', () => {
       "providers: [mockTypedApi([mockTypedCall('system.info', {})])];",
       "import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';",
     ));
+  });
+
+  it('keeps a split valid where mockApi() is not an array element', () => {
+    const source = lines(
+      "import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';",
+      '',
+      'const provider = mockApi([',
+      "  mockCall('audit.query', (params) => []),",
+      "  mockCall('system.info', {}),",
+      ']);',
+      'providers: [...mockApi([',
+      "  mockCall('audit.query', (params) => []),",
+      "  mockCall('system.info', {}),",
+      '])];',
+    );
+
+    const { output, changed, notes } = transformSpec(source, 'x.spec.ts');
+
+    expect(changed).toBe(true);
+    expect(output).toBe(lines(
+      "import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';",
+      "import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';",
+      '',
+      'const provider = [',
+      '  mockTypedApi([',
+      "    mockTypedCall('system.info', {}),",
+      '  ]),',
+      '  mockApi([',
+      "    mockCall('audit.query', (params) => []),",
+      '  ]),',
+      '];',
+      'providers: [...mockTypedApi([',
+      "  mockTypedCall('system.info', {}),",
+      ']),',
+      '...mockApi([',
+      "  mockCall('audit.query', (params) => []),",
+      '])];',
+    ));
+    expect(notes.map((note) => note.line)).toEqual([9, 16]);
+  });
+
+  it('says nothing about a spec the run left alone under keepLegacy', () => {
+    const source = lines(
+      "import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';",
+      "import { ApiService } from 'app/modules/websocket/api.service';",
+      '',
+      "providers: [mockApi([mockCall('user.query', [])])];",
+      'const api = spectator.inject(ApiService);',
+      "expect(api.call).toHaveBeenCalledWith('user.query', [[]]);",
+    );
+
+    expect(transformSpec(source, 'x.spec.ts', { keepLegacy: () => true })).toEqual({
+      output: source, changed: false, notes: [],
+    });
+  });
+
+  it('does not flag a mockProvider that already stubs the query verbs', () => {
+    const source = lines(
+      "import { mockProvider } from '@ngneat/spectator/jest';",
+      "import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';",
+      "import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';",
+      '',
+      "providers: [mockApi([mockCall('system.info', {})])];",
+      'providers: [mockProvider(TypedApiService, { query: jest.fn(), call: jest.fn() })];',
+      'providers: [mockProvider(TypedApiService, { call: jest.fn() })];',
+    );
+
+    expect(transformSpec(source, 'x.spec.ts').notes).toEqual([
+      { line: 7, message: expect.stringContaining('a spy object leaves them undefined') },
+    ]);
   });
 
   it('leaves a spec with nothing to convert alone', () => {
