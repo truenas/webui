@@ -10,10 +10,8 @@ import {
 } from '@truenas/ui-components';
 import { filter, map } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { helptextApiKeys } from 'app/helptext/api-keys';
 import { ApiKey } from 'app/interfaces/api-key.interface';
-import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -92,19 +90,16 @@ export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
    * The picker pages this query (50 per page, filtered by the typed username), so a directory
    * service with thousands of users is never enumerated in one go.
    */
-  protected readonly userQueryParams = new ParamsBuilder<User>()
-    .filter('roles', '!=', [])
-    .orFilter('local', '=', false)
-    .setOptions({ select: ['username', 'id', 'uid', 'local'], order_by: ['username'] })
-    .getParams();
-
   /**
    * Narrows the field to users that have a role, and is also what its "Add New"
    * row creates against. The field is only rendered for a full admin, so no
    * query can be issued for a user who could never see the result.
    */
   protected readonly userDirectoryOptions: DirectoryQueryOptions = {
-    queryParams: this.userQueryParams,
+    queryParams: [
+      [['OR', [[['roles', '!=', []]], [['local', '=', false]]]]],
+      { select: ['username', 'id', 'uid', 'local'], order_by: ['username'] },
+    ],
   };
 
   protected readonly forbiddenNames$ = this.api.call('api_key.query', [

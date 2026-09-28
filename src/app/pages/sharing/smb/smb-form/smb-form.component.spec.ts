@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnBannerComponent, TnBannerHarness, TnCheckboxHarness, TnChipInputHarness, TnDialog, TnFormFieldHarness,
   TnInputHarness, TnSelectHarness,
@@ -17,11 +18,12 @@ import {
   provideTnFormFieldDismissibleErrors,
   provideTnFormFieldErrors,
 } from 'app/core/providers/tn-form-field-errors.provider';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
@@ -47,6 +49,7 @@ import { IxGroupChipsHarness } from 'app/modules/forms/ix-forms/testing/user-gro
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbUsersWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-users-warning/smb-users-warning.component';
 import { EntitlementsService } from 'app/services/entitlements.service';
@@ -149,9 +152,12 @@ describe('SmbFormComponent', () => {
     providers: [
       mockAuth(),
       mockEntitlements(),
+      mockTypedApi([
+        mockTypedQuery('group.query', [{ id: 1, group: 'test', builtin: false }] as WebUiQueryEntity<'group.query'>[]),
+        mockTypedCall('group.get_group_obj', { gr_gid: 1000, gr_name: 'test', gr_mem: [] } as CallResponse<WebUiApiDirectory, 'group.get_group_obj'>),
+        mockTypedQuery('user.query', []),
+      ]),
       mockApi([
-        mockCall('group.query', [{ id: 1, group: 'test', builtin: false }] as Group[]),
-        mockCall('group.get_group_obj', { gr_gid: 1000, gr_name: 'test', gr_mem: [] }),
         mockCall('sharing.smb.create', { ...existingShare }),
         mockCall('sharing.smb.update', { ...existingShare }),
         mockCall('sharing.smb.share_precheck', null),
@@ -162,7 +168,6 @@ describe('SmbFormComponent', () => {
           acl: true,
         } as FileSystemStat),
         mockCall('smb.config', { aapl_extensions: true } as SmbConfig),
-        mockCall('user.query', []),
         mockJob('service.control', fakeSuccessfulJob()),
       ]),
       mockProvider(Router),
@@ -1307,7 +1312,7 @@ describe('SmbFormComponent', () => {
     it('should show error when non-existent group is entered in watch list', async () => {
       // An EMPTY result is what the directory reads as "no such group"; a lookup
       // that ERRORS is a transport failure and leaves the name unflagged.
-      spectator.inject(MockApiService).mockCall('group.query', []);
+      spectator.inject(MockTypedApiService).mockQuery('group.query', []);
 
       // Fill in required fields and enable audit logging
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
@@ -1343,7 +1348,7 @@ describe('SmbFormComponent', () => {
     it('should show error when non-existent group is entered in ignore list', async () => {
       // An EMPTY result is what the directory reads as "no such group"; a lookup
       // that ERRORS is a transport failure and leaves the name unflagged.
-      spectator.inject(MockApiService).mockCall('group.query', []);
+      spectator.inject(MockTypedApiService).mockQuery('group.query', []);
 
       // Fill in required fields and enable audit logging
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));

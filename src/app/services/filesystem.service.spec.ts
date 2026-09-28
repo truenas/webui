@@ -1,13 +1,13 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom } from 'rxjs';
 import { datasetsRootNode, zvolsRootNode } from 'app/constants/basic-root-nodes.constant';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FileAttribute } from 'app/enums/file-attribute.enum';
 import { FileType } from 'app/enums/file-type.enum';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 describe('FilesystemService', () => {
@@ -15,8 +15,8 @@ describe('FilesystemService', () => {
   const createService = createServiceFactory({
     service: FilesystemService,
     providers: [
-      mockApi([
-        mockCall('filesystem.listdir', [
+      mockTypedApi([
+        mockTypedCall('filesystem.listdir', [
           {
             path: '/mnt/parent/directory',
             name: 'directory',
@@ -54,7 +54,7 @@ describe('FilesystemService', () => {
         } as TreeNode<ExplorerNodeData>),
       );
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
         'filesystem.listdir',
         ['/mnt/parent', [], {
           select: ['attributes', 'is_ctldir', 'name', 'path', 'type'],
@@ -99,7 +99,7 @@ describe('FilesystemService', () => {
         },
       } as TreeNode<ExplorerNodeData>));
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
         'filesystem.listdir',
         [
           '/mnt/parent',

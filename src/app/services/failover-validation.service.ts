@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, of, catchError, filter, switchMap, take, timeout, finalize,
+  Observable, of, catchError, filter, map, switchMap, take, timeout, finalize,
 } from 'rxjs';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
@@ -9,7 +9,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 export interface FailoverValidationResult {
   success: boolean;
@@ -26,7 +26,7 @@ export enum FailoverErrorType {
 
 @Injectable({ providedIn: 'root' })
 export class FailoverValidationService {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
 
@@ -86,6 +86,8 @@ export class FailoverValidationService {
 
   protected checkFailoverStatus(): Observable<FailoverValidationResult> {
     return this.api.call('failover.status').pipe(
+      // Middleware types the status as a literal; the UI compares it against its enum.
+      map((status) => status as FailoverStatus),
       switchMap((status) => {
         // SINGLE status means no failover is configured, proceed as normal
         if (status === FailoverStatus.Single) {
@@ -139,16 +141,15 @@ export class FailoverValidationService {
     ];
 
     return this.api.subscribe('core.get_jobs').pipe(
-      filter((event) => {
-        const job = event.fields as Job;
-        return job.method === 'failover.events.vrrp_master'
+      // A removal carries no job to inspect. The UI's `Job` narrows the generated entry's loose fields.
+      map((event) => (event.msg === 'removed' ? null : event.fields as unknown as Job)),
+      filter((job): job is Job => {
+        return job?.method === 'failover.events.vrrp_master'
           && terminalStates.includes(job.state);
       }),
       take(1), // Take first event with terminal state
       timeout(this.FAILOVER_TIMEOUT_MS),
-      switchMap((event) => {
-        const job = event.fields as Job;
-
+      switchMap((job) => {
         if (job.state === JobState.Success) {
           return of({ success: true, isHaLicensed: true });
         }

@@ -1,11 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import {
-  filter, map, Observable, repeat, switchMap, takeUntil,
+  map, Observable, repeat, switchMap, takeUntil,
 } from 'rxjs';
-import { CollectionChangeType } from 'app/enums/api.enum';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { DiskTemperatures } from 'app/interfaces/disk.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 export interface Temperature {
   keys: string[];
@@ -18,23 +18,19 @@ export interface Temperature {
   providedIn: 'root',
 })
 export class DiskTemperatureService {
-  protected api = inject(ApiService);
+  protected api = inject(TypedApiService);
 
-  private disksChanged$ = this.api.subscribe('disk.query').pipe(
-    filter((event) => [
-      CollectionChangeType.Added,
-      CollectionChangeType.Changed,
-      CollectionChangeType.Removed,
-    ].includes(event.msg)),
-  );
+  // The typed client only forwards added / changed / removed, so every event is a change.
+  private disksChanged$ = this.api.subscribe('disk.query');
 
   getTemperature(): Observable<DiskTemperatures> {
     return this.api
       .call('webui.enclosure.dashboard')
       .pipe(
         repeat({ delay: () => this.disksChanged$ }),
+        // Middleware types both responses as plain dicts.
         map((enclosures) => {
-          return enclosures.map((enclosure) => {
+          return (enclosures as DashboardEnclosure[]).map((enclosure) => {
             return Object.values(enclosure.elements[EnclosureElementType.ArrayDeviceSlot])
               .map((element) => element.dev)
               .filter((dev) => !!dev) as string[];
@@ -42,6 +38,7 @@ export class DiskTemperatureService {
         }),
         switchMap((disks) => {
           return this.api.call('disk.temperatures', [disks]).pipe(
+            map((temperatures) => temperatures as DiskTemperatures),
             repeat({ delay: 10000 }),
             takeUntil(this.disksChanged$),
           );

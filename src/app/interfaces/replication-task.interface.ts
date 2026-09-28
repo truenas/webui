@@ -6,7 +6,6 @@ import { LoggingLevel } from 'app/enums/logging-level.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
-import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
@@ -56,14 +55,11 @@ export interface ReplicationTask {
   retention_policy: RetentionPolicy;
   retries?: number;
   schedule?: Schedule;
-  schedule_method: ScheduleMethod;
   source_datasets?: string[];
-  source_datasets_from: string;
   speed_limit?: number;
   ssh_credentials?: KeychainSshCredentials;
   state: DataProtectionTaskState;
   target_dataset: string;
-  target_dataset_from: string;
   transport: TransportMode;
   has_encrypted_dataset_keys?: boolean;
 }

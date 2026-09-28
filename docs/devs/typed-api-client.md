@@ -98,6 +98,11 @@ Where things differ:
 - **Queries have verbs.** `call('user.query', [filters, { get: true }])` is
   `queryOne('user.query', filters)`; `{ count: true }` is `queryCount`. The
   verb picks the result type, so there is nothing to narrow.
+- **Filters built before the call** are typed
+  `TypedQueryFilter<WebUiQueryEntity<'user.query'>>[]`, both from the token
+  file, since the client does not export its own `QueryFilters` yet (gap 6).
+  An `OR` takes a list of filter *lists*, `['OR', [[a], [b]]]`, where
+  `ParamsBuilder` writes `['OR', [a, b]]`.
 - **Events are a discriminated union** on `msg`. A removal carries an `id`
   and no `fields`; narrow before reading.
 - **Errors are unchanged.** `call` throws the same `ApiCallError` as
@@ -228,6 +233,14 @@ spec's calls moved.
 conversion a spec gets `setup-jest.ts`'s global `TranslateModule` instead. A
 spec whose component injects one of those websocket services needs its own
 `mockProvider`. The specs checked so far already have one.
+
+Two things it gets wrong, both found moving `src/app/services`. A spec that
+already has a `mockTypedApi([...])` gets a second one rather than a merged
+one, and the later provider hides the earlier; merge them by hand. And a
+method a component reads both directly and through a migrated service (the
+replication wizard's `replication.query`, the S3 grant rows' `user.query`)
+needs a mock on both doubles, which `--only` cannot express: it moves the
+legacy mock rather than copying it.
 
 Follow it with
 `yarn lint:fix` on the changed files, then `tsc`. `tsc` is where the real
@@ -401,6 +414,12 @@ above. Each is a change for `truenas/api-client-ts`.
     derive a missing type from the directory
     (`CallResponse<D, 'keychaincredential.create'>`) rather than importing it
     from an older version's namespace.
+
+14. **Methods missing from the dump.** `interface.lag_supported_protocols` is
+    in no generated directory, most likely because middleware marks it
+    private. `NetworkService` therefore keeps `ApiService` for it, next to
+    `reporting.realtime` (gap 5), and `src/app/services` cannot be pinned as a
+    whole until both have a typed route.
 
 ## Version policy
 

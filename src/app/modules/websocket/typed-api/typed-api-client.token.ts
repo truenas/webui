@@ -5,11 +5,14 @@ import {
   consoleLogger,
   createTrueNasClient,
   noopLogger,
+  QueryEntity,
+  QueryMethod,
   TrueNasApiClient,
 } from '@truenas/api-client';
 import { environment } from 'environments/environment';
 import { from, Observable, shareReplay } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
+import { QueryComparator } from 'app/interfaces/query-api.interface';
 
 /**
  * The API surface the UI is written against.
@@ -22,6 +25,22 @@ export type WebUiApiDirectory = ApiDirectoryV27_0_0;
 
 /** A client typed against {@link WebUiApiDirectory}. */
 export type WebUiApiClient = TrueNasApiClient<WebUiApiDirectory>;
+
+/** A `.query` method of {@link WebUiApiDirectory}, as the query verbs take it. */
+export type WebUiQueryMethod = QueryMethod<WebUiApiDirectory['call']>;
+
+/** The entity a query method returns rows of, e.g. `WebUiQueryEntity<'user.query'>`. */
+export type WebUiQueryEntity<M extends WebUiQueryMethod> = QueryEntity<WebUiApiDirectory['call'], M>;
+
+/**
+ * One filter for a query verb, for filters built up before the call rather than
+ * written inline. Mirrors the client's own `QueryFilter`, which it does not
+ * export yet (gap 6 in docs/devs/typed-api-client.md); the two are structurally
+ * identical, so a list of these is accepted wherever the client takes filters.
+ */
+export type TypedQueryFilter<E>
+  = | [field: (keyof E & string) | `${string}.${string}`, operator: QueryComparator, value: unknown]
+    | ['OR', TypedQueryFilter<E>[][]];
 
 /**
  * The `@truenas/api-client` instance behind {@link TypedApiService}.

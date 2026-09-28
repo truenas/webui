@@ -11,18 +11,13 @@ import { VmDisplayType, VmState } from 'app/enums/vm.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
-import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
-import {
-  VirtualizationDetails,
-  VirtualMachine,
-  VmDisplayWebUriParams,
-  VmDisplayWebUriParamsOptions,
-} from 'app/interfaces/virtual-machine.interface';
+import { CoreDownloadResponse } from 'app/interfaces/core-download.interface';
+import { VirtualizationDetails, VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { StopVmDialogComponent, StopVmDialogData } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -31,7 +26,7 @@ const wildcardBindAddresses = ['0.0.0.0', '::'];
 
 @Injectable({ providedIn: 'root' })
 export class VmService {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private loader = inject(LoaderService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
@@ -44,14 +39,6 @@ export class VmService {
 
   hasVirtualizationSupport$ = new BehaviorSubject<boolean>(true);
   private checkMemory$ = new Subject<void>();
-
-  private wsMethods = {
-    start: 'vm.start',
-    restart: 'vm.restart',
-    poweroff: 'vm.poweroff',
-    reset: 'vm.reset',
-    resume: 'vm.resume',
-  } as const;
 
   constructor() {
     this.getVirtualizationDetails().pipe(take(1)).subscribe((details) => {
@@ -83,15 +70,17 @@ export class VmService {
   doStartResume(vm: VirtualMachine, overcommit = false): Observable<boolean> {
     const shouldDoResume = vm.status.state === VmState.Suspended;
 
-    // build the params for the request - `overcommit` is only applicable to `vm.start`.
-    const params = overcommit && !shouldDoResume ? [vm.id, { overcommit: true }] : [vm.id];
+    // call `vm.resume` if the VM is suspended, otherwise call `vm.start` - `overcommit` only applies to the latter.
+    let request$: Observable<unknown>;
+    if (shouldDoResume) {
+      request$ = this.api.call('vm.resume', [vm.id]);
+    } else if (overcommit) {
+      request$ = this.api.call('vm.start', [vm.id, { overcommit: true }]);
+    } else {
+      request$ = this.api.call('vm.start', [vm.id]);
+    }
 
-    // call `vm.resume` if the VM is suspended, otherwise call `vm.start`
-    const method = shouldDoResume ? this.wsMethods.resume : this.wsMethods.start;
-
-    type StartResumeParams = ApiCallParams<typeof this.wsMethods.start> | ApiCallParams<typeof this.wsMethods.resume>;
-
-    return this.api.call(method, params as StartResumeParams)
+    return request$
       .pipe(
         this.loader.withLoader(),
         take(1),
@@ -131,11 +120,16 @@ export class VmService {
   }
 
   doRestart(vm: VirtualMachine): Observable<number> {
-    return this.api.startJob(this.wsMethods.restart, [vm.id]).pipe(this.loader.withLoader());
+    return this.api.startJob('vm.restart', [vm.id]).pipe(this.loader.withLoader());
   }
 
   doPowerOff(vm: VirtualMachine): void {
-    this.doAction(vm, this.wsMethods.poweroff, [vm.id]);
+    this.api.call('vm.poweroff', [vm.id])
+      .pipe(this.loader.withLoader(), take(1))
+      .subscribe({
+        next: () => this.checkMemory(),
+        error: (error: unknown) => this.errorHandler.showErrorModal(error),
+      });
   }
 
   /**
@@ -159,7 +153,7 @@ export class VmService {
             return of(false);
           }
 
-          return this.api.call(this.wsMethods.reset, [vm.id]).pipe(
+          return this.api.call('vm.reset', [vm.id]).pipe(
             this.loader.withLoader(),
             take(1),
             tap(() => this.snackbar.success(
@@ -178,15 +172,22 @@ export class VmService {
   downloadLogs(vm: VirtualMachine): Observable<Blob> {
     const filename = `${vm.id}_${vm.name}.log`;
     return this.api.call('core.download', ['vm.log_file_download', [vm.id], filename]).pipe(
+      // Middleware types the job id and URL pair as a plain list.
+      map((response) => response as CoreDownloadResponse),
       switchMap(([, url]) => this.download.downloadUrl(url, filename, 'text/plain')),
     );
   }
 
   openDisplay(vm: VirtualMachine): void {
     this.api.call('vm.get_display_devices', [vm.id])
-      .pipe(this.loader.withLoader(), take(1))
+      .pipe(
+        // Middleware types the display type as a literal; the UI narrows it to its enum.
+        map((devices) => devices as VmDisplayDevice[]),
+        this.loader.withLoader(),
+        take(1),
+      )
       .subscribe({
-        next: (devices: VmDisplayDevice[]) => {
+        next: (devices) => {
           const spiceDevice = devices.find((device) => device.attributes.type === VmDisplayType.Spice);
           const vncDevices = devices.filter((device) => device.attributes.type === VmDisplayType.Vnc);
 
@@ -239,29 +240,6 @@ export class VmService {
       );
   }
 
-  private doAction<T extends 'vm.start' | 'vm.update' | 'vm.poweroff'>(
-    vm: VirtualMachine,
-    method: T,
-    params: ApiCallParams<T> = [vm.id],
-  ): void {
-    this.api.call(method, params)
-      .pipe(this.loader.withLoader(), take(1))
-      .subscribe({
-        next: () => {
-          this.checkMemory();
-        },
-        error: (error: unknown) => {
-          const apiError = extractApiErrorDetails(error);
-          if (method === this.wsMethods.start
-            && apiError?.errname === ApiErrorName.NoMemory) {
-            this.onMemoryError(vm);
-            return;
-          }
-          this.errorHandler.showErrorModal(error);
-        },
-      });
-  }
-
   /**
    * Display devices are normally bound to a wildcard address, which is useless to show to a user:
    * they cannot point a VNC or SPICE client at 0.0.0.0. Fall back to the host the UI is being
@@ -276,17 +254,9 @@ export class VmService {
   }
 
   private openDisplayWebUri(vmId: number): void {
-    const displayOptions = {
-      protocol: this.window.location.protocol.replace(':', '').toUpperCase(),
-    } as VmDisplayWebUriParamsOptions;
+    const protocol = this.window.location.protocol === 'http:' ? 'HTTP' : 'HTTPS';
 
-    const requestParams: VmDisplayWebUriParams = [
-      vmId,
-      this.window.location.host,
-      displayOptions,
-    ];
-
-    this.api.call('vm.get_display_web_uri', requestParams)
+    this.api.call('vm.get_display_web_uri', [vmId, this.window.location.host, { protocol }])
       .pipe(this.loader.withLoader(), take(1))
       .subscribe({
         next: (webUri) => {

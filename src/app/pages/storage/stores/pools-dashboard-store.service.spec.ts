@@ -28,7 +28,6 @@ const disk: Disk = {
   bus: DiskBus.Spi,
   description: '',
   devname: 'sdd',
-  duplicate_serial: [],
   expiretime: '',
   hddstandby: DiskStandby.AlwaysOn,
   identifier: '{uuid}b3ba146f-1ab6-4a45-ae6b-37ea00baf0aa',

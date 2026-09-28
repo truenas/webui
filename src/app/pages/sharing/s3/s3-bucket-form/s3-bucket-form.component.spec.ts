@@ -12,6 +12,7 @@ import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import {
   S3Access, S3MultipartEtag, S3ObjectLockMode, S3ObjectOwnership, S3PermissionsModel, S3PrincipalType, S3Versioning,
@@ -28,6 +29,7 @@ import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-fo
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { s3UserFormPreset } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 import { DatasetService } from 'app/services/dataset/dataset.service';
@@ -38,6 +40,13 @@ import { entitlementsReducer } from 'app/store/entitlements/entitlements.reducer
 import { entitlementsStateKey } from 'app/store/entitlements/entitlements.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
+
+const users = [
+  { username: 'alice', uid: 1000 },
+  { username: 'bob', uid: 1001 },
+];
+
+const groups = [{ group: 'staff', gid: 1001 }];
 
 describe('S3BucketFormComponent', () => {
   let spectator: Spectator<S3BucketFormComponent>;
@@ -100,17 +109,20 @@ describe('S3BucketFormComponent', () => {
     component: S3BucketFormComponent,
     imports: [ReactiveFormsModule],
     providers: [
+      // The owner picker reads users through `UserDirectoryService` on the typed client; the grant
+      // rows' principal pickers still read them over the legacy one.
+      mockTypedApi([
+        mockTypedQuery('user.query', users as WebUiQueryEntity<'user.query'>[]),
+        mockTypedQuery('group.query', groups as WebUiQueryEntity<'group.query'>[]),
+      ]),
       mockApi([
         mockCall('sharing.s3.create'),
         mockCall('sharing.s3.update'),
         mockCall('sharing.s3.force_disable_versioning'),
         mockCall('sharing.s3.audit_choices', { GetObject: 'GetObject', PutObject: 'PutObject' }),
         mockCall('pool.filesystem_choices', ['tank', 'tank/buckets', 'tank/buckets/photos']),
-        mockCall('user.query', [
-          { username: 'alice', uid: 1000 },
-          { username: 'bob', uid: 1001 },
-        ] as User[]),
-        mockCall('group.query', [{ group: 'staff', gid: 1001 }] as Group[]),
+        mockCall('user.query', users as User[]),
+        mockCall('group.query', groups as Group[]),
       ]),
       mockAuth(),
       mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),

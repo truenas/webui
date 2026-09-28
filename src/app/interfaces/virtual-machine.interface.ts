@@ -46,38 +46,9 @@ export interface VirtualMachine {
 
 export type VirtualMachineUpdate = Omit<VirtualMachine, 'status' | 'id' | 'devices'>;
 
-export type VmStopParams = [
-  id: number,
-  params: {
-    force: boolean;
-    force_after_timeout: boolean;
-  },
-];
-
-export type VmDisplayWebUriParams = [
-  id: number,
-  domain: string,
-  options?: VmDisplayWebUriParamsOptions,
-];
-
-export interface VmDisplayWebUriParamsOptions {
-  protocol?: string;
-  devices_passwords?: [
-    {
-      device_id: number;
-      password: string;
-    },
-  ];
-}
-
 export interface VmPortWizardResult {
   port: number;
   web: number;
-}
-
-export interface VmDisplayWebUri {
-  error: string;
-  uri: string;
 }
 
 export type VmCloneParams = [

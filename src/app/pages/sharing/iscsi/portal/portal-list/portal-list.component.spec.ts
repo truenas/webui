@@ -7,6 +7,7 @@ import {
 } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -41,10 +42,12 @@ describe('PortalListComponent', () => {
     component: PortalListComponent,
     providers: [
       mockProvider(EmptyService),
+      mockTypedApi([
+        mockTypedCall('iscsi.portal.listen_ip_choices', { '0.0.0.0': '0.0.0.0' } as Choices),
+      ]),
       mockApi([
         mockCall('iscsi.portal.query', portals),
         mockCall('iscsi.portal.delete'),
-        mockCall('iscsi.portal.listen_ip_choices', { '0.0.0.0': '0.0.0.0' } as Choices),
       ]),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),

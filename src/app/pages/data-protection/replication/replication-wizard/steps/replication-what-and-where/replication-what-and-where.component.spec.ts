@@ -25,9 +25,22 @@ import {
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { DatasetService } from 'app/services/dataset/dataset.service';
+
+const existingTasks = [
+  {
+    id: 1,
+    name: 'task1',
+    direction: Direction.Push,
+    ssh_credentials: { id: 123 },
+    source_datasets: ['pool21', 'pool22'],
+    target_dataset: 'pool23',
+    transport: TransportMode.Ssh,
+  },
+];
 
 describe('ReplicationWhatAndWhereComponent', () => {
   let spectator: Spectator<ReplicationWhatAndWhereComponent>;
@@ -51,19 +64,11 @@ describe('ReplicationWhatAndWhereComponent', () => {
             },
           },
         ] as KeychainCredential[]),
+        // Read both here, over the legacy client, and through `ReplicationService`.
+        mockTypedQuery('replication.query', existingTasks as WebUiQueryEntity<'replication.query'>[]),
       ]),
       mockApi([
-        mockCall('replication.query', [
-          {
-            id: 1,
-            name: 'task1',
-            direction: Direction.Push,
-            ssh_credentials: { id: 123 },
-            source_datasets: ['pool21', 'pool22'],
-            target_dataset: 'pool23',
-            transport: TransportMode.Ssh,
-          },
-        ] as ReplicationTask[]),
+        mockCall('replication.query', existingTasks as ReplicationTask[]),
         mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
       ]),
       mockProvider(DatasetService),

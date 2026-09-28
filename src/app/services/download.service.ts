@@ -4,13 +4,14 @@ import { Store } from '@ngrx/store';
 import { Observable, switchMap } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
+import { CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AppState } from 'app/store';
 
 interface CoreDownloadParams {
   method: string;
-  arguments: unknown;
+  arguments: unknown[];
   fileName: string;
   mimeType: string;
 }
@@ -20,12 +21,14 @@ interface CoreDownloadParams {
 })
 export class DownloadService {
   protected http = inject(HttpClient);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private store$ = inject<Store<AppState>>(Store);
 
 
   coreDownload(params: CoreDownloadParams): Observable<Blob> {
     return this.api.call('core.download', [params.method, params.arguments, params.fileName]).pipe(
+      // Middleware types the pair as a plain list.
+      map((response) => response as CoreDownloadResponse),
       switchMap(([jobId, url]) => {
         return this.store$.select(selectJob(jobId)).pipe(
           observeJob(),

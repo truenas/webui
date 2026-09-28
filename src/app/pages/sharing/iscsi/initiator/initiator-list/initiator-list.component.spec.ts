@@ -9,6 +9,7 @@ import {
 } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -33,8 +34,10 @@ describe('InitiatorListComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(EmptyService),
+      mockTypedApi([
+        mockTypedQuery('iscsi.initiator.query', initiators),
+      ]),
       mockApi([
-        mockCall('iscsi.initiator.query', initiators),
         mockCall('iscsi.initiator.delete'),
       ]),
       mockProvider(DialogService, {

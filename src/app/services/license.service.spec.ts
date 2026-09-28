@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom, of } from 'rxjs';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { HardwareType } from 'app/enums/hardware-type.enum';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
@@ -15,7 +15,7 @@ describe('LicenseService', () => {
     TestBed.configureTestingModule({
       providers: [
         LicenseService,
-        mockApi(),
+        mockTypedApi(),
         mockProvider(TruenasConnectService, { config$: of(null) }),
         mockProvider(EntitlementsService, {
           entitled$: (feature: EntitlementFeature) => of(feature === EntitlementFeature.Webshare && isWebshareEntitled),

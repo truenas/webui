@@ -2,21 +2,22 @@ import { Injectable, inject } from '@angular/core';
 import {
   forkJoin, map, Observable, of, switchMap,
 } from 'rxjs';
-import { FcPortFormValue, FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { FcPortFormValue } from 'app/interfaces/fibre-channel.interface';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Injectable({ providedIn: 'root' })
 export class FibreChannelService {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
 
 
   /**
    * Load all FC ports associated with a target.
    * @param targetId Target ID.
-   * @returns Observable of FibreChannelPort array.
+   * @returns Observable of the target's ports.
    */
-  loadTargetPorts(targetId: number): Observable<FibreChannelPort[]> {
-    return this.api.call('fcport.query', [[['target.id', '=', targetId]]]);
+  loadTargetPorts(targetId: number): Observable<WebUiQueryEntity<'fcport.query'>[]> {
+    return this.api.query('fcport.query', [['target.id', '=', targetId]]);
   }
 
   /**
@@ -144,9 +145,8 @@ export class FibreChannelService {
   }
 
   private createNewPort(hostId: number): Observable<string> {
-    return this.api.call('fc.fc_host.query', [[['id', '=', hostId]]]).pipe(
-      switchMap((hosts) => {
-        const host = hosts[0];
+    return this.api.queryOne('fc.fc_host.query', [['id', '=', hostId]]).pipe(
+      switchMap((host) => {
         return this.api.call('fc.fc_host.update', [host.id, { npiv: host.npiv + 1 }]).pipe(
           map(() => `${host.alias}/${host.npiv + 1}`),
         );

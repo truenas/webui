@@ -8,6 +8,7 @@ import {
 } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
 import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -38,8 +39,8 @@ describe('PortalFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('iscsi.auth.query', [{
+      mockTypedApi([
+        mockTypedQuery('iscsi.auth.query', [{
           id: 1,
           peersecret: '',
           peeruser: '',
@@ -48,10 +49,12 @@ describe('PortalFormComponent', () => {
           user: 'root',
           discovery_auth: IscsiAuthMethod.None,
         }]),
-        mockCall('iscsi.portal.listen_ip_choices', {
+        mockTypedCall('iscsi.portal.listen_ip_choices', {
           '0.0.0.0': '0.0.0.0',
           '192.168.1.3': '192.168.1.3',
         }),
+      ]),
+      mockApi([
         mockCall('iscsi.portal.create'),
         mockCall('iscsi.portal.update'),
       ]),
@@ -85,6 +88,7 @@ describe('PortalFormComponent', () => {
       spectator.component.closed.subscribe(closed);
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('iscsi.portal.create', [{
         comment: 'work',
@@ -123,6 +127,7 @@ describe('PortalFormComponent', () => {
       spectator.component.closed.subscribe(closed);
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('iscsi.portal.update', [1, {
         comment: 'good',
