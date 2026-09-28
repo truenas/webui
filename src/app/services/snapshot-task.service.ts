@@ -2,13 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PeriodicSnapshotTaskUpdate } from 'app/interfaces/periodic-snapshot-task.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SnapshotTaskService {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
 
   /**
    * Checks if a snapshot task has associated snapshots that would be affected by deletion.

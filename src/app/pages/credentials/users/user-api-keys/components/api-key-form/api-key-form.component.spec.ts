@@ -10,6 +10,7 @@ import { parseISO } from 'date-fns';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { User } from 'app/interfaces/user.interface';
 import {
@@ -20,6 +21,8 @@ import { LocaleService } from 'app/modules/language/locale.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { KeyCreatedDialog } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
 import { DirectoryQueryOptions, UserDirectoryService } from 'app/services/user-directory.service';
@@ -41,11 +44,13 @@ describe('ApiKeyFormComponent', () => {
     providers: [
       ...ixFormTestingProviders(),
       mockAuth(),
-      mockApi([
-        mockCall('user.query', [
+      mockTypedApi([
+        mockTypedQuery('user.query', [
           { id: 1, uid: 1000, username: 'root' },
           { id: 2, uid: 1001, username: 'operator' },
-        ] as User[]),
+        ] as WebUiQueryEntity<'user.query'>[]),
+      ]),
+      mockApi([
         mockCall('api_key.query', []),
         mockCall('api_key.create', { key: 'generated-key' } as ApiKey),
         mockCall('api_key.update', {} as ApiKey),
@@ -187,15 +192,12 @@ describe('ApiKeyFormComponent', () => {
 
       queryUsers('');
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.query', [
-        [['OR', [['roles', '!=', []], ['local', '=', false]]]],
-        {
-          select: ['username', 'id', 'uid', 'local'],
-          order_by: ['username'],
-          offset: 0,
-          limit: 50,
-        },
-      ]);
+      expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('user.query', [['OR', [[['roles', '!=', []]], [['local', '=', false]]]]], {
+        select: ['username', 'id', 'uid', 'local'],
+        order_by: ['username'],
+        offset: 0,
+        limit: 50,
+      });
     });
 
     it('narrows the query by the typed username instead of listing everyone', async () => {
@@ -203,13 +205,14 @@ describe('ApiKeyFormComponent', () => {
 
       queryUsers('AD01\\jsmith');
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.query', [
+      expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith(
+        'user.query',
         [
           ['username', '~', '(?i).*AD01\\\\jsmith'],
-          ['OR', [['roles', '!=', []], ['local', '=', false]]],
+          ['OR', [[['roles', '!=', []]], [['local', '=', false]]]],
         ],
         expect.objectContaining({ offset: 0, limit: 50 }),
-      ]);
+      );
     });
   });
 

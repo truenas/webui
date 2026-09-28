@@ -1,21 +1,36 @@
 import { Injectable, inject } from '@angular/core';
+import { CallResponse } from '@truenas/api-client';
 import { Observable } from 'rxjs';
 import { finalize, map, shareReplay, tap } from 'rxjs/operators';
-import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
+import { DsUncachedGroup } from 'app/interfaces/ds-cache.interface';
 import { Group } from 'app/interfaces/group.interface';
-import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  TypedQueryFilter, WebUiApiDirectory, WebUiQueryEntity,
+} from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+
+type GroupFilter = TypedQueryFilter<WebUiQueryEntity<'group.query'>>;
+type UserFilter = TypedQueryFilter<WebUiQueryEntity<'user.query'>>;
+
+/**
+ * Where the generated entries meet the UI's `User` and `Group`. Middleware
+ * types `roles` as plain strings, and `group` and `last_password_change` as
+ * loose values; the UI narrows them to what it reads.
+ */
+function toUser(entry: WebUiQueryEntity<'user.query'>): User {
+  return entry as unknown as User;
+}
+
+function toGroup(entry: WebUiQueryEntity<'group.query'>): Group {
+  return entry as Group;
+}
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  protected api = inject(ApiService);
+  protected api = inject(TypedApiService);
 
   static readonly namePattern = /^[a-zA-Z0-9_][a-zA-Z0-9_.-]*[$]?$/;
-  protected uncachedUserQuery = 'user.get_user_obj' as const;
-  protected uncachedGroupQuery = 'group.get_group_obj' as const;
-  protected userQuery = 'user.query' as const;
-  protected groupQuery = 'group.query' as const;
   protected queryOptions = { limit: 50 };
 
   // Cache of usernames and group names from recent autocomplete queries.
@@ -40,10 +55,10 @@ export class UserService {
     search = '',
     hideBuiltIn = false,
     offset = 0,
-    extraFilters: QueryFilter<Group>[] = [],
+    extraFilters: GroupFilter[] = [],
   ): Observable<Group[]> {
     const trimmedSearch = search.trim();
-    const queryArgs: QueryFilter<Group>[] = [...extraFilters];
+    const queryArgs: GroupFilter[] = [...extraFilters];
 
     if (trimmedSearch) {
       queryArgs.push(['group', '~', `(?i).*${trimmedSearch.replaceAll('\\', '\\\\')}`]);
@@ -52,18 +67,18 @@ export class UserService {
       queryArgs.push(['builtin', '=', false]);
     }
 
-    return this.api.call(this.groupQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]).pipe(
+    return this.api.query('group.query', queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }).pipe(
       map((groups) => {
         this.updateAutocompleteCache();
         groups.forEach((group) => this.autocompleteGroupCache.add(group.group));
-        return groups;
+        return groups.map(toGroup);
       }),
     );
   }
 
   smbGroupQueryDsCache(search = '', hideBuiltIn = false, offset = 0): Observable<Group[]> {
     const trimmedSearch = search.trim();
-    const queryArgs: QueryFilter<Group>[] = [['smb', '=', true]];
+    const queryArgs: GroupFilter[] = [['smb', '=', true]];
 
     if (trimmedSearch) {
       // Escape backslashes for domain-prefixed group names (e.g., "ACME\Domain Admins")
@@ -73,11 +88,11 @@ export class UserService {
       queryArgs.push(['builtin', '=', false]);
     }
 
-    return this.api.call(this.groupQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]).pipe(
+    return this.api.query('group.query', queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }).pipe(
       map((groups) => {
         this.updateAutocompleteCache();
         groups.forEach((group) => this.autocompleteGroupCache.add(group.group));
-        return groups;
+        return groups.map(toGroup);
       }),
     );
   }
@@ -87,7 +102,7 @@ export class UserService {
    * @deprecated Use getGroupByNameCached() instead to populate the directory services cache.
    */
   getGroupByName(groupname: string): Observable<DsUncachedGroup> {
-    return this.api.call(this.uncachedGroupQuery, [{ groupname }]);
+    return this.api.call('group.get_group_obj', [{ groupname }]);
   }
 
   /**
@@ -105,9 +120,6 @@ export class UserService {
    *
    * @param groupname - Exact group name to look up
    * @returns Observable of the group object
-   *
-   * Note: The `as unknown as Observable<Group>` cast is required because the API's
-   * type system doesn't distinguish between array and single-object returns when get: true.
    */
   getGroupByNameCached(groupname: string): Observable<Group> {
     // Check if there's already an in-flight request for this group
@@ -116,8 +128,9 @@ export class UserService {
       return inFlight$; // Return shared Observable
     }
 
-    const queryArgs: QueryFilter<Group>[] = [['name', '=', groupname]];
-    const request$ = (this.api.call(this.groupQuery, [queryArgs, { get: true }]) as unknown as Observable<Group>).pipe(
+    const queryArgs: GroupFilter[] = [['name', '=', groupname]];
+    const request$ = this.api.queryOne('group.query', queryArgs).pipe(
+      map(toGroup),
       tap((group) => {
         // Add to autocomplete cache when request succeeds
         this.updateAutocompleteCache();
@@ -145,17 +158,17 @@ export class UserService {
    */
   userQueryDsCache(search = '', offset = 0): Observable<User[]> {
     const trimmedSearch = search.trim();
-    const queryArgs: QueryFilter<User>[] = [];
+    const queryArgs: UserFilter[] = [];
 
     if (trimmedSearch) {
       queryArgs.push(['username', '~', `(?i).*${trimmedSearch.replaceAll('\\', '\\\\')}`]);
     }
 
-    return this.api.call(this.userQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]).pipe(
+    return this.api.query('user.query', queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }).pipe(
       map((users) => {
         this.updateAutocompleteCache();
         users.forEach((user) => this.autocompleteUserCache.add(user.username));
-        return users;
+        return users.map(toUser);
       }),
     );
   }
@@ -164,8 +177,8 @@ export class UserService {
    * Gets a user by exact name match using the uncached API.
    * @deprecated Use getUserByNameCached() instead to populate the directory services cache.
    */
-  getUserByName(username: string): Observable<DsUncachedUser> {
-    return this.api.call(this.uncachedUserQuery, [{ username }]);
+  getUserByName(username: string): Observable<CallResponse<WebUiApiDirectory, 'user.get_user_obj'>> {
+    return this.api.call('user.get_user_obj', [{ username }]);
   }
 
   /**
@@ -183,9 +196,6 @@ export class UserService {
    *
    * @param username - Exact username to look up
    * @returns Observable of the user object
-   *
-   * Note: The `as unknown as Observable<User>` cast is required because the API's
-   * type system doesn't distinguish between array and single-object returns when get: true.
    */
   getUserByNameCached(username: string): Observable<User> {
     // Check if there's already an in-flight request for this user
@@ -194,8 +204,9 @@ export class UserService {
       return inFlight$; // Return shared Observable
     }
 
-    const queryArgs: QueryFilter<User>[] = [['username', '=', username]];
-    const request$ = (this.api.call(this.userQuery, [queryArgs, { get: true }]) as unknown as Observable<User>).pipe(
+    const queryArgs: UserFilter[] = [['username', '=', username]];
+    const request$ = this.api.queryOne('user.query', queryArgs).pipe(
+      map(toUser),
       tap((user) => {
         // Add to autocomplete cache when request succeeds
         this.updateAutocompleteCache();
@@ -223,17 +234,17 @@ export class UserService {
    */
   smbUserQueryDsCache(search = '', offset = 0): Observable<User[]> {
     const trimmedSearch = search.trim();
-    const queryArgs: QueryFilter<User>[] = [['smb', '=', true]];
+    const queryArgs: UserFilter[] = [['smb', '=', true]];
     if (trimmedSearch) {
       // Escape backslashes for domain-prefixed usernames (e.g., "ACME\admin")
       queryArgs.push(['username', '^', trimmedSearch.replaceAll('\\', '\\\\')]);
     }
 
-    return this.api.call(this.userQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]).pipe(
+    return this.api.query('user.query', queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }).pipe(
       map((users) => {
         this.updateAutocompleteCache();
         users.forEach((user) => this.autocompleteUserCache.add(user.username));
-        return users;
+        return users.map(toUser);
       }),
     );
   }

@@ -1,7 +1,6 @@
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { Observable, of, Subject } from 'rxjs';
 import { oneMinuteMillis } from 'app/constants/time.constant';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { IncomingMessage } from 'app/interfaces/api-message.interface';
@@ -27,7 +26,6 @@ describe('TokenLastUsedService', () => {
         logout: jest.fn().mockReturnValue(new Subject()),
         user$: new Subject(),
       }),
-      mockApi(),
       {
         provide: WINDOW,
         useValue: {

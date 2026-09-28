@@ -8,11 +8,11 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Injectable()
 export class ReplicationService {
-  protected api = inject(ApiService);
+  protected api = inject(TypedApiService);
   private authService = inject(AuthService);
 
 
@@ -32,9 +32,12 @@ export class ReplicationService {
           ]).pipe(
             switchMap((hasRole) => {
               if (hasRole) {
+                // `LEGACY` only describes tasks from before transports were split. No form offers
+                // it, and middleware does not list datasets over it.
+                const transport = providerOptions.transport as Exclude<TransportMode, TransportMode.Legacy>;
                 return this.api.call(
                   'replication.list_datasets',
-                  [providerOptions.transport, providerOptions.sshCredential],
+                  [transport, providerOptions.sshCredential],
                 ).pipe(tap((datasets) => cachedDatasets = datasets));
               }
               return of([] as string[]);
@@ -67,7 +70,11 @@ export class ReplicationService {
   }
 
   getReplicationTasks(): Observable<ReplicationTask[]> {
-    return this.api.call('replication.query');
+    return this.api.query('replication.query').pipe(
+      // Middleware types the enums as plain literals and `job`, `state` and the SSH credential as
+      // loose dicts; the UI narrows them to what it reads.
+      map((tasks) => tasks as unknown as ReplicationTask[]),
+    );
   }
 
   generateEncryptionHexKey(length: number): string {

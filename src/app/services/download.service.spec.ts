@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
-import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { lastValueFrom, of } from 'rxjs';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { TaskState } from 'app/enums/task-state.enum';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DownloadService } from 'app/services/download.service';
 
 describe('DownloadService', () => {
@@ -14,8 +14,8 @@ describe('DownloadService', () => {
     service: DownloadService,
     providers: [
       mockProvider(HttpClient),
-      mockApi([
-        mockCall('core.download', [123, 'http://localhost/download.file']),
+      mockTypedApi([
+        mockTypedCall('core.download', [123, 'http://localhost/download.file']),
       ]),
     ],
   });
@@ -66,7 +66,7 @@ describe('DownloadService', () => {
   });
 
   describe('coreDownload', () => {
-    it('calls core.download, waits for job to complete and then downloads the file', () => {
+    it('calls core.download, waits for job to complete and then downloads the file', async () => {
       jest.spyOn(spectator.inject(Store), 'select').mockReturnValue(of({
         id: 123,
         time_finished: {
@@ -76,14 +76,14 @@ describe('DownloadService', () => {
       }));
       jest.spyOn(spectator.service, 'downloadUrl').mockReturnValue(of(new Blob()));
 
-      spectator.service.coreDownload({
+      await lastValueFrom(spectator.service.coreDownload({
         fileName: 'test.csr',
         method: 'filesystem.get',
         arguments: ['argument'],
         mimeType: 'application/x-x509-user-cert',
-      }).subscribe();
+      }));
 
-      expect(spectator.inject(ApiService).call)
+      expect(spectator.inject(TypedApiService).call)
         .toHaveBeenCalledWith('core.download', ['filesystem.get', ['argument'], 'test.csr']);
       const downloadService = spectator.inject(DownloadService);
       expect(downloadService.downloadUrl).toHaveBeenCalledTimes(1);

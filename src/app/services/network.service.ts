@@ -9,12 +9,19 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AppState } from 'app/store';
 import { selectIsHaEnabled } from 'app/store/ha-info/ha-info.selectors';
 
 @Injectable({ providedIn: 'root' })
 export class NetworkService {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
+  /**
+   * For the two calls the typed client cannot make yet: `interface.lag_supported_protocols` is
+   * private and so absent from the generated directory, and `reporting.realtime` is an event
+   * source, which takes subscription params (gap 5 in docs/devs/typed-api-client.md).
+   */
+  private legacyApi = inject(ApiService);
   private store = inject(Store<AppState>);
 
   macRegex = macAddressRegex;
@@ -42,7 +49,7 @@ export class NetworkService {
   }
 
   getLaggProtocolChoices(): Observable<string[]> {
-    return this.api.call('interface.lag_supported_protocols');
+    return this.legacyApi.call('interface.lag_supported_protocols');
   }
 
   getBridgeMembersChoices(id?: string): Observable<Choices> {
@@ -72,7 +79,7 @@ export class NetworkService {
   }
 
   subscribeToInOutUpdates(): Observable<AllNetworkInterfacesUpdate> {
-    return this.api.subscribe('reporting.realtime').pipe(
+    return this.legacyApi.subscribe('reporting.realtime').pipe(
       map((event) => event.fields?.interfaces),
       filter(Boolean),
     );

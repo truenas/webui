@@ -13,7 +13,7 @@ import { FileRecord } from 'app/interfaces/file-record.interface';
 import { QueryFilter, QueryOptions } from 'app/interfaces/query-api.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 export interface ProviderOptions {
   directoriesOnly?: boolean;
@@ -26,7 +26,7 @@ export interface ProviderOptions {
 
 @Injectable({ providedIn: 'root' })
 export class FilesystemService {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
 
 
   getTopLevelDatasetsNodes(): Observable<ExplorerNodeData[]> {
@@ -74,7 +74,7 @@ export class FilesystemService {
       if (options.datasetsOnly && node.data.path.trim() === '/') {
         return of([{ ...datasetsRootNode }]);
       }
-      const typeFilter: [QueryFilter<FileRecord>?] = [];
+      const typeFilter: QueryFilter<FileRecord>[] = [];
       if (options.directoriesOnly) {
         typeFilter.push(['type', '=', FileType.Directory]);
       }
@@ -87,7 +87,7 @@ export class FilesystemService {
         return this.getZvolNodes(node);
       }
 
-      return this.api.call('filesystem.listdir', [node.data.path, typeFilter, this.queryOptions]).pipe(
+      return this.listdir(node.data.path, typeFilter).pipe(
         map((files) => {
           return files
             .filter((file) => {
@@ -115,7 +115,7 @@ export class FilesystemService {
 
     return forkJoin([
       // Attempt to load zvols from /dev/zvol
-      this.api.call('filesystem.listdir', [searchNode.data.path, [], this.queryOptions]).pipe(
+      this.listdir(searchNode.data.path, []).pipe(
         catchError((error: unknown) => {
           const apiError = extractApiErrorDetails(error);
           if (/\[ENOENT] Directory \/dev\/zvol.* does not exist/.exec(apiError?.reason)) {
@@ -127,7 +127,7 @@ export class FilesystemService {
       ),
 
       // And load dataset structure to build the tree if no zvols exist at all.
-      this.api.call('filesystem.listdir', [wouldBeDatasetPath, [['type', '=', FileType.Directory]], this.queryOptions]),
+      this.listdir(wouldBeDatasetPath, [['type', '=', FileType.Directory]]),
     ])
       .pipe(
         map(([zvolTree, datasetTree]) => {
@@ -148,6 +148,14 @@ export class FilesystemService {
           return uniqBy([...datasetNodes, ...zvolNodes], (node) => node.path);
         }),
       );
+  }
+
+  private listdir(path: string, filters: QueryFilter<FileRecord>[]): Observable<FileRecord[]> {
+    return this.api.call('filesystem.listdir', [path, filters, this.queryOptions]).pipe(
+      // Middleware types the answer as every shape a query can take; with neither `get` nor
+      // `count` in the options it is always the list.
+      map((files) => files as FileRecord[]),
+    );
   }
 
   private fileToNode(file: FileRecord): ExplorerNodeData {

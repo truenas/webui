@@ -3,9 +3,9 @@ import { createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { TnDialog } from '@truenas/ui-components';
 import { firstValueFrom, of, throwError } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { VmDisplayType, VmState } from 'app/enums/vm.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
@@ -14,7 +14,7 @@ import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -34,17 +34,17 @@ describe('VmService', () => {
   const createService = createServiceFactory({
     service: VmService,
     providers: [
-      mockApi([
-        mockCall('core.download'),
-        mockCall('vm.virtualization_details', { supported: true, error: null }),
-        mockCall('vm.start'),
-        mockCall('vm.resume'),
-        mockCall('vm.poweroff'),
-        mockCall('vm.reset'),
-        mockCall('vm.get_available_memory', 4096),
-        mockJob('vm.stop', fakeSuccessfulJob()),
-        mockJob('vm.restart', fakeSuccessfulJob()),
-        mockCall('vm.get_display_devices', []),
+      mockTypedApi([
+        mockTypedCall('core.download', null),
+        mockTypedCall('vm.virtualization_details', { supported: true, error: null }),
+        mockTypedCall('vm.start', null),
+        mockTypedCall('vm.resume', null),
+        mockTypedCall('vm.poweroff', null),
+        mockTypedCall('vm.reset', null),
+        mockTypedCall('vm.get_available_memory', 4096),
+        mockTypedJob('vm.stop', { state: JobState.Success }),
+        mockTypedJob('vm.restart', { state: JobState.Success }),
+        mockTypedCall('vm.get_display_devices', []),
       ]),
       mockProvider(DialogService),
       mockProvider(TnDialog, {
@@ -87,30 +87,30 @@ describe('VmService', () => {
 
   it('should get virtualization details', async () => {
     expect(await firstValueFrom(spectator.service.hasVirtualizationSupport$)).toBe(true);
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.virtualization_details');
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('vm.virtualization_details');
   });
 
   it('should get available memory', async () => {
     expect(await firstValueFrom(spectator.service.getAvailableMemory())).toBe(4096);
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.get_available_memory');
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('vm.get_available_memory');
   });
 
   it('should call websocket to start vm', () => {
     const vm = mockVm(VmState.Stopped);
     spectator.service.doStartResume(vm);
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.start', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('vm.start', [1]);
   });
 
   it('should call `vm.resume` when the VM is suspended', () => {
     const vm = mockVm(VmState.Suspended);
     spectator.service.doStartResume(vm);
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.resume', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('vm.resume', [1]);
   });
 
   it('should not pass overcommit parameter when resuming suspended VM', () => {
     const vm = mockVm(VmState.Suspended);
     spectator.service.doStartResume(vm, true); // overcommit=true
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.resume', [1]); // no overcommit param
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('vm.resume', [1]); // no overcommit param
   });
 
   it('should open dialog to stop vm', () => {
@@ -119,7 +119,7 @@ describe('VmService', () => {
   });
 
   it('should call websocket to restart vm', () => {
-    const apiService = spectator.inject(ApiService);
+    const apiService = spectator.inject(TypedApiService);
     jest.spyOn(apiService, 'startJob').mockReturnValue(of(1));
 
     spectator.service.doRestart({ id: 1 } as VirtualMachine);
@@ -129,7 +129,7 @@ describe('VmService', () => {
   it('should call websocket to poweroff vm', () => {
     const vm = mockVm(VmState.Running);
     spectator.service.doPowerOff(vm);
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.poweroff', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('vm.poweroff', [1]);
   });
 
   it('should call websocket to reset vm after confirmation', async () => {
@@ -142,7 +142,7 @@ describe('VmService', () => {
     expect(dialogService.confirm).toHaveBeenCalledWith(expect.objectContaining({
       message: expect.stringContaining('The guest OS is not shut down cleanly'),
     }));
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.reset', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('vm.reset', [1]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('VM vm has been reset.');
     expect(wasReset).toBe(true);
   });
@@ -154,7 +154,7 @@ describe('VmService', () => {
 
     const wasReset = await firstValueFrom(spectator.service.doReset(vm));
 
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('vm.reset', [1]);
+    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('vm.reset', [1]);
     expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
     expect(wasReset).toBe(false);
   });
@@ -163,7 +163,7 @@ describe('VmService', () => {
     const vm = mockVm(VmState.Running);
     const errorHandlerService = spectator.inject(ErrorHandlerService);
     jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of(true));
-    jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValueOnce(throwError(() => new ApiCallError({
+    jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValueOnce(throwError(() => new ApiCallError({
       code: JsonRpcErrorCode.CallError,
       message: 'Failed to reset VM',
     })));
@@ -178,12 +178,12 @@ describe('VmService', () => {
   it('should call websocket to download vm logs', () => {
     const vm = mockVm(VmState.Running, 'test');
     spectator.service.downloadLogs(vm);
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.download', ['vm.log_file_download', [1], '1_test.log']);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('core.download', ['vm.log_file_download', [1], '1_test.log']);
   });
 
   it('should open an error dialog when the VM fails to start', async () => {
     const vm = mockVm(VmState.Shutoff);
-    const apiService = spectator.inject(ApiService);
+    const apiService = spectator.inject(TypedApiService);
     const errorHandlerService = spectator.inject(ErrorHandlerService);
     const callSpy = jest.spyOn(apiService, 'call');
     const mockImpl = callSpy.getMockImplementation();
@@ -203,7 +203,7 @@ describe('VmService', () => {
 
   it('should overcommit memory when VM start fails', async () => {
     const vm = mockVm(VmState.Shutoff);
-    const apiService = spectator.inject(ApiService);
+    const apiService = spectator.inject(TypedApiService);
     const dialogService = spectator.inject(DialogService);
     const callSpy = jest.spyOn(apiService, 'call');
     const confirmSpy = jest.spyOn(dialogService, 'confirm');
@@ -232,7 +232,7 @@ describe('VmService', () => {
 
   describe('openDisplay', () => {
     function mockDisplayDevices(devices: VmDisplayDevice[]): void {
-      const apiService = spectator.inject(ApiService);
+      const apiService = spectator.inject(TypedApiService);
       const callSpy = jest.spyOn(apiService, 'call');
       const mockImpl = callSpy.getMockImplementation();
 

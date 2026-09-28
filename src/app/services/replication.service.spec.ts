@@ -1,12 +1,12 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ReplicationService } from 'app/services/replication.service';
 
 describe('ReplicationService', () => {
@@ -15,8 +15,8 @@ describe('ReplicationService', () => {
     service: ReplicationService,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('replication.list_datasets', [
+      mockTypedApi([
+        mockTypedCall('replication.list_datasets', [
           'parent',
           'parent/child1',
           'parent/child2',
@@ -47,7 +47,7 @@ describe('ReplicationService', () => {
         } as TreeNode<ExplorerNodeData>),
       );
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
         'replication.list_datasets',
         [TransportMode.Ssh, 2],
       );
@@ -118,7 +118,7 @@ describe('ReplicationService', () => {
         } as TreeNode<ExplorerNodeData>),
       );
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledTimes(1);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledTimes(1);
     });
   });
 });

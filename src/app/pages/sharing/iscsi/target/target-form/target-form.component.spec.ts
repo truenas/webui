@@ -11,6 +11,7 @@ import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-error
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
 import {
   IscsiAuthAccess, IscsiInitiatorGroup, IscsiPortal, IscsiTarget,
@@ -23,6 +24,7 @@ import {
 } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   FcMpioInfoBannerComponent,
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-mpio-info-banner/fc-mpio-info-banner.component';
@@ -133,14 +135,8 @@ describe('TargetFormComponent', () => {
         validatePhysicalPortUniqueness: jest.fn(permissiveFcPortValidation),
       }),
       ...ixFormTestingProviders(),
-      mockApi([
-        mockCall('tn_connect.config'),
-        mockCall('fc.fc_host.query', []),
-        mockCall('fcport.port_choices', {}),
-        mockCall('iscsi.target.create'),
-        mockCall('iscsi.target.update', { id: 123 } as IscsiTarget),
-        mockCall('iscsi.target.validate_name', null),
-        mockCall('iscsi.portal.query', [{
+      mockTypedApi([
+        mockTypedQuery('iscsi.portal.query', [{
           comment: 'comment_1',
           id: 1,
           tag: 11,
@@ -151,7 +147,7 @@ describe('TargetFormComponent', () => {
           tag: 22,
           listen: [{ ip: '2.2.2.2' }],
         }] as IscsiPortal[]),
-        mockCall('iscsi.initiator.query', [{
+        mockTypedQuery('iscsi.initiator.query', [{
           id: 3,
           comment: 'comment_3',
           initiators: ['initiator_1'],
@@ -160,7 +156,7 @@ describe('TargetFormComponent', () => {
           comment: 'comment_4',
           initiators: ['initiator_2'],
         }] as IscsiInitiatorGroup[]),
-        mockCall('iscsi.auth.query', [{
+        mockTypedQuery('iscsi.auth.query', [{
           id: 5,
           tag: 55,
           peersecret: 'peersecret_1',
@@ -175,6 +171,14 @@ describe('TargetFormComponent', () => {
           secret: 'secret_2',
           user: 'user_2',
         }] as IscsiAuthAccess[]),
+      ]),
+      mockApi([
+        mockCall('tn_connect.config'),
+        mockCall('fc.fc_host.query', []),
+        mockCall('fcport.port_choices', {}),
+        mockCall('iscsi.target.create'),
+        mockCall('iscsi.target.update', { id: 123 } as IscsiTarget),
+        mockCall('iscsi.target.validate_name', null),
       ]),
       mockAuth(),
       provideTnFormFieldErrors(),
@@ -305,7 +309,7 @@ describe('TargetFormComponent', () => {
       expect(closed).toHaveBeenCalledWith(true);
     });
 
-    it('loads and shows the \'portal\', \'initiator\' and \'auth\'', () => {
+    it('loads and shows the \'portal\', \'initiator\' and \'auth\'', async () => {
       let portal;
       let initiator;
       let auth: Option[] = [];
@@ -313,10 +317,12 @@ describe('TargetFormComponent', () => {
       spectator.component.portals$.subscribe((options) => portal = options);
       spectator.component.initiators$.subscribe((options) => initiator = options);
       spectator.component.auths$.subscribe((options) => auth = options);
+      await spectator.fixture.whenStable();
 
-      expect(api.call).toHaveBeenNthCalledWith(1, 'iscsi.portal.query', []);
-      expect(api.call).toHaveBeenNthCalledWith(2, 'iscsi.initiator.query', []);
-      expect(api.call).toHaveBeenNthCalledWith(3, 'iscsi.auth.query', []);
+      const typedApi = spectator.inject(TypedApiService);
+      expect(typedApi.query).toHaveBeenNthCalledWith(1, 'iscsi.portal.query');
+      expect(typedApi.query).toHaveBeenNthCalledWith(2, 'iscsi.initiator.query');
+      expect(typedApi.query).toHaveBeenNthCalledWith(3, 'iscsi.auth.query');
 
       expect(spectator.component.hasFibreChannel()).toBe(true);
 

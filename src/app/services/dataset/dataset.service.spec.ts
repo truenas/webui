@@ -1,6 +1,6 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom, of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -12,8 +12,8 @@ describe('DatasetService', () => {
   const createService = createServiceFactory({
     service: DatasetService,
     providers: [
-      mockApi([
-        mockCall('pool.filesystem_choices', [
+      mockTypedApi([
+        mockTypedCall('pool.filesystem_choices', [
           'pool',
           'pool/subpool',
           'pool/anotherpool',

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
-  BehaviorSubject, distinctUntilChanged, filter, Observable,
+  BehaviorSubject, distinctUntilChanged, filter, map, Observable,
 } from 'rxjs';
 import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
@@ -13,14 +13,14 @@ import {
   IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AppState } from 'app/store';
 
 @Injectable({
   providedIn: 'root',
 })
 export class IscsiService {
-  protected api = inject(ApiService);
+  protected api = inject(TypedApiService);
   protected auth = inject(AuthService);
   private store$ = inject<Store<AppState>>(Store);
 
@@ -39,11 +39,11 @@ export class IscsiService {
   }
 
   listPortals(): Observable<IscsiPortal[]> {
-    return this.api.call('iscsi.portal.query', []);
+    return this.api.query('iscsi.portal.query');
   }
 
   getInitiators(): Observable<IscsiInitiatorGroup[]> {
-    return this.api.call('iscsi.initiator.query', []);
+    return this.api.query('iscsi.initiator.query');
   }
 
   getExtentDevices(): Observable<Choices> {
@@ -51,15 +51,21 @@ export class IscsiService {
   }
 
   getExtents(): Observable<IscsiExtent[]> {
-    return this.api.call('iscsi.extent.query', []);
+    return this.api.query('iscsi.extent.query').pipe(
+      // Middleware types `type` and `rpm` as literals and `filesize` as a number or string; the UI narrows them.
+      map((extents) => extents as IscsiExtent[]),
+    );
   }
 
   getTargets(): Observable<IscsiTarget[]> {
-    return this.api.call('iscsi.target.query', []);
+    return this.api.query('iscsi.target.query').pipe(
+      // Middleware types `mode` and each group's `authmethod` as literals; the UI narrows them to its enums.
+      map((targets) => targets as IscsiTarget[]),
+    );
   }
 
   getTargetExtents(): Observable<IscsiTargetExtent[]> {
-    return this.api.call('iscsi.targetextent.query', []);
+    return this.api.query('iscsi.targetextent.query');
   }
 
   deleteTargetExtent(id: number): Observable<boolean> {
@@ -67,10 +73,13 @@ export class IscsiService {
   }
 
   getAuth(): Observable<IscsiAuthAccess[]> {
-    return this.api.call('iscsi.auth.query', []);
+    return this.api.query('iscsi.auth.query').pipe(
+      // Middleware types `discovery_auth` as a literal; the UI narrows it to its enum.
+      map((credentials) => credentials as IscsiAuthAccess[]),
+    );
   }
 
   getGlobalSessions(): Observable<IscsiGlobalSession[]> {
-    return this.api.call('iscsi.global.sessions');
+    return this.api.query('iscsi.global.sessions');
   }
 }

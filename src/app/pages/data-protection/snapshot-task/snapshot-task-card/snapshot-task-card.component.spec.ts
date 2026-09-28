@@ -9,6 +9,7 @@ import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
@@ -83,11 +84,13 @@ describe('SnapshotTaskCardComponent', () => {
           },
         ],
       }),
+      mockTypedApi([
+        mockTypedCall('pool.snapshottask.delete_will_change_retention_for', {}),
+      ]),
       mockApi([
         mockCall('pool.snapshottask.query', snapshotTasks),
         mockCall('pool.snapshottask.delete'),
         mockCall('pool.snapshottask.update'),
-        mockCall('pool.snapshottask.delete_will_change_retention_for', {}),
         mockCall('cronjob.run'),
       ]),
       mockProvider(DialogService, {

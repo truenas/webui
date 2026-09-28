@@ -7,20 +7,21 @@ import { Disk } from 'app/interfaces/disk.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Injectable({ providedIn: 'root' })
 export class StorageService {
-  protected api = inject(ApiService);
-
-  protected diskResource = 'disk.query' as const;
+  protected api = inject(TypedApiService);
 
   filesystemStat(path: string): Observable<FileSystemStat> {
     return this.api.call('filesystem.stat', [path]);
   }
 
   listDisks(): Observable<Disk[]> {
-    return this.api.call(this.diskResource, []);
+    return this.api.query('disk.query').pipe(
+      // Middleware types `bus`, `type` and the power settings as plain strings; the UI narrows them to its enums.
+      map((disks) => disks as Disk[]),
+    );
   }
 
   getDatasetNameOptions(): Observable<Option[]> {

@@ -12,12 +12,12 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiExtentType, IscsiExtentUsefor } from 'app/enums/iscsi.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FibreChannelHost, FibreChannelPortChoices } from 'app/interfaces/fibre-channel.interface';
-import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import {
   IscsiAuthAccess, IscsiExtent, IscsiInitiatorGroup, IscsiPortal, IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
@@ -30,6 +30,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { fillControlValues, indexFormControls } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { ExtentWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/extent-wizard-step/extent-wizard-step.component';
 import { ProtocolOptionsWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/protocol-options-wizard-step/protocol-options-wizard-step.component';
@@ -58,18 +59,23 @@ describe('IscsiWizardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockApi([
-        mockCall('iscsi.global.sessions', [] as IscsiGlobalSession[]),
-        mockCall('iscsi.extent.query', []),
-        mockCall('iscsi.target.query', []),
-        mockCall('iscsi.portal.query', []),
-        mockCall('iscsi.auth.query', []),
-        mockCall('iscsi.extent.disk_choices', {}),
-        mockCall('iscsi.portal.listen_ip_choices', {
+      mockTypedApi([
+        mockTypedQuery('iscsi.global.sessions', []),
+        mockTypedQuery('iscsi.extent.query', []),
+        mockTypedQuery('iscsi.target.query', []),
+        mockTypedQuery('iscsi.portal.query', []),
+        mockTypedQuery('iscsi.auth.query', []),
+        mockTypedCall('iscsi.extent.disk_choices', {}),
+        mockTypedCall('iscsi.portal.listen_ip_choices', {
           '0.0.0.0': '0.0.0.0',
           '192.168.1.3': '192.168.1.3',
           '::': '::',
         }),
+        mockTypedQuery('fcport.query', []),
+        mockTypedCall('fcport.create', null),
+        mockTypedCall('fc.fc_host.update', null),
+      ]),
+      mockApi([
         mockCall('pool.dataset.create', { id: 'my pool/test_zvol' } as Dataset),
         mockCall('iscsi.extent.create', { id: 11 } as IscsiExtent),
         mockCall('iscsi.auth.create', { id: 12, tag: 12 } as IscsiAuthAccess),
@@ -90,9 +96,6 @@ describe('IscsiWizardComponent', () => {
             id: 2, alias: 'fc1', npiv: 0, wwpn: '10:00:00:00:c9:30:00:00', wwpn_b: '10:00:00:00:c9:30:00:01',
           },
         ] as FibreChannelHost[]),
-        mockCall('fcport.query', []),
-        mockCall('fcport.create'),
-        mockCall('fc.fc_host.update'),
       ]),
       mockEntitlements(),
       provideMockStore({
@@ -293,7 +296,7 @@ describe('IscsiWizardComponent', () => {
     expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('iscsi.initiator.create', expect.anything());
 
     // The chosen port is linked to the created target.
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('fcport.create', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('fcport.create', [{
       port: 'fc0',
       target_id: 15,
     }]);

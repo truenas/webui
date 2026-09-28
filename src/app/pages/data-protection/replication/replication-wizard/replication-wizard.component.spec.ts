@@ -15,7 +15,6 @@ import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum'
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
-import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
@@ -33,9 +32,6 @@ const existingTask: ReplicationTask = {
   id: 123,
   recursive: false,
   retention_policy: RetentionPolicy.Source,
-  schedule_method: ScheduleMethod.Cron,
-  source_datasets_from: '',
-  target_dataset_from: '',
   state: {
     state: JobState.Running,
   },
@@ -79,8 +75,10 @@ describe('ReplicationWizardComponent', () => {
       mockAuth(),
       mockTypedApi([
         mockTypedQuery('keychaincredential.query', []),
+        mockTypedQuery('replication.query', []),
       ]),
       mockApi([
+        // `ReplicationWhatAndWhereComponent` still reads the task list over the legacy client too.
         mockCall('replication.query', []),
         mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
         mockCall('replication.target_unmatched_snapshots', {}),

@@ -1,30 +1,30 @@
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
+import { firstValueFrom, of } from 'rxjs';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from './system-general.service';
 
 describe('SystemGeneralService', () => {
   let spectator: SpectatorService<SystemGeneralService>;
-  let api: MockApiService;
+  let api: MockTypedApiService;
 
   const createService = createServiceFactory({
     service: SystemGeneralService,
     providers: [
-      mockApi([
-        mockCall('certificate.query', []),
-        mockCall('certificate.country_choices', { US: 'United States' }),
-        mockCall('system.general.ui_address_choices', {}),
-        mockCall('system.general.ui_v6address_choices', {}),
-        mockCall('system.general.kbdmap_choices', { us: 'United States' }),
-        mockCall('system.general.timezone_choices', { 'America/New_York': 'Eastern Time' }),
-        mockCall('system.general.ui_certificate_choices', {}),
-        mockCall('system.general.ui_httpsprotocols_choices', {}),
-        mockCall('system.general.ui_restart', null),
-        mockJob('directoryservices.cache_refresh', fakeSuccessfulJob()),
+      mockTypedApi([
+        mockTypedQuery('certificate.query', []),
+        mockTypedCall('certificate.country_choices', { US: 'United States' }),
+        mockTypedCall('system.general.ui_address_choices', {}),
+        mockTypedCall('system.general.ui_v6address_choices', {}),
+        mockTypedCall('system.general.kbdmap_choices', { us: 'United States' }),
+        mockTypedCall('system.general.timezone_choices', { 'America/New_York': 'Eastern Time' }),
+        mockTypedCall('system.general.ui_certificate_choices', {}),
+        mockTypedCall('system.general.ui_httpsprotocols_choices', {}),
+        mockTypedCall('system.general.ui_restart', null),
+        mockTypedJob('directoryservices.cache_refresh', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -37,7 +37,7 @@ describe('SystemGeneralService', () => {
 
   beforeEach(() => {
     spectator = createService();
-    api = spectator.inject(MockApiService);
+    api = spectator.inject(MockTypedApiService);
   });
 
 
@@ -45,7 +45,7 @@ describe('SystemGeneralService', () => {
     it('should call certificate.query API', () => {
       spectator.service.getCertificates().subscribe();
 
-      expect(api.call).toHaveBeenCalledWith('certificate.query');
+      expect(api.query).toHaveBeenCalledWith('certificate.query');
     });
   });
 
@@ -172,24 +172,16 @@ describe('SystemGeneralService', () => {
       expect(result).toBe(true);
     });
 
-    it('should return Observable<true> regardless of user choice', () => {
+    it('should return Observable<true> regardless of user choice', async () => {
       const dialogService = spectator.inject(DialogService);
 
       // Test when user confirms
       (dialogService.confirm as jest.Mock) = jest.fn(() => of(true));
-      let result1: boolean;
-      spectator.service.handleUiServiceRestart().subscribe((value) => {
-        result1 = value;
-      });
-      expect(result1).toBe(true);
+      expect(await firstValueFrom(spectator.service.handleUiServiceRestart())).toBe(true);
 
       // Test when user cancels
       (dialogService.confirm as jest.Mock) = jest.fn(() => of(false));
-      let result2: boolean;
-      spectator.service.handleUiServiceRestart().subscribe((value) => {
-        result2 = value;
-      });
-      expect(result2).toBe(true);
+      expect(await firstValueFrom(spectator.service.handleUiServiceRestart())).toBe(true);
     });
 
     it('should handle errors with error handler when API call fails', () => {

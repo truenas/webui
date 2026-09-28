@@ -1,12 +1,12 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom, of, throwError } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ComboboxQueryType } from 'app/enums/combobox.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { UserDirectoryService } from 'app/services/user-directory.service';
 import { UserService } from 'app/services/user.service';
 
@@ -27,9 +27,9 @@ describe('UserDirectoryService', () => {
   const createService = createServiceFactory({
     service: UserDirectoryService,
     providers: [
-      mockApi([
-        mockCall('user.query', []),
-        mockCall('group.query', []),
+      mockTypedApi([
+        mockTypedQuery('user.query', []),
+        mockTypedQuery('group.query', []),
       ]),
       mockProvider(FormSidePanelService),
       mockProvider(UserService, {
@@ -93,36 +93,30 @@ describe('UserDirectoryService', () => {
       // A field with its own filters cannot go through UserService, whose
       // autocomplete cache takes none.
       it('queries the endpoint directly, merging the field filters with the search', async () => {
-        const api = spectator.inject(ApiService);
+        const api = spectator.inject(TypedApiService);
 
         await lastValueFrom(directory.queryUsers('ad', 1, {
           queryParams: [[['roles', '!=', []]], { select: ['username'] }],
         }));
 
         expect(userService.userQueryDsCache).not.toHaveBeenCalled();
-        expect(api.call).toHaveBeenCalledWith('user.query', [
-          [['username', '~', '(?i).*ad'], ['roles', '!=', []]],
-          { select: ['username'], offset: 50, limit: 50 },
-        ]);
+        expect(api.query).toHaveBeenCalledWith('user.query', [['username', '~', '(?i).*ad'], ['roles', '!=', []]], { select: ['username'], offset: 50, limit: 50 });
       });
 
       it('escapes backslashes so a domain-prefixed name is searchable verbatim', async () => {
-        const api = spectator.inject(ApiService);
+        const api = spectator.inject(TypedApiService);
 
         await lastValueFrom(directory.queryUsers('ACME\\adm', 0, { queryParams: [[], {}] }));
 
-        expect(api.call).toHaveBeenCalledWith('user.query', [
-          [['username', '~', '(?i).*ACME\\\\adm']],
-          { offset: 0, limit: 50 },
-        ]);
+        expect(api.query).toHaveBeenCalledWith('user.query', [['username', '~', '(?i).*ACME\\\\adm']], { offset: 0, limit: 50 });
       });
 
       it('does not add a search filter for a blank query', async () => {
-        const api = spectator.inject(ApiService);
+        const api = spectator.inject(TypedApiService);
 
         await lastValueFrom(directory.queryUsers('   ', 0, { queryParams: [[], {}] }));
 
-        expect(api.call).toHaveBeenCalledWith('user.query', [[], { offset: 0, limit: 50 }]);
+        expect(api.query).toHaveBeenCalledWith('user.query', [], { offset: 0, limit: 50 });
       });
     });
   });
@@ -169,7 +163,7 @@ describe('UserDirectoryService', () => {
   describe('userExists', () => {
     it('answers from the autocomplete cache without a lookup', async () => {
       jest.spyOn(userService, 'isUserInAutocompleteCache').mockReturnValue(true);
-      const api = jest.spyOn(spectator.inject(ApiService), 'call');
+      const api = jest.spyOn(spectator.inject(TypedApiService), 'queryCount');
 
       expect(await lastValueFrom(directory.userExists('root'))).toBe(true);
       expect(api).not.toHaveBeenCalled();
@@ -177,21 +171,21 @@ describe('UserDirectoryService', () => {
 
     it('answers from the negative cache without a lookup', async () => {
       jest.spyOn(userService, 'isUserCachedAsNonExistent').mockReturnValue(true);
-      const api = jest.spyOn(spectator.inject(ApiService), 'call');
+      const api = jest.spyOn(spectator.inject(TypedApiService), 'queryCount');
 
       expect(await lastValueFrom(directory.userExists('ghost'))).toBe(false);
       expect(api).not.toHaveBeenCalled();
     });
 
     it('reports a name the directory returns', async () => {
-      spectator.inject(MockApiService).mockCall('user.query', [{ username: 'root' } as User]);
+      spectator.inject(MockTypedApiService).mockQuery('user.query', [{ username: 'root' } as User]);
 
       expect(await lastValueFrom(directory.userExists('root'))).toBe(true);
       expect(userService.recordUserAsNonExistent).not.toHaveBeenCalled();
     });
 
     it('records an empty result so the same name is not queried again', async () => {
-      spectator.inject(MockApiService).mockCall('user.query', []);
+      spectator.inject(MockTypedApiService).mockQuery('user.query', []);
 
       expect(await lastValueFrom(directory.userExists('ghost'))).toBe(false);
       expect(userService.recordUserAsNonExistent).toHaveBeenCalledWith('ghost');
@@ -202,7 +196,7 @@ describe('UserDirectoryService', () => {
       // swallowing this returned the wrong verdict — and cached it. The lookup
       // used to ask with `{ get: true }`, which errors for a missing name just
       // as a dropped websocket does, making the two indistinguishable.
-      jest.spyOn(spectator.inject(ApiService), 'call')
+      jest.spyOn(spectator.inject(TypedApiService), 'queryCount')
         .mockReturnValue(throwError(() => new Error('connection reset')));
 
       await expect(lastValueFrom(directory.userExists('root'))).rejects.toThrow('connection reset');
@@ -212,14 +206,14 @@ describe('UserDirectoryService', () => {
 
   describe('groupExists', () => {
     it('records an empty result so the same name is not queried again', async () => {
-      spectator.inject(MockApiService).mockCall('group.query', []);
+      spectator.inject(MockTypedApiService).mockQuery('group.query', []);
 
       expect(await lastValueFrom(directory.groupExists('ghost'))).toBe(false);
       expect(userService.recordGroupAsNonExistent).toHaveBeenCalledWith('ghost');
     });
 
     it('lets a transport error through instead of reading it as "no such group"', async () => {
-      jest.spyOn(spectator.inject(ApiService), 'call')
+      jest.spyOn(spectator.inject(TypedApiService), 'queryCount')
         .mockReturnValue(throwError(() => new Error('connection reset')));
 
       await expect(lastValueFrom(directory.groupExists('wheel'))).rejects.toThrow('connection reset');

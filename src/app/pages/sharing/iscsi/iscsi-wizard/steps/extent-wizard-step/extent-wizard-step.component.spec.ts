@@ -4,8 +4,8 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiExtentType, IscsiExtentUsefor } from 'app/enums/iscsi.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { ExtentWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/extent-wizard-step/extent-wizard-step.component';
@@ -20,8 +20,8 @@ describe('ExtentWizardStepComponent', () => {
     providers: [
       FormBuilder,
       mockAuth(),
-      mockApi([
-        mockCall('iscsi.extent.disk_choices', {
+      mockTypedApi([
+        mockTypedCall('iscsi.extent.disk_choices', {
           'zvol/tank/regular-vol': 'tank/regular-vol (10 GiB)',
           'zvol/tank/another-vol': 'tank/another-vol (20 GiB)',
           'zvol/tank/myvol@snapshot1': 'tank/myvol@snapshot1 [ro]',

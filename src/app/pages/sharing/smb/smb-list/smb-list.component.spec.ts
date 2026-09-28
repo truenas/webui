@@ -10,9 +10,9 @@ import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { Pool } from 'app/interfaces/pool.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -20,6 +20,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
@@ -86,12 +87,14 @@ describe('SmbListComponent', () => {
     declarations: commonDeclarations,
     providers: [
       ...commonProviders,
+      mockTypedApi([
+        mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
+      ]),
       mockApi([
         mockCall('sharing.smb.query', shares as SmbShare[]),
         mockCall('sharing.smb.delete'),
         mockCall('sharing.smb.update'),
         mockCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
-        mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
       ]),
       mockSharingTierService({ enabled: false }),
     ],
@@ -203,6 +206,9 @@ describe('SmbListComponent', () => {
       declarations: commonDeclarations,
       providers: [
         ...commonProviders,
+        mockTypedApi([
+          mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
+        ]),
         mockApi([
           mockCall('sharing.smb.query', [{
             ...shares[0],
@@ -211,7 +217,6 @@ describe('SmbListComponent', () => {
           mockCall('sharing.smb.delete'),
           mockCall('sharing.smb.update'),
           mockCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
-          mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
         ]),
         mockSharingTierService({ enabled: false }),
       ],
@@ -245,6 +250,9 @@ describe('SmbListComponent', () => {
       declarations: commonDeclarations,
       providers: [
         ...commonProviders,
+        mockTypedApi([
+          mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
+        ]),
         mockApi([
           mockCall('sharing.smb.query', [{
             ...shares[0],
@@ -254,7 +262,6 @@ describe('SmbListComponent', () => {
           mockCall('sharing.smb.delete'),
           mockCall('sharing.smb.update'),
           mockCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
-          mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
         ]),
         mockSharingTierService({ enabled: false }),
       ],

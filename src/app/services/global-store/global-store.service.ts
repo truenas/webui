@@ -2,48 +2,37 @@ import { inject, Injectable, Type } from '@angular/core';
 import {
   BehaviorSubject, Observable, of, shareReplay, switchMap, tap,
 } from 'rxjs';
-import { ApiCallAndSubscribeMethod, ApiCallAndSubscribeResponse } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
-import { ApiCallMethod, ApiCallParams, ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
-import { ApiEventMethod, ApiEventTyped } from 'app/interfaces/api-message.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  TypedQueryFilter, WebUiQueryEntity, WebUiQueryMethod,
+} from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
-export interface GlobalStoreMembers<
-  M1 extends ApiCallMethod,
-  M2 extends ApiEventMethod,
-  M3 extends ApiCallAndSubscribeMethod,
-> {
-  call: Observable<ApiCallResponse<M1>>;
-  subscribe: Observable<ApiEventTyped<M2>>;
-  callAndSubscribe: Observable<ApiCallAndSubscribeResponse<M3>[]>;
+export interface GlobalStoreMembers<M extends WebUiQueryMethod> {
+  call: Observable<WebUiQueryEntity<M>[]>;
   invalidate: () => void;
 }
 
-export function globalStore<
-  M1 extends ApiCallMethod,
-  M2 extends ApiEventMethod,
-  M3 extends ApiCallAndSubscribeMethod,
->(
-  method: M1 | M2 | M3,
-  params?: ApiCallParams<M1 | M3>,
-): Type<GlobalStoreMembers<M1, M2, M3>> {
+/**
+ * A root-provided cache of one query's rows: the first subscriber sends the query, later ones get
+ * the cached rows until `invalidate()`.
+ */
+export function globalStore<M extends WebUiQueryMethod>(
+  method: M,
+  filters?: TypedQueryFilter<WebUiQueryEntity<M>>[],
+): Type<GlobalStoreMembers<M>> {
   @Injectable({ providedIn: 'root' })
-  class GlobalStore implements GlobalStoreMembers<M1, M2, M3> {
-    private api = inject(ApiService);
-    private callResult$ = new BehaviorSubject<ApiCallResponse<M1>>(undefined);
-    private subscribeResult$ = new BehaviorSubject<ApiEventTyped<M2> | undefined>(undefined);
-    private callAndSubscribeResult$ = new BehaviorSubject<ApiCallAndSubscribeResponse<M3>[] | undefined>(undefined);
+  class GlobalStore implements GlobalStoreMembers<M> {
+    private api = inject(TypedApiService);
+    private callResult$ = new BehaviorSubject<WebUiQueryEntity<M>[] | undefined>(undefined);
+    private callInFlight$: Observable<WebUiQueryEntity<M>[]> | null = null;
 
-    private callInFlight$: Observable<ApiCallResponse<M1>> | null = null;
-    private subscribeInFlight$: Observable<ApiEventTyped<M2>> | null = null;
-    private callAndSubscribeInFlight$: Observable<ApiCallAndSubscribeResponse<M3>[]> | null = null;
-
-    get call(): Observable<ApiCallResponse<M1>> {
+    get call(): Observable<WebUiQueryEntity<M>[]> {
       return this.callResult$.pipe(
         switchMap((callResult) => {
           if (callResult === undefined) {
             if (!this.callInFlight$) {
               this.callInFlight$ = this.api
-                .call(method as M1, params as ApiCallParams<M1>)
+                .query(method, filters)
                 .pipe(
                   tap((result) => {
                     this.callResult$.next(result);
@@ -59,57 +48,9 @@ export function globalStore<
       );
     }
 
-    get subscribe(): Observable<ApiEventTyped<M2>> {
-      return this.subscribeResult$.pipe(
-        switchMap((subscribeResult) => {
-          if (subscribeResult === undefined) {
-            if (!this.subscribeInFlight$) {
-              this.subscribeInFlight$ = this.api
-                .subscribe(method as M2)
-                .pipe(
-                  tap((result) => {
-                    this.subscribeResult$.next(result);
-                    this.subscribeInFlight$ = null;
-                  }),
-                  shareReplay({ bufferSize: 1, refCount: false }),
-                );
-            }
-            return this.subscribeInFlight$;
-          }
-          return of(subscribeResult);
-        }),
-      );
-    }
-
-    get callAndSubscribe(): Observable<ApiCallAndSubscribeResponse<M3>[]> {
-      return this.callAndSubscribeResult$.pipe(
-        switchMap((callAndSubscribeResult) => {
-          if (callAndSubscribeResult === undefined) {
-            if (!this.callAndSubscribeInFlight$) {
-              this.callAndSubscribeInFlight$ = this.api
-                .callAndSubscribe(method as M3, params as ApiCallParams<M3>)
-                .pipe(
-                  tap((result) => {
-                    this.callAndSubscribeResult$.next(result);
-                    this.callAndSubscribeInFlight$ = null;
-                  }),
-                  shareReplay({ bufferSize: 1, refCount: false }),
-                );
-            }
-            return this.callAndSubscribeInFlight$;
-          }
-          return of(callAndSubscribeResult);
-        }),
-      );
-    }
-
     invalidate(): void {
       this.callResult$.next(undefined);
       this.callInFlight$ = null;
-      this.subscribeResult$.next(undefined);
-      this.subscribeInFlight$ = null;
-      this.callAndSubscribeResult$.next(undefined);
-      this.callAndSubscribeInFlight$ = null;
     }
   }
   return GlobalStore;

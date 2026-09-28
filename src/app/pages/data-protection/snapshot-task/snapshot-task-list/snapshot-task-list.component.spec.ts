@@ -7,6 +7,7 @@ import { TnButtonHarness, TnSelectHarness, TnTableHarness } from '@truenas/ui-co
 import { MockComponent, MockPipe } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { TaskState } from 'app/enums/task-state.enum';
@@ -96,9 +97,6 @@ describe('SnapshotTaskListComponent', () => {
           if (method === 'pool.snapshottask.query') {
             return of(snapshotTasksList);
           }
-          if (method === 'pool.snapshottask.delete_will_change_retention_for') {
-            return of({});
-          }
           if (method === 'pool.snapshottask.delete') {
             return of(true);
           }
@@ -106,6 +104,9 @@ describe('SnapshotTaskListComponent', () => {
         }),
         subscribe: jest.fn().mockReturnValue(event$),
       }),
+      mockTypedApi([
+        mockTypedCall('pool.snapshottask.delete_will_change_retention_for', {}),
+      ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),

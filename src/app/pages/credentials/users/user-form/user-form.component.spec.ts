@@ -60,7 +60,6 @@ describe('UserFormComponent', () => {
     groups: [101],
     twofactor_auth_configured: false,
     local: true,
-    id_type_both: false,
     roles: [],
     api_keys: [],
   } as User;

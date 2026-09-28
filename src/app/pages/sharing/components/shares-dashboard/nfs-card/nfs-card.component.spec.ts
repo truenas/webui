@@ -7,11 +7,11 @@ import { TnButtonHarness, TnDialog, TnMenuHarness, TnSlideToggleHarness, TnTable
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
-import { Pool } from 'app/interfaces/pool.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -23,6 +23,7 @@ import {
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
 import {
   ServiceActionsMenuService,
@@ -100,13 +101,13 @@ describe('NfsCardComponent', () => {
     imports: commonImports,
     providers: [
       ...commonProviders,
+      mockTypedApi([
+        mockTypedQuery('pool.query', [{ path: '/mnt/x' }] as WebUiQueryEntity<'pool.query'>[]),
+      ]),
       mockApi([
         mockCall('sharing.nfs.query', nfsShares),
         mockCall('sharing.nfs.delete'),
-        // Return a truthy share so accumulateLoadingState's `!!value` filter
-        // lets the success handler (reload + toast) run.
         mockCall('sharing.nfs.update', { id: 10 } as NfsShare),
-        mockCall('pool.query', [{ path: '/mnt/x' }] as Pool[]),
       ]),
       mockSharingTierService({ enabled: false }),
     ],
@@ -194,6 +195,9 @@ describe('NfsCardComponent', () => {
       imports: commonImports,
       providers: [
         ...commonProviders,
+        mockTypedApi([
+          mockTypedQuery('pool.query', [{ path: '/mnt/x' }] as WebUiQueryEntity<'pool.query'>[]),
+        ]),
         mockApi([
           mockCall('sharing.nfs.query', [{
             ...nfsShares[0],
@@ -201,7 +205,6 @@ describe('NfsCardComponent', () => {
           }] as NfsShare[]),
           mockCall('sharing.nfs.delete'),
           mockCall('sharing.nfs.update', { id: 10 } as NfsShare),
-          mockCall('pool.query', [{ path: '/mnt/x' }] as Pool[]),
         ]),
       ],
     });
@@ -224,6 +227,9 @@ describe('NfsCardComponent', () => {
       imports: commonImports,
       providers: [
         ...commonProviders,
+        mockTypedApi([
+          mockTypedQuery('pool.query', [{ path: '/mnt/x' }] as WebUiQueryEntity<'pool.query'>[]),
+        ]),
         mockApi([
           mockCall('sharing.nfs.query', [{
             ...nfsShares[0],
@@ -231,7 +237,6 @@ describe('NfsCardComponent', () => {
           }] as NfsShare[]),
           mockCall('sharing.nfs.delete'),
           mockCall('sharing.nfs.update', { id: 10 } as NfsShare),
-          mockCall('pool.query', [{ path: '/mnt/x' }] as Pool[]),
         ]),
       ],
     });

@@ -7,6 +7,7 @@ import {
 } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -35,8 +36,10 @@ describe('AuthorizedAccessListComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(EmptyService),
+      mockTypedApi([
+        mockTypedQuery('iscsi.auth.query', authAccess),
+      ]),
       mockApi([
-        mockCall('iscsi.auth.query', authAccess),
         mockCall('iscsi.auth.delete'),
       ]),
       mockProvider(DialogService, {

@@ -1,7 +1,7 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { firstValueFrom } from 'rxjs';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { NetworkService } from 'app/services/network.service';
 import { selectIsHaEnabled } from 'app/store/ha-info/ha-info.selectors';
 
@@ -17,7 +17,7 @@ describe('NetworkService', () => {
           { selector: selectIsHaEnabled, value: false },
         ],
       }),
-      mockProvider(ApiService),
+      mockProvider(TypedApiService),
     ],
   });
 
