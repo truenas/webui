@@ -1,4 +1,5 @@
-import { signal } from '@angular/core';
+import { DestroyRef, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { tnIconMarker } from '@truenas/ui-components';
 import { Observable, map, of } from 'rxjs';
@@ -57,8 +58,10 @@ export function mockSharingTierService(opts: MockOpts = {}): ReturnType<typeof m
     tierJobRefreshes$: () => jobUpdates$,
     openChangeTierDialog: jest.fn(() => of(true)),
     openChangeTierDialogForDataset: jest.fn(() => of(true)),
-    wireTierJobRefresh: (wireOpts: { reload: () => void }) => {
-      jobUpdates$.subscribe(() => wireOpts.reload());
+    // Unsubscribes with the component, as the real one does, so a stream shared across a spec's
+    // tests reaches only the component that is still alive.
+    wireTierJobRefresh: (wireOpts: { destroyRef: DestroyRef; reload: () => void }) => {
+      jobUpdates$.pipe(takeUntilDestroyed(wireOpts.destroyRef)).subscribe(() => wireOpts.reload());
     },
     createChangeTierAction: buildAction,
     createChangeDatasetTierAction: buildDatasetAction,

@@ -5,18 +5,19 @@ import { Router } from '@angular/router';
 import { createRoutingFactory, SpectatorRouting, mockProvider } from '@ngneat/spectator/jest';
 import { TnEmptyComponent, TnEmptyHarness, TnTreeVirtualScrollViewComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, Subject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
+import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { ApiCallError } from 'app/services/errors/error.classes';
 
 describe('DatasetsManagementComponent', () => {
@@ -31,8 +32,7 @@ describe('DatasetsManagementComponent', () => {
   ] as DatasetDetails[]);
 
   const error$ = new BehaviorSubject<unknown>(null);
-  // The reload the component most recently wired to tier job events.
-  let reloadOnTierJob: () => void;
+  const tierJobUpdates$ = new Subject<ZfsTierRewriteJobEntry>();
 
   const createComponent = createRoutingFactory({
     component: DatasetsManagementComponent,
@@ -57,18 +57,13 @@ describe('DatasetsManagementComponent', () => {
       mockProvider(DatasetTreeStore, {
         datasets$,
         error$,
-        loadDatasets: jest.fn(),
+        loadDatasets: () => {},
+        refreshDatasets: jest.fn(),
         selectedBranch$: of(false),
         isLoading$: of(false),
         selectDatasetById: () => {},
       }),
-      mockProvider(SharingTierService, {
-        getTierConfig: () => of({ enabled: false }),
-        tierEnabled: () => false,
-        wireTierJobRefresh: ({ reload }: { reload: () => void }) => {
-          reloadOnTierJob = reload;
-        },
-      }),
+      mockSharingTierService({ jobUpdates$: tierJobUpdates$ }),
     ],
   });
 
@@ -132,13 +127,12 @@ describe('DatasetsManagementComponent', () => {
     expect(spectator.query(TnEmptyComponent)!.actionText()).toBe('Create Pool');
   });
 
-  it('reloads the datasets when a tier job appears or changes status', () => {
+  it('refreshes the datasets in the background when a tier job appears or changes status', () => {
     const store = spectator.inject(DatasetTreeStore);
-    jest.mocked(store.loadDatasets).mockClear();
 
-    reloadOnTierJob();
+    tierJobUpdates$.next({ tier_job_id: 'pool/dataset@1' } as ZfsTierRewriteJobEntry);
 
-    expect(store.loadDatasets).toHaveBeenCalledTimes(1);
+    expect(store.refreshDatasets).toHaveBeenCalledTimes(1);
   });
 
   describe('horizontal scroll width', () => {

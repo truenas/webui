@@ -115,7 +115,7 @@
     </div>
 
     @let dataset = selectedDataset$ | async;
-    @let showDetails = !searchQuery() || dataset.name.toLowerCase().includes(searchQuery().toLowerCase());
+    @let showDetails = !searchQuery() || dataset?.name.toLowerCase().includes(searchQuery().toLowerCase());
 
     @if (dataset && showDetails) {
       <div

@@ -250,16 +250,19 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Reloads the tree when a tier rewrite job appears, changes status or goes away.
+   * Refreshes the tree when a tier rewrite job appears, changes status or goes away.
    *
    * The details card reloads once after "Change Storage Tier" is applied, but
    * `pool.dataset.details` can answer before the new job is visible in it, so that
    * reload alone may miss the migration and the card never shows its badge.
+   *
+   * `refreshDatasets`, not `loadDatasets`: these events arrive for jobs on any dataset,
+   * and a load unmounts the details panel while it runs.
    */
   private listenForTierJobs(): void {
     this.sharingTierService.wireTierJobRefresh({
       destroyRef: this.destroyRef,
-      reload: () => this.datasetStore.loadDatasets(),
+      reload: () => this.datasetStore.refreshDatasets(),
     });
   }
 

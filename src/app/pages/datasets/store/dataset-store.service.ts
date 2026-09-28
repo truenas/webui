@@ -105,6 +105,23 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
     );
   });
 
+  /**
+   * Refetches the datasets without entering the loading state, so the tree and the
+   * details panel stay mounted while it runs — for refreshes the user did not ask for,
+   * where `loadDatasets` would blank the page. A failure keeps the data already shown
+   * rather than replacing it with an error.
+   */
+  readonly refreshDatasets = this.effect((triggers$: Observable<void>) => {
+    return triggers$.pipe(
+      switchMap(() => {
+        return this.api.call('pool.dataset.details').pipe(
+          tap((datasets: DatasetDetails[]) => this.patchState({ datasets })),
+          catchError(() => EMPTY),
+        );
+      }),
+    );
+  });
+
   readonly resetDatasets = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(
       tap(() => {

@@ -212,7 +212,7 @@ started. It now reloads when a tier job starts or changes status. The readout id
 and the dialogs' values) arrived in NAS-143970 on 2026-09-25, so a `shipped`
 run needs a nightly built after that.
 
-The framework is done and the coverage is not. Fifty-four tests — fifty-three
+The framework is done and the coverage is not. Fifty-nine tests — fifty-eight
 journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built

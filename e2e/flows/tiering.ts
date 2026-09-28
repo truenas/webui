@@ -51,7 +51,10 @@ export async function saveTierConfig(page: Page): Promise<void> {
 export async function selectDataset(page: Page, name: string): Promise<void> {
   await goToDatasets(page);
 
-  const pool = name.split('/')[0];
+  const [pool] = name.split('/');
+  if (!pool) {
+    throw new Error(`"${name}" is not a dataset name: expected "<pool>/<dataset>".`);
+  }
   await page.locator(datasetLocators.treeNode(pool)).click();
 
   const node = page.locator(datasetLocators.treeNode(name));

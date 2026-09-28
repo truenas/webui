@@ -51,6 +51,44 @@ describe('DatasetTreeStore', () => {
     });
   });
 
+  describe('refreshDatasets', () => {
+    it('replaces the datasets without entering the loading state', () => {
+      testScheduler.run(({ cold, expectObservable }) => {
+        const mockedApi = spectator.inject(ApiService);
+        jest.spyOn(mockedApi, 'call').mockReturnValue(cold('-b|', { b: datasets }));
+
+        spectator.service.refreshDatasets();
+
+        expect(mockedApi.call).toHaveBeenCalledWith('pool.dataset.details');
+        expectObservable(spectator.service.state$).toBe('ab', {
+          a: {
+            error: null, isLoading: false, selectedDatasetId: null, datasets: [],
+          },
+          b: {
+            error: null, isLoading: false, selectedDatasetId: null, datasets,
+          },
+        });
+      });
+    });
+
+    it('keeps the datasets already shown when the refresh fails', () => {
+      testScheduler.run(({ cold, expectObservable }) => {
+        const mockedApi = spectator.inject(ApiService);
+        const shown = [{ id: 'parent' }] as DatasetDetails[];
+        spectator.service.patchState({ datasets: shown });
+        jest.spyOn(mockedApi, 'call').mockReturnValue(cold('-#', {}, new Error('Network Error')));
+
+        spectator.service.refreshDatasets();
+
+        expectObservable(spectator.service.state$).toBe('a', {
+          a: {
+            error: null, isLoading: false, selectedDatasetId: null, datasets: shown,
+          },
+        });
+      });
+    });
+  });
+
   describe('selectDatasetById', () => {
     it('updates selectedDatasetId in state', () => {
       testScheduler.run(({ expectObservable }) => {
