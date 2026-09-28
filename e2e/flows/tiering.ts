@@ -39,17 +39,20 @@ export async function saveTierConfig(page: Page): Promise<void> {
  * Selects a dataset in the tree, so its details card — and the tier row on it —
  * is the one on screen.
  *
- * Searches for it first. The tree expands only the selected pool, so with the
- * shared pool present as well — any full run — the tier pool sits collapsed and
- * its datasets are not rendered at all. Filtering by name is how a user finds one
- * dataset among several pools, and it does not depend on which pool is open.
+ * Opens its pool first. The page selects the first pool on arrival and expands
+ * only the selected branch, so with the shared pool present as well — any full
+ * run — the tier pool sits collapsed and its datasets are not rendered at all.
+ * Selecting a node expands it (`selectedBranch$` in `dataset-management`), so
+ * clicking the pool is how a user opens it too. Searching does not help: the
+ * filter keeps the pool row but leaves it collapsed.
  *
  * `name` is the full dataset id; see `openDeleteDatasetDialog`.
  */
 export async function selectDataset(page: Page, name: string): Promise<void> {
   await goToDatasets(page);
 
-  await page.locator(datasetLocators.search).fill(name.split('/').pop() ?? name);
+  const pool = name.split('/')[0];
+  await page.locator(datasetLocators.treeNode(pool)).click();
 
   const node = page.locator(datasetLocators.treeNode(name));
   await expect(node).toBeVisible();

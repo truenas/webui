@@ -90,9 +90,6 @@ export const datasetLocators = {
    */
   treeNode: (name: string) => `[data-test="dataset-${kebabTestSegment(name)}"]`,
 
-  /** The tree's filter box — `ix-basic-search`, whose `tn-input` declares `[testId]="'search'"`. */
-  search: '[data-test="input-search"]',
-
   addDataset: '[data-test="button-add-dataset"]',
   name: '[data-test="input-name"]',
   /** `<tn-select formControlName="share_type">`, id via control-name fallback. */
