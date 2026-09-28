@@ -6,7 +6,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { TnDialog, tnIconMarker } from '@truenas/ui-components';
 import {
-  EMPTY, Observable, auditTime, catchError, defer, filter, map, of, retry, shareReplay, tap, timer,
+  EMPTY, Observable, auditTime, catchError, filter, map, of, retry, shareReplay, tap, timer,
 } from 'rxjs';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -96,26 +96,6 @@ export class SharingTierService {
 
   tierJobRefreshes$(): Observable<ZfsTierRewriteJobEntry> {
     return this.subscribeTierJobUpdates().pipe(auditTime(500));
-  }
-
-  /**
-   * Like `tierJobRefreshes$`, but emits only when a job first appears or changes status, never
-   * for a progress tick. For views whose reload is visible — the datasets page blanks its
-   * details panel while `pool.dataset.details` is in flight — where reloading on every tick of a
-   * running migration would make the page flicker until it finished.
-   */
-  tierJobStatusChanges$(): Observable<ZfsTierRewriteJobEntry> {
-    return defer(() => {
-      const lastStatus = new Map<string, ZfsTierRewriteJobEntry['status']>();
-      return this.subscribeTierJobUpdates().pipe(
-        filter((job) => {
-          const changed = lastStatus.get(job.tier_job_id) !== job.status;
-          lastStatus.set(job.tier_job_id, job.status);
-          return changed;
-        }),
-        auditTime(500),
-      );
-    });
   }
 
   /**

@@ -5,13 +5,12 @@ import { Router } from '@angular/router';
 import { createRoutingFactory, SpectatorRouting, mockProvider } from '@ngneat/spectator/jest';
 import { TnEmptyComponent, TnEmptyHarness, TnTreeVirtualScrollViewComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { BehaviorSubject, Subject, of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
-import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
@@ -32,7 +31,8 @@ describe('DatasetsManagementComponent', () => {
   ] as DatasetDetails[]);
 
   const error$ = new BehaviorSubject<unknown>(null);
-  const tierJobStatusChanges$ = new Subject<ZfsTierRewriteJobEntry>();
+  // The reload the component most recently wired to tier job events.
+  let reloadOnTierJob: () => void;
 
   const createComponent = createRoutingFactory({
     component: DatasetsManagementComponent,
@@ -65,7 +65,9 @@ describe('DatasetsManagementComponent', () => {
       mockProvider(SharingTierService, {
         getTierConfig: () => of({ enabled: false }),
         tierEnabled: () => false,
-        tierJobStatusChanges$: () => tierJobStatusChanges$,
+        wireTierJobRefresh: ({ reload }: { reload: () => void }) => {
+          reloadOnTierJob = reload;
+        },
       }),
     ],
   });
@@ -130,11 +132,11 @@ describe('DatasetsManagementComponent', () => {
     expect(spectator.query(TnEmptyComponent)!.actionText()).toBe('Create Pool');
   });
 
-  it('reloads the datasets when a tier job starts or changes status', () => {
+  it('reloads the datasets when a tier job appears or changes status', () => {
     const store = spectator.inject(DatasetTreeStore);
     jest.mocked(store.loadDatasets).mockClear();
 
-    tierJobStatusChanges$.next({ tier_job_id: 'pool/dataset@1' } as ZfsTierRewriteJobEntry);
+    reloadOnTierJob();
 
     expect(store.loadDatasets).toHaveBeenCalledTimes(1);
   });
