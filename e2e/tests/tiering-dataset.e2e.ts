@@ -30,7 +30,7 @@ import {
   applyTierChange, openChangeTierDialog, openMigrationStatus, selectDataset,
 } from '../flows/tiering';
 import { changeTierDialogLocators, datasetTierLocators, migrationStatusDialogLocators } from '../locators/tiering';
-import { leavingTestData, runCleanupSteps } from '../support/cleanup';
+import { type CleanupStep, leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
 /** Set per test, by `unusedDatasetName` — see there for why it is never reused. */
@@ -39,7 +39,17 @@ let dataset = '';
 /** A migration of an empty dataset completes at once; this is for a slow appliance. */
 const migrationTimeoutMs = 60_000;
 
-test.beforeEach(async ({ api, entitlements }) => {
+/**
+ * The pool and the switch are set up once for the file, not per test.
+ *
+ * Both restart the tiering daemon: `zfs.tier.update` reloads it, and building or
+ * exporting a pool moves the system dataset, which restarts it again. Done per
+ * test, that churn was enough for systemd to stop starting the daemon
+ * (`start-limit-hit`), and the next migration failed with `[Errno 2]` — a
+ * middleware defect this spec should not keep tripping over. Each test owns only
+ * its dataset.
+ */
+test.beforeAll(async ({ api, entitlements }) => {
   // Every dataset's tier is null until tiering is on, and `zfs.tier.update`
   // refuses an appliance without the key.
   test.skip(
@@ -47,31 +57,34 @@ test.beforeEach(async ({ api, entitlements }) => {
     'This appliance is not entitled to ZFSTIER, so middleware refuses to turn tiering on.',
   );
 
-  await establishTierBaseline(api, { enabled: true });
   await ensureTierPoolPresent(api);
+  await establishTierBaseline(api, { enabled: true });
+});
 
+test.beforeEach(async ({ api }) => {
   dataset = `${tierPoolName}/${unusedDatasetName('e2e_tier')}`;
   await ensureDatasetPresent(api, dataset);
 });
 
-test.afterEach(async ({ api, entitlements }) => {
-  if (!isEntitled(entitlements, entitlementFeature.zfsTier) || leavingTestData(`dataset "${dataset}"`)) {
+test.afterEach(async ({ api }) => {
+  if (leavingTestData(`dataset "${dataset}"`)) {
     return;
   }
-  await runCleanupSteps([
-    [`delete dataset ${dataset}`, () => ensureDatasetAbsent(api, dataset)],
-    ['turn tiering off', () => establishTierBaseline(api)],
-  ]);
+  await ensureDatasetAbsent(api, dataset);
 });
 
-test.afterAll(async ({ api }) => {
-  if (leavingTestData(`pool "${tierPoolName}"`)) {
+test.afterAll(async ({ api, entitlements }) => {
+  if (leavingTestData(`pool "${tierPoolName}" and the tiering configuration`)) {
     return;
   }
-  // Unconditional, and not gated on the entitlement: a pool this spec built
-  // on an earlier run must go whatever this run was able to do.
+  // The export is not gated on the entitlement: a pool this spec built on an
+  // earlier run must go whatever this run was able to do. Turning tiering off
+  // is, because middleware refuses the call outright without the key.
   await runCleanupSteps([
     [`export pool ${tierPoolName}`, () => ensurePoolAbsent(api, tierPoolName)],
+    ...(isEntitled(entitlements, entitlementFeature.zfsTier)
+      ? [['turn tiering off', () => establishTierBaseline(api)] as CleanupStep]
+      : []),
   ]);
 });
 

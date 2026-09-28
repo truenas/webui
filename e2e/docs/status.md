@@ -200,7 +200,15 @@ Writing it turned up a middleware defect: a rewrite job is keyed by dataset
 before (deleted since, even on a pool destroyed and rebuilt since) comes back
 `REGULAR` while carrying the old job, `COMPLETE`, so the UI shows a finished
 migration on a dataset that never had one. The spec names its datasets per run
-to stay clear of it. The readout ids the dataset spec asserts on (`text-tier`
+to stay clear of it. Running it also exposed a second: the tiering daemon
+(`truenas_zfstierd`) is restarted by every `zfs.tier.update` and by every pool
+create or export (each moves the system dataset), and enough of that trips
+systemd's start limit. The daemon then stays down, and every migration fails with
+`[Errno 2] No such file or directory` while the tier change still goes through.
+So the dataset spec builds its pool and turns tiering on once per file, and
+`establishTierBaseline` skips writes that change nothing. And one UI bug: the
+Datasets page reloaded once after Apply and could miss the migration it had just
+started. It now reloads when a tier job starts or changes status. The readout ids the dataset spec asserts on (`text-tier`
 and the dialogs' values) arrived in NAS-143970 on 2026-09-25, so a `shipped`
 run needs a nightly built after that.
 
