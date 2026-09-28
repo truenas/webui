@@ -8,6 +8,7 @@ import { Subject, firstValueFrom, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
+import { TierRewriteJobStatus } from 'app/enums/tier-rewrite-job-status.enum';
 import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -205,6 +206,29 @@ describe('SharingTierService', () => {
         jest.advanceTimersByTime(600);
 
         expect(reload).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('tierJobStatusChanges$', () => {
+      beforeEach(() => jest.useFakeTimers());
+      afterEach(() => jest.useRealTimers());
+
+      it('emits when a job appears or changes status, but not for progress ticks', () => {
+        const emitted: string[] = [];
+        const subscription = spectator.service.tierJobStatusChanges$()
+          .subscribe((job) => emitted.push(`${job.tier_job_id}:${job.status}`));
+
+        jobUpdates$.next({ fields: { tier_job_id: 'tank/a@1', status: TierRewriteJobStatus.Running } });
+        jest.advanceTimersByTime(600);
+        jobUpdates$.next({ fields: { tier_job_id: 'tank/a@1', status: TierRewriteJobStatus.Running } });
+        jest.advanceTimersByTime(600);
+        jobUpdates$.next({ fields: { tier_job_id: 'tank/a@1', status: TierRewriteJobStatus.Complete } });
+        jest.advanceTimersByTime(600);
+        jobUpdates$.next({ fields: { tier_job_id: 'tank/b@2', status: TierRewriteJobStatus.Running } });
+        jest.advanceTimersByTime(600);
+
+        expect(emitted).toEqual(['tank/a@1:RUNNING', 'tank/a@1:COMPLETE', 'tank/b@2:RUNNING']);
+        subscription.unsubscribe();
       });
     });
   });

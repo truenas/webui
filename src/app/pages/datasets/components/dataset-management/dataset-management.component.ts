@@ -231,6 +231,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
     this.sharingTierService.getTierConfig()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.cdr.markForCheck());
+    this.listenForTierJobs();
   }
 
   ngAfterViewInit(): void {
@@ -246,6 +247,19 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
         }
         this.cdr.markForCheck();
       });
+  }
+
+  /**
+   * Reloads the tree when a tier rewrite job starts or changes status.
+   *
+   * The details card reloads once after "Change Storage Tier" is applied, but
+   * `pool.dataset.details` can answer before the new job is visible in it, so that
+   * reload alone may miss the migration and the card never shows its badge.
+   */
+  private listenForTierJobs(): void {
+    this.sharingTierService.tierJobStatusChanges$()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.datasetStore.loadDatasets());
   }
 
   private listenForLoading(): void {
