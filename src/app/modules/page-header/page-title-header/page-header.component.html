@@ -3,7 +3,7 @@
   <div class="title-container">
     <div class="title-and-indicator">
       @let title = pageTitle();
-      <h1>{{ title ? (title | translate) : (currentTitle$ | async) | translate }}</h1>
+      <h1 tnTestId="page-title" tnTestIdType="text">{{ title ? (title | translate) : (currentTitle$ | async) | translate }}</h1>
 
       @if (tooltip()) {
         <ix-tooltip

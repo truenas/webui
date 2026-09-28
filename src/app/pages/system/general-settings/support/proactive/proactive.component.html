@@ -7,7 +7,7 @@
   (closed)="closed.emit($event)"
 >
   @if (isSupportUnavailable()) {
-    <ix-warning [message]="helptext.proactive.unavailableMessage"></ix-warning>
+    <ix-warning tnTestId="proactive-unavailable" tnTestIdType="text" [message]="helptext.proactive.unavailableMessage"></ix-warning>
   }
   <div class="two-columns">
     <tn-form-section

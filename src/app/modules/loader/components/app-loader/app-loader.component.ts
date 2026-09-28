@@ -2,7 +2,7 @@ import {
   Component, ChangeDetectionStrategy, signal,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnSpinnerComponent } from '@truenas/ui-components';
+import { TnSpinnerComponent, TnTestIdDirective } from '@truenas/ui-components';
 
 @Component({
   selector: 'ix-app-loader',
@@ -10,6 +10,7 @@ import { TnSpinnerComponent } from '@truenas/ui-components';
   styleUrls: ['./app-loader.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnSpinnerComponent,
     TranslateModule,
   ],

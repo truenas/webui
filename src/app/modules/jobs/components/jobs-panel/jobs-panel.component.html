@@ -6,28 +6,28 @@
         class="job-badge running"
         [tnTooltip]="'Active' | translate"
       >
-        <span class="job-badge-count">{{ runningJobsCount$ | async }}</span>
+        <span class="job-badge-count" tnTestId="running-jobs-count" tnTestIdType="text">{{ runningJobsCount$ | async }}</span>
         <tn-icon name="sync" library="mdi" class="job-icon-running"></tn-icon>
       </div>
       <div
         class="job-badge waiting"
         [tnTooltip]="JobState.Waiting | jobStateDisplay"
       >
-        <span class="job-badge-count">{{ waitingJobsCount$ | async }}</span>
+        <span class="job-badge-count" tnTestId="waiting-jobs-count" tnTestIdType="text">{{ waitingJobsCount$ | async }}</span>
         <tn-icon name="clock-outline" library="mdi" class="job-icon-waiting"></tn-icon>
       </div>
       <div
         class="job-badge success"
         [tnTooltip]="JobState.Success | jobStateDisplay"
       >
-        <span class="job-badge-count">{{ successJobsCount$ | async }}</span>
+        <span class="job-badge-count" tnTestId="successful-jobs-count" tnTestIdType="text">{{ successJobsCount$ | async }}</span>
         <tn-icon name="check-circle" library="mdi" class="job-icon-success"></tn-icon>
       </div>
       <div
         class="job-badge failed"
         [tnTooltip]="JobState.Failed | jobStateDisplay"
       >
-        <span class="job-badge-count">{{ failedJobsCount$ | async }}</span>
+        <span class="job-badge-count" tnTestId="failed-jobs-count" tnTestIdType="text">{{ failedJobsCount$ | async }}</span>
         <tn-icon name="close-circle" library="mdi" class="job-icon-failed"></tn-icon>
       </div>
     </div>

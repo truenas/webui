@@ -9,6 +9,8 @@
         @if (alert.hasDuplicates) {
           <span
             class="duplicate-count-badge"
+            tnTestIdType="text"
+            [tnTestId]="['alert-duplicate-count', alert.expansionKey]"
             [attr.aria-label]="alert.duplicateTooltip"
             [tnTooltip]="alert.duplicateTooltip"
           >
@@ -36,7 +38,7 @@
                     <div class="alert-detail" [innerHTML]="message"></div>
                   }
                   @if (alert.contextualHelp) {
-                    <div class="alert-help">{{ alert.contextualHelp | translate }}</div>
+                    <div class="alert-help" tnTestIdType="text" [tnTestId]="['alert-help', alert.expansionKey]">{{ alert.contextualHelp | translate }}</div>
                   }
                   @if (alert.documentationUrl) {
                     <a

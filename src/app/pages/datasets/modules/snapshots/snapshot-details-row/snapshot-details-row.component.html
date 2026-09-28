@@ -20,7 +20,11 @@
     } @else {
       <dd>
         @if (creationTimestampMs !== undefined) {
-          <ix-date [date]="creationTimestampMs"></ix-date>
+          <ix-date
+            tnTestIdType="date"
+            [date]="creationTimestampMs"
+            [tnTestId]="['date-created', snapshot().snapshot_name]"
+          ></ix-date>
         } @else {
           {{ 'N/A' | translate }}
         }

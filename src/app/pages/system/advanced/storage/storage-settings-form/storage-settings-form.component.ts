@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent } from '@truenas/ui-components';
+import { TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent, TnTestIdDirective } from '@truenas/ui-components';
 import {
   forkJoin, map, Observable, of,
 } from 'rxjs';
@@ -31,6 +31,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   templateUrl: './storage-settings-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     ReactiveFormsModule,
     IxFormComponent,
     TnFormSectionComponent,

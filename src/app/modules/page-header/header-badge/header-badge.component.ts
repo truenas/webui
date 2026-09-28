@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialog } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog, TnTestIdDirective } from '@truenas/ui-components';
 import { IfNightlyDirective } from 'app/directives/if-nightly/if-nightly.directive';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 
@@ -10,6 +10,7 @@ import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/
   styleUrls: ['./header-badge.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     IfNightlyDirective,
     TnButtonComponent,
     TranslateModule,

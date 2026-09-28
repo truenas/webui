@@ -1,10 +1,10 @@
 <div class="wrapper">
   <div class="container">
     @if (data.title) {
-      <div class="title">{{ data.title }}</div>
+      <div class="title" tnTestId="full-screen-title" tnTestIdType="text">{{ data.title }}</div>
     }
     @if (data.message) {
-      <p class="message" [class.pre]="data.pre">{{ data.message }}</p>
+      <p class="message" tnTestId="full-screen-message" tnTestIdType="text" [class.pre]="data.pre">{{ data.message }}</p>
     }
   </div>
   @if (data.showClose) {

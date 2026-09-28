@@ -205,9 +205,10 @@ stays convention, and reviewing it is a reviewer's job.
 
 A table cell is covered (rule 2, and every column of every list has an id). A value rendered
 anywhere else — a card's detail line, a widget's number, a dialog's message — is not, and
-`yarn check-test-ids --report` counts what is left: **619 readouts across the app** that no suite
+`yarn check-test-ids --report` counts what is left: **545 readouts across the app** that no suite
 can read, listed per area. `src/app/pages/sharing` was the first area off that list (NAS-143970),
-`src/app/pages/data-protection` the second (NAS-143971).
+`src/app/pages/data-protection` the second (NAS-143971), and the shared `src/app/modules` the
+third (NAS-143972) — all but `modules/websocket-debug-panel`, which is dev-only.
 
 It is a *measurement, not a gate*, because unlike a table column the set is not bounded and some
 members are genuinely not automation targets (a gauge's sublabel, prose inside a tooltip). Driving
@@ -225,9 +226,9 @@ Four things do NOT need an id of their own, and the report already discounts the
   repeat on every row. Both halves are checked, because "renders one value" alone discounted twelve
   templates under `pages/sharing`, three wizards and two panel forms among them: a routed page is
   written as a tag nowhere, so nothing tags it and nothing can address the value it renders.
-  `<ix-date>` is the same shape and currently does **not** qualify — ten of its fourteen call sites
-  pass no id — so its readout is counted and `modules/dates` stays on the list until they are
-  tagged. That is the condition working, not a false positive.
+  `<ix-date>`, `<ix-warning>`, `<ix-status-badge>` and `<ix-empty>` are the same shape, and
+  qualify only because every call site is tagged — leave one untagged and the readout inside
+  counts again. That is the condition working, not a false positive.
 - **A message hoisted into a `helptext` constant**, i.e. `{{ helptext.<path> | translate }}`.
   `{{ 'Name' | translate }}` was never counted; moving the same literal into a constants file does
   not make it a value. Both halves are required, so a dynamic label that merely passes through the
@@ -237,6 +238,13 @@ Four things do NOT need an id of their own, and the report already discounts the
 
 `yarn check-test-ids --report src/app/pages/<area>` lists that area's readouts one per line, with
 the markup, which is the working list for closing one.
+
+In a shared component, a static id inside the template repeats on every instance in the page.
+Scope it by what tells the instances apart: a key the component already holds (`[alert().key,
+'time']`, `['job', job().id, 'description']`), a `testId` input the call site passes
+(`<ix-gauge-chart [testId]="[pool.name, 'usage']">`), or the call-site tag above when the
+component renders one value. A component that appears once per page — a dialog, the page header,
+the jobs panel — takes a plain static id.
 
 When you do tag a readout, the convention is `tnTestIdType="text"` with the base named after the
 **label beside it**, not the expression behind it: a row labelled "Last Scrub Date" should emit

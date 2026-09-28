@@ -5,7 +5,7 @@
       @if (error.hint) {
         <div class="hint-text">
           <tn-icon name="information" library="mdi" class="hint-icon"></tn-icon>
-          <span>{{ error.hint | translate }}</span>
+          <span tnTestId="error-hint" tnTestIdType="text">{{ error.hint | translate }}</span>
         </div>
       }
     </div>
@@ -38,7 +38,7 @@
           <table class="details-table">
             @for (detail of error.details; track detail.label) {
               <tr>
-                <td class="detail-label">{{ detail.label }}:</td>
+                <td class="detail-label" tnTestIdType="text" [tnTestId]="['error-detail-label', detail.label]">{{ detail.label }}:</td>
                 <td class="detail-value">
                   @if (isCollapsibleDetail(detail.label)) {
                     @if (!isDetailExpanded(detail.label)) {
@@ -71,12 +71,12 @@
                         <tn-icon name="eye-off" library="mdi" customSize="18px"></tn-icon>
                         <span>{{ 'Hide' | translate }}</span>
                       </a>
-                      <pre>{{ detail.value }}</pre>
+                      <pre tnTestIdType="text" [tnTestId]="['error-detail', detail.label]">{{ detail.value }}</pre>
                     }
                   } @else if (detail.value && detail.value.toString().includes('\n')) {
-                    <pre>{{ detail.value }}</pre>
+                    <pre tnTestIdType="text" [tnTestId]="['error-detail', detail.label]">{{ detail.value }}</pre>
                   } @else {
-                    {{ detail.value || 'N/A' }}
+                    <span tnTestIdType="text" [tnTestId]="['error-detail', detail.label]">{{ detail.value || 'N/A' }}</span>
                   }
                 </td>
               </tr>

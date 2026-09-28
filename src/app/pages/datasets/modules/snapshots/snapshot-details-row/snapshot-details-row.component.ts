@@ -4,6 +4,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnTooltipDirective, TnDialog, TnButtonComponent, TnCheckboxComponent, TnDividerComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { isEmpty } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -30,6 +31,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./snapshot-details-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     NgxSkeletonLoaderModule,
     TranslateModule,
     FileSizePipe,

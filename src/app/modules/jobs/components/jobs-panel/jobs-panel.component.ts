@@ -12,6 +12,7 @@ import {
   TnIconComponent,
   TnProgressBarComponent,
   TnTooltipDirective,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import {
@@ -48,6 +49,7 @@ import { FailedJobError } from 'app/services/errors/error.classes';
   styleUrls: ['./jobs-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnDialogShellComponent,
     TnTooltipDirective,
     TnIconComponent,

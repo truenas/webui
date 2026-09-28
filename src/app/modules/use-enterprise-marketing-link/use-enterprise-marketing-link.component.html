@@ -9,22 +9,22 @@
     rel="noopener noreferrer"
     [href]="href"
   >
-    <span class="text-above">
+    <span class="text-above" tnTestId="marketing-message" tnTestIdType="text">
       {{ message.text | translate }}
     </span>
 
-    <span>
+    <span tnTestId="marketing-cta" tnTestIdType="text">
       {{ message.cta | translate }}
     </span>
   </a>
 } @else {
   <div class="no-link" tnTestId="use-enterprise-marketing-link" tnTestIdType="text">
-    <span class="text-above">
+    <span class="text-above" tnTestId="marketing-message" tnTestIdType="text">
       {{ message.text | translate }}
     </span>
 
     @if (message.cta) {
-      <span>
+      <span tnTestId="marketing-cta" tnTestIdType="text">
         {{ message.cta | translate }}
       </span>
     }

@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, injec
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconButtonComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { helptextTopbar } from 'app/helptext/topbar';
@@ -22,6 +22,7 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
   templateUrl: './jobs-indicator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnIconButtonComponent,
     StatusBadgeComponent,
     TranslateModule,

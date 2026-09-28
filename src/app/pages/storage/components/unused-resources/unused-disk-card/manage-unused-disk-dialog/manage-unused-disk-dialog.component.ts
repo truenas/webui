@@ -10,6 +10,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { groupBy } from 'lodash-es';
 import { Observable, of } from 'rxjs';
@@ -28,6 +29,7 @@ import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage
   styleUrls: ['./manage-unused-disk-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     AsyncPipe,
     TnDialogShellComponent,
     TnFormFieldComponent,

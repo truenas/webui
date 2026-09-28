@@ -1,5 +1,6 @@
 import { Component, HostBinding, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -23,16 +24,25 @@ export interface GaugeSegment {
   styleUrls: ['./gauge-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     BaseChartDirective,
   ],
 })
 export class GaugeChartComponent {
   themeService = inject(ThemeService);
 
+  /**
+   * Scopes the label and sublabel ids. A static id inside the chart would repeat on every gauge in
+   * the page, so the call site names the one it renders.
+   */
+  readonly testId = input.required<(string | null | undefined)[]>();
   label = input('');
   sublabel = input('');
   value = input.required<number>();
   segments = input<GaugeSegment[]>();
+
+  protected readonly labelTestId = computed(() => [...this.testId(), 'label']);
+  protected readonly sublabelTestId = computed(() => [...this.testId(), 'sublabel']);
 
   colorFill = input<string, string>('', {
     transform: (color: string) => this.conversionColor(color),

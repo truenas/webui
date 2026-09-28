@@ -19,6 +19,7 @@
       <div>
         <ix-gauge-chart
           class="gauge"
+          [testId]="[poolState().name, 'usage']"
           [colorFill]="gaugeFill()"
           [colorBlank]="gaugeBlankColor()"
           [segments]="chartSegments()"

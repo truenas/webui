@@ -1,7 +1,7 @@
 import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { FullScreenDialogOptions } from 'app/interfaces/dialog.interface';
 
 @Component({
@@ -10,6 +10,7 @@ import { FullScreenDialogOptions } from 'app/interfaces/dialog.interface';
   styleUrls: ['./full-screen-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnButtonComponent,
     TranslateModule,
   ],

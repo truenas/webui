@@ -12,11 +12,11 @@
     (click)="clickable() && open()"
   >
     <div class="description-line">
-      <span class="job-description">
+      <span class="job-description" tnTestIdType="text" [tnTestId]="['job', job().id, 'description']">
         {{ job().description ? job().description : job().method }}
       </span>
       @if (job().state === JobState.Running) {
-        <small class="job-progress-percent">
+        <small class="job-progress-percent" tnTestIdType="text" [tnTestId]="['job', job().id, 'progress']">
           {{ job().progress.percent || 0 | number: '1.2-2' }}%
         </small>
       }
@@ -35,14 +35,14 @@
       @switch (job().state) {
         @case (JobState.Running) {
           @if (job().progress.description) {
-            <div class="job-progress-description">
+            <div class="job-progress-description" tnTestIdType="text" [tnTestId]="['job', job().id, 'progress-description']">
               {{ job().progress.description }}
             </div>
           }
           @if (!job().progress.description) {
             <div class="job-time">
               {{ job().state | jobStateDisplay }}:
-              <strong>
+              <strong tnTestIdType="text" [tnTestId]="['job', job().id, 'time']">
                 {{ job().time_started?.$date ? (job().time_started.$date | formatDateTime) : '–' }}
               </strong>
             </div>
@@ -51,7 +51,7 @@
         @case (JobState.Waiting) {
           <div class="job-time">
             {{ job().state | jobStateDisplay }}:
-            <strong>
+            <strong tnTestIdType="text" [tnTestId]="['job', job().id, 'time']">
               {{ job().time_started?.$date ? (job().time_started.$date | formatDateTime) : '–' }}
             </strong>
           </div>
@@ -59,7 +59,7 @@
         @case (JobState.Success) {
            <div class="job-time">
               {{ job().state | jobStateDisplay }}:
-              <strong>
+              <strong tnTestIdType="text" [tnTestId]="['job', job().id, 'time']">
                 {{ job().time_finished?.$date ? (job().time_finished.$date | formatDateTime) : '–' }}
               </strong>
             </div>
@@ -67,7 +67,7 @@
         @case (JobState.Failed) {
           <div class="job-time">
             {{ job().state | jobStateDisplay }}:
-            <strong>
+            <strong tnTestIdType="text" [tnTestId]="['job', job().id, 'time']">
               @let timeFinished = job().time_finished?.$date;
               {{ timeFinished ? (timeFinished | formatDateTime) : '–' }}
             </strong>
@@ -76,7 +76,7 @@
         @case (JobState.Aborted) {
           <div class="job-time">
             {{ job().state | jobStateDisplay }}:
-            <strong>
+            <strong tnTestIdType="text" [tnTestId]="['job', job().id, 'time']">
               @let timeFinished = job().time_finished?.$date;
               {{ timeFinished ? (timeFinished | formatDateTime) : '–' }}
             </strong>

@@ -7,6 +7,7 @@ import {
   InputType,
   TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnRadioComponent, TnRadioGroupComponent,
   TnStepperNextDirective,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   combineLatest, map, Observable,
@@ -35,6 +36,7 @@ import { EntitlementsService } from 'app/services/entitlements.service';
   styleUrls: ['./general-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     AsyncPipe,
     ReactiveFormsModule,
     TnFormFieldComponent,

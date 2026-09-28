@@ -6,7 +6,7 @@ import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnCheckboxComponent, TnFormSectionComponent, TnFormFieldComponent, TnInputComponent } from '@truenas/ui-components';
+import { TnCheckboxComponent, TnFormSectionComponent, TnFormFieldComponent, TnInputComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
@@ -27,6 +27,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./proactive.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     IxFormComponent,
     ReactiveFormsModule,
     TnFormFieldComponent,

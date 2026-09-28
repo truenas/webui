@@ -81,6 +81,7 @@
       <ix-widget-stale-data-notice></ix-widget-stale-data-notice>
     } @else if (!isDatasetLoading()) {
       <ix-gauge-chart
+        [testId]="[pool()?.name, 'usage']"
         [colorFill]="gaugeFill()"
         [colorBlank]="gaugeBlankColor()"
         [width]="size()"

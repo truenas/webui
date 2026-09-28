@@ -21,6 +21,8 @@
             @if (disk.exportedPool) {
               <ix-warning
                 class="inline-warning"
+                tnTestIdType="text"
+                [tnTestId]="['exported-pool-warning', disk.formattedDisk]"
                 [message]="getWarningText(disk.exportedPool)"
               ></ix-warning>
             }
