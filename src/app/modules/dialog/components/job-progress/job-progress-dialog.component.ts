@@ -3,7 +3,7 @@ import { DecimalPipe } from '@angular/common';
 import { AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent, TnIconButtonComponent, TnProgressBarComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnIconButtonComponent, TnProgressBarComponent, TnTestIdDirective } from '@truenas/ui-components';
 import {
   Observable, Subscription, map,
 } from 'rxjs';
@@ -46,6 +46,7 @@ export interface JobProgressDialogConfig<Result> {
   styleUrls: ['./job-progress-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnDialogShellComponent,
     TnButtonComponent,
     TnIconButtonComponent,

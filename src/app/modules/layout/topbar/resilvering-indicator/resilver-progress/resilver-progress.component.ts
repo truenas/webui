@@ -3,7 +3,7 @@ import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent, TnProgressBarComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnProgressBarComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
@@ -15,6 +15,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   styleUrls: ['./resilver-progress.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnDialogShellComponent,
     TnButtonComponent,
     TnProgressBarComponent,

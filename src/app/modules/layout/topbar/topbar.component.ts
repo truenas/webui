@@ -7,7 +7,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconButtonComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import {
   filter, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
@@ -50,6 +50,7 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
   styleUrls: ['./topbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnIconButtonComponent,
     GlobalSearchTriggerComponent,
     CheckinIndicatorComponent,

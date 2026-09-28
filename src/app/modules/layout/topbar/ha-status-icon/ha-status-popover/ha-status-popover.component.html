@@ -18,7 +18,7 @@
   @if (failoverDisabledReasons.length) {
     <ul class="disabled-reasons">
       @for (reason of failoverDisabledReasons; track reason) {
-        <li>
+        <li tnTestIdType="text" [tnTestId]="['failover-disabled-reason', reason]">
           {{ ((reason | mapValue: disabledReasonExplanations) || reason) | translate }}
         </li>
       }

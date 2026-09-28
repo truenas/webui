@@ -80,7 +80,7 @@
                 <h4 class="legend-timestamp">
                   <strong>{{ 'Start' | translate }}:</strong>
                   <span class="date">
-                    <ix-date [date]="currentStartDate"></ix-date>
+                    <ix-date tnTestIdType="date" [date]="currentStartDate" [tnTestId]="[report().title, 'start']"></ix-date>
                   </span>
                 </h4>
               }
@@ -88,7 +88,7 @@
                 <h4 class="legend-timestamp">
                   <strong>{{ 'End' | translate }}:</strong>
                   <span class="date">
-                    <ix-date [date]="currentEndDate"></ix-date>
+                    <ix-date tnTestIdType="date" [date]="currentEndDate" [tnTestId]="[report().title, 'end']"></ix-date>
                   </span>
                 </h4>
               }
@@ -103,7 +103,11 @@
                     <strong>{{ 'Time' | translate }}:</strong>
                     @if (legendData.xHTML) {
                       <span class="date">
-                        <ix-date [date]="getDateFromString(legendData.xHTML)"></ix-date>
+                        <ix-date
+                          tnTestIdType="date"
+                          [date]="getDateFromString(legendData.xHTML)"
+                          [tnTestId]="[report().title, 'time']"
+                        ></ix-date>
                       </span>
                     }
                   </h4>

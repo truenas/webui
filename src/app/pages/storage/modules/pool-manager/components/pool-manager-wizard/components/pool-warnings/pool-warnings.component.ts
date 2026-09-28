@@ -6,6 +6,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnCheckboxComponent, TnCheckboxLabelDirective, TnFormFieldComponent, TnRadioComponent,
   TnRadioGroupComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import { combineLatest, startWith } from 'rxjs';
@@ -26,6 +27,7 @@ import { hasNonUniqueSerial, hasExportedPool, isSedCapable } from 'app/pages/sto
   styleUrls: ['./pool-warnings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     ReactiveFormsModule,
     WarningComponent,
     TnFormFieldComponent,

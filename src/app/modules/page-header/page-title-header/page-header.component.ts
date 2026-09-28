@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, OnDestroy, OnInit, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { map } from 'rxjs/operators';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { PageTitleService } from 'app/modules/layout/page-title.service';
@@ -20,6 +21,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   styleUrls: ['./page-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     BreadcrumbComponent,
     HeaderBadgeComponent,
     FakeProgressBarComponent,

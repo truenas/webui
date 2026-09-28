@@ -128,8 +128,8 @@
       <div class="category-section">
         <div class="category-header">
           <tn-icon [name]="getCategoryIcon(category)"></tn-icon>
-          <h4>{{ getCategoryLabel(category) | translate }}</h4>
-          <span class="category-count">{{ getCategoryCount(alerts) }}</span>
+          <h4 tnTestIdType="text" [tnTestId]="['alert-category', category]">{{ getCategoryLabel(category) | translate }}</h4>
+          <span class="category-count" tnTestIdType="text" [tnTestId]="['alert-category-count', category]">{{ getCategoryCount(alerts) }}</span>
         </div>
         <div class="alert-list">
           @for (alert of alerts; track trackAlert(alert); let last = $last) {
@@ -163,8 +163,8 @@
       <div class="category-section">
         <div class="category-header">
           <tn-icon [name]="getCategoryIcon(category)"></tn-icon>
-          <h4>{{ getCategoryLabel(category) | translate }}</h4>
-          <span class="category-count">{{ getCategoryCount(alerts) }}</span>
+          <h4 tnTestIdType="text" [tnTestId]="['alert-category', category]">{{ getCategoryLabel(category) | translate }}</h4>
+          <span class="category-count" tnTestIdType="text" [tnTestId]="['alert-category-count', category]">{{ getCategoryCount(alerts) }}</span>
         </div>
         <div class="alert-list">
           @for (alert of alerts; track trackAlert(alert); let last = $last) {

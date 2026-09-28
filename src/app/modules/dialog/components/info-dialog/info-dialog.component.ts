@@ -1,7 +1,7 @@
 import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 
 export interface InfoDialogData {
   title: string;
@@ -16,6 +16,7 @@ export interface InfoDialogData {
   styleUrls: ['./info-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnDialogShellComponent,
     TnButtonComponent,
     TnIconComponent,

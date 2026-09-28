@@ -1,7 +1,7 @@
 <tn-card class="card" padding="small" [padContent]="true" [title]="'Metadata' | translate">
   <dl class="details">
     <dt>{{ 'Timestamp' | translate }}:</dt>
-    <dd><ix-date [date]="log().message_timestamp * 1000"></ix-date></dd>
+    <dd><ix-date tnTestId="timestamp" tnTestIdType="date" [date]="log().message_timestamp * 1000"></ix-date></dd>
 
     <dt>{{ 'Service' | translate }}:</dt>
     <dd>{{ log().service | auditServiceLabel | translate }}</dd>

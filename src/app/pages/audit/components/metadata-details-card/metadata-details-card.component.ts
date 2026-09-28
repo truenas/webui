@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { AuditService } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { credentialTypeLabels } from 'app/interfaces/credential-type.interface';
@@ -15,6 +15,7 @@ import { AuditServiceLabelPipe } from 'app/pages/audit/utils/audit-service-label
   styleUrls: ['./metadata-details-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     AuditServiceLabelPipe,
     IxDateComponent,
     TnCardComponent,

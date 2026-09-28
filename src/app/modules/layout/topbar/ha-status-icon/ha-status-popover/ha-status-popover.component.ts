@@ -1,7 +1,7 @@
 import { DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { failoverDisabledReasonLabels } from 'app/enums/failover-disabled-reason.enum';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 
@@ -11,6 +11,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   styleUrls: ['./ha-status-popover.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnIconComponent,
     TranslateModule,
     MapValuePipe,

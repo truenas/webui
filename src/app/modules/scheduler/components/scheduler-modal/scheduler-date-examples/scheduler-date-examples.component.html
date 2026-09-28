@@ -1,6 +1,6 @@
 @for (date of scheduleExamples() | slice: 0:maxExamples; track $index) {
   <div class="schedule-example">
-    <ix-date [date]="date"></ix-date>
+    <ix-date tnTestIdType="date" [date]="date" [tnTestId]="['schedule-example', $index]"></ix-date>
   </div>
 }
 

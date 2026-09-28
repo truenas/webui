@@ -7,7 +7,7 @@
             {{ breadcrumb.breadcrumb | translate }}
           </a>
         } @else {
-          <span>{{ breadcrumb.breadcrumb | translate }}</span>
+          <span tnTestIdType="text" [tnTestId]="['breadcrumb', breadcrumb.breadcrumb]">{{ breadcrumb.breadcrumb | translate }}</span>
         }
       </li>
     }

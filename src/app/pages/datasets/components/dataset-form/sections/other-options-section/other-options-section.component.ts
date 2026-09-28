@@ -9,6 +9,7 @@ import {
   TnFormSectionComponent,
   TnInputComponent,
   TnSelectComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   combineLatest, Observable, of, take,
@@ -62,6 +63,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   templateUrl: './other-options-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TranslateModule,
     ReactiveFormsModule,
     TnFormSectionComponent,

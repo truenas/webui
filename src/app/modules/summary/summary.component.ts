@@ -15,6 +15,7 @@ interface SummaryRow {
    * keeps the array out of every change-detection pass. See {@link normalizeTestIdParts}.
    */
   testId: string[];
+  labelTestId: string[];
 }
 
 @Component({
@@ -39,6 +40,10 @@ export class SummaryComponent {
    * the "renders nothing when the summary has not been built yet" spec pins it.
    */
   protected readonly sections = computed<SummaryRow[][]>(() => (this.summary() ?? []).map(
-    (section) => section.map((item) => ({ item, testId: normalizeTestIdParts(['summary', item.label]) })),
+    (section) => section.map((item) => ({
+      item,
+      testId: normalizeTestIdParts(['summary', item.label]),
+      labelTestId: normalizeTestIdParts(['summary', item.label, 'label']),
+    })),
   ));
 }

@@ -14,7 +14,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconButtonComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { DualListBoxSide } from 'app/modules/lists/dual-listbox/dual-listbox-side';
 import { DualListBoxSideComponent } from 'app/modules/lists/dual-listbox/dual-listbox-side.component';
 import { DetectBrowserService } from 'app/services/detect-browser.service';
@@ -25,6 +25,7 @@ import { DetectBrowserService } from 'app/services/detect-browser.service';
   styleUrls: ['./dual-listbox.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     DragDropModule,
     DualListBoxSideComponent,
     TnIconButtonComponent,

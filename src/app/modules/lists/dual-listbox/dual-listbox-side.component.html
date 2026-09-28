@@ -1,7 +1,7 @@
 <div class="listbox-header">
   <p class="listbox-title">
     {{ listName() }}
-    <span class="listbox-count">{{ countLabel() }}</span>
+    <span class="listbox-count" tnTestIdType="text" [tnTestId]="['count', listType()]">{{ countLabel() }}</span>
   </p>
 
   @if (sortable()) {

@@ -47,6 +47,8 @@
           @if (hostname$ | async; as hostname) {
             <div
               class="hostname-label"
+              tnTestId="hostname"
+              tnTestIdType="text"
               tnTooltipPosition="above"
               [tnTooltip]="'Hostname: {hostname}' | translate: { hostname }"
             >{{ hostname }}</div>
@@ -63,7 +65,7 @@
                 {{ productTypeText }}
               </a>
             } @else {
-              <span>
+              <span tnTestId="product-type" tnTestIdType="text">
                 {{ productTypeText }}
               </span>
             }

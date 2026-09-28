@@ -19,7 +19,7 @@
           @let dictSchema = asDictSchema(schema);
           @if (dictSchema.title) {
             <div class="label">
-              <div class="label-wrapper">
+              <div class="label-wrapper" tnTestIdType="text" [tnTestId]="['dict-title', dictSchema.controlName]">
                 {{ dictSchema.title }}
               </div>
 

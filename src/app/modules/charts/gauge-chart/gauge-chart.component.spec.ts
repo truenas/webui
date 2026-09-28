@@ -26,6 +26,7 @@ describe('GaugeChartComponent', () => {
     spectator = createComponent({
       props: {
         value: 0,
+        testId: ['tank', 'usage'],
         colorFill: '#000',
         colorBlank: 'var(--bg2)',
       },
@@ -35,6 +36,14 @@ describe('GaugeChartComponent', () => {
   it('shows supplied label', () => {
     spectator.setInput('label', 'Test Label');
     expect(spectator.query('.label')).toHaveText('Test Label');
+  });
+
+  it('scopes the label ids to the gauge it renders', () => {
+    spectator.setInput('label', '42%');
+    spectator.setInput('sublabel', 'Used');
+
+    expect(spectator.query('.label')).toHaveAttribute('data-test', 'text-tank-usage-label');
+    expect(spectator.query('.sublabel')).toHaveAttribute('data-test', 'text-tank-usage-sublabel');
   });
 
   it('renders donut chart', () => {

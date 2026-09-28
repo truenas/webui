@@ -9,8 +9,8 @@
       (onClick)="closeRequested.emit()"
     ></tn-icon-button>
   </h4>
-  <div class="crontab">{{ crontab() }}</div>
-  <div class="crontab-explanation">{{ crontab() | crontabExplanation }}</div>
+  <div class="crontab" tnTestId="crontab" tnTestIdType="text">{{ crontab() }}</div>
+  <div class="crontab-explanation" tnTestId="crontab-explanation" tnTestIdType="text">{{ crontab() | crontabExplanation }}</div>
 </section>
 
 <div class="calendar">

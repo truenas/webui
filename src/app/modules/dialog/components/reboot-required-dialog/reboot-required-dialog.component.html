@@ -10,7 +10,7 @@
       </p>
 
       @for (reason of failoverDisabledReasons(); track reason) {
-        <li>
+        <li tnTestIdType="text" [tnTestId]="['failover-disabled-reason', reason]">
           {{ ((reason | mapValue: disabledReasonExplanations) || reason) | translate }}
         </li>
       }
@@ -29,7 +29,7 @@
         </span>
       </p>
       @for (reason of thisNodeRebootReasons(); track reason) {
-        <li> {{ reason.reason }} </li>
+        <li tnTestIdType="text" [tnTestId]="['local-reboot-reason', reason.code]"> {{ reason.reason }} </li>
       }
     </div>
   }
@@ -46,7 +46,7 @@
         </span>
       </p>
       @for (reason of otherNodeRebootReasons(); track reason) {
-        <li> {{ reason.reason }} </li>
+        <li tnTestIdType="text" [tnTestId]="['remote-reboot-reason', reason.code]"> {{ reason.reason }} </li>
       }
     </div>
   }

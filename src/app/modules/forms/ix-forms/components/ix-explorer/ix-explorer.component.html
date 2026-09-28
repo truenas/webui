@@ -25,7 +25,12 @@
 <ng-content></ng-content>
 
 @if (loadingError(); as loadingError) {
-  <div role="alert" class="loading-error">
+  <div
+    role="alert"
+    class="loading-error"
+    tnTestIdType="text"
+    [tnTestId]="[controlDirective.name, 'loading-error']"
+  >
     {{ loadingError }}
   </div>
 }

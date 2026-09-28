@@ -8,11 +8,11 @@
           [value]="progressTotalPercent"
           [ariaLabel]="title | translate"
         ></tn-progress-bar>
-        <label> {{ progressTotalPercent | number: '1.2-2' }}% </label>
+        <label tnTestId="resilver-progress" tnTestIdType="text"> {{ progressTotalPercent | number: '1.2-2' }}% </label>
       </div>
     }
-    <div>{{ description | translate }}{{ diskName }}</div>
-    <div>{{ statusLabel | translate }}{{ state }}</div>
+    <div tnTestId="resilver-disk" tnTestIdType="text">{{ description | translate }}{{ diskName }}</div>
+    <div tnTestId="resilver-status" tnTestIdType="text">{{ statusLabel | translate }}{{ state }}</div>
   </div>
 
   <div tnDialogAction>

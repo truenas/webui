@@ -6,6 +6,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnSelectComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -26,6 +27,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./disk-wipe-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     AsyncPipe,
     TnDialogShellComponent,
     WarningComponent,
