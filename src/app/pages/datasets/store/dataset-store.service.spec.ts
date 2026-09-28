@@ -89,6 +89,46 @@ describe('DatasetTreeStore', () => {
     });
   });
 
+  describe('when a load and a refresh overlap', () => {
+    const before = [{ id: 'before' }] as DatasetDetails[];
+    const after = [{ id: 'after' }] as DatasetDetails[];
+
+    it('lets a later load cancel an in-flight refresh, so an older answer cannot land last', () => {
+      testScheduler.run(({ cold, expectObservable }) => {
+        const mockedApi = spectator.inject(ApiService);
+        jest.spyOn(mockedApi, 'call')
+          .mockReturnValueOnce(cold('----r|', { r: before }))
+          .mockReturnValueOnce(cold('-l|', { l: after }));
+
+        spectator.service.refreshDatasets();
+        spectator.service.loadDatasets();
+
+        expectObservable(spectator.service.select((state) => state.datasets)).toBe('ab', { a: [], b: after });
+      });
+    });
+
+    it('clears the loading state when a refresh supersedes a load', () => {
+      testScheduler.run(({ cold, expectObservable }) => {
+        const mockedApi = spectator.inject(ApiService);
+        jest.spyOn(mockedApi, 'call')
+          .mockReturnValueOnce(cold('----l|', { l: before }))
+          .mockReturnValueOnce(cold('-r|', { r: after }));
+
+        spectator.service.loadDatasets();
+        spectator.service.refreshDatasets();
+
+        expectObservable(spectator.service.state$).toBe('ab', {
+          a: {
+            error: null, isLoading: true, selectedDatasetId: null, datasets: [],
+          },
+          b: {
+            error: null, isLoading: false, selectedDatasetId: null, datasets: after,
+          },
+        });
+      });
+    });
+  });
+
   describe('selectDatasetById', () => {
     it('updates selectedDatasetId in state', () => {
       testScheduler.run(({ expectObservable }) => {

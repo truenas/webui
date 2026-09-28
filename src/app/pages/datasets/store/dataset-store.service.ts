@@ -74,16 +74,44 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
     },
   );
 
-  readonly loadDatasets = this.effect((triggers$: Observable<void>) => {
+  /**
+   * Loads the datasets, entering the loading state while `pool.dataset.details` runs.
+   * For loads the user asked for, where the page should show that it is fetching.
+   */
+  readonly loadDatasets = (): void => {
+    this.fetchDatasets({ silent: false });
+  };
+
+  /**
+   * Refetches the datasets without entering the loading state, so the tree and the
+   * details panel stay mounted while it runs — for refreshes the user did not ask for,
+   * where `loadDatasets` would blank the page. A failure keeps the data already shown
+   * rather than replacing it with an error.
+   */
+  readonly refreshDatasets = (): void => {
+    this.fetchDatasets({ silent: true });
+  };
+
+  /**
+   * The one stream both kinds of fetch go through, so the latest request always wins.
+   *
+   * As two effects with a `switchMap` each, neither cancelled the other: an older
+   * response could land after a newer one and put back a snapshot from before, say, a
+   * dataset was deleted. Any answer clears `isLoading`, because a refresh can cancel a
+   * load that set it, and nothing else would clear it then.
+   */
+  private readonly fetchDatasets = this.effect((triggers$: Observable<{ silent: boolean }>) => {
     return triggers$.pipe(
-      tap(() => {
-        // Not clearing the state on reload on purpose.
-        this.patchState({
-          error: null,
-          isLoading: true,
-        });
+      tap(({ silent }) => {
+        if (!silent) {
+          // Not clearing the state on reload on purpose.
+          this.patchState({
+            error: null,
+            isLoading: true,
+          });
+        }
       }),
-      switchMap(() => {
+      switchMap(({ silent }) => {
         return this.api.call('pool.dataset.details')
           .pipe(
             tap((datasets: DatasetDetails[]) => {
@@ -93,31 +121,16 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
               });
             }),
             catchError((error: unknown) => {
-              this.patchState({
-                isLoading: false,
-                error,
-              });
+              if (!silent) {
+                this.patchState({ isLoading: false, error });
+              } else if (this.get().isLoading) {
+                // This refresh cancelled a load; end its loading state, keep what is shown.
+                this.patchState({ isLoading: false });
+              }
 
               return EMPTY;
             }),
           );
-      }),
-    );
-  });
-
-  /**
-   * Refetches the datasets without entering the loading state, so the tree and the
-   * details panel stay mounted while it runs — for refreshes the user did not ask for,
-   * where `loadDatasets` would blank the page. A failure keeps the data already shown
-   * rather than replacing it with an error.
-   */
-  readonly refreshDatasets = this.effect((triggers$: Observable<void>) => {
-    return triggers$.pipe(
-      switchMap(() => {
-        return this.api.call('pool.dataset.details').pipe(
-          tap((datasets: DatasetDetails[]) => this.patchState({ datasets })),
-          catchError(() => EMPTY),
-        );
       }),
     );
   });

@@ -208,9 +208,10 @@ systemd's start limit. The daemon then stays down, and every migration fails wit
 So the dataset spec builds its pool and turns tiering on once per file, and
 `establishTierBaseline` skips writes that change nothing. And one UI bug: the
 Datasets page reloaded once after Apply and could miss the migration it had just
-started. It now reloads when a tier job starts or changes status. The readout ids the dataset spec asserts on (`text-tier`
-and the dialogs' values) arrived in NAS-143970 on 2026-09-25, so a `shipped`
-run needs a nightly built after that.
+started. It now refreshes in the background when a tier job starts or changes
+status. The readout ids the dataset spec asserts on (`text-tier` and the
+dialogs' values) arrived in NAS-143970 on 2026-09-25, so a `shipped` run needs
+a nightly built after that.
 
 The framework is done and the coverage is not. Fifty-nine tests — fifty-eight
 journeys and the smoke — against 19 top-level feature areas. What the work
@@ -251,8 +252,9 @@ a number. See `05-ci.md`.
 1. **Widen coverage.** Dataset ACL and manual snapshot are the two uncovered
    stories worth taking next. The confirmation-bypass class is now covered
    everywhere this suite can reach it — datasets, zvols and pool disconnect;
-   what is left needs an app, SED hardware or a VM. ZFS tiering's configuration and a dataset's tier change are covered;
-   the share-list tier action and the tier gating are next. S3 is covered as a feature — create, configure,
+   what is left needs an app, SED hardware or a VM. ZFS tiering's configuration
+   and a dataset's tier change are covered; the share-list tier action and the
+   tier gating are next. S3 is covered as a feature — create, configure,
    edit, toggle, rotate, delete — except auditing, which is licence-gated and
    needs an Enterprise appliance. List-driven journeys (deleting a pool, dataset
    or share from a list) are no longer blocked: `tn-table` still writes nothing
