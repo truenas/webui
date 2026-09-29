@@ -10,6 +10,7 @@ import {
   catchError, distinctUntilChanged, map, mergeMap,
 } from 'rxjs/operators';
 import { HardwareType } from 'app/enums/hardware-type.enum';
+import { EntitlementFacts } from 'app/interfaces/entitlement.interface';
 import { ContractType, License, SystemInfo } from 'app/interfaces/system-info.interface';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
@@ -128,7 +129,8 @@ export class SystemInfoEffects {
     ofType(adminUiInitialized),
     mergeMap(() => {
       return this.api.call('truenas.entitlements.facts').pipe(
-        map((entitlementFacts) => entitlementFactsLoaded({ entitlementFacts })),
+        // Middleware types `hardware_type` as a literal union; `HardwareType` holds the same values.
+        map((entitlementFacts) => entitlementFactsLoaded({ entitlementFacts: entitlementFacts as EntitlementFacts })),
         catchError((error: unknown) => {
           console.error(error);
           return of(entitlementFactsLoaded({

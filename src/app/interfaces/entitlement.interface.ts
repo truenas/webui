@@ -11,7 +11,7 @@ export interface EntitlementEntry {
 
 /** Wire shape of `truenas.entitlements.facts`: the facts entitlement decisions are computed from. */
 export interface EntitlementFacts {
-  hardware_type: `${HardwareType}`;
+  hardware_type: HardwareType;
   /**
    * Name of the installed iX-issued license type (see `LicenseType`), `null` without one.
    * Left as a plain string by middleware so a newer license type does not fail validation.
