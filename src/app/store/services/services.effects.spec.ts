@@ -4,15 +4,16 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   BehaviorSubject, firstValueFrom, of, ReplaySubject, throwError,
 } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { StartServiceDialogResult } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   checkIfServiceIsEnabled, serviceChanged, serviceEnabled, servicesLoaded, serviceStarted,
@@ -30,7 +31,7 @@ const cifsService = {
 
 describe('ServicesEffects', () => {
   let spectator: SpectatorService<ServicesEffects>;
-  let api: ApiService;
+  let api: TypedApiService;
   let store$: MockStore<ServicesState>;
 
   const closed$ = new BehaviorSubject<StartServiceDialogResult>({
@@ -42,8 +43,8 @@ describe('ServicesEffects', () => {
     service: ServicesEffects,
     providers: [
       provideMockActions(() => actions$),
-      mockApi([
-        mockCall('service.query', [cifsService]),
+      mockTypedApi([
+        mockTypedQuery('service.query', [cifsService]),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -64,7 +65,7 @@ describe('ServicesEffects', () => {
 
   beforeEach(() => {
     spectator = createService();
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
     store$ = spectator.inject(MockStore);
   });
 
@@ -76,18 +77,18 @@ describe('ServicesEffects', () => {
       expect(dispatchedAction).toEqual(servicesLoaded({ services: [cifsService] }));
     });
 
-    it('should handle errors when loading services', () => {
-      jest.spyOn(console, 'error').mockImplementation();
+    it('logs and swallows an error when loading services', () => {
+      const consoleError = jest.spyOn(console, 'error').mockImplementation();
       const error = new Error('Service loading error');
-      jest.spyOn(api, 'call').mockReturnValue(throwError(() => error));
+      jest.spyOn(api, 'query').mockReturnValue(throwError(() => error));
 
       actions$.next(adminUiInitialized());
 
-      spectator.service.loadServices$.subscribe({
-        error: (err: unknown) => {
-          expect(err).toEqual(error);
-        },
-      });
+      const dispatched: unknown[] = [];
+      spectator.service.loadServices$.subscribe((action) => dispatched.push(action));
+
+      expect(dispatched).toEqual([]);
+      expect(consoleError).toHaveBeenCalledWith(error);
     });
   });
 
@@ -95,7 +96,10 @@ describe('ServicesEffects', () => {
     it('should subscribe to service updates', async () => {
       jest.spyOn(api, 'subscribe').mockImplementation((method) => {
         if (method === 'service.query') {
-          return of({ fields: { ...cifsService, state: ServiceStatus.Running } } as ApiEvent<Service>);
+          return of({
+            msg: CollectionChangeType.Changed,
+            fields: { ...cifsService, state: ServiceStatus.Running },
+          } as ApiEvent<Service>);
         }
         return of();
       });
@@ -111,6 +115,19 @@ describe('ServicesEffects', () => {
           },
         }),
       );
+    });
+
+    it('ignores a removal, which carries no service to update', () => {
+      jest.spyOn(api, 'subscribe').mockReturnValue(
+        of({ msg: CollectionChangeType.Removed, id: cifsService.id } as ApiEvent<Service>),
+      );
+
+      actions$.next(servicesLoaded({ services: [cifsService] }));
+
+      const dispatched: unknown[] = [];
+      spectator.service.subscribeToUpdates$.subscribe((action) => dispatched.push(action));
+
+      expect(dispatched).toEqual([]);
     });
   });
 

@@ -1,17 +1,17 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { EventUnion } from '@truenas/api-client';
 import { firstValueFrom, of, ReplaySubject, Subject } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
-import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-reasons.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AppState } from 'app/store';
 import { entitlementsLoaded } from 'app/store/entitlements/entitlements.actions';
 import {
@@ -23,9 +23,11 @@ import { HaInfoEffects } from 'app/store/ha-info/ha-info.effects';
 import { selectHaInfoState, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 
+type FailoverDisabledReasonsEvent = EventUnion<WebUiApiDirectory, 'failover.disabled.reasons'>;
+
 describe('HaInfoEffects', () => {
   let spectator: SpectatorService<HaInfoEffects>;
-  let api: ApiService;
+  let api: TypedApiService;
   let actions$: ReplaySubject<unknown>;
   let store$: MockStore<AppState>;
 
@@ -46,8 +48,8 @@ describe('HaInfoEffects', () => {
           { selector: selectHaInfoState, value: { isHaLicensed: null, haStatus: null } },
         ],
       }),
-      mockApi([
-        mockCall('failover.disabled.reasons', []),
+      mockTypedApi([
+        mockTypedCall('failover.disabled.reasons', []),
       ]),
       { provide: WINDOW, useValue: mockWindow },
     ],
@@ -55,7 +57,7 @@ describe('HaInfoEffects', () => {
 
   beforeEach(() => {
     spectator = createService();
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
     store$ = spectator.inject(MockStore);
     actions$ = new ReplaySubject(1);
   });
@@ -185,14 +187,12 @@ describe('HaInfoEffects', () => {
 
   describe('subscribeToHa', () => {
     it('should subscribe to HA status updates when HA is licensed', async () => {
-      const mockEvent: ApiEvent<FailoverDisabledReasonEvent> = {
-        collection: 'failover.disabled.reasons',
+      const mockEvent = {
         fields: {
           disabled_reasons: [FailoverDisabledReason.MismatchDisks],
         },
-        id: 1,
         msg: CollectionChangeType.Changed,
-      };
+      } satisfies FailoverDisabledReasonsEvent;
       jest.spyOn(api, 'subscribe').mockReturnValue(of(mockEvent));
 
       actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: true }));
@@ -223,7 +223,7 @@ describe('HaInfoEffects', () => {
     });
 
     it('tears the HA subscription down when the licensed status is corrected to non-HA', () => {
-      const events$ = new Subject<ApiEvent<FailoverDisabledReasonEvent>>();
+      const events$ = new Subject<FailoverDisabledReasonsEvent>();
       jest.spyOn(api, 'subscribe').mockReturnValue(events$);
       const dispatched: unknown[] = [];
       const subscription = spectator.service.subscribeToHa.subscribe((action) => dispatched.push(action));
@@ -232,9 +232,7 @@ describe('HaInfoEffects', () => {
       actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: true }));
       actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: false }));
       events$.next({
-        collection: 'failover.disabled.reasons',
         fields: { disabled_reasons: [] as FailoverDisabledReason[] },
-        id: 1,
         msg: CollectionChangeType.Changed,
       });
 
@@ -242,15 +240,28 @@ describe('HaInfoEffects', () => {
       subscription.unsubscribe();
     });
 
+    it('ignores an event that is not a change, which carries no reasons', () => {
+      jest.spyOn(api, 'subscribe').mockReturnValue(
+        of({ msg: CollectionChangeType.Removed } as FailoverDisabledReasonsEvent),
+      );
+      actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: true }));
+
+      const dispatched: unknown[] = [];
+      spectator.service.subscribeToHa.subscribe({
+        next: (action) => dispatched.push(action),
+        error: (error: unknown) => dispatched.push(error),
+      });
+
+      expect(dispatched).toEqual([]);
+    });
+
     it('should handle empty reasons array in subscription', async () => {
-      const mockEvent: ApiEvent<FailoverDisabledReasonEvent> = {
-        collection: 'failover.disabled.reasons',
+      const mockEvent = {
         fields: {
           disabled_reasons: [] as FailoverDisabledReason[],
         },
-        id: 1,
         msg: CollectionChangeType.Changed,
-      };
+      } satisfies FailoverDisabledReasonsEvent;
       jest.spyOn(api, 'subscribe').mockReturnValue(of(mockEvent));
 
       actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: true }));

@@ -256,14 +256,14 @@ export class GuiFormComponent implements OnInit {
     ).subscribe((config) => {
       this.configData = config;
       this.formGroup.patchValue({
-        ui_certificate: config.ui_certificate.toString(),
+        ui_certificate: config.ui_certificate?.toString() ?? '',
         ui_address: config.ui_address,
         ui_v6address: config.ui_v6address,
         ui_port: config.ui_port,
         ui_httpsport: config.ui_httpsport,
         ui_httpsprotocols: config.ui_httpsprotocols,
         ui_httpsredirect: config.ui_httpsredirect,
-        usage_collection: config.usage_collection,
+        usage_collection: config.usage_collection ?? false,
         ui_consolemsg: config.ui_consolemsg,
       });
       this.isFormLoading.set(false);

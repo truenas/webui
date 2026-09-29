@@ -56,7 +56,11 @@ export interface License {
   type: LicenseType;
   contract_type: ContractType | null;
   model: string | null;
-  expires_at: ApiDate | null;
+  /**
+   * Absent from v27's `truenas.license.info`; only the legacy `webui.main.dashboard.sys_info`
+   * shape may still carry it. Read the `Support` feature's `expires_at` first.
+   */
+  expires_at?: ApiDate | null;
   features: LicenseFeatureInfo[];
   serials: string[];
   enclosures: Record<string, number>;

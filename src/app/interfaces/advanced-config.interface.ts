@@ -34,7 +34,8 @@ export interface AdvancedConfig {
   syslogservers: SyslogServer[];
   traceback: boolean;
   uploadcrash: boolean;
-  sed_passwd: string;
+  /** Write-only: `system.advanced.update` takes it, `system.advanced.config` never returns it. */
+  sed_passwd?: string;
   kernel_extra_options: string;
   legacy_ui?: boolean;
 }

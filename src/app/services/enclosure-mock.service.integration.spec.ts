@@ -69,13 +69,10 @@ describe('EnclosureMockService - Real-time Updates', () => {
         }),
       );
 
-      expect(store$.dispatch).toHaveBeenCalledWith(
+      // `truenas.is_ix_hardware` is on the typed client, which the debug panel's mocks do not reach.
+      expect(store$.dispatch).not.toHaveBeenCalledWith(
         addMockConfig({
-          config: expect.objectContaining({
-            id: 'enclosure-mock-is-ix-hardware',
-            enabled: true,
-            methodName: 'truenas.is_ix_hardware',
-          }),
+          config: expect.objectContaining({ methodName: 'truenas.is_ix_hardware' }),
         }),
       );
 
@@ -94,12 +91,6 @@ describe('EnclosureMockService - Real-time Updates', () => {
           enabled: true,
           methodName: 'webui.enclosure.dashboard',
           response: { type: 'success', result: [] },
-        },
-        {
-          id: 'enclosure-mock-is-ix-hardware',
-          enabled: true,
-          methodName: 'truenas.is_ix_hardware',
-          response: { type: 'success', result: true },
         },
       ];
 
@@ -146,9 +137,6 @@ describe('EnclosureMockService - Real-time Updates', () => {
       store$.overrideSelector(selectMockConfigs, [
         {
           id: 'enclosure-mock-dashboard', enabled: true, methodName: 'webui.enclosure.dashboard', response: { type: 'success', result: [] },
-        },
-        {
-          id: 'enclosure-mock-is-ix-hardware', enabled: true, methodName: 'truenas.is_ix_hardware', response: { type: 'success', result: true },
         },
       ]);
       store$.refreshState();

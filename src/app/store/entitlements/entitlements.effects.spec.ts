@@ -1,17 +1,20 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
+import { CallResponse } from '@truenas/api-client';
 import {
   firstValueFrom, Observable, of, ReplaySubject, Subject, throwError,
 } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
-import { EntitlementsInfo } from 'app/interfaces/entitlement.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { entitlementsLoaded, entitlementsLoadFailed } from 'app/store/entitlements/entitlements.actions';
 import { EntitlementsEffects } from 'app/store/entitlements/entitlements.effects';
 import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
+
+type EntitlementsInfo = CallResponse<WebUiApiDirectory, 'truenas.entitlements.info'>;
 
 const info = {
   features: {
@@ -30,7 +33,7 @@ describe('EntitlementsEffects', () => {
   const createService = createServiceFactory({
     service: EntitlementsEffects,
     providers: [
-      mockApi([mockCall('truenas.entitlements.info', info)]),
+      mockTypedApi([mockTypedCall('truenas.entitlements.info', info)]),
       provideMockActions(() => actions$),
     ],
   });
@@ -57,7 +60,7 @@ describe('EntitlementsEffects', () => {
   it('supersedes an in-flight load rather than racing it', () => {
     const slow$ = new Subject<EntitlementsInfo>();
     const fast = { features: {} } as EntitlementsInfo;
-    jest.spyOn(spectator.inject(ApiService), 'call')
+    jest.spyOn(spectator.inject(TypedApiService), 'call')
       .mockReturnValueOnce(slow$ as unknown as Observable<never>)
       .mockReturnValueOnce(of(fast) as unknown as Observable<never>);
 
@@ -73,7 +76,7 @@ describe('EntitlementsEffects', () => {
   });
 
   it('reports failure instead of erroring, leaving the reducer to fall back permissively', async () => {
-    jest.spyOn(spectator.inject(ApiService), 'call')
+    jest.spyOn(spectator.inject(TypedApiService), 'call')
       .mockReturnValue(throwError(() => new Error('websocket down')));
     jest.spyOn(console, 'error').mockImplementation();
     actions$.next(adminUiInitialized());

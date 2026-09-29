@@ -274,7 +274,6 @@
     "./src/app/interfaces/events/ha-status-event.interface.ts",
     "./src/app/interfaces/events/sidenav-status-event.interface.ts",
     "./src/app/interfaces/export-params.interface.ts",
-    "./src/app/interfaces/failover-disabled-reasons.interface.ts",
     "./src/app/interfaces/failover.interface.ts",
     "./src/app/interfaces/field-relation.interface.ts",
     "./src/app/interfaces/file-record.interface.ts",

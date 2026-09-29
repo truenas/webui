@@ -2,7 +2,6 @@ import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
-import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import {
@@ -112,7 +111,6 @@ import {
   DsUncachedGroup, LoggedInUser,
 } from 'app/interfaces/ds-cache.interface';
 import { DashboardEnclosure, Enclosure, SetDriveBayLightStatus } from 'app/interfaces/enclosure.interface';
-import { EntitlementFacts, EntitlementsInfo } from 'app/interfaces/entitlement.interface';
 import {
   FailoverConfig,
   FailoverUpdate,
@@ -218,7 +216,6 @@ import {
 import { Privilege, PrivilegeRole, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
-import { FailoverRebootInfo, SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
 import { ReplicationConfigUpdate } from 'app/interfaces/replication-config-update.interface';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import {
@@ -261,7 +258,7 @@ import {
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
-import { License, SystemInfo } from 'app/interfaces/system-info.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import {
   UpdateConfig,
@@ -487,11 +484,9 @@ export interface ApiCallDirectory {
   // Failover
   'failover.become_passive': { params: void; response: void };
   'failover.config': { params: void; response: FailoverConfig };
-  'failover.disabled.reasons': { params: void; response: FailoverDisabledReason[] };
   'failover.get_ips': { params: void; response: string[] };
   'failover.licensed': { params: void; response: boolean };
   'failover.node': { params: void; response: string };
-  'failover.reboot.info': { params: void; response: FailoverRebootInfo };
   'failover.sync_from_peer': { params: void; response: void };
   'failover.sync_to_peer': { params: [{ reboot?: boolean }]; response: void };
   'failover.update': { params: [Partial<FailoverUpdate>]; response: FailoverConfig };
@@ -783,7 +778,6 @@ export interface ApiCallDirectory {
   's3.accesskey.delete': { params: [id: number]; response: boolean };
 
   // Service
-  'service.query': { params: QueryParams<Service>; response: Service[] };
   'service.update': { params: [number | ServiceName, Partial<Service>]; response: number };
 
   // Sharing
@@ -861,7 +855,6 @@ export interface ApiCallDirectory {
   'system.ntpserver.query': { params: QueryParams<NtpServer>; response: NtpServer[] };
   'system.ntpserver.update': { params: [id: number, params: Partial<CreateNtpServer>]; response: NtpServer };
   'system.security.config': { params: void; response: SystemSecurityConfig };
-  'system.reboot.info': { params: void; response: SystemRebootInfo };
 
   // Systemdataset
   'systemdataset.config': { params: void; response: SystemDatasetConfig };
@@ -879,15 +872,9 @@ export interface ApiCallDirectory {
   'tn_connect.ips_with_hostnames': { params: void; response: Record<string, string> };
 
   // TrueNAS
-  'truenas.accept_eula': { params: void; response: void };
-  'truenas.entitlements.facts': { params: void; response: EntitlementFacts };
-  'truenas.entitlements.info': { params: void; response: EntitlementsInfo };
   'truenas.get_eula': { params: void; response: string };
-  'truenas.is_eula_accepted': { params: void; response: boolean };
   'truenas.is_production': { params: void; response: boolean };
-  'truenas.is_ix_hardware': { params: void; response: boolean };
   'truenas.license.fingerprint': { params: void; response: string };
-  'truenas.license.info': { params: void; response: License | null };
   'truenas.license.upload': {
     params: [license: string, options?: { ha_propagate?: boolean }];
     response: void;
