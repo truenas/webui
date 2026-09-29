@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnIconButtonComponent, TnIconComponent, TnProgressBarComponent, TnSpinnerComponent, TnTooltipDirective,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
@@ -27,6 +28,7 @@ import { AppState } from 'app/store';
     TnIconButtonComponent,
     TranslateModule,
     DecimalPipe,
+    TnTestIdDirective,
   ],
 })
 export class JobNameComponent {

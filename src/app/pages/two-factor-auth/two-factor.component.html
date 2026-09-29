@@ -71,12 +71,12 @@
 
     @if (getProvisioningUriSecret(qrInfo?.provisioning_uri); as secret) {
       <div class="secret-actions">
-        <p>
+        <p tnTestId="secret-hint" tnTestIdType="text">
           {{ 'If you can\'t use QR code, use this text code instead' | translate }}:
         </p>
 
         <div class="secret">
-          <p>
+          <p tnTestId="secret" tnTestIdType="text">
             {{ secret }}
           </p>
 

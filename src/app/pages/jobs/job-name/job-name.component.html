@@ -36,9 +36,9 @@
 
   <div class="job-name-wrapper">
     <div class="job-name">
-      <span>{{ job().description ? job().description : job().method }}</span>
+      <span tnTestIdType="text" [tnTestId]="['job', job().id, 'name']">{{ job().description ? job().description : job().method }}</span>
       @if (isRunning()) {
-        <small>
+        <small tnTestIdType="text" [tnTestId]="['job', job().id, 'progress']">
           {{ job().progress.percent || 0 | number: '1.2-2' }}%
         </small>
       }

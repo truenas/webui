@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnCardComponent, TnCardFooterActionsDirective, TnTooltipDirective,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
@@ -32,6 +33,7 @@ import { isContainerActive } from 'app/pages/containers/utils/container-status.u
     NgxSkeletonLoaderModule,
     DeviceActionsMenuComponent,
     AddNicMenuComponent,
+    TnTestIdDirective,
   ],
 })
 export class ContainerNicDevicesComponent {

@@ -11,7 +11,7 @@
   } @else {
     @for (device of shownDevices(); track device.id) {
       <div class="device">
-        <span class="device-description">{{ getDeviceDescription(device) }}</span>
+        <span class="device-description" tnTestIdType="text" [tnTestId]="['usb-device', device.id]">{{ getDeviceDescription(device) }}</span>
 
         <ix-device-actions-menu
           [device]="device"

@@ -35,8 +35,8 @@
         <tn-list>
           @for (item of card.items; track item) {
             <tn-list-item class="card-list-item">
-              <span class="label">{{ item.label | translate }}:</span>
-              <span class="value">{{ item.value || ('None' | translate) }}</span>
+              <span class="label" tnTestIdType="text" [tnTestId]="[item.label, 'label']">{{ item.label | translate }}:</span>
+              <span class="value" tnTestIdType="text" [tnTestId]="[item.label, 'value']">{{ item.value || ('None' | translate) }}</span>
             </tn-list-item>
           }
         </tn-list>

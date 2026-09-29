@@ -22,14 +22,14 @@
         class="device default-device"
         [tnTooltip]="'Default network interface, always active' | translate"
       >
-        <span class="device-description">
+        <span class="device-description" tnTestId="default-nic-device" tnTestIdType="text">
           {{ defaultBridge() }} ({{ 'Default' | translate }})
         </span>
       </div>
     }
     @for (device of shownDevices(); track device.id) {
       <div class="device">
-        <span class="device-description">{{ getDeviceDescription(device) }}</span>
+        <span class="device-description" tnTestIdType="text" [tnTestId]="['nic-device', device.id]">{{ getDeviceDescription(device) }}</span>
 
         @if (!hasPendingInterfaceChanges()) {
           <ix-device-actions-menu

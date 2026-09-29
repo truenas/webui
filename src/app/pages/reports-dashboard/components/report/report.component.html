@@ -2,7 +2,7 @@
   <div class="card-container">
     <tn-card class="card" [class.loading]="!isReady" [bordered]="!isReady" [padContent]="false">
       <div class="toolbar" tnCardHeader>
-        <h3 class="tn-card__title">{{ reportTitle | translate }}</h3>
+        <h3 class="tn-card__title" tnTestIdType="text" [tnTestId]="[report().title, 'title']">{{ reportTitle | translate }}</h3>
         <!-- Controls/Tools -->
         @if (localControls() && !report().errorConf) {
           <div class="line-chart-tools">
@@ -143,10 +143,10 @@
                           ></div>
                         }
                         <span class="legend-item">
-                          <strong>{{ legendItem | translate }}</strong>
+                          <strong tnTestIdType="text" [tnTestId]="[report().title, legendItem, 'label']">{{ legendItem | translate }}</strong>
                         </span>
                         @if (legendData.series?.[i]?.yHTML && shouldShowLegendValue) {
-                          <span class="date">:
+                          <span class="date" tnTestIdType="text" [tnTestId]="[report().title, legendItem, 'value']">:
                             {{ legendData.series[i].yHTML | translate }}
                           </span>
                         }
@@ -155,7 +155,7 @@
                       @if (data?.aggregations) {
                         @for (item of data.aggregations | keyvalue; track item) {
                           <td class="report-analytics">
-                            <span>{{ item.value[i] ? item.value[i] : 'null' }}</span>
+                            <span tnTestIdType="text" [tnTestId]="[report().title, legendItem, item.key]">{{ item.value[i] ? item.value[i] : 'null' }}</span>
                           </td>
                         }
                       }
@@ -167,7 +167,7 @@
             @if (legendData.stackedTotalHTML && shouldShowTotal && shouldShowLegendValue) {
               <h4 class="total-line">
                 <strong>{{ 'Total' | translate }}:</strong>
-                <span>{{ legendData.stackedTotalHTML | translate }}</span>
+                <span tnTestIdType="text" [tnTestId]="[report().title, 'total']">{{ legendData.stackedTotalHTML | translate }}</span>
               </h4>
             }
           </section>

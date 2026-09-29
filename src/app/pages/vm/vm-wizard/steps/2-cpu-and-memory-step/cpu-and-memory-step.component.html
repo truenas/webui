@@ -1,7 +1,7 @@
 <form [formGroup]="form">
   <tn-form-section>
     @if (maxVcpus) {
-      <p class="warning-text">
+      <p class="warning-text" tnTestId="vcpus-warning" tnTestIdType="text">
         {{ helptext.vcpus_warning | translate: { maxVcpus } }}
       </p>
     }

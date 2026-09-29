@@ -3,5 +3,5 @@
     <h3 class="card-title">{{ 'Event Data' | translate }}</h3>
     <ix-copy-button [text]="yamlContent()" [jsonText]="eventData()"></ix-copy-button>
   </div>
-  <pre>{{ yamlContent() }}</pre>
+  <pre tnTestId="event-data" tnTestIdType="text">{{ yamlContent() }}</pre>
 </tn-card>

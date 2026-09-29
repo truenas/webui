@@ -7,6 +7,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardAction, TnCardComponent, TnDialog, TnEmptyComponent, TnListComponent, TnListItemComponent,
   TnMenuItem,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   forkJoin,
@@ -67,6 +68,7 @@ interface DataCard {
     TnListComponent,
     TnListItemComponent,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class DirectoryServicesComponent implements OnInit {
