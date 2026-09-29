@@ -88,9 +88,9 @@ describe('S3BucketListComponent', () => {
     table = await loader.getHarness(IxTableHarness);
   });
 
-  it('shows the page title with the experimental badge', () => {
+  it('shows the page title with the early access badge', () => {
     expect(spectator.query('h3')).toHaveText('S3 Buckets');
-    expect(spectator.query('.experimental-badge')).toHaveText('Experimental');
+    expect(spectator.query('.experimental-badge')).toHaveText('Early Access');
   });
 
   it('shows table rows', async () => {
