@@ -263,7 +263,7 @@ export class GuiFormComponent implements OnInit {
         ui_httpsport: config.ui_httpsport,
         ui_httpsprotocols: config.ui_httpsprotocols,
         ui_httpsredirect: config.ui_httpsredirect,
-        usage_collection: config.usage_collection,
+        usage_collection: config.usage_collection ?? false,
         ui_consolemsg: config.ui_consolemsg,
       });
       this.isFormLoading.set(false);

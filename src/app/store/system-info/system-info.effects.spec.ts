@@ -5,15 +5,13 @@ import { CallResponse } from '@truenas/api-client';
 import { environment } from 'environments/environment';
 import { firstValueFrom, ReplaySubject } from 'rxjs';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
-import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { HardwareType } from 'app/enums/hardware-type.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { LicenseType } from 'app/enums/license-type.enum';
 import { ContractType } from 'app/interfaces/system-info.interface';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { selectEnclosureMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
+import { selectIsEnclosureMockActive } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { entitlementFactsLoaded, ixHardwareLoaded, systemInfoLoaded } from 'app/store/system-info/system-info.actions';
 import { SystemInfoEffects } from 'app/store/system-info/system-info.effects';
@@ -137,12 +135,7 @@ describe('SystemInfoEffects', () => {
 
     it('reports iX hardware while the debug panel mocks an enclosure', async () => {
       withDebugPanel(true);
-      spectator.inject(MockStore).overrideSelector(selectEnclosureMockConfig, {
-        enabled: true,
-        controllerModel: EnclosureModel.M40,
-        expansionModels: [],
-        scenario: MockEnclosureScenario.FillSomeSlots,
-      });
+      spectator.inject(MockStore).overrideSelector(selectIsEnclosureMockActive, true);
       api.mockCall('truenas.is_ix_hardware', false);
       actions$.next(adminUiInitialized());
 

@@ -178,19 +178,20 @@ describe('GuiFormComponent', () => {
     });
   });
 
-  describe('without a UI certificate', () => {
+  describe('without a UI certificate or a usage collection choice', () => {
     beforeEach(() => {
-      generalConfig = { ...mockSystemGeneralConfig, ui_certificate: null };
+      generalConfig = { ...mockSystemGeneralConfig, ui_certificate: null, usage_collection: null };
     });
 
     afterEach(() => {
       generalConfig = mockSystemGeneralConfig;
     });
 
-    it('loads with the certificate left empty', () => {
+    it('loads with the certificate empty and usage collection off', () => {
       spectator = createComponent();
 
       expect(spectator.component.formGroup.value.ui_certificate).toBe('');
+      expect(spectator.component.formGroup.value.usage_collection).toBe(false);
       expect(spectator.component.formGroup.value.ui_port).toBe(80);
     });
   });

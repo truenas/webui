@@ -10,7 +10,7 @@ import {
   deleteMockConfig,
   updateMockConfig,
 } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
-import { selectEnclosureMockConfig, selectMockConfigs } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
+import { isEnclosureMockActive, selectEnclosureMockConfig, selectMockConfigs } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 import { enclosureMockIds } from 'app/modules/websocket-debug-panel/utils/mock-id.utils';
 
 @Injectable({
@@ -41,7 +41,7 @@ export class EnclosureMockService implements OnDestroy {
       )
       .subscribe((config) => {
         const wasEnabled = this.currentConfig?.enabled;
-        const isEnabled = config.enabled && config.controllerModel !== null;
+        const isEnabled = isEnclosureMockActive(config);
 
         this.currentConfig = config;
 

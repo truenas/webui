@@ -14,7 +14,7 @@ import { EntitlementFacts } from 'app/interfaces/entitlement.interface';
 import { ContractType, License, SystemInfo } from 'app/interfaces/system-info.interface';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
-import { selectEnclosureMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
+import { selectIsEnclosureMockActive } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
@@ -75,9 +75,7 @@ export class SystemInfoEffects {
       return of(false);
     }
 
-    return this.store$.select(selectEnclosureMockConfig).pipe(
-      map((config) => config.enabled && config.controllerModel !== null),
-    );
+    return this.store$.select(selectIsEnclosureMockActive);
   });
 
   loadSystemInfo = createEffect(() => this.actions$.pipe(
