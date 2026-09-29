@@ -7,8 +7,9 @@ Commit changes and create a PR. Use with a title, optionally prefixed by a ticke
    If it has no ticket key, ask the user whether to apply the `jira` label to the PR, so bugclerk creates the ticket.
    Remind them the `check-ticket` check stays red until the PR title references a ticket, which is required before merge.
 2. If there are uncommitted changes, run tests on changed files with `yarn test:changed`.
-3. If the tests pass, switch to a branch named after the ticket number from $ARGUMENTS if it has one, otherwise a short kebab-case name derived from the title. Create the branch if necessary.
-4. Commit the changes with the title: "$ARGUMENTS".
+3. If the tests pass, switch to a branch named after the ticket number in the confirmed title from step 1 if it has one,
+   otherwise a short kebab-case name derived from that title. Create the branch if necessary.
+4. Commit the changes with the confirmed title from step 1.
 5. Check if there are any uncommitted changes. If there are, run `git add .` and commit again.
 6. Push the branch to the remote repository.
 7. Open browser window with the link to create a pull request for the branch

@@ -58,7 +58,10 @@ Our CI will make sure that your code matches our code style, but it may be a goo
 
 - Push changes to your fork.
 
-- Open a PR against our repo.
+- Open a PR against our repo. Its title must reference the ticket, e.g. `NAS-12345: Fix the issue with ...`;
+  the `check-ticket` workflow blocks merging until it does. (UI team members can open a PR without a ticket and apply
+  the `jira` label to have one created, but labels need triage access to the repo, so contributors working from a fork
+  should pick or create a ticket first.)
 
 ### Wait For Changes To Be Merged
 
