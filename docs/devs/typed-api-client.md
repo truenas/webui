@@ -427,7 +427,9 @@ above. Each is a change for `truenas/api-client-ts`.
     them as plain `string`. `system.info`'s timestamps and the dates in
     `truenas.license.info` hit this first; `SystemInfoEffects` narrows them
     once, in `toSystemInfo` and `normalizeLicense`, to the UI's `ApiTimestamp`
-    and `ApiDate`. Fix: emit the envelopes in the generator.
+    and `ApiDate`. Fix: emit the envelopes in the generator. The same cast is
+    where the license's missing top-level `expires_at` would hide, so `License`
+    declares it optional; the readers fall back to the `Support` feature's date.
 
 ## Version policy
 

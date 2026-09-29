@@ -37,7 +37,8 @@ const knownContractTypes: ReadonlySet<string> = new Set(Object.values(ContractTy
  */
 function normalizeLicense(wireLicense: LicenseInfo | null): License | null {
   // Middleware types the dates as strings, but they arrive as `ApiDate` envelopes, and it leaves
-  // `type` and the feature names as open strings the UI reads through its enums.
+  // `type` and the feature names as open strings the UI reads through its enums. It sends no
+  // top-level `expires_at`, which is why `License` declares that field optional.
   const license = wireLicense as unknown as License | null;
   if (!license?.contract_type) {
     return license;
