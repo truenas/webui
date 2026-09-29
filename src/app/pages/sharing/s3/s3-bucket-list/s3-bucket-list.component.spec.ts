@@ -92,9 +92,9 @@ describe('S3BucketListComponent', () => {
     table = await loader.getHarness(TnTableHarness);
   });
 
-  it('shows the page title with the experimental badge', () => {
+  it('shows the page title with the early access badge', () => {
     expect(spectator.query('.tn-card__title')).toHaveText('S3 Buckets');
-    expect(spectator.query('.experimental-badge')).toHaveText('Experimental');
+    expect(spectator.query('.experimental-badge')).toHaveText('Early Access');
   });
 
   it('shows table rows', async () => {
