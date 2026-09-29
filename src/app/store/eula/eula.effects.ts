@@ -50,10 +50,12 @@ export class EulaEffects {
       title: this.translate.get('End User License Agreement - TrueNAS'),
       buttonText: this.translate.get('I Agree'),
     }).pipe(
+      // Without the text there is nothing to agree to, so no dialog and no acceptance.
+      filter((dialog): dialog is typeof dialog & { eula: string } => Boolean(dialog.eula)),
       switchMap(({ eula, title, buttonText }) => {
         return this.dialogService.confirm({
           title,
-          message: ignoreTranslation(eula ?? ''),
+          message: ignoreTranslation(eula),
           hideCheckbox: true,
           buttonText,
           hideCancel: true,

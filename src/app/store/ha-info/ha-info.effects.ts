@@ -50,7 +50,7 @@ export class HaInfoEffects {
           }
 
           return this.api.call('failover.disabled.reasons').pipe(
-            map((reasons) => this.haStatusLoaded(reasons)),
+            map((reasons) => this.toHaStatusAction(reasons)),
           );
         }),
       );
@@ -68,12 +68,12 @@ export class HaInfoEffects {
 
       return this.api.subscribe('failover.disabled.reasons').pipe(
         filter((event) => event.msg === 'changed'),
-        map((event) => this.haStatusLoaded(event.fields.disabled_reasons)),
+        map((event) => this.toHaStatusAction(event.fields.disabled_reasons)),
       );
     }),
   ));
 
-  private haStatusLoaded(reasons: string[]): ReturnType<typeof haStatusLoaded> {
+  private toHaStatusAction(reasons: string[]): ReturnType<typeof haStatusLoaded> {
     // Middleware types the reasons as plain strings; `FailoverDisabledReason` holds the same values.
     const failoverDisabledReasons = reasons as FailoverDisabledReason[];
     const haEnabled = failoverDisabledReasons.length === 0;

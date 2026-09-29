@@ -30,6 +30,8 @@ export const mockIdGenerators = {
  */
 export const enclosureMockIds = {
   dashboard: mockIdGenerators.enclosure('dashboard'),
+  // No longer registered (`truenas.is_ix_hardware` is on the typed client); kept so disabling the
+  // mock still clears an entry persisted by an older build.
   isIxHardware: mockIdGenerators.enclosure('is-ix-hardware'),
   systemInfo: mockIdGenerators.enclosure('system-info'),
   mainDashboardSysInfo: mockIdGenerators.enclosure('main-dashboard-sys-info'),

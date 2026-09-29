@@ -68,7 +68,8 @@ export class EnclosureMockService implements OnDestroy {
       return;
     }
 
-    // Create/update mock configs for each enclosure endpoint
+    // Create/update mock configs for each enclosure endpoint. `truenas.is_ix_hardware` is on the typed
+    // client, which these mocks do not reach; `SystemInfoEffects` reads the enclosure mock flag instead.
     const mockConfigs: MockConfig[] = [
       {
         id: enclosureMockIds.dashboard,
@@ -77,15 +78,6 @@ export class EnclosureMockService implements OnDestroy {
         response: {
           type: 'success',
           result: this.mockGenerator.webuiDashboardEnclosureResponse(),
-        },
-      },
-      {
-        id: enclosureMockIds.isIxHardware,
-        enabled: true,
-        methodName: 'truenas.is_ix_hardware',
-        response: {
-          type: 'success',
-          result: true,
         },
       },
     ];

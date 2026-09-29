@@ -100,19 +100,11 @@ describe('EnclosureMockService', () => {
         }),
       );
 
-      expect(store$.dispatch).toHaveBeenCalledWith(
-        addMockConfig({
-          config: {
-            id: 'enclosure-mock-is-ix-hardware',
-            enabled: true,
-            methodName: 'truenas.is_ix_hardware',
-            response: {
-              type: 'success',
-              result: true,
-            },
-          },
-        }),
-      );
+      // `truenas.is_ix_hardware` is on the typed client, which the debug panel's mocks do not reach.
+      expect(store$.dispatch).not.toHaveBeenCalledWith(expect.objectContaining({
+        type: addMockConfig.type,
+        config: expect.objectContaining({ methodName: 'truenas.is_ix_hardware' }),
+      }));
     });
 
     it('should dispatch updateMockConfig when configs already exist', () => {
@@ -121,9 +113,6 @@ describe('EnclosureMockService', () => {
       const existingConfigs: MockConfig[] = [
         {
           id: 'enclosure-mock-dashboard', enabled: false, methodName: 'webui.enclosure.dashboard', response: { type: 'success' as const, result: [] as unknown[] },
-        },
-        {
-          id: 'enclosure-mock-is-ix-hardware', enabled: false, methodName: 'truenas.is_ix_hardware', response: { type: 'success' as const, result: false },
         },
       ];
 

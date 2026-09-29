@@ -164,6 +164,26 @@ describe('RebootInfoEffects', () => {
     });
   });
 
+  describe('subscribeToRebootInfo with an event that is not a change', () => {
+    it('dispatches nothing, since only a change carries reboot info', () => {
+      jest.spyOn(spectator.inject(TypedApiService), 'subscribe').mockReturnValue(
+        of({ msg: CollectionChangeType.Removed } as ApiEvent<SystemRebootInfo>),
+      );
+      const dispatched: unknown[] = [];
+      spectator.service.subscribeToRebootInfo.subscribe({
+        next: (action) => dispatched.push(action),
+        error: (error: unknown) => dispatched.push(error),
+      });
+      // `actions$` replays the previous test's action to a new subscriber; start counting here.
+      dispatched.length = 0;
+
+      actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: true }));
+      actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: false }));
+
+      expect(dispatched).toEqual([]);
+    });
+  });
+
   describe('refreshRebootInfo', () => {
     it('refreshes reboot info and dispatches rebootInfoLoaded() for non-HA', async () => {
       actions$.next(refreshRebootInfo());

@@ -48,6 +48,7 @@ describe('GuiFormComponent', () => {
     ui_consolemsg: false,
     ui_certificate: 1,
   } as SystemGeneralConfig;
+  let generalConfig = mockSystemGeneralConfig;
 
   const createComponent = createComponentFactory({
     component: GuiFormComponent,
@@ -85,7 +86,10 @@ describe('GuiFormComponent', () => {
         selectors: [
           {
             selector: selectGeneralConfig,
-            value: mockSystemGeneralConfig,
+            // Read when each test builds its store, so a test can swap the config before the form loads it.
+            get value() {
+              return generalConfig;
+            },
           },
         ],
       }),
@@ -171,6 +175,23 @@ describe('GuiFormComponent', () => {
         title: 'Restart Web Service',
       }));
       expect(api.call).toHaveBeenCalledWith('system.general.ui_restart');
+    });
+  });
+
+  describe('without a UI certificate', () => {
+    beforeEach(() => {
+      generalConfig = { ...mockSystemGeneralConfig, ui_certificate: null };
+    });
+
+    afterEach(() => {
+      generalConfig = mockSystemGeneralConfig;
+    });
+
+    it('loads with the certificate left empty', () => {
+      spectator = createComponent();
+
+      expect(spectator.component.formGroup.value.ui_certificate).toBe('');
+      expect(spectator.component.formGroup.value.ui_port).toBe(80);
     });
   });
 

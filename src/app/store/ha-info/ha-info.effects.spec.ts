@@ -240,6 +240,21 @@ describe('HaInfoEffects', () => {
       subscription.unsubscribe();
     });
 
+    it('ignores an event that is not a change, which carries no reasons', () => {
+      jest.spyOn(api, 'subscribe').mockReturnValue(
+        of({ msg: CollectionChangeType.Removed } as FailoverDisabledReasonsEvent),
+      );
+      actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: true }));
+
+      const dispatched: unknown[] = [];
+      spectator.service.subscribeToHa.subscribe({
+        next: (action) => dispatched.push(action),
+        error: (error: unknown) => dispatched.push(error),
+      });
+
+      expect(dispatched).toEqual([]);
+    });
+
     it('should handle empty reasons array in subscription', async () => {
       const mockEvent = {
         fields: {

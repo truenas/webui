@@ -256,7 +256,7 @@ export class GuiFormComponent implements OnInit {
     ).subscribe((config) => {
       this.configData = config;
       this.formGroup.patchValue({
-        ui_certificate: config.ui_certificate.toString(),
+        ui_certificate: config.ui_certificate?.toString() ?? '',
         ui_address: config.ui_address,
         ui_v6address: config.ui_v6address,
         ui_port: config.ui_port,

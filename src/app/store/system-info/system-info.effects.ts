@@ -1,14 +1,20 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { CallResponse } from '@truenas/api-client';
-import { EMPTY, forkJoin, of } from 'rxjs';
+import { environment } from 'environments/environment';
 import {
-  catchError, map, mergeMap,
+  combineLatest, defer, EMPTY, forkJoin, Observable, of,
+} from 'rxjs';
+import {
+  catchError, distinctUntilChanged, map, mergeMap,
 } from 'rxjs/operators';
 import { HardwareType } from 'app/enums/hardware-type.enum';
 import { ContractType, License, SystemInfo } from 'app/interfaces/system-info.interface';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { selectEnclosureMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
+import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   entitlementFactsLoaded,
@@ -56,6 +62,22 @@ function toSystemInfo(systemInfo: SystemInfoResult, license: License | null): Sy
 export class SystemInfoEffects {
   private actions$ = inject(Actions);
   private api = inject(TypedApiService);
+  private store$ = inject<Store<AppState>>(Store);
+
+  /**
+   * The debug panel's enclosure mock stands in for iX hardware on a dev box. Its mocks only
+   * intercept `ApiService` calls, so the typed `truenas.is_ix_hardware` answer is overridden here
+   * instead. The debug panel's state only exists when the panel is enabled (see `main.ts`).
+   */
+  private isEnclosureMockEnabled$: Observable<boolean> = defer(() => {
+    if (!environment.debugPanel?.enabled) {
+      return of(false);
+    }
+
+    return this.store$.select(selectEnclosureMockConfig).pipe(
+      map((config) => config.enabled && config.controllerModel !== null),
+    );
+  });
 
   loadSystemInfo = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized, systemInfoUpdated),
@@ -86,13 +108,18 @@ export class SystemInfoEffects {
   loadIsIxHardware = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
-      return this.api.call('truenas.is_ix_hardware').pipe(
-        map((isIxHardware) => ixHardwareLoaded({ isIxHardware })),
+      const isIxHardware$ = this.api.call('truenas.is_ix_hardware').pipe(
         catchError((error: unknown) => {
           // TODO: Show error message to user?
           console.error(error);
-          return of(ixHardwareLoaded({ isIxHardware: false }));
+          return of(false);
         }),
+      );
+
+      return combineLatest([isIxHardware$, this.isEnclosureMockEnabled$]).pipe(
+        map(([isIxHardware, isEnclosureMocked]) => isIxHardware || isEnclosureMocked),
+        distinctUntilChanged(),
+        map((isIxHardware) => ixHardwareLoaded({ isIxHardware })),
       );
     }),
   ));

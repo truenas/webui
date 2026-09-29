@@ -1,17 +1,21 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { CallResponse } from '@truenas/api-client';
+import { environment } from 'environments/environment';
 import { firstValueFrom, ReplaySubject } from 'rxjs';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { HardwareType } from 'app/enums/hardware-type.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { LicenseType } from 'app/enums/license-type.enum';
 import { ContractType } from 'app/interfaces/system-info.interface';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { selectEnclosureMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
-import { entitlementFactsLoaded } from 'app/store/system-info/system-info.actions';
+import { entitlementFactsLoaded, ixHardwareLoaded, systemInfoLoaded } from 'app/store/system-info/system-info.actions';
 import { SystemInfoEffects } from 'app/store/system-info/system-info.effects';
 
 type LicenseInfo = CallResponse<WebUiApiDirectory, 'truenas.license.info'>;
@@ -70,7 +74,10 @@ describe('SystemInfoEffects', () => {
 
       expect(api.call).toHaveBeenCalledWith('system.info');
       expect(api.call).toHaveBeenCalledWith('truenas.license.info');
-      expect(action.systemInfo).toEqual({ ...baseSystemInfo, license: baseLicense });
+      expect(action).toEqual({
+        type: systemInfoLoaded.type,
+        systemInfo: { ...baseSystemInfo, license: baseLicense },
+      });
     });
 
     it('emits systemInfoLoaded with license: null when truenas.license.info errors', async () => {
@@ -80,7 +87,10 @@ describe('SystemInfoEffects', () => {
       actions$.next(adminUiInitialized());
       const action = await firstValueFrom(spectator.service.loadSystemInfo);
 
-      expect(action.systemInfo).toEqual({ ...baseSystemInfo, license: null });
+      expect(action).toEqual({
+        type: systemInfoLoaded.type,
+        systemInfo: { ...baseSystemInfo, license: null },
+      });
     });
 
     it('uppercases lower-cased contract_type', async () => {
@@ -101,6 +111,43 @@ describe('SystemInfoEffects', () => {
 
       expect(action.systemInfo.license?.contract_type).toBe('PLATINUM');
       expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('platinum'));
+    });
+  });
+
+  describe('loadIsIxHardware', () => {
+    const debugPanel = environment.debugPanel;
+    const withDebugPanel = (enabled: boolean): void => {
+      environment.debugPanel = {
+        defaultMessageLimit: 100, mockJobDefaultDelay: 0, persistMockConfigs: false, enabled,
+      };
+    };
+
+    afterEach(() => {
+      environment.debugPanel = debugPanel;
+    });
+
+    it('reports what the box says', async () => {
+      withDebugPanel(false);
+      api.mockCall('truenas.is_ix_hardware', false);
+      actions$.next(adminUiInitialized());
+
+      expect(await firstValueFrom(spectator.service.loadIsIxHardware))
+        .toEqual(ixHardwareLoaded({ isIxHardware: false }));
+    });
+
+    it('reports iX hardware while the debug panel mocks an enclosure', async () => {
+      withDebugPanel(true);
+      spectator.inject(MockStore).overrideSelector(selectEnclosureMockConfig, {
+        enabled: true,
+        controllerModel: EnclosureModel.M40,
+        expansionModels: [],
+        scenario: MockEnclosureScenario.FillSomeSlots,
+      });
+      api.mockCall('truenas.is_ix_hardware', false);
+      actions$.next(adminUiInitialized());
+
+      expect(await firstValueFrom(spectator.service.loadIsIxHardware))
+        .toEqual(ixHardwareLoaded({ isIxHardware: true }));
     });
   });
 

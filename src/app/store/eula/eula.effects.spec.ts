@@ -89,6 +89,27 @@ describe('EulaEffects', () => {
     });
   });
 
+  describe('when middleware has no EULA text', () => {
+    it('does not ask the user to agree to an empty dialog', async () => {
+      actions$ = new ReplaySubject<unknown>(1);
+      spectator = createService({
+        providers: [
+          provideMockActions(() => actions$),
+        ],
+      });
+      spectator.inject(MockTypedApiService).mockCall('truenas.get_eula', null);
+      actions$.next(adminUiInitialized());
+      spectator.service.checkEula$.subscribe();
+      await new Promise((resolve) => {
+        setTimeout(resolve);
+      });
+
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('truenas.get_eula');
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
+      expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('truenas.accept_eula');
+    });
+  });
+
   describe('on community systems', () => {
     it('does not check or show the EULA even when middleware reports it pending', () => {
       actions$ = new ReplaySubject<unknown>(1);
