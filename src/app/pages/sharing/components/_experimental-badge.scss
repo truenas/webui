@@ -9,10 +9,9 @@
     line-height: initial;
     padding: 3px 8px;
 
-    // Cornflower blue with dark text; white text on it falls short of WCAG AA contrast.
     &.early-access {
       background: #6495ed;
-      color: #000;
+      color: #fff;
     }
   }
 }
