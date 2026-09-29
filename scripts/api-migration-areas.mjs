@@ -72,6 +72,9 @@ export const migratedApiPaths = [
   'src/app/services/vm.service.spec.ts',
   // Its last legacy import was the extent step's spec feeding `IscsiService`, which moved above.
   'src/app/pages/sharing/iscsi/iscsi-wizard/steps',
+  // NAS-143994: the root NgRx effects — system info and config, entitlements, HA, reboot info,
+  // services, EULA, network check-in and preferences.
+  'src/app/store',
 ];
 
 /**

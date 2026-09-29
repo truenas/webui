@@ -11,7 +11,7 @@ import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
@@ -24,7 +24,7 @@ import {
 export class NetworkInterfacesEffects {
   private actions$ = inject(Actions);
   private router = inject(Router);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);

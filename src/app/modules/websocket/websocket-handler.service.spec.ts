@@ -73,23 +73,23 @@ describe('WebSocketHandlerService', () => {
     await settle();
 
     client.connection.simulateClose();
-    spectator.service.scheduleCall({ id: 'message-2', method: 'truenas.is_eula_accepted', params: [] });
-    spectator.service.scheduleCall({ id: 'message-3', method: 'truenas.accept_eula', params: [] });
+    spectator.service.scheduleCall({ id: 'message-2', method: 'system.info', params: [] });
+    spectator.service.scheduleCall({ id: 'message-3', method: 'system.host_id', params: [] });
     await settle();
 
     expect(sentMethods()).toContain('truenas.get_eula');
-    expect(sentMethods()).not.toContain('truenas.is_eula_accepted');
-    expect(sentMethods()).not.toContain('truenas.accept_eula');
+    expect(sentMethods()).not.toContain('system.info');
+    expect(sentMethods()).not.toContain('system.host_id');
 
     client.connection.simulateOpen();
     await settle();
-    expect(sentMethods()).toContain('truenas.is_eula_accepted');
+    expect(sentMethods()).toContain('system.info');
 
     // The queue releases one call per completion, so the third waits for the
     // second to be answered.
     client.connection.receive({ jsonrpc: '2.0', id: 'message-2', result: true });
     await settle();
-    expect(sentMethods()).toContain('truenas.accept_eula');
+    expect(sentMethods()).toContain('system.host_id');
   });
 
   it('carries the connection’s messages on responses$', async () => {

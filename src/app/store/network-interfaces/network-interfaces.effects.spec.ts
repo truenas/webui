@@ -4,11 +4,11 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, of, ReplaySubject } from 'rxjs';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   checkinIndicatorPressed,
@@ -23,9 +23,9 @@ describe('NetworkInterfacesEffects', () => {
     service: NetworkInterfacesEffects,
     providers: [
       provideMockActions(() => actions$),
-      mockApi([
-        mockCall('interface.has_pending_changes', true),
-        mockCall('interface.checkin_waiting', 60),
+      mockTypedApi([
+        mockTypedCall('interface.has_pending_changes', true),
+        mockTypedCall('interface.checkin_waiting', 60),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -60,7 +60,7 @@ describe('NetworkInterfacesEffects', () => {
       const authMock = spectator.inject(MockAuthService);
       authMock.setRoles([]);
       actions$.next(adminUiInitialized());
-      expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
+      expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalled();
     });
   });
 

@@ -6,8 +6,9 @@ import {
   filter, map, switchMap, withLatestFrom,
 } from 'rxjs/operators';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AppState } from 'app/store';
 import { entitlementsLoaded } from 'app/store/entitlements/entitlements.actions';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
@@ -21,7 +22,7 @@ import { selectHaInfoState, selectIsHaLicensed } from './ha-info.selectors';
 @Injectable()
 export class HaInfoEffects {
   private actions$ = inject(Actions);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private window = inject<Window>(WINDOW);
   private store$ = inject<Store<AppState>>(Store);
 
@@ -49,12 +50,7 @@ export class HaInfoEffects {
           }
 
           return this.api.call('failover.disabled.reasons').pipe(
-            map((failoverDisabledReasons) => {
-              const haEnabled = failoverDisabledReasons.length === 0;
-              this.window.localStorage.setItem('ha_status', haEnabled.toString());
-
-              return haStatusLoaded({ haStatus: { hasHa: haEnabled, reasons: failoverDisabledReasons } });
-            }),
+            map((reasons) => this.haStatusLoaded(reasons)),
           );
         }),
       );
@@ -71,14 +67,18 @@ export class HaInfoEffects {
       }
 
       return this.api.subscribe('failover.disabled.reasons').pipe(
-        map((event) => {
-          const failoverDisabledReasons = event.fields?.disabled_reasons;
-          const haEnabled = failoverDisabledReasons.length === 0;
-          this.window.localStorage.setItem('ha_status', haEnabled.toString());
-
-          return haStatusLoaded({ haStatus: { hasHa: haEnabled, reasons: failoverDisabledReasons } });
-        }),
+        filter((event) => event.msg === 'changed'),
+        map((event) => this.haStatusLoaded(event.fields.disabled_reasons)),
       );
     }),
   ));
+
+  private haStatusLoaded(reasons: string[]): ReturnType<typeof haStatusLoaded> {
+    // Middleware types the reasons as plain strings; `FailoverDisabledReason` holds the same values.
+    const failoverDisabledReasons = reasons as FailoverDisabledReason[];
+    const haEnabled = failoverDisabledReasons.length === 0;
+    this.window.localStorage.setItem('ha_status', haEnabled.toString());
+
+    return haStatusLoaded({ haStatus: { hasHa: haEnabled, reasons: failoverDisabledReasons } });
+  }
 }

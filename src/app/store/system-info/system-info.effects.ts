@@ -1,18 +1,23 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { CallResponse } from '@truenas/api-client';
 import { EMPTY, forkJoin, of } from 'rxjs';
 import {
   catchError, map, mergeMap,
 } from 'rxjs/operators';
 import { HardwareType } from 'app/enums/hardware-type.enum';
-import { ContractType, License } from 'app/interfaces/system-info.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { ContractType, License, SystemInfo } from 'app/interfaces/system-info.interface';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   entitlementFactsLoaded,
   ixHardwareLoaded,
   systemInfoLoaded, systemInfoUpdated,
 } from 'app/store/system-info/system-info.actions';
+
+type SystemInfoResult = CallResponse<WebUiApiDirectory, 'system.info'>;
+type LicenseInfo = CallResponse<WebUiApiDirectory, 'truenas.license.info'>;
 
 const knownContractTypes: ReadonlySet<string> = new Set(Object.values(ContractType));
 
@@ -23,7 +28,10 @@ const knownContractTypes: ReadonlySet<string> = new Set(Object.values(ContractTy
  * warning is logged so they surface during testing — the label helper has its
  * own raw-string fallback for display.
  */
-function normalizeLicense(license: License | null): License | null {
+function normalizeLicense(wireLicense: LicenseInfo | null): License | null {
+  // Middleware types the dates as strings, but they arrive as `ApiDate` envelopes, and it leaves
+  // `type` and the feature names as open strings the UI reads through its enums.
+  const license = wireLicense as unknown as License | null;
   if (!license?.contract_type) {
     return license;
   }
@@ -36,10 +44,18 @@ function normalizeLicense(license: License | null): License | null {
   return { ...license, contract_type: upper as ContractType };
 }
 
+/**
+ * Middleware types the timestamps as strings, but they arrive as `ApiTimestamp` envelopes; `license`
+ * is filled from `truenas.license.info` rather than read from this answer.
+ */
+function toSystemInfo(systemInfo: SystemInfoResult, license: License | null): SystemInfo {
+  return { ...systemInfo, license } as unknown as SystemInfo;
+}
+
 @Injectable()
 export class SystemInfoEffects {
   private actions$ = inject(Actions);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
 
   loadSystemInfo = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized, systemInfoUpdated),
@@ -56,7 +72,7 @@ export class SystemInfoEffects {
         ),
       }).pipe(
         map(({ systemInfo, license }) => systemInfoLoaded({
-          systemInfo: { ...systemInfo, license: normalizeLicense(license) },
+          systemInfo: toSystemInfo(systemInfo, normalizeLicense(license)),
         })),
         catchError((error: unknown) => {
           // TODO: Basically a fatal error. Handle it.

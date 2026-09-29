@@ -421,6 +421,14 @@ above. Each is a change for `truenas/api-client-ts`.
     `reporting.realtime` (gap 5), and `src/app/services` cannot be pinned as a
     whole until both have a typed route.
 
+15. **Dates are typed as strings.** Middleware sends a `datetime` as an
+    `{ $date: <ms> }` envelope and a `date` as `{ $type: 'date', $value }`, and
+    the client passes both through untouched, but the generated types declare
+    them as plain `string`. `system.info`'s timestamps and the dates in
+    `truenas.license.info` hit this first; `SystemInfoEffects` narrows them
+    once, in `toSystemInfo` and `normalizeLicense`, to the UI's `ApiTimestamp`
+    and `ApiDate`. Fix: emit the envelopes in the generator.
+
 ## Version policy
 
 `WebUiApiDirectory` pins `v27.0.0`. The literal must stay at the

@@ -9,14 +9,9 @@ export interface EntitlementEntry {
   message: string;
 }
 
-/** Wire shape of `truenas.entitlements.info`. Keys stay open: middleware adds them over releases. */
-export interface EntitlementsInfo {
-  features: Record<string, EntitlementEntry>;
-}
-
 /** Wire shape of `truenas.entitlements.facts`: the facts entitlement decisions are computed from. */
 export interface EntitlementFacts {
-  hardware_type: HardwareType;
+  hardware_type: `${HardwareType}`;
   /**
    * Name of the installed iX-issued license type (see `LicenseType`), `null` without one.
    * Left as a plain string by middleware so a newer license type does not fail validation.

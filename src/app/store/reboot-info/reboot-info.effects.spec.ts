@@ -1,16 +1,21 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, of, ReplaySubject, Subject } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { FailoverRebootInfo, SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { failoverLicensedStatusLoaded } from 'app/store/ha-info/ha-info.actions';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { rebootInfoLoaded, refreshRebootInfo } from 'app/store/reboot-info/reboot-info.actions';
 import { RebootInfoEffects } from 'app/store/reboot-info/reboot-info.effects';
+
+type FailoverRebootInfo = CallResponse<WebUiApiDirectory, 'failover.reboot.info'>;
 
 const fakeThisNodeRebootInfo: SystemRebootInfo = {
   boot_id: 'this-boot-id',
@@ -40,9 +45,9 @@ describe('RebootInfoEffects', () => {
           { selector: selectIsHaLicensed, value: false },
         ],
       }),
-      mockApi([
-        mockCall('system.reboot.info', fakeThisNodeRebootInfo),
-        mockCall('failover.reboot.info', {
+      mockTypedApi([
+        mockTypedCall('system.reboot.info', fakeThisNodeRebootInfo),
+        mockTypedCall('failover.reboot.info', {
           this_node: fakeThisNodeRebootInfo,
           other_node: fakeOtherNodeRebootInfo,
         }),
@@ -54,12 +59,13 @@ describe('RebootInfoEffects', () => {
   beforeEach(() => {
     spectator = createService();
 
-    jest.spyOn(spectator.inject(ApiService), 'subscribe').mockImplementation((method) => {
+    jest.spyOn(spectator.inject(TypedApiService), 'subscribe').mockImplementation((method) => {
       if (method === 'system.reboot.info') {
-        return of({ fields: fakeThisNodeRebootInfo } as ApiEvent<SystemRebootInfo>);
+        return of({ msg: CollectionChangeType.Changed, fields: fakeThisNodeRebootInfo } as ApiEvent<SystemRebootInfo>);
       }
       if (method === 'failover.reboot.info') {
         return of({
+          msg: CollectionChangeType.Changed,
           fields: {
             this_node: fakeThisNodeRebootInfo,
             other_node: fakeOtherNodeRebootInfo,
@@ -93,7 +99,7 @@ describe('RebootInfoEffects', () => {
       // The HA fetch is still in flight when the entitlement corrects the status to non-HA; its
       // late answer must not overwrite the corrected one.
       const haInfo$ = new Subject<FailoverRebootInfo>();
-      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => (
+      jest.spyOn(spectator.inject(TypedApiService), 'call').mockImplementation((method) => (
         method === 'failover.reboot.info' ? haInfo$ : of(fakeThisNodeRebootInfo)
       ));
       const dispatched: unknown[] = [];
@@ -134,10 +140,10 @@ describe('RebootInfoEffects', () => {
       // Sign-in seeds HA as licensed, then the HA entitlement says otherwise: the first source
       // must be torn down, or both keep pushing reboot info and race each other.
       const haEvents$ = new Subject<ApiEvent<FailoverRebootInfo>>();
-      jest.spyOn(spectator.inject(ApiService), 'subscribe').mockImplementation((method) => (
+      jest.spyOn(spectator.inject(TypedApiService), 'subscribe').mockImplementation((method) => (
         method === 'failover.reboot.info'
           ? haEvents$
-          : of({ fields: fakeThisNodeRebootInfo } as ApiEvent<SystemRebootInfo>)
+          : of({ msg: CollectionChangeType.Changed, fields: fakeThisNodeRebootInfo } as ApiEvent<SystemRebootInfo>)
       ));
       const dispatched: unknown[] = [];
       spectator.service.subscribeToRebootInfo.subscribe((action) => dispatched.push(action));
@@ -147,6 +153,7 @@ describe('RebootInfoEffects', () => {
       actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: true }));
       actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: false }));
       haEvents$.next({
+        msg: CollectionChangeType.Changed,
         fields: { this_node: fakeThisNodeRebootInfo, other_node: fakeOtherNodeRebootInfo },
       } as ApiEvent<FailoverRebootInfo>);
 
