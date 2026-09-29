@@ -12,6 +12,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnAutocompleteComponent, TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent,
   TnFormSectionComponent, TnInputComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { BehaviorSubject, Observable, forkJoin, of, shareReplay } from 'rxjs';
 import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
@@ -87,6 +88,7 @@ export interface DeviceFormData {
     TranslateModule,
     TnAutocompleteComponent,
     TnBannerComponent,
+    TnTestIdDirective,
   ],
 })
 export class DeviceFormComponent extends IxFormHostForm implements OnInit {

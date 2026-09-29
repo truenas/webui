@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { getCredentialsCreationSource } from 'app/helpers/get-credentials-creation-source.utils';
 import { credentialTypeLabels } from 'app/interfaces/credential-type.interface';
@@ -25,6 +26,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
     JsonPipe,
     ReactiveFormsModule,
     IxCodeEditorComponent,
+    TnTestIdDirective,
   ],
 })
 export class JobLogsRowComponent {

@@ -8,6 +8,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnBannerComponent, TnButtonComponent, TnCardComponent, TnDialog, TnFormFieldComponent, TnInputComponent,
   TnProgressBarComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -77,6 +78,7 @@ const defaultToleranceWindow = 1;
     TranslateModule,
     AsyncPipe,
     CopyButtonComponent,
+    TnTestIdDirective,
   ],
 })
 export class TwoFactorComponent implements OnInit {

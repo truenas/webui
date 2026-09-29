@@ -13,6 +13,7 @@ import {
   TnSelectComponent,
   TnStepperNextDirective,
   TnStepperPreviousDirective,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
@@ -50,6 +51,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnStepperPreviousDirective,
     TnStepperNextDirective,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {

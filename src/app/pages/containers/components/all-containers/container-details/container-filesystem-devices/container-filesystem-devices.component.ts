@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject, DestroyRef } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnCardAction, TnCardComponent } from '@truenas/ui-components';
+import { TnCardAction, TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ContainerDeviceType } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
@@ -28,6 +28,7 @@ import { isContainerActive } from 'app/pages/containers/utils/container-status.u
     NgxSkeletonLoaderModule,
     TranslateModule,
     DeviceActionsMenuComponent,
+    TnTestIdDirective,
   ],
 })
 export class ContainerFilesystemDevicesComponent {

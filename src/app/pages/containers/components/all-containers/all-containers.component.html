@@ -14,10 +14,10 @@
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
   ></ix-container-list>
 
-  <ng-container detail-header>
+  <span detail-header tnTestId="details-for" tnTestIdType="text">
     {{ 'Details for' | translate }}
     {{ selectedContainer()?.name }}
-  </ng-container>
+  </span>
 
   <ng-container detail>
     @let container = selectedContainer();
