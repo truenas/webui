@@ -83,9 +83,9 @@ export class FormSidePanelService {
    * duplicate.
    *
    * "Appended later" means inside the CDK overlay container, not on `<body>`: the container element
-   * created here is a body child, but the overlay that actually paints is re-homed into the CDK
-   * overlay container by {@link FormSidePanelContainerComponent}, which is where the stacking is
-   * decided — against other panels and against CDK dialogs and dropdowns alike. Either way they sit
+   * created here is a body child, but `tn-side-panel` attaches the overlay that actually paints
+   * through CDK's `Overlay` when it opens, so the stacking is decided by open order — against other
+   * panels and against CDK dialogs and dropdowns alike. Either way they sit
    * outside any route's view, so they outlive navigation unless torn down explicitly —
    * {@link closeAll} does that for every panel in the stack.
    */
