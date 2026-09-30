@@ -280,6 +280,38 @@ describe('SupportCardComponent', () => {
 
         expect(spectator.component.licenseInfo.daysLeftInContract).toBe(-1);
       });
+
+      it('still counts a full day left in the afternoon before the contract ends', () => {
+        emitSystemInfo({
+          datetime: { $date: Date.parse('2026-09-29T13:00:00Z') } as SystemInfo['datetime'],
+          license: makeLicense('2026-09-30'),
+        });
+
+        expect(spectator.component.licenseInfo.daysLeftInContract).toBe(1);
+      });
+
+      it('keeps the warning banner up for the whole of the last day in force', async () => {
+        emitSystemInfo({
+          datetime: { $date: Date.parse('2026-09-30T18:00:00Z') } as SystemInfo['datetime'],
+          license: makeLicense('2026-09-30'),
+        });
+
+        expect(spectator.component.licenseInfo.daysLeftInContract).toBe(0);
+
+        const banner = await loader.getHarnessOrNull(
+          TnBannerHarness.with({ textContains: /Your support contract expires in/ }),
+        );
+        expect(banner).not.toBeNull();
+      });
+
+      it('reports the contract as lapsed only after its end date', () => {
+        emitSystemInfo({
+          datetime: { $date: Date.parse('2026-10-01T00:30:00Z') } as SystemInfo['datetime'],
+          license: makeLicense('2026-09-30'),
+        });
+
+        expect(spectator.component.licenseInfo.daysLeftInContract).toBe(-1);
+      });
     });
 
     describe('Header action buttons', () => {
