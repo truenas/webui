@@ -372,6 +372,33 @@ describe('DiskListComponent', () => {
     });
   });
 
+  it.each([
+    SedStatus.Unlocked,
+    SedStatus.Uninitialized,
+    SedStatus.Failed,
+  ])('offers SED Reset but not Unlock for a %s SED disk', async (sedStatus) => {
+    spectator.inject(MockApiService).mockCall('disk.query', [{ ...fakeDisks[2], sed_status: sedStatus }] as Disk[]);
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(TnTableHarness);
+    await table.toggleRowExpansion(0);
+
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Unlock' }))).toBeNull();
+
+    const resetButton = await loader.getHarness(TnButtonHarness.with({ label: 'SED Reset' }));
+    await resetButton.click();
+
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ResetSedDialog, {
+      data: { diskName: 'sdc' },
+    });
+  });
+
+  it('does not offer SED Reset for a disk without SED support', async () => {
+    await table.toggleRowExpansion(1);
+
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'SED Reset' }))).toBeNull();
+  });
+
   it('reloads disks when edit form is saved', async () => {
     const api = spectator.inject(ApiService);
     const formPanel = spectator.inject(FormSidePanelService);
