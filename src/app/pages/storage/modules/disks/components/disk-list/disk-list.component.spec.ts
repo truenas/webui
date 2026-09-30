@@ -7,6 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
@@ -256,6 +257,33 @@ describe('DiskListComponent', () => {
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ResetSedDialog, {
       data: { diskName: 'sdc' },
     });
+  });
+
+  it.each([
+    SedStatus.Unlocked,
+    SedStatus.Uninitialized,
+    SedStatus.Failed,
+  ])('offers SED Reset but not Unlock for a %s SED disk', async (sedStatus) => {
+    spectator.inject(MockApiService).mockCall('disk.query', [{ ...fakeDisks[2], sed_status: sedStatus }] as Disk[]);
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(IxTableHarness);
+    await table.expandRow(0);
+
+    expect(await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Unlock' }))).toBeNull();
+
+    const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'SED Reset' }));
+    await resetButton.click();
+
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ResetSedDialog, {
+      data: { diskName: 'sdc' },
+    });
+  });
+
+  it('does not offer SED Reset for a disk without SED support', async () => {
+    await table.expandRow(1);
+
+    expect(await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'SED Reset' }))).toBeNull();
   });
 
   it('updates disks when edit form is saved', async () => {
