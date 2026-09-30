@@ -8,7 +8,6 @@ import {
   TnIconComponent,
   TnListComponent,
   TnListItemComponent,
-  TnTestIdDirective,
   TnTooltipDirective,
 } from '@truenas/ui-components';
 import { helptextGlobal } from 'app/helptext/global-helptext';
@@ -27,7 +26,6 @@ import { isContainerRunning } from 'app/pages/containers/utils/container-status.
     TnListItemComponent,
     TnIconComponent,
     TnTooltipDirective,
-    TnTestIdDirective,
     TranslateModule,
   ],
 })

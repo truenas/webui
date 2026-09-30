@@ -38,7 +38,7 @@ describe('FormSidePanelContainerComponent busy overlay', () => {
     (node) => node.componentInstance instanceof BusyTestFormComponent,
   ).componentInstance as BusyTestFormComponent;
 
-  // The panel renders through an overlay portaled to document.body, so query the document root.
+  // The panel renders in a CDK overlay pane, outside the fixture, so query the document root.
   const getOverlay = (): Element | null => document.querySelector('.panel-content__busy-overlay');
 
   beforeEach(() => {

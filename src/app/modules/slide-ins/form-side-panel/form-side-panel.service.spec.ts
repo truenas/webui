@@ -1,5 +1,6 @@
 /* eslint-disable max-classes-per-file */
-import { OverlayContainer } from '@angular/cdk/overlay';
+import { Overlay, OverlayContainer } from '@angular/cdk/overlay';
+import { DomPortal } from '@angular/cdk/portal';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
@@ -205,7 +206,17 @@ describe('FormSidePanelService', () => {
     expect(alreadyOpen.compareDocumentPosition(overlay!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
-  it('closes the panel on Escape', async () => {
+  // The other half of NAS-143761: with a dialog open underneath (Manage Hosts → Edit), Escape must
+  // close the panel ONLY. CDK's keyboard dispatcher delivers it to the topmost attached overlay, so
+  // the dialog's overlay must never see it.
+  it('closes the panel on Escape without passing it to an overlay open underneath', async () => {
+    const underneathElement = document.createElement('div');
+    document.body.appendChild(underneathElement);
+    const underneath = TestBed.inject(Overlay).create();
+    underneath.attach(new DomPortal(underneathElement));
+    const underneathKeydown = jest.fn();
+    underneath.keydownEvents().subscribe(underneathKeydown);
+
     service.open(TestFormComponent, { title: 'NFS' });
     fixture.detectChanges();
     const panel = await rootLoader.getHarness(TnSidePanelHarness);
@@ -219,6 +230,9 @@ describe('FormSidePanelService', () => {
     fixture.detectChanges();
 
     expect(await panel.isOpen()).toBe(false);
+    expect(underneathKeydown).not.toHaveBeenCalled();
+    expect(underneath.hasAttached()).toBe(true);
+    underneath.dispose();
   });
 
   it('submits the form and resolves onSuccess when Save is clicked', async () => {
