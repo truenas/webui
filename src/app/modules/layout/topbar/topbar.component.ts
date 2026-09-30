@@ -34,7 +34,6 @@ import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { TruenasConnectButtonComponent } from 'app/modules/truenas-connect/truenas-connect-button.component';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { RebootInfoDialogSuppressionService } from 'app/services/reboot-info-dialog-suppression.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
@@ -77,7 +76,6 @@ export class TopbarComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private tnc = inject(TruenasConnectService);
-  private apiService = inject<ApiService>(ApiService);
   private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
   private destroyRef = inject(DestroyRef);
 

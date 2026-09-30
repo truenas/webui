@@ -7,10 +7,10 @@ import {
 } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, of, tap } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import {
   SmartAlertAction,
@@ -21,7 +21,7 @@ import { SmartAlertService } from 'app/modules/alerts/services/smart-alert.servi
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('SmartAlertService', () => {
@@ -76,8 +76,8 @@ describe('SmartAlertService', () => {
   const createService = createServiceFactory({
     service: SmartAlertService,
     providers: [
-      mockApi([
-        mockJob('cloud_backup.sync', fakeSuccessfulJob()),
+      mockTypedApi([
+        mockTypedJob('cloud_backup.sync', { state: JobState.Success }),
       ]),
       mockProvider(Router, {
         url: '/dashboard',
@@ -223,7 +223,7 @@ describe('SmartAlertService', () => {
 
     it('runs the api job when the user confirms the dialog', () => {
       jest.replaceProperty(router, 'url', '/data-protection/cloud-backup');
-      const apiService = spectator.inject(ApiService);
+      const apiService = spectator.inject(TypedApiService);
       const jobSpy = jest.spyOn(apiService, 'job');
 
       findRunTaskAction(cloudBackupAlert)?.handler?.();
@@ -235,7 +235,7 @@ describe('SmartAlertService', () => {
       jest.replaceProperty(router, 'url', '/data-protection/cloud-backup');
       const dialogConfirm = dialogService.confirm as unknown as jest.Mock;
       dialogConfirm.mockReturnValueOnce(of(false));
-      const apiService = spectator.inject(ApiService);
+      const apiService = spectator.inject(TypedApiService);
       const jobSpy = jest.spyOn(apiService, 'job');
 
       findRunTaskAction(cloudBackupAlert)?.handler?.();

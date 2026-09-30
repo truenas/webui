@@ -7,6 +7,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
+import { CallResponse } from '@truenas/api-client';
 import { TnDialog, TnIconButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { isObject } from 'lodash-es';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -26,7 +27,8 @@ import {
 } from 'app/modules/truecommand/components/truecommand-signup-modal/truecommand-signup-modal.component';
 import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal/truecommand-status-modal.component';
 import { trueCommandElements } from 'app/modules/truecommand/truecommand-button.elements';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 const truecommandStatusLabels: Record<TrueCommandStatus, string> = {
@@ -35,6 +37,18 @@ const truecommandStatusLabels: Record<TrueCommandStatus, string> = {
   [TrueCommandStatus.Connected]: T('TrueCommand is connected'),
   [TrueCommandStatus.Failed]: T('TrueCommand connection failed'),
 };
+
+type TrueCommandEntry = CallResponse<WebUiApiDirectory, 'truecommand.config'>;
+
+/**
+ * Middleware's `status` literal, read through the UI's enum. Change events leave out `api_key`,
+ * which `isConnected` treats as absent.
+ */
+function toTrueCommandConfig(
+  config: Omit<TrueCommandEntry, 'api_key'> & { api_key?: string | null },
+): TrueCommandConfig {
+  return { api_key: null, ...config, status: config.status as TrueCommandStatus };
+}
 
 @Component({
   selector: 'ix-truecommand-button',
@@ -50,7 +64,7 @@ const truecommandStatusLabels: Record<TrueCommandStatus, string> = {
   ],
 })
 export class TruecommandButtonComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   private tnDialog = inject(TnDialog);
   private overlay = inject(Overlay);
@@ -93,15 +107,21 @@ export class TruecommandButtonComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.api.call('truecommand.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
+    this.api.call('truecommand.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((entry) => {
+      const config = toTrueCommandConfig(entry);
       this.tcStatus.set(config);
       this.tcConnected = this.isConnected(config);
     });
     this.api.subscribe('truecommand.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
-      this.tcStatus.set(event.fields);
-      this.tcConnected = this.isConnected(event.fields);
+      if (event.msg !== 'changed') {
+        return;
+      }
+
+      const config = toTrueCommandConfig(event.fields);
+      this.tcStatus.set(config);
+      this.tcConnected = this.isConnected(config);
       if (this.isTcStatusOpened && this.tcStatusDialogRef) {
-        this.tcStatusDialogRef.componentInstance?.update(event.fields);
+        this.tcStatusDialogRef.componentInstance?.update(config);
       }
     });
   }

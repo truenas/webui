@@ -12,11 +12,11 @@ import {
 import { shareReplay, startWith } from 'rxjs/operators';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
-import { DetailsDisk } from 'app/interfaces/disk.interface';
+import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   getNonUniqueSerialDisksWarning,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
@@ -54,7 +54,7 @@ import { hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils
 export class UnusedDiskSelectComponent implements ControlValueAccessor, OnInit {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private destroyRef = inject(DestroyRef);
 
   /**
@@ -81,7 +81,10 @@ export class UnusedDiskSelectComponent implements ControlValueAccessor, OnInit {
   });
 
   private unusedDisks$ = this.api.call('disk.details').pipe(
-    map((diskDetails) => {
+    // Middleware types the answer loosely because its shape depends on `type`; without one it is
+    // the used/unused split.
+    map((response) => {
+      const diskDetails = response as unknown as DiskDetailsResponse;
       return [
         ...diskDetails.unused,
         ...diskDetails.used.filter((disk) => disk.exported_zpool),

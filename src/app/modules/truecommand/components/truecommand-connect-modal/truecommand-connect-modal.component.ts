@@ -5,6 +5,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { CallParams } from '@truenas/api-client';
 import {
   TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
 } from '@truenas/ui-components';
@@ -12,10 +13,11 @@ import { startWith } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
-import { TrueCommandConfig, UpdateTrueCommand } from 'app/interfaces/true-command-config.interface';
+import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface TruecommandSignupModalState {
@@ -52,7 +54,7 @@ export class TruecommandConnectModalComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private loader = inject(LoaderService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private destroyRef = inject(DestroyRef);
 
   readonly helptext = helptextTopbar;
@@ -108,7 +110,7 @@ export class TruecommandConnectModalComponent implements OnInit {
 
     this.loader.open();
 
-    const params = {} as UpdateTrueCommand;
+    const params = {} as CallParams<WebUiApiDirectory, 'truecommand.update'>[0];
 
     params.enabled = this.form.getRawValue().enabled;
     if (this.form.value.api_key) {

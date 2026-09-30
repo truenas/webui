@@ -12,7 +12,7 @@ import {
 import {
   ResilveringIndicatorComponent,
 } from 'app/modules/layout/topbar/resilvering-indicator/resilvering-indicator.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 describe('ResilveringIndicatorComponent', () => {
   let spectator: Spectator<ResilveringIndicatorComponent>;
@@ -21,8 +21,9 @@ describe('ResilveringIndicatorComponent', () => {
     component: ResilveringIndicatorComponent,
     providers: [
       mockProvider(TnDialog),
-      mockProvider(ApiService, {
+      mockProvider(TypedApiService, {
         subscribe: jest.fn().mockReturnValue(of({
+          msg: 'changed',
           fields: {
             scan: {
               function: PoolScanFunction.Resilver,

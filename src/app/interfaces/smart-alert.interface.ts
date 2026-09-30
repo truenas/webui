@@ -20,6 +20,8 @@ export enum SmartAlertActionType {
   RunTask = 'run-task',
 }
 
+export type SmartAlertRunTaskMethod = 'cloud_backup.sync' | 'cloudsync.sync' | 'rsynctask.run';
+
 export interface SmartAlertAction {
   label: string;
   type: SmartAlertActionType;
@@ -35,8 +37,8 @@ export interface SmartAlertAction {
   // For external links
   externalUrl?: string;
 
-  // For API calls
-  apiMethod?: string;
+  // For API calls: the jobs that run a task now, each taking the task id
+  apiMethod?: SmartAlertRunTaskMethod;
   apiParams?: unknown;
 
   // Custom handler

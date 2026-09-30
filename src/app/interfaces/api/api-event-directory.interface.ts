@@ -1,5 +1,4 @@
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { Alert } from 'app/interfaces/alert.interface';
 import { App, AppContainerLog, AppStats } from 'app/interfaces/app.interface';
 import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
@@ -15,7 +14,6 @@ import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.inte
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
-import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
@@ -23,7 +21,6 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 
 export interface ApiEventDirectory {
-  'alert.list': { response: Alert };
   'app.container_log_follow': { response: AppContainerLog };
   'app.image.query': { response: ContainerImage };
   'app.query': { response: App };
@@ -38,7 +35,6 @@ export interface ApiEventDirectory {
   'pool.query': { response: Pool };
   'reporting.realtime': { response: ReportingRealtimeUpdate };
   'tn_connect.config': { response: TruenasConnectConfig };
-  'truecommand.config': { response: TrueCommandConfig };
   'user.query': { response: User };
 
   'container.query': { response: Container };

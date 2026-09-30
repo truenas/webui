@@ -12,7 +12,7 @@ import { Service } from 'app/interfaces/service.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
@@ -37,7 +37,7 @@ export interface StartServiceDialogResult {
   ],
 })
 export class StartServiceDialog implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
@@ -105,10 +105,12 @@ export class StartServiceDialog implements OnInit {
             );
           }
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.dialogRef.close(result);
         },
         error: (error: unknown) => {
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.errorHandler.showErrorModal(error);
           this.dialogRef.close({
             start: false,

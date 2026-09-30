@@ -6,7 +6,7 @@ import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-component
 import { catchError, EMPTY, switchMap } from 'rxjs';
 import { Job } from 'app/interfaces/job.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -24,7 +24,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class ShowLogsDialog {
   protected dialogRef = inject<DialogRef<void, ShowLogsDialog>>(DialogRef);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private download = inject(DownloadService);
   job = inject<Job>(DIALOG_DATA);

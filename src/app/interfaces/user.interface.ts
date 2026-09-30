@@ -79,12 +79,6 @@ export interface UserUpdate {
   userns_idmap?: UsernsIdmap;
 }
 
-export interface SetPasswordParams {
-  username: string;
-  old_password: string;
-  new_password: string;
-}
-
 /**
  * What a create-user flow opens the user form with — see {@link FormPreset}.
  *

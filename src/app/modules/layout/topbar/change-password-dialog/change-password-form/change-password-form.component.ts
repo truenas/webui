@@ -17,7 +17,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Component({
   selector: 'ix-change-password-form',
@@ -40,7 +40,7 @@ export class ChangePasswordFormComponent {
 
   private translate = inject(TranslateService);
   private fb = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private authService = inject(AuthService);
   private loader = inject(LoaderService);
   private formErrorHandler = inject(FormErrorHandlerService);
