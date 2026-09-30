@@ -238,7 +238,9 @@
               [label]="'Unlock' | translate"
               (onClick)="unlock(disk)"
             ></tn-button>
+          }
 
+          @if (canResetSed(disk)) {
             <tn-button
               *ixRequiresRoles="requiredRoles"
               icon="mdi-restart"
