@@ -7,7 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
-import { of, throwError } from 'rxjs';
+import { NEVER, of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -71,7 +71,9 @@ describe('SupportCardComponent', () => {
       mockProvider(MatDialog),
       mockProvider(DialogService),
       mockProvider(MatSnackBar),
-      mockProvider(SlideIn),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => NEVER),
+      }),
       mockProvider(LocaleService, {
         getPreferredDateFormat: jest.fn(() => 'yyyy-MM-dd'),
       }),
@@ -169,6 +171,19 @@ describe('SupportCardComponent', () => {
         await enableButton.click();
 
         expect(slideIn.open).toHaveBeenCalledWith(ProactiveComponent, { wide: true });
+      });
+
+      it('re-checks proactive support status after the slide-in closes', async () => {
+        jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(of({ response: true }));
+        const api = spectator.inject(ApiService);
+        jest.spyOn(api, 'call').mockImplementation(() => of(true));
+
+        const enableButton = await loader.getHarness(MatButtonHarness.with({ text: 'Enable' }));
+        await enableButton.click();
+
+        expect(api.call).toHaveBeenCalledWith('support.is_available');
+        expect(api.call).toHaveBeenCalledWith('support.is_available_and_enabled');
+        expect(spectator.query('.support-banner.proactive')).not.toExist();
       });
 
       it('hides proactive support banner when enabled', () => {
