@@ -91,6 +91,9 @@ export const migratedApiPaths = [
   'src/app/pages/jobs',
   // Nothing here imports a client; `pool-scan-event.helper.ts` names a generated event type.
   'src/app/helpers',
+  // NAS-144116: the SED password choice shared by the VDEVs Extend and Replace dialogs, typed from
+  // the start. The dialogs around it still start their jobs through `ApiService`.
+  'src/app/pages/storage/modules/vdevs/components/sed-disk-password',
 ];
 
 /**
