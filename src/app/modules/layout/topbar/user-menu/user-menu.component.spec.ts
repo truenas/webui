@@ -8,8 +8,8 @@ import {
   TnDialog, TnIconButtonHarness, TnMenuHarness, TnSpriteLoaderService,
 } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { dummyUser } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -34,7 +34,7 @@ describe('UserMenuComponent', () => {
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockApi(),
+      mockTypedApi(),
       mockProvider(AuthService, {
         logout: jest.fn(() => of()),
         getGlobalTwoFactorConfig: jest.fn(() => globalTwoFactorConfig$),

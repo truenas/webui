@@ -351,7 +351,10 @@ above. Each is a change for `truenas/api-client-ts`.
    in 7.0.1.
 5. **Parameterised subscriptions.** `EventName` excludes events that take
    subscription params (`method:param` style, e.g. file tailing), which the
-   legacy `subscribe` supports. Needed before Phase 1 step 4.
+   legacy `subscribe` supports. Needed before Phase 1 step 4. Until then the
+   log tails stay on `ApiService`: `ConsoleMessagesStore` and the job progress
+   dialog's `filesystem.file_tail_follow`, next to `NetworkService`'s
+   `reporting.realtime`.
 6. **Query, message and connection types are not exported.** `QueryFilters`
    and `QueryProjection` are internal, so the wrapper forwards the query verbs
    through `Parameters<>` rather than declaring them; `TrueNasMessage` and
@@ -430,6 +433,15 @@ above. Each is a change for `truenas/api-client-ts`.
     and `ApiDate`. Fix: emit the envelopes in the generator. The same cast is
     where the license's missing top-level `expires_at` would hide, so `License`
     declares it optional; the readers fall back to the `Support` feature's date.
+
+16. **An event model without its `fields` wrapper.** `pool.scan` declares its
+    `changed` payload as `{ name, scan }` at the top level, while middleware
+    sends it under `fields` like every other collection update (the legacy
+    readers take `event.fields.scan` and work). The client forwards the frame
+    untouched, so the generated type names properties that are not there.
+    `poolScanFromEvent` in `app/helpers/pool-scan-event.helper.ts` reads the
+    wire shape once for every consumer. Fix: wrap event payloads in the
+    generator, or correct the model in middleware.
 
 ## Version policy
 

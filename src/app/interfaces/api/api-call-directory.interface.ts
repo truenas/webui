@@ -265,16 +265,12 @@ import {
   UpdateProfileChoices,
   UpdateStatus,
 } from 'app/interfaces/system-update.interface';
-import {
-  TrueCommandConfig, TrueCommandUpdateResponse,
-  UpdateTrueCommand,
-} from 'app/interfaces/true-command-config.interface';
 import { TruenasConnectConfig, TruenasConnectUpdate } from 'app/interfaces/truenas-connect-config.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import {
-  DeleteUserParams, SetPasswordParams, User, UserUpdate,
+  DeleteUserParams, User, UserUpdate,
 } from 'app/interfaces/user.interface';
 import {
   VirtualMachine, VirtualMachineUpdate, VmCloneParams, VmDeleteParams, VmPortWizardResult,
@@ -318,11 +314,8 @@ export interface ApiCallDirectory {
   'acme.dns.authenticator.update': { params: [number, Partial<UpdateDnsAuthenticator>]; response: DnsAuthenticator };
 
   // Alert
-  'alert.dismiss': { params: string[]; response: void };
-  'alert.list': { params: void; response: Alert[] };
   'alert.list_categories': { params: void; response: AlertCategory[] };
   'alert.list_policies': { params: void; response: AlertPolicy[] };
-  'alert.restore': { params: string[]; response: void };
 
   // Alert Classes
   'alertclasses.config': { params: void; response: AlertClasses };
@@ -438,7 +431,6 @@ export interface ApiCallDirectory {
   'core.download': { params: CoreDownloadQuery; response: CoreDownloadResponse };
   'core.get_jobs': { params: QueryParams<Job>; response: Job[] };
   'core.job_abort': { params: [jobId: number]; response: void };
-  'core.job_download_logs': { params: [ id: number, filename: string ]; response: string };
   'core.resize_shell': { params: ResizeShellRequest; response: void };
   'core.subscribe': { params: [name: ApiEventMethod]; response: void };
   'core.unsubscribe': { params: [id: string]; response: void };
@@ -861,8 +853,6 @@ export interface ApiCallDirectory {
   'systemdataset.pool_choices': { params: void; response: Choices };
 
   // Truecommand
-  'truecommand.config': { params: void; response: TrueCommandConfig };
-  'truecommand.update': { params: [Partial<UpdateTrueCommand>]; response: TrueCommandUpdateResponse };
 
   // Truenas Connect
   'tn_connect.config': { params: void; response: TruenasConnectConfig };
@@ -906,7 +896,6 @@ export interface ApiCallDirectory {
   'user.query': { params: QueryParams<User>; response: User[] };
   'user.renew_2fa_secret': { params: [string, { interval: number; otp_digits: number }]; response: User };
   'user.unset_2fa_secret': { params: [string]; response: User };
-  'user.set_password': { params: [SetPasswordParams]; response: void };
   'user.setup_local_administrator': { params: [userName: string, password: string, ec2?: { instance_id: string }]; response: void };
   'user.shell_choices': { params: [ids: number[]]; response: Choices };
 

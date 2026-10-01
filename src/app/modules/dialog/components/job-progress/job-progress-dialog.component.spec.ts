@@ -4,7 +4,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnDialogHarness, TnIconButtonHarness, TnProgressBarComponent } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import {
@@ -13,6 +13,7 @@ import {
 } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 describe('JobProgressDialogComponent', () => {
   let spectator: Spectator<JobProgressDialog<unknown>>;
@@ -22,8 +23,8 @@ describe('JobProgressDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: JobProgressDialog<unknown>,
     providers: [
-      mockApi([
-        mockCall('core.job_abort'),
+      mockTypedApi([
+        mockTypedCall('core.job_abort', null),
       ]),
       mockProvider(DialogRef),
     ],
@@ -164,7 +165,7 @@ describe('JobProgressDialogComponent', () => {
       const abortButton = await loader.getHarness(TnButtonHarness.with({ label: 'Abort' }));
       await abortButton.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.job_abort', [testJob.id]);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('core.job_abort', [testJob.id]);
 
       const abortingButton = await loader.getHarness(TnButtonHarness.with({ label: 'Aborting...' }));
       expect(await abortingButton.isDisabled()).toBe(true);
@@ -240,6 +241,7 @@ describe('JobProgressDialogComponent', () => {
 
       spectator = createComponent({
         providers: [
+          // The log tail stays on the legacy client (gap 5).
           mockProvider(ApiService, {
             subscribe: jest.fn(() => of({
               fields: {

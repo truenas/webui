@@ -295,9 +295,9 @@ describe('ApiService', () => {
 
   describe('subscribe', () => {
     it('should successfully subscribe', () => {
-      spectator.service.subscribe('alert.list').subscribe();
+      spectator.service.subscribe('pool.scan').subscribe();
 
-      expect(spectator.inject(SubscriptionManagerService).subscribe).toHaveBeenCalledWith('alert.list');
+      expect(spectator.inject(SubscriptionManagerService).subscribe).toHaveBeenCalledWith('pool.scan');
     });
   });
 

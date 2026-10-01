@@ -9,8 +9,9 @@ import { TnAutocompleteHarness, TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -37,9 +38,8 @@ describe('RaidzExtendDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockJob('pool.attach', fakeSuccessfulJob()),
-        mockCall('disk.details', {
+      mockTypedApi([
+        mockTypedCall('disk.details', {
           unused: [
             {
               devname: 'sde',
@@ -54,6 +54,9 @@ describe('RaidzExtendDialogComponent', () => {
           ] as DetailsDisk[],
           used: [],
         }),
+      ]),
+      mockApi([
+        mockJob('pool.attach', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogRef),
       mockProvider(SnackbarService),

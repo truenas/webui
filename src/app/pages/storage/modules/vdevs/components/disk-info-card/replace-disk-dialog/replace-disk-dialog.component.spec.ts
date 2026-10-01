@@ -7,8 +7,9 @@ import { TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnDialogHarn
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
@@ -29,13 +30,15 @@ describe('ReplaceDiskDialogComponent', () => {
       UnusedDiskSelectComponent,
     ],
     providers: [
-      mockApi([
-        mockCall('disk.details', {
+      mockTypedApi([
+        mockTypedCall('disk.details', {
           unused: [
             { devname: 'sdb', identifier: '{serial_lunid}BBBBB1', size: 10 * GiB },
           ] as DetailsDisk[],
           used: [],
         }),
+      ]),
+      mockApi([
         mockJob('pool.replace', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogRef),

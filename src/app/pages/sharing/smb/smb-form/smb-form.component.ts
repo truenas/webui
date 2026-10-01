@@ -33,7 +33,6 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { mapToOptionsWithHoverTooltips } from 'app/helpers/options.helper';
 import { helptextSharingSmb } from 'app/helptext/sharing';
-import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import {
@@ -45,7 +44,7 @@ import {
 } from 'app/interfaces/smb-share.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
+import { ExplorerCreateDatasetComponent, ExplorerDatasetProperties } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
@@ -171,7 +170,7 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
 
   title: string = helptextSharingSmb.formTitleAdd;
 
-  createDatasetProps: Omit<DatasetCreate, 'name'> = {
+  createDatasetProps: ExplorerDatasetProperties = {
     share_type: DatasetPreset.Smb,
   };
 

@@ -1,20 +1,26 @@
 import { ChangeDetectionStrategy, Component, forwardRef, inject, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
+import { v27_0_0 } from '@truenas/api-client';
 import { firstValueFrom, MonoTypeOperatorFunction } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { maxDatasetPath } from 'app/constants/dataset.constants';
 import { nameValidatorRegex } from 'app/constants/name-validator.constant';
 import { DatasetCaseSensitivity, DatasetPreset } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
-import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ExplorerCreateAction } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-action';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
-export const genericCreateDatasetProps: Omit<DatasetCreate, 'name'> = {
+/** What a host presets on the datasets the picker creates. The name comes from the inline row. */
+export type ExplorerDatasetProperties = Omit<v27_0_0.PoolDatasetCreateFilesystem, 'name'>;
+
+type DatasetEntry = WebUiQueryEntity<'pool.dataset.query'>;
+
+export const genericCreateDatasetProps: ExplorerDatasetProperties = {
   share_type: DatasetPreset.Generic,
 };
 
@@ -34,12 +40,12 @@ export const genericCreateDatasetProps: Omit<DatasetCreate, 'name'> = {
 })
 export class ExplorerCreateDatasetComponent implements ExplorerCreateAction {
   private explorer = inject(IxExplorerComponent);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private authService = inject(AuthService);
   private errorParser = inject(ErrorParserService);
 
-  readonly datasetProperties = input<Omit<DatasetCreate, 'name'>>(genericCreateDatasetProps);
+  readonly datasetProperties = input<ExplorerDatasetProperties>(genericCreateDatasetProps);
 
   readonly id = 'create-dataset';
   readonly label = this.translate.instant('Create Dataset');
@@ -68,35 +74,42 @@ export class ExplorerCreateDatasetComponent implements ExplorerCreateAction {
     const datasetName = name.trim();
 
     const parents = await firstValueFrom(
-      this.api.call('pool.dataset.query', [[['id', '=', parentId]]]).pipe(this.toInlineError()),
+      this.api.query('pool.dataset.query', [['id', '=', parentId]]).pipe(this.toInlineError()),
     );
     if (!parents.length) {
       throw new Error(this.translate.instant('Parent dataset {name} not found.', { name: parentId }));
     }
     const parent = parents[0];
-    this.validateName(parent, datasetName);
+    this.validateName(parentId, parent, datasetName);
 
+    const fullName = `${parentId}/${datasetName}`;
     const dataset = await firstValueFrom(
       this.api.call('pool.dataset.create', [{
         ...this.datasetProperties(),
-        name: `${parent.name}/${datasetName}`,
+        name: fullName,
       }]).pipe(this.toInlineError()),
     );
-    return dataset.mountpoint;
+    // Optional in the generated entry; a new filesystem is always mounted under /mnt.
+    return dataset.mountpoint ?? `/mnt/${fullName}`;
   }
 
-  private validateName(parent: Dataset, name: string): void {
+  /** `parentName` is the parent's id, which for a dataset is its name. */
+  private validateName(parentName: string, parent: DatasetEntry, name: string): void {
     if (!nameValidatorRegex.test(name)) {
       throw new Error(this.translate.instant('Name is invalid.'));
     }
 
-    if (parent.name.length + 1 + name.length >= maxDatasetPath) {
+    if (parentName.length + 1 + name.length >= maxDatasetPath) {
       throw new Error(this.translate.instant('Dataset name is too long.'));
     }
 
-    const isNameCaseInsensitive = parent.casesensitivity.value !== DatasetCaseSensitivity.Sensitive;
-    const namesInUse = (parent.children || [])
-      .map((child) => /[^/]*$/.exec(child.name)?.[0])
+    // Middleware types the property value as an open string; it is one of the enum's values.
+    const caseSensitivity = parent.casesensitivity?.value as DatasetCaseSensitivity | undefined;
+    const isNameCaseInsensitive = caseSensitivity !== DatasetCaseSensitivity.Sensitive;
+    // Middleware types nested children as `unknown[]`; they are dataset entries like the parent.
+    const children = (parent.children ?? []) as DatasetEntry[];
+    const namesInUse = children
+      .map((child) => /[^/]*$/.exec(child.name ?? '')?.[0])
       .filter((childName): childName is string => childName !== undefined);
     const isInUse = isNameCaseInsensitive
       ? namesInUse.some((usedName) => usedName.toLowerCase() === name.toLowerCase())

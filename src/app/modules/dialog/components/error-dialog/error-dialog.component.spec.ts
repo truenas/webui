@@ -7,11 +7,11 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { ErrorDialog } from 'app/modules/dialog/components/error-dialog/error-dialog.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DownloadService } from 'app/services/download.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -30,8 +30,8 @@ describe('ErrorDialog', () => {
   const createComponent = createComponentFactory({
     component: ErrorDialog,
     providers: [
-      mockApi([
-        mockCall('core.job_download_logs', '/logs/logs.log'),
+      mockTypedApi([
+        mockTypedCall('core.job_download_logs', '/logs/logs.log'),
       ]),
       mockProvider(DownloadService, {
         streamDownloadFile: jest.fn(() => of(new Blob())),
@@ -104,7 +104,7 @@ describe('ErrorDialog', () => {
       const downloadButton = await loader.getHarness(TnButtonHarness.with({ label: 'Download Logs' }));
       await downloadButton.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.job_download_logs', [1, '1.log']);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('core.job_download_logs', [1, '1.log']);
       expect(spectator.inject(DownloadService).streamDownloadFile).toHaveBeenCalledWith('/logs/logs.log', '1.log', 'text/plain');
       expect(spectator.inject(DownloadService).downloadBlob).toHaveBeenCalledWith(expect.any(Blob), '1.log');
     });

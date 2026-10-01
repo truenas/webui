@@ -5,8 +5,8 @@ import { Store, StoreModule } from '@ngrx/store';
 import { TnIconButtonHarness } from '@truenas/ui-components';
 import { ngMocks } from 'ng-mocks';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertWithDuplicates } from 'app/interfaces/smart-alert.interface';
@@ -62,9 +62,9 @@ describe('AlertComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('alert.dismiss'),
-        mockCall('alert.restore'),
+      mockTypedApi([
+        mockTypedCall('alert.dismiss', null),
+        mockTypedCall('alert.restore', null),
       ]),
     ],
   });

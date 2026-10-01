@@ -75,6 +75,22 @@ export const migratedApiPaths = [
   // NAS-143994: the root NgRx effects — system info and config, entitlements, HA, reboot info,
   // services, EULA, network check-in and preferences.
   'src/app/store',
+  // NAS-143995: the shared modules — alerts, dialogs, the top bar, form controls and TrueCommand.
+  // `modules/dialog` and `modules/layout` are pinned below their roots: the job progress dialog
+  // and the console footer tail logs through `filesystem.file_tail_follow`, an event source the
+  // typed client cannot subscribe to yet (gap 5).
+  'src/app/modules/alerts',
+  'src/app/modules/dialog/components/error-dialog',
+  'src/app/modules/dialog/components/multi-error-dialog',
+  'src/app/modules/dialog/components/show-logs-dialog',
+  'src/app/modules/dialog/components/start-service-dialog',
+  'src/app/modules/forms',
+  'src/app/modules/layout/topbar',
+  'src/app/modules/truecommand',
+  // Its only legacy dependant was a spec mocking `core.job_download_logs` for the logs dialog.
+  'src/app/pages/jobs',
+  // Nothing here imports a client; `pool-scan-event.helper.ts` names a generated event type.
+  'src/app/helpers',
 ];
 
 /**

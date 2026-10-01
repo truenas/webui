@@ -6,8 +6,9 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent, TnProgressBarComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
+import { poolScanFromEvent } from 'app/helpers/pool-scan-event.helper';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Component({
   selector: 'ix-resilver-progress',
@@ -26,7 +27,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 export class ResilverProgressDialog implements OnInit {
   protected dialogRef = inject<DialogRef<string, ResilverProgressDialog>>(DialogRef);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
@@ -45,12 +46,12 @@ export class ResilverProgressDialog implements OnInit {
 
   ngOnInit(): void {
     this.api.subscribe('pool.scan').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
-      // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-      if (!event || !event.fields.scan.function.includes(PoolScanFunction.Resilver)) {
+      const poolScan = poolScanFromEvent(event);
+      if (!poolScan?.scan.function.includes(PoolScanFunction.Resilver)) {
         return;
       }
 
-      this.resilveringDetails = event.fields;
+      this.resilveringDetails = poolScan;
       this.diskName = this.resilveringDetails.name;
       this.progressTotalPercent = this.resilveringDetails.scan.percentage;
       this.state = this.resilveringDetails.scan.state;

@@ -5,9 +5,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import {
   Spectator, createComponentFactory, mockProvider, SpectatorFactory,
 } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnDialog, TnIconButtonHarness, TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -16,8 +17,9 @@ import {
 } from 'app/modules/truecommand/components/truecommand-signup-modal/truecommand-signup-modal.component';
 import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal/truecommand-status-modal.component';
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
-function getFakeConfig(overrides: Partial<TrueCommandConfig>): TrueCommandConfig {
+function getFakeConfig(overrides: Partial<TrueCommandConfig>): CallResponse<WebUiApiDirectory, 'truecommand.config'> {
   return {
     api_key: null,
     status: TrueCommandStatus.Disabled,
@@ -27,7 +29,7 @@ function getFakeConfig(overrides: Partial<TrueCommandConfig>): TrueCommandConfig
     remote_url: 'remote_url string',
     status_reason: 'status_reason string',
     ...overrides,
-  };
+  } as CallResponse<WebUiApiDirectory, 'truecommand.config'>;
 }
 
 describe('TruecommandButtonComponent', () => {
@@ -44,8 +46,8 @@ describe('TruecommandButtonComponent', () => {
         TruecommandStatusModalComponent,
       ],
       providers: [
-        mockApi([
-          mockCall('truecommand.config', getFakeConfig(config)),
+        mockTypedApi([
+          mockTypedCall('truecommand.config', getFakeConfig(config)),
         ]),
         mockProvider(DialogService, {
           generalDialog: jest.fn(() => of()),
@@ -66,8 +68,10 @@ describe('TruecommandButtonComponent', () => {
     describe(`For status '${status}'`, () => {
       const createComponent = createComponentWithData({ status });
 
-      beforeEach(() => {
+      beforeEach(async () => {
         spectator = createComponent();
+        await spectator.fixture.whenStable();
+        spectator.detectChanges();
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         dialogServiceMock = spectator.inject(DialogService);
       });
@@ -128,8 +132,10 @@ describe('TruecommandButtonComponent', () => {
         status, api_key: apiKey, enabled, status_reason: statusReason,
       });
 
-      beforeEach(() => {
+      beforeEach(async () => {
         spectator = createComponent();
+        await spectator.fixture.whenStable();
+        spectator.detectChanges();
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         dialogServiceMock = spectator.inject(DialogService);
 

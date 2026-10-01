@@ -12,6 +12,7 @@ import { TaskState } from 'app/enums/task-state.enum';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface JobProgressDialogConfig<Result> {
@@ -58,7 +59,12 @@ export interface JobProgressDialogConfig<Result> {
 export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
   private dialogRef = inject<DialogRef<void, JobProgressDialog<T>>>(DialogRef);
   data = inject<JobProgressDialogConfig<T>>(DIALOG_DATA);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
+  /**
+   * Only for tailing the job's log: `filesystem.file_tail_follow` is an event source, which takes
+   * subscription params (gap 5 in docs/devs/typed-api-client.md).
+   */
+  private legacyApi = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   readonly destroyRef = inject(DestroyRef);
@@ -203,7 +209,7 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
   private getRealtimeLogs(): Subscription {
     this.realtimeLogsSubscribed = true;
     this.cdr.markForCheck();
-    return this.api.subscribe(`filesystem.file_tail_follow:${JSON.stringify({ path: this.job.logs_path })}`)
+    return this.legacyApi.subscribe(`filesystem.file_tail_follow:${JSON.stringify({ path: this.job.logs_path })}`)
       .pipe(map((apiEvent) => apiEvent.fields), takeUntilDestroyed(this.destroyRef))
       .subscribe((logs) => {
         if (logs?.data && typeof logs.data === 'string') {
