@@ -7,8 +7,7 @@
     <tn-list>
       <div [tnTooltip]="shellTooltip() | translate">
         <tn-list-item
-          tnTestIdType="link"
-          [tnTestId]="'open-shell'"
+          [testId]="['link', 'open-shell']"
           [class.is-clickable]="canOpenShell()"
           [clickable]="canOpenShell()"
           [disabled]="!canOpenShell()"

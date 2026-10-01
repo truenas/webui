@@ -1,5 +1,6 @@
 /* eslint-disable max-classes-per-file */
-import { OverlayContainer } from '@angular/cdk/overlay';
+import { Overlay, OverlayContainer } from '@angular/cdk/overlay';
+import { DomPortal } from '@angular/cdk/portal';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
@@ -185,11 +186,11 @@ describe('FormSidePanelService', () => {
     expect(await panel.getContentText()).toContain('nfs form body');
   });
 
-  // `tn-side-panel` portals its overlay to `document.body`, where it and the CDK overlay container
-  // are siblings with fixed z-indexes — so a panel opened from an already-open dialog (Manage Hosts
-  // → Edit) rendered under that dialog's backdrop. Inside the container they stack by DOM order
-  // instead, i.e. by open order, which works in both directions. See NAS-143761.
-  it('re-homes the panel overlay into the CDK overlay container, after overlays already open', () => {
+  // A panel opened from an already-open dialog (Manage Hosts → Edit) once rendered under that
+  // dialog's backdrop, invisible and click-blocked (NAS-143761). `tn-side-panel` now attaches
+  // through CDK's `Overlay` when it opens, so open order decides — pinned here so a library change
+  // can't quietly reintroduce it.
+  it('stacks the panel above an overlay that was already open', async () => {
     const cdkContainer = TestBed.inject(OverlayContainer).getContainerElement();
     // Stand in for a dialog that was already open when the panel opened.
     const alreadyOpen = document.createElement('div');
@@ -198,51 +199,40 @@ describe('FormSidePanelService', () => {
 
     service.open(TestFormComponent, { title: 'NFS' });
     fixture.detectChanges();
+    expect(await (await rootLoader.getHarness(TnSidePanelHarness)).isOpen()).toBe(true);
 
     const overlay = document.querySelector('.tn-side-panel__overlay');
-    expect(overlay?.parentElement).toBe(cdkContainer);
-    // `_tn-styles.scss` restores `pointer-events` on this library-private modifier, because the
-    // container it now sits in is `pointer-events: none` and the property inherits. Pinned here so
-    // a rename upstream fails loudly instead of leaving every panel click-through (jsdom does no
-    // hit-testing, so nothing else in the suite would notice).
-    expect(overlay?.classList.contains('tn-side-panel__overlay--open')).toBe(true);
-    expect(Array.from(cdkContainer.children).indexOf(overlay)).toBeGreaterThan(
-      Array.from(cdkContainer.children).indexOf(alreadyOpen),
-    );
+    expect(cdkContainer.contains(overlay)).toBe(true);
+    expect(alreadyOpen.compareDocumentPosition(overlay!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
-  // Escape must close the panel ONLY. CDK's OverlayKeyboardDispatcher listens on `body` in the
-  // bubble phase and routes the key to the topmost overlay it knows about — and it does not know
-  // about the panel, which `tn-side-panel` portals itself rather than creating through
-  // `Overlay.create()`. So with a dialog open underneath (Manage Hosts → Edit), an Escape that
-  // reached `body` would close the DIALOG, landing the user back on the Subsystems screen: the
-  // very symptom of NAS-143761, by another route. It does not, because the library stops
-  // propagation on the panel element, below `body` — pinned here so a library change can't
-  // quietly reintroduce it.
-  it('handles Escape itself, without letting it bubble to the CDK dispatcher on body', async () => {
-    // Angular dev-mode logs "signal read during notification phase" on this path: `tn-side-panel`
-    // writes its `open` model from inside its own output handler, so the container re-renders
-    // mid-notification. Pre-existing and unrelated to the re-homing — it reproduces with
-    // `moveOverlayIntoCdkContainer()` disabled — so keep it from failing the suite here.
-    jest.spyOn(console, 'error').mockImplementation();
+  // The other half of NAS-143761: with a dialog open underneath (Manage Hosts → Edit), Escape must
+  // close the panel ONLY. CDK's keyboard dispatcher delivers it to the topmost attached overlay, so
+  // the dialog's overlay must never see it.
+  it('closes the panel on Escape without passing it to an overlay open underneath', async () => {
+    const underneathElement = document.createElement('div');
+    document.body.appendChild(underneathElement);
+    const underneath = TestBed.inject(Overlay).create();
+    underneath.attach(new DomPortal(underneathElement));
+    const underneathKeydown = jest.fn();
+    underneath.keydownEvents().subscribe(underneathKeydown);
 
     service.open(TestFormComponent, { title: 'NFS' });
     fixture.detectChanges();
+    const panel = await rootLoader.getHarness(TnSidePanelHarness);
+    expect(await panel.isOpen()).toBe(true);
 
-    const bodyKeydown = jest.fn();
-    document.body.addEventListener('keydown', bodyKeydown);
     fixture.ngZone?.run(() => {
       document.querySelector('.tn-side-panel__content')
         ?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     });
     await fixture.whenStable();
     fixture.detectChanges();
-    document.body.removeEventListener('keydown', bodyKeydown);
 
-    expect(bodyKeydown).not.toHaveBeenCalled();
-    // ...and the panel itself did react, so Escape is handled, not merely swallowed.
-    expect(document.querySelector('.tn-side-panel__overlay')?.classList)
-      .not.toContain('tn-side-panel__overlay--open');
+    expect(await panel.isOpen()).toBe(false);
+    expect(underneathKeydown).not.toHaveBeenCalled();
+    expect(underneath.hasAttached()).toBe(true);
+    underneath.dispose();
   });
 
   it('submits the form and resolves onSuccess when Save is clicked', async () => {

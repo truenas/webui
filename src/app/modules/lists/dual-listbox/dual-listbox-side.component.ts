@@ -107,10 +107,12 @@ export class DualListBoxSideComponent<T> {
    * Joined here rather than passed as segments so the binding compares by value
    * — see the note in the template. `kebabTestSegment` splits on every
    * non-alphanumeric run, so joining with `-` and normalizing once produces the
-   * same id as normalizing each segment and joining would.
+   * same id as normalizing each segment and joining would. It includes the
+   * `list-item-` prefix because `tn-list-item`'s `[testId]` writes its base
+   * verbatim instead of prefixing a type.
    */
   protected itemTestId(item: T): string {
-    return `${this.listType()}-${this.side().displayOf(item)}`;
+    return `list-item-${this.listType()}-${this.side().displayOf(item)}`;
   }
 
   protected trackByKey(index: number, item: T): unknown {

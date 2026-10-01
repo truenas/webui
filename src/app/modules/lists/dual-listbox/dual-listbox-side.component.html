@@ -79,15 +79,14 @@
         the binding's `Object.is` guard and re-runs the test-id directive's
         effect for every rendered item on every check — on a list this one is
         built to keep O(n) work off. A string compares by value, so the write
-        happens once. The composed id is unchanged either way; see
-        `itemTestId`.
+        happens once. `tn-list-item` writes the value verbatim, with no type
+        prefix, so `itemTestId` carries the `list-item-` itself.
       -->
       <tn-list-item
         #listItem
         cdkDrag
-        tnTestIdType="list-item"
         [wrap]="true"
-        [tnTestId]="itemTestId(item)"
+        [testId]="itemTestId(item)"
         [attr.role]="'option'"
         [attr.aria-selected]="side().isSelected(item)"
         [attr.tabindex]="idx === side().tabStop() ? 0 : -1"

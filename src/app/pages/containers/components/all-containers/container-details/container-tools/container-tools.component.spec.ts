@@ -55,6 +55,7 @@ describe('ContainerToolsComponent', () => {
   describe('shell', () => {
     it('shows a Shell row with a trailing icon', async () => {
       expect(spectator.query('tn-list-item')).toHaveText('Shell');
+      expect(spectator.query('tn-list-item')).toHaveAttribute('data-test', 'link-open-shell');
 
       const icon = await loader.getHarness(TnIconHarness);
       expect(await icon.getName()).toBe('console-line');
