@@ -4,12 +4,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnBannerHarness, TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { BehaviorSubject, of, Subject } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   SetAdminPasswordFormComponent,
 } from 'app/pages/signin/set-admin-password-form/set-admin-password-form.component';
@@ -26,8 +26,8 @@ describe('SetAdminPasswordFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockCall('user.setup_local_administrator'),
+      mockTypedApi([
+        mockTypedCall('user.setup_local_administrator', null),
       ]),
       mockProvider(SigninStore, {
         // Kept live, like the real store, so the submit button's in-flight label can be asserted.
@@ -87,8 +87,8 @@ describe('SetAdminPasswordFormComponent', () => {
     const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Sign In' }));
     await submitButton.click();
 
-    const api = spectator.inject(ApiService);
-    expect(api.call).toHaveBeenCalledWith('user.setup_local_administrator', ['truenas_admin', '12345678']);
+    const api = spectator.inject(TypedApiService);
+    expect(api.callUnauthenticated).toHaveBeenCalledWith('user.setup_local_administrator', ['truenas_admin', '12345678']);
     const authService = spectator.inject(AuthService);
     expect(authService.login).toHaveBeenCalledWith('truenas_admin', '12345678');
 

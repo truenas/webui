@@ -20,7 +20,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { PaginationServerSide } from 'app/modules/tn-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/tn-table/classes/api-data-provider/sorting-server-side.class';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { auditElements } from 'app/pages/audit/audit.elements';
 import { auditDisplayedColumns, AuditListComponent } from 'app/pages/audit/components/audit-list/audit-list.component';
 import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details-panel/log-details-panel.component';
@@ -52,7 +52,7 @@ const messageTimestampColumnIndex = auditDisplayedColumns.indexOf('message_times
   ],
 })
 export class AuditComponent implements OnInit, OnDestroy {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);

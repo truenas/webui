@@ -95,7 +95,6 @@ import { DirectoryServicesUpdate, DirectoryServicesUpdateResponse } from 'app/in
 import {
   Disk, DiskDetailsResponse,
   DiskTemperatureAgg,
-  DiskTemperatures,
   DiskUpdate,
   ExtraDiskQueryOptions, DiskDetailsParams,
 } from 'app/interfaces/disk.interface';
@@ -222,14 +221,6 @@ import {
   ReplicationCreate,
   ReplicationTask,
 } from 'app/interfaces/replication-task.interface';
-import {
-  ReportingExporter, ReportingExporterSchema, UpdateReportingExporter,
-} from 'app/interfaces/reporting-exporters.interface';
-import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
-import {
-  ReportingData,
-  ReportingQueryParams,
-} from 'app/interfaces/reporting.interface';
 import { ResilverConfig, ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import {
@@ -463,7 +454,6 @@ export interface ApiCallDirectory {
   'disk.reset_sed': { params: [params: { name: string; psid: string }]; response: void };
   'disk.temperature_agg': { params: [disks: string[], days: number]; response: DiskTemperatureAgg };
   'disk.temperature_alerts': { params: [disks: string[]]; response: Alert[] };
-  'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };
   'disk.unlock_sed': { params: [params: { name: string; password: string }]; response: void };
   'disk.update': { params: [id: string, update: Partial<DiskUpdate>]; response: Disk };
 
@@ -746,13 +736,6 @@ export interface ApiCallDirectory {
   'replication.update': { params: [id: number, update: Partial<ReplicationCreate>]; response: ReplicationTask };
 
   // Reporting
-  'reporting.exporters.create': { params: [UpdateReportingExporter]; response: ReportingExporter };
-  'reporting.exporters.delete': { params: [id: number]; response: boolean };
-  'reporting.exporters.exporter_schemas': { params: void; response: ReportingExporterSchema[] };
-  'reporting.exporters.query': { params: QueryParams<ReportingExporter>; response: ReportingExporter[] };
-  'reporting.exporters.update': { params: [number, Partial<UpdateReportingExporter>]; response: ReportingExporter };
-  'reporting.netdata_get_data': { params: ReportingQueryParams; response: ReportingData[] };
-  'reporting.netdata_graphs': { params: QueryParams<ReportingGraph>; response: ReportingGraph[] };
 
   // Rsynctask
   'rsynctask.create': { params: [RsyncTaskUpdate]; response: RsyncTask };
@@ -835,7 +818,6 @@ export interface ApiCallDirectory {
   'system.advanced.syslog_certificate_choices': { params: void; response: Choices };
   'system.advanced.update': { params: [Partial<AdvancedConfigUpdate>]; response: AdvancedConfig };
   'system.advanced.update_gpu_pci_ids': { params: [isolated_gpu_pci_ids: string[]]; response: void };
-  'system.advanced.login_banner': { params: void; response: string };
   'system.boot_id': { params: void; response: string };
   'system.general.config': { params: void; response: SystemGeneralConfig };
   'system.general.ui_restart': { params: void; response: void };
@@ -869,7 +851,6 @@ export interface ApiCallDirectory {
     params: [license: string, options?: { ha_propagate?: boolean }];
     response: void;
   };
-  'truenas.managed_by_truecommand': { params: void; response: boolean };
 
   // Tunable
   'tunable.query': { params: QueryParams<Tunable>; response: Tunable[] };
@@ -892,11 +873,9 @@ export interface ApiCallDirectory {
   'user.update': { params: [id: number, update: Partial<UserUpdate>]; response: User };
   'user.delete': { params: DeleteUserParams; response: number };
   'user.get_next_uid': { params: void; response: number };
-  'user.has_local_administrator_set_up': { params: void; response: boolean };
   'user.query': { params: QueryParams<User>; response: User[] };
   'user.renew_2fa_secret': { params: [string, { interval: number; otp_digits: number }]; response: User };
   'user.unset_2fa_secret': { params: [string]; response: User };
-  'user.setup_local_administrator': { params: [userName: string, password: string, ec2?: { instance_id: string }]; response: void };
   'user.shell_choices': { params: [ids: number[]]; response: Choices };
 
   // Container

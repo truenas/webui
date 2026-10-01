@@ -35,7 +35,7 @@ import { SearchProperty } from 'app/modules/forms/search-input/types/search-prop
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { dateProperty, searchProperties, textProperty } from 'app/modules/forms/search-input/utils/search-properties.utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
 import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.service';
 
@@ -86,7 +86,7 @@ interface UsernameSource {
   ],
 })
 export class AuditSearchComponent implements OnInit, AfterViewInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private activatedRoute = inject(ActivatedRoute);
   private urlOptionsService = inject(UrlOptionsService);
   private translate = inject(TranslateService);
@@ -107,7 +107,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
 
   private readonly viewInitialized$ = new ReplaySubject<void>(1);
 
-  private userSuggestions$ = this.api.call('user.query').pipe(
+  private userSuggestions$ = this.api.query('user.query').pipe(
     map((users) => this.mapUsersForSuggestions(users)),
     take(1),
     shareReplay({ refCount: true, bufferSize: 1 }),

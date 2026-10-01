@@ -6,14 +6,13 @@ import { Store } from '@ngrx/store';
 import {
   BehaviorSubject, firstValueFrom, of, throwError,
 } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -26,7 +25,7 @@ import { failoverLicensedStatusLoaded } from 'app/store/ha-info/ha-info.actions'
 
 describe('SigninStore', () => {
   let spectator: SpectatorService<SigninStore>;
-  let api: MockApiService;
+  let api: MockTypedApiService;
   let authService: AuthService;
 
   const isTokenWithinTimeline$ = new BehaviorSubject<boolean>(true);
@@ -44,10 +43,10 @@ describe('SigninStore', () => {
   const createService = createServiceFactory({
     service: SigninStore,
     providers: [
-      mockApi([
-        mockCall('user.has_local_administrator_set_up', true),
-        mockCall('auth.twofactor.config', { enabled: false } as GlobalTwoFactorConfig),
-        mockCall('system.advanced.login_banner', ''),
+      mockTypedApi([
+        mockTypedCall('user.has_local_administrator_set_up', true),
+        mockTypedCall('auth.twofactor.config', { enabled: false } as GlobalTwoFactorConfig),
+        mockTypedCall('system.advanced.login_banner', ''),
       ]),
       mockProvider(WebSocketStatusService, {
         isConnected$: of(true),
@@ -100,7 +99,7 @@ describe('SigninStore', () => {
 
   beforeEach(() => {
     spectator = createService();
-    api = spectator.inject(MockApiService);
+    api = spectator.inject(MockTypedApiService);
     authService = spectator.inject(AuthService);
   });
 
@@ -152,7 +151,6 @@ describe('SigninStore', () => {
 
   describe('handleSuccessfulLogin', () => {
     it('redirects user to dashboard by default', () => {
-      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValueOnce(of({ enabled: false }));
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigateByUrl');
       // Mock user$ to emit a user
@@ -208,7 +206,6 @@ describe('SigninStore', () => {
     });
 
     it('redirects user to url stored in sessionStorage', () => {
-      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValueOnce(of({ enabled: false }));
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigateByUrl');
       jest.spyOn(spectator.inject<Window>(WINDOW).sessionStorage, 'getItem').mockReturnValue('/some-url');
@@ -225,7 +222,6 @@ describe('SigninStore', () => {
     });
 
     it('redirects url to url stored in sessionStorage cropping out token query param', () => {
-      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValueOnce(of({ enabled: false }));
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigateByUrl');
       jest.spyOn(spectator.inject<Window>(WINDOW).sessionStorage, 'getItem').mockReturnValue('/some-url?token=123');
@@ -286,8 +282,8 @@ describe('SigninStore', () => {
       });
 
       // Verify API calls were made
-      expect(api.call).toHaveBeenCalledWith('user.has_local_administrator_set_up');
-      expect(api.call).toHaveBeenCalledWith('system.advanced.login_banner');
+      expect(api.callUnauthenticated).toHaveBeenCalledWith('user.has_local_administrator_set_up');
+      expect(api.callUnauthenticated).toHaveBeenCalledWith('system.advanced.login_banner');
 
       // Verify the state was updated
       const state = await firstValueFrom(spectator.service.state$);
@@ -323,9 +319,13 @@ describe('SigninStore', () => {
       expect(loginWithTokenSpy).toHaveBeenCalled();
     });
 
-    it('should not call "loginWithToken" if token is not within timeline and clear auth token and queryToken is null', () => {
+    it('should not call "loginWithToken" if token is not within timeline and clear auth token and queryToken is null', async () => {
       isTokenWithinTimeline$.next(false);
       spectator.service.init();
+      // The typed double answers on a microtask.
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve);
+      });
 
       expect(authService.clearAuthToken).toHaveBeenCalled();
       expect(authService.loginWithToken).not.toHaveBeenCalled();
@@ -677,7 +677,6 @@ describe('SigninStore', () => {
     it('performs failover checks on successful login via handleSuccessfulLogin', async () => {
       const failoverValidation = spectator.inject(FailoverValidationService);
       jest.spyOn(authService, 'initializeSession').mockReturnValue(of(LoginResult.Success));
-      jest.spyOn(api, 'call').mockReturnValueOnce(of({ enabled: false }));
       jest.spyOn(spectator.inject(Router), 'navigateByUrl').mockResolvedValue(true);
       // Mock user$ to emit a user
       Object.defineProperty(authService, 'user$', {
@@ -702,7 +701,6 @@ describe('SigninStore', () => {
       jest.spyOn(failoverValidation, 'validateFailover').mockReturnValue(
         of({ success: false, error: 'Failover check failed', isHaLicensed: true }),
       );
-      jest.spyOn(api, 'call').mockReturnValueOnce(of({ enabled: false }));
       jest.spyOn(spectator.service, 'setLoadingState');
       const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'error');
 
@@ -729,7 +727,6 @@ describe('SigninStore', () => {
       });
       const loginWithTokenSpy = jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(LoginResult.Success));
       jest.spyOn(authService, 'initializeSession').mockReturnValue(of(LoginResult.Success));
-      jest.spyOn(api, 'call').mockReturnValueOnce(of({ enabled: false }));
       jest.spyOn(spectator.inject<Window>(WINDOW).sessionStorage, 'getItem').mockReturnValue(null);
       // Mock user$ to emit a user
       Object.defineProperty(authService, 'user$', {
@@ -750,7 +747,7 @@ describe('SigninStore', () => {
       expect(failoverSpy).toHaveBeenCalled();
     });
 
-    it('handles failover validation in init process', () => {
+    it('handles failover validation in init process', async () => {
       const failoverValidation = spectator.inject(FailoverValidationService);
       const activatedRoute = spectator.inject(ActivatedRoute);
       jest.spyOn(activatedRoute.snapshot.queryParamMap, 'get').mockImplementationOnce(() => 'test-token');
@@ -759,9 +756,12 @@ describe('SigninStore', () => {
       jest.spyOn(failoverValidation, 'validateFailover').mockReturnValue(
         of({ success: false, error: 'Failover error', isHaLicensed: true }),
       );
-      jest.spyOn(api, 'call').mockReturnValueOnce(of({ enabled: false }));
 
       spectator.service.init();
+      // The typed double answers on a microtask.
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve);
+      });
 
       expect(authService.setQueryToken).toHaveBeenCalledWith('test-token');
       expect(authService.loginWithToken).toHaveBeenCalled();

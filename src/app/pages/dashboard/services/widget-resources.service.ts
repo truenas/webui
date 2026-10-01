@@ -1,26 +1,56 @@
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { CallResponse } from '@truenas/api-client';
 import { subHours } from 'date-fns';
 import {
-  Observable, Subject, catchError, debounceTime,
+  Observable, OperatorFunction, Subject, catchError, debounceTime,
   filter,
   forkJoin, map, NEVER, of, repeat, shareReplay, startWith, throttleTime, timer,
 } from 'rxjs';
 import { detectStaleData, StaleDataState } from 'app/helpers/operators/detect-stale-data.operator';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
+import { poolScanFromEvent } from 'app/helpers/pool-scan-event.helper';
 import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
+import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
+import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import {
   AllCpusUpdate, MemoryUpdate, AllNetworkInterfacesUpdate, ReportingData,
 } from 'app/interfaces/reporting.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
+import { RsyncTask } from 'app/interfaces/rsync-task.interface';
+import { DashboardSystemInfo } from 'app/interfaces/system-info.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+
+type DashboardSystemInfoResult = CallResponse<WebUiApiDirectory, 'webui.main.dashboard.sys_info'>;
+
+/**
+ * Middleware types the license as an open dictionary and `datetime` as a string, but they are the
+ * `License` that `truenas.license.info` returns and an `ApiTimestamp` envelope (gap 15).
+ */
+function toDashboardSystemInfo(info: DashboardSystemInfoResult): DashboardSystemInfo {
+  return info as unknown as DashboardSystemInfo;
+}
+
+/**
+ * Narrows generated rows to the UI interface the widgets are written against. Both describe the
+ * same wire objects, but the UI's read open strings through its enums (`DiskPowerLevel`,
+ * `CompressionType`, `PoolStatus`), require fields middleware defaults, and still list a few it no
+ * longer sends (`Pool.encrypt*`). Those interfaces are shared far beyond the dashboard, so they
+ * are reconciled with their other readers rather than here.
+ */
+function asUiInterface<T>(): OperatorFunction<unknown, T> {
+  return map((value) => value as T);
+}
 
 export interface PoolUsage {
   available: number;
@@ -40,24 +70,32 @@ export interface PoolUsage {
   providedIn: 'root',
 })
 export class WidgetResourcesService {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
+  /**
+   * For the two event sources the typed client cannot subscribe to: `reporting.realtime` and
+   * `app.stats` take subscription params, so they are not typed event names (gap 5 in
+   * docs/devs/typed-api-client.md).
+   */
+  private legacyApi = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
 
-  readonly realtimeUpdates$ = this.api.subscribe('reporting.realtime');
+  readonly realtimeUpdates$ = this.legacyApi.subscribe('reporting.realtime');
 
   readonly refreshInterval$ = timer(0, 5000).pipe(startWith(0));
   private readonly triggerRefreshDashboardSystemInfo$ = new Subject<void>();
 
   readonly backups$ = forkJoin([
-    this.api.call('replication.query'),
-    this.api.call('rsynctask.query'),
-    this.api.call('cloudsync.query'),
-    this.api.call('cloud_backup.query'),
+    this.api.query('replication.query'),
+    this.api.query('rsynctask.query'),
+    this.api.query('cloudsync.query'),
+    this.api.query('cloud_backup.query'),
   ]).pipe(
+    asUiInterface<[ReplicationTask[], RsyncTask[], CloudSyncTask[], CloudBackup[]]>(),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   readonly dashboardSystemInfo$ = this.api.call('webui.main.dashboard.sys_info').pipe(
+    map((info) => toDashboardSystemInfo(info)),
     repeat({ delay: () => this.triggerRefreshDashboardSystemInfo$ }),
     debounceTime(300),
     toLoadingState(),
@@ -71,23 +109,28 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly networkInterfaces$ = this.api.call('interface.query').pipe(
+  readonly networkInterfaces$ = this.api.query('interface.query').pipe(
+    asUiInterface<NetworkInterface[]>(),
     map((interfaces) => processNetworkInterfaces(interfaces)),
     toLoadingState(),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly installedApps$ = this.api.callAndSubscribe('app.query').pipe(
+  readonly installedApps$ = this.api.queryAndSubscribe('app.query').pipe(
+    asUiInterface<App[]>(),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly pools$ = this.api.callAndSubscribe('pool.query').pipe(
+  readonly pools$ = this.api.queryAndSubscribe('pool.query').pipe(
+    asUiInterface<Pool[]>(),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   // since pool.query doesn't emit events for scan updates, we need to subscribe to
   // the `pool.scan` endpoint to actually receive real-time scrub/resilver updates.
   readonly scans$ = this.api.subscribe('pool.scan').pipe(
+    map((event) => poolScanFromEvent(event)),
+    filter((scan) => scan !== null),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
@@ -108,6 +151,7 @@ export class WidgetResourcesService {
       identifier: interfaceName,
       name: 'interface',
     }], { end, start }]).pipe(
+      asUiInterface<ReportingData[]>(),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }
@@ -120,15 +164,17 @@ export class WidgetResourcesService {
   }
 
   getPoolByName(poolName: string): Observable<Pool> {
-    return this.api.call('pool.query', [[['name', '=', poolName]]]).pipe(
+    return this.api.query('pool.query', [['name', '=', poolName]]).pipe(
+      asUiInterface<Pool[]>(),
       map((pools) => pools[0]),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }
 
   getDisksByPoolId(poolId: string): Observable<Disk[]> {
-    return this.api.call('disk.query', [[], { extra: { pools: true } }]).pipe(
-      map((response) => response.filter((disk: Disk) => disk.pool === poolId)),
+    return this.api.query('disk.query', [], { extra: { pools: true } }).pipe(
+      asUiInterface<Disk[]>(),
+      map((disks) => disks.filter((disk) => disk.pool === poolId)),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }
@@ -148,7 +194,7 @@ export class WidgetResourcesService {
   }
 
   getAppStats(appName: string): Observable<LoadingState<AppStats>> {
-    return this.api.subscribe('app.stats').pipe(
+    return this.legacyApi.subscribe('app.stats').pipe(
       filter(() => Boolean(appName)),
       map((event) => event.fields.find((stats) => stats.app_name === appName)),
       filter((stats) => !!stats),
@@ -159,9 +205,11 @@ export class WidgetResourcesService {
 
   getAppStatusUpdates(appName: string): Observable<Job<void, AppStartQueryParams>> {
     return this.api.subscribe('core.get_jobs').pipe(
-      filter((event) => ['app.start', 'app.stop'].includes(event.fields.method)),
-      filter((event: ApiEvent<Job<void, AppStartQueryParams>>) => event.fields.arguments[0] === appName),
+      filter((event) => event.msg === 'added' || event.msg === 'changed'),
       map((event) => event.fields),
+      filter((job) => ['app.start', 'app.stop'].includes(job.method) && job.arguments[0] === appName),
+      // The client's job is honest about the fields that stay null until the job starts (gap 8).
+      map((job) => job as unknown as Job<void, AppStartQueryParams>),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }
@@ -233,7 +281,6 @@ export class WidgetResourcesService {
    */
   scanUpdatesWithStaleDetection(): Observable<StaleDataState<PoolScan>> {
     return this.scans$.pipe(
-      map((update) => update.fields),
       catchError(() => NEVER),
       detectStaleData(5000),
       shareReplay({ bufferSize: 1, refCount: false }),
