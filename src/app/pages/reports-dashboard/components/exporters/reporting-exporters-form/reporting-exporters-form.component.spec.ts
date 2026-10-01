@@ -6,13 +6,12 @@ import {
   TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { throwError } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SchemaType } from 'app/enums/schema.enum';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
-import { Schema } from 'app/interfaces/schema.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -20,16 +19,16 @@ describe('ReportingExportersFormComponent', () => {
   let spectator: Spectator<ReportingExportersFormComponent>;
   let loader: HarnessLoader;
 
-  const existingExporter: ReportingExporter = {
+  const existingExporter = {
     name: 'test',
     id: 123,
     attributes: {
       exporter_type: ReportingExporterKey.Graphite,
-      access_key_id: 'access_key_id',
-      secret_access_key: 'secret_access_key',
+      destination_ip: 'destination_ip',
+      namespace: 'namespace',
     },
     enabled: true,
-  };
+  } as ReportingExporter;
 
   const createComponent = createComponentFactory({
     component: ReportingExportersFormComponent,
@@ -37,26 +36,26 @@ describe('ReportingExportersFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockCall('reporting.exporters.exporter_schemas', [{
+      mockTypedApi([
+        mockTypedCall('reporting.exporters.exporter_schemas', [{
           key: ReportingExporterKey.Graphite,
           schema: [
             {
-              _name_: 'access_key_id',
+              _name_: 'destination_ip',
               _required_: false,
-              title: 'Access Key ID',
+              title: 'Destination IP',
               type: SchemaType.String,
             },
             {
-              _name_: 'secret_access_key',
+              _name_: 'namespace',
               _required_: false,
-              title: 'Secret Access Key ID',
+              title: 'Namespace',
               type: SchemaType.String,
             },
-          ] as Schema[],
+          ],
         }]),
-        mockCall('reporting.exporters.create'),
-        mockCall('reporting.exporters.update'),
+        mockTypedCall('reporting.exporters.create', null),
+        mockTypedCall('reporting.exporters.update', null),
       ]),
       mockAuth(),
       ...ixFormTestingProviders(),
@@ -78,20 +77,21 @@ describe('ReportingExportersFormComponent', () => {
       const typeSelect = await loader.getHarness(TnSelectHarness);
       await typeSelect.selectOption(ReportingExporterKey.Graphite);
 
-      const secretAccessKey = await loader.getHarness(TnInputHarness.with({ name: 'secret_access_key' }));
+      const secretAccessKey = await loader.getHarness(TnInputHarness.with({ name: 'namespace' }));
       await secretAccessKey.setValue('abcd');
-      const accessKeyId = await loader.getHarness(TnInputHarness.with({ name: 'access_key_id' }));
+      const accessKeyId = await loader.getHarness(TnInputHarness.with({ name: 'destination_ip' }));
       await accessKeyId.setValue('abcde');
 
       const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.create', [{
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('reporting.exporters.create', [{
         name: 'exporter1',
         enabled: true,
         attributes: {
-          access_key_id: 'abcde',
-          secret_access_key: 'abcd',
+          destination_ip: 'abcde',
+          namespace: 'abcd',
           exporter_type: ReportingExporterKey.Graphite,
         },
       }]);
@@ -103,7 +103,7 @@ describe('ReportingExportersFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(ApiService, {
+          mockProvider(TypedApiService, {
             call: jest.fn(() => throwError(() => new Error('Schemas unavailable'))),
           }),
           mockProvider(ErrorHandlerService),
@@ -139,7 +139,7 @@ describe('ReportingExportersFormComponent', () => {
     });
 
     it('shows values for existing exporter', async () => {
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.exporter_schemas');
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('reporting.exporters.exporter_schemas');
 
       const typeSelect = await loader.getHarness(TnSelectHarness);
       const typeOptions = await typeSelect.getOptions();
@@ -149,32 +149,33 @@ describe('ReportingExportersFormComponent', () => {
       expect(await nameInput.getValue()).toBe(existingExporter.name);
       expect(await nameInput.isDisabled()).toBe(false);
 
-      expect(await typeSelect.getDisplayText()).toBe(existingExporter.attributes.exporter_type as string);
+      expect(await typeSelect.getDisplayText()).toBe(existingExporter.attributes.exporter_type);
       expect(await typeSelect.isDisabled()).toBe(false);
 
       const enableCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable' }));
       expect(await enableCheckbox.isChecked()).toBe(existingExporter.enabled);
       expect(await enableCheckbox.isDisabled()).toBe(false);
 
-      const accessKeyId = await loader.getHarness(TnInputHarness.with({ name: 'access_key_id' }));
-      expect(await accessKeyId.getValue()).toBe(existingExporter.attributes.access_key_id);
+      const accessKeyId = await loader.getHarness(TnInputHarness.with({ name: 'destination_ip' }));
+      expect(await accessKeyId.getValue()).toBe(existingExporter.attributes.destination_ip);
       expect(await accessKeyId.isDisabled()).toBe(false);
 
-      const secretAccessKey = await loader.getHarness(TnInputHarness.with({ name: 'secret_access_key' }));
-      expect(await secretAccessKey.getValue()).toBe(existingExporter.attributes.secret_access_key);
+      const secretAccessKey = await loader.getHarness(TnInputHarness.with({ name: 'namespace' }));
+      expect(await secretAccessKey.getValue()).toBe(existingExporter.attributes.namespace);
       expect(await secretAccessKey.isDisabled()).toBe(false);
     });
 
     it('edits exporter when form is submitted', async () => {
       jest.spyOn(console, 'warn').mockImplementation();
 
-      const accessKeyId = await loader.getHarness(TnInputHarness.with({ name: 'access_key_id' }));
+      const accessKeyId = await loader.getHarness(TnInputHarness.with({ name: 'destination_ip' }));
       await accessKeyId.setValue('efghi');
 
       const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith(
         'reporting.exporters.update',
         [
           123,
@@ -182,8 +183,8 @@ describe('ReportingExportersFormComponent', () => {
             name: existingExporter.name,
             enabled: existingExporter.enabled,
             attributes: {
-              secret_access_key: existingExporter.attributes.secret_access_key,
-              access_key_id: 'efghi',
+              namespace: existingExporter.attributes.namespace,
+              destination_ip: 'efghi',
               exporter_type: ReportingExporterKey.Graphite,
             },
           },

@@ -6,13 +6,13 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { TnIconButtonComponent, TnIconButtonHarness, TnMenuHarness, TnSelectHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AuditService } from 'app/enums/audit.enum';
 import { ExportFormat } from 'app/enums/export-format.enum';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/audit-search.component';
 import { mockAuditApiDataProvider } from 'app/pages/audit/testing/mock-audit-api-data-provider';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
@@ -32,8 +32,8 @@ describe('AuditSearchComponent', () => {
       ),
     ],
     providers: [
-      mockApi([
-        mockCall('user.query', []),
+      mockTypedApi([
+        mockTypedQuery('user.query', []),
       ]),
       mockProvider(UrlOptionsService, {
         setUrlOptions: jest.fn(),
@@ -96,7 +96,7 @@ describe('AuditSearchComponent', () => {
     });
 
     it('should call user.query on init', () => {
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.query');
+      expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('user.query');
     });
   });
 

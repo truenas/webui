@@ -105,6 +105,22 @@ Where things differ:
   `ParamsBuilder` writes `['OR', [a, b]]`.
 - **Events are a discriminated union** on `msg`. A removal carries an `id`
   and no `fields`; narrow before reading.
+- **Calls made before sign-in use `callUnauthenticated`.** Every other verb
+  waits for an authenticated session, so a method middleware answers without
+  one (`system.advanced.login_banner`, `user.has_local_administrator_set_up`,
+  `truenas.managed_by_truecommand`, `user.setup_local_administrator`) would
+  hang on the sign-in page through `call`. `callUnauthenticated` waits for the
+  client only. The legacy client sent these regardless of the session, so
+  nothing marks them; check whether a page runs before login when moving it.
+- **`callAndSubscribe` is `queryAndSubscribe`.** It queries the collection,
+  then folds its change events into the rows by `id` (`followCollection`), and
+  takes filters and `extra` but no `select`, since the events carry whole rows.
+  Script it in specs with `mockTypedQuery` for the rows and `emitEvent` for the
+  changes.
+- **A query whose params are one object is a `call`.** `audit.query` takes its
+  filters and options inside a single object rather than as
+  `[filters, options]`, so it is not a typed query method: call it with `call`
+  and script it with `mockTypedCall`.
 - **Errors are unchanged.** `call` throws the same `ApiCallError` as
   `ApiService`, with the full JSON-RPC payload, so `ErrorHandlerService` and
   form validation work as before. `job` throws `FailedJobError` on failure.
@@ -354,7 +370,8 @@ above. Each is a change for `truenas/api-client-ts`.
    legacy `subscribe` supports. Needed before Phase 1 step 4. Until then the
    log tails stay on `ApiService`: `ConsoleMessagesStore` and the job progress
    dialog's `filesystem.file_tail_follow`, next to `NetworkService`'s
-   `reporting.realtime`.
+   `reporting.realtime`, and the dashboard's `WidgetResourcesService`, which
+   streams `reporting.realtime` and `app.stats`.
 6. **Query, message and connection types are not exported.** `QueryFilters`
    and `QueryProjection` are internal, so the wrapper forwards the query verbs
    through `Parameters<>` rather than declaring them; `TrueNasMessage` and
@@ -442,6 +459,15 @@ above. Each is a change for `truenas/api-client-ts`.
     `poolScanFromEvent` in `app/helpers/pool-scan-event.helper.ts` reads the
     wire shape once for every consumer. Fix: wrap event payloads in the
     generator, or correct the model in middleware.
+
+17. **Event subscriptions are never released.** `client.api.events` shares one
+    stream per event with `resetOnRefCountZero: false` and never sends
+    `core.unsubscribe`, where the legacy `subscribe` unsubscribes when its last
+    consumer goes. For a collection that only emits on change (`pool.query`,
+    `app.query`) that costs little. For an event source that pushes on a timer
+    (`reporting.realtime`, `app.stats`) it would keep streaming after the page
+    that wanted it is closed, so those must not move until the client releases
+    subscriptions, even once gap 5 lets them compile.
 
 ## Version policy
 

@@ -9,6 +9,7 @@ import { map, Observable } from 'rxjs';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { dispatchTypedCall } from 'app/modules/websocket/typed-api/dispatch-typed-call';
+import { followCollection } from 'app/modules/websocket/typed-api/follow-collection';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 type D = WebUiApiDirectory;
@@ -63,6 +64,10 @@ export class MockTypedApiService implements OnDestroy {
 
   readonly call = jest.fn((method: string, params?: unknown) => dispatchTypedCall(this.client, method, params));
 
+  readonly callUnauthenticated = jest.fn(
+    (method: string, params?: unknown) => dispatchTypedCall(this.client, method, params),
+  );
+
   readonly query = jest.fn((method: string, filters?: unknown, options?: unknown) => {
     return this.api.query(method, filters, options);
   });
@@ -84,6 +89,17 @@ export class MockTypedApiService implements OnDestroy {
   readonly startJob = jest.fn((method: string, params?: unknown) => this.api.callAndGetJobId(method, params));
 
   readonly subscribe = jest.fn((event: string) => this.api.events(event));
+
+  /**
+   * Same folding as `TypedApiService.queryAndSubscribe`: script the rows with `mockQuery`, the
+   * changes with `emitEvent`.
+   */
+  readonly queryAndSubscribe = jest.fn((method: string, filters?: unknown, options?: unknown) => {
+    return followCollection(
+      this.api.query(method, filters, options) as Observable<{ id?: unknown }[]>,
+      this.api.events(method) as Observable<{ msg: string; id?: unknown; fields?: { id?: unknown } }>,
+    );
+  });
 
   mockCall<M extends TypedCallMethod>(method: M, response: TypedCallResponseOrFactory<M>): void {
     this.client.mock.call(method, response);
