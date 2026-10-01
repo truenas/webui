@@ -127,7 +127,7 @@ describe('DatasetTreeStore', () => {
       });
     });
 
-    it('clears the loading state when a refresh supersedes a load', () => {
+    it('does not let a refresh cancel a load in flight; it runs once the load has answered', () => {
       testScheduler.run(({ cold, expectObservable }) => {
         const mockedApi = spectator.inject(ApiService);
         jest.spyOn(mockedApi, 'call')
@@ -137,14 +137,48 @@ describe('DatasetTreeStore', () => {
         spectator.service.loadDatasets();
         spectator.service.refreshDatasets();
 
-        expectObservable(spectator.service.state$).toBe('ab', {
+        expectObservable(spectator.service.state$).toBe('a---bc', {
           a: {
             error: null, isLoading: true, selectedDatasetId: null, datasets: [],
           },
           b: {
+            error: null, isLoading: false, selectedDatasetId: null, datasets: before,
+          },
+          c: {
             error: null, isLoading: false, selectedDatasetId: null, datasets: after,
           },
         });
+      });
+    });
+
+    it('runs a single follow-up however many refreshes arrive during a fetch', () => {
+      testScheduler.run(({ cold, flush }) => {
+        const mockedApi = spectator.inject(ApiService);
+        jest.spyOn(mockedApi, 'call').mockReturnValue(cold('----r|', { r: after }));
+
+        spectator.service.refreshDatasets();
+        spectator.service.refreshDatasets();
+        spectator.service.refreshDatasets();
+        spectator.service.refreshDatasets();
+        flush();
+
+        // The first, and one more for everything that queued behind it.
+        expect(mockedApi.call).toHaveBeenCalledTimes(2);
+      });
+    });
+  });
+
+  it('reports a failed refresh when there are no datasets on screen to keep', () => {
+    testScheduler.run(({ cold, expectObservable }) => {
+      const mockedApi = spectator.inject(ApiService);
+      const refreshError = new Error('Network Error');
+      jest.spyOn(mockedApi, 'call').mockReturnValue(cold('-#', {}, refreshError));
+
+      spectator.service.refreshDatasets();
+
+      expectObservable(spectator.service.select((state) => state.error)).toBe('ab', {
+        a: null,
+        b: refreshError,
       });
     });
   });

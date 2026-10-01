@@ -258,6 +258,13 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
    *
    * `refreshDatasets`, not `loadDatasets`: these events arrive for jobs on any dataset,
    * and a load unmounts the details panel while it runs.
+   *
+   * The `zfs.tier.rewrite_job_query` topic behind this carries a job's id and status and
+   * nothing else, and middleware sends it only for those three transitions, polling every
+   * five seconds. Progress is on the per-job `zfs.tier.rewrite_job_status` topic, which the
+   * migration badge and dialog follow and this page does not — so a running migration does
+   * not turn this into a refresh loop. Should that ever change, `refreshDatasets` queues
+   * rather than restarts, so the worst case is back-to-back fetches, not a starved page.
    */
   private listenForTierJobs(): void {
     this.sharingTierService.wireTierJobRefresh({

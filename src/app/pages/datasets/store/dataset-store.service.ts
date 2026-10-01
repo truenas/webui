@@ -74,9 +74,15 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
     },
   );
 
+  /** Whether a `pool.dataset.details` call is in flight. */
+  private isFetching = false;
+  /** Whether a refresh arrived during that call and still has to run once it answers. */
+  private isRefreshQueued = false;
+
   /**
    * Loads the datasets, entering the loading state while `pool.dataset.details` runs.
    * For loads the user asked for, where the page should show that it is fetching.
+   * Cancels whatever fetch is in flight, so the latest load always wins.
    */
   readonly loadDatasets = (): void => {
     this.fetchDatasets({ silent: false });
@@ -85,20 +91,29 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
   /**
    * Refetches the datasets without entering the loading state, so the tree and the
    * details panel stay mounted while it runs — for refreshes the user did not ask for,
-   * where `loadDatasets` would blank the page. A failure keeps the data already shown
-   * rather than replacing it with an error.
+   * where `loadDatasets` would blank the page.
+   *
+   * A refresh never cancels a fetch in flight. It waits for that one to answer and then
+   * runs once, however many arrived meanwhile — so a burst of them cannot keep restarting
+   * `pool.dataset.details` (the heaviest dataset call there is) and starve the page, and a
+   * load the user is waiting on is never thrown away for one they did not ask for.
    */
   readonly refreshDatasets = (): void => {
+    if (this.isFetching) {
+      this.isRefreshQueued = true;
+      return;
+    }
     this.fetchDatasets({ silent: true });
   };
 
   /**
-   * The one stream both kinds of fetch go through, so the latest request always wins.
+   * The one stream both kinds of fetch go through.
    *
-   * As two effects with a `switchMap` each, neither cancelled the other: an older
+   * As two effects with a `switchMap` each, neither knew about the other: an older
    * response could land after a newer one and put back a snapshot from before, say, a
-   * dataset was deleted. Any answer clears `isLoading`, because a refresh can cancel a
-   * load that set it, and nothing else would clear it then.
+   * dataset was deleted. Here a load cancels what is in flight, and a refresh queues
+   * behind it (see `refreshDatasets`), so answers are applied in the order they were
+   * asked for.
    */
   private readonly fetchDatasets = this.effect((triggers$: Observable<{ silent: boolean }>) => {
     return triggers$.pipe(
@@ -112,6 +127,12 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
         }
       }),
       switchMap(({ silent }) => {
+        this.isFetching = true;
+        if (!silent) {
+          // This load fetches fresher data than any refresh queued before it could.
+          this.isRefreshQueued = false;
+        }
+
         return this.api.call('pool.dataset.details')
           .pipe(
             tap((datasets: DatasetDetails[]) => {
@@ -123,14 +144,18 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
                 error: null,
                 datasets,
               });
+              this.onFetchSettled();
             }),
             catchError((error: unknown) => {
               if (!silent) {
                 this.patchState({ isLoading: false, error });
-              } else if (this.get().isLoading) {
-                // This refresh cancelled a load; end its loading state, keep what is shown.
-                this.patchState({ isLoading: false });
+              } else if (!this.get().datasets.length) {
+                // A failed refresh keeps the data already shown rather than replacing it
+                // with an error. With nothing shown there is nothing to keep, and staying
+                // quiet would tell the user there are no datasets.
+                this.patchState({ error });
               }
+              this.onFetchSettled();
 
               return EMPTY;
             }),
@@ -138,6 +163,15 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
       }),
     );
   });
+
+  /** Runs the refresh that was queued behind the fetch that just answered, if there was one. */
+  private onFetchSettled(): void {
+    this.isFetching = false;
+    if (this.isRefreshQueued) {
+      this.isRefreshQueued = false;
+      this.fetchDatasets({ silent: true });
+    }
+  }
 
   readonly resetDatasets = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(
