@@ -25,4 +25,11 @@ export const helptextVolumeStatus = {
   raidzExtendMessage: T('The expanded vdev uses the pre-expanded parity ratio, which reduces the total vdev capacity.\
  To reset the vdev parity ratio and fully use the new capacity, manually rewrite all data in the vdev.\
  This process takes time and is irreversible.'),
+
+  sedDiskPassword: {
+    lockedMessage: T('{disk} is a locked self-encrypting drive. Choose the password to unlock it with.'),
+    uninitializedMessage: T('{disk} is an uninitialized self-encrypting drive. Choose the password to set it up with.'),
+    individualTooltip: T('Stored as this disk\'s own SED password, and used instead of the global SED password to\
+ unlock it from now on.'),
+  },
 };

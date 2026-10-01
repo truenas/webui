@@ -101,6 +101,9 @@ export const migratedApiPaths = [
   'src/app/pages/dashboard/widgets',
   'src/app/pages/dashboard/services/dashboard.store.ts',
   'src/app/pages/dashboard/services/dashboard.store.spec.ts',
+  // NAS-144116: the SED password choice shared by the VDEVs Extend and Replace dialogs, typed from
+  // the start. The dialogs around it still start their jobs through `ApiService`.
+  'src/app/pages/storage/modules/vdevs/components/sed-disk-password',
 ];
 
 /**
