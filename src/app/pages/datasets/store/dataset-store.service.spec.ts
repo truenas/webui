@@ -89,6 +89,26 @@ describe('DatasetTreeStore', () => {
     });
   });
 
+  it('clears a load error once a later refresh succeeds', () => {
+    testScheduler.run(({ cold, expectObservable }) => {
+      const mockedApi = spectator.inject(ApiService);
+      const loadError = new Error('Network Error');
+      jest.spyOn(mockedApi, 'call')
+        .mockReturnValueOnce(cold('-#', {}, loadError))
+        .mockReturnValueOnce(cold('---r|', { r: datasets }));
+
+      spectator.service.loadDatasets();
+      // Subscribed a frame after the load fails, i.e. while its error is latched.
+      cold('--t').subscribe(() => spectator.service.refreshDatasets());
+
+      expectObservable(spectator.service.select((state) => state.error)).toBe('ab---c', {
+        a: null,
+        b: loadError,
+        c: null,
+      });
+    });
+  });
+
   describe('when a load and a refresh overlap', () => {
     const before = [{ id: 'before' }] as DatasetDetails[];
     const after = [{ id: 'after' }] as DatasetDetails[];

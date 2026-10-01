@@ -51,10 +51,10 @@ export async function saveTierConfig(page: Page): Promise<void> {
 export async function selectDataset(page: Page, name: string): Promise<void> {
   await goToDatasets(page);
 
-  const [pool] = name.split('/');
-  if (!pool) {
-    throw new Error(`"${name}" is not a dataset name: expected "<pool>/<dataset>".`);
+  if (!name.includes('/')) {
+    throw new Error(`"${name}" is not a dataset under a pool: expected "<pool>/<dataset>".`);
   }
+  const pool = name.slice(0, name.indexOf('/'));
   await page.locator(datasetLocators.treeNode(pool)).click();
 
   const node = page.locator(datasetLocators.treeNode(name));
@@ -65,18 +65,30 @@ export async function selectDataset(page: Page, name: string): Promise<void> {
 }
 
 /**
- * Opens Change Storage Tier from the dataset details card and waits for it to
- * finish loading.
+ * Opens Change Storage Tier from the dataset details card and waits for its
+ * details to load.
  *
- * The dialog asks five things before it lets you apply — the pool's tier space,
- * the dataset, and three share services — and Apply stays disabled while any of
- * them is outstanding, or for good if one failed. So an enabled Apply is both the
- * ready signal and the check that the dialog loaded cleanly.
+ * The signal is a tier's "available" line, not Apply. Apply is bound to
+ * `isSubmitting() || loadFailed()`, both false from the first render, so it is
+ * enabled before any of the dialog's calls have answered and says nothing about
+ * them. The space lines come from `zpool.query` and render only once it and
+ * `pool.dataset.query` are back — the regular tier's always, so whichever side
+ * that is on appears.
+ *
+ * The four share queries have no such signal: with no share on the dataset they
+ * render nothing. What they can do is fail, which sets `loadFailed` and disables
+ * Apply for good — so Apply is asserted after the wait, where a failure that has
+ * already landed is caught here rather than as a click on a disabled button.
  */
 export async function openChangeTierDialog(page: Page): Promise<void> {
   await page.locator(datasetTierLocators.change).click();
 
   await expect(page.locator(changeTierDialogLocators.title)).toBeVisible();
+  await expect(
+    page.locator(changeTierDialogLocators.currentTierSpace)
+      .or(page.locator(changeTierDialogLocators.newTierSpace))
+      .first(),
+  ).toBeVisible();
   await expect(page.locator(changeTierDialogLocators.apply)).toBeEnabled();
 }
 

@@ -46,6 +46,15 @@ export const changeTierDialogLocators = {
   currentTier: '[data-test="text-current-tier"]',
   newTier: '[data-test="text-new-tier"]',
 
+  /**
+   * "{size} available" under each tier chip. Rendered only once the dialog's
+   * `zpool.query` has answered — the regular tier's always, the performance
+   * tier's only when that tier has free space — so one of the two is the
+   * dialog's "details loaded" signal.
+   */
+  currentTierSpace: '[data-test="text-current-tier-space"]',
+  newTierSpace: '[data-test="text-new-tier-space"]',
+
   /** `<tn-checkbox testId="move-existing-data">` — ticked when the dialog opens. */
   moveExistingData: '[data-test="checkbox-move-existing-data"]',
 

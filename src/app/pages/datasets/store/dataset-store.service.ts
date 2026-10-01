@@ -115,8 +115,12 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
         return this.api.call('pool.dataset.details')
           .pipe(
             tap((datasets: DatasetDetails[]) => {
+              // `error` too: a refresh never passes through the branch above that clears
+              // it, so a failed load followed by a good refresh would otherwise leave the
+              // page reporting a failure over data that loaded fine.
               this.patchState({
                 isLoading: false,
+                error: null,
                 datasets,
               });
             }),
