@@ -10,6 +10,8 @@
     [tooltip]="helptext.dialogFormFields.newDisk.tooltip | translate"
   ></ix-unused-disk-select>
 
+  <ix-sed-disk-password [poolId]="data.poolId" [disk]="newDisk()"></ix-sed-disk-password>
+
   <ix-form-actions>
     <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
       {{ 'Cancel' | translate }}
@@ -19,7 +21,7 @@
       type="submit"
       color="primary"
       ixTest="extend"
-      [disabled]="form.invalid"
+      [disabled]="!canSubmit()"
     >
       {{ 'Extend' | translate }}
     </button>

@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, computed, DestroyRef, signal, inject, viewChild,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -20,6 +22,7 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { SedDiskPasswordComponent } from 'app/pages/storage/modules/vdevs/components/sed-disk-password/sed-disk-password.component';
 import { PoolExtendJobService } from 'app/pages/storage/modules/vdevs/services/pool-extend-job.service';
 import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -38,6 +41,7 @@ export interface RaidzExtendDialogParams {
     MatDialogTitle,
     ReactiveFormsModule,
     UnusedDiskSelectComponent,
+    SedDiskPasswordComponent,
     FormActionsComponent,
     MatButton,
     TestDirective,
@@ -62,6 +66,11 @@ export class RaidzExtendDialog {
   form = this.formBuilder.group({
     newDisk: ['', Validators.required],
   });
+
+  protected readonly newDisk = toSignal(this.form.controls.newDisk.value$, { initialValue: '' });
+  private readonly sedDiskPassword = viewChild.required(SedDiskPasswordComponent);
+  private readonly isFormValid = toSignal(this.form.valid$, { initialValue: false });
+  protected readonly canSubmit = computed(() => this.isFormValid() && this.sedDiskPassword().isValid());
 
   readonly helptext = helptextVolumeStatus;
 
@@ -94,10 +103,12 @@ export class RaidzExtendDialog {
           target_vdev: this.data.vdev.guid,
         } as PoolAttachParams;
 
-        return this.dialogService.jobDialog(
-          this.api.job('pool.attach', [this.data.poolId, payload]),
-          { title: this.translate.instant('Extending VDEV'), canMinimize: true },
-        ).afterClosed();
+        return this.sedDiskPassword().prepareDisk().pipe(
+          switchMap(() => this.dialogService.jobDialog(
+            this.api.job('pool.attach', [this.data.poolId, payload]),
+            { title: this.translate.instant('Extending VDEV'), canMinimize: true },
+          ).afterClosed()),
+        );
       }),
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
