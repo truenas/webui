@@ -6,8 +6,9 @@ import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator
 import { TnAutocompleteHarness, TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
@@ -27,8 +28,8 @@ describe('BootPoolReplaceDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockCall('disk.details', {
+      mockTypedApi([
+        mockTypedCall('disk.details', {
           unused: [
             {
               name: 'sdb',
@@ -38,6 +39,8 @@ describe('BootPoolReplaceDialogComponent', () => {
           ] as DetailsDisk[],
           used: [],
         }),
+      ]),
+      mockApi([
         mockJob('boot.replace', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService, {

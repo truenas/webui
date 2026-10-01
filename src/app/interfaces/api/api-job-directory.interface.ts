@@ -53,7 +53,6 @@ import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { UpdateParams } from 'app/interfaces/system-update.interface';
 import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
-import { VmStopParams } from 'app/interfaces/virtual-machine.interface';
 import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/modules/feedback/interfaces/file-ticket.interface';
 
 export interface ApiJobDirectory {
@@ -104,7 +103,6 @@ export interface ApiJobDirectory {
   'core.bulk': { params: CoreBulkQuery; response: CoreBulkResponse[] };
 
   // Directory Services
-  'directoryservices.cache_refresh': { params: void; response: void };
   'directoryservices.leave': { params: [DirectoryServicesLeaveParams]; response: void };
   'directoryservices.sync_keytab': { params: void; response: void };
   'directoryservices.update': { params: [DirectoryServicesUpdate]; response: DirectoryServicesUpdateResponse };
@@ -114,7 +112,6 @@ export interface ApiJobDirectory {
 
   // Failover
   'failover.events.vrrp_master': { params: void; response: void };
-  'failover.reboot.other_node': { params: void; response: void };
   'failover.upgrade': { params: [FailoverUpgradeParams]; response: boolean };
 
   // Filesystem
@@ -203,8 +200,6 @@ export interface ApiJobDirectory {
 
   // VM
   'vm.device.convert': { params: [{ source: string; destination: string }]; response: boolean };
-  'vm.restart': { params: [id: number]; response: void };
-  'vm.stop': { params: VmStopParams; response: void };
 }
 
 export type ApiJobMethod = keyof ApiJobDirectory;

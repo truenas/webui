@@ -2,13 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { CallResponse } from '@truenas/api-client';
 import {
   EMPTY, forkJoin, Observable, of,
 } from 'rxjs';
 import {
   catchError, map, mergeMap, pairwise, switchMap, tap, withLatestFrom,
 } from 'rxjs/operators';
-import { CollectionChangeType } from 'app/enums/api.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import {
   dismissAlertPressed, dismissAllAlertsPressed,
@@ -25,17 +25,28 @@ import {
 import {
   AlertSlice, selectDismissedAlerts, selectIsAlertPanelOpen, selectUnreadAlerts,
 } from 'app/modules/alerts/store/alert.selectors';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
+
+type AlertEntry = CallResponse<WebUiApiDirectory, 'alert.list'>[number];
+
+/**
+ * Middleware types `klass` and `level` as open strings the UI reads through its enums, and the
+ * timestamps as strings although they arrive as `ApiTimestamp` envelopes.
+ */
+function toAlert(alert: AlertEntry): Alert {
+  return alert as unknown as Alert;
+}
 
 type AlertCallResult = { id: string; ok: true } | { id: string; ok: false; error: unknown };
 
 @Injectable()
 export class AlertEffects {
   private actions$ = inject(Actions);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private store$ = inject<Store<AlertSlice>>(Store);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
@@ -44,7 +55,7 @@ export class AlertEffects {
     ofType(adminUiInitialized, alertIndicatorPressed, alertReceivedWhenPanelIsOpen),
     switchMap(() => {
       return this.api.call('alert.list').pipe(
-        map((alerts) => alertsLoaded({ alerts })),
+        map((alerts) => alertsLoaded({ alerts: alerts.map(toAlert) })),
         catchError((error: unknown) => {
           console.error(error);
           // TODO: See if it would make sense to parse middleware error.
@@ -64,15 +75,13 @@ export class AlertEffects {
           return this.store$.select(selectIsAlertPanelOpen).pipe(
             switchMap((isAlertsPanelOpen) => {
               switch (true) {
-                case [
-                  CollectionChangeType.Added, CollectionChangeType.Changed,
-                ].includes(event.msg) && isAlertsPanelOpen:
+                case (event.msg === 'added' || event.msg === 'changed') && isAlertsPanelOpen:
                   return of(alertReceivedWhenPanelIsOpen());
-                case event.msg === CollectionChangeType.Added && !isAlertsPanelOpen:
-                  return of(alertAdded({ alert: event.fields }));
-                case event.msg === CollectionChangeType.Changed && !isAlertsPanelOpen:
-                  return of(alertChanged({ alert: event.fields }));
-                case event.msg === CollectionChangeType.Removed:
+                case event.msg === 'added' && !isAlertsPanelOpen:
+                  return of(alertAdded({ alert: toAlert(event.fields) }));
+                case event.msg === 'changed' && !isAlertsPanelOpen:
+                  return of(alertChanged({ alert: toAlert(event.fields) }));
+                case event.msg === 'removed':
                   return of(alertRemoved({ id: event.id.toString() }));
                 default:
                   return EMPTY;

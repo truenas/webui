@@ -2,9 +2,9 @@ import { fakeAsync, tick } from '@angular/core/testing';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of, throwError } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
@@ -20,15 +20,15 @@ import {
 
 describe('FailoverValidationService', () => {
   let spectator: SpectatorService<FailoverValidationService>;
-  let api: MockApiService;
+  let api: MockTypedApiService;
 
   const createService = createServiceFactory({
     service: FailoverValidationService,
     providers: [
-      mockApi([
-        mockCall('failover.licensed', true),
-        mockCall('failover.status', FailoverStatus.Master),
-        mockCall('failover.disabled.reasons', []),
+      mockTypedApi([
+        mockTypedCall('failover.licensed', true),
+        mockTypedCall('failover.status', FailoverStatus.Master),
+        mockTypedCall('failover.disabled.reasons', []),
       ]),
       mockProvider(TranslateService, {
         instant: jest.fn((key: string) => key),
@@ -42,7 +42,7 @@ describe('FailoverValidationService', () => {
 
   beforeEach(() => {
     spectator = createService();
-    api = spectator.inject(MockApiService);
+    api = spectator.inject(MockTypedApiService);
   });
 
   describe('validateFailover', () => {

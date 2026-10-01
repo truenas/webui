@@ -5,29 +5,29 @@ import {
   TnButtonHarness, TnIconButtonHarness, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { ReportingExporterListComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.component';
 
-const exporters: ReportingExporter[] = [
+const exporters = [
   {
     id: 1,
     attributes: {
-      secret: 'abcd',
-      email: 'testemail',
+      destination_ip: '10.0.0.1',
+      namespace: 'truenas',
       exporter_type: ReportingExporterKey.Graphite,
     },
     enabled: true,
     name: 'test',
   },
-];
+] as ReportingExporter[];
 
 describe('ReportingExportersListComponent', () => {
   let spectator: Spectator<ReportingExporterListComponent>;
@@ -38,10 +38,10 @@ describe('ReportingExportersListComponent', () => {
     component: ReportingExporterListComponent,
     imports: [],
     providers: [
-      mockApi([
-        mockCall('reporting.exporters.query', exporters),
-        mockCall('reporting.exporters.delete'),
-        mockCall('reporting.exporters.update'),
+      mockTypedApi([
+        mockTypedQuery('reporting.exporters.query', exporters),
+        mockTypedCall('reporting.exporters.delete', null),
+        mockTypedCall('reporting.exporters.update', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -94,14 +94,14 @@ describe('ReportingExportersListComponent', () => {
       call: expect.any(Function),
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.delete', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('reporting.exporters.delete', [1]);
   });
 
   it('updates a reporting exporter when Enabled toggle is toggled', async () => {
     const toggle = await loader.getHarness(TnSlideToggleHarness);
     await toggle.toggle();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.update', [
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('reporting.exporters.update', [
       1,
       { enabled: false },
     ]);

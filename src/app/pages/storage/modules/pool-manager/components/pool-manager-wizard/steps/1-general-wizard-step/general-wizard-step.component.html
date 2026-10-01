@@ -28,7 +28,7 @@
     @if (form.controls.encryptionType.value === EncryptionType.Software) {
       @if (hasSedCapableDisks$ | async; as hasSedDisks) {
         @if (hasSedDisks && (hasSedEntitlement$ | async)) {
-          <ix-warning color="green" [message]="helptext.sedInfoMessage | translate"></ix-warning>
+          <ix-warning tnTestId="sed-info" tnTestIdType="text" color="green" [message]="helptext.sedInfoMessage | translate"></ix-warning>
         }
       }
     }
@@ -37,7 +37,7 @@
     @if (form.controls.encryptionType.value === EncryptionType.Sed) {
       <!-- Show info if no password is set, warning if password exists -->
       @if (isSedPasswordSet$ | async; as isPasswordSet) {
-        <ix-warning [message]="helptext.sedGlobalPasswordWarning | translate"></ix-warning>
+        <ix-warning tnTestId="sed-global-password-warning" tnTestIdType="text" [message]="helptext.sedGlobalPasswordWarning | translate"></ix-warning>
 
         <tn-form-field
           [label]="helptext.sedPasswordLabel | translate"
@@ -56,7 +56,7 @@
           ></tn-input>
         </tn-form-field>
       } @else {
-        <ix-warning color="green" [message]="helptext.sedGlobalPasswordInfo | translate"></ix-warning>
+        <ix-warning tnTestId="sed-global-password-info" tnTestIdType="text" color="green" [message]="helptext.sedGlobalPasswordInfo | translate"></ix-warning>
 
         <tn-form-field
           [label]="helptext.sedPasswordLabel | translate"
@@ -80,7 +80,7 @@
   } @else {
     <!-- Message when adding VDEVs to SED pool -->
     @if (pool()?.all_sed) {
-      <ix-warning color="green" [message]="helptext.sedPoolVdevMessage | translate"></ix-warning>
+      <ix-warning tnTestId="sed-pool-vdev-info" tnTestIdType="text" color="green" [message]="helptext.sedPoolVdevMessage | translate"></ix-warning>
     }
   }
 

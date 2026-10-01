@@ -92,7 +92,7 @@
         (onClick)="onAlertIndicatorPressed()"
       >
         @if (alertBadge(); as badge) {
-          <ix-status-badge [badge]="badge"></ix-status-badge>
+          <ix-status-badge tnTestId="alerts-badge" tnTestIdType="text" [badge]="badge"></ix-status-badge>
         }
       </tn-icon-button>
 

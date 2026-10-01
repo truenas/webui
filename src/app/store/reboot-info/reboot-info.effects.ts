@@ -2,8 +2,10 @@ import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { map, switchMap, take } from 'rxjs/operators';
-import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  filter, map, switchMap, take,
+} from 'rxjs/operators';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { failoverLicensedStatusLoaded } from 'app/store/ha-info/ha-info.actions';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { rebootInfoLoaded, refreshRebootInfo } from 'app/store/reboot-info/reboot-info.actions';
@@ -11,7 +13,7 @@ import { rebootInfoLoaded, refreshRebootInfo } from 'app/store/reboot-info/reboo
 @Injectable()
 export class RebootInfoEffects {
   private actions$ = inject(Actions);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private store$ = inject(Store);
 
   // Latest wins here and below: the licensed status is seeded at sign-in and can be corrected once
@@ -35,13 +37,15 @@ export class RebootInfoEffects {
     switchMap(({ isHaLicensed }) => {
       if (isHaLicensed) {
         return this.api.subscribe('failover.reboot.info').pipe(
+          filter((event) => event.msg === 'changed'),
           map((event) => rebootInfoLoaded({
-            thisNodeRebootInfo: event.fields?.this_node,
-            otherNodeRebootInfo: event.fields?.other_node,
+            thisNodeRebootInfo: event.fields.this_node,
+            otherNodeRebootInfo: event.fields.other_node,
           })),
         );
       }
       return this.api.subscribe('system.reboot.info').pipe(
+        filter((event) => event.msg === 'changed'),
         map((event) => rebootInfoLoaded({
           thisNodeRebootInfo: event.fields,
           otherNodeRebootInfo: null,

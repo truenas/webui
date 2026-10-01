@@ -1,6 +1,7 @@
 import { SlicePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { slice } from 'lodash-es';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { LocaleService } from 'app/modules/language/locale.service';
@@ -12,6 +13,7 @@ import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule
   styleUrls: ['./scheduler-date-examples.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     IxDateComponent,
     TranslateModule,
     SlicePipe,

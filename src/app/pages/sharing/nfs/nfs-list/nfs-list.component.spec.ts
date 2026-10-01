@@ -10,15 +10,16 @@ import { Subject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
-import { Pool } from 'app/interfaces/pool.interface';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
@@ -67,11 +68,13 @@ describe('NfsListComponent', () => {
     component: NfsListComponent,
     providers: [
       ...commonProviders,
+      mockTypedApi([
+        mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
+      ]),
       mockApi([
         mockCall('sharing.nfs.query', shares as NfsShare[]),
         mockCall('sharing.nfs.delete'),
         mockCall('sharing.nfs.update'),
-        mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
       ]),
       mockSharingTierService({ enabled: false }),
     ],
@@ -152,6 +155,9 @@ describe('NfsListComponent', () => {
       component: NfsListComponent,
       providers: [
         ...commonProviders,
+        mockTypedApi([
+          mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
+        ]),
         mockApi([
           mockCall('sharing.nfs.query', [{
             ...shares[0],
@@ -159,7 +165,6 @@ describe('NfsListComponent', () => {
           }] as NfsShare[]),
           mockCall('sharing.nfs.delete'),
           mockCall('sharing.nfs.update'),
-          mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
         ]),
         mockSharingTierService({ enabled: false }),
       ],
@@ -181,6 +186,9 @@ describe('NfsListComponent', () => {
       component: NfsListComponent,
       providers: [
         ...commonProviders,
+        mockTypedApi([
+          mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
+        ]),
         mockApi([
           mockCall('sharing.nfs.query', [{
             ...shares[0],
@@ -189,7 +197,6 @@ describe('NfsListComponent', () => {
           }] as NfsShare[]),
           mockCall('sharing.nfs.delete'),
           mockCall('sharing.nfs.update'),
-          mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
         ]),
         mockSharingTierService({ enabled: false }),
       ],
@@ -213,11 +220,13 @@ describe('NfsListComponent', () => {
       component: NfsListComponent,
       providers: [
         ...commonProviders,
+        mockTypedApi([
+          mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
+        ]),
         mockApi([
           mockCall('sharing.nfs.query', shares as NfsShare[]),
           mockCall('sharing.nfs.delete'),
           mockCall('sharing.nfs.update'),
-          mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
         ]),
         mockSharingTierService({ enabled: true, jobUpdates$ }),
       ],
@@ -240,6 +249,9 @@ describe('NfsListComponent', () => {
       component: NfsListComponent,
       providers: [
         ...commonProviders,
+        mockTypedApi([
+          mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
+        ]),
         mockApi([
           mockCall('sharing.nfs.query', [{
             ...shares[0],
@@ -248,7 +260,6 @@ describe('NfsListComponent', () => {
           }] as NfsShare[]),
           mockCall('sharing.nfs.delete'),
           mockCall('sharing.nfs.update'),
-          mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
         ]),
         mockSharingTierService({ enabled: true }),
       ],
@@ -272,6 +283,9 @@ describe('NfsListComponent', () => {
       component: NfsListComponent,
       providers: [
         ...commonProviders,
+        mockTypedApi([
+          mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
+        ]),
         mockApi([
           mockCall('sharing.nfs.query', [{
             ...shares[0],
@@ -281,7 +295,6 @@ describe('NfsListComponent', () => {
           }] as NfsShare[]),
           mockCall('sharing.nfs.delete'),
           mockCall('sharing.nfs.update'),
-          mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
         ]),
         mockSharingTierService({ enabled: true }),
       ],
@@ -306,9 +319,11 @@ describe('NfsListComponent', () => {
       providers: [
         ...commonProviders,
         mockEntitlements([EntitlementFeature.NfsSnapshot]),
+        mockTypedApi([
+          mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
+        ]),
         mockApi([
           mockCall('sharing.nfs.query', shares as NfsShare[]),
-          mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
         ]),
         mockSharingTierService({ enabled: false }),
       ],

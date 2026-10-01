@@ -59,7 +59,7 @@
      and render it in a live region. It sits OUTSIDE `.search-row` (a `display: flex` row) so it
      stacks under the search box instead of becoming a third flex item beside it. -->
 @if (hasQueryErrors && errorMessages?.[0]?.message; as errorMessage) {
-  <div class="query-error" role="alert">{{ errorMessage }}</div>
+  <div class="query-error" role="alert" tnTestId="query-error" tnTestIdType="text">{{ errorMessage }}</div>
 }
 
 @if (filterPresets()?.length > 0) {

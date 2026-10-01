@@ -9,9 +9,9 @@ import { parseISO } from 'date-fns';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { S3AccessKeyStatus } from 'app/enums/s3.enum';
 import { S3AccessKey } from 'app/interfaces/s3.interface';
-import { User } from 'app/interfaces/user.interface';
 import {
   IxUserComboboxComponent,
 } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
@@ -21,6 +21,7 @@ import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import {
   S3AccessKeyCredentialsDialogComponent,
 } from 'app/pages/credentials/s3-access-keys/s3-access-key-credentials-dialog/s3-access-key-credentials-dialog.component';
@@ -56,8 +57,10 @@ describe('S3AccessKeyFormComponent', () => {
     imports: [ReactiveFormsModule],
     providers: [
       ...ixFormTestingProviders(),
+      mockTypedApi([
+        mockTypedQuery('user.query', [{ username: 'alice', uid: 1000 }] as WebUiQueryEntity<'user.query'>[]),
+      ]),
       mockApi([
-        mockCall('user.query', [{ username: 'alice', uid: 1000 }] as User[]),
         mockCall('s3.accesskey.create', createdKey),
         mockCall('s3.accesskey.update', createdKey),
       ]),

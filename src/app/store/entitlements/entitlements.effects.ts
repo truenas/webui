@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { entitlementsLoaded, entitlementsLoadFailed } from 'app/store/entitlements/entitlements.actions';
 import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
@@ -10,7 +10,7 @@ import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
 @Injectable()
 export class EntitlementsEffects {
   private actions$ = inject(Actions);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
 
   loadEntitlements = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized, systemInfoUpdated),

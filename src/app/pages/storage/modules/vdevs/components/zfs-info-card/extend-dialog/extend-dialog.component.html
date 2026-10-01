@@ -8,6 +8,8 @@
     [tooltip]="helptext.dialogFormFields.newDisk.tooltip | translate"
   ></ix-unused-disk-select>
 
+  <ix-sed-disk-password [poolId]="data.poolId" [disk]="newDisk()"></ix-sed-disk-password>
+
 </form>
 <ix-form-actions tnDialogAction>
   <tn-button
@@ -20,7 +22,7 @@
     color="primary"
     testId="extend"
     [label]="'Extend' | translate"
-    [disabled]="form.invalid"
+    [disabled]="!canSubmit()"
     (onClick)="onSubmit()"
   ></tn-button>
 </ix-form-actions>

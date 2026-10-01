@@ -9,8 +9,9 @@ import { TnAutocompleteHarness, TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -18,6 +19,9 @@ import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unus
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  mockSedDiskPasswordCalls, sedEntitledProvider,
+} from 'app/pages/storage/modules/vdevs/components/sed-disk-password/testing/sed-disk-password-mocks';
 import {
   RaidzExtendDialog, RaidzExtendDialogParams,
 } from 'app/pages/storage/modules/vdevs/components/zfs-info-card/raidz-extend-dialog/raidz-extend-dialog.component';
@@ -37,9 +41,9 @@ describe('RaidzExtendDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockJob('pool.attach', fakeSuccessfulJob()),
-        mockCall('disk.details', {
+      sedEntitledProvider,
+      mockTypedApi([
+        mockTypedCall('disk.details', {
           unused: [
             {
               devname: 'sde',
@@ -54,6 +58,10 @@ describe('RaidzExtendDialogComponent', () => {
           ] as DetailsDisk[],
           used: [],
         }),
+        ...mockSedDiskPasswordCalls(),
+      ]),
+      mockApi([
+        mockJob('pool.attach', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogRef),
       mockProvider(SnackbarService),

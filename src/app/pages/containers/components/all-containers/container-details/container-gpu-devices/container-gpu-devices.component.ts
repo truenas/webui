@@ -5,6 +5,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnBannerActionDirective, TnBannerComponent, TnButtonComponent,
   TnCardComponent, TnCardFooterActionsDirective,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
@@ -45,6 +46,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
     TnBannerComponent,
     TnBannerActionDirective,
     TnButtonComponent,
+    TnTestIdDirective,
   ],
 })
 export class ContainerGpuDevicesComponent {

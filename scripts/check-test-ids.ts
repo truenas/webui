@@ -833,10 +833,10 @@ function reportReadoutCoverage(templates: { file: string; src: string }[], listi
   // read as closed while `ix-target-form` and `ix-s3-bucket-form` still owed ids.
   //
   // What earns it today is the table cells — `ix-task-state-cell`, `ix-subsystem-name-cell` and
-  // three more — whose every call site passes a row-scoped id. `<ix-date>` is the same *shape* and
-  // does not qualify: ten of its fourteen call sites pass no id, so its readout is counted and
-  // `modules/dates` is on the list until those call sites are tagged. That is the condition doing
-  // its job, not a false positive.
+  // three more — whose every call site passes a row-scoped id — and `<ix-date>`, `<ix-warning>`,
+  // `<ix-status-badge>` and `<ix-empty>`, whose call sites were all tagged in NAS-143972. Leave one
+  // untagged and the readout inside counts again. That is the condition doing its job, not a false
+  // positive.
   const singleValue = new Set(
     [...templateBySelector]
       .filter(([selector, template]) => valueCount(template) === 1 && tagged.has(selector))

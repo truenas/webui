@@ -19,7 +19,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { getAlertEnhancement } from './alert-enhancement.registry';
 
@@ -42,7 +42,7 @@ export class SmartAlertService {
   private document = inject(DOCUMENT);
   private window = this.document.defaultView as Window;
   private dialogService = inject(DialogService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
@@ -303,10 +303,7 @@ export class SmartAlertService {
           throw new Error(`Invalid API call parameters: method=${action.apiMethod}, taskId=${taskId}, type=${typeof taskId}`);
         }
 
-        // Cast apiMethod to any to avoid TypeScript error with dynamic method names
-        // The method names are validated at registry definition time, so this is safe
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return this.api.job(action.apiMethod as any, [taskId]).pipe(
+        return this.api.job(action.apiMethod, [taskId]).pipe(
           distinctUntilChanged((prev, curr) => prev.state === curr.state),
           tap((job) => {
             if (job.state === JobState.Running) {

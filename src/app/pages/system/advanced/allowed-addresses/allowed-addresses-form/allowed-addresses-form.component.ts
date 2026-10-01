@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnFormSectionComponent, TnInputComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { defaultIfEmpty, of, switchMap, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
@@ -24,6 +25,7 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
   styleUrls: ['./allowed-addresses-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     ReactiveFormsModule,
     IxFormComponent,
     TnFormSectionComponent,

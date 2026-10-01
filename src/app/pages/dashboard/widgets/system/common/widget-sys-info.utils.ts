@@ -48,7 +48,8 @@ export function formatLicenseExpiration(
 /**
  * Pick the license expiration date, tolerating the legacy `contract_end` field
  * still emitted by `webui.main.dashboard.sys_info` (which the dashboard widgets
- * consume). The new `truenas.license.info` endpoint surfaces `expires_at`.
+ * consume). v27's `truenas.license.info` has no top-level `expires_at`; the dates live on each
+ * feature entry instead.
  *
  * Remove the `contract_end` fallback once the dashboard endpoint is migrated
  * to the new shape.

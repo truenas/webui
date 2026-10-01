@@ -1,7 +1,7 @@
 <ng-container [formGroup]="form">
   @if (nonUniqueSerialDisks.length) {
     <div class="spacer-top">
-      <ix-warning [message]="nonUniqueSerialDisksTooltip"></ix-warning>
+      <ix-warning tnTestId="non-unique-serial-disks-warning" tnTestIdType="text" [message]="nonUniqueSerialDisksTooltip"></ix-warning>
       <tn-form-field
         [label]="'Allow non-unique serialed disks (not recommended)' | translate"
         [tooltip]="nonUniqueSerialDisksTooltip | translate"
@@ -29,7 +29,7 @@
 
   @if (disksWithExportedPools.length) {
     <div class="spacer-bottom">
-      <ix-warning [message]="exportedPoolsWarning | translate"></ix-warning>
+      <ix-warning tnTestId="exported-pools-warning" tnTestIdType="text" [message]="exportedPoolsWarning | translate"></ix-warning>
       <!-- These checkboxes are one multi-select, not independent fields, so they need a group
            with a name. `ix-label` rendered a bare <label> with no `for` and no wrapped control,
            which named nothing. -->

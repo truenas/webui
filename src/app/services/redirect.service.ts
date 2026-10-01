@@ -5,7 +5,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, take } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -13,7 +12,6 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   providedIn: 'root',
 })
 export class RedirectService {
-  protected api = inject(ApiService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private store$ = inject<Store<AppState>>(Store);

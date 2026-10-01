@@ -1,6 +1,5 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalApiHttpService } from 'app/services/global-api-http.service';
 import { UpdateService } from 'app/services/update.service';
@@ -12,9 +11,6 @@ describe('UpdateService', () => {
   const createService = createServiceFactory({
     service: UpdateService,
     providers: [
-      mockApi([
-        mockCall('system.boot_id', 'boot-id-1'),
-      ]),
       {
         provide: GlobalApiHttpService,
         useValue: {

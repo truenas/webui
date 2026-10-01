@@ -22,7 +22,11 @@
           <p>{{ 'Add the required no. of disks to get a vdev size estimate' | translate }}</p>
         }
         @if (spansEnclosures) {
-          <ix-warning [message]="'VDEVs spans enclosure' | translate"></ix-warning>
+          <ix-warning
+            tnTestIdType="text"
+            [message]="'VDEVs spans enclosure' | translate"
+            [tnTestId]="['vdev-spans-enclosure', layout(), position()]"
+          ></ix-warning>
         }
       </div>
       <div class="vdev-container">

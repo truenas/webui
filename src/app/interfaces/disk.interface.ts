@@ -12,7 +12,6 @@ export interface Disk {
   bus: DiskBus;
   description: string;
   devname: string;
-  duplicate_serial: string[];
   expiretime: string;
   hddstandby: DiskStandby;
   identifier: string;

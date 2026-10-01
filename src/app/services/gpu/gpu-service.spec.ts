@@ -1,14 +1,16 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { Device } from 'app/interfaces/device.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -34,10 +36,10 @@ describe('GpuService', () => {
   const createService = createServiceFactory({
     service: GpuService,
     providers: [
-      mockApi([
-        mockCall('system.advanced.update_gpu_pci_ids'),
-        mockCall('device.get_info', allGpus),
-        mockCall('system.advanced.get_gpu_pci_choices', {
+      mockTypedApi([
+        mockTypedCall('system.advanced.update_gpu_pci_ids', null),
+        mockTypedCall('device.get_info', allGpus as CallResponse<WebUiApiDirectory, 'device.get_info'>),
+        mockTypedCall('system.advanced.get_gpu_pci_choices', {
           'GeForce [0000:01:00.0]': {
             pci_slot: '0000:01:00.0',
             uses_system_critical_devices: false,
@@ -73,7 +75,7 @@ describe('GpuService', () => {
       const gpus = await firstValueFrom(spectator.service.getAllGpus());
 
       expect(gpus).toEqual(allGpus);
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('device.get_info', [{ type: DeviceType.Gpu }]);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('device.get_info', [{ type: DeviceType.Gpu }]);
     });
   });
 
@@ -81,7 +83,7 @@ describe('GpuService', () => {
     it('calls the correct API endpoint and returns raw GPU PCI choices', async () => {
       const choices = await firstValueFrom(spectator.service.getRawGpuPciChoices());
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.advanced.get_gpu_pci_choices');
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('system.advanced.get_gpu_pci_choices');
       expect(choices).toEqual({
         'GeForce [0000:01:00.0]': {
           pci_slot: '0000:01:00.0',
@@ -138,7 +140,7 @@ describe('GpuService', () => {
     });
 
     it('marks GPUs with system critical devices in the label', async () => {
-      const apiService = spectator.inject(ApiService);
+      const apiService = spectator.inject(TypedApiService);
       jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
         if (method === 'system.advanced.get_gpu_pci_choices') {
           return of({
@@ -194,7 +196,7 @@ describe('GpuService', () => {
       jest.spyOn(store$, 'dispatch');
       await firstValueFrom(spectator.service.addIsolatedGpuPciIds(['0000:01:00.0']));
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
         'system.advanced.update_gpu_pci_ids',
         [['0000:02:00.0', '0000:01:00.0']],
       );
@@ -205,7 +207,7 @@ describe('GpuService', () => {
       testScheduler.run(({ expectObservable }) => {
         const call$ = spectator.service.addIsolatedGpuPciIds(['0000:02:00.0']);
 
-        expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
+        expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalled();
         expectObservable(call$).toBe('(a|)', { a: undefined });
       });
     });

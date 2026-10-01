@@ -5,14 +5,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnDialogHarness, TnSlideToggleHarness } from '@truenas/ui-components';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { StartServiceDialog } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectServices } from 'app/store/services/services.selectors';
 
@@ -35,15 +36,16 @@ describe('StartServiceDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('service.update'),
-        mockJob('service.control', fakeSuccessfulJob()),
+      mockTypedApi([
+        mockTypedCall('service.update', null),
+        mockTypedJob('service.control', { state: JobState.Success }),
       ]),
       {
         provide: DIALOG_DATA,
         useValue: ServiceName.Cifs,
       },
       mockProvider(DialogRef),
+      mockProvider(SnackbarService),
       provideMockStore({
         selectors: [{
           selector: selectServices,
@@ -55,6 +57,8 @@ describe('StartServiceDialogComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    // The job settles on a microtask; let the zone re-render so the progress bar sees loading end.
+    spectator.fixture.autoDetectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     store$ = spectator.inject(MockStore);
   });
@@ -79,8 +83,8 @@ describe('StartServiceDialogComponent', () => {
     const startButton = await loader.getHarness(TnButtonHarness.with({ label: 'Start' }));
     await startButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('service.update', [4, { enable: true }]);
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('service.control', [ServiceOperation.Start, ServiceName.Cifs, { silent: false }]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('service.update', [4, { enable: true }]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('service.control', [ServiceOperation.Start, ServiceName.Cifs, { silent: false }]);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
       start: true,
       startAutomatically: true,
@@ -106,8 +110,8 @@ describe('StartServiceDialogComponent', () => {
     const startButton = await loader.getHarness(TnButtonHarness.with({ label: 'Start' }));
     await startButton.click();
 
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('service.update', [4, { enable: true }]);
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('service.control', [ServiceOperation.Start, ServiceName.Cifs, { silent: false }]);
+    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('service.update', [4, { enable: true }]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('service.control', [ServiceOperation.Start, ServiceName.Cifs, { silent: false }]);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
       start: true,
       startAutomatically: false,
@@ -118,7 +122,7 @@ describe('StartServiceDialogComponent', () => {
     const noButton = await loader.getHarness(TnButtonHarness.with({ label: 'No' }));
     await noButton.click();
 
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
+    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalled();
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
       start: false,
       startAutomatically: false,

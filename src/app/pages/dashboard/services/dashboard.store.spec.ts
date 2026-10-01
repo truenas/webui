@@ -1,9 +1,9 @@
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom, of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
@@ -45,8 +45,8 @@ describe('DashboardStore', () => {
           },
         ],
       }),
-      mockApi([
-        mockCall('auth.set_attribute'),
+      mockTypedApi([
+        mockTypedCall('auth.set_attribute', null),
       ]),
     ],
   });
@@ -82,7 +82,7 @@ describe('DashboardStore', () => {
     });
   });
 
-  it('should handle save operation and its completion', () => {
+  it('should handle save operation and its completion', async () => {
     const finalizeSpy = jest.spyOn(spectator.service, 'toggleLoadingState');
 
     spectator.service.save([{
@@ -93,7 +93,7 @@ describe('DashboardStore', () => {
     },
     ]).subscribe();
 
-    const api = spectator.inject(ApiService);
+    const api = spectator.inject(TypedApiService);
     expect(api.call).toHaveBeenCalledWith('auth.set_attribute', [
       'dashState',
       [{
@@ -104,6 +104,9 @@ describe('DashboardStore', () => {
       }],
     ]);
 
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve);
+    });
     expect(finalizeSpy).toHaveBeenCalledWith(false);
   });
 

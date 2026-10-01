@@ -4,7 +4,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
 
 describe('AuditApiDataProvider', () => {
@@ -13,7 +13,7 @@ describe('AuditApiDataProvider', () => {
 
   beforeEach(() => {
     api = { call: jest.fn(() => of([])) };
-    dataProvider = new AuditApiDataProvider(api as unknown as ApiService);
+    dataProvider = new AuditApiDataProvider(api as unknown as TypedApiService);
   });
 
   it('throws on direct setParams() so callers cannot desync the typed filters', () => {

@@ -6,7 +6,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnButtonToggleHarness, TnEmptyHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -64,8 +64,8 @@ describe('JobsListComponent', () => {
       mockProvider(ActivatedRoute, {
         queryParams: of({}),
       }),
-      mockApi([
-        mockCall('core.job_download_logs', 'http://localhost/download/log'),
+      mockTypedApi([
+        mockTypedCall('core.job_download_logs', 'http://localhost/download/log'),
       ]),
       mockProvider(DownloadService, {
         downloadUrl: jest.fn(() => of(undefined)),

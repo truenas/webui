@@ -2,7 +2,7 @@
   <ix-page-header>
     <div *ixWithLoadingState="availableMemory$ as availableMemory" class="vm-summary">
       <strong>{{ 'Available Memory' | translate }}:</strong>
-      <span>{{ availableMemory | ixFileSize }}</span>
+      <span tnTestId="available-memory" tnTestIdType="text">{{ availableMemory | ixFileSize }}</span>
       <tn-icon
         name="information"
         library="mdi"

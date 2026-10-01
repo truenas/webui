@@ -14,6 +14,8 @@
 
     @if (isSmbRunning$ | async) {
       <ix-warning
+        tnTestId="smb-reboot-warning"
+        tnTestIdType="text"
         [message]="helptext.smbRebootWarning | translate"
       ></ix-warning>
     }

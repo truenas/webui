@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { Job } from 'app/interfaces/job.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -20,7 +20,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ErrorTemplateComponent {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private download = inject(DownloadService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);

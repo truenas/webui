@@ -41,7 +41,7 @@
         }
       </div>
     } @else if (searchQuery$ | async) {
-      <ix-empty [conf]="noSearchResultsConfig"></ix-empty>
+      <ix-empty tnTestId="no-search-results" tnTestIdType="text" [conf]="noSearchResultsConfig"></ix-empty>
     }
   }
 

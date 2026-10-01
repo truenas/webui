@@ -6,19 +6,19 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Role } from 'app/enums/role.enum';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ChangePasswordDialog } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 describe('ChangePasswordFormComponent (via ChangePasswordDialog)', () => {
   let spectator: Spectator<ChangePasswordDialog>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -34,8 +34,8 @@ describe('ChangePasswordFormComponent (via ChangePasswordDialog)', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('user.set_password'),
+      mockTypedApi([
+        mockTypedCall('user.set_password', null),
       ]),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogRef),
@@ -49,7 +49,7 @@ describe('ChangePasswordFormComponent (via ChangePasswordDialog)', () => {
   it('does not show current password field for full admin', async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
 
     // Ensure hasRole returns true when called with Role.FullAdmin
     const authService = spectator.inject(MockAuthService);
@@ -65,7 +65,7 @@ describe('ChangePasswordFormComponent (via ChangePasswordDialog)', () => {
   it('checks current password, updates to new password and closes the dialog when form is saved', async () => {
     spectator = createComponent({ detectChanges: false });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
 
     // Set up the auth mock to return false for FullAdmin (i.e., not a full admin)
     // BEFORE the first change detection, so the Current Password branch renders.
@@ -96,7 +96,7 @@ describe('ChangePasswordFormComponent (via ChangePasswordDialog)', () => {
   it('shows error if any happened during password change request', async () => {
     spectator = createComponent({ detectChanges: false });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
 
     // Set up the auth mock to return false for FullAdmin (i.e., not a full admin)
     // BEFORE the first change detection, so the Current Password branch renders.

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { TnIconButtonComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { StatusBadge, StatusBadgeComponent } from 'app/modules/layout/topbar/status-badge/status-badge.component';
@@ -36,6 +36,7 @@ function classifyStatus(status: TruenasConnectStatus): StatusKind {
 @Component({
   selector: 'ix-truenas-connect-button',
   imports: [
+    TnTestIdDirective,
     TnIconButtonComponent,
     StatusBadgeComponent,
   ],

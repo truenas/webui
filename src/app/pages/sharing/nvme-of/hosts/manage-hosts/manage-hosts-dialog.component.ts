@@ -99,8 +99,8 @@ export class ManageHostsDialog implements OnInit {
   }
 
   onAdd(): void {
-    // The panel stacks above this dialog (FormSidePanelContainerComponent re-homes it into the CDK
-    // overlay container so open order decides), so the dialog stays open behind it and the user is
+    // The panel stacks above this dialog (tn-side-panel attaches through CDK's Overlay, so open
+    // order decides), so the dialog stays open behind it and the user is
     // back on the list as soon as the form closes — no need to close it first as the slide-in did.
     this.formPanel
       .open(HostFormComponent, { title: this.translate.instant('Add Host') })

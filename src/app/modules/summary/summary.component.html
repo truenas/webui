@@ -7,8 +7,8 @@
         [tnTestId]="row.testId"
         [class.section-start]="i === 0"
       >
-        <td class="summary-line-label">{{ row.item.label | translate }}:</td>
-        <td class="summary-line-value">{{ row.item.value | translate }}</td>
+        <td class="summary-line-label" tnTestIdType="text" [tnTestId]="row.labelTestId">{{ row.item.label | translate }}:</td>
+        <td class="summary-line-value" tnTestIdType="text" [tnTestId]="row.testId">{{ row.item.value | translate }}</td>
       </tr>
     }
   }

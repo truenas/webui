@@ -13,7 +13,8 @@ export class UsersDataProvider extends ApiDataProvider<'user.query'> {
   private additionalUsername: string;
 
   constructor(
-    api: ApiService,
+    // Re-declared at its own type: `load` makes a second, legacy-typed `user.query` call.
+    protected override api: ApiService,
     params: QueryParams<User>,
   ) {
     super(api, 'user.query', params);

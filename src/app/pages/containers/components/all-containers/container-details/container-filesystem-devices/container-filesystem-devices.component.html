@@ -8,7 +8,7 @@
   } @else {
     @for (disk of visibleDisks(); track disk.id) {
       <div class="device">
-        <span class="device-description">{{ getDeviceDescription(disk) }}</span>
+        <span class="device-description" tnTestIdType="text" [tnTestId]="['filesystem-device', disk.id]">{{ getDeviceDescription(disk) }}</span>
 
         <ix-device-actions-menu
           [device]="disk"

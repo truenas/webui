@@ -13,24 +13,25 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Injectable({ providedIn: 'root' })
 export class SystemGeneralService {
-  protected api = inject(ApiService);
+  protected api = inject(TypedApiService);
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
-
-  protected certificateList = 'certificate.query' as const;
 
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
   updateIsDone$ = new Subject<void>();
 
   getCertificates(): Observable<Certificate[]> {
-    return this.api.call(this.certificateList);
+    return this.api.query('certificate.query').pipe(
+      // Middleware types `key_type` as a plain string and `extensions` as a loose dict; the UI narrows them.
+      map((certificates) => certificates as Certificate[]),
+    );
   }
 
   getCertificateCountryChoices(): Observable<Choices> {

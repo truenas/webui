@@ -6,6 +6,7 @@ import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-
 import { KiB } from 'app/constants/bytes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
@@ -58,14 +59,16 @@ describe('ExtentFormComponent', () => {
       mockAuth(),
       mockProvider(StorageService),
       mockProvider(DialogService),
-      mockApi([
-        mockCall('iscsi.extent.create'),
-        mockCall('iscsi.extent.update'),
-        mockCall('iscsi.extent.disk_choices', {
+      mockTypedApi([
+        mockTypedCall('iscsi.extent.disk_choices', {
           key_device_1: 'value_device_1',
           key_device_2: 'value_device_2',
           key_device_3: 'value_device_3',
         } as Choices),
+      ]),
+      mockApi([
+        mockCall('iscsi.extent.create'),
+        mockCall('iscsi.extent.update'),
       ]),
       ...ixFormTestingProviders(),
     ],
@@ -108,6 +111,7 @@ describe('ExtentFormComponent', () => {
       spectator.component.closed.subscribe(closed);
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('iscsi.extent.create', [{
         avail_threshold: null,
@@ -166,6 +170,7 @@ describe('ExtentFormComponent', () => {
       spectator.component.closed.subscribe(closed);
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.update', [
         123,
@@ -199,6 +204,7 @@ describe('ExtentFormComponent', () => {
       spectator.detectChanges();
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.update', [
         123,

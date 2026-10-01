@@ -1,8 +1,8 @@
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import Dygraph, { dygraphs } from 'dygraphs';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { ThemeService } from 'app/modules/theme/theme.service';
@@ -62,7 +62,7 @@ describe('LineChartComponent', () => {
   const createComponent = createComponentFactory({
     component: LineChartComponent,
     providers: [
-      mockApi(),
+      mockTypedApi(),
       mockProvider(ReportsService, {
         emitLegendEvent: jest.fn(),
       }),

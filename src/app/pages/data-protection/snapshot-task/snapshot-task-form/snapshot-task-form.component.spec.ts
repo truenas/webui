@@ -7,8 +7,10 @@ import {
   TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -59,10 +61,12 @@ describe('SnapshotTaskComponent', () => {
     mockProvider(LocaleService, {
       timezone: 'America/New_York',
     }),
+    mockTypedApi([
+      mockTypedCall('pool.snapshottask.update_will_change_retention_for', {}),
+    ]),
     mockApi([
       mockCall('pool.snapshottask.create'),
       mockCall('pool.snapshottask.update'),
-      mockCall('pool.snapshottask.update_will_change_retention_for', {}),
     ]),
     mockProvider(DialogService),
     mockProvider(StorageService, {
@@ -132,6 +136,7 @@ describe('SnapshotTaskComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
@@ -183,6 +188,7 @@ describe('SnapshotTaskComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
@@ -218,6 +224,7 @@ describe('SnapshotTaskComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
@@ -231,7 +238,10 @@ describe('SnapshotTaskComponent', () => {
 
     it('shows retention warning when snapshots are affected', async () => {
       const mockSnapshots = ['snapshot1', 'snapshot2', 'snapshot3'];
-      spectator.inject(ApiService).call.mockReturnValue(of(mockSnapshots));
+      spectator.inject(MockTypedApiService).mockCall(
+        'pool.snapshottask.update_will_change_retention_for',
+        { 'pool/dataset': mockSnapshots },
+      );
 
       await (await getInput('lifetime_value')).setValue('5');
 
@@ -253,7 +263,7 @@ describe('SnapshotTaskComponent', () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
       const mockError = new Error('API Error');
-      spectator.inject(ApiService).call.mockImplementation(() => {
+      spectator.inject(MockTypedApiService).call.mockImplementation(() => {
         throw mockError;
       });
 

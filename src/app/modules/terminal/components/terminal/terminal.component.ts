@@ -6,7 +6,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnSpinnerComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnSpinnerComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { FitAddon } from '@xterm/addon-fit';
 import { Terminal } from '@xterm/xterm';
 import FontFaceObserver from 'fontfaceobserver';
@@ -30,6 +30,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   providers: [ShellService],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnButtonComponent,
     TnSpinnerComponent,
     NgStyle,

@@ -1,18 +1,30 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { EMPTY, forkJoin, of } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { CallResponse } from '@truenas/api-client';
+import { environment } from 'environments/environment';
 import {
-  catchError, map, mergeMap,
+  combineLatest, defer, EMPTY, forkJoin, Observable, of,
+} from 'rxjs';
+import {
+  catchError, distinctUntilChanged, map, mergeMap,
 } from 'rxjs/operators';
 import { HardwareType } from 'app/enums/hardware-type.enum';
-import { ContractType, License } from 'app/interfaces/system-info.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { EntitlementFacts } from 'app/interfaces/entitlement.interface';
+import { ContractType, License, SystemInfo } from 'app/interfaces/system-info.interface';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { selectIsEnclosureMockActive } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
+import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   entitlementFactsLoaded,
   ixHardwareLoaded,
   systemInfoLoaded, systemInfoUpdated,
 } from 'app/store/system-info/system-info.actions';
+
+type SystemInfoResult = CallResponse<WebUiApiDirectory, 'system.info'>;
+type LicenseInfo = CallResponse<WebUiApiDirectory, 'truenas.license.info'>;
 
 const knownContractTypes: ReadonlySet<string> = new Set(Object.values(ContractType));
 
@@ -23,7 +35,11 @@ const knownContractTypes: ReadonlySet<string> = new Set(Object.values(ContractTy
  * warning is logged so they surface during testing — the label helper has its
  * own raw-string fallback for display.
  */
-function normalizeLicense(license: License | null): License | null {
+function normalizeLicense(wireLicense: LicenseInfo | null): License | null {
+  // Middleware types the dates as strings, but they arrive as `ApiDate` envelopes, and it leaves
+  // `type` and the feature names as open strings the UI reads through its enums. It sends no
+  // top-level `expires_at`, which is why `License` declares that field optional.
+  const license = wireLicense as unknown as License | null;
   if (!license?.contract_type) {
     return license;
   }
@@ -36,10 +52,32 @@ function normalizeLicense(license: License | null): License | null {
   return { ...license, contract_type: upper as ContractType };
 }
 
+/**
+ * Middleware types the timestamps as strings, but they arrive as `ApiTimestamp` envelopes; `license`
+ * is filled from `truenas.license.info` rather than read from this answer.
+ */
+function toSystemInfo(systemInfo: SystemInfoResult, license: License | null): SystemInfo {
+  return { ...systemInfo, license } as unknown as SystemInfo;
+}
+
 @Injectable()
 export class SystemInfoEffects {
   private actions$ = inject(Actions);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
+  private store$ = inject<Store<AppState>>(Store);
+
+  /**
+   * The debug panel's enclosure mock stands in for iX hardware on a dev box. Its mocks only
+   * intercept `ApiService` calls, so the typed `truenas.is_ix_hardware` answer is overridden here
+   * instead. The debug panel's state only exists when the panel is enabled (see `main.ts`).
+   */
+  private isEnclosureMockEnabled$: Observable<boolean> = defer(() => {
+    if (!environment.debugPanel?.enabled) {
+      return of(false);
+    }
+
+    return this.store$.select(selectIsEnclosureMockActive);
+  });
 
   loadSystemInfo = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized, systemInfoUpdated),
@@ -56,7 +94,7 @@ export class SystemInfoEffects {
         ),
       }).pipe(
         map(({ systemInfo, license }) => systemInfoLoaded({
-          systemInfo: { ...systemInfo, license: normalizeLicense(license) },
+          systemInfo: toSystemInfo(systemInfo, normalizeLicense(license)),
         })),
         catchError((error: unknown) => {
           // TODO: Basically a fatal error. Handle it.
@@ -70,13 +108,18 @@ export class SystemInfoEffects {
   loadIsIxHardware = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
-      return this.api.call('truenas.is_ix_hardware').pipe(
-        map((isIxHardware) => ixHardwareLoaded({ isIxHardware })),
+      const isIxHardware$ = this.api.call('truenas.is_ix_hardware').pipe(
         catchError((error: unknown) => {
           // TODO: Show error message to user?
           console.error(error);
-          return of(ixHardwareLoaded({ isIxHardware: false }));
+          return of(false);
         }),
+      );
+
+      return combineLatest([isIxHardware$, this.isEnclosureMockEnabled$]).pipe(
+        map(([isIxHardware, isEnclosureMocked]) => isIxHardware || isEnclosureMocked),
+        distinctUntilChanged(),
+        map((isIxHardware) => ixHardwareLoaded({ isIxHardware })),
       );
     }),
   ));
@@ -85,7 +128,8 @@ export class SystemInfoEffects {
     ofType(adminUiInitialized),
     mergeMap(() => {
       return this.api.call('truenas.entitlements.facts').pipe(
-        map((entitlementFacts) => entitlementFactsLoaded({ entitlementFacts })),
+        // Middleware types `hardware_type` as a literal union; `HardwareType` holds the same values.
+        map((entitlementFacts) => entitlementFactsLoaded({ entitlementFacts: entitlementFacts as EntitlementFacts })),
         catchError((error: unknown) => {
           console.error(error);
           return of(entitlementFactsLoaded({

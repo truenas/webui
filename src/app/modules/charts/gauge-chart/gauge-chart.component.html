@@ -4,8 +4,8 @@
   [options]="chartOptions"
 ></canvas>
 <div class="label-container">
-  <div class="label">{{ label() }}</div>
+  <div class="label" tnTestIdType="text" [tnTestId]="labelTestId()">{{ label() }}</div>
   @if (sublabel()) {
-    <div class="sublabel">{{ sublabel() }}</div>
+    <div class="sublabel" tnTestIdType="text" [tnTestId]="sublabelTestId()">{{ sublabel() }}</div>
   }
 </div>

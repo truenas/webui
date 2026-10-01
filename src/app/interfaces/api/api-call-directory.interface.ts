@@ -2,12 +2,8 @@ import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
-import { DeviceType } from 'app/enums/device-type.enum';
-import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
-import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
-import { TransportMode } from 'app/enums/transport-mode.enum';
 import {
   Acl,
   AclQueryParams,
@@ -92,7 +88,6 @@ import { DatasetQuota, DatasetQuotaQueryParams, SetDatasetQuota } from 'app/inte
 import {
   Dataset, DatasetCreate, DatasetDetails, DatasetUpdate, ExtraDatasetQueryOptions,
 } from 'app/interfaces/dataset.interface';
-import { Device } from 'app/interfaces/device.interface';
 import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
 import { DirectoryServicesLeaveParams, DirectoryServicesLeaveResponse } from 'app/interfaces/directoryservices-leave.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
@@ -100,7 +95,6 @@ import { DirectoryServicesUpdate, DirectoryServicesUpdateResponse } from 'app/in
 import {
   Disk, DiskDetailsResponse,
   DiskTemperatureAgg,
-  DiskTemperatures,
   DiskUpdate,
   ExtraDiskQueryOptions, DiskDetailsParams,
 } from 'app/interfaces/disk.interface';
@@ -113,10 +107,9 @@ import { DockerConfig, DockerStatusData } from 'app/interfaces/docker-config.int
 import { DockerRegistry, DockerRegistryPayload } from 'app/interfaces/docker-registry.interface';
 import { DockerHubRateLimit } from 'app/interfaces/dockerhub-rate-limit.interface';
 import {
-  DsUncachedGroup, DsUncachedUser, LoggedInUser,
+  DsUncachedGroup, LoggedInUser,
 } from 'app/interfaces/ds-cache.interface';
 import { DashboardEnclosure, Enclosure, SetDriveBayLightStatus } from 'app/interfaces/enclosure.interface';
-import { EntitlementFacts, EntitlementsInfo } from 'app/interfaces/entitlement.interface';
 import {
   FailoverConfig,
   FailoverUpdate,
@@ -128,7 +121,6 @@ import {
   FibreChannelPortUpdate,
   FibreChannelStatus,
 } from 'app/interfaces/fibre-channel.interface';
-import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
 import { FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
 import { GpuPciChoices } from 'app/interfaces/gpu-pci-choice.interface';
@@ -223,21 +215,12 @@ import {
 import { Privilege, PrivilegeRole, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
-import { FailoverRebootInfo, SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
 import { ReplicationConfigUpdate } from 'app/interfaces/replication-config-update.interface';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import {
   ReplicationCreate,
   ReplicationTask,
 } from 'app/interfaces/replication-task.interface';
-import {
-  ReportingExporter, ReportingExporterSchema, UpdateReportingExporter,
-} from 'app/interfaces/reporting-exporters.interface';
-import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
-import {
-  ReportingData,
-  ReportingQueryParams,
-} from 'app/interfaces/reporting.interface';
 import { ResilverConfig, ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import {
@@ -266,28 +249,22 @@ import {
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
-import { License, SystemInfo } from 'app/interfaces/system-info.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import {
   UpdateConfig,
   UpdateProfileChoices,
   UpdateStatus,
 } from 'app/interfaces/system-update.interface';
-import {
-  TrueCommandConfig, TrueCommandUpdateResponse,
-  UpdateTrueCommand,
-} from 'app/interfaces/true-command-config.interface';
 import { TruenasConnectConfig, TruenasConnectUpdate } from 'app/interfaces/truenas-connect-config.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import {
-  DeleteUserParams, SetPasswordParams, User, UserUpdate,
+  DeleteUserParams, User, UserUpdate,
 } from 'app/interfaces/user.interface';
 import {
-  VirtualizationDetails,
-  VirtualMachine, VirtualMachineUpdate, VmCloneParams, VmDeleteParams, VmDisplayWebUri,
-  VmDisplayWebUriParams, VmPortWizardResult,
+  VirtualMachine, VirtualMachineUpdate, VmCloneParams, VmDeleteParams, VmPortWizardResult,
 } from 'app/interfaces/virtual-machine.interface';
 import {
   VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
@@ -328,11 +305,8 @@ export interface ApiCallDirectory {
   'acme.dns.authenticator.update': { params: [number, Partial<UpdateDnsAuthenticator>]; response: DnsAuthenticator };
 
   // Alert
-  'alert.dismiss': { params: string[]; response: void };
-  'alert.list': { params: void; response: Alert[] };
   'alert.list_categories': { params: void; response: AlertCategory[] };
   'alert.list_policies': { params: void; response: AlertPolicy[] };
-  'alert.restore': { params: string[]; response: void };
 
   // Alert Classes
   'alertclasses.config': { params: void; response: AlertClasses };
@@ -412,7 +386,6 @@ export interface ApiCallDirectory {
 
   // Certificate
   'certificate.acme_server_choices': { params: void; response: Choices };
-  'certificate.country_choices': { params: void; response: Choices };
   'certificate.ec_curve_choices': { params: void; response: Choices };
   'certificate.extended_key_usage_choices': { params: void; response: ExtendedKeyUsageChoices };
   'certificate.query': { params: QueryParams<Certificate>; response: Certificate[] };
@@ -449,7 +422,6 @@ export interface ApiCallDirectory {
   'core.download': { params: CoreDownloadQuery; response: CoreDownloadResponse };
   'core.get_jobs': { params: QueryParams<Job>; response: Job[] };
   'core.job_abort': { params: [jobId: number]; response: void };
-  'core.job_download_logs': { params: [ id: number, filename: string ]; response: string };
   'core.resize_shell': { params: ResizeShellRequest; response: void };
   'core.subscribe': { params: [name: ApiEventMethod]; response: void };
   'core.unsubscribe': { params: [id: string]; response: void };
@@ -463,7 +435,6 @@ export interface ApiCallDirectory {
   'cronjob.update': { params: [id: number, update: Partial<CronjobUpdate>]; response: Cronjob };
 
   // Device
-  'device.get_info': { params: [{ type: DeviceType }]; response: Device[] };
 
   // Directory Services
   'directoryservices.status': { params: void; response: DirectoryServicesStatus };
@@ -483,7 +454,6 @@ export interface ApiCallDirectory {
   'disk.reset_sed': { params: [params: { name: string; psid: string }]; response: void };
   'disk.temperature_agg': { params: [disks: string[], days: number]; response: DiskTemperatureAgg };
   'disk.temperature_alerts': { params: [disks: string[]]; response: Alert[] };
-  'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };
   'disk.unlock_sed': { params: [params: { name: string; password: string }]; response: void };
   'disk.update': { params: [id: string, update: Partial<DiskUpdate>]; response: Disk };
 
@@ -496,12 +466,9 @@ export interface ApiCallDirectory {
   // Failover
   'failover.become_passive': { params: void; response: void };
   'failover.config': { params: void; response: FailoverConfig };
-  'failover.disabled.reasons': { params: void; response: FailoverDisabledReason[] };
   'failover.get_ips': { params: void; response: string[] };
   'failover.licensed': { params: void; response: boolean };
   'failover.node': { params: void; response: string };
-  'failover.reboot.info': { params: void; response: FailoverRebootInfo };
-  'failover.status': { params: void; response: FailoverStatus };
   'failover.sync_from_peer': { params: void; response: void };
   'failover.sync_to_peer': { params: [{ reboot?: boolean }]; response: void };
   'failover.update': { params: [Partial<FailoverUpdate>]; response: FailoverConfig };
@@ -525,7 +492,6 @@ export interface ApiCallDirectory {
   'filesystem.acltemplate.create': { params: [AclTemplateCreateParams]; response: AclTemplateCreateResponse };
   'filesystem.acltemplate.delete': { params: [id: number]; response: boolean };
   'filesystem.getacl': { params: AclQueryParams; response: Acl };
-  'filesystem.listdir': { params: ListdirQueryParams; response: FileRecord[] };
   'filesystem.stat': { params: [path: string]; response: FileSystemStat };
   'filesystem.statfs': { params: [path: string]; response: Statfs };
 
@@ -763,7 +729,6 @@ export interface ApiCallDirectory {
   'replication.count_eligible_manual_snapshots': { params: [CountManualSnapshotsParams]; response: EligibleManualSnapshotsCount };
   'replication.create': { params: [ReplicationCreate]; response: ReplicationTask };
   'replication.delete': { params: [id: number]; response: boolean };
-  'replication.list_datasets': { params: [transport: TransportMode, credentials?: number]; response: string[] };
   'replication.list_naming_schemas': { params: void; response: string[] };
   'replication.query': { params: QueryParams<ReplicationTask>; response: ReplicationTask[] };
   'replication.restore': { params: [id: number, params: { name: string; target_dataset: string }]; response: void };
@@ -771,13 +736,6 @@ export interface ApiCallDirectory {
   'replication.update': { params: [id: number, update: Partial<ReplicationCreate>]; response: ReplicationTask };
 
   // Reporting
-  'reporting.exporters.create': { params: [UpdateReportingExporter]; response: ReportingExporter };
-  'reporting.exporters.delete': { params: [id: number]; response: boolean };
-  'reporting.exporters.exporter_schemas': { params: void; response: ReportingExporterSchema[] };
-  'reporting.exporters.query': { params: QueryParams<ReportingExporter>; response: ReportingExporter[] };
-  'reporting.exporters.update': { params: [number, Partial<UpdateReportingExporter>]; response: ReportingExporter };
-  'reporting.netdata_get_data': { params: ReportingQueryParams; response: ReportingData[] };
-  'reporting.netdata_graphs': { params: QueryParams<ReportingGraph>; response: ReportingGraph[] };
 
   // Rsynctask
   'rsynctask.create': { params: [RsyncTaskUpdate]; response: RsyncTask };
@@ -795,7 +753,6 @@ export interface ApiCallDirectory {
   's3.accesskey.delete': { params: [id: number]; response: boolean };
 
   // Service
-  'service.query': { params: QueryParams<Service>; response: Service[] };
   'service.update': { params: [number | ServiceName, Partial<Service>]; response: number };
 
   // Sharing
@@ -861,16 +818,9 @@ export interface ApiCallDirectory {
   'system.advanced.syslog_certificate_choices': { params: void; response: Choices };
   'system.advanced.update': { params: [Partial<AdvancedConfigUpdate>]; response: AdvancedConfig };
   'system.advanced.update_gpu_pci_ids': { params: [isolated_gpu_pci_ids: string[]]; response: void };
-  'system.advanced.login_banner': { params: void; response: string };
   'system.boot_id': { params: void; response: string };
   'system.general.config': { params: void; response: SystemGeneralConfig };
-  'system.general.kbdmap_choices': { params: void; response: Choices };
-  'system.general.timezone_choices': { params: void; response: Choices };
-  'system.general.ui_address_choices': { params: void; response: Choices };
-  'system.general.ui_certificate_choices': { params: void; response: Record<number, string> };
-  'system.general.ui_httpsprotocols_choices': { params: void; response: Choices };
   'system.general.ui_restart': { params: void; response: void };
-  'system.general.ui_v6address_choices': { params: void; response: Choices };
   'system.general.update': { params: [Partial<SystemGeneralConfigUpdate>]; response: SystemGeneralConfig };
   'system.host_id': { params: void; response: string };
   'system.info': { params: void; response: SystemInfo };
@@ -879,16 +829,12 @@ export interface ApiCallDirectory {
   'system.ntpserver.query': { params: QueryParams<NtpServer>; response: NtpServer[] };
   'system.ntpserver.update': { params: [id: number, params: Partial<CreateNtpServer>]; response: NtpServer };
   'system.security.config': { params: void; response: SystemSecurityConfig };
-  'system.security.info.fips_available': { params: void; response: boolean };
-  'system.reboot.info': { params: void; response: SystemRebootInfo };
 
   // Systemdataset
   'systemdataset.config': { params: void; response: SystemDatasetConfig };
   'systemdataset.pool_choices': { params: void; response: Choices };
 
   // Truecommand
-  'truecommand.config': { params: void; response: TrueCommandConfig };
-  'truecommand.update': { params: [Partial<UpdateTrueCommand>]; response: TrueCommandUpdateResponse };
 
   // Truenas Connect
   'tn_connect.config': { params: void; response: TruenasConnectConfig };
@@ -898,20 +844,13 @@ export interface ApiCallDirectory {
   'tn_connect.ips_with_hostnames': { params: void; response: Record<string, string> };
 
   // TrueNAS
-  'truenas.accept_eula': { params: void; response: void };
-  'truenas.entitlements.facts': { params: void; response: EntitlementFacts };
-  'truenas.entitlements.info': { params: void; response: EntitlementsInfo };
   'truenas.get_eula': { params: void; response: string };
-  'truenas.is_eula_accepted': { params: void; response: boolean };
   'truenas.is_production': { params: void; response: boolean };
-  'truenas.is_ix_hardware': { params: void; response: boolean };
   'truenas.license.fingerprint': { params: void; response: string };
-  'truenas.license.info': { params: void; response: License | null };
   'truenas.license.upload': {
     params: [license: string, options?: { ha_propagate?: boolean }];
     response: void;
   };
-  'truenas.managed_by_truecommand': { params: void; response: boolean };
 
   // Tunable
   'tunable.query': { params: QueryParams<Tunable>; response: Tunable[] };
@@ -934,13 +873,9 @@ export interface ApiCallDirectory {
   'user.update': { params: [id: number, update: Partial<UserUpdate>]; response: User };
   'user.delete': { params: DeleteUserParams; response: number };
   'user.get_next_uid': { params: void; response: number };
-  'user.get_user_obj': { params: [{ username?: string; uid?: number }]; response: DsUncachedUser };
-  'user.has_local_administrator_set_up': { params: void; response: boolean };
   'user.query': { params: QueryParams<User>; response: User[] };
   'user.renew_2fa_secret': { params: [string, { interval: number; otp_digits: number }]; response: User };
   'user.unset_2fa_secret': { params: [string]; response: User };
-  'user.set_password': { params: [SetPasswordParams]; response: void };
-  'user.setup_local_administrator': { params: [userName: string, password: string, ec2?: { instance_id: string }]; response: void };
   'user.shell_choices': { params: [ids: number[]]; response: Choices };
 
   // Container
@@ -985,20 +920,13 @@ export interface ApiCallDirectory {
   'vm.device.usb_controller_choices': { params: void; response: Choices };
   'vm.device.usb_passthrough_choices': { params: void; response: Record<string, VmUsbPassthroughDeviceChoice> };
   'vm.device.virtual_size': { params: [{ path: string }]; response: number };
-  'vm.get_available_memory': { params: void; response: number };
   'vm.get_display_devices': { params: [id: number]; response: VmDisplayDevice[] };
-  'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: VmDisplayWebUri };
   'vm.maximum_supported_vcpus': { params: void; response: number };
   'vm.port_wizard': { params: void; response: VmPortWizardResult };
-  'vm.poweroff': { params: [id: number]; response: void };
   'vm.query': { params: QueryParams<VirtualMachine>; response: VirtualMachine[] };
   'vm.random_mac': { params: void; response: string };
-  'vm.reset': { params: [id: number]; response: void };
   'vm.resolution_choices': { params: void; response: Choices };
-  'vm.start': { params: [id: number, params?: { overcommit?: boolean }]; response: void };
   'vm.update': { params: [id: number, update: Partial<VirtualMachineUpdate>]; response: VirtualMachine };
-  'vm.virtualization_details': { params: void; response: VirtualizationDetails };
-  'vm.resume': { params: [id: number]; response: void };
 
   // Vmware
   'vmware.create': { params: [VmwareSnapshotUpdate]; response: VmwareSnapshot };

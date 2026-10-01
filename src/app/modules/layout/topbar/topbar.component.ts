@@ -7,7 +7,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconButtonComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import {
   filter, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
@@ -34,7 +34,6 @@ import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { TruenasConnectButtonComponent } from 'app/modules/truenas-connect/truenas-connect-button.component';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { RebootInfoDialogSuppressionService } from 'app/services/reboot-info-dialog-suppression.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
@@ -50,6 +49,7 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
   styleUrls: ['./topbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnIconButtonComponent,
     GlobalSearchTriggerComponent,
     CheckinIndicatorComponent,
@@ -76,7 +76,6 @@ export class TopbarComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private tnc = inject(TruenasConnectService);
-  private apiService = inject<ApiService>(ApiService);
   private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
   private destroyRef = inject(DestroyRef);
 

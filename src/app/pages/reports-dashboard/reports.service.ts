@@ -1,20 +1,24 @@
 import { Injectable, inject } from '@angular/core';
+import { CallParams } from '@truenas/api-client';
 import {
   map, Observable, shareReplay, BehaviorSubject, Subject,
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ReportTab, reportTypeLabels, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { LegendDataWithStackedTotalHtml, Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { convertAggregations, optimizeLegend } from 'app/pages/reports-dashboard/utils/report.utils';
+
+type GraphIdentifier = CallParams<WebUiApiDirectory, 'reporting.netdata_get_data'>[0][number];
 
 @Injectable({
   providedIn: 'root',
 })
 export class ReportsService {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
 
   private reportingGraphs$ = new BehaviorSubject<ReportingGraph[]>([]);
   private diskMetrics$ = new BehaviorSubject<Option[]>([]);
@@ -25,7 +29,10 @@ export class ReportsService {
   readonly legendEventEmitterObs$ = this.legendEventEmitter$.asObservable();
 
   constructor() {
-    this.api.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
+    this.api.query('reporting.netdata_graphs').pipe(
+      // Middleware leaves `name` an open string; the UI reads it through `ReportingGraphName`.
+      map((graphs) => graphs as ReportingGraph[]),
+    ).subscribe((reportingGraphs) => {
       this.hasUps = reportingGraphs.some((graph) => graph.name.startsWith('ups'));
       this.reportingGraphs$.next(reportingGraphs);
     });
@@ -47,11 +54,12 @@ export class ReportsService {
       truncate: boolean;
     },
   ): Observable<ReportingData> {
-    return this.api.call(
-      'reporting.netdata_get_data',
-      [[queryData.params], queryData.timeFrame],
-    ).pipe(
-      map((reportingData: ReportingData[]) => reportingData[0]),
+    // The names come from `reporting.netdata_graphs`, so they are ones middleware accepts, even
+    // though `ReportingGraphName` also lists retired graphs.
+    const graph = queryData.params as GraphIdentifier;
+    return this.api.call('reporting.netdata_get_data', [[graph], queryData.timeFrame]).pipe(
+      // Middleware types the samples as `unknown[]`; they are rows of numbers.
+      map((reportingData) => reportingData[0] as unknown as ReportingData),
       map((reportingData) => {
         // Deep clone the object to avoid modifying read-only properties
         const clonedData = {
@@ -117,7 +125,7 @@ export class ReportsService {
   }
 
   getDiskDevices(): Observable<Option[]> {
-    return this.api.call('disk.query').pipe(
+    return this.api.query('disk.query').pipe(
       map((disks) => {
         return disks
           .filter((disk) => !disk.devname.includes('multipath'))

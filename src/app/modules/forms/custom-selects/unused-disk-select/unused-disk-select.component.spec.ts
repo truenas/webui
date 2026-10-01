@@ -13,7 +13,7 @@ import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 describe('UnusedDiskSelectComponent', () => {
   let spectator: SpectatorHost<UnusedDiskSelectComponent>;
@@ -54,7 +54,7 @@ describe('UnusedDiskSelectComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(ApiService, {
+      mockProvider(TypedApiService, {
         call: () => mockCall$,
       }),
       mockProvider(DialogService),

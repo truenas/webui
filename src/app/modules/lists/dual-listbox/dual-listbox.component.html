@@ -84,6 +84,13 @@
   {{ 'Use the arrow keys to move between items, or start typing to jump to one.' | translate }}
 </div>
 
-<div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+<div
+  class="sr-only"
+  role="status"
+  aria-live="polite"
+  aria-atomic="true"
+  tnTestId="dual-listbox-status"
+  tnTestIdType="text"
+>
   {{ ariaMessage() }}
 </div>

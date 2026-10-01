@@ -1,6 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   TrueCommandStatusComponent,
 } from 'app/pages/signin/true-command-status/true-command-status.component';
@@ -10,8 +10,8 @@ describe('TrueCommandStatusComponent', () => {
   const createComponent = createComponentFactory({
     component: TrueCommandStatusComponent,
     providers: [
-      mockApi([
-        mockCall('truenas.managed_by_truecommand', true),
+      mockTypedApi([
+        mockTypedCall('truenas.managed_by_truecommand', true),
       ]),
     ],
   });
@@ -21,10 +21,13 @@ describe('TrueCommandStatusComponent', () => {
   });
 
   it('makes a websocket call to check TrueCommand status', () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('truenas.managed_by_truecommand');
+    expect(spectator.inject(TypedApiService).callUnauthenticated).toHaveBeenCalledWith('truenas.managed_by_truecommand');
   });
 
-  it('shows Managed by Truecommand status', () => {
+  it('shows Managed by Truecommand status', async () => {
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
+
     expect(spectator.query('tn-icon')).toHaveAttribute('name', 'tn-truecommand-logo-mark-color');
     expect(spectator.query('.truecommand-text')).toHaveExactText('Managed by TrueCommand');
   });

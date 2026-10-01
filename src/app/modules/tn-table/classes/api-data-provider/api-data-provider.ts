@@ -10,7 +10,15 @@ import { SortingServerSide } from 'app/modules/tn-table/classes/api-data-provide
 import { BaseDataProvider } from 'app/modules/tn-table/classes/base-data-provider';
 import { TablePagination } from 'app/modules/tn-table/interfaces/table-pagination.interface';
 import { TableSort } from 'app/modules/tn-table/interfaces/table-sort.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+
+/**
+ * What a provider needs from an API client: `call`, with its generics erased so that both
+ * `ApiService` and `TypedApiService` fit while consumers move from one to the other. The
+ * provider types each response by its method `T`.
+ */
+export interface ApiDataProviderClient {
+  call(method: string, params?: unknown): Observable<unknown>;
+}
 
 export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<ApiCallResponseType<T>> {
   paginationStrategy: PaginationServerSide;
@@ -19,7 +27,7 @@ export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<Ap
   protected rows: ApiCallResponseType<T>[] = [];
 
   constructor(
-    protected api: ApiService,
+    protected api: ApiDataProviderClient,
     protected method: T,
     protected params: ApiCallParams<T> = [],
   ) {

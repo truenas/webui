@@ -12,7 +12,7 @@ import { DeviceType } from 'app/enums/device-type.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { GpuPciChoices } from 'app/interfaces/gpu-pci-choice.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -21,7 +21,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   providedIn: 'root',
 })
 export class GpuService {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private store$ = inject<Store<AppState>>(Store);
 
   private allGpus$: Observable<Device[]>;
@@ -32,6 +32,8 @@ export class GpuService {
   getAllGpus(): Observable<Device[]> {
     if (!this.allGpus$) {
       this.allGpus$ = this.api.call('device.get_info', [{ type: DeviceType.Gpu }]).pipe(
+        // Middleware types the answer as the union of every device kind; asking for GPUs answers with GPUs.
+        map((devices) => devices as Device[]),
         shareReplay({
           refCount: false,
           bufferSize: 1,
@@ -66,7 +68,10 @@ export class GpuService {
    * Get raw GPU PCI choices from the API.
    */
   getRawGpuPciChoices(): Observable<GpuPciChoices> {
-    return this.api.call('system.advanced.get_gpu_pci_choices');
+    return this.api.call('system.advanced.get_gpu_pci_choices').pipe(
+      // Middleware types the choices as a plain dict.
+      map((choices) => choices as GpuPciChoices),
+    );
   }
 
   getIsolatedGpuPciIds(): Observable<string[]> {

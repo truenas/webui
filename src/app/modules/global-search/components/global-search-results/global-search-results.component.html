@@ -1,7 +1,7 @@
 @if (!isLoading() || results().length) {
   <div class="search-results-card">
     @for (section of availableSections; track trackBySection($index, section)) {
-      <h2 class="section">
+      <h2 class="section" tnTestIdType="text" [tnTestId]="['search-section', section.value]">
         {{ section.label | translate }}
       </h2>
       @if (getElementsBySection(section.value).length) {

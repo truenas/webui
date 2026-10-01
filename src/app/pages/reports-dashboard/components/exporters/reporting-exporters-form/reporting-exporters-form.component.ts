@@ -14,7 +14,7 @@ import {
   TnInputComponent,
   TnSelectComponent,
 } from '@truenas/ui-components';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { getDynamicFormSchemaNode } from 'app/helpers/get-dynamic-form-schema-node';
 import {
@@ -26,6 +26,7 @@ import {
   ReportingExporterKey as ReportingExporterType,
   ReportingExporterSchema,
   ReportingExporter,
+  ReportingExporterCreate,
 } from 'app/interfaces/reporting-exporters.interface';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import {
@@ -40,7 +41,7 @@ import {
   SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Component({
   selector: 'ix-reporting-exporters-form',
@@ -60,7 +61,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 })
 export class ReportingExportersFormComponent extends IxFormHostForm implements OnInit {
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private destroyRef = inject(DestroyRef);
 
   /**
@@ -127,9 +128,12 @@ export class ReportingExportersFormComponent extends IxFormHostForm implements O
       }
     }
 
+    // The attribute controls are built at runtime from `exporter_schemas`, so the compiler cannot
+    // see that they add up to the exporter's attributes; middleware validates them on save.
+    const payload = values as unknown as ReportingExporterCreate;
     const request$ = this.editingExporter
-      ? this.api.call('reporting.exporters.update', [this.editingExporter.id, values])
-      : this.api.call('reporting.exporters.create', [values]);
+      ? this.api.call('reporting.exporters.update', [this.editingExporter.id, payload])
+      : this.api.call('reporting.exporters.create', [payload]);
 
     return {
       request$,
@@ -162,7 +166,9 @@ export class ReportingExportersFormComponent extends IxFormHostForm implements O
       if (this.editingExporter) {
         this.form.patchValue({
           ...this.editingExporter,
-          type: this.editingExporter.attributes['exporter_type'] as string,
+          // The attribute controls are keyed by the schema's field names rather than typed.
+          attributes: Object.fromEntries(Object.entries(this.editingExporter.attributes)),
+          type: this.editingExporter.attributes.exporter_type,
         });
       }
 
@@ -175,7 +181,11 @@ export class ReportingExportersFormComponent extends IxFormHostForm implements O
    * Can be refactored when the API is updated to use the new schema format.
    */
   private getExportersSchemas(): Observable<ReportingExporterSchema[]> {
-    return this.api.call('reporting.exporters.exporter_schemas');
+    // Middleware leaves `key` and the schema's field types open; the UI reads them through
+    // `ReportingExporterKey` and `SchemaType`.
+    return this.api.call('reporting.exporters.exporter_schemas').pipe(
+      map((schemas) => schemas as unknown as ReportingExporterSchema[]),
+    );
   }
 
   private setExporterTypeOptions(schemas: ReportingExporterSchema[]): void {

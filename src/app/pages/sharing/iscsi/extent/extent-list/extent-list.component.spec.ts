@@ -9,11 +9,13 @@ import {
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
 import { DeleteExtentDialog } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
 import { ExtentListComponent } from 'app/pages/sharing/iscsi/extent/extent-list/extent-list.component';
@@ -41,8 +43,10 @@ describe('ExtentListComponent', () => {
     component: ExtentListComponent,
     providers: [
       mockProvider(EmptyService),
+      mockTypedApi([
+        mockTypedQuery('iscsi.extent.query', extents as WebUiQueryEntity<'iscsi.extent.query'>[]),
+      ]),
       mockApi([
-        mockCall('iscsi.extent.query', extents),
         mockCall('iscsi.extent.delete'),
       ]),
       mockProvider(DialogService, {

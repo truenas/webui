@@ -11,28 +11,27 @@ export interface User {
   username: string;
   unixhash: string;
   smbhash: string;
-  home: string;
-  shell: string;
+  home?: string;
+  shell?: string;
   full_name: string;
   builtin: boolean;
   immutable: boolean;
-  smb: boolean;
-  webshare: boolean;
-  ssh_password_enabled: boolean;
-  password_disabled: boolean;
-  locked: boolean;
-  sudo_commands_nopasswd: string[];
-  sudo_commands: string[];
-  email: string | null;
+  smb?: boolean;
+  webshare?: boolean;
+  ssh_password_enabled?: boolean;
+  password_disabled?: boolean;
+  locked?: boolean;
+  sudo_commands_nopasswd?: string[];
+  sudo_commands?: string[];
+  email?: string | null;
   group: UserGroup;
-  groups: number[];
-  sshpubkey: string | null;
+  groups?: number[];
+  sshpubkey?: string | null;
   twofactor_auth_configured: boolean;
   local: boolean;
-  id_type_both: boolean;
   roles: Role[];
   api_keys: number[];
-  userns_idmap: UsernsIdmap;
+  userns_idmap?: UsernsIdmap;
   password_history: unknown[] | null;
   password_change_required: boolean;
   password_age: number | null;
@@ -78,12 +77,6 @@ export interface UserUpdate {
   group_create?: boolean;
   home_create?: boolean;
   userns_idmap?: UsernsIdmap;
-}
-
-export interface SetPasswordParams {
-  username: string;
-  old_password: string;
-  new_password: string;
 }
 
 /**

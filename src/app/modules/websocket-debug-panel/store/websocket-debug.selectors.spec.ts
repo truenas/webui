@@ -372,6 +372,21 @@ describe('WebSocketDebug Selectors', () => {
       });
     });
 
+    describe('selectIsEnclosureMockActive', () => {
+      const withEnclosureMock = (enabled: boolean, controllerModel: EnclosureModel | null): typeof rootState => ({
+        webSocketDebug: {
+          ...initialState,
+          enclosureMock: { ...initialState.enclosureMock, enabled, controllerModel },
+        },
+      });
+
+      it('is true only when the mock is enabled and has a controller', () => {
+        expect(fromSelectors.selectIsEnclosureMockActive(withEnclosureMock(true, EnclosureModel.M40))).toBe(true);
+        expect(fromSelectors.selectIsEnclosureMockActive(withEnclosureMock(true, null))).toBe(false);
+        expect(fromSelectors.selectIsEnclosureMockActive(withEnclosureMock(false, EnclosureModel.M40))).toBe(false);
+      });
+    });
+
     describe('selectEnclosureControllerModel', () => {
       it('should select controller model', () => {
         const result = fromSelectors.selectEnclosureControllerModel(rootState);

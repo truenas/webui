@@ -10,7 +10,6 @@ import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
-import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
@@ -50,9 +49,6 @@ const existingTask: ReplicationTask = {
   id: 123,
   recursive: false,
   retention_policy: RetentionPolicy.Source,
-  schedule_method: ScheduleMethod.Cron,
-  source_datasets_from: '',
-  target_dataset_from: '',
   state: {
     state: JobState.Running,
   },

@@ -1,9 +1,14 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { lastValueFrom, of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { FcPortFormValue, FibreChannelHost, FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { lastValueFrom } from 'rxjs';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { FcPortFormValue } from 'app/interfaces/fibre-channel.interface';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
+
+type FcPort = WebUiQueryEntity<'fcport.query'>;
+type FcHost = WebUiQueryEntity<'fc.fc_host.query'>;
 
 describe('FibreChannelService', () => {
   let spectator: SpectatorService<FibreChannelService>;
@@ -14,13 +19,13 @@ describe('FibreChannelService', () => {
   const createService = createServiceFactory({
     service: FibreChannelService,
     providers: [
-      mockApi([
-        mockCall('fcport.query', [{ id: fakePortId, port: 'fc/2' }] as FibreChannelPort[]),
-        mockCall('fcport.create'),
-        mockCall('fcport.update'),
-        mockCall('fcport.delete'),
-        mockCall('fc.fc_host.query', [{ id: fakeHostId, alias: 'fc', npiv: 1 }] as FibreChannelHost[]),
-        mockCall('fc.fc_host.update'),
+      mockTypedApi([
+        mockTypedQuery('fcport.query', [{ id: fakePortId, port: 'fc/2' }] as FcPort[]),
+        mockTypedCall('fcport.create', null),
+        mockTypedCall('fcport.update', null),
+        mockTypedCall('fcport.delete', null),
+        mockTypedQuery('fc.fc_host.query', [{ id: fakeHostId, alias: 'fc', npiv: 1 }] as FcHost[]),
+        mockTypedCall('fc.fc_host.update', null),
       ]),
     ],
   });
@@ -29,20 +34,20 @@ describe('FibreChannelService', () => {
 
   describe('loadTargetPorts', () => {
     it('returns empty array when target has no ports', async () => {
-      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(of([]));
+      spectator.inject(MockTypedApiService).mockQuery('fcport.query', []);
 
       const result = await lastValueFrom(spectator.service.loadTargetPorts(fakeTargetId));
 
       expect(result).toEqual([]);
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith(
         'fcport.query',
-        [[['target.id', '=', fakeTargetId]]],
+        [['target.id', '=', fakeTargetId]],
       );
     });
 
     it('returns array with single port', async () => {
-      const port = { id: 1, port: 'fc0' } as FibreChannelPort;
-      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(of([port]));
+      const port = { id: 1, port: 'fc0' } as FcPort;
+      spectator.inject(MockTypedApiService).mockQuery('fcport.query', [port]);
 
       const result = await lastValueFrom(spectator.service.loadTargetPorts(fakeTargetId));
 
@@ -54,8 +59,8 @@ describe('FibreChannelService', () => {
         { id: 1, port: 'fc0' },
         { id: 2, port: 'fc1' },
         { id: 3, port: 'fc0/1' },
-      ] as FibreChannelPort[];
-      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(of(ports));
+      ] as FcPort[];
+      spectator.inject(MockTypedApiService).mockQuery('fcport.query', ports);
 
       const result = await lastValueFrom(spectator.service.loadTargetPorts(fakeTargetId));
 
@@ -193,36 +198,23 @@ describe('FibreChannelService', () => {
 
   describe('linkFiberChannelPortsToTarget', () => {
     it('handles 0→0 transition (no existing, no desired)', async () => {
-      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
-        if (method === 'fcport.query') {
-          return of([]);
-        }
-        return of(null);
-      });
+      spectator.inject(MockTypedApiService).mockQuery('fcport.query', []);
 
       const result = await lastValueFrom(
         spectator.service.linkFiberChannelPortsToTarget(fakeTargetId, []),
       );
 
       expect(result).toBe(true);
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith(
         'fcport.query',
-        [[['target.id', '=', fakeTargetId]]],
+        [['target.id', '=', fakeTargetId]],
       );
       // Should not call create or delete
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledTimes(1);
+      expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalled();
     });
 
     it('handles 0→1 transition (create single port)', async () => {
-      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
-        if (method === 'fcport.query') {
-          return of([]);
-        }
-        if (method === 'fcport.create') {
-          return of({ id: 1, port: 'fc0' });
-        }
-        return of(null);
-      });
+      spectator.inject(MockTypedApiService).mockQuery('fcport.query', []);
 
       await lastValueFrom(
         spectator.service.linkFiberChannelPortsToTarget(fakeTargetId, [
@@ -230,39 +222,26 @@ describe('FibreChannelService', () => {
         ]),
       );
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
         'fcport.create',
         [{ port: 'fc0', target_id: fakeTargetId }],
       );
     });
 
     it('handles 1→0 transition (delete existing port)', async () => {
-      const existingPort = { id: 1, port: 'fc0' } as FibreChannelPort;
-      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
-        if (method === 'fcport.query') {
-          return of([existingPort]);
-        }
-        if (method === 'fcport.delete') {
-          return of(true);
-        }
-        return of(null);
-      });
+      const existingPort = { id: 1, port: 'fc0' } as FcPort;
+      spectator.inject(MockTypedApiService).mockQuery('fcport.query', [existingPort]);
 
       await lastValueFrom(
         spectator.service.linkFiberChannelPortsToTarget(fakeTargetId, []),
       );
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('fcport.delete', [1]);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('fcport.delete', [1]);
     });
 
     it('handles 1→1 transition (no change, same port)', async () => {
-      const existingPort = { id: 1, port: 'fc0' } as FibreChannelPort;
-      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
-        if (method === 'fcport.query') {
-          return of([existingPort]);
-        }
-        return of(null);
-      });
+      const existingPort = { id: 1, port: 'fc0' } as FcPort;
+      spectator.inject(MockTypedApiService).mockQuery('fcport.query', [existingPort]);
 
       const result = await lastValueFrom(
         spectator.service.linkFiberChannelPortsToTarget(fakeTargetId, [
@@ -272,23 +251,12 @@ describe('FibreChannelService', () => {
 
       expect(result).toBe(true);
       // Should only call query, no create or delete
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledTimes(1);
+      expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalled();
     });
 
     it('handles 1→1 transition (change to different port)', async () => {
-      const existingPort = { id: 1, port: 'fc0' } as FibreChannelPort;
-      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
-        if (method === 'fcport.query') {
-          return of([existingPort]);
-        }
-        if (method === 'fcport.delete') {
-          return of(true);
-        }
-        if (method === 'fcport.create') {
-          return of({ id: 2, port: 'fc1' });
-        }
-        return of(null);
-      });
+      const existingPort = { id: 1, port: 'fc0' } as FcPort;
+      spectator.inject(MockTypedApiService).mockQuery('fcport.query', [existingPort]);
 
       await lastValueFrom(
         spectator.service.linkFiberChannelPortsToTarget(fakeTargetId, [
@@ -296,24 +264,16 @@ describe('FibreChannelService', () => {
         ]),
       );
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('fcport.delete', [1]);
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('fcport.delete', [1]);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
         'fcport.create',
         [{ port: 'fc1', target_id: fakeTargetId }],
       );
     });
 
     it('handles 1→N transition (add more ports)', async () => {
-      const existingPort = { id: 1, port: 'fc0' } as FibreChannelPort;
-      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
-        if (method === 'fcport.query') {
-          return of([existingPort]);
-        }
-        if (method === 'fcport.create') {
-          return of({ id: 2 });
-        }
-        return of(null);
-      });
+      const existingPort = { id: 1, port: 'fc0' } as FcPort;
+      spectator.inject(MockTypedApiService).mockQuery('fcport.query', [existingPort]);
 
       await lastValueFrom(
         spectator.service.linkFiberChannelPortsToTarget(fakeTargetId, [
@@ -324,35 +284,22 @@ describe('FibreChannelService', () => {
       );
 
       // Should not delete fc0 (still desired)
-      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('fcport.delete', expect.anything());
+      expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('fcport.delete', expect.anything());
       // Should create fc1 and fc2
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
         'fcport.create',
         [{ port: 'fc1', target_id: fakeTargetId }],
       );
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
         'fcport.create',
         [{ port: 'fc2', target_id: fakeTargetId }],
       );
     });
 
     it('creates virtual port when host_id provided', async () => {
-      const host = { id: fakeHostId, alias: 'fc', npiv: 1 } as FibreChannelHost;
-      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
-        if (method === 'fcport.query') {
-          return of([]);
-        }
-        if (method === 'fc.fc_host.query') {
-          return of([host]);
-        }
-        if (method === 'fc.fc_host.update') {
-          return of({ ...host, npiv: 2 });
-        }
-        if (method === 'fcport.create') {
-          return of({ id: 1 });
-        }
-        return of(null);
-      });
+      const host = { id: fakeHostId, alias: 'fc', npiv: 1 } as FcHost;
+      spectator.inject(MockTypedApiService).mockQuery('fcport.query', []);
+      spectator.inject(MockTypedApiService).mockQuery('fc.fc_host.query', [host]);
 
       await lastValueFrom(
         spectator.service.linkFiberChannelPortsToTarget(fakeTargetId, [
@@ -360,11 +307,11 @@ describe('FibreChannelService', () => {
         ]),
       );
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
         'fc.fc_host.update',
         [fakeHostId, { npiv: 2 }],
       );
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
         'fcport.create',
         [{ port: 'fc/2', target_id: fakeTargetId }],
       );
@@ -375,20 +322,9 @@ describe('FibreChannelService', () => {
         { id: 1, port: 'fc0' },
         { id: 2, port: 'fc1' },
         { id: 3, port: 'fc2' },
-      ] as FibreChannelPort[];
+      ] as FcPort[];
 
-      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
-        if (method === 'fcport.query') {
-          return of(existingPorts);
-        }
-        if (method === 'fcport.delete') {
-          return of(true);
-        }
-        if (method === 'fcport.create') {
-          return of({ id: 4 });
-        }
-        return of(null);
-      });
+      spectator.inject(MockTypedApiService).mockQuery('fcport.query', existingPorts);
 
       await lastValueFrom(
         spectator.service.linkFiberChannelPortsToTarget(fakeTargetId, [
@@ -399,15 +335,15 @@ describe('FibreChannelService', () => {
       );
 
       // Should delete fc1 and fc2
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('fcport.delete', [2]);
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('fcport.delete', [3]);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('fcport.delete', [2]);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('fcport.delete', [3]);
       // Should create fc3
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
         'fcport.create',
         [{ port: 'fc3', target_id: fakeTargetId }],
       );
       // Should not touch fc0
-      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('fcport.delete', [1]);
+      expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('fcport.delete', [1]);
     });
   });
 });

@@ -7,10 +7,9 @@ export interface Group {
   group: string;
   name: string;
   id: number;
-  userns_idmap: UsernsIdmap;
-  id_type_both: boolean;
+  userns_idmap?: UsernsIdmap;
   local: boolean;
-  smb: boolean;
+  smb?: boolean;
   sudo_commands_nopasswd?: string[];
   sudo_commands?: string[];
   roles: Role[];
@@ -18,7 +17,7 @@ export interface Group {
   /**
    * List of user ids.
    */
-  users: number[];
+  users?: number[];
 }
 
 export type DeleteGroupParams = [

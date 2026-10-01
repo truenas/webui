@@ -5,9 +5,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TranslateService } from '@ngx-translate/core';
 import { TnBannerHarness, TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { BehaviorSubject, of, Subject } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
-import { LoginExResponse, LoginExResponseType, LoginSuccessResponse } from 'app/interfaces/auth.interface';
+import { LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SigninFormComponent } from 'app/pages/signin/signin-form/signin-form.component';
@@ -28,9 +27,6 @@ describe('SigninFormComponent', () => {
           loginResult: LoginResult.Success,
         })),
       }),
-      mockApi([
-        mockCall('auth.login_ex', { response_type: LoginExResponseType.Success } as LoginSuccessResponse),
-      ]),
       mockProvider(SnackbarService),
       mockProvider(SigninStore, {
         // Kept live, like the real store, so the submit button's in-flight label can be asserted.

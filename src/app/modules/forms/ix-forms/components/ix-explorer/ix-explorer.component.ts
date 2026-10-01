@@ -15,6 +15,7 @@ import {
   TN_FORM_FIELD_CONTEXT,
   TnFilePickerComponent,
   tnIconMarker,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { firstValueFrom, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -37,6 +38,7 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
   styleUrls: ['./ix-explorer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     IxLabelComponent,
     IxErrorsComponent,
     ReactiveFormsModule,

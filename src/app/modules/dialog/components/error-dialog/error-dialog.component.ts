@@ -9,7 +9,7 @@ import {
 import { switchMap, tap } from 'rxjs';
 import { ErrorReport, ErrorReportAction, collapsibleDetailLabels } from 'app/interfaces/error-report.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -29,7 +29,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class ErrorDialog {
   protected dialogRef = inject<DialogRef<boolean, ErrorDialog>>(DialogRef);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private download = inject(DownloadService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);

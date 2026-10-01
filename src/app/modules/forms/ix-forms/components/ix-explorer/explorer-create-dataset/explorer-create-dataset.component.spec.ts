@@ -1,16 +1,17 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { CallResponse } from '@truenas/api-client';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 describe('ExplorerCreateDatasetComponent', () => {
   let spectator: Spectator<ExplorerCreateDatasetComponent>;
@@ -28,15 +29,17 @@ describe('ExplorerCreateDatasetComponent', () => {
     children: [
       { name: 'tank/existing' },
     ],
-  } as Dataset;
+  } as WebUiQueryEntity<'pool.dataset.query'>;
 
   const createComponent = createComponentFactory({
     component: ExplorerCreateDatasetComponent,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('pool.dataset.query', [parentDataset]),
-        mockCall('pool.dataset.create', { mountpoint: '/mnt/tank/new' } as Dataset),
+      mockTypedApi([
+        mockTypedQuery('pool.dataset.query', [parentDataset]),
+        mockTypedCall('pool.dataset.create', {
+          mountpoint: '/mnt/tank/new',
+        } as CallResponse<WebUiApiDirectory, 'pool.dataset.create'>),
       ]),
       mockProvider(IxExplorerComponent, { nodeAt }),
     ],
@@ -90,8 +93,8 @@ describe('ExplorerCreateDatasetComponent', () => {
     it('creates the dataset under the browsed parent and resolves with its mountpoint', async () => {
       const created = await spectator.component.createInline('/mnt/tank', 'new');
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.query', [[['id', '=', 'tank']]]);
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
+      expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('pool.dataset.query', [['id', '=', 'tank']]);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
         comments: 'test',
         name: 'tank/new',
       }]);
@@ -108,7 +111,7 @@ describe('ExplorerCreateDatasetComponent', () => {
     });
 
     it('rejects when the parent dataset does not exist', async () => {
-      spectator.inject(MockApiService).mockCall('pool.dataset.query', []);
+      spectator.inject(MockTypedApiService).mockQuery('pool.dataset.query', []);
 
       await expect(spectator.component.createInline('/mnt/gone', 'new'))
         .rejects.toThrow('Parent dataset gone not found.');

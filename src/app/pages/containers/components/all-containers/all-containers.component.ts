@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -24,6 +25,7 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
     ContainerListComponent,
     MasterDetailViewComponent,
     UiSearchDirective,
+    TnTestIdDirective,
   ],
 })
 export class AllContainersComponent implements OnInit {

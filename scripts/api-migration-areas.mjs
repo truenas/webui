@@ -34,6 +34,76 @@ export const migratedApiPaths = [
   'src/app/services/cloud-credential.service.spec.ts',
   'src/app/services/keychain-credential.service.ts',
   'src/app/services/keychain-credential.service.spec.ts',
+  // NAS-143993: the core domain services. `src/app/services` itself cannot be pinned yet:
+  // `network.service.ts` keeps `ApiService` for the two calls the typed client cannot make
+  // (gap 14 and gap 5 in docs/devs/typed-api-client.md), so the rest are pinned file by file.
+  'src/app/services/dataset',
+  'src/app/services/global-store',
+  'src/app/services/gpu',
+  'src/app/services/disk-temperature.service.ts',
+  'src/app/services/disk-temperature.service.spec.ts',
+  'src/app/services/download.service.ts',
+  'src/app/services/download.service.spec.ts',
+  'src/app/services/failover-validation.service.ts',
+  'src/app/services/failover-validation.service.spec.ts',
+  'src/app/services/fibre-channel.service.ts',
+  'src/app/services/fibre-channel.service.spec.ts',
+  'src/app/services/filesystem.service.ts',
+  'src/app/services/filesystem.service.spec.ts',
+  'src/app/services/filesystem-zvols.service.spec.ts',
+  'src/app/services/iscsi.service.ts',
+  'src/app/services/license.service.ts',
+  'src/app/services/license.service.spec.ts',
+  'src/app/services/reboot.service.ts',
+  'src/app/services/reboot.service.spec.ts',
+  'src/app/services/redirect.service.ts',
+  'src/app/services/replication.service.ts',
+  'src/app/services/replication.service.spec.ts',
+  'src/app/services/snapshot-task.service.ts',
+  'src/app/services/storage.service.ts',
+  'src/app/services/storage.service.spec.ts',
+  'src/app/services/system-general.service.ts',
+  'src/app/services/system-general.service.spec.ts',
+  'src/app/services/user-directory.service.ts',
+  'src/app/services/user-directory.service.spec.ts',
+  'src/app/services/user.service.ts',
+  'src/app/services/user.service.spec.ts',
+  'src/app/services/vm.service.ts',
+  'src/app/services/vm.service.spec.ts',
+  // Its last legacy import was the extent step's spec feeding `IscsiService`, which moved above.
+  'src/app/pages/sharing/iscsi/iscsi-wizard/steps',
+  // NAS-143994: the root NgRx effects — system info and config, entitlements, HA, reboot info,
+  // services, EULA, network check-in and preferences.
+  'src/app/store',
+  // NAS-143995: the shared modules — alerts, dialogs, the top bar, form controls and TrueCommand.
+  // `modules/dialog` and `modules/layout` are pinned below their roots: the job progress dialog
+  // and the console footer tail logs through `filesystem.file_tail_follow`, an event source the
+  // typed client cannot subscribe to yet (gap 5).
+  'src/app/modules/alerts',
+  'src/app/modules/dialog/components/error-dialog',
+  'src/app/modules/dialog/components/multi-error-dialog',
+  'src/app/modules/dialog/components/show-logs-dialog',
+  'src/app/modules/dialog/components/start-service-dialog',
+  'src/app/modules/forms',
+  'src/app/modules/layout/topbar',
+  'src/app/modules/truecommand',
+  // Its only legacy dependant was a spec mocking `core.job_download_logs` for the logs dialog.
+  'src/app/pages/jobs',
+  // Nothing here imports a client; `pool-scan-event.helper.ts` names a generated event type.
+  'src/app/helpers',
+  // NAS-143996: sign-in, audit, reports and the dashboard. `pages/dashboard` is pinned below its
+  // root: `WidgetResourcesService` keeps `ApiService` for `reporting.realtime` and `app.stats`,
+  // event sources the typed client cannot subscribe to yet (gap 5).
+  'src/app/pages/signin',
+  'src/app/pages/audit',
+  'src/app/pages/reports-dashboard',
+  'src/app/pages/dashboard/components',
+  'src/app/pages/dashboard/widgets',
+  'src/app/pages/dashboard/services/dashboard.store.ts',
+  'src/app/pages/dashboard/services/dashboard.store.spec.ts',
+  // NAS-144116: the SED password choice shared by the VDEVs Extend and Replace dialogs, typed from
+  // the start. The dialogs around it still start their jobs through `ApiService`.
+  'src/app/pages/storage/modules/vdevs/components/sed-disk-password',
 ];
 
 /**

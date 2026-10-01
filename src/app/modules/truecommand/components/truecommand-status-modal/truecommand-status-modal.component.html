@@ -22,10 +22,10 @@
           library="mdi"
         ></tn-icon>
       }
-      <span class="status-label">{{ tc.status | translate }}</span>
+      <span class="status-label" tnTestId="truecommand-status" tnTestIdType="text">{{ tc.status | translate }}</span>
     </div>
     @if (tc.status_reason) {
-      <div class="status-reason">
+      <div class="status-reason" tnTestId="truecommand-status-reason" tnTestIdType="text">
         {{ tc.status_reason | translate }}
       </div>
     }
@@ -33,7 +33,7 @@
       <div class="tc-ip">
         <tn-icon name="tn-truecommand-logo-mark-color" class="tc-ip-icon"></tn-icon>
         <span class="tc-ip-label">{{ 'Remote IP:' | translate }}</span>
-        <span class="tc-ip-value">{{ tc.remote_ip_address }}</span>
+        <span class="tc-ip-value" tnTestId="truecommand-remote-ip" tnTestIdType="text">{{ tc.remote_ip_address }}</span>
       </div>
     }
   </div>

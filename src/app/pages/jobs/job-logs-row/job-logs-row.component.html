@@ -1,5 +1,5 @@
 <div class="list-item">
-  <h4>ID: <span class="job-id">{{ job().id }}</span></h4>
+  <h4>ID: <span class="job-id" tnTestIdType="text" [tnTestId]="['job', job().id, 'id']">{{ job().id }}</span></h4>
 
   <h4>{{ 'Arguments' | translate }}</h4>
   @if (job().arguments.length > 0) {
@@ -20,7 +20,7 @@
   <h4>{{ 'Log Path' | translate }}</h4>
   @if (job().logs_path) {
     <div class="logs">
-      <pre><code>{{ job().logs_path }}</code></pre>
+      <pre tnTestIdType="text" [tnTestId]="['job', job().id, 'log-path']"><code>{{ job().logs_path }}</code></pre>
       <ix-copy-button [text]="job().logs_path"></ix-copy-button>
     </div>
   } @else {
@@ -32,7 +32,7 @@
   <h4>{{ 'Log Excerpt' | translate }}</h4>
   @if (job().logs_excerpt) {
     <div class="logs">
-      <pre><code>{{ job().logs_excerpt }}</code></pre>
+      <pre tnTestIdType="text" [tnTestId]="['job', job().id, 'log-excerpt']"><code>{{ job().logs_excerpt }}</code></pre>
       <ix-copy-button [text]="job().logs_excerpt"></ix-copy-button>
     </div>
   } @else {
@@ -62,7 +62,7 @@
   <h4>{{ 'Error' | translate }}</h4>
   @if (job().error) {
     <div class="logs">
-      <pre><code>{{ job().error }}</code></pre>
+      <pre tnTestIdType="text" [tnTestId]="['job', job().id, 'error']"><code>{{ job().error }}</code></pre>
       <ix-copy-button [text]="job().error"></ix-copy-button>
     </div>
   } @else {

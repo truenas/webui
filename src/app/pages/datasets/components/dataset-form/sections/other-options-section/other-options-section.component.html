@@ -72,7 +72,7 @@
     </tn-form-field>
 
     @if (hasChecksumWarning) {
-      <ix-warning [message]="helptext.deduplicationChecksumInlineWarning"></ix-warning>
+      <ix-warning tnTestId="deduplication-checksum-warning" tnTestIdType="text" [message]="helptext.deduplicationChecksumInlineWarning"></ix-warning>
     }
 
     <tn-form-field

@@ -31,7 +31,7 @@
   tn-table exposes a projectable empty-state slot (NAS-141021 library follow-up).
 -->
 @if ((dataSource().length && !filteredApps().length) || (!dataSource().length && !isLoading())) {
-  <ix-empty [conf]="entityEmptyConf"></ix-empty>
+  <ix-empty tnTestId="no-installed-apps" tnTestIdType="text" [conf]="entityEmptyConf"></ix-empty>
 } @else {
   <tn-table
     class="apps-table"

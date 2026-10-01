@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, computed, input, output, signal,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCalendarComponent, TnIconButtonComponent } from '@truenas/ui-components';
+import { TnCalendarComponent, TnIconButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import {
   endOfMonth, isAfter, isBefore, startOfMonth,
 } from 'date-fns';
@@ -23,6 +23,7 @@ interface SchedulePreview {
   styleUrls: ['./scheduler-preview-column.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnIconButtonComponent,
     TnCalendarComponent,
     SchedulerDateExamplesComponent,

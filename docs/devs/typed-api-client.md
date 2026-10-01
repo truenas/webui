@@ -98,8 +98,29 @@ Where things differ:
 - **Queries have verbs.** `call('user.query', [filters, { get: true }])` is
   `queryOne('user.query', filters)`; `{ count: true }` is `queryCount`. The
   verb picks the result type, so there is nothing to narrow.
+- **Filters built before the call** are typed
+  `TypedQueryFilter<WebUiQueryEntity<'user.query'>>[]`, both from the token
+  file, since the client does not export its own `QueryFilters` yet (gap 6).
+  An `OR` takes a list of filter *lists*, `['OR', [[a], [b]]]`, where
+  `ParamsBuilder` writes `['OR', [a, b]]`.
 - **Events are a discriminated union** on `msg`. A removal carries an `id`
   and no `fields`; narrow before reading.
+- **Calls made before sign-in use `callUnauthenticated`.** Every other verb
+  waits for an authenticated session, so a method middleware answers without
+  one (`system.advanced.login_banner`, `user.has_local_administrator_set_up`,
+  `truenas.managed_by_truecommand`, `user.setup_local_administrator`) would
+  hang on the sign-in page through `call`. `callUnauthenticated` waits for the
+  client only. The legacy client sent these regardless of the session, so
+  nothing marks them; check whether a page runs before login when moving it.
+- **`callAndSubscribe` is `queryAndSubscribe`.** It queries the collection,
+  then folds its change events into the rows by `id` (`followCollection`), and
+  takes filters and `extra` but no `select`, since the events carry whole rows.
+  Script it in specs with `mockTypedQuery` for the rows and `emitEvent` for the
+  changes.
+- **A query whose params are one object is a `call`.** `audit.query` takes its
+  filters and options inside a single object rather than as
+  `[filters, options]`, so it is not a typed query method: call it with `call`
+  and script it with `mockTypedCall`.
 - **Errors are unchanged.** `call` throws the same `ApiCallError` as
   `ApiService`, with the full JSON-RPC payload, so `ErrorHandlerService` and
   form validation work as before. `job` throws `FailedJobError` on failure.
@@ -198,6 +219,53 @@ Each area is a small PR: swap the injection, fix the types the compiler now
 reports, update the spec's mock, and verify against a box. Prefer several
 narrow PRs to one wide one; the diff per file is mechanical and easy to review
 in isolation.
+
+The spec half has a codemod. Once an area's production code injects
+`TypedApiService`, run
+
+```bash
+yarn codemod:typed-api-specs src/app/pages/<area>
+yarn codemod:typed-api-specs --only 'keychaincredential.*' src/app/pages/<consumers>   # a shared service moved
+yarn codemod:typed-api-specs --keep-legacy 'cloudsync.create' src/app/pages/<area>    # some calls stay legacy
+```
+
+It rewrites `mockApi` / `mockCall` / `mockJob` to `mockTypedApi` /
+`mockTypedCall` / `mockTypedQuery` / `mockTypedJob`, renames `ApiService` and
+`MockApiService`, moves `call('x.query', [filters, options])` assertions to
+`query` / `queryOne` / `queryCount`, adds `await spectator.fixture.whenStable()`
+after `spectator.component.submit()`, and fixes the imports. It prints
+`file:line` for what it left alone: query factories, `mockProvider(ApiService)`
+(bare or with stubs: a spy object leaves the query verbs undefined), `jest.spyOn(api, 'call')`
+in a spec whose queries moved, hand-written `method === 'x.query'` dispatch, `failApiCall`,
+`emitSubscribeEvent`, `mockCallOnce`, `callAndSubscribe`,
+`expect(api.call).not.toHaveBeenCalled()` / `.toHaveBeenCalledTimes(n)` (which name no method, so they
+pass once a query has moved to `query`), and, under `--only` /
+`--keep-legacy`, a bare `mockApi()`, since nothing in it says whether the
+spec's calls moved.
+
+`mockTypedApi()` is not a drop-in for everything `mockApi()` provided.
+`mockApi()` also stubs `WebSocketStatusService`, `WebSocketHandlerService`,
+`SubscriptionManagerService` and its own ICU-aware `TranslateService`. After
+conversion a spec gets `setup-jest.ts`'s global `TranslateModule` instead. A
+spec whose component injects one of those websocket services needs its own
+`mockProvider`. The specs checked so far already have one.
+
+Two things it gets wrong, both found moving `src/app/services`. A spec that
+already has a `mockTypedApi([...])` gets a second one rather than a merged
+one, and the later provider hides the earlier; merge them by hand. And a
+method a component reads both directly and through a migrated service (the
+replication wizard's `replication.query`, the S3 grant rows' `user.query`)
+needs a mock on both doubles, which `--only` cannot express: it moves the
+legacy mock rather than copying it.
+
+Follow it with
+`yarn lint:fix` on the changed files, then `tsc`. `tsc` is where the real
+work is. Typed fixtures are checked against the generated directory, so a UI
+interface cast (`as Pool[]` where the query returns `PoolEntry`) or a
+`mockTypedCall('x', null)` for a method that returns something fails to
+compile. Each of those is drift the legacy mocks were hiding. Run on all of
+`src/app` at the time of writing, it rewrote 444 specs and flagged 84 for
+hand conversion.
 
 As the last consumer of a method moves, delete its entry from the hand-written
 directory. The shrinking directories are the progress bar.
@@ -299,7 +367,11 @@ above. Each is a change for `truenas/api-client-ts`.
    in 7.0.1.
 5. **Parameterised subscriptions.** `EventName` excludes events that take
    subscription params (`method:param` style, e.g. file tailing), which the
-   legacy `subscribe` supports. Needed before Phase 1 step 4.
+   legacy `subscribe` supports. Needed before Phase 1 step 4. Until then the
+   log tails stay on `ApiService`: `ConsoleMessagesStore` and the job progress
+   dialog's `filesystem.file_tail_follow`, next to `NetworkService`'s
+   `reporting.realtime`, and the dashboard's `WidgetResourcesService`, which
+   streams `reporting.realtime` and `app.stats`.
 6. **Query, message and connection types are not exported.** `QueryFilters`
    and `QueryProjection` are internal, so the wrapper forwards the query verbs
    through `Parameters<>` rather than declaring them; `TrueNasMessage` and
@@ -362,6 +434,40 @@ above. Each is a change for `truenas/api-client-ts`.
     derive a missing type from the directory
     (`CallResponse<D, 'keychaincredential.create'>`) rather than importing it
     from an older version's namespace.
+
+14. **Methods missing from the dump.** `interface.lag_supported_protocols` is
+    in no generated directory, most likely because middleware marks it
+    private. `NetworkService` therefore keeps `ApiService` for it, next to
+    `reporting.realtime` (gap 5), and `src/app/services` cannot be pinned as a
+    whole until both have a typed route.
+
+15. **Dates are typed as strings.** Middleware sends a `datetime` as an
+    `{ $date: <ms> }` envelope and a `date` as `{ $type: 'date', $value }`, and
+    the client passes both through untouched, but the generated types declare
+    them as plain `string`. `system.info`'s timestamps and the dates in
+    `truenas.license.info` hit this first; `SystemInfoEffects` narrows them
+    once, in `toSystemInfo` and `normalizeLicense`, to the UI's `ApiTimestamp`
+    and `ApiDate`. Fix: emit the envelopes in the generator. The same cast is
+    where the license's missing top-level `expires_at` would hide, so `License`
+    declares it optional; the readers fall back to the `Support` feature's date.
+
+16. **An event model without its `fields` wrapper.** `pool.scan` declares its
+    `changed` payload as `{ name, scan }` at the top level, while middleware
+    sends it under `fields` like every other collection update (the legacy
+    readers take `event.fields.scan` and work). The client forwards the frame
+    untouched, so the generated type names properties that are not there.
+    `poolScanFromEvent` in `app/helpers/pool-scan-event.helper.ts` reads the
+    wire shape once for every consumer. Fix: wrap event payloads in the
+    generator, or correct the model in middleware.
+
+17. **Event subscriptions are never released.** `client.api.events` shares one
+    stream per event with `resetOnRefCountZero: false` and never sends
+    `core.unsubscribe`, where the legacy `subscribe` unsubscribes when its last
+    consumer goes. For a collection that only emits on change (`pool.query`,
+    `app.query`) that costs little. For an event source that pushes on a timer
+    (`reporting.realtime`, `app.stats`) it would keep streaming after the page
+    that wanted it is closed, so those must not move until the client releases
+    subscriptions, even once gap 5 lets them compile.
 
 ## Version policy
 

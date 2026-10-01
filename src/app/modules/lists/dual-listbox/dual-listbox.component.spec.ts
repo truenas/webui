@@ -89,6 +89,17 @@ describe('DualListBoxComponent', () => {
     expect(namesIn('selected')).toEqual([]);
   });
 
+  // e2e/locators/groups.ts addresses rows by these ids, so a library bump that changes how
+  // `tn-list-item` composes them has to fail here rather than in the e2e suite.
+  it('should name each item by its side and display value', async () => {
+    expect(itemsIn('available')[0]).toHaveAttribute('data-test', 'list-item-available-item-1');
+
+    await (await getButton('chevron-double-right')).click();
+    spectator.detectChanges();
+
+    expect(itemsIn('selected')[0]).toHaveAttribute('data-test', 'list-item-selected-item-1');
+  });
+
   it('should select an item when clicked', () => {
     clickItem('available', 0);
 

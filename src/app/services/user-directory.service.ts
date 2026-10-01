@@ -1,15 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { QueryListOptions } from '@truenas/api-client';
 import { TnSelectOption } from '@truenas/ui-components';
 import { Observable, from, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ComboboxQueryType } from 'app/enums/combobox.enum';
 import { Group } from 'app/interfaces/group.interface';
-import { QueryFilter, QueryFilters, QueryParams } from 'app/interfaces/query-api.interface';
 import { User, UserFormPreset } from 'app/interfaces/user.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedQueryFilter, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { UserService } from 'app/services/user.service';
 
 /**
@@ -28,6 +29,11 @@ export type UserValueField = typeof userValueFields[number];
 /** Fields of a `Group` a picker may commit as its value. */
 const groupValueFields = ['group', 'gid', 'id'] as const;
 export type GroupValueField = typeof groupValueFields[number];
+
+type UserEntity = WebUiQueryEntity<'user.query'>;
+
+/** What a user row must carry to become an option: its name, and whichever field is the value. */
+type UserOptionSource = Pick<User, 'username' | UserValueField>;
 
 /**
  * How an `ix-user-*` / `ix-group-*` field narrows the list. Bound with
@@ -69,7 +75,10 @@ export interface DirectoryQueryOptions {
    * that offers only some users — `roles != []`, say. Bypasses `UserService`'s
    * autocomplete cache, since that takes no extra filters.
    */
-  queryParams?: QueryParams<User>;
+  queryParams?: [
+    filters?: TypedQueryFilter<UserEntity>[],
+    options?: Omit<QueryListOptions<UserEntity>, 'offset' | 'limit'>,
+  ];
 }
 
 /** Rows per page. Matches `UserService`'s own `limit`. */
@@ -91,7 +100,7 @@ export const directoryPageSize = 50;
 @Injectable({ providedIn: 'root' })
 export class UserDirectoryService {
   private userService = inject(UserService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
 
@@ -108,7 +117,7 @@ export class UserDirectoryService {
 
     // A field with its own filters cannot go through UserService, whose
     // autocomplete cache takes none — it queries the endpoint directly.
-    let users$: Observable<User[]>;
+    let users$: Observable<UserOptionSource[]>;
     if (queryParams) {
       users$ = this.queryUsersWithParams(search, offset, queryParams, queryType);
     } else if (queryType === ComboboxQueryType.Smb) {
@@ -136,7 +145,7 @@ export class UserDirectoryService {
       // legitimately include directory-service ones.
       groups$ = this.userService.smbGroupQueryDsCache(search, false, offset);
     } else {
-      const filters: QueryFilter<Group>[] = [];
+      const filters: TypedQueryFilter<WebUiQueryEntity<'group.query'>>[] = [];
       if (localOnly) {
         filters.push(['local', '=', true]);
       }
@@ -186,9 +195,9 @@ export class UserDirectoryService {
       return of(false);
     }
 
-    return this.api.call('user.query', [[['username', '=', username]]]).pipe(
-      map((users) => {
-        if (users.length > 0) {
+    return this.api.queryCount('user.query', [['username', '=', username]]).pipe(
+      map((count) => {
+        if (count > 0) {
           return true;
         }
         // Remembered, so a name already known to be wrong is not re-queried on
@@ -213,9 +222,9 @@ export class UserDirectoryService {
       return of(false);
     }
 
-    return this.api.call('group.query', [[['name', '=', groupName]]]).pipe(
-      map((groups) => {
-        if (groups.length > 0) {
+    return this.api.queryCount('group.query', [['name', '=', groupName]]).pipe(
+      map((count) => {
+        if (count > 0) {
           return true;
         }
         this.userService.recordGroupAsNonExistent(groupName);
@@ -253,11 +262,11 @@ export class UserDirectoryService {
   private queryUsersWithParams(
     search: string,
     offset: number,
-    queryParams: QueryParams<User>,
+    queryParams: NonNullable<DirectoryQueryOptions['queryParams']>,
     queryType?: ComboboxQueryType,
-  ): Observable<User[]> {
+  ): Observable<UserOptionSource[]> {
     const [baseFilters = [], baseOptions = {}] = queryParams;
-    const filters: QueryFilters<User> = [...baseFilters];
+    const filters = [...baseFilters];
 
     if (queryType === ComboboxQueryType.Smb) {
       filters.unshift(['smb', '=', true]);
@@ -270,7 +279,11 @@ export class UserDirectoryService {
       filters.unshift(['username', '~', `(?i).*${trimmed.replaceAll('\\', '\\\\')}`]);
     }
 
-    return this.api.call('user.query', [filters, { ...baseOptions, offset, limit: directoryPageSize }]);
+    return this.api.query('user.query', filters, { ...baseOptions, offset, limit: directoryPageSize }).pipe(
+      // A caller's `select` is not known here, so the rows come back typed as partial.
+      // Every caller that selects keeps the name and the value fields.
+      map((users) => users as UserOptionSource[]),
+    );
   }
 }
 

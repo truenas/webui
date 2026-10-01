@@ -9,11 +9,6 @@ export interface EntitlementEntry {
   message: string;
 }
 
-/** Wire shape of `truenas.entitlements.info`. Keys stay open: middleware adds them over releases. */
-export interface EntitlementsInfo {
-  features: Record<string, EntitlementEntry>;
-}
-
 /** Wire shape of `truenas.entitlements.facts`: the facts entitlement decisions are computed from. */
 export interface EntitlementFacts {
   hardware_type: HardwareType;

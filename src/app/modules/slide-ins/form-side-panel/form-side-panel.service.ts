@@ -83,9 +83,9 @@ export class FormSidePanelService {
    * duplicate.
    *
    * "Appended later" means inside the CDK overlay container, not on `<body>`: the container element
-   * created here is a body child, but the overlay that actually paints is re-homed into the CDK
-   * overlay container by {@link FormSidePanelContainerComponent}, which is where the stacking is
-   * decided — against other panels and against CDK dialogs and dropdowns alike. Either way they sit
+   * created here is a body child, but `tn-side-panel` attaches the overlay that actually paints
+   * through CDK's `Overlay` when it opens, so the stacking is decided by open order — against other
+   * panels and against CDK dialogs and dropdowns alike. Either way they sit
    * outside any route's view, so they outlive navigation unless torn down explicitly —
    * {@link closeAll} does that for every panel in the stack.
    */
@@ -205,9 +205,11 @@ export class FormSidePanelService {
     this.appRef.attachView(containerRef.hostView);
     this.document.body.appendChild(containerRef.location.nativeElement as HTMLElement);
 
-    // Defer opening until the panel has painted in its closed (off-screen) state, otherwise
-    // tn-side-panel's transform transition has nothing to animate from and the panel just
-    // appears. Two frames guarantee a paint with the `--initialized` class applied first.
+    // Defer opening until tn-side-panel has rendered with its `--initialized` class: that class is
+    // what turns the slide-in transition on, so opening before it lands makes the panel appear
+    // without animating (checked in a real browser against 0.7.12: no `transitionrun` fires). The
+    // closed-state paint is no longer the reason — the library attaches the overlay and forces a
+    // layout read itself when it opens. Two frames guarantee the class is applied first.
     requestAnimationFrame(() => requestAnimationFrame(() => {
       if (containerRef.hostView.destroyed) {
         return;

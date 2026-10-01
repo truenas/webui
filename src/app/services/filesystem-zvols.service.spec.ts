@@ -1,13 +1,13 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom, of, throwError } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FileAttribute } from 'app/enums/file-attribute.enum';
 import { FileType } from 'app/enums/file-type.enum';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -17,7 +17,7 @@ describe('FilesystemService - getTreeNodeProvider - zvols support', () => {
   const createService = createServiceFactory({
     service: FilesystemService,
     providers: [
-      mockApi([]),
+      mockTypedApi([]),
     ],
   });
 
@@ -25,7 +25,7 @@ describe('FilesystemService - getTreeNodeProvider - zvols support', () => {
     beforeEach(() => {
       spectator = createService();
 
-      const mockedApi = spectator.inject(MockApiService);
+      const mockedApi = spectator.inject(MockTypedApiService);
       jest.spyOn(mockedApi, 'call').mockImplementation((method, args) => {
         if (method !== 'filesystem.listdir') {
           throw new Error(`Unexpected API call: ${method} with args ${JSON.stringify(args)}`);
@@ -57,8 +57,8 @@ describe('FilesystemService - getTreeNodeProvider - zvols support', () => {
         } as TreeNode<ExplorerNodeData>),
       );
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledTimes(2);
-      expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledTimes(2);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenNthCalledWith(
         1,
         'filesystem.listdir',
         ['/dev/zvol', [], {
@@ -67,7 +67,7 @@ describe('FilesystemService - getTreeNodeProvider - zvols support', () => {
           limit: 1000,
         }],
       );
-      expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenNthCalledWith(
         2,
         'filesystem.listdir',
         [
@@ -98,7 +98,7 @@ describe('FilesystemService - getTreeNodeProvider - zvols support', () => {
     beforeEach(() => {
       spectator = createService();
 
-      const mockedApi = spectator.inject(MockApiService);
+      const mockedApi = spectator.inject(MockTypedApiService);
       jest.spyOn(mockedApi, 'call').mockImplementation((method, args) => {
         if (method !== 'filesystem.listdir') {
           throw new Error(`Unexpected API call: ${method} with args ${JSON.stringify(args)}`);

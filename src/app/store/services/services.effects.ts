@@ -7,9 +7,10 @@ import {
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
+import { Service } from 'app/interfaces/service.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServicesService } from 'app/services/services.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -23,7 +24,7 @@ import { serviceEnabled } from './services.actions';
 export class ServicesEffects {
   private store$ = inject<Store<AppState>>(Store);
   private actions$ = inject(Actions);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   private authService = inject(AuthService);
   private servicesService = inject(ServicesService);
@@ -31,8 +32,9 @@ export class ServicesEffects {
   loadServices$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
-      return this.api.call('service.query', [[], { order_by: ['service'] }]).pipe(
-        map((services) => servicesLoaded({ services })),
+      return this.api.query('service.query', [], { order_by: ['service'] }).pipe(
+        // Middleware types `service` and `state` as plain strings; the UI's enums hold the same values.
+        map((services) => servicesLoaded({ services: services as Service[] })),
         catchError((error: unknown) => {
           // TODO: Basically a fatal error. Handle it.
           console.error(error);
@@ -46,8 +48,9 @@ export class ServicesEffects {
     ofType(servicesLoaded),
     switchMap(() => {
       return this.api.subscribe('service.query').pipe(
-        map((event) => event.fields),
-        map((service) => serviceChanged({ service })),
+        // A removal carries no service to update.
+        filter((event) => event.msg !== 'removed'),
+        map((event) => serviceChanged({ service: event.fields as Service })),
       );
     }),
   ));

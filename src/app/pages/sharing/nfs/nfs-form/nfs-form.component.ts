@@ -20,10 +20,9 @@ import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs } from 'app/helptext/sharing';
-import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
+import { ExplorerCreateDatasetComponent, ExplorerDatasetProperties } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
@@ -93,7 +92,7 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
   defaultNfsShare: NfsShare | undefined;
 
   protected isAdvancedMode = signal(false);
-  createDatasetProps: Omit<DatasetCreate, 'name'> = {
+  createDatasetProps: ExplorerDatasetProperties = {
     share_type: DatasetPreset.Multiprotocol,
   };
 

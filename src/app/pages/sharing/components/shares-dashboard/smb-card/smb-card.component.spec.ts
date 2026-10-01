@@ -12,9 +12,9 @@ import {
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { Pool } from 'app/interfaces/pool.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbSharePurpose, SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -27,6 +27,7 @@ import {
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
@@ -103,14 +104,14 @@ describe('SmbCardComponent', () => {
     imports: commonImports,
     providers: [
       ...commonProviders,
+      mockTypedApi([
+        mockTypedQuery('pool.query', [{ path: '/mnt/APPS' }] as WebUiQueryEntity<'pool.query'>[]),
+      ]),
       mockApi([
         mockCall('sharing.smb.query', smbShares),
         mockCall('sharing.smb.delete'),
-        // Return a truthy share so accumulateLoadingState's `!!value` filter
-        // lets the success handler (reload + toast) run.
         mockCall('sharing.smb.update', { id: 3 } as SmbShare),
         mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
-        mockCall('pool.query', [{ path: '/mnt/APPS' }] as Pool[]),
       ]),
       mockSharingTierService({ enabled: false }),
     ],
@@ -232,6 +233,9 @@ describe('SmbCardComponent', () => {
       imports: commonImports,
       providers: [
         ...commonProviders,
+        mockTypedApi([
+          mockTypedQuery('pool.query', [{ path: '/mnt/APPS' }] as WebUiQueryEntity<'pool.query'>[]),
+        ]),
         mockApi([
           mockCall('sharing.smb.query', [{
             ...smbShares[0],
@@ -240,7 +244,6 @@ describe('SmbCardComponent', () => {
           mockCall('sharing.smb.delete'),
           mockCall('sharing.smb.update'),
           mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
-          mockCall('pool.query', [{ path: '/mnt/APPS' }] as Pool[]),
         ]),
       ],
     });
@@ -273,6 +276,9 @@ describe('SmbCardComponent', () => {
       imports: commonImports,
       providers: [
         ...commonProviders,
+        mockTypedApi([
+          mockTypedQuery('pool.query', [{ path: '/mnt/APPS' }] as WebUiQueryEntity<'pool.query'>[]),
+        ]),
         mockApi([
           mockCall('sharing.smb.query', [{
             ...smbShares[0],
@@ -281,7 +287,6 @@ describe('SmbCardComponent', () => {
           mockCall('sharing.smb.delete'),
           mockCall('sharing.smb.update'),
           mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
-          mockCall('pool.query', [{ path: '/mnt/APPS' }] as Pool[]),
         ]),
       ],
     });
@@ -314,6 +319,9 @@ describe('SmbCardComponent', () => {
       imports: commonImports,
       providers: [
         ...commonProviders,
+        mockTypedApi([
+          mockTypedQuery('pool.query', [{ path: '/mnt/APPS' }] as WebUiQueryEntity<'pool.query'>[]),
+        ]),
         mockApi([
           mockCall('sharing.smb.query', [{
             ...smbShares[0],
@@ -322,7 +330,6 @@ describe('SmbCardComponent', () => {
           mockCall('sharing.smb.delete'),
           mockCall('sharing.smb.update'),
           mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
-          mockCall('pool.query', [{ path: '/mnt/APPS' }] as Pool[]),
         ]),
       ],
     });

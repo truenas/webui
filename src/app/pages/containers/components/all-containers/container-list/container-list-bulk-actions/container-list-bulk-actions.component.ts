@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialog, TnMenuComponent, TnMenuItem, TnMenuTriggerDirective, tnIconMarker,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   filter,
@@ -33,6 +34,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnMenuTriggerDirective,
     TranslateModule,
     RequiresRolesDirective,
+    TnTestIdDirective,
   ],
 })
 

@@ -16,6 +16,7 @@ export const initialConsoleMessagesState: ConsoleMessagesState = {
   providedIn: 'root',
 })
 export class ConsoleMessagesStore extends ComponentStore<ConsoleMessagesState> implements OnDestroy {
+  /** Stays on `ApiService`: `filesystem.file_tail_follow` is an event source (gap 5 in typed-api-client.md). */
   private api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
 

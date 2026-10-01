@@ -58,6 +58,8 @@ describe('InspectVdevsDialogComponent', () => {
     expect(vdevTypes).toHaveLength(2);
     expect(vdevTypes[0]).toHaveText('Data');
     expect(vdevTypes[1]).toHaveText('Log');
+    expect(vdevTypes[0]).toHaveAttribute('data-test', 'list-item-vdev-type-data');
+    expect(vdevTypes[1]).toHaveAttribute('data-test', 'list-item-vdev-type-log');
   });
 
   it('shows vdevs of the currently selected vdev type', () => {

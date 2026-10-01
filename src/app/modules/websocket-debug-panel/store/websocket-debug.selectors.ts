@@ -1,4 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { MockEnclosureConfig } from 'app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface';
 import { WebSocketDebugState } from './websocket-debug.reducer';
 
 export const selectWebSocketDebugState = createFeatureSelector<WebSocketDebugState>('webSocketDebug');
@@ -67,6 +68,20 @@ export const selectEnclosureMockConfig = createSelector(
 export const selectIsEnclosureMockEnabled = createSelector(
   selectEnclosureMockConfig,
   (config) => config.enabled,
+);
+
+/**
+ * Whether the enclosure mock is on and has a controller to generate, which is when
+ * `EnclosureMockService` registers its mocks. Shared so nothing that stands in for those mocks can
+ * disagree with it.
+ */
+export function isEnclosureMockActive(config: MockEnclosureConfig): boolean {
+  return config.enabled && config.controllerModel !== null;
+}
+
+export const selectIsEnclosureMockActive = createSelector(
+  selectEnclosureMockConfig,
+  isEnclosureMockActive,
 );
 
 export const selectEnclosureControllerModel = createSelector(

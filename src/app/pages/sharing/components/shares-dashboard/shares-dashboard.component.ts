@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { map } from 'rxjs';
 import { sharesEmptyConfig } from 'app/constants/empty-configs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -25,6 +26,7 @@ import { SmbCardComponent } from './smb-card/smb-card.component';
   styleUrls: ['./shares-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     UiSearchDirective,
     SmbCardComponent,
     NfsCardComponent,

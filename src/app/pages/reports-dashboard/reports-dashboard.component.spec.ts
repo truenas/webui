@@ -2,8 +2,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { LayoutService } from 'app/modules/layout/layout.service';
@@ -49,7 +49,7 @@ describe('ReportsDashboardComponent', () => {
         ] as ReportingGraph[])),
         getReportTabs: jest.fn(() => fakeTabs),
       }),
-      mockApi([]),
+      mockTypedApi([]),
       mockAuth(),
     ],
   });

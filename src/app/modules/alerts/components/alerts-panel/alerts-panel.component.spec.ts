@@ -5,14 +5,14 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
+import { CallResponse } from '@truenas/api-client';
 import { TnIconButtonHarness, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
-import { CollectionChangeType } from 'app/enums/api.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
@@ -23,7 +23,8 @@ import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -32,6 +33,9 @@ import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 import { systemInfoReducer } from 'app/store/system-info/system-info.reducer';
 import { systemInfoStateKey } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
+
+// The fixtures carry the `$date` envelopes middleware sends, which the generated type calls strings.
+type AlertEntry = CallResponse<WebUiApiDirectory, 'alert.list'>[number];
 
 const unreadAlerts = [
   {
@@ -71,7 +75,7 @@ const dismissedAlerts = [
 
 describe('AlertsPanelComponent', () => {
   let spectator: Spectator<AlertsPanelComponent>;
-  let api: ApiService;
+  let api: TypedApiService;
   let alertPanel: AlertsPanelPageObject;
 
   const createComponent = createComponentFactory({
@@ -106,10 +110,10 @@ describe('AlertsPanelComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('alert.list', [...unreadAlerts, ...dismissedAlerts]),
-        mockCall('alert.dismiss'),
-        mockCall('alert.restore'),
+      mockTypedApi([
+        mockTypedCall('alert.list', [...unreadAlerts, ...dismissedAlerts] as unknown as AlertEntry[]),
+        mockTypedCall('alert.dismiss', null),
+        mockTypedCall('alert.restore', null),
       ]),
       mockProvider(SystemGeneralService),
       mockProvider(FormSidePanelService),
@@ -134,7 +138,7 @@ describe('AlertsPanelComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
 
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
     alertPanel = new AlertsPanelPageObject(spectator);
 
     spectator.detectChanges();
@@ -358,43 +362,45 @@ describe('AlertsPanelComponent', () => {
     expect(alertPanel.dismissedAlertsSection).not.toExist();
   });
 
-  it('adds an alert when websocket alert.list subscription sends an "add" event', () => {
+  it('adds an alert when websocket alert.list subscription sends an "add" event', async () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
+    await spectator.fixture.whenStable();
 
-    const websocketMock = spectator.inject(MockApiService);
-    websocketMock.emitSubscribeEvent({
-      id: 'test-id-1',
-      msg: CollectionChangeType.Added,
-      collection: 'alert.list',
+    const websocketMock = spectator.inject(MockTypedApiService);
+    websocketMock.emitEvent('alert.list', {
+      msg: 'added',
+      id: 1,
       fields: {
         id: 'new',
         key: 'new-alert-key',
         dismissed: false,
         formatted: 'New Alert',
         datetime: { $date: 1641819015 },
-      } as Alert,
+      } as unknown as AlertEntry,
     });
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
 
     expect(alertPanel.unreadAlertComponents).toHaveLength(3);
   });
 
-  it('updates an alert when websocket alert.list subscription sends a "change" event', () => {
+  it('updates an alert when websocket alert.list subscription sends a "change" event', async () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
+    await spectator.fixture.whenStable();
 
-    const websocketMock = spectator.inject(MockApiService);
-    websocketMock.emitSubscribeEvent({
-      id: 'test-id-2',
-      msg: CollectionChangeType.Changed,
-      collection: 'alert.list',
+    const websocketMock = spectator.inject(MockTypedApiService);
+    websocketMock.emitEvent('alert.list', {
+      msg: 'changed',
+      id: 1,
       fields: {
         id: '1',
         key: 'unread-key-1',
         dismissed: true,
         formatted: 'Unread 1',
         datetime: { $date: 1641811015 },
-      } as Alert,
+      } as unknown as AlertEntry,
     });
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
 
     expect(alertPanel.unreadAlertComponents).toHaveLength(1);

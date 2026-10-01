@@ -8,5 +8,10 @@
     font-weight: 500;
     line-height: initial;
     padding: 3px 8px;
+
+    &.early-access {
+      background: #6495ed;
+      color: #fff;
+    }
   }
 }

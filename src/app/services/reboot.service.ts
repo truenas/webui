@@ -8,7 +8,7 @@ import {
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Injectable({
@@ -19,7 +19,7 @@ export class RebootService {
   private translate = inject(TranslateService);
   private router = inject(Router);
   private snackbar = inject(SnackbarService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private authService = inject(AuthService);
 

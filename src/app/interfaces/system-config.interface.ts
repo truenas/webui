@@ -1,10 +1,9 @@
 export interface SystemGeneralConfig {
   id: number;
   kbdmap: string;
-  language: string;
   timezone: string;
   ui_address: string[];
-  ui_certificate: number;
+  ui_certificate: number | null;
   ui_certificate_name: string | null;
   ui_consolemsg: boolean;
   ui_httpsport: number;
@@ -13,7 +12,7 @@ export interface SystemGeneralConfig {
   ui_port: number;
   ui_v6address: string[];
   ui_allowlist: string[];
-  usage_collection: boolean;
+  usage_collection: boolean | null;
   usage_collection_is_set: boolean;
   wizardshown: boolean;
   ds_auth: boolean;

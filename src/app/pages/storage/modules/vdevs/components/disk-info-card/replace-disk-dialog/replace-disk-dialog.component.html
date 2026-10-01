@@ -9,6 +9,12 @@
     [tooltip]="helptext.dialogFormFields.disk.tooltip | translate"
   ></ix-unused-disk-select>
 
+  <ix-sed-disk-password
+    diskField="identifier"
+    [poolId]="data.poolId"
+    [disk]="replacement()"
+  ></ix-sed-disk-password>
+
   <tn-form-field>
     <tn-checkbox
       testId="preserve-settings"
@@ -47,6 +53,7 @@
     color="primary"
     testId="replace"
     [label]="'Replace Disk' | translate"
+    [disabled]="!canSubmit()"
     (onClick)="onSubmit()"
   ></tn-button>
 </ix-form-actions>

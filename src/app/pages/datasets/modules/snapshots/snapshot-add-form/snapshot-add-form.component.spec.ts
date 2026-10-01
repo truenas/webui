@@ -9,6 +9,7 @@ import { of, Subject, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
@@ -29,9 +30,11 @@ describe('SnapshotAddFormComponent', () => {
     ],
     providers: [
       mockAuth(),
+      mockTypedApi([
+        mockTypedCall('pool.filesystem_choices', ['APPS', 'POOL']),
+      ]),
       mockApi([
         mockCall('pool.snapshot.create'),
-        mockCall('pool.filesystem_choices', ['APPS', 'POOL']),
         mockCall('replication.list_naming_schemas', mockNamingSchema),
         mockCall('vmware.dataset_has_vms', true),
       ]),

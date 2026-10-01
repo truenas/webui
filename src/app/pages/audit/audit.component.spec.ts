@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { CallParams, CallResponse } from '@truenas/api-client';
 import {
   TnButtonComponent,
   TnButtonToggleComponent,
@@ -14,7 +15,8 @@ import {
 } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AuditService } from 'app/enums/audit.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
@@ -25,7 +27,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { MockMasterDetailViewComponent } from 'app/modules/master-detail-view/testing/mock-master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { AuditComponent } from 'app/pages/audit/audit.component';
 import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details-panel/log-details-panel.component';
 import { auditEntries } from 'app/pages/audit/testing/mock-audit-api-data-provider';
@@ -33,10 +35,21 @@ import { UrlOptionsService } from 'app/services/url-options.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
+type AuditQueryParams = NonNullable<CallParams<WebUiApiDirectory, 'audit.query'>[0]>;
+
+// The UI reads entries as `AuditEntry`, discriminated on service and event; middleware's entry is open.
+const auditEntryRows = auditEntries as unknown as CallResponse<WebUiApiDirectory, 'audit.query'>;
+
 describe('AuditComponent', () => {
   let spectator: Spectator<AuditComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: MockTypedApiService;
+
+  function getAuditQueryParams(): AuditQueryParams[] {
+    return api.call.mock.calls
+      .filter(([method]) => method === 'audit.query')
+      .map(([, params]) => (params as [AuditQueryParams])[0]);
+  }
 
   const createComponent = createComponentFactory({
     component: AuditComponent,
@@ -70,16 +83,9 @@ describe('AuditComponent', () => {
         parseUrlOptions: () => ({}),
         setUrlOptions: jest.fn(),
       }),
-      mockApi([
-        mockCall('audit.query', (params) => {
-          if (params[0]['query-options']!.count) {
-            // TODO: Not correct. Figure out how to solve this for query endpoints.
-            return 2 as unknown as AuditEntry[];
-          }
-
-          return auditEntries;
-        }),
-        mockCall('user.query', []),
+      mockTypedApi([
+        mockTypedQuery('user.query', []),
+        mockTypedCall('audit.query', ([params]) => (params?.['query-options']?.count ? 2 : auditEntryRows)),
       ]),
       provideMockStore({
         selectors: [
@@ -102,10 +108,14 @@ describe('AuditComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
-    api = spectator.inject(ApiService);
+    api = spectator.inject(MockTypedApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    // The typed double answers on a microtask. Detect changes automatically, so the fake progress
+    // bar sees the load finish and stops its timer; otherwise the fixture never settles.
+    spectator.fixture.autoDetectChanges();
+    await spectator.fixture.whenStable();
   });
 
   it('checks used components on page', () => {
@@ -116,15 +126,13 @@ describe('AuditComponent', () => {
   });
 
   it('makes only 2 API calls during initialization (count + data)', () => {
-    const auditQueryCalls = (api.call as jest.Mock).mock.calls.filter(
-      (call) => call[0] === 'audit.query',
-    );
+    const auditQueryCalls = getAuditQueryParams();
 
     // Should have exactly 2 calls (1 for count, 1 for data) - not duplicated
     expect(auditQueryCalls).toHaveLength(2);
 
-    const countCall = auditQueryCalls.find((call) => call[1][0]['query-options']?.count);
-    const dataCall = auditQueryCalls.find((call) => !call[1][0]['query-options']?.count);
+    const countCall = auditQueryCalls.find((params) => params['query-options']?.count);
+    const dataCall = auditQueryCalls.find((params) => !params['query-options']?.count);
 
     expect(countCall).toBeDefined();
     expect(dataCall).toBeDefined();
@@ -136,15 +144,13 @@ describe('AuditComponent', () => {
     const standbyToggle = await loader.getHarness(TnButtonToggleHarness.with({ label: 'Standby' }));
     await standbyToggle.check();
 
-    const auditQueryCalls = (api.call as jest.Mock).mock.calls.filter(
-      (call) => call[0] === 'audit.query',
-    );
+    const auditQueryCalls = getAuditQueryParams();
 
     // Should have exactly 2 calls (1 for count, 1 for data) - not duplicated
     expect(auditQueryCalls).toHaveLength(2);
 
-    const dataCall = auditQueryCalls.find((call) => !call[1][0]['query-options']?.count);
-    expect(dataCall?.[1][0]).toHaveProperty('remote_controller', true);
+    const dataCall = auditQueryCalls.find((params) => !params['query-options']?.count);
+    expect(dataCall).toHaveProperty('remote_controller', true);
   });
 
   // Detailed basic/advanced query-shaping behavior is covered in
@@ -152,7 +158,7 @@ describe('AuditComponent', () => {
   // wiring: search input → audit page → API call, plus the controller toggle
   // and service select also reaching the API.
   describe('integration', () => {
-    it('sends empty filters when basic search has no query', () => {
+    it('sends empty filters when basic search has no query', async () => {
       const search = spectator.query(SearchInputComponent)!;
       search.query.set({
         isBasicQuery: true,
@@ -160,6 +166,7 @@ describe('AuditComponent', () => {
       });
 
       search.runSearch.emit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenLastCalledWith(
         'audit.query',
@@ -172,7 +179,7 @@ describe('AuditComponent', () => {
       );
     });
 
-    it('applies basic search filters to the API query', () => {
+    it('applies basic search filters to the API query', async () => {
       const search = spectator.query(SearchInputComponent)!;
       search.query.set({
         isBasicQuery: true,
@@ -180,6 +187,7 @@ describe('AuditComponent', () => {
       });
 
       search.runSearch.emit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenLastCalledWith(
         'audit.query',
@@ -192,7 +200,7 @@ describe('AuditComponent', () => {
       );
     });
 
-    it('applies advanced search filters to the API query', () => {
+    it('applies advanced search filters to the API query', async () => {
       const search = spectator.query<SearchInputComponent<AuditEntry>>(SearchInputComponent)!;
       search.query.set({
         isBasicQuery: false,
@@ -203,6 +211,7 @@ describe('AuditComponent', () => {
       });
 
       search.runSearch.emit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenLastCalledWith(
         'audit.query',
@@ -240,7 +249,7 @@ describe('AuditComponent', () => {
 
       spectator.detectChanges();
 
-      const auditQueryCalls = (api.call as jest.Mock).mock.calls.filter(
+      const auditQueryCalls = api.call.mock.calls.filter(
         (call) => call[0] === 'audit.query',
       );
 

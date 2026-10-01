@@ -1,40 +1,40 @@
 <tn-card class="card" padding="small" [padContent]="true" [title]="'Metadata' | translate">
   <dl class="details">
     <dt>{{ 'Timestamp' | translate }}:</dt>
-    <dd><ix-date [date]="log().message_timestamp * 1000"></ix-date></dd>
+    <dd><ix-date tnTestId="timestamp" tnTestIdType="date" [date]="log().message_timestamp * 1000"></ix-date></dd>
 
     <dt>{{ 'Service' | translate }}:</dt>
-    <dd>{{ log().service | auditServiceLabel | translate }}</dd>
+    <dd tnTestId="service" tnTestIdType="text">{{ log().service | auditServiceLabel | translate }}</dd>
 
     <!-- Raw event token (e.g. METHOD_CALL), matching what is recorded and sent to remote syslog. -->
     <dt>{{ 'Event' | translate }}:</dt>
-    <dd>{{ log().event || '-' }}</dd>
+    <dd tnTestId="event" tnTestIdType="text">{{ log().event || '-' }}</dd>
 
     <dt>{{ 'User' | translate }}:</dt>
-    <dd>{{ log().username || '-' }}</dd>
+    <dd tnTestId="user" tnTestIdType="text">{{ log().username || '-' }}</dd>
 
     <dt>{{ 'Address' | translate }}:</dt>
-    <dd>{{ log().address || '-' }}</dd>
+    <dd tnTestId="address" tnTestIdType="text">{{ log().address || '-' }}</dd>
 
     @if (origin(); as origin) {
       <dt>{{ 'Origin' | translate }}:</dt>
-      <dd>{{ origin }}</dd>
+      <dd tnTestId="origin" tnTestIdType="text">{{ origin }}</dd>
     }
 
     @if (credentialType(); as credentialType) {
       <dt>{{ 'Authenticated With' | translate }}:</dt>
-      <dd>{{ credentialType | translate }}</dd>
+      <dd tnTestId="authenticated-with" tnTestIdType="text">{{ credentialType | translate }}</dd>
     }
 
     <dt>{{ 'Session' | translate }}:</dt>
-    <dd>{{ log().session || '-' }}</dd>
+    <dd tnTestId="session" tnTestIdType="text">{{ log().session || '-' }}</dd>
 
     <dt>{{ 'Audit ID' | translate }}:</dt>
-    <dd>{{ log().audit_id || '-' }}</dd>
+    <dd tnTestId="audit-id" tnTestIdType="text">{{ log().audit_id || '-' }}</dd>
 
     @if (version(); as version) {
       <dt>{{ 'Version' | translate }}:</dt>
-      <dd>{{ version }}</dd>
+      <dd tnTestId="version" tnTestIdType="text">{{ version }}</dd>
     }
   </dl>
 </tn-card>
