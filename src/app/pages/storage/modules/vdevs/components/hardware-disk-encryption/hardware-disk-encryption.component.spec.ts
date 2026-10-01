@@ -10,6 +10,7 @@ import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
+import { SedStatus } from 'app/enums/sed-status.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -30,7 +31,7 @@ describe('HardwareDiskEncryptionComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('disk.query', [{ passwd: '' } as Disk]),
+        mockCall('disk.query', [{ passwd: '', sed: true, sed_status: SedStatus.Unlocked } as Disk]),
         mockCall('system.advanced.sed_global_password_is_set', false),
       ]),
       mockProvider(NavigateAndHighlightService),
@@ -92,9 +93,14 @@ describe('HardwareDiskEncryptionComponent', () => {
       spectator.detectChanges();
     });
 
+    it('shows the SED status of the current disk', () => {
+      const detailsItem = spectator.query(byText('Self-Encrypting Drive (SED):', { exact: true }))!;
+      expect(detailsItem.nextElementSibling).toHaveText('Unlocked');
+    });
+
     it('loads and shows whether password is set for the current disk', () => {
       expect(spectator.inject(ApiService).call)
-        .toHaveBeenCalledWith('disk.query', [[['devname', '=', 'sda']], { extra: { passwords: true } }]);
+        .toHaveBeenCalledWith('disk.query', [[['devname', '=', 'sda']], { extra: { passwords: true, sed_status: true } }]);
 
       const detailsItem = spectator.query(byText('SED Password:', { exact: true }))!;
       expect(detailsItem.nextElementSibling).toHaveText('Password is not set');
@@ -113,6 +119,16 @@ describe('HardwareDiskEncryptionComponent', () => {
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ManageDiskSedDialog, { data: 'sda' });
     });
 
+    it('reloads the disk after the SED password dialog saves', () => {
+      const api = spectator.inject(ApiService);
+      jest.mocked(spectator.inject(TnDialog).open).mockReturnValue({ closed: of(true) } as ReturnType<TnDialog['open']>);
+      jest.mocked(api.call).mockClear();
+
+      spectator.click(spectator.query(byText('Manage SED Password'))!);
+
+      expect(api.call).toHaveBeenCalledWith('disk.query', expect.anything());
+    });
+
     it('shows a link to manage global SED password', () => {
       const manageGlobalSedPassword = spectator.query(byText('Manage Global SED Password'))!;
       spectator.click(manageGlobalSedPassword);
@@ -128,6 +144,31 @@ describe('HardwareDiskEncryptionComponent', () => {
         .toHaveAttribute('data-test', 'link-manage-sed-password');
       expect(spectator.query(byText('Manage Global SED Password')))
         .toHaveAttribute('data-test', 'link-manage-global-sed-password');
+    });
+  });
+
+  describe('entitled to SED, disk is not SED capable', () => {
+    beforeEach(() => {
+      const api = spectator.inject(ApiService);
+      jest.mocked(api.call).mockImplementation(((method: string) => {
+        if (method === 'disk.query') {
+          return of([{ passwd: '', sed: false } as Disk]);
+        }
+        return of(true);
+      }) as unknown as ApiService['call']);
+      spectator.setInput('topologyDisk', { disk: 'sdb' } as TopologyDisk);
+      store$.overrideSelector(selectEntitlements, {});
+      store$.refreshState();
+      spectator.detectChanges();
+    });
+
+    it('shows the disk as unsupported and hides the password rows', () => {
+      const detailsItem = spectator.query(byText('Self-Encrypting Drive (SED):', { exact: true }))!;
+      expect(detailsItem.nextElementSibling).toHaveText('Unsupported');
+
+      expect(spectator.query(byText('SED Password:', { exact: true }))).toBeNull();
+      expect(spectator.query(byText('Global SED Password:', { exact: true }))).toBeNull();
+      expect(spectator.query(byText('Manage SED Password'))).toBeNull();
     });
   });
 });
