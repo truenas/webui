@@ -20,6 +20,9 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
+  mockSedDiskPasswordCalls, sedEntitledProvider,
+} from 'app/pages/storage/modules/vdevs/components/sed-disk-password/testing/sed-disk-password-mocks';
+import {
   RaidzExtendDialog, RaidzExtendDialogParams,
 } from 'app/pages/storage/modules/vdevs/components/zfs-info-card/raidz-extend-dialog/raidz-extend-dialog.component';
 import { PoolExtendJobService } from 'app/pages/storage/modules/vdevs/services/pool-extend-job.service';
@@ -38,6 +41,7 @@ describe('RaidzExtendDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
+      sedEntitledProvider,
       mockTypedApi([
         mockTypedCall('disk.details', {
           unused: [
@@ -54,6 +58,7 @@ describe('RaidzExtendDialogComponent', () => {
           ] as DetailsDisk[],
           used: [],
         }),
+        ...mockSedDiskPasswordCalls(),
       ]),
       mockApi([
         mockJob('pool.attach', fakeSuccessfulJob()),
