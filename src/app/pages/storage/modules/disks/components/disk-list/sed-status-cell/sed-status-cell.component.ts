@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
-import { SedStatus } from 'app/enums/sed-status.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
+import { sedStatusLabel } from 'app/pages/storage/modules/disks/utils/sed-status-label.utils';
 
 @Component({
   selector: 'ix-sed-status-cell',
@@ -14,26 +13,7 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-
   ],
 })
 export class SedStatusCellComponent<T extends Disk> extends ColumnComponent<T> {
-  protected statusText = computed(() => {
-    const disk = this.row();
-
-    if (!disk.sed) {
-      return T('Unsupported');
-    }
-
-    switch (disk.sed_status) {
-      case SedStatus.Unlocked:
-        return T('Unlocked');
-      case SedStatus.Locked:
-        return T('Locked');
-      case SedStatus.Uninitialized:
-        return T('Uninitialized');
-      case SedStatus.Failed:
-        return T('Failed');
-      default:
-        return T('Unknown');
-    }
-  });
+  protected statusText = computed(() => sedStatusLabel(this.row()));
 }
 
 export function sedStatusColumn<T extends Disk>(

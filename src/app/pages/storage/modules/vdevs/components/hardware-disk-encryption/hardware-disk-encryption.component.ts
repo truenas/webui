@@ -4,15 +4,21 @@ import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { combineLatest, Subject } from 'rxjs';
+import {
+  filter, map, startWith, switchMap,
+} from 'rxjs/operators';
 import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
 import { NavigateAndHighlightDirective } from 'app/directives/navigate-and-interact/navigate-and-highlight.directive';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
+import { Disk } from 'app/interfaces/disk.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { sedStatusLabel } from 'app/pages/storage/modules/disks/utils/sed-status-label.utils';
 import {
   ManageDiskSedDialog,
 } from 'app/pages/storage/modules/vdevs/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
@@ -51,23 +57,41 @@ export class HardwareDiskEncryptionComponent {
     return Boolean(this.hasSedEntitlement());
   });
 
-  protected readonly hasDiskEncryption = toSignal(
-    toObservable(this.topologyDisk).pipe(
-      filter(Boolean),
-      switchMap((topologyItem) => {
+  private readonly refreshDisk$ = new Subject<void>();
+
+  // Refetched after the per-disk password dialog saves, so "Password is set" follows the change.
+  // Skipped without the SED entitlement, as the card is hidden then (same gate as the Disks list).
+  // `undefined` while loading, `null` when no disk matches the devname.
+  private readonly disk = toSignal(
+    combineLatest([
+      toObservable(this.topologyDisk).pipe(filter(Boolean)),
+      toObservable(this.hasSedEntitlement).pipe(filter(Boolean)),
+      this.refreshDisk$.pipe(startWith(undefined)),
+    ]).pipe(
+      switchMap(([topologyItem]) => {
         return this.api.call('disk.query', [[['devname', '=', topologyItem.disk]],
-          { extra: { passwords: true } }]).pipe(
-          map(([disk]) => disk.passwd !== ''),
+          { extra: { passwords: true, sed_status: true } }]).pipe(
+          map(([disk]) => (disk as Disk | undefined) ?? null),
         );
       }),
     ),
   );
+
+  protected readonly supportsSed = computed(() => Boolean(this.disk()?.sed));
+  protected readonly hasDiskEncryption = computed(() => Boolean(this.disk()?.passwd));
+  protected readonly sedStatusLabel = computed(() => {
+    const disk = this.disk();
+    if (disk === undefined) {
+      return T('Loading...');
+    }
+    return disk ? sedStatusLabel(disk) : T('Unknown');
+  });
 
   onManageSedPassword(): void {
     this.matDialog.open(ManageDiskSedDialog, {
       data: this.topologyDisk().disk,
     }).afterClosed()
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
-      .subscribe();
+      .subscribe(() => this.refreshDisk$.next());
   }
 }

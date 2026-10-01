@@ -6,25 +6,32 @@
 
   <mat-card-content>
     <div class="details-item">
-      <div class="label">{{ 'SED Password' | translate }}:</div>
-      <div class="value">
-        {{ hasDiskEncryption()
-          ? ('Password is set' | translate)
-          : ('Password is not set' | translate)
-        }}
-      </div>
-
-      <a
-        *ixHasRole="requiredRoles"
-        ixTest="manage-sed-password"
-        (click)="onManageSedPassword()"
-      >
-        {{ 'Manage SED Password' | translate }}
-      </a>
+      <div class="label">{{ 'Self-Encrypting Drive (SED)' | translate }}:</div>
+      <div class="value">{{ sedStatusLabel() | translate }}</div>
     </div>
 
-    <div class="details-item">
-      <div class="label">{{ 'Global SED Password' | translate }}:</div>
+    <!-- Neither password applies to a disk that cannot self-encrypt. -->
+    @if (supportsSed()) {
+      <div class="details-item">
+        <div class="label">{{ 'SED Password' | translate }}:</div>
+        <div class="value">
+          {{ hasDiskEncryption()
+            ? ('Password is set' | translate)
+            : ('Password is not set' | translate)
+          }}
+        </div>
+
+        <a
+          *ixHasRole="requiredRoles"
+          ixTest="manage-sed-password"
+          (click)="onManageSedPassword()"
+        >
+          {{ 'Manage SED Password' | translate }}
+        </a>
+      </div>
+
+      <div class="details-item">
+        <div class="label">{{ 'Global SED Password' | translate }}:</div>
         <div class="value">
           {{ hasGlobalEncryption()
             ? ('Password is set' | translate)
@@ -41,7 +48,8 @@
         >
           {{ 'Manage Global SED Password' | translate }}
         </a>
-    </div>
+      </div>
+    }
   </mat-card-content>
 </mat-card>
 }
