@@ -1,5 +1,4 @@
 import { LinkState } from 'app/enums/network-interface.enum';
-import { ReportingQueryUnit } from 'app/enums/reporting.enum';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 
 export interface ReportingRealtimeUpdate {
@@ -57,22 +56,6 @@ export interface MemoryUpdate {
   arc_available_memory: number;
   physical_memory_total: number;
   physical_memory_available: number;
-}
-
-export interface ReportingQueryOptions {
-  unit?: ReportingQueryUnit;
-  start?: number;
-  end?: number;
-}
-
-export type ReportingQueryParams = [
-  [ReportingNameAndId],
-  ReportingQueryOptions,
-];
-
-export interface ReportingNameAndId {
-  name: string;
-  identifier?: string;
 }
 
 export type ReportingAggregationKeys = 'min' | 'mean' | 'max';

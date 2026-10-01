@@ -6,7 +6,7 @@ import {
   Observable, catchError, combineLatest, filter, finalize, map, of, switchMap, tap,
 } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { SomeWidgetSettings, WidgetType } from 'app/pages/dashboard/types/widget.interface';
@@ -61,7 +61,7 @@ export const initialState: DashboardState = {
 @Injectable()
 export class DashboardStore extends ComponentStore<DashboardState> {
   private authService = inject(AuthService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
 

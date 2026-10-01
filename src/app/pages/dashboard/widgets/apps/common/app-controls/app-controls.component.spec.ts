@@ -6,8 +6,8 @@ import {
   TnIconButtonHarness, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
 import { of, Observable } from 'rxjs';
-import { mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { AppState } from 'app/enums/app-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
@@ -57,7 +57,7 @@ describe('AppControlsComponent', () => {
         openWindow: jest.fn(),
       }),
       mockProvider(ApplicationsService, {
-        restartApplication: jest.fn(() => mockJob('app.redeploy')),
+        restartApplication: jest.fn(() => of({ state: JobState.Success } as Job<void>)),
         getInstalledAppsStatusUpdates: jest.fn(() => {
           return of() as Observable<ApiEvent<Job<void, AppStartQueryParams>>>;
         }),

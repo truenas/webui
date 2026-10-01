@@ -91,6 +91,16 @@ export const migratedApiPaths = [
   'src/app/pages/jobs',
   // Nothing here imports a client; `pool-scan-event.helper.ts` names a generated event type.
   'src/app/helpers',
+  // NAS-143996: sign-in, audit, reports and the dashboard. `pages/dashboard` is pinned below its
+  // root: `WidgetResourcesService` keeps `ApiService` for `reporting.realtime` and `app.stats`,
+  // event sources the typed client cannot subscribe to yet (gap 5).
+  'src/app/pages/signin',
+  'src/app/pages/audit',
+  'src/app/pages/reports-dashboard',
+  'src/app/pages/dashboard/components',
+  'src/app/pages/dashboard/widgets',
+  'src/app/pages/dashboard/services/dashboard.store.ts',
+  'src/app/pages/dashboard/services/dashboard.store.spec.ts',
   // NAS-144116: the SED password choice shared by the VDEVs Extend and Replace dialogs, typed from
   // the start. The dialogs around it still start their jobs through `ApiService`.
   'src/app/pages/storage/modules/vdevs/components/sed-disk-password',

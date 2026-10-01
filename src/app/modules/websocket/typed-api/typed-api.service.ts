@@ -28,10 +28,14 @@ import { ApiErrorName } from 'app/enums/api.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { dispatchTypedCall } from 'app/modules/websocket/typed-api/dispatch-typed-call';
+import { followCollection } from 'app/modules/websocket/typed-api/follow-collection';
 import {
   TYPED_API_CLIENT,
+  TypedQueryFilter,
   WebUiApiClient,
   WebUiApiDirectory,
+  WebUiQueryEntity,
+  WebUiQueryMethod,
 } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -115,6 +119,23 @@ export class TypedApiService {
   }
 
   /**
+   * `call` for the methods middleware answers without a session, such as the sign-in page's
+   * `system.advanced.login_banner`. It waits for the client only, not for a login, which `call`
+   * would hold it for until the user had signed in.
+   *
+   * There is no session to end, so a refusal is thrown like any other error.
+   */
+  callUnauthenticated<M extends CallMethod<D>>(
+    method: M,
+    ...params: ArgsOf<CallParams<D, M>>
+  ): Observable<CallResponse<D, M>> {
+    return this.client$.pipe(
+      take(1),
+      switchMap((client) => dispatchTypedCall<CallResponse<D, M>>(client, method, params[0])),
+    );
+  }
+
+  /**
    * Query a collection. Typed by the entity behind the `.query` method, with
    * `select` narrowing the rows to the picked fields.
    *
@@ -186,6 +207,30 @@ export class TypedApiService {
     return this.ready$.pipe(
       switchMap((client) => client.api.events(event)),
     );
+  }
+
+  /**
+   * Query a collection and keep the rows current from its change events, the typed counterpart
+   * of `ApiService.callAndSubscribe`.
+   *
+   * There is no `select`: the change events carry whole rows, so a projection would be undone
+   * by the first one. Like `subscribe`, the event subscription outlives its consumers — the
+   * client shares one stream per event and never sends `core.unsubscribe` (gap 17 in
+   * docs/devs/typed-api-client.md).
+   */
+  queryAndSubscribe<M extends WebUiQueryMethod & EventName<D>>(
+    method: M,
+    filters: TypedQueryFilter<WebUiQueryEntity<M>>[] = [],
+    options: { extra?: Record<string, unknown> } = {},
+  ): Observable<WebUiQueryEntity<M>[]> {
+    // The query and event verbs are generic over the directory, which `M` cannot be narrowed
+    // through; `followCollection` takes the erased shapes and folds rows by `id` alone.
+    interface LooseRow { id?: unknown }
+    const looseQuery = this.query as unknown as (
+      method: string, filters: unknown, options: unknown,
+    ) => Observable<LooseRow[]>;
+    const changes$ = this.subscribe(method) as unknown as Observable<{ msg: string; id?: unknown; fields?: LooseRow }>;
+    return followCollection(looseQuery(method, filters, options), changes$) as Observable<WebUiQueryEntity<M>[]>;
   }
 
   /**

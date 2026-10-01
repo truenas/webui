@@ -14,10 +14,12 @@ import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.servi
  */
 export class EmptyTypedApiService {
   call = getMissingInjectionErrorFactory(TypedApiService.name);
+  callUnauthenticated = getMissingInjectionErrorFactory(TypedApiService.name);
   query = getMissingInjectionErrorFactory(TypedApiService.name);
   queryOne = getMissingInjectionErrorFactory(TypedApiService.name);
   queryCount = getMissingInjectionErrorFactory(TypedApiService.name);
   job = getMissingInjectionErrorFactory(TypedApiService.name);
   startJob = getMissingInjectionErrorFactory(TypedApiService.name);
   subscribe = getMissingInjectionErrorFactory(TypedApiService.name);
+  queryAndSubscribe = getMissingInjectionErrorFactory(TypedApiService.name);
 }

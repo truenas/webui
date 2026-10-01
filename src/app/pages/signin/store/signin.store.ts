@@ -16,7 +16,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FailoverValidationService } from 'app/services/failover-validation.service';
 import { SessionTimeoutService } from 'app/services/session-timeout.service';
@@ -51,7 +51,7 @@ const tokenParam = 'token' as const;
 
 @Injectable()
 export class SigninStore extends ComponentStore<SigninState> {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private tokenLastUsedService = inject(TokenLastUsedService);
   private router = inject(Router);
@@ -206,7 +206,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   private checkForLoginBanner(): Observable<string> {
     this.subscribeToLoginBannerUpdates();
 
-    return this.api.call('system.advanced.login_banner').pipe(
+    return this.api.callUnauthenticated('system.advanced.login_banner').pipe(
       tap((loginBanner) => this.patchState({ loginBanner })),
       catchError((error: unknown) => {
         this.errorHandler.showErrorModal(error);
@@ -223,7 +223,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private checkIfAdminPasswordSet(): Observable<boolean> {
-    return this.api.call('user.has_local_administrator_set_up').pipe(
+    return this.api.callUnauthenticated('user.has_local_administrator_set_up').pipe(
       tap((wasAdminSet) => this.patchState({ wasAdminSet })),
       catchError((error: unknown) => {
         this.errorHandler.showErrorModal(error);

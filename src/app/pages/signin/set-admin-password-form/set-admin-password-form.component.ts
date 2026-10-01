@@ -13,10 +13,11 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 
-const adminUsername = 'truenas_admin';
+// The one name `user.setup_local_administrator` accepts besides `root`.
+const adminUsername = 'truenas_admin' as const;
 
 @Component({
   selector: 'ix-set-admin-password-form',
@@ -35,7 +36,7 @@ const adminUsername = 'truenas_admin';
 })
 export class SetAdminPasswordFormComponent {
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private authService = inject(AuthService);
   private errorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
@@ -95,7 +96,7 @@ export class SetAdminPasswordFormComponent {
     this.signinStore.setLoadingState(true);
     this.hasSubmitted.set(true);
 
-    const request$ = this.api.call('user.setup_local_administrator', [username, password]);
+    const request$ = this.api.callUnauthenticated('user.setup_local_administrator', [username, password]);
 
     request$.pipe(
       switchMap(() => this.authService.login(username, password)),

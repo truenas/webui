@@ -3,6 +3,17 @@ import { LicenseType } from 'app/enums/license-type.enum';
 import { ApiDate, ApiTimestamp } from 'app/interfaces/api-date.interface';
 
 // TODO: Split mixed interface for system.info and webui.main.dashboard.sys_info
+/**
+ * What `webui.main.dashboard.sys_info` answers: the subset of `SystemInfo` the dashboard's system
+ * widgets read, for this controller and, on HA, the other one.
+ */
+export interface DashboardSystemInfo extends Pick<
+  SystemInfo,
+  'platform' | 'version' | 'license' | 'system_serial' | 'hostname' | 'uptime_seconds' | 'datetime'
+> {
+  remote_info: DashboardSystemInfo | null;
+}
+
 export interface SystemInfo {
   platform: string;
   boottime: ApiTimestamp;
