@@ -3,8 +3,10 @@ A PR can be opened without a Jira ticket, but it cannot be merged without one:
 the `check-ticket` check stays red until the title references a ticket, for example:
   NAS-12345: Fix broken thing
   NAS-12345 / 27.0.0-BETA.1 / Fix broken thing
-No ticket yet? Add the `jira` label and bugclerk creates one; then put its key
-in the title before merging.
+No ticket yet? UI team members can add the `jira` label and bugclerk creates one;
+then put its key in the title before merging. Labels need triage access to the repo,
+so if you are contributing from a fork, pick or file a ticket first
+(see docs/contributing_code.md).
 -->
 
 **Changes:**

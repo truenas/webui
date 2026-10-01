@@ -13,5 +13,7 @@ Commit changes and create a PR. Use with a title, optionally prefixed by a ticke
 5. Check if there are any uncommitted changes. If there are, run `git add .` and commit again.
 6. Push the branch to the remote repository.
 7. Open browser window with the link to create a pull request for the branch
-   (`https://github.com/truenas/webui/compare/master...<branch>?expand=1`). If the user chose the `jira` label in step 1,
-   append `&labels=jira` so the new PR form has it applied.
+   (`https://github.com/truenas/webui/compare/master...<branch>?expand=1&title=<url-encoded confirmed title>`).
+   Passing the title matters: GitHub only prefills it from the commit message when the branch has a single commit,
+   and falls back to the branch name otherwise. If the user chose the `jira` label in step 1, append `&labels=jira`
+   so the new PR form has it applied.
