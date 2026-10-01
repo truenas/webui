@@ -111,8 +111,8 @@ export class MyComponent {
 
 ## Branch and Commit Guidelines
 - Branch naming: `NAS-<issue number>` (e.g., `NAS-12345`) when a ticket exists; otherwise a short descriptive name.
-  A ticket is not required to *open* a PR — add the `jira` label and bugclerk creates one — but the PR title must
-  reference it before merge (the `check-ticket` workflow enforces this).
+  A ticket is not required to *open* a PR — add the `jira` label and bugclerk creates one and adds its key to the
+  PR title — but the title must reference a ticket before merge (the `check-ticket` workflow enforces this).
 - Commit messages: prefer `NAS-<issue number>: <description>`. No hook enforces or prepends it any more —
   what lands on master is the PR title, set on GitHub.
 - Keep commit message short (to one line).

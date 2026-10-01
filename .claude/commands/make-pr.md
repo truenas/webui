@@ -4,8 +4,9 @@ Commit changes and create a PR. Use with a title, optionally prefixed by a ticke
    If the string is empty, read the changes (`git diff` / `git diff --cached`, and any commits not on master) and
    propose a title that summarizes them — short, imperative, the way a ticket title reads, since bugclerk reuses it.
    Wait for the user to confirm or edit it before continuing.
-   If it has no ticket key, ask the user whether to apply the `jira` label to the PR, so bugclerk creates the ticket.
-   Remind them the `check-ticket` check stays red until the PR title references a ticket, which is required before merge.
+   If it has no ticket key, ask the user whether to apply the `jira` label to the PR, so bugclerk creates the ticket
+   and adds its key to the PR title. Remind them that without the label the `check-ticket` check stays red until
+   they put a ticket key in the PR title themselves, which is required before merge.
 2. If there are uncommitted changes, run tests on changed files with `yarn test:changed`.
 3. If the tests pass, switch to a branch named after the ticket number in the confirmed title from step 1 if it has one,
    otherwise a short kebab-case name derived from that title. Create the branch if necessary.
