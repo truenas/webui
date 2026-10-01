@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnCardComponent, TnDialog, TnTestIdDirective } from '@truenas/ui-components';
 import { combineLatest, Subject } from 'rxjs';
@@ -52,25 +53,31 @@ export class HardwareDiskEncryptionComponent {
   private readonly refreshDisk$ = new Subject<void>();
 
   // Refetched after the per-disk password dialog saves, so "Password is set" follows the change.
+  // Skipped without the SED entitlement, as the card is hidden then (same gate as the Disks list).
+  // `undefined` while loading, `null` when no disk matches the devname.
   private readonly disk = toSignal(
     combineLatest([
       toObservable(this.topologyDisk).pipe(filter(Boolean)),
+      toObservable(this.hasSedEntitlement).pipe(filter(Boolean)),
       this.refreshDisk$.pipe(startWith(undefined)),
     ]).pipe(
       switchMap(([topologyItem]) => {
         return this.api.call('disk.query', [[['devname', '=', topologyItem.disk]],
           { extra: { passwords: true, sed_status: true } }]).pipe(
-          map(([disk]) => disk as Disk | undefined),
+          map(([disk]) => (disk as Disk | undefined) ?? null),
         );
       }),
     ),
   );
 
-  protected readonly isSedCapable = computed(() => Boolean(this.disk()?.sed));
+  protected readonly supportsSed = computed(() => Boolean(this.disk()?.sed));
   protected readonly hasDiskEncryption = computed(() => Boolean(this.disk()?.passwd));
   protected readonly sedStatusLabel = computed(() => {
     const disk = this.disk();
-    return disk ? sedStatusLabel(disk) : null;
+    if (disk === undefined) {
+      return T('Loading...');
+    }
+    return disk ? sedStatusLabel(disk) : T('Unknown');
   });
 
   protected onManageSedPassword(): void {

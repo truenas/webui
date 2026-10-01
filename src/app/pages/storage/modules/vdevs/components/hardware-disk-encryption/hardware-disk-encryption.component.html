@@ -1,14 +1,12 @@
 @if (hasSedSupport()) {
   <tn-card padding="small" [title]="'Hardware Disk Encryption' | translate">
-    @if (sedStatusLabel(); as statusLabel) {
-      <div class="details-item">
-        <div class="label">{{ 'Self-Encrypting Drive (SED)' | translate }}:</div>
-        <div class="value">{{ statusLabel | translate }}</div>
-      </div>
-    }
+    <div class="details-item">
+      <div class="label">{{ 'Self-Encrypting Drive (SED)' | translate }}:</div>
+      <div class="value">{{ sedStatusLabel() | translate }}</div>
+    </div>
 
     <!-- Neither password applies to a disk that cannot self-encrypt. -->
-    @if (isSedCapable()) {
+    @if (supportsSed()) {
       <div class="details-item">
         <div class="label">{{ 'SED Password' | translate }}:</div>
         <div class="value">

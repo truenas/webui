@@ -4,6 +4,7 @@ import {
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnCardComponent, TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
@@ -84,6 +85,10 @@ describe('HardwareDiskEncryptionComponent', () => {
     it('checks no hardware disk encryption support', () => {
       expect(spectator.query(TnCardComponent)).toBeNull();
     });
+
+    it('does not query the disk while the card is hidden', () => {
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('disk.query', expect.anything());
+    });
   });
 
   describe('entitled to SED', () => {
@@ -121,7 +126,7 @@ describe('HardwareDiskEncryptionComponent', () => {
 
     it('reloads the disk after the SED password dialog saves', () => {
       const api = spectator.inject(ApiService);
-      jest.mocked(spectator.inject(TnDialog).open).mockReturnValue({ closed: of(true) } as ReturnType<TnDialog['open']>);
+      jest.mocked(spectator.inject(TnDialog).open).mockReturnValueOnce({ closed: of(true) } as ReturnType<TnDialog['open']>);
       jest.mocked(api.call).mockClear();
 
       spectator.click(spectator.query(byText('Manage SED Password'))!);
@@ -149,13 +154,7 @@ describe('HardwareDiskEncryptionComponent', () => {
 
   describe('entitled to SED, disk is not SED capable', () => {
     beforeEach(() => {
-      const api = spectator.inject(ApiService);
-      jest.mocked(api.call).mockImplementation(((method: string) => {
-        if (method === 'disk.query') {
-          return of([{ passwd: '', sed: false } as Disk]);
-        }
-        return of(true);
-      }) as unknown as ApiService['call']);
+      spectator.inject(MockApiService).mockCall('disk.query', [{ passwd: '', sed: false } as Disk]);
       spectator.setInput('topologyDisk', { disk: 'sdb' } as TopologyDisk);
       store$.overrideSelector(selectEntitlements, {});
       store$.refreshState();
@@ -169,6 +168,22 @@ describe('HardwareDiskEncryptionComponent', () => {
       expect(spectator.query(byText('SED Password:', { exact: true }))).toBeNull();
       expect(spectator.query(byText('Global SED Password:', { exact: true }))).toBeNull();
       expect(spectator.query(byText('Manage SED Password'))).toBeNull();
+    });
+  });
+
+  describe('entitled to SED, disk is not found', () => {
+    beforeEach(() => {
+      spectator.inject(MockApiService).mockCall('disk.query', []);
+      spectator.setInput('topologyDisk', { disk: 'sdz' } as TopologyDisk);
+      store$.overrideSelector(selectEntitlements, {});
+      store$.refreshState();
+      spectator.detectChanges();
+    });
+
+    it('shows the SED status as unknown and hides the password rows', () => {
+      const detailsItem = spectator.query(byText('Self-Encrypting Drive (SED):', { exact: true }))!;
+      expect(detailsItem.nextElementSibling).toHaveText('Unknown');
+      expect(spectator.query(byText('SED Password:', { exact: true }))).toBeNull();
     });
   });
 });
