@@ -4,8 +4,9 @@
 import { expect, type Page } from '@playwright/test';
 import { goToDatasets, goToShares, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
+import { smbLocators } from '../locators/smb';
 import {
-  datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolWizardLocators, smbLocators,
+  datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolWizardLocators,
 } from '../locators/storage';
 
 /**
@@ -174,12 +175,12 @@ export async function createSmbShare(page: Page, path: string, name: string): Pr
   await goToShares(page);
 
   await page.locator(smbLocators.addShare).click();
-  await expect(page.locator(smbLocators.path)).toBeVisible();
+  await expect(page.locator(smbLocators.form.path)).toBeVisible();
 
-  await page.locator(smbLocators.path).fill(path);
-  await page.locator(smbLocators.name).fill(name);
+  await page.locator(smbLocators.form.path).fill(path);
+  await page.locator(smbLocators.form.name).fill(name);
 
-  await page.locator(smbLocators.save).click();
+  await page.locator(smbLocators.form.save).click();
 
   // Creating a share prompts to configure its ACL. Decline: accepting navigates
   // away to the ACL editor, which is a separate journey. Asserted rather than
@@ -196,7 +197,7 @@ export async function createSmbShare(page: Page, path: string, name: string): Pr
   await expect(startService).toBeVisible({ timeout: saveTimeoutMs });
   await startService.click();
 
-  await expect(page.locator(smbLocators.save)).toBeHidden({ timeout: saveTimeoutMs });
+  await expect(page.locator(smbLocators.form.save)).toBeHidden({ timeout: saveTimeoutMs });
 }
 
 /**

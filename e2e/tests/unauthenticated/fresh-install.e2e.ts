@@ -23,10 +23,8 @@
  * share one identity (`testAdmin`) so it is visibly the same account.
  */
 import { firstValueFrom, timeout } from 'rxjs';
-import {
-  ensurePoolAbsent, ensureSmbServiceStopped, ensureSmbShareAbsent, findGroupAclGrants,
-  requireUnusedDisks,
-} from '../../fixtures/storage';
+import { ensureSmbServiceStopped, ensureSmbShareAbsent } from '../../fixtures/smb';
+import { ensurePoolAbsent, findGroupAclGrants, requireUnusedDisks } from '../../fixtures/storage';
 import { ensureUserAbsent, testAdmin } from '../../fixtures/users';
 import { expectSignedInAs, signIn, signOut } from '../../flows/auth';
 import { createRaidz2Pool, createSmbDataset, createSmbShare } from '../../flows/storage';
