@@ -19,7 +19,7 @@ export interface LicenseInfoInSupport {
    * expiration is set on either the SUPPORT feature or the top-level license.
    */
   expirationDateDisplay: string | null;
-  /** Days until contract end. Negative when expired. */
+  /** Whole days until contract end. `0` means it ends today and support is still available. */
   daysLeftInContract: number | null;
   /**
    * Feature names with `Support` filtered out (it is surfaced via the contract

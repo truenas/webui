@@ -1,5 +1,6 @@
 import { formatInTimeZone } from 'date-fns-tz';
 import { miniSeries, serverSeries } from 'app/constants/server-series.constant';
+import { oneDayMillis } from 'app/constants/time.constant';
 import { ProductEnclosure } from 'app/enums/product-enclosure.enum';
 import { ApiDate } from 'app/interfaces/api-date.interface';
 import { License } from 'app/interfaces/system-info.interface';
@@ -43,6 +44,35 @@ export function formatLicenseExpiration(
     return null;
   }
   return formatInTimeZone(new Date(value), 'UTC', localeService.getPreferredDateFormat());
+}
+
+/**
+ * Whole calendar days from today until a license expires, both dates read in UTC.
+ *
+ * The wire value is a calendar date, not an instant, and the contract is in force
+ * through the whole of that date. Subtracting instants answers a different question:
+ * at 13:00 UTC the day before expiry the date is half a day away, which rounds to 0
+ * and reads as "expires today". Truncating both sides to a UTC day keeps the answer
+ * stable for the whole day.
+ *
+ * `0` means the contract ends today and support is still available. A negative
+ * number means it has lapsed.
+ */
+export function getDaysUntilLicenseExpiration(
+  expiresAt: ApiDate | null | undefined,
+  nowMs: number,
+): number | null {
+  const value = expiresAt?.$value;
+  if (!value) {
+    return null;
+  }
+  const expiresAtMs = new Date(value).getTime();
+  if (Number.isNaN(expiresAtMs)) {
+    return null;
+  }
+  const now = new Date(nowMs);
+  const todayMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  return Math.round((expiresAtMs - todayMs) / oneDayMillis);
 }
 
 /**
