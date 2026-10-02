@@ -14,7 +14,7 @@ import {
   datasetMountPath, ensureDatasetAbsent, ensureDatasetPresent, findDataset,
 } from '../fixtures/storage';
 import {
-  confirmShareDeletion, openDeleteShareDialog, openEditShareForm, saveShareForm,
+  confirmShareDeletion, formSettleTimeoutMs, openDeleteShareDialog, openEditShareForm, saveShareForm,
 } from '../flows/smb';
 import { smbLocators } from '../locators/smb';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
@@ -87,7 +87,8 @@ test('editing a share from the list changes the share that was picked', async ({
 
   // The card first: an edit that saved but left the row showing the old value
   // sends an admin back in to make a change that is already made.
-  await expect(page.locator(smbLocators.card.description(target))).toHaveText(description);
+  await expect(page.locator(smbLocators.card.description(target)))
+    .toHaveText(description, { timeout: formSettleTimeoutMs });
 
   const saved = await findSmbShare(api, target);
   expect(saved).toMatchObject({

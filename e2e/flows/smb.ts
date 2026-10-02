@@ -23,6 +23,19 @@ const startServiceSaveTimeoutMs = 90_000;
  */
 export const formSettleTimeoutMs = 60_000;
 
+/**
+ * Opens a share's row menu on the dashboard card.
+ *
+ * Waits for the trigger on the same budget as the add form, and for the same
+ * reason: the rows arrive with the rest of a slow-settling page.
+ */
+async function openShareRowMenu(page: Page, name: string): Promise<void> {
+  const trigger = page.locator(smbLocators.card.rowMenu(name));
+
+  await expect(trigger).toBeVisible({ timeout: formSettleTimeoutMs });
+  await trigger.click();
+}
+
 /** Opens the add-share panel from the Shares dashboard, as a user would. */
 export async function openAddShareForm(page: Page): Promise<void> {
   await goToShares(page);
@@ -42,7 +55,7 @@ export async function openAddShareForm(page: Page): Promise<void> {
 export async function openEditShareForm(page: Page, name: string): Promise<void> {
   await goToShares(page);
 
-  await page.locator(smbLocators.card.rowMenu(name)).click();
+  await openShareRowMenu(page, name);
   await page.locator(smbLocators.card.rowMenuEdit(name)).click();
   await expect(page.locator(smbLocators.form.name)).toHaveValue(name, { timeout: formSettleTimeoutMs });
 }
@@ -137,7 +150,7 @@ export async function createSmbShareAndStartService(page: Page, path: string, na
 export async function openDeleteShareDialog(page: Page, name: string): Promise<void> {
   await goToShares(page);
 
-  await page.locator(smbLocators.card.rowMenu(name)).click();
+  await openShareRowMenu(page, name);
   await page.locator(smbLocators.card.rowMenuDelete(name)).click();
   await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
 }
