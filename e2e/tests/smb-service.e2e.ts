@@ -15,7 +15,9 @@ import {
 } from '../fixtures/smb';
 import { datasetMountPath, ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
 import { goToDatasets, goToShares } from '../flows/navigation';
-import { choosePurpose, formSettleTimeoutMs, openAddShareForm } from '../flows/smb';
+import {
+  choosePurpose, formSettleTimeoutMs, openAddShareForm, toggleShareEnabled,
+} from '../flows/smb';
 import { smbLocators } from '../locators/smb';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
@@ -117,7 +119,7 @@ test('switching a share off from the list reaches the appliance', async ({ page,
   expect((await findSmbShare(api, toggledShare))?.enabled).toBe(true);
 
   await goToShares(page);
-  await page.locator(smbLocators.card.enabledToggle(toggledShare)).click();
+  await toggleShareEnabled(page, toggledShare);
 
   // A switch is the easiest control in the app to leave purely cosmetic — it
   // moves on click whether or not anything was written. The appliance is the
@@ -132,7 +134,7 @@ test('switching a share off from the list reaches the appliance', async ({ page,
   // destroys the card, so the row that comes back is one it has rebuilt.
   await goToDatasets(page);
   await goToShares(page);
-  await page.locator(smbLocators.card.enabledToggle(toggledShare)).click();
+  await toggleShareEnabled(page, toggledShare);
   await expect.poll(async () => (await findSmbShare(api, toggledShare))?.enabled).toBe(true);
 
   expect((await queryService(api, smbServiceName))?.state).toBe('RUNNING');
