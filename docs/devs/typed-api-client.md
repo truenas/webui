@@ -38,9 +38,11 @@ moved — goes over the same connection: `WebSocketHandlerService.responses$` is
 tab, which showed up as two entries in `auth.sessions` and every audited call
 recorded twice. That is gone.
 
-What the handler still owns is what the client has no seam for: the call queue
-and its 20-concurrent ceiling, the debug panel's logging, and its mock
-interception. Connection state — open, closed, refused, shutting down — is
+What the handler still owns is what the client has no seam for: the legacy call
+queue, the debug panel's logging, and its mock interception. The ceiling on
+concurrent calls is no longer the handler's alone: middleware refuses the 21st
+call in flight on a connection, whoever sent it, so `limitConcurrentCalls` holds
+the whole tab to 20 on the connection's `send` (see gap 19). Connection state — open, closed, refused, shutting down — is
 `ConnectionService`'s (NAS-143990). What it lost with the socket: the reconnect timer (the client's
 connection retries on its own), `core.set_options` on open (the client sends
 it), and the ping timer (the client pings every 20s, so `PingService` is
@@ -490,6 +492,17 @@ above. Each is a change for `truenas/api-client-ts`.
     change in `transformFormDataToApiPayload`, but it changes the request, so
     it wants a box check of all three service types first, or a correction to
     the model in middleware if the inner field is not meant to be required.
+
+19. **No limit on concurrent calls.** Middleware runs 20 calls at a time per
+    connection and refuses the next with "Maximum number of concurrent calls
+    (20) has exceeded". The client sends whatever it is given. While the two
+    clients shared a socket and only the legacy queue counted, a page load put
+    up to 26 in flight and middleware refused the excess — a click that did
+    nothing, or a `core.subscribe` refused and a store left stale for the
+    session. `limitConcurrentCalls` closes it from the UI by replacing
+    `connection.send` on the instance, which works only because every request,
+    the client's own included, goes out through that method. A `maxConcurrentCalls`
+    option on the client would retire the patch.
 
 ## Version policy
 

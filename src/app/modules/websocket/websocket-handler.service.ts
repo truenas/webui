@@ -45,7 +45,8 @@ type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>> & { js
  * What stays here is everything the typed client has no seam for, and that
  * the calls still riding this service depend on:
  *
- * - the call queue and its 20-concurrent-call ceiling,
+ * - the call queue, and the 20-call ceiling on what it has in flight itself
+ *   (the tab's total is held to 20 on the connection, by `limitConcurrentCalls`),
  * - the WebSocket debug panel's logging and its mock interception.
  *
  * The connection status the app's reconnect, shutdown and failover flows read

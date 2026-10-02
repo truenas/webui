@@ -68,7 +68,6 @@ type ClientApi = WebUiApiClient['api'];
  * ## What is deliberately not here yet
  *
  * - Calls are not intercepted by the WebSocket debug panel or its mocks.
- * - There is no concurrent-call limit.
  * - `query` / `queryOne` / `queryCount` are exposed straight from the client
  *   until the wrapper grows its own error handling for them.
  */
