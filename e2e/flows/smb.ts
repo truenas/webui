@@ -99,6 +99,44 @@ export async function saveShareForm(page: Page): Promise<void> {
 }
 
 /**
+ * Creates an SMB share pointing at a dataset's mountpoint, and starts the SMB
+ * service when the app offers to. The counterpart of {@link saveShareForm},
+ * which declines; this one is `fresh-install`'s, where a served share is the point.
+ *
+ * Starting the service matters: a share on a stopped service exists in the
+ * configuration but serves nothing, so a journey that stops at "share created"
+ * would report success on a NAS that is not actually sharing anything.
+ */
+export async function createSmbShareAndStartService(page: Page, path: string, name: string): Promise<void> {
+  await goToShares(page);
+
+  await page.locator(smbLocators.addShare).click();
+  await expect(page.locator(smbLocators.form.path)).toBeVisible();
+
+  await page.locator(smbLocators.form.path).fill(path);
+  await page.locator(smbLocators.form.name).fill(name);
+
+  await page.locator(smbLocators.form.save).click();
+
+  // Creating a share prompts to configure its ACL. Decline: accepting navigates
+  // away to the ACL editor, which is a separate journey. Asserted rather than
+  // probed — if this prompt ever stops appearing, that is a flow change worth
+  // failing on rather than silently tolerating.
+  const declineAcl = page.locator(smbLocators.declineAclPrompt);
+  await expect(declineAcl).toBeVisible({ timeout: saveTimeoutMs });
+  await declineAcl.click();
+
+  // With the ACL prompt dismissed, the app notices the SMB service is stopped
+  // and offers to start it. This dialog appears only when the service is not
+  // already running (`checkIfServiceIsEnabled` -> `dialogService.startService`).
+  const startService = page.locator(smbLocators.startService);
+  await expect(startService).toBeVisible({ timeout: saveTimeoutMs });
+  await startService.click();
+
+  await expect(page.locator(smbLocators.form.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
  * Opens the delete confirmation for a share, from its row menu on the
  * dashboard card.
  *

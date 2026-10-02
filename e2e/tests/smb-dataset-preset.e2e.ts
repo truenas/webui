@@ -27,6 +27,7 @@ import { ensureDatasetAbsent, findDataset } from '../fixtures/storage';
 import { goToDatasets } from '../flows/navigation';
 import { smbLocators } from '../locators/smb';
 import { datasetLocators } from '../locators/storage';
+import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
 /** Created through the dataset form — that is the thing under test. */
@@ -54,10 +55,16 @@ test.beforeEach(async ({ api, pool }) => {
 });
 
 test.afterEach(async ({ api, pool }) => {
-  await ensureSmbShareAbsent(api, presetShare);
-  await ensureDatasetAbsent(api, `${pool}/${smbDataset}`);
-  await ensureDatasetAbsent(api, `${pool}/${genericDataset}`);
-  await ensureSmbServiceStopped(api);
+  if (leavingTestData(`share "${presetShare}" and the e2e_preset_* datasets, with SMB as the test left it`)) {
+    return;
+  }
+
+  await runCleanupSteps([
+    ['stop the SMB service', () => ensureSmbServiceStopped(api)],
+    [`remove share ${presetShare}`, () => ensureSmbShareAbsent(api, presetShare)],
+    [`remove dataset ${smbDataset}`, () => ensureDatasetAbsent(api, `${pool}/${smbDataset}`)],
+    [`remove dataset ${genericDataset}`, () => ensureDatasetAbsent(api, `${pool}/${genericDataset}`)],
+  ]);
 });
 
 test('a dataset that shares itself offers to start the service it needs', async ({ page, api, pool }) => {

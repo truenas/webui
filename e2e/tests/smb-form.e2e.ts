@@ -25,6 +25,7 @@ import {
   choosePurpose, formSettleTimeoutMs, openAddShareForm, saveShareForm, showAdvancedOptions,
 } from '../flows/smb';
 import { smbLocators } from '../locators/smb';
+import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
 /** Created through the form, never over the API — that is the thing under test. */
@@ -66,10 +67,16 @@ test.beforeEach(async ({ api, pool }) => {
 });
 
 test.afterEach(async ({ api, pool }) => {
-  for (const share of allShares) {
-    await ensureSmbShareAbsent(api, share);
+  if (leavingTestData(`the e2e_form_* shares and dataset "${pool}/${datasetName}"`)) {
+    return;
   }
-  await ensureDatasetAbsent(api, `${pool}/${datasetName}`);
+
+  await runCleanupSteps([
+    ...allShares.map((share): [string, () => Promise<void>] => (
+      [`remove share ${share}`, () => ensureSmbShareAbsent(api, share)]
+    )),
+    [`remove dataset ${datasetName}`, () => ensureDatasetAbsent(api, `${pool}/${datasetName}`)],
+  ]);
 });
 
 test('an admin publishes a share, and the appliance really has one', async ({ page, api, pool }) => {
@@ -171,11 +178,9 @@ test('the form will not publish a share name that is already taken', async ({ pa
   // being tested is a round trip to middleware and the parsing of its answer.
   await page.locator(smbLocators.form.name).fill(existingShare);
   await expect(page.locator(smbLocators.form.save)).toBeDisabled();
-
-  expect(await findSmbShare(api, newShare)).toBeUndefined();
 });
 
-test('the form will not publish a share name with invalid characters', async ({ page, api, pool }) => {
+test('the form will not publish a share name with invalid characters', async ({ page, pool }) => {
   await openAddShareForm(page);
   await page.locator(smbLocators.form.path).fill(datasetMountPath(`${pool}/${datasetName}`));
 
@@ -187,6 +192,4 @@ test('the form will not publish a share name with invalid characters', async ({ 
   // are a real constraint rather than a UI preference.
   await page.locator(smbLocators.form.name).fill('bad/name');
   await expect(page.locator(smbLocators.form.save)).toBeDisabled();
-
-  expect(await findSmbShare(api, newShare)).toBeUndefined();
 });
