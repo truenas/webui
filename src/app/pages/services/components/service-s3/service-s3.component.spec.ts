@@ -8,22 +8,22 @@ import {
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import {
   S3Access, S3AuditOverflow, S3LogLevel, S3PrincipalType,
 } from 'app/enums/s3.enum';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { S3Config } from 'app/interfaces/s3.interface';
-import { User } from 'app/interfaces/user.interface';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
@@ -39,7 +39,7 @@ describe('ServiceS3Component', () => {
 
   let spectator: Spectator<ServiceS3Component>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const config = {
     id: 1,
@@ -80,13 +80,13 @@ describe('ServiceS3Component', () => {
         entitled: (feature: EntitlementFeature) => computed(() => !deniedFeatures().includes(feature)),
         entitledStrictly: (feature: EntitlementFeature) => computed(() => !deniedFeatures().includes(feature)),
       }),
-      mockApi([
-        mockCall('s3.config', config),
-        mockCall('s3.update', config),
-        mockCall('s3.bindip_choices', { '0.0.0.0': '0.0.0.0', '192.168.1.10': '192.168.1.10' }),
-        mockCall('sharing.s3.audit_choices', { GetObject: 'GetObject' }),
-        mockCall('user.query', [{ username: 'alice', uid: 1000 }] as User[]),
-        mockCall('group.query', []),
+      mockTypedApi([
+        mockTypedCall('s3.config', config),
+        mockTypedCall('s3.update', config),
+        mockTypedCall('s3.bindip_choices', { '0.0.0.0': '0.0.0.0', '192.168.1.10': '192.168.1.10' }),
+        mockTypedCall('sharing.s3.audit_choices', { GetObject: 'GetObject' }),
+        mockTypedQuery('user.query', [{ username: 'alice', uid: 1000 }] as WebUiQueryEntity<'user.query'>[]),
+        mockTypedQuery('group.query', []),
       ]),
       mockProvider(SystemGeneralService, {
         getCertificates: () => of([{ id: 5, name: 's3-cert' }] as Certificate[]),
@@ -105,7 +105,7 @@ describe('ServiceS3Component', () => {
     deniedFeatures.set([]);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
     await spectator.fixture.whenStable();
   });
 
@@ -145,6 +145,7 @@ describe('ServiceS3Component', () => {
     const closed = jest.fn();
     spectator.component.closed.subscribe(closed);
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(api.call).toHaveBeenCalledWith('s3.update', [{
       listeners: [
@@ -192,15 +193,16 @@ describe('ServiceS3Component', () => {
       expect(await getAuditModeSelect()).not.toBeNull();
     });
 
-    it('sends no audit settings without the key, rather than the form\'s defaults', () => {
+    it('sends no audit settings without the key, rather than the form\'s defaults', async () => {
       deniedFeatures.set([EntitlementFeature.S3Audit]);
       spectator.detectChanges();
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       // Read off the actual call: middleware rejects audit settings it is not entitled to, and the
       // controls the user saw were inert, so nothing on screen was theirs to send.
-      const updateCall = jest.mocked(spectator.inject(ApiService).call).mock.calls
+      const updateCall = jest.mocked(spectator.inject(TypedApiService).call).mock.calls
         .find(([method]) => method === 's3.update');
       const payload = (updateCall?.[1] as [Record<string, unknown>])[0];
 

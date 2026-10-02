@@ -14,7 +14,8 @@ import {
 } from '@truenas/ui-components';
 import { MockComponents, ngMocks } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
@@ -61,8 +62,8 @@ describe('DirectoryServicesConfigFormComponent', () => {
           afterClosed: () => of(null),
         })),
       }),
-      mockApi([
-        mockJob('directoryservices.update'),
+      mockTypedApi([
+        mockTypedJob('directoryservices.update', { state: JobState.Success }),
       ]),
     ],
   });

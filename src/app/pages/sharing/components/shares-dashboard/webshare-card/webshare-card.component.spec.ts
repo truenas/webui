@@ -13,13 +13,12 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
-import { WebSharePasskey } from 'app/enums/webshare-passkey.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { User } from 'app/interfaces/user.interface';
-import { WebShare, WebShareConfig } from 'app/interfaces/webshare-config.interface';
+import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -78,12 +77,6 @@ describe('WebShareCardComponent', () => {
     status: TruenasConnectStatus.Configured,
   } as TruenasConnectConfig;
 
-  const mockWebShareConfig: WebShareConfig = {
-    id: 1,
-    search: true,
-    passkey: WebSharePasskey.Enabled,
-  };
-
   const createComponent = createComponentFactory({
     component: WebShareCardComponent,
     imports: [TablePagerShowMoreComponent,
@@ -105,8 +98,6 @@ describe('WebShareCardComponent', () => {
         mockCall('tn_connect.ips_with_hostnames', {}),
         mockCall('interface.websocket_local_ip', '192.168.1.100'),
         mockCall('user.query', [{ id: 1, username: 'testuser', webshare: true } as User]),
-        mockCall('webshare.config', mockWebShareConfig),
-        mockCall('webshare.update', mockWebShareConfig),
       ]),
       provideMockStore({
         initialState: {

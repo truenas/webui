@@ -1,13 +1,6 @@
-export interface KerberosRealm {
-  admin_server: string[];
-  id: number;
-  kdc: string[];
-  kpasswd_server: string[];
-  realm: string;
-  kdc_string: string;
-  admin_server_string: string;
-  primary_kdc: string;
-  kpasswd_server_string: string;
-}
+import { CallParams, v27_0_0 } from '@truenas/api-client';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
-export type KerberosRealmUpdate = Omit<KerberosRealm, 'id'>;
+export type KerberosRealm = v27_0_0.KerberosRealmEntry;
+
+export type KerberosRealmUpdate = CallParams<WebUiApiDirectory, 'kerberos.realm.create'>[0];

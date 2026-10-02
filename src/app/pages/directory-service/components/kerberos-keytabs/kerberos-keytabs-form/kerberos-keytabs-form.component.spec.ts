@@ -3,12 +3,12 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnFileInputHarness, TnInputHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
 import { StorageService } from 'app/services/storage.service';
 
@@ -30,9 +30,9 @@ describe('KerberosKeytabsFormComponent', () => {
     providers: [
       mockProvider(StorageService),
       mockProvider(DialogService),
-      mockApi([
-        mockCall('kerberos.keytab.create'),
-        mockCall('kerberos.keytab.update'),
+      mockTypedApi([
+        mockTypedCall('kerberos.keytab.create', existingKerberosKeytabs),
+        mockTypedCall('kerberos.keytab.update', existingKerberosKeytabs),
       ]),
       mockAuth(),
       ...ixFormTestingProviders(),
@@ -82,7 +82,7 @@ describe('KerberosKeytabsFormComponent', () => {
 
       await submitAndWait();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('kerberos.keytab.create', [{
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('kerberos.keytab.create', [{
         name: 'new_keytab',
         file: btoa('abc'),
       }]);
@@ -106,7 +106,7 @@ describe('KerberosKeytabsFormComponent', () => {
 
       await submitAndWait();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('kerberos.keytab.update', [
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('kerberos.keytab.update', [
         123,
         { name: 'test_name', file: btoa('abc') },
       ]);

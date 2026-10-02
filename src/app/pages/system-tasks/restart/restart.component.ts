@@ -6,8 +6,8 @@ import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { ConnectionService } from 'app/modules/websocket/connection.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SystemTaskRedirectService } from 'app/pages/system-tasks/services/system-task-redirect.service';
 import { SystemTaskSplashComponent } from 'app/pages/system-tasks/system-task-splash/system-task-splash.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -25,7 +25,7 @@ import { selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info
   ],
 })
 export class RestartComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private connection = inject(ConnectionService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);

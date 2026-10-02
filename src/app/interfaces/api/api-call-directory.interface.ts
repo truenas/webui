@@ -2,7 +2,7 @@ import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
-import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
+import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import {
   Acl,
@@ -88,10 +88,7 @@ import { DatasetQuota, DatasetQuotaQueryParams, SetDatasetQuota } from 'app/inte
 import {
   Dataset, DatasetCreate, DatasetDetails, DatasetUpdate, ExtraDatasetQueryOptions,
 } from 'app/interfaces/dataset.interface';
-import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
-import { DirectoryServicesLeaveParams, DirectoryServicesLeaveResponse } from 'app/interfaces/directoryservices-leave.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
-import { DirectoryServicesUpdate, DirectoryServicesUpdateResponse } from 'app/interfaces/directoryservices-update.interface';
 import {
   Disk, DiskDetailsResponse,
   DiskTemperatureAgg,
@@ -122,7 +119,6 @@ import {
   FibreChannelStatus,
 } from 'app/interfaces/fibre-channel.interface';
 import { FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
-import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
 import { GpuPciChoices } from 'app/interfaces/gpu-pci-choice.interface';
 import {
   CreateGroup, DeleteGroupParams, Group, UpdateGroup,
@@ -149,13 +145,6 @@ import {
 import { Jbof, JbofUpdate } from 'app/interfaces/jbof.interface';
 import { Job } from 'app/interfaces/job.interface';
 import {
-  KerberosConfig,
-  KerberosConfigUpdate,
-  KerberosKeytab,
-  KerberosKeytabUpdate,
-} from 'app/interfaces/kerberos-config.interface';
-import { KerberosRealm, KerberosRealmUpdate } from 'app/interfaces/kerberos-realm.interface';
-import {
   KeychainCredential,
   KeychainCredentialCreate,
   KeychainCredentialDeleteOptions,
@@ -177,7 +166,7 @@ import {
   ServiceRestartedOnNetworkSync,
 } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
-import { AddNfsPrincipal, NfsConfig, NfsConfigUpdate } from 'app/interfaces/nfs-config.interface';
+import { AddNfsPrincipal, NfsConfig } from 'app/interfaces/nfs-config.interface';
 import {
   Nfs3Session, Nfs4Session, NfsShare, NfsShareUpdate,
 } from 'app/interfaces/nfs-share.interface';
@@ -230,18 +219,13 @@ import {
   S3Bucket,
   S3BucketCreate,
   S3BucketUpdate,
-  S3Config,
-  S3ConfigUpdate,
 } from 'app/interfaces/s3.interface';
-import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
 import { SmbConfig, SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
 import {
   SmbShare, SmbSharesec, SmbSharesecAce,
 } from 'app/interfaces/smb-share.interface';
 import { SmbStatus } from 'app/interfaces/smb-status.interface';
-import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
-import { SshConfig, SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
 import {
   RemoteSshScanParams,
   SshConnectionSetup,
@@ -259,7 +243,6 @@ import {
 import { TruenasConnectConfig, TruenasConnectUpdate } from 'app/interfaces/truenas-connect-config.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
-import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import {
   DeleteUserParams, User, UserUpdate,
 } from 'app/interfaces/user.interface';
@@ -274,9 +257,7 @@ import {
   MatchDatastoresWithDatasetsParams,
   VmwareSnapshot, VmwareSnapshotUpdate,
 } from 'app/interfaces/vmware.interface';
-import {
-  WebShareConfig, WebShareConfigUpdate, WebShare, WebShareUpdate,
-} from 'app/interfaces/webshare-config.interface';
+import { WebShare, WebShareUpdate } from 'app/interfaces/webshare-config.interface';
 import {
   CloneZfsSnapshot,
   CreateZfsSnapshot,
@@ -438,10 +419,6 @@ export interface ApiCallDirectory {
 
   // Directory Services
   'directoryservices.status': { params: void; response: DirectoryServicesStatus };
-  'directoryservices.config': { params: void; response: DirectoryServicesConfig };
-  'directoryservices.update': { params: DirectoryServicesUpdate; response: DirectoryServicesUpdateResponse };
-  'directoryservices.leave': { params: [DirectoryServicesLeaveParams]; response: DirectoryServicesLeaveResponse };
-  'directoryservices.certificate_choices': { params: void; response: Choices };
 
   // LDAP
   'ldap.config': { params: void; response: LdapConfig };
@@ -464,7 +441,6 @@ export interface ApiCallDirectory {
   'enclosure2.set_slot_status': { params: [SetDriveBayLightStatus]; response: void };
 
   // Failover
-  'failover.become_passive': { params: void; response: void };
   'failover.config': { params: void; response: FailoverConfig };
   'failover.get_ips': { params: void; response: string[] };
   'failover.licensed': { params: void; response: boolean };
@@ -496,8 +472,6 @@ export interface ApiCallDirectory {
   'filesystem.statfs': { params: [path: string]; response: Statfs };
 
   // FTP
-  'ftp.config': { params: void; response: FtpConfig };
-  'ftp.update': { params: [Partial<FtpConfigUpdate>]; response: FtpConfig };
 
   // Group
   'group.create': { params: [CreateGroup]; response: number };
@@ -586,17 +560,7 @@ export interface ApiCallDirectory {
   'jbof.delete': { params: [id: number, force?: boolean]; response: boolean };
 
   // Kerberos
-  'kerberos.config': { params: void; response: KerberosConfig };
-  'kerberos.keytab.create': { params: [KerberosKeytabUpdate]; response: KerberosKeytab };
-  'kerberos.keytab.delete': { params: [id: number]; response: boolean };
   'kerberos.keytab.kerberos_principal_choices': { params: void; response: string[] };
-  'kerberos.keytab.query': { params: QueryParams<KerberosKeytab>; response: KerberosKeytab[] };
-  'kerberos.keytab.update': { params: [id: number, update: Partial<KerberosKeytabUpdate>]; response: KerberosKeytab };
-  'kerberos.realm.create': { params: [KerberosRealmUpdate]; response: KerberosRealm };
-  'kerberos.realm.delete': { params: [id: number]; response: boolean };
-  'kerberos.realm.query': { params: QueryParams<KerberosRealm>; response: KerberosRealm[] };
-  'kerberos.realm.update': { params: [id: number, update: Partial<KerberosRealmUpdate>]; response: KerberosRealm };
-  'kerberos.update': { params: [Partial<KerberosConfigUpdate>]; response: KerberosConfig };
 
   // Keychain credential
   'keychaincredential.create': { params: [KeychainCredentialCreate]; response: KeychainCredential };
@@ -631,11 +595,9 @@ export interface ApiCallDirectory {
 
   // NFS
   'nfs.add_principal': { params: [AddNfsPrincipal]; response: boolean };
-  'nfs.bindip_choices': { params: void; response: Choices };
   'nfs.config': { params: void; response: NfsConfig };
   'nfs.get_nfs3_clients': { params: [params?: QueryParams<Nfs3Session>]; response: Nfs3Session[] };
   'nfs.get_nfs4_clients': { params: [params?: QueryParams<Nfs4Session>]; response: Nfs4Session[] };
-  'nfs.update': { params: [Partial<NfsConfigUpdate>]; response: NfsConfig };
 
   // NVMe-oF
   'nvmet.global.config': { params: void; response: NvmeOfGlobalConfig };
@@ -744,16 +706,12 @@ export interface ApiCallDirectory {
   'rsynctask.update': { params: [id: number, params: Partial<RsyncTaskUpdate>]; response: RsyncTask };
 
   // S3
-  's3.config': { params: void; response: S3Config };
-  's3.update': { params: [S3ConfigUpdate]; response: S3Config };
-  's3.bindip_choices': { params: void; response: Choices };
   's3.accesskey.query': { params: QueryParams<S3AccessKey>; response: S3AccessKey[] };
   's3.accesskey.create': { params: [S3AccessKeyCreate]; response: S3AccessKey };
   's3.accesskey.update': { params: [id: number, update: S3AccessKeyUpdate]; response: S3AccessKey };
   's3.accesskey.delete': { params: [id: number]; response: boolean };
 
   // Service
-  'service.update': { params: [number | ServiceName, Partial<Service>]; response: number };
 
   // Sharing
   'sharing.nfs.create': { params: [NfsShareUpdate]; response: NfsShare };
@@ -779,20 +737,13 @@ export interface ApiCallDirectory {
   'sharing.webshare.update': { params: [id: number, update: Partial<WebShareUpdate>]; response: WebShare };
 
   // SMB
-  'smb.bindip_choices': { params: void; response: Choices };
   'smb.config': { params: void; response: SmbConfig };
   'smb.status': { params: [level: SmbInfoLevel, params?: QueryParams<SmbStatus>]; response: SmbStatus[] };
-  'smb.unixcharset_choices': { params: void; response: Choices };
   'smb.update': { params: [Partial<SmbConfigUpdate>]; response: SmbConfig };
 
   // SNMP
-  'snmp.config': { params: void; response: SnmpConfig };
-  'snmp.update': { params: [Partial<SnmpConfigUpdate>]; response: SnmpConfig };
 
   // SSH
-  'ssh.bindiface_choices': { params: void; response: Choices };
-  'ssh.config': { params: void; response: SshConfig };
-  'ssh.update': { params: [Partial<SshConfigUpdate>]; response: SshConfig };
 
   // Static route
   'staticroute.create': { params: [UpdateStaticRoute]; response: StaticRoute };
@@ -863,10 +814,6 @@ export interface ApiCallDirectory {
   'update.update': { params: [Partial<UpdateConfig>]; response: UpdateConfig };
 
   // UPS
-  'ups.config': { params: void; response: UpsConfig };
-  'ups.driver_choices': { params: void; response: Choices };
-  'ups.port_choices': { params: void; response: string[] };
-  'ups.update': { params: [Partial<UpsConfigUpdate>]; response: UpsConfig };
 
   // User
   'user.create': { params: [UserUpdate]; response: User };
@@ -945,8 +892,6 @@ export interface ApiCallDirectory {
   'webui.crypto.get_certificate_domain_names': { params: [number]; response: string[] };
 
   // WebShare
-  'webshare.config': { params: void; response: WebShareConfig };
-  'webshare.update': { params: [Partial<WebShareConfigUpdate>]; response: WebShareConfig };
 
   // ZFS
   'pool.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };

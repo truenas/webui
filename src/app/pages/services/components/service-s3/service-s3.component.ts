@@ -31,7 +31,9 @@ import {
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSharingS3 } from 'app/helptext/sharing';
-import { S3AuditMask, S3Config, S3Listener } from 'app/interfaces/s3.interface';
+import {
+  S3Config, S3ConfigUpdate, S3GrantEntry, S3Listener,
+} from 'app/interfaces/s3.interface';
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
@@ -44,7 +46,7 @@ import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { portRangeValidator, rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { serviceConfigSavedMessage } from 'app/pages/services/components/service-config-forms.constants';
 import { createS3GrantFormGroup, S3GrantFormGroup, toS3Grants } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
 import { S3GrantsListComponent } from 'app/pages/sharing/s3/s3-grants-list/s3-grants-list.component';
@@ -81,6 +83,8 @@ function createS3ServiceForm(fb: NonNullableFormBuilder) {
 
 type S3ServiceFormValue = ReturnType<ReturnType<typeof createS3ServiceForm>['getRawValue']>;
 
+type S3DefaultAudit = NonNullable<S3ConfigUpdate['default_audit']>;
+
 @Component({
   selector: 'ix-service-s3',
   templateUrl: './service-s3.component.html',
@@ -104,7 +108,7 @@ type S3ServiceFormValue = ReturnType<ReturnType<typeof createS3ServiceForm>['get
   ],
 })
 export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormValue> implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private entitlements = inject(EntitlementsService);
@@ -180,7 +184,7 @@ export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormVal
       map(([options, config]): TnSelectOption<string>[] => {
         return [
           ...new Set<string>([
-            ...config.listeners.map((listener) => listener.address),
+            ...(config.listeners ?? []).map((listener) => listener.address),
             ...options.map((option) => String(option.value)),
           ]),
         ].map((value) => ({ label: value, value }));
@@ -234,26 +238,33 @@ export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormVal
     };
   };
 
-  /** Idempotent: `loadFormConfig` replays it on retry, so the arrays are rebuilt from scratch. */
+  /**
+   * Idempotent: `loadFormConfig` replays it on retry, so the arrays are rebuilt from scratch.
+   *
+   * `s3.config` spells its enums as the wire literals, where the form's controls and the grant rows
+   * hold the UI's enums of the same values, and leaves the fields middleware defaults optional.
+   */
   private patchConfig(config: S3Config): void {
     this.form.controls.listeners.clear();
     this.form.controls.global_grants.clear();
-    config.listeners.forEach((listener) => this.addListener(listener));
-    config.global_grants.forEach((grant) => this.form.controls.global_grants.push(createS3GrantFormGroup(grant)));
-    const [auditMode, auditActions] = this.auditMaskToForm(config.default_audit);
+    config.listeners?.forEach((listener) => this.addListener(listener));
+    config.global_grants?.forEach((grant) => {
+      this.form.controls.global_grants.push(createS3GrantFormGroup(grant as S3GrantEntry));
+    });
+    const [auditMode, auditActions] = this.auditMaskToForm(config.default_audit ?? []);
     this.form.patchValue({
       certificate: config.certificate,
       servers: config.servers,
       region: config.region,
-      log_level: config.log_level,
+      log_level: config.log_level as S3LogLevel,
       managed_root_dataset: config.managed_root_dataset,
       default_audit_mode: auditMode,
       default_audit_actions: auditActions,
-      default_audit_overflow: config.default_audit_overflow,
+      default_audit_overflow: config.default_audit_overflow as S3AuditOverflow,
     });
   }
 
-  private auditMaskToForm(mask: S3AuditMask): [S3AuditMode, string[]] {
+  private auditMaskToForm(mask: S3DefaultAudit): [S3AuditMode, string[]] {
     if (mask === s3AuditAll) {
       return [S3AuditMode.All, []];
     }
@@ -263,12 +274,13 @@ export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormVal
     return [S3AuditMode.Selected, mask];
   }
 
-  private formToAuditMask(mode: S3AuditMode, actions: string[]): S3AuditMask {
+  /** The selected actions are offered by `sharing.s3.audit_choices`, so they are the wire's names. */
+  private formToAuditMask(mode: S3AuditMode, actions: string[]): S3DefaultAudit {
     switch (mode) {
       case S3AuditMode.All:
         return s3AuditAll;
       case S3AuditMode.Selected:
-        return actions;
+        return actions as Exclude<S3DefaultAudit, typeof s3AuditAll>;
       default:
         return [];
     }

@@ -3,12 +3,12 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { BehaviorSubject } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { ConnectionService } from 'app/modules/websocket/connection.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { FailoverComponent } from 'app/pages/system-tasks/failover/failover.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
@@ -27,8 +27,8 @@ describe('FailoverComponent', () => {
           { selector: selectIsEnterprise, value: false },
         ],
       }),
-      mockApi([
-        mockCall('failover.become_passive'),
+      mockTypedApi([
+        mockTypedCall('failover.become_passive', null),
       ]),
       mockProvider(Location),
       mockProvider(DialogService, {
@@ -75,7 +75,7 @@ describe('FailoverComponent', () => {
   });
 
   it('makes the active controller become passive', () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('failover.become_passive');
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('failover.become_passive');
   });
 
   it('replaces location state to avoid failing over again if user visits the page again', () => {

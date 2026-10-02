@@ -10,7 +10,6 @@ import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { Certificate, CertificateCreate, CertificateUpdate } from 'app/interfaces/certificate.interface';
 import { CloudBackupRestoreParams, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
-import { ConfigResetParams } from 'app/interfaces/config-reset-params.interface';
 import { PullContainerImageParams, PullContainerImageResponse } from 'app/interfaces/container-image.interface';
 import {
   Container,
@@ -24,8 +23,6 @@ import {
   DatasetEncryptionSummaryQueryParams,
 } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetLockParams, DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
-import { DirectoryServicesLeaveParams } from 'app/interfaces/directoryservices-leave.interface';
-import { DirectoryServicesUpdate, DirectoryServicesUpdateResponse } from 'app/interfaces/directoryservices-update.interface';
 import { DiskWipeParams } from 'app/interfaces/disk.interface';
 import { DockerConfig, DockerConfigUpdate } from 'app/interfaces/docker-config.interface';
 import { ExportParams } from 'app/interfaces/export-params.interface';
@@ -46,9 +43,7 @@ import {
   PoolReplaceParams, PruneDedupTableParams,
   UpdatePool,
 } from 'app/interfaces/pool.interface';
-import { RebootParams } from 'app/interfaces/reboot.interface';
 import { ServiceControlOptions } from 'app/interfaces/service.interface';
-import { ShutdownParams } from 'app/interfaces/shutdown.interface';
 import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-dataset-config.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { UpdateParams } from 'app/interfaces/system-update.interface';
@@ -96,16 +91,12 @@ export interface ApiJobDirectory {
   'app.image.pull': { params: [PullContainerImageParams]; response: PullContainerImageResponse };
 
   // Config
-  'config.reset': { params: [ConfigResetParams]; response: void };
   'config.upload': { params: void; response: void };
 
   // Core
   'core.bulk': { params: CoreBulkQuery; response: CoreBulkResponse[] };
 
   // Directory Services
-  'directoryservices.leave': { params: [DirectoryServicesLeaveParams]; response: void };
-  'directoryservices.sync_keytab': { params: void; response: void };
-  'directoryservices.update': { params: [DirectoryServicesUpdate]; response: DirectoryServicesUpdateResponse };
 
   // Disk
   'disk.wipe': { params: DiskWipeParams; response: void };
@@ -170,8 +161,6 @@ export interface ApiJobDirectory {
   'support.new_ticket': { params: [CreateNewTicket]; response: NewTicketResponse };
 
   // System
-  'system.reboot': { params: RebootParams; response: void };
-  'system.shutdown': { params: ShutdownParams; response: void };
   'system.security.update': { params: [Partial<SystemSecurityConfig>]; response: void };
 
   // SystemDataset

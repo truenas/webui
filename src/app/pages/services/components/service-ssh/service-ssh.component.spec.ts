@@ -3,24 +3,24 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
 import { Group } from 'app/interfaces/group.interface';
-import { SshConfig } from 'app/interfaces/ssh-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxGroupChipsHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
-import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
+
+type SshConfig = CallResponse<WebUiApiDirectory, 'ssh.config'>;
 
 const fakeGroupDataSource = [{
   id: 1,
@@ -34,7 +34,7 @@ const fakeGroupDataSource = [{
 describe('ServiceSshComponent', () => {
   let spectator: Spectator<ServiceSshComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -70,8 +70,8 @@ describe('ServiceSshComponent', () => {
       mockTypedApi([
         mockTypedQuery('group.query', fakeGroupDataSource as WebUiQueryEntity<'group.query'>[]),
       ]),
-      mockApi([
-        mockCall('ssh.config', {
+      mockTypedApi([
+        mockTypedCall('ssh.config', {
           tcpport: 22,
           password_login_groups: ['dummy-group'],
           passwordauth: true,
@@ -84,11 +84,11 @@ describe('ServiceSshComponent', () => {
           weak_ciphers: [SshWeakCipher.Aes128Cbc],
           options: 'options',
         } as SshConfig),
-        mockCall('ssh.bindiface_choices', {
+        mockTypedCall('ssh.bindiface_choices', {
           enp0s3: 'enp0s3',
           macvtap0: 'macvtap0',
         }),
-        mockCall('ssh.update'),
+        mockTypedCall('ssh.update', {} as SshConfig),
       ]),
       ...ixFormTestingProviders(),
       mockProvider(DialogService),
@@ -117,21 +117,22 @@ describe('ServiceSshComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
   });
 
-  it('blocks Save when the initial config load fails', () => {
+  it('blocks Save when the initial config load fails', async () => {
     expect(spectator.component.canSubmit()).toBe(true);
 
     const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
       .mockReturnValue(of(true));
-    failApiCall(api, 'ssh.config');
+    spectator.inject(MockTypedApiService).mockCallError('ssh.config');
 
     // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
     // re-initialising an already-initialised form re-registers its valueChanges subscriptions,
     // so the assertion would hinge on double-init being harmless.
     const failed = TestBed.createComponent(ServiceSshComponent);
     failed.detectChanges();
+    await failed.whenStable();
 
     expect(showErrorModal).toHaveBeenCalled();
     // `hasLoadFailed` is what the panel reads (for its banner) and what `<ix-form>`'s
@@ -156,6 +157,7 @@ describe('ServiceSshComponent', () => {
     await groups.addChip('another-group');
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(api.call).toHaveBeenCalledWith('ssh.update', [
       expect.objectContaining({ password_login_groups: ['dummy-group', 'another-group'] }),
@@ -230,6 +232,7 @@ describe('ServiceSshComponent', () => {
     await (await getCheckbox('tcpfwd')).check();
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(api.call).toHaveBeenCalledWith('ssh.update', [{
       // New basic options
@@ -261,6 +264,7 @@ describe('ServiceSshComponent', () => {
     await (await getInput('options')).setValue('new-params');
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(api.call).toHaveBeenCalledWith('ssh.update', [{
       // Old basic options
@@ -286,6 +290,7 @@ describe('ServiceSshComponent', () => {
     await (await getSelect('sftp_log_level')).selectOption('--');
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(api.call).toHaveBeenCalledWith('ssh.update', [
       expect.objectContaining({ sftp_log_level: '' }),

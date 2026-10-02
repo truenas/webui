@@ -16,7 +16,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { ServicesService } from 'app/services/services.service';
@@ -35,7 +35,7 @@ import { ServicesService } from 'app/services/services.service';
   ],
 })
 export class ServiceStatusCellComponent {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);

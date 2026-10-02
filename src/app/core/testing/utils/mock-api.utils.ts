@@ -186,7 +186,7 @@ export function mockJob<M extends ApiJobMethod>(
  *
  * @example
  * ```ts
- * failApiCall(spectator.inject(ApiService), 'ftp.config');
+ * failApiCall(spectator.inject(ApiService), 'smb.config');
  * ```
  *
  * Reaches through to the mock rather than `jest.spyOn`: `api.call` is already a jest mock, so

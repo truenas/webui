@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { CallParams } from '@truenas/api-client';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnSelectComponent,
@@ -27,12 +28,15 @@ import {
   advancedModeFooterAction, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { ignoreTranslation, translateOptions } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   serviceConfigSavedMessage,
 } from 'app/pages/services/components/service-config-forms.constants';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+
+type FtpTlsPolicy = NonNullable<CallParams<WebUiApiDirectory, 'ftp.update'>[0]['tls_policy']>;
 
 // Built here rather than inline in the component, and left with an inferred return type — see
 // the `V` type parameter on IxFormHostForm for why.
@@ -54,7 +58,7 @@ function createFtpForm(formBuilder: FormBuilder) {
     filemask: [''],
     dirmask: [''],
     tls: [false],
-    tls_policy: [''],
+    tls_policy: ['' as FtpTlsPolicy],
     tls_opt_allow_client_renegotiations: [false],
     tls_opt_allow_dot_login: [false],
     tls_opt_allow_per_user: [false],
@@ -82,7 +86,7 @@ function createFtpForm(formBuilder: FormBuilder) {
 }
 
 /**
- * The form's own value shape, which is NOT `FtpConfigUpdate`: `filemask`/`dirmask` hold
+ * The form's own value shape, which is NOT the `ftp.update` payload: `filemask`/`dirmask` hold
  * pre-{@link invertUmask} values and the bandwidth controls are in bytes where the API takes KB
  * (all reshaped in {@link ServiceFtpComponent.handleSubmit}).
  */
@@ -111,7 +115,7 @@ type FtpFormValue = ReturnType<ReturnType<typeof createFtpForm>['getRawValue']>;
 })
 export class ServiceFtpComponent extends IxFormHostForm<boolean, FtpFormValue> implements OnInit {
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private systemGeneralService = inject(SystemGeneralService);
   private filesystemService = inject(FilesystemService);
   private translate = inject(TranslateService);

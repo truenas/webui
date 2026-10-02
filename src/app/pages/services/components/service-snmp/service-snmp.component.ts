@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { CallParams } from '@truenas/api-client';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnSelectComponent,
@@ -14,7 +15,8 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   serviceConfigSavedMessage,
 } from 'app/pages/services/components/service-config-forms.constants';
@@ -49,10 +51,12 @@ function createSnmpForm(fb: FormBuilder, validation: IxValidatorsService) {
 }
 
 /**
- * The form's own value shape, which is NOT `SnmpConfigUpdate`: the v3 controls are blanked (and
+ * The form's own value shape, which is NOT the `snmp.update` payload: the v3 controls are blanked (and
  * `v3_privproto` nulled) for the API in {@link ServiceSnmpComponent.handleSubmit}.
  */
 type SnmpFormValue = ReturnType<ReturnType<typeof createSnmpForm>['getRawValue']>;
+
+type SnmpConfigUpdate = CallParams<WebUiApiDirectory, 'snmp.update'>[0];
 
 @Component({
   selector: 'ix-service-snmp',
@@ -72,7 +76,7 @@ type SnmpFormValue = ReturnType<ReturnType<typeof createSnmpForm>['getRawValue']
 })
 export class ServiceSnmpComponent extends IxFormHostForm<boolean, SnmpFormValue> implements OnInit {
   private fb = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private validation = inject(IxValidatorsService);
   private translate = inject(TranslateService);
 
@@ -120,7 +124,8 @@ export class ServiceSnmpComponent extends IxFormHostForm<boolean, SnmpFormValue>
     }
 
     return {
-      request$: this.api.call('snmp.update', [values]),
+      // The auth and privacy selects offer only the values middleware accepts.
+      request$: this.api.call('snmp.update', [values as SnmpConfigUpdate]),
       successMessage: this.translate.instant(serviceConfigSavedMessage),
     };
   };

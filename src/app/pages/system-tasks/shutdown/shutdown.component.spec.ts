@@ -1,14 +1,14 @@
 import { Location } from '@angular/common';
-import { fakeAsync, tick } from '@angular/core/testing';
+import { fakeAsync, flushMicrotasks, tick } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { ConnectionService } from 'app/modules/websocket/connection.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ShutdownComponent, blackoutDelay } from 'app/pages/system-tasks/shutdown/shutdown.component';
 import { selectIsEnterprise, selectProductType } from 'app/store/system-info/system-info.selectors';
 
@@ -23,8 +23,8 @@ describe('ShutdownComponent', () => {
           { selector: selectIsEnterprise, value: false },
         ],
       }),
-      mockApi([
-        mockJob('system.shutdown', fakeSuccessfulJob()),
+      mockTypedApi([
+        mockTypedJob('system.shutdown', { state: JobState.Success }),
       ]),
       mockProvider(Location),
       mockProvider(ConnectionService, {
@@ -47,7 +47,7 @@ describe('ShutdownComponent', () => {
   it('shuts the system down with the reason from the query parameters', fakeAsync(() => {
     spectator = createComponent();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.shutdown', ['User requested shutdown']);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('system.shutdown', ['User requested shutdown']);
   }));
 
   it('replaces location state to avoid shutting down again if user visits the page again', fakeAsync(() => {
@@ -58,6 +58,8 @@ describe('ShutdownComponent', () => {
 
   it('tears down the websocket connection once the shutdown job completes', fakeAsync(() => {
     spectator = createComponent();
+    // The typed double answers the job on a microtask.
+    flushMicrotasks();
 
     expect(spectator.inject(ConnectionService).prepareShutdown).toHaveBeenCalled();
     expect(spectator.inject(AuthService).clearAuthToken).toHaveBeenCalled();

@@ -29,7 +29,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
 import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceActionsCellComponent } from 'app/pages/services/components/service-actions-cell/service-actions-cell.component';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
@@ -74,7 +74,7 @@ import { waitForServices } from 'app/store/services/services.selectors';
 export class ServicesComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private servicesService = inject(ServicesService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<ServicesState>>(Store);
   private errorHandler = inject(ErrorHandlerService);

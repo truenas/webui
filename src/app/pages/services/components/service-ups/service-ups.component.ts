@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { CallParams } from '@truenas/api-client';
 import {
   InputType, TnAutocompleteComponent, TnCheckboxComponent,
   TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
@@ -11,13 +12,13 @@ import { Role } from 'app/enums/role.enum';
 import { UpsMode } from 'app/enums/ups-mode.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceUps } from 'app/helptext/services/components/service-ups';
-import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { translateOptions } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   serviceConfigSavedMessage,
 } from 'app/pages/services/components/service-config-forms.constants';
@@ -48,7 +49,9 @@ function createUpsForm(fb: NonNullableFormBuilder) {
   });
 }
 
-/** The form's own value shape, which is NOT `UpsConfigUpdate` — every control is nullable here. */
+type UpsConfigUpdate = CallParams<WebUiApiDirectory, 'ups.update'>[0];
+
+/** The form's own value shape, which is NOT the `ups.update` payload — every control is nullable here. */
 type UpsFormValue = ReturnType<ReturnType<typeof createUpsForm>['getRawValue']>;
 
 @Component({
@@ -70,7 +73,7 @@ type UpsFormValue = ReturnType<ReturnType<typeof createUpsForm>['getRawValue']>;
   ],
 })
 export class ServiceUpsComponent extends IxFormHostForm<boolean, UpsFormValue> implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
@@ -144,7 +147,11 @@ export class ServiceUpsComponent extends IxFormHostForm<boolean, UpsFormValue> i
   readonly shutdownOptions = translateOptions(this.translate, helptextServiceUps.shutdownOptions);
 
   ngOnInit(): void {
-    this.loadFormConfig(this.api.call('ups.config'), (config) => this.form.patchValue(config));
+    this.loadFormConfig(this.api.call('ups.config'), (config) => this.form.patchValue({
+      ...config,
+      // `ups.config` spells it as the wire literal; the control holds the UI's enum of the same values.
+      mode: config.mode as UpsMode,
+    }));
     this.form.controls.remotehost.disable();
     this.form.controls.remoteport.disable();
 

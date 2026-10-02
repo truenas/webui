@@ -18,7 +18,7 @@ import {
   advancedModeFooterAction, advancedModeSettingLabels, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { translateOptions } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   serviceConfigSavedMessage,
 } from 'app/pages/services/components/service-config-forms.constants';
@@ -43,7 +43,7 @@ function createSshForm(fb: NonNullableFormBuilder) {
 }
 
 /**
- * The form's own value shape, which is NOT `SshConfigUpdate`: `tcpport` and the two SFTP log
+ * The form's own value shape, which is NOT the `ssh.update` payload: `tcpport` and the two SFTP log
  * controls are nullable here, and `sftp_log_level` is coerced to `''` for the API in
  * {@link ServiceSshComponent.handleSubmit}.
  */
@@ -67,7 +67,7 @@ type SshFormValue = ReturnType<ReturnType<typeof createSshForm>['getRawValue']>;
   ],
 })
 export class ServiceSshComponent extends IxFormHostForm<boolean, SshFormValue> implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
 
@@ -109,7 +109,13 @@ export class ServiceSshComponent extends IxFormHostForm<boolean, SshFormValue> i
   }
 
   ngOnInit(): void {
-    this.loadFormConfig(this.api.call('ssh.config'), (config) => this.form.patchValue(config));
+    this.loadFormConfig(this.api.call('ssh.config'), (config) => this.form.patchValue({
+      ...config,
+      // `ssh.config` spells these as the wire literals; the controls hold the UI's enums of the same values.
+      sftp_log_level: config.sftp_log_level as SshSftpLogLevel,
+      sftp_log_facility: config.sftp_log_facility as SshSftpLogFacility,
+      weak_ciphers: config.weak_ciphers as SshWeakCipher[],
+    }));
   }
 
   // `allValues` is copied because it is mutated below.

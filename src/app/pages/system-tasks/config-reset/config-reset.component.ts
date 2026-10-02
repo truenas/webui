@@ -3,8 +3,8 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { ConnectionService } from 'app/modules/websocket/connection.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SystemTaskRedirectService } from 'app/pages/system-tasks/services/system-task-redirect.service';
 import { SystemTaskSplashComponent } from 'app/pages/system-tasks/system-task-splash/system-task-splash.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -24,7 +24,7 @@ export class ConfigResetComponent implements OnInit {
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private location = inject(Location);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private redirect = inject(SystemTaskRedirectService);
   private destroyRef = inject(DestroyRef);
 

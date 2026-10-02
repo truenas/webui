@@ -8,15 +8,16 @@ import {
   TnButtonHarness, TnCheckboxHarness, TnDialog, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { catchError, EMPTY, Observable, of } from 'rxjs';
-import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   AddSpnDialog,
 } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
@@ -26,7 +27,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 describe('ServiceNfsComponent', () => {
   let spectator: Spectator<ServiceNfsComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -49,8 +50,8 @@ describe('ServiceNfsComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('nfs.config', {
+      mockTypedApi([
+        mockTypedCall('nfs.config', {
           allow_nonroot: false,
           servers: 3,
           bindip: ['192.168.1.117', '192.168.1.118'],
@@ -63,14 +64,14 @@ describe('ServiceNfsComponent', () => {
           userd_manage_gids: false,
           rdma: false,
         } as NfsConfig),
-        mockCall('nfs.bindip_choices', {
+        mockTypedCall('nfs.bindip_choices', {
           '192.168.1.117': '192.168.1.117',
           '192.168.1.118': '192.168.1.118',
           '192.168.1.119': '192.168.1.119',
         }),
-        mockCall('nfs.update'),
-        mockCall('rdma.capable_protocols', () => rdmaCapableProtocols),
-        mockCall('directoryservices.status', {
+        mockTypedCall('nfs.update', {} as NfsConfig),
+        mockTypedCall('rdma.capable_protocols', () => rdmaCapableProtocols),
+        mockTypedCall('directoryservices.status', {
           status: DirectoryServiceStatus.Healthy,
           type: DirectoryServiceType.ActiveDirectory,
           status_msg: null,
@@ -99,24 +100,25 @@ describe('ServiceNfsComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
     await spectator.fixture.whenStable();
   });
 
-  it('blocks Save when the initial config load fails', () => {
+  it('blocks Save when the initial config load fails', async () => {
     expect(spectator.component.canSubmit()).toBe(true);
 
     const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
       .mockReturnValue(of(true));
     // Only `nfs.config` gates the form; the RDMA / directory-services enrichments fail soft (see
     // the test below).
-    failApiCall(api, 'nfs.config');
+    spectator.inject(MockTypedApiService).mockCallError('nfs.config');
 
     // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
     // re-initialising an already-initialised form re-registers its valueChanges subscriptions,
     // so the assertion would hinge on double-init being harmless.
     const failed = TestBed.createComponent(ServiceNfsComponent);
     failed.detectChanges();
+    await failed.whenStable();
 
     expect(showErrorModal).toHaveBeenCalled();
     // `hasLoadFailed` is what the panel reads (for its banner) and what `<ix-form>`'s
@@ -125,13 +127,14 @@ describe('ServiceNfsComponent', () => {
     expect(failed.componentInstance.canSubmit()).toBe(false);
   });
 
-  it('keeps the form usable when only an enrichment call fails', () => {
+  it('keeps the form usable when only an enrichment call fails', async () => {
     // `directoryservices.status` only decides whether Add SPN is offered. Failing it must not
     // block Save over a form that holds the real configuration `nfs.config` returned.
-    failApiCall(api, 'directoryservices.status');
+    spectator.inject(MockTypedApiService).mockCallError('directoryservices.status');
 
     const loaded = TestBed.createComponent(ServiceNfsComponent);
     loaded.detectChanges();
+    await loaded.whenStable();
 
     expect(api.call).toHaveBeenCalledWith('directoryservices.status');
     expect(loaded.componentInstance.hasLoadFailed()).toBe(false);
@@ -142,7 +145,7 @@ describe('ServiceNfsComponent', () => {
     // The choices reach the template through a `toSignal`, which latches an error and re-throws it
     // on every read — so a failure that isn't caught takes down the whole form render rather than
     // emptying one select. The addresses the config binds to still come from `nfs.config`.
-    failApiCall(api, 'nfs.bindip_choices');
+    spectator.inject(MockTypedApiService).mockCallError('nfs.bindip_choices');
 
     const loaded = TestBed.createComponent(ServiceNfsComponent);
     loaded.detectChanges();
@@ -194,6 +197,7 @@ describe('ServiceNfsComponent', () => {
     await (await getInput('rpclockd_port')).setValue('510');
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(api.call).toHaveBeenCalledWith('nfs.update', [{
       allow_nonroot: true,

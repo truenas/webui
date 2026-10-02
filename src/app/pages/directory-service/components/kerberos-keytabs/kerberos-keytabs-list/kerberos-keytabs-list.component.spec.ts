@@ -4,15 +4,16 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnButtonComponent, TnButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   KerberosKeytabsFormComponent,
 } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
@@ -38,8 +39,8 @@ describe('KerberosKeytabsListComponent', () => {
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => ({ onSuccess: jest.fn() })),
       }),
-      mockApi([
-        mockCall('kerberos.keytab.query', [
+      mockTypedApi([
+        mockTypedQuery('kerberos.keytab.query', [
           {
             id: 1,
             name: 'keytab1',
@@ -49,12 +50,12 @@ describe('KerberosKeytabsListComponent', () => {
             name: 'keytab2',
           },
         ] as KerberosKeytab[]),
-        mockCall('directoryservices.status', {
+        mockTypedCall('directoryservices.status', {
           type: DirectoryServiceType.ActiveDirectory,
           status: DirectoryServiceStatus.Healthy,
         } as DirectoryServicesStatus),
-        mockCall('kerberos.keytab.delete'),
-        mockJob('directoryservices.sync_keytab'),
+        mockTypedCall('kerberos.keytab.delete', null),
+        mockTypedJob('directoryservices.sync_keytab', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -74,7 +75,7 @@ describe('KerberosKeytabsListComponent', () => {
   });
 
   it('loads and shows a list of kerberos keytabs', async () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('kerberos.keytab.query');
+    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('kerberos.keytab.query');
 
     expect(await table.getHeaderTexts()).toEqual(['Name', '']);
     expect(await table.getAllRowTexts()).toEqual([
@@ -103,7 +104,7 @@ describe('KerberosKeytabsListComponent', () => {
       call: expect.any(Function),
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('kerberos.keytab.delete', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('kerberos.keytab.delete', [1]);
   });
 
   it('calls directoryservices.sync_keytab when Sync is pressed', async () => {
@@ -112,7 +113,7 @@ describe('KerberosKeytabsListComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('directoryservices.sync_keytab');
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('directoryservices.sync_keytab');
   });
 });
 
@@ -129,9 +130,9 @@ describe('KerberosKeytabsListComponent - LDAP mode', () => {
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => ({ onSuccess: jest.fn() })),
       }),
-      mockApi([
-        mockCall('kerberos.keytab.query', []),
-        mockCall('directoryservices.status', {
+      mockTypedApi([
+        mockTypedQuery('kerberos.keytab.query', []),
+        mockTypedCall('directoryservices.status', {
           type: DirectoryServiceType.Ldap,
           status: DirectoryServiceStatus.Healthy,
         } as DirectoryServicesStatus),

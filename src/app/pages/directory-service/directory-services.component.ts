@@ -20,8 +20,8 @@ import { Role } from 'app/enums/role.enum';
 import { helptextDashboard } from 'app/helptext/directory-service/dashboard';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { credentialTypeLabels } from 'app/interfaces/directoryservice-credentials.interface';
-import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
-import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
+import { DirectoryServicesConfig, toDirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
+import { DirectoryServicesStatus, toDirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { IpaConfig } from 'app/interfaces/ipa-config.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -34,7 +34,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DirectoryServicesFormComponent } from 'app/pages/directory-service/components/directory-services-form/directory-services-form.component';
 import { KerberosKeytabsListComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.component';
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
@@ -72,7 +72,7 @@ interface DataCard {
   ],
 })
 export class DirectoryServicesComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formPanel = inject(FormSidePanelService);
   private dialog = inject(DialogService);
   private tnDialog = inject(TnDialog);
@@ -198,7 +198,9 @@ export class DirectoryServicesComponent implements OnInit {
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(([servicesState, directoryServicesConfig]) => {
+      .subscribe(([status, config]) => {
+        const servicesState = toDirectoryServicesStatus(status);
+        const directoryServicesConfig = toDirectoryServicesConfig(config);
         this.directoryServicesConfig.set(directoryServicesConfig);
         this.directoryServicesStatus.set(servicesState);
         const adConfig = directoryServicesConfig?.configuration as ActiveDirectoryConfig;
@@ -341,8 +343,10 @@ export class DirectoryServicesComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((event) => {
-        const status = event.fields as DirectoryServicesStatus;
-        this.directoryServicesStatus.set(status);
+        if (event.msg !== 'changed') {
+          return;
+        }
+        this.directoryServicesStatus.set(toDirectoryServicesStatus(event.fields));
 
         // Refresh the cards to update the UI with new status
         this.refreshCards();

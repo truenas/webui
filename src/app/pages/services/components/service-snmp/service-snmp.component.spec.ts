@@ -3,22 +3,26 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { SnmpConfig } from 'app/interfaces/snmp-config.interface';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServiceSnmpComponent } from './service-snmp.component';
 
+type SnmpConfig = CallResponse<WebUiApiDirectory, 'snmp.config'>;
+
 describe('ServiceSnmpComponent', () => {
   let spectator: Spectator<ServiceSnmpComponent>;
-  let api: ApiService;
+  let api: TypedApiService;
   let loader: HarnessLoader;
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
@@ -42,9 +46,9 @@ describe('ServiceSnmpComponent', () => {
     routes: [],
     providers: [
       mockProvider(DialogService),
-      mockApi([
-        mockCall('snmp.update'),
-        mockCall('snmp.config', {
+      mockTypedApi([
+        mockTypedCall('snmp.update', {} as SnmpConfig),
+        mockTypedCall('snmp.config', {
           location: 'My location',
           contact: 'test@truenas.org',
           community: 'gated',
@@ -65,22 +69,23 @@ describe('ServiceSnmpComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('blocks Save when the initial config load fails', () => {
+  it('blocks Save when the initial config load fails', async () => {
     expect(spectator.component.canSubmit()).toBe(true);
 
     const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
       .mockReturnValue(of(true));
-    failApiCall(api, 'snmp.config');
+    spectator.inject(MockTypedApiService).mockCallError('snmp.config');
 
     // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
     // re-initialising an already-initialised form re-registers its valueChanges subscriptions,
     // so the assertion would hinge on double-init being harmless.
     const failed = TestBed.createComponent(ServiceSnmpComponent);
     failed.detectChanges();
+    await failed.whenStable();
 
     expect(showErrorModal).toHaveBeenCalled();
     // `hasLoadFailed` is what the panel reads (for its banner) and what `<ix-form>`'s
@@ -122,6 +127,7 @@ describe('ServiceSnmpComponent', () => {
     await (await getCheckbox('zilstat')).uncheck();
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(api.call).toHaveBeenCalledWith('snmp.update', [{
       location: 'New location',
@@ -144,6 +150,7 @@ describe('ServiceSnmpComponent', () => {
     await (await getSelect('v3_authtype')).selectOption('--');
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(api.call).toHaveBeenCalledWith('snmp.update', [
       expect.objectContaining({ v3_authtype: '' }),
@@ -158,6 +165,7 @@ describe('ServiceSnmpComponent', () => {
     expect(await hasInput('v3_privpassphrase')).toBe(false);
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(api.call).toHaveBeenCalledWith('snmp.update', [
       expect.objectContaining({

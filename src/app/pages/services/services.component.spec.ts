@@ -5,18 +5,18 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnIconButtonHarness, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
+import { JobState } from 'app/enums/job-state.enum';
 import { serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { FtpConfig } from 'app/interfaces/ftp-config.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -25,7 +25,8 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServicesComponent } from 'app/pages/services/services.component';
 import {
@@ -37,6 +38,8 @@ import { IscsiService } from 'app/services/iscsi.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { initialState } from 'app/store/services/services.reducer';
 import { selectServices } from 'app/store/services/services.selectors';
+
+type FtpConfig = CallResponse<WebUiApiDirectory, 'ftp.config'>;
 
 const fakeDataSource: Service[] = [...serviceNames.entries()]
   .map(([service], id) => {
@@ -51,7 +54,7 @@ const fakeDataSource: Service[] = [...serviceNames.entries()]
 describe('ServicesComponent', () => {
   let spectator: Spectator<ServicesComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
   let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
@@ -63,11 +66,11 @@ describe('ServicesComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('service.update', 1),
-        mockJob('service.control', fakeSuccessfulJob()),
+      mockTypedApi([
+        mockTypedCall('service.update', 1),
+        mockTypedJob('service.control', { state: JobState.Success }),
         // Loaded when the FTP config form is opened in the side panel.
-        mockCall('ftp.config', {} as FtpConfig),
+        mockTypedCall('ftp.config', {} as FtpConfig),
       ]),
       mockProvider(DialogService),
       mockProvider(FormSidePanelService, {
@@ -96,7 +99,7 @@ describe('ServicesComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
     table = await loader.getHarness(TnTableHarness);
   });
 

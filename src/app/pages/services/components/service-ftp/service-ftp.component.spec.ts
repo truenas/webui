@@ -3,14 +3,15 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { FtpConfig } from 'app/interfaces/ftp-config.interface';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxPermissionsComponent } from 'app/modules/forms/controls/ix-permissions/ix-permissions.component';
 import {
@@ -20,11 +21,14 @@ import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+
+type FtpConfig = CallResponse<WebUiApiDirectory, 'ftp.config'>;
 
 describe('ServiceFtpComponent', () => {
   let spectator: Spectator<ServiceFtpComponent>;
@@ -102,12 +106,12 @@ describe('ServiceFtpComponent', () => {
       MockComponent(ExplorerCreateDatasetComponent),
     ],
     providers: [
-      mockApi([
-        mockCall('ftp.config', {
+      mockTypedApi([
+        mockTypedCall('ftp.config', {
           ...existingFtpConfig,
           id: 1,
         }),
-        mockCall('ftp.update'),
+        mockTypedCall('ftp.update', {} as FtpConfig),
       ]),
       mockProvider(SystemGeneralService, {
         getCertificates: () => of([
@@ -132,19 +136,19 @@ describe('ServiceFtpComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('blocks Save when the initial config load fails', () => {
+  it('blocks Save when the initial config load fails', async () => {
     expect(spectator.component.canSubmit()).toBe(true);
 
-    const api = spectator.inject(ApiService);
     const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
       .mockReturnValue(of(true));
-    failApiCall(api, 'ftp.config');
+    spectator.inject(MockTypedApiService).mockCallError('ftp.config');
 
     // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
     // re-initialising an already-initialised form re-registers its valueChanges subscriptions,
     // so the assertion would hinge on double-init being harmless.
     const failed = TestBed.createComponent(ServiceFtpComponent);
     failed.detectChanges();
+    await failed.whenStable();
 
     expect(showErrorModal).toHaveBeenCalled();
     // `hasLoadFailed` is what the panel reads (for its banner) and what `<ix-form>`'s
@@ -154,7 +158,7 @@ describe('ServiceFtpComponent', () => {
   });
 
   it('loads and shows current settings for FTP service', async () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ftp.config');
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('ftp.config');
 
     expect(await (await getInput('port')).getValue()).toBe('21');
     expect(await (await getInput('clients')).getValue()).toBe('5');
@@ -222,8 +226,9 @@ describe('ServiceFtpComponent', () => {
     await (await getInput('anonuserdlbw')).setValue('5');
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ftp.update', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('ftp.update', [{
       ...existingFtpConfig,
       tls_opt_ip_address_required: true,
       anonuserdlbw: 5,

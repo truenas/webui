@@ -1,9 +1,11 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnDialog, TnMenuHarness } from '@truenas/ui-components';
 import { of, throwError, NEVER } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DirectoryServiceStatus, DirectoryServiceType, DirectoryServiceCredentialType } from 'app/enums/directory-services.enum';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { LdapCredentialPlain } from 'app/interfaces/directoryservice-credentials.interface';
@@ -15,7 +17,8 @@ import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { LeaveDomainDialog } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { DirectoryServicesComponent } from './directory-services.component';
@@ -59,22 +62,13 @@ describe('DirectoryServicesComponent', () => {
   const createComponent = createComponentFactory({
     component: DirectoryServicesComponent,
     providers: [
-      mockProvider(ApiService, {
-        call: jest.fn((method: string) => {
-          if (method === 'directoryservices.status') {
-            return of(mockServicesStatus);
-          }
-          if (method === 'directoryservices.config') {
-            return of(mockDirectoryServicesConfig);
-          }
-          return of(null);
-        }),
-        subscribe: jest.fn(() => {
-          return of({
-            fields: mockServicesStatus,
-          });
-        }),
-      }),
+      mockTypedApi([
+        mockTypedCall('directoryservices.status', () => mockServicesStatus),
+        mockTypedCall(
+          'directoryservices.config',
+          () => mockDirectoryServicesConfig as CallResponse<WebUiApiDirectory, 'directoryservices.config'>,
+        ),
+      ]),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
           afterClosed: () => of({ description: 'Directory Service cache has been rebuilt.' }),
@@ -122,6 +116,7 @@ describe('DirectoryServicesComponent', () => {
     it('should show Settings as a card action button', async () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const settingsButton = await TestbedHarnessEnvironment.loader(spectator.fixture).getHarness(TnButtonHarness.with({ label: /Settings/ }));
       expect(await settingsButton.getLabel()).toContain('Settings');
@@ -130,6 +125,7 @@ describe('DirectoryServicesComponent', () => {
     it('should open the directory services form when Settings action is clicked', async () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
       const openFormSpy = jest.spyOn(
         spectator.component as DirectoryServicesComponentWithProtected,
         'openDirectoryServicesForm',
@@ -144,6 +140,7 @@ describe('DirectoryServicesComponent', () => {
     it('should show Leave button for Active Directory when healthy', async () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const menu = await openCardMenu();
       const labels = await menu.getItemLabels();
@@ -155,6 +152,7 @@ describe('DirectoryServicesComponent', () => {
 
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const menu = await openCardMenu();
       const labels = await menu.getItemLabels();
@@ -174,6 +172,7 @@ describe('DirectoryServicesComponent', () => {
 
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const menu = await openCardMenu();
       const labels = await menu.getItemLabels();
@@ -190,6 +189,7 @@ describe('DirectoryServicesComponent', () => {
 
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const menu = await openCardMenu();
       const labels = await menu.getItemLabels();
@@ -216,6 +216,7 @@ describe('DirectoryServicesComponent', () => {
     it('should display Server URLs in LDAP data card', async () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       // tn-card content/title are read directly here because @truenas/ui-components 0.3.4
       // ships no TnCardHarness/TnListHarness yet; revisit when those harnesses land.
@@ -230,6 +231,7 @@ describe('DirectoryServicesComponent', () => {
     it('should display Credential Type in LDAP data card', async () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
@@ -244,6 +246,7 @@ describe('DirectoryServicesComponent', () => {
 
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
@@ -258,6 +261,7 @@ describe('DirectoryServicesComponent', () => {
 
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
@@ -283,6 +287,7 @@ describe('DirectoryServicesComponent', () => {
     it('should display Active Directory card title', async () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardTitle = spectator.query('tn-card h3');
       expect(cardTitle).toBeTruthy();
@@ -292,6 +297,7 @@ describe('DirectoryServicesComponent', () => {
     it('should display Status in Active Directory data card', async () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
@@ -304,6 +310,7 @@ describe('DirectoryServicesComponent', () => {
     it('should display Status Message when provided', async () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
@@ -316,6 +323,7 @@ describe('DirectoryServicesComponent', () => {
     it('should display Domain Name in Active Directory data card', async () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
@@ -328,6 +336,7 @@ describe('DirectoryServicesComponent', () => {
     it('should display Account Cache as Enabled when enabled', async () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
@@ -342,6 +351,7 @@ describe('DirectoryServicesComponent', () => {
 
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
@@ -356,6 +366,7 @@ describe('DirectoryServicesComponent', () => {
 
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
@@ -382,6 +393,7 @@ describe('DirectoryServicesComponent', () => {
     it('should display IPA card title', async () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardTitle = spectator.query('tn-card h3');
       expect(cardTitle).toBeTruthy();
@@ -391,6 +403,7 @@ describe('DirectoryServicesComponent', () => {
     it('should display Status in IPA data card', async () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
@@ -403,6 +416,7 @@ describe('DirectoryServicesComponent', () => {
     it('should display Status Message when provided', async () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
@@ -415,6 +429,7 @@ describe('DirectoryServicesComponent', () => {
     it('should display Target Server in IPA data card', async () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
@@ -427,6 +442,7 @@ describe('DirectoryServicesComponent', () => {
     it('should display Domain in IPA data card', async () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
@@ -439,6 +455,7 @@ describe('DirectoryServicesComponent', () => {
     it('should display Base DN in IPA data card', async () => {
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
@@ -453,6 +470,7 @@ describe('DirectoryServicesComponent', () => {
 
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
@@ -474,6 +492,7 @@ describe('DirectoryServicesComponent', () => {
 
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardTitle = spectator.query('tn-card h3');
       expect(cardTitle).toBeTruthy();
@@ -490,6 +509,7 @@ describe('DirectoryServicesComponent', () => {
 
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardTitle = spectator.query('tn-card h3');
       expect(cardTitle).toBeTruthy();
@@ -508,6 +528,7 @@ describe('DirectoryServicesComponent', () => {
 
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardTitle = spectator.query('tn-card h3');
       expect(cardTitle).toBeTruthy();
@@ -526,6 +547,7 @@ describe('DirectoryServicesComponent', () => {
 
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
@@ -547,6 +569,7 @@ describe('DirectoryServicesComponent', () => {
 
       spectator = createComponent();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const cardContent = spectator.query('tn-card');
       expect(cardContent).toBeTruthy();
@@ -573,6 +596,7 @@ describe('DirectoryServicesComponent', () => {
       };
       const dialogOpenSpy = jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue(dialogRef as DialogRef);
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const menu = await openCardMenu();
       await menu.clickItem({ label: /Leave/ });
@@ -589,9 +613,10 @@ describe('DirectoryServicesComponent', () => {
         closed: of(true),
       };
       jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue(dialogRef as DialogRef);
-      const apiCallSpy = jest.spyOn(spectator.inject(ApiService), 'call');
+      const apiCallSpy = jest.spyOn(spectator.inject(TypedApiService), 'call');
 
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const menu = await openCardMenu();
       await menu.clickItem({ label: /Leave/ });
@@ -612,6 +637,7 @@ describe('DirectoryServicesComponent', () => {
 
     it('should show Rebuild Directory Service Cache menu item', async () => {
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const menu = await openCardMenu();
       const labels = await menu.getItemLabels();
@@ -623,6 +649,7 @@ describe('DirectoryServicesComponent', () => {
       const jobDialogSpy = jest.spyOn(dialogService, 'jobDialog');
 
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const menu = await openCardMenu();
       await menu.clickItem({ label: /Rebuild Directory Service Cache/ });
@@ -641,6 +668,7 @@ describe('DirectoryServicesComponent', () => {
       jest.spyOn(dialogService, 'jobDialog').mockReturnValue(mockJobProgressDialogRef);
 
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const menu = await openCardMenu();
       await menu.clickItem({ label: /Rebuild Directory Service Cache/ });
@@ -662,6 +690,7 @@ describe('DirectoryServicesComponent', () => {
       jest.spyOn(dialogService, 'jobDialog').mockReturnValue(mockJobProgressDialogRef);
 
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const menu = await openCardMenu();
       await menu.clickItem({ label: /Rebuild Directory Service Cache/ });
@@ -682,6 +711,7 @@ describe('DirectoryServicesComponent', () => {
       jest.spyOn(dialogService, 'jobDialog').mockReturnValue(mockJobProgressDialogRef);
 
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const menu = await openCardMenu();
       await menu.clickItem({ label: /Rebuild Directory Service Cache/ });
@@ -699,6 +729,7 @@ describe('DirectoryServicesComponent', () => {
       (spectator.component as DirectoryServicesComponentWithProtected).isLoading.set(true);
       spectator.detectChanges();
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const menu = await openCardMenu();
 
@@ -717,6 +748,7 @@ describe('DirectoryServicesComponent', () => {
       jobDialogSpy.mockReturnValue(mockJobProgressDialogRef);
 
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       const menu = await openCardMenu();
 
@@ -737,6 +769,7 @@ describe('DirectoryServicesComponent', () => {
       const jobDialogSpy = jest.spyOn(dialogService, 'jobDialog');
 
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       // Set loading state to true first
       (spectator.component as DirectoryServicesComponentWithProtected).isLoading.set(true);
