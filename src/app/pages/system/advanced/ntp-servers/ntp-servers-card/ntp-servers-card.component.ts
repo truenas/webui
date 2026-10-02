@@ -152,6 +152,7 @@ export class NtpServersCardComponent implements OnInit {
         'Synchronize the system time with the configured NTP servers? The NTP service will be restarted, and the clock will be set to the NTP time within a few seconds, even if it is far off.',
       ),
       buttonText: this.translate.instant('Sync Time'),
+      hideCheckbox: true,
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.job('service.control', [ServiceOperation.Restart, ServiceName.Ntpd, { silent: false }]).pipe(

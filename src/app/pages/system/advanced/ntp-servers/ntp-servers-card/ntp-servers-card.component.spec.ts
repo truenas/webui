@@ -134,6 +134,7 @@ describe('NtpServersCardComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Sync Time',
       buttonText: 'Sync Time',
+      hideCheckbox: true,
     }));
     expect(api.job).toHaveBeenCalledWith('service.control', ['RESTART', 'ntpd', { silent: false }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
