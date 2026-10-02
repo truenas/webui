@@ -358,6 +358,15 @@ export class DiskListComponent implements OnInit {
     return disk.sed && disk.sed_status === SedStatus.Locked;
   }
 
+  /**
+   * A PSID reset is a recovery path, so it is offered in every reported SED state (locked,
+   * unlocked, uninitialized, failed), not only when the disk is locked. `sed_status` is only
+   * queried with the SED entitlement, so its presence also gates on that.
+   */
+  protected canResetSed(disk: Disk): boolean {
+    return Boolean(disk.sed && disk.sed_status);
+  }
+
   protected isUnusedDisk(disk: Disk): boolean {
     return !!this.unusedDisks.find((unusedDisk) => unusedDisk.name === disk.name);
   }

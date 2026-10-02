@@ -91,7 +91,9 @@
               <tn-icon name="lock-open-variant" library="mdi"></tn-icon>
               <span>{{ 'Unlock' | translate }}</span>
             </button>
+          }
 
+          @if (canResetSed(disk)) {
             <button
               *ixRequiresRoles="requiredRoles"
               mat-button
