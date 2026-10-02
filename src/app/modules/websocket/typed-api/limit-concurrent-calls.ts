@@ -39,19 +39,31 @@ interface WaitingCall {
  */
 export function limitConcurrentCalls(connection: Connection, limit = maxGatedCalls): void {
   const send = connection.send.bind(connection);
-  const inFlight = new Set<string>();
+  /**
+   * Each call awaiting an answer, with the handle the connection gave for it.
+   * That handle closes once the frame is written: until then the connection is
+   * still holding the frame for a socket, and giving up on it takes it back.
+   */
+  const inFlight = new Map<string, Subscription>();
   const waiting: WaitingCall[] = [];
-  let isOpen = false;
+  let wasOpen = false;
 
   // The three below call each other in a ring, hence declarations: they hoist.
   function start({ id, message, handle }: WaitingCall): void {
-    inFlight.add(id);
+    // Counted before it is sent, in case the answer arrives as it is written.
+    inFlight.set(id, Subscription.EMPTY);
     const sending = send(message);
+    if (!inFlight.has(id)) {
+      return;
+    }
+    inFlight.set(id, sending);
+
     handle.add(() => {
+      const isWritten = sending.closed;
       sending.unsubscribe();
-      // Given up on before a socket took it, so it was never written and no
+      // Given up on before a socket took it: it was never written, and no
       // answer is coming to free its place.
-      if (!isOpen) {
+      if (!isWritten && inFlight.get(id) === sending) {
         finish(id);
       }
     });
@@ -73,18 +85,22 @@ export function limitConcurrentCalls(connection: Connection, limit = maxGatedCal
     }
   }
 
-  connection.opened$.subscribe((opened) => {
-    const wasOpen = isOpen;
-    isOpen = opened;
-
-    // Only a socket that was open takes anything with it: what was written on
-    // it is lost, answers included, and what was waiting here goes the same way.
-    // A connection that reports closed without having opened has written
-    // nothing, and still holds every frame it was given for the socket to come.
-    if (wasOpen && !opened) {
-      inFlight.clear();
-      waiting.length = 0;
+  connection.opened$.subscribe((isOpen) => {
+    const isLost = wasOpen && !isOpen;
+    wasOpen = isOpen;
+    if (!isLost) {
+      return;
     }
+
+    // What was written on the socket is lost with it, answers included, and what
+    // was waiting here goes the same way. A frame the connection has not written
+    // yet is still its to send on the next socket, so that one stays counted.
+    inFlight.forEach((sending, id) => {
+      if (sending.closed) {
+        inFlight.delete(id);
+      }
+    });
+    waiting.length = 0;
   });
 
   connection.messages().subscribe((message) => {

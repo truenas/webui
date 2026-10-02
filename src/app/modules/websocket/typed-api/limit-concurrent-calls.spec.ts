@@ -1,5 +1,5 @@
 import { createFakeClient, FakeConnection } from '@truenas/api-client/testing';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { limitConcurrentCalls, maxGatedCalls } from 'app/modules/websocket/typed-api/limit-concurrent-calls';
 
 describe('limitConcurrentCalls', () => {
@@ -89,8 +89,10 @@ describe('limitConcurrentCalls', () => {
     call('b');
 
     connection.send({ jsonrpc: '2.0', method: 'core.notify' });
+    // An answer the UI gives, should it ever: an id, and no method.
+    connection.send({ jsonrpc: '2.0', id: 'theirs', result: true });
 
-    expect(connection.sent).toHaveLength(3);
+    expect(connection.sent).toHaveLength(4);
   });
 
   it('starts from nothing in flight after the socket is lost', () => {
@@ -103,7 +105,10 @@ describe('limitConcurrentCalls', () => {
     call('d');
     call('e');
 
-    // `c` was waiting when the socket went and is dropped with it.
+    expect(sentIds()).toEqual(['a', 'b', 'd', 'e']);
+
+    // `c` was waiting when the socket went and is dropped with it, not sent late.
+    answer('d');
     expect(sentIds()).toEqual(['a', 'b', 'd', 'e']);
   });
 
@@ -115,6 +120,45 @@ describe('limitConcurrentCalls', () => {
     call('b');
     call('c');
 
+    connection.simulateOpen();
+    expect(sentIds()).toEqual(['a', 'b']);
+
+    answer('a');
+    expect(sentIds()).toEqual(['a', 'b', 'c']);
+  });
+
+  it('keeps counting a call the connection is still holding when a socket is lost', () => {
+    connection.close();
+    connection = new FakeConnection({ opened: false });
+    const opened$ = new Subject<boolean>();
+    connection.opened$ = opened$;
+    limitConcurrentCalls(connection, 2);
+
+    // Sent as the loss is being reported, by something that heard of it first:
+    // there is no socket, so the connection holds the frame for the next one.
+    opened$.next(true);
+    call('z');
+    opened$.next(false);
+    call('d');
+    call('e');
+
+    connection.simulateOpen();
+    expect(sentIds()).toEqual(['z', 'd']);
+  });
+
+  it('forgets nothing when the connection reports closed without having opened', () => {
+    connection.close();
+    connection = new FakeConnection({ opened: false });
+    const opened$ = new Subject<boolean>();
+    connection.opened$ = opened$;
+    limitConcurrentCalls(connection, 2);
+    call('a');
+    call('b');
+    call('c');
+
+    // A first attempt failing: closed, then error, with no socket in between.
+    opened$.next(false);
+    opened$.next(false);
     connection.simulateOpen();
     expect(sentIds()).toEqual(['a', 'b']);
 
