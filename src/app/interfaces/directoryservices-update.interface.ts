@@ -13,6 +13,7 @@ export interface DirectoryServicesUpdate extends Omit<DirectoryServicesConfig, '
  * discriminants as literals where the forms use the UI's enums, and it asks for `service_type`
  * inside `configuration` as well as at the top level. The form has only ever sent the top-level
  * one, and this keeps it that way rather than changing the request under a type migration.
+ * Tracked as gap 18 in docs/devs/typed-api-client.md.
  */
 export function toDirectoryServicesUpdateArgs(
   update: DirectoryServicesUpdate,

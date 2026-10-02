@@ -33,7 +33,7 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import {
   advancedModeFooterAction, advancedModeSettingLabels, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   serviceConfigSavedMessage,
@@ -248,7 +248,12 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
 
     this.api.query('sharing.smb.query').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (shares) => {
-        const incompatiblePurposes: string[] = [SmbSharePurpose.MultiProtocolShare, SmbSharePurpose.LegacyShare];
+        // Typed by the wire's literals, so a regenerated directory that renames either one fails to compile
+        // rather than quietly never matching.
+        const incompatiblePurposes: WebUiQueryEntity<'sharing.smb.query'>['purpose'][] = [
+          SmbSharePurpose.MultiProtocolShare,
+          SmbSharePurpose.LegacyShare,
+        ];
         const hasIncompatible = shares.some((share) => incompatiblePurposes.includes(share.purpose));
         this.hasIncompatibleShares.set(hasIncompatible);
       },

@@ -481,6 +481,16 @@ above. Each is a change for `truenas/api-client-ts`.
     that wanted it is closed, so those must not move until the client releases
     subscriptions, even once gap 5 lets them compile.
 
+18. **`directoryservices.update` asks for a discriminant the form never sends.**
+    The generated input requires `service_type` inside `configuration` as well
+    as at the top level; the directory services form has only ever sent the
+    top-level one, and middleware has accepted that. The migration keeps the
+    request unchanged, so `toDirectoryServicesUpdateArgs` asserts the generated
+    shape over a payload without the inner field. Sending it is a one-line
+    change in `transformFormDataToApiPayload`, but it changes the request, so
+    it wants a box check of all three service types first, or a correction to
+    the model in middleware if the inner field is not meant to be required.
+
 ## Version policy
 
 `WebUiApiDirectory` pins `v27.0.0`. The literal must stay at the

@@ -69,8 +69,6 @@ describe('ServiceSshComponent', () => {
     providers: [
       mockTypedApi([
         mockTypedQuery('group.query', fakeGroupDataSource as WebUiQueryEntity<'group.query'>[]),
-      ]),
-      mockTypedApi([
         mockTypedCall('ssh.config', {
           tcpport: 22,
           password_login_groups: ['dummy-group'],

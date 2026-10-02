@@ -204,7 +204,8 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
   private applyConfig(config: CallResponse<WebUiApiDirectory, 'nfs.config'>): void {
     this.isAddSpnDisabled.set(!config.v4_krb);
     this.hasNfsStatus.set(config.keytab_has_nfs_spn);
-    this.configuredBindIps.set(config.bindip ?? []);
+    const bindIps = config.bindip ?? [];
+    this.configuredBindIps.set(bindIps);
 
     // Silently, so loading a config is not mistaken for the user changing the protocols: the
     // dependency below blanks `v4_domain` whenever NFSv4 is off, and a stored value must survive
@@ -214,6 +215,7 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
     this.form.controls.protocols.setValue(protocols as NfsProtocol[], { emitEvent: false });
     this.form.patchValue({
       ...rest,
+      bindip: bindIps,
       servers_auto: config.managed_nfsd,
     });
   }
