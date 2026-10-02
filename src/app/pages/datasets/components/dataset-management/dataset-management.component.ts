@@ -231,6 +231,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
     this.sharingTierService.getTierConfig()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.cdr.markForCheck());
+    this.listenForTierJobs();
   }
 
   ngAfterViewInit(): void {
@@ -246,6 +247,30 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
         }
         this.cdr.markForCheck();
       });
+  }
+
+  /**
+   * Refreshes the tree when a tier rewrite job appears, changes status or goes away.
+   *
+   * The details card reloads once after "Change Storage Tier" is applied, but
+   * `pool.dataset.details` can answer before the new job is visible in it, so that
+   * reload alone may miss the migration and the card never shows its badge.
+   *
+   * `refreshDatasets`, not `loadDatasets`: these events arrive for jobs on any dataset,
+   * and a load unmounts the details panel while it runs.
+   *
+   * The `zfs.tier.rewrite_job_query` topic behind this carries a job's id and status and
+   * nothing else, and middleware sends it only for those three transitions, polling every
+   * five seconds. Progress is on the per-job `zfs.tier.rewrite_job_status` topic, which the
+   * migration badge and dialog follow and this page does not — so a running migration does
+   * not turn this into a refresh loop. Should that ever change, `refreshDatasets` queues
+   * rather than restarts, so the worst case is back-to-back fetches, not a starved page.
+   */
+  private listenForTierJobs(): void {
+    this.sharingTierService.wireTierJobRefresh({
+      destroyRef: this.destroyRef,
+      reload: () => this.datasetStore.refreshDatasets(),
+    });
   }
 
   private listenForLoading(): void {

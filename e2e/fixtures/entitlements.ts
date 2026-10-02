@@ -42,4 +42,10 @@ export function isEntitled(decisions: EntitlementDecisions, feature: string): bo
 export const entitlementFeature = {
   s3Audit: 'S3_AUDIT',
   s3Versioning: 'S3_VERSIONING',
+  /**
+   * Not a UI lock like the S3 keys: the Tiering button hides only when the key is explicitly
+   * denied. It is `zfs.tier.update` that refuses an appliance without it, so a journey that
+   * turns tiering on cannot run there at all.
+   */
+  zfsTier: 'ZFSTIER',
 } as const;

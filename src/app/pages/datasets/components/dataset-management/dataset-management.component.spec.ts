@@ -5,18 +5,20 @@ import { Router } from '@angular/router';
 import { createRoutingFactory, SpectatorRouting, mockProvider } from '@ngneat/spectator/jest';
 import { TnEmptyComponent, TnEmptyHarness, TnTreeVirtualScrollViewComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, Subject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
+import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
+import { BasicSearchHarness } from 'app/modules/forms/search-input/components/basic-search/basic-search.harness';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { ApiCallError } from 'app/services/errors/error.classes';
 
 describe('DatasetsManagementComponent', () => {
@@ -31,6 +33,7 @@ describe('DatasetsManagementComponent', () => {
   ] as DatasetDetails[]);
 
   const error$ = new BehaviorSubject<unknown>(null);
+  const tierJobUpdates$ = new Subject<ZfsTierRewriteJobEntry>();
 
   const createComponent = createRoutingFactory({
     component: DatasetsManagementComponent,
@@ -56,14 +59,12 @@ describe('DatasetsManagementComponent', () => {
         datasets$,
         error$,
         loadDatasets: () => {},
+        refreshDatasets: jest.fn(),
         selectedBranch$: of(false),
         isLoading$: of(false),
         selectDatasetById: () => {},
       }),
-      mockProvider(SharingTierService, {
-        getTierConfig: () => of({ enabled: false }),
-        tierEnabled: () => false,
-      }),
+      mockSharingTierService({ jobUpdates$: tierJobUpdates$ }),
     ],
   });
 
@@ -125,6 +126,26 @@ describe('DatasetsManagementComponent', () => {
     // white-box: TnEmptyHarness has no getter for icon / action text
     expect(spectator.query(TnEmptyComponent)!.icon()).toBe('dataset-root');
     expect(spectator.query(TnEmptyComponent)!.actionText()).toBe('Create Pool');
+  });
+
+  it('refreshes the datasets in the background when a tier job appears or changes status', () => {
+    const store = spectator.inject(DatasetTreeStore);
+
+    tierJobUpdates$.next({ tier_job_id: 'pool/dataset@1' } as ZfsTierRewriteJobEntry);
+
+    expect(store.refreshDatasets).toHaveBeenCalledTimes(1);
+  });
+
+  it('filters the tree while no dataset is selected', async () => {
+    error$.next(null);
+    datasets$.next([{ id: 'first', name: 'First Dataset' }] as DatasetDetails[]);
+    spectator.detectChanges();
+    const search = await loader.getHarness(BasicSearchHarness);
+
+    await search.setValue('first');
+
+    expect(await search.getValue()).toBe('first');
+    expect(spectator.query('.details-container')).not.toExist();
   });
 
   describe('horizontal scroll width', () => {

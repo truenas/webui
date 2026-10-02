@@ -51,6 +51,178 @@ describe('DatasetTreeStore', () => {
     });
   });
 
+  describe('refreshDatasets', () => {
+    it('replaces the datasets without entering the loading state', () => {
+      testScheduler.run(({ cold, expectObservable }) => {
+        const mockedApi = spectator.inject(ApiService);
+        jest.spyOn(mockedApi, 'call').mockReturnValue(cold('-b|', { b: datasets }));
+
+        spectator.service.refreshDatasets();
+
+        expect(mockedApi.call).toHaveBeenCalledWith('pool.dataset.details');
+        expectObservable(spectator.service.state$).toBe('ab', {
+          a: {
+            error: null, isLoading: false, selectedDatasetId: null, datasets: [],
+          },
+          b: {
+            error: null, isLoading: false, selectedDatasetId: null, datasets,
+          },
+        });
+      });
+    });
+
+    it('keeps the datasets already shown when the refresh fails', () => {
+      testScheduler.run(({ cold, expectObservable }) => {
+        const mockedApi = spectator.inject(ApiService);
+        const shown = [{ id: 'parent' }] as DatasetDetails[];
+        spectator.service.patchState({ datasets: shown });
+        jest.spyOn(mockedApi, 'call').mockReturnValue(cold('-#', {}, new Error('Network Error')));
+
+        spectator.service.refreshDatasets();
+
+        expectObservable(spectator.service.state$).toBe('a', {
+          a: {
+            error: null, isLoading: false, selectedDatasetId: null, datasets: shown,
+          },
+        });
+      });
+    });
+  });
+
+  it('clears a load error once a later refresh succeeds', () => {
+    testScheduler.run(({ cold, expectObservable }) => {
+      const mockedApi = spectator.inject(ApiService);
+      const loadError = new Error('Network Error');
+      jest.spyOn(mockedApi, 'call')
+        .mockReturnValueOnce(cold('-#', {}, loadError))
+        .mockReturnValueOnce(cold('---r|', { r: datasets }));
+
+      spectator.service.loadDatasets();
+      // Subscribed a frame after the load fails, i.e. while its error is latched.
+      cold('--t').subscribe(() => spectator.service.refreshDatasets());
+
+      expectObservable(spectator.service.select((state) => state.error)).toBe('ab---c', {
+        a: null,
+        b: loadError,
+        c: null,
+      });
+    });
+  });
+
+  describe('when a load and a refresh overlap', () => {
+    const before = [{ id: 'before' }] as DatasetDetails[];
+    const after = [{ id: 'after' }] as DatasetDetails[];
+
+    it('lets a later load cancel an in-flight refresh, so an older answer cannot land last', () => {
+      testScheduler.run(({ cold, expectObservable }) => {
+        const mockedApi = spectator.inject(ApiService);
+        jest.spyOn(mockedApi, 'call')
+          .mockReturnValueOnce(cold('----r|', { r: before }))
+          .mockReturnValueOnce(cold('-l|', { l: after }));
+
+        spectator.service.refreshDatasets();
+        spectator.service.loadDatasets();
+
+        expectObservable(spectator.service.select((state) => state.datasets)).toBe('ab', { a: [], b: after });
+      });
+    });
+
+    it('does not let a refresh cancel a load in flight; it runs once the load has answered', () => {
+      testScheduler.run(({ cold, expectObservable }) => {
+        const mockedApi = spectator.inject(ApiService);
+        jest.spyOn(mockedApi, 'call')
+          .mockReturnValueOnce(cold('----l|', { l: before }))
+          .mockReturnValueOnce(cold('-r|', { r: after }));
+
+        spectator.service.loadDatasets();
+        spectator.service.refreshDatasets();
+
+        expectObservable(spectator.service.state$).toBe('a---bc', {
+          a: {
+            error: null, isLoading: true, selectedDatasetId: null, datasets: [],
+          },
+          b: {
+            error: null, isLoading: false, selectedDatasetId: null, datasets: before,
+          },
+          c: {
+            error: null, isLoading: false, selectedDatasetId: null, datasets: after,
+          },
+        });
+      });
+    });
+
+    it('runs a single follow-up however many refreshes arrive during a fetch', () => {
+      testScheduler.run(({ cold, flush }) => {
+        const mockedApi = spectator.inject(ApiService);
+        jest.spyOn(mockedApi, 'call').mockReturnValue(cold('----r|', { r: after }));
+
+        spectator.service.refreshDatasets();
+        spectator.service.refreshDatasets();
+        spectator.service.refreshDatasets();
+        spectator.service.refreshDatasets();
+        flush();
+
+        // The first, and one more for everything that queued behind it.
+        expect(mockedApi.call).toHaveBeenCalledTimes(2);
+      });
+    });
+
+    it('still runs a refresh queued behind a fetch that a load then replaces', () => {
+      testScheduler.run(({ cold, expectObservable }) => {
+        const mockedApi = spectator.inject(ApiService);
+        jest.spyOn(mockedApi, 'call')
+          .mockReturnValueOnce(cold('------x|', { x: [] }))
+          .mockReturnValueOnce(cold('--l|', { l: before }))
+          .mockReturnValueOnce(cold('-r|', { r: after }));
+
+        spectator.service.loadDatasets();
+        spectator.service.refreshDatasets();
+        spectator.service.loadDatasets();
+
+        expectObservable(spectator.service.select((state) => state.datasets)).toBe('a-bc', {
+          a: [],
+          b: before,
+          c: after,
+        });
+      });
+    });
+
+    it('recovers on the next load from a fetch that is never answered', () => {
+      testScheduler.run(({ cold, flush }) => {
+        const mockedApi = spectator.inject(ApiService);
+        jest.spyOn(mockedApi, 'call')
+          .mockReturnValueOnce(cold('-'))
+          .mockReturnValue(cold('-r|', { r: after }));
+
+        spectator.service.refreshDatasets();
+        spectator.service.refreshDatasets();
+        spectator.service.loadDatasets();
+        flush();
+        // The load, and the refresh that had queued behind the fetch it replaced.
+        expect(mockedApi.call).toHaveBeenCalledTimes(3);
+
+        spectator.service.refreshDatasets();
+        flush();
+        expect(mockedApi.call).toHaveBeenCalledTimes(4);
+      });
+    });
+  });
+
+  it('reports a failed refresh when there are no datasets on screen to keep', () => {
+    testScheduler.run(({ cold, expectObservable }) => {
+      const mockedApi = spectator.inject(ApiService);
+      const refreshError = new Error('Network Error');
+      jest.spyOn(mockedApi, 'call').mockReturnValue(cold('-#', {}, refreshError));
+
+      spectator.service.refreshDatasets();
+
+      expectObservable(spectator.service.select((state) => state.error)).toBe('ab', {
+        a: null,
+        b: refreshError,
+      });
+    });
+  });
+
   describe('selectDatasetById', () => {
     it('updates selectedDatasetId in state', () => {
       testScheduler.run(({ expectObservable }) => {
