@@ -24,7 +24,9 @@
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import { ensureSmbServiceStopped, ensureSmbShareAbsent } from '../../fixtures/smb';
-import { ensurePoolAbsent, findGroupAclGrants, requireUnusedDisks } from '../../fixtures/storage';
+import {
+  datasetMountPath, ensurePoolAbsent, findGroupAclGrants, requireUnusedDisks,
+} from '../../fixtures/storage';
 import { ensureUserAbsent, testAdmin } from '../../fixtures/users';
 import { expectSignedInAs, signIn, signOut } from '../../flows/auth';
 import { createSmbShareAndStartService } from '../../flows/smb';
@@ -45,7 +47,7 @@ const dataset = 'shared';
 const share = 'e2e-share';
 
 /** Where the dataset is mounted, and therefore what the SMB share points at. */
-const datasetPath = `/mnt/${pool.name}/${dataset}`;
+const datasetPath = datasetMountPath(`${pool.name}/${dataset}`);
 
 /**
  * Per-call bound inside the service-state poll below.

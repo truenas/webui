@@ -29,8 +29,10 @@ export const smbLocators = {
     purpose: '[data-test="select-purpose"]',
     /**
      * A purpose option, by the label shown on screen — `tn-select` derives an
-     * option's id from its label, not its value (`Default Share`, stored as
-     * `DEFAULT_SHARE`), so a locator built from the enum would never match.
+     * option's id from its label, not its value. The two agree for some
+     * purposes and not for others: `Time Machine Share` is `time-machine-share`
+     * here, while its stored value, `TIMEMACHINE_SHARE`, would give
+     * `timemachine-share`.
      *
      * The picker does not offer every purpose: `Legacy Share` is left out for a
      * new share, and `Veeam Repository Share` without the entitlement.

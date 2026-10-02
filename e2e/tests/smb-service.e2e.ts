@@ -15,7 +15,7 @@ import {
 } from '../fixtures/smb';
 import { datasetMountPath, ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
 import { goToDatasets, goToShares } from '../flows/navigation';
-import { choosePurpose, openAddShareForm } from '../flows/smb';
+import { choosePurpose, formSettleTimeoutMs, openAddShareForm } from '../flows/smb';
 import { smbLocators } from '../locators/smb';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
@@ -140,7 +140,8 @@ test('switching a share off from the list reaches the appliance', async ({ page,
 
 test('the switch on the card stops the service and starts it again', async ({ page, api }) => {
   await goToShares(page);
-  await expect(page.locator(smbLocators.card.serviceStatus)).toHaveText('Running');
+  await expect(page.locator(smbLocators.card.serviceStatus))
+    .toHaveText('Running', { timeout: formSettleTimeoutMs });
 
   await page.locator(smbLocators.card.serviceToggle).click();
 

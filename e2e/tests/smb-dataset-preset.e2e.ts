@@ -95,17 +95,29 @@ test('a dataset with no share to serve does not offer anything', async ({ page, 
   await expect(page.locator(datasetLocators.name)).toBeVisible({ timeout: 60_000 });
 
   await page.locator(datasetLocators.name).fill(genericDataset);
+
+  // Through SMB on the way to Generic, so the checkbox is seen to go: a control
+  // that was never there is hidden too, and would say nothing about the preset.
   await page.locator(datasetLocators.shareType).click();
-  await page.locator(datasetLocators.shareTypeOption(preset.generic)).click();
+  await page.locator(datasetLocators.shareTypeOption(preset.smb)).click();
+  await expect(page.locator(datasetLocators.createSmbShare)).toBeVisible();
 
   // `canCreateSmb` is false for Generic, so there is no share checkbox at all —
   // and therefore nothing for the service prompt to be about.
+  await page.locator(datasetLocators.shareType).click();
+  await page.locator(datasetLocators.shareTypeOption(preset.generic)).click();
   await expect(page.locator(datasetLocators.createSmbShare)).toBeHidden();
   await page.locator(datasetLocators.save).click();
 
   // The negative control. Without it the first test would pass just as well
   // against a form that offered to start SMB after saving anything at all.
+  //
+  // Asserted once the new dataset is in the tree, not when the panel closes:
+  // the prompt is raised off the same save that closes the panel, so "hidden"
+  // straight away would also be true of a prompt that had not rendered yet.
   await expect(page.locator(datasetLocators.name)).toBeHidden({ timeout: 60_000 });
+  await expect(page.locator(datasetLocators.treeNode(`${pool}/${genericDataset}`)))
+    .toBeVisible({ timeout: 60_000 });
   await expect(page.locator(smbLocators.startService)).toBeHidden();
 
   expect((await queryService(api, smbServiceName))?.state).toBe('STOPPED');
