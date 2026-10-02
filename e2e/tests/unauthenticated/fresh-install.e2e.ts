@@ -27,7 +27,8 @@ import { ensureSmbServiceStopped, ensureSmbShareAbsent } from '../../fixtures/sm
 import { ensurePoolAbsent, findGroupAclGrants, requireUnusedDisks } from '../../fixtures/storage';
 import { ensureUserAbsent, testAdmin } from '../../fixtures/users';
 import { expectSignedInAs, signIn, signOut } from '../../flows/auth';
-import { createRaidz2Pool, createSmbDataset, createSmbShare } from '../../flows/storage';
+import { createSmbShareAndStartService } from '../../flows/smb';
+import { createRaidz2Pool, createSmbDataset } from '../../flows/storage';
 import { createTrueNasAdminUser } from '../../flows/users';
 import type { E2eApiClient } from '../../support/api/client';
 import { leavingTestData } from '../../support/cleanup';
@@ -134,7 +135,7 @@ test('an admin sets up a fresh instance: user, pool, dataset, SMB share', async 
   });
 
   await test.step('publish an SMB share and start the service', async () => {
-    await createSmbShare(page, datasetPath, share);
+    await createSmbShareAndStartService(page, datasetPath, share);
   });
 
   // Verified through the API rather than the UI, deliberately. Every step above

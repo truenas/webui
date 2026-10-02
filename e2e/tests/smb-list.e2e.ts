@@ -22,6 +22,7 @@ import {
   confirmShareDeletion, openDeleteShareDialog, openEditShareForm, saveShareForm,
 } from '../flows/smb';
 import { smbLocators } from '../locators/smb';
+import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
 /** The share each test deletes, and the one that must survive it. */
@@ -41,9 +42,15 @@ test.beforeEach(async ({ api, pool }) => {
 });
 
 test.afterEach(async ({ api, pool }) => {
-  await ensureSmbShareAbsent(api, target);
-  await ensureSmbShareAbsent(api, bystander);
-  await ensureDatasetAbsent(api, `${pool}/${datasetName}`);
+  if (leavingTestData(`shares "${target}" and "${bystander}" and dataset "${pool}/${datasetName}"`)) {
+    return;
+  }
+
+  await runCleanupSteps([
+    [`remove share ${target}`, () => ensureSmbShareAbsent(api, target)],
+    [`remove share ${bystander}`, () => ensureSmbShareAbsent(api, bystander)],
+    [`remove dataset ${datasetName}`, () => ensureDatasetAbsent(api, `${pool}/${datasetName}`)],
+  ]);
 });
 
 test('unsharing a path removes the share that was picked, and keeps the data', async ({ page, api, pool }) => {
@@ -51,7 +58,7 @@ test('unsharing a path removes the share that was picked, and keeps the data', a
   const path = datasetMountPath(dataset);
 
   // Both over the API: the deletion is the thing under test, so the shares
-  // themselves are a precondition (R3.1).
+  // themselves are a precondition.
   await ensureSmbSharePresent(api, { name: target, path });
   await ensureSmbSharePresent(api, { name: bystander, path });
 

@@ -32,24 +32,16 @@ import { datasetMountPath, ensureDatasetAbsent, ensureDatasetPresent } from '../
 import { goToShares } from '../flows/navigation';
 import { choosePurpose, openAddShareForm } from '../flows/smb';
 import { smbLocators } from '../locators/smb';
+import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+/** Typed into the form and never saved — the Time Machine test stops at the gate. */
 const timeMachineShare = 'e2e_service_tm_share';
+/** Provisioned over the API, for the switches to act on. */
 const toggledShare = 'e2e_service_toggle_share';
 
-const allShares = [timeMachineShare, toggledShare];
-
-/**
- * Two datasets, not one.
- *
- * Publishing a share puts an ACL on its path, and the form only raises the
- * "Configure ACL" question when `filesystem.stat(path).acl` is already true.
- * One shared path would mean the toggle test's fixture share silently changed
- * which prompts the *form* test is owed — an order dependency that reads as a
- * flaky dialog.
- */
+/** The path both of them point at. */
 const datasetName = 'e2e_service_smb_ds';
-const toggleDatasetName = 'e2e_service_toggle_ds';
 
 const purpose = { timeMachine: 'Time Machine Share' } as const;
 
@@ -71,36 +63,40 @@ let appleExtensionsWereOn = false;
  * start-up.
  */
 test.beforeEach(async ({ api, pool }) => {
-  for (const share of allShares) {
-    await ensureSmbShareAbsent(api, share);
-  }
+  await ensureSmbShareAbsent(api, toggledShare);
 
   appleExtensionsWereOn = await readSmbAppleExtensions(api);
   await setSmbAppleExtensions(api, false);
 
   await ensureDatasetPresent(api, `${pool}/${datasetName}`);
-  await ensureDatasetPresent(api, `${pool}/${toggleDatasetName}`);
   await ensureSmbSharePresent(api, {
     name: toggledShare,
-    path: datasetMountPath(`${pool}/${toggleDatasetName}`),
+    path: datasetMountPath(`${pool}/${datasetName}`),
   });
+
+  // Stopped first, and not for the stop: that is what clears start-at-boot,
+  // which `ensureServiceRunning` leaves as it finds it. The card-switch test
+  // asserts the flag is still off afterwards, so it has to be off beforehand.
+  await ensureSmbServiceStopped(api);
   await ensureServiceRunning(api, smbServiceName, serviceCost);
 });
 
 /**
- * Order matters, and middleware enforces it: `aapl_extensions` cannot be turned
- * back off while a Time Machine share exists — `[EINVAL] ... must be enabled
- * when AFP, time machine, or Final Cut Pro shares are present`. So the shares
- * go first, and only then the service configuration they required.
+ * The service first, then what it served, then the storage under that. The
+ * Apple-extensions write goes back after the share is gone: middleware refuses
+ * to turn the flag off while a share that needs it exists.
  */
 test.afterEach(async ({ api, pool }) => {
-  await ensureSmbServiceStopped(api);
-  for (const share of allShares) {
-    await ensureSmbShareAbsent(api, share);
+  if (leavingTestData(`share "${toggledShare}" and dataset "${pool}/${datasetName}"`)) {
+    return;
   }
-  await setSmbAppleExtensions(api, appleExtensionsWereOn);
-  await ensureDatasetAbsent(api, `${pool}/${datasetName}`);
-  await ensureDatasetAbsent(api, `${pool}/${toggleDatasetName}`);
+
+  await runCleanupSteps([
+    ['stop the SMB service', () => ensureSmbServiceStopped(api)],
+    [`remove share ${toggledShare}`, () => ensureSmbShareAbsent(api, toggledShare)],
+    ['restore Apple extensions', () => setSmbAppleExtensions(api, appleExtensionsWereOn)],
+    [`remove dataset ${datasetName}`, () => ensureDatasetAbsent(api, `${pool}/${datasetName}`)],
+  ]);
 });
 
 test('a Time Machine share cannot be saved until the service supports it', async ({ page, api, pool }) => {
@@ -145,11 +141,10 @@ test('switching a share off from the list reaches the appliance', async ({ page,
   // reloading writes the value that is already there and nothing appears to
   // happen.
   //
-  // Waiting on the switch's own checked state would be the better shape and is
-  // not available: `tn-slide-toggle` puts the `data-test` on its `<label for>`,
-  // not on the input, so `toBeChecked()` has nothing to read and passes
-  // vacuously — tried, and the re-enable still failed. A reload is the honest
-  // way to get a row the card has definitely rebuilt.
+  // Waiting on the switch's own checked state would be the better shape, and
+  // was tried: the switch flips on click, before the card has reloaded its
+  // rows, so it does not hold the second click back. A reload is the honest way
+  // to get a row the card has definitely rebuilt.
   await page.reload();
   await page.locator(smbLocators.card.enabledToggle(toggledShare)).click();
   await expect.poll(async () => (await findSmbShare(api, toggledShare))?.enabled).toBe(true);

@@ -36,8 +36,9 @@ export const smbLocators = {
      * label. The two disagree for every purpose (`Default Share` is stored as
      * `DEFAULT_SHARE`), so a locator built from the enum would never match.
      *
-     * Note the picker offers seven of the nine purposes: `Legacy Share` and
-     * `Veeam Repository Share` are not selectable on a new share.
+     * Note the picker does not offer every purpose: `Legacy Share` is left out
+     * for a new share, and `Veeam Repository Share` for an appliance without the
+     * entitlement.
      */
     purposeOption: (label: string): string => `[data-test="option-purpose-${kebabTestSegment(label)}"]`,
 
@@ -79,8 +80,6 @@ export const smbLocators = {
     hostsAllow: '[data-test="chip-input-hostsallow"]',
 
     save: '[data-test="button-save"]',
-    /** The panel's dismiss control; raises the unsaved-changes confirmation. */
-    close: '[data-test="button-close-side-panel"]',
   },
 
   /**
@@ -119,25 +118,14 @@ export const smbLocators = {
    */
   enableAppleExtensions: '[data-test="button-enable-apple-extensions"]',
 
-  /**
-   * The "Restart SMB Service" dialog, raised *instead of* the start offer while
-   * the service is running.
-   *
-   * Not gated on Time Machine, whatever the surrounding code's comments say:
-   * `isRestartRequired` is `this.isNew || this.form.dirty`. Kept because
-   * `smb-form.e2e.ts` establishes a stopped service precisely so this does not
-   * appear, and naming it is how that precondition stays legible.
-   */
-  restartService: '[data-test="button-restart-service"]',
-
   card: {
     /**
      * The SMB service switch in the card header — `service-<name>` under the
      * toggle's own prefix, where the name is middleware's (`cifs`), not the
      * label's. Starts or stops the service outright; there is no confirmation.
      *
-     * On the `<label>`, like every `tn-slide-toggle`, so it can be clicked but
-     * not read — see {@link serviceStatus} for the state.
+     * It moves on click, before the service has; {@link serviceStatus} is the
+     * state the card actually holds.
      */
     serviceToggle: '[data-test="toggle-service-cifs"]',
     /** The header's status readout, whose text is the service state as the card believes it. */

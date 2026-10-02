@@ -93,8 +93,6 @@ export const datasetLocators = {
   name: '[data-test="input-name"]',
   /** `<tn-select formControlName="share_type">`, id via control-name fallback. */
   shareType: '[data-test="select-share-type"]',
-  /** `DatasetPreset.Smb` is `'SMB'`, which normalizes to `smb`. */
-  shareTypeSmb: '[data-test="option-share-type-smb"]',
   /**
    * A preset by the label the select shows. Only `SMB` and `Multiprotocol` make
    * the form offer to create a share (`canCreateSmb`); `Generic` and `Apps` never do.

@@ -65,8 +65,7 @@ export async function ensureSmbShareAbsent(client: E2eApiClient, name: string): 
  * Creates a plain share on an existing path, if absent.
  *
  * For the bystander in a deletion test and anything else that needs a share to
- * merely exist. Never for the share under test — that one goes through the form
- * (R3.1).
+ * merely exist. Never for the share under test — that one goes through the form.
  */
 export async function ensureSmbSharePresent(
   client: E2eApiClient,
