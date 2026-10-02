@@ -8,7 +8,6 @@
  */
 import type { CallResponse, QueryEntity } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
-import { ensureServiceStopped } from './services';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
@@ -192,26 +191,6 @@ export async function findPool(client: E2eApiClient, name: string): Promise<Name
   return pool;
 }
 
-/**
- * Removes an SMB share by name, if present.
- *
- * Done before the pool is exported so the share is not left pointing at a path
- * that no longer exists.
- */
-export async function ensureSmbShareAbsent(client: E2eApiClient, name: string): Promise<void> {
-  const shares = await firstValueFrom(
-    client.api
-      .query('sharing.smb.query', [['name', '=', name]])
-      .pipe(timeout(readTimeoutMs)),
-  );
-
-  for (const share of shares) {
-    await firstValueFrom(
-      client.api.call('sharing.smb.delete', [share.id]).pipe(timeout(slowCallTimeoutMs)),
-    );
-  }
-}
-
 /** An entry of an NFSv4 ACL, named from the library rather than hand-written. */
 type Nfs4Ace = Extract<
   CallResponse<E2eApiDirectory, 'filesystem.getacl'>, { acltype: 'NFS4' }
@@ -321,24 +300,6 @@ export async function findGroupAclGrants(
     && 'BASIC' in entry.perms
     && writeCapablePerms.has(entry.perms.BASIC)
   ));
-}
-
-/**
- * Returns the SMB service to stopped and not-auto-starting.
- *
- * Load-bearing for the fresh-install story, not mere tidiness. The app's
- * post-save dialogs branch on service state: stopped raises "Start SMB
- * Service", running raises "Restart SMB Service" instead. Leaving the service
- * running means the next run silently exercises a different path — and the
- * story's whole premise is a *fresh* instance, which a running, auto-starting
- * SMB service is not. The protocol itself lives in `fixtures/services.ts`.
- */
-export async function ensureSmbServiceStopped(client: E2eApiClient): Promise<void> {
-  await ensureServiceStopped(
-    client,
-    'cifs',
-    'SMB service did not stop; the next run will not start from a fresh state.',
-  );
 }
 
 /**
@@ -483,4 +444,9 @@ export async function ensureDatasetAbsent(client: E2eApiClient, name: string): P
       throw error;
     }
   }
+}
+
+/** Where a dataset is mounted, which is what a share points at. */
+export function datasetMountPath(datasetName: string): string {
+  return `/mnt/${datasetName}`;
 }

@@ -1,0 +1,135 @@
+/**
+ * SMB shares, driven through the UI.
+ */
+import { expect, type Page } from '@playwright/test';
+import { goToShares } from './navigation';
+import { confirmDialogLocators } from '../locators/dialogs';
+import { smbLocators } from '../locators/smb';
+
+/** Creating a share writes to middleware and then asks two follow-up questions. */
+const saveTimeoutMs = 60_000;
+
+/**
+ * How long a control on this form may take to appear.
+ *
+ * Generous on purpose, and the reason is the screen rather than the form. The
+ * Shares dashboard is the chattiest page the suite drives — six service cards
+ * polling their own state — and the development build queues calls past twenty
+ * rather than dropping them, so on a loaded appliance the form settles slowly
+ * while the page catches up. Every id below is verified against a running
+ * appliance, so a long wait here means a busy page, not a wrong selector; the
+ * usual argument for a short timeout (fail fast on a typo) does not apply.
+ *
+ * Only the `branch` profile queues this way. CI runs `shipped`, where the
+ * diagnostic is compiled out entirely.
+ */
+export const formSettleTimeoutMs = 60_000;
+
+/** Opens the add-share panel from the Shares dashboard, as a user would. */
+export async function openAddShareForm(page: Page): Promise<void> {
+  await goToShares(page);
+
+  await expect(page.locator(smbLocators.addShare)).toBeVisible({ timeout: formSettleTimeoutMs });
+  await page.locator(smbLocators.addShare).click();
+  await expect(page.locator(smbLocators.form.name)).toBeVisible({ timeout: formSettleTimeoutMs });
+}
+
+/**
+ * Opens the edit panel for a share, from its row menu on the dashboard card.
+ *
+ * Waits for the name to be filled in rather than for the field to exist: the
+ * panel is the same component as the add form, so the field renders either way
+ * and only its value says the share that was picked is the one that loaded.
+ */
+export async function openEditShareForm(page: Page, name: string): Promise<void> {
+  await goToShares(page);
+
+  await page.locator(smbLocators.card.rowMenu(name)).click();
+  await page.locator(smbLocators.card.rowMenuEdit(name)).click();
+  await expect(page.locator(smbLocators.form.name)).toHaveValue(name, { timeout: formSettleTimeoutMs });
+}
+
+/** Picks a share purpose by the label shown in the select. */
+export async function choosePurpose(page: Page, label: string): Promise<void> {
+  await page.locator(smbLocators.form.purpose).click();
+
+  const option = page.locator(smbLocators.form.purposeOption(label));
+  await expect(option).toBeVisible({ timeout: formSettleTimeoutMs });
+  await option.click();
+}
+
+/**
+ * Expands the advanced options.
+ *
+ * The controls a purpose enables are not in the DOM until this is open, so any
+ * assertion about the preset engine has to come after it. Waits on a control
+ * that every purpose renders rather than on the toggle's own state.
+ */
+export async function showAdvancedOptions(page: Page): Promise<void> {
+  await page.locator(smbLocators.form.advancedToggle).click();
+  await expect(page.locator(smbLocators.form.hostsAllow)).toBeVisible({ timeout: formSettleTimeoutMs });
+}
+
+/**
+ * Saves the form, declines the offer to start SMB, and waits for the panel.
+ *
+ * **Starting the service is global state.** It changes which dialog the next
+ * test is shown — `CLAUDE.md` names that as the failure mode a passing suite
+ * hides — so a spec about the form leaves the service where it found it. The
+ * offer only appears while SMB is stopped, which every caller establishes in
+ * `beforeEach`.
+ *
+ * Two prompts this deliberately does not handle, because no caller needs them
+ * and guessing at their order got it wrong once: "Configure ACL", which appears
+ * only when `filesystem.stat(path).acl` is already true (so never on the fresh
+ * datasets these specs create), and "Restart SMB Service", which replaces the
+ * start offer when the service is running. The product raises restart *before*
+ * ACL (`smb-form.component.ts` chains `restartCifsServiceIfNecessary` then
+ * `shouldRedirectToAclEdit`); a helper that handled them the other way round
+ * would deadlock. Add them here when a test needs one, in that order.
+ */
+export async function saveShareForm(page: Page): Promise<void> {
+  const declineStart = page.locator(smbLocators.declineStartService);
+
+  await page.locator(smbLocators.form.save).click();
+  await expect(declineStart).toBeVisible({ timeout: saveTimeoutMs });
+  await declineStart.click();
+
+  await expect(page.locator(smbLocators.form.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Opens the delete confirmation for a share, from its row menu on the
+ * dashboard card.
+ *
+ * Two clicks, because four actions collapse into a kebab menu — which is also
+ * what makes this a row-targeting test: the menu belongs to one row, and
+ * opening the wrong one deletes the wrong share with no other symptom.
+ */
+export async function openDeleteShareDialog(page: Page, name: string): Promise<void> {
+  await goToShares(page);
+
+  await page.locator(smbLocators.card.rowMenu(name)).click();
+  await page.locator(smbLocators.card.rowMenuDelete(name)).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+}
+
+/**
+ * Confirms the open delete dialog and waits for it to go.
+ *
+ * Two steps, because this one carries the destructive-action tick box:
+ * `confirmDelete` does not pass `hideCheckbox`, so Unshare stays **disabled**
+ * until the box is ticked. Asserting that in between is the cheap way to keep
+ * the guard honest — a dialog that stopped requiring it would still let this
+ * flow through, and nothing else would notice.
+ */
+export async function confirmShareDeletion(page: Page): Promise<void> {
+  const confirm = page.locator(confirmDialogLocators.confirm);
+
+  await expect(confirm).toBeDisabled();
+  await page.locator(confirmDialogLocators.checkbox).click();
+  await expect(confirm).toBeEnabled();
+
+  await confirm.click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeHidden({ timeout: saveTimeoutMs });
+}

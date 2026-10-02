@@ -11,7 +11,6 @@
  *    `kebabTestSegment` — which is NOT lodash. `RAIDZ2` normalizes to `raidz2`,
  *    not `raidz-2`. webui's own normalizer does use lodash and would differ.
  */
-import { confirmDialogLocators } from './dialogs';
 import { kebabTestSegment } from './test-id';
 
 export const poolWizardLocators = {
@@ -96,6 +95,11 @@ export const datasetLocators = {
   shareType: '[data-test="select-share-type"]',
   /** `DatasetPreset.Smb` is `'SMB'`, which normalizes to `smb`. */
   shareTypeSmb: '[data-test="option-share-type-smb"]',
+  /**
+   * A preset by the label the select shows. Only `SMB` and `Multiprotocol` make
+   * the form offer to create a share (`canCreateSmb`); `Generic` and `Apps` never do.
+   */
+  shareTypeOption: (label: string) => `[data-test="option-share-type-${kebabTestSegment(label)}"]`,
 
   /**
    * "Create SMB Share", which the SMB preset turns **on** by default.
@@ -197,39 +201,3 @@ export const deleteDatasetDialogLocators = {
   submit: '[data-test="button-dialog-delete-dataset"]',
 } as const;
 
-export const smbLocators = {
-  /**
-   * "Add" in the Windows (SMB) Shares card on the Shares dashboard —
-   * `testId="smb-share-add"` in `smb-card.component.html`.
-   *
-   * Not `add-smb-share`, which belongs to the standalone SMB *list* page at
-   * `/sharing/smb`. Arriving via the sidebar lands on the dashboard, so the
-   * card's button is the one a user actually clicks.
-   */
-  addShare: '[data-test="button-smb-share-add"]',
-  /**
-   * `ix-explorer` renders a `tn-file-picker`, whose inner `<input>` takes the
-   * control name. It is typable — `allowManualInput` defaults to true — so the
-   * path can be entered directly rather than navigated as a tree.
-   */
-  path: '[data-test="input-path"]',
-  name: '[data-test="input-name"]',
-  save: '[data-test="button-save"]',
-  /**
-   * "No" on the "Configure ACL" prompt that follows share creation.
-   *
-   * `dialogService.confirm({ cancelText: 'No', hideCheckbox: true })`, so it is
-   * the standard confirm dialog's cancel button despite the custom label —
-   * hence the reference rather than a second copy of the id.
-   */
-  declineAclPrompt: confirmDialogLocators.cancel,
-  /**
-   * "Start" on the "Start SMB Service" dialog
-   * (`start-service-dialog.component.html`, `testId="enable-service"`).
-   *
-   * Its sibling "No" is `button-do-not-start`. The dialog also carries a toggle
-   * for starting the service automatically on boot, which we leave alone —
-   * starting it now is what makes the share actually serve.
-   */
-  startService: '[data-test="button-enable-service"]',
-} as const;
