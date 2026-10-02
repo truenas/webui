@@ -1,23 +1,12 @@
 /**
  * Story: creating a dataset that shares itself should offer to turn the service on.
  *
- * A dataset given the SMB preset creates an SMB share alongside itself. A share
- * on a stopped service serves nothing, so the form offers to start it — and
- * that offer is the only thing standing between an admin and a share they
- * believe is live.
- *
- * The rule has four conditions and one of them is a race worth pinning:
- *
- *   onSaved()  →  canCreateSmb && create_smb  →  checkIfServiceIsEnabled(Cifs)
- *   effect     →  canUserManageService, then selectService(Cifs)
- *                 .pipe(take(1), filter(Boolean))
- *              →  state === Stopped  →  startService dialog
- *
- * `canCreateSmb` is true only for the SMB and Multiprotocol presets, which is
- * what the second test holds it to. And the effect takes `take(1)` off a
- * `filter(Boolean)` on the services store: if that store has not populated when
- * the action lands, nothing emits and **no prompt appears at all**, silently.
- * Neither condition is visible to a unit test of either component.
+ * A dataset given the SMB preset creates a share alongside itself, and a share
+ * on a stopped service serves nothing, so the form offers to start it. The
+ * offer is made only for a preset that creates a share (`canCreateSmb`), which
+ * the second test holds it to. It also depends on the services store being
+ * populated when the save lands: the effect is `take(1)` then `filter(Boolean)`,
+ * so an empty store means no prompt at all, silently.
  */
 import { queryService } from '../fixtures/services';
 import {

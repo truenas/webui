@@ -1,27 +1,12 @@
 /**
- * Story: Time Machine needs something from the service before it will save.
+ * Stories: what a share needs from the SMB service, and the switches on the card.
  *
- * A Time Machine share requires Apple SMB2/3 protocol extensions, which are a
- * setting on the *service*, not on the share. While they are off the form does
- * not merely warn — `extraDisabled` holds Save down — and it offers to turn
- * them on from inside the form. That is the only route from that purpose to a
- * saved share, and the write it performs (`smb.update`) outlives the share, so
- * this spec puts it back.
- *
- * ## What this spec deliberately does *not* cover
- *
- * The "Restart SMB Service" prompt. It looked like the interesting rule here
- * and it is not what the code does: `isRestartRequired` is
- * `this.isNew || this.form.dirty`, so the prompt appears for **every** new
- * share and every edit while the service is running, Time Machine or not. The
- * Time Machine transition logic that the surrounding comments describe lives in
- * `isNewTimeMachineShare`, which is referenced nowhere in `src/` — see
- * `docs/status.md`. Pinning the current behaviour would encode something that
- * reads as unintended, so it waits on a product answer.
- *
- * **This spec starts the SMB service, which is global state.** It is stopped
- * again whatever the test did: `CLAUDE.md` names leaving it running as the failure
- * mode a passing suite hides.
+ * A Time Machine share requires Apple SMB2/3 extensions, a setting on the
+ * *service*. While they are off `extraDisabled` holds Save down and the form
+ * offers to turn them on; that write (`smb.update`) outlives the share, so this
+ * spec puts it back. It also starts the service, which is global state, and
+ * stops it again whatever the test did. The "Restart SMB Service" prompt is
+ * deliberately not covered — see the known gaps in `docs/status.md`.
  */
 import { ensureServiceRunning, queryService } from '../fixtures/services';
 import {
@@ -57,13 +42,9 @@ let appleExtensionsWereOn: boolean | undefined;
 /**
  * Preconditions are *established* here, not asserted in the tests.
  *
- * Including Apple extensions, which are forced off: a previous run that failed
- * partway could leave them on, and a test that merely asserted they were off
- * would fail for a reason having nothing to do with what it covers.
- *
- * This hook does not take `page`, so it runs before one exists — which matters
- * for the service, since the app reads service state into its store at
- * start-up.
+ * Including Apple extensions, which are forced off: a run that failed partway
+ * could leave them on. The hook does not take `page`, so it runs before one
+ * exists — the app reads service state into its store at start-up.
  */
 test.beforeEach(async ({ api, pool }) => {
   appleExtensionsWereOn = undefined;
@@ -143,17 +124,12 @@ test('switching a share off from the list reaches the appliance', async ({ page,
   // only place that can say otherwise.
   await expect.poll(async () => (await findSmbShare(api, toggledShare))?.enabled).toBe(false);
 
-  // Left and come back to before going back, rather than clicking the same switch twice.
+  // Left and come back to, rather than clicking the same switch twice.
   // `onChangeEnabledState` computes the new value from the row it was handed
-  // (`!row.enabled`), so a second click against a row the card has not finished
-  // reloading writes the value that is already there and nothing appears to
-  // happen.
-  //
-  // Waiting on the switch's own checked state would be the better shape, and
-  // was tried: the switch flips on click, before the card has reloaded its
-  // rows, so it does not hold the second click back. Leaving the page and
-  // returning destroys the card, which is the honest way to get a row it has
-  // definitely rebuilt.
+  // (`!row.enabled`), so a second click against a row the card has not reloaded
+  // writes the value that is already there. The switch's own checked state is
+  // no guard: it flips on click, before the rows reload. Leaving the page
+  // destroys the card, so the row that comes back is one it has rebuilt.
   await goToDatasets(page);
   await goToShares(page);
   await page.locator(smbLocators.card.enabledToggle(toggledShare)).click();

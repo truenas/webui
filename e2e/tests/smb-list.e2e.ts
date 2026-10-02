@@ -1,16 +1,11 @@
 /**
  * Stories: acting on a share from the list acts on the one you picked.
  *
- * Unsharing first, then editing.
- *
- * Two claims, and the second is the one an admin would most regret being wrong.
- * Deleting an SMB share removes the *share*; what is on the path is untouched
- * by design. A test that only checked the row was gone could not tell that
- * apart from a delete that took the dataset with it.
- *
- * The row-targeting half is the same claim the users and groups specs make, and
- * it reaches it differently again: an SMB row's actions collapse into a kebab
- * menu, so the delete belongs to whichever row's menu was opened.
+ * An SMB row's actions collapse into a kebab menu, so an action belongs to
+ * whichever row's menu was opened; each test runs beside a second share that
+ * must come through untouched. Unsharing has a second claim: it removes the
+ * *share* and leaves what is on the path, which a test that only checked the
+ * row was gone could not tell from a delete that took the dataset with it.
  */
 import {
   ensureSmbServiceStopped, ensureSmbShareAbsent, ensureSmbSharePresent, findSmbShare,

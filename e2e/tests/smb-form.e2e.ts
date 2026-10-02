@@ -2,20 +2,11 @@
  * Story: what the SMB share form accepts, what it refuses, and what the
  * appliance is left holding afterwards.
  *
- * The form is shaped by one control. `purpose` selects a preset, and
- * `presetEnabledFields` decides from it which options exist at all — so the
- * same panel is a different form for each of seven purposes. That is a much
- * larger conditional surface than anything else covered so far, and it is
- * mostly invisible until the advanced section is opened.
- *
- * Saves are asserted through `sharing.smb.query`: a row says the screen
- * believed it, the API says the appliance did it — and carries back the two
- * things the form never shows, the `purpose` it stored and the `options` block
- * it derived from the preset.
- *
- * **The SMB service is left alone.** Every save here declines the offer to
- * start it. Service state is global, and `CLAUDE.md` names leaving it running
- * as the failure mode a passing suite hides.
+ * `purpose` selects a preset, and `presetEnabledFields` decides from it which
+ * options exist at all, so the same panel is a different form per purpose.
+ * Saves are asserted through `sharing.smb.query`, which also carries back what
+ * the form never shows: the `purpose` it stored and the `options` it derived.
+ * Every save declines the offer to start SMB, because service state is global.
  */
 import {
   ensureSmbServiceStopped, ensureSmbShareAbsent, ensureSmbSharePresent, findSmbShare,
