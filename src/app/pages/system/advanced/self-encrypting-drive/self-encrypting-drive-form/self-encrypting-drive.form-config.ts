@@ -1,5 +1,6 @@
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { map } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
@@ -28,6 +29,11 @@ export function getSelfEncryptingDriveFormConfig(
         translate.instant('SED password and confirmation should match.'),
       ),
     ],
+    // Pre-fill the saved global password, matching the per-disk SED password dialog,
+    // so users can reveal it to confirm what will be used to unlock their disks.
+    loadData: () => api.call('system.advanced.sed_global_password').pipe(
+      map((password) => ({ sed_passwd: password, sed_passwd2: password })),
+    ),
     fields: [
       {
         name: 'sed_passwd',
