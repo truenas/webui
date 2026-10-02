@@ -42,7 +42,8 @@ What the handler still owns is what the client has no seam for: the legacy call
 queue, the debug panel's logging, and its mock interception. The ceiling on
 concurrent calls is no longer the handler's alone: middleware refuses the 21st
 call in flight on a connection, whoever sent it, so `limitConcurrentCalls` holds
-the whole tab to 20 on the connection's `send` (see gap 19). Connection state — open, closed, refused, shutting down — is
+the whole tab to 19 on the connection's `send`, one short of the ceiling to
+leave room for the keepalive ping (see gap 19). Connection state — open, closed, refused, shutting down — is
 `ConnectionService`'s (NAS-143990). What it lost with the socket: the reconnect timer (the client's
 connection retries on its own), `core.set_options` on open (the client sends
 it), and the ping timer (the client pings every 20s, so `PingService` is
@@ -493,16 +494,19 @@ above. Each is a change for `truenas/api-client-ts`.
     it wants a box check of all three service types first, or a correction to
     the model in middleware if the inner field is not meant to be required.
 
-19. **No limit on concurrent calls.** Middleware runs 20 calls at a time per
-    connection and refuses the next with "Maximum number of concurrent calls
-    (20) has exceeded". The client sends whatever it is given. While the two
-    clients shared a socket and only the legacy queue counted, a page load put
-    up to 26 in flight and middleware refused the excess — a click that did
-    nothing, or a `core.subscribe` refused and a store left stale for the
-    session. `limitConcurrentCalls` closes it from the UI by replacing
-    `connection.send` on the instance, which works only because every request,
-    the client's own included, goes out through that method. A `maxConcurrentCalls`
-    option on the client would retire the patch.
+19. **No limit on concurrent calls.** Middleware holds 20 calls per connection
+    (ten running, ten waiting) and refuses the next with "Maximum number of
+    concurrent calls (20) has exceeded". The client sends whatever it is given.
+    While the two clients shared a socket and only the legacy queue counted, a
+    page load put up to 26 in flight and middleware refused the excess — a
+    click that did nothing, or a `core.subscribe` refused and a store left
+    stale for the session. `limitConcurrentCalls` closes it from the UI by
+    replacing `connection.send` on the instance, which works because the
+    client's verbs and authenticator all go out through that method. Two
+    frames do not: `core.set_options` on open, answered before anything else is
+    sent, and the 20-second `core.ping`, which is why the gate stops at 19. A
+    `maxConcurrentCalls` option on the client, counting its own ping, would
+    retire the patch and the spare slot.
 
 ## Version policy
 

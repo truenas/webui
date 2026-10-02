@@ -5,10 +5,18 @@ type Connection = WebUiApiClient['connection'];
 type Message = Parameters<Connection['send']>[0];
 
 /**
- * How many calls middleware runs at once for one connection. It refuses the next
- * one with "Maximum number of concurrent calls (20) has exceeded".
+ * How many calls middleware will hold for one connection: it runs ten and lets
+ * ten more wait. The next is refused with "Maximum number of concurrent calls
+ * (20) has exceeded".
  */
 export const maxConcurrentCalls = 20;
+
+/**
+ * How many of those the tab's own requests may take. One is left for the
+ * client's keepalive `core.ping`, which is written straight to the socket every
+ * 20 s and so cannot be held back here, but which middleware counts all the same.
+ */
+export const maxGatedCalls = maxConcurrentCalls - 1;
 
 interface WaitingCall {
   id: string;
@@ -20,16 +28,16 @@ interface WaitingCall {
  * Holds requests back so that no more than `limit` are awaiting an answer on
  * `connection` at once. The rest wait their turn, in the order they were sent.
  *
- * Done on the connection's own `send` because that is the one place every
- * request passes: `ApiService`'s queue, `TypedApiService`, and the client's own
- * verbs and authenticator all write through it. A limit kept by any one of them
- * counts only its own calls, and the tab's total is what middleware refuses.
+ * Done on the connection's own `send` because that is where requests meet:
+ * `ApiService`'s queue, `TypedApiService`, and the client's own verbs and
+ * authenticator all write through it. A limit kept by any one of them counts
+ * only its own calls, and the tab's total is what middleware refuses.
  *
  * Only requests count: a frame with both an `id` and a `method`. A request is
  * finished when a frame with its id comes back, whether or not its caller is
  * still listening, since the appliance is busy with it either way.
  */
-export function limitConcurrentCalls(connection: Connection, limit = maxConcurrentCalls): void {
+export function limitConcurrentCalls(connection: Connection, limit = maxGatedCalls): void {
   const send = connection.send.bind(connection);
   const inFlight = new Set<string>();
   const waiting: WaitingCall[] = [];
@@ -66,20 +74,23 @@ export function limitConcurrentCalls(connection: Connection, limit = maxConcurre
   }
 
   connection.opened$.subscribe((opened) => {
+    const wasOpen = isOpen;
     isOpen = opened;
+
+    // Only a socket that was open takes anything with it: what was written on
+    // it is lost, answers included, and what was waiting here goes the same way.
+    // A connection that reports closed without having opened has written
+    // nothing, and still holds every frame it was given for the socket to come.
+    if (wasOpen && !opened) {
+      inFlight.clear();
+      waiting.length = 0;
+    }
   });
 
   connection.messages().subscribe((message) => {
     if (message.id !== undefined && message.id !== null) {
       finish(String(message.id));
     }
-  });
-
-  // What was sent on a socket is lost with it, answers included, and the
-  // connection drops what it had queued. The calls still waiting here go too.
-  connection.closed$.subscribe(() => {
-    inFlight.clear();
-    waiting.length = 0;
   });
 
   connection.send = (message: Message): Subscription => {
