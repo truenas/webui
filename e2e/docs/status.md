@@ -225,14 +225,15 @@ to middleware rather than a lookup in a cached list. `smb-list` deletes and
 edits a share from its row menu, each beside a second share that must come
 through untouched. `smb-dataset-preset` covers a rule that spans two features:
 a dataset created with the SMB preset publishes a share, and the form then
-offers to start the service — only for the SMB and Multiprotocol presets, and
-only while the service is stopped. `smb-service` covers what lives on the
+offers to start the service — which it does not do for a preset that makes no
+share (Generic is the control; Multiprotocol and a running service are not
+exercised). `smb-service` covers what lives on the
 service rather than the share: the Apple-extensions gate a Time Machine share
 is held behind (the write, `smb.update`, outlives the share, so the spec puts
 it back), a row's Enabled switch, and the card's own start/stop switch.
 
-Four ids in this area are not what the template implies, and were read off a
-running appliance: row actions collapse into a kebab menu whose items carry the
+Four things in this area are not what the template implies, and were read off
+a running appliance: row actions collapse into a kebab menu whose items carry the
 icon *with its library* (`…-more-action-mdi-delete-row-action`); the card's row
 tag uses the library normalizer while the cells inside the same row use lodash;
 `Legacy Share` is filtered out of the purpose picker for new shares; and the

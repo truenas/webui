@@ -9,6 +9,9 @@ import { smbLocators } from '../locators/smb';
 /** Creating a share writes to middleware and then asks two follow-up questions. */
 const saveTimeoutMs = 60_000;
 
+/** Longer where the save also starts the service, which is a job of its own. */
+const startServiceSaveTimeoutMs = 90_000;
+
 /**
  * How long a control on this form may take to appear.
  *
@@ -123,17 +126,17 @@ export async function createSmbShareAndStartService(page: Page, path: string, na
   // probed — if this prompt ever stops appearing, that is a flow change worth
   // failing on rather than silently tolerating.
   const declineAcl = page.locator(smbLocators.declineAclPrompt);
-  await expect(declineAcl).toBeVisible({ timeout: saveTimeoutMs });
+  await expect(declineAcl).toBeVisible({ timeout: startServiceSaveTimeoutMs });
   await declineAcl.click();
 
   // With the ACL prompt dismissed, the app notices the SMB service is stopped
   // and offers to start it. This dialog appears only when the service is not
   // already running (`checkIfServiceIsEnabled` -> `dialogService.startService`).
   const startService = page.locator(smbLocators.startService);
-  await expect(startService).toBeVisible({ timeout: saveTimeoutMs });
+  await expect(startService).toBeVisible({ timeout: startServiceSaveTimeoutMs });
   await startService.click();
 
-  await expect(page.locator(smbLocators.form.save)).toBeHidden({ timeout: saveTimeoutMs });
+  await expect(page.locator(smbLocators.form.save)).toBeHidden({ timeout: startServiceSaveTimeoutMs });
 }
 
 /**

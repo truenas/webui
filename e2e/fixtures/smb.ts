@@ -1,10 +1,11 @@
 /**
  * SMB share preconditions and cleanup, over the API.
  *
- * Shares only. The *service* is `fixtures/services.ts`, and the split matters
- * more here than elsewhere: SMB service state is global, so a test that starts
- * it changes which dialog every later test is shown — `CLAUDE.md` names that as
- * the failure mode a passing suite hides.
+ * Shares, and the two things about the service that are SMB's own: its name and
+ * its Apple-extensions flag. Starting and stopping is `fixtures/services.ts`,
+ * and the split matters more here than elsewhere: SMB service state is global,
+ * so a test that starts it changes which dialog every later test is shown —
+ * `CLAUDE.md` names that as the failure mode a passing suite hides.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
