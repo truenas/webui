@@ -95,6 +95,14 @@
 
   <ng-template tnCardFooterActions>
     <tn-button
+      *ixRequiresRoles="syncRequiredRoles"
+      [testId]="'sync-ntp-time'"
+      [ixUiSearch]="searchableElements.elements.syncTime"
+      [label]="'Sync Time' | translate"
+      [disabled]="!(dataProvider.currentPageCount$ | async)"
+      (onClick)="doSyncTime()"
+    ></tn-button>
+    <tn-button
       *ixRequiresRoles="requiredRoles"
       color="primary"
       [testId]="'add-ntp'"

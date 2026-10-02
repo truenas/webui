@@ -19,5 +19,15 @@ export const ntpServersElements = {
         T('Time Server'),
       ],
     },
+    syncTime: {
+      hierarchy: [T('Sync Time')],
+      anchor: 'sync-ntp-time',
+      synonyms: [
+        T('Sync System Time'),
+        T('Synchronize Time'),
+        T('Resync Time'),
+        T('NTP Sync'),
+      ],
+    },
   },
 } satisfies UiSearchableElement;

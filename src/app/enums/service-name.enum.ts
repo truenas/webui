@@ -10,6 +10,7 @@ export enum ServiceName {
   NvmeOf = 'nvmet',
   WebShare = 'webshare',
   S3 = 's3',
+  Ntpd = 'ntpd',
 }
 
 export const serviceNames = new Map<ServiceName, string>([
