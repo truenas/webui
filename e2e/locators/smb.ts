@@ -139,6 +139,10 @@ export const smbLocators = {
      * The cells inside the same row go through `cellRowTag` and lodash instead,
      * giving `e-2-e-recon-share`. One share, two spellings, in one row; see the
      * note in `locators/test-id.ts`.
+     *
+     * The card shows four shares, by name. A fifth that sorts ahead of the
+     * one a test wants pushes it off the card and every locator here times out,
+     * so a spec keeps its shares few and the appliance free of others.
      */
     row: (name: string): string => `[data-test="row-card-smb-share-${kebabTestSegment(name)}"]`,
 

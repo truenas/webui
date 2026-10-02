@@ -20,7 +20,7 @@
  * reads as unintended, so it waits on a product answer.
  *
  * **This spec starts the SMB service, which is global state.** It is stopped
- * again unconditionally: `CLAUDE.md` names leaving it running as the failure
+ * again whatever the test did: `CLAUDE.md` names leaving it running as the failure
  * mode a passing suite hides.
  */
 import { ensureServiceRunning, queryService } from '../fixtures/services';
@@ -29,7 +29,7 @@ import {
   readSmbAppleExtensions, setSmbAppleExtensions, smbServiceName,
 } from '../fixtures/smb';
 import { datasetMountPath, ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
-import { goToShares } from '../flows/navigation';
+import { goToDatasets, goToShares } from '../flows/navigation';
 import { choosePurpose, openAddShareForm } from '../flows/smb';
 import { smbLocators } from '../locators/smb';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
@@ -48,8 +48,11 @@ const purpose = { timeMachine: 'Time Machine Share' } as const;
 /** What a left-behind running service would cost the next run, said once. */
 const serviceCost = 'the SMB service was left running, so the next run is offered a restart where it expects a start.';
 
-/** Apple extensions as this spec found them, put back in teardown. */
-let appleExtensionsWereOn = false;
+/**
+ * Apple extensions as this spec found them, put back in teardown. Undefined
+ * until read, so a `beforeEach` that failed before reading it restores nothing.
+ */
+let appleExtensionsWereOn: boolean | undefined;
 
 /**
  * Preconditions are *established* here, not asserted in the tests.
@@ -58,11 +61,12 @@ let appleExtensionsWereOn = false;
  * partway could leave them on, and a test that merely asserted they were off
  * would fail for a reason having nothing to do with what it covers.
  *
- * This hook takes only `api`, so it runs before `page` exists — which matters
+ * This hook does not take `page`, so it runs before one exists — which matters
  * for the service, since the app reads service state into its store at
  * start-up.
  */
 test.beforeEach(async ({ api, pool }) => {
+  appleExtensionsWereOn = undefined;
   await ensureSmbShareAbsent(api, toggledShare);
 
   appleExtensionsWereOn = await readSmbAppleExtensions(api);
@@ -87,14 +91,18 @@ test.beforeEach(async ({ api, pool }) => {
  * to turn the flag off while a share that needs it exists.
  */
 test.afterEach(async ({ api, pool }) => {
-  if (leavingTestData(`share "${toggledShare}" and dataset "${pool}/${datasetName}"`)) {
+  if (leavingTestData(`share "${toggledShare}", dataset "${pool}/${datasetName}", SMB as the test left it, and Apple extensions unrestored`)) {
     return;
   }
 
   await runCleanupSteps([
     ['stop the SMB service', () => ensureSmbServiceStopped(api)],
     [`remove share ${toggledShare}`, () => ensureSmbShareAbsent(api, toggledShare)],
-    ['restore Apple extensions', () => setSmbAppleExtensions(api, appleExtensionsWereOn)],
+    ['restore Apple extensions', async () => {
+      if (appleExtensionsWereOn !== undefined) {
+        await setSmbAppleExtensions(api, appleExtensionsWereOn);
+      }
+    }],
     [`remove dataset ${datasetName}`, () => ensureDatasetAbsent(api, `${pool}/${datasetName}`)],
   ]);
 });
@@ -135,7 +143,7 @@ test('switching a share off from the list reaches the appliance', async ({ page,
   // only place that can say otherwise.
   await expect.poll(async () => (await findSmbShare(api, toggledShare))?.enabled).toBe(false);
 
-  // Reloaded before going back, rather than clicking the same switch twice.
+  // Left and come back to before going back, rather than clicking the same switch twice.
   // `onChangeEnabledState` computes the new value from the row it was handed
   // (`!row.enabled`), so a second click against a row the card has not finished
   // reloading writes the value that is already there and nothing appears to
@@ -143,9 +151,11 @@ test('switching a share off from the list reaches the appliance', async ({ page,
   //
   // Waiting on the switch's own checked state would be the better shape, and
   // was tried: the switch flips on click, before the card has reloaded its
-  // rows, so it does not hold the second click back. A reload is the honest way
-  // to get a row the card has definitely rebuilt.
-  await page.reload();
+  // rows, so it does not hold the second click back. Leaving the page and
+  // returning destroys the card, which is the honest way to get a row it has
+  // definitely rebuilt.
+  await goToDatasets(page);
+  await goToShares(page);
   await page.locator(smbLocators.card.enabledToggle(toggledShare)).click();
   await expect.poll(async () => (await findSmbShare(api, toggledShare))?.enabled).toBe(true);
 

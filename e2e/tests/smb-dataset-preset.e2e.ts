@@ -45,7 +45,7 @@ const preset = { smb: 'SMB', generic: 'Generic' } as const;
  *
  * Before, because a service left running by an earlier run would make the
  * prompt not appear and the first test fail for a reason that has nothing to do
- * with it. After, unconditionally, because service state is global.
+ * with it. After, whatever the test did, because service state is global.
  */
 test.beforeEach(async ({ api, pool }) => {
   await ensureSmbShareAbsent(api, presetShare);
