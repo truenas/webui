@@ -43,6 +43,7 @@ export function limitConcurrentCalls(connection: Connection, limit = maxGatedCal
    * Each call awaiting an answer, with the handle the connection gave for it.
    * That handle closes once the frame is written: until then the connection is
    * still holding the frame for a socket, and giving up on it takes it back.
+   * (It also closes when the connection is closed for good, which ends this too.)
    */
   const inFlight = new Map<string, Subscription>();
   const waiting: WaitingCall[] = [];
