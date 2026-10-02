@@ -166,6 +166,46 @@ describe('DatasetTreeStore', () => {
         expect(mockedApi.call).toHaveBeenCalledTimes(2);
       });
     });
+
+    it('still runs a refresh queued behind a fetch that a load then replaces', () => {
+      testScheduler.run(({ cold, expectObservable }) => {
+        const mockedApi = spectator.inject(ApiService);
+        jest.spyOn(mockedApi, 'call')
+          .mockReturnValueOnce(cold('------x|', { x: [] }))
+          .mockReturnValueOnce(cold('--l|', { l: before }))
+          .mockReturnValueOnce(cold('-r|', { r: after }));
+
+        spectator.service.loadDatasets();
+        spectator.service.refreshDatasets();
+        spectator.service.loadDatasets();
+
+        expectObservable(spectator.service.select((state) => state.datasets)).toBe('a-bc', {
+          a: [],
+          b: before,
+          c: after,
+        });
+      });
+    });
+
+    it('recovers on the next load from a fetch that is never answered', () => {
+      testScheduler.run(({ cold, flush }) => {
+        const mockedApi = spectator.inject(ApiService);
+        jest.spyOn(mockedApi, 'call')
+          .mockReturnValueOnce(cold('-'))
+          .mockReturnValue(cold('-r|', { r: after }));
+
+        spectator.service.refreshDatasets();
+        spectator.service.refreshDatasets();
+        spectator.service.loadDatasets();
+        flush();
+        // The load, and the refresh that had queued behind the fetch it replaced.
+        expect(mockedApi.call).toHaveBeenCalledTimes(3);
+
+        spectator.service.refreshDatasets();
+        flush();
+        expect(mockedApi.call).toHaveBeenCalledTimes(4);
+      });
+    });
   });
 
   it('reports a failed refresh when there are no datasets on screen to keep', () => {

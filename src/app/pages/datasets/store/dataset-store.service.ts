@@ -97,6 +97,10 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
    * runs once, however many arrived meanwhile — so a burst of them cannot keep restarting
    * `pool.dataset.details` (the heaviest dataset call there is) and starve the page, and a
    * load the user is waiting on is never thrown away for one they did not ask for.
+   *
+   * A fetch that is never answered leaves refreshes queued until the next `loadDatasets`,
+   * which replaces it. The one way that happens is the socket dropping, and that sends the
+   * app to sign-in; the page loads again on the way back.
    */
   readonly refreshDatasets = (): void => {
     if (this.isFetching) {
@@ -127,11 +131,10 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
         }
       }),
       switchMap(({ silent }) => {
+        // A refresh queued behind the fetch this one replaces stays queued. A load does
+        // not stand in for it: what the refresh was asked to pick up may not be in
+        // `pool.dataset.details` yet when the load is answered.
         this.isFetching = true;
-        if (!silent) {
-          // This load fetches fresher data than any refresh queued before it could.
-          this.isRefreshQueued = false;
-        }
 
         return this.api.call('pool.dataset.details')
           .pipe(

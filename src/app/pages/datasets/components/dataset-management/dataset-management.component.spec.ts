@@ -13,6 +13,7 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
+import { BasicSearchHarness } from 'app/modules/forms/search-input/components/basic-search/basic-search.harness';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
@@ -133,6 +134,18 @@ describe('DatasetsManagementComponent', () => {
     tierJobUpdates$.next({ tier_job_id: 'pool/dataset@1' } as ZfsTierRewriteJobEntry);
 
     expect(store.refreshDatasets).toHaveBeenCalledTimes(1);
+  });
+
+  it('filters the tree while no dataset is selected', async () => {
+    error$.next(null);
+    datasets$.next([{ id: 'first', name: 'First Dataset' }] as DatasetDetails[]);
+    spectator.detectChanges();
+    const search = await loader.getHarness(BasicSearchHarness);
+
+    await search.setValue('first');
+
+    expect(await search.getValue()).toBe('first');
+    expect(spectator.query('.details-container')).not.toExist();
   });
 
   describe('horizontal scroll width', () => {
