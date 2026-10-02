@@ -20,8 +20,6 @@ export interface NfsConfig {
   rdma: boolean;
 }
 
-export type NfsConfigUpdate = Partial<Omit<NfsConfig, 'id' | 'v4_krb_enabled'>>;
-
 export interface AddNfsPrincipal {
   username: string;
   password: string;

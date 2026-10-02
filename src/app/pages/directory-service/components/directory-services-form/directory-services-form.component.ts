@@ -29,7 +29,10 @@ import { helptextDirectoryServices } from 'app/helptext/directory-service/direct
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { DirectoryServiceCredential } from 'app/interfaces/directoryservice-credentials.interface';
 import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
-import { DirectoryServicesUpdate } from 'app/interfaces/directoryservices-update.interface';
+import {
+  DirectoryServicesUpdate,
+  toDirectoryServicesUpdateArgs,
+} from 'app/interfaces/directoryservices-update.interface';
 import { IpaConfig } from 'app/interfaces/ipa-config.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -40,7 +43,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import {
   SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ActiveDirectoryConfigComponent } from './active-directory-config/active-directory-config.component';
 import { CredentialConfigComponent } from './credential-config/credential-config.component';
@@ -73,7 +76,7 @@ import { DirectoryServiceValidationService } from './services/directory-service-
 export class DirectoryServicesFormComponent extends IxFormHostForm implements OnInit {
   private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);
@@ -244,7 +247,10 @@ export class DirectoryServicesFormComponent extends IxFormHostForm implements On
 
   protected handleSubmit = (): SubmitResult => ({
     request$: this.dialogService.jobDialog(
-      this.api.job('directoryservices.update', [this.transformFormDataToApiPayload(this.form.value)]),
+      this.api.job(
+        'directoryservices.update',
+        [toDirectoryServicesUpdateArgs(this.transformFormDataToApiPayload(this.form.value))],
+      ),
       { title: this.translate.instant('Updating Directory Services Configuration') },
     ).afterClosed(),
     successMessage: this.translate.instant('Directory services configuration updated.'),
@@ -270,7 +276,7 @@ export class DirectoryServicesFormComponent extends IxFormHostForm implements On
 
       this.isClearingConfig.set(true);
       this.dialogService.jobDialog(
-        this.api.job('directoryservices.update', [{ enable: false, service_type: null } as DirectoryServicesUpdate]),
+        this.api.job('directoryservices.update', [{ enable: false, service_type: null }]),
         { title: this.translate.instant('Clearing Directory Services Configuration') },
       )
         .afterClosed()

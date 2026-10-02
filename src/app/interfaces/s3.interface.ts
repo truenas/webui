@@ -1,8 +1,8 @@
+import { CallParams, CallResponse } from '@truenas/api-client';
 import {
   S3Access,
   S3AccessKeyStatus,
   S3AuditOverflow,
-  S3LogLevel,
   S3MultipartEtag,
   S3ObjectLockMode,
   S3ObjectOwnership,
@@ -12,6 +12,7 @@ import {
 } from 'app/enums/s3.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { SharingTierInfo } from 'app/interfaces/zfs-tier.interface';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 /**
  * A list of audit action names, or the literal `ALL`.
@@ -34,32 +35,12 @@ export interface S3GrantEntry extends S3Grant {
   name: string;
 }
 
-export interface S3Listener {
-  address: string;
-  port: number;
-  tls: boolean;
-}
+/** The S3 service's settings, as `s3.config` returns them. */
+export type S3Config = CallResponse<WebUiApiDirectory, 's3.config'>;
 
-export interface S3Config {
-  id: number;
-  listeners: S3Listener[];
-  servers: number;
-  certificate: number | null;
-  region: string;
-  log_level: S3LogLevel;
-  default_audit: S3AuditMask;
-  default_audit_overflow: S3AuditOverflow;
-  global_grants: S3GrantEntry[];
-  /**
-   * Dataset name (not a mount point) under which buckets created through the S3 protocol get their
-   * datasets. Must already exist. Empty means such CreateBucket requests are refused.
-   */
-  managed_root_dataset: string;
-}
+export type S3ConfigUpdate = CallParams<WebUiApiDirectory, 's3.update'>[0];
 
-export interface S3ConfigUpdate extends Partial<Omit<S3Config, 'id' | 'global_grants'>> {
-  global_grants?: S3Grant[];
-}
+export type S3Listener = NonNullable<S3Config['listeners']>[number];
 
 export interface S3Bucket {
   id: number;

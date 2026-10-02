@@ -11,11 +11,10 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { DirectoryServiceCredentialType } from 'app/enums/directory-services.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
-import { DirectoryServicesLeaveParams } from 'app/interfaces/directoryservices-leave.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -39,7 +38,7 @@ export class LeaveDomainDialog {
   private errorHandler = inject(ErrorHandlerService);
   private formBuilder = inject(FormBuilder);
   private dialogService = inject(DialogService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   protected dialogRef = inject<DialogRef<unknown, LeaveDomainDialog>>(DialogRef);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
@@ -54,18 +53,16 @@ export class LeaveDomainDialog {
 
   onSubmit(): void {
     const formValue = this.form.value;
-    // Always use KERBEROS_USER for leave operation
-    const params: DirectoryServicesLeaveParams = {
-      credential: {
-        credential_type: DirectoryServiceCredentialType.KerberosUser,
-        username: formValue.username ?? '',
-        password: formValue.password ?? '',
-      },
-    };
-
     // Show job progress dialog
     this.dialogService.jobDialog(
-      this.api.job('directoryservices.leave', [params]),
+      this.api.job('directoryservices.leave', [{
+        // Always use KERBEROS_USER for leave operation
+        credential: {
+          credential_type: DirectoryServiceCredentialType.KerberosUser,
+          username: formValue.username ?? '',
+          password: formValue.password ?? '',
+        },
+      }]),
       {
         title: this.translate.instant('Leaving Domain'),
         description: this.translate.instant('Leaving domain, please wait...'),

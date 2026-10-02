@@ -14,7 +14,7 @@ import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FileValidatorService } from 'app/modules/forms/ix-forms/validators/file-validator/file-validator.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 /**
  * `FileReader` rather than `File.arrayBuffer()`: the latter is absent from jsdom, and the read has
@@ -50,7 +50,7 @@ function readFileAsArrayBuffer(file: File): Observable<ArrayBuffer> {
 })
 export class KerberosKeytabsFormComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private fileValidator = inject(FileValidatorService);
   private translate = inject(TranslateService);
 

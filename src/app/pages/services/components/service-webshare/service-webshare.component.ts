@@ -14,13 +14,12 @@ import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WebSharePasskey, webSharePasskeyLabels } from 'app/enums/webshare-passkey.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceWebshare } from 'app/helptext/services/components/service-webshare';
-import { WebShareConfig } from 'app/interfaces/webshare-config.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   serviceConfigSavedMessage,
 } from 'app/pages/services/components/service-config-forms.constants';
@@ -36,7 +35,7 @@ function createWebshareForm(fb: NonNullableFormBuilder) {
   });
 }
 
-/** The form's own value shape rather than `WebShareConfigUpdate`, which `search` can drift from. */
+/** The form's own value shape rather than the `webshare.update` payload, which `search` can drift from. */
 type WebShareFormValue = ReturnType<ReturnType<typeof createWebshareForm>['getRawValue']>;
 
 @Component({
@@ -58,7 +57,7 @@ type WebShareFormValue = ReturnType<ReturnType<typeof createWebshareForm>['getRa
 export class ServiceWebshareComponent extends IxFormHostForm<boolean, WebShareFormValue> implements OnInit {
   readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
 
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private truenasConnectService = inject(TruenasConnectService);
@@ -128,12 +127,13 @@ export class ServiceWebshareComponent extends IxFormHostForm<boolean, WebShareFo
     this.loadFormConfig(combineLatest([
       this.api.call('webshare.config'),
       this.entitlements.entitled$(EntitlementFeature.TrueSearch).pipe(take(1)),
-    ]), ([config, isEntitled]: [WebShareConfig, boolean]) => {
+    ]), ([config, isEntitled]) => {
       this.form.patchValue({
         // The guard effect may already have locked the control off. Gate the loaded value too,
         // otherwise a stale `search: true` would be restored while unavailable and then submitted.
         search: config.search && isEntitled && this.isTruenasConnectConfigured(),
-        passkey: config.passkey,
+        // `webshare.config` spells it as the wire literal; the control holds the UI's enum of the same values.
+        passkey: config.passkey as WebSharePasskey,
       });
     });
   }

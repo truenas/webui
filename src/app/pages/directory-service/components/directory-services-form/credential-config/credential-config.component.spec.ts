@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DirectoryServiceCredentialType, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { DirectoryServiceCredential } from 'app/interfaces/directoryservice-credentials.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -22,9 +23,11 @@ describe('CredentialConfigComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      mockTypedApi([
+        mockTypedCall('directoryservices.certificate_choices', { 1: 'truenas_default' }),
+      ]),
       mockApi([
         mockCall('kerberos.keytab.kerberos_principal_choices', mockKerberosPrincipals),
-        mockCall('directoryservices.certificate_choices', { 1: 'truenas_default' }),
       ]),
       DirectoryServiceValidationService,
     ],

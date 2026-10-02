@@ -5,6 +5,7 @@ import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { CallParams } from '@truenas/api-client';
 import {
   TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent,
   TnFormSectionComponent, TnInputComponent, TnSelectComponent,
@@ -20,7 +21,7 @@ import { SmbMinProtocol, smbMinProtocolLabels } from 'app/enums/smb-min-protocol
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
-import { SmbConfigUpdate, smbSearchSpotlight } from 'app/interfaces/smb-config.interface';
+import { smbSearchSpotlight } from 'app/interfaces/smb-config.interface';
 import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
@@ -32,7 +33,8 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import {
   advancedModeFooterAction, advancedModeSettingLabels, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   serviceConfigSavedMessage,
 } from 'app/pages/services/components/service-config-forms.constants';
@@ -79,11 +81,13 @@ function createSmbForm(fb: FormBuilder, validatorsService: IxValidatorsService, 
 }
 
 /**
- * The form's own value shape, which is deliberately NOT `SmbConfigUpdate`: `bindip` is a
+ * The form's own value shape, which is deliberately NOT the `smb.update` payload: `bindip` is a
  * FormArray of `{ bindIp }` rows and `spotlight_search` stands in for `search_protocols`
  * (both reshaped in {@link ServiceSmbComponent.handleSubmit}).
  */
 type SmbFormValue = ReturnType<ReturnType<typeof createSmbForm>['getRawValue']>;
+
+type SmbConfigUpdate = NonNullable<CallParams<WebUiApiDirectory, 'smb.update'>[0]>;
 
 @Component({
   selector: 'ix-service-smb',
@@ -108,7 +112,7 @@ type SmbFormValue = ReturnType<ReturnType<typeof createSmbForm>['getRawValue']>;
   ],
 })
 export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private entitlements = inject(EntitlementsService);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
@@ -242,9 +246,14 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => this.isSmb1Enabled.set(value === SmbMinProtocol.Smb1));
 
-    this.api.call('sharing.smb.query').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.api.query('sharing.smb.query').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (shares) => {
-        const incompatiblePurposes = [SmbSharePurpose.MultiProtocolShare, SmbSharePurpose.LegacyShare];
+        // Typed by the wire's literals, so a regenerated directory that renames either one fails to compile
+        // rather than quietly never matching.
+        const incompatiblePurposes: WebUiQueryEntity<'sharing.smb.query'>['purpose'][] = [
+          SmbSharePurpose.MultiProtocolShare,
+          SmbSharePurpose.LegacyShare,
+        ];
         const hasIncompatible = shares.some((share) => incompatiblePurposes.includes(share.purpose));
         this.hasIncompatibleShares.set(hasIncompatible);
       },
@@ -256,7 +265,9 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
       this.api.call('smb.config'),
       this.entitlements.entitled$(EntitlementFeature.TrueSearch).pipe(take(1)),
     ]), ([config, hasTrueSearch]) => {
-      const searchProtocolEnabled = config.search_protocols.includes(smbSearchSpotlight);
+      const searchProtocolEnabled = Boolean(config.search_protocols?.includes(smbSearchSpotlight));
+      // `smb.config` spells these as the wire literals; the controls hold the UI's enums of the same values.
+      const minimumProtocol = config.minimum_protocol as SmbMinProtocol;
       // The rows are pushed, not patched, so the patch has to start from an empty array to stay
       // idempotent — `loadFormConfig` replays it on retry, and without this every bind IP would
       // come back duplicated.
@@ -265,11 +276,13 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
       this.configuredBindIps.set(config.bindip);
       this.form.patchValue({
         ...config,
+        minimum_protocol: minimumProtocol,
+        encryption: config.encryption as SmbEncryption,
         // A stale `true` must not be restored (and later submitted) without the entitlement.
         spotlight_search: searchProtocolEnabled && hasTrueSearch,
         bindip: config.bindip.map((ip) => ({ bindIp: ip })),
       });
-      this.isSmb1Enabled.set(config.minimum_protocol === SmbMinProtocol.Smb1);
+      this.isSmb1Enabled.set(minimumProtocol === SmbMinProtocol.Smb1);
     });
   }
 
@@ -290,6 +303,8 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
     const { spotlight_search: spotlightSearch, bindip, ...formValues } = allValues;
     const values: SmbConfigUpdate = {
       ...formValues,
+      // Picked from `smb.unixcharset_choices`, so always one of the names middleware accepts.
+      unixcharset: formValues.unixcharset as SmbConfigUpdate['unixcharset'],
       search_protocols: spotlightSearch ? [smbSearchSpotlight] : [],
       bindip: bindip.map((value) => value.bindIp),
     };

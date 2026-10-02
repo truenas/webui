@@ -2,30 +2,30 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createHostFactory, mockProvider, SpectatorHost } from '@ngneat/spectator/jest';
 import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceStatusCellComponent } from 'app/pages/services/components/service-status-cell/service-status-cell.component';
 
 describe('ServiceStatusCellComponent', () => {
   let spectator: SpectatorHost<ServiceStatusCellComponent>;
   let loader: ReturnType<typeof TestbedHarnessEnvironment.loader>;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const createHost = createHostFactory({
     component: ServiceStatusCellComponent,
     imports: [MapValuePipe],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('service.update', 1),
-        mockJob('service.control', fakeSuccessfulJob()),
+      mockTypedApi([
+        mockTypedCall('service.update', 1),
+        mockTypedJob('service.control', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
     ],
@@ -37,7 +37,7 @@ describe('ServiceStatusCellComponent', () => {
       <ix-service-status-cell [service]="service"></ix-service-status-cell>
     `, { hostProps: { service } });
 
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
 

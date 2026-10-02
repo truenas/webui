@@ -4,13 +4,13 @@ import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { BehaviorSubject } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { ConnectionService } from 'app/modules/websocket/connection.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { RestartComponent } from 'app/pages/system-tasks/restart/restart.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -31,8 +31,8 @@ describe('RestartComponent', () => {
           { selector: selectIsEnterprise, value: false },
         ],
       }),
-      mockApi([
-        mockJob('system.reboot', fakeSuccessfulJob()),
+      mockTypedApi([
+        mockTypedJob('system.reboot', { state: JobState.Success }),
       ]),
       mockProvider(Router),
       mockProvider(Location, {
@@ -84,7 +84,7 @@ describe('RestartComponent', () => {
     });
 
     it('calls system.reboot with default "Unknown Reason" when no reason is provided', () => {
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.reboot', ['Unknown Reason']);
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('system.reboot', ['Unknown Reason']);
     });
 
     it('replaces URL state to prevent accidental restart on refresh', () => {
@@ -132,7 +132,7 @@ describe('RestartComponent', () => {
     });
 
     it('calls system.reboot with the provided reason', () => {
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
         'system.reboot',
         ['Active Controller Update Reboot'],
       );

@@ -5,6 +5,7 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { CallResponse } from '@truenas/api-client';
 import {
   InputType, TnButtonComponent, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnSelectComponent,
@@ -21,8 +22,7 @@ import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceNfs } from 'app/helptext/services/components/service-nfs';
-import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
-import { NfsConfig } from 'app/interfaces/nfs-config.interface';
+import { DirectoryServicesStatus, toDirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
@@ -31,7 +31,8 @@ import {
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { rangeValidator, portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   serviceConfigSavedMessage,
 } from 'app/pages/services/components/service-config-forms.constants';
@@ -62,7 +63,7 @@ function createNfsForm(fb: NonNullableFormBuilder, validatorsService: IxValidato
 }
 
 /**
- * The form's own value shape, which is NOT `NfsConfig`: `servers_auto` is a UI-only control
+ * The form's own value shape, which is NOT the `nfs.config` entry: `servers_auto` is a UI-only control
  * (mapped from `managed_nfsd` and dropped in {@link ServiceNfsComponent.handleSubmit}).
  */
 type NfsFormValue = ReturnType<ReturnType<typeof createNfsForm>['getRawValue']>;
@@ -88,7 +89,7 @@ type NfsFormValue = ReturnType<ReturnType<typeof createNfsForm>['getRawValue']>;
   ],
 })
 export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
@@ -200,18 +201,21 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
   /**
    * Idempotent, as {@link loadFormConfig} requires: every write is a plain (re-runnable) patch.
    */
-  private applyConfig(config: NfsConfig): void {
+  private applyConfig(config: CallResponse<WebUiApiDirectory, 'nfs.config'>): void {
     this.isAddSpnDisabled.set(!config.v4_krb);
     this.hasNfsStatus.set(config.keytab_has_nfs_spn);
-    this.configuredBindIps.set(config.bindip);
+    const bindIps = config.bindip ?? [];
+    this.configuredBindIps.set(bindIps);
 
     // Silently, so loading a config is not mistaken for the user changing the protocols: the
     // dependency below blanks `v4_domain` whenever NFSv4 is off, and a stored value must survive
     // its own load rather than be cleared out from under a config the user never touched.
     const { protocols, ...rest } = config;
-    this.form.controls.protocols.setValue(protocols, { emitEvent: false });
+    // `nfs.config` spells them as the wire literals; the control holds the UI's enum of the same values.
+    this.form.controls.protocols.setValue(protocols as NfsProtocol[], { emitEvent: false });
     this.form.patchValue({
       ...rest,
+      bindip: bindIps,
       servers_auto: config.managed_nfsd,
     });
   }
@@ -235,6 +239,7 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
 
   private loadActiveDirectoryState(): Observable<DirectoryServicesStatus> {
     return this.api.call('directoryservices.status').pipe(
+      map(toDirectoryServicesStatus),
       tap((dsStatus) => {
         if (dsStatus.type === DirectoryServiceType.ActiveDirectory) {
           this.activeDirectoryState.set(dsStatus.status);

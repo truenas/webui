@@ -1,15 +1,3 @@
-export interface KerberosConfig {
-  appdefaults_aux: string;
-  id: number;
-  libdefaults_aux: string;
-}
+import { v27_0_0 } from '@truenas/api-client';
 
-export type KerberosConfigUpdate = Omit<KerberosConfig, 'id'>;
-
-export interface KerberosKeytab {
-  file: string;
-  id: number;
-  name: string;
-}
-
-export type KerberosKeytabUpdate = Omit<KerberosKeytab, 'id'>;
+export type KerberosKeytab = v27_0_0.KerberosKeytabEntry;

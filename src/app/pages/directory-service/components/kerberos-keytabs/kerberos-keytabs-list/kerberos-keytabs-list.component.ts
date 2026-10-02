@@ -19,11 +19,12 @@ import {
   TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { filter, switchMap } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { Role } from 'app/enums/role.enum';
+import { toDirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -38,7 +39,7 @@ import { convertStringToId, mapTnSortToTableSort } from 'app/modules/tn-table/ut
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
 import { kerberosKeytabsListElements } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -74,7 +75,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class KerberosKeytabsListComponent implements OnInit {
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   protected dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   protected emptyService = inject(EmptyService);
@@ -123,7 +124,7 @@ export class KerberosKeytabsListComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    const keytabsRows$ = this.api.call('kerberos.keytab.query');
+    const keytabsRows$ = this.api.query('kerberos.keytab.query');
     this.dataProvider = new AsyncDataProvider<KerberosKeytab>(keytabsRows$);
     this.setDefaultSort();
     this.getKerberosKeytabs();
@@ -140,6 +141,7 @@ export class KerberosKeytabsListComponent implements OnInit {
 
   private checkActiveDirectoryStatus(): void {
     this.api.call('directoryservices.status').pipe(
+      map(toDirectoryServicesStatus),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((status) => {
       this.isActiveDirectoryEnabled.set(

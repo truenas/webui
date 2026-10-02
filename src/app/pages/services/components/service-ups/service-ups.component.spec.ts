@@ -3,24 +3,29 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallParams, CallResponse } from '@truenas/api-client';
 import {
   TnAutocompleteHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { UpsMode, UpsShutdownMode } from 'app/enums/ups-mode.enum';
-import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+
+type UpsConfig = CallResponse<WebUiApiDirectory, 'ups.config'>;
+type UpsConfigUpdate = CallParams<WebUiApiDirectory, 'ups.update'>[0];
 
 describe('ServiceUpsComponent', () => {
   let spectator: Spectator<ServiceUpsComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -38,8 +43,8 @@ describe('ServiceUpsComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockCall('ups.config', {
+      mockTypedApi([
+        mockTypedCall('ups.config', {
           complete_identifier: 'ups@localhost:3',
           driver: 'bcmxcp$PW9315',
           extrausers: '',
@@ -61,7 +66,7 @@ describe('ServiceUpsComponent', () => {
           shutdowncmd: '',
           shutdowntimer: 30,
         } as UpsConfig),
-        mockCall('ups.driver_choices', {
+        mockTypedCall('ups.driver_choices', {
           bcmxcp$PW9315: 'Powerware ups 5 PW9315 3-phase (bcmxcp)',
           'bcmxcp$Powerware 9130': 'Eaton ups 5 Powerware 9130 (bcmxcp)',
           'bcmxcp$Powerware 9140': 'Eaton ups 5 Powerware 9140 (bcmxcp)',
@@ -70,8 +75,8 @@ describe('ServiceUpsComponent', () => {
           'bcmxcp$R5500 XR': 'Compaq ups 4 R5500 XR (bcmxcp) / HP ups 4 R5500 XR (bcmxcp)',
           'bcmxcp$T750 G2': 'HP ups 3 T750 G2 Serial port (bcmxcp)',
         }),
-        mockCall('ups.port_choices', ['/dev/uhid', 'auto']),
-        mockCall('ups.update'),
+        mockTypedCall('ups.port_choices', ['/dev/uhid', 'auto']),
+        mockTypedCall('ups.update', {} as UpsConfig),
       ]),
       ...ixFormTestingProviders(),
       mockProvider(DialogService),
@@ -82,21 +87,22 @@ describe('ServiceUpsComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
   });
 
-  it('blocks Save when the initial config load fails', () => {
+  it('blocks Save when the initial config load fails', async () => {
     expect(spectator.component.canSubmit()).toBe(true);
 
     const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
       .mockReturnValue(of(true));
-    failApiCall(api, 'ups.config');
+    spectator.inject(MockTypedApiService).mockCallError('ups.config');
 
     // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
     // re-initialising an already-initialised form re-registers its valueChanges subscriptions,
     // so the assertion would hinge on double-init being harmless.
     const failed = TestBed.createComponent(ServiceUpsComponent);
     failed.detectChanges();
+    await failed.whenStable();
 
     expect(showErrorModal).toHaveBeenCalled();
     // `hasLoadFailed` is what the panel reads (for its banner) and what `<ix-form>`'s
@@ -153,6 +159,7 @@ describe('ServiceUpsComponent', () => {
     await (await getCheckbox('powerdown')).uncheck();
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(api.call).toHaveBeenCalledWith('ups.update', [{
       driver: 'bcmxcp$R1500 G2',
@@ -184,6 +191,7 @@ describe('ServiceUpsComponent', () => {
     await (await getInput('remoteport')).setValue('3493');
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(api.call).toHaveBeenCalledWith('ups.update', [
       expect.objectContaining({
@@ -206,6 +214,7 @@ describe('ServiceUpsComponent', () => {
     const portValue = await port.getInputValue();
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(portValue).toBe('/my-custom-port');
     expect(api.call).toHaveBeenCalledWith('ups.update', [

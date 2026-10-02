@@ -36,7 +36,7 @@ import { convertStringToId, mapTnSortToTableSort } from 'app/modules/tn-table/ut
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { KerberosRealmRow } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realm-row.interface';
 import { kerberosRealmsListElements } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.elements';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
@@ -72,7 +72,7 @@ import { KerberosRealmsFormComponent } from 'app/pages/directory-service/compone
 })
 export class KerberosRealmsListComponent implements OnInit {
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   protected dialogService = inject(DialogService);
   protected emptyService = inject(EmptyService);
   private formPanel = inject(FormSidePanelService);
@@ -118,7 +118,7 @@ export class KerberosRealmsListComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    const kerberosRealms$ = this.api.call('kerberos.realm.query').pipe(
+    const kerberosRealms$ = this.api.query('kerberos.realm.query').pipe(
       map((realms) => {
         return realms.map((realm) => {
           return {

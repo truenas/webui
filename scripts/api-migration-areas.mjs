@@ -104,6 +104,32 @@ export const migratedApiPaths = [
   // NAS-144116: the SED password choice shared by the VDEVs Extend and Replace dialogs, typed from
   // the start. The dialogs around it still start their jobs through `ApiService`.
   'src/app/pages/storage/modules/vdevs/components/sed-disk-password',
+  // NAS-143997: directory services, the service config forms and the shutdown / restart / failover /
+  // config reset pages. `pages/directory-service` and `pages/services` are pinned below their roots:
+  // `kerberos.keytab.kerberos_principal_choices` (the credential step of the directory services
+  // form) and `nfs.add_principal` (the NFS service's Add SPN dialog) are missing from the
+  // generated directory (gap 14), so those two keep `ApiService`.
+  'src/app/pages/directory-service/directory-services.component.ts',
+  'src/app/pages/directory-service/directory-services.component.spec.ts',
+  'src/app/pages/directory-service/components/directory-services-form/directory-services-form.component.ts',
+  'src/app/pages/directory-service/components/directory-services-form/directory-services-form.component.spec.ts',
+  'src/app/pages/directory-service/components/kerberos-keytabs',
+  'src/app/pages/directory-service/components/kerberos-realms',
+  'src/app/pages/directory-service/components/kerberos-realms-form',
+  'src/app/pages/directory-service/components/leave-domain-dialog',
+  'src/app/pages/services/services.component.ts',
+  'src/app/pages/services/services.component.spec.ts',
+  'src/app/pages/services/components/service-ftp',
+  'src/app/pages/services/components/service-nfs/service-nfs.component.ts',
+  'src/app/pages/services/components/service-nfs/service-nfs.component.spec.ts',
+  'src/app/pages/services/components/service-s3',
+  'src/app/pages/services/components/service-smb',
+  'src/app/pages/services/components/service-snmp',
+  'src/app/pages/services/components/service-ssh',
+  'src/app/pages/services/components/service-status-cell',
+  'src/app/pages/services/components/service-ups',
+  'src/app/pages/services/components/service-webshare',
+  'src/app/pages/system-tasks',
 ];
 
 /**

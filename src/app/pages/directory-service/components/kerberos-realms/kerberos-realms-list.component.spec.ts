@@ -2,13 +2,13 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnTableHarness } from '@truenas/ui-components';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
 
@@ -31,9 +31,9 @@ describe('KerberosRealmsListComponent', () => {
     component: KerberosRealmsListComponent,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('kerberos.realm.query', kerberosRealms),
-        mockCall('kerberos.realm.delete'),
+      mockTypedApi([
+        mockTypedQuery('kerberos.realm.query', kerberosRealms),
+        mockTypedCall('kerberos.realm.delete', null),
       ]),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
@@ -89,6 +89,6 @@ describe('KerberosRealmsListComponent', () => {
       call: expect.any(Function),
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('kerberos.realm.delete', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('kerberos.realm.delete', [1]);
   });
 });

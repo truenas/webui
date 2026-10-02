@@ -117,6 +117,14 @@ Where things differ:
   takes filters and `extra` but no `select`, since the events carry whole rows.
   Script it in specs with `mockTypedQuery` for the rows and `emitEvent` for the
   changes.
+- **A form's enums still come back as literals.** A config read (`smb.config`,
+  `ssh.config`, `ups.config`) spells its enum fields as the wire literals, and a
+  form control typed with the UI's enum will not take them. Cast the field to
+  the enum where the form is patched, with a comment, rather than retyping the
+  control; on the way out an enum is already assignable to the literal. A
+  control whose options come from a choices call (`smb.unixcharset_choices`)
+  holds a wire value typed as `string`, and is cast to the payload's field type
+  at the submit.
 - **A query whose params are one object is a `call`.** `audit.query` takes its
   filters and options inside a single object rather than as
   `[filters, options]`, so it is not a typed query method: call it with `call`
@@ -439,7 +447,11 @@ above. Each is a change for `truenas/api-client-ts`.
     in no generated directory, most likely because middleware marks it
     private. `NetworkService` therefore keeps `ApiService` for it, next to
     `reporting.realtime` (gap 5), and `src/app/services` cannot be pinned as a
-    whole until both have a typed route.
+    whole until both have a typed route. `kerberos.keytab.kerberos_principal_choices`
+    and `nfs.add_principal` are missing the same way, so the directory services
+    form's credential step and the NFS service's Add SPN dialog keep `ApiService`
+    too, and `pages/directory-service` and `pages/services` are pinned below their
+    roots.
 
 15. **Dates are typed as strings.** Middleware sends a `datetime` as an
     `{ $date: <ms> }` envelope and a `date` as `{ $type: 'date', $value }`, and
@@ -468,6 +480,16 @@ above. Each is a change for `truenas/api-client-ts`.
     (`reporting.realtime`, `app.stats`) it would keep streaming after the page
     that wanted it is closed, so those must not move until the client releases
     subscriptions, even once gap 5 lets them compile.
+
+18. **`directoryservices.update` asks for a discriminant the form never sends.**
+    The generated input requires `service_type` inside `configuration` as well
+    as at the top level; the directory services form has only ever sent the
+    top-level one, and middleware has accepted that. The migration keeps the
+    request unchanged, so `toDirectoryServicesUpdateArgs` asserts the generated
+    shape over a payload without the inner field. Sending it is a one-line
+    change in `transformFormDataToApiPayload`, but it changes the request, so
+    it wants a box check of all three service types first, or a correction to
+    the model in middleware if the inner field is not meant to be required.
 
 ## Version policy
 

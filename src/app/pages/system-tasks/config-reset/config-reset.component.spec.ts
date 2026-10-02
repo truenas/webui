@@ -3,13 +3,13 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { BehaviorSubject, of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { ConnectionService } from 'app/modules/websocket/connection.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ConfigResetComponent } from 'app/pages/system-tasks/config-reset/config-reset.component';
 import { selectIsEnterprise, selectProductType } from 'app/store/system-info/system-info.selectors';
 
@@ -25,8 +25,8 @@ describe('ConfigResetComponent', () => {
           { selector: selectIsEnterprise, value: false },
         ],
       }),
-      mockApi([
-        mockJob('config.reset', fakeSuccessfulJob()),
+      mockTypedApi([
+        mockTypedJob('config.reset', { state: JobState.Success }),
       ]),
       mockProvider(Location),
       // AuthService is injected by SystemTaskRedirectService rather than by the component,
@@ -76,7 +76,7 @@ describe('ConfigResetComponent', () => {
   });
 
   it('resets config when user visits the page and waits for websocket to reconnect', () => {
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('config.reset', [{ reboot: true }]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('config.reset', [{ reboot: true }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(ConnectionService).prepareShutdown).toHaveBeenCalled();
   });

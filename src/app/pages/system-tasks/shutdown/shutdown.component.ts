@@ -7,8 +7,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { timer } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { ConnectionService } from 'app/modules/websocket/connection.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SystemTaskSplashComponent } from 'app/pages/system-tasks/system-task-splash/system-task-splash.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -26,7 +26,7 @@ export const blackoutDelay = 60 * 1000;
   ],
 })
 export class ShutdownComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private connection = inject(ConnectionService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
