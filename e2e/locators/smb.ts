@@ -1,11 +1,9 @@
 /**
  * SMB shares — the dashboard card and the share form.
  *
- * The form is hand-written (`smb-form.component.html`), not renderer-driven, so
- * its ids come from explicit `testId` inputs; most happen to match the control
- * name anyway. Every value below was read off a running appliance rather than
- * derived from the template, because several are not what the template suggests
- * — see {@link rowMenuDelete} in particular.
+ * The form is hand-written (`smb-form.component.html`), so its ids come from
+ * explicit `testId` inputs. Every value below was read off a running appliance,
+ * because several are not what the template suggests — see {@link rowMenuDelete}.
  *
  * See `signin.ts` for a note on the type-prefixing that produces these values.
  */
@@ -30,15 +28,12 @@ export const smbLocators = {
      */
     purpose: '[data-test="select-purpose"]',
     /**
-     * A purpose option, by the label shown on screen.
-     *
-     * **By label, not by value** — `tn-select` derives an option's id from its
-     * label. The two disagree for every purpose (`Default Share` is stored as
+     * A purpose option, by the label shown on screen — `tn-select` derives an
+     * option's id from its label, not its value (`Default Share`, stored as
      * `DEFAULT_SHARE`), so a locator built from the enum would never match.
      *
-     * Note the picker does not offer every purpose: `Legacy Share` is left out
-     * for a new share, and `Veeam Repository Share` for an appliance without the
-     * entitlement.
+     * The picker does not offer every purpose: `Legacy Share` is left out for a
+     * new share, and `Veeam Repository Share` without the entitlement.
      */
     purposeOption: (label: string): string => `[data-test="option-purpose-${kebabTestSegment(label)}"]`,
 
@@ -134,15 +129,12 @@ export const smbLocators = {
     /**
      * A share's row in the dashboard card.
      *
-     * `[rowTestId]` comes from `rowTagPair`'s `uniqueRowTag`, which is the
-     * *library's* normalizer — so `e2e_recon_share` is `e2e-recon-share` here.
-     * The cells inside the same row go through `cellRowTag` and lodash instead,
-     * giving `e-2-e-recon-share`. One share, two spellings, in one row; see the
+     * The row tag goes through the library's normalizer (`e2e-recon-share`); the
+     * cells inside the same row go through lodash (`e-2-e-recon-share`). See the
      * note in `locators/test-id.ts`.
      *
-     * The card shows four shares, by name. A fifth that sorts ahead of the
-     * one a test wants pushes it off the card and every locator here times out,
-     * so a spec keeps its shares few and the appliance free of others.
+     * The card shows four shares, by name, so a spec keeps its shares few: a
+     * fifth sorting ahead of the one a test wants pushes it off the card.
      */
     row: (name: string): string => `[data-test="row-card-smb-share-${kebabTestSegment(name)}"]`,
 

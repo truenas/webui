@@ -15,16 +15,11 @@ const startServiceSaveTimeoutMs = 90_000;
 /**
  * How long a control on this form may take to appear.
  *
- * Generous on purpose, and the reason is the screen rather than the form. The
- * Shares dashboard is the chattiest page the suite drives — six service cards
- * polling their own state — and the development build queues calls past twenty
- * rather than dropping them, so on a loaded appliance the form settles slowly
- * while the page catches up. Every id below is verified against a running
- * appliance, so a long wait here means a busy page, not a wrong selector; the
- * usual argument for a short timeout (fail fast on a typo) does not apply.
- *
- * Only the `branch` profile queues this way. CI runs `shipped`, where the
- * diagnostic is compiled out entirely.
+ * Generous because of the screen, not the form: the Shares dashboard is the
+ * chattiest page the suite drives, and the development build queues calls past
+ * twenty, so the form settles slowly while the page catches up. The ids are
+ * verified against a running appliance, so a long wait here is a busy page
+ * rather than a wrong selector.
  */
 export const formSettleTimeoutMs = 60_000;
 
@@ -76,20 +71,12 @@ export async function showAdvancedOptions(page: Page): Promise<void> {
 /**
  * Saves the form, declines the offer to start SMB, and waits for the panel.
  *
- * **Starting the service is global state.** It changes which dialog the next
- * test is shown — `CLAUDE.md` names that as the failure mode a passing suite
- * hides — so a spec about the form leaves the service where it found it. The
- * offer only appears while SMB is stopped, which every caller establishes in
- * `beforeEach`.
+ * Declines because service state is global. The offer only appears while SMB
+ * is stopped, which every caller establishes in `beforeEach`.
  *
- * Two prompts this deliberately does not handle, because no caller needs them
- * and guessing at their order got it wrong once: "Configure ACL", which appears
- * only when `filesystem.stat(path).acl` is already true (so never on the fresh
- * datasets these specs create), and "Restart SMB Service", which replaces the
- * start offer when the service is running. The product raises restart *before*
- * ACL (`smb-form.component.ts` chains `restartCifsServiceIfNecessary` then
- * `shouldRedirectToAclEdit`); a helper that handled them the other way round
- * would deadlock. Add them here when a test needs one, in that order.
+ * Not handled, because no caller needs them: "Restart SMB Service" (raised
+ * instead while the service is running) and "Configure ACL" (only when the
+ * path already has an ACL). The form raises them in that order.
  */
 export async function saveShareForm(page: Page): Promise<void> {
   const declineStart = page.locator(smbLocators.declineStartService);
