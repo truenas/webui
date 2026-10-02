@@ -13,6 +13,8 @@
     [tooltip]="helptext.dialogFormFields.newDisk.tooltip | translate"
   ></ix-unused-disk-select>
 
+  <ix-sed-disk-password [poolId]="data.poolId" [disk]="newDisk()"></ix-sed-disk-password>
+
   <div>{{ helptext.raidzExtendMessage | translate }}</div>
 
   <ix-form-actions>
@@ -24,7 +26,7 @@
       type="submit"
       color="primary"
       ixTest="extend"
-      [disabled]="form.invalid"
+      [disabled]="!canSubmit()"
     >
       {{ 'Extend' | translate }}
     </button>

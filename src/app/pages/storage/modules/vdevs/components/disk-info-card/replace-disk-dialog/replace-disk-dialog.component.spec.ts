@@ -6,10 +6,12 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { DetailsDisk } from 'app/interfaces/disk.interface';
+import { SedStatus } from 'app/enums/sed-status.enum';
+import { DetailsDisk, Disk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -20,6 +22,9 @@ import {
   ReplaceDiskDialogData,
   ReplaceDiskDialog,
 } from 'app/pages/storage/modules/vdevs/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
+import {
+  mockSedDiskPasswordCalls, sedEntitledProvider,
+} from 'app/pages/storage/modules/vdevs/components/sed-disk-password/testing/sed-disk-password-mocks';
 
 describe('ReplaceDiskDialogComponent', () => {
   let spectator: Spectator<ReplaceDiskDialog>;
@@ -39,6 +44,7 @@ describe('ReplaceDiskDialogComponent', () => {
           used: [],
         }),
         mockJob('pool.replace', fakeSuccessfulJob()),
+        ...mockSedDiskPasswordCalls(),
       ]),
       mockProvider(MatDialogRef),
       mockProvider(DialogService, {
@@ -56,6 +62,7 @@ describe('ReplaceDiskDialogComponent', () => {
         } as ReplaceDiskDialogData,
       },
       mockAuth(),
+      sedEntitledProvider,
     ],
   });
 
@@ -124,5 +131,36 @@ describe('ReplaceDiskDialogComponent', () => {
         preserve_settings: false,
       },
     ]);
+  });
+
+  it('unlocks a locked SED disk with an individual password before replacing', async () => {
+    const api = spectator.inject(MockApiService);
+    api.mockCall('disk.query', [{ name: 'sdb', sed: true, sed_status: SedStatus.Locked } as Disk]);
+    api.mockCall('disk.unlock_sed');
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({ 'Member Disk': 'sdb (10 GiB)' });
+
+    expect(api.call).toHaveBeenCalledWith(
+      'disk.query',
+      [[['identifier', '=', '{serial_lunid}BBBBB1']], { extra: { sed_status: true } }],
+    );
+
+    await form.fillForm({ 'SED Password': 'Individual password for this disk' });
+    await form.fillForm({ Password: 'disk-secret' });
+
+    const replaceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Replace Disk' }));
+    await replaceButton.click();
+
+    expect(api.call).toHaveBeenCalledWith('disk.unlock_sed', [{ name: 'sdb', password: 'disk-secret' }]);
+    expect(api.job).toHaveBeenCalledWith(
+      'pool.replace',
+      [1, expect.objectContaining({ disk: '{serial_lunid}BBBBB1' })],
+    );
+  });
+
+  it('keeps Replace Disk disabled until a disk is picked', async () => {
+    const replaceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Replace Disk' }));
+    expect(await replaceButton.isDisabled()).toBe(true);
   });
 });

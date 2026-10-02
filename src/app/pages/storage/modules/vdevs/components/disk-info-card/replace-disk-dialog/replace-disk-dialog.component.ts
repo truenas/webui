@@ -1,11 +1,14 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, viewChild,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
 } from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
@@ -16,6 +19,7 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { SedDiskPasswordComponent } from 'app/pages/storage/modules/vdevs/components/sed-disk-password/sed-disk-password.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface ReplaceDiskDialogData {
@@ -33,6 +37,7 @@ export interface ReplaceDiskDialogData {
     MatDialogTitle,
     ReactiveFormsModule,
     UnusedDiskSelectComponent,
+    SedDiskPasswordComponent,
     IxCheckboxComponent,
     FormActionsComponent,
     MatButton,
@@ -60,24 +65,29 @@ export class ReplaceDiskDialog {
     force: [false],
   });
 
+  protected readonly replacement = toSignal(this.form.controls.replacement.valueChanges, { initialValue: '' });
+  private readonly sedDiskPassword = viewChild.required(SedDiskPasswordComponent);
+  private readonly formStatus = toSignal(this.form.statusChanges, { initialValue: this.form.status });
+  protected readonly canSubmit = computed(() => this.formStatus() === 'VALID' && this.sedDiskPassword().isValid());
+
   readonly helptext = helptextVolumeStatus;
 
   protected readonly Role = Role;
 
   onSubmit(): void {
     const values = this.form.getRawValue();
-    this.dialogService.jobDialog(
-      this.api.job('pool.replace', [this.data.poolId, {
-        label: this.data.guid,
-        disk: values.replacement,
-        force: values.force,
-        preserve_settings: values.preserve_settings,
-        preserve_description: values.preserve_description,
-      }]),
-      { title: this.translate.instant(helptextVolumeStatus.replaceDisk.title) },
-    )
-      .afterClosed()
+    this.sedDiskPassword().prepareDisk()
       .pipe(
+        switchMap(() => this.dialogService.jobDialog(
+          this.api.job('pool.replace', [this.data.poolId, {
+            label: this.data.guid,
+            disk: values.replacement,
+            force: values.force,
+            preserve_settings: values.preserve_settings,
+            preserve_description: values.preserve_description,
+          }]),
+          { title: this.translate.instant(helptextVolumeStatus.replaceDisk.title) },
+        ).afterClosed()),
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )

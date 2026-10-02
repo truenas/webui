@@ -10,6 +10,12 @@
     [tooltip]="helptext.dialogFormFields.disk.tooltip | translate"
   ></ix-unused-disk-select>
 
+  <ix-sed-disk-password
+    diskField="identifier"
+    [poolId]="data.poolId"
+    [disk]="replacement()"
+  ></ix-sed-disk-password>
+
   <ix-checkbox
     formControlName="preserve_settings"
     [label]="'Preserve Power Management settings' | translate"
@@ -37,6 +43,7 @@
       type="submit"
       color="primary"
       ixTest="replace"
+      [disabled]="!canSubmit()"
     >
       {{ 'Replace Disk' | translate }}
     </button>
