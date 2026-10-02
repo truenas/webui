@@ -96,8 +96,6 @@ export interface ApiJobDirectory {
   // Core
   'core.bulk': { params: CoreBulkQuery; response: CoreBulkResponse[] };
 
-  // Directory Services
-
   // Disk
   'disk.wipe': { params: DiskWipeParams; response: void };
 

@@ -415,8 +415,6 @@ export interface ApiCallDirectory {
   'cronjob.run': { params: [id: number]; response: void };
   'cronjob.update': { params: [id: number, update: Partial<CronjobUpdate>]; response: Cronjob };
 
-  // Device
-
   // Directory Services
   'directoryservices.status': { params: void; response: DirectoryServicesStatus };
 
@@ -449,8 +447,6 @@ export interface ApiCallDirectory {
   'failover.sync_to_peer': { params: [{ reboot?: boolean }]; response: void };
   'failover.update': { params: [Partial<FailoverUpdate>]; response: FailoverConfig };
 
-  // Fibre Channel
-
   // Fibre Channel Host
   'fc.fc_host.query': { params: QueryParams<FibreChannelHost>; response: FibreChannelHost[] };
   'fc.fc_host.update': { params: [id: number, changes: Partial<FibreChannelHost>]; response: void };
@@ -470,8 +466,6 @@ export interface ApiCallDirectory {
   'filesystem.getacl': { params: AclQueryParams; response: Acl };
   'filesystem.stat': { params: [path: string]; response: FileSystemStat };
   'filesystem.statfs': { params: [path: string]; response: Statfs };
-
-  // FTP
 
   // Group
   'group.create': { params: [CreateGroup]; response: number };
@@ -697,8 +691,6 @@ export interface ApiCallDirectory {
   'replication.target_unmatched_snapshots': { params: TargetUnmatchedSnapshotsParams; response: Record<string, string[]> };
   'replication.update': { params: [id: number, update: Partial<ReplicationCreate>]; response: ReplicationTask };
 
-  // Reporting
-
   // Rsynctask
   'rsynctask.create': { params: [RsyncTaskUpdate]; response: RsyncTask };
   'rsynctask.delete': { params: [id: number]; response: boolean };
@@ -710,8 +702,6 @@ export interface ApiCallDirectory {
   's3.accesskey.create': { params: [S3AccessKeyCreate]; response: S3AccessKey };
   's3.accesskey.update': { params: [id: number, update: S3AccessKeyUpdate]; response: S3AccessKey };
   's3.accesskey.delete': { params: [id: number]; response: boolean };
-
-  // Service
 
   // Sharing
   'sharing.nfs.create': { params: [NfsShareUpdate]; response: NfsShare };
@@ -740,10 +730,6 @@ export interface ApiCallDirectory {
   'smb.config': { params: void; response: SmbConfig };
   'smb.status': { params: [level: SmbInfoLevel, params?: QueryParams<SmbStatus>]; response: SmbStatus[] };
   'smb.update': { params: [Partial<SmbConfigUpdate>]; response: SmbConfig };
-
-  // SNMP
-
-  // SSH
 
   // Static route
   'staticroute.create': { params: [UpdateStaticRoute]; response: StaticRoute };
@@ -785,8 +771,6 @@ export interface ApiCallDirectory {
   'systemdataset.config': { params: void; response: SystemDatasetConfig };
   'systemdataset.pool_choices': { params: void; response: Choices };
 
-  // Truecommand
-
   // Truenas Connect
   'tn_connect.config': { params: void; response: TruenasConnectConfig };
   'tn_connect.update': { params: [Partial<TruenasConnectUpdate>]; response: TruenasConnectConfig };
@@ -812,8 +796,6 @@ export interface ApiCallDirectory {
   'update.profile_choices': { params: void; response: UpdateProfileChoices };
   'update.config': { params: void; response: UpdateConfig };
   'update.update': { params: [Partial<UpdateConfig>]; response: UpdateConfig };
-
-  // UPS
 
   // User
   'user.create': { params: [UserUpdate]; response: User };
@@ -890,8 +872,6 @@ export interface ApiCallDirectory {
   // WebUI Crypto
   'webui.crypto.csr_profiles': { params: void; response: CertificateProfiles };
   'webui.crypto.get_certificate_domain_names': { params: [number]; response: string[] };
-
-  // WebShare
 
   // ZFS
   'pool.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };

@@ -124,8 +124,12 @@ export class ServiceSnmpComponent extends IxFormHostForm<boolean, SnmpFormValue>
     }
 
     return {
-      // The auth and privacy selects offer only the values middleware accepts.
-      request$: this.api.call('snmp.update', [values as SnmpConfigUpdate]),
+      request$: this.api.call('snmp.update', [{
+        ...values,
+        // The auth and privacy selects offer only the values middleware accepts.
+        v3_authtype: values.v3_authtype as SnmpConfigUpdate['v3_authtype'],
+        v3_privproto: values.v3_privproto as SnmpConfigUpdate['v3_privproto'],
+      }]),
       successMessage: this.translate.instant(serviceConfigSavedMessage),
     };
   };
