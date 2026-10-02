@@ -13,14 +13,19 @@ import {
   TnTableColumnDirective,
   TnTableComponent,
 } from '@truenas/ui-components';
+import { filter, last, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
+import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import {
@@ -30,6 +35,7 @@ import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/tab
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ntpServersElements } from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.elements';
 import { getNtpServersFormConfig } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers.form-config';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-ntp-servers-card',
@@ -59,9 +65,13 @@ export class NtpServersCardComponent implements OnInit {
   private api = inject(ApiService);
   private dialog = inject(DialogService);
   private formPanel = inject(FormSidePanelService);
+  private loader = inject(LoaderService);
+  private snackbar = inject(SnackbarService);
+  private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
+  protected readonly syncRequiredRoles = [Role.ServiceWrite];
   protected readonly searchableElements = ntpServersElements;
 
   dataProvider: AsyncDataProvider<NtpServer>;
@@ -129,5 +139,30 @@ export class NtpServersCardComponent implements OnInit {
     this.formPanel.openForm(getNtpServersFormConfig(this.api, this.translate, undefined), {
       title: this.translate.instant('Add NTP Server'),
     }).onSuccess(() => this.loadItems(), this.destroyRef);
+  }
+
+  /**
+   * There is no dedicated "sync now" endpoint: restarting chronyd makes it poll the servers
+   * in an iburst and step the clock, since chrony.conf allows a step in the first updates (`makestep`).
+   */
+  protected doSyncTime(): void {
+    this.dialog.confirm({
+      title: this.translate.instant('Sync Time'),
+      message: this.translate.instant(
+        'Synchronize the system time with the configured NTP servers? The NTP service will be restarted, and the clock will be set to the NTP time within a few seconds, even if it is far off.',
+      ),
+      buttonText: this.translate.instant('Sync Time'),
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => this.api.job('service.control', [ServiceOperation.Restart, ServiceName.Ntpd, { silent: false }]).pipe(
+        observeJob(),
+        last(),
+        this.loader.withLoader(),
+        this.errorHandler.withErrorHandler(),
+      )),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.snackbar.success(this.translate.instant('System time is being synchronized with the NTP servers.'));
+    });
   }
 }

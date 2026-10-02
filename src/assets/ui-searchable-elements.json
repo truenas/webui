@@ -1762,6 +1762,33 @@
       "System",
       "Advanced Settings",
       "NTP Server",
+      "Sync Time"
+    ],
+    "synonyms": [
+      "Add NTP Server",
+      "Sync System Time",
+      "Synchronize Time",
+      "Resync Time",
+      "NTP Sync"
+    ],
+    "requiredRoles": [
+      "SERVICE_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "sync-ntp-time",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "NTP Server",
       "Add NTP Server"
     ],
     "synonyms": [
