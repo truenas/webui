@@ -36,6 +36,14 @@ async function openShareRowMenu(page: Page, name: string): Promise<void> {
   await trigger.click();
 }
 
+/** Flips a share's Enabled switch on the dashboard card, on the same settle budget. */
+export async function toggleShareEnabled(page: Page, name: string): Promise<void> {
+  const toggle = page.locator(smbLocators.card.enabledToggle(name));
+
+  await expect(toggle).toBeVisible({ timeout: formSettleTimeoutMs });
+  await toggle.click();
+}
+
 /** Opens the add-share panel from the Shares dashboard, as a user would. */
 export async function openAddShareForm(page: Page): Promise<void> {
   await goToShares(page);
@@ -74,7 +82,8 @@ export async function choosePurpose(page: Page, label: string): Promise<void> {
  *
  * The controls a purpose enables are not in the DOM until this is open, so any
  * assertion about the preset engine has to come after it. Waits on a control
- * that every purpose renders rather than on the toggle's own state.
+ * nearly every purpose renders rather than on the toggle's own state — not for
+ * an External Share, which has no host list.
  */
 export async function showAdvancedOptions(page: Page): Promise<void> {
   await page.locator(smbLocators.form.advancedToggle).click();
