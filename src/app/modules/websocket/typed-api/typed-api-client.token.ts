@@ -10,9 +10,12 @@ import {
   TrueNasApiClient,
 } from '@truenas/api-client';
 import { environment } from 'environments/environment';
-import { from, Observable, shareReplay } from 'rxjs';
+import {
+  from, Observable, shareReplay, tap,
+} from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { QueryComparator } from 'app/interfaces/query-api.interface';
+import { limitConcurrentCalls } from 'app/modules/websocket/typed-api/limit-concurrent-calls';
 
 /**
  * The API surface the UI is written against.
@@ -80,6 +83,8 @@ export const TYPED_API_CLIENT = new InjectionToken<Observable<WebUiApiClient>>(
         protocol,
         logger: environment.production ? noopLogger : consoleLogger,
       })).pipe(
+        // Before anything else holds the client, so every call it sends is counted.
+        tap((client) => limitConcurrentCalls(client.connection)),
         shareReplay({ bufferSize: 1, refCount: false }),
       );
     },

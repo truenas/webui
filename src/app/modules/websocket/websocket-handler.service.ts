@@ -23,6 +23,7 @@ import {
 } from 'app/interfaces/api-message.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ConnectionService, TypedConnection } from 'app/modules/websocket/connection.service';
+import { maxConcurrentCalls } from 'app/modules/websocket/typed-api/limit-concurrent-calls';
 import { MockResponseService } from 'app/modules/websocket-debug-panel/services/mock-response.service';
 import { WebSocketDebugService } from 'app/modules/websocket-debug-panel/services/websocket-debug.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -45,7 +46,8 @@ type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>> & { js
  * What stays here is everything the typed client has no seam for, and that
  * the calls still riding this service depend on:
  *
- * - the call queue and its 20-concurrent-call ceiling,
+ * - the call queue, and the 20-call ceiling on what it has in flight itself
+ *   (the tab's total is held under that on the connection, by `limitConcurrentCalls`),
  * - the WebSocket debug panel's logging and its mock interception.
  *
  * The connection status the app's reconnect, shutdown and failover flows read
@@ -80,7 +82,7 @@ export class WebSocketHandlerService {
    */
   private connection: TypedConnection | undefined;
 
-  private readonly maxConcurrentCalls = 20;
+  private readonly maxConcurrentCalls = maxConcurrentCalls;
 
   private readonly triggerNextCall$ = new Subject<void>();
   private activeCalls = 0;
