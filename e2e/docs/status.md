@@ -213,7 +213,34 @@ status. The readout ids the dataset spec asserts on (`text-tier` and the
 dialogs' values) arrived in NAS-143970 on 2026-09-25, so a `shipped` run needs
 a nightly built after that.
 
-The framework is done and the coverage is not. Fifty-nine tests — fifty-eight
+SMB shares came next, in `tests/smb-form.e2e.ts`, `tests/smb-list.e2e.ts`,
+`tests/smb-dataset-preset.e2e.ts` and `tests/smb-service.e2e.ts` — the first
+area since S3 with a conditional surface big enough to be the point. A share's
+purpose selects a preset and `presetEnabledFields` decides from it which options
+exist at all, so one panel is seven different forms; `smb-form` pins the swap in
+both directions and the External Share case, where the path control is replaced
+by a remote-path list and the appliance stores the sentinel `EXTERNAL`. Both
+name refusals go through `sharing.smb.share_precheck`, so they are a round trip
+to middleware rather than a lookup in a cached list. `smb-list` deletes and
+edits a share from its row menu, each beside a second share that must come
+through untouched. `smb-dataset-preset` covers a rule that spans two features:
+a dataset created with the SMB preset publishes a share, and the form then
+offers to start the service — which it does not do for a preset that makes no
+share (Generic is the control; Multiprotocol and a running service are not
+exercised). `smb-service` covers what lives on the
+service rather than the share: the Apple-extensions gate a Time Machine share
+is held behind (the write, `smb.update`, outlives the share, so the spec puts
+it back), a row's Enabled switch, and the card's own start/stop switch.
+
+Four things in this area are not what the template implies, and were read off
+a running appliance: row actions collapse into a kebab menu whose items carry the
+icon *with its library* (`…-more-action-mdi-delete-row-action`); the card's row
+tag uses the library normalizer while the cells inside the same row use lodash;
+`Legacy Share` is filtered out of the purpose picker for new shares; and the
+"Configure ACL" prompt depends on `filesystem.stat(path).acl` rather than on the
+purpose, which is why these specs never see it and `fresh-install` always does.
+
+The framework is done and the coverage is not. Seventy-one tests — seventy
 journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
@@ -254,7 +281,12 @@ a number. See `05-ci.md`.
    everywhere this suite can reach it — datasets, zvols and pool disconnect;
    what is left needs an app, SED hardware or a VM. ZFS tiering's configuration
    and a dataset's tier change are covered; the share-list tier action and the
-   tier gating are next. S3 is covered as a feature — create, configure,
+   tier gating are next — the SMB specs brought the share fixture and row
+   locators the first of those needs. SMB shares are covered from the Shares
+   dashboard — publish, the purpose presets, edit, enable, unshare, the service
+   switch — but not the share and filesystem ACL editors, the standalone list
+   page, or anything a real SMB client would have to prove. NFS is the
+   near-copy to take after it. S3 is covered as a feature — create, configure,
    edit, toggle, rotate, delete — except auditing, which is licence-gated and
    needs an Enterprise appliance. List-driven journeys (deleting a pool, dataset
    or share from a list) are no longer blocked: `tn-table` still writes nothing
@@ -322,6 +354,15 @@ a number. See `05-ci.md`.
   behind — webui's own defaults, which is what that account was already being
   given at runtime, but now written down rather than inferred. Harmless in
   practice and irreversible, so it is recorded rather than worked around.
+- **`isNewTimeMachineShare` in `smb-form.component.ts` is dead code**, and the
+  restart prompt is broader than the comments around it imply. The prompt is
+  gated on `isRestartRequired`, which is `this.isNew || this.form.dirty` — so it
+  appears for every new share and every edit while SMB is running, whatever the
+  purpose. The Time Machine transition logic the comments describe lives in
+  `isNewTimeMachineShare`, which nothing in `src/` references. So
+  `smb-service.e2e.ts` covers the Apple-extensions gate and leaves the restart
+  prompt alone: pinning the current behaviour would encode something that reads
+  as unintended. Worth a product answer before it is tested either way.
 - **The delete-group dialog's "delete these users too" checkbox is unreachable**,
   and so has no test. It renders when the group has members, while the button
   that opens the dialog is disabled for exactly that reason — two rules that
