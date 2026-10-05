@@ -11,7 +11,7 @@ import {
   ContainerDevice,
   ContainerUsbDevice,
 } from 'app/interfaces/container.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   AddUsbDeviceMenuComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-usb-devices/add-usb-device-menu/add-usb-device-menu.component';
@@ -39,7 +39,7 @@ import { isContainerActive } from 'app/pages/containers/utils/container-status.u
   ],
 })
 export class ContainerUsbDevicesComponent {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private devicesStore = inject(ContainerDevicesStore);
   private containersStore = inject(ContainersStore);
   private translate = inject(TranslateService);

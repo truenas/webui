@@ -1,7 +1,7 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { AvailableUsb, ContainerDevice } from 'app/interfaces/container.interface';
 import {
@@ -56,8 +56,8 @@ describe('ContainerUsbDevicesComponent', () => {
       ),
     ],
     providers: [
-      mockApi([
-        mockCall('container.device.usb_choices', {
+      mockTypedApi([
+        mockTypedCall('container.device.usb_choices', {
           usb_1_1: {
             capability: { vendor_id: '0x046d', product_id: '0x0825' },
             available: true,
@@ -84,8 +84,11 @@ describe('ContainerUsbDevicesComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
+    // The typed double answers `container.device.usb_choices` on a microtask.
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
   });
 
   it('shows human-readable descriptions for USB devices middleware knows about', () => {

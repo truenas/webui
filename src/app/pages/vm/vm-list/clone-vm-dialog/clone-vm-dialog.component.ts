@@ -8,10 +8,10 @@ import {
 } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { VirtualMachine, VmCloneParams } from 'app/interfaces/virtual-machine.interface';
+import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -33,7 +33,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class CloneVmDialogComponent {
   private errorHandler = inject(ErrorHandlerService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private loader = inject(LoaderService);
   vm = inject<VirtualMachine>(DIALOG_DATA);
   protected dialogRef = inject<DialogRef<unknown, CloneVmDialogComponent>>(DialogRef);
@@ -43,12 +43,8 @@ export class CloneVmDialogComponent {
   protected readonly requiredRoles = [Role.VmWrite];
 
   onClone(): void {
-    const params = [this.vm.id] as VmCloneParams;
-    if (this.nameControl.value) {
-      params.push(this.nameControl.value);
-    }
-
-    this.api.call('vm.clone', params)
+    const name = this.nameControl.value;
+    this.api.call('vm.clone', name ? [this.vm.id, name] : [this.vm.id])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),

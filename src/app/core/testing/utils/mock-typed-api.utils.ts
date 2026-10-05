@@ -77,3 +77,15 @@ export function mockTypedJob<M extends JobMethod<D>>(
 ): MockTypedApiResponse {
   return (api) => api.mockJob(method, updates);
 }
+
+/**
+ * Waits for the typed double to answer. It replies on a microtask, as a socket would, so a spec
+ * that asserts on the outcome of a call needs to let that reply land first. A component spec has
+ * `await spectator.fixture.whenStable()` for this; a service or store spec, with no fixture to
+ * wait on, awaits this instead. A macrotask runs after every microtask already queued.
+ */
+export function settleTypedApi(): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve);
+  });
+}

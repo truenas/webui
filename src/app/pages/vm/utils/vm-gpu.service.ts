@@ -7,7 +7,7 @@ import { VmDeviceType } from 'app/enums/vm.enum';
 import { Device, PciDevice } from 'app/interfaces/device.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 
 @Injectable({
@@ -15,7 +15,7 @@ import { GpuService } from 'app/services/gpu/gpu.service';
 })
 export class VmGpuService {
   private gpuService = inject(GpuService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
 
 
   /**

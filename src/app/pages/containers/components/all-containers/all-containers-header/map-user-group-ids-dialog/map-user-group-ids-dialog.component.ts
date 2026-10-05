@@ -30,7 +30,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   IdMapping,
   ViewType,
@@ -70,7 +70,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class MapUserGroupIdsDialogComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   protected dialogRef = inject<DialogRef<unknown, MapUserGroupIdsDialogComponent>>(DialogRef);
   private translate = inject(TranslateService);
@@ -118,7 +118,7 @@ export class MapUserGroupIdsDialogComponent implements OnInit {
     let request$: Observable<IdMapping[]>;
 
     if (this.typeControl.value === ViewType.Users) {
-      request$ = this.api.call('user.query', [[['local', '=', true], ['userns_idmap', '!=', null]]]).pipe(
+      request$ = this.api.query('user.query', [['local', '=', true], ['userns_idmap', '!=', null]]).pipe(
         map((users) => users.map((user) => ({
           name: user.username,
           systemId: user.id,
@@ -128,7 +128,7 @@ export class MapUserGroupIdsDialogComponent implements OnInit {
         }))),
       );
     } else {
-      request$ = this.api.call('group.query', [[['local', '=', true], ['userns_idmap', '!=', null]]]).pipe(
+      request$ = this.api.query('group.query', [['local', '=', true], ['userns_idmap', '!=', null]]).pipe(
         map((groups) => groups.map((group) => ({
           name: group.group,
           systemId: group.id,

@@ -23,7 +23,7 @@ import {
 import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   containerPathValidator,
   poolPathValidator,
@@ -48,7 +48,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
 })
 export class ContainerFilesystemDeviceFormComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private filesystem = inject(FilesystemService);
 
@@ -97,7 +97,9 @@ export class ContainerFilesystemDeviceFormComponent extends IxFormHostForm imple
     const existingDisk = this.disk();
     return existingDisk
       ? this.api.call('container.device.update', [existingDisk.id, {
-          attributes: payload,
+          // `container.device.update` types `attributes` as a loose record, which an interface has no
+          // index signature to satisfy; the copy is the same object as an anonymous type.
+          attributes: { ...payload },
         }])
       : this.api.call('container.device.create', [{
           container: this.container().id,

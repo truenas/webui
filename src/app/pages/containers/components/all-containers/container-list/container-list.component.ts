@@ -38,7 +38,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ContainerListBulkActionsComponent } from 'app/pages/containers/components/all-containers/container-list/container-list-bulk-actions/container-list-bulk-actions.component';
 import { ContainerStatusCellComponent } from 'app/pages/containers/components/all-containers/container-list/container-status-cell/container-status-cell.component';
 import {
@@ -93,7 +93,7 @@ export class ContainerListComponent {
   private searchDirectives = inject(UiSearchDirectivesService);
   private layoutService = inject(LayoutService);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private tnDialog = inject(TnDialog);
   private dialog = inject(DialogService);

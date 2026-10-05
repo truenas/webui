@@ -7,12 +7,12 @@ import {
   TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ContainerDeviceType, ContainerNicDeviceType } from 'app/enums/container.enum';
 import { ContainerDevice } from 'app/interfaces/container.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AddNicMenuComponent } from 'app/pages/containers/components/all-containers/container-details/container-nic-devices/add-nic-menu/add-nic-menu.component';
 import { ContainerNicFormDialog } from 'app/pages/containers/components/common/container-nic-form-dialog/container-nic-form-dialog.component';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
@@ -25,12 +25,12 @@ describe('AddNicMenuComponent', () => {
     component: AddNicMenuComponent,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('container.device.nic_attach_choices', {
+      mockTypedApi([
+        mockTypedCall('container.device.nic_attach_choices', {
           BRIDGE: ['truenasbr0'],
           MACVLAN: ['ens1'],
         }),
-        mockCall('container.device.create'),
+        mockTypedCall('container.device.create', null),
       ]),
       mockProvider(ContainersStore, {
         selectedContainer: () => ({ id: 123 }),
@@ -98,7 +98,7 @@ describe('AddNicMenuComponent', () => {
       minWidth: '500px',
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('container.device.create', [{
       container: 123,
       attributes: {
         dtype: ContainerDeviceType.Nic,
@@ -126,7 +126,7 @@ describe('AddNicMenuComponent', () => {
     const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
     await menu.clickItem({ label: 'truenasbr0' });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('container.device.create', [{
       container: 123,
       attributes: {
         dtype: ContainerDeviceType.Nic,
@@ -145,8 +145,8 @@ describe('AddNicMenuComponent - Default Bridge Filtering', () => {
     component: AddNicMenuComponent,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('container.device.nic_attach_choices', {
+      mockTypedApi([
+        mockTypedCall('container.device.nic_attach_choices', {
           BRIDGE: ['truenasbr0'],
           MACVLAN: ['ens1'],
         }),
@@ -188,8 +188,8 @@ describe('AddNicMenuComponent - No NICs Available', () => {
     component: AddNicMenuComponent,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('container.device.nic_attach_choices', {}),
+      mockTypedApi([
+        mockTypedCall('container.device.nic_attach_choices', { BRIDGE: [], MACVLAN: [] }),
       ]),
       mockProvider(ContainersStore, {
         selectedContainer: () => ({ id: 123 }),
@@ -221,8 +221,8 @@ describe('AddNicMenuComponent - NIC Deduplication', () => {
     component: AddNicMenuComponent,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('container.device.nic_attach_choices', {
+      mockTypedApi([
+        mockTypedCall('container.device.nic_attach_choices', {
           BRIDGE: ['eth0', 'truenasbr0'],
           MACVLAN: ['eth0', 'ens1'],
         }),

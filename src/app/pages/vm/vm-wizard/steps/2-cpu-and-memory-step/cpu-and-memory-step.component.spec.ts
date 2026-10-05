@@ -6,7 +6,7 @@ import {
   TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness, TnStepperComponent,
 } from '@truenas/ui-components';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { VmCpuMode } from 'app/enums/vm.enum';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import {
@@ -23,9 +23,9 @@ describe('CpuAndMemoryStepComponent', () => {
     ],
     providers: [
       mockProvider(TnStepperComponent),
-      mockApi([
-        mockCall('vm.maximum_supported_vcpus', 27),
-        mockCall('vm.cpu_model_choices', {
+      mockTypedApi([
+        mockTypedCall('vm.maximum_supported_vcpus', 27),
+        mockTypedCall('vm.cpu_model_choices', {
           486: '486',
           EPYC: 'EPYC',
         }),
@@ -114,7 +114,11 @@ describe('CpuAndMemoryStepComponent', () => {
     ]);
   });
 
-  it('loads maximum number of vcpus and shows a message about it', () => {
+  it('loads maximum number of vcpus and shows a message about it', async () => {
+    // The typed double answers on a microtask.
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
+
     expect(spectator.query('.warning-text'))
       .toHaveText('The product of vCPUs, cores and threads must not exceed 27 on this system.');
   });

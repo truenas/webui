@@ -4,13 +4,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { VmDeviceType, VmDiskMode } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
 
 describe('DeleteVmDialogComponent', () => {
@@ -64,9 +65,9 @@ describe('DeleteVmDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockCall('vm.delete'),
-        mockCall('vm.device.query', mockDevices),
+      mockTypedApi([
+        mockTypedCall('vm.delete', null),
+        mockTypedQuery('vm.device.query', mockDevices as unknown as WebUiQueryEntity<'vm.device.query'>[]),
       ]),
       mockAuth(),
       mockProvider(DialogRef),
@@ -100,12 +101,12 @@ describe('DeleteVmDialogComponent', () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.delete', [1, { force: true, zvols: true }]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('vm.delete', [1, { force: true, zvols: true }]);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 
   it('loads devices on init', () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.device.query', [[['vm', '=', 1]]]);
+    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('vm.device.query', [['vm', '=', 1]]);
   });
 
   it('shows devices list only when "Delete Virtual Machine Data?" is checked', async () => {

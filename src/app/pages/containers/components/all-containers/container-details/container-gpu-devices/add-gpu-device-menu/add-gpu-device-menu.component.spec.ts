@@ -5,12 +5,12 @@ import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ContainerDeviceType, containerGpuType, ContainerType } from 'app/enums/container.enum';
 import { ContainerDevice } from 'app/interfaces/container.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   AddGpuDeviceMenuComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-gpu-devices/add-gpu-device-menu/add-gpu-device-menu.component';
@@ -35,8 +35,8 @@ describe('AddGpuDeviceMenuComponent', () => {
       component: AddGpuDeviceMenuComponent,
       providers: [
         mockAuth(),
-        mockApi([
-          mockCall('container.device.create'),
+        mockTypedApi([
+          mockTypedCall('container.device.create', null),
         ]),
         provideMockStore({
           selectors: [
@@ -90,7 +90,7 @@ describe('AddGpuDeviceMenuComponent', () => {
       const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
       await menu.clickItem({ label: 'AMD (0000:1a:00.0)' });
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('container.device.create', [{
         container: 123,
         attributes: {
           dtype: ContainerDeviceType.Gpu,
@@ -109,7 +109,7 @@ describe('AddGpuDeviceMenuComponent', () => {
       component: AddGpuDeviceMenuComponent,
       providers: [
         mockAuth(),
-        mockApi([]),
+        mockTypedApi([]),
         provideMockStore({
           selectors: [
             {

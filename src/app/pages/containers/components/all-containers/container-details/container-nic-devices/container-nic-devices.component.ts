@@ -10,7 +10,7 @@ import { catchError, of } from 'rxjs';
 import { ContainerDeviceType } from 'app/enums/container.enum';
 import { containersHelptext } from 'app/helptext/containers/containers';
 import { ContainerDevice, ContainerNicDevice } from 'app/interfaces/container.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AddNicMenuComponent } from 'app/pages/containers/components/all-containers/container-details/container-nic-devices/add-nic-menu/add-nic-menu.component';
 import {
   DeviceActionsMenuComponent,
@@ -40,7 +40,7 @@ export class ContainerNicDevicesComponent {
   private devicesStore = inject(ContainerDevicesStore);
   private containersStore = inject(ContainersStore);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
 
   protected readonly hasPendingInterfaceChanges = toSignal(
     this.api.call('interface.has_pending_changes').pipe(catchError(() => of(false))),

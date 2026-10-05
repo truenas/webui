@@ -3,17 +3,17 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { EventUnion } from '@truenas/api-client';
 import {
   TnButtonHarness, TnEmptyHarness, TnSelectHarness, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { VmBootloader, VmDeviceType, VmDisplayType, VmState } from 'app/enums/vm.enum';
-import { ApiEventTyped } from 'app/interfaces/api-message.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -24,6 +24,7 @@ import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   TableColumnPickerComponent,
 } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import {
   VirtualMachineDetailsRowComponent,
 } from 'app/pages/vm/vm-list/vm-details-row/vm-details-row.component';
@@ -31,6 +32,8 @@ import { VmListComponent } from 'app/pages/vm/vm-list.component';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { VmService } from 'app/services/vm.service';
+
+type VmQueryEvent = EventUnion<WebUiApiDirectory, 'vm.query'>;
 
 const virtualMachines = [
   {
@@ -107,8 +110,8 @@ describe('VmListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('vm.query', virtualMachines),
+      mockTypedApi([
+        mockTypedQuery('vm.query', virtualMachines as unknown as WebUiQueryEntity<'vm.query'>[]),
       ]),
       provideMockStore({
         initialState: {
@@ -147,8 +150,9 @@ describe('VmListComponent', () => {
    * changed or removed. Preferred over seeding the component's row map directly: it also covers
    * the subscription that maintains it, and keeps these cases off the component's internals.
    */
-  function emitVmEvent(event: Partial<ApiEventTyped>): void {
-    spectator.inject(MockApiService).emitSubscribeEvent(event as ApiEventTyped);
+  function emitVmEvent(event: { msg: CollectionChangeType; id: number; fields?: Partial<VirtualMachine> }): void {
+    // Fixtures read as the UI's `VirtualMachine`, partial updates included; the wire event is the same object.
+    spectator.inject(MockTypedApiService).emitEvent('vm.query', event as unknown as VmQueryEvent);
     spectator.detectChanges();
   }
 
@@ -373,7 +377,7 @@ describe('VmListComponent', () => {
       emitVmEvent({
         msg: CollectionChangeType.Changed,
         id: virtualMachines[0].id,
-        fields: { id: virtualMachines[0].id, status: { state: VmState.Stopped } },
+        fields: { id: virtualMachines[0].id, status: { state: VmState.Stopped } } as Partial<VirtualMachine>,
       });
 
       expect(await table.getCellText(0, 'display_port')).toBe('VNC:5900');
@@ -419,7 +423,7 @@ describe('VmListComponent without virtualization support', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([mockCall('vm.query', [])]),
+      mockTypedApi([mockTypedQuery('vm.query', [])]),
       provideMockStore({
         initialState: {
           preferences: { preferences: { vmList: {} } },

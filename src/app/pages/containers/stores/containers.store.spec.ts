@@ -5,18 +5,18 @@ import { of, Subject } from 'rxjs';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ContainerStatus } from 'app/enums/container.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
-import {
-  Container, ContainerDevice, ContainerMetrics,
-} from 'app/interfaces/container.interface';
+import { Container, ContainerMetrics } from 'app/interfaces/container.interface';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ContainerSortField, ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
 
 describe('ContainersStore', () => {
   let spectator: SpectatorService<ContainersStore>;
 
-  const event$ = new Subject<ApiEvent>();
+  // The wire shape, which a status-only change does not fit the generated event type for.
+  const event$ = new Subject<{ msg: CollectionChangeType; id: number | string; fields?: Partial<Container> }>();
   const metricsEvent$ = new Subject<ApiEvent<ContainerMetrics>>();
   const containers = [
     fakeContainer({ id: 1, name: 'container1' }),
@@ -25,29 +25,21 @@ describe('ContainersStore', () => {
 
   const defaultSort = { active: ContainerSortField.Name, direction: SortDirection.Asc };
 
-  const devices = [
-    { id: 1, dtype: 'FILESYSTEM' },
-    { id: 2, dtype: 'USB' },
-  ] as ContainerDevice[];
-
   const routerEvents$ = new Subject<NavigationEnd>();
 
   const createService = createServiceFactory({
     service: ContainersStore,
     providers: [
+      // A stub rather than `mockTypedApi()`: the store's name-keyed, status-only change events are
+      // the wire shape the generated `container.query` event type does not describe, so they are
+      // fed in as they arrive.
+      mockProvider(TypedApiService, {
+        query: jest.fn(() => of(containers)),
+        subscribe: jest.fn(() => event$),
+      }),
+      // `container.metrics` stays on the legacy client (gap 17 in docs/devs/typed-api-client.md).
       mockProvider(ApiService, {
-        call: jest.fn((method) => {
-          if (method === 'container.query') {
-            return of(containers);
-          }
-          return of(devices);
-        }),
-        subscribe: jest.fn((method) => {
-          if (method === 'container.metrics') {
-            return metricsEvent$;
-          }
-          return event$;
-        }),
+        subscribe: jest.fn(() => metricsEvent$),
       }),
       mockProvider(Router, {
         events: routerEvents$,
@@ -79,7 +71,7 @@ describe('ContainersStore', () => {
   it('should load containers when initialize is called', () => {
     spectator.service.initialize();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.query');
+    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('container.query');
     expect(spectator.service.state()).toEqual({
       containers,
       selectedContainer: undefined,
@@ -94,21 +86,21 @@ describe('ContainersStore', () => {
     spectator.service.patchState({ isLoading: true });
     spectator.service.initialize();
 
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
+    expect(spectator.inject(TypedApiService).query).not.toHaveBeenCalled();
   });
 
   it('should make API call when reload is called after initialization', () => {
     spectator.service.initialize();
     spectator.service.reload();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledTimes(2);
+    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledTimes(2);
   });
 
   it('should make API call when reload is called even while loading', () => {
     spectator.service.patchState({ isLoading: true });
     spectator.service.reload();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.query');
+    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('container.query');
   });
 
   it('should select container when method is called', () => {
@@ -164,18 +156,18 @@ describe('ContainersStore', () => {
 
   describe('container updates subscription', () => {
     it('subscribes to container updates in constructor', () => {
-      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('container.query');
+      expect(spectator.inject(TypedApiService).subscribe).toHaveBeenCalledWith('container.query');
     });
 
     it('does not create duplicate subscriptions on multiple initialize calls', () => {
-      const initialSubscribeCalls = spectator.inject(ApiService).subscribe.mock.calls.filter(
+      const initialSubscribeCalls = spectator.inject(TypedApiService).subscribe.mock.calls.filter(
         (call: [string]) => call[0] === 'container.query',
       ).length;
 
       spectator.service.initialize();
       spectator.service.initialize();
 
-      const currentSubscribeCalls = spectator.inject(ApiService).subscribe.mock.calls.filter(
+      const currentSubscribeCalls = spectator.inject(TypedApiService).subscribe.mock.calls.filter(
         (call: [string]) => call[0] === 'container.query',
       ).length;
 
@@ -188,7 +180,6 @@ describe('ContainersStore', () => {
     it('adds container to the list if add event emitted', () => {
       const newContainer = fakeContainer({ id: 3 });
       event$.next({
-        collection: 'container.query',
         id: 3,
         msg: CollectionChangeType.Added,
         fields: newContainer,
@@ -203,7 +194,6 @@ describe('ContainersStore', () => {
     it('sorts containers by name when an out-of-order container is added', () => {
       const newContainer = fakeContainer({ id: 3, name: 'aaa-container' });
       event$.next({
-        collection: 'container.query',
         id: 3,
         msg: CollectionChangeType.Added,
         fields: newContainer,
@@ -217,7 +207,6 @@ describe('ContainersStore', () => {
 
     it('handles change event', () => {
       event$.next({
-        collection: 'container.query',
         id: 2,
         msg: CollectionChangeType.Changed,
         fields: fakeContainer({ id: 2, name: 'container3' }),
@@ -233,7 +222,6 @@ describe('ContainersStore', () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
       event$.next({
-        collection: 'container.query',
         id: containers[0].name, // API sends name instead of ID for status updates
         msg: CollectionChangeType.Changed,
         fields: { status: 'running' } as unknown as Partial<Container>,
@@ -262,7 +250,6 @@ describe('ContainersStore', () => {
       spectator.service.patchState({ containers: duplicateNameContainers });
 
       event$.next({
-        collection: 'container.query',
         id: 'duplicate',
         msg: CollectionChangeType.Changed,
         fields: { status: 'running' } as unknown as Partial<Container>,
@@ -279,7 +266,6 @@ describe('ContainersStore', () => {
 
     it('handles remove event', () => {
       event$.next({
-        collection: 'container.query',
         id: 2,
         msg: CollectionChangeType.Removed,
         fields: fakeContainer({ id: 2 }),
@@ -363,8 +349,7 @@ describe('ContainersStore', () => {
     it('sorts client-side without sending order_by to the backend', () => {
       spectator.service.setSort({ active: ContainerSortField.Name, direction: SortDirection.Desc });
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.query');
-      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('container.query', expect.anything());
+      expect(jest.mocked(spectator.inject(TypedApiService).query).mock.calls).toEqual([['container.query']]);
     });
   });
 });

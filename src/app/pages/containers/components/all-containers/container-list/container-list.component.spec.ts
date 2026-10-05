@@ -16,7 +16,7 @@ import { LayoutService } from 'app/modules/layout/layout.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ContainerListComponent } from 'app/pages/containers/components/all-containers/container-list/container-list.component';
 import {
   StopOptionsDialog, StopOptionsOperation,
@@ -92,7 +92,7 @@ describe('ContainerListComponent', () => {
       mockProvider(LoaderService, {
         withLoader: jest.fn(() => (source$: unknown) => source$),
       }),
-      mockProvider(ApiService, {
+      mockProvider(TypedApiService, {
         call: jest.fn(() => of(undefined)),
         job: jest.fn(() => of(undefined)),
       }),
@@ -137,7 +137,7 @@ describe('ContainerListComponent', () => {
 
     expect(spectator.inject(TnDialog).open)
       .toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Stop });
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
       'container.stop',
       [1, { force: true, timeout: -1 }],
     );
@@ -150,7 +150,7 @@ describe('ContainerListComponent', () => {
 
     expect(spectator.inject(TnDialog).open)
       .toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Restart });
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.start', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('container.start', [1]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Container restarted');
   });
 
@@ -161,7 +161,7 @@ describe('ContainerListComponent', () => {
     const startButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'play-circle' }));
     await startButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.start', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('container.start', [1]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Container started');
   });
 

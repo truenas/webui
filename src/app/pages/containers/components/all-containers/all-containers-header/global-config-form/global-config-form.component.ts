@@ -3,12 +3,12 @@ import { ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { CallParams } from '@truenas/api-client';
 import {
   TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import {
   IxFormHostForm,
@@ -17,7 +17,8 @@ import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Component({
   selector: 'ix-global-config-form',
@@ -38,7 +39,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 export class GlobalConfigFormComponent extends IxFormHostForm implements OnInit {
   private destroyRef = inject(DestroyRef);
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
 
   /**
@@ -183,7 +184,7 @@ export class GlobalConfigFormComponent extends IxFormHostForm implements OnInit 
 
   protected handleSubmit = (): SubmitResult => {
     const controls = this.form.controls;
-    const values: ContainerGlobalConfig = {
+    const values = {
       // Transform [AUTO] back to empty string for the API
       bridge: controls.bridge.value === this.autoBridge ? '' : controls.bridge.value,
       // Convert empty strings to null for optional network fields
@@ -193,7 +194,9 @@ export class GlobalConfigFormComponent extends IxFormHostForm implements OnInit 
     };
 
     return {
-      request$: this.api.call('lxc.update', [values]),
+      // The form clears a network with `null`, as it always has; the generated `lxc.update` input
+      // types both networks as optional strings without it.
+      request$: this.api.call('lxc.update', [values as CallParams<WebUiApiDirectory, 'lxc.update'>[0]]),
       successMessage: this.translate.instant('Container settings updated'),
     };
   };

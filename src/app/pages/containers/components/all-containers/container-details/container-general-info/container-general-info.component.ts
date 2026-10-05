@@ -19,7 +19,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   DeleteContainerDialog,
 } from 'app/pages/containers/components/common/delete-container-dialog/delete-container-dialog.component';
@@ -48,7 +48,7 @@ export class ContainerGeneralInfoComponent {
   private tnDialog = inject(TnDialog);
   private overlay = inject(Overlay);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private router = inject(Router);
   private formPanel = inject(FormSidePanelService);
   private containersStore = inject(ContainersStore);

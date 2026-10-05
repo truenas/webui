@@ -4,11 +4,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 
 describe('CloneVmDialogComponent', () => {
@@ -20,8 +20,8 @@ describe('CloneVmDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockCall('vm.clone'),
+      mockTypedApi([
+        mockTypedCall('vm.clone', null),
       ]),
       mockAuth(),
       mockProvider(DialogRef),
@@ -47,7 +47,7 @@ describe('CloneVmDialogComponent', () => {
     const cloneButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clone' }));
     await cloneButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.clone', [1, 'Dolly']);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('vm.clone', [1, 'Dolly']);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 });

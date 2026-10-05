@@ -12,11 +12,11 @@ import { Role } from 'app/enums/role.enum';
 import { VmDeviceType, vmDeviceTypeLabels } from 'app/enums/vm.enum';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
-import { VmDevice } from 'app/interfaces/vm-device.interface';
+import { toVmDevice, VmDevice } from 'app/interfaces/vm-device.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -38,7 +38,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DeleteVmDialogComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formBuilder = inject(FormBuilder);
   protected dialogRef = inject<DialogRef<unknown, DeleteVmDialogComponent>>(DialogRef);
   private validators = inject(IxValidatorsService);
@@ -65,14 +65,14 @@ export class DeleteVmDialogComponent implements OnInit {
   }
 
   private loadDevices(): void {
-    this.api.call('vm.device.query', [[['vm', '=', this.vm.id]]])
+    this.api.query('vm.device.query', [['vm', '=', this.vm.id]])
       .pipe(
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((devices) => {
         // Only show DISK and RAW devices
-        const filteredDevices = devices.filter((device) => {
+        const filteredDevices = devices.map(toVmDevice).filter((device) => {
           return [VmDeviceType.Disk, VmDeviceType.Raw].includes(device.attributes.dtype);
         });
         this.devices.set(filteredDevices);

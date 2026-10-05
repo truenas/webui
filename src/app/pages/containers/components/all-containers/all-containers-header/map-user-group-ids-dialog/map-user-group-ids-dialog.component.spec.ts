@@ -5,10 +5,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonToggleHarness, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { Group } from 'app/interfaces/group.interface';
-import { directIdMapping, User } from 'app/interfaces/user.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { directIdMapping } from 'app/interfaces/user.interface';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { UserService } from 'app/services/user.service';
 import { MapUserGroupIdsDialogComponent } from './map-user-group-ids-dialog.component';
 import { ViewType } from './mapping.types';
@@ -23,40 +23,40 @@ const mockUserService = {
 describe('MapUserGroupIdsDialogComponent', () => {
   let spectator: Spectator<MapUserGroupIdsDialogComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
-  const mockUsers: User[] = [
+  const mockUsers = [
     {
       id: 1,
       uid: 1000,
       username: 'testuser',
       userns_idmap: directIdMapping,
       local: true,
-    } as User,
+    } as WebUiQueryEntity<'user.query'>,
     {
       id: 2,
       uid: 1001,
       username: 'anotheruser',
       userns_idmap: 2001,
       local: true,
-    } as User,
+    } as WebUiQueryEntity<'user.query'>,
   ];
 
-  const mockGroups: Group[] = [
+  const mockGroups = [
     {
       id: 10,
       gid: 1000,
       group: 'testgroup',
       userns_idmap: directIdMapping,
       local: true,
-    } as Group,
+    } as WebUiQueryEntity<'group.query'>,
     {
       id: 11,
       gid: 1001,
       group: 'anothergroup',
       userns_idmap: 2002,
       local: true,
-    } as Group,
+    } as WebUiQueryEntity<'group.query'>,
   ];
 
   const createComponent = createComponentFactory({
@@ -65,27 +65,33 @@ describe('MapUserGroupIdsDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockCall('user.query', mockUsers),
-        mockCall('group.query', mockGroups),
-        mockCall('user.update'),
-        mockCall('group.update'),
+      mockTypedApi([
+        mockTypedQuery('user.query', mockUsers),
+        mockTypedQuery('group.query', mockGroups),
+        mockTypedCall('user.update', null),
+        mockTypedCall('group.update', null),
       ]),
       mockProvider(DialogRef),
       mockProvider(UserService, mockUserService),
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
+    // The typed double answers queries on a microtask, after the change detection that set
+    // `[loading]`. Without automatic change detection nothing drops it again before the fake
+    // progress bar's grace timer fires, which then starts a redraw interval the fixture never
+    // settles past — so every load (on init, and on switching to Groups) would hang the harness.
+    spectator.fixture.autoDetectChanges();
+    await spectator.fixture.whenStable();
   });
 
   it('loads users on init', () => {
-    expect(api.call).toHaveBeenCalledWith('user.query', [[
+    expect(api.query).toHaveBeenCalledWith('user.query', [
       ['local', '=', true], ['userns_idmap', '!=', null],
-    ]]);
+    ]);
   });
 
   it('displays users by default', async () => {
@@ -110,34 +116,21 @@ describe('MapUserGroupIdsDialogComponent', () => {
   });
 
   it('deletes user mapping when delete button is clicked', async () => {
-    const apiCallSpy = jest.spyOn(api, 'call');
-    apiCallSpy.mockClear();
-    apiCallSpy.mockImplementation((method) => {
-      if (method === 'user.update') {
-        return of(null);
-      }
-      if (method === 'user.query') {
-        return of(mockUsers);
-      }
-      return of(null);
-    });
-
     const deleteButtons = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-delete' }));
     await deleteButtons[0].click();
 
-    expect(apiCallSpy).toHaveBeenCalledWith('user.update', [1, { userns_idmap: null }]);
+    expect(api.call).toHaveBeenCalledWith('user.update', [1, { userns_idmap: null }]);
   });
 
   it('reloads mappings when a new mapping is added', () => {
-    const apiCallSpy = jest.spyOn(api, 'call');
-    apiCallSpy.mockClear();
+    jest.mocked(api.query).mockClear();
 
     spectator.triggerEventHandler('ix-new-mapping-form', 'mappingAdded', undefined);
     spectator.detectChanges();
 
-    expect(apiCallSpy).toHaveBeenCalledWith('user.query', [[
+    expect(api.query).toHaveBeenCalledWith('user.query', [
       ['local', '=', true], ['userns_idmap', '!=', null],
-    ]]);
+    ]);
   });
 
   it('closes dialog when close button is clicked', () => {

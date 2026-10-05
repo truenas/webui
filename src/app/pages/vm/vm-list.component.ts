@@ -19,18 +19,17 @@ import {
   TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { take, tap } from 'rxjs';
+import { map, take, tap } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { CollectionChangeType } from 'app/enums/api.enum';
 import { Role } from 'app/enums/role.enum';
 import {
   VmDeviceType, VmDisplayType, VmState, vmTimeNames,
 } from 'app/enums/vm.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
-import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { toVirtualMachine, VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -51,7 +50,7 @@ import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, memoizedRowTag, toDisplayedColumns,
 } from 'app/modules/tn-table/utils';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { VirtualMachineDetailsRowComponent } from 'app/pages/vm/vm-list/vm-details-row/vm-details-row.component';
 import { vmListElements } from 'app/pages/vm/vm-list.elements';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
@@ -100,7 +99,7 @@ const displayPortColumn = 'display_port';
 export class VmListComponent implements OnInit {
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private cdr = inject(ChangeDetectorRef);
   private vmService = inject(VmService);
   private fileSizePipe = inject(FileSizePipe);
@@ -118,7 +117,8 @@ export class VmListComponent implements OnInit {
   private vmMap = new Map<string | number, VirtualMachine>();
 
   // TODO: Refactor VM data provider to use ngrx/store
-  private readonly virtualMachines$ = this.api.call('vm.query').pipe(
+  private readonly virtualMachines$ = this.api.query('vm.query').pipe(
+    map((vms) => vms.map(toVirtualMachine)),
     tap((vms) => {
       this.vmMachines = vms;
       this.vmMap = new Map<number, VirtualMachine>(vms.map((vm) => [vm.id, vm]));
@@ -257,31 +257,23 @@ export class VmListComponent implements OnInit {
     this.api.subscribe('vm.query')
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
-        const updatedVm = event.fields;
-        const vmId = updatedVm?.id || event.id;
-
-        if (!vmId) return;
-
-        switch (event.msg) {
-          case CollectionChangeType.Added:
-          case CollectionChangeType.Changed: {
-            const existingVm = this.vmMap.get(vmId);
-            if (existingVm) {
-              // Preserve critical properties like devices if they're not in the update
-              const mergedVm = { ...existingVm, ...updatedVm };
-              if (!updatedVm.devices && existingVm.devices) {
-                mergedVm.devices = existingVm.devices;
-              }
-              this.vmMap.set(vmId, mergedVm);
-            } else {
-              this.vmMap.set(vmId, updatedVm);
+        // The typed event's `msg` is the wire literal, which `CollectionChangeType` cannot be compared with.
+        if (event.msg === 'removed') {
+          this.vmMap.delete(event.id);
+        } else {
+          const updatedVm = toVirtualMachine(event.fields);
+          const vmId = updatedVm.id || event.id;
+          const existingVm = this.vmMap.get(vmId);
+          if (existingVm) {
+            // Preserve critical properties like devices if they're not in the update
+            const mergedVm = { ...existingVm, ...updatedVm };
+            if (!updatedVm.devices && existingVm.devices) {
+              mergedVm.devices = existingVm.devices;
             }
-            break;
+            this.vmMap.set(vmId, mergedVm);
+          } else {
+            this.vmMap.set(vmId, updatedVm);
           }
-
-          case CollectionChangeType.Removed:
-            this.vmMap.delete(vmId);
-            break;
         }
 
         this.vmMachines = Array.from(this.vmMap.values());

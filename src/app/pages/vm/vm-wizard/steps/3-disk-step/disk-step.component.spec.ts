@@ -7,11 +7,10 @@ import {
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { VmDeviceType, VmDiskMode } from 'app/enums/vm.enum';
-import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
-import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
 import { ImageVirtualSizeValidatorService } from 'app/pages/vm/utils/image-virtual-size-validator.service';
 import { DiskStepComponent, NewOrExistingDisk } from 'app/pages/vm/vm-wizard/steps/3-disk-step/disk-step.component';
@@ -28,20 +27,20 @@ describe('DiskStepComponent', () => {
     ],
     providers: [
       mockProvider(TnStepperComponent),
-      mockApi([
-        mockCall('pool.filesystem_choices', [
+      mockTypedApi([
+        mockTypedCall('pool.filesystem_choices', [
           'poolio',
           'poolio/files',
         ]),
-        mockCall('vm.device.disk_choices', {
+        mockTypedCall('vm.device.disk_choices', {
           '/dev/zvol/poolio/test-327brn': 'poolio/test-327brn',
         }),
-        mockCall('vm.device.query', [
+        mockTypedQuery('vm.device.query', [
           { vm: 1, attributes: { dtype: VmDeviceType.Disk, path: '/dev/zvol/poolio/test-327brn' } },
-        ] as VmDiskDevice[]),
-        mockCall('vm.query', [
+        ] as WebUiQueryEntity<'vm.device.query'>[]),
+        mockTypedQuery('vm.query', [
           { id: 1, name: 'existing-vm' },
-        ] as VirtualMachine[]),
+        ] as WebUiQueryEntity<'vm.query'>[]),
       ]),
       mockProvider(FreeSpaceValidatorService, {
         validate: () => of(null),

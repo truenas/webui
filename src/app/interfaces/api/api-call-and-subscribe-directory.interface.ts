@@ -1,22 +1,18 @@
 import { App } from 'app/interfaces/app.interface';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
-import { Container } from 'app/interfaces/container.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { User } from 'app/interfaces/user.interface';
-import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 
 /**
  * Directory of compatible API call and subscribe methods.
  */
 export interface ApiCallAndSubscribeEventDirectory {
-  'vm.query': { response: VirtualMachine };
   'user.query': { response: User };
   'pool.query': { response: Pool };
   'group.query': { response: Group };
   'app.image.query': { response: ContainerImage };
   'app.query': { response: App };
-  'container.query': { response: Container };
 }
 
 export type ApiCallAndSubscribeMethod = keyof ApiCallAndSubscribeEventDirectory;

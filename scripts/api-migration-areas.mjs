@@ -130,6 +130,16 @@ export const migratedApiPaths = [
   'src/app/pages/services/components/service-ups',
   'src/app/pages/services/components/service-webshare',
   'src/app/pages/system-tasks',
+  // NAS-143998: virtual machines and containers. `pages/containers` is pinned below its root:
+  // `ContainersStore` keeps `ApiService` for `container.metrics`, an event source middleware pushes
+  // on a timer, which must not move while the typed client never releases a subscription (gap 17).
+  'src/app/pages/vm',
+  'src/app/pages/containers/components',
+  'src/app/pages/containers/utils',
+  'src/app/pages/containers/stores/container-config.store.ts',
+  'src/app/pages/containers/stores/container-config.store.spec.ts',
+  'src/app/pages/containers/stores/container-devices.store.ts',
+  'src/app/pages/containers/stores/container-devices.store.spec.ts',
 ];
 
 /**

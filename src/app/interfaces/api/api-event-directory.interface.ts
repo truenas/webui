@@ -2,9 +2,7 @@ import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { App, AppContainerLog, AppStats } from 'app/interfaces/app.interface';
 import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
-import {
-  Container, ContainerGlobalConfig, ContainerMetrics,
-} from 'app/interfaces/container.interface';
+import { ContainerMetrics } from 'app/interfaces/container.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { DockerStatusData } from 'app/interfaces/docker-config.interface';
@@ -16,7 +14,6 @@ import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { User } from 'app/interfaces/user.interface';
-import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 
@@ -37,11 +34,8 @@ export interface ApiEventDirectory {
   'tn_connect.config': { response: TruenasConnectConfig };
   'user.query': { response: User };
 
-  'container.query': { response: Container };
   'container.metrics': { response: ContainerMetrics };
-  'lxc.config': { response: ContainerGlobalConfig };
 
-  'vm.query': { response: VirtualMachine };
   'pool.scan': { response: PoolScan };
   'pool.snapshot.query': { response: ZfsSnapshot };
   'pool.snapshottask.query': { response: PeriodicSnapshotTask };

@@ -7,24 +7,22 @@ import {
   mockProvider,
   Spectator,
 } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnDialogHarness, TnInputHarness, TnTableHarness } from '@truenas/ui-components';
-import {
-  mockCall,
-  mockApi,
-} from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ContainerRemote, ContainerType } from 'app/enums/container.enum';
-import { ContainerImageRegistryResponse } from 'app/interfaces/container.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SelectImageDialog } from 'app/pages/containers/components/container-wizard/select-image-dialog/select-image-dialog.component';
 
-const imageChoices: ContainerImageRegistryResponse[] = [
+const imageChoices: CallResponse<WebUiApiDirectory, 'container.image.query_registry'> = [
   {
     name: 'almalinux',
-    versions: ['8'],
+    versions: [{ version: '8' }],
   },
   {
     name: 'alpine',
-    versions: ['3.18'],
+    versions: [{ version: '3.18' }],
   },
 ];
 
@@ -36,7 +34,7 @@ describe('SelectImageDialogComponent', () => {
     component: SelectImageDialog,
     imports: [ReactiveFormsModule],
     providers: [
-      mockApi([mockCall('container.image.query_registry', imageChoices)]),
+      mockTypedApi([mockTypedCall('container.image.query_registry', imageChoices)]),
       mockProvider(DialogRef),
       {
         provide: DIALOG_DATA,
@@ -60,7 +58,7 @@ describe('SelectImageDialogComponent', () => {
     });
 
     it('loads image choices', () => {
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
         'container.image.query_registry',
         [],
       );

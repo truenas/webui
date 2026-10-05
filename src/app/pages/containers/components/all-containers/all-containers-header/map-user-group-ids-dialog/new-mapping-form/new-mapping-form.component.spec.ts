@@ -4,11 +4,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { Group } from 'app/interfaces/group.interface';
-import { directIdMapping, User } from 'app/interfaces/user.interface';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { directIdMapping } from 'app/interfaces/user.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ViewType } from 'app/pages/containers/components/all-containers/all-containers-header/map-user-group-ids-dialog/mapping.types';
 import { UserService } from 'app/services/user.service';
 import { NewMappingFormComponent } from './new-mapping-form.component';
@@ -23,10 +23,10 @@ const mockUserService = {
 describe('NewMappingFormComponent', () => {
   let spectator: Spectator<NewMappingFormComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
-  const mockUser: User = { id: 1000, username: 'testuser', uid: 1000 } as User;
-  const mockGroup: Group = { id: 2000, group: 'testgroup', gid: 1000 } as Group;
+  const mockUser = { id: 1000, username: 'testuser', uid: 1000 } as WebUiQueryEntity<'user.query'>;
+  const mockGroup = { id: 2000, group: 'testgroup', gid: 1000 } as WebUiQueryEntity<'group.query'>;
 
   const createComponent = createComponentFactory({
     component: NewMappingFormComponent,
@@ -34,11 +34,11 @@ describe('NewMappingFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockCall('user.query', [mockUser]),
-        mockCall('group.query', [mockGroup]),
-        mockCall('user.update'),
-        mockCall('group.update'),
+      mockTypedApi([
+        mockTypedQuery('user.query', [mockUser]),
+        mockTypedQuery('group.query', [mockGroup]),
+        mockTypedCall('user.update', null),
+        mockTypedCall('group.update', null),
       ]),
       mockProvider(UserService, mockUserService),
       ...ixFormTestingProviders(),
@@ -52,7 +52,7 @@ describe('NewMappingFormComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
   });
 
   const getInstanceIdInput = (): Promise<TnInputHarness> => loader.getHarness(
@@ -94,7 +94,7 @@ describe('NewMappingFormComponent', () => {
     const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Set' }));
     await submitButton.click();
 
-    expect(api.call).toHaveBeenCalledWith('user.query', [[['username', '=', 'testuser']]]);
+    expect(api.query).toHaveBeenCalledWith('user.query', [['username', '=', 'testuser']]);
     expect(api.call).toHaveBeenCalledWith('user.update', [1000, { userns_idmap: directIdMapping }]);
   });
 
@@ -110,7 +110,7 @@ describe('NewMappingFormComponent', () => {
     const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Set' }));
     await submitButton.click();
 
-    expect(api.call).toHaveBeenCalledWith('user.query', [[['username', '=', 'testuser']]]);
+    expect(api.query).toHaveBeenCalledWith('user.query', [['username', '=', 'testuser']]);
     expect(api.call).toHaveBeenCalledWith('user.update', [1000, { userns_idmap: 2000 }]);
   });
 
@@ -121,7 +121,7 @@ describe('NewMappingFormComponent', () => {
     const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Set' }));
     await submitButton.click();
 
-    expect(api.call).toHaveBeenCalledWith('group.query', [[['group', '=', 'testgroup']]]);
+    expect(api.query).toHaveBeenCalledWith('group.query', [['group', '=', 'testgroup']]);
     expect(api.call).toHaveBeenCalledWith('group.update', [2000, { userns_idmap: directIdMapping }]);
   });
 

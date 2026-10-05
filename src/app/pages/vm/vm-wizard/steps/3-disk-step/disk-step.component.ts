@@ -26,12 +26,12 @@ import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
-import { Dataset } from 'app/interfaces/dataset.interface';
-import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
+import { toVmDevice, VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   AnnotatedZvolOption, buildAnnotatedZvolOptions,
 } from 'app/pages/vm/utils/build-annotated-zvol-options.utils';
@@ -74,7 +74,7 @@ const validImageExtensions = ['.qcow2', '.qed', '.raw', '.vdi', '.vhdx', '.vmdk'
 export class DiskStepComponent implements OnInit, SummaryProvider {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private freeSpaceValidator = inject(FreeSpaceValidatorService);
   private imageVirtualSizeValidator = inject(ImageVirtualSizeValidatorService);
   private filesystemService = inject(FilesystemService);
@@ -116,11 +116,11 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
 
   readonly hddPathOptions$ = forkJoin([
     this.api.call('vm.device.disk_choices'),
-    this.api.call('vm.device.query'),
-    this.api.call('vm.query', [[], { select: ['id', 'name'] }]),
+    this.api.query('vm.device.query'),
+    this.api.query('vm.query', [], { select: ['id', 'name'] }),
   ]).pipe(
     tap(([choices, allDevices, vms]) => {
-      const diskDevices = allDevices.filter(
+      const diskDevices = allDevices.map(toVmDevice).filter(
         (device): device is VmDiskDevice => device.attributes.dtype === VmDeviceType.Disk,
       );
       this.annotatedZvolOptions = buildAnnotatedZvolOptions(
@@ -190,8 +190,8 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
   /**
    * Queries dataset information for a given dataset path.
    */
-  private queryDataset = (datasetPath: string): Observable<Dataset[]> => {
-    return this.api.call('pool.dataset.query', [[['id', '=', datasetPath]]]).pipe(
+  private queryDataset = (datasetPath: string): Observable<WebUiQueryEntity<'pool.dataset.query'>[]> => {
+    return this.api.query('pool.dataset.query', [['id', '=', datasetPath]]).pipe(
       catchError((error: unknown) => {
         // By design: If the dataset query fails, allow proceeding and skip validation
         console.error('Failed to query dataset for zvol:', error);
