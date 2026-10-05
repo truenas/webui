@@ -13,7 +13,6 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of, switchMap } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
-import { oneDayMillis } from 'app/constants/time.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { LicenseFeature, getLabelForLicenseFeature } from 'app/enums/license-feature.enum';
@@ -30,6 +29,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   formatLicenseExpiration,
+  getDaysUntilLicenseExpiration,
   getProductImageSrc,
 } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
@@ -140,10 +140,7 @@ export class SupportCardComponent implements OnInit {
     const expiresAt = supportFeature?.expires_at ?? license.expires_at ?? null;
 
     const expirationDateDisplay = formatLicenseExpiration(expiresAt, this.localeService);
-    let daysLeftInContract: number | null = null;
-    if (expiresAt?.$value) {
-      daysLeftInContract = Math.round((new Date(expiresAt.$value).getTime() - nowMs) / oneDayMillis);
-    }
+    const daysLeftInContract = getDaysUntilLicenseExpiration(expiresAt, nowMs);
 
     const featureNames = license.features
       .filter((feature) => feature.name !== LicenseFeature.Support)
