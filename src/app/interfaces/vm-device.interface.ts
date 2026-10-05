@@ -56,6 +56,9 @@ export type VmDeviceUpdate = CallParams<WebUiApiDirectory, 'vm.device.create'>[0
  * Reads a `vm.device.query` row into the UI's device union. The generated entry spells each
  * attribute's `dtype` and mode as the wire literal where the device pages switch on the UI's
  * enums; it describes the same object.
+ *
+ * The `as` checks only that the two types are comparable, not that every field the UI reads is
+ * present: a regenerated entry that drops or renames a field still compiles, and reads `undefined`.
  */
 export function toVmDevice(device: WebUiQueryEntity<'vm.device.query'>): VmDevice {
   return device as VmDevice;

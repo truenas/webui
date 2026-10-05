@@ -135,10 +135,7 @@ export interface ContainerDeleteOptions {
 
 export type ContainerGlobalConfig = CallResponse<WebUiApiDirectory, 'lxc.config'>;
 
-export interface ContainerImageRegistryResponse {
-  name: string;
-  versions: string[];
-}
+export type ContainerImageRegistryResponse = CallResponse<WebUiApiDirectory, 'container.image.query_registry'>[number];
 
 export interface UsbCapability {
   product: string;
@@ -172,6 +169,9 @@ export interface ContainerDeviceEntry {
  * generated entry spells `status.state`, `capabilities_policy` and `idmap.type` as the wire
  * literals where the pages compare them with the UI's enums, and leaves the fields middleware
  * defaults optional; it describes the same object.
+ *
+ * The `as` checks only that the two types are comparable, not that every field the UI reads is
+ * present: a regenerated entry that drops or renames a field still compiles, and reads `undefined`.
  */
 export function toContainer(container: WebUiQueryEntity<'container.query'>): Container {
   return container as Container;
@@ -180,6 +180,9 @@ export function toContainer(container: WebUiQueryEntity<'container.query'>): Con
 /**
  * Reads a `container.device.query` row into the UI's device union, whose `dtype` and NIC `type`
  * are the UI's enums where the generated entry has the wire literals.
+ *
+ * The `as` checks only that the two types are comparable, not that every field the UI reads is
+ * present: a regenerated entry that drops or renames a field still compiles, and reads `undefined`.
  */
 export function toContainerDeviceEntry(device: WebUiQueryEntity<'container.device.query'>): ContainerDeviceEntry {
   return device as ContainerDeviceEntry;

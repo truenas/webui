@@ -257,6 +257,7 @@ export class VmListComponent implements OnInit {
     this.api.subscribe('vm.query')
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
+        // The typed event's `msg` is the wire literal, which `CollectionChangeType` cannot be compared with.
         if (event.msg === 'removed') {
           this.vmMap.delete(event.id);
         } else {

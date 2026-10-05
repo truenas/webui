@@ -230,9 +230,11 @@ export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
   }
 
   private createVm(): Observable<VirtualMachine> {
-    const vmPayload = {
+    const vmPayload: VirtualMachineUpdate = {
+      // Set outside `pick`, which types every field it picks as optional.
+      name: this.osForm.name,
       ...pick(this.osForm, [
-        'name', 'description', 'time', 'hyperv_enlightenments',
+        'description', 'time', 'hyperv_enlightenments',
         'bootloader', 'shutdown_timeout', 'autostart', 'enable_secure_boot', 'trusted_platform_module',
       ]),
       ...pick(this.cpuAndMemoryForm, [
@@ -245,7 +247,7 @@ export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
       ...pick(this.gpuForm, [
         'ensure_display_device', 'hide_from_msr',
       ]),
-    } as VirtualMachineUpdate;
+    };
 
     return this.api.call('vm.create', [vmPayload]).pipe(map(toVirtualMachine));
   }

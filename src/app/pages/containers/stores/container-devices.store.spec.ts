@@ -1,7 +1,9 @@
 import { signal } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { Subject, throwError } from 'rxjs';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import {
+  mockTypedApi, mockTypedCall, mockTypedQuery, settleTypedApi,
+} from 'app/core/testing/utils/mock-typed-api.utils';
 import { containerGpuType } from 'app/enums/container.enum';
 import { Container } from 'app/interfaces/container.interface';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
@@ -34,11 +36,6 @@ describe('ContainerDevicesStore', () => {
   const device2 = {
     id: 2, dtype: 'FILESYSTEM', source: '/mnt/tank/two', target: '/two',
   };
-
-  // The typed double answers on a microtask.
-  const settle = (): Promise<void> => new Promise((resolve) => {
-    setTimeout(resolve);
-  });
 
   const gpuChoices = {
     '0000:19:00.0': containerGpuType.Nvidia,
@@ -76,7 +73,7 @@ describe('ContainerDevicesStore', () => {
 
   it('should load devices when loadDevices is called', async () => {
     spectator.service.reload();
-    await settle();
+    await settleTypedApi();
 
     expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('container.device.query', [['container', '=', 1]]);
     expect(spectator.service.state()).toEqual({
@@ -92,7 +89,7 @@ describe('ContainerDevicesStore', () => {
 
   it('loadDevices – loads a list of devices for the selected container', async () => {
     spectator.service.reload();
-    await settle();
+    await settleTypedApi();
 
     expect(spectator.service.devices()).toEqual([
       device1,
@@ -104,7 +101,7 @@ describe('ContainerDevicesStore', () => {
 
   it('deviceDeleted – removes a device from list of devices for selected container', async () => {
     spectator.service.reload();
-    await settle();
+    await settleTypedApi();
     spectator.service.deviceDeleted(1);
 
     expect(spectator.service.devices()).toEqual([device2]);
@@ -120,13 +117,13 @@ describe('ContainerDevicesStore', () => {
     });
 
     it('gpuChoices - returns gpuChoices part of the state', async () => {
-      await settle();
+      await settleTypedApi();
 
       expect(spectator.service.gpuChoices()).toEqual(gpuChoices);
     });
 
     it('isLoadingGpuChoices - returns isLoadingGpuChoices part of the state', async () => {
-      await settle();
+      await settleTypedApi();
 
       expect(spectator.service.isLoadingGpuChoices()).toBe(false);
     });
@@ -169,7 +166,7 @@ describe('ContainerDevicesStore', () => {
 
     it('clears devices on API error', async () => {
       spectator.service.reload();
-      await settle();
+      await settleTypedApi();
       expect(spectator.service.devices()).toEqual([
         device1,
         device2,
@@ -201,7 +198,7 @@ describe('ContainerDevicesStore', () => {
 
     it('sets isLoading to false after devices are loaded', async () => {
       spectator.service.reload();
-      await settle();
+      await settleTypedApi();
 
       expect(spectator.service.isLoading()).toBe(false);
       expect(spectator.service.devices()).toEqual([
@@ -214,7 +211,7 @@ describe('ContainerDevicesStore', () => {
   describe('deviceDeleted', () => {
     beforeEach(async () => {
       spectator.service.reload();
-      await settle();
+      await settleTypedApi();
     });
 
     it('removes only the specified device', () => {
@@ -243,7 +240,7 @@ describe('ContainerDevicesStore', () => {
 
   describe('gpu choices', () => {
     it('loads gpu choices in constructor', async () => {
-      await settle();
+      await settleTypedApi();
 
       expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('container.device.gpu_choices');
       expect(spectator.service.gpuChoices()).toEqual(gpuChoices);

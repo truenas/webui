@@ -59,6 +59,9 @@ export interface VirtualizationDetails {
  * spells `bootloader`, `cpu_mode`, `time` and `status.state` as the wire literals where the pages
  * compare them with the UI's enums, leaves the fields middleware defaults optional, and types
  * `devices` as the generated union; it describes the same object.
+ *
+ * The `as` checks only that the two types are comparable, not that every field the UI reads is
+ * present: a regenerated entry that drops or renames a field still compiles, and reads `undefined`.
  */
 export function toVirtualMachine(vm: WebUiQueryEntity<'vm.query'>): VirtualMachine {
   return vm as VirtualMachine;

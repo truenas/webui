@@ -163,7 +163,8 @@ Where things differ:
   The fake answers frames on a microtask, as a socket would, so a spec that
   asserts on the outcome of a submit needs `await spectator.fixture.whenStable()`
   after `submit()`; asserting that the call was made does not, since the frame
-  goes out synchronously. The same applies before a submit when the component
+  goes out synchronously. A service or store spec, with no fixture to wait on,
+  awaits `settleTypedApi()` from the same utils instead. The same applies before a submit when the component
   loads data on init and gates saving on it: settle, then `detectChanges()`,
   because a loading flag that flipped back on the microtask has not yet
   crossed an input binding such as `<ix-form [externalLoading]>`.

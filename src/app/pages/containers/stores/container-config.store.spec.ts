@@ -1,7 +1,9 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { Subject, throwError } from 'rxjs';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import {
+  mockTypedApi, mockTypedCall, settleTypedApi,
+} from 'app/core/testing/utils/mock-typed-api.utils';
 import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ContainerConfigStore } from 'app/pages/containers/stores/container-config.store';
@@ -24,11 +26,6 @@ describe('ContainerConfigStore', () => {
     ],
   });
 
-  // The typed double answers on a microtask.
-  const settle = (): Promise<void> => new Promise((resolve) => {
-    setTimeout(resolve);
-  });
-
   beforeEach(() => {
     spectator = createService();
   });
@@ -42,7 +39,7 @@ describe('ContainerConfigStore', () => {
 
   it('should load config when initialize is called', async () => {
     spectator.service.initialize();
-    await settle();
+    await settleTypedApi();
 
     expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('lxc.config');
     expect(spectator.service.state()).toEqual({
@@ -54,7 +51,7 @@ describe('ContainerConfigStore', () => {
   it('should not make duplicate API calls when initialize is called while loading', async () => {
     spectator.service.patchState({ isLoading: true });
     spectator.service.initialize();
-    await settle();
+    await settleTypedApi();
 
     expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('lxc.config');
   });
@@ -62,7 +59,7 @@ describe('ContainerConfigStore', () => {
   describe('selectors', () => {
     beforeEach(async () => {
       spectator.service.initialize();
-      await settle();
+      await settleTypedApi();
     });
 
     it('isLoading - returns isLoading part of the state', () => {
@@ -82,7 +79,7 @@ describe('ContainerConfigStore', () => {
 
     it('sets isLoading to false on API error', async () => {
       spectator.service.initialize();
-      await settle();
+      await settleTypedApi();
 
       expect(spectator.service.isLoading()).toBe(false);
       expect(spectator.service.config()).toBeNull();
@@ -94,7 +91,7 @@ describe('ContainerConfigStore', () => {
       const errorHandler = spectator.inject(ErrorHandlerService);
 
       spectator.service.initialize();
-      await settle();
+      await settleTypedApi();
 
       expect(errorHandler.showErrorModal).toHaveBeenCalledWith(error);
     });

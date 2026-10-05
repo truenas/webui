@@ -161,7 +161,8 @@ export class DeviceListComponent implements OnInit {
     this.api.subscribe('vm.query').pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((event) => {
-      // A removal carries no fields to read.
+      // A removal carries no fields to read. `msg` is the wire literal, which `CollectionChangeType`
+      // cannot be compared with.
       if (event.msg !== 'removed' && event.id === this.vmId) {
         const vm = toVirtualMachine(event.fields);
         this.vmName = vm.name;
