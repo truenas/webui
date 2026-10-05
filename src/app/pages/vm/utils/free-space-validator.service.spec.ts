@@ -1,10 +1,11 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, of } from 'rxjs';
 import { GiB, TiB } from 'app/constants/bytes.constant';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { Statfs } from 'app/interfaces/filesystem-stat.interface';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
 
 describe('FreeSpaceValidatorService', () => {
@@ -12,10 +13,10 @@ describe('FreeSpaceValidatorService', () => {
   const createService = createServiceFactory({
     service: FreeSpaceValidatorService,
     providers: [
-      mockApi([
-        mockCall('filesystem.statfs', {
+      mockTypedApi([
+        mockTypedCall('filesystem.statfs', {
           free_bytes: 10 * TiB,
-        } as Statfs),
+        } as CallResponse<WebUiApiDirectory, 'filesystem.statfs'>),
       ]),
     ],
   });
@@ -25,8 +26,8 @@ describe('FreeSpaceValidatorService', () => {
   it('quotes a maximum that is actually available, rounding the free space down', async () => {
     // Free space a hair under 50 GiB renders as `50 GiB` when rounded to the nearest
     // hundredth of a unit — a size this very validator then rejects.
-    const api = spectator.inject(MockApiService);
-    jest.spyOn(api, 'call').mockReturnValue(of({ free_bytes: 50 * GiB - 1 } as Statfs));
+    const api = spectator.inject(MockTypedApiService);
+    jest.spyOn(api, 'call').mockReturnValue(of({ free_bytes: 50 * GiB - 1 } as CallResponse<WebUiApiDirectory, 'filesystem.statfs'>));
 
     const formGroup = new FormGroup({
       datastore: new FormControl('tighto'),

@@ -18,7 +18,7 @@ import { Container, ContainerStopParams } from 'app/interfaces/container.interfa
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { StopOptionsDialog, StopOptionsOperation } from 'app/pages/containers/components/all-containers/container-list/stop-options-dialog/stop-options-dialog.component';
 import { isContainerActive, isContainerStopped } from 'app/pages/containers/utils/container-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -42,7 +42,7 @@ export class ContainerListBulkActionsComponent {
   private destroyRef = inject(DestroyRef);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private dialog = inject(DialogService);
   private tnDialog = inject(TnDialog);

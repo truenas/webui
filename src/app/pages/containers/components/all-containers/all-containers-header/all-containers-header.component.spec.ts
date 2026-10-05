@@ -5,8 +5,9 @@ import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectat
 import {
   TnButtonHarness, TnMenuHarness, TnMenuTesting, TnDialog,
 } from '@truenas/ui-components';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
@@ -34,16 +35,16 @@ describe('AllContainersHeaderComponent', () => {
     component: AllContainersHeaderComponent,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('lxc.config', {
+      mockTypedApi([
+        mockTypedCall('lxc.config', {
           bridge: 'bridge1',
           v4_network: '1.2.3.4/24',
           v6_network: null,
           preferred_pool: 'tank',
-        }),
-        mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', bridge1: 'bridge1' }),
-        mockCall('container.pool_choices', { tank: 'tank' }),
-        mockCall('lxc.update'),
+        } as ContainerGlobalConfig),
+        mockTypedCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', bridge1: 'bridge1' }),
+        mockTypedCall('container.pool_choices', { tank: 'tank' }),
+        mockTypedCall('lxc.update', null),
       ]),
       mockProvider(ContainersStore, {
         initialize: jest.fn(),

@@ -2,30 +2,27 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnFormFieldHarness, TnRadioHarness } from '@truenas/ui-components';
 import { NEVER, Observable, Subject, of, throwError } from 'rxjs';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JsonRpcErrorCode, ApiErrorName } from 'app/enums/api.enum';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
 import { transformApiCallErrorMessage } from 'app/helpers/api.helper';
-import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
-import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import {
   VmDevice,
   VmDiskDevice,
   VmDisplayDevice,
-  VmPassthroughDeviceChoice,
   VmPciPassthroughDevice,
   VmUsbPassthroughDevice,
   VmRawFileDevice,
-  VmUsbPassthroughDeviceChoice,
 } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -34,7 +31,8 @@ import {
 } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DeviceFormComponent, DeviceFormData } from 'app/pages/vm/devices/device-form/device-form.component';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -42,6 +40,9 @@ import { VmService } from 'app/services/vm.service';
 
 const threeGibibytes = 3 * (2 ** 30);
 const tenGibibytes = 10 * (2 ** 30);
+
+type UsbPassthroughChoice = CallResponse<WebUiApiDirectory, 'vm.device.usb_passthrough_choices'>[string];
+type PciPassthroughChoice = CallResponse<WebUiApiDirectory, 'vm.device.passthrough_device_choices'>[string];
 
 describe('DeviceFormComponent', () => {
   let spectator: Spectator<DeviceFormComponent>;
@@ -67,7 +68,7 @@ describe('DeviceFormComponent', () => {
       spectator.detectChanges();
     },
   };
-  let api: ApiService;
+  let api: TypedApiService;
 
   /**
    * The form mixes `ix-*` controls (explorer, combobox, and the two byte-formatted size inputs)
@@ -118,64 +119,64 @@ describe('DeviceFormComponent', () => {
       // Mirrors main.ts: tn-form-field resolves validator messages through this app-wide
       // resolver, so without it the spec would assert the library's English fallback.
       provideTnFormFieldErrors(),
-      mockApi([
-        mockCall('vm.device.create'),
-        mockCall('vm.device.update'),
-        mockCall('vm.get_display_devices', [
+      mockTypedApi([
+        mockTypedCall('vm.device.create', null),
+        mockTypedCall('vm.device.update', null),
+        mockTypedCall('vm.get_display_devices', [
           { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Spice } },
           { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Vnc } },
-        ] as VmDisplayDevice[]),
-        mockCall('vm.device.bind_choices', {
+        ] as CallResponse<WebUiApiDirectory, 'vm.get_display_devices'>),
+        mockTypedCall('vm.device.bind_choices', {
           '0.0.0.0': '0.0.0.0',
           '::': '::',
         }),
-        mockCall('vm.resolution_choices', {
+        mockTypedCall('vm.resolution_choices', {
           '640x480': '640x480',
           '800x600': '800x600',
           '1024x768': '1024x768',
         }),
-        mockCall('vm.device.usb_passthrough_choices', {
+        mockTypedCall('vm.device.usb_passthrough_choices', {
           usb_device_1: {
             capability: { product: 'prod_1', vendor: 'vendor_1' },
             description: 'prod_1 by vendor_1',
-          } as VmUsbPassthroughDeviceChoice,
+          } as UsbPassthroughChoice,
           usb_device_2: {
             capability: { product: 'prod_2', vendor: 'vendor_2' },
             description: 'prod_2 by vendor_2',
-          } as VmUsbPassthroughDeviceChoice,
+          } as UsbPassthroughChoice,
         }),
-        mockCall('vm.device.passthrough_device_choices', {
+        mockTypedCall('vm.device.passthrough_device_choices', {
           pci_0000_00_1c_0: {
             reset_mechanism_defined: true,
-          } as VmPassthroughDeviceChoice,
+          } as PciPassthroughChoice,
           pci_0000_00_1c_5: {
             reset_mechanism_defined: false,
-          } as VmPassthroughDeviceChoice,
+          } as PciPassthroughChoice,
         }),
-        mockCall('vm.random_mac', '00:a0:98:30:09:90'),
-        mockCall('vm.device.nic_attach_choices', {
+        mockTypedCall('vm.random_mac', '00:a0:98:30:09:90'),
+        mockTypedCall('vm.device.nic_attach_choices', {
           BRIDGE: ['enp0s3'],
           MACVLAN: ['enp0s4'],
         }),
-        mockCall('vm.device.disk_choices', {
+        mockTypedCall('vm.device.disk_choices', {
           '/dev/zvol/bassein/zvol1': 'bassein/zvol1',
           '/dev/zvol/bassein/zvol+with+spaces': 'bassein/zvol with spaces',
         }),
-        mockCall('vm.device.query', [
+        mockTypedQuery('vm.device.query', [
           { vm: 2, attributes: { dtype: VmDeviceType.Disk, path: '/dev/zvol/bassein/zvol1' } },
-        ] as VmDiskDevice[]),
-        mockCall('vm.query', [
+        ] as WebUiQueryEntity<'vm.device.query'>[]),
+        mockTypedQuery('vm.query', [
           { id: 1, name: 'test-vm' },
           { id: 2, name: 'other-vm' },
-        ] as VirtualMachine[]),
-        mockCall('vm.device.usb_controller_choices', {
+        ] as WebUiQueryEntity<'vm.query'>[]),
+        mockTypedCall('vm.device.usb_controller_choices', {
           'piix3-uhci': 'piix3-uhci',
           'pci-ohci': 'pci-ohci',
         }),
-        mockCall('system.advanced.config', {
+        mockTypedCall('system.advanced.config', {
           isolated_gpu_pci_ids: ['pci_0000_00_1c_0'],
-        } as AdvancedConfig),
-        mockCall('pool.filesystem_choices', ['bassein', 'bassein/datasets']),
+        } as CallResponse<WebUiApiDirectory, 'system.advanced.config'>),
+        mockTypedCall('pool.filesystem_choices', ['bassein', 'bassein/datasets']),
       ]),
       mockAuth(),
       mockProvider(DialogService, {
@@ -201,7 +202,7 @@ describe('DeviceFormComponent', () => {
     closedSpy = jest.fn();
     spectator.component.closed.subscribe(closedSpy);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
   }
 
   // The form is opened only through `FormSidePanelService`, so this whole surface is driven by
@@ -253,7 +254,7 @@ describe('DeviceFormComponent', () => {
     });
 
     it('does not emit closed when the save fails', async () => {
-      jest.spyOn(spectator.inject(ApiService), 'call')
+      jest.spyOn(spectator.inject(TypedApiService), 'call')
         .mockReturnValue(throwError(() => new Error('Device could not be created')));
 
       await fillForm({ Type: 'CD-ROM', 'CD-ROM Path': '/mnt/cdrom' });
@@ -318,6 +319,7 @@ describe('DeviceFormComponent', () => {
 
         jest.spyOn(api, 'call').mockReturnValue(NEVER);
         spectator.component.submit();
+        await spectator.fixture.whenStable();
 
         expect(spectator.component.isBusy()).toBe(true);
       });
@@ -464,7 +466,7 @@ describe('DeviceFormComponent', () => {
         await fillForm({
           Type: 'NIC',
         });
-        spectator.inject(MockApiService).call.mockClear();
+        spectator.inject(MockTypedApiService).call.mockClear();
 
         const generateButton = await loader.getHarness(TnButtonHarness.with({ label: 'Generate' }));
         await generateButton.click();
@@ -884,7 +886,7 @@ describe('DeviceFormComponent', () => {
       beforeEach(() => setup({ virtualMachineId: 45, vmName: 'test-vm' }));
 
       it('properly transforms and displays an error', async () => {
-        const spy = spectator.inject(MockApiService);
+        const spy = spectator.inject(MockTypedApiService);
         spy.call.mockImplementation(mockApiCall(apiErrorToGetTransformed, spy.call));
 
         await fillForm(
@@ -923,7 +925,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('still handles an error that is not transformed', async () => {
-        const spy = spectator.inject(MockApiService);
+        const spy = spectator.inject(MockTypedApiService);
         spy.call.mockImplementation(mockApiCall(apiErrorWontGetTransformed, spy.call));
 
         await fillForm(
@@ -958,7 +960,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('handles errors *not* in the raw file form', async () => {
-        const spy = spectator.inject(MockApiService);
+        const spy = spectator.inject(MockTypedApiService);
         spy.call.mockImplementation(mockApiCall(apiErrorWontGetTransformed, spy.call));
 
         await fillForm({
@@ -1166,10 +1168,10 @@ describe('DeviceFormComponent', () => {
       beforeEach(() => setup({ virtualMachineId: 46 }));
 
       it('hides Display type option when VM already has 2 or more displays (proxy for having 1 display of each type)', async () => {
-        spectator.inject(MockApiService).mockCall('vm.get_display_devices', [
+        spectator.inject(MockTypedApiService).mockCall('vm.get_display_devices', [
           { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Spice } },
           { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Vnc } },
-        ] as VmDisplayDevice[]);
+        ] as CallResponse<WebUiApiDirectory, 'vm.get_display_devices'>);
         const typeField = await loader.getHarness(TnFormControlHarness.with({ label: 'Type' }));
         expect(api.call).toHaveBeenCalledWith('vm.get_display_devices', [46]);
         expect(await typeField.getSelectOptions()).not.toContain('Display');
@@ -1236,27 +1238,27 @@ describe('DeviceFormComponent', () => {
         ],
         providers: [
           ...ixFormTestingProviders(),
-          mockApi([
-            mockCall('vm.device.create'),
-            mockCall('vm.device.update'),
-            mockCall('vm.get_display_devices', []), // No existing display devices
-            mockCall('vm.device.bind_choices', {
+          mockTypedApi([
+            mockTypedCall('vm.device.create', null),
+            mockTypedCall('vm.device.update', null),
+            mockTypedCall('vm.get_display_devices', []), // No existing display devices
+            mockTypedCall('vm.device.bind_choices', {
               '0.0.0.0': '0.0.0.0',
               '::': '::',
             }),
-            mockCall('vm.resolution_choices', {
+            mockTypedCall('vm.resolution_choices', {
               '640x480': '640x480',
               '800x600': '800x600',
               '1024x768': '1024x768',
               '1920x1080': '1920x1080',
             }),
-            mockCall('vm.device.usb_passthrough_choices', {}),
-            mockCall('vm.device.passthrough_device_choices', {}),
-            mockCall('vm.random_mac', '00:a0:98:30:09:90'),
-            mockCall('vm.device.nic_attach_choices', {}),
-            mockCall('vm.device.disk_choices', {}),
-            mockCall('vm.device.usb_controller_choices', {}),
-            mockCall('system.advanced.config', {} as AdvancedConfig),
+            mockTypedCall('vm.device.usb_passthrough_choices', {}),
+            mockTypedCall('vm.device.passthrough_device_choices', {}),
+            mockTypedCall('vm.random_mac', '00:a0:98:30:09:90'),
+            mockTypedCall('vm.device.nic_attach_choices', { BRIDGE: [], MACVLAN: [] }),
+            mockTypedCall('vm.device.disk_choices', {}),
+            mockTypedCall('vm.device.usb_controller_choices', {}),
+            mockTypedCall('system.advanced.config', {} as CallResponse<WebUiApiDirectory, 'system.advanced.config'>),
           ]),
           mockAuth(),
           mockProvider(DialogService),
@@ -1335,27 +1337,27 @@ describe('DeviceFormComponent', () => {
         ],
         providers: [
           ...ixFormTestingProviders(),
-          mockApi([
-            mockCall('vm.device.create'),
-            mockCall('vm.device.update'),
-            mockCall('vm.get_display_devices', []), // No existing display devices
-            mockCall('vm.device.bind_choices', {
+          mockTypedApi([
+            mockTypedCall('vm.device.create', null),
+            mockTypedCall('vm.device.update', null),
+            mockTypedCall('vm.get_display_devices', []), // No existing display devices
+            mockTypedCall('vm.device.bind_choices', {
               '0.0.0.0': '0.0.0.0',
               '::': '::',
             }),
-            mockCall('vm.resolution_choices', {
+            mockTypedCall('vm.resolution_choices', {
               '640x480': '640x480',
               '800x600': '800x600',
               '1024x768': '1024x768',
               '1920x1080': '1920x1080',
             }),
-            mockCall('vm.device.usb_passthrough_choices', {}),
-            mockCall('vm.device.passthrough_device_choices', {}),
-            mockCall('vm.random_mac', '00:a0:98:30:09:90'),
-            mockCall('vm.device.nic_attach_choices', {}),
-            mockCall('vm.device.disk_choices', {}),
-            mockCall('vm.device.usb_controller_choices', {}),
-            mockCall('system.advanced.config', {} as AdvancedConfig),
+            mockTypedCall('vm.device.usb_passthrough_choices', {}),
+            mockTypedCall('vm.device.passthrough_device_choices', {}),
+            mockTypedCall('vm.random_mac', '00:a0:98:30:09:90'),
+            mockTypedCall('vm.device.nic_attach_choices', { BRIDGE: [], MACVLAN: [] }),
+            mockTypedCall('vm.device.disk_choices', {}),
+            mockTypedCall('vm.device.usb_controller_choices', {}),
+            mockTypedCall('system.advanced.config', {} as CallResponse<WebUiApiDirectory, 'system.advanced.config'>),
           ]),
           mockAuth(),
           mockProvider(DialogService),

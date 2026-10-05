@@ -2,14 +2,14 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ContainerDeviceType, ContainerType } from 'app/enums/container.enum';
 import { Container, ContainerFilesystemDevice } from 'app/interfaces/container.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   ContainerFilesystemDeviceFormComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-filesystem-devices/container-filesystem-device-form/container-filesystem-device-form.component';
@@ -30,9 +30,9 @@ describe('ContainerFilesystemDeviceFormComponent', () => {
     component: ContainerFilesystemDeviceFormComponent,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('container.device.create'),
-        mockCall('container.device.update'),
+      mockTypedApi([
+        mockTypedCall('container.device.create', null),
+        mockTypedCall('container.device.update', null),
       ]),
       mockProvider(FilesystemService),
       ...ixFormTestingProviders(),
@@ -69,8 +69,9 @@ describe('ContainerFilesystemDeviceFormComponent', () => {
       await (await getTargetInput()).setValue('/target');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('container.device.create', [{
         container: 1,
         attributes: {
           source: '/mnt/path',
@@ -119,8 +120,9 @@ describe('ContainerFilesystemDeviceFormComponent', () => {
       await (await getTargetInput()).setValue('/new-target');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.update', [456, {
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('container.device.update', [456, {
         attributes: {
           source: '/mnt/updated',
           target: '/new-target',

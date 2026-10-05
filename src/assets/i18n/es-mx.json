@@ -1520,7 +1520,7 @@
   "{days, plural, =1 {# day} other {# days}}": "{days, plural, =1 {# día} other {# días}}",
   "{duration} remaining": "{duration} restante",
   "{eligible} of {total} existing snapshots of dataset {dataset} would be replicated with this task.": "{eligible} de {total} instantáneas existentes del dataset {dataset} se replicarían con esta tarea.",
-  "{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed": "{failedCount} de {allCount, plural, =1 {# tarea} other {# tareas}} {n, plural, one {falló} other {fallaron}}",
+  "{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed": "{failedCount} de {allCount, plural, =1 {# tarea} other {# tareas}} {failedCount, plural, one {falló} other {fallaron}}",
   "{field} is required": "{field} es obligatorio",
   "{hours, plural, =1 {# hour} other {# hours}}": "{hours, plural, =1 {# hora} other {# horas}}",
   "{interfaceName} must start with \"{prefix}\" followed by an unique number": "{interfaceName} debe comenzar con \"{prefix}\" seguido de un número único",

@@ -6,8 +6,8 @@ import {
   TnButtonHarness, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime,
 } from 'app/enums/vm.enum';
@@ -17,7 +17,7 @@ import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
@@ -72,18 +72,18 @@ describe('VmEditFormComponent', () => {
       // Close synchronously on submit — the panel's minimum-feedback timer would otherwise
       // defer `closed` past the end of the test.
       { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
-      mockApi([
-        mockCall('vm.bootloader_options', {
+      mockTypedApi([
+        mockTypedCall('vm.bootloader_options', {
           UEFI: 'UEFI',
           UEFI_CSM: 'Legacy BIOS',
         }),
-        mockCall('vm.cpu_model_choices', {
+        mockTypedCall('vm.cpu_model_choices', {
           EPYC: 'EPYC',
           Pentium: 'Pentium',
         }),
-        mockCall('vm.update'),
-        mockCall('system.advanced.update_gpu_pci_ids'),
-        mockCall('system.advanced.get_gpu_pci_choices', {
+        mockTypedCall('vm.update', null),
+        mockTypedCall('system.advanced.update_gpu_pci_ids', null),
+        mockTypedCall('system.advanced.get_gpu_pci_choices', {
           'GeForce [0000:02:00.0]': {
             pci_slot: '0000:02:00.0',
             uses_system_critical_devices: false,
@@ -267,9 +267,10 @@ describe('VmEditFormComponent', () => {
 
     // Hosted in a <tn-side-panel>: the panel footer owns Save and calls submit() on the form.
     spectator.component.submit();
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.update', [4, {
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('vm.update', [4, {
       autostart: true,
       bootloader: VmBootloader.Uefi,
       cores: 2,
@@ -304,9 +305,10 @@ describe('VmEditFormComponent', () => {
 
     // Hosted in a <tn-side-panel>: the panel footer owns Save and calls submit() on the form.
     spectator.component.submit();
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.update', [4, {
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('vm.update', [4, {
       autostart: true,
       bootloader: VmBootloader.Uefi,
       cores: 2,
@@ -337,6 +339,7 @@ describe('VmEditFormComponent', () => {
 
     // Hosted in a <tn-side-panel>: the panel footer owns Save and calls submit() on the form.
     spectator.component.submit();
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
 
     expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(

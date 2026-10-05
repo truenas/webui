@@ -6,9 +6,9 @@ import {
   TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness, TnStepperComponent,
 } from '@truenas/ui-components';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { VmNicType } from 'app/enums/vm.enum';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   NetworkInterfaceStepComponent,
 } from 'app/pages/vm/vm-wizard/steps/4-network-interface-step/network-interface-step.component';
@@ -25,9 +25,9 @@ describe('NetworkInterfaceStepComponent', () => {
       // Mirrors main.ts: tn-form-field resolves validator messages through this app-wide resolver.
       provideTnFormFieldErrors(),
       mockProvider(TnStepperComponent),
-      mockApi([
-        mockCall('vm.random_mac', '00:00:00:00:00:01'),
-        mockCall('vm.device.nic_attach_choices', {
+      mockTypedApi([
+        mockTypedCall('vm.random_mac', '00:00:00:00:00:01'),
+        mockTypedCall('vm.device.nic_attach_choices', {
           BRIDGE: ['eno1'],
           MACVLAN: ['eno2'],
         }),
@@ -90,7 +90,7 @@ describe('NetworkInterfaceStepComponent', () => {
   });
 
   it('generates random MAC when form is initialized', async () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.random_mac');
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('vm.random_mac');
 
     const macAddress = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="nic_mac"]' }));
     expect(await macAddress.getValue()).toBe('00:00:00:00:00:01');

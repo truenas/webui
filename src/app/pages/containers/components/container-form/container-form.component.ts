@@ -47,9 +47,9 @@ import { containersHelptext } from 'app/helptext/containers/containers';
 import {
   Container,
   ContainerEnvVariablesFormGroup,
-  ContainerIdmap,
   ContainerUsbDevice,
   CreateContainer,
+  toContainer,
   UpdateContainer,
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -66,7 +66,7 @@ import {
 import {
   advancedModeFooterAction, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   SelectImageDialog,
   ContainerImageWithId,
@@ -103,7 +103,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   },
 })
 export class ContainerFormComponent extends IxFormHostForm implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
@@ -129,9 +129,9 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
   protected readonly isPrivilegedIdmap = signal(false);
   protected readonly isIsolatedIdmap = signal(false);
 
-  protected readonly forbiddenNames$ = this.api.call('container.query', [
-    [], { select: ['name'], order_by: ['name'] },
-  ]).pipe(
+  protected readonly forbiddenNames$ = this.api.query('container.query', [], {
+    select: ['name'], order_by: ['name'],
+  }).pipe(
     map((containers) => containers
       .map((container) => container.name)
       .filter((name) => name !== this.editingContainer?.name)),
@@ -330,7 +330,7 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
     this.form.controls.image.clearValidators();
     this.form.controls.image.updateValueAndValidity();
 
-    this.loadFormConfig(this.api.call('container.get_instance', [containerId]), (container: Container) => {
+    this.loadFormConfig(this.api.call('container.get_instance', [containerId]).pipe(map(toContainer)), (container) => {
       this.editingContainer = container;
       this.populateFormForEdit(container);
     });
@@ -451,7 +451,7 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
           if (!job?.result) {
             throw new Error('Container creation was cancelled');
           }
-          return job.result;
+          return toContainer(job.result);
         }),
         switchMap((container) => this.createUsbDevices(container)),
       );
@@ -491,7 +491,7 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
   private updateContainer(): Observable<Container> {
     const payload = this.getUpdatePayload();
 
-    return this.api.call('container.update', [this.editingContainer.id, payload]);
+    return this.api.call('container.update', [this.editingContainer.id, payload]).pipe(map(toContainer));
   }
 
   private getCreatePayload(): CreateContainer {
@@ -575,7 +575,7 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
     return { name: imageString, version: '' };
   }
 
-  private buildIdmapPayload(): ContainerIdmap | null {
+  private buildIdmapPayload(): CreateContainer['idmap'] {
     const idmapType = this.form.controls.idmap_type.value;
     switch (idmapType) {
       case ContainerIdmapType.Isolated:

@@ -4,8 +4,8 @@ import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconButtonHarness, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ContainerDeviceType } from 'app/enums/container.enum';
 import {
   ContainerDevice,
@@ -15,7 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   ContainerFilesystemDeviceFormComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-filesystem-devices/container-filesystem-device-form/container-filesystem-device-form.component';
@@ -47,8 +47,8 @@ describe('DeviceActionsMenuComponent', () => {
       mockProvider(ErrorHandlerService, {
         withErrorHandler: jest.fn(() => (source$: Observable<unknown>) => source$),
       }),
-      mockApi([
-        mockCall('container.device.delete'),
+      mockTypedApi([
+        mockTypedCall('container.device.delete', null),
       ]),
       mockProvider(ContainersStore, {
         selectedContainer,
@@ -95,7 +95,7 @@ describe('DeviceActionsMenuComponent', () => {
         call: expect.any(Function),
         successMessage: 'Device was deleted',
       });
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.delete', [123]);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('container.device.delete', [123]);
       expect(spectator.inject(ContainerDevicesStore).deviceDeleted).toHaveBeenCalledWith(123);
     });
   });

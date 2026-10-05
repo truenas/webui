@@ -23,7 +23,7 @@ import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -49,7 +49,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);

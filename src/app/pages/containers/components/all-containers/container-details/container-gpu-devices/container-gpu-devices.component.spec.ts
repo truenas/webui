@@ -5,12 +5,12 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { TnBannerHarness, TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ContainerDeviceType, containerGpuType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerDevice } from 'app/interfaces/container.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   AddGpuDeviceMenuComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-gpu-devices/add-gpu-device-menu/add-gpu-device-menu.component';
@@ -53,8 +53,8 @@ describe('ContainerGpuDevicesComponent', () => {
       ),
     ],
     providers: [
-      mockApi([
-        mockCall('system.advanced.update'),
+      mockTypedApi([
+        mockTypedCall('system.advanced.update', null),
       ]),
       mockProvider(LoaderService, {
         withLoader: jest.fn(() => (source$: unknown) => source$),
@@ -121,7 +121,7 @@ describe('ContainerGpuDevicesComponent', () => {
     const button = await loader.getHarness(TnButtonHarness.with({ label: 'Enable NVIDIA Drivers' }));
     await button.click();
 
-    const api = spectator.inject(ApiService);
+    const api = spectator.inject(TypedApiService);
     expect(api.call).toHaveBeenCalledWith('system.advanced.update', [{ nvidia: true }]);
 
     const snackbar = spectator.inject(SnackbarService);

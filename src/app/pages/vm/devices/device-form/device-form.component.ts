@@ -33,7 +33,7 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextDevice } from 'app/helptext/vm/devices/device-add-edit';
 import { SelectOption } from 'app/interfaces/option.interface';
 import {
-  VmDevice, VmDeviceUpdate, VmDiskDevice,
+  toVmDevice, VmDevice, VmDeviceUpdate, VmDiskDevice, VmDisplayDevice,
 } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -46,7 +46,7 @@ import {
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { FileValidatorService } from 'app/modules/forms/ix-forms/validators/file-validator/file-validator.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   AnnotatedZvolOption, buildAnnotatedZvolOptions,
 } from 'app/pages/vm/utils/build-annotated-zvol-options.utils';
@@ -93,7 +93,7 @@ export interface DeviceFormData {
 })
 export class DeviceFormComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private networkService = inject(NetworkService);
   private validators = inject(IxValidatorsService);
@@ -372,11 +372,11 @@ export class DeviceFormComponent extends IxFormHostForm implements OnInit {
 
     this.zvolOptions$ = forkJoin([
       this.api.call('vm.device.disk_choices'),
-      this.api.call('vm.device.query'),
-      this.api.call('vm.query', [[], { select: ['id', 'name'] }]),
+      this.api.query('vm.device.query'),
+      this.api.query('vm.query', [], { select: ['id', 'name'] }),
     ]).pipe(
       tap(([choices, allDevices, vms]) => {
-        const diskDevices = allDevices.filter(
+        const diskDevices = allDevices.map(toVmDevice).filter(
           (device): device is VmDiskDevice => device.attributes.dtype === VmDeviceType.Disk,
         );
         this.annotatedZvolOptions = buildAnnotatedZvolOptions(
@@ -626,7 +626,9 @@ export class DeviceFormComponent extends IxFormHostForm implements OnInit {
 
         return this.isNew
           ? this.api.call('vm.device.create', [update])
-          : this.api.call('vm.device.update', [this.existingDevice.id, update]);
+          // `vm.device.update` types `attributes` as a loose record, which a device interface has no
+          // index signature to satisfy; the copy is the same object as an anonymous type.
+          : this.api.call('vm.device.update', [this.existingDevice.id, { ...update, attributes: { ...update.attributes } }]);
       }),
     ),
     successMessage: event.isEdit
@@ -788,7 +790,11 @@ export class DeviceFormComponent extends IxFormHostForm implements OnInit {
    */
   private hideDisplayIfCannotBeAdded(): void {
     this.api.call('vm.get_display_devices', [this.virtualMachineId])
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        // Middleware types the display type as a literal; the UI narrows it to its enum.
+        map((devices) => devices as VmDisplayDevice[]),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe((devices) => {
         const spiceDevices = devices.filter((device) => device.attributes.type === VmDisplayType.Spice);
         const vncDevices = devices.filter((device) => device.attributes.type === VmDisplayType.Vnc);

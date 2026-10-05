@@ -1,13 +1,16 @@
 import { FormControl, FormGroup } from '@angular/forms';
+import { CallParams, CallResponse, JobParams } from '@truenas/api-client';
 import {
   AllowedImageOs,
   ContainerCapabilitiesPolicy,
   ContainerDeviceType,
+  ContainerGpuType,
   ContainerIdmapType,
   ContainerNicDeviceType,
   ContainerStatus,
   ContainerType,
 } from 'app/enums/container.enum';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export type ContainerMetrics = Record<string, ContainerStats>;
 
@@ -54,33 +57,11 @@ export interface Container {
   };
 }
 
-export type CreateContainer = Partial<Omit<Container, 'id' | 'dataset' | 'status' | 'idmap'>> & {
-  name: string;
-  autostart: boolean;
-  pool: string;
-  image: {
-    name: string;
-    version: string;
-  };
-  idmap?: ContainerIdmap | null;
-};
+/** What the container form sends to `container.create`. */
+export type CreateContainer = JobParams<WebUiApiDirectory, 'container.create'>[0];
 
-export type UpdateContainer = Partial<Pick<Container,
-  | 'uuid'
-  | 'name'
-  | 'description'
-  | 'cpuset'
-  | 'autostart'
-  | 'time'
-  | 'shutdown_timeout'
-  | 'init'
-  | 'initdir'
-  | 'initenv'
-  | 'inituser'
-  | 'initgroup'
-  | 'capabilities_policy'
-  | 'capabilities_state'
->>;
+/** What the container form sends to `container.update`. */
+export type UpdateContainer = CallParams<WebUiApiDirectory, 'container.update'>[1];
 
 export interface ContainerFilesystemDevice {
   id?: number;
@@ -111,7 +92,7 @@ export interface ContainerUsbDevice {
 export interface ContainerGpuDevice {
   id?: number;
   dtype: ContainerDeviceType.Gpu;
-  gpu_type: string;
+  gpu_type: ContainerGpuType;
   pci_address: string;
 }
 
@@ -152,19 +133,9 @@ export interface ContainerDeleteOptions {
   recursive?: boolean;
 }
 
-export type ContainerDeleteParams = [containerId: number, options?: ContainerDeleteOptions];
+export type ContainerGlobalConfig = CallResponse<WebUiApiDirectory, 'lxc.config'>;
 
-export interface ContainerGlobalConfig {
-  bridge: string | null;
-  v4_network: string | null;
-  v6_network: string | null;
-  preferred_pool: string | null;
-}
-
-export interface ContainerImageRegistryResponse {
-  name: string;
-  versions: string[];
-}
+export type ContainerImageRegistryResponse = CallResponse<WebUiApiDirectory, 'container.image.query_registry'>[number];
 
 export interface UsbCapability {
   product: string;
@@ -187,19 +158,32 @@ export type ContainerEnvVariablesFormGroup = FormGroup<{
   value: FormControl<string>;
 }>;
 
-export interface ContainerDevicePayload {
-  container?: number;
-  attributes?: ContainerDevice;
-}
-
-export interface ContainerDeviceDelete {
-  force?: boolean;
-  raw_file?: boolean;
-  zvol?: boolean;
-}
-
 export interface ContainerDeviceEntry {
   id: number;
   attributes: ContainerDevice;
   container: number;
+}
+
+/**
+ * Reads a `container.query` row into the shape the container pages are written against. The
+ * generated entry spells `status.state`, `capabilities_policy` and `idmap.type` as the wire
+ * literals where the pages compare them with the UI's enums, and leaves the fields middleware
+ * defaults optional; it describes the same object.
+ *
+ * The `as` checks only that the two types are comparable, not that every field the UI reads is
+ * present: a regenerated entry that drops or renames a field still compiles, and reads `undefined`.
+ */
+export function toContainer(container: WebUiQueryEntity<'container.query'>): Container {
+  return container as Container;
+}
+
+/**
+ * Reads a `container.device.query` row into the UI's device union, whose `dtype` and NIC `type`
+ * are the UI's enums where the generated entry has the wire literals.
+ *
+ * The `as` checks only that the two types are comparable, not that every field the UI reads is
+ * present: a regenerated entry that drops or renames a field still compiles, and reads `undefined`.
+ */
+export function toContainerDeviceEntry(device: WebUiQueryEntity<'container.device.query'>): ContainerDeviceEntry {
+  return device as ContainerDeviceEntry;
 }

@@ -23,7 +23,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   ContainerFilesystemDeviceFormComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-filesystem-devices/container-filesystem-device-form/container-filesystem-device-form.component';
@@ -52,7 +52,7 @@ export class DeviceActionsMenuComponent {
   private destroyRef = inject(DestroyRef);
   private dialog = inject(DialogService);
   private tnDialog = inject(TnDialog);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
@@ -164,7 +164,9 @@ export class DeviceActionsMenuComponent {
           }
 
           return this.api.call('container.device.update', [nicDevice.id, {
-            attributes: payload,
+            // `container.device.update` types `attributes` as a loose record, which an interface has no
+            // index signature to satisfy; the copy is the same object as an anonymous type.
+            attributes: { ...payload },
           }]).pipe(
             this.loader.withLoader(),
             this.errorHandler.withErrorHandler(),

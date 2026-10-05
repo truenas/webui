@@ -2,17 +2,18 @@ import { FormBuilder, FormControl, FormGroup, ValidationErrors } from '@angular/
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom, Observable, of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { ImageVirtualSizeValidatorService } from './image-virtual-size-validator.service';
+
+type DatasetEntry = WebUiQueryEntity<'pool.dataset.query'>;
 
 describe('ImageVirtualSizeValidatorService', () => {
   let spectator: SpectatorService<ImageVirtualSizeValidatorService>;
   let form: FormGroup;
   let mockGetVirtualSize: jest.Mock<Observable<number | null>, [string]>;
-  let mockQueryDataset: jest.Mock<Observable<Dataset[]>, [string]>;
+  let mockQueryDataset: jest.Mock<Observable<DatasetEntry[]>, [string]>;
 
   const createService = createServiceFactory({
     service: ImageVirtualSizeValidatorService,
@@ -23,7 +24,6 @@ describe('ImageVirtualSizeValidatorService', () => {
           [errorKey]: { message },
         })),
       }),
-      mockApi(),
     ],
   });
 
@@ -231,7 +231,7 @@ describe('ImageVirtualSizeValidatorService', () => {
         {
           type: DatasetType.Volume,
           volsize: { parsed: 20 * GiB },
-        } as Dataset,
+        } as DatasetEntry,
       ]));
 
       form.patchValue({
@@ -254,7 +254,7 @@ describe('ImageVirtualSizeValidatorService', () => {
         {
           type: DatasetType.Volume,
           volsize: { parsed: 20 * GiB },
-        } as Dataset,
+        } as DatasetEntry,
       ]));
 
       form.patchValue({
@@ -275,7 +275,7 @@ describe('ImageVirtualSizeValidatorService', () => {
         {
           type: DatasetType.Volume,
           volsize: { parsed: 20 * GiB },
-        } as Dataset,
+        } as DatasetEntry,
       ]));
 
       form.patchValue({
@@ -300,7 +300,7 @@ describe('ImageVirtualSizeValidatorService', () => {
         {
           type: DatasetType.Volume,
           volsize: { parsed: 50 * GiB },
-        } as Dataset,
+        } as DatasetEntry,
       ]));
 
       form.patchValue({
@@ -322,7 +322,7 @@ describe('ImageVirtualSizeValidatorService', () => {
     it('handles dataset not found gracefully', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
       mockGetVirtualSize.mockReturnValue(of(20 * GiB));
-      mockQueryDataset.mockReturnValue(of([] as Dataset[]));
+      mockQueryDataset.mockReturnValue(of([] as DatasetEntry[]));
 
       form.patchValue({
         import_image: true,
@@ -346,7 +346,7 @@ describe('ImageVirtualSizeValidatorService', () => {
       // This test verifies that an empty dataset array is handled gracefully
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
       mockGetVirtualSize.mockReturnValue(of(20 * GiB));
-      mockQueryDataset.mockReturnValue(of([] as Dataset[]));
+      mockQueryDataset.mockReturnValue(of([] as DatasetEntry[]));
 
       form.patchValue({
         import_image: true,
@@ -372,7 +372,7 @@ describe('ImageVirtualSizeValidatorService', () => {
         {
           type: DatasetType.Filesystem,
           volsize: { parsed: 20 * GiB },
-        } as Dataset,
+        } as DatasetEntry,
       ]));
 
       form.patchValue({
@@ -399,7 +399,7 @@ describe('ImageVirtualSizeValidatorService', () => {
         {
           type: DatasetType.Volume,
           volsize: undefined,
-        } as Dataset,
+        } as DatasetEntry,
       ]));
 
       form.patchValue({
@@ -426,7 +426,7 @@ describe('ImageVirtualSizeValidatorService', () => {
         {
           type: DatasetType.Volume,
           volsize: { parsed: undefined },
-        } as Dataset,
+        } as DatasetEntry,
       ]));
 
       form.patchValue({

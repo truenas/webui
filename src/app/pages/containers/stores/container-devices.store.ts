@@ -10,8 +10,8 @@ import {
   take,
   of,
 } from 'rxjs';
-import { Container, ContainerDevice } from 'app/interfaces/container.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { Container, ContainerDevice, toContainerDeviceEntry } from 'app/interfaces/container.interface';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { containerDeviceEntriesToDevices } from 'app/pages/containers/utils/container-device.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -32,7 +32,7 @@ const initialState: ContainerDeviceState = {
 
 @Injectable()
 export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private containersStore = inject(ContainersStore);
 
@@ -89,8 +89,8 @@ export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> 
 
   private fetchDevicesForContainer(container: Container): Observable<ContainerDevice[]> {
     this.patchState({ isLoading: true });
-    return this.api.call('container.device.query', [[['container', '=', container.id]]]).pipe(
-      map((containerDevices) => containerDeviceEntriesToDevices(containerDevices)),
+    return this.api.query('container.device.query', [['container', '=', container.id]]).pipe(
+      map((containerDevices) => containerDeviceEntriesToDevices(containerDevices.map(toContainerDeviceEntry))),
       tap((devices) => {
         this.patchState({
           devices,

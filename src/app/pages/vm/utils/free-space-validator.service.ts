@@ -5,7 +5,7 @@ import { Observable, of } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { buildRoundedDownFileSize } from 'app/helpers/file-size.utils';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 /**
  * Creates an async validator that checks if there is enough free space for the selected datastore.
@@ -18,7 +18,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
  */
 @Injectable({ providedIn: 'root' })
 export class FreeSpaceValidatorService {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private validators = inject(IxValidatorsService);
   private translate = inject(TranslateService);
 

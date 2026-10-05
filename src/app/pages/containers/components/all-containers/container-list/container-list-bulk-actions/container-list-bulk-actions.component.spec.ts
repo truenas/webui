@@ -12,7 +12,7 @@ import { Container } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { StopOptionsDialog, StopOptionsOperation } from 'app/pages/containers/components/all-containers/container-list/stop-options-dialog/stop-options-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ContainerListBulkActionsComponent } from './container-list-bulk-actions.component';
@@ -43,7 +43,7 @@ describe('ContainerListBulkActionsComponent', () => {
           close: jest.fn(),
         } as unknown as DialogRef)),
       }),
-      mockProvider(ApiService, {
+      mockProvider(TypedApiService, {
         call: jest.fn(() => of(undefined)),
         job: jest.fn(() => of(undefined)),
       }),
@@ -80,7 +80,7 @@ describe('ContainerListBulkActionsComponent', () => {
     await menu.clickItem({ label: 'Start All Selected' });
     await spectator.fixture.whenStable();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.start', [2]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('container.start', [2]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Requested action performed for selected Containers');
   });
 
@@ -124,7 +124,7 @@ describe('ContainerListBulkActionsComponent', () => {
       await menu.clickItem({ label: 'Stop All Selected' });
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('container.stop', [3, expect.anything()]);
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('container.stop', [3, expect.anything()]);
     });
   });
 

@@ -59,9 +59,11 @@ export function idNameArrayToOptions<T = number>(): OperatorFunction<{ id: T; na
  * Input: `{ "BRIDGE": ["br0", "br1"], "MACVLAN": ["eth0"] }`
  * Output: `[{ label: "br0", value: "br0" }, { label: "br1", value: "br1" }, ...]`
  */
-export function nicChoicesToOptions(): OperatorFunction<Record<string, string[]>, Option[]> {
+export function nicChoicesToOptions<T extends { [K in keyof T]: string[] }>(): OperatorFunction<T, Option[]> {
   return map((groupedChoices) => {
-    const allInterfaces = Object.values(groupedChoices).flat();
+    // Generated choice types are interfaces (`{ BRIDGE: string[]; MACVLAN: string[] }`), which have no
+    // index signature for `Object.values` to read the element type from.
+    const allInterfaces = (Object.values(groupedChoices) as string[][]).flat();
     return allInterfaces.map((interfaceName) => ({
       label: ignoreTranslation(interfaceName),
       value: interfaceName,

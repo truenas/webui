@@ -16,7 +16,7 @@ import {
 } from 'app/interfaces/container.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   AddGpuDeviceMenuComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-gpu-devices/add-gpu-device-menu/add-gpu-device-menu.component';
@@ -54,7 +54,7 @@ export class ContainerGpuDevicesComponent {
   private devicesStore = inject(ContainerDevicesStore);
   private containersStore = inject(ContainersStore);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);

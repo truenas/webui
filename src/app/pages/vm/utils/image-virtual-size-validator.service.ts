@@ -5,8 +5,8 @@ import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { buildNormalizedFileSize, buildRoundedUpFileSize } from 'app/helpers/file-size.utils';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 /**
  * Service that creates async validators for checking if disk size is sufficient for imported VM images.
@@ -76,7 +76,7 @@ export class ImageVirtualSizeValidatorService {
   validateHddPath(
     form: FormGroup,
     getVirtualSize: (imagePath: string) => Observable<number | null>,
-    queryDataset: (datasetPath: string) => Observable<Dataset[]>,
+    queryDataset: (datasetPath: string) => Observable<WebUiQueryEntity<'pool.dataset.query'>[]>,
   ): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       const importImage = form.controls.import_image?.value as boolean | undefined;
@@ -107,19 +107,22 @@ export class ImageVirtualSizeValidatorService {
           }
 
           return queryDataset(datasetPath).pipe(
-            map((datasets: Dataset[]): ValidationErrors | null => {
+            map((datasets): ValidationErrors | null => {
               if (datasets.length === 0) {
                 console.error('Dataset not found for path:', datasetPath);
                 return null;
               }
 
               const dataset = datasets[0];
-              if (dataset.type !== DatasetType.Volume || !dataset.volsize?.parsed) {
+              // Middleware types `type` as a plain string and a property's `parsed` value as unknown;
+              // a zvol's volsize is bytes.
+              const zvolSize = dataset.volsize?.parsed;
+              const isZvol = (dataset.type as DatasetType | undefined) === DatasetType.Volume;
+              if (!isZvol || typeof zvolSize !== 'number' || !zvolSize) {
                 console.error('Selected dataset is not a zvol or has no volsize:', dataset);
                 return null;
               }
 
-              const zvolSize = dataset.volsize.parsed;
               if (zvolSize >= virtualSize) {
                 return null;
               }

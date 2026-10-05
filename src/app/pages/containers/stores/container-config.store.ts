@@ -1,12 +1,11 @@
-import { computed, DestroyRef, Injectable, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { computed, Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   of, exhaustMap, tap, EMPTY,
 } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface ContainerConfigState {
@@ -21,16 +20,14 @@ const initialState: ContainerConfigState = {
 
 @Injectable()
 export class ContainerConfigStore extends ComponentStore<ContainerConfigState> {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private destroyRef = inject(DestroyRef);
 
   readonly isLoading = computed(() => this.state().isLoading);
   readonly config = computed(() => this.state().config);
 
   constructor() {
     super(initialState);
-    this.subscribeToConfigUpdates();
   }
 
   readonly initialize = this.effect((trigger$) => {
@@ -61,12 +58,4 @@ export class ContainerConfigStore extends ComponentStore<ContainerConfigState> {
       }),
     );
   });
-
-  private subscribeToConfigUpdates(): void {
-    this.api.subscribe('lxc.config')
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(({ fields }) => {
-        this.patchState({ config: fields });
-      });
-  }
 }

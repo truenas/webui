@@ -8,13 +8,13 @@ import {
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { ContainerDeviceType, containerGpuType } from 'app/enums/container.enum';
+import { ContainerDeviceType, containerGpuType, ContainerGpuType } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
 import { containersHelptext } from 'app/helptext/containers/containers';
 import { ContainerGpuDevice } from 'app/interfaces/container.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { isContainerActive } from 'app/pages/containers/utils/container-status.utils';
@@ -24,7 +24,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 
 interface GpuMenuItem {
   pciAddress: string;
-  gpuType: string;
+  gpuType: ContainerGpuType;
   description: string;
 }
 
@@ -47,7 +47,7 @@ export class AddGpuDeviceMenuComponent {
   protected readonly requiredRoles = [Role.ContainerDeviceWrite];
 
   private destroyRef = inject(DestroyRef);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
@@ -102,7 +102,8 @@ export class AddGpuDeviceMenuComponent {
       })
       .map(([pciAddress, gpuType]): GpuMenuItem => ({
         pciAddress,
-        gpuType,
+        // `container.device.gpu_choices` types the vendor as a plain string; it is one of these.
+        gpuType: gpuType as ContainerGpuType,
         description: `${gpuType} (${pciAddress})`,
       }));
   });
@@ -125,10 +126,10 @@ export class AddGpuDeviceMenuComponent {
       dtype: ContainerDeviceType.Gpu,
       gpu_type: gpu.gpuType,
       pci_address: gpu.pciAddress,
-    } as ContainerGpuDevice);
+    });
   }
 
-  private addDevice(payload: Partial<ContainerGpuDevice>): void {
+  private addDevice(payload: ContainerGpuDevice): void {
     const instanceId = this.containersStore.selectedContainer()?.id;
     if (!instanceId) {
       return;
@@ -136,7 +137,7 @@ export class AddGpuDeviceMenuComponent {
 
     this.api.call('container.device.create', [{
       container: instanceId,
-      attributes: payload as ContainerGpuDevice,
+      attributes: payload,
     }])
       .pipe(
         this.loader.withLoader(),

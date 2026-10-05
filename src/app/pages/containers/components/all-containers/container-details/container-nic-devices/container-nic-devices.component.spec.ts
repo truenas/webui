@@ -1,7 +1,7 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ContainerDeviceType, ContainerNicDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerDevice } from 'app/interfaces/container.interface';
 import {
@@ -29,8 +29,8 @@ const defaultContainersStoreProvider = mockProvider(ContainersStore, {
   }),
 });
 
-const noPendingChangesProvider = mockApi([
-  mockCall('interface.has_pending_changes', false),
+const noPendingChangesProvider = mockTypedApi([
+  mockTypedCall('interface.has_pending_changes', false),
 ]);
 
 describe('ContainerNicDevicesComponent', () => {

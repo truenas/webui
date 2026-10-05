@@ -1,10 +1,13 @@
 import { signal } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { Subject, throwError } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import {
+  mockTypedApi, mockTypedCall, mockTypedQuery, settleTypedApi,
+} from 'app/core/testing/utils/mock-typed-api.utils';
 import { containerGpuType } from 'app/enums/container.enum';
-import { Container, ContainerDeviceEntry } from 'app/interfaces/container.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { Container } from 'app/interfaces/container.interface';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
@@ -19,14 +22,20 @@ describe('ContainerDevicesStore', () => {
     fakeContainer({ id: 2 }),
   ];
 
-  const containerDevices = [
+  const containerDevices: WebUiQueryEntity<'container.device.query'>[] = [
     {
-      id: 1, container: 1, attributes: { name: 'device1' },
-    } as unknown as ContainerDeviceEntry,
+      id: 1, container: 1, attributes: { dtype: 'FILESYSTEM', source: '/mnt/tank/one', target: '/one' },
+    },
     {
-      id: 2, container: 1, attributes: { name: 'device2' },
-    } as unknown as ContainerDeviceEntry,
-  ] as ContainerDeviceEntry[];
+      id: 2, container: 1, attributes: { dtype: 'FILESYSTEM', source: '/mnt/tank/two', target: '/two' },
+    },
+  ];
+  const device1 = {
+    id: 1, dtype: 'FILESYSTEM', source: '/mnt/tank/one', target: '/one',
+  };
+  const device2 = {
+    id: 2, dtype: 'FILESYSTEM', source: '/mnt/tank/two', target: '/two',
+  };
 
   const gpuChoices = {
     '0000:19:00.0': containerGpuType.Nvidia,
@@ -36,9 +45,9 @@ describe('ContainerDevicesStore', () => {
   const createService = createServiceFactory({
     service: ContainerDevicesStore,
     providers: [
-      mockApi([
-        mockCall('container.device.query', containerDevices),
-        mockCall('container.device.gpu_choices', gpuChoices),
+      mockTypedApi([
+        mockTypedQuery('container.device.query', containerDevices),
+        mockTypedCall('container.device.gpu_choices', gpuChoices),
       ]),
       mockProvider(ContainersStore, {
         containers: jest.fn(() => containers),
@@ -62,14 +71,15 @@ describe('ContainerDevicesStore', () => {
     });
   });
 
-  it('should load devices when loadDevices is called', () => {
+  it('should load devices when loadDevices is called', async () => {
     spectator.service.reload();
+    await settleTypedApi();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.query', [[['container', '=', 1]]]);
+    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('container.device.query', [['container', '=', 1]]);
     expect(spectator.service.state()).toEqual({
       devices: [
-        { id: 1, name: 'device1' },
-        { id: 2, name: 'device2' },
+        device1,
+        device2,
       ],
       isLoading: false,
       gpuChoices,
@@ -77,22 +87,24 @@ describe('ContainerDevicesStore', () => {
     });
   });
 
-  it('loadDevices – loads a list of devices for the selected container', () => {
+  it('loadDevices – loads a list of devices for the selected container', async () => {
     spectator.service.reload();
+    await settleTypedApi();
 
     expect(spectator.service.devices()).toEqual([
-      { id: 1, name: 'device1' },
-      { id: 2, name: 'device2' },
+      device1,
+      device2,
     ]);
-    expect(spectator.inject(ApiService).call)
-      .toHaveBeenCalledWith('container.device.query', [[['container', '=', 1]]]);
+    expect(spectator.inject(TypedApiService).query)
+      .toHaveBeenCalledWith('container.device.query', [['container', '=', 1]]);
   });
 
-  it('deviceDeleted – removes a device from list of devices for selected container', () => {
+  it('deviceDeleted – removes a device from list of devices for selected container', async () => {
     spectator.service.reload();
+    await settleTypedApi();
     spectator.service.deviceDeleted(1);
 
-    expect(spectator.service.devices()).toEqual([{ id: 2, name: 'device2' }]);
+    expect(spectator.service.devices()).toEqual([device2]);
   });
 
   describe('selectors', () => {
@@ -104,11 +116,15 @@ describe('ContainerDevicesStore', () => {
       expect(spectator.service.devices()).toEqual([]);
     });
 
-    it('gpuChoices - returns gpuChoices part of the state', () => {
+    it('gpuChoices - returns gpuChoices part of the state', async () => {
+      await settleTypedApi();
+
       expect(spectator.service.gpuChoices()).toEqual(gpuChoices);
     });
 
-    it('isLoadingGpuChoices - returns isLoadingGpuChoices part of the state', () => {
+    it('isLoadingGpuChoices - returns isLoadingGpuChoices part of the state', async () => {
+      await settleTypedApi();
+
       expect(spectator.service.isLoadingGpuChoices()).toBe(false);
     });
   });
@@ -123,8 +139,8 @@ describe('ContainerDevicesStore', () => {
 
   describe('error handling', () => {
     it('sets isLoading to false on API error', () => {
-      const delayedResponse$ = new Subject<ContainerDeviceEntry[]>();
-      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(delayedResponse$);
+      const delayedResponse$ = new Subject<WebUiQueryEntity<'container.device.query'>[]>();
+      jest.spyOn(spectator.inject(TypedApiService), 'query').mockReturnValue(delayedResponse$);
 
       spectator.service.reload();
       expect(spectator.service.isLoading()).toBe(true);
@@ -137,7 +153,7 @@ describe('ContainerDevicesStore', () => {
 
     it('shows error modal when loadDevices fails', () => {
       const error = new Error('Failed to load devices');
-      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(
+      jest.spyOn(spectator.inject(TypedApiService), 'query').mockReturnValue(
         throwError(() => error),
       );
       const errorHandler = spectator.inject(ErrorHandlerService);
@@ -148,14 +164,15 @@ describe('ContainerDevicesStore', () => {
       expect(errorHandler.showErrorModal).toHaveBeenCalledWith(error);
     });
 
-    it('clears devices on API error', () => {
+    it('clears devices on API error', async () => {
       spectator.service.reload();
+      await settleTypedApi();
       expect(spectator.service.devices()).toEqual([
-        { id: 1, name: 'device1' },
-        { id: 2, name: 'device2' },
+        device1,
+        device2,
       ]);
 
-      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(
+      jest.spyOn(spectator.inject(TypedApiService), 'query').mockReturnValue(
         throwError(() => new Error('API error')),
       );
 
@@ -167,8 +184,8 @@ describe('ContainerDevicesStore', () => {
 
   describe('loading state', () => {
     it('sets isLoading to true while fetching devices', () => {
-      const delayedResponse$ = new Subject<ContainerDeviceEntry[]>();
-      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(delayedResponse$);
+      const delayedResponse$ = new Subject<WebUiQueryEntity<'container.device.query'>[]>();
+      jest.spyOn(spectator.inject(TypedApiService), 'query').mockReturnValue(delayedResponse$);
 
       spectator.service.reload();
 
@@ -179,40 +196,42 @@ describe('ContainerDevicesStore', () => {
       expect(spectator.service.isLoading()).toBe(false);
     });
 
-    it('sets isLoading to false after devices are loaded', () => {
+    it('sets isLoading to false after devices are loaded', async () => {
       spectator.service.reload();
+      await settleTypedApi();
 
       expect(spectator.service.isLoading()).toBe(false);
       expect(spectator.service.devices()).toEqual([
-        { id: 1, name: 'device1' },
-        { id: 2, name: 'device2' },
+        device1,
+        device2,
       ]);
     });
   });
 
   describe('deviceDeleted', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       spectator.service.reload();
+      await settleTypedApi();
     });
 
     it('removes only the specified device', () => {
       spectator.service.deviceDeleted(1);
 
-      expect(spectator.service.devices()).toEqual([{ id: 2, name: 'device2' }]);
+      expect(spectator.service.devices()).toEqual([device2]);
     });
 
     it('keeps all devices if deleted device does not exist', () => {
       spectator.service.deviceDeleted(999);
 
       expect(spectator.service.devices()).toEqual([
-        { id: 1, name: 'device1' },
-        { id: 2, name: 'device2' },
+        device1,
+        device2,
       ]);
     });
 
     it('handles deleting all devices one by one', () => {
       spectator.service.deviceDeleted(1);
-      expect(spectator.service.devices()).toEqual([{ id: 2, name: 'device2' }]);
+      expect(spectator.service.devices()).toEqual([device2]);
 
       spectator.service.deviceDeleted(2);
       expect(spectator.service.devices()).toEqual([]);
@@ -220,8 +239,10 @@ describe('ContainerDevicesStore', () => {
   });
 
   describe('gpu choices', () => {
-    it('loads gpu choices in constructor', () => {
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.gpu_choices');
+    it('loads gpu choices in constructor', async () => {
+      await settleTypedApi();
+
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('container.device.gpu_choices');
       expect(spectator.service.gpuChoices()).toEqual(gpuChoices);
     });
   });
