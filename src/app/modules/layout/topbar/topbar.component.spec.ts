@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter, signal } from '@angular/core';
 import {
-  createComponentFactory, mockProvider, Spectator,
+  byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
@@ -13,6 +13,7 @@ import { of } from 'rxjs';
 import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { selectImportantUnreadAlertsCount, selectIsAlertPanelOpen, selectTopAlertSeverity } from 'app/modules/alerts/store/alert.selectors';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -32,6 +33,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { RebootInfoState } from 'app/store/reboot-info/reboot-info.reducer';
 import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 const fakeRebootInfo: RebootInfoState = {
   thisNodeRebootInfo: {
@@ -147,6 +149,10 @@ function createTopbarComponent(options: ComponentOptions = {}): {
             selector: selectTopAlertSeverity,
             value: null,
           },
+          {
+            selector: selectSystemInfo,
+            value: { hostname: 'truenas-a' } as SystemInfo,
+          },
         ],
       }),
     ],
@@ -176,6 +182,21 @@ describe('TopbarComponent', () => {
       TnIconButtonHarness.with({ name: 'update' }),
     );
     expect(rebootInfoButton).not.toBeNull();
+  });
+
+  describe('hostname', () => {
+    it('shows the hostname of the system the UI is connected to', () => {
+      expect(spectator.query(byText('truenas-a'))).toExist();
+    });
+
+    it('updates when the hostname changes', () => {
+      spectator.inject(MockStore).overrideSelector(selectSystemInfo, { hostname: 'truenas-b' } as SystemInfo);
+      spectator.inject(MockStore).refreshState();
+      spectator.detectChanges();
+
+      expect(spectator.query(byText('truenas-a'))).not.toExist();
+      expect(spectator.query(byText('truenas-b'))).toExist();
+    });
   });
 
   describe('update icon', () => {

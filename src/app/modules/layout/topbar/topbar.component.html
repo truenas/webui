@@ -16,6 +16,18 @@
 
     <ix-global-search-trigger></ix-global-search-trigger>
 
+    @if (hostname(); as hostname) {
+      <div
+        class="hostname"
+        tnTestId="hostname"
+        tnTestIdType="text"
+        [tnTooltip]="'Hostname: {hostname}' | translate: { hostname }"
+      >
+        <tn-icon name="server" library="mdi" size="sm" aria-hidden="true"></tn-icon>
+        <span class="hostname-text">{{ hostname }}</span>
+      </div>
+    }
+
     <ix-truenas-logo></ix-truenas-logo>
 
     <div class="topbar-mobile-footer" [class.has-console-footer]="hasConsoleFooter()">

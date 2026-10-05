@@ -44,16 +44,6 @@
         </div>
       } @else {
         <div class="sidenav-copyright-txt">
-          @if (hostname$ | async; as hostname) {
-            <div
-              class="hostname-label"
-              tnTestId="hostname"
-              tnTestIdType="text"
-              tnTooltipPosition="above"
-              [tnTooltip]="'Hostname: {hostname}' | translate: { hostname }"
-            >{{ hostname }}</div>
-          }
-
           <p class="product-type">
             @if (isCommunityEdition()) {
               <a

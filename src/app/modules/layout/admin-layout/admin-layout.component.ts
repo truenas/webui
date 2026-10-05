@@ -11,7 +11,7 @@ import {
   TnDrawerComponent, TnDrawerContainerComponent, TnDrawerContentComponent,
   TnDrawerMode, TnIconComponent, TnTestIdDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
-import { filter, map, pairwise, startWith } from 'rxjs';
+import { filter, pairwise, startWith } from 'rxjs';
 import { exploreNasEnterpriseLink } from 'app/constants/explore-nas-enterprise-link.constant';
 import { productTypeLabels } from 'app/enums/product-type.enum';
 import { hashMessage } from 'app/helpers/hash-message';
@@ -37,7 +37,7 @@ import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
 import {
-  selectCopyrightHtml, selectIsCommunityEdition, selectProductType, waitForSystemInfo,
+  selectCopyrightHtml, selectIsCommunityEdition, selectProductType,
 } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -80,7 +80,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('alertPanel', { static: true }) private alertPanel: ElementRef<HTMLElement>;
   @ViewChild(TopbarComponent) private topbar: TopbarComponent;
 
-  readonly hostname$ = this.store$.pipe(waitForSystemInfo, map(({ hostname }) => hostname));
   readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
   readonly copyrightHtml = toSignal(this.store$.select(selectCopyrightHtml));

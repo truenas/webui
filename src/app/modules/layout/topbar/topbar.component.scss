@@ -9,6 +9,9 @@
   .topbar-mobile-footer {
     align-items: center;
     display: inline-flex;
+    // Zero basis, not its 100% width, so it only takes the room left after the search
+    // box and the hostname; the hostname truncates only when there is none left.
+    flex: 1 1 0;
     margin-top: -3px;
     place-content: flex-end;
     width: inherit;
@@ -71,6 +74,41 @@
   #sidenavToggle {
     height: 30px;
   }
+
+  // Sized by its fixed-width search box instead of its own `width: 100%`. As a flex
+  // basis, that 100% made the hostname absorb most of the shrinking and cut off the
+  // node suffix (`-nodea` / `-nodeb`) that tells HA controllers apart. Not growing
+  // keeps the hostname right next to the box; the button row takes the spare room.
+  ix-global-search-trigger {
+    flex: 0 1 0;
+  }
+
+  .hostname {
+    align-items: center;
+    display: flex;
+    // Truncated only when the bar has no room left for the whole name.
+    flex: 0 1 auto;
+    font-size: 13px;
+    gap: 6px;
+    margin-left: 16px;
+    max-width: 320px;
+    min-width: 0;
+
+    // The phone layout has no room left next to the logo and the search icon.
+    @media (max-width: $breakpoint-xs) {
+      display: none;
+    }
+
+    tn-icon {
+      flex-shrink: 0;
+      opacity: 0.7;
+    }
+
+    .hostname-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
 }
 
 .topbar button:focus-visible {
@@ -99,13 +137,13 @@
 }
 
 ix-truenas-logo {
+  flex: 1 1 0;
   height: 48px;
-  opacity: 1;
-  visibility: visible;
 
+  // The sidebar shows its own logo at these widths. Removed from the flow rather than
+  // hidden, so the empty slot doesn't push the hostname and buttons past the edge.
   @media(min-width: $breakpoint-tablet) {
-    opacity: 0;
-    visibility: hidden;
+    display: none;
   }
 }
 
