@@ -1,5 +1,5 @@
 import { createFakeClient, FakeConnection } from '@truenas/api-client/testing';
-import { Subject, Subscription } from 'rxjs';
+import { config as rxjsConfig, Subject, Subscription } from 'rxjs';
 import { limitConcurrentCalls, maxGatedCalls } from 'app/modules/websocket/typed-api/limit-concurrent-calls';
 
 describe('limitConcurrentCalls', () => {
@@ -55,7 +55,7 @@ describe('limitConcurrentCalls', () => {
     call('b');
     call('c');
 
-    connection.receive({ jsonrpc: '2.0', id: 'a', error: { code: -32000, message: 'refused' } });
+    connection.receive({ jsonrpc: '2.0', id: 'a', error: { code: -32603, message: 'failed' } });
 
     expect(sentIds()).toEqual(['a', 'b', 'c']);
   });
@@ -202,6 +202,49 @@ describe('limitConcurrentCalls', () => {
     expect(client.connection.sent.slice(sentBefore).map((frame) => frame.method)).toEqual(['core.ping', 'system.info']);
 
     client.close();
+  });
+
+  it('gives back the place of a held-back call that could not be sent, and carries on', () => {
+    connection.close();
+    connection = new FakeConnection({ opened: true });
+    const send = connection.send.bind(connection);
+    connection.send = (message) => {
+      if (message.id === 'broken') {
+        throw new Error('cannot send');
+      }
+      return send(message);
+    };
+    limitConcurrentCalls(connection, 1);
+    // `broken` is started by the answer to `a`, so that is where it throws: inside
+    // the gate's own subscriber, which RxJS reports rather than rethrows.
+    const reported = jest.fn();
+    rxjsConfig.onUnhandledError = reported;
+    jest.useFakeTimers();
+
+    call('a');
+    call('broken');
+    call('c');
+    answer('a');
+    jest.runAllTimers();
+    answer('c');
+    call('d');
+
+    expect(reported).toHaveBeenCalledWith(new Error('cannot send'));
+    expect(sentIds()).toEqual(['a', 'c', 'd']);
+
+    jest.useRealTimers();
+    rxjsConfig.onUnhandledError = null;
+  });
+
+  it('says so when middleware refuses a call for being one too many', () => {
+    jest.spyOn(console, 'error').mockImplementation();
+    call('a');
+
+    connection.receive({
+      jsonrpc: '2.0', id: 'a', error: { code: -32000, message: 'Maximum number of concurrent calls (20) has exceeded' },
+    });
+
+    expect(console.error).toHaveBeenCalledWith(expect.stringContaining('refused a call'));
   });
 
   it('frees the place of a call abandoned before a socket existed to send it on', () => {

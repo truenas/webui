@@ -1,3 +1,4 @@
+import { environment } from 'environments/environment';
 import { Subscription } from 'rxjs';
 import type { WebUiApiClient } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
@@ -17,6 +18,15 @@ export const maxConcurrentCalls = 20;
  * 20 s and so cannot be held back here, but which middleware counts all the same.
  */
 export const maxGatedCalls = maxConcurrentCalls - 1;
+
+/**
+ * The JSON-RPC code middleware gives that refusal. Seeing one means something
+ * reached the appliance uncounted: this gate only sees what passes `send`.
+ */
+const tooManyConcurrentCallsCode = -32000;
+
+/** How many calls may wait here before it is worth saying so, in a development build. */
+const longQueue = maxConcurrentCalls * 2;
 
 interface WaitingCall {
   id: string;
@@ -53,7 +63,15 @@ export function limitConcurrentCalls(connection: Connection, limit = maxGatedCal
   function start({ id, message, handle }: WaitingCall): void {
     // Counted before it is sent, in case the answer arrives as it is written.
     inFlight.set(id, Subscription.EMPTY);
-    const sending = send(message);
+    let sending: Subscription;
+    try {
+      sending = send(message);
+    } catch (error) {
+      // A call that waited is started from whichever answer made room for it,
+      // not from its caller, so nobody else is placed to give its place back.
+      finish(id);
+      throw error;
+    }
     if (!inFlight.has(id)) {
       return;
     }
@@ -105,6 +123,12 @@ export function limitConcurrentCalls(connection: Connection, limit = maxGatedCal
   });
 
   connection.messages().subscribe((message) => {
+    if ((message.error as { code?: number } | undefined)?.code === tooManyConcurrentCallsCode) {
+      console.error(
+        `Middleware refused a call for exceeding ${maxConcurrentCalls} concurrent calls, which the limit of `
+        + `${limit} kept here should make impossible. Something is reaching it without passing connection.send.`,
+      );
+    }
     if (message.id !== undefined && message.id !== null) {
       finish(String(message.id));
     }
@@ -122,6 +146,12 @@ export function limitConcurrentCalls(connection: Connection, limit = maxGatedCal
     }
 
     waiting.push(call);
+    if (!environment.production && waiting.length === longQueue) {
+      console.warn(
+        `${longQueue} API calls are waiting behind ${limit} that the appliance has not answered yet. `
+        + 'Nothing else in the tab is sent until one of those is.',
+      );
+    }
     call.handle.add(() => {
       const index = waiting.indexOf(call);
       if (index >= 0) {

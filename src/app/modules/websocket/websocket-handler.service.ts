@@ -23,7 +23,7 @@ import {
 } from 'app/interfaces/api-message.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ConnectionService, TypedConnection } from 'app/modules/websocket/connection.service';
-import { maxConcurrentCalls } from 'app/modules/websocket/typed-api/limit-concurrent-calls';
+import { maxConcurrentCalls as middlewareCallLimit } from 'app/modules/websocket/typed-api/limit-concurrent-calls';
 import { MockResponseService } from 'app/modules/websocket-debug-panel/services/mock-response.service';
 import { WebSocketDebugService } from 'app/modules/websocket-debug-panel/services/websocket-debug.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -82,7 +82,7 @@ export class WebSocketHandlerService {
    */
   private connection: TypedConnection | undefined;
 
-  private readonly maxConcurrentCalls = maxConcurrentCalls;
+  private readonly maxConcurrentCalls = middlewareCallLimit;
 
   private readonly triggerNextCall$ = new Subject<void>();
   private activeCalls = 0;
