@@ -663,6 +663,22 @@ describe('DiskListComponent - without SED license', () => {
     expect(headerRow).toEqual(['Name', 'Serial', 'Disk Size', 'Pool']);
   });
 
+  it('offers no SED actions, even when disk.details reports a status', async () => {
+    const api = spectator.inject(MockApiService);
+    api.mockCall('disk.query', [{ ...fakeDisks[0], sed: true }] as Disk[]);
+    api.mockCall('disk.details', {
+      unused: [],
+      used: [{ name: 'sda', devname: 'sda', sed_status: SedStatus.Locked }] as DetailsDisk[],
+    });
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(TnTableHarness);
+    await table.toggleRowExpansion(0);
+
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Unlock' }))).toBeNull();
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'SED Reset' }))).toBeNull();
+  });
+
   it('does not probe a SED disk that disk.details left out', () => {
     const api = spectator.inject(MockApiService);
     api.mockCall('disk.query', [{ ...fakeDisks[0], sed: true }] as Disk[]);
@@ -695,6 +711,7 @@ describe('DiskListComponent when the SED entitlement resolves late', () => {
       mockProvider(TnDialog),
       mockProvider(EntitlementsService, {
         entitled: () => hasSed,
+        entitled$: () => of(true),
       }),
       provideMockStore({
         selectors: [

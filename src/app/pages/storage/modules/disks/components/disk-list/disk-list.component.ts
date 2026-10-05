@@ -152,16 +152,12 @@ export class DiskListComponent {
     this.api.call('disk.query', [[], { extra: { pools: true, passwords: true } }]),
   ])).pipe(
     switchMap(([diskDetails, disks]) => {
-      const sedStatuses = new Map(
-        [...diskDetails.unused, ...diskDetails.used].map((disk) => [disk.name, disk.sed_status]),
-      );
-
       this.unusedDisks = [
         ...diskDetails.unused,
         ...diskDetails.used.filter((disk) => disk.exported_zpool),
       ];
 
-      return this.addMissingSedStatuses(disks, sedStatuses).pipe(
+      return this.getSedStatuses([...diskDetails.unused, ...diskDetails.used], disks).pipe(
         map((statuses) => {
           this.disks = disks.map((disk) => this.toRow({ ...disk, sed_status: statuses.get(disk.name) }));
           return this.disks;
@@ -501,7 +497,7 @@ export class DiskListComponent {
   /**
    * A PSID reset is a recovery path, so it is offered in every reported SED state (locked,
    * unlocked, uninitialized, failed), not only when the disk is locked. `sed_status` is only
-   * reported with the SED entitlement, so its presence also gates on that.
+   * kept with the SED entitlement (see `getSedStatuses`), so its presence also gates on that.
    */
   protected canResetSed(disk: Disk): boolean {
     return Boolean(disk.sed && disk.sed_status);
@@ -516,26 +512,31 @@ export class DiskListComponent {
     this.dataProvider.setFilter({ list: this.disks, query, columnKeys: ['name', 'pool', 'serial', 'size'] });
   }
 
-  // `disk.details` skips disks the OS cannot size. Probe those once its own sweep has finished.
-  private addMissingSedStatuses(
-    disks: Disk[],
-    sedStatuses: Map<string, SedStatus | undefined>,
-  ): Observable<Map<string, SedStatus | undefined>> {
-    const missing = disks.filter((disk) => disk.sed && !sedStatuses.has(disk.name)).map((disk) => disk.name);
-    if (!missing.length) {
-      return of(sedStatuses);
-    }
-
+  /**
+   * SED statuses by disk name; none without the SED entitlement. `disk.details` skips disks the
+   * OS cannot size, so those are probed here, once its own sweep has finished.
+   */
+  private getSedStatuses(detailsDisks: DetailsDisk[], disks: Disk[]): Observable<Map<string, SedStatus | undefined>> {
     return this.entitlements.entitled$(EntitlementFeature.Sed).pipe(
       take(1),
       switchMap((hasSed) => {
-        return hasSed
-          ? this.api.call('disk.query', [[['name', 'in', missing]], { extra: { sed_status: true } }])
-          : of([] as Disk[]);
-      }),
-      map((probedDisks) => {
-        probedDisks.forEach((disk) => sedStatuses.set(disk.name, disk.sed_status));
-        return sedStatuses;
+        const statuses = new Map<string, SedStatus | undefined>();
+        if (!hasSed) {
+          return of(statuses);
+        }
+
+        detailsDisks.forEach((disk) => statuses.set(disk.name, disk.sed_status));
+        const missing = disks.filter((disk) => disk.sed && !statuses.has(disk.name)).map((disk) => disk.name);
+        if (!missing.length) {
+          return of(statuses);
+        }
+
+        return this.api.call('disk.query', [[['name', 'in', missing]], { extra: { sed_status: true } }]).pipe(
+          map((probedDisks) => {
+            probedDisks.forEach((disk) => statuses.set(disk.name, disk.sed_status));
+            return statuses;
+          }),
+        );
       }),
     );
   }
