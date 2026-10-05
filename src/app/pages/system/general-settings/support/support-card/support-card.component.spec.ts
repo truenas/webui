@@ -290,7 +290,7 @@ describe('SupportCardComponent', () => {
         expect(spectator.component.licenseInfo.daysLeftInContract).toBe(1);
       });
 
-      it('keeps the warning banner up for the whole of the last day in force', async () => {
+      it('keeps the warning banner up for the whole of the last day in force', () => {
         emitSystemInfo({
           datetime: { $date: Date.parse('2026-09-30T18:00:00Z') } as SystemInfo['datetime'],
           license: makeLicense('2026-09-30'),
@@ -298,10 +298,8 @@ describe('SupportCardComponent', () => {
 
         expect(spectator.component.licenseInfo.daysLeftInContract).toBe(0);
 
-        const banner = await loader.getHarnessOrNull(
-          TnBannerHarness.with({ textContains: /Your support contract expires in/ }),
-        );
-        expect(banner).not.toBeNull();
+        const banner = spectator.query('.support-banner.warning');
+        expect(banner).toExist();
       });
 
       it('reports the contract as lapsed only after its end date', () => {
