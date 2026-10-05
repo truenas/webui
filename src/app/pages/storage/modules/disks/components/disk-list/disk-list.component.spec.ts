@@ -186,6 +186,24 @@ describe('DiskListComponent', () => {
     expect(api.call).toHaveBeenCalledTimes(2);
   });
 
+  it('probes a SED disk that disk.details left out, once the details sweep is done', async () => {
+    const missingDisk = {
+      ...fakeDisks[2], identifier: 'identifier4', name: 'sdd', devname: 'sdd',
+    } as Disk;
+    const api = spectator.inject(MockApiService);
+    api.mockCall('disk.query', (params) => {
+      return params?.[0]?.length
+        ? [{ ...missingDisk, sed_status: SedStatus.Unlocked }]
+        : [...fakeDisks, missingDisk];
+    });
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(TnTableHarness);
+
+    expect(api.call).toHaveBeenCalledWith('disk.query', [[['name', 'in', ['sdd']]], { extra: { sed_status: true } }]);
+    expect((await table.getAllRowTexts())[3]).toEqual(['sdd', 'serial3', '5 GiB', 'N/A', 'Unlocked']);
+  });
+
   /**
    * Resolves the `data-test` of a button located by the label a user reads. tn-button puts
    * `[testId]` on the inner `<button>` rather than on its host, which is where e2e locates it.
@@ -643,6 +661,14 @@ describe('DiskListComponent - without SED license', () => {
 
     expect(headerRow).not.toContain('Self-Encrypting Drive (SED)');
     expect(headerRow).toEqual(['Name', 'Serial', 'Disk Size', 'Pool']);
+  });
+
+  it('does not probe a SED disk that disk.details left out', () => {
+    const api = spectator.inject(MockApiService);
+    api.mockCall('disk.query', [{ ...fakeDisks[0], sed: true }] as Disk[]);
+    spectator = createComponent();
+
+    expect(api.call).not.toHaveBeenCalledWith('disk.query', [expect.anything(), { extra: { sed_status: true } }]);
   });
 });
 

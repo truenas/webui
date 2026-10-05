@@ -9,8 +9,9 @@ import {
   type TnSortEvent,
 } from '@truenas/ui-components';
 import {
-  defer, filter, forkJoin, map, Subject,
+  defer, filter, forkJoin, map, Observable, of, Subject,
 } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
@@ -150,17 +151,22 @@ export class DiskListComponent {
     this.api.call('disk.details'),
     this.api.call('disk.query', [[], { extra: { pools: true, passwords: true } }]),
   ])).pipe(
-    map(([diskDetails, disks]) => {
+    switchMap(([diskDetails, disks]) => {
       const sedStatuses = new Map(
-        [...diskDetails.unused, ...diskDetails.used].map((disk) => [disk.devname, disk.sed_status]),
+        [...diskDetails.unused, ...diskDetails.used].map((disk) => [disk.name, disk.sed_status]),
       );
 
       this.unusedDisks = [
         ...diskDetails.unused,
         ...diskDetails.used.filter((disk) => disk.exported_zpool),
       ];
-      this.disks = disks.map((disk) => this.toRow({ ...disk, sed_status: sedStatuses.get(disk.devname) }));
-      return this.disks;
+
+      return this.addMissingSedStatuses(disks, sedStatuses).pipe(
+        map((statuses) => {
+          this.disks = disks.map((disk) => this.toRow({ ...disk, sed_status: statuses.get(disk.name) }));
+          return this.disks;
+        }),
+      );
     }),
   );
 
@@ -508,6 +514,30 @@ export class DiskListComponent {
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.disks, query, columnKeys: ['name', 'pool', 'serial', 'size'] });
+  }
+
+  // `disk.details` skips disks the OS cannot size. Probe those once its own sweep has finished.
+  private addMissingSedStatuses(
+    disks: Disk[],
+    sedStatuses: Map<string, SedStatus | undefined>,
+  ): Observable<Map<string, SedStatus | undefined>> {
+    const missing = disks.filter((disk) => disk.sed && !sedStatuses.has(disk.name)).map((disk) => disk.name);
+    if (!missing.length) {
+      return of(sedStatuses);
+    }
+
+    return this.entitlements.entitled$(EntitlementFeature.Sed).pipe(
+      take(1),
+      switchMap((hasSed) => {
+        return hasSed
+          ? this.api.call('disk.query', [[['name', 'in', missing]], { extra: { sed_status: true } }])
+          : of([] as Disk[]);
+      }),
+      map((probedDisks) => {
+        probedDisks.forEach((disk) => sedStatuses.set(disk.name, disk.sed_status));
+        return sedStatuses;
+      }),
+    );
   }
 
   private toRow(disk: Disk): DiskRow {
