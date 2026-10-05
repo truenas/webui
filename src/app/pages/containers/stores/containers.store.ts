@@ -12,11 +12,21 @@ import {
 } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { containerStatusLabels } from 'app/enums/container.enum';
-import { ApiEventTyped } from 'app/interfaces/api-message.interface';
-import { Container, ContainerMetrics } from 'app/interfaces/container.interface';
+import { Container, ContainerMetrics, toContainer } from 'app/interfaces/container.interface';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+
+/**
+ * A `container.query` event as middleware sends it. The generated event declares a numeric `id`
+ * and a whole row, but a status-only change arrives keyed by the container's name and carrying
+ * only `status` (see the workaround in `processContainerUpdateEvent`).
+ */
+type ContainerQueryEvent
+  = | { msg: CollectionChangeType.Added; id: number; fields: Container }
+    | { msg: CollectionChangeType.Changed; id: number | string; fields: Partial<Container> }
+    | { msg: CollectionChangeType.Removed; id: number };
 
 export enum ContainerSortField {
   Name = 'name',
@@ -99,7 +109,13 @@ const initialState: ContainersState = {
 
 @Injectable()
 export class ContainersStore extends ComponentStore<ContainersState> {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
+  /**
+   * For `container.metrics` alone: an event source middleware pushes on a timer, which must not
+   * move while the typed client never releases a subscription (gap 17 in
+   * docs/devs/typed-api-client.md) — it would keep streaming after the page is left.
+   */
+  private legacyApi = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
@@ -156,7 +172,8 @@ export class ContainersStore extends ComponentStore<ContainersState> {
         }
 
         this.patchState({ isLoading: true });
-        return this.api.call('container.query').pipe(
+        return this.api.query('container.query').pipe(
+          map((containers) => containers.map(toContainer)),
           tap((containers) => {
             const selectedContainerId = this.selectedContainerId();
 
@@ -192,7 +209,7 @@ export class ContainersStore extends ComponentStore<ContainersState> {
   private subscribeToContainerUpdates(): void {
     this.api.subscribe('container.query')
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((event) => this.processContainerUpdateEvent(event));
+      .subscribe((event) => this.processContainerUpdateEvent(event as ContainerQueryEvent));
   }
 
   /**
@@ -203,7 +220,8 @@ export class ContainersStore extends ComponentStore<ContainersState> {
     return trigger$.pipe(
       exhaustMap(() => {
         this.patchState({ isLoading: true });
-        return this.api.call('container.query').pipe(
+        return this.api.query('container.query').pipe(
+          map((containers) => containers.map(toContainer)),
           tap((containers) => {
             const selectedContainerId = this.selectedContainerId();
             const updates: Partial<ContainersState> = {
@@ -230,9 +248,7 @@ export class ContainersStore extends ComponentStore<ContainersState> {
     );
   });
 
-  private processContainerUpdateEvent(
-    event: ApiEventTyped<'container.query'>,
-  ): void {
+  private processContainerUpdateEvent(event: ContainerQueryEvent): void {
     const prevContainers = this.containers();
     const selectedContainer = this.selectedContainer();
     switch (event?.msg) {
@@ -351,7 +367,7 @@ export class ContainersStore extends ComponentStore<ContainersState> {
           if (!shouldSubscribe) {
             return EMPTY;
           }
-          return this.api.subscribe('container.metrics').pipe(
+          return this.legacyApi.subscribe('container.metrics').pipe(
             map((event) => event.fields ?? {}),
           );
         }),

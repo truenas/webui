@@ -8,41 +8,37 @@ import {
   TnSelectHarness, TnDialog,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import {
   ContainerCapabilitiesPolicy, ContainerDeviceType, ContainerIdmapType, ContainerStatus,
 } from 'app/enums/container.enum';
-import { AvailableUsb, Container } from 'app/interfaces/container.interface';
+import { JobState } from 'app/enums/job-state.enum';
+import {
+  AvailableUsb, ContainerGlobalConfig, toContainer,
+} from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+
+type ContainerEntry = WebUiQueryEntity<'container.query'>;
 
 describe('ContainerFormComponent', () => {
   let spectator: Spectator<ContainerFormComponent>;
   let loader: HarnessLoader;
 
-  beforeAll(() => {
-    Object.defineProperty(global, 'crypto', {
-      value: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        randomUUID: () => 'test-uuid-456',
-      },
-    });
-  });
-
-  const existingContainer: Container = {
+  const existingContainerEntry = {
     id: 1,
     uuid: 'test-uuid-123',
     name: 'test-container',
     description: 'Test description',
     cpuset: '0-1',
     autostart: true,
-    time: 'local',
+    time: 'LOCAL',
     shutdown_timeout: 30,
     dataset: 'pool1/containers/test-container',
     init: '/sbin/init',
@@ -58,13 +54,14 @@ describe('ContainerFormComponent', () => {
       pid: 1234,
       domain_state: null,
     },
-  };
+  } as ContainerEntry;
+  const existingContainer = toContainer(existingContainerEntry);
 
-  const createdContainer: Container = {
-    ...existingContainer,
+  const createdContainer = {
+    ...existingContainerEntry,
     id: 1,
     name: 'new-container',
-  };
+  } as ContainerEntry;
 
   const createComponent = createComponentFactory({
     component: ContainerFormComponent,
@@ -73,27 +70,27 @@ describe('ContainerFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('container.pool_choices', { pool1: 'pool1', pool2: 'pool2' }),
-        mockCall('lxc.config', {
+      mockTypedApi([
+        mockTypedCall('container.pool_choices', { pool1: 'pool1', pool2: 'pool2' }),
+        mockTypedCall('lxc.config', {
           bridge: 'lxdbr0',
           v4_network: null,
           v6_network: null,
           preferred_pool: 'pool1',
-        }),
-        mockJob('container.create', fakeSuccessfulJob(createdContainer)),
-        mockCall('container.update', existingContainer),
-        mockCall('container.get_instance', existingContainer),
-        mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
-        mockCall('container.query', []),
-        mockCall('container.device.usb_choices', {
+        } as ContainerGlobalConfig),
+        mockTypedJob('container.create', { state: JobState.Success, result: createdContainer }),
+        mockTypedCall('container.update', existingContainerEntry),
+        mockTypedCall('container.get_instance', existingContainerEntry),
+        mockTypedCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
+        mockTypedQuery('container.query', []),
+        mockTypedCall('container.device.usb_choices', {
           usb_1_1: {
             capability: { vendor_id: '0x046d', product_id: '0x0825' },
             available: true,
             description: 'Web Cam by Logitech',
           } as AvailableUsb,
         }),
-        mockCall('container.device.create'),
+        mockTypedCall('container.device.create', null),
       ]),
       mockProvider(ContainersStore, {
         reload: jest.fn(),
@@ -141,6 +138,7 @@ describe('ContainerFormComponent', () => {
 
   const submit = async (): Promise<void> => {
     spectator.component.submit();
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
     await spectator.fixture.whenStable();
   };
@@ -190,19 +188,19 @@ describe('ContainerFormComponent', () => {
       ],
       providers: [
         mockAuth(),
-        mockApi([
-          mockCall('container.pool_choices', { pool1: 'pool1', pool2: 'pool2' }),
-          mockCall('lxc.config', {
+        mockTypedApi([
+          mockTypedCall('container.pool_choices', { pool1: 'pool1', pool2: 'pool2' }),
+          mockTypedCall('lxc.config', {
             bridge: 'lxdbr0',
             v4_network: null,
             v6_network: null,
             preferred_pool: 'pool1',
-          }),
-          mockJob('container.create'),
-          mockCall('container.update', existingContainer),
-          mockCall('container.get_instance', existingContainer),
-          mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
-          mockCall('container.query', []),
+          } as ContainerGlobalConfig),
+          mockTypedJob('container.create', { state: JobState.Success }),
+          mockTypedCall('container.update', existingContainerEntry),
+          mockTypedCall('container.get_instance', existingContainerEntry),
+          mockTypedCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
+          mockTypedQuery('container.query', []),
         ]),
         mockProvider(ContainersStore, {
           initialize: jest.fn(),
@@ -221,9 +219,12 @@ describe('ContainerFormComponent', () => {
       ],
     });
 
-    beforeEach(() => {
+    beforeEach(async () => {
       spectator = createEditComponent({ props: { editContainer: existingContainer } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      // The typed double answers `container.get_instance` on a microtask.
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
     });
 
     it('sets isEditMode to true', () => {
@@ -244,7 +245,7 @@ describe('ContainerFormComponent', () => {
     });
 
     it('loads the container being edited from the panel input', () => {
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.get_instance', [1]);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('container.get_instance', [1]);
     });
 
     // Middleware refuses to rename a container that is not stopped - since 26.0 SUSPENDED
@@ -258,24 +259,28 @@ describe('ContainerFormComponent', () => {
   describe.each([ContainerStatus.Running, ContainerStatus.Suspended, ContainerStatus.Stopped])(
     'renaming a %s container',
     (state) => {
-      const container: Container = { ...existingContainer, status: { ...existingContainer.status, state } };
+      const containerEntry = {
+        ...existingContainerEntry,
+        status: { ...existingContainerEntry.status, state },
+      } as ContainerEntry;
+      const container = toContainer(containerEntry);
 
       const createStateComponent = createComponentFactory({
         component: ContainerFormComponent,
         imports: [ReactiveFormsModule],
         providers: [
           mockAuth(),
-          mockApi([
-            mockCall('container.pool_choices', { pool1: 'pool1' }),
-            mockCall('lxc.config', {
+          mockTypedApi([
+            mockTypedCall('container.pool_choices', { pool1: 'pool1' }),
+            mockTypedCall('lxc.config', {
               bridge: 'lxdbr0',
               v4_network: null,
               v6_network: null,
               preferred_pool: 'pool1',
-            }),
-            mockCall('container.get_instance', container),
-            mockCall('lxc.bridge_choices', { lxdbr0: 'lxdbr0' }),
-            mockCall('container.query', []),
+            } as ContainerGlobalConfig),
+            mockTypedCall('container.get_instance', containerEntry),
+            mockTypedCall('lxc.bridge_choices', { lxdbr0: 'lxdbr0' }),
+            mockTypedQuery('container.query', []),
           ]),
           mockProvider(ContainersStore),
           mockProvider(TnDialog),
@@ -288,6 +293,8 @@ describe('ContainerFormComponent', () => {
       it(`${state === ContainerStatus.Stopped ? 'allows' : 'refuses'} the rename`, async () => {
         spectator = createStateComponent({ props: { editContainer: container } });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+        await spectator.fixture.whenStable();
+        spectator.detectChanges();
 
         const nameInput = await getInput('name');
         expect(await nameInput.isDisabled()).toBe(state !== ContainerStatus.Stopped);
@@ -358,7 +365,7 @@ describe('ContainerFormComponent', () => {
       expect(containersStore.reload).toHaveBeenCalled();
       expect(router.navigate).toHaveBeenCalledWith(['/containers', 'view', 1]);
 
-      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('container.device.create', expect.anything());
+      expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('container.device.create', expect.anything());
     });
 
     it('attaches selected USB devices by physical port after the container is created', async () => {
@@ -378,7 +385,7 @@ describe('ContainerFormComponent', () => {
 
       await submit();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('container.device.create', [{
         container: 1,
         attributes: {
           dtype: ContainerDeviceType.Usb,
@@ -398,19 +405,19 @@ describe('ContainerFormComponent', () => {
       ],
       providers: [
         mockAuth(),
-        mockApi([
-          mockCall('container.pool_choices', { pool1: 'pool1', pool2: 'pool2' }),
-          mockCall('lxc.config', {
+        mockTypedApi([
+          mockTypedCall('container.pool_choices', { pool1: 'pool1', pool2: 'pool2' }),
+          mockTypedCall('lxc.config', {
             bridge: 'lxdbr0',
             v4_network: null,
             v6_network: null,
             preferred_pool: 'pool1',
-          }),
-          mockJob('container.create'),
-          mockCall('container.update', { ...existingContainer, name: 'updated-container' } as Container),
-          mockCall('container.get_instance', existingContainer),
-          mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
-          mockCall('container.query', []),
+          } as ContainerGlobalConfig),
+          mockTypedJob('container.create', { state: JobState.Success }),
+          mockTypedCall('container.update', { ...existingContainerEntry, name: 'updated-container' }),
+          mockTypedCall('container.get_instance', existingContainerEntry),
+          mockTypedCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
+          mockTypedQuery('container.query', []),
         ]),
         mockProvider(ContainersStore, {
           initialize: jest.fn(),
@@ -431,13 +438,16 @@ describe('ContainerFormComponent', () => {
       ],
     });
 
-    beforeEach(() => {
+    beforeEach(async () => {
       spectator = createEditComponent({ props: { editContainer: existingContainer } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      // The typed double answers `container.get_instance` on a microtask.
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
     });
 
     it('submits update call with only changed fields when form is submitted', async () => {
-      const api = spectator.inject(ApiService);
+      const api = spectator.inject(TypedApiService);
       const snackbar = spectator.inject(SnackbarService);
       const containersStore = spectator.inject(ContainersStore);
       const closedSpy = jest.fn();
@@ -514,16 +524,12 @@ describe('ContainerFormComponent', () => {
       await submit();
 
       expect(dialogService.jobDialog).toHaveBeenCalled();
-      const jobDialogCall = (dialogService.jobDialog as jest.Mock).mock.calls[0];
-      const jobObservable = jobDialogCall[0];
-
-      jobObservable.subscribe((job: { params: unknown[] }) => {
-        const payload = job.params[0];
-        expect(payload).toMatchObject({
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('container.create', [
+        expect.objectContaining({
           pool: '',
           name: 'new-container',
-        });
-      });
+        }),
+      ]);
     });
   });
 
@@ -535,20 +541,20 @@ describe('ContainerFormComponent', () => {
       ],
       providers: [
         mockAuth(),
-        mockApi([
-          mockCall('container.pool_choices', { pool1: 'pool1', pool2: 'pool2' }),
-          mockCall('lxc.config', {
+        mockTypedApi([
+          mockTypedCall('container.pool_choices', { pool1: 'pool1', pool2: 'pool2' }),
+          mockTypedCall('lxc.config', {
             bridge: 'lxdbr0',
             v4_network: null,
             v6_network: null,
             preferred_pool: null,
-          }),
-          mockJob('container.create', fakeSuccessfulJob(createdContainer)),
-          mockCall('container.update', existingContainer),
-          mockCall('container.get_instance', existingContainer),
-          mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
-          mockCall('container.query', []),
-          mockCall('container.device.usb_choices', {}),
+          } as ContainerGlobalConfig),
+          mockTypedJob('container.create', { state: JobState.Success, result: createdContainer }),
+          mockTypedCall('container.update', existingContainerEntry),
+          mockTypedCall('container.get_instance', existingContainerEntry),
+          mockTypedCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
+          mockTypedQuery('container.query', []),
+          mockTypedCall('container.device.usb_choices', {}),
         ]),
         mockProvider(ContainersStore, {
           initialize: jest.fn(),
@@ -647,19 +653,19 @@ describe('ContainerFormComponent', () => {
       imports: [ReactiveFormsModule],
       providers: [
         mockAuth(),
-        mockApi([
-          mockCall('container.pool_choices', { pool1: 'pool1' }),
-          mockCall('lxc.config', {
+        mockTypedApi([
+          mockTypedCall('container.pool_choices', { pool1: 'pool1' }),
+          mockTypedCall('lxc.config', {
             bridge: 'lxdbr0',
             v4_network: null,
             v6_network: null,
             preferred_pool: 'pool1',
-          }),
-          mockJob('container.create'),
-          mockCall('container.update', existingContainer),
-          mockCall('container.get_instance', existingContainer),
-          mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic' }),
-          mockCall('container.query', []),
+          } as ContainerGlobalConfig),
+          mockTypedJob('container.create', { state: JobState.Success }),
+          mockTypedCall('container.update', existingContainerEntry),
+          mockTypedCall('container.get_instance', existingContainerEntry),
+          mockTypedCall('lxc.bridge_choices', { '[AUTO]': 'Automatic' }),
+          mockTypedQuery('container.query', []),
         ]),
         mockProvider(ContainersStore, { initialize: jest.fn() }),
         mockProvider(TnDialog),
@@ -669,9 +675,12 @@ describe('ContainerFormComponent', () => {
       ],
     });
 
-    beforeEach(() => {
+    beforeEach(async () => {
       spectator = createEditComponent({ props: { editContainer: existingContainer } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      // The typed double answers `container.get_instance` on a microtask.
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
     });
 
     it('does not show ID Map Type in edit mode', async () => {
@@ -721,7 +730,7 @@ describe('ContainerFormComponent', () => {
     }
 
     it('sends default idmap when Default is selected', async () => {
-      const api = spectator.inject(ApiService);
+      const api = spectator.inject(TypedApiService);
       await submitWithIdmap(ContainerIdmapType.Default);
 
       expect(api.job).toHaveBeenCalledWith('container.create', [
@@ -730,7 +739,7 @@ describe('ContainerFormComponent', () => {
     });
 
     it('sends null idmap when Privileged is selected', async () => {
-      const api = spectator.inject(ApiService);
+      const api = spectator.inject(TypedApiService);
       await submitWithIdmap(ContainerIdmapType.Privileged);
 
       expect(api.job).toHaveBeenCalledWith('container.create', [
@@ -739,7 +748,7 @@ describe('ContainerFormComponent', () => {
     });
 
     it('sends isolated idmap with slice when Isolated is selected with a slice', async () => {
-      const api = spectator.inject(ApiService);
+      const api = spectator.inject(TypedApiService);
       await submitWithIdmap(ContainerIdmapType.Isolated, 5);
 
       expect(api.job).toHaveBeenCalledWith('container.create', [
@@ -748,7 +757,7 @@ describe('ContainerFormComponent', () => {
     });
 
     it('sends isolated idmap with null slice when Isolated is selected without a slice', async () => {
-      const api = spectator.inject(ApiService);
+      const api = spectator.inject(TypedApiService);
       await submitWithIdmap(ContainerIdmapType.Isolated, null);
 
       expect(api.job).toHaveBeenCalledWith('container.create', [

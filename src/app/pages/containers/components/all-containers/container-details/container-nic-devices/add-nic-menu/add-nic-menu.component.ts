@@ -5,7 +5,9 @@ import {
   TnButtonComponent, TnDialog, TnMenuComponent, TnMenuItem, TnMenuTriggerDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { filter, Observable, switchMap } from 'rxjs';
+import {
+  filter, map, Observable, switchMap,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
   ContainerDeviceType,
@@ -18,7 +20,7 @@ import {
 } from 'app/interfaces/container.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ContainerNicFormDialog } from 'app/pages/containers/components/common/container-nic-form-dialog/container-nic-form-dialog.component';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
@@ -46,7 +48,7 @@ export class AddNicMenuComponent {
   readonly defaultBridge = input.required<string | null>();
 
   private destroyRef = inject(DestroyRef);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
@@ -154,7 +156,8 @@ export class AddNicMenuComponent {
   }
 
   private getNicChoices(): Observable<Record<string, string[]>> {
-    return this.api.call('container.device.nic_attach_choices', []);
+    // Read as a record of groups: the generated type names BRIDGE and MACVLAN, the menu lists whatever comes.
+    return this.api.call('container.device.nic_attach_choices').pipe(map((choices) => ({ ...choices })));
   }
 
   private addDevice(nicKey: string): void {

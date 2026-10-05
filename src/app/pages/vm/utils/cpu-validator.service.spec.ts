@@ -1,8 +1,8 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 
 describe('CpuValidatorService', () => {
@@ -10,8 +10,8 @@ describe('CpuValidatorService', () => {
   const createService = createServiceFactory({
     service: CpuValidatorService,
     providers: [
-      mockApi([
-        mockCall('vm.maximum_supported_vcpus', 7),
+      mockTypedApi([
+        mockTypedCall('vm.maximum_supported_vcpus', 7),
       ]),
     ],
   });
@@ -36,7 +36,7 @@ describe('CpuValidatorService', () => {
           message: 'The product of vCPUs, cores and threads must not exceed 7 on this system.',
         },
       });
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.maximum_supported_vcpus');
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('vm.maximum_supported_vcpus');
     });
 
     it('only loads maximum supported vcpus once', () => {
@@ -44,7 +44,7 @@ describe('CpuValidatorService', () => {
       spectator.service.createValidator();
       spectator.service.createValidator();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledTimes(1);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledTimes(1);
     });
 
     it('returns a validator that does not return an error when product of '

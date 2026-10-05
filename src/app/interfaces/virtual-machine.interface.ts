@@ -1,7 +1,9 @@
+import { CallParams } from '@truenas/api-client';
 import {
   VmBootloader, VmCpuMode, VmState, VmTime,
 } from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export interface VirtualMachine {
   autostart: boolean;
@@ -44,24 +46,20 @@ export interface VirtualMachine {
   enable_secure_boot: boolean;
 }
 
-export type VirtualMachineUpdate = Omit<VirtualMachine, 'status' | 'id' | 'devices'>;
-
-export interface VmPortWizardResult {
-  port: number;
-  web: number;
-}
-
-export type VmCloneParams = [
-  id: number,
-  newName?: string,
-];
-
-export type VmDeleteParams = [
-  id: number,
-  params: { zvols: boolean; force: boolean },
-];
+/** What the VM forms send, to `vm.create` and `vm.update` alike. */
+export type VirtualMachineUpdate = CallParams<WebUiApiDirectory, 'vm.create'>[0];
 
 export interface VirtualizationDetails {
   supported: boolean;
   error: string | null;
+}
+
+/**
+ * Reads a `vm.query` row into the shape the VM pages are written against. The generated entry
+ * spells `bootloader`, `cpu_mode`, `time` and `status.state` as the wire literals where the pages
+ * compare them with the UI's enums, leaves the fields middleware defaults optional, and types
+ * `devices` as the generated union; it describes the same object.
+ */
+export function toVirtualMachine(vm: WebUiQueryEntity<'vm.query'>): VirtualMachine {
+  return vm as VirtualMachine;
 }

@@ -21,12 +21,12 @@ import {
   TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { filter, tap } from 'rxjs';
+import { filter, map, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VmDeviceType, VmState, vmDeviceTypeLabels } from 'app/enums/vm.enum';
-import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
-import { VmDevice } from 'app/interfaces/vm-device.interface';
+import { toVirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { toVmDevice, VmDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -38,7 +38,7 @@ import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import {
   dataProviderLoading, dataProviderRows, mapTnSortToTableSort, memoizedRowTag,
 } from 'app/modules/tn-table/utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import {
   DeviceDeleteModalComponent,
@@ -75,7 +75,7 @@ import {
   ],
 })
 export class DeviceListComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   private cdr = inject(ChangeDetectorRef);
@@ -95,7 +95,8 @@ export class DeviceListComponent implements OnInit {
 
   protected readonly displayedColumns = ['id', 'dtype', 'order', 'actions'];
 
-  private readonly devices$ = this.api.call('vm.device.query', [[['vm', '=', this.vmId]]]).pipe(
+  private readonly devices$ = this.api.query('vm.device.query', [['vm', '=', this.vmId]]).pipe(
+    map((devices) => devices.map(toVmDevice)),
     tap((devices) => this.devices = devices),
     takeUntilDestroyed(this.destroyRef),
   );
@@ -145,12 +146,13 @@ export class DeviceListComponent implements OnInit {
   }
 
   private loadVmName(): void {
-    this.api.call('vm.query', [[['id', '=', this.vmId]]]).pipe(
+    this.api.query('vm.query', [['id', '=', this.vmId]]).pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((vms: VirtualMachine[]) => {
+    ).subscribe((vms) => {
       if (vms.length > 0) {
-        this.vmName = vms[0].name;
-        this.isVmRunning.set(vms[0].status.state === VmState.Running);
+        const vm = toVirtualMachine(vms[0]);
+        this.vmName = vm.name;
+        this.isVmRunning.set(vm.status.state === VmState.Running);
       }
     });
   }
@@ -159,9 +161,11 @@ export class DeviceListComponent implements OnInit {
     this.api.subscribe('vm.query').pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((event) => {
-      if (event.id === this.vmId) {
-        this.vmName = event.fields.name;
-        this.isVmRunning.set(event.fields.status.state === VmState.Running);
+      // A removal carries no fields to read.
+      if (event.msg !== 'removed' && event.id === this.vmId) {
+        const vm = toVirtualMachine(event.fields);
+        this.vmName = vm.name;
+        this.isVmRunning.set(vm.status.state === VmState.Running);
         this.cdr.markForCheck();
       }
     });

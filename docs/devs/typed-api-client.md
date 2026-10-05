@@ -477,9 +477,11 @@ above. Each is a change for `truenas/api-client-ts`.
     `core.unsubscribe`, where the legacy `subscribe` unsubscribes when its last
     consumer goes. For a collection that only emits on change (`pool.query`,
     `app.query`) that costs little. For an event source that pushes on a timer
-    (`reporting.realtime`, `app.stats`) it would keep streaming after the page
-    that wanted it is closed, so those must not move until the client releases
-    subscriptions, even once gap 5 lets them compile.
+    (`reporting.realtime`, `app.stats`, `container.metrics`) it would keep
+    streaming after the page that wanted it is closed, so those must not move
+    until the client releases subscriptions, even once gap 5 lets them compile.
+    `container.metrics` takes no params and already compiles, so
+    `ContainersStore` keeps `ApiService` for that one subscription.
 
 18. **`directoryservices.update` asks for a discriminant the form never sends.**
     The generated input requires `service_type` inside `configuration` as well
@@ -490,6 +492,23 @@ above. Each is a change for `truenas/api-client-ts`.
     change in `transformFormDataToApiPayload`, but it changes the request, so
     it wants a box check of all three service types first, or a correction to
     the model in middleware if the inner field is not meant to be required.
+
+19. **Drift found moving VMs and containers.** Four places where the generated directory and
+    what middleware or the UI actually does disagree, each handled at one site:
+    - `container.query`'s change event is declared with a numeric `id` and a whole row, but a
+      status-only change arrives keyed by the container's *name* and carrying only `status`.
+      `ContainersStore` reads the event as that wire shape (`ContainerQueryEvent`) rather than the
+      generated one, and keeps its name-matching workaround.
+    - `lxc.update` declares `v4_network` and `v6_network` as optional strings, while the global
+      settings form has always cleared a network by sending `null`. The request is unchanged and
+      asserted to the generated input at the submit; worth a box check before dropping the `null`.
+    - `lxc.config` is not an event source in any version's event directory, so the containers
+      config store's subscription to it could never have fired. It is gone; the header reloads
+      the config after the settings form saves, which is what kept it current.
+    - `vm.device.update` and `container.device.update` type `attributes` as
+      `{ [k: string]: unknown }`, which a device interface has no index signature to satisfy, where
+      the matching `create` takes the typed device union. The call sites spread the attributes into
+      an anonymous object rather than cast.
 
 ## Version policy
 

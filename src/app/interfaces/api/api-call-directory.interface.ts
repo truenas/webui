@@ -65,16 +65,6 @@ import { CloudSyncProvider, CloudSyncRestoreParams } from 'app/interfaces/clouds
 import {
   ContainerImage, DeleteContainerImageParams,
 } from 'app/interfaces/container-image.interface';
-import {
-  AvailableUsb,
-  ContainerDevicePayload,
-  ContainerDeviceDelete,
-  ContainerDeviceEntry,
-  Container,
-  ContainerGlobalConfig,
-  ContainerImageRegistryResponse,
-  UpdateContainer,
-} from 'app/interfaces/container.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { CoreOptions } from 'app/interfaces/core-options.interface';
 import {
@@ -118,7 +108,7 @@ import {
   FibreChannelPortUpdate,
   FibreChannelStatus,
 } from 'app/interfaces/fibre-channel.interface';
-import { FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
+import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { GpuPciChoices } from 'app/interfaces/gpu-pci-choice.interface';
 import {
   CreateGroup, DeleteGroupParams, Group, UpdateGroup,
@@ -246,12 +236,6 @@ import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfac
 import {
   DeleteUserParams, User, UserUpdate,
 } from 'app/interfaces/user.interface';
-import {
-  VirtualMachine, VirtualMachineUpdate, VmCloneParams, VmDeleteParams, VmPortWizardResult,
-} from 'app/interfaces/virtual-machine.interface';
-import {
-  VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
-} from 'app/interfaces/vm-device.interface';
 import {
   MatchDatastoresWithDatasets,
   MatchDatastoresWithDatasetsParams,
@@ -465,7 +449,6 @@ export interface ApiCallDirectory {
   'filesystem.acltemplate.delete': { params: [id: number]; response: boolean };
   'filesystem.getacl': { params: AclQueryParams; response: Acl };
   'filesystem.stat': { params: [path: string]; response: FileSystemStat };
-  'filesystem.statfs': { params: [path: string]; response: Statfs };
 
   // Group
   'group.create': { params: [CreateGroup]; response: number };
@@ -807,55 +790,7 @@ export interface ApiCallDirectory {
   'user.unset_2fa_secret': { params: [string]; response: User };
   'user.shell_choices': { params: [ids: number[]]; response: Choices };
 
-  // Container
-  'container.device.create': { params: [ContainerDevicePayload]; response: ContainerDeviceEntry };
-  'container.device.delete': { params: [id: number, options?: ContainerDeviceDelete]; response: boolean };
-  'container.device.query': { params: QueryParams<ContainerDeviceEntry>; response: ContainerDeviceEntry[] };
-  'container.device.update': { params: [id: number, update: Partial<ContainerDevicePayload>]; response: ContainerDeviceEntry };
-  'container.device.disk_choices': { params: []; response: Record<string, string> };
-  'container.device.gpu_choices': { params: []; response: Record<string, string> };
-  'container.device.nic_attach_choices': { params: []; response: Record<string, string[]> };
-  'container.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
-
-  // Container (actual available endpoints only)
-  'container.get_instance': { params: [containerId: number]; response: Container };
-  'container.image.query_registry': { params: []; response: ContainerImageRegistryResponse[] };
-  'container.pool_choices': { params: []; response: Choices };
-  'container.query': { params: QueryParams<Container>; response: Container[] };
-  'container.start': { params: [containerId: number]; response: void };
-  'container.update': { params: [containerId: number, update: Partial<UpdateContainer>]; response: Container };
-
-  // LXC (actual available endpoints only)
-  'lxc.bridge_choices': { params: []; response: Choices };
-  'lxc.config': { params: []; response: ContainerGlobalConfig };
-  'lxc.update': { params: [Partial<ContainerGlobalConfig>]; response: ContainerGlobalConfig };
-
-  // VM
-  'vm.bootloader_options': { params: void; response: Choices };
-  'vm.clone': { params: VmCloneParams; response: boolean };
-  'vm.cpu_model_choices': { params: void; response: Choices };
-  'vm.create': { params: [VirtualMachineUpdate]; response: VirtualMachine };
-  'vm.delete': { params: VmDeleteParams; response: boolean };
-  'vm.device.bind_choices': { params: void; response: Choices };
-  'vm.device.convert': { params: [{ source: string; destination: string }]; response: boolean };
-  'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
-  'vm.device.delete': { params: [number, VmDeviceDelete?]; response: boolean };
-  'vm.device.disk_choices': { params: void; response: Choices };
   'system.advanced.get_gpu_pci_choices': { params: void; response: GpuPciChoices };
-  'vm.device.nic_attach_choices': { params: void; response: Record<string, string[]> };
-  'vm.device.passthrough_device_choices': { params: void; response: Record<string, VmPassthroughDeviceChoice> };
-  'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
-  'vm.device.update': { params: [id: number, update: Partial<VmDeviceUpdate>]; response: VmDevice };
-  'vm.device.usb_controller_choices': { params: void; response: Choices };
-  'vm.device.usb_passthrough_choices': { params: void; response: Record<string, VmUsbPassthroughDeviceChoice> };
-  'vm.device.virtual_size': { params: [{ path: string }]; response: number };
-  'vm.get_display_devices': { params: [id: number]; response: VmDisplayDevice[] };
-  'vm.maximum_supported_vcpus': { params: void; response: number };
-  'vm.port_wizard': { params: void; response: VmPortWizardResult };
-  'vm.query': { params: QueryParams<VirtualMachine>; response: VirtualMachine[] };
-  'vm.random_mac': { params: void; response: string };
-  'vm.resolution_choices': { params: void; response: Choices };
-  'vm.update': { params: [id: number, update: Partial<VirtualMachineUpdate>]; response: VirtualMachine };
 
   // Vmware
   'vmware.create': { params: [VmwareSnapshotUpdate]; response: VmwareSnapshot };

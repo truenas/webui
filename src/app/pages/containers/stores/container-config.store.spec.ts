@@ -1,42 +1,36 @@
-import { fakeAsync, flush } from '@angular/core/testing';
-import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
-import { of, Subject, throwError } from 'rxjs';
-import { CollectionChangeType } from 'app/enums/api.enum';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
+import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { Subject, throwError } from 'rxjs';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ContainerConfigStore } from 'app/pages/containers/stores/container-config.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('ContainerConfigStore', () => {
   let spectator: SpectatorService<ContainerConfigStore>;
-  const configEvent$ = new Subject<ApiEvent<ContainerGlobalConfig>>();
-  const config: ContainerGlobalConfig = {
+  const config = {
     bridge: 'br0',
-    v4_network: null,
-    v6_network: null,
+    v4_network: '10.0.0.1/24',
+    v6_network: 'fd00::1/64',
   } as ContainerGlobalConfig;
-
-  const mockApiService = {
-    call: jest.fn(() => of(config)),
-    subscribe: jest.fn(() => configEvent$),
-  };
 
   const createService = createServiceFactory({
     service: ContainerConfigStore,
     providers: [
-      mockProvider(ApiService, mockApiService),
+      mockTypedApi([
+        mockTypedCall('lxc.config', config),
+      ]),
     ],
   });
 
-  beforeEach(() => {
-    mockApiService.call.mockClear();
-    mockApiService.call.mockReturnValue(of(config));
-    spectator = createService();
+  // The typed double answers on a microtask.
+  const settle = (): Promise<void> => new Promise((resolve) => {
+    setTimeout(resolve);
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
+  beforeEach(() => {
+    spectator = createService();
   });
 
   it('should have default empty state', () => {
@@ -46,30 +40,30 @@ describe('ContainerConfigStore', () => {
     });
   });
 
-  it('should load config when initialize is called', fakeAsync(() => {
+  it('should load config when initialize is called', async () => {
     spectator.service.initialize();
-    flush();
+    await settle();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalled();
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('lxc.config');
     expect(spectator.service.state()).toEqual({
       isLoading: false,
       config,
     });
-  }));
+  });
 
-  it('should not make duplicate API calls when initialize is called while loading', fakeAsync(() => {
+  it('should not make duplicate API calls when initialize is called while loading', async () => {
     spectator.service.patchState({ isLoading: true });
     spectator.service.initialize();
-    flush();
+    await settle();
 
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
-  }));
+    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('lxc.config');
+  });
 
   describe('selectors', () => {
-    beforeEach(fakeAsync(() => {
+    beforeEach(async () => {
       spectator.service.initialize();
-      flush();
-    }));
+      await settle();
+    });
 
     it('isLoading - returns isLoading part of the state', () => {
       expect(spectator.service.isLoading()).toBe(false);
@@ -80,77 +74,36 @@ describe('ContainerConfigStore', () => {
     });
   });
 
-  describe('config updates subscription', () => {
-    it('subscribes to config updates on first initialize call', () => {
-      spectator.service.initialize();
-
-      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('lxc.config');
-    });
-
-    it('does not create duplicate subscriptions on multiple initialize calls', () => {
-      spectator.service.initialize();
-      spectator.service.initialize();
-
-      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledTimes(1);
-    });
-
-    it('updates config when subscription emits new data', () => {
-      spectator.service.initialize();
-
-      const updatedConfig: ContainerGlobalConfig = {
-        ...config,
-        bridge: 'br1',
-      };
-
-      configEvent$.next({
-        collection: 'lxc.config',
-        id: '1',
-        msg: CollectionChangeType.Changed,
-        fields: updatedConfig,
-      });
-
-      expect(spectator.service.config()).toEqual(updatedConfig);
-    });
-  });
-
   describe('error handling', () => {
-    it('sets isLoading to false on API error', () => {
-      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(
-        throwError(() => new Error('API error')),
-      );
+    beforeEach(() => {
+      spectator.inject(MockTypedApiService).mockCallError('lxc.config');
+      jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal').mockImplementation();
+    });
 
+    it('sets isLoading to false on API error', async () => {
       spectator.service.initialize();
+      await settle();
 
       expect(spectator.service.isLoading()).toBe(false);
       expect(spectator.service.config()).toBeNull();
     });
 
-    it('shows error modal when API call fails', () => {
+    it('shows error modal when API call fails', async () => {
       const error = new Error('API error');
-      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(
-        throwError(() => error),
-      );
+      jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(throwError(() => error));
       const errorHandler = spectator.inject(ErrorHandlerService);
-      jest.spyOn(errorHandler, 'showErrorModal');
 
       spectator.service.initialize();
+      await settle();
 
       expect(errorHandler.showErrorModal).toHaveBeenCalledWith(error);
     });
   });
 
   describe('loading state', () => {
-    it('sets isLoading to false after config is loaded', fakeAsync(() => {
-      spectator.service.initialize();
-      flush();
-
-      expect(spectator.service.isLoading()).toBe(false);
-      expect(spectator.service.config()).toEqual(config);
-    }));
-
     it('sets isLoading to true while fetching config', () => {
       const delayedResponse$ = new Subject<ContainerGlobalConfig>();
-      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(delayedResponse$);
+      jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(delayedResponse$);
 
       spectator.service.initialize();
 

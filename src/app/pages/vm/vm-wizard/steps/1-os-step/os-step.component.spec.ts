@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import {
   TnCheckboxHarness, TnInputHarness, TnSelectHarness, TnStepperComponent,
 } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import {
   VmBootloader, VmOs, VmTime,
 } from 'app/enums/vm.enum';
@@ -21,13 +21,13 @@ describe('OsStepComponent', () => {
     ],
     providers: [
       mockProvider(TnStepperComponent),
-      mockApi([
-        mockCall('vm.query', []),
-        mockCall('vm.bootloader_options', {
+      mockTypedApi([
+        mockTypedQuery('vm.query', []),
+        mockTypedCall('vm.bootloader_options', {
           UEFI: 'UEFI',
-          UEFI_CSM: 'UEFI_CSM',
+          UEFI_CSM: 'Legacy BIOS',
         }),
-        mockCall('vm.device.bind_choices', {
+        mockTypedCall('vm.device.bind_choices', {
           '0.0.0.0': '0.0.0.0',
           '10.10.16.82': '10.10.16.82',
         }),

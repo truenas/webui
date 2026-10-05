@@ -2,11 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   GlobalConfigFormComponent,
 } from 'app/pages/containers/components/all-containers/all-containers-header/global-config-form/global-config-form.component';
@@ -33,22 +34,22 @@ describe('GlobalConfigFormComponent', () => {
   const createComponent = createComponentFactory({
     component: GlobalConfigFormComponent,
     providers: [
-      mockApi([
-        mockCall('lxc.config', {
+      mockTypedApi([
+        mockTypedCall('lxc.config', {
           bridge: 'bridge1',
           v4_network: '1.2.3.4/24',
           v6_network: null,
           preferred_pool: 'tank',
-        }),
-        mockCall('lxc.bridge_choices', {
+        } as ContainerGlobalConfig),
+        mockTypedCall('lxc.bridge_choices', {
           '[AUTO]': 'Automatic',
           bridge1: 'bridge1',
         }),
-        mockCall('container.pool_choices', {
+        mockTypedCall('container.pool_choices', {
           tank: 'tank',
           pool2: 'pool2',
         }),
-        mockCall('lxc.update'),
+        mockTypedCall('lxc.update', null),
       ]),
       mockAuth(),
       ...ixFormTestingProviders(),
@@ -63,7 +64,7 @@ describe('GlobalConfigFormComponent', () => {
   });
 
   it('shows current global settings from the API', async () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.config');
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('lxc.config');
 
     const bridgeSelect = await loader.getHarness(TnSelectHarness.with({ displayText: 'bridge1' }));
     expect(await bridgeSelect.getDisplayText()).toBe('bridge1');
@@ -99,7 +100,7 @@ describe('GlobalConfigFormComponent', () => {
 
     await submit();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.update', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('lxc.update', [{
       bridge: '',
       v4_network: '1.2.3.4/24',
       v6_network: null,
@@ -113,7 +114,7 @@ describe('GlobalConfigFormComponent', () => {
 
     await submit();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.update', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('lxc.update', [{
       bridge: 'bridge1',
       v4_network: '1.2.3.4/24',
       v6_network: null,
@@ -148,7 +149,7 @@ describe('GlobalConfigFormComponent', () => {
 
     await submit();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.update', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('lxc.update', [{
       bridge: '',
       v4_network: null,
       v6_network: 'fd00::/64',
@@ -204,21 +205,21 @@ describe('GlobalConfigFormComponent - automatic bridge', () => {
   const createComponent = createComponentFactory({
     component: GlobalConfigFormComponent,
     providers: [
-      mockApi([
-        mockCall('lxc.config', {
+      mockTypedApi([
+        mockTypedCall('lxc.config', {
           bridge: '', // API returns empty string for automatic
           v4_network: '10.0.0.0/24',
           v6_network: 'fd00::/64',
           preferred_pool: 'tank',
-        }),
-        mockCall('lxc.bridge_choices', {
+        } as ContainerGlobalConfig),
+        mockTypedCall('lxc.bridge_choices', {
           '[AUTO]': 'Automatic',
           bridge1: 'bridge1',
         }),
-        mockCall('container.pool_choices', {
+        mockTypedCall('container.pool_choices', {
           tank: 'tank',
         }),
-        mockCall('lxc.update'),
+        mockTypedCall('lxc.update', null),
       ]),
       mockAuth(),
       ...ixFormTestingProviders(),

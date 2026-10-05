@@ -4,12 +4,12 @@ import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 describe('ApiDataProvider', () => {
-  let dataProvider: ApiDataProvider<'vm.query'>;
+  let dataProvider: ApiDataProvider<'pool.query'>;
   let api: { call: jest.Mock };
 
   beforeEach(() => {
     api = { call: jest.fn(() => of([])) };
-    dataProvider = new ApiDataProvider(api as unknown as ApiService, 'vm.query');
+    dataProvider = new ApiDataProvider(api as unknown as ApiService, 'pool.query');
   });
 
   it('resets pagination to page 1 when sorting changes', () => {

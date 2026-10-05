@@ -37,6 +37,8 @@ export const containerGpuType = {
   Nvidia: 'NVIDIA',
 } as const;
 
+export type ContainerGpuType = typeof containerGpuType[keyof typeof containerGpuType];
+
 export enum ContainerNicDeviceType {
   E1000 = 'E1000',
   Virtio = 'VIRTIO',

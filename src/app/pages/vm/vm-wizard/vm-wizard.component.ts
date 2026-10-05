@@ -10,22 +10,21 @@ import { pick } from 'lodash-es';
 import {
   forkJoin, Observable, of, switchMap,
 } from 'rxjs';
-import { catchError, defaultIfEmpty } from 'rxjs/operators';
+import { catchError, defaultIfEmpty, map } from 'rxjs/operators';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { VmDeviceType, VmDisplayType, VmNicType, VmOs } from 'app/enums/vm.enum';
-import { DatasetCreate } from 'app/interfaces/dataset.interface';
-import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
-import { VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
+import { toVirtualMachine, VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
+import { toVmDevice, VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { SummarySection } from 'app/modules/summary/summary.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
 import { OsStepComponent } from 'app/pages/vm/vm-wizard/steps/1-os-step/os-step.component';
 import {
@@ -68,7 +67,7 @@ import { GpuService } from 'app/services/gpu/gpu.service';
 export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private gpuService = inject(GpuService);
   private vmGpuService = inject(VmGpuService);
@@ -248,7 +247,7 @@ export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
       ]),
     } as VirtualMachineUpdate;
 
-    return this.api.call('vm.create', [vmPayload]);
+    return this.api.call('vm.create', [vmPayload]).pipe(map(toVirtualMachine));
   }
 
   private createDevices(vm: VirtualMachine, importedZvolPath: string | null = null): Observable<unknown[]> {
@@ -363,12 +362,13 @@ export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
     );
   }
 
-  private makeDeviceRequest(vmId: number, payload: VmDeviceUpdate): Observable<VmDevice | null> {
+  private makeDeviceRequest(vmId: number, payload: Omit<VmDeviceUpdate, 'vm'>): Observable<VmDevice | null> {
     return this.api.call('vm.device.create', [{
       vm: vmId,
       ...payload,
     }])
       .pipe(
+        map(toVmDevice),
         catchError((error: unknown) => {
           const parsedErrors = this.errorParser.parseError(error);
           const firstReport = Array.isArray(parsedErrors) ? parsedErrors[0] : parsedErrors;
@@ -391,7 +391,7 @@ export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
         name: zvolName,
         type: DatasetType.Volume,
         volsize: this.diskForm.volsize || 10 * GiB,
-      } as DatasetCreate]).pipe(
+      }]).pipe(
         switchMap(() => {
           // Now convert the image to the created zvol
           const jobDialog = this.dialogService.jobDialog(

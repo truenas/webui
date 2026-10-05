@@ -3,8 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerFilesystemDevice } from 'app/interfaces/container.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -51,9 +51,9 @@ describe('ContainerFilesystemDevicesComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('container.device.create'),
-        mockCall('container.device.update'),
+      mockTypedApi([
+        mockTypedCall('container.device.create', null),
+        mockTypedCall('container.device.update', null),
       ]),
       mockProvider(SnackbarService),
       mockProvider(FilesystemService),
@@ -111,7 +111,7 @@ describe('ContainerFilesystemDevicesComponent', () => {
         ],
         providers: [
           mockAuth(),
-          mockApi([]),
+          mockTypedApi([]),
           mockProvider(SnackbarService),
           mockProvider(FilesystemService),
           mockProvider(FormSidePanelService),

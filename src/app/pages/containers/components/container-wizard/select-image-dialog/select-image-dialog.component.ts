@@ -16,7 +16,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export type ContainerImageWithId = ContainerImage & {
@@ -47,7 +47,7 @@ export type ContainerImageWithId = ContainerImage & {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectImageDialog implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogRef = inject<DialogRef<unknown, SelectImageDialog>>(DialogRef);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);

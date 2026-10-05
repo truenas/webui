@@ -1,7 +1,8 @@
-import { Overwrite } from 'utility-types';
+import { CallParams } from '@truenas/api-client';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export interface BaseVmDevice {
   id: number;
@@ -48,56 +49,22 @@ export type VmDevice
     | VmDiskDevice
     | VmCdRomDevice;
 
-export type VmDeviceUpdate = Overwrite<Partial<Omit<VmDevice, 'id'>>, {
-  attributes?: Partial<VmDevice['attributes']>;
-}>;
+/** What the device forms send, to `vm.device.create` and `vm.device.update` alike. */
+export type VmDeviceUpdate = CallParams<WebUiApiDirectory, 'vm.device.create'>[0];
+
+/**
+ * Reads a `vm.device.query` row into the UI's device union. The generated entry spells each
+ * attribute's `dtype` and mode as the wire literal where the device pages switch on the UI's
+ * enums; it describes the same object.
+ */
+export function toVmDevice(device: WebUiQueryEntity<'vm.device.query'>): VmDevice {
+  return device as VmDevice;
+}
 
 export interface VmDeviceDelete {
   zvol: boolean;
   raw_file: boolean;
   force: boolean;
-}
-
-export interface VmPassthroughDeviceChoice {
-  controller_type?: string;
-  capability: {
-    class: string;
-    domain: string;
-    bus: string;
-    slot: string;
-    function: string;
-    product: string;
-    vendor: string;
-  };
-  iommu_group: {
-    number: number;
-    addresses: {
-      domain: string;
-      bus: string;
-      slot: string;
-      function: string;
-    }[];
-  };
-  device_path: string;
-  drivers: string[];
-  available: boolean;
-  error: unknown;
-  reset_mechanism_defined: boolean;
-  description: string;
-}
-
-export interface VmUsbPassthroughDeviceChoice {
-  capability: {
-    product: string;
-    vendor: string;
-    product_id: string;
-    vendor_id: string;
-    bus: string;
-    device: string;
-  };
-  available: boolean;
-  error: unknown;
-  description: string;
 }
 
 interface VmDisplayAttributes {

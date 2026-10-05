@@ -32,7 +32,7 @@ import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { vmNamePattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 
 @Component({
@@ -58,7 +58,7 @@ import { vmNamePattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 export class OsStepComponent implements SummaryProvider {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.nonNullable.group({
@@ -67,7 +67,7 @@ export class OsStepComponent implements SummaryProvider {
     name: ['',
       [Validators.required, Validators.pattern(vmNamePattern)],
       forbiddenAsyncValues(
-        this.api.call('vm.query', [[], { select: ['name'], order_by: ['name'] }]).pipe(
+        this.api.query('vm.query', [], { select: ['name'], order_by: ['name'] }).pipe(
           map((vms) => vms.map((vm) => vm.name)),
         ),
       ),
