@@ -115,7 +115,7 @@ describe('DiskListComponent', () => {
     sed_status: SedStatus.Failed,
   }] as DetailsDisk[];
 
-  // SED status reaches the page through `disk.details` only — `disk.query` never carries it.
+  // SED status reaches the page through `disk.details`; the page-load `disk.query` does not ask for it.
   const fakeUsedDisks = [
     ...fakeUnusedDisks,
     { name: 'sdc', devname: 'sdc', sed_status: SedStatus.Locked },
