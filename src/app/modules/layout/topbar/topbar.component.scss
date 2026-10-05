@@ -71,6 +71,35 @@
   #sidenavToggle {
     height: 30px;
   }
+
+  .hostname {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    font-size: 13px;
+    gap: 6px;
+    margin-left: 16px;
+    max-width: 240px;
+
+    @media (max-width: $breakpoint-md) {
+      max-width: 160px;
+    }
+
+    // The phone layout has no room left next to the logo and the search icon.
+    @media (max-width: $breakpoint-xs) {
+      display: none;
+    }
+
+    tn-icon {
+      flex-shrink: 0;
+      opacity: 0.7;
+    }
+
+    .hostname-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
 }
 
 .topbar button:focus-visible {

@@ -7,9 +7,11 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import {
-  filter, Observable, Subscription, switchMap, tap,
+  TnDialog, TnIconButtonComponent, TnIconComponent, TnTestIdDirective, TnTooltipDirective,
+} from '@truenas/ui-components';
+import {
+  filter, map, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
@@ -40,6 +42,7 @@ import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
 import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
 
@@ -51,6 +54,8 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
   imports: [
     TnTestIdDirective,
     TnIconButtonComponent,
+    TnIconComponent,
+    TnTooltipDirective,
     GlobalSearchTriggerComponent,
     CheckinIndicatorComponent,
     ResilveringIndicatorComponent,
@@ -102,6 +107,12 @@ export class TopbarComponent implements OnInit {
   protected readonly alertBadgeCount = toSignal(this.store$.select(
     selectImportantUnreadAlertsCount,
   ), { initialValue: 0 });
+
+  // Shown on every page so users of HA systems can tell which controller they are connected to.
+  protected readonly hostname = toSignal(
+    this.appStore$.pipe(waitForSystemInfo, map(({ hostname }) => hostname)),
+    { initialValue: null },
+  );
 
   protected readonly hasConsoleFooter = toSignal(this.store$.select(selectHasConsoleFooter), { initialValue: false });
 

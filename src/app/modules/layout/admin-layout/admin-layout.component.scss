@@ -83,13 +83,6 @@ ix-truenas-logo {
 }
 
 
-.hostname-label {
-  font-size: 12px;
-  margin: auto;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
 // The shell drawer resizes after first paint (saved collapse state arriving from the
 // preferences store, breakpoint changes) — render those instantly instead of sliding
 // the content area around on load. The old mat-sidenav shell never animated width.
