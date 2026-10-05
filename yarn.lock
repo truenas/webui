@@ -690,17 +690,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/router@npm:~21.2.0":
-  version: 21.2.0
-  resolution: "@angular/router@npm:21.2.0"
+"@angular/router@npm:~21.2.24":
+  version: 21.2.24
+  resolution: "@angular/router@npm:21.2.24"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/common": 21.2.0
-    "@angular/core": 21.2.0
-    "@angular/platform-browser": 21.2.0
+    "@angular/common": 21.2.24
+    "@angular/core": 21.2.24
+    "@angular/platform-browser": 21.2.24
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10/8cb264d88871b1e2629323cd2c8ec891dece5a241993199a979daa18de9ef06e83c635f70d497c80175f1fecded71a01d68ef5d0e4e1cf4ff48dace460e25423
+  checksum: 10/03c7b148961bc5911c63ab5d6e265473a5ec4f3c76b4eb52ef71deadf46b6e8b8b79e916745563dc838b118ad063e4a20fc0493b10aba8014ba0238b0df07c75
   languageName: node
   linkType: hard
 
@@ -7883,15 +7883,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:~3.4.13":
-  version: 3.4.13
-  resolution: "dompurify@npm:3.4.13"
+"dompurify@npm:~3.4.16":
+  version: 3.4.16
+  resolution: "dompurify@npm:3.4.16"
   dependencies:
     "@types/trusted-types": "npm:^2.0.7"
   dependenciesMeta:
     "@types/trusted-types":
       optional: true
-  checksum: 10/0db0a309a868a38aca042f606b37446977c35ee4501850a8c1bf2781337d79871daf1f4344bbf5b545f2a8c62e4d4e192c8fd6f1ff49ecec7c865c55a0aefee3
+  checksum: 10/a571d0e2bede4f739666afd640398a86854abd27c71ce0724910249e2fd2ca7ddb8098a9ab579d3a5b39058419af694421f8fe859a81fd6d8acda16019a8ab9d
   languageName: node
   linkType: hard
 
@@ -9237,10 +9237,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-uri@npm:~3.1.7":
-  version: 3.1.7
-  resolution: "fast-uri@npm:3.1.7"
-  checksum: 10/6d62ea818841e1b460f60482fd31582faa23ea9d9b33f856412b24c42da11fd72bd003be6696390ec896dbe4e9e78d3bb8d93bf70a511c7f69e5e807ac9b284f
+"fast-uri@npm:~3.1.8":
+  version: 3.1.8
+  resolution: "fast-uri@npm:3.1.8"
+  checksum: 10/d3dfa29fd2e5fa2371833699f3f78c975b79f65e52e0ce37604db10dffb85b5b448b5075e93453272cb95fb1c6a759495164e60649ffd69e59ec43f20d44f791
   languageName: node
   linkType: hard
 
@@ -10023,9 +10023,9 @@ __metadata:
   linkType: hard
 
 "http-cache-semantics@npm:^4.1.1":
-  version: 4.2.0
-  resolution: "http-cache-semantics@npm:4.2.0"
-  checksum: 10/4efd2dfcfeea9d5e88c84af450b9980be8a43c2c8179508b1c57c7b4421c855f3e8efe92fa53e0b3f4a43c85824ada930eabbc306d1b3beab750b6dcc5187693
+  version: 4.3.0
+  resolution: "http-cache-semantics@npm:4.3.0"
+  checksum: 10/3f7b17565d3a046f069ecfc220d790ccfbef4a94a486502c5d1a23c50d71880393175416845579487a91bfefca393614d16a99bd566d474807a4ebb1139da9cd
   languageName: node
   linkType: hard
 
@@ -15583,7 +15583,7 @@ __metadata:
     "@angular/forms": "npm:~21.2.0"
     "@angular/platform-browser": "npm:~21.2.0"
     "@angular/platform-browser-dynamic": "npm:~21.2.0"
-    "@angular/router": "npm:~21.2.0"
+    "@angular/router": "npm:~21.2.24"
     "@biesbjerg/ngx-translate-extract-marker": "npm:~1.0.0"
     "@bugsplat/angular-tree-component": "npm:~18.0.0"
     "@codemirror/autocomplete": "npm:~6.18.6"
@@ -15657,7 +15657,7 @@ __metadata:
     d3: "npm:~7.9.0"
     date-fns: "npm:~4.1.0"
     date-fns-tz: "npm:~3.2.0"
-    dompurify: "npm:~3.4.13"
+    dompurify: "npm:~3.4.16"
     dygraphs: "npm:~2.2.1"
     email-validator: "npm:~2.0.4"
     fontfaceobserver: "npm:^2.3.0"
