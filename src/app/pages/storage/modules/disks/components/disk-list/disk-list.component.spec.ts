@@ -8,14 +8,16 @@ import {
   TnButtonHarness, TnDialog, TnEmptyHarness, TnSelectHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { NEVER, of } from 'rxjs';
+import {
+  NEVER, of, Subject, throwError,
+} from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
-import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
+import { Disk, DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { BasicSearchHarness } from 'app/modules/forms/search-input/components/basic-search/basic-search.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -186,22 +188,51 @@ describe('DiskListComponent', () => {
     expect(api.call).toHaveBeenCalledTimes(2);
   });
 
-  it('probes a SED disk that disk.details left out, once the details sweep is done', async () => {
+  describe('a SED disk that disk.details left out', () => {
     const missingDisk = {
       ...fakeDisks[2], identifier: 'identifier4', name: 'sdd', devname: 'sdd',
     } as Disk;
-    const api = spectator.inject(MockApiService);
-    api.mockCall('disk.query', (params) => {
-      return params?.[0]?.length
-        ? [{ ...missingDisk, sed_status: SedStatus.Unlocked }]
-        : [...fakeDisks, missingDisk];
-    });
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(TnTableHarness);
+    const probeParams = [[['name', 'in', ['sdd']]], { extra: { sed_status: true } }];
 
-    expect(api.call).toHaveBeenCalledWith('disk.query', [[['name', 'in', ['sdd']]], { extra: { sed_status: true } }]);
-    expect((await table.getAllRowTexts())[3]).toEqual(['sdd', 'serial3', '5 GiB', 'N/A', 'Unlocked']);
+    it('is probed only once the details sweep is done', async () => {
+      const api = spectator.inject(MockApiService);
+      const details$ = new Subject<DiskDetailsResponse>();
+      const mockedCall = api.call.getMockImplementation();
+      api.call.mockImplementation((method: string, params: unknown) => {
+        return method === 'disk.details' ? details$ : mockedCall(method, params);
+      });
+      api.mockCall('disk.query', (params) => {
+        return params?.[0]?.length
+          ? [{ ...missingDisk, sed_status: SedStatus.Unlocked }]
+          : [...fakeDisks, missingDisk];
+      });
+      spectator = createComponent();
+
+      expect(api.call).not.toHaveBeenCalledWith('disk.query', probeParams);
+
+      details$.next({ unused: [], used: fakeUsedDisks });
+      details$.complete();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(TnTableHarness);
+
+      expect(api.call).toHaveBeenCalledWith('disk.query', probeParams);
+      expect((await table.getAllRowTexts())[3]).toEqual(['sdd', 'serial3', '5 GiB', 'N/A', 'Unlocked']);
+    });
+
+    it('still lists every disk when the probe fails', async () => {
+      const api = spectator.inject(MockApiService);
+      const mockedCall = api.call.getMockImplementation();
+      api.call.mockImplementation((method: string, params: unknown) => {
+        const isProbe = method === 'disk.query' && (params as unknown[][])[0].length;
+        return isProbe ? throwError(() => new Error('SP_BUSY')) : mockedCall(method, params);
+      });
+      api.mockCall('disk.query', [...fakeDisks, missingDisk]);
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(TnTableHarness);
+
+      expect((await table.getAllRowTexts())[3]).toEqual(['sdd', 'serial3', '5 GiB', 'N/A', 'Unknown']);
+    });
   });
 
   /**

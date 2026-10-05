@@ -11,7 +11,7 @@ import {
 import {
   defer, filter, forkJoin, map, Observable, of, Subject,
 } from 'rxjs';
-import { switchMap, take } from 'rxjs/operators';
+import { catchError, switchMap, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
@@ -526,12 +526,14 @@ export class DiskListComponent {
         }
 
         detailsDisks.forEach((disk) => statuses.set(disk.name, disk.sed_status));
-        const missing = disks.filter((disk) => disk.sed && !statuses.has(disk.name)).map((disk) => disk.name);
+        const missing = disks.filter((disk) => disk.sed && !statuses.get(disk.name)).map((disk) => disk.name);
         if (!missing.length) {
           return of(statuses);
         }
 
         return this.api.call('disk.query', [[['name', 'in', missing]], { extra: { sed_status: true } }]).pipe(
+          // The statuses are supplementary: a failed probe must not cost the user the whole list.
+          catchError(() => of([] as Disk[])),
           map((probedDisks) => {
             probedDisks.forEach((disk) => statuses.set(disk.name, disk.sed_status));
             return statuses;
