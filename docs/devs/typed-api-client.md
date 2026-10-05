@@ -18,7 +18,7 @@ rewrite. To see where it stands, run `yarn check-api-migration --report`.
 
 | Piece | Where |
 |---|---|
-| `@truenas/api-client` as a runtime dependency (7.0.1 at the time of writing) | `package.json` |
+| `@truenas/api-client` as a runtime dependency (8.0.0 at the time of writing) | `package.json` |
 | The client instance, typed against `v27.0.0` | `src/app/modules/websocket/typed-api/typed-api-client.token.ts` |
 | `TypedApiService`, the migration target for `ApiService` | `src/app/modules/websocket/typed-api/typed-api.service.ts` |
 | The version the UI is written against | `WebUiApiDirectory` in the token file |
@@ -344,7 +344,7 @@ above. Each is a change for `truenas/api-client-ts`.
    legacy `call` path renders. A migrated `query` read is therefore a small
    downgrade in error reporting today (`cloudsync.credentials.query`,
    `keychaincredential.query`), and the first `job` site will inherit the
-   same. Unchanged as of 7.0.1. Fix: a typed error class carrying the full
+   same. Unchanged as of 8.0.0. Fix: a typed error class carrying the full
    payload; until then, route a query through `call` where the report
    matters. `call` is also the only verb that can act on `ENOTAUTHENTICATED`,
    which is why ending the app's session on that refusal lives there.
@@ -366,7 +366,7 @@ above. Each is a change for `truenas/api-client-ts`.
    `Denied` reach no UI from `loginWithToken`, only from the interactive login,
    which is unaffected because a password login throws on `AUTH_ERR` alone), so
    this is a fidelity gap rather than a broken flow. A `response` on the error,
-   or a non-throwing variant, would close it. Still so in 7.0.1.
+   or a non-throwing variant, would close it. Still so in 8.0.0.
 4. **A password login is cached in the authenticator.** `loginWithUserPass`
    keeps the plaintext password on the authenticator and replays it on every
    reconnect. The UI never wanted that — it keeps a single-use token instead —
@@ -386,7 +386,7 @@ above. Each is a change for `truenas/api-client-ts`.
    through `Parameters<>` rather than declaring them; `TrueNasMessage` and
    `TrueNasConnection` are absent from the main entry too, so
    `ConnectionService` names the connection as
-   `WebUiApiClient['connection']` (`TypedConnection`). Still so in 7.0.1.
+   `WebUiApiClient['connection']` (`TypedConnection`). Still so in 8.0.0.
 
    Partly closed there: 7.0.1 exports `TrueNasErrorFrame` and `TrueNasErrorData`
    from the main entry, where 6.x had them only under `testing`. The wrapper's

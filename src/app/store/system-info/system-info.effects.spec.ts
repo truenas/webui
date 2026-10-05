@@ -31,10 +31,11 @@ describe('SystemInfoEffects', () => {
     contract_type: ContractType.Gold,
     model: 'M40',
     features: [{
-      name: LicenseFeature.Apps, start_date: null, expires_at: null, source: 'enterprise', type: null,
+      name: LicenseFeature.Apps, start_date: null, expires_at: null, type: null,
     }],
     serials: ['CI-1'],
     enclosures: {},
+    issued_at: null,
   };
 
   const createService = createServiceFactory({
