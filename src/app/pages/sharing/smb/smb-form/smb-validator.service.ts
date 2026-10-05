@@ -87,8 +87,15 @@ export class SmbValidationService {
       return this.translate.instant(this.nameExistsError);
     }
 
-    if (errorText.includes(this.invalidCharactersError)) {
-      return `${this.translate.instant(this.invalidCharactersError)}: ${errorText.split(this.invalidCharactersError)[1].trim()}`;
+    // Matched whatever its case: middleware has sent this sentence both capitalised and not,
+    // and an unmatched one reaches the user as the raw `[EINVAL] smb_share_precheck.name: …`.
+    const invalidCharactersAt = errorText.toLowerCase().indexOf(this.invalidCharactersError.toLowerCase());
+    if (invalidCharactersAt >= 0) {
+      const characters = errorText
+        .slice(invalidCharactersAt + this.invalidCharactersError.length)
+        .replace(/^\s*:/, '')
+        .trim();
+      return `${this.translate.instant(this.invalidCharactersError)}: ${characters}`;
     }
 
     return errorText.trim();

@@ -23,13 +23,14 @@
  * share one identity (`testAdmin`) so it is visibly the same account.
  */
 import { firstValueFrom, timeout } from 'rxjs';
+import { ensureSmbServiceStopped, ensureSmbShareAbsent } from '../../fixtures/smb';
 import {
-  ensurePoolAbsent, ensureSmbServiceStopped, ensureSmbShareAbsent, findGroupAclGrants,
-  requireUnusedDisks,
+  datasetMountPath, ensurePoolAbsent, findGroupAclGrants, requireUnusedDisks,
 } from '../../fixtures/storage';
 import { ensureUserAbsent, testAdmin } from '../../fixtures/users';
 import { expectSignedInAs, signIn, signOut } from '../../flows/auth';
-import { createRaidz2Pool, createSmbDataset, createSmbShare } from '../../flows/storage';
+import { createSmbShareAndStartService } from '../../flows/smb';
+import { createRaidz2Pool, createSmbDataset } from '../../flows/storage';
 import { createTrueNasAdminUser } from '../../flows/users';
 import type { E2eApiClient } from '../../support/api/client';
 import { leavingTestData } from '../../support/cleanup';
@@ -46,7 +47,7 @@ const dataset = 'shared';
 const share = 'e2e-share';
 
 /** Where the dataset is mounted, and therefore what the SMB share points at. */
-const datasetPath = `/mnt/${pool.name}/${dataset}`;
+const datasetPath = datasetMountPath(`${pool.name}/${dataset}`);
 
 /**
  * Per-call bound inside the service-state poll below.
@@ -136,7 +137,7 @@ test('an admin sets up a fresh instance: user, pool, dataset, SMB share', async 
   });
 
   await test.step('publish an SMB share and start the service', async () => {
-    await createSmbShare(page, datasetPath, share);
+    await createSmbShareAndStartService(page, datasetPath, share);
   });
 
   // Verified through the API rather than the UI, deliberately. Every step above
