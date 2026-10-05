@@ -221,7 +221,11 @@ exist at all, so one panel is seven different forms; `smb-form` pins the swap in
 both directions and the External Share case, where the path control is replaced
 by a remote-path list and the appliance stores the sentinel `EXTERNAL`. Both
 name refusals go through `sharing.smb.share_precheck`, so they are a round trip
-to middleware rather than a lookup in a cached list. `smb-list` deletes and
+to middleware rather than a lookup in a cached list. They are asserted on the
+message under the field, not on Save being disabled, which is also true while
+the check is still pending; doing so found the invalid-characters branch showing
+middleware's raw `[EINVAL] …` text, because the validator matched its sentence
+by case and middleware had lowered it. `smb-list` deletes and
 edits a share from its row menu, each beside a second share that must come
 through untouched. `smb-dataset-preset` covers a rule that spans two features:
 a dataset created with the SMB preset publishes a share, and the form then

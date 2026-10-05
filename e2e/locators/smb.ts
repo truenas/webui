@@ -49,6 +49,11 @@ export const smbLocators = {
      */
     path: '[data-test="input-path"]',
     name: '[data-test="input-name"]',
+    /**
+     * The field around {@link name}: its label and, once the name has been
+     * refused, the reason. The only place the validator's verdict is written.
+     */
+    nameField: '[data-test="form-field-name"]',
     /** "Description". The control is `comment`, which is also what middleware stores it as. */
     comment: '[data-test="input-comment"]',
     /** Replaces {@link path} for an External Share. */

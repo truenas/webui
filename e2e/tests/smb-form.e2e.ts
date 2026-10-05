@@ -167,7 +167,14 @@ test('the form will not publish a share name that is already taken', async ({ pa
   // This refusal is not a local list lookup: `SmbValidationService` calls
   // `sharing.smb.share_precheck` and reads the *error text* back, so what is
   // being tested is a round trip to middleware and the parsing of its answer.
+  //
+  // The message is the verdict. Save alone is not: it is also held down while
+  // the check is still on its way, so "disabled" would be true of a validator
+  // that never refused anything.
   await page.locator(smbLocators.form.name).fill(existingShare);
+  await page.locator(smbLocators.form.name).blur();
+  await expect(page.locator(smbLocators.form.nameField))
+    .toContainText('Share with this name already exists', { timeout: formSettleTimeoutMs });
   await expect(page.locator(smbLocators.form.save)).toBeDisabled();
 });
 
@@ -182,5 +189,8 @@ test('the form will not publish a share name with invalid characters', async ({ 
   // of it — and a share name is passed to Samba, so the characters it rejects
   // are a real constraint rather than a UI preference.
   await page.locator(smbLocators.form.name).fill('bad/name');
+  await page.locator(smbLocators.form.name).blur();
+  await expect(page.locator(smbLocators.form.nameField))
+    .toContainText('Share name contains the following invalid characters', { timeout: formSettleTimeoutMs });
   await expect(page.locator(smbLocators.form.save)).toBeDisabled();
 });

@@ -50,6 +50,9 @@ let appleExtensionsWereOn: boolean | undefined;
  */
 test.beforeEach(async ({ api, pool }) => {
   appleExtensionsWereOn = undefined;
+  // Never saved by this spec, but a share by this name would be a Time Machine
+  // share, and one of those is what stops teardown turning the extensions off.
+  await ensureSmbShareAbsent(api, timeMachineShare);
   await ensureSmbShareAbsent(api, toggledShare);
 
   appleExtensionsWereOn = await readSmbAppleExtensions(api);
@@ -80,6 +83,7 @@ test.afterEach(async ({ api, pool }) => {
 
   await runCleanupSteps([
     ['stop the SMB service', () => ensureSmbServiceStopped(api)],
+    [`remove share ${timeMachineShare}`, () => ensureSmbShareAbsent(api, timeMachineShare)],
     [`remove share ${toggledShare}`, () => ensureSmbShareAbsent(api, toggledShare)],
     ['restore Apple extensions', async () => {
       if (appleExtensionsWereOn !== undefined) {
