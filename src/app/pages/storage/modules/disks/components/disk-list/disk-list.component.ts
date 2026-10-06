@@ -513,29 +513,39 @@ export class DiskListComponent {
   }
 
   /**
-   * SED statuses by disk name; none without the SED entitlement. `disk.details` skips disks the
-   * OS cannot size, so those are probed here, once its own sweep has finished.
+   * SED statuses by disk name; none without the SED entitlement. A SED disk that `disk.details`
+   * left out (it skips disks the OS cannot size) or returned without a status is probed here,
+   * once its own sweep has finished.
    */
-  private getSedStatuses(detailsDisks: DetailsDisk[], disks: Disk[]): Observable<Map<string, SedStatus | undefined>> {
+  private getSedStatuses(detailsDisks: DetailsDisk[], disks: Disk[]): Observable<Map<string, SedStatus>> {
     return this.entitlements.entitled$(EntitlementFeature.Sed).pipe(
       take(1),
       switchMap((hasSed) => {
-        const statuses = new Map<string, SedStatus | undefined>();
+        const statuses = new Map<string, SedStatus>();
         if (!hasSed) {
           return of(statuses);
         }
 
-        detailsDisks.forEach((disk) => statuses.set(disk.name, disk.sed_status));
-        const missing = disks.filter((disk) => disk.sed && !statuses.get(disk.name)).map((disk) => disk.name);
+        const addStatuses = (from: (Disk | DetailsDisk)[]): void => from.forEach((disk) => {
+          if (disk.sed_status) {
+            statuses.set(disk.name, disk.sed_status);
+          }
+        });
+
+        addStatuses(detailsDisks);
+        const missing = disks.filter((disk) => disk.sed && !statuses.has(disk.name)).map((disk) => disk.name);
         if (!missing.length) {
           return of(statuses);
         }
 
         return this.api.call('disk.query', [[['name', 'in', missing]], { extra: { sed_status: true } }]).pipe(
           // The statuses are supplementary: a failed probe must not cost the user the whole list.
-          catchError(() => of([] as Disk[])),
+          catchError((error: unknown) => {
+            console.error(error);
+            return of([] as Disk[]);
+          }),
           map((probedDisks) => {
-            probedDisks.forEach((disk) => statuses.set(disk.name, disk.sed_status));
+            addStatuses(probedDisks);
             return statuses;
           }),
         );

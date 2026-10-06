@@ -219,7 +219,20 @@ describe('DiskListComponent', () => {
       expect((await table.getAllRowTexts())[3]).toEqual(['sdd', 'serial3', '5 GiB', 'N/A', 'Unlocked']);
     });
 
-    it('still lists every disk when the probe fails', async () => {
+    it('is probed too when disk.details returned it without a status', () => {
+      const api = spectator.inject(MockApiService);
+      api.mockCall('disk.query', [...fakeDisks, missingDisk]);
+      api.mockCall('disk.details', {
+        unused: [],
+        used: [...fakeUsedDisks, { name: 'sdd', devname: 'sdd' }] as DetailsDisk[],
+      });
+      spectator = createComponent();
+
+      expect(api.call).toHaveBeenCalledWith('disk.query', probeParams);
+    });
+
+    it('still lists every disk when the probe fails, and logs why', async () => {
+      jest.spyOn(console, 'error').mockImplementation();
       const api = spectator.inject(MockApiService);
       const mockedCall = api.call.getMockImplementation();
       api.call.mockImplementation((method: string, params: unknown) => {
@@ -232,6 +245,7 @@ describe('DiskListComponent', () => {
       table = await loader.getHarness(TnTableHarness);
 
       expect((await table.getAllRowTexts())[3]).toEqual(['sdd', 'serial3', '5 GiB', 'N/A', 'Unknown']);
+      expect(console.error).toHaveBeenCalledWith(new Error('SP_BUSY'));
     });
   });
 
