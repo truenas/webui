@@ -133,6 +133,15 @@ describe('DockerImageDeleteDialogComponent', () => {
     expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
     expect(spectator.fixture.nativeElement).toHaveText('Warning: 2 of 2 docker images could not be deleted.');
 
+    const rows = spectator.queryAll(BulkListItemComponent).map((row, index) => ({
+      title: spectator.queryAll('ix-bulk-list-item')[index].textContent?.trim(),
+      message: row.item().message,
+    }));
+    expect(rows).toEqual([
+      { title: 'truenas/webui:3.1', message: mockFailedBulkResponse[0].error },
+      { title: 'truenas/middleware:0.1.2', message: mockFailedBulkResponse[1].error },
+    ]);
+
     const closeButton = await loader.getHarness(TnButtonHarness.with({ label: 'Close' }));
     await closeButton.click();
   });

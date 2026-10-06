@@ -161,6 +161,7 @@ export const migratedApiPaths = [
   'src/app/pages/apps/components/installed-apps/app-rollback-modal',
   'src/app/pages/apps/components/installed-apps/app-settings-button',
   'src/app/pages/apps/components/installed-apps/installed-apps-list',
+  'src/app/pages/apps/components/select-pool-dialog',
   'src/app/pages/apps/store/apps-store.service.ts',
   'src/app/pages/apps/store/apps-store.service.spec.ts',
   'src/app/pages/apps/store/docker.store.ts',
