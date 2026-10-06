@@ -20,6 +20,13 @@ import { SortValue, TableSort } from 'app/modules/tn-table/interfaces/table-sort
  * Everything a `tn-table` list needs around the table itself: the column model it declares
  * ({@link createTable}), the adapters between a data provider and the table's inputs, row-tag
  * helpers for test ids, and the `tnTableListHost` that wires a whole list together.
+ *
+ * Row tags, however a table builds them (these helpers, `tnTableListHost.rowTag`, or by hand): use
+ * fields that identify the row, never ones that change while it is on screen (job state, counters,
+ * timestamps, the value a user edits). The tag is an e2e contract, and a tag that moves under a test
+ * breaks every locator built against it. The exception is a tag kept verbatim from the legacy
+ * `ix-table` because Release Engineering already selects on it (e.g. `cron-list`); such a tag says so
+ * where it is declared.
  */
 
 export function convertStringToId(inputString: string): string {
@@ -45,10 +52,6 @@ export function convertStringToId(inputString: string): string {
  * Pre-normalizes through {@link normalizeTestIdString} so the tag matches the id the list
  * already had before it moved to `[tnTestId]` — see that helper for why the two kebab
  * implementations disagree.
- *
- * Build the tag from fields that identify the row, never from ones that change while it is on
- * screen (job state, counters, timestamps, the value a user edits): the tag is an e2e contract,
- * and a tag that moves under a test breaks every locator built against it.
  */
 export function toUniqueRowTag(value: string): string {
   return normalizeTestIdString(convertStringToId(value));
