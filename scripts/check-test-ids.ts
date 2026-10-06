@@ -339,7 +339,7 @@ const componentTestIdInput = /TestId\b/;
  * a container listening for Escape), and something already addressable through an ancestor that
  * carries the id. Anything a journey would click belongs in the template with an id, not here —
  * and "the component has no `testId` input" is not a reason, because `[tnTestId]` is a directive
- * and applies to any host element. That is how the two `tn-list-item` rows are tagged.
+ * and applies to any host element.
  */
 const allowedClickables = new Map<string, string>([
   ['src/app/modules/layout/admin-layout/admin-layout.component.html:overlay', 'Scrim behind the secondary menu; a test closes the menu by clicking what opened it.'],
