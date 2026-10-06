@@ -13,11 +13,12 @@ import {
   TnTablePagerComponent,
   TnTestIdDirective,
 } from '@truenas/ui-components';
+import { map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { translated } from 'app/helpers/translated.helper';
-import { VmwareSnapshot } from 'app/interfaces/vmware.interface';
+import { VmwareSnapshot, toVmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -26,7 +27,7 @@ import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { detailActionTestId, tnTableListHost } from 'app/modules/tn-table/utils';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
 import { vmwareSnapshotListElements } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.elements';
 import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-cell.component';
@@ -57,7 +58,7 @@ import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-ce
 export class VmwareSnapshotListComponent implements OnInit {
   protected translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   private destroyRef = inject(DestroyRef);
 
@@ -66,7 +67,8 @@ export class VmwareSnapshotListComponent implements OnInit {
 
   protected readonly searchQuery = signal('');
 
-  private readonly snapshots$ = this.api.call('vmware.query').pipe(
+  private readonly snapshots$ = this.api.query('vmware.query').pipe(
+    map((snapshots) => snapshots.map(toVmwareSnapshot)),
     takeUntilDestroyed(),
   );
 

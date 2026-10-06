@@ -3,13 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness, TnSlideToggleHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
@@ -24,7 +24,8 @@ import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-fo
 import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -78,10 +79,8 @@ describe('RsyncTaskFormComponent', () => {
           { id: 1, name: 'ssh01' },
           { id: 2, name: 'ssh02' },
         ] as KeychainCredential[]),
-      ]),
-      mockApi([
-        mockCall('rsynctask.create', existingTask),
-        mockCall('rsynctask.update', existingTask),
+        mockTypedCall('rsynctask.create', existingTask as unknown as CallResponse<WebUiApiDirectory, 'rsynctask.create'>),
+        mockTypedCall('rsynctask.update', existingTask as unknown as CallResponse<WebUiApiDirectory, 'rsynctask.update'>),
       ]),
       mockProvider(FilesystemService),
       mockProvider(UserService, {
@@ -125,9 +124,9 @@ describe('RsyncTaskFormComponent', () => {
 
   // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
-  const saveForm = (): void => {
+  const saveForm = async (): Promise<void> => {
     spectator.component.submit();
-
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
   };
 
@@ -166,9 +165,9 @@ describe('RsyncTaskFormComponent', () => {
       await setCheckbox('delayupdates', false);
       await (await loader.getHarness(TnChipInputHarness.with({ selector: '[formControlName="extra"]' }))).addChip('param=newValue');
 
-      saveForm();
+      await saveForm();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.create', [{
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('rsynctask.create', [{
         archive: false,
         compress: true,
         delayupdates: false,
@@ -231,9 +230,9 @@ describe('RsyncTaskFormComponent', () => {
       await setCheckbox('compress', false);
       await setCheckbox('delayupdates', true);
 
-      saveForm();
+      await saveForm();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.update', [
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('rsynctask.update', [
         1,
         {
           ...existingTask,
@@ -257,12 +256,12 @@ describe('RsyncTaskFormComponent', () => {
         TnSlideToggleHarness.with({ selector: '[formControlName="ssh_keyscan"]' }),
       )).check();
 
-      saveForm();
+      await saveForm();
 
       const existingTaskWithoutModule = { ...existingTask };
       delete existingTaskWithoutModule.remotemodule;
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.update', [
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('rsynctask.update', [
         1,
         {
           ...existingTaskWithoutModule,
@@ -282,12 +281,12 @@ describe('RsyncTaskFormComponent', () => {
       await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="ssh_credentials"]' }))).selectOption('ssh01');
       await (await getInput('remotepath')).setValue('/mnt/path');
 
-      saveForm();
+      await saveForm();
 
       const existingTaskWithoutModule = { ...existingTask };
       delete existingTaskWithoutModule.remotemodule;
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.update', [
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('rsynctask.update', [
         1,
         {
           ...existingTaskWithoutModule,
@@ -313,12 +312,13 @@ describe('RsyncTaskFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('emits closed and updates when saved via the host submit() entry point', () => {
+    it('emits closed and updates when saved via the host submit() entry point', async () => {
       closedSpy = jest.spyOn(spectator.component.closed, 'emit');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.update', [1, expect.anything()]);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('rsynctask.update', [1, expect.anything()]);
       expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });

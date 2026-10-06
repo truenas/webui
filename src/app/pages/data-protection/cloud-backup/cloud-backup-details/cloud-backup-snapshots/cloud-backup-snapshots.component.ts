@@ -22,7 +22,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { translated } from 'app/helpers/translated.helper';
-import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
+import { CloudBackup, CloudBackupSnapshot, toCloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -36,7 +36,7 @@ import {
   TableRelativeDateCellComponent,
 } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -62,7 +62,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class CloudBackupSnapshotsComponent implements OnChanges {
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
@@ -120,7 +120,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
     }
 
     const cloudBackupSnapshots$ = this.api.call('cloud_backup.list_snapshots', [this.backup().id]).pipe(
-      map((snapshots) => [...snapshots].sort((a, b) => b.time.$date - a.time.$date)),
+      map((snapshots) => snapshots.map(toCloudBackupSnapshot).sort((a, b) => b.time.$date - a.time.$date)),
       takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider().unsubscribe();

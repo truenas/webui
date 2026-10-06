@@ -26,7 +26,7 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SnapshotTaskService } from 'app/services/snapshot-task.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
@@ -54,7 +54,7 @@ import { TaskService } from 'app/services/task.service';
 export class SnapshotTaskFormComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private fb = inject(NonNullableFormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private snapshotTaskService = inject(SnapshotTaskService);
   private translate = inject(TranslateService);
   private taskService = inject(TaskService);

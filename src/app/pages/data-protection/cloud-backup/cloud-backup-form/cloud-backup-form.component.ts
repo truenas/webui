@@ -28,7 +28,8 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudBackup } from 'app/helptext/data-protection/cloud-backup/cloud-backup';
-import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
+import { CloudBackup, CloudBackupUpdate, toCloudBackup } from 'app/interfaces/cloud-backup.interface';
+import { toCloudSyncDirectoryListing } from 'app/interfaces/cloud-sync-task.interface';
 import { SelectOption, newOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
@@ -44,7 +45,7 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -78,7 +79,7 @@ type FormValue = CloudBackupFormComponent['form']['value'];
 export class CloudBackupFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private fb = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(FormErrorHandlerService);
   private filesystemService = inject(FilesystemService);
   private cloudCredentialService = inject(CloudCredentialService);
@@ -253,7 +254,7 @@ export class CloudBackupFormComponent implements OnInit {
         map((listing) => {
           const nodes: ExplorerNodeData[] = [];
 
-          listing.forEach((file) => {
+          listing.map(toCloudSyncDirectoryListing).forEach((file) => {
             if (file.IsDir) {
               nodes.push({
                 path: `${data.attributes.folder}/${file.Name}`.replace(/\/+/g, '/'),
@@ -286,8 +287,8 @@ export class CloudBackupFormComponent implements OnInit {
   protected handleSubmit = (): SubmitResult<CloudBackup, CloudBackup> => {
     const payload = this.prepareData(this.form.value);
     const request$: Observable<CloudBackup> = this.editingTask
-      ? this.api.call('cloud_backup.update', [this.editingTask.id, payload])
-      : this.api.call('cloud_backup.create', [payload]);
+      ? this.api.call('cloud_backup.update', [this.editingTask.id, payload]).pipe(map(toCloudBackup))
+      : this.api.call('cloud_backup.create', [payload]).pipe(map(toCloudBackup));
 
     return {
       request$,

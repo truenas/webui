@@ -28,7 +28,7 @@ import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { translated } from 'app/helpers/translated.helper';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
-import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncTaskUi, toCloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -53,7 +53,7 @@ import {
   formatTaskStateValue, TaskStateCellComponent,
 } from 'app/modules/tn-table-cells/state-cell/task-state-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { cloudSyncListElements } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.elements';
 import { CloudSyncRestoreDialog } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
@@ -98,7 +98,7 @@ import { AppState } from 'app/store';
 })
 export class CloudSyncListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private taskService = inject(TaskService);
   private formPanel = inject(FormSidePanelService);
@@ -119,9 +119,9 @@ export class CloudSyncListComponent implements OnInit {
   protected readonly jobState = JobState;
   protected readonly requiredRoles = [Role.CloudSyncWrite];
 
-  private readonly cloudSyncTasks$ = this.api.call('cloudsync.query').pipe(
+  private readonly cloudSyncTasks$ = this.api.query('cloudsync.query').pipe(
     map((cloudSyncTasks) => CloudSyncDataTransformer.transformTasks(
-      cloudSyncTasks,
+      cloudSyncTasks.map(toCloudSyncTask),
       this.taskService,
       this.translate,
     )),

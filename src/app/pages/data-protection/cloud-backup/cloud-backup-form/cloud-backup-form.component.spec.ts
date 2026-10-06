@@ -3,12 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnBannerHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness, TnSpriteLoaderService,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
@@ -19,7 +20,8 @@ import {
 import { addNewSelectOptionValueType } from 'app/modules/forms/custom-selects/ix-select-with-new-option.directive';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   CloudBackupFormComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
@@ -92,11 +94,11 @@ describe('CloudBackupFormComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(DialogService),
-      mockApi([
-        mockCall('cloud_backup.create', existingTask),
-        mockCall('cloud_backup.update', existingTask),
-        mockCall('cloudsync.create_bucket'),
-        mockCall('cloud_backup.transfer_setting_choices', [
+      mockTypedApi([
+        mockTypedCall('cloud_backup.create', existingTask as unknown as CallResponse<WebUiApiDirectory, 'cloud_backup.create'>),
+        mockTypedCall('cloud_backup.update', existingTask as unknown as CallResponse<WebUiApiDirectory, 'cloud_backup.update'>),
+        mockTypedCall('cloudsync.create_bucket', null),
+        mockTypedCall('cloud_backup.transfer_setting_choices', [
           CloudsyncTransferSetting.Default,
           CloudsyncTransferSetting.Performance,
           CloudsyncTransferSetting.FastStorage,
@@ -185,10 +187,11 @@ describe('CloudBackupFormComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.create', [{
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloud_backup.create', [{
         args: '',
         attributes: { folder: '/', bucket: 'brand-new-bucket' },
         credentials: 2,
@@ -237,10 +240,11 @@ describe('CloudBackupFormComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloud_backup.create', [{
+      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('cloud_backup.create', [{
         args: '',
         attributes: { folder: '/', bucket: 'path_to_bucket1' },
         credentials: 2,
@@ -309,10 +313,11 @@ describe('CloudBackupFormComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloud_backup.update', [1, {
+      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('cloud_backup.update', [1, {
         args: '',
         attributes: {
           folder: '/My Folder',
@@ -361,8 +366,9 @@ describe('CloudBackupFormComponent', () => {
       await (await getSelect('bucket')).selectOption('bucket1');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.update', [1, expect.anything()]);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloud_backup.update', [1, expect.anything()]);
       expect(closedSpy).toHaveBeenCalledWith(existingTask);
     });
   });

@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Direction } from 'app/enums/direction.enum';
@@ -12,7 +11,7 @@ import { CloudSyncCredentialEntry } from 'app/interfaces/cloudsync-credential.in
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { StorjProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
 import { googlePhotosCreds, googlePhotosProvider, storjProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
 import { CloudSyncWizardComponent } from './cloudsync-wizard.component';
@@ -36,10 +35,8 @@ describe('CloudSyncWizardComponent', () => {
         mockTypedCall('cloudsync.credentials.update', googlePhotosCreds as CloudSyncCredentialEntry),
         mockTypedCall('cloudsync.credentials.delete', true),
         mockTypedCall('cloudsync.providers', [googlePhotosProvider, storjProvider]),
-      ]),
-      mockApi([
-        mockCall('cloudsync.create'),
-        mockCall('cloudsync.delete'),
+        mockTypedCall('cloudsync.create', null),
+        mockTypedCall('cloudsync.delete', null),
       ]),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
@@ -99,7 +96,7 @@ describe('CloudSyncWizardComponent', () => {
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.create', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('cloudsync.create', [{
       attributes: {
         folder: '/',
       },

@@ -4,6 +4,7 @@ import { DataProtectionTaskState } from 'app/interfaces/data-protection-task-sta
 import { Job } from 'app/interfaces/job.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export interface RsyncTask {
   archive: boolean;
@@ -42,4 +43,17 @@ export interface RsyncTaskUi extends RsyncTask {
   next_run: string;
   state: DataProtectionTaskState;
   last_run: string;
+}
+
+/**
+ * Reads a `rsynctask.query` row into the shape the data protection pages are written against. The generated
+ * entry spells the enums as wire literals, leaves the fields middleware defaults optional and types
+ * `job` and the SSH credential as loose records; it describes the same object.
+ *
+ * A plain `as` does not compile here: `job` is a loose record, not comparable with the UI's `Job`.
+ * So the cast checks nothing, and a regenerated entry that drops or renames a field still compiles
+ * and reads `undefined`.
+ */
+export function toRsyncTask(task: WebUiQueryEntity<'rsynctask.query'>): RsyncTask {
+  return task as unknown as RsyncTask;
 }

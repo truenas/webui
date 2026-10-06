@@ -25,7 +25,7 @@ const wsError = new ApiCallError({
 } as JsonRpcError);
 
 const failedJob = {
-  method: 'cloudsync.sync_onetime',
+  method: 'cloudsync.sync',
   description: null,
   error: 'DUMMY_ERROR',
   exception: 'EXCEPTION',

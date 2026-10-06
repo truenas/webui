@@ -9,9 +9,10 @@ import {
 import { MockComponent, MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
@@ -29,7 +30,8 @@ import {
 import {
   TableDetailsRowComponent,
 } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudSyncListComponent } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.component';
 import { CloudSyncRestoreDialog } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
@@ -114,10 +116,10 @@ describe('CloudSyncListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('cloudsync.query', cloudSyncList),
-        mockCall('cloudsync.delete'),
-        mockJob('cloudsync.sync', fakeSuccessfulJob()),
+      mockTypedApi([
+        mockTypedQuery('cloudsync.query', cloudSyncList as unknown as WebUiQueryEntity<'cloudsync.query'>[]),
+        mockTypedCall('cloudsync.delete', null),
+        mockTypedJob('cloudsync.sync', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -225,9 +227,9 @@ describe('CloudSyncListComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloudsync.sync', [1]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloudsync.sync', [1]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('cloudsync.query');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudlist» has started.');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudlist» completed successfully.');
   });
@@ -249,7 +251,7 @@ describe('CloudSyncListComponent', () => {
       },
     );
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('cloudsync.query');
   });
 
   it('deletes a Cloud Sync with confirmation when Delete button is pressed', async () => {
@@ -264,7 +266,7 @@ describe('CloudSyncListComponent', () => {
       successMessage: 'Cloud Sync Task «custom-cloudlist» deleted.',
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.delete', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloudsync.delete', [1]);
   });
 
   it('shows dialog when Restore button is pressed', async () => {
@@ -279,7 +281,7 @@ describe('CloudSyncListComponent', () => {
       data: 1,
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('cloudsync.query');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has been restored.');
   });
 
@@ -295,8 +297,8 @@ describe('CloudSyncListComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloudsync.sync', [1, { dry_run: true }]);
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloudsync.sync', [1, { dry_run: true }]);
+    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('cloudsync.query');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudlist» has started.');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudlist» dry run completed successfully.');
   });

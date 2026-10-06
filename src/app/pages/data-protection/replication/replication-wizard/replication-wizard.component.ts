@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, output, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { CallParams, CallResponse } from '@truenas/api-client';
 import { TnStepComponent, TnStepperComponent } from '@truenas/ui-components';
 import { merge } from 'lodash-es';
 import {
@@ -20,22 +21,29 @@ import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
-import { CountManualSnapshotsParams, EligibleManualSnapshotsCount, TargetUnmatchedSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
-import { PeriodicSnapshotTask, PeriodicSnapshotTaskCreate } from 'app/interfaces/periodic-snapshot-task.interface';
-import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
+import {
+  CountManualSnapshotsParams, EligibleManualSnapshotsCount, TargetUnmatchedSnapshotsParams, toCountManualSnapshotsArgs,
+} from 'app/interfaces/count-manual-snapshots.interface';
+import { PeriodicSnapshotTask, PeriodicSnapshotTaskCreate, toPeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
+import {
+  ReplicationCreate, ReplicationTask, toReplicationCreateArgs, toReplicationTask,
+} from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
-import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ReplicationWizardData } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ReplicationService } from 'app/services/replication.service';
+
+type CreateSnapshotArgs = CallParams<WebUiApiDirectory, 'pool.snapshot.create'>[0];
+type CreatedSnapshot = CallResponse<WebUiApiDirectory, 'pool.snapshot.create'>;
 
 @Component({
   selector: 'ix-replication-wizard',
@@ -52,7 +60,7 @@ import { ReplicationService } from 'app/services/replication.service';
   ],
 })
 export class ReplicationWizardComponent {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private replicationService = inject(ReplicationService);
   private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);
@@ -76,7 +84,7 @@ export class ReplicationWizardComponent {
 
   eligibleSnapshots = 0;
   existSnapshotTasks: number[] = [];
-  createdSnapshots: ZfsSnapshot[] = [];
+  createdSnapshots: CreatedSnapshot[] = [];
   createdSnapshotTasks: PeriodicSnapshotTask[] = [];
   createdReplication: ReplicationTask | undefined;
 
@@ -202,7 +210,7 @@ export class ReplicationWizardComponent {
     ]).pipe(
       switchMap((hasRole) => {
         if (hasRole) {
-          return this.api.call('replication.count_eligible_manual_snapshots', [payload]);
+          return this.api.call('replication.count_eligible_manual_snapshots', [toCountManualSnapshotsArgs(payload)]);
         }
         return of({ eligible: 0, total: 0 });
       }),
@@ -216,15 +224,15 @@ export class ReplicationWizardComponent {
   }
 
   private createPeriodicSnapshotTask(payload: PeriodicSnapshotTaskCreate): Observable<PeriodicSnapshotTask> {
-    return this.api.call('pool.snapshottask.create', [payload]);
+    return this.api.call('pool.snapshottask.create', [payload]).pipe(map(toPeriodicSnapshotTask));
   }
 
-  private createSnapshot(payload: CreateZfsSnapshot): Observable<ZfsSnapshot> {
+  private createSnapshot(payload: CreateSnapshotArgs): Observable<CreatedSnapshot> {
     return this.api.call('pool.snapshot.create', [payload]);
   }
 
   private createReplication(payload: ReplicationCreate): Observable<ReplicationTask> {
-    return this.api.call('replication.create', [payload]);
+    return this.api.call('replication.create', [toReplicationCreateArgs(payload)]).pipe(map(toReplicationTask));
   }
 
   private getSnapshotsCountPayload(value: ReplicationWizardData): CountManualSnapshotsParams | undefined {
@@ -267,8 +275,8 @@ export class ReplicationWizardComponent {
     return payload;
   }
 
-  private getSnapshotsPayload(data: ReplicationWizardData): CreateZfsSnapshot[] {
-    const payload: CreateZfsSnapshot[] = [];
+  private getSnapshotsPayload(data: ReplicationWizardData): CreateSnapshotArgs[] {
+    const payload: CreateSnapshotArgs[] = [];
     for (const dataset of data.source_datasets) {
       payload.push({
         dataset,
@@ -356,7 +364,7 @@ export class ReplicationWizardComponent {
     schedule: Schedule;
     naming_schema?: string;
   }): Observable<PeriodicSnapshotTask[]> {
-    return this.api.call('pool.snapshottask.query', [[
+    return this.api.query('pool.snapshottask.query', [
       ['dataset', '=', payload.dataset],
       ['schedule.minute', '=', payload.schedule.minute],
       ['schedule.hour', '=', payload.schedule.hour],
@@ -364,7 +372,7 @@ export class ReplicationWizardComponent {
       ['schedule.month', '=', payload.schedule.month],
       ['schedule.dow', '=', payload.schedule.dow],
       ['naming_schema', '=', payload.naming_schema ? payload.naming_schema : this.defaultNamingSchema],
-    ]]);
+    ]).pipe(map((tasks) => tasks.map(toPeriodicSnapshotTask)));
   }
 
   private setSchemaOrRegexForObject(
@@ -392,7 +400,7 @@ export class ReplicationWizardComponent {
     this.rollBack();
   }
 
-  private callCreateSnapshots(values: ReplicationWizardData): Observable<ZfsSnapshot[] | null> {
+  private callCreateSnapshots(values: ReplicationWizardData): Observable<CreatedSnapshot[] | null> {
     const snapshotsCountPayload = this.getSnapshotsCountPayload(values);
     if (snapshotsCountPayload) {
       return this.getSnapshotsCount(snapshotsCountPayload).pipe(

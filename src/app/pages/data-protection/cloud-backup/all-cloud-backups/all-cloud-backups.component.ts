@@ -3,18 +3,18 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent } from '@truenas/ui-components';
-import { filter, tap } from 'rxjs';
+import { filter, map, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
+import { CloudBackup, toCloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CloudBackupDetailsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-details.component';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { CloudBackupListComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.component';
@@ -37,7 +37,7 @@ import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/
   ],
 })
 export class AllCloudBackupsComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private route = inject(ActivatedRoute);
@@ -85,7 +85,8 @@ export class AllCloudBackupsComponent implements OnInit {
   }
 
   private loadCloudBackups(id?: string): void {
-    const cloudBackups$ = this.api.call('cloud_backup.query').pipe(
+    const cloudBackups$ = this.api.query('cloud_backup.query').pipe(
+      map((cloudBackups) => cloudBackups.map(toCloudBackup)),
       tap((cloudBackups) => {
         this.cloudBackups.set(cloudBackups);
 

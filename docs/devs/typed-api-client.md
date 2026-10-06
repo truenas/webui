@@ -527,6 +527,23 @@ above. Each is a change for `truenas/api-client-ts`.
     `maxConcurrentCalls` option on the client, counting its own ping, would
     retire the patch and the spare slot.
 
+21. **Drift found moving data protection.** Handled at one site each:
+    - `replication.create` / `update` and `replication.count_eligible_manual_snapshots` declare
+      their dataset lists as non-empty (`[string, ...string[]]`). The forms build `string[]` and
+      require a dataset before submitting, so `toReplicationCreateArgs` and
+      `toCountManualSnapshotsArgs` hand the payload over unchanged.
+    - `TransportMode.Legacy` (`LEGACY`) is in no generated transport union and no form offered it,
+      so the member is gone.
+    - `cloudsync.list_directory` returns loose records (rclone's `lsjson` output);
+      `toCloudSyncDirectoryListing` names the fields the explorers read.
+    - `cloud_backup.list_snapshots` types `time` as a string where the wire sends a `$date`
+      envelope (gap 15); `toCloudBackupSnapshot` reads it as the envelope.
+    - The task entries (`cloud_backup`, `cloudsync`, `pool.snapshottask`, `replication`,
+      `rsynctask`, `vmware`) are read into the UI interfaces through a `toX` adapter per
+      interface, as `toVirtualMachine` does, rather than retyping every consumer.
+    - `selectJobsByMethod` keys on the legacy `ApiJobMethod`, so `cloud_backup.sync` and
+      `rsynctask.run` stay in the job directory until the jobs store moves.
+
 ## Version policy
 
 `WebUiApiDirectory` pins `v27.0.0`. The literal must stay at the

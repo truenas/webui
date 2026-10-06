@@ -42,6 +42,7 @@ export class FakeProgressBarComponent implements OnChanges, OnDestroy {
    * Don't show progress bar immediately when loading becomes true.
    */
   private readonly gracePeriod = 200;
+  private graceTimeout: ReturnType<typeof setTimeout> | undefined;
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (!('loading' in changes)) {
@@ -56,6 +57,8 @@ export class FakeProgressBarComponent implements OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    // A bar destroyed inside its grace period would otherwise start an interval nothing stops.
+    clearTimeout(this.graceTimeout);
     this.stop.next();
   }
 
@@ -68,7 +71,8 @@ export class FakeProgressBarComponent implements OnChanges, OnDestroy {
     this.shouldFadeOut.set(false);
 
     // Wait for grace period.
-    setTimeout(() => {
+    clearTimeout(this.graceTimeout);
+    this.graceTimeout = setTimeout(() => {
       if (this.loading()) {
         this.start();
       }
@@ -76,6 +80,7 @@ export class FakeProgressBarComponent implements OnChanges, OnDestroy {
   }
 
   private stopAnimating(): void {
+    clearTimeout(this.graceTimeout);
     this.stop.next();
     this.shouldFadeOut.set(true);
   }

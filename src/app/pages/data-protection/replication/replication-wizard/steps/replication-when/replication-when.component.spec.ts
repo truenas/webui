@@ -3,8 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnRadioHarness, TnStepperComponent } from '@truenas/ui-components';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
@@ -22,7 +22,7 @@ describe('ReplicationWhenComponent', () => {
     providers: [
       mockProvider(TnStepperComponent),
       mockAuth(),
-      mockApi(),
+      mockTypedApi(),
     ],
   });
 

@@ -2,17 +2,18 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnInputHarness, TnRadioHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { firstValueFrom, of } from 'rxjs';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import {
   CloudBackup,
   CloudBackupSnapshot,
   CloudBackupSnapshotDirectoryFileType,
-  CloudBackupSnapshotDirectoryListing,
 } from 'app/interfaces/cloud-backup.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -21,7 +22,8 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -47,12 +49,12 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
           afterClosed: () => of(null),
         })),
       }),
-      mockApi([
-        mockJob('cloud_backup.restore'),
-        mockCall('cloud_backup.list_snapshot_directory', [
+      mockTypedApi([
+        mockTypedJob('cloud_backup.restore', { state: JobState.Success }),
+        mockTypedCall('cloud_backup.list_snapshot_directory', [
           { name: 'sub', path: '/sub', type: CloudBackupSnapshotDirectoryFileType.Dir },
           { name: 'file.txt', path: '/file.txt', type: CloudBackupSnapshotDirectoryFileType.File },
-        ] as CloudBackupSnapshotDirectoryListing[]),
+        ] as CallResponse<WebUiApiDirectory, 'cloud_backup.list_snapshot_directory'>),
       ]),
       mockProvider(FilesystemService),
       ...ixFormTestingProviders(),
@@ -75,8 +77,9 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       await (await getExplorer('target')).setValue('/mnt/bulldozer');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer',
@@ -93,8 +96,9 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       await (await getExplorer('excludedPaths')).setValue('/mnt/dozer/another');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer',
@@ -116,8 +120,9 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       await (await getExplorer('includedPaths')).setValue('/mnt/dozer/a');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer',
@@ -139,8 +144,9 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       await (await getExplorer('includedPaths')).setValue('/mnt/dozer/file.txt');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer',
@@ -162,8 +168,9 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       await (await getExplorer('includedPaths')).setValue('/mnt/dozer/a');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer/a',
@@ -186,8 +193,9 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       await (await getExplorer('target')).setValue('/mnt/bulldozer');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer',
@@ -286,8 +294,9 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
 
       await (await getExplorer('target')).setValue('/mnt/bulldozer');
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer',

@@ -31,7 +31,7 @@ import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
-import { CloudSyncListDirectoryParams, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncListDirectoryParams, CloudSyncTaskUpdate, toCloudSyncDirectoryListing } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { newOption, Option } from 'app/interfaces/option.interface';
@@ -48,7 +48,7 @@ import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CreateStorjBucketDialog } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
@@ -81,7 +81,7 @@ type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
   ],
 })
 export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private cdr = inject(ChangeDetectorRef);
   private formPanel = inject(FormSidePanelService);
   private dialog = inject(DialogService);
@@ -579,7 +579,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
         map((listing) => {
           const nodes: ExplorerNodeData[] = [];
 
-          listing.forEach((file) => {
+          listing.map(toCloudSyncDirectoryListing).forEach((file) => {
             if (file.IsDir) {
               nodes.push({
                 path: `${String(data.attributes.folder)}/${file.Name}`.replace(/\/+/g, '/'),

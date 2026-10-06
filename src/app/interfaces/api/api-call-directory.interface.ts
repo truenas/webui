@@ -1,5 +1,4 @@
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
-import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { RdmaProtocolName } from 'app/enums/service-name.enum';
@@ -44,16 +43,9 @@ import {
 import { Choices } from 'app/interfaces/choices.interface';
 import {
   CloudBackup,
-  CloudBackupSnapshot,
-  CloudBackupSnapshotDirectoryListing,
-  CloudBackupSnapshotDirectoryParams,
-  CloudBackupUpdate,
 } from 'app/interfaces/cloud-backup.interface';
 import {
-  CloudSyncDirectoryListing,
-  CloudSyncListDirectoryParams,
   CloudSyncTask,
-  CloudSyncTaskUpdate,
 } from 'app/interfaces/cloud-sync-task.interface';
 import {
   CloudSyncBucket,
@@ -61,17 +53,12 @@ import {
   CloudSyncCredentialUpdate,
   CloudSyncCredentialVerify, CloudSyncCredentialVerifyResult, CloudSyncOneDriveDrive, CloudSyncOneDriveParams,
 } from 'app/interfaces/cloudsync-credential.interface';
-import { CloudSyncProvider, CloudSyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
+import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import {
   ContainerImage, DeleteContainerImageParams,
 } from 'app/interfaces/container-image.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { CoreOptions } from 'app/interfaces/core-options.interface';
-import {
-  CountManualSnapshotsParams,
-  EligibleManualSnapshotsCount,
-  TargetUnmatchedSnapshotsParams,
-} from 'app/interfaces/count-manual-snapshots.interface';
 import { Cronjob, CronjobUpdate } from 'app/interfaces/cronjob.interface';
 import { DatasetHasVmsQueryParams } from 'app/interfaces/dataset-has-vms-query-params.interface';
 import { DatasetQuota, DatasetQuotaQueryParams, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
@@ -181,11 +168,6 @@ import {
   UpdateNvmeOfSubsystem,
 } from 'app/interfaces/nvme-of.interface';
 import { MapOption } from 'app/interfaces/option.interface';
-import {
-  PeriodicSnapshotTask,
-  PeriodicSnapshotTaskCreate,
-  PeriodicSnapshotTaskUpdate,
-} from 'app/interfaces/periodic-snapshot-task.interface';
 import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { CreateScrubTask, ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import {
@@ -197,11 +179,10 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ReplicationConfigUpdate } from 'app/interfaces/replication-config-update.interface';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import {
-  ReplicationCreate,
   ReplicationTask,
 } from 'app/interfaces/replication-task.interface';
 import { ResilverConfig, ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
-import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
+import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import {
   S3AccessKey,
   S3AccessKeyCreate,
@@ -236,11 +217,6 @@ import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfac
 import {
   DeleteUserParams, User, UserUpdate,
 } from 'app/interfaces/user.interface';
-import {
-  MatchDatastoresWithDatasets,
-  MatchDatastoresWithDatasetsParams,
-  VmwareSnapshot, VmwareSnapshotUpdate,
-} from 'app/interfaces/vmware.interface';
 import { WebShare, WebShareUpdate } from 'app/interfaces/webshare-config.interface';
 import {
   CloneZfsSnapshot,
@@ -356,31 +332,18 @@ export interface ApiCallDirectory {
   'certificate.query': { params: QueryParams<Certificate>; response: Certificate[] };
 
   // CloudBackup
-  'cloud_backup.create': { params: [CloudBackupUpdate]; response: CloudBackup };
-  'cloud_backup.delete': { params: [id: number]; response: boolean };
-  'cloud_backup.list_snapshots': { params: [id: number]; response: CloudBackupSnapshot[] };
-  'cloud_backup.list_snapshot_directory': { params: CloudBackupSnapshotDirectoryParams; response: CloudBackupSnapshotDirectoryListing[] };
-  'cloud_backup.transfer_setting_choices': { params: void; response: CloudsyncTransferSetting[] };
   'cloud_backup.query': { params: [id?: QueryParams<CloudBackup>]; response: CloudBackup[] };
-  'cloud_backup.update': { params: [id: number, update: Partial<CloudBackupUpdate>]; response: CloudBackup };
 
   // CloudSync
-  'cloudsync.abort': { params: [id: number]; response: boolean };
-  'cloudsync.create': { params: [CloudSyncTaskUpdate]; response: CloudSyncTask };
-  'cloudsync.create_bucket': { params: [number, string]; response: void };
   'cloudsync.credentials.create': { params: [CloudSyncCredentialUpdate]; response: CloudSyncCredential };
   'cloudsync.credentials.delete': { params: [id: number]; response: boolean };
   'cloudsync.credentials.query': { params: QueryParams<CloudSyncCredential>; response: CloudSyncCredential[] };
   'cloudsync.credentials.update': { params: [id: number, update: CloudSyncCredentialUpdate]; response: CloudSyncCredential };
   'cloudsync.credentials.verify': { params: [CloudSyncCredentialVerify]; response: CloudSyncCredentialVerifyResult };
-  'cloudsync.delete': { params: [id: number]; response: boolean };
   'cloudsync.list_buckets': { params: [id: number]; response: CloudSyncBucket[] };
-  'cloudsync.list_directory': { params: [CloudSyncListDirectoryParams]; response: CloudSyncDirectoryListing[] };
   'cloudsync.onedrive_list_drives': { params: [CloudSyncOneDriveParams]; response: CloudSyncOneDriveDrive[] };
   'cloudsync.providers': { params: void; response: CloudSyncProvider[] };
   'cloudsync.query': { params: QueryParams<CloudSyncTask>; response: CloudSyncTask[] };
-  'cloudsync.restore': { params: CloudSyncRestoreParams; response: void };
-  'cloudsync.update': { params: [id: number, task: Partial<CloudSyncTaskUpdate>]; response: CloudSyncTask };
 
   // Core
   'core.ping': { params: void; response: 'pong' };
@@ -643,12 +606,6 @@ export interface ApiCallDirectory {
   'pool.scrub.delete': { params: [id: number]; response: boolean };
   'pool.scrub.query': { params: QueryParams<ScrubTask>; response: ScrubTask[] };
   'pool.scrub.update': { params: [id: number, params: Partial<CreateScrubTask>]; response: ScrubTask };
-  'pool.snapshottask.create': { params: [PeriodicSnapshotTaskCreate]; response: PeriodicSnapshotTask };
-  'pool.snapshottask.delete': { params: [id: number, options?: { fixate_removal_date: boolean }]; response: boolean };
-  'pool.snapshottask.delete_will_change_retention_for': { params: [id: number]; response: Record<string, string[]> };
-  'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };
-  'pool.snapshottask.update': { params: [id: number, update: Partial<PeriodicSnapshotTaskUpdate>]; response: PeriodicSnapshotTask };
-  'pool.snapshottask.update_will_change_retention_for': { params: [id: number, update: Partial<PeriodicSnapshotTaskUpdate>]; response: Record<string, string[]> };
   'pool.upgrade': { params: [id: number]; response: boolean };
   'pool.validate_name': { params: string[]; response: boolean | { error: boolean } };
 
@@ -665,20 +622,12 @@ export interface ApiCallDirectory {
   // Replication
   'replication.config.config': { params: void; response: ReplicationConfig };
   'replication.config.update': { params: [Partial<ReplicationConfigUpdate>]; response: ReplicationConfig };
-  'replication.count_eligible_manual_snapshots': { params: [CountManualSnapshotsParams]; response: EligibleManualSnapshotsCount };
-  'replication.create': { params: [ReplicationCreate]; response: ReplicationTask };
-  'replication.delete': { params: [id: number]; response: boolean };
   'replication.list_naming_schemas': { params: void; response: string[] };
   'replication.query': { params: QueryParams<ReplicationTask>; response: ReplicationTask[] };
   'replication.restore': { params: [id: number, params: { name: string; target_dataset: string }]; response: void };
-  'replication.target_unmatched_snapshots': { params: TargetUnmatchedSnapshotsParams; response: Record<string, string[]> };
-  'replication.update': { params: [id: number, update: Partial<ReplicationCreate>]; response: ReplicationTask };
 
   // Rsynctask
-  'rsynctask.create': { params: [RsyncTaskUpdate]; response: RsyncTask };
-  'rsynctask.delete': { params: [id: number]; response: boolean };
   'rsynctask.query': { params: QueryParams<RsyncTask>; response: RsyncTask[] };
-  'rsynctask.update': { params: [id: number, params: Partial<RsyncTaskUpdate>]; response: RsyncTask };
 
   // S3
   's3.accesskey.query': { params: QueryParams<S3AccessKey>; response: S3AccessKey[] };
@@ -793,12 +742,7 @@ export interface ApiCallDirectory {
   'system.advanced.get_gpu_pci_choices': { params: void; response: GpuPciChoices };
 
   // Vmware
-  'vmware.create': { params: [VmwareSnapshotUpdate]; response: VmwareSnapshot };
   'vmware.dataset_has_vms': { params: DatasetHasVmsQueryParams; response: boolean };
-  'vmware.delete': { params: [id: number]; response: boolean };
-  'vmware.match_datastores_with_datasets': { params: [MatchDatastoresWithDatasetsParams]; response: MatchDatastoresWithDatasets };
-  'vmware.query': { params: QueryParams<VmwareSnapshot>; response: VmwareSnapshot[] };
-  'vmware.update': { params: [id: number, update: Partial<VmwareSnapshotUpdate>]; response: VmwareSnapshot };
 
   // WebUI main
   // TODO: Incorrect response definition here or for system.info.

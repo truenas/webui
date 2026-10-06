@@ -13,12 +13,11 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
-import { CloudSyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -43,7 +42,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
   ],
 })
 export class CloudSyncRestoreDialog {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formBuilder = inject(FormBuilder);
   private filesystem = inject(FilesystemService);
   private translate = inject(TranslateService);
@@ -57,7 +56,8 @@ export class CloudSyncRestoreDialog {
 
   readonly form = this.formBuilder.nonNullable.group({
     description: ['', Validators.required],
-    transfer_mode: [TransferMode.Copy],
+    // Restoring cannot move; `cloudsync.restore` takes SYNC or COPY only.
+    transfer_mode: [TransferMode.Copy as TransferMode.Copy | TransferMode.Sync],
     path: [mntPath, Validators.required],
   });
 
@@ -75,7 +75,7 @@ export class CloudSyncRestoreDialog {
   ]);
 
   onSubmit(): void {
-    this.api.call('cloudsync.restore', [this.parentTaskId, this.form.value] as CloudSyncRestoreParams)
+    this.api.call('cloudsync.restore', [this.parentTaskId, this.form.getRawValue()])
       .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

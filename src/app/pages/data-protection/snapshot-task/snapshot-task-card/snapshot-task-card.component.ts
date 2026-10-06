@@ -26,7 +26,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
-import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
+import { PeriodicSnapshotTaskUi, toPeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -47,7 +47,7 @@ import {
 import {
   TableToggleCellComponent,
 } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { snapshotTaskCardElements } from 'app/pages/data-protection/snapshot-task/snapshot-task-card/snapshot-task-card.elements';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -87,7 +87,7 @@ export class SnapshotTaskCardComponent implements OnInit {
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   private snapshotTaskService = inject(SnapshotTaskService);
   private loader = inject(LoaderService);
@@ -141,8 +141,8 @@ export class SnapshotTaskCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const snapshotTasks$ = this.api.call('pool.snapshottask.query').pipe(
-      map((snapshotTasks) => snapshotTasks as PeriodicSnapshotTaskUi[]),
+    const snapshotTasks$ = this.api.query('pool.snapshottask.query').pipe(
+      map((snapshotTasks) => snapshotTasks.map((task) => toPeriodicSnapshotTask(task) as PeriodicSnapshotTaskUi)),
     );
     this.dataProvider = new AsyncDataProvider<PeriodicSnapshotTaskUi>(snapshotTasks$);
     this.setDefaultSort();

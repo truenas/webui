@@ -15,7 +15,7 @@ import {
   FormSubmitEvent, IxFormComponent, SubmitResult, ixFormMinSubmitFeedbackMs,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 
 interface ReplicationRestoreFormValue {
@@ -48,7 +48,7 @@ interface ReplicationRestoreFormValue {
   ],
 })
 export class ReplicationRestoreDialog {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private loader = inject(LoaderService);
   private formBuilder = inject(NonNullableFormBuilder);
   private datasetService = inject(DatasetService);

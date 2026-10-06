@@ -1,7 +1,7 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnCardComponent } from '@truenas/ui-components';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { CloudBackupScheduleComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-schedule/cloud-backup-schedule.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -25,7 +25,7 @@ describe('CloudBackupScheduleComponent', () => {
   const createComponent = createComponentFactory({
     component: CloudBackupScheduleComponent,
     providers: [
-      mockApi(),
+      mockTypedApi(),
       provideMockStore({
         selectors: [
           {

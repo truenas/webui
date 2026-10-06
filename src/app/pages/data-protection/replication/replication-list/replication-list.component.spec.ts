@@ -3,15 +3,15 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnButtonHarness, TnDialog, TnSelectHarness, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
@@ -34,7 +34,8 @@ import {
 import {
   TableDetailsRowComponent,
 } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationListComponent } from 'app/pages/data-protection/replication/replication-list/replication-list.component';
 import { ReplicationRestoreDialog } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
@@ -145,11 +146,11 @@ describe('ReplicationListComponent', () => {
           },
         ],
       }),
-      mockApi([
-        mockCall('replication.query', tasks),
-        mockCall('replication.update', { ...tasks[0], enabled: true }),
-        mockJob('replication.run', fakeSuccessfulJob()),
-        mockCall('replication.delete'),
+      mockTypedApi([
+        mockTypedQuery('replication.query', tasks as unknown as WebUiQueryEntity<'replication.query'>[]),
+        mockTypedCall('replication.update', { ...tasks[0], enabled: true } as unknown as CallResponse<WebUiApiDirectory, 'replication.update'>),
+        mockTypedJob('replication.run', { state: JobState.Success }),
+        mockTypedCall('replication.delete', null),
       ]),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -204,7 +205,7 @@ describe('ReplicationListComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('replication.run', [1]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('replication.run', [1]);
   });
 
   it('shows wizard when the add button is pressed', async () => {
@@ -250,7 +251,7 @@ describe('ReplicationListComponent', () => {
       call: expect.any(Function),
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.delete', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('replication.delete', [1]);
   });
 
   it('shows dialog when Restore button is pressed', async () => {
@@ -273,7 +274,7 @@ describe('ReplicationListComponent', () => {
 
     await toggle.toggle();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
       'replication.update',
       [1, { enabled: true }],
     );

@@ -6,7 +6,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import {
   TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
@@ -32,8 +32,8 @@ describe('SourceSectionComponent', () => {
     providers: [
       mockProvider(LanguageService),
       mockProvider(LocaleService),
-      mockApi([
-        mockCall('pool.snapshottask.query', [
+      mockTypedApi([
+        mockTypedQuery('pool.snapshottask.query', [
           {
             id: 1,
             dataset: 'files',

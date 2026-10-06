@@ -15,7 +15,7 @@ import {
   TnTablePagerComponent,
 } from '@truenas/ui-components';
 import {
-  Observable, filter, switchMap, tap,
+  Observable, filter, map, switchMap, tap,
 } from 'rxjs';
 import { snapshotTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -26,7 +26,7 @@ import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { translated } from 'app/helpers/translated.helper';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
-import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
+import { PeriodicSnapshotTaskUi, toPeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -50,7 +50,7 @@ import {
   formatTaskStateValue, TaskStateCellComponent,
 } from 'app/modules/tn-table-cells/state-cell/task-state-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { snapshotTaskListElements } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -95,7 +95,7 @@ import { TaskService } from 'app/services/task.service';
 export class SnapshotTaskListComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private dialogService = inject(DialogService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private taskService = inject(TaskService);
   private snapshotTaskService = inject(SnapshotTaskService);
   private translate = inject(TranslateService);
@@ -111,12 +111,14 @@ export class SnapshotTaskListComponent implements OnInit {
   private snapshotTasks: PeriodicSnapshotTaskUi[] = [];
   protected readonly searchQuery = signal('');
 
-  private readonly tasks$ = this.api.call('pool.snapshottask.query').pipe(
+  private readonly tasks$ = this.api.query('pool.snapshottask.query').pipe(
+    // The UI-only fields are filled in once the rows reach the table.
+    map((tasks) => tasks.map((task) => toPeriodicSnapshotTask(task) as PeriodicSnapshotTaskUi)),
     tap((tasks) => {
-      this.snapshotTasks = tasks as PeriodicSnapshotTaskUi[];
+      this.snapshotTasks = tasks;
     }),
     takeUntilDestroyed(),
-  ) as Observable<PeriodicSnapshotTaskUi[]>;
+  );
 
   readonly dataProvider = new AsyncDataProvider<PeriodicSnapshotTaskUi>(this.tasks$);
   protected readonly EmptyType = EmptyType;
