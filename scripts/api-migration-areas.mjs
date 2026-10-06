@@ -140,6 +140,9 @@ export const migratedApiPaths = [
   'src/app/pages/containers/stores/container-config.store.spec.ts',
   'src/app/pages/containers/stores/container-devices.store.ts',
   'src/app/pages/containers/stores/container-devices.store.spec.ts',
+  // NAS-144000: data protection — cloud backup, cloud sync, periodic snapshot, rsync, replication
+  // and VMware snapshot tasks, their cards, lists, forms and wizards.
+  'src/app/pages/data-protection',
 ];
 
 /**

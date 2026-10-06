@@ -14,7 +14,9 @@ import {
   TnTableComponent,
   TnTablePagerComponent,
 } from '@truenas/ui-components';
-import { filter, switchMap, tap } from 'rxjs';
+import {
+  filter, map, switchMap, tap,
+} from 'rxjs';
 import { replicationTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -25,7 +27,7 @@ import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { translated } from 'app/helpers/translated.helper';
 import { Job } from 'app/interfaces/job.interface';
-import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { ReplicationTask, toReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -49,7 +51,7 @@ import {
 } from 'app/modules/tn-table-cells/state-cell/task-state-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   ReplicationFormComponent,
 } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -94,7 +96,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class ReplicationListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
@@ -112,11 +114,14 @@ export class ReplicationListComponent implements OnInit {
   protected readonly searchableElements = replicationListElements;
   protected readonly EmptyType = EmptyType;
 
-  private readonly replicationTasks$ = this.api.call('replication.query', [[], {
+  private readonly replicationTasks$ = this.api.query('replication.query', [], {
     extra: {
       check_dataset_encryption_keys: true,
     },
-  }]).pipe(tap((replicationTasks) => this.replicationTasks = replicationTasks));
+  }).pipe(
+    map((tasks) => tasks.map(toReplicationTask)),
+    tap((replicationTasks) => this.replicationTasks = replicationTasks),
+  );
 
   readonly dataProvider = new AsyncDataProvider<ReplicationTask>(this.replicationTasks$);
 

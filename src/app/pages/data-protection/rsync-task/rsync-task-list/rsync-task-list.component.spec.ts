@@ -7,9 +7,8 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -24,7 +23,8 @@ import {
   TableColumnPickerComponent,
 } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { RsyncTaskListComponent } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.component';
 import { TaskService } from 'app/services/task.service';
@@ -97,10 +97,10 @@ describe('RsyncTaskListComponent', () => {
         confirm: jest.fn(() => of(true)),
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockApi([
-        mockCall('rsynctask.query', tasks),
-        mockCall('rsynctask.delete'),
-        mockJob('rsynctask.run', fakeSuccessfulJob()),
+      mockTypedApi([
+        mockTypedQuery('rsynctask.query', tasks as unknown as WebUiQueryEntity<'rsynctask.query'>[]),
+        mockTypedCall('rsynctask.delete', null),
+        mockTypedJob('rsynctask.run', { state: JobState.Success }),
       ]),
       mockProvider(TaskService, {
         getTaskNextRun: jest.fn(() => 'in about 10 hours'),
@@ -249,13 +249,13 @@ describe('RsyncTaskListComponent', () => {
       call: expect.any(Function),
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.delete', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('rsynctask.delete', [1]);
   });
 
   it('runs a task when run button is pressed', async () => {
     const menu = await openRowMenu();
     await menu.clickItem({ label: 'Run job' });
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('rsynctask.run', [1]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('rsynctask.run', [1]);
   });
 });

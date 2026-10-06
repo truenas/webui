@@ -5,10 +5,9 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnDialog, TnMenuHarness, TnSlideToggleHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -24,7 +23,8 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
   CloudSyncRestoreDialog,
@@ -118,11 +118,11 @@ describe('CloudSyncTaskCardComponent', () => {
           },
         ],
       }),
-      mockApi([
-        mockCall('cloudsync.query', cloudsyncTasks),
-        mockCall('cloudsync.delete'),
-        mockCall('cloudsync.update'),
-        mockJob('cloudsync.sync', fakeSuccessfulJob()),
+      mockTypedApi([
+        mockTypedQuery('cloudsync.query', cloudsyncTasks as unknown as WebUiQueryEntity<'cloudsync.query'>[]),
+        mockTypedCall('cloudsync.delete', null),
+        mockTypedCall('cloudsync.update', null),
+        mockTypedJob('cloudsync.sync', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -220,7 +220,7 @@ describe('CloudSyncTaskCardComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloudsync.sync', [3]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloudsync.sync', [3]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudsync» has started.');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudsync» completed successfully.');
   });
@@ -232,7 +232,7 @@ describe('CloudSyncTaskCardComponent', () => {
       time_finished: { $date: new Date().getTime() },
     } as Job<void>;
 
-    jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(of(successJob));
+    jest.spyOn(spectator.inject(TypedApiService), 'job').mockReturnValue(of(successJob));
     const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');
 
     const menu = await openRowMenu();
@@ -250,7 +250,7 @@ describe('CloudSyncTaskCardComponent', () => {
       time_finished: { $date: new Date().getTime() },
     } as Job<void>;
 
-    jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(of(finishedJob));
+    jest.spyOn(spectator.inject(TypedApiService), 'job').mockReturnValue(of(finishedJob));
     const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');
 
     const menu = await openRowMenu();
@@ -271,7 +271,7 @@ describe('CloudSyncTaskCardComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloudsync.sync', [3, { dry_run: true }]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloudsync.sync', [3, { dry_run: true }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudsync» has started.');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudsync» dry run completed successfully.');
   });
@@ -298,7 +298,7 @@ describe('CloudSyncTaskCardComponent', () => {
       successMessage: 'Cloud Sync Task «custom-cloudsync» deleted.',
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.delete', [3]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloudsync.delete', [3]);
   });
 
   it('updates CloudSync Task Enabled status once toggle is updated', async () => {
@@ -308,7 +308,7 @@ describe('CloudSyncTaskCardComponent', () => {
 
     await toggle.check();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
       'cloudsync.update',
       [3, { enabled: true }],
     );

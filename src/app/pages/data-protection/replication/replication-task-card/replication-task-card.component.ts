@@ -22,14 +22,14 @@ import {
   TnDialog,
 } from '@truenas/ui-components';
 import {
-  catchError, EMPTY, Observable, filter, of, switchMap, tap,
+  catchError, EMPTY, Observable, filter, map, of, switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
-import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { ReplicationTask, toReplicationTask } from 'app/interfaces/replication-task.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -48,7 +48,7 @@ import {
 import {
   TableToggleCellComponent,
 } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   ReplicationFormComponent,
 } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -94,7 +94,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class ReplicationTaskCardComponent extends JobTaskCardBase<ReplicationTask> {
   private formPanel = inject(FormSidePanelService);
   private errorHandler = inject(ErrorHandlerService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
   private tnDialog = inject(TnDialog);
@@ -149,9 +149,9 @@ export class ReplicationTaskCardComponent extends JobTaskCardBase<ReplicationTas
   }
 
   protected queryTasks(): Observable<ReplicationTask[]> {
-    return this.api.call('replication.query', [[], {
+    return this.api.query('replication.query', [], {
       extra: { check_dataset_encryption_keys: true },
-    }]);
+    }).pipe(map((tasks) => tasks.map(toReplicationTask)));
   }
 
   protected mergeJob(row: ReplicationTask, job: Job): ReplicationTask {

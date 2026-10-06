@@ -5,9 +5,9 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnDialog, TnMenuHarness, TnSlideToggleHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
@@ -20,7 +20,8 @@ import { LocaleService } from 'app/modules/language/locale.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { RsyncTaskCardComponent } from 'app/pages/data-protection/rsync-task/rsync-task-card/rsync-task-card.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
@@ -112,10 +113,10 @@ describe('RsyncTaskCardComponent', () => {
           },
         ],
       }),
-      mockApi([
-        mockCall('rsynctask.query', rsyncTasks),
-        mockCall('rsynctask.delete'),
-        mockCall('rsynctask.update'),
+      mockTypedApi([
+        mockTypedQuery('rsynctask.query', rsyncTasks as unknown as WebUiQueryEntity<'rsynctask.query'>[]),
+        mockTypedCall('rsynctask.delete', null),
+        mockTypedCall('rsynctask.update', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -225,7 +226,7 @@ describe('RsyncTaskCardComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('rsynctask.run', [1]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('rsynctask.run', [1]);
   });
 
   it('deletes a Rsync Task with confirmation when Delete button is pressed', async () => {
@@ -238,7 +239,7 @@ describe('RsyncTaskCardComponent', () => {
       call: expect.any(Function),
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.delete', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('rsynctask.delete', [1]);
   });
 
   it('updates Rsync Task Enabled status once toggle is updated', async () => {
@@ -248,7 +249,7 @@ describe('RsyncTaskCardComponent', () => {
 
     await toggle.check();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
       'rsynctask.update',
       [1, { enabled: true }],
     );

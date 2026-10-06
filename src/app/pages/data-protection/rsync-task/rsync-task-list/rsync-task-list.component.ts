@@ -13,7 +13,7 @@ import {
   TnTablePagerComponent,
 } from '@truenas/ui-components';
 import {
-  filter, switchMap, tap,
+  filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { rsyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -24,7 +24,7 @@ import { Role } from 'app/enums/role.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { translated } from 'app/helpers/translated.helper';
-import { RsyncTask } from 'app/interfaces/rsync-task.interface';
+import { RsyncTask, toRsyncTask } from 'app/interfaces/rsync-task.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -49,7 +49,7 @@ import {
   TaskStateCellComponent,
 } from 'app/modules/tn-table-cells/state-cell/task-state-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { rsyncTaskListElements } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.elements';
 import { TaskService } from 'app/services/task.service';
@@ -85,7 +85,7 @@ import { TaskService } from 'app/services/task.service';
 })
 export class RsyncTaskListComponent implements OnInit {
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
   private crontabExplanation = inject(CrontabExplanationPipe);
@@ -100,7 +100,9 @@ export class RsyncTaskListComponent implements OnInit {
 
   protected readonly searchQuery = signal('');
 
-  private readonly rsyncTasks$ = this.api.call('rsynctask.query');
+  private readonly rsyncTasks$ = this.api.query('rsynctask.query').pipe(
+    map((tasks) => tasks.map(toRsyncTask)),
+  );
 
   readonly dataProvider = new AsyncDataProvider<RsyncTask>(this.rsyncTasks$);
 

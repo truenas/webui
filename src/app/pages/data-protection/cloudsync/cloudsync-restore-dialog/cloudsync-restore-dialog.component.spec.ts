@@ -4,12 +4,12 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
@@ -27,8 +27,8 @@ describe('CloudSyncRestoreDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('cloudsync.restore'),
+      mockTypedApi([
+        mockTypedCall('cloudsync.restore', null),
       ]),
       mockProvider(DialogService),
       mockProvider(DialogRef),
@@ -62,7 +62,7 @@ describe('CloudSyncRestoreDialogComponent', () => {
     const save = await loader.getHarness(TnButtonHarness.with({ label: 'Restore' }));
     await save.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.restore', [
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloudsync.restore', [
       23,
       {
         description: 'Reverse task',

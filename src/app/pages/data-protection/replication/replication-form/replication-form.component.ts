@@ -14,9 +14,9 @@ import { Role } from 'app/enums/role.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
-import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
+import { CountManualSnapshotsParams, toCountManualSnapshotsArgs } from 'app/interfaces/count-manual-snapshots.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
-import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { ReplicationCreate, ReplicationTask, toReplicationCreateArgs } from 'app/interfaces/replication-task.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
@@ -27,7 +27,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import {
   SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   GeneralSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/general-section/general-section.component';
@@ -70,7 +70,7 @@ import { ReplicationService } from 'app/services/replication.service';
   ],
 })
 export class ReplicationFormComponent extends IxFormHostForm implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorParser = inject(ErrorParserService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
@@ -209,8 +209,8 @@ export class ReplicationFormComponent extends IxFormHostForm implements OnInit {
 
     return {
       request$: this.existingReplication
-        ? this.api.call('replication.update', [this.existingReplication.id, payload])
-        : this.api.call('replication.create', [payload]),
+        ? this.api.call('replication.update', [this.existingReplication.id, toReplicationCreateArgs(payload)])
+        : this.api.call('replication.create', [toReplicationCreateArgs(payload)]),
       successMessage: isNew
         ? this.translate.instant('Replication task created.')
         : this.translate.instant('Replication task saved.'),
@@ -287,7 +287,7 @@ export class ReplicationFormComponent extends IxFormHostForm implements OnInit {
     this.authService.hasRole(this.requiredRoles).pipe(
       switchMap((hasRole) => {
         if (hasRole) {
-          return this.api.call('replication.count_eligible_manual_snapshots', [payload]);
+          return this.api.call('replication.count_eligible_manual_snapshots', [toCountManualSnapshotsArgs(payload)]);
         }
         return of({ eligible: 0, total: 0 });
       }),

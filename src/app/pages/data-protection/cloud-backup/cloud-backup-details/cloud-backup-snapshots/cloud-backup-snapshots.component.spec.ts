@@ -3,17 +3,19 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnCardComponent, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { CloudBackupSnapshotsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-snapshots/cloud-backup-snapshots.component';
 import { StorageService } from 'app/services/storage.service';
@@ -46,8 +48,8 @@ describe('CloudBackupSnapshotsComponent', () => {
     component: CloudBackupSnapshotsComponent,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('cloud_backup.list_snapshots', cloudBackupSnapshots),
+      mockTypedApi([
+        mockTypedCall('cloud_backup.list_snapshots', cloudBackupSnapshots as unknown as CallResponse<WebUiApiDirectory, 'cloud_backup.list_snapshots'>),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -81,6 +83,8 @@ describe('CloudBackupSnapshotsComponent', () => {
         } as CloudBackup,
       },
     });
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(TnTableHarness);
   });
@@ -125,6 +129,6 @@ describe('CloudBackupSnapshotsComponent', () => {
     const menu = await openRowMenu();
     await menu.clickItem({ label: 'Delete' });
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.delete_snapshot', [1, 'second']);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloud_backup.delete_snapshot', [1, 'second']);
   });
 });

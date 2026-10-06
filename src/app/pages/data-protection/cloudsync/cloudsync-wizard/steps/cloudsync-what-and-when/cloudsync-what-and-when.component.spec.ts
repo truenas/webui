@@ -6,7 +6,6 @@ import {
   TnButtonHarness, TnDialog, TnInputHarness, TnSelectHarness, TnStepperComponent,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CloudSyncCredentialEntry } from 'app/interfaces/cloudsync-credential.interface';
@@ -35,10 +34,8 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       mockTypedApi([
         mockTypedQuery('cloudsync.credentials.query', [googlePhotosCreds as CloudSyncCredentialEntry]),
         mockTypedCall('cloudsync.providers', [googlePhotosProvider]),
-      ]),
-      mockApi([
-        mockCall('cloudsync.create'),
-        mockCall('cloudsync.update'),
+        mockTypedCall('cloudsync.create', null),
+        mockTypedCall('cloudsync.update', null),
       ]),
       mockProvider(DatasetService),
       mockProvider(TnDialog, {

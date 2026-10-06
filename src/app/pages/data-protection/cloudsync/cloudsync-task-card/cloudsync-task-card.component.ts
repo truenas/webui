@@ -29,7 +29,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
-import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncTaskUi, toCloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -49,7 +49,7 @@ import {
 import {
   TableToggleCellComponent,
 } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudSyncRestoreDialog } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
@@ -89,7 +89,7 @@ import { TaskService } from 'app/services/task.service';
 })
 export class CloudSyncTaskCardComponent extends JobTaskCardBase<CloudSyncTaskUi> {
   private errorHandler = inject(ErrorHandlerService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   private formPanel = inject(FormSidePanelService);
   private taskService = inject(TaskService);
@@ -153,9 +153,9 @@ export class CloudSyncTaskCardComponent extends JobTaskCardBase<CloudSyncTaskUi>
   }
 
   protected queryTasks(): Observable<CloudSyncTaskUi[]> {
-    return this.api.call('cloudsync.query').pipe(
+    return this.api.query('cloudsync.query').pipe(
       map((cloudSyncTasks) => CloudSyncDataTransformer.transformTasks(
-        cloudSyncTasks,
+        cloudSyncTasks.map(toCloudSyncTask),
         this.taskService,
         this.translate,
       )),

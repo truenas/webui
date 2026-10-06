@@ -3,9 +3,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
@@ -22,7 +22,8 @@ import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
   TransferModeExplanationComponent,
@@ -189,10 +190,8 @@ describe('CloudSyncFormComponent', () => {
           credentials_schema: [],
           credentials_oauth: null,
         }] as CloudSyncProvider[]),
-      ]),
-      mockApi([
-        mockCall('cloudsync.create', existingTask),
-        mockCall('cloudsync.update', existingTask),
+        mockTypedCall('cloudsync.create', existingTask as unknown as CallResponse<WebUiApiDirectory, 'cloudsync.create'>),
+        mockTypedCall('cloudsync.update', existingTask as unknown as CallResponse<WebUiApiDirectory, 'cloudsync.update'>),
       ]),
       ...ixFormTestingProviders(),
       mockProvider(FilesystemService),
@@ -222,10 +221,11 @@ describe('CloudSyncFormComponent', () => {
       await spectator.fixture.whenStable();
       spectator.detectChanges();
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.create', [{
+      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('cloudsync.create', [{
         attributes: { folder: '/' },
         bwlimit: [],
         create_empty_src_dirs: false,
@@ -309,10 +309,11 @@ describe('CloudSyncFormComponent', () => {
       await spectator.fixture.whenStable();
       spectator.detectChanges();
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.update', [1, {
+      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('cloudsync.update', [1, {
         attributes: { folder: mntPath },
         bwlimit: [
           { bandwidth: null, time: '9:00' },
@@ -408,8 +409,9 @@ describe('CloudSyncFormComponent', () => {
       await spectator.fixture.whenStable();
       spectator.detectChanges();
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.update', [1, expect.anything()]);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloudsync.update', [1, expect.anything()]);
       expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });

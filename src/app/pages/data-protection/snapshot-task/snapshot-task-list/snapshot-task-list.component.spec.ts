@@ -5,15 +5,14 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnSelectHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent, MockPipe } from 'ng-mocks';
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
-import { CollectionChangeType } from 'app/enums/api.enum';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { PeriodicSnapshotTaskUi, PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
+import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -27,7 +26,8 @@ import {
 import {
   TableDetailsRowComponent,
 } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   SnapshotTaskFormComponent,
 } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
@@ -41,8 +41,6 @@ describe('SnapshotTaskListComponent', () => {
   let spectator: Spectator<SnapshotTaskListComponent>;
   let loader: HarnessLoader;
   let table: TnTableHarness;
-  const event$ = new Subject<ApiEvent<PeriodicSnapshotTask>>();
-
   const snapshotTasksList = [
     {
       id: 1,
@@ -92,19 +90,12 @@ describe('SnapshotTaskListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(ApiService, {
-        call: jest.fn((method) => {
-          if (method === 'pool.snapshottask.query') {
-            return of(snapshotTasksList);
-          }
-          if (method === 'pool.snapshottask.delete') {
-            return of(true);
-          }
-          return of(null);
-        }),
-        subscribe: jest.fn().mockReturnValue(event$),
-      }),
       mockTypedApi([
+        mockTypedQuery(
+          'pool.snapshottask.query',
+          snapshotTasksList as unknown as WebUiQueryEntity<'pool.snapshottask.query'>[],
+        ),
+        mockTypedCall('pool.snapshottask.delete', true),
         mockTypedCall('pool.snapshottask.delete_will_change_retention_for', {}),
       ]),
       mockProvider(DialogService, {
@@ -190,7 +181,7 @@ describe('SnapshotTaskListComponent', () => {
       },
     );
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.query');
+    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('pool.snapshottask.query');
   });
 
   it('deletes a Cloud Sync with confirmation when Delete button is pressed', async () => {
@@ -210,20 +201,19 @@ describe('SnapshotTaskListComponent', () => {
       secondaryCheckboxText: helptextSnapshotForm.keepSnapshotsLabel,
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, { fixate_removal_date: false }]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, { fixate_removal_date: false }]);
   });
 
   it('reloads the data provider when an event is received from pool.snapshottask.query', () => {
-    const api = spectator.inject(ApiService);
+    const api = spectator.inject(TypedApiService);
     expect(api.subscribe).toHaveBeenCalledWith('pool.snapshottask.query');
 
     jest.spyOn(spectator.component.dataProvider, 'load');
 
-    event$.next({
-      collection: 'pool.snapshottask.query',
+    spectator.inject(MockTypedApiService).emitEvent('pool.snapshottask.query', {
+      msg: 'changed',
       id: snapshotTasksList[0].id,
-      msg: CollectionChangeType.Changed,
-      fields: { state: { state: TaskState.Finished } } as PeriodicSnapshotTask,
+      fields: { state: { state: TaskState.Finished } } as WebUiQueryEntity<'pool.snapshottask.query'>,
     });
 
     expect(spectator.component.dataProvider.load).toHaveBeenCalled();

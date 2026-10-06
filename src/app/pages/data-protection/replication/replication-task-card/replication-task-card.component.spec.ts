@@ -5,10 +5,9 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnDialog, TnMenuHarness, TnSlideToggleHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -18,7 +17,8 @@ import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationRestoreDialog } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { ReplicationTaskCardComponent } from 'app/pages/data-protection/replication/replication-task-card/replication-task-card.component';
@@ -93,12 +93,11 @@ describe('ReplicationTaskCardComponent', () => {
           },
         ],
       }),
-      mockApi([
-        mockCall('replication.query', replicationTasks),
-        mockCall('core.get_jobs', []),
-        mockCall('replication.delete'),
-        mockCall('replication.update'),
-        mockJob('replication.run', fakeSuccessfulJob()),
+      mockTypedApi([
+        mockTypedQuery('replication.query', replicationTasks as unknown as WebUiQueryEntity<'replication.query'>[]),
+        mockTypedCall('replication.delete', null),
+        mockTypedCall('replication.update', null),
+        mockTypedJob('replication.run', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -189,7 +188,7 @@ describe('ReplicationTaskCardComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('replication.run', [1]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('replication.run', [1]);
   });
 
   it('shows dialog when Restore button is pressed', async () => {
@@ -225,7 +224,7 @@ describe('ReplicationTaskCardComponent', () => {
       call: expect.any(Function),
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.delete', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('replication.delete', [1]);
   });
 
   it('updates Replication Task Enabled status once toggle is updated', async () => {
@@ -235,7 +234,7 @@ describe('ReplicationTaskCardComponent', () => {
 
     await toggle.check();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
       'replication.update',
       [1, { enabled: true }],
     );

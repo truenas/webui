@@ -12,7 +12,7 @@ import { Role } from 'app/enums/role.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Component({
   selector: 'ix-create-storj-bucket-dialog',
@@ -32,7 +32,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 export class CreateStorjBucketDialog {
   private formBuilder = inject(FormBuilder);
   protected dialogRef = inject<DialogRef<unknown, CreateStorjBucketDialog>>(DialogRef);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private loader = inject(LoaderService);
   data = inject<{
     credentialsId: number;

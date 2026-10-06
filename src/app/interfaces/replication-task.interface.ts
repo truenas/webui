@@ -1,3 +1,4 @@
+import { CallParams } from '@truenas/api-client';
 import { CompressionType } from 'app/enums/compression-type.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -11,6 +12,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { DataProtectionTaskState } from './data-protection-task-state.interface';
 
 export interface ReplicationTask {
@@ -111,4 +113,28 @@ export interface ReplicationCreate {
   logging_level?: LoggingLevel | null;
   enabled: boolean;
   sudo?: boolean;
+}
+
+/**
+ * Reads a `replication.query` row into the shape the data protection pages are written against. The generated
+ * entry spells the enums as wire literals, leaves the fields middleware defaults optional and types
+ * `job`, `state` and the SSH credential as loose records; it describes the same object.
+ *
+ * The cast checks nothing: a regenerated entry that drops or renames a field still compiles, and
+ * reads `undefined`.
+ */
+export function toReplicationTask(task: WebUiQueryEntity<'replication.query'>): ReplicationTask {
+  return task as unknown as ReplicationTask;
+}
+
+/** What `replication.create` and `replication.update` take, as middleware declares it. */
+export type ReplicationCreateArgs = CallParams<WebUiApiDirectory, 'replication.create'>[0];
+
+/**
+ * Hands a form's payload to `replication.create` / `replication.update` unchanged. Middleware
+ * declares `source_datasets` as a non-empty list, which `string[]` cannot express; both the form
+ * and the wizard require a source dataset before they submit.
+ */
+export function toReplicationCreateArgs(payload: ReplicationCreate): ReplicationCreateArgs {
+  return payload as ReplicationCreateArgs;
 }

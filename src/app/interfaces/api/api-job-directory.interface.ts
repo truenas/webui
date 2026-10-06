@@ -8,8 +8,6 @@ import {
 } from 'app/interfaces/app.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { Certificate, CertificateCreate, CertificateUpdate } from 'app/interfaces/certificate.interface';
-import { CloudBackupRestoreParams, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
-import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { PullContainerImageParams, PullContainerImageResponse } from 'app/interfaces/container-image.interface';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
@@ -75,12 +73,9 @@ export interface ApiJobDirectory {
 
   // CloudBackup
   'cloud_backup.sync': { params: [id: number, params?: { dry_run: boolean }]; response: void };
-  'cloud_backup.restore': { params: CloudBackupRestoreParams; response: CloudBackupSnapshot[] };
-  'cloud_backup.delete_snapshot': { params: [taskId: number, snapshotId: string]; response: void };
 
   // CloudSync
   'cloudsync.sync': { params: [id: number, params?: { dry_run: boolean }]; response: number };
-  'cloudsync.sync_onetime': { params: [task: CloudSyncTaskUpdate, params: { dry_run?: boolean }]; response: void };
 
   // Container
   'app.image.pull': { params: [PullContainerImageParams]; response: PullContainerImageResponse };

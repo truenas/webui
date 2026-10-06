@@ -1,6 +1,7 @@
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { DataProtectionTaskState } from 'app/interfaces/data-protection-task-state.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export interface PeriodicSnapshotTask {
   schedule: Schedule;
@@ -39,4 +40,16 @@ export interface PeriodicSnapshotTaskUi extends PeriodicSnapshotTask {
   next_run: string;
   last_run: string;
   legacy: boolean;
+}
+
+/**
+ * Reads a `pool.snapshottask.query` row into the shape the data protection pages are written against.
+ * The generated entry spells the enums as wire literals and leaves the fields middleware defaults
+ * optional; it describes the same object.
+ *
+ * The cast checks nothing: a regenerated entry that drops or renames a field still compiles, and
+ * reads `undefined`.
+ */
+export function toPeriodicSnapshotTask(task: WebUiQueryEntity<'pool.snapshottask.query'>): PeriodicSnapshotTask {
+  return task as unknown as PeriodicSnapshotTask;
 }

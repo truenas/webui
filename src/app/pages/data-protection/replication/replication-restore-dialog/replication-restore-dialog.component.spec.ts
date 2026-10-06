@@ -4,12 +4,12 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   ReplicationRestoreDialog,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
@@ -25,8 +25,8 @@ describe('ReplicationRestoreDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('replication.restore'),
+      mockTypedApi([
+        mockTypedCall('replication.restore', null),
       ]),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
@@ -59,7 +59,7 @@ describe('ReplicationRestoreDialogComponent', () => {
     const save = await loader.getHarness(TnButtonHarness.with({ label: 'Restore' }));
     await save.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.restore', [
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('replication.restore', [
       23,
       {
         name: 'Reverse task',

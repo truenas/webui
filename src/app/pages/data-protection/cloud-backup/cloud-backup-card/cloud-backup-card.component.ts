@@ -21,14 +21,14 @@ import {
   TnTooltipDirective,
 } from '@truenas/ui-components';
 import {
-  Observable, filter, of, switchMap, tap,
+  Observable, filter, map, of, switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
-import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
+import { CloudBackup, toCloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -48,7 +48,7 @@ import {
 import {
   TableToggleCellComponent,
 } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { replicationListElements } from 'app/pages/data-protection/replication/replication-list/replication-list.elements';
 import { JobTaskCardBase } from 'app/pages/data-protection/utils/job-task-card-base.directive';
@@ -84,7 +84,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CloudBackupCardComponent extends JobTaskCardBase<CloudBackup> {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
@@ -136,7 +136,9 @@ export class CloudBackupCardComponent extends JobTaskCardBase<CloudBackup> {
   }
 
   protected queryTasks(): Observable<CloudBackup[]> {
-    return this.api.call('cloud_backup.query');
+    return this.api.query('cloud_backup.query').pipe(
+      map((cloudBackups) => cloudBackups.map(toCloudBackup)),
+    );
   }
 
   protected mergeJob(row: CloudBackup, job: Job): CloudBackup {

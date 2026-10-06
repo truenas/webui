@@ -8,7 +8,6 @@ import { Disk } from 'app/interfaces/disk.interface';
 import { DockerStatusData } from 'app/interfaces/docker-config.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
@@ -38,7 +37,6 @@ export interface ApiEventDirectory {
 
   'pool.scan': { response: PoolScan };
   'pool.snapshot.query': { response: ZfsSnapshot };
-  'pool.snapshottask.query': { response: PeriodicSnapshotTask };
   'directoryservices.status': { response: DirectoryServicesStatus };
   'zfs.tier.rewrite_job_query': { response: ZfsTierRewriteJobEntry };
   'zfs.tier.rewrite_job_status': { response: ZfsTierRewriteJobEntry };

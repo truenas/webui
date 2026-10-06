@@ -7,8 +7,8 @@ import {
 } from '@truenas/ui-components';
 import { MockComponents, MockDirective } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
@@ -21,7 +21,8 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AllCloudBackupsComponent } from 'app/pages/data-protection/cloud-backup/all-cloud-backups/all-cloud-backups.component';
 import { CloudBackupDetailsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-details.component';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
@@ -73,11 +74,11 @@ describe('AllCloudBackupsComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('cloud_backup.query', cloudBackups),
-        mockCall('cloud_backup.delete'),
-        mockCall('cloud_backup.update'),
-        mockJob('cloud_backup.sync'),
+      mockTypedApi([
+        mockTypedQuery('cloud_backup.query', cloudBackups as unknown as WebUiQueryEntity<'cloud_backup.query'>[]),
+        mockTypedCall('cloud_backup.delete', null),
+        mockTypedCall('cloud_backup.update', null),
+        mockTypedJob('cloud_backup.sync', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -205,7 +206,7 @@ describe('AllCloudBackupsComponent', () => {
         hideCheckbox: true,
       });
 
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.sync', [1]);
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloud_backup.sync', [1]);
       expect(spectator.component.dataProvider.expandedRow).toEqual({ ...cloudBackups[0] });
     });
 
@@ -220,7 +221,7 @@ describe('AllCloudBackupsComponent', () => {
         successMessage: 'Cloud Backup Task «UA» deleted.',
       });
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
     });
 
     it('updates Cloud Backup Enabled status once the toggle is updated', async () => {
@@ -230,7 +231,7 @@ describe('AllCloudBackupsComponent', () => {
 
       await toggle.check();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
         'cloud_backup.update',
         [1, { enabled: true }],
       );

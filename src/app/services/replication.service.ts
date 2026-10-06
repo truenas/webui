@@ -32,12 +32,9 @@ export class ReplicationService {
           ]).pipe(
             switchMap((hasRole) => {
               if (hasRole) {
-                // `LEGACY` only describes tasks from before transports were split. No form offers
-                // it, and middleware does not list datasets over it.
-                const transport = providerOptions.transport as Exclude<TransportMode, TransportMode.Legacy>;
                 return this.api.call(
                   'replication.list_datasets',
-                  [transport, providerOptions.sshCredential],
+                  [providerOptions.transport, providerOptions.sshCredential],
                 ).pipe(tap((datasets) => cachedDatasets = datasets));
               }
               return of([] as string[]);

@@ -22,7 +22,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -46,7 +46,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class VmwareSnapshotFormComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private fb = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   protected dialogService = inject(DialogService);

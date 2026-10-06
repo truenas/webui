@@ -72,4 +72,15 @@ describe('FakeProgressBarComponent', () => {
     const progressBar = spectator.query(TnProgressBarComponent);
     expect(progressBar).toBeFalsy();
   }));
+
+  it('does not start animating when destroyed during the grace period', fakeAsync(() => {
+    spectator.setInput('loading', true);
+    spectator.fixture.destroy();
+
+    tick(400);
+
+    // Starting would leave an interval running that nothing stops once the bar is gone.
+    expect(spectator.component.isAnimating()).toBe(false);
+    discardPeriodicTasks();
+  }));
 });
