@@ -49,11 +49,11 @@ function makeLicense(supportExpiresAt: string | null): License {
     expires_at: expiresAtDate,
     features: [
       {
-        name: LicenseFeature.Apps, start_date: null, expires_at: null, source: 'enterprise', type: null,
+        name: LicenseFeature.Apps, start_date: null, expires_at: null, type: null,
       },
       ...(expiresAtDate
         ? [{
-            name: LicenseFeature.Support, start_date: null, expires_at: expiresAtDate, source: 'enterprise', type: null,
+            name: LicenseFeature.Support, start_date: null, expires_at: expiresAtDate, type: null,
           }]
         : []),
     ],

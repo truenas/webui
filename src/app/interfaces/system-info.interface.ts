@@ -43,15 +43,13 @@ export interface SystemInfo {
  *
  * Dates are wrapped in the `ApiDate` envelope (`{ $type: 'date', $value: 'YYYY-MM-DD' }`)
  * or null. The `Support` entry, when present, carries the contract dates surfaced on
- * the support card; other features may have null dates. `source` says how the feature was
- * granted (e.g. `enterprise`) and `type` is its tier qualifier (e.g. `GOLD`); both are
- * open-ended strings on the wire.
+ * the support card; other features may have null dates. `type` is the feature's tier
+ * qualifier (e.g. `GOLD`), an open-ended string on the wire.
  */
 export interface LicenseFeatureInfo {
   name: LicenseFeature;
   start_date: ApiDate | null;
   expires_at: ApiDate | null;
-  source: string;
   type: string | null;
 }
 
