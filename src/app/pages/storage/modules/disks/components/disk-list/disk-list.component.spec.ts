@@ -232,7 +232,7 @@ describe('DiskListComponent', () => {
     });
 
     it('still lists every disk when the probe fails, and logs why', async () => {
-      jest.spyOn(console, 'error').mockImplementation();
+      const consoleError = jest.spyOn(console, 'error').mockImplementation();
       const api = spectator.inject(MockApiService);
       const mockedCall = api.call.getMockImplementation();
       api.call.mockImplementation((method: string, params: unknown) => {
@@ -245,7 +245,8 @@ describe('DiskListComponent', () => {
       table = await loader.getHarness(TnTableHarness);
 
       expect((await table.getAllRowTexts())[3]).toEqual(['sdd', 'serial3', '5 GiB', 'N/A', 'Unknown']);
-      expect(console.error).toHaveBeenCalledWith(new Error('SP_BUSY'));
+      expect(consoleError).toHaveBeenCalledWith(new Error('SP_BUSY'));
+      consoleError.mockRestore();
     });
   });
 
