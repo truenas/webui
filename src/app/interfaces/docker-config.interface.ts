@@ -14,8 +14,7 @@ export interface DockerStatusData {
 /**
  * Reads a `docker.status` response, or a `docker.state` event's fields, into the UI's
  * `DockerStatusData`. The generated model spells `status` as the wire literal, which the apps pages
- * compare with and look labels up by `DockerStatus`. Middleware also declares `MIGRATING` and
- * `MIGRATION_FAILED`, which the enum does not have; those read as they always have, with no label.
+ * compare with and look labels up by `DockerStatus`.
  */
 export function toDockerStatusData(
   status: CallResponse<WebUiApiDirectory, 'docker.status'> | { status: string; description: string },

@@ -42,7 +42,7 @@ describe('AppSettingsButtonComponent', () => {
     component: AppSettingsButtonComponent,
     providers: [
       mockAuth(),
-      // ApiService calls issued by the AppsSettings form rendered inside the side panel.
+      // TypedApiService calls issued by the AppsSettings form rendered inside the side panel.
       mockTypedApi([
         mockTypedCall('catalog.trains', ['stable']),
         mockTypedCall('catalog.config', { preferred_trains: [] } as CatalogConfig),

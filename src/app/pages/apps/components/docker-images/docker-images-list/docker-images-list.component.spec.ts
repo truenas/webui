@@ -5,7 +5,7 @@ import { TnButtonHarness, TnDialog, TnIconButtonHarness, TnTableComponent, TnTab
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -31,7 +31,6 @@ describe('DockerImagesListComponent', () => {
       mockAuth(),
       mockTypedApi([
         mockTypedQuery('app.image.query', fakeDockerImagesDataSource),
-        mockTypedCall('app.image.delete', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

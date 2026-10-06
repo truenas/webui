@@ -8,6 +8,8 @@ export enum DockerStatus {
   Stopped = 'STOPPED',
   Unconfigured = 'UNCONFIGURED',
   Failed = 'FAILED',
+  Migrating = 'MIGRATING',
+  MigrationFailed = 'MIGRATION_FAILED',
 }
 
 export const dockerStatusLabels = new Map<DockerStatus, string>([
@@ -18,4 +20,6 @@ export const dockerStatusLabels = new Map<DockerStatus, string>([
   [DockerStatus.Stopping, T('Stopping Apps Service')],
   [DockerStatus.Pending, T('Apps Service Pending')],
   [DockerStatus.Unconfigured, T('Apps Service Not Configured')],
+  [DockerStatus.Migrating, T('Migrating Apps Service')],
+  [DockerStatus.MigrationFailed, T('Apps Service Migration Failed')],
 ]);
