@@ -34,8 +34,9 @@ export interface VmwareSnapshot {
  * entry spells `state.state` as a wire literal and `state.datetime` as a string where the wire
  * sends a `$date` envelope (gap 15); it describes the same object.
  *
- * The cast checks nothing: a regenerated entry that drops or renames a field still compiles, and
- * reads `undefined`.
+ * A plain `as` does not compile here: `state.datetime` is a string where the UI reads the `$date`
+ * envelope. So the cast checks nothing, and a regenerated entry that drops or renames a field
+ * still compiles and reads `undefined`.
  */
 export function toVmwareSnapshot(snapshot: WebUiQueryEntity<'vmware.query'>): VmwareSnapshot {
   return snapshot as unknown as VmwareSnapshot;

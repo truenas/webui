@@ -47,9 +47,9 @@ export interface PeriodicSnapshotTaskUi extends PeriodicSnapshotTask {
  * The generated entry spells the enums as wire literals and leaves the fields middleware defaults
  * optional; it describes the same object.
  *
- * The cast checks nothing: a regenerated entry that drops or renames a field still compiles, and
- * reads `undefined`.
+ * The `as` checks only that the two types are comparable, not that every field the UI reads is
+ * present: a regenerated entry that drops or renames a field still compiles, and reads `undefined`.
  */
 export function toPeriodicSnapshotTask(task: WebUiQueryEntity<'pool.snapshottask.query'>): PeriodicSnapshotTask {
-  return task as unknown as PeriodicSnapshotTask;
+  return task as PeriodicSnapshotTask;
 }

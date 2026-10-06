@@ -76,8 +76,9 @@ export interface CloudSyncDirectoryListing {
  * entry spells the enums as wire literals, leaves the fields middleware defaults optional, types
  * `attributes` as the provider union and `job` as a loose record; it describes the same object.
  *
- * The cast checks nothing: a regenerated entry that drops or renames a field still compiles, and
- * reads `undefined`.
+ * A plain `as` does not compile here: `attributes` is the provider union, which has no index
+ * signature to compare with the UI's record. So the cast checks nothing, and a regenerated entry
+ * that drops or renames a field still compiles and reads `undefined`.
  */
 export function toCloudSyncTask(task: WebUiQueryEntity<'cloudsync.query'>): CloudSyncTask {
   return task as unknown as CloudSyncTask;

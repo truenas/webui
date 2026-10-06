@@ -77,8 +77,6 @@ describe('ReplicationWizardComponent', () => {
       mockTypedApi([
         mockTypedQuery('keychaincredential.query', []),
         mockTypedQuery('replication.query', []),
-        // `ReplicationWhatAndWhereComponent` still reads the task list over the legacy client too.
-        mockTypedQuery('replication.query', []),
         mockTypedCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
         mockTypedCall('replication.target_unmatched_snapshots', {}),
         mockTypedQuery('pool.snapshottask.query', []),

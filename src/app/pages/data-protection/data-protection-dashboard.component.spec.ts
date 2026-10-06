@@ -41,9 +41,11 @@ describe('DataProtectionDashboardComponent', () => {
     imports: [TnEmptyComponent],
   });
 
-  it('renders data protection cards', () => {
+  it('renders data protection cards', async () => {
     pools.splice(0, pools.length, { id: 1 } as WebUiQueryEntity<'pool.query'>);
     spectator = createComponent();
+    await settleTypedApi();
+    spectator.detectChanges();
 
     expect(spectator.query(CloudBackupCardComponent)).toExist();
     expect(spectator.query(CloudSyncTaskCardComponent)).toExist();

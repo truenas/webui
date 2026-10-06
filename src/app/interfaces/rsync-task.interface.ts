@@ -50,8 +50,9 @@ export interface RsyncTaskUi extends RsyncTask {
  * entry spells the enums as wire literals, leaves the fields middleware defaults optional and types
  * `job` and the SSH credential as loose records; it describes the same object.
  *
- * The cast checks nothing: a regenerated entry that drops or renames a field still compiles, and
- * reads `undefined`.
+ * A plain `as` does not compile here: `job` is a loose record, not comparable with the UI's `Job`.
+ * So the cast checks nothing, and a regenerated entry that drops or renames a field still compiles
+ * and reads `undefined`.
  */
 export function toRsyncTask(task: WebUiQueryEntity<'rsynctask.query'>): RsyncTask {
   return task as unknown as RsyncTask;
