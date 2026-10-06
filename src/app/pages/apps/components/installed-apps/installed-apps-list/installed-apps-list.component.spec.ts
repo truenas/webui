@@ -9,8 +9,8 @@ import { MockDeclaration } from 'ng-mocks';
 import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
 import { BehaviorSubject, of } from 'rxjs';
-import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AppState } from 'app/enums/app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { App } from 'app/interfaces/app.interface';
@@ -19,7 +19,7 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppBulkUpdateComponent } from 'app/pages/apps/components/installed-apps/app-bulk-update/app-bulk-update.component';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
@@ -130,8 +130,8 @@ describe('InstalledAppsListComponent', () => {
         })),
         checkIfAppIxVolumeExists: jest.fn(() => of(true)),
       }),
-      mockApi([
-        mockJob('core.bulk'),
+      mockTypedApi([
+        mockTypedJob('core.bulk', { state: JobState.Success }),
       ]),
       mockAuth(),
       mockProvider(AppsStatsService, {
@@ -255,7 +255,7 @@ describe('InstalledAppsListComponent', () => {
       },
     });
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', [
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('core.bulk', [
       'app.delete',
       [
         [

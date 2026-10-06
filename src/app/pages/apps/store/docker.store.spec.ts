@@ -1,12 +1,12 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi, mockTypedCall, settleTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DockerStatus } from 'app/enums/docker-status.enum';
 import { DockerConfig } from 'app/interfaces/docker-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -15,12 +15,12 @@ describe('DockerStore', () => {
   const createComponent = createServiceFactory({
     service: DockerStore,
     providers: [
-      mockApi([
-        mockCall('docker.config', {
+      mockTypedApi([
+        mockTypedCall('docker.config', {
           enable_image_updates: true,
           pool: 'pewl',
         } as DockerConfig),
-        mockCall('docker.status', {
+        mockTypedCall('docker.status', {
           status: DockerStatus.Running,
           description: 'Docker is running',
         }),
@@ -51,11 +51,12 @@ describe('DockerStore', () => {
   });
 
   describe('initialize', () => {
-    it('loads docker data', () => {
+    it('loads docker data', async () => {
       spectator.service.initialize();
+      await settleTypedApi();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('docker.config');
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('docker.status');
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('docker.config');
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('docker.status');
 
       expect(spectator.service.state()).toEqual({
         dockerConfig: {
@@ -72,16 +73,17 @@ describe('DockerStore', () => {
   });
 
   describe('reloadDockerConfig', () => {
-    it('reloads docker config and updates the state', () => {
+    it('reloads docker config and updates the state', async () => {
       const newDockerConfig = {
         pool: 'new-pool',
         enable_image_updates: false,
       } as DockerConfig;
 
-      const mockedApi = spectator.inject(MockApiService);
+      const mockedApi = spectator.inject(MockTypedApiService);
       mockedApi.mockCall('docker.config', newDockerConfig);
 
       spectator.service.reloadDockerConfig().subscribe();
+      await settleTypedApi();
 
       expect(mockedApi.call).toHaveBeenCalledWith('docker.config');
       expect(spectator.service.state().dockerConfig).toEqual(newDockerConfig);

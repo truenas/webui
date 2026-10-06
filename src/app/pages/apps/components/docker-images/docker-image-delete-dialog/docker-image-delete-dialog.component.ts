@@ -12,12 +12,10 @@ import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ContainerImage, DeleteContainerImageParams } from 'app/interfaces/container-image.interface';
-import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -40,7 +38,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class DockerImageDeleteDialog {
   private fb = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   protected dialogRef = inject<DialogRef<unknown, DockerImageDeleteDialog>>(DialogRef);
@@ -99,16 +97,12 @@ export class DockerImageDeleteDialog {
     });
 
     this.api.job('core.bulk', ['app.image.delete', deleteParams]).pipe(
-      filter((job: Job<CoreBulkResponse<void>[], DeleteContainerImageParams[]>) => !!job.result),
+      filter((job) => !!job.result),
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((response) => {
-      response.arguments[1].forEach((params, index: number) => {
-        if (!params) {
-          return;
-        }
-
-        const [imageId] = params.toString().split(',');
+      // `core.bulk` answers each call in the order it was given.
+      deleteParams.forEach(([imageId], index: number) => {
         const bulkItem = this.bulkItems.get(imageId);
         if (bulkItem) {
           const item = response.result[index];

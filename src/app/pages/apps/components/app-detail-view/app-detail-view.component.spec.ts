@@ -2,17 +2,19 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { App } from 'app/interfaces/app.interface';
+import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import {
   AppAvailableInfoCardComponent,
@@ -70,11 +72,14 @@ describe('AppDetailViewComponent', () => {
     ],
     providers: [
       InstalledAppsStore,
-      mockApi([
-        mockJob('app.create'),
-        mockJob('app.update'),
-        mockCall('catalog.get_app_details', existingCatalogApp),
-        mockCall('app.query', [{} as App]),
+      mockTypedApi([
+        mockTypedJob('app.create', { state: JobState.Success }),
+        mockTypedJob('app.update', { state: JobState.Success }),
+        mockTypedCall(
+          'catalog.get_app_details',
+          existingCatalogApp as unknown as CallResponse<WebUiApiDirectory, 'catalog.get_app_details'>,
+        ),
+        mockTypedQuery('app.query', [{} as WebUiQueryEntity<'app.query'>]),
       ]),
       mockProvider(AuthService, {
         user$: of({ attributes: { appsAgreement: true } }),

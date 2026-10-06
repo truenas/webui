@@ -10,8 +10,8 @@ import { TnInputHarness } from '@truenas/ui-components';
 import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponent, MockDeclaration } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
@@ -59,7 +59,7 @@ describe('Finding app', () => {
     providers: [
       DockerStore,
       InstalledAppsStore,
-      mockApi([]),
+      mockTypedApi([]),
       mockProvider(AppsStore, {
         isLoading$: of(false),
         availableApps$: of([]),

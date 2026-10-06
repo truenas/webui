@@ -381,9 +381,10 @@ above. Each is a change for `truenas/api-client-ts`.
    subscription params (`method:param` style, e.g. file tailing), which the
    legacy `subscribe` supports. Needed before Phase 1 step 4. Until then the
    log tails stay on `ApiService`: `ConsoleMessagesStore` and the job progress
-   dialog's `filesystem.file_tail_follow`, next to `NetworkService`'s
-   `reporting.realtime`, and the dashboard's `WidgetResourcesService`, which
-   streams `reporting.realtime` and `app.stats`.
+   dialog's `filesystem.file_tail_follow`, the installed app's container logs
+   (`app.container_log_follow`), next to `NetworkService`'s `reporting.realtime`,
+   and the dashboard's `WidgetResourcesService`, which streams
+   `reporting.realtime` and `app.stats`.
 6. **Query, message and connection types are not exported.** `QueryFilters`
    and `QueryProjection` are internal, so the wrapper forwards the query verbs
    through `Parameters<>` rather than declaring them; `TrueNasMessage` and
@@ -485,7 +486,9 @@ above. Each is a change for `truenas/api-client-ts`.
     streaming after the page that wanted it is closed, so those must not move
     until the client releases subscriptions, even once gap 5 lets them compile.
     `container.metrics` takes no params and already compiles, so
-    `ContainersStore` keeps `ApiService` for that one subscription.
+    `ContainersStore` keeps `ApiService` for that one subscription. The apps
+    pages do the same for `app.stats` (`AppsStatsService`) and
+    `reporting.realtime` (the app details' resources card).
 
 18. **`directoryservices.update` asks for a discriminant the form never sends.**
     The generated input requires `service_type` inside `configuration` as well
@@ -526,6 +529,25 @@ above. Each is a change for `truenas/api-client-ts`.
     sent, and the 20-second `core.ping`, which is why the gate stops at 19. A
     `maxConcurrentCalls` option on the client, counting its own ping, would
     retire the patch and the spare slot.
+
+21. **Drift found moving apps.** Handled at one site each:
+    - `app.query`, `app.available` / `app.latest` / `app.similar` and `catalog.get_app_details` are
+      open models (`{ [k: string]: unknown }`) where the pages read the catalog's structure:
+      `metadata`, `capabilities`, `run_as_context`, `versions`, `app_metadata`. They do not overlap
+      the UI's `App`, `AvailableApp` and `CatalogApp`, so `toApp`, `toAvailableApp` and
+      `toCatalogApp` convert through `unknown`, once, in `ApplicationsService`. The available
+      apps' `last_update` is gap 15's `{ $date }` envelope again.
+    - A workload's `container_port` and `host_port` are numbers on the wire; the UI had them as
+      strings. `AppUsedPort` and `AppHostPort` now say `number`.
+    - `docker.status` and `docker.state` declare `MIGRATING` and `MIGRATION_FAILED`, which
+      `DockerStatus` does not have. `toDockerStatusData` reads the status as the enum, so those two
+      show no label, as before.
+    - `docker.update` declares `pool?: string`, while choosing no pool for apps has always sent
+      `pool: null`. The request is unchanged and asserted to the generated input in
+      `DockerStore.setDockerPool`; worth a box check before changing it.
+    - `core.bulk` answers each call as `{ job_id, error, result }`, in the order given, so the
+      image delete dialog reads its rows by index from the arguments it sent, rather than from the
+      job's echoed `arguments`.
 
 ## Version policy
 

@@ -17,7 +17,7 @@ import { App, AppRollbackParams } from 'app/interfaces/app.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -40,7 +40,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class AppRollbackModalComponent {
   protected dialogRef = inject<DialogRef<unknown, AppRollbackModalComponent>>(DialogRef);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   private formBuilder = inject(FormBuilder);
   private errorHandler = inject(ErrorHandlerService);

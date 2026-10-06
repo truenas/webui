@@ -5,13 +5,15 @@ import { byText } from '@ngneat/spectator';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnChipInputHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { App } from 'app/interfaces/app.interface';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AvailableAppsHeaderComponent } from 'app/pages/apps/components/available-apps/available-apps-header/available-apps-header.component';
 import { FilterSelectListComponent } from 'app/pages/apps/components/filter-select-list/filter-select-list.component';
 import { FilterSelectListHarness } from 'app/pages/apps/components/filter-select-list/filter-select-list.harness';
@@ -35,9 +37,9 @@ describe('AvailableAppsHeaderComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('app.query', [{}, {}, {}] as App[]),
-        mockJob('catalog.sync'),
+      mockTypedApi([
+        mockTypedQuery('app.query', [{}, {}, {}] as WebUiQueryEntity<'app.query'>[]),
+        mockTypedJob('catalog.sync', { state: JobState.Success }),
       ]),
       mockProvider(InstalledAppsStore, {
         installedApps$: of([{}, {}, {}] as App[]),
@@ -131,7 +133,7 @@ describe('AvailableAppsHeaderComponent', () => {
     spectator.click(spectator.query(byText('Refresh Catalog'))!);
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('catalog.sync');
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('catalog.sync');
     expect(spectator.inject(AppsStore).initialize).toHaveBeenCalled();
     expect(spectator.inject(InstalledAppsStore).initialize).toHaveBeenCalled();
   });

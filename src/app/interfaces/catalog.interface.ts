@@ -1,19 +1,11 @@
+import { CallResponse } from '@truenas/api-client';
 import {
   AppMetadata, ChartFormValue, ChartSchemaGroup, ChartSchemaNode,
 } from 'app/interfaces/app.interface';
 import { AppMaintainer } from 'app/interfaces/available-app.interface';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
-export interface CatalogConfig {
-  id: string;
-  label: string;
-  location: string;
-  preferred_trains: string[];
-}
-
-export interface CatalogUpdate {
-  preferred_trains: string[];
-  nvidia?: boolean;
-}
+export type CatalogConfig = CallResponse<WebUiApiDirectory, 'catalog.config'>;
 
 export interface CatalogApp {
   app_readme: string;
@@ -45,6 +37,16 @@ export interface CatalogApp {
       protocols: string[];
     }>;
   };
+}
+
+/**
+ * Reads a `catalog.get_app_details` response into the shape the app wizard is written against. It
+ * describes the same object, but the generated model leaves `versions` as an open map and carries
+ * `app_metadata` only through its `{ [k: string]: unknown }`, so the two types do not overlap and
+ * the conversion goes through `unknown`.
+ */
+export function toCatalogApp(app: CallResponse<WebUiApiDirectory, 'catalog.get_app_details'>): CatalogApp {
+  return app as unknown as CatalogApp;
 }
 
 export interface CatalogAppVersion {
@@ -97,10 +99,4 @@ export interface ChartMetadataDependency {
   repository: string;
   version: string;
   enabled: boolean;
-}
-
-export interface GetItemDetailsParams {
-  cache?: boolean;
-  catalog?: string;
-  train?: string;
 }

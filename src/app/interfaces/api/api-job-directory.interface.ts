@@ -1,16 +1,9 @@
 import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { SetAcl } from 'app/interfaces/acl.interface';
-import {
-  App,
-  AppCreate, AppDeleteParams, AppRollbackParams, AppStartQueryParams,
-  AppUpdate,
-  AppUpgradeParams,
-} from 'app/interfaces/app.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { Certificate, CertificateCreate, CertificateUpdate } from 'app/interfaces/certificate.interface';
 import { CloudBackupRestoreParams, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
-import { PullContainerImageParams, PullContainerImageResponse } from 'app/interfaces/container-image.interface';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
 import {
@@ -19,7 +12,6 @@ import {
 } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetLockParams, DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { DiskWipeParams } from 'app/interfaces/disk.interface';
-import { DockerConfig, DockerConfigUpdate } from 'app/interfaces/docker-config.interface';
 import { ExportParams } from 'app/interfaces/export-params.interface';
 import { FailoverUpgradeParams } from 'app/interfaces/failover.interface';
 import { FilesystemPutParams, FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
@@ -54,24 +46,10 @@ export interface ApiJobDirectory {
   'boot.replace': { params: [oldDisk: string, newDisk: string]; response: void };
   'boot.scrub': { params: void; response: void };
 
-  // Catalog
-  'catalog.sync': { params: [label: string]; response: void };
-
   // Certificate
   'certificate.create': { params: [CertificateCreate]; response: Certificate };
   'certificate.delete': { params: [id: number, force?: boolean]; response: boolean };
   'certificate.update': { params: [id: number, update: Partial<CertificateUpdate>]; response: Certificate };
-
-  // App
-  'app.create': { params: [AppCreate]; response: App };
-  'app.update': { params: [string, Partial<AppUpdate>]; response: App };
-  'app.start': { params: AppStartQueryParams; response: void };
-  'app.stop': { params: AppStartQueryParams; response: void };
-  'app.redeploy': { params: AppStartQueryParams; response: void };
-  'app.delete': { params: AppDeleteParams; response: boolean };
-  'app.upgrade': { params: AppUpgradeParams; response: App };
-  'app.rollback': { params: AppRollbackParams; response: App };
-  'app.convert_to_custom': { params: [appName: string]; response: App };
 
   // CloudBackup
   'cloud_backup.sync': { params: [id: number, params?: { dry_run: boolean }]; response: void };
@@ -81,9 +59,6 @@ export interface ApiJobDirectory {
   // CloudSync
   'cloudsync.sync': { params: [id: number, params?: { dry_run: boolean }]; response: number };
   'cloudsync.sync_onetime': { params: [task: CloudSyncTaskUpdate, params: { dry_run?: boolean }]; response: void };
-
-  // Container
-  'app.image.pull': { params: [PullContainerImageParams]; response: PullContainerImageResponse };
 
   // Config
   'config.upload': { params: void; response: void };
@@ -108,9 +83,6 @@ export interface ApiJobDirectory {
 
   // KMIP
   'kmip.update': { params: [Partial<KmipConfigUpdate>]; response: KmipConfig };
-
-  // Docker
-  'docker.update': { params: [Partial<DockerConfigUpdate>]; response: DockerConfig };
 
   // Mail
   'mail.send': { params: [SendMailParams, MailConfigUpdate]; response: boolean };

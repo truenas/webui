@@ -1,11 +1,12 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { JobParams } from '@truenas/api-client';
 import { AppState } from 'app/enums/app-state.enum';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { AppMaintainer } from 'app/interfaces/available-app.interface';
 import { ChartMetadata } from 'app/interfaces/catalog.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
-import { QueryParams } from 'app/interfaces/query-api.interface';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export type ChartFormValue = string | number | boolean | Record<string, unknown> | ChartFormValue[] | null;
 
@@ -15,12 +16,12 @@ export interface ChartFormValues extends HierarchicalObjectMap<ChartFormValue> {
 }
 
 export interface AppHostPort {
-  host_port: string;
+  host_port: number;
   host_ip: string;
 }
 
 export interface AppUsedPort {
-  container_port: string;
+  container_port: number;
   protocol: string;
   host_ports?: AppHostPort[];
 }
@@ -94,6 +95,19 @@ export interface App {
   version_details?: ChartSchema;
 }
 
+/**
+ * Reads an `app.query` row into the shape the apps pages are written against. The generated entry
+ * types `metadata`, `portals`, `config` and `version_details` as open maps where the pages read the
+ * catalog's structure, and spells `state` as the wire literal; it describes the same object.
+ *
+ * `metadata` is the catalog's metadata block, which the generated model leaves as
+ * `{ [k: string]: unknown }`, so the two types do not overlap and the conversion goes through
+ * `unknown`: nothing checks the fields the UI reads.
+ */
+export function toApp(app: WebUiQueryEntity<'app.query'>): App {
+  return app as unknown as App;
+}
+
 export interface AppStats {
   app_name: string;
   /**
@@ -132,60 +146,8 @@ interface AppNetworkStats {
   tx_bytes: number;
 }
 
-export interface AppCreate {
-  values?: Record<string, ChartFormValue>;
-  app_name: string;
-  catalog_app: string;
-  train: string;
-  version?: string;
-  custom_compose_config?: Record<string, unknown>;
-  custom_compose_config_string?: string;
-  custom_app?: boolean;
-}
-
-export interface AppUpdate {
-  /**
-   * Required when `custom_app = false`
-   */
-  values?: Record<string, ChartFormValue>;
-  /**
-   * Required attr when `custom_app = true`
-   */
-  custom_compose_config?: Record<string, unknown>;
-  /**
-   * Optional attr when `custom_app = true`
-   */
-  custom_compose_config_string?: string;
-}
-
-export interface AppUpgrade {
-  app_version?: string;
-  values?: Record<string, ChartFormValue>;
-}
-
-export type AppQueryParams = QueryParams<App, {
-  extra?: {
-    /**
-     * host_ip is a string which can be provided to override portal IP address if it is a wildcard.
-     */
-    host_ip?: string;
-
-    /**
-     * include_app_schema is a boolean which can be set to include app schema in the response.
-     */
-    include_app_schema?: boolean;
-
-    /**
-     * is a boolean which can be set to retrieve app configuration used to install/manage app.
-     */
-    retrieve_config?: boolean;
-  };
-}>;
-
-export type AppUpgradeParams = [
-  name: string,
-  params?: AppUpgrade,
-];
+/** One app's arguments to `app.upgrade`, as the bulk update sends them through `core.bulk`. */
+export type AppUpgradeParams = JobParams<WebUiApiDirectory, 'app.upgrade'>;
 
 export interface ChartSchemaEnum {
   value: string;
@@ -295,15 +257,7 @@ export interface AppMetadata {
 export type AppStartQueryParams = [
   name: string,
 ];
-export type AppDeleteParams = [
-  string,
-  {
-    remove_images?: boolean;
-    remove_ix_volumes?: boolean;
-  },
-];
-
-export type AppRollbackParams = [app_name: string, { app_version: string; rollback_snapshot: boolean }];
+export type AppRollbackParams = JobParams<WebUiApiDirectory, 'app.rollback'>;
 
 export interface AppContainerLog {
   data: string;

@@ -1,11 +1,9 @@
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { App, AppContainerLog, AppStats } from 'app/interfaces/app.interface';
+import { AppContainerLog, AppStats } from 'app/interfaces/app.interface';
 import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
-import { ContainerImage } from 'app/interfaces/container-image.interface';
 import { ContainerMetrics } from 'app/interfaces/container.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Disk } from 'app/interfaces/disk.interface';
-import { DockerStatusData } from 'app/interfaces/docker-config.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
@@ -19,13 +17,10 @@ import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 
 export interface ApiEventDirectory {
   'app.container_log_follow': { response: AppContainerLog };
-  'app.image.query': { response: ContainerImage };
-  'app.query': { response: App };
   'app.stats': { response: AppStats[] };
   'boot.environment.query': { response: BootEnvironment };
   'core.get_jobs': { response: Job };
   'disk.query': { response: Disk };
-  'docker.state': { response: DockerStatusData };
   'failover.status': { response: { status: FailoverStatus } };
   'filesystem.file_tail_follow': { response: { data: string } };
   'group.query': { response: Group };

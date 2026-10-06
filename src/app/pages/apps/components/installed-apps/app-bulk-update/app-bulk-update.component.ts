@@ -32,7 +32,7 @@ import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-lis
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { extractAppVersion, formatVersionWithRevision, resolveAppVersion } from 'app/pages/apps/utils/version-formatting.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -64,7 +64,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class AppBulkUpdateComponent {
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   protected dialogRef = inject<DialogRef<unknown, AppBulkUpdateComponent>>(DialogRef);
   private appService = inject(ApplicationsService);

@@ -5,8 +5,8 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -35,7 +35,7 @@ describe('InstallAppButtonComponent', () => {
       mockProvider(Router),
       mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
       mockAuth(),
-      mockApi([mockCall('auth.set_attribute')]),
+      mockTypedApi([mockTypedCall('auth.set_attribute', null)]),
     ],
   });
 

@@ -31,7 +31,6 @@ import {
   ChartFormValue,
   ChartFormValues,
   App,
-  AppCreate,
   ChartSchema,
   ChartSchemaNode,
 } from 'app/interfaces/app.interface';
@@ -56,7 +55,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ReadOnlyComponent } from 'app/modules/page-header/readonly-badge/readonly-badge.component';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DockerHubRateInfoDialog } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -99,7 +98,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
   private dockerStore = inject(DockerStore);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private authService = inject(AuthService);
   private tnDialog = inject(TnDialog);
   private unsavedChangesService = inject(UnsavedChangesService);
@@ -263,7 +262,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
    */
   protected handleSubmit = (): SubmitResult => {
     const data = this.buildPayload();
-    let job$: Observable<Job<App>>;
+    let job$: Observable<Job>;
 
     if (this.isNew) {
       const version = data.version;
@@ -275,7 +274,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
           app_name: data.release_name,
           train: this.train,
           version,
-        } as AppCreate,
+        },
       ]);
     } else {
       delete data.release_name;

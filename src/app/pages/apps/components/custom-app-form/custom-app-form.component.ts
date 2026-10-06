@@ -12,7 +12,7 @@ import { filter, map } from 'rxjs';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { Role } from 'app/enums/role.enum';
 import { jsonToYaml } from 'app/helpers/json-to-yaml.helper';
-import { App, AppCreate } from 'app/interfaces/app.interface';
+import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCodeEditorComponent } from 'app/modules/forms/controls/ix-code-editor/ix-code-editor.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
@@ -20,7 +20,7 @@ import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
 // Built here rather than inline in the component, and left with an inferred return type — see
@@ -53,7 +53,7 @@ type CustomAppFormValue = ReturnType<ReturnType<typeof createCustomAppForm>['get
 export class CustomAppFormComponent extends IxFormHostForm<boolean, CustomAppFormValue> implements OnInit {
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   private appService = inject(ApplicationsService);
   private router = inject(Router);
@@ -121,7 +121,7 @@ export class CustomAppFormComponent extends IxFormHostForm<boolean, CustomAppFor
             custom_app: true,
             app_name: allValues.release_name,
             custom_compose_config_string: allValues.custom_compose_config_string,
-          } as AppCreate],
+          }],
         )
       : this.api.job('app.update', [
           allValues.release_name,
