@@ -45,6 +45,10 @@ export function convertStringToId(inputString: string): string {
  * Pre-normalizes through {@link normalizeTestIdString} so the tag matches the id the list
  * already had before it moved to `[tnTestId]` — see that helper for why the two kebab
  * implementations disagree.
+ *
+ * Build the tag from fields that identify the row, never from ones that change while it is on
+ * screen (job state, counters, timestamps, the value a user edits): the tag is an e2e contract,
+ * and a tag that moves under a test breaks every locator built against it.
  */
 export function toUniqueRowTag(value: string): string {
   return normalizeTestIdString(convertStringToId(value));

@@ -115,6 +115,13 @@ describe('DatasetQuotasListComponent', () => {
     );
   });
 
+  it('tags each row by user, not by the quota values that editing it changes', () => {
+    const rows = Array.from(spectator.queryAll('tbody tr[data-test]'))
+      .map((row) => row.getAttribute('data-test'));
+
+    expect(rows).toEqual(['row-users-quota-daemon', 'row-users-quota-bin']);
+  });
+
   it('should delete user quota when click delete button', async () => {
     const deleteButtons = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-delete' }));
     await deleteButtons[0].click();

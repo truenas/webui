@@ -174,8 +174,9 @@ export class DatasetQuotasListComponent implements OnInit {
     return this.emptyValue;
   }
 
+  // Keyed on identity only: the quota values are what a user edits here, so they must not rename the row.
   protected readonly uniqueRowTag = (row: DatasetQuota): string => (
-    convertStringToId(`${this.helpTextKey}-quota-${row.name}${this.emptyValue}${row.obj_quota}`)
+    convertStringToId(`${this.helpTextKey}-quota-${row.name || row.id}`)
   );
 
   protected ariaLabel(row: DatasetQuota): string {
