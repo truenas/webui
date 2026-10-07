@@ -9,13 +9,14 @@ import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnRadioComponent,
   TnSelectComponent, TnTooltipDirective,
 } from '@truenas/ui-components';
+import { map } from 'rxjs';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
-import { AclTemplateByPath } from 'app/interfaces/acl.interface';
+import { AclTemplateByPath, toAclTemplateByPath } from 'app/interfaces/acl.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   SelectPresetModalConfig,
 } from 'app/pages/datasets/modules/permissions/interfaces/select-preset-modal-config.interface';
@@ -40,7 +41,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class SelectPresetModalComponent implements OnInit {
   protected dialogRef = inject<DialogRef>(DialogRef);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private aclEditorStore = inject(DatasetAclEditorStore);
@@ -93,6 +94,7 @@ export class SelectPresetModalComponent implements OnInit {
       },
     }])
       .pipe(
+        map((presets) => presets.map(toAclTemplateByPath)),
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),

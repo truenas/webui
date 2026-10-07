@@ -14,7 +14,9 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
-import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
+import {
+  Dataset, DatasetCreate, DatasetUpdate, toDataset, toDatasetCreateArgs, toDatasetUpdateArgs,
+} from 'app/interfaces/dataset.interface';
 import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
@@ -25,7 +27,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import {
   advancedModeFooterAction, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   EncryptionSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/encryption-section/encryption-section.component';
@@ -70,7 +72,7 @@ interface DatasetFormSection {
   ],
 })
 export class DatasetFormComponent extends IxFormHostForm<Dataset | null> implements OnInit, AfterViewInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialog = inject(DialogService);
   private datasetFormService = inject(DatasetFormService);
   private router = inject(Router);
@@ -291,9 +293,10 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
 
     let request$: Observable<Dataset>;
     if (this.isNew()) {
-      request$ = this.api.call('pool.dataset.create', [payload as DatasetCreate]);
+      request$ = this.api.call('pool.dataset.create', [toDatasetCreateArgs(payload as DatasetCreate)]).pipe(map(toDataset));
     } else if (existingDataset) {
-      request$ = this.api.call('pool.dataset.update', [existingDataset.id, payload as DatasetUpdate]);
+      request$ = this.api.call('pool.dataset.update', [existingDataset.id, toDatasetUpdateArgs(payload as DatasetUpdate)])
+        .pipe(map(toDataset));
     } else {
       // Unreachable — `isMissingEditRecord` keeps Save disabled until the edit load lands. An
       // erroring request$ rather than a `throw` (which `onFormSubmit` calls outside its try-less

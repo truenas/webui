@@ -544,6 +544,28 @@ above. Each is a change for `truenas/api-client-ts`.
     - `selectJobsByMethod` keys on the legacy `ApiJobMethod`, so `cloud_backup.sync` and
       `rsynctask.run` stay in the job directory until the jobs store moves.
 
+22. **Drift found moving datasets.** Handled at one site each:
+    - `pool.dataset.query` rows type every ZFS property as a loose record and declare neither
+      `mounted` nor `share_type`; `toDataset` reads them into `Dataset`, and `toDatasetDetails` does the
+      same for `pool.dataset.details`, which middleware declares as a list of loose records.
+    - `pool.dataset.update` takes `user_properties` as a `{ key, value }` list, as `create` does. The
+      UI's `DatasetUpdate` had it as a record; nothing wrote it, so the interface now matches.
+    - `pool.dataset.get_quota` declares every shape a query can return across all four kinds of quota,
+      and types its filters over the union, so only fields every kind has can be named.
+      `toDatasetQuotas` and `toDatasetQuotaFilters` read the user and group rows the quota pages use.
+      It is not a `.query` method, so it is called with `call`, but it has an entity, so the fake
+      answers it as a query: script it with `mockTypedQuery`.
+    - `pool.dataset.checksum_choices` declares a fixed set of keys, which an interface without an
+      index signature cannot be read as `Choices`; the dataset form copies it into one first.
+    - `filesystem.getacl` and `filesystem.acltemplate.by_path` spell tags, types and permissions as
+      wire literals and do not pair `acltype` with the kind of entries; `toAcl` and
+      `toAclTemplateByPath` read them into the editors' types.
+    - `pool.snapshot.query` types each property's `parsed` as `unknown` and `retention.datetime` as a
+      string (gap 15); `toZfsSnapshot` reads rows and change events alike.
+    - `pool.dataset.encryption_summary` and `pool.dataset.unlock` stay in the job directory:
+      `UploadService.uploadAsJob` takes the legacy `ApiJobMethod`, and the unlock dialog starts both
+      through it when a key file is uploaded.
+
 ## Version policy
 
 `WebUiApiDirectory` pins `v27.0.0`. The literal must stay at the

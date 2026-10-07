@@ -6,7 +6,6 @@ import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-component
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -24,7 +23,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class ExportAllKeysDialog {
   private errorHandler = inject(ErrorHandlerService);
-  private api = inject(ApiService);
   private loader = inject(LoaderService);
   protected dialogRef = inject<DialogRef>(DialogRef);
   private download = inject(DownloadService);

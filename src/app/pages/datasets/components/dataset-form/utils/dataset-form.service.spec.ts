@@ -1,12 +1,13 @@
 import { createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { firstValueFrom, of } from 'rxjs';
 import { maxDatasetNesting, maxDatasetPath } from 'app/constants/dataset.constants';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 
 describe('DatasetFormService', () => {
@@ -14,8 +15,8 @@ describe('DatasetFormService', () => {
   const createService = createServiceFactory({
     service: DatasetFormService,
     providers: [
-      mockApi([
-        mockCall('pool.dataset.query', [dataset]),
+      mockTypedApi([
+        mockTypedQuery('pool.dataset.query', [dataset as unknown as WebUiQueryEntity<'pool.dataset.query'>]),
       ]),
       mockProvider(DialogService),
     ],
@@ -24,13 +25,13 @@ describe('DatasetFormService', () => {
   let spectator: ReturnType<typeof createService>;
   let service: DatasetFormService;
   let dialogService: DialogService;
-  let api: ApiService;
+  let api: TypedApiService;
 
   beforeEach(() => {
     spectator = createService();
     service = spectator.service as DatasetFormService;
     dialogService = spectator.inject(DialogService);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
     jest.spyOn(dialogService, 'warn').mockReturnValue(of(true));
   });
 
@@ -60,7 +61,7 @@ describe('DatasetFormService', () => {
     it('loads dataset by id', async () => {
       const loadedDataset = await firstValueFrom(service.loadDataset('test'));
 
-      expect(api.call).toHaveBeenCalledWith('pool.dataset.query', [[['id', '=', 'test']]]);
+      expect(api.query).toHaveBeenCalledWith('pool.dataset.query', [['id', '=', 'test']]);
       expect(loadedDataset).toEqual(dataset);
     });
   });

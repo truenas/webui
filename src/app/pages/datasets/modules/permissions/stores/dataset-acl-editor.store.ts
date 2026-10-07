@@ -14,11 +14,11 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { isFailedJobError } from 'app/helpers/api.helper';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import {
-  Acl, AclTemplateByPath, NfsAclItem, PosixAclItem, SetAcl,
+  Acl, AclTemplateByPath, NfsAclItem, PosixAclItem, SetAcl, toAcl, toAclTemplateByPath, toSetAclArgs,
 } from 'app/interfaces/acl.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   AclSaveFormParams,
   DatasetAclEditorState,
@@ -51,7 +51,7 @@ const initialState: DatasetAclEditorState = {
   providedIn: 'root',
 })
 export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState> {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private errorParser = inject(ErrorParserService);
   private dialogService = inject(DialogService);
@@ -76,7 +76,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       }),
       switchMap((mountpoint) => {
         return forkJoin([
-          this.api.call('filesystem.getacl', [mountpoint, true, true]),
+          this.api.call('filesystem.getacl', [mountpoint, true, true]).pipe(map(toAcl)),
           this.api.call('filesystem.stat', [mountpoint]),
         ]).pipe(
           tap(([acl, stat]) => {
@@ -232,6 +232,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
             resolve_names: true,
           },
         }]).pipe(
+          map((presets) => presets.map(toAclTemplateByPath)),
           tap((presets) => {
             this.patchState({
               isLoading: false,
@@ -262,7 +263,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
 
   private runSetAclJob(setAcl: SetAcl): Observable<Job> {
     return this.dialogService.jobDialog(
-      this.api.job('filesystem.setacl', [setAcl]),
+      this.api.job('filesystem.setacl', [toSetAclArgs(setAcl)]),
       {
         title: this.translate.instant(helptextAcl.saveDialog.title),
         description: this.translate.instant(helptextAcl.saveDialog.message),

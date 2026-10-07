@@ -7,20 +7,22 @@ import {
   TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
-import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
+import { JobState } from 'app/enums/job-state.enum';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { indexFormControls } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { EncryptionOptionsDialog } from 'app/pages/datasets/modules/encryption/components/encryption-options-dialog/encryption-options-dialog.component';
 import { EncryptionOptionsDialogData } from './encryption-options-dialog-data.interface';
 
 describe('EncryptionOptionsDialogComponent', () => {
   let spectator: Spectator<EncryptionOptionsDialog>;
-  let api: ApiService;
+  let api: TypedApiService;
   let loader: HarnessLoader;
   let dialogRef: DialogRef;
   const createComponent = createComponentFactory({
@@ -37,14 +39,14 @@ describe('EncryptionOptionsDialogComponent', () => {
           afterClosed: () => of(undefined),
         })),
       }),
-      mockApi([
-        mockJob('pool.dataset.change_key'),
-        mockCall('pool.dataset.inherit_parent_encryption_properties'),
-        mockCall('pool.dataset.query', [{
+      mockTypedApi([
+        mockTypedJob('pool.dataset.change_key', { state: JobState.Success }),
+        mockTypedCall('pool.dataset.inherit_parent_encryption_properties', null),
+        mockTypedQuery('pool.dataset.query', [{
           pbkdf2iters: {
             rawvalue: '1300000',
           },
-        } as Dataset]),
+        }] as unknown as WebUiQueryEntity<'pool.dataset.query'>[]),
       ]),
       mockAuth(),
     ],
@@ -71,7 +73,7 @@ describe('EncryptionOptionsDialogComponent', () => {
         { provide: DIALOG_DATA, useValue: dialogData },
       ],
     });
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     dialogRef = spectator.inject(DialogRef);
   }
@@ -98,8 +100,8 @@ describe('EncryptionOptionsDialogComponent', () => {
 
   it('loads dataset pbkdf2iters when dialog is opened', async () => {
     setupTest();
-    expect(api.call)
-      .toHaveBeenCalledWith('pool.dataset.query', [[['id', '=', 'pool/parent/child']]]);
+    expect(api.query)
+      .toHaveBeenCalledWith('pool.dataset.query', [['id', '=', 'pool/parent/child']]);
 
     const pbkdf2iters = await loader.getHarness(
       TnInputHarness.with({ selector: '[formControlName="pbkdf2iters"]' }),

@@ -10,12 +10,13 @@ import {
 } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
@@ -66,9 +67,9 @@ describe('SnapshotRollbackDialog', () => {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         toMachineTime: (date: number | Date) => new Date(date),
       }),
-      mockApi([
-        mockCall('pool.snapshot.query', [snapshotWithCreation(1634575914)]),
-        mockCall('pool.snapshot.rollback'),
+      mockTypedApi([
+        mockTypedQuery('pool.snapshot.query', [snapshotWithCreation(1634575914) as unknown as WebUiQueryEntity<'pool.snapshot.query'>]),
+        mockTypedCall('pool.snapshot.rollback', null),
       ]),
     ],
   });
@@ -89,7 +90,7 @@ describe('SnapshotRollbackDialog', () => {
     expect(spectator.fixture.nativeElement).toHaveText('Use snapshot first-snapshot to roll test-dataset back to');
     expect(spectator.fixture.nativeElement.textContent as string).toContain(expectedCreationDateFragment);
     expect(spectator.fixture.nativeElement).toHaveText('Rolling the dataset back destroys data on the dataset');
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('pool.snapshot.query', expect.anything());
+    expect(spectator.inject(TypedApiService).query).not.toHaveBeenCalledWith('pool.snapshot.query', expect.anything(), expect.anything());
   });
 
   it('warns about destructive rollback via the banner', async () => {
@@ -108,7 +109,7 @@ describe('SnapshotRollbackDialog', () => {
     const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));
     await rollbackButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.rollback', [
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.snapshot.rollback', [
       'test-dataset@first-snapshot',
       { force: true },
     ]);
@@ -126,7 +127,7 @@ describe('SnapshotRollbackDialog', () => {
     const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));
     await rollbackButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.rollback', [
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.snapshot.rollback', [
       'test-dataset@first-snapshot',
       { force: true, recursive: true },
     ]);
@@ -136,21 +137,20 @@ describe('SnapshotRollbackDialog', () => {
   it('omits the datetime fragment when the snapshot data has no creation timestamp, so the dialog does not display 1969', () => {
     setupDialog(snapshotWithCreation(undefined));
 
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('pool.snapshot.query', expect.anything());
+    expect(spectator.inject(TypedApiService).query).not.toHaveBeenCalledWith('pool.snapshot.query', expect.anything(), expect.anything());
     expect(spectator.fixture.nativeElement).toHaveText('Use snapshot first-snapshot to roll test-dataset back?');
     expect(spectator.fixture.nativeElement).not.toHaveText('1969');
   });
 
-  it('falls back to a pool.snapshot.query when the caller passes a snapshot without properties', () => {
+  it('falls back to a pool.snapshot.query when the caller passes a snapshot without properties', async () => {
     setupDialog({ ...fakeZfsSnapshot, properties: undefined });
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.query', [
-      [['id', '=', 'test-dataset@first-snapshot']],
-      {
-        select: ['properties'],
-        extra: { properties: ['creation'] },
-      },
-    ]);
+    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('pool.snapshot.query', [['id', '=', 'test-dataset@first-snapshot']], {
+      select: ['properties'],
+      extra: { properties: ['creation'] },
+    });
     expect(spectator.fixture.nativeElement.textContent as string).toContain(expectedCreationDateFragment);
   });
 
@@ -159,7 +159,7 @@ describe('SnapshotRollbackDialog', () => {
     // detectChanges: false so ngOnInit hasn't fired yet — stub the query to
     // error first, then trigger the single lifecycle pass via detectChanges().
     spectator = createComponent({ detectChanges: false });
-    jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(throwError(() => new Error('boom')));
+    jest.spyOn(spectator.inject(TypedApiService), 'query').mockReturnValue(throwError(() => new Error('boom')));
 
     spectator.detectChanges();
 
@@ -172,7 +172,7 @@ describe('SnapshotRollbackDialog', () => {
     // Stub the query to resolve with an empty array (the deleted-between-list-
     // and-click scenario) before the lifecycle runs.
     spectator = createComponent({ detectChanges: false });
-    jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(of([]));
+    jest.spyOn(spectator.inject(TypedApiService), 'query').mockReturnValue(of([]));
 
     spectator.detectChanges();
 
@@ -198,7 +198,7 @@ describe('SnapshotRollbackDialog', () => {
     const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Rollback' }));
     await rollbackButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.rollback', [
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.snapshot.rollback', [
       'test-dataset@first-snapshot',
       { force: true, recursive_clones: true },
     ]);
@@ -214,7 +214,7 @@ describe('SnapshotRollbackDialog', () => {
     // not a guard, so the handler must refuse an invalid form itself.
     spectator.query('form')!.dispatchEvent(new Event('submit'));
 
-    expect(spectator.inject(ApiService).call)
+    expect(spectator.inject(TypedApiService).call)
       .not.toHaveBeenCalledWith('pool.snapshot.rollback', expect.anything());
   });
 });

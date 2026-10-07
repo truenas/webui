@@ -13,13 +13,13 @@ import {
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { toZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SnapshotCloneDialog } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { getFiniteNumber, getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
@@ -47,7 +47,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
@@ -91,20 +91,15 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   }
 
   private getSnapshotInfo(): void {
-    this.api.call(
-      'pool.snapshot.query',
-      [
-        [['id', '=', this.snapshot().name]], {
-          extra: {
-            retention: true,
-            holds: true,
-            properties: ['creation', 'used', 'referenced'],
-          },
-        },
-      ],
-    )
+    this.api.query('pool.snapshot.query', [['id', '=', this.snapshot().name]], {
+      extra: {
+        retention: true,
+        holds: true,
+        properties: ['creation', 'used', 'referenced'],
+      },
+    })
       .pipe(
-        map((snapshots) => snapshots[0]),
+        map((snapshots) => toZfsSnapshot(snapshots[0])),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({

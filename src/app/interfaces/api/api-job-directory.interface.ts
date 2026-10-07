@@ -10,17 +10,16 @@ import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { Certificate, CertificateCreate, CertificateUpdate } from 'app/interfaces/certificate.interface';
 import { PullContainerImageParams, PullContainerImageResponse } from 'app/interfaces/container-image.interface';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
-import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
 import {
   DatasetEncryptionSummary,
   DatasetEncryptionSummaryQueryParams,
 } from 'app/interfaces/dataset-encryption-summary.interface';
-import { DatasetLockParams, DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
+import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { DiskWipeParams } from 'app/interfaces/disk.interface';
 import { DockerConfig, DockerConfigUpdate } from 'app/interfaces/docker-config.interface';
 import { ExportParams } from 'app/interfaces/export-params.interface';
 import { FailoverUpgradeParams } from 'app/interfaces/failover.interface';
-import { FilesystemPutParams, FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
+import { FilesystemPutParams } from 'app/interfaces/filesystem-stat.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
@@ -96,7 +95,6 @@ export interface ApiJobDirectory {
   // Filesystem
   'filesystem.put': { params: FilesystemPutParams; response: boolean };
   'filesystem.setacl': { params: [SetAcl]; response: void };
-  'filesystem.setperm': { params: [FilesystemSetPermParams]; response: void };
 
   // IPMI
   'ipmi.sel.clear': { params: void; response: void };
@@ -122,13 +120,10 @@ export interface ApiJobDirectory {
   'pool.replace': { params: [id: number, params: PoolReplaceParams]; response: boolean };
   'pool.scrub': { params: PoolScrubTaskParams; response: void };
   'pool.update': { params: [id: number, update: Partial<UpdatePool>]; response: Pool };
-  'pool.dataset.change_key': { params: [id: string, params: DatasetChangeKeyParams]; response: void };
   'pool.dataset.encryption_summary': {
     params: [path: string, params?: DatasetEncryptionSummaryQueryParams];
     response: DatasetEncryptionSummary[];
   };
-  'pool.dataset.export_key': { params: [id: string, download?: boolean]; response: string };
-  'pool.dataset.lock': { params: DatasetLockParams; response: boolean };
   'pool.dataset.unlock': { params: [path: string, params: DatasetUnlockParams]; response: DatasetUnlockResult };
   'pool.ddt_prune': { params: [PruneDedupTableParams]; response: void };
 

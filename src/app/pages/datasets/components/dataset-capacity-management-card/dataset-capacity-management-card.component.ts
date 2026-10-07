@@ -16,12 +16,13 @@ import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { isQuotaSet } from 'app/helpers/storage.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { toDatasetQuotas } from 'app/interfaces/dataset-quota.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { datasetCapacityManagementElements } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.elements';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { SpaceManagementChartComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/space-management-chart/space-management-chart.component';
@@ -46,7 +47,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private datasetStore = inject(DatasetTreeStore);
@@ -165,8 +166,8 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
         this.cdr.markForCheck();
       }),
       switchMap(() => forkJoin([
-        this.api.call('pool.dataset.get_quota', [this.dataset().id, DatasetQuotaType.User, []]),
-        this.api.call('pool.dataset.get_quota', [this.dataset().id, DatasetQuotaType.Group, []]),
+        this.api.call('pool.dataset.get_quota', [this.dataset().id, DatasetQuotaType.User, []]).pipe(map(toDatasetQuotas)),
+        this.api.call('pool.dataset.get_quota', [this.dataset().id, DatasetQuotaType.Group, []]).pipe(map(toDatasetQuotas)),
       ])),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({

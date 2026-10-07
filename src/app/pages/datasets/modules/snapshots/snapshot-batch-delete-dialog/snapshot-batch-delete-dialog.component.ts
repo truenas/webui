@@ -12,7 +12,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SnapshotDialogData } from 'app/pages/datasets/modules/snapshots/interfaces/snapshot-dialog-data.interface';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -35,7 +35,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class SnapshotBatchDeleteDialog implements OnInit {
   private fb = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   protected dialogRef = inject<DialogRef<boolean, SnapshotBatchDeleteDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
@@ -53,7 +53,7 @@ export class SnapshotBatchDeleteDialog implements OnInit {
 
   total = this.snapshots.length;
   dialogData: SnapshotDialogData;
-  jobSuccess: boolean[] = [];
+  jobSuccess: unknown[] = [];
   jobErrors: string[] = [];
 
   get hasClones(): boolean {
@@ -90,12 +90,12 @@ export class SnapshotBatchDeleteDialog implements OnInit {
     const params: CoreBulkQuery = ['pool.snapshot.delete', snapshots];
     this.api.job('core.bulk', params).pipe(
       this.loader.withLoader(),
-      filter((job: Job<CoreBulkResponse<boolean>[]>) => !!job.result),
-      map((job: Job<CoreBulkResponse<boolean>[]>) => job.result),
+      filter((job: Job<CoreBulkResponse[]>) => !!job.result),
+      map((job: Job<CoreBulkResponse[]>) => job.result),
       finalize(() => this.isDeleting.set(false)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: (results: CoreBulkResponse<boolean>[]) => {
+      next: (results: CoreBulkResponse[]) => {
         results.forEach((item) => {
           if (item.error) {
             this.jobErrors.push(item.error);

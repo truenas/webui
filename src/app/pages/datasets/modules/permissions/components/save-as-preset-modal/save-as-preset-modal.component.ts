@@ -17,13 +17,13 @@ import { AclType } from 'app/enums/acl-type.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import {
-  Acl, AclTemplateByPath, AclTemplateCreateParams, NfsAclItem, PosixAclItem,
+  Acl, AclTemplateByPath, AclTemplateCreateParams, NfsAclItem, PosixAclItem, toAclTemplateByPath,
 } from 'app/interfaces/acl.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -48,7 +48,7 @@ import { UserService } from 'app/services/user.service';
 })
 export class SaveAsPresetModalComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
@@ -90,6 +90,7 @@ export class SaveAsPresetModalComponent implements OnInit {
       },
     }])
       .pipe(
+        map((presets) => presets.map(toAclTemplateByPath)),
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),

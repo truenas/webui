@@ -13,12 +13,12 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
-import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { toZfsSnapshot, ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -43,7 +43,7 @@ import { AppState } from 'app/store';
   ],
 })
 export class SnapshotRollbackDialog implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private loader = inject(LoaderService);
   private fb = inject(FormBuilder);
   private errorHandler = inject(ErrorHandlerService);
@@ -131,15 +131,12 @@ export class SnapshotRollbackDialog implements OnInit {
       return;
     }
     this.isLoading.set(true);
-    this.api.call('pool.snapshot.query', [
-      [['id', '=', snapshot.name]],
-      {
-        // `select` projects the `properties` column; `extra.properties` tells
-        // middleware which ZFS properties to populate inside it. Both are required.
-        select: ['properties'],
-        extra: { properties: ['creation'] },
-      },
-    ]).pipe(
+    this.api.query('pool.snapshot.query', [['id', '=', snapshot.name]], {
+      // `select` projects the `properties` column; `extra.properties` tells
+      // middleware which ZFS properties to populate inside it. Both are required.
+      select: ['properties'],
+      extra: { properties: ['creation'] },
+    }).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (snapshots) => {
@@ -155,7 +152,7 @@ export class SnapshotRollbackDialog implements OnInit {
         // translated sentence below. `<ix-date>` can't be embedded inside an
         // ngx-translate {datetime} placeholder, so we mirror its conversion via
         // toMachineTime + formatDateTime here.
-        this.creationMachineTime.set(this.computeCreationMachineTime(fetched));
+        this.creationMachineTime.set(this.computeCreationMachineTime(toZfsSnapshot(fetched)));
         this.isLoading.set(false);
       },
       error: (error: unknown) => {
