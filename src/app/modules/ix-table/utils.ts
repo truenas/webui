@@ -18,6 +18,11 @@ export function convertStringToId(inputString: string): string {
     .replace(/^-|-$/g, '');
 }
 
+/**
+ * `uniqueRowTag` becomes the row's `data-test` (and the id of every cell in it), which e2e suites locate rows by.
+ * Build it from fields that identify the row, never from job state, counters, timestamps or values the user can
+ * edit in that same table: those change while the row is on screen and silently rename it.
+ */
 export function createTable<T>(
   columns: Column<T, ColumnComponent<T>>[],
   config: { uniqueRowTag: (row: T) => string; ariaLabels: (row: T) => string[] },
