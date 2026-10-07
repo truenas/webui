@@ -5,9 +5,7 @@ import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { AdvancedConfig, AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
-import {
-  Alert, AlertCategory, AlertClasses, AlertClassesUpdate,
-} from 'app/interfaces/alert.interface';
+import { AlertCategory, AlertClasses, AlertClassesUpdate } from 'app/interfaces/alert.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { ApiEventMethod } from 'app/interfaces/api-message.interface';
 import {
@@ -56,12 +54,7 @@ import {
   Dataset, DatasetCreate, ExtraDatasetQueryOptions,
 } from 'app/interfaces/dataset.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
-import {
-  Disk, DiskDetailsResponse,
-  DiskTemperatureAgg,
-  DiskUpdate,
-  ExtraDiskQueryOptions, DiskDetailsParams,
-} from 'app/interfaces/disk.interface';
+import { Disk, DiskDetailsResponse, ExtraDiskQueryOptions, DiskDetailsParams } from 'app/interfaces/disk.interface';
 import {
   AuthenticatorSchema,
   CreateDnsAuthenticator,
@@ -158,13 +151,10 @@ import {
   UpdateNvmeOfSubsystem,
 } from 'app/interfaces/nvme-of.interface';
 import { MapOption } from 'app/interfaces/option.interface';
-import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
-import { CreateScrubTask, ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import {
   Pool, PoolInstance,
 } from 'app/interfaces/pool.interface';
 import { Privilege, PrivilegeRole, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
-import { Process } from 'app/interfaces/process.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ReplicationConfigUpdate } from 'app/interfaces/replication-config-update.interface';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
@@ -357,14 +347,8 @@ export interface ApiCallDirectory {
   // Disk
   'disk.details': { params: [params: DiskDetailsParams]; response: DiskDetailsResponse };
   'disk.query': { params: QueryParams<Disk, ExtraDiskQueryOptions>; response: Disk[] };
-  'disk.reset_sed': { params: [params: { name: string; psid: string }]; response: void };
-  'disk.temperature_agg': { params: [disks: string[], days: number]; response: DiskTemperatureAgg };
-  'disk.temperature_alerts': { params: [disks: string[]]; response: Alert[] };
-  'disk.unlock_sed': { params: [params: { name: string; password: string }]; response: void };
-  'disk.update': { params: [id: string, update: Partial<DiskUpdate>]; response: Disk };
 
   // Enclosure
-  'enclosure2.query': { params: void; response: Enclosure[] };
   'webui.enclosure.dashboard': { params: void; response: DashboardEnclosure[] };
   'enclosure.label.set': { params: [enclosureId: string, label: string]; response: Enclosure };
   'enclosure2.set_slot_status': { params: [SetDriveBayLightStatus]; response: void };
@@ -557,25 +541,15 @@ export interface ApiCallDirectory {
   'nvmet.port.transport_address_choices': { params: NvmeOfTransportParams; response: Choices };
 
   // Pool
-  'pool.attachments': { params: [id: number]; response: PoolAttachment[] };
   'pool.dataset.create': { params: [DatasetCreate]; response: Dataset };
   'pool.dataset.delete': { params: [path: string, params: { recursive: boolean; force?: boolean }]; response: boolean };
   'pool.dataset.export_keys_for_replication': { params: [id: number]; response: unknown };
   'pool.dataset.query': { params: QueryParams<Dataset, ExtraDatasetQueryOptions>; response: Dataset[] };
-  'pool.detach': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.filesystem_choices': { params: [DatasetType[]?]; response: string[] };
-  'pool.offline': { params: [id: number, params: { label: string }]; response: boolean };
-  'pool.online': { params: [id: number, params: { label: string }]; response: boolean };
-  'pool.processes': { params: [id: number]; response: Process[] };
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
   'pool.resilver.config': { params: void; response: ResilverConfig };
   'pool.resilver.update': { params: [Partial<ResilverConfigUpdate>]; response: ResilverConfig };
-  'pool.scrub.create': { params: [CreateScrubTask]; response: ScrubTask };
   'pool.scrub.delete': { params: [id: number]; response: boolean };
-  'pool.scrub.query': { params: QueryParams<ScrubTask>; response: ScrubTask[] };
-  'pool.scrub.update': { params: [id: number, params: Partial<CreateScrubTask>]; response: ScrubTask };
-  'pool.upgrade': { params: [id: number]; response: boolean };
-  'pool.validate_name': { params: string[]; response: boolean | { error: boolean } };
 
   // Privilege
   'privilege.create': { params: [PrivilegeUpdate]; response: Privilege };
@@ -648,7 +622,6 @@ export interface ApiCallDirectory {
   'system.advanced.config': { params: void; response: AdvancedConfig };
   'system.advanced.nvidia_present': { params: void; response: boolean };
   'system.advanced.sed_global_password': { params: void; response: string };
-  'system.advanced.sed_global_password_is_set': { params: void; response: boolean };
   'system.advanced.serial_port_choices': { params: void; response: Choices };
   'system.advanced.syslog_certificate_authority_choices': { params: void; response: Choices };
   'system.advanced.syslog_certificate_choices': { params: void; response: Choices };
@@ -725,7 +698,6 @@ export interface ApiCallDirectory {
 
   // ZFS Tier
   'zfs.tier.config': { params: void; response: ZfsTierConfig };
-  'zfs.tier.update': { params: [Partial<ZfsTierConfig>]; response: ZfsTierConfig };
   'zfs.tier.rewrite_job_status': { params: [{ tier_job_id: string }]; response: ZfsTierRewriteJobEntry };
   'zfs.tier.rewrite_job_cancel': { params: [{ tier_job_id: string }]; response: void };
   'zfs.tier.dataset_set_tier': { params: [{ dataset_name: string; tier_type: DatasetTier; move_existing_data?: boolean }]; response: ZfsTierRewriteJobEntry };

@@ -4,17 +4,17 @@ import {
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnCardComponent, TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
-import { Disk } from 'app/interfaces/disk.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   ManageDiskSedDialog,
 } from 'app/pages/storage/modules/vdevs/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
@@ -31,9 +31,9 @@ describe('HardwareDiskEncryptionComponent', () => {
       HasRoleDirective,
     ],
     providers: [
-      mockApi([
-        mockCall('disk.query', [{ passwd: '', sed: true, sed_status: SedStatus.Unlocked } as Disk]),
-        mockCall('system.advanced.sed_global_password_is_set', false),
+      mockTypedApi([
+        mockTypedQuery('disk.query', [{ passwd: '', sed: true, sed_status: SedStatus.Unlocked } as WebUiQueryEntity<'disk.query'>]),
+        mockTypedCall('system.advanced.sed_global_password_is_set', false),
       ]),
       mockProvider(NavigateAndHighlightService),
       mockProvider(TnDialog, {
@@ -87,14 +87,16 @@ describe('HardwareDiskEncryptionComponent', () => {
     });
 
     it('does not query the disk while the card is hidden', () => {
-      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('disk.query', expect.anything());
+      expect(spectator.inject(TypedApiService).query).not.toHaveBeenCalled();
     });
   });
 
   describe('entitled to SED', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       store$.overrideSelector(selectEntitlements, {});
       store$.refreshState();
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
       spectator.detectChanges();
     });
 
@@ -104,15 +106,15 @@ describe('HardwareDiskEncryptionComponent', () => {
     });
 
     it('loads and shows whether password is set for the current disk', () => {
-      expect(spectator.inject(ApiService).call)
-        .toHaveBeenCalledWith('disk.query', [[['devname', '=', 'sda']], { extra: { passwords: true, sed_status: true } }]);
+      expect(spectator.inject(TypedApiService).query)
+        .toHaveBeenCalledWith('disk.query', [['devname', '=', 'sda']], { extra: { passwords: true, sed_status: true } });
 
       const detailsItem = spectator.query(byText('SED Password:', { exact: true }))!;
       expect(detailsItem.nextElementSibling).toHaveText('Password is not set');
     });
 
     it('loads and shows whether SED password is set globally', () => {
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.advanced.sed_global_password_is_set');
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('system.advanced.sed_global_password_is_set');
 
       const detailsItem = spectator.query(byText('Global SED Password:', { exact: true }))!;
       expect(detailsItem.nextElementSibling).toHaveText('Password is not set');
@@ -125,13 +127,13 @@ describe('HardwareDiskEncryptionComponent', () => {
     });
 
     it('reloads the disk after the SED password dialog saves', () => {
-      const api = spectator.inject(ApiService);
+      const api = spectator.inject(TypedApiService);
       jest.mocked(spectator.inject(TnDialog).open).mockReturnValueOnce({ closed: of(true) } as ReturnType<TnDialog['open']>);
-      jest.mocked(api.call).mockClear();
+      jest.mocked(api.query).mockClear();
 
       spectator.click(spectator.query(byText('Manage SED Password'))!);
 
-      expect(api.call).toHaveBeenCalledWith('disk.query', expect.anything());
+      expect(api.query).toHaveBeenCalledWith('disk.query', [['devname', '=', 'sda']], expect.anything());
     });
 
     it('shows a link to manage global SED password', () => {
@@ -153,11 +155,13 @@ describe('HardwareDiskEncryptionComponent', () => {
   });
 
   describe('entitled to SED, disk is not SED capable', () => {
-    beforeEach(() => {
-      spectator.inject(MockApiService).mockCall('disk.query', [{ passwd: '', sed: false } as Disk]);
+    beforeEach(async () => {
+      spectator.inject(MockTypedApiService).mockQuery('disk.query', [{ passwd: '', sed: false } as WebUiQueryEntity<'disk.query'>]);
       spectator.setInput('topologyDisk', { disk: 'sdb' } as TopologyDisk);
       store$.overrideSelector(selectEntitlements, {});
       store$.refreshState();
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
       spectator.detectChanges();
     });
 
@@ -172,11 +176,13 @@ describe('HardwareDiskEncryptionComponent', () => {
   });
 
   describe('entitled to SED, disk is not found', () => {
-    beforeEach(() => {
-      spectator.inject(MockApiService).mockCall('disk.query', []);
+    beforeEach(async () => {
+      spectator.inject(MockTypedApiService).mockQuery('disk.query', []);
       spectator.setInput('topologyDisk', { disk: 'sdz' } as TopologyDisk);
       store$.overrideSelector(selectEntitlements, {});
       store$.refreshState();
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
       spectator.detectChanges();
     });
 

@@ -30,7 +30,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import {
   ServicesToBeRestartedDialogComponent,
@@ -73,7 +73,7 @@ export class ExportDisconnectModalComponent implements OnInit {
   private dialogService = inject(DialogService);
   private tnDialog = inject(TnDialog);
   private loader = inject(LoaderService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private datasetStore = inject(DatasetTreeStore);
   private cdr = inject(ChangeDetectorRef);
   private snackbar = inject(SnackbarService);
@@ -279,7 +279,7 @@ export class ExportDisconnectModalComponent implements OnInit {
       this.api.call('pool.attachments', [this.pool.id]),
       this.api.call('pool.processes', [this.pool.id]),
       this.api.call('systemdataset.config'),
-      this.api.call('pool.query', [[], { count: true }]),
+      this.api.queryCount('pool.query'),
       this.store.select(selectIsHaEnabled).pipe(take(1)),
       this.api.call('failover.config'),
     ])
@@ -293,7 +293,7 @@ export class ExportDisconnectModalComponent implements OnInit {
         this.processes = processes;
         this.organizeProcesses(processes);
         this.systemConfig = systemConfig;
-        this.totalPoolCount = poolCount as unknown as number;
+        this.totalPoolCount = poolCount;
         this.isHaEnabled = isHaEnabled;
         this.failoverConfig = failoverConfig;
         this.prepareForm();

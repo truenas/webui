@@ -12,7 +12,9 @@ import {
 import {
   combineLatest, map, Observable,
 } from 'rxjs';
-import { startWith, take } from 'rxjs/operators';
+import {
+  filter, startWith, switchMap, take,
+} from 'rxjs/operators';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { translated } from 'app/helpers/translated.helper';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
@@ -23,7 +25,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { WarningComponent } from 'app/modules/warning/warning.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
@@ -52,7 +54,7 @@ import { EntitlementsService } from 'app/services/entitlements.service';
   ],
 })
 export class GeneralWizardStepComponent implements OnInit, OnChanges {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private entitlements = inject(EntitlementsService);
   private formBuilder = inject(FormBuilder);
   private dialog = inject(DialogService);
@@ -85,7 +87,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   protected readonly helptext = helptextPoolCreation;
 
   isLoading$ = this.store.isLoading$;
-  poolNames$ = this.api.call('pool.query', [[], { select: ['name'], order_by: ['name'] }]).pipe(
+  poolNames$ = this.api.query('pool.query', [], { select: ['name'], order_by: ['name'] }).pipe(
     map((pools) => pools.map((pool) => pool.name)),
   );
 
@@ -154,7 +156,12 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
    * available SED-capable disks and the SED entitlement.
    */
   private getDefaultEncryptionType$(): Observable<EncryptionType> {
-    return combineLatest([this.hasSedCapableDisks$, this.hasSedEntitlement$]).pipe(
+    // The store loads the disks after this step is created, so wait for that load to finish before reading
+    // whether any are SED-capable; reading earlier always sees the initial `false`.
+    return this.store.isLoading$.pipe(
+      filter((isLoading) => !isLoading),
+      take(1),
+      switchMap(() => combineLatest([this.hasSedCapableDisks$, this.hasSedEntitlement$])),
       take(1),
       map(([hasSedDisks, hasSedEntitlement]) => {
         return (hasSedDisks && hasSedEntitlement) ? EncryptionType.Sed : EncryptionType.None;

@@ -9,7 +9,7 @@ import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ActivePoolScanComponent } from './active-pool-scan.component';
 
 describe('ActivePoolScanComponent', () => {
@@ -18,7 +18,7 @@ describe('ActivePoolScanComponent', () => {
   const createComponent = createComponentFactory({
     component: ActivePoolScanComponent,
     providers: [
-      mockProvider(ApiService, {
+      mockProvider(TypedApiService, {
         startJob: jest.fn(() => of(undefined)),
       }),
       mockProvider(DialogService, {
@@ -71,14 +71,14 @@ describe('ActivePoolScanComponent', () => {
       const stopButton = await loader.getHarness(TnButtonHarness.with({ label: 'Stop Scrub' }));
       await stopButton.click();
 
-      expect(spectator.inject(ApiService).startJob).toHaveBeenCalledWith('pool.scrub', [1, PoolScrubAction.Stop]);
+      expect(spectator.inject(TypedApiService).startJob).toHaveBeenCalledWith('pool.scrub', [1, PoolScrubAction.Stop]);
     });
 
     it('pauses scrub when Pause Scrub is pressed', async () => {
       const pauseButton = await loader.getHarness(TnButtonHarness.with({ label: 'Pause Scrub' }));
       await pauseButton.click();
 
-      expect(spectator.inject(ApiService).startJob).toHaveBeenCalledWith('pool.scrub', [1, PoolScrubAction.Pause]);
+      expect(spectator.inject(TypedApiService).startJob).toHaveBeenCalledWith('pool.scrub', [1, PoolScrubAction.Pause]);
     });
   });
 
@@ -110,7 +110,7 @@ describe('ActivePoolScanComponent', () => {
       const resumeButton = await loader.getHarness(TnButtonHarness.with({ label: 'Resume Scrub' }));
       await resumeButton.click();
 
-      expect(spectator.inject(ApiService).startJob).toHaveBeenCalledWith('pool.scrub', [1, PoolScrubAction.Start]);
+      expect(spectator.inject(TypedApiService).startJob).toHaveBeenCalledWith('pool.scrub', [1, PoolScrubAction.Start]);
     });
   });
 

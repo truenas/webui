@@ -19,7 +19,9 @@ import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { Disk, DetailsDisk, ExtraDiskQueryOptions } from 'app/interfaces/disk.interface';
+import {
+  Disk, DetailsDisk, ExtraDiskQueryOptions, toDisk, toDiskDetails,
+} from 'app/interfaces/disk.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -34,7 +36,7 @@ import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, memoizedRowTag, toDisplayedColumns,
 } from 'app/modules/tn-table/utils';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent, DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { diskListElements } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.elements';
@@ -91,7 +93,7 @@ function toPowerLevelOrder(value: DiskPowerLevel | null | undefined): number {
  * (`selected`) here for the same reason. `pool` stays as the display text the row was
  * built with, as it was before the migration.
  */
-function toDisk(row: DiskRow): Disk {
+function rowToDisk(row: DiskRow): Disk {
   const {
     sizeText, sedStatusText, hddStandbyText, advPowerManagementText, ...disk
   } = row;
@@ -123,7 +125,7 @@ function toDisk(row: DiskRow): Disk {
   ],
 })
 export class DiskListComponent {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private entitlements = inject(EntitlementsService);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
@@ -159,12 +161,13 @@ export class DiskListComponent {
 
       return forkJoin([
         this.api.call('disk.details').pipe(
+          map(toDiskDetails),
           map((diskDetails) => [
             ...diskDetails.unused,
             ...diskDetails.used.filter((disk) => disk.exported_zpool),
           ]),
         ),
-        this.api.call('disk.query', [[], extraOptions]),
+        this.api.query('disk.query', [], extraOptions).pipe(map((disks) => disks.map(toDisk))),
       ]).pipe(
         map(([unusedDisks, disks]) => {
           this.unusedDisks = unusedDisks;
@@ -383,7 +386,7 @@ export class DiskListComponent {
 
   /**
    * Test-id fragment for a row's action buttons. A method rather than a {@link DiskRow} field
-   * so `toDisk` doesn't have to strip a test-id concern back off.
+   * so `rowToDisk` doesn't have to strip a test-id concern back off.
    */
   protected testIdTag(row: DiskRow): string {
     return normalizeTestIdString(row.name);
@@ -451,7 +454,7 @@ export class DiskListComponent {
   }
 
   protected edit(rows: DiskRow[]): void {
-    const disks = rows.map((row) => toDisk(row));
+    const disks = rows.map((row) => rowToDisk(row));
     const result$ = disks.length > 1
       ? this.formPanel.open<DiskFormResponse>(DiskBulkEditComponent, {
           title: this.translate.instant('Bulk Edit Disks'),

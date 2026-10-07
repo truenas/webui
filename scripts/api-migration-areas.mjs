@@ -101,9 +101,6 @@ export const migratedApiPaths = [
   'src/app/pages/dashboard/widgets',
   'src/app/pages/dashboard/services/dashboard.store.ts',
   'src/app/pages/dashboard/services/dashboard.store.spec.ts',
-  // NAS-144116: the SED password choice shared by the VDEVs Extend and Replace dialogs, typed from
-  // the start. The dialogs around it still start their jobs through `ApiService`.
-  'src/app/pages/storage/modules/vdevs/components/sed-disk-password',
   // NAS-143997: directory services, the service config forms and the shutdown / restart / failover /
   // config reset pages. `pages/directory-service` and `pages/services` are pinned below their roots:
   // `kerberos.keytab.kerberos_principal_choices` (the credential step of the directory services
@@ -146,6 +143,9 @@ export const migratedApiPaths = [
   // NAS-144001: datasets — the tree and details cards, the dataset and zvol forms, quotas, encryption,
   // permissions and ACL editing, and snapshots.
   'src/app/pages/datasets',
+  // NAS-144002: storage — the pools dashboard and its cards, import, the pool creation wizard and Add VDEVs,
+  // disks, VDEVs and hardware disk encryption. It absorbs the SED password entry pinned above.
+  'src/app/pages/storage',
 ];
 
 /**

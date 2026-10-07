@@ -3,11 +3,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnDialogHarness, TnInputHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { UnlockSedDialog } from './unlock-sed-dialog.component';
 
 describe('UnlockSedDialog', () => {
@@ -18,8 +18,8 @@ describe('UnlockSedDialog', () => {
     component: UnlockSedDialog,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('disk.unlock_sed'),
+      mockTypedApi([
+        mockTypedCall('disk.unlock_sed', null),
       ]),
       mockProvider(DialogRef),
       mockProvider(SnackbarService),
@@ -55,7 +55,7 @@ describe('UnlockSedDialog', () => {
     const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock' }));
     await unlockButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.unlock_sed', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('disk.unlock_sed', [{
       name: 'sda',
       password: 'test-password',
     }]);

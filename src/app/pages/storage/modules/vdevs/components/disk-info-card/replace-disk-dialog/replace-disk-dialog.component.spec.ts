@@ -9,16 +9,14 @@ import {
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
@@ -47,9 +45,7 @@ describe('ReplaceDiskDialogComponent', () => {
           used: [],
         }),
         ...mockSedDiskPasswordCalls(),
-      ]),
-      mockApi([
-        mockJob('pool.replace', fakeSuccessfulJob()),
+        mockTypedJob('pool.replace', { state: JobState.Success }),
       ]),
       mockProvider(DialogRef),
       mockProvider(DialogService, {
@@ -93,7 +89,7 @@ describe('ReplaceDiskDialogComponent', () => {
     await replaceButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.replace', [
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('pool.replace', [
       1,
       {
         disk: '{serial_lunid}BBBBB1',
@@ -124,7 +120,7 @@ describe('ReplaceDiskDialogComponent', () => {
     const replaceButton = await loader.getHarness(TnButtonHarness.with({ label: 'Replace Disk' }));
     await replaceButton.click();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.replace', [
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('pool.replace', [
       1,
       {
         disk: '{serial_lunid}BBBBB1',
@@ -165,7 +161,7 @@ describe('ReplaceDiskDialogComponent', () => {
     await spectator.fixture.whenStable();
 
     expect(api.call).toHaveBeenCalledWith('disk.unlock_sed', [{ name: 'sdb', password: 'disk-secret' }]);
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
       'pool.replace',
       [1, expect.objectContaining({ disk: '{serial_lunid}BBBBB1' })],
     );

@@ -9,10 +9,10 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { NEVER, of } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
@@ -27,7 +27,8 @@ import {
 import {
   TableDetailsRowComponent,
 } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   DiskBulkEditComponent,
 } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
@@ -144,9 +145,9 @@ describe('DiskListComponent', () => {
           },
         ],
       }),
-      mockApi([
-        mockCall('disk.query', fakeDisks),
-        mockCall('disk.details', { unused: [], used: fakeUnusedDisks }),
+      mockTypedApi([
+        mockTypedQuery('disk.query', fakeDisks as unknown as WebUiQueryEntity<'disk.query'>[]),
+        mockTypedCall('disk.details', { unused: [], used: fakeUnusedDisks }),
       ]),
     ],
   });
@@ -202,7 +203,7 @@ describe('DiskListComponent', () => {
   });
 
   it('keeps splitting letter-digit boundaries in row-action test ids, as lodash kebab-case did', async () => {
-    spectator.inject(MockApiService).mockCall(
+    spectator.inject(MockTypedApiService).mockQuery(
       'disk.query',
       [{ ...fakeDisks[0], name: 'nvme0n1', devname: 'nvme0n1' }] as Disk[],
     );
@@ -377,7 +378,7 @@ describe('DiskListComponent', () => {
     SedStatus.Uninitialized,
     SedStatus.Failed,
   ])('offers SED Reset but not Unlock for a %s SED disk', async (sedStatus) => {
-    spectator.inject(MockApiService).mockCall('disk.query', [{ ...fakeDisks[2], sed_status: sedStatus }] as Disk[]);
+    spectator.inject(MockTypedApiService).mockQuery('disk.query', [{ ...fakeDisks[2], sed_status: sedStatus }] as unknown as WebUiQueryEntity<'disk.query'>[]);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(TnTableHarness);
@@ -400,7 +401,7 @@ describe('DiskListComponent', () => {
   });
 
   it('reloads disks when edit form is saved', async () => {
-    const api = spectator.inject(ApiService);
+    const api = spectator.inject(TypedApiService);
     const formPanel = spectator.inject(FormSidePanelService);
 
     const mockUpd: DiskFormResponse = [{ identifier: 'identifier1', description: 'updated' }];
@@ -410,6 +411,7 @@ describe('DiskListComponent', () => {
 
     // the initial load already called both endpoints, so only count what the save triggers
     (api.call as jest.Mock).mockClear();
+    (api.query as unknown as jest.Mock).mockClear();
 
     const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
@@ -417,12 +419,12 @@ describe('DiskListComponent', () => {
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    expect(api.call).toHaveBeenCalledWith('disk.query', expect.anything());
+    expect(api.query).toHaveBeenCalledWith('disk.query', [], expect.anything());
     expect(api.call).toHaveBeenCalledWith('disk.details');
   });
 
   it('reconciles the edited row immediately, without waiting for the reload', async () => {
-    const api = spectator.inject(ApiService);
+    const api = spectator.inject(TypedApiService);
     const formPanel = spectator.inject(FormSidePanelService);
 
     const mockUpd: DiskFormResponse = [{ identifier: 'identifier1', pool: 'new-pool' }];
@@ -609,9 +611,9 @@ describe('DiskListComponent - without SED license', () => {
           },
         ],
       }),
-      mockApi([
-        mockCall('disk.query', fakeDisks),
-        mockCall('disk.details', { unused: [], used: [] }),
+      mockTypedApi([
+        mockTypedQuery('disk.query', fakeDisks as unknown as WebUiQueryEntity<'disk.query'>[]),
+        mockTypedCall('disk.details', { unused: [], used: [] }),
       ]),
     ],
   });
@@ -663,9 +665,9 @@ describe('DiskListComponent when the SED entitlement resolves late', () => {
           },
         ],
       }),
-      mockApi([
-        mockCall('disk.query', [] as Disk[]),
-        mockCall('disk.details', { unused: [], used: [] }),
+      mockTypedApi([
+        mockTypedQuery('disk.query', []),
+        mockTypedCall('disk.details', { unused: [], used: [] }),
       ]),
     ],
   });

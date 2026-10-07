@@ -4,14 +4,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   AutotrimDialog,
 } from 'app/pages/storage/components/dashboard-pool/storage-health-card/autotrim-dialog/autotrim-dialog.component';
@@ -35,8 +35,8 @@ describe('AutotrimDialogComponent', () => {
           },
         } as Pool,
       },
-      mockApi([
-        mockJob('pool.update', fakeSuccessfulJob()),
+      mockTypedApi([
+        mockTypedJob('pool.update', { state: JobState.Success }),
       ]),
       mockProvider(SnackbarService),
       mockProvider(DialogService),
@@ -61,7 +61,7 @@ describe('AutotrimDialogComponent', () => {
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.update', [47, { autotrim: OnOff.Off }]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('pool.update', [47, { autotrim: OnOff.Off }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });

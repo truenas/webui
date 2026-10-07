@@ -17,13 +17,14 @@ import { PoolStatus, poolStatusLabels } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { countTopologyErrors } from 'app/helpers/disk-errors.helper';
+import { poolScanFromEvent } from 'app/helpers/pool-scan-event.helper';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   ScrubFormComponent,
 } from 'app/pages/storage/components/dashboard-pool/disk-health-card/scrub-form/scrub-form.component';
@@ -74,7 +75,7 @@ interface StatusIconData {
   ],
 })
 export class StorageHealthCardComponent {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
@@ -91,8 +92,8 @@ export class StorageHealthCardComponent {
 
   private scanUpdates$ = toObservable(this.pool).pipe(
     switchMap((pool) => this.api.subscribe('pool.scan').pipe(
-      map((apiEvent) => apiEvent.fields),
-      filter((scan) => scan.name === pool.name),
+      map((event) => poolScanFromEvent(event)),
+      filter((scan) => scan?.name === pool.name),
       map((scan) => scan.scan),
     )),
     this.errorHandler.withErrorHandler(),

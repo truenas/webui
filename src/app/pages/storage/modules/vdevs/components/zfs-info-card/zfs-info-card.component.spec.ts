@@ -7,10 +7,11 @@ import {
   TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk } from 'app/interfaces/disk.interface';
@@ -18,7 +19,7 @@ import {
   TopologyDisk, VDev,
 } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   ExtendDialog,
 } from 'app/pages/storage/modules/vdevs/components/zfs-info-card/extend-dialog/extend-dialog.component';
@@ -31,11 +32,11 @@ describe('ZfsInfoCardComponent', () => {
   const createComponent = createComponentFactory({
     component: ZfsInfoCardComponent,
     providers: [
-      mockApi([
-        mockCall('pool.detach'),
-        mockCall('pool.offline'),
-        mockCall('pool.online'),
-        mockJob('pool.remove'),
+      mockTypedApi([
+        mockTypedCall('pool.detach', null),
+        mockTypedCall('pool.offline', null),
+        mockTypedCall('pool.online', null),
+        mockTypedJob('pool.remove', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -125,7 +126,7 @@ describe('ZfsInfoCardComponent', () => {
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.remove', [1, { label: 'disk-guid' }]);
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('pool.remove', [1, { label: 'disk-guid' }]);
       expect(spectator.inject(VDevsStore).reloadList).toHaveBeenCalled();
     });
 
@@ -160,7 +161,7 @@ describe('ZfsInfoCardComponent', () => {
       await menu.clickItem({ label: 'Detach' });
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.detach', [1, { label: 'disk-guid' }]);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.detach', [1, { label: 'disk-guid' }]);
     });
 
     it('offlines a device with confirmation when Offline is pressed from the card menu', async () => {
@@ -168,7 +169,7 @@ describe('ZfsInfoCardComponent', () => {
       await menu.clickItem({ label: 'Offline' });
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.offline', [1, { label: 'disk-guid' }]);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.offline', [1, { label: 'disk-guid' }]);
     });
 
     // Guards the e2e contract: moving these actions into the kebab menu must preserve their

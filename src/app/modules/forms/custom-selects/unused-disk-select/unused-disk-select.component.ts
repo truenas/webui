@@ -12,7 +12,7 @@ import {
 import { shareReplay, startWith } from 'rxjs/operators';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
-import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
+import { DetailsDisk, toDiskDetails } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
@@ -81,15 +81,11 @@ export class UnusedDiskSelectComponent implements ControlValueAccessor, OnInit {
   });
 
   private unusedDisks$ = this.api.call('disk.details').pipe(
-    // Middleware types the answer loosely because its shape depends on `type`; without one it is
-    // the used/unused split.
-    map((response) => {
-      const diskDetails = response as unknown as DiskDetailsResponse;
-      return [
-        ...diskDetails.unused,
-        ...diskDetails.used.filter((disk) => disk.exported_zpool),
-      ];
-    }),
+    map(toDiskDetails),
+    map((diskDetails) => [
+      ...diskDetails.unused,
+      ...diskDetails.used.filter((disk) => disk.exported_zpool),
+    ]),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 

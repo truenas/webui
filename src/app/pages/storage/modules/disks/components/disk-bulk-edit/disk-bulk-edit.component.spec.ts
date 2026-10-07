@@ -3,13 +3,15 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { JobResult } from '@truenas/api-client';
 import { TnSelectHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import {
   CoreBulkQuery,
   CoreBulkResponse,
@@ -20,7 +22,8 @@ import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DiskBulkEditComponent } from './disk-bulk-edit.component';
 
 const mockJobSuccessResponse = [
@@ -37,7 +40,7 @@ const mockJobSuccessResponse = [
 describe('DiskBulkEditComponent', () => {
   let spectator: Spectator<DiskBulkEditComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const dataDisk1 = {
     name: 'sda',
@@ -62,8 +65,8 @@ describe('DiskBulkEditComponent', () => {
       // minimum-feedback window before emitting `closed`.
       { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockProvider(DialogService),
-      mockApi([
-        mockJob('core.bulk', fakeSuccessfulJob(mockJobSuccessResponse)),
+      mockTypedApi([
+        mockTypedJob('core.bulk', { state: JobState.Success, result: mockJobSuccessResponse as JobResult<WebUiApiDirectory, 'core.bulk'> }),
       ]),
     ],
   });
@@ -80,7 +83,7 @@ describe('DiskBulkEditComponent', () => {
   beforeEach(() => {
     spectator = createComponent({ props: { disksToEdit: [dataDisk1, dataDisk2] } });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
   });
 
   it('sets disks settings when form is opened', async () => {
@@ -96,6 +99,7 @@ describe('DiskBulkEditComponent', () => {
     await fillSettings();
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     const req: CoreBulkQuery = [
       'disk.update',
@@ -127,6 +131,7 @@ describe('DiskBulkEditComponent', () => {
 
     await fillSettings();
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(closed).toHaveBeenCalledWith([
       { identifier: '{serial}VB76b9dd9d-4e5d8cf2', advpowermgmt: '64', hddstandby: '10' },
@@ -157,6 +162,7 @@ describe('DiskBulkEditComponent', () => {
 
     await fillSettings();
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(api.job).toHaveBeenCalledWith('core.bulk', expect.anything());
     expect(dialogService.error).toHaveBeenCalledWith([
@@ -178,6 +184,7 @@ describe('DiskBulkEditComponent', () => {
 
     await fillSettings();
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     // One dialog for the whole bulk (a dialog per failed disk was a storm), but every distinct
     // reason survives — reporting only the first would hide the second disk's failure entirely.
@@ -195,6 +202,7 @@ describe('DiskBulkEditComponent', () => {
 
     await fillSettings();
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     // core.bulk is not transactional, so the second disk was updated even though the first
     // failed — the opener has to hear about it to refresh that row.
@@ -233,6 +241,7 @@ describe('DiskBulkEditComponent', () => {
 
     await fillSettings();
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(api.job).toHaveBeenCalledWith('core.bulk', expect.anything());
     expect(errorHandler.handleValidationErrors).toHaveBeenCalled();

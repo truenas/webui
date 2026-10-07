@@ -12,11 +12,11 @@ import {
 import { of } from 'rxjs';
 import { NewDeduplicationQuotaSetting } from 'app/enums/deduplication-setting.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { Pool, UpdatePool } from 'app/interfaces/pool.interface';
+import { Pool, toPoolUpdateArgs, UpdatePool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export enum QuotaType {
@@ -50,7 +50,7 @@ export const quotaTypeLabels = new Map<QuotaType, string>([
 export class SetDedupQuotaComponent {
   protected readonly InputType = InputType;
   private formBuilder = inject(NonNullableFormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialog = inject(DialogService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
@@ -106,7 +106,7 @@ export class SetDedupQuotaComponent {
         break;
     }
 
-    const job$ = this.api.job('pool.update', [this.pool.id, payload]);
+    const job$ = this.api.job('pool.update', [this.pool.id, toPoolUpdateArgs(payload)]);
 
     this.dialog.jobDialog(job$, {
       title: this.translate.instant('Updating pool settings'),

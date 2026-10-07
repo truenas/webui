@@ -7,7 +7,7 @@ import {
   TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnStepperComponent,
 } from '@truenas/ui-components';
 import { of, Subject } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
@@ -37,10 +37,10 @@ describe('GeneralWizardStepComponent', () => {
     ],
     providers: [
       mockProvider(TnStepperComponent),
-      mockApi([
-        mockCall('pool.query', []),
-        mockCall('pool.validate_name', true),
-        mockCall('system.advanced.sed_global_password_is_set', false),
+      mockTypedApi([
+        mockTypedQuery('pool.query', []),
+        mockTypedCall('pool.validate_name', true),
+        mockTypedCall('system.advanced.sed_global_password_is_set', false),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),
@@ -50,6 +50,7 @@ describe('GeneralWizardStepComponent', () => {
       }),
       mockProvider(PoolManagerStore, {
         startOver$,
+        isLoading$: of(false),
         hasSedCapableDisks$: of(false),
         encryptionType$: of(EncryptionType.None),
         setGeneralOptions: jest.fn(),
@@ -127,8 +128,10 @@ describe('GeneralWizardStepComponent', () => {
     });
   });
 
-  it('requires SED password when SED encryption type is selected', () => {
+  it('requires SED password when SED encryption type is selected', async () => {
     spectator.component.form.patchValue({ encryptionType: EncryptionType.Sed });
+    // Whether a global password is set is answered on a microtask.
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
 
     expect(spectator.component.form.controls.sedPassword.hasError('required')).toBe(true);
@@ -224,10 +227,10 @@ describe('GeneralWizardStepComponent with SED disks and no global password', () 
     imports: [ReactiveFormsModule, PoolWarningsComponent],
     providers: [
       mockProvider(TnStepperComponent),
-      mockApi([
-        mockCall('pool.query', []),
-        mockCall('pool.validate_name', true),
-        mockCall('system.advanced.sed_global_password_is_set', false),
+      mockTypedApi([
+        mockTypedQuery('pool.query', []),
+        mockTypedCall('pool.validate_name', true),
+        mockTypedCall('system.advanced.sed_global_password_is_set', false),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),
@@ -237,6 +240,7 @@ describe('GeneralWizardStepComponent with SED disks and no global password', () 
       }),
       mockProvider(PoolManagerStore, {
         startOver$,
+        isLoading$: of(false),
         hasSedCapableDisks$: of(true),
         encryptionType$: of(EncryptionType.None),
         setGeneralOptions: jest.fn(),
@@ -301,10 +305,10 @@ describe('GeneralWizardStepComponent with existing SED password', () => {
     imports: [ReactiveFormsModule, PoolWarningsComponent],
     providers: [
       mockProvider(TnStepperComponent),
-      mockApi([
-        mockCall('pool.query', []),
-        mockCall('pool.validate_name', true),
-        mockCall('system.advanced.sed_global_password_is_set', true),
+      mockTypedApi([
+        mockTypedQuery('pool.query', []),
+        mockTypedCall('pool.validate_name', true),
+        mockTypedCall('system.advanced.sed_global_password_is_set', true),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),
@@ -314,6 +318,7 @@ describe('GeneralWizardStepComponent with existing SED password', () => {
       }),
       mockProvider(PoolManagerStore, {
         startOver$,
+        isLoading$: of(false),
         hasSedCapableDisks$: of(true),
         encryptionType$: of(EncryptionType.None),
         setGeneralOptions: jest.fn(),
