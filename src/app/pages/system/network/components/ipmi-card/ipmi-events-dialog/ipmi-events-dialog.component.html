@@ -6,14 +6,14 @@
     @for (event of events; track event.id) {
       <div class="event">
         <div class="event-header">
-          <div>{{ getEventDate(event) | formatDateTime }}</div>
-          <div>
+          <div tnTestIdType="text" [tnTestId]="['ipmi-event', event.id, 'date']">{{ getEventDate(event) | formatDateTime }}</div>
+          <div tnTestIdType="text" [tnTestId]="['ipmi-event', event.id, 'name']">
             {{ event.name }}
             &mdash;
             {{ event.event_direction }}
           </div>
         </div>
-        <div class="event-description">
+        <div class="event-description" tnTestIdType="text" [tnTestId]="['ipmi-event', event.id, 'description']">
           {{ event.event }}
         </div>
       </div>

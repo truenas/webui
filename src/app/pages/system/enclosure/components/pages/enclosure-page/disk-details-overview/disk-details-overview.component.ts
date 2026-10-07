@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconButtonComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -14,6 +14,7 @@ import { DiskDetailsComponent } from './disks-overview-details/disk-details.comp
   styleUrls: ['./disk-details-overview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnIconButtonComponent,
     DiskIconComponent,
     IdentifyLightComponent,

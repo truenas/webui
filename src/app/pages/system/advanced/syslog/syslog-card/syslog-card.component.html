@@ -6,25 +6,45 @@
   <div class="details">
     <div class="details-item" [ixUiSearch]="searchableElements.elements.UseFQDNForLogging">
       <span class="label">{{ 'Use FQDN for Logging' | translate }}:</span>
-      <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
+      <span
+        *ixWithLoadingState="advancedConfig$ as advancedConfig"
+        class="value"
+        tnTestId="syslog-use-fqdn"
+        tnTestIdType="text"
+      >
         {{ advancedConfig.fqdn_syslog ? ('Enabled' | translate) : ('Disabled' | translate) }}
       </span>
     </div>
     <div class="details-item" [ixUiSearch]="searchableElements.elements.level">
       <span class="label">{{ 'Syslog Level' | translate }}:</span>
-      <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
+      <span
+        *ixWithLoadingState="advancedConfig$ as advancedConfig"
+        class="value"
+        tnTestId="syslog-level"
+        tnTestIdType="text"
+      >
         {{ advancedConfig.sysloglevel | mapValue: syslogLevelLabels | translate }}
       </span>
     </div>
     <div class="details-item" [ixUiSearch]="searchableElements.elements.server">
       <span class="label">{{ 'Syslog Servers' | translate }}:</span>
-      <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
+      <span
+        *ixWithLoadingState="advancedConfig$ as advancedConfig"
+        class="value"
+        tnTestId="syslog-servers"
+        tnTestIdType="text"
+      >
         {{ formatSyslogServers(advancedConfig) }}
       </span>
     </div>
     <div class="details-item" [ixUiSearch]="searchableElements.elements.includeAuditLogs">
       <span class="label">{{ 'Include Audit Logs' | translate }}:</span>
-      <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
+      <span
+        *ixWithLoadingState="advancedConfig$ as advancedConfig"
+        class="value"
+        tnTestId="syslog-include-audit-logs"
+        tnTestIdType="text"
+      >
         {{ advancedConfig.syslog_audit | yesNo }}
       </span>
     </div>

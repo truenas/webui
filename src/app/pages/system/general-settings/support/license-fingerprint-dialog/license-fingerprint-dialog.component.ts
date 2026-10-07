@@ -6,7 +6,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnDialogShellComponent, TnIconButtonComponent, TnSpinnerComponent,
+  TnButtonComponent, TnDialogShellComponent, TnIconButtonComponent, TnSpinnerComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { LicenseFingerprintValue } from 'app/interfaces/system-info.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -93,6 +93,7 @@ export function buildFingerprintField(
   styleUrls: ['./license-fingerprint-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnDialogShellComponent,
     TnButtonComponent,
     TnIconButtonComponent,

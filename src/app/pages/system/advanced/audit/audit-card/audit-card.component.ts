@@ -5,7 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   Subject, shareReplay, startWith, switchMap, tap,
@@ -28,6 +28,7 @@ import { AppState } from 'app/store';
   templateUrl: './audit-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnCardComponent,
     TnCardFooterActionsDirective,
     UiSearchDirective,

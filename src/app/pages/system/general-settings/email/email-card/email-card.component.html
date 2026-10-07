@@ -16,7 +16,12 @@
   <tn-list>
     <tn-list-item [ixUiSearch]="searchableElements.elements.sendMethod">
       <span class="label">{{ 'Send Mail Method' | translate }}:</span>
-      <span *ixWithLoadingState="emailConfigState() as emailConfig" class="value">
+      <span
+        *ixWithLoadingState="emailConfigState() as emailConfig"
+        class="value"
+        tnTestId="email-send-mail-method"
+        tnTestIdType="text"
+      >
         {{
           !emailConfig?.oauth?.client_id
             ? helptext.sendMailMethod.smtp.label
@@ -29,7 +34,7 @@
       @if (emailConfig?.fromemail || emailConfig?.fromname) {
         <tn-list-item>
           <span class="label">{{ 'From' | translate }}:</span>
-          <span class="value">
+          <span class="value" tnTestId="email-from" tnTestIdType="text">
             {{ emailConfig.fromname }}
             {{
               emailConfig.outgoingserver && emailConfig.fromemail && !emailConfig?.oauth?.client_id

@@ -2,7 +2,7 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent, TnEmptyComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnEmptyComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { parse } from 'date-fns';
 import { JobState } from 'app/enums/job-state.enum';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
@@ -18,6 +18,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./ipmi-events-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnDialogShellComponent,
     FakeProgressBarComponent,
     TnEmptyComponent,

@@ -10,18 +10,18 @@
         <tn-list>
           <tn-list-item>
             {{ 'Status' | translate }}:
-            {{ poolInstance.scan.pause !== null ? 'PAUSED' : poolInstance.scan.state ? poolInstance.scan.state : ('None requested' | translate) }}
+            <span tnTestId="scan-status" tnTestIdType="text">{{ poolInstance.scan.pause !== null ? 'PAUSED' : poolInstance.scan.state ? poolInstance.scan.state : ('None requested' | translate) }}</span>
           </tn-list-item>
           @if (poolInstance.scan.errors !== null) {
             <tn-list-item>
               {{ 'Errors' | translate }}:
-              {{ poolInstance.scan.errors }}
+              <span tnTestId="scan-errors" tnTestIdType="text">{{ poolInstance.scan.errors }}</span>
             </tn-list-item>
           }
           @if (poolInstance.scan.start_time?.$date) {
             <tn-list-item>
               {{ 'Date' | translate }}:
-              {{ poolInstance.scan.start_time.$date | formatDateTime }}
+              <span tnTestId="scan-date" tnTestIdType="text">{{ poolInstance.scan.start_time.$date | formatDateTime }}</span>
             </tn-list-item>
           }
         </tn-list>

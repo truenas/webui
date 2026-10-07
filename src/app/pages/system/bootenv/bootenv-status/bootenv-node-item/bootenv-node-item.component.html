@@ -1,9 +1,9 @@
 <div class="tree-node-grid">
   <div class="cell cell-name">
-    <span class="name">{{ ownName() }}</span>
+    <span class="name" tnTestIdType="text" [tnTestId]="[ownName(), 'name']">{{ ownName() }}</span>
   </div>
   <div class="cell cell-status" [style.background-color]="statusColor()">
-    <span>{{ topologyItem().status | titlecase }}</span>
+    <span tnTestIdType="text" [tnTestId]="[ownName(), 'status']">{{ topologyItem().status | titlecase }}</span>
     @if (!isDisk() && !isMirror() && poolInstance()?.status_detail) {
       <tn-icon
         name="information-outline"
@@ -13,16 +13,16 @@
     }
   </div>
   <div class="cell">
-    <span>{{ topologyItem()?.stats?.read_errors || 0 }}</span>
+    <span tnTestIdType="text" [tnTestId]="[ownName(), 'read-errors']">{{ topologyItem()?.stats?.read_errors || 0 }}</span>
   </div>
   <div class="cell">
-    <span>{{ topologyItem()?.stats?.write_errors || 0 }}</span>
+    <span tnTestIdType="text" [tnTestId]="[ownName(), 'write-errors']">{{ topologyItem()?.stats?.write_errors || 0 }}</span>
   </div>
   <div class="cell">
-    <span>{{ topologyItem()?.stats?.checksum_errors || 0 }}</span>
+    <span tnTestIdType="text" [tnTestId]="[ownName(), 'checksum-errors']">{{ topologyItem()?.stats?.checksum_errors || 0 }}</span>
   </div>
   <div class="cell">
-    <span>{{ errors() }}</span>
+    <span tnTestIdType="text" [tnTestId]="[ownName(), 'errors']">{{ errors() }}</span>
   </div>
   <div class="cell cell-actions">
     @if (isDisk() || isMirror()) {

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 import { getSlotsOfSide } from 'app/pages/system/enclosure/utils/get-slots-of-side.utils';
@@ -11,6 +12,7 @@ import { unassignedColor } from 'app/pages/system/enclosure/utils/unassigned-col
   templateUrl: './pools-legend.component.html',
   styleUrls: ['./pools-legend.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [TnTestIdDirective],
 })
 export class PoolsLegendComponent {
   private translate = inject(TranslateService);

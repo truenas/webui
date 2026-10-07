@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   Subject, shareReplay, startWith, switchMap,
@@ -25,6 +25,7 @@ import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-se
   templateUrl: './system-security-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnCardComponent,
     TnCardFooterActionsDirective,
     WithLoadingStateDirective,

@@ -7,7 +7,7 @@
     >
       <div class="status-item">
         <span class="status-name"> {{ 'Boot Pool Condition' | translate }}: </span>
-        <span class="status-value">
+        <span class="status-value" tnTestId="boot-pool-condition" tnTestIdType="text">
           {{ condition | mapValue: poolStatusLabels | translate }}
           @if (condition === PoolStatus.Degraded) {
             {{ 'Check Alerts for more details.' | translate }}
@@ -17,21 +17,21 @@
 
       <div class="status-item">
         <span class="status-name"> {{ 'Size' | translate }}: </span>
-        <span class="status-value">
+        <span class="status-value" tnTestId="boot-pool-size" tnTestIdType="text">
           {{ state?.size ? (state.size | ixFileSize) : '' }}
         </span>
       </div>
 
       <div class="status-item">
         <span class="status-name"> {{ 'Used' | translate }}: </span>
-        <span class="status-value">
+        <span class="status-value" tnTestId="boot-pool-used" tnTestIdType="text">
           {{ state?.allocated ? (state.allocated | ixFileSize) : '' }}
         </span>
       </div>
 
       <div class="status-item">
         <span class="status-name"> {{ 'Last Scrub Run' | translate }}: </span>
-        <span class="status-value">
+        <span class="status-value" tnTestId="last-scrub-run" tnTestIdType="text">
           @if (state.scan?.end_time) {
             {{ state.scan.end_time.$date | formatDateTime }}
           } @else {

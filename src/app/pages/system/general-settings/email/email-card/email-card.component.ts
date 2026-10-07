@@ -9,7 +9,7 @@ import {
   TnListComponent,
   TnListItemComponent,
   TnButtonComponent,
-  TnCardFooterActionsDirective,
+  TnCardFooterActionsDirective, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -27,6 +27,7 @@ import { EmailFormComponent } from 'app/pages/system/general-settings/email/emai
   templateUrl: './email-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnCardComponent,
     TnCardHeaderDirective,
     TnListComponent,

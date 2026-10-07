@@ -15,7 +15,7 @@ import {
   TnMenuItemComponent,
   TnMenuTriggerDirective,
   TnProgressBarComponent,
-  TnSelectComponent,
+  TnSelectComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -37,6 +37,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./alert-config-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     AsyncPipe,
     TnCardComponent,
     TnCardHeaderActionsDirective,

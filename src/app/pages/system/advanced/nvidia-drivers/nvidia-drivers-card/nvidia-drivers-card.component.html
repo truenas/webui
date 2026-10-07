@@ -7,7 +7,12 @@
   <div class="details">
     <div class="details-item" [ixUiSearch]="searchableElements.elements.enableNvidiaGpuSupport">
       <span class="label">{{ 'Enable NVIDIA GPU Support' | translate }}:</span>
-      <span *ixWithLoadingState="nvidiaEnabled$ as nvidiaEnabled" class="value">
+      <span
+        *ixWithLoadingState="nvidiaEnabled$ as nvidiaEnabled"
+        class="value"
+        tnTestId="enable-nvidia-gpu-support"
+        tnTestIdType="text"
+      >
         {{ nvidiaEnabled ? ('Enabled' | translate) : ('Disabled' | translate) }}
       </span>
     </div>

@@ -21,7 +21,7 @@
           [size]="selectedSlot().size"
           [name]="selectedSlot().dev"
         ></ix-disk-icon>
-        <div class="capacity">{{ selectedSlot().size | ixFileSize }}</div>
+        <div class="capacity" tnTestId="disk-capacity" tnTestIdType="text">{{ selectedSlot().size | ixFileSize }}</div>
         <div class="disk-actions">
           @if (selectedSlot().supports_identify_light) {
             <ix-identify-light></ix-identify-light>
