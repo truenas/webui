@@ -196,6 +196,9 @@ describe('DatasetAclEditorComponent', () => {
         const form = spectator.query(EditNfsAceComponent)!;
 
         expect(form).toExist();
+        // The fake client answers with a copy of the fixture, so identity is checked against what the store
+        // loaded: the form must edit that entry, not a copy of it.
+        expect(form.ace).toBe(spectator.inject(DatasetAclEditorStore).state().acl.acl[0]);
         expect(form.ace).toEqual(acl.acl[0]);
       });
     });

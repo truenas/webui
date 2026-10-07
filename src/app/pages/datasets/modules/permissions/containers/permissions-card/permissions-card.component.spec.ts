@@ -32,6 +32,7 @@ import {
 import {
   PermissionsCardComponent,
 } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
+import { PermissionsCardState } from 'app/pages/datasets/modules/permissions/interfaces/permissions-sidebar-state.interface';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
 
 describe('PermissionsCardComponent', () => {
@@ -61,6 +62,12 @@ describe('PermissionsCardComponent', () => {
   } as DatasetDetails;
 
   let spectator: Spectator<PermissionsCardComponent>;
+
+  /**
+   * What the card's own store loaded. The fake client answers with a copy of each fixture, so the views are checked
+   * for receiving this object as is, rather than the fixture itself.
+   */
+  const cardState = (): PermissionsCardState => spectator.inject(PermissionsCardStore, true).state();
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: PermissionsCardComponent,
@@ -111,6 +118,7 @@ describe('PermissionsCardComponent', () => {
   it('shows trivial permissions when acl is trivial', () => {
     const permissionsComponent = spectator.query(ViewTrivialPermissionsComponent)!;
     expect(permissionsComponent).toExist();
+    expect(permissionsComponent.stat).toBe(cardState().stat);
     expect(permissionsComponent.stat).toEqual(stat);
   });
 
@@ -131,6 +139,7 @@ describe('PermissionsCardComponent', () => {
 
     const permissionsComponent = spectator.query(ViewPosixPermissionsComponent)!;
     expect(permissionsComponent).toExist();
+    expect(permissionsComponent.acl).toBe(cardState().acl);
     expect(permissionsComponent.acl).toEqual(acl);
   });
 
@@ -194,6 +203,7 @@ describe('PermissionsCardComponent', () => {
 
     const permissionsComponent = spectator.query(ViewNfsPermissionsComponent)!;
     expect(permissionsComponent).toExist();
+    expect(permissionsComponent.acl).toBe(cardState().acl);
     expect(permissionsComponent.acl).toEqual(acl);
   }));
 
