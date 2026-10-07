@@ -1,3 +1,4 @@
+import { CallParams, CallResponse } from '@truenas/api-client';
 import { AclMode } from 'app/enums/acl-type.enum';
 import {
   DatasetAclType,
@@ -19,6 +20,7 @@ import { WithInherit } from 'app/enums/with-inherit.enum';
 import { YesNo } from 'app/enums/yes-no.enum';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { SharingTierInfo } from 'app/interfaces/zfs-tier.interface';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 /** Base interface for dataset share summaries from middleware */
 export interface DatasetShareSummary {
@@ -164,7 +166,7 @@ export interface DatasetUpdate {
   recordsize?: WithInherit<DatasetRecordSize>;
   aclmode?: AclMode;
   acltype?: DatasetAclType;
-  user_properties?: Record<string, string>;
+  user_properties?: { key: string; value: string }[];
   create_ancestors?: boolean;
   user_properties_update?: { key: string; value: string; remove?: boolean }[];
 }
@@ -225,3 +227,43 @@ export enum DiskSpaceKey {
 }
 export type DiskSpace = Partial<Record<DiskSpaceKey, number>>;
 export type SwatchColors = Partial<Record<DiskSpaceKey, { backgroundColor: string }>>;
+
+/**
+ * Reads a `pool.dataset.query` row, or the entry `pool.dataset.create` / `update` return, into the shape the
+ * datasets pages are written against. The generated entry types every ZFS property as a loose record and
+ * declares neither `mounted` nor `share_type`, which middleware sends; it describes the same object.
+ *
+ * A plain `as` does not compile here: the property records are not comparable with `ZfsProperty`. So the cast
+ * checks nothing, and a regenerated entry that drops or renames a field still compiles and reads `undefined`.
+ */
+export function toDataset(dataset: WebUiQueryEntity<'pool.dataset.query'>): Dataset {
+  return dataset as unknown as Dataset;
+}
+
+/**
+ * Reads `pool.dataset.details` into `DatasetDetails`. Middleware declares the response as a list of loose
+ * records, so there is nothing in the generated type to check this against.
+ */
+export function toDatasetDetails(details: CallResponse<WebUiApiDirectory, 'pool.dataset.details'>): DatasetDetails[] {
+  return details as unknown as DatasetDetails[];
+}
+
+/** What `pool.dataset.create` takes, as middleware declares it. */
+export type DatasetCreateArgs = CallParams<WebUiApiDirectory, 'pool.dataset.create'>[0];
+
+/** What `pool.dataset.update` takes as its changes, as middleware declares it. */
+export type DatasetUpdateArgs = CallParams<WebUiApiDirectory, 'pool.dataset.update'>[1];
+
+/**
+ * Hands a form's payload to `pool.dataset.create` unchanged. Middleware spells `compression`, `recordsize` and
+ * friends as literal unions; the forms hold them as strings read from the matching `*_choices` call, so they
+ * are the same values typed loosely.
+ */
+export function toDatasetCreateArgs(payload: DatasetCreate): DatasetCreateArgs {
+  return payload as DatasetCreateArgs;
+}
+
+/** {@link toDatasetCreateArgs} for `pool.dataset.update`. */
+export function toDatasetUpdateArgs(payload: DatasetUpdate): DatasetUpdateArgs {
+  return payload as DatasetUpdateArgs;
+}

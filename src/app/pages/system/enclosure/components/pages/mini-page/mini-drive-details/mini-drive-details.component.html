@@ -25,14 +25,14 @@
 <ul class="overview">
   <li class="item">
     <div class="label">{{ 'Pool' | translate }}:</div>
-    <div class="value">
+    <div class="value" tnTestId="disk-pool" tnTestIdType="text">
       {{ slot().pool_info?.pool_name || ('Disk not attached to any pools.' | translate) }}
     </div>
   </li>
 
   <li class="item">
     <div class="label">{{ 'VDEV' | translate }}:</div>
-    <div class="value">
+    <div class="value" tnTestId="disk-vdev" tnTestIdType="text">
       @if (slot().pool_info; as poolInfo) {
         {{ getFriendlyVdevName(poolInfo.vdev_name, poolInfo.vdev_type) }}
       } @else {
@@ -44,7 +44,7 @@
   @if (slot().pool_info) {
     <li class="item">
       <div class="label">{{ 'Status' | translate }}:</div>
-      <div class="value">
+      <div class="value" tnTestId="disk-status" tnTestIdType="text">
         {{ slot().pool_info.disk_status | mapValue: enclosureDiskStatusLabels | translate }}
       </div>
     </li>
@@ -53,21 +53,21 @@
   @if (slot().model) {
     <li class="item">
       <div class="label">{{ 'Model' | translate }}:</div>
-      <div class="value">{{ slot().model }}</div>
+      <div class="value" tnTestId="disk-model" tnTestIdType="text">{{ slot().model }}</div>
     </li>
   }
 
   @if (slot().serial) {
     <li class="item">
       <div class="label">{{ 'Serial' | translate }}:</div>
-      <div class="value">{{ slot().serial }}</div>
+      <div class="value" tnTestId="disk-serial" tnTestIdType="text">{{ slot().serial }}</div>
     </li>
   }
 
   @if (slot().rotationrate) {
     <li class="item">
       <div class="label">{{ 'Rotation Rate' | translate }}:</div>
-      <div class="value">
+      <div class="value" tnTestId="disk-rotation-rate" tnTestIdType="text">
         {{ '{rate} RPM' | translate: { rate: slot().rotationrate } }}
       </div>
     </li>

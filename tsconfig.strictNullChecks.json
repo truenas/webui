@@ -258,7 +258,6 @@
     "./src/app/interfaces/data-protection-task-state.interface.ts",
     "./src/app/interfaces/dataset-change-key.interface.ts",
     "./src/app/interfaces/dataset-encryption-summary.interface.ts",
-    "./src/app/interfaces/dataset-has-vms-query-params.interface.ts",
     "./src/app/interfaces/dataset-lock.interface.ts",
     "./src/app/interfaces/dataset-quota.interface.ts",
     "./src/app/interfaces/dataset.interface.ts",

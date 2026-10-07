@@ -8,14 +8,14 @@ import {
   InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnSelectComponent, TnSelectOption, TnSlideToggleComponent,
 } from '@truenas/ui-components';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { RsyncMode, RsyncSshConnectMode } from 'app/enums/rsync-mode.enum';
 import { helptextRsyncForm } from 'app/helptext/data-protection/rsync/rsync-form';
 import { newOption } from 'app/interfaces/option.interface';
-import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
+import { RsyncTask, RsyncTaskUpdate, toRsyncTask } from 'app/interfaces/rsync-task.interface';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
@@ -30,7 +30,7 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 @Component({
@@ -59,7 +59,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
 export class RsyncTaskFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(FormErrorHandlerService);
   private filesystemService = inject(FilesystemService);
   private validatorsService = inject(IxValidatorsService);
@@ -215,8 +215,8 @@ export class RsyncTaskFormComponent implements OnInit {
     delete values.sshconnectmode;
 
     const request$: Observable<RsyncTask> = this.editingTask
-      ? this.api.call('rsynctask.update', [this.editingTask.id, values as RsyncTaskUpdate])
-      : this.api.call('rsynctask.create', [values as RsyncTaskUpdate]);
+      ? this.api.call('rsynctask.update', [this.editingTask.id, values as RsyncTaskUpdate]).pipe(map(toRsyncTask))
+      : this.api.call('rsynctask.create', [values as RsyncTaskUpdate]).pipe(map(toRsyncTask));
 
     return {
       request$,

@@ -4,9 +4,9 @@
   </div>
   <div class="disk-overview">
     <div class="tile" [class.active]="selectedView() === EnclosureView.Pools">
-      <div class="primary-number">{{ poolsInfo().length }}</div>
+      <div class="primary-number" tnTestId="pools-in-enclosure" tnTestIdType="text">{{ poolsInfo().length }}</div>
       <div class="title">{{ '{n, plural, one {Pool in Enclosure} other {Pools in Enclosure} }' | translate: { n: poolsInfo().length } }}</div>
-      <div class="subtitle">
+      <div class="subtitle" tnTestId="pools-summary" tnTestIdType="text">
         @if (unhealthyPoolsInfo().length === 0) {
           {{ 'All pools are online.' | translate }}
         } @else if (unhealthyPoolsInfo().length === 1) {
@@ -29,9 +29,9 @@
       ></tn-button>
     </div>
     <div class="tile" [class.active]="selectedView() === EnclosureView.DiskStatus">
-      <div class="primary-number">{{ failedDisks().length }}</div>
+      <div class="primary-number" tnTestId="failed-disks" tnTestIdType="text">{{ failedDisks().length }}</div>
       <div class="title">{{ '{n, plural, one {Failed Disk} other {Failed Disks} }' | translate: { n: failedDisks().length } }}</div>
-      <div class="subtitle">
+      <div class="subtitle" tnTestId="failed-disks-summary" tnTestIdType="text">
         @if (failedDisks().length === 0) {
           {{ 'All disks healthy.' | translate }}
         } @else if (failedDisks().length === 1) {
@@ -52,7 +52,7 @@
     </div>
     @if (expanders().length) {
       <div class="tile" [class.active]="selectedView() === EnclosureView.Expanders">
-        <div class="primary-number">{{ expanders().length }}</div>
+        <div class="primary-number" tnTestId="sas-expanders" tnTestIdType="text">{{ expanders().length }}</div>
         <div class="title">{{ '{n, plural, one {SAS Expander} other {SAS Expanders} }' | translate: { n: expanders().length} }}</div>
         <div class="subtitle"> {{ 'on this enclosure.' | translate }} </div>
         <tn-button

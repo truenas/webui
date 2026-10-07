@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 
@@ -11,7 +12,7 @@ import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
   templateUrl: './sas-expander-status-view.component.html',
   styleUrl: './sas-expander-status-view.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslateModule, TitleCasePipe],
+  imports: [TnTestIdDirective, TranslateModule, TitleCasePipe],
 })
 export class SasExpanderStatusViewComponent {
   readonly enclosure = input.required<DashboardEnclosure>();

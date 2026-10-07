@@ -44,7 +44,7 @@ import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
-import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncTaskUi, CloudSyncTaskUpdate, toCloudSyncDirectoryListing } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { SelectOption, newOption } from 'app/interfaces/option.interface';
@@ -69,7 +69,7 @@ import {
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { CreateStorjBucketDialog } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { CustomTransfersDialog } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
@@ -111,7 +111,7 @@ type FormValue = CloudSyncFormComponent['form']['value'];
 export class CloudSyncFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   protected router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -563,7 +563,7 @@ export class CloudSyncFormComponent implements OnInit {
         map((listing) => {
           const nodes: ExplorerNodeData[] = [];
 
-          listing.forEach((file) => {
+          listing.map(toCloudSyncDirectoryListing).forEach((file) => {
             if (file.IsDir) {
               nodes.push({
                 path: `${data.attributes.folder}/${file.Name}`.replace(/\/+/g, '/'),

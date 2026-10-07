@@ -10,14 +10,14 @@
       <dl class="fingerprint-fields">
         @for (field of fields; track field.key) {
           <div class="field">
-            <dt class="field-label">{{ field.label | translate }}</dt>
-            <dd class="field-value">
+            <dt class="field-label" tnTestIdType="text" [tnTestId]="['fingerprint-field', field.key, 'label']">{{ field.label | translate }}</dt>
+            <dd class="field-value" tnTestIdType="text" [tnTestId]="['fingerprint-field', field.key]">
               @if (field.values.length === 1) {
                 {{ field.values[0] }}
               } @else {
                 <ul class="field-list">
                   @for (item of field.values; track $index) {
-                    <li>{{ item }}</li>
+                    <li tnTestIdType="text" [tnTestId]="['fingerprint-field', field.key, $index]">{{ item }}</li>
                   }
                 </ul>
               }
@@ -26,7 +26,7 @@
         }
       </dl>
     } @else if (fingerprintFallback()) {
-      <pre class="fingerprint-raw">{{ fingerprintFallback() }}</pre>
+      <pre class="fingerprint-raw" tnTestId="fingerprint-raw" tnTestIdType="text">{{ fingerprintFallback() }}</pre>
     }
   }
 </div>

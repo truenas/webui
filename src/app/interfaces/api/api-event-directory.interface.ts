@@ -6,13 +6,11 @@ import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status
 import { Disk } from 'app/interfaces/disk.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { User } from 'app/interfaces/user.interface';
-import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 
 export interface ApiEventDirectory {
@@ -32,8 +30,6 @@ export interface ApiEventDirectory {
   'container.metrics': { response: ContainerMetrics };
 
   'pool.scan': { response: PoolScan };
-  'pool.snapshot.query': { response: ZfsSnapshot };
-  'pool.snapshottask.query': { response: PeriodicSnapshotTask };
   'directoryservices.status': { response: DirectoryServicesStatus };
   'zfs.tier.rewrite_job_query': { response: ZfsTierRewriteJobEntry };
   'zfs.tier.rewrite_job_status': { response: ZfsTierRewriteJobEntry };

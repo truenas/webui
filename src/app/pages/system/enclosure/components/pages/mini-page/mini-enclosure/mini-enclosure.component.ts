@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { EnclosureSideComponent } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-side.component';
@@ -15,6 +16,7 @@ import { MiniSlotStatusComponent } from './mini-slot-status/mini-slot-status.com
   styleUrl: './mini-enclosure.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     EnclosureSideComponent,
     MiniSlotStatusComponent,
     TranslateModule,

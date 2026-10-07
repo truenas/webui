@@ -4,13 +4,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { MatchDatastoresWithDatasets, VmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { VmwareSnapshotFormComponent } from './vmware-snapshot-form.component';
 
 describe('VmwareSnapshotFormComponent', () => {
@@ -34,8 +34,8 @@ describe('VmwareSnapshotFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('vmware.match_datastores_with_datasets', {
+      mockTypedApi([
+        mockTypedCall('vmware.match_datastores_with_datasets', {
           filesystems: [
             {
               type: DatasetType.Filesystem,
@@ -61,8 +61,8 @@ describe('VmwareSnapshotFormComponent', () => {
             },
           ],
         } as MatchDatastoresWithDatasets),
-        mockCall('vmware.create'),
-        mockCall('vmware.update'),
+        mockTypedCall('vmware.create', null),
+        mockTypedCall('vmware.update', null),
       ]),
       ...ixFormTestingProviders(),
       mockProvider(DialogService, {
@@ -93,7 +93,7 @@ describe('VmwareSnapshotFormComponent', () => {
       const fetchDatastoresButton = await loader.getHarness(TnButtonHarness.with({ label: 'Fetch DataStores' }));
       await fetchDatastoresButton.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vmware.match_datastores_with_datasets', [{
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('vmware.match_datastores_with_datasets', [{
         hostname: '192.168.30.4',
         username: 'root',
         password: 'pleasechange',
@@ -105,10 +105,11 @@ describe('VmwareSnapshotFormComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vmware.create', [{
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('vmware.create', [{
         hostname: '192.168.30.4',
         username: 'root',
         password: 'pleasechange',
@@ -141,6 +142,7 @@ describe('VmwareSnapshotFormComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
@@ -150,7 +152,7 @@ describe('VmwareSnapshotFormComponent', () => {
         }),
       );
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vmware.update', [
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('vmware.update', [
         1,
         {
           hostname: '192.168.30.4',
@@ -185,7 +187,7 @@ describe('VmwareSnapshotFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vmware.update', [1, expect.anything()]);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('vmware.update', [1, expect.anything()]);
       expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });

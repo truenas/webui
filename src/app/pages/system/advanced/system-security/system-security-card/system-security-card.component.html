@@ -6,21 +6,36 @@
   <div class="details">
     <div class="details-item" [ixUiSearch]="searchableElements.elements.enableFips">
       <span class="label">{{ 'Enable FIPS' | translate }}:</span>
-      <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+      <span
+        *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig"
+        class="value"
+        tnTestId="security-enable-fips"
+        tnTestIdType="text"
+      >
         {{ systemSecurityConfig?.enable_fips ? ('Yes' | translate) : ('No' | translate) }}
       </span>
     </div>
 
     <div class="details-item" [ixUiSearch]="searchableElements.elements.enableGposStig">
       <span class="label">{{ 'Enable TrueNAS STIG compatibility mode' | translate }}:</span>
-      <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+      <span
+        *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig"
+        class="value"
+        tnTestId="security-enable-stig"
+        tnTestIdType="text"
+      >
         {{ systemSecurityConfig?.enable_gpos_stig ? ('Yes' | translate) : ('No' | translate) }}
       </span>
     </div>
 
     <div class="details-item" [ixUiSearch]="searchableElements.elements.minPasswordAge">
       <span class="label">{{ 'Min Password Age' | translate }}:</span>
-      <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+      <span
+        *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig"
+        class="value"
+        tnTestId="security-min-password-age"
+        tnTestIdType="text"
+      >
         @if (systemSecurityConfig?.min_password_age) {
           {{ '{n, plural, one {# day} other {# days} }' | translate: { n: systemSecurityConfig?.min_password_age } }}
         } @else {
@@ -31,7 +46,12 @@
 
     <div class="details-item" [ixUiSearch]="searchableElements.elements.maxPasswordAge">
       <span class="label">{{ 'Max Password Age' | translate }}:</span>
-      <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+      <span
+        *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig"
+        class="value"
+        tnTestId="security-max-password-age"
+        tnTestIdType="text"
+      >
         @if (systemSecurityConfig?.max_password_age) {
           {{ '{n, plural, one {# day} other {# days} }' | translate: { n: systemSecurityConfig?.max_password_age } }}
         } @else {
@@ -42,7 +62,12 @@
 
     <div class="details-item" [ixUiSearch]="searchableElements.elements.passwordComplexityRuleset">
       <span class="label">{{ 'Password Complexity Ruleset' | translate }}:</span>
-      <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+      <span
+        *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig"
+        class="value"
+        tnTestId="security-password-complexity-ruleset"
+        tnTestIdType="text"
+      >
         @if (systemSecurityConfig?.password_complexity_ruleset?.$set?.length) {
           @for (rule of systemSecurityConfig.password_complexity_ruleset?.$set; let isLast = $last; track rule) {
             {{ rulesetLabels.get(rule) | translate }}@if (!isLast) {,}
@@ -55,7 +80,12 @@
 
     <div class="details-item" [ixUiSearch]="searchableElements.elements.minPasswordLength">
       <span class="label">{{ 'Min Password Length' | translate }}:</span>
-      <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+      <span
+        *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig"
+        class="value"
+        tnTestId="security-min-password-length"
+        tnTestIdType="text"
+      >
         @if (systemSecurityConfig?.min_password_length) {
           {{ '{n, plural, one {# character} other {# characters} }' | translate: { n: systemSecurityConfig?.min_password_length } }}
         } @else {
@@ -66,7 +96,12 @@
 
     <div class="details-item" [ixUiSearch]="searchableElements.elements.passwordHistoryLength">
       <span class="label">{{ 'Password History Length' | translate }}:</span>
-      <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+      <span
+        *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig"
+        class="value"
+        tnTestId="security-password-history-length"
+        tnTestIdType="text"
+      >
         @if (systemSecurityConfig?.password_history_length) {
           {{ '{n, plural, one {# entry} other {# entries} }' | translate: { n: systemSecurityConfig?.password_history_length } }}
         } @else {

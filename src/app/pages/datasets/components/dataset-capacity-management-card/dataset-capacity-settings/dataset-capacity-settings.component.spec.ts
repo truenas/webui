@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { GiB } from 'app/constants/bytes.constant';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -13,7 +13,7 @@ import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   DatasetCapacitySettingsComponent,
 } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
@@ -63,8 +63,8 @@ describe('DatasetCapacitySettingsComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockCall('pool.dataset.update'),
+      mockTypedApi([
+        mockTypedCall('pool.dataset.update', null),
       ]),
       ...ixFormTestingProviders(),
       mockProvider(DialogService),
@@ -139,8 +139,9 @@ describe('DatasetCapacitySettingsComponent', () => {
     const closed = jest.fn();
     spectator.component.closed.subscribe(closed);
     save();
+    await spectator.fixture.whenStable();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', [
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.dataset.update', [
       'root/path',
       {
         quota: 110 * GiB,
@@ -163,7 +164,7 @@ describe('DatasetCapacitySettingsComponent', () => {
 
     save();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', [
+    expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', [
       'root/path',
       {
         quota: 105 * GiB,

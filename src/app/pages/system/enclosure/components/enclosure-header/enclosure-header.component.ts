@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialog } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog, TnTestIdDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import {
@@ -16,6 +16,7 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   styleUrls: ['./enclosure-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     RequiresRolesDirective,
     TnButtonComponent,
     TranslateModule,

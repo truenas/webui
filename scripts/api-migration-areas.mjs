@@ -140,6 +140,12 @@ export const migratedApiPaths = [
   'src/app/pages/containers/stores/container-config.store.spec.ts',
   'src/app/pages/containers/stores/container-devices.store.ts',
   'src/app/pages/containers/stores/container-devices.store.spec.ts',
+  // NAS-144000: data protection — cloud backup, cloud sync, periodic snapshot, rsync, replication
+  // and VMware snapshot tasks, their cards, lists, forms and wizards.
+  'src/app/pages/data-protection',
+  // NAS-144001: datasets — the tree and details cards, the dataset and zvol forms, quotas, encryption,
+  // permissions and ACL editing, and snapshots.
+  'src/app/pages/datasets',
   // NAS-143999: apps. `pages/apps` is pinned below its root: `AppsStatsService` (`app.stats`) and the
   // resources card (`reporting.realtime`) keep `ApiService` for event sources middleware pushes on a
   // timer (gap 17), and the container logs tail `app.container_log_follow`, a parameterised

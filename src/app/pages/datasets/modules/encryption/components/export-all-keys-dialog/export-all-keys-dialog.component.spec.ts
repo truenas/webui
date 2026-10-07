@@ -4,8 +4,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ExportAllKeysDialog } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
@@ -19,8 +19,8 @@ describe('ExportAllKeysDialogComponent', () => {
     imports: [
     ],
     providers: [
-      mockApi([
-        mockJob('pool.dataset.export_key', fakeSuccessfulJob('12345678')),
+      mockTypedApi([
+        mockTypedJob('pool.dataset.export_key', { state: JobState.Success, result: '12345678' }),
       ]),
       mockProvider(DownloadService, {
         coreDownload: jest.fn(() => of(undefined)),

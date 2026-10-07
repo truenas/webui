@@ -27,7 +27,7 @@
     <div formArrayName="syslogservers" role="group" [attr.aria-label]="'Syslog Servers List' | translate">
       @for (server of syslogServersArray.controls; track server; let i = $index) {
         <div class="server-group" [formGroupName]="i" [attr.aria-label]="('Syslog Server' | translate) + ' ' + (i + 1)">
-          <h4 [id]="'server-heading-' + i">{{ 'Syslog Server' | translate }} {{ i + 1 }}</h4>
+          <h4 tnTestIdType="text" [tnTestId]="['syslog-server-heading', i + 1]" [id]="'server-heading-' + i">{{ 'Syslog Server' | translate }} {{ i + 1 }}</h4>
           <tn-form-field [label]="'Host' | translate" [tooltip]="tooltips.syslogserver | translate">
             <tn-input formControlName="host"></tn-input>
           </tn-form-field>

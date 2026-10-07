@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import { enclosureDiskStatusLabels } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
@@ -10,6 +11,7 @@ import { getDiskStatusColor } from 'app/pages/system/enclosure/utils/disk-status
   templateUrl: './statuses-legend.component.html',
   styleUrls: ['./statuses-legend.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [TnTestIdDirective],
 })
 export class StatusesLegendComponent {
   private translate = inject(TranslateService);

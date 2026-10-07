@@ -6,8 +6,8 @@ import {
   TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
@@ -20,7 +20,8 @@ import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   CloudBackupFormComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
@@ -71,11 +72,11 @@ describe('CloudBackupListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('cloud_backup.query', cloudBackups),
-        mockCall('cloud_backup.delete'),
-        mockCall('cloud_backup.update'),
-        mockJob('cloud_backup.sync'),
+      mockTypedApi([
+        mockTypedQuery('cloud_backup.query', cloudBackups as unknown as WebUiQueryEntity<'cloud_backup.query'>[]),
+        mockTypedCall('cloud_backup.delete', null),
+        mockTypedCall('cloud_backup.update', null),
+        mockTypedJob('cloud_backup.sync', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -156,11 +157,11 @@ describe('CloudBackupListComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.sync', [1]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloud_backup.sync', [1]);
   });
 
   it('shows success message when job completes successfully', async () => {
-    jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(of({
+    jest.spyOn(spectator.inject(TypedApiService), 'job').mockReturnValue(of({
       id: 1,
       state: JobState.Success,
     } as Job<void>));
@@ -180,7 +181,7 @@ describe('CloudBackupListComponent', () => {
   });
 
   it('shows success message when job finishes successfully', async () => {
-    jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(of({
+    jest.spyOn(spectator.inject(TypedApiService), 'job').mockReturnValue(of({
       id: 1,
       state: JobState.Success,
     } as Job<void>));
@@ -210,7 +211,7 @@ describe('CloudBackupListComponent', () => {
       successMessage: 'Cloud Backup Task «UA» deleted.',
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
   });
 
   it('sorts through the data provider when a sortable header is clicked', async () => {
@@ -238,7 +239,7 @@ describe('CloudBackupListComponent', () => {
 
     await toggle.check();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
       'cloud_backup.update',
       [1, { enabled: true }],
     );

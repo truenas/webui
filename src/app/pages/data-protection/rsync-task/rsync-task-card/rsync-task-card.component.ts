@@ -29,7 +29,7 @@ import { Role } from 'app/enums/role.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
-import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
+import { RsyncTaskUi, toRsyncTask } from 'app/interfaces/rsync-task.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -48,7 +48,7 @@ import {
 import {
   TableToggleCellComponent,
 } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { JobTaskCardBase } from 'app/pages/data-protection/utils/job-task-card-base.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -84,7 +84,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class RsyncTaskCardComponent extends JobTaskCardBase<RsyncTaskUi> {
   private errorHandler = inject(ErrorHandlerService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
   protected emptyService = inject(EmptyService);
@@ -127,8 +127,8 @@ export class RsyncTaskCardComponent extends JobTaskCardBase<RsyncTaskUi> {
   }
 
   protected queryTasks(): Observable<RsyncTaskUi[]> {
-    return this.api.call('rsynctask.query').pipe(
-      map((rsyncTasks: RsyncTaskUi[]) => this.transformRsyncTasks(rsyncTasks)),
+    return this.api.query('rsynctask.query').pipe(
+      map((rsyncTasks) => this.transformRsyncTasks(rsyncTasks.map((task) => toRsyncTask(task) as RsyncTaskUi))),
     );
   }
 

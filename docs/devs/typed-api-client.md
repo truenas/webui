@@ -530,7 +530,46 @@ above. Each is a change for `truenas/api-client-ts`.
     `maxConcurrentCalls` option on the client, counting its own ping, would
     retire the patch and the spare slot.
 
-21. **Drift found moving apps.** Handled at one site each:
+21. **Drift found moving data protection.** Handled at one site each:
+    - `replication.create` / `update` and `replication.count_eligible_manual_snapshots` declare
+      their dataset lists as non-empty (`[string, ...string[]]`). The forms build `string[]` and
+      require a dataset before submitting, so `toReplicationCreateArgs` and
+      `toCountManualSnapshotsArgs` hand the payload over unchanged.
+    - `TransportMode.Legacy` (`LEGACY`) is in no generated transport union and no form offered it,
+      so the member is gone.
+    - `cloudsync.list_directory` returns loose records (rclone's `lsjson` output);
+      `toCloudSyncDirectoryListing` names the fields the explorers read.
+    - `cloud_backup.list_snapshots` types `time` as a string where the wire sends a `$date`
+      envelope (gap 15); `toCloudBackupSnapshot` reads it as the envelope.
+    - The task entries (`cloud_backup`, `cloudsync`, `pool.snapshottask`, `replication`,
+      `rsynctask`, `vmware`) are read into the UI interfaces through a `toX` adapter per
+      interface, as `toVirtualMachine` does, rather than retyping every consumer.
+    - `selectJobsByMethod` keys on the legacy `ApiJobMethod`, so `cloud_backup.sync` and
+      `rsynctask.run` stay in the job directory until the jobs store moves.
+
+22. **Drift found moving datasets.** Handled at one site each:
+    - `pool.dataset.query` rows type every ZFS property as a loose record and declare neither
+      `mounted` nor `share_type`; `toDataset` reads them into `Dataset`, and `toDatasetDetails` does the
+      same for `pool.dataset.details`, which middleware declares as a list of loose records.
+    - `pool.dataset.update` takes `user_properties` as a `{ key, value }` list, as `create` does. The
+      UI's `DatasetUpdate` had it as a record; nothing wrote it, so the interface now matches.
+    - `pool.dataset.get_quota` declares every shape a query can return across all four kinds of quota,
+      and types its filters over the union, so only fields every kind has can be named.
+      `toDatasetQuotas` and `toDatasetQuotaFilters` read the user and group rows the quota pages use.
+      It is not a `.query` method, so it is called with `call`, but it has an entity, so the fake
+      answers it as a query: script it with `mockTypedQuery`.
+    - `pool.dataset.checksum_choices` declares a fixed set of keys, which an interface without an
+      index signature cannot be read as `Choices`; the dataset form copies it into one first.
+    - `filesystem.getacl` and `filesystem.acltemplate.by_path` spell tags, types and permissions as
+      wire literals and do not pair `acltype` with the kind of entries; `toAcl` and
+      `toAclTemplateByPath` read them into the editors' types.
+    - `pool.snapshot.query` types each property's `parsed` as `unknown` and `retention.datetime` as a
+      string (gap 15); `toZfsSnapshot` reads rows and change events alike.
+    - `pool.dataset.encryption_summary` and `pool.dataset.unlock` stay in the job directory:
+      `UploadService.uploadAsJob` takes the legacy `ApiJobMethod`, and the unlock dialog starts both
+      through it when a key file is uploaded.
+
+23. **Drift found moving apps.** Handled at one site each:
     - `app.query`, `app.available` / `app.latest` / `app.similar` and `catalog.get_app_details` are
       open models (`{ [k: string]: unknown }`) where the pages read the catalog's structure:
       `metadata`, `capabilities`, `run_as_context`, `versions`, `app_metadata`. They do not overlap

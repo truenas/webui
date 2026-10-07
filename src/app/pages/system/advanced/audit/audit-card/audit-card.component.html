@@ -6,31 +6,51 @@
   <div class="details">
     <div class="details-item" [ixUiSearch]="searchableElements.elements.retention">
       <span class="label">{{ 'Retention' | translate }}:</span>
-      <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
+      <span
+        *ixWithLoadingState="auditConfig$ as auditConfig"
+        class="value"
+        tnTestId="audit-retention"
+        tnTestIdType="text"
+      >
         {{ getEndValue(auditConfig.retention, '{value} days') }}
       </span>
     </div>
     <div class="details-item" [ixUiSearch]="searchableElements.elements.reservation">
       <span class="label">{{ 'Reservation' | translate }}:</span>
-      <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
+      <span
+        *ixWithLoadingState="auditConfig$ as auditConfig"
+        class="value"
+        tnTestId="audit-reservation"
+        tnTestIdType="text"
+      >
         {{ getEndValue(auditConfig.reservation, '{value} GiB') }}
       </span>
     </div>
     <div class="details-item" [ixUiSearch]="searchableElements.elements.quota">
       <span class="label">{{ 'Quota' | translate }}:</span>
-      <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
+      <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value" tnTestId="audit-quota" tnTestIdType="text">
         {{ getEndValue(auditConfig.quota, '{value} GiB') }}
       </span>
     </div>
     <div class="details-item" [ixUiSearch]="searchableElements.elements.quotaFillWarning">
       <span class="label">{{ 'Quota Fill Warning' | translate }}:</span>
-      <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
+      <span
+        *ixWithLoadingState="auditConfig$ as auditConfig"
+        class="value"
+        tnTestId="audit-quota-fill-warning"
+        tnTestIdType="text"
+      >
         {{ getEndValue(auditConfig.quota_fill_warning, '{value}%') }}
       </span>
     </div>
     <div class="details-item" [ixUiSearch]="searchableElements.elements.quotaFillCritical">
       <span class="label">{{ 'Quota Fill Critical' | translate }}:</span>
-      <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
+      <span
+        *ixWithLoadingState="auditConfig$ as auditConfig"
+        class="value"
+        tnTestId="audit-quota-fill-critical"
+        tnTestIdType="text"
+      >
         {{ getEndValue(auditConfig.quota_fill_critical, '{value}%') }}
       </span>
     </div>

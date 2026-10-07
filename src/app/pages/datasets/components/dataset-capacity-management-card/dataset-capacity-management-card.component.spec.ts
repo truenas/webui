@@ -5,18 +5,18 @@ import { TnButtonHarness, TnCardComponent } from '@truenas/ui-components';
 import { MockComponents, MockModule } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
-import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { SpaceManagementChartComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/space-management-chart/space-management-chart.component';
@@ -81,11 +81,12 @@ describe('DatasetCapacityManagementCardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('pool.dataset.get_quota', [
+      mockTypedApi([
+        // Not a `.query` method, but it has an entity, so the fake answers it as one.
+        mockTypedQuery('pool.dataset.get_quota', [
           { id: 1, quota: 200 },
           { id: 2, quota: 200 },
-        ] as DatasetQuota[]),
+        ] as WebUiQueryEntity<'pool.dataset.get_quota'>[]),
       ]),
       mockProvider(DialogService),
       mockProvider(DatasetTreeStore, {
@@ -140,7 +141,10 @@ describe('DatasetCapacityManagementCardComponent', () => {
       expect(chartExtra[1].querySelector('.value')).toHaveText('4 KiB');
     });
 
-    it('shows details block', () => {
+    it('shows details block', async () => {
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
+
       const details = spectator.queryAll('.details');
       expect(details).toHaveLength(2);
 
@@ -242,9 +246,9 @@ describe('DatasetCapacityManagementCardComponent', () => {
       ],
       providers: [
         mockAuth(),
-        mockApi([
-          mockCall('pool.dataset.get_quota', []),
-          mockCall('zpool.query', [{
+        mockTypedApi([
+          mockTypedQuery('pool.dataset.get_quota', []),
+          mockTypedCall('zpool.query', [{
             name: 'dozer',
             properties: {
               class_special_available: { value: 1024 * 1024 * 1024 * 5 },
@@ -274,7 +278,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
       expect(label).toHaveText('Available to Dataset (Regular Tier):');
     });
 
-    it('shows "Pool Performance Tier Available" when dataset is on the Performance tier', () => {
+    it('shows "Pool Performance Tier Available" when dataset is on the Performance tier', async () => {
       spectator = createTieredComponent({
         props: {
           dataset: {
@@ -284,6 +288,8 @@ describe('DatasetCapacityManagementCardComponent', () => {
           } as DatasetDetails,
         },
       });
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
       const labels = Array.from(spectator.queryAll('.details .details-item .label'));
       const perfRow = labels.find((el) => el.textContent?.includes('Pool Performance Tier Available'));
       expect(perfRow).toBeTruthy();

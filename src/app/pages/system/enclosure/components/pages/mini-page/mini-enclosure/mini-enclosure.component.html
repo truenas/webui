@@ -6,8 +6,8 @@
 >
   @for (slot of slots(); track slot.drive_bay_number; let index = $index) {
     <div class="slot">
-      <span class="slot-number">{{ index + 1 }}</span>
-      <span class="slot-contents">
+      <span class="slot-number" tnTestIdType="text" [tnTestId]="['slot', slot.drive_bay_number, 'number']">{{ index + 1 }}</span>
+      <span class="slot-contents" tnTestIdType="text" [tnTestId]="['slot', slot.drive_bay_number, 'contents']">
         {{ slot.dev || ('Empty' | translate) }}
       </span>
     </div>

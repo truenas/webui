@@ -10,13 +10,13 @@ import { GiB } from 'app/constants/bytes.constant';
 import { Role } from 'app/enums/role.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
-import { DatasetDetails, DatasetUpdate } from 'app/interfaces/dataset.interface';
+import { DatasetDetails, DatasetUpdate, toDatasetUpdateArgs } from 'app/interfaces/dataset.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { getUserProperty, isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 
 @Component({
@@ -35,7 +35,7 @@ import { getUserProperty, isPropertyInherited, isRootDataset } from 'app/pages/d
   ],
 })
 export class DatasetCapacitySettingsComponent extends IxFormHostForm implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private validators = inject(IxValidatorsService);
@@ -145,7 +145,10 @@ export class DatasetCapacitySettingsComponent extends IxFormHostForm implements 
 
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     return {
-      request$: this.api.call('pool.dataset.update', [this.datasetToEdit().id, this.getChangedFormValues()]),
+      request$: this.api.call('pool.dataset.update', [
+        this.datasetToEdit().id,
+        toDatasetUpdateArgs(this.getChangedFormValues()),
+      ]),
       successMessage: this.translate.instant('Dataset settings updated.'),
     };
   };

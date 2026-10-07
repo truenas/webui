@@ -2,10 +2,10 @@ import { Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { EMPTY, Observable } from 'rxjs';
 import {
-  catchError, switchMap, tap,
+  catchError, map, switchMap, tap,
 } from 'rxjs/operators';
-import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { DatasetDetails, toDatasetDetails } from 'app/interfaces/dataset.interface';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 
 export interface DatasetTreeState {
@@ -26,7 +26,7 @@ const initialState: DatasetTreeState = {
   providedIn: 'root',
 })
 export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
 
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly error$ = this.select((state) => state.error);
@@ -138,7 +138,8 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
 
         return this.api.call('pool.dataset.details')
           .pipe(
-            tap((datasets: DatasetDetails[]) => {
+            map(toDatasetDetails),
+            tap((datasets) => {
               // `error` too: a refresh never passes through the branch above that clears
               // it, so a failed load followed by a good refresh would otherwise leave the
               // page reporting a failure over data that loaded fine.

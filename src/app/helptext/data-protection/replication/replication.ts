@@ -17,9 +17,7 @@ export const helptextReplication = {
  higher transfer speeds. This only works when replicating to a\
  TrueNAS, or other system with <i>py-libzfs</i> installed.</li>\
  <li><i>LOCAL</i> efficiently replicates snapshots to another dataset on\
- the same system without using the network.</li>\
- <li><i>LEGACY</i> uses the legacy replication engine from FreeNAS 11.2\
- and earlier.</li></ul>'),
+ the same system without using the network.</li></ul>'),
 
   sshCredentialsTooltip: T('Choose a connection that has been saved in\
  <b>Credentials > Backup Credentials > SSH Connections</b>.'),

@@ -84,6 +84,10 @@ describe('TunableCardComponent', () => {
     ]);
   });
 
+  it('tags each row by variable, not by the value that editing it changes', () => {
+    expect(spectator.query('tbody tr[data-test]')).toHaveAttribute('data-test', 'row-tunable-zfs-arc-max');
+  });
+
   it('opens the Add Tunable form in a side panel when Add is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();

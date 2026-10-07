@@ -1,7 +1,5 @@
-import {
-  AclType,
-
-} from 'app/enums/acl-type.enum';
+import { CallResponse, JobParams } from '@truenas/api-client';
+import { AclType } from 'app/enums/acl-type.enum';
 import {
   NfsAclTag,
   NfsAclType,
@@ -11,7 +9,7 @@ import {
   NfsBasicPermission,
 } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
-import { QueryFilter, QueryOptions } from 'app/interfaces/query-api.interface';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export type Acl = NfsAcl | PosixAcl;
 
@@ -33,12 +31,6 @@ export interface PosixAcl extends BaseAcl {
   acltype: AclType.Posix1e;
   flags: AclFlags;
 }
-
-export type AclQueryParams = [
-  path: string,
-  simplified?: boolean,
-  resolveIds?: boolean,
-];
 
 export interface PosixAclItem {
   default: boolean;
@@ -124,17 +116,6 @@ export interface SetAcl {
   options: SetAclOptions;
 }
 
-export interface AclTemplateByPathParams {
-  path?: string;
-  'query-filters'?: QueryFilter<unknown>[];
-  'query-options'?: QueryOptions<unknown>;
-  'format-options'?: {
-    canonicalize?: boolean;
-    ensure_builtins?: boolean;
-    resolve_names?: boolean;
-  };
-}
-
 export type AclTemplateByPath = NfsAclTemplateByPath | PosixAclTemplateByPath;
 
 export interface BaseAclTemplateByPath {
@@ -161,11 +142,33 @@ export interface AclTemplateCreateParams {
   comment?: string;
 }
 
-export interface AclTemplateCreateResponse {
-  name: string;
-  acltype: AclType.Nfs4 | AclType.Posix1e;
-  acl: NfsAclItem[] | PosixAclItem[];
-  comment: string;
-  id: number;
-  builtin: boolean;
+/**
+ * Reads `filesystem.getacl` into `Acl`. Middleware declares a union of NFS4, POSIX1E and DISABLED results whose
+ * entries spell tags, types and permissions as wire literals and leave `flags` optional on NFS4; the editors are
+ * written against the UI's reading of the same object. A path whose ACL is disabled comes back as a POSIX1E-shaped
+ * trivial ACL, which is how the UI has always treated it.
+ */
+export function toAcl(acl: CallResponse<WebUiApiDirectory, 'filesystem.getacl'>): Acl {
+  return acl as unknown as Acl;
+}
+
+/**
+ * Reads a `filesystem.acltemplate.by_path` entry into `AclTemplateByPath`. The generated entry types `acltype` as
+ * either ACL type alongside a list that could be either kind of entry, where the UI pairs them up.
+ */
+export function toAclTemplateByPath(
+  template: CallResponse<WebUiApiDirectory, 'filesystem.acltemplate.by_path'>[number],
+): AclTemplateByPath {
+  return template as unknown as AclTemplateByPath;
+}
+
+/** What `filesystem.setacl` takes, as middleware declares it. */
+export type SetAclArgs = JobParams<WebUiApiDirectory, 'filesystem.setacl'>[0];
+
+/**
+ * Hands an editor's ACL to `filesystem.setacl` unchanged. The UI's `acltype` includes `OFF`, which the editors
+ * never send: a disabled ACL is stripped, not set.
+ */
+export function toSetAclArgs(acl: SetAcl): SetAclArgs {
+  return acl as SetAclArgs;
 }

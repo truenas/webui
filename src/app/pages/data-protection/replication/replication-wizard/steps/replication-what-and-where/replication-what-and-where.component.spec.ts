@@ -7,9 +7,8 @@ import {
   TnStepperComponent,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -17,7 +16,6 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
-import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   SshCredentialsSelectComponent,
@@ -66,10 +64,8 @@ describe('ReplicationWhatAndWhereComponent', () => {
         ] as KeychainCredential[]),
         // Read both here, over the legacy client, and through `ReplicationService`.
         mockTypedQuery('replication.query', existingTasks as WebUiQueryEntity<'replication.query'>[]),
-      ]),
-      mockApi([
-        mockCall('replication.query', existingTasks as ReplicationTask[]),
-        mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
+        mockTypedQuery('replication.query', existingTasks as unknown as WebUiQueryEntity<'replication.query'>[]),
+        mockTypedCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
       ]),
       mockProvider(DatasetService),
       mockProvider(TnDialog, {

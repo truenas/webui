@@ -6,7 +6,7 @@
   <div class="details">
     <div class="details-item" [ixUiSearch]="searchableElements.elements.sedPassword">
       <span class="label">{{ 'Password' | translate }}:</span>
-      <span *ixWithLoadingState="sedConfig$ as sedConfig" class="value">
+      <span *ixWithLoadingState="sedConfig$ as sedConfig" class="value" tnTestId="sed-password" tnTestIdType="text">
         {{ sedConfig.sedPassword }}
       </span>
     </div>

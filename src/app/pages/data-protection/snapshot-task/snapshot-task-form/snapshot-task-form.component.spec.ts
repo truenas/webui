@@ -8,7 +8,6 @@ import {
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
@@ -17,7 +16,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
@@ -63,10 +62,8 @@ describe('SnapshotTaskComponent', () => {
     }),
     mockTypedApi([
       mockTypedCall('pool.snapshottask.update_will_change_retention_for', {}),
-    ]),
-    mockApi([
-      mockCall('pool.snapshottask.create'),
-      mockCall('pool.snapshottask.update'),
+      mockTypedCall('pool.snapshottask.create', null),
+      mockTypedCall('pool.snapshottask.update', null),
     ]),
     mockProvider(DialogService),
     mockProvider(StorageService, {
@@ -140,7 +137,7 @@ describe('SnapshotTaskComponent', () => {
 
       spectator.detectChanges();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
         allow_empty: false,
         dataset: 'test',
         enabled: true,
@@ -192,7 +189,7 @@ describe('SnapshotTaskComponent', () => {
 
       spectator.detectChanges();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.update', [
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.snapshottask.update', [
         1,
         {
           allow_empty: true,
@@ -217,7 +214,7 @@ describe('SnapshotTaskComponent', () => {
     });
 
     it('includes fixate_removal_date as false when no snapshots are affected', async () => {
-      const apiService = spectator.inject(ApiService);
+      const apiService = spectator.inject(TypedApiService);
 
       await (await getCheckbox('allow_empty')).uncheck();
 
@@ -315,7 +312,7 @@ describe('SnapshotTaskComponent', () => {
       panelSpectator.component.submit();
       await panelSpectator.fixture.whenStable();
 
-      expect(panelSpectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(panelSpectator.inject(TypedApiService).call).toHaveBeenCalledWith(
         'pool.snapshottask.update',
         [1, expect.any(Object)],
       );

@@ -21,7 +21,7 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   PropertiesOverrideValidatorService,
 } from 'app/pages/data-protection/replication/replication-form/properties-override-validator/properties-override-validator.service';
@@ -53,7 +53,7 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class SourceSectionComponent implements OnChanges {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private taskService = inject(TaskService);
   private translate = inject(TranslateService);
@@ -89,7 +89,7 @@ export class SourceSectionComponent implements OnChanges {
   readonly timeOptions$ = of(this.taskService.getTimeOptions());
   readonly snapshotNamingOptions$ = of(mapToOptions(snapshotNamingOptionNames, this.translate));
 
-  readonly periodicSnapshotTasks$ = this.api.call('pool.snapshottask.query').pipe(map((tasks) => {
+  readonly periodicSnapshotTasks$ = this.api.query('pool.snapshottask.query').pipe(map((tasks) => {
     return tasks.map((task) => {
       const enabledMessage = task.enabled
         ? this.translate.instant('Enabled')

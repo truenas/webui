@@ -4,10 +4,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
+import { CallResponse } from '@truenas/api-client';
 import { TnFormSectionHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AclMode } from 'app/enums/acl-type.enum';
 import {
   DatasetAclType,
@@ -27,6 +28,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import {
   OtherOptionsSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/other-options-section/other-options-section.component';
@@ -206,18 +208,18 @@ describe('OtherOptionsSectionComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockCall('pool.dataset.checksum_choices', {
+      mockTypedApi([
+        mockTypedCall('pool.dataset.checksum_choices', {
           ON: 'ON',
           SHA256: 'SHA256',
-        }),
-        mockCall('pool.dataset.compression_choices', {
+        } as CallResponse<WebUiApiDirectory, 'pool.dataset.checksum_choices'>),
+        mockTypedCall('pool.dataset.compression_choices', {
           LZ4: 'LZ4',
           LZJB: 'LZJB',
           OFF: 'OFF',
         }),
-        mockCall('pool.dataset.recordsize_choices', ['1K', '64K']),
-        mockCall('pool.dataset.recommended_zvol_blocksize', '256K' as DatasetRecordSize),
+        mockTypedCall('pool.dataset.recordsize_choices', ['1K', '64K']),
+        mockTypedCall('pool.dataset.recommended_zvol_blocksize', '256K' as DatasetRecordSize),
       ]),
       mockProvider(SystemGeneralService),
       mockProvider(SharingTierService, {

@@ -13,13 +13,20 @@ import {
   TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnInputComponent, TnRadioGroupComponent,
   TnTestIdDirective,
 } from '@truenas/ui-components';
-import { from, of, switchMap } from 'rxjs';
+import {
+  from, map, of, switchMap,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextUnlock } from 'app/helptext/storage/volumes/datasets/dataset-unlock';
-import { DatasetEncryptionSummary, DatasetEncryptionSummaryQueryParams, DatasetEncryptionSummaryQueryParamsDataset } from 'app/interfaces/dataset-encryption-summary.interface';
-import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
+import {
+  DatasetEncryptionSummary,
+  DatasetEncryptionSummaryQueryParams,
+  DatasetEncryptionSummaryQueryParamsDataset,
+  toDatasetEncryptionSummaryJob,
+} from 'app/interfaces/dataset-encryption-summary.interface';
+import { DatasetUnlockParams, DatasetUnlockResult, toDatasetUnlockJob } from 'app/interfaces/dataset-lock.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -27,7 +34,7 @@ import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { UnlockSummaryDialog } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
@@ -82,7 +89,7 @@ function requireAtLeastOneKeyOrPassphrase(message: string): ValidatorFn {
   ],
 })
 export class DatasetUnlockComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private aroute = inject(ActivatedRoute);
   private dialogService = inject(DialogService);
@@ -162,7 +169,7 @@ export class DatasetUnlockComponent implements OnInit {
 
   private getEncryptionSummary(): void {
     this.dialogService.jobDialog(
-      this.api.job('pool.dataset.encryption_summary', [this.pk]),
+      this.api.job('pool.dataset.encryption_summary', [this.pk]).pipe(map(toDatasetEncryptionSummaryJob)),
       {
         title: this.translate.instant(helptextUnlock.fetchingEncryptionSummaryTitle),
         description: this.translate.instant(helptextUnlock.fetchingEncryptionSummaryMessage, { dataset: this.pk }),
@@ -231,7 +238,7 @@ export class DatasetUnlockComponent implements OnInit {
           method: 'pool.dataset.unlock',
           params: [this.pk, payload],
         })
-      : this.api.job('pool.dataset.unlock', [this.pk, payload]);
+      : this.api.job('pool.dataset.unlock', [this.pk, payload]).pipe(map(toDatasetUnlockJob));
 
     this.dialogService.jobDialog(job$, {
       title: this.translate.instant(helptextUnlock.unlockingDatasetsTitle),
@@ -282,7 +289,7 @@ export class DatasetUnlockComponent implements OnInit {
           method: 'pool.dataset.encryption_summary',
           params: [this.pk, payload],
         })
-      : this.api.job('pool.dataset.encryption_summary', [this.pk, payload]);
+      : this.api.job('pool.dataset.encryption_summary', [this.pk, payload]).pipe(map(toDatasetEncryptionSummaryJob));
 
     return {
       request$: this.dialogService.jobDialog(job$, {

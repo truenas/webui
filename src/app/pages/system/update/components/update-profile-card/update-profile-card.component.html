@@ -6,7 +6,7 @@
   @if (isProfileMissingFromOptions()) {
     <div class="current-profile">
       <div class="label">{{ 'Current Profile:' | translate }}</div>
-      <div class="value">{{ currentProfileLabel() }}</div>
+      <div class="value" tnTestId="current-profile" tnTestIdType="text">{{ currentProfileLabel() }}</div>
     </div>
   }
 
@@ -43,12 +43,12 @@
         @for (profile of availableProfiles(); track profile.name) {
           <div class="profile-row">
             <div class="profile-name">
-              <strong>{{ profile.name }}</strong>
+              <strong tnTestIdType="text" [tnTestId]="['profile', profile.name, 'name']">{{ profile.name }}</strong>
               @if (profile.footnote) {
-                <span class="profile-note">{{ profile.footnote }}</span>
+                <span class="profile-note" tnTestIdType="text" [tnTestId]="['profile', profile.name, 'footnote']">{{ profile.footnote }}</span>
               }
             </div>
-            <div class="profile-description">
+            <div class="profile-description" tnTestIdType="text" [tnTestId]="['profile', profile.name, 'description']">
               {{ profile.description }}
             </div>
           </div>
@@ -71,12 +71,16 @@
           @for (profile of notAvailableProfiles(); track profile.name) {
             <div class="profile-row">
               <div class="profile-name">
-                <strong>{{ profile.name }}</strong>
+                <strong tnTestIdType="text" [tnTestId]="['profile', profile.name, 'name']">{{ profile.name }}</strong>
                 @if (profile.footnote) {
-                  <span class="profile-note">{{ profile.footnote }}</span>
+                  <span class="profile-note" tnTestIdType="text" [tnTestId]="['profile', profile.name, 'footnote']">{{ profile.footnote }}</span>
                 }
               </div>
-              <div class="profile-description">
+              <div
+                class="profile-description"
+                tnTestIdType="text"
+                [tnTestId]="['profile', profile.name, 'description']"
+              >
                 {{ profile.description }}
               </div>
             </div>

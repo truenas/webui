@@ -149,6 +149,11 @@ describe('TunableListComponent', () => {
     ]);
   });
 
+  it('tags each row by variable, not by the value that editing it changes', () => {
+    expect(spectator.queryAll('tbody tr[data-test]')[kernelHostnameRow])
+      .toHaveAttribute('data-test', 'row-tunable-kernel-hostname');
+  });
+
   it('opens the Add Tunable form when Add is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();

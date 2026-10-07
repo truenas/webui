@@ -1,8 +1,10 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { CallResponse, CallParams } from '@truenas/api-client';
 import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { Schedule } from './schedule.interface';
 
 export interface CloudBackup {
@@ -29,9 +31,8 @@ export interface CloudBackup {
   rate_limit: number | null;
 }
 
-export interface CloudBackupUpdate extends Omit<CloudBackup, 'id' | 'job' | 'locked' | 'credentials'> {
-  credentials: number;
-}
+/** What the cloud backup form sends, to `cloud_backup.create` and `cloud_backup.update` alike. */
+export type CloudBackupUpdate = CallParams<WebUiApiDirectory, 'cloud_backup.create'>[0];
 
 export interface CloudBackupSnapshot {
   id: string;
@@ -77,18 +78,6 @@ export enum CloudBackupSnapshotDirectoryFileType {
   Dir = 'dir',
 }
 
-export type CloudBackupSnapshotDirectoryParams = [
-  id: number,
-  snapshot_id: string,
-  path: string,
-];
-
-export interface CloudBackupSnapshotDirectoryListing {
-  name: string;
-  path: string;
-  type: CloudBackupSnapshotDirectoryFileType;
-}
-
 export interface BackupTile {
   title: string;
   totalSend: number;
@@ -98,4 +87,28 @@ export interface BackupTile {
   lastWeekSend: number;
   lastWeekReceive: number;
   lastSuccessfulTask: ApiTimestamp;
+}
+
+/**
+ * Reads a `cloud_backup.query` row into the shape the data protection pages are written against. The generated
+ * entry spells the enums as wire literals, leaves the fields middleware defaults optional, types
+ * `attributes` as the provider union and `job` as a loose record; it describes the same object.
+ *
+ * A plain `as` does not compile here: `attributes` is the provider union, which has no index
+ * signature to compare with the UI's record. So the cast checks nothing, and a regenerated entry
+ * that drops or renames a field still compiles and reads `undefined`.
+ */
+export function toCloudBackup(cloudBackup: WebUiQueryEntity<'cloud_backup.query'>): CloudBackup {
+  return cloudBackup as unknown as CloudBackup;
+}
+
+/**
+ * Reads a `cloud_backup.list_snapshots` row. The generated type declares `time` as a string where
+ * middleware sends a `{ $date }` envelope (gap 15 in docs/devs/typed-api-client.md), and leaves out
+ * the restic fields the UI does not read either.
+ */
+export function toCloudBackupSnapshot(
+  snapshot: CallResponse<WebUiApiDirectory, 'cloud_backup.list_snapshots'>[number],
+): CloudBackupSnapshot {
+  return snapshot as unknown as CloudBackupSnapshot;
 }

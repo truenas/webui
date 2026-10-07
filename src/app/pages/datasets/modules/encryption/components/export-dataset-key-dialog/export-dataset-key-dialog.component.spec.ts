@@ -4,11 +4,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ExportDatasetKeyDialog } from './export-dataset-key-dialog.component';
 
@@ -18,8 +18,8 @@ describe('ExportDatasetKeyDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: ExportDatasetKeyDialog,
     providers: [
-      mockApi([
-        mockJob('pool.dataset.export_key', fakeSuccessfulJob('12345678')),
+      mockTypedApi([
+        mockTypedJob('pool.dataset.export_key', { state: JobState.Success, result: '12345678' }),
       ]),
       mockProvider(DownloadService, {
         coreDownload: jest.fn(() => of(undefined)),
@@ -35,13 +35,15 @@ describe('ExportDatasetKeyDialogComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
   });
 
   it('loads and shows dataset encryption key', () => {
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.dataset.export_key', ['pool/my-dataset']);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('pool.dataset.export_key', ['pool/my-dataset']);
     const key = spectator.query('.key');
     expect(key).toHaveText('12345678');
   });
@@ -59,7 +61,7 @@ describe('ExportDatasetKeyDialogComponent', () => {
   });
 
   it('auto closes dialog if there was an error loading the key', () => {
-    const mockedApi = spectator.inject(MockApiService);
+    const mockedApi = spectator.inject(MockTypedApiService);
     jest.spyOn(mockedApi, 'job').mockReturnValue(throwError(() => new Error('Failed to load key')));
 
     spectator.component.ngOnInit();

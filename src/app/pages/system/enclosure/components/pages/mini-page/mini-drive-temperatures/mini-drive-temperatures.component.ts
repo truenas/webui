@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
@@ -16,6 +17,7 @@ import { DiskTemperatureService } from 'app/services/disk-temperature.service';
   styleUrl: './mini-drive-temperatures.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     NgxSkeletonLoaderModule,
     TooltipComponent,
     TranslateModule,

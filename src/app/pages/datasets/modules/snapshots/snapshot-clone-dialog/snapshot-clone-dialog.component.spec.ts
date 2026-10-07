@@ -4,10 +4,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SnapshotCloneDialog } from './snapshot-clone-dialog.component';
 
 describe('SnapshotCloneDialogComponent', () => {
@@ -26,8 +26,8 @@ describe('SnapshotCloneDialogComponent', () => {
       },
       mockProvider(DialogRef),
       mockProvider(DialogService),
-      mockApi([
-        mockCall('pool.snapshot.clone'),
+      mockTypedApi([
+        mockTypedCall('pool.snapshot.clone', null),
       ]),
     ],
   });
@@ -49,7 +49,7 @@ describe('SnapshotCloneDialogComponent', () => {
     const cloneButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clone' }));
     await cloneButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.clone', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.snapshot.clone', [{
       dataset_dst: 'pool/dataset',
       snapshot: 'my-snapshot',
     }]);

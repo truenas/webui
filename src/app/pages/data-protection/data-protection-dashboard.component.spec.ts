@@ -2,9 +2,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { TnEmptyComponent, TnEmptyHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { Pool } from 'app/interfaces/pool.interface';
+import { mockTypedApi, mockTypedQuery, settleTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import {
   CloudBackupCardComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-card/cloud-backup-card.component';
@@ -17,8 +17,9 @@ import { SnapshotTaskCardComponent } from 'app/pages/data-protection/snapshot-ta
 describe('DataProtectionDashboardComponent', () => {
   let spectator: Spectator<DataProtectionDashboardComponent>;
 
-  // pool.query is called with { count: true }, so it resolves to a number.
-  let poolCount: unknown = 1;
+  // The dashboard only counts pools, so one row stands for "a pool exists". Filled in place: the
+  // double reads the rows when the query arrives, not when it is scripted.
+  const pools: WebUiQueryEntity<'pool.query'>[] = [];
 
   const createComponent = createComponentFactory({
     component: DataProtectionDashboardComponent,
@@ -33,19 +34,19 @@ describe('DataProtectionDashboardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('pool.query', () => poolCount as Pool[]),
+      mockTypedApi([
+        mockTypedQuery('pool.query', pools),
       ]),
     ],
     imports: [TnEmptyComponent],
   });
 
-  beforeEach(() => {
-    poolCount = 1;
+  it('renders data protection cards', async () => {
+    pools.splice(0, pools.length, { id: 1 } as WebUiQueryEntity<'pool.query'>);
     spectator = createComponent();
-  });
+    await settleTypedApi();
+    spectator.detectChanges();
 
-  it('renders data protection cards', () => {
     expect(spectator.query(CloudBackupCardComponent)).toExist();
     expect(spectator.query(CloudSyncTaskCardComponent)).toExist();
     expect(spectator.query(SnapshotTaskCardComponent)).toExist();
@@ -54,9 +55,11 @@ describe('DataProtectionDashboardComponent', () => {
   });
 
   describe('when there are no pools', () => {
-    beforeEach(() => {
-      poolCount = 0;
+    beforeEach(async () => {
+      pools.length = 0;
       spectator = createComponent();
+      await settleTypedApi();
+      spectator.detectChanges();
     });
 
     it('shows the empty state with the catalog description, markup stripped', async () => {

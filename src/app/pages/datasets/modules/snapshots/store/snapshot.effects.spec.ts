@@ -2,10 +2,11 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom, ReplaySubject } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   snapshotPageEntered,
   snapshotsLoaded,
@@ -22,7 +23,7 @@ const fakeSnapshots = [
 
 describe('SnapshotEffects', () => {
   let spectator: SpectatorService<SnapshotEffects>;
-  let api: ApiService;
+  let api: TypedApiService;
   let store$: MockStore<AppState>;
   let actions$: ReplaySubject<unknown>;
 
@@ -30,8 +31,8 @@ describe('SnapshotEffects', () => {
     service: SnapshotEffects,
     providers: [
       provideMockActions(() => actions$),
-      mockApi([
-        mockCall('pool.snapshot.query', fakeSnapshots),
+      mockTypedApi([
+        mockTypedQuery('pool.snapshot.query', fakeSnapshots as unknown as WebUiQueryEntity<'pool.snapshot.query'>[]),
       ]),
       provideMockStore({
         initialState: {
@@ -50,7 +51,7 @@ describe('SnapshotEffects', () => {
   beforeEach(() => {
     actions$ = new ReplaySubject<unknown>(1);
     spectator = createService();
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
     store$ = spectator.inject(MockStore);
   });
 
@@ -60,14 +61,14 @@ describe('SnapshotEffects', () => {
 
       const dispatchedAction = await firstValueFrom(spectator.service.loadSnapshots$);
       expect(dispatchedAction).toEqual(snapshotsLoaded({ snapshots: fakeSnapshots }));
-      expect(api.call).toHaveBeenCalledTimes(1);
+      expect(api.query).toHaveBeenCalledTimes(1);
     });
 
     it('should not make duplicate API calls when preferences change', async () => {
       actions$.next(snapshotPageEntered());
 
       await firstValueFrom(spectator.service.loadSnapshots$);
-      expect(api.call).toHaveBeenCalledTimes(1);
+      expect(api.query).toHaveBeenCalledTimes(1);
 
       store$.overrideSelector(selectPreferences, { showSnapshotExtraColumns: true } as Preferences);
       store$.refreshState();
@@ -76,7 +77,7 @@ describe('SnapshotEffects', () => {
       actions$.next(snapshotExtraColumnsToggled());
 
       // Verify no additional calls were made (still 1)
-      expect(api.call).toHaveBeenCalledTimes(1);
+      expect(api.query).toHaveBeenCalledTimes(1);
     });
 
     it('requests creation/used/referenced properties when extra columns are enabled', async () => {
@@ -86,46 +87,41 @@ describe('SnapshotEffects', () => {
       actions$.next(snapshotPageEntered());
       await firstValueFrom(spectator.service.loadSnapshots$);
 
-      expect(api.call).toHaveBeenCalledWith('pool.snapshot.query', [
-        [],
-        {
-          select: ['snapshot_name', 'dataset', 'name', 'properties'],
-          order_by: ['name'],
-          extra: { properties: ['creation', 'used', 'referenced'] },
-        },
-      ]);
+      expect(api.query).toHaveBeenCalledWith('pool.snapshot.query', [], {
+        select: ['snapshot_name', 'dataset', 'name', 'properties'],
+        order_by: ['name'],
+        extra: { properties: ['creation', 'used', 'referenced'] },
+      });
     });
 
     it('does not request extra properties when extra columns are hidden', async () => {
       actions$.next(snapshotPageEntered());
       await firstValueFrom(spectator.service.loadSnapshots$);
 
-      expect(api.call).toHaveBeenCalledWith('pool.snapshot.query', [
-        [],
-        {
-          select: ['snapshot_name', 'dataset', 'name'],
-          order_by: ['name'],
-        },
-      ]);
+      expect(api.query).toHaveBeenCalledWith('pool.snapshot.query', [], {
+        select: ['snapshot_name', 'dataset', 'name'],
+        order_by: ['name'],
+      });
       // Also assert the absence of `extra` explicitly so an accidental
       // `extra: undefined` (or any value) would fail the test — the deep
       // equality above would otherwise pass with a stray undefined key.
-      expect(api.call).toHaveBeenCalledWith('pool.snapshot.query', [
+      expect(api.query).toHaveBeenCalledWith(
+        'pool.snapshot.query',
         [],
         expect.not.objectContaining({ extra: expect.anything() }),
-      ]);
+      );
     });
 
     it('should make a new API call when snapshotPageEntered is dispatched again', async () => {
       actions$.next(snapshotPageEntered());
 
       await firstValueFrom(spectator.service.loadSnapshots$);
-      expect(api.call).toHaveBeenCalledTimes(1);
+      expect(api.query).toHaveBeenCalledTimes(1);
 
       actions$.next(snapshotPageEntered());
 
       await firstValueFrom(spectator.service.loadSnapshots$);
-      expect(api.call).toHaveBeenCalledTimes(2);
+      expect(api.query).toHaveBeenCalledTimes(2);
     });
   });
 });

@@ -24,7 +24,7 @@ import { Role } from 'app/enums/role.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
-import { CountManualSnapshotsParams, EligibleManualSnapshotsCount } from 'app/interfaces/count-manual-snapshots.interface';
+import { CountManualSnapshotsParams, EligibleManualSnapshotsCount, toCountManualSnapshotsArgs } from 'app/interfaces/count-manual-snapshots.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
@@ -45,7 +45,7 @@ import { regexValidator } from 'app/modules/forms/ix-forms/validators/regex-vali
 import { LocaleService } from 'app/modules/language/locale.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -88,7 +88,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   private authService = inject(AuthService);
   private datasetService = inject(DatasetService);
   private dialogService = inject(DialogService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorParser = inject(ErrorParserService);
   private errorHandler = inject(ErrorHandlerService);
@@ -142,7 +142,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     sudo: [false],
     name: ['', [Validators.required],
       forbiddenAsyncValues(
-        this.api.call('replication.query').pipe(
+        this.api.query('replication.query').pipe(
           map((replications) => replications.map((replication) => replication.name)),
         ),
       ),
@@ -465,7 +465,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       ]).pipe(
         switchMap((hasRole) => {
           if (hasRole) {
-            return this.api.call('replication.count_eligible_manual_snapshots', [payload]);
+            return this.api.call('replication.count_eligible_manual_snapshots', [toCountManualSnapshotsArgs(payload)]);
           }
           return of({ eligible: 0, total: 0 });
         }),
@@ -536,15 +536,13 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
         (tasks: ReplicationTask[]) => {
           const options: Option[] = [];
           for (const task of tasks) {
-            if (task.transport !== TransportMode.Legacy) {
-              const exp = task.state?.datetime
-                ? this.translate.instant('last run {date}', {
-                    date: format(new Date(task.state.datetime.$date), this.localeService.dateFormat),
-                  })
-                : this.translate.instant('never ran');
-              const label = `${task.name} (${exp})`;
-              options.push({ label, value: task.id });
-            }
+            const exp = task.state?.datetime
+              ? this.translate.instant('last run {date}', {
+                  date: format(new Date(task.state.datetime.$date), this.localeService.dateFormat),
+                })
+              : this.translate.instant('never ran');
+            const label = `${task.name} (${exp})`;
+            options.push({ label, value: task.id });
           }
           this.existReplicationOptions$ = of(options);
           this.cdr.markForCheck();

@@ -11,7 +11,7 @@ import {
   InputType, TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent,
   TnFormFieldComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { of, startWith } from 'rxjs';
+import { map, of, startWith } from 'rxjs';
 import { minimumPbkdf2Iterations } from 'app/constants/dataset.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -19,7 +19,7 @@ import { Role } from 'app/enums/role.enum';
 import { findInTree } from 'app/helpers/find-in-tree.utils';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { Dataset, toDataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
@@ -28,7 +28,7 @@ import {
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { isPasswordEncrypted, isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { EncryptionOptionsDialogData } from './encryption-options-dialog-data.interface';
@@ -76,7 +76,7 @@ interface EncryptionOptionsFormValue {
 })
 export class EncryptionOptionsDialog implements OnInit {
   private fb = inject(NonNullableFormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
   private dialog = inject(DialogService);
@@ -203,8 +203,8 @@ export class EncryptionOptionsDialog implements OnInit {
   };
 
   private loadPbkdf2iters(): void {
-    this.api.call('pool.dataset.query', [[['id', '=', this.data.dataset.id]]])
-      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
+    this.api.query('pool.dataset.query', [['id', '=', this.data.dataset.id]])
+      .pipe(map((datasets) => datasets.map(toDataset)), this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (datasets: Dataset[]) => {
           const pbkdf2iters = datasets[0].pbkdf2iters;

@@ -4,9 +4,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   CreateStorjBucketDialog,
 } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
@@ -21,8 +21,8 @@ describe('CreateStorjBucketDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('cloudsync.create_bucket'),
+      mockTypedApi([
+        mockTypedCall('cloudsync.create_bucket', null),
       ]),
       mockProvider(DialogRef),
       {
@@ -46,7 +46,7 @@ describe('CreateStorjBucketDialogComponent', () => {
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.create_bucket', [1, 'new-bucket']);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloudsync.create_bucket', [1, 'new-bucket']);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith('new-bucket');
   });
 });

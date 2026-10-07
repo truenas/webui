@@ -1,14 +1,15 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { UsageCardComponent } from 'app/pages/datasets/components/usage-card/usage-card.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
@@ -33,12 +34,12 @@ describe('UsageCardComponent', () => {
   const createComponent = createComponentFactory({
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('tn_connect.config', {
+      mockTypedApi([
+        mockTypedCall('tn_connect.config', {
           id: 1,
           enabled: true,
           status: TruenasConnectStatus.Configured,
-        } as TruenasConnectConfig),
+        } as CallResponse<WebUiApiDirectory, 'tn_connect.config'>),
       ]),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),

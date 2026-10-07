@@ -3,21 +3,23 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { YesNo } from 'app/enums/yes-no.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
-import { Acl, NfsAcl, PosixAcl } from 'app/interfaces/acl.interface';
+import { NfsAcl, PosixAcl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   ViewNfsPermissionsComponent,
 } from 'app/pages/datasets/modules/permissions/components/view-nfs-permissions/view-nfs-permissions.component';
@@ -30,6 +32,7 @@ import {
 import {
   PermissionsCardComponent,
 } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
+import { PermissionsCardState } from 'app/pages/datasets/modules/permissions/interfaces/permissions-sidebar-state.interface';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
 
 describe('PermissionsCardComponent', () => {
@@ -59,6 +62,12 @@ describe('PermissionsCardComponent', () => {
   } as DatasetDetails;
 
   let spectator: Spectator<PermissionsCardComponent>;
+
+  /**
+   * What the card's own store loaded. The fake client answers with a copy of each fixture, so the views are checked
+   * for receiving this object as is, rather than the fixture itself.
+   */
+  const cardState = (): PermissionsCardState => spectator.inject(PermissionsCardStore, true).state();
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: PermissionsCardComponent,
@@ -75,24 +84,26 @@ describe('PermissionsCardComponent', () => {
       PermissionsCardStore,
       mockProvider(DialogService),
       mockProvider(Router),
-      mockApi([
-        mockCall('filesystem.stat', stat),
-        mockCall('filesystem.getacl', {
+      mockTypedApi([
+        mockTypedCall('filesystem.stat', stat as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
+        mockTypedCall('filesystem.getacl', {
           trivial: true,
-        } as Acl),
+        } as CallResponse<WebUiApiDirectory, 'filesystem.getacl'>),
       ]),
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent({
       props: { dataset },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
   });
 
   it('loads stat and acl for dataset provided in Input', () => {
-    const api = spectator.inject(ApiService);
+    const api = spectator.inject(TypedApiService);
 
     expect(api.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/testpool/dataset']);
     expect(api.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/testpool/dataset', true, true]);
@@ -107,25 +118,29 @@ describe('PermissionsCardComponent', () => {
   it('shows trivial permissions when acl is trivial', () => {
     const permissionsComponent = spectator.query(ViewTrivialPermissionsComponent)!;
     expect(permissionsComponent).toExist();
-    expect(permissionsComponent.stat).toBe(stat);
+    expect(permissionsComponent.stat).toBe(cardState().stat);
+    expect(permissionsComponent.stat).toEqual(stat);
   });
 
-  it('shows posix permissions when acltype is POSIX', () => {
+  it('shows posix permissions when acltype is POSIX', async () => {
     const acl = {
       trivial: false,
       acltype: AclType.Posix1e,
     } as PosixAcl;
 
-    spectator.inject(MockApiService).mockCallOnce('filesystem.getacl', acl);
+    spectator.inject(MockTypedApiService).mockCall('filesystem.getacl', acl as unknown as CallResponse<WebUiApiDirectory, 'filesystem.getacl'>);
 
     spectator.setInput('dataset', {
       ...dataset,
       mountpoint: '/mnt/test/posix',
     });
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
 
     const permissionsComponent = spectator.query(ViewPosixPermissionsComponent)!;
     expect(permissionsComponent).toExist();
-    expect(permissionsComponent.acl).toBe(acl);
+    expect(permissionsComponent.acl).toBe(cardState().acl);
+    expect(permissionsComponent.acl).toEqual(acl);
   });
 
   it('does not load permissions for locked datasets', () => {
@@ -136,7 +151,7 @@ describe('PermissionsCardComponent', () => {
       locked: true,
     });
 
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('filesystem.getacl', expect.anything());
+    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('filesystem.getacl', expect.anything());
     expect(spectator.fixture.nativeElement).toHaveText('Dataset is locked');
   });
 
@@ -153,8 +168,8 @@ describe('PermissionsCardComponent', () => {
       },
     });
 
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('filesystem.getacl', expect.anything());
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('filesystem.stat', expect.anything());
+    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('filesystem.getacl', expect.anything());
+    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('filesystem.stat', expect.anything());
     expect(spectator.fixture.nativeElement).toHaveText('Dataset is not mounted');
   });
 
@@ -166,8 +181,8 @@ describe('PermissionsCardComponent', () => {
       mountpoint: null,
     });
 
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('filesystem.getacl', expect.anything());
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('filesystem.stat', expect.anything());
+    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('filesystem.getacl', expect.anything());
+    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('filesystem.stat', expect.anything());
     expect(spectator.fixture.nativeElement).toHaveText('Dataset has no mountpoint');
   });
 
@@ -177,7 +192,7 @@ describe('PermissionsCardComponent', () => {
       acltype: AclType.Nfs4,
     } as NfsAcl;
 
-    spectator.inject(MockApiService).mockCallOnce('filesystem.getacl', acl);
+    spectator.inject(MockTypedApiService).mockCall('filesystem.getacl', acl as unknown as CallResponse<WebUiApiDirectory, 'filesystem.getacl'>);
 
     spectator.setInput('dataset', {
       ...dataset,
@@ -188,7 +203,8 @@ describe('PermissionsCardComponent', () => {
 
     const permissionsComponent = spectator.query(ViewNfsPermissionsComponent)!;
     expect(permissionsComponent).toExist();
-    expect(permissionsComponent.acl).toBe(acl);
+    expect(permissionsComponent.acl).toBe(cardState().acl);
+    expect(permissionsComponent.acl).toEqual(acl);
   }));
 
   describe('edit button', () => {

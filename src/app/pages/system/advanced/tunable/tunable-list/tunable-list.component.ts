@@ -97,7 +97,8 @@ export class TunableListComponent implements OnInit {
     },
   ];
 
-  protected readonly uniqueRowTag = (row: Tunable): string => convertStringToId('tunable-' + row.var + '-' + row.value);
+  // Keyed on `var` only: `value` is what a user edits, so it must not rename the row.
+  protected readonly uniqueRowTag = (row: Tunable): string => convertStringToId('tunable-' + row.var);
 
   protected ariaLabel(row: Tunable): string {
     return [row.var, this.translate.instant('Tunable')].join(' ');

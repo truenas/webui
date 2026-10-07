@@ -2,9 +2,10 @@ import { Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { EMPTY, forkJoin, Observable } from 'rxjs';
 import {
-  catchError, switchMap, tap,
+  catchError, map, switchMap, tap,
 } from 'rxjs/operators';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { toAcl } from 'app/interfaces/acl.interface';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   PermissionsCardState,
 } from 'app/pages/datasets/modules/permissions/interfaces/permissions-sidebar-state.interface';
@@ -18,7 +19,7 @@ const initialState: PermissionsCardState = {
 
 @Injectable()
 export class PermissionsCardStore extends ComponentStore<PermissionsCardState> {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
 
   constructor() {
@@ -36,7 +37,7 @@ export class PermissionsCardStore extends ComponentStore<PermissionsCardState> {
       switchMap((mountpoint) => {
         return forkJoin([
           this.api.call('filesystem.stat', [mountpoint]),
-          this.api.call('filesystem.getacl', [mountpoint, true, true]),
+          this.api.call('filesystem.getacl', [mountpoint, true, true]).pipe(map(toAcl)),
         ]).pipe(
           tap(([stat, acl]) => {
             this.patchState({

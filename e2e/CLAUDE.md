@@ -91,9 +91,7 @@ are in-house.
 **A missing `testId` input is not a blocker.** `[tnTestId]` is a directive, so it
 applies to any host element — a component that exposes no `testId` of its own is
 still taggable from the call site with `tnTestIdType="…"` plus `[tnTestId]`, as
-long as that component imports `TnTestIdDirective`. `tn-list-item` takes no
-`testId` input in 0.7.8 and both clickable list rows (the dual-listbox option,
-the inspect-VDEVs type selector) are tagged exactly that way. Reach for a
+long as that component imports `TnTestIdDirective`. Reach for a
 library change when the element you need is one the library *renders* and your
 template cannot touch — a table row, a dialog's chrome — not merely because an
 input is missing.

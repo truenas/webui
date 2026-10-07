@@ -8,7 +8,7 @@ import {
   TnListComponent,
   TnListItemComponent,
   TnButtonComponent,
-  TnCardFooterActionsDirective,
+  TnCardFooterActionsDirective, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -32,6 +32,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   templateUrl: './localization-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnCardComponent,
     TnCardHeaderDirective,
     TnListComponent,
