@@ -7,7 +7,7 @@ import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogS
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface StripAclModalData {
@@ -29,7 +29,7 @@ export interface StripAclModalData {
   ],
 })
 export class StripAclModalComponent {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   protected dialogRef = inject<DialogRef>(DialogRef);

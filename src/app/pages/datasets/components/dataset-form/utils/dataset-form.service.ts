@@ -7,17 +7,17 @@ import { map, switchMap } from 'rxjs/operators';
 import { maxDatasetNesting, maxDatasetPath } from 'app/constants/dataset.constants';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { Dataset, toDataset } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DatasetFormService {
   private dialog = inject(DialogService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
 
 
@@ -49,8 +49,8 @@ export class DatasetFormService {
   }
 
   loadDataset(datasetId: string): Observable<Dataset> {
-    return this.api.call('pool.dataset.query', [[['id', '=', datasetId]]]).pipe(
-      map((response) => response[0]),
+    return this.api.query('pool.dataset.query', [['id', '=', datasetId]]).pipe(
+      map((response) => toDataset(response[0])),
     );
   }
 

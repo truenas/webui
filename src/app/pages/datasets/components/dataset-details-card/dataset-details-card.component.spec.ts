@@ -6,8 +6,8 @@ import {
   TnDialog, TnButtonHarness, TnCardComponent, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
@@ -18,7 +18,7 @@ import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialog } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
@@ -89,8 +89,8 @@ describe('DatasetDetailsCardComponent', () => {
           closed: of(true),
         })),
       }),
-      mockApi([
-        mockCall('pool.dataset.promote'),
+      mockTypedApi([
+        mockTypedCall('pool.dataset.promote', null),
       ]),
       mockProvider(Router),
       mockProvider(DialogService),
@@ -274,7 +274,7 @@ describe('DatasetDetailsCardComponent', () => {
       const menu = await openCardMenu();
       await menu.clickItem({ label: 'Promote' });
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.promote', ['pool/child']);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.dataset.promote', ['pool/child']);
     });
   });
 });

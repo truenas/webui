@@ -143,6 +143,9 @@ export const migratedApiPaths = [
   // NAS-144000: data protection — cloud backup, cloud sync, periodic snapshot, rsync, replication
   // and VMware snapshot tasks, their cards, lists, forms and wizards.
   'src/app/pages/data-protection',
+  // NAS-144001: datasets — the tree and details cards, the dataset and zvol forms, quotas, encryption,
+  // permissions and ACL editing, and snapshots.
+  'src/app/pages/datasets',
 ];
 
 /**

@@ -10,8 +10,8 @@ import {
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -19,6 +19,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { snapshotsInitialState } from 'app/pages/datasets/modules/snapshots/store/snapshot.reducer';
 import { selectSnapshotState, selectSnapshots, selectSnapshotsTotal } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
@@ -45,9 +46,9 @@ describe('SnapshotListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('pool.snapshot.query', fakeZfsSnapshotDataSource),
-        mockCall('pool.snapshot.delete'),
+      mockTypedApi([
+        mockTypedQuery('pool.snapshot.query', fakeZfsSnapshotDataSource as unknown as WebUiQueryEntity<'pool.snapshot.query'>[]),
+        mockTypedCall('pool.snapshot.delete', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -418,7 +419,7 @@ describe('SnapshotListComponent — paging', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([mockCall('pool.snapshot.query', manySnapshots)]),
+      mockTypedApi([mockTypedQuery('pool.snapshot.query', manySnapshots as unknown as WebUiQueryEntity<'pool.snapshot.query'>[])]),
       mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
       mockProvider(FormSidePanelService, { open: jest.fn(() => SlideInResult.empty()) }),
       provideMockStore({
@@ -553,7 +554,7 @@ describe('SnapshotListComponent — paging on a dataset route', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([mockCall('pool.snapshot.query', childSnapshots)]),
+      mockTypedApi([mockTypedQuery('pool.snapshot.query', childSnapshots as unknown as WebUiQueryEntity<'pool.snapshot.query'>[])]),
       mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
       mockProvider(FormSidePanelService, { open: jest.fn(() => SlideInResult.empty()) }),
       provideMockStore({

@@ -1,10 +1,12 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { of, Subject, throwError } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall, settleTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl } from 'app/interfaces/acl.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -29,9 +31,9 @@ describe('PermissionsCardStore', () => {
   const createService = createServiceFactory({
     service: PermissionsCardStore,
     providers: [
-      mockApi([
-        mockCall('filesystem.stat', mockStat),
-        mockCall('filesystem.getacl', mockAcl),
+      mockTypedApi([
+        mockTypedCall('filesystem.stat', mockStat as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
+        mockTypedCall('filesystem.getacl', mockAcl as unknown as CallResponse<WebUiApiDirectory, 'filesystem.getacl'>),
       ]),
     ],
   });
@@ -53,7 +55,7 @@ describe('PermissionsCardStore', () => {
       const delayedStat$ = new Subject<FileSystemStat>();
       const delayedAcl$ = new Subject<Acl>();
 
-      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
+      jest.spyOn(spectator.inject(TypedApiService), 'call').mockImplementation((method) => {
         if (method === 'filesystem.stat') {
           return delayedStat$;
         }
@@ -79,19 +81,20 @@ describe('PermissionsCardStore', () => {
       const mountpoint$ = of('/mnt/pool/dataset');
       spectator.service.loadPermissions(mountpoint$);
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/pool/dataset']);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/pool/dataset']);
     });
 
     it('calls filesystem.getacl with mountpoint and parameters', () => {
       const mountpoint$ = of('/mnt/pool/dataset');
       spectator.service.loadPermissions(mountpoint$);
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/pool/dataset', true, true]);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/pool/dataset', true, true]);
     });
 
-    it('updates state with stat and acl after successful load', () => {
+    it('updates state with stat and acl after successful load', async () => {
       const mountpoint$ = of('/mnt/pool/dataset');
       spectator.service.loadPermissions(mountpoint$);
+      await settleTypedApi();
 
       expect(spectator.service.state()).toEqual({
         isLoading: false,
@@ -100,9 +103,10 @@ describe('PermissionsCardStore', () => {
       });
     });
 
-    it('sets isLoading to false after loading completes', () => {
+    it('sets isLoading to false after loading completes', async () => {
       const mountpoint$ = of('/mnt/pool/dataset');
       spectator.service.loadPermissions(mountpoint$);
+      await settleTypedApi();
 
       expect(spectator.service.state().isLoading).toBe(false);
     });
@@ -121,7 +125,7 @@ describe('PermissionsCardStore', () => {
       } as Acl;
 
       let callCount = 0;
-      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
+      jest.spyOn(spectator.inject(TypedApiService), 'call').mockImplementation((method) => {
         callCount++;
         if (callCount <= 2) {
           // First mountpoint emission - return mock data
@@ -147,11 +151,12 @@ describe('PermissionsCardStore', () => {
       expect(spectator.service.state().acl).toEqual(newAcl);
     });
 
-    it('resets state to initial before loading new mountpoint', () => {
+    it('resets state to initial before loading new mountpoint', async () => {
       const mountpoint$ = new Subject<string>();
       spectator.service.loadPermissions(mountpoint$);
 
       mountpoint$.next('/mnt/pool/dataset');
+      await settleTypedApi();
       expect(spectator.service.state()).toEqual({
         isLoading: false,
         stat: mockStat,
@@ -160,7 +165,7 @@ describe('PermissionsCardStore', () => {
 
       const delayedStat$ = new Subject<FileSystemStat>();
       const delayedAcl$ = new Subject<Acl>();
-      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
+      jest.spyOn(spectator.inject(TypedApiService), 'call').mockImplementation((method) => {
         if (method === 'filesystem.stat') {
           return delayedStat$;
         }
@@ -181,7 +186,7 @@ describe('PermissionsCardStore', () => {
   describe('error handling', () => {
     it('shows error modal when loading fails', () => {
       const error = new Error('Failed to load permissions');
-      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(
+      jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(
         throwError(() => error),
       );
       const errorHandler = spectator.inject(ErrorHandlerService);
@@ -194,7 +199,7 @@ describe('PermissionsCardStore', () => {
     });
 
     it('sets isLoading to false on error', () => {
-      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(
+      jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(
         throwError(() => new Error('API error')),
       );
 
@@ -205,7 +210,7 @@ describe('PermissionsCardStore', () => {
     });
 
     it('does not update stat and acl on error', () => {
-      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(
+      jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(
         throwError(() => new Error('API error')),
       );
 

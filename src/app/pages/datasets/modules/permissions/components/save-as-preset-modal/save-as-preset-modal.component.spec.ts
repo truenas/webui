@@ -5,11 +5,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnIconButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl, AclTemplateByPath, PosixAclItem } from 'app/interfaces/acl.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SaveAsPresetModalComponent } from 'app/pages/datasets/modules/permissions/components/save-as-preset-modal/save-as-preset-modal.component';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
@@ -31,8 +31,8 @@ describe('SaveAsPresetModalComponent', () => {
         getUserByNameCached: jest.fn(() => of({ username: 'testuser', uid: 1000 } as User)),
         getGroupByNameCached: jest.fn(() => of({ group: 'testgroup', gid: 1000 } as Group)),
       }),
-      mockApi([
-        mockCall('filesystem.acltemplate.by_path', [
+      mockTypedApi([
+        mockTypedCall('filesystem.acltemplate.by_path', [
           {
             id: 1, name: 'e', acltype: AclType.Nfs4, acl: [],
           },
@@ -52,8 +52,8 @@ describe('SaveAsPresetModalComponent', () => {
             id: 6, name: 'f', acltype: AclType.Nfs4, acl: [],
           },
         ] as AclTemplateByPath[]),
-        mockCall('filesystem.acltemplate.delete'),
-        mockCall('filesystem.acltemplate.create'),
+        mockTypedCall('filesystem.acltemplate.delete', null),
+        mockTypedCall('filesystem.acltemplate.create', null),
       ]),
       {
         provide: DIALOG_DATA,
@@ -77,8 +77,10 @@ describe('SaveAsPresetModalComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('loads acl presets and shows them', () => {
-    const api = spectator.inject(ApiService);
+  it('loads acl presets and shows them', async () => {
+    const api = spectator.inject(TypedApiService);
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
 
     expect(api.call).toHaveBeenCalledWith('filesystem.acltemplate.by_path', [{
       'format-options': {
@@ -119,7 +121,7 @@ describe('SaveAsPresetModalComponent', () => {
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('filesystem.acltemplate.create', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('filesystem.acltemplate.create', [{
       name: 'New Preset',
       acltype: 'POSIX1E',
       acl: [],
@@ -132,7 +134,7 @@ describe('SaveAsPresetModalComponent', () => {
     const removeButtons = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'close-circle' }));
     await removeButtons[2].click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('filesystem.acltemplate.delete', [4]);
-    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('filesystem.acltemplate.by_path', expect.anything());
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('filesystem.acltemplate.delete', [4]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('filesystem.acltemplate.by_path', expect.anything());
   });
 });

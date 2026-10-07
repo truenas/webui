@@ -3,15 +3,17 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { JobResult } from '@truenas/api-client';
 import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SnapshotBatchDeleteDialog } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { fakeZfsSnapshotDataSource } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
 
@@ -41,9 +43,9 @@ describe('SnapshotBatchDeleteDialogComponent', () => {
       }),
       mockProvider(DialogRef),
       mockProvider(DialogService),
-      mockApi([
-        mockJob('core.bulk', fakeSuccessfulJob(mockJobSuccessResponse)),
-        mockCall('pool.snapshot.delete'),
+      mockTypedApi([
+        mockTypedJob('core.bulk', { state: JobState.Success, result: mockJobSuccessResponse as JobResult<WebUiApiDirectory, 'core.bulk'> }),
+        mockTypedCall('pool.snapshot.delete', null),
       ]),
     ],
   });
@@ -64,7 +66,7 @@ describe('SnapshotBatchDeleteDialogComponent', () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', [
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('core.bulk', [
       'pool.snapshot.delete',
       [
         ['test-dataset@first-snapshot'],

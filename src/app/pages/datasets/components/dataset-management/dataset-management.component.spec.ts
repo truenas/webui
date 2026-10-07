@@ -3,18 +3,19 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { createRoutingFactory, SpectatorRouting, mockProvider } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnEmptyComponent, TnEmptyHarness, TnTreeVirtualScrollViewComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { BehaviorSubject, Subject, of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { BasicSearchHarness } from 'app/modules/forms/search-input/components/basic-search/basic-search.harness';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
@@ -52,8 +53,8 @@ describe('DatasetsManagementComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('systemdataset.config', { pool: 'Second Dataset' } as SystemDatasetConfig),
+      mockTypedApi([
+        mockTypedCall('systemdataset.config', { pool: 'Second Dataset' } as CallResponse<WebUiApiDirectory, 'systemdataset.config'>),
       ]),
       mockProvider(DatasetTreeStore, {
         datasets$,

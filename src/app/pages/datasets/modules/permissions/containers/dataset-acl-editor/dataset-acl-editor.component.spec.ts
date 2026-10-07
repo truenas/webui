@@ -5,22 +5,23 @@ import { Router } from '@angular/router';
 import {
   createRoutingFactory, mockProvider, SpectatorRouting,
 } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { firstValueFrom, of } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AclType } from 'app/enums/acl-type.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enum';
 import { NfsAcl } from 'app/interfaces/acl.interface';
-import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import {
   AclEditorListComponent,
 } from 'app/pages/datasets/modules/permissions/components/acl-editor-list/acl-editor-list.component';
@@ -52,7 +53,7 @@ import { UserService } from 'app/services/user.service';
 
 describe('DatasetAclEditorComponent', () => {
   let spectator: SpectatorRouting<DatasetAclEditorComponent>;
-  let api: MockApiService;
+  let api: MockTypedApiService;
   let tnDialog: TnDialog;
   let loader: HarnessLoader;
   const acl = {
@@ -106,13 +107,13 @@ describe('DatasetAclEditorComponent', () => {
       StorageService,
       DatasetAclEditorStore,
       mockProvider(DialogService),
-      mockApi([
-        mockCall('filesystem.getacl', acl),
-        mockCall('filesystem.stat', {
+      mockTypedApi([
+        mockTypedCall('filesystem.getacl', acl as unknown as CallResponse<WebUiApiDirectory, 'filesystem.getacl'>),
+        mockTypedCall('filesystem.stat', {
           user: 'john',
           group: 'johns',
-        } as FileSystemStat),
-        mockJob('filesystem.setacl', fakeSuccessfulJob()),
+        } as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
+        mockTypedJob('filesystem.setacl', { state: JobState.Success }),
       ]),
       mockProvider(UserService, {
         userQueryDsCache: () => of(),
@@ -136,12 +137,14 @@ describe('DatasetAclEditorComponent', () => {
   });
 
   describe('empty return URL', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       spectator = createComponent();
-      api = spectator.inject(MockApiService);
+      api = spectator.inject(MockTypedApiService);
       tnDialog = spectator.inject(TnDialog);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       jest.spyOn(spectator.inject(Router), 'navigate').mockResolvedValue(true);
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
     });
 
     it('sets returnUrl to null when not provided', () => {
@@ -193,7 +196,7 @@ describe('DatasetAclEditorComponent', () => {
         const form = spectator.query(EditNfsAceComponent)!;
 
         expect(form).toExist();
-        expect(form.ace).toBe(acl.acl[0]);
+        expect(form.ace).toEqual(acl.acl[0]);
       });
     });
 
@@ -307,7 +310,7 @@ describe('DatasetAclEditorComponent', () => {
       expect(store.loadHomeSharePreset).not.toHaveBeenCalled();
     });
 
-    it('loads home share preset when homeShare is true', () => {
+    it('loads home share preset when homeShare is true', async () => {
       spectator = createComponent({
         detectChanges: false,
         queryParams: {
@@ -319,6 +322,7 @@ describe('DatasetAclEditorComponent', () => {
       jest.spyOn(store, 'loadHomeSharePreset');
 
       spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       expect(store.loadHomeSharePreset).toHaveBeenCalled();
     });

@@ -1,15 +1,18 @@
 import { Router } from '@angular/router';
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { Observable, of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AclType } from 'app/enums/acl-type.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enum';
 import { NfsAcl, SetAcl } from 'app/interfaces/acl.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FailedJobError } from 'app/services/errors/error.classes';
 import { StorageService } from 'app/services/storage.service';
@@ -18,7 +21,7 @@ import { DatasetAclEditorStore } from './dataset-acl-editor.store';
 describe('DatasetAclEditorStore', () => {
   let spectator: SpectatorService<DatasetAclEditorStore>;
   let store: DatasetAclEditorStore;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const mockAcl: NfsAcl = {
     acltype: AclType.Nfs4,
@@ -43,10 +46,10 @@ describe('DatasetAclEditorStore', () => {
   const createService = createServiceFactory({
     service: DatasetAclEditorStore,
     providers: [
-      mockApi([
-        mockCall('filesystem.getacl', mockAcl),
-        mockCall('filesystem.stat', mockStat),
-        mockJob('filesystem.setacl', fakeSuccessfulJob()),
+      mockTypedApi([
+        mockTypedCall('filesystem.getacl', mockAcl as unknown as CallResponse<WebUiApiDirectory, 'filesystem.getacl'>),
+        mockTypedCall('filesystem.stat', mockStat as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
+        mockTypedJob('filesystem.setacl', { state: JobState.Success }),
       ]),
       {
         provide: DialogService,
@@ -76,7 +79,7 @@ describe('DatasetAclEditorStore', () => {
   beforeEach(() => {
     spectator = createService();
     store = spectator.service;
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
   });
 
   describe('prepareSetAcl', () => {

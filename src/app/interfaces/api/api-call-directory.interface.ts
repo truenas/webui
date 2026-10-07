@@ -1,16 +1,8 @@
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
-import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
+import { DatasetType } from 'app/enums/dataset.enum';
 import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
-import {
-  Acl,
-  AclQueryParams,
-  AclTemplateByPath,
-  AclTemplateByPathParams,
-  AclTemplateCreateParams,
-  AclTemplateCreateResponse,
-} from 'app/interfaces/acl.interface';
 import { AdvancedConfig, AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
 import {
@@ -60,10 +52,8 @@ import {
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { CoreOptions } from 'app/interfaces/core-options.interface';
 import { Cronjob, CronjobUpdate } from 'app/interfaces/cronjob.interface';
-import { DatasetHasVmsQueryParams } from 'app/interfaces/dataset-has-vms-query-params.interface';
-import { DatasetQuota, DatasetQuotaQueryParams, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import {
-  Dataset, DatasetCreate, DatasetDetails, DatasetUpdate, ExtraDatasetQueryOptions,
+  Dataset, DatasetCreate, ExtraDatasetQueryOptions,
 } from 'app/interfaces/dataset.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import {
@@ -168,7 +158,7 @@ import {
   UpdateNvmeOfSubsystem,
 } from 'app/interfaces/nvme-of.interface';
 import { MapOption } from 'app/interfaces/option.interface';
-import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
+import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { CreateScrubTask, ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import {
   Pool, PoolInstance,
@@ -218,12 +208,6 @@ import {
   DeleteUserParams, User, UserUpdate,
 } from 'app/interfaces/user.interface';
 import { WebShare, WebShareUpdate } from 'app/interfaces/webshare-config.interface';
-import {
-  CloneZfsSnapshot,
-  CreateZfsSnapshot,
-  ZfsRollbackParams,
-  ZfsSnapshot,
-} from 'app/interfaces/zfs-snapshot.interface';
 import { ZfsTierConfig, ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { Zpool } from 'app/interfaces/zpool.interface';
 import {
@@ -407,10 +391,6 @@ export interface ApiCallDirectory {
   'fcport.status': { params: []; response: FibreChannelStatus[] };
 
   // Filesystem
-  'filesystem.acltemplate.by_path': { params: [AclTemplateByPathParams]; response: AclTemplateByPath[] };
-  'filesystem.acltemplate.create': { params: [AclTemplateCreateParams]; response: AclTemplateCreateResponse };
-  'filesystem.acltemplate.delete': { params: [id: number]; response: boolean };
-  'filesystem.getacl': { params: AclQueryParams; response: Acl };
   'filesystem.stat': { params: [path: string]; response: FileSystemStat };
 
   // Group
@@ -578,22 +558,10 @@ export interface ApiCallDirectory {
 
   // Pool
   'pool.attachments': { params: [id: number]; response: PoolAttachment[] };
-  'pool.dataset.attachments': { params: [datasetId: string]; response: DatasetAttachment[] };
-  'pool.dataset.checksum_choices': { params: void; response: Choices };
-  'pool.dataset.compression_choices': { params: void; response: Choices };
   'pool.dataset.create': { params: [DatasetCreate]; response: Dataset };
   'pool.dataset.delete': { params: [path: string, params: { recursive: boolean; force?: boolean }]; response: boolean };
-  'pool.dataset.details': { params: void; response: DatasetDetails[] };
   'pool.dataset.export_keys_for_replication': { params: [id: number]; response: unknown };
-  'pool.dataset.get_quota': { params: DatasetQuotaQueryParams; response: DatasetQuota[] };
-  'pool.dataset.inherit_parent_encryption_properties': { params: [id: string]; response: void };
-  'pool.dataset.processes': { params: [datasetId: string]; response: Process[] };
-  'pool.dataset.promote': { params: [id: string]; response: void };
   'pool.dataset.query': { params: QueryParams<Dataset, ExtraDatasetQueryOptions>; response: Dataset[] };
-  'pool.dataset.recommended_zvol_blocksize': { params: [pool: string]; response: DatasetRecordSize };
-  'pool.dataset.recordsize_choices': { params: void; response: string[] };
-  'pool.dataset.set_quota': { params: [dataset: string, quotas: SetDatasetQuota[]]; response: void };
-  'pool.dataset.update': { params: [id: string, update: Partial<DatasetUpdate>]; response: Dataset };
   'pool.detach': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.filesystem_choices': { params: [DatasetType[]?]; response: string[] };
   'pool.offline': { params: [id: number, params: { label: string }]; response: boolean };
@@ -622,7 +590,6 @@ export interface ApiCallDirectory {
   // Replication
   'replication.config.config': { params: void; response: ReplicationConfig };
   'replication.config.update': { params: [Partial<ReplicationConfigUpdate>]; response: ReplicationConfig };
-  'replication.list_naming_schemas': { params: void; response: string[] };
   'replication.query': { params: QueryParams<ReplicationTask>; response: ReplicationTask[] };
   'replication.restore': { params: [id: number, params: { name: string; target_dataset: string }]; response: void };
 
@@ -742,7 +709,6 @@ export interface ApiCallDirectory {
   'system.advanced.get_gpu_pci_choices': { params: void; response: GpuPciChoices };
 
   // Vmware
-  'vmware.dataset_has_vms': { params: DatasetHasVmsQueryParams; response: boolean };
 
   // WebUI main
   // TODO: Incorrect response definition here or for system.info.
@@ -753,13 +719,6 @@ export interface ApiCallDirectory {
   'webui.crypto.get_certificate_domain_names': { params: [number]; response: string[] };
 
   // ZFS
-  'pool.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };
-  'pool.snapshot.create': { params: [CreateZfsSnapshot]; response: ZfsSnapshot };
-  'pool.snapshot.delete': { params: [id: string, params?: { defer?: boolean; recursive?: boolean }]; response: boolean };
-  'pool.snapshot.hold': { params: [string]; response: void };
-  'pool.snapshot.query': { params: QueryParams<ZfsSnapshot>; response: ZfsSnapshot[] };
-  'pool.snapshot.release': { params: [string]; response: void };
-  'pool.snapshot.rollback': { params: ZfsRollbackParams; response: void };
 
   // ZPool
   'zpool.query': { params: [{ properties?: string[]; pool_names?: string[] }?]; response: Zpool[] };

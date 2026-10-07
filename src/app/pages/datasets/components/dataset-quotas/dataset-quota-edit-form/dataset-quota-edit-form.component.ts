@@ -11,20 +11,21 @@ import {
 import {
   EMPTY, Observable, of, switchMap,
 } from 'rxjs';
-import { catchError, filter, tap } from 'rxjs/operators';
+import {
+  catchError, filter, map, tap,
+} from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
-import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
-import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
+import { DatasetQuota, SetDatasetQuota, toDatasetQuotas } from 'app/interfaces/dataset-quota.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Component({
   selector: 'ix-dataset-quota-edit-form',
@@ -40,7 +41,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 })
 export class DatasetQuotaEditFormComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private errorHandler = inject(FormErrorHandlerService);
   protected dialogService = inject(DialogService);
@@ -48,7 +49,7 @@ export class DatasetQuotaEditFormComponent extends IxFormHostForm implements OnI
 
   /** Context supplied by the `<tn-side-panel>` host (via {@link FormSidePanelService}). */
   readonly datasetId = input.required<string>();
-  readonly quotaType = input.required<DatasetQuotaType>();
+  readonly quotaType = input.required<DatasetQuotaType.User | DatasetQuotaType.Group>();
   readonly quotaId = input.required<number>();
 
   protected readonly requiredRoles = [Role.DatasetWrite];
@@ -141,8 +142,9 @@ export class DatasetQuotaEditFormComponent extends IxFormHostForm implements OnI
   }
 
   private getQuota(id: number): Observable<DatasetQuota[]> {
-    const params = [['id', '=', id] as QueryFilter<DatasetQuota>] as QueryParams<DatasetQuota>;
-    return this.api.call('pool.dataset.get_quota', [this.datasetId(), this.quotaType(), params]);
+    return this.api.call('pool.dataset.get_quota', [this.datasetId(), this.quotaType(), [['id', '=', id]]]).pipe(
+      map(toDatasetQuotas),
+    );
   }
 
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {

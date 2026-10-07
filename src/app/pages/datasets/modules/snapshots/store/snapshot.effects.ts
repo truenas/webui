@@ -6,9 +6,9 @@ import { EMPTY, of } from 'rxjs';
 import {
   catchError, filter, map, switchMap, take,
 } from 'rxjs/operators';
-import { CollectionChangeType } from 'app/enums/api.enum';
-import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { toZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   snapshotAdded, snapshotChanged,
   snapshotPageEntered,
@@ -20,7 +20,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 @Injectable()
 export class SnapshotEffects {
   private actions$ = inject(Actions);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
 
@@ -29,16 +29,13 @@ export class SnapshotEffects {
     switchMap(() => this.store$.pipe(waitForPreferences, take(1))),
     switchMap((preferences) => {
       const showExtraColumns = preferences.showSnapshotExtraColumns;
-      const extraColumns = showExtraColumns ? ['properties' as keyof ZfsSnapshot] : [];
-      return this.api.call('pool.snapshot.query', [
-        [],
-        {
-          select: ['snapshot_name', 'dataset', 'name', ...extraColumns],
-          order_by: ['name'],
-          ...(showExtraColumns ? { extra: { properties: ['creation', 'used', 'referenced'] } } : {}),
-        },
-      ]).pipe(
-        map((snapshots) => snapshotsLoaded({ snapshots })),
+      const extraColumns: (keyof WebUiQueryEntity<'pool.snapshot.query'>)[] = showExtraColumns ? ['properties'] : [];
+      return this.api.query('pool.snapshot.query', [], {
+        select: ['snapshot_name', 'dataset', 'name', ...extraColumns],
+        order_by: ['name'],
+        ...(showExtraColumns ? { extra: { properties: ['creation', 'used', 'referenced'] } } : {}),
+      }).pipe(
+        map((snapshots) => snapshotsLoaded({ snapshots: snapshots.map(toZfsSnapshot) })),
         catchError((error: unknown) => {
           console.error(error);
           // TODO: See if it would make sense to parse middleware error.
@@ -54,13 +51,13 @@ export class SnapshotEffects {
     ofType(snapshotsLoaded),
     switchMap(() => {
       return this.api.subscribe('pool.snapshot.query').pipe(
-        filter((event) => event.msg !== CollectionChangeType.Removed),
+        filter((event) => event.msg !== 'removed'),
         switchMap((event) => {
           switch (event.msg) {
-            case CollectionChangeType.Added:
-              return of(snapshotAdded({ snapshot: event.fields }));
-            case CollectionChangeType.Changed:
-              return of(snapshotChanged({ snapshot: event.fields }));
+            case 'added':
+              return of(snapshotAdded({ snapshot: toZfsSnapshot(event.fields) }));
+            case 'changed':
+              return of(snapshotChanged({ snapshot: toZfsSnapshot(event.fields) }));
             default:
               return EMPTY;
           }
@@ -73,7 +70,7 @@ export class SnapshotEffects {
     ofType(snapshotsLoaded),
     switchMap(() => {
       return this.api.subscribe('pool.snapshot.query').pipe(
-        filter((event) => event.msg === CollectionChangeType.Removed),
+        filter((event) => event.msg === 'removed'),
         map((event) => snapshotRemoved({ id: event.id.toString() })),
       );
     }),

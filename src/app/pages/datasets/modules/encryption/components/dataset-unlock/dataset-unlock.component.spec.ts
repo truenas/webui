@@ -10,15 +10,16 @@ import {
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { DatasetEncryptionSummary } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { fillControlValues, indexFormControls } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { TnFileInputTestHarness } from 'app/modules/forms/ix-forms/testing/tn-file-input.harness';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
 import { UploadService } from 'app/services/upload.service';
 
@@ -43,8 +44,8 @@ describe('DatasetUnlockComponent', () => {
       mockProvider(ActivatedRoute, {
         snapshot: { params: { datasetId: 'pool_name_1' } },
       }),
-      mockApi([
-        mockJob('pool.dataset.encryption_summary'),
+      mockTypedApi([
+        mockTypedJob('pool.dataset.encryption_summary', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -113,7 +114,7 @@ describe('DatasetUnlockComponent', () => {
     const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock' }));
     await unlockButton.click();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
       'pool.dataset.encryption_summary',
       [
         'pool_name_1',

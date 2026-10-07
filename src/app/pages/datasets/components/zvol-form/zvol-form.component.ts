@@ -10,7 +10,7 @@ import {
   TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  finalize, forkJoin, Observable, switchMap, tap, throwError,
+  finalize, forkJoin, map, Observable, switchMap, tap, throwError,
 } from 'rxjs';
 import {
   minimumPbkdf2Iterations,
@@ -36,7 +36,9 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
-import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
+import {
+  Dataset, DatasetCreate, DatasetUpdate, toDataset, toDatasetCreateArgs, toDatasetUpdateArgs,
+} from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
@@ -51,7 +53,7 @@ import {
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import {
   VolsizeValidationError,
@@ -94,7 +96,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
   private formatter = inject(IxFormatterService);
   private translate = inject(TranslateService);
   private formBuilder = inject(NonNullableFormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
@@ -260,7 +262,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
   private buildCreateResult(event: FormSubmitEvent<ZvolFormData>): SubmitResult<Dataset, Dataset> {
     const data = this.buildCreatePayload(event.allValues);
     return {
-      request$: this.api.call('pool.dataset.create', [data as DatasetCreate]),
+      request$: this.api.call('pool.dataset.create', [toDatasetCreateArgs(data as DatasetCreate)]).pipe(map(toDataset)),
       // Owned by the form so every entry point (details panel, details card, explorer) confirms
       // identically; the openers deliberately raise no snackbar of their own.
       successMessage: (created) => this.translate.instant('Zvol «{name}» created.', {
@@ -273,13 +275,15 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
 
   private buildEditResult(event: FormSubmitEvent<ZvolFormData>): SubmitResult<Dataset, Dataset> {
     return {
-      request$: this.api.call('pool.dataset.query', [[['id', '=', this.parentOrZvolId()]]]).pipe(
+      request$: this.api.query('pool.dataset.query', [['id', '=', this.parentOrZvolId()]]).pipe(
         switchMap((datasets) => {
-          const { payload, canSubmit } = this.buildEditPayload(event, datasets);
+          const { payload, canSubmit } = this.buildEditPayload(event, datasets.map(toDataset));
           if (!canSubmit) {
             return throwError(() => new VolsizeValidationError('Zvol volsize cannot be shrunk.'));
           }
-          return this.api.call('pool.dataset.update', [this.parentOrZvolId(), payload]);
+          return this.api.call('pool.dataset.update', [this.parentOrZvolId(), toDatasetUpdateArgs(payload)]).pipe(
+            map(toDataset),
+          );
         }),
       ),
       // See `buildCreateResult` — the message is the form's, not the opener's.
@@ -485,7 +489,9 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
 
     this.setupLoading.set(true);
     forkJoin([
-      this.api.call('pool.dataset.query', [[['id', '=', this.parentOrZvolId()]]]),
+      this.api.query('pool.dataset.query', [['id', '=', this.parentOrZvolId()]]).pipe(
+        map((datasets) => datasets.map(toDataset)),
+      ),
       this.loadRecommendedBlocksize(),
       this.api.call('pool.dataset.compression_choices').pipe(choicesToOptions()),
     ])
@@ -519,7 +525,8 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
             parentDatasetId.pop();
             parentDatasetId = parentDatasetId.join('/');
 
-            this.api.call('pool.dataset.query', [[['id', '=', parentDatasetId]]]).pipe(
+            this.api.query('pool.dataset.query', [['id', '=', parentDatasetId]]).pipe(
+              map((datasets) => datasets.map(toDataset)),
               this.errorHandler.withErrorHandler(),
               takeUntilDestroyed(this.destroyRef),
             ).subscribe({
@@ -836,6 +843,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
     const root = this.parentOrZvolId().split('/')[0];
 
     return this.api.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(
+      map((recommendedSize) => recommendedSize as DatasetRecordSize),
       tap((recommendedSize) => {
         this.form.controls.volblocksize.setValue(recommendedSize);
         this.minimumRecommendedBlockSize = recommendedSize;

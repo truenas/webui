@@ -14,7 +14,7 @@ import {
 import {
   combineLatest, Observable, of, take,
 } from 'rxjs';
-import { startWith } from 'rxjs/operators';
+import { map, startWith } from 'rxjs/operators';
 import {
   specialVdevDefaultThreshold,
   specialVdevMaxThreshold,
@@ -43,13 +43,14 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { Choices } from 'app/interfaces/choices.interface';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { WarningComponent } from 'app/modules/warning/warning.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
 import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
@@ -82,7 +83,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   private systemGeneralService = inject(SystemGeneralService);
   private dialogService = inject(DialogService);
   private formatter = inject(IxFormatterService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private datasetFormService = inject(DatasetFormService);
   private tierService = inject(SharingTierService);
   private destroyRef = inject(DestroyRef);
@@ -159,6 +160,8 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   private readonly defaultAtimeOptions$ = of(mapToOptions(onOffLabels, this.translate));
   private defaultDeduplicationOptions$ = of(mapToOptions(deduplicationSettingLabels, this.translate));
   private defaultChecksumOptions$ = this.api.call('pool.dataset.checksum_choices').pipe(
+    // Middleware declares a fixed set of keys, which an interface without an index signature cannot be read as.
+    map((choices): Choices => ({ ...choices })),
     choicesToOptions(),
   );
 
@@ -551,7 +554,9 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     const root = parent.id.split('/')[0];
     combineLatest([
       this.form.controls.recordsize.valueChanges.pipe(startWith(this.form.controls.recordsize.value)),
-      this.api.call('pool.dataset.recommended_zvol_blocksize', [root]),
+      this.api.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(
+        map((recommended) => recommended as DatasetRecordSize),
+      ),
     ])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(([recordsizeValue, recommendedAsString]) => {

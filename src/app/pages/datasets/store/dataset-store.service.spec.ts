@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   DatasetTreeState,
   DatasetTreeStore,
@@ -16,7 +16,7 @@ describe('DatasetTreeStore', () => {
   const datasets = [{ id: 'parent' }, { id: 'parent/child' }] as Dataset[];
   const createService = createServiceFactory({
     service: DatasetTreeStore,
-    providers: [mockProvider(ApiService)],
+    providers: [mockProvider(TypedApiService)],
   });
 
   beforeEach(() => {
@@ -26,7 +26,7 @@ describe('DatasetTreeStore', () => {
 
   it('loads datasets and sets loading indicators when loadDatasets is called', () => {
     testScheduler.run(({ cold, expectObservable }) => {
-      const mockedApi = spectator.inject(ApiService);
+      const mockedApi = spectator.inject(TypedApiService);
       jest
         .spyOn(mockedApi, 'call')
         .mockReturnValue(cold('-b|', { b: datasets }));
@@ -54,7 +54,7 @@ describe('DatasetTreeStore', () => {
   describe('refreshDatasets', () => {
     it('replaces the datasets without entering the loading state', () => {
       testScheduler.run(({ cold, expectObservable }) => {
-        const mockedApi = spectator.inject(ApiService);
+        const mockedApi = spectator.inject(TypedApiService);
         jest.spyOn(mockedApi, 'call').mockReturnValue(cold('-b|', { b: datasets }));
 
         spectator.service.refreshDatasets();
@@ -73,7 +73,7 @@ describe('DatasetTreeStore', () => {
 
     it('keeps the datasets already shown when the refresh fails', () => {
       testScheduler.run(({ cold, expectObservable }) => {
-        const mockedApi = spectator.inject(ApiService);
+        const mockedApi = spectator.inject(TypedApiService);
         const shown = [{ id: 'parent' }] as DatasetDetails[];
         spectator.service.patchState({ datasets: shown });
         jest.spyOn(mockedApi, 'call').mockReturnValue(cold('-#', {}, new Error('Network Error')));
@@ -91,7 +91,7 @@ describe('DatasetTreeStore', () => {
 
   it('clears a load error once a later refresh succeeds', () => {
     testScheduler.run(({ cold, expectObservable }) => {
-      const mockedApi = spectator.inject(ApiService);
+      const mockedApi = spectator.inject(TypedApiService);
       const loadError = new Error('Network Error');
       jest.spyOn(mockedApi, 'call')
         .mockReturnValueOnce(cold('-#', {}, loadError))
@@ -115,7 +115,7 @@ describe('DatasetTreeStore', () => {
 
     it('lets a later load cancel an in-flight refresh, so an older answer cannot land last', () => {
       testScheduler.run(({ cold, expectObservable }) => {
-        const mockedApi = spectator.inject(ApiService);
+        const mockedApi = spectator.inject(TypedApiService);
         jest.spyOn(mockedApi, 'call')
           .mockReturnValueOnce(cold('----r|', { r: before }))
           .mockReturnValueOnce(cold('-l|', { l: after }));
@@ -129,7 +129,7 @@ describe('DatasetTreeStore', () => {
 
     it('does not let a refresh cancel a load in flight; it runs once the load has answered', () => {
       testScheduler.run(({ cold, expectObservable }) => {
-        const mockedApi = spectator.inject(ApiService);
+        const mockedApi = spectator.inject(TypedApiService);
         jest.spyOn(mockedApi, 'call')
           .mockReturnValueOnce(cold('----l|', { l: before }))
           .mockReturnValueOnce(cold('-r|', { r: after }));
@@ -153,7 +153,7 @@ describe('DatasetTreeStore', () => {
 
     it('runs a single follow-up however many refreshes arrive during a fetch', () => {
       testScheduler.run(({ cold, flush }) => {
-        const mockedApi = spectator.inject(ApiService);
+        const mockedApi = spectator.inject(TypedApiService);
         jest.spyOn(mockedApi, 'call').mockReturnValue(cold('----r|', { r: after }));
 
         spectator.service.refreshDatasets();
@@ -169,7 +169,7 @@ describe('DatasetTreeStore', () => {
 
     it('still runs a refresh queued behind a fetch that a load then replaces', () => {
       testScheduler.run(({ cold, expectObservable }) => {
-        const mockedApi = spectator.inject(ApiService);
+        const mockedApi = spectator.inject(TypedApiService);
         jest.spyOn(mockedApi, 'call')
           .mockReturnValueOnce(cold('------x|', { x: [] }))
           .mockReturnValueOnce(cold('--l|', { l: before }))
@@ -189,7 +189,7 @@ describe('DatasetTreeStore', () => {
 
     it('recovers on the next load from a fetch that is never answered', () => {
       testScheduler.run(({ cold, flush }) => {
-        const mockedApi = spectator.inject(ApiService);
+        const mockedApi = spectator.inject(TypedApiService);
         jest.spyOn(mockedApi, 'call')
           .mockReturnValueOnce(cold('-'))
           .mockReturnValue(cold('-r|', { r: after }));
@@ -210,7 +210,7 @@ describe('DatasetTreeStore', () => {
 
   it('reports a failed refresh when there are no datasets on screen to keep', () => {
     testScheduler.run(({ cold, expectObservable }) => {
-      const mockedApi = spectator.inject(ApiService);
+      const mockedApi = spectator.inject(TypedApiService);
       const refreshError = new Error('Network Error');
       jest.spyOn(mockedApi, 'call').mockReturnValue(cold('-#', {}, refreshError));
 

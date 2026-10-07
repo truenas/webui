@@ -4,19 +4,19 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
-import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 
 describe('DatasetQuotaEditFormComponent', () => {
   let spectator: Spectator<DatasetQuotaEditFormComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -28,14 +28,15 @@ describe('DatasetQuotaEditFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockCall('pool.dataset.get_quota', [{
+      mockTypedApi([
+        // Not a `.query` method, but it has an entity, so the fake answers it as one.
+        mockTypedQuery('pool.dataset.get_quota', [{
           id: 1,
           name: 'daemon',
           quota: 512000,
           obj_quota: 0,
-        } as DatasetQuota]),
-        mockCall('pool.dataset.set_quota'),
+        }] as unknown as WebUiQueryEntity<'pool.dataset.get_quota'>[]),
+        mockTypedCall('pool.dataset.set_quota', null),
       ]),
       mockProvider(DialogService),
       ...ixFormTestingProviders(),
@@ -52,7 +53,7 @@ describe('DatasetQuotaEditFormComponent', () => {
           quotaId: 1,
         },
       });
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -73,6 +74,7 @@ describe('DatasetQuotaEditFormComponent', () => {
       const closed = jest.fn();
       spectator.component.closed.subscribe(closed);
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', ['Test', [
         {
@@ -99,7 +101,7 @@ describe('DatasetQuotaEditFormComponent', () => {
           quotaId: 1,
         },
       });
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -118,6 +120,7 @@ describe('DatasetQuotaEditFormComponent', () => {
       await (await getTnInput('obj_quota')).setValue('1');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', ['Test', [
         {
@@ -145,7 +148,7 @@ describe('DatasetQuotaEditFormComponent', () => {
           quotaId: 1,
         },
       });
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
       dialogService = spectator.inject(DialogService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
@@ -155,6 +158,7 @@ describe('DatasetQuotaEditFormComponent', () => {
       await (await getTnInput('data_quota')).setValue('0');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(confirmSpy).toHaveBeenCalledWith(expect.objectContaining({
         title: 'Delete User Quota',
@@ -169,6 +173,7 @@ describe('DatasetQuotaEditFormComponent', () => {
       await (await getTnInput('data_quota')).setValue('0');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(dialogService.confirm).toHaveBeenCalled();
       expect(api.call).not.toHaveBeenCalledWith('pool.dataset.set_quota', expect.anything());

@@ -6,14 +6,15 @@ import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, pipe } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SnapshotCloneDialog } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
@@ -22,7 +23,7 @@ import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots/testing/sn
 describe('SnapshotDetailsRowComponent', () => {
   let spectator: SpectatorRouting<SnapshotDetailsRowComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const createComponent = createRoutingFactory({
     component: SnapshotDetailsRowComponent,
@@ -41,11 +42,11 @@ describe('SnapshotDetailsRowComponent', () => {
         confirm: jest.fn(() => of(true)),
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockApi([
-        mockCall('pool.snapshot.query', [fakeZfsSnapshot]),
-        mockCall('pool.snapshot.hold'),
-        mockCall('pool.snapshot.release'),
-        mockCall('pool.snapshot.delete'),
+      mockTypedApi([
+        mockTypedQuery('pool.snapshot.query', [fakeZfsSnapshot as unknown as WebUiQueryEntity<'pool.snapshot.query'>]),
+        mockTypedCall('pool.snapshot.hold', null),
+        mockTypedCall('pool.snapshot.release', null),
+        mockTypedCall('pool.snapshot.delete', null),
       ]),
     ],
   });
@@ -57,10 +58,13 @@ describe('SnapshotDetailsRowComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
   });
 
-  it('renders details rows', () => {
+  it('renders details rows', async () => {
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
+
     const rows = spectator.queryAll('.details-row');
     expect(rows).toHaveLength(4);
 
@@ -125,6 +129,6 @@ describe('SnapshotDetailsRowComponent', () => {
       successMessage: 'Snapshot deleted.',
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.delete', ['test-dataset@first-snapshot']);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.snapshot.delete', ['test-dataset@first-snapshot']);
   });
 });

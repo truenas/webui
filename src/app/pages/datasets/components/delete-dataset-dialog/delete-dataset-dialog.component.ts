@@ -23,7 +23,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -47,7 +47,7 @@ export class DeleteDatasetDialog implements OnInit {
   private loader = inject(LoaderService);
   private fb = inject(FormBuilder);
   private errorHandler = inject(ErrorHandlerService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialog = inject(DialogService);
   protected dialogRef = inject<DialogRef>(DialogRef);
   private translate = inject(TranslateService);
