@@ -20,6 +20,7 @@ import { countTopologyErrors } from 'app/helpers/disk-errors.helper';
 import { poolScanFromEvent } from 'app/helpers/pool-scan-event.helper';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
+import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -93,7 +94,7 @@ export class StorageHealthCardComponent {
   private scanUpdates$ = toObservable(this.pool).pipe(
     switchMap((pool) => this.api.subscribe('pool.scan').pipe(
       map((event) => poolScanFromEvent(event)),
-      filter((scan) => scan?.name === pool.name),
+      filter((scan): scan is PoolScan => scan?.name === pool.name),
       map((scan) => scan.scan),
     )),
     this.errorHandler.withErrorHandler(),
