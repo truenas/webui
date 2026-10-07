@@ -32,6 +32,7 @@ jobs:
       - name: Install
         uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
         with:
+          node-version: '24.15.0'
           cache-jest: 'true'
 
       - name: Run translations update
