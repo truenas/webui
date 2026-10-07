@@ -4529,30 +4529,34 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@truenas/ui-components@npm:~0.7.12":
-  version: 0.7.12
-  resolution: "@truenas/ui-components@npm:0.7.12"
+"@truenas/ui-components@npm:~0.8.10":
+  version: 0.8.10
+  resolution: "@truenas/ui-components@npm:0.8.10"
   dependencies:
     "@material-design-icons/svg": "npm:~0.14.13"
     "@mdi/svg": "npm:~7.4.47"
     "@types/svg-sprite": "npm:~0.0.39"
     "@types/vinyl": "npm:~2.0.12"
     cheerio: "npm:~1.0.0"
+    fast-glob: "npm:^3.3.3"
     filesize: "npm:~11.0.17"
     svg-sprite: "npm:~2.0.4"
     tslib: "npm:^2.3.0"
     tsx: "npm:~4.19.1"
     vinyl: "npm:~3.0.0"
   peerDependencies:
-    "@angular/cdk": ^21.0.0
-    "@angular/common": ^21.0.0
-    "@angular/core": ^21.0.0
-    "@angular/router": ^21.0.0
-    "@mdi/angular-material": ^7.2.96
+    "@angular/animations": ^22.0.0
+    "@angular/cdk": ^22.0.0
+    "@angular/common": ^22.0.0
+    "@angular/core": ^22.0.0
+    "@angular/forms": ^22.0.0
+    "@angular/platform-browser": ^22.0.0
+    "@angular/router": ^22.0.0
     "@mdi/js": ^7.4.47
+    rxjs: ^7.5.0
   bin:
-    truenas-icons: scripts/icon-sprite/cli.js
-  checksum: 10/c4993f635762df0495ef3a7ef17cadc3f7e626eb693c34526a74c9f5d9ec48890453185ac96cc239f904f33290a9644c7f426a322aa4a2f07998bff9f16d2f46
+    truenas-icons: scripts/icon-sprite/cli.cjs
+  checksum: 10/874f0575210202cc3118c60b594e2214e71c9670eabff5c7fe8f5952aed1bfc6880ddd134d4966698a207559a8148546c8fa1755cb66eb01e9a9d5aebbd63370
   languageName: node
   linkType: hard
 
@@ -15787,7 +15791,7 @@ __metadata:
     "@stylistic/eslint-plugin": "npm:~2.9.0"
     "@truenas/api-client": "npm:~8.0.0"
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master"
-    "@truenas/ui-components": "npm:~0.7.12"
+    "@truenas/ui-components": "npm:~0.8.10"
     "@types/cheerio": "npm:~0.22.35"
     "@types/d3": "npm:~7.4.3"
     "@types/dygraphs": "npm:^2.1.10"
