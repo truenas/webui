@@ -39,6 +39,14 @@ const fakeQuotas = [{
   quota: 512000,
   quota_type: DatasetQuotaType.User,
   used_percent: 0,
+}, {
+  id: 1000,
+  name: null,
+  obj_quota: 0,
+  obj_used: 0,
+  quota: 512000,
+  quota_type: DatasetQuotaType.User,
+  used_percent: 0,
 }] as DatasetQuota[];
 
 describe('DatasetQuotasListComponent', () => {
@@ -108,13 +116,21 @@ describe('DatasetQuotasListComponent', () => {
     expect(await table.getHeaderTexts()).toEqual(
       ['Name', 'ID', 'Data Quota', 'DQ Used', 'DQ % Used', 'Object Quota', 'OQ Used', 'OQ % Used', ''],
     );
-    expect(await table.getRowCount()).toBe(2);
+    expect(await table.getRowCount()).toBe(3);
     expect(await table.getRowTexts(0)).toEqual(
       ['daemon', '1', '500 KiB', '—', '25%', '5', '55', '11%', ''],
     );
     expect(await table.getRowTexts(1)).toEqual(
       ['bin', '2', '500 KiB', '—', '0%', '—', '33', '—', ''],
     );
+  });
+
+  it('tags each row by user, not by the quota values that editing it changes', () => {
+    const rows = Array.from(spectator.queryAll('tbody tr[data-test]'))
+      .map((row) => row.getAttribute('data-test'));
+
+    // An unmapped uid has no name, so its row falls back to the id.
+    expect(rows).toEqual(['row-users-quota-daemon', 'row-users-quota-bin', 'row-users-quota-id-1000']);
   });
 
   it('should delete user quota when click delete button', async () => {

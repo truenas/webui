@@ -89,7 +89,8 @@ export class TunableCardComponent implements OnInit {
     },
   ];
 
-  protected readonly uniqueRowTag = (row: Tunable): string => `tunable-${row.var}-${row.value}`;
+  // Keyed on `var` only: `value` is what a user edits, so it must not rename the row.
+  protected readonly uniqueRowTag = (row: Tunable): string => `tunable-${row.var}`;
 
   protected ariaLabel(row: Tunable): string {
     return [row.var, this.translate.instant('Tunable')].join(' ');
