@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import {
-  filter, forkJoin, map, Observable, Subject, take,
+  catchError, defer, filter, forkJoin, map, Observable, of, Subject, switchMap, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -20,7 +20,7 @@ import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { Disk, DetailsDisk, ExtraDiskQueryOptions } from 'app/interfaces/disk.interface';
+import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -237,7 +237,7 @@ export class DiskListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // `entitled$` waits for a real answer, so `sed_status` is never silently omitted because
+    // `entitled$` waits for a real answer, so SED statuses are never silently dropped because
     // entitlements had not loaded yet.
     this.entitlements.entitled$(EntitlementFeature.Sed).pipe(
       take(1),
@@ -250,31 +250,28 @@ export class DiskListComponent implements OnInit {
         }
       }
 
-      const extraOptions: ExtraDiskQueryOptions = {
-        extra: {
-          pools: true,
-          passwords: true,
-          ...(hasSed && { sed_status: true }),
-        },
-      };
-
-      const request$ = forkJoin([
-        this.api.call('disk.details').pipe(
-          map((diskDetails) => [
+      // SED status comes from `disk.details`; asking `disk.query` for it too probes each drive twice.
+      const request$ = defer(() => forkJoin([
+        this.api.call('disk.details'),
+        this.api.call('disk.query', [[], { extra: { pools: true, passwords: true } }]),
+      ])).pipe(
+        switchMap(([diskDetails, disks]) => {
+          this.unusedDisks = [
             ...diskDetails.unused,
             ...diskDetails.used.filter((disk) => disk.exported_zpool),
-          ]),
-        ),
-        this.api.call('disk.query', [[], extraOptions]),
-      ]).pipe(
-        map(([unusedDisks, disks]) => {
-          this.unusedDisks = unusedDisks;
-          this.disks = disks.map((disk) => ({
-            ...disk,
-            pool: this.getPoolColumn(disk),
-            selected: false,
-          }));
-          return this.disks;
+          ];
+
+          return this.getSedStatuses(hasSed, [...diskDetails.unused, ...diskDetails.used], disks).pipe(
+            map((statuses) => {
+              this.disks = disks.map((disk) => ({
+                ...disk,
+                sed_status: statuses.get(disk.name),
+                pool: this.getPoolColumn(disk),
+                selected: false,
+              }));
+              return this.disks;
+            }),
+          );
         }),
       );
       this.dataProvider = new AsyncDataProvider(request$);
@@ -361,7 +358,7 @@ export class DiskListComponent implements OnInit {
   /**
    * A PSID reset is a recovery path, so it is offered in every reported SED state (locked,
    * unlocked, uninitialized, failed), not only when the disk is locked. `sed_status` is only
-   * queried with the SED entitlement, so its presence also gates on that.
+   * kept with the SED entitlement (see `getSedStatuses`), so its presence also gates on that.
    */
   protected canResetSed(disk: Disk): boolean {
     return Boolean(disk.sed && disk.sed_status);
@@ -380,6 +377,46 @@ export class DiskListComponent implements OnInit {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
+  }
+
+  /**
+   * SED statuses by disk name; none without the SED entitlement. A SED disk that `disk.details`
+   * left out (it skips disks the OS cannot size) or returned without a status is probed here,
+   * once its own sweep has finished.
+   */
+  private getSedStatuses(
+    hasSed: boolean,
+    detailsDisks: DetailsDisk[],
+    disks: Disk[],
+  ): Observable<Map<string, SedStatus>> {
+    const statuses = new Map<string, SedStatus>();
+    if (!hasSed) {
+      return of(statuses);
+    }
+
+    const addStatuses = (from: (Disk | DetailsDisk)[]): void => from.forEach((disk) => {
+      if (disk.sed_status) {
+        statuses.set(disk.name, disk.sed_status);
+      }
+    });
+
+    addStatuses(detailsDisks);
+    const missing = disks.filter((disk) => disk.sed && !statuses.has(disk.name)).map((disk) => disk.name);
+    if (!missing.length) {
+      return of(statuses);
+    }
+
+    return this.api.call('disk.query', [[['name', 'in', missing]], { extra: { sed_status: true } }]).pipe(
+      // The statuses are supplementary: a failed probe must not cost the user the whole list.
+      catchError((error: unknown) => {
+        console.error(error);
+        return of([] as Disk[]);
+      }),
+      map((probedDisks) => {
+        addStatuses(probedDisks);
+        return statuses;
+      }),
+    );
   }
 
   private getPoolColumn(diskToCheck: Disk): string {
