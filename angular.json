@@ -55,6 +55,9 @@
               "src/assets/styles/index.scss"
             ],
             "scripts": [],
+            "externalDependencies": [
+              "marked-katex-extension"
+            ],
             "extractLicenses": false,
             "sourceMap": true,
             "optimization": false,
