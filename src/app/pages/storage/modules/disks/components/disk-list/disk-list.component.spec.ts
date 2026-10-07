@@ -8,14 +8,16 @@ import {
   TnButtonHarness, TnDialog, TnEmptyHarness, TnSelectHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { NEVER, of } from 'rxjs';
+import {
+  NEVER, of, Subject, throwError,
+} from 'rxjs';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
-import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
+import { Disk, DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { BasicSearchHarness } from 'app/modules/forms/search-input/components/basic-search/basic-search.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -81,10 +83,7 @@ describe('DiskListComponent', () => {
       type: 'SSD',
       devname: 'sdb',
       pool: null,
-      // A disk that reports a status but doesn't support SED still renders as "Unsupported" —
-      // which is exactly where the raw column value and the displayed text diverge.
       sed: false,
-      sed_status: SedStatus.Failed,
     },
     {
       identifier: 'identifier3',
@@ -101,7 +100,6 @@ describe('DiskListComponent', () => {
       devname: 'sdc',
       pool: null,
       sed: true,
-      sed_status: SedStatus.Locked,
     },
   ] as Disk[];
 
@@ -115,7 +113,16 @@ describe('DiskListComponent', () => {
     type: 'HDD',
     exported_zpool: 'test pool',
     devname: 'sdb',
+    // A disk that reports a status but doesn't support SED still renders as "Unsupported" —
+    // which is exactly where the raw column value and the displayed text diverge.
+    sed_status: SedStatus.Failed,
   }] as DetailsDisk[];
+
+  // SED status reaches the page through `disk.details`; the page-load `disk.query` does not ask for it.
+  const fakeUsedDisks = [
+    ...fakeUnusedDisks,
+    { name: 'sdc', devname: 'sdc', sed_status: SedStatus.Locked },
+  ] as DetailsDisk[];
 
   const createComponent = createComponentFactory({
     component: DiskListComponent,
@@ -147,7 +154,7 @@ describe('DiskListComponent', () => {
       }),
       mockTypedApi([
         mockTypedQuery('disk.query', fakeDisks as unknown as WebUiQueryEntity<'disk.query'>[]),
-        mockTypedCall('disk.details', { unused: [], used: fakeUnusedDisks }),
+        mockTypedCall('disk.details', { unused: [], used: fakeUsedDisks }),
       ]),
     ],
   });
@@ -172,6 +179,75 @@ describe('DiskListComponent', () => {
       ['sdb', 'serial2', '5 GiB', 'test pool (Exported)', 'Unsupported'],
       ['sdc', 'serial3', '5 GiB', 'N/A', 'Locked'],
     ]);
+  });
+
+  it('leaves the SED status sweep to disk.details, so the drives are not probed twice at once', () => {
+    const api = spectator.inject(TypedApiService);
+
+    expect(api.call).toHaveBeenCalledWith('disk.details');
+    expect(api.call).toHaveBeenCalledTimes(1);
+    expect(api.query).toHaveBeenCalledWith('disk.query', [], { extra: { pools: true, passwords: true } });
+    expect(api.query).toHaveBeenCalledTimes(1);
+  });
+
+  describe('a SED disk that disk.details left out', () => {
+    const missingDisk = {
+      ...fakeDisks[2], identifier: 'identifier4', name: 'sdd', devname: 'sdd',
+    } as Disk;
+    const probeFilters = [['name', 'in', ['sdd']]];
+    const probeOptions = { extra: { sed_status: true } };
+    const isProbe = (filters: unknown): boolean => Array.isArray(filters) && filters.length > 0;
+
+    it('is probed only once the details sweep is done', async () => {
+      const api = spectator.inject(MockTypedApiService);
+      const details$ = new Subject<DiskDetailsResponse>();
+      const mockedCall = api.call.getMockImplementation()!;
+      api.call.mockImplementation((method: string, params?: unknown) => {
+        return method === 'disk.details' ? details$ : mockedCall(method, params);
+      });
+      api.query.mockImplementation((method: string, filters?: unknown) => of(isProbe(filters)
+        ? [{ ...missingDisk, sed_status: SedStatus.Unlocked }]
+        : [...fakeDisks, missingDisk]));
+      spectator = createComponent();
+
+      expect(api.query).not.toHaveBeenCalledWith('disk.query', probeFilters, probeOptions);
+
+      details$.next({ unused: [], used: fakeUsedDisks });
+      details$.complete();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(TnTableHarness);
+
+      expect(api.query).toHaveBeenCalledWith('disk.query', probeFilters, probeOptions);
+      expect((await table.getAllRowTexts())[3]).toEqual(['sdd', 'serial3', '5 GiB', 'N/A', 'Unlocked']);
+    });
+
+    it('is probed too when disk.details returned it without a status', async () => {
+      const api = spectator.inject(MockTypedApiService);
+      api.mockQuery('disk.query', [...fakeDisks, missingDisk] as unknown as WebUiQueryEntity<'disk.query'>[]);
+      api.mockCall('disk.details', {
+        unused: [],
+        used: [...fakeUsedDisks, { name: 'sdd', devname: 'sdd' }] as DetailsDisk[],
+      });
+      spectator = createComponent();
+      await spectator.fixture.whenStable();
+
+      expect(api.query).toHaveBeenCalledWith('disk.query', probeFilters, probeOptions);
+    });
+
+    it('still lists every disk when the probe fails, and logs why', async () => {
+      const consoleError = jest.spyOn(console, 'error').mockImplementation();
+      const api = spectator.inject(MockTypedApiService);
+      api.query.mockImplementation((method: string, filters?: unknown) => (isProbe(filters)
+        ? throwError(() => new Error('SP_BUSY'))
+        : of([...fakeDisks, missingDisk])));
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(TnTableHarness);
+
+      expect((await table.getAllRowTexts())[3]).toEqual(['sdd', 'serial3', '5 GiB', 'N/A', 'Unknown']);
+      expect(consoleError).toHaveBeenCalledWith(new Error('SP_BUSY'));
+      consoleError.mockRestore();
+    });
   });
 
   /**
@@ -205,7 +281,7 @@ describe('DiskListComponent', () => {
   it('keeps splitting letter-digit boundaries in row-action test ids, as lodash kebab-case did', async () => {
     spectator.inject(MockTypedApiService).mockQuery(
       'disk.query',
-      [{ ...fakeDisks[0], name: 'nvme0n1', devname: 'nvme0n1' }] as Disk[],
+      [{ ...fakeDisks[0], name: 'nvme0n1', devname: 'nvme0n1' }] as unknown as WebUiQueryEntity<'disk.query'>[],
     );
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -378,11 +454,14 @@ describe('DiskListComponent', () => {
     SedStatus.Uninitialized,
     SedStatus.Failed,
   ])('offers SED Reset but not Unlock for a %s SED disk', async (sedStatus) => {
-    spectator.inject(MockTypedApiService).mockQuery('disk.query', [{ ...fakeDisks[2], sed_status: sedStatus }] as unknown as WebUiQueryEntity<'disk.query'>[]);
+    spectator.inject(MockTypedApiService).mockCall('disk.details', {
+      unused: [],
+      used: [{ name: 'sdc', devname: 'sdc', sed_status: sedStatus }] as DetailsDisk[],
+    });
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(TnTableHarness);
-    await table.toggleRowExpansion(0);
+    await table.toggleRowExpansion(2);
 
     expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Unlock' }))).toBeNull();
 
@@ -435,6 +514,7 @@ describe('DiskListComponent', () => {
     // Against a real middleware the reload takes 5-10s; keep it pending so the optimistic
     // update the save performs is what the table shows.
     (api.call as jest.Mock).mockReturnValue(NEVER);
+    (api.query as unknown as jest.Mock).mockReturnValue(NEVER);
 
     const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
@@ -629,6 +709,31 @@ describe('DiskListComponent - without SED license', () => {
 
     expect(headerRow).not.toContain('Self-Encrypting Drive (SED)');
     expect(headerRow).toEqual(['Name', 'Serial', 'Disk Size', 'Pool']);
+  });
+
+  it('offers no SED actions, even when disk.details reports a status', async () => {
+    const api = spectator.inject(MockTypedApiService);
+    api.mockQuery('disk.query', [{ ...fakeDisks[0], sed: true }] as unknown as WebUiQueryEntity<'disk.query'>[]);
+    api.mockCall('disk.details', {
+      unused: [],
+      used: [{ name: 'sda', devname: 'sda', sed_status: SedStatus.Locked }] as DetailsDisk[],
+    });
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(TnTableHarness);
+    await table.toggleRowExpansion(0);
+
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Unlock' }))).toBeNull();
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'SED Reset' }))).toBeNull();
+  });
+
+  it('does not probe a SED disk that disk.details left out', async () => {
+    const api = spectator.inject(MockTypedApiService);
+    api.mockQuery('disk.query', [{ ...fakeDisks[0], sed: true }] as unknown as WebUiQueryEntity<'disk.query'>[]);
+    spectator = createComponent();
+    await spectator.fixture.whenStable();
+
+    expect(api.query).not.toHaveBeenCalledWith('disk.query', expect.anything(), { extra: { sed_status: true } });
   });
 });
 
