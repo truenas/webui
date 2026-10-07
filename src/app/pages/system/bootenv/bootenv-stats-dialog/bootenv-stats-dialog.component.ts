@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
-  InputType,
+  InputType, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PoolStatus, poolStatusLabels } from 'app/enums/pool-status.enum';
@@ -31,6 +31,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   styleUrls: ['./bootenv-stats-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnDialogShellComponent,
     TnFormFieldComponent,
     TnInputComponent,

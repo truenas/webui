@@ -4,7 +4,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnEmptyComponent,
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnEmptyComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -25,6 +25,7 @@ import { GpuService } from 'app/services/gpu/gpu.service';
   templateUrl: './isolated-gpus-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnCardComponent,
     TnCardFooterActionsDirective,
     TnEmptyComponent,

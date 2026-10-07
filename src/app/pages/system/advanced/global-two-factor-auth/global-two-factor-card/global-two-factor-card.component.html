@@ -6,7 +6,12 @@
   <div class="details" [ixUiSearch]="searchableElements.elements.globallyEnabled">
     <div class="details-item">
       <span class="label">{{ 'Global 2FA' | translate }}:</span>
-      <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
+      <span
+        *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig"
+        class="value"
+        tnTestId="global-2fa"
+        tnTestIdType="text"
+      >
         {{ twoFactorAuthConfig?.enabled ? ('Enabled' | translate) : ('Disabled' | translate) }}
       </span>
     </div>
@@ -23,14 +28,24 @@
           [message]="helpText.card.toleranceWindowTooltip | translate"
         ></ix-tooltip>
       </span>
-      <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
+      <span
+        *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig"
+        class="value"
+        tnTestId="global-2fa-tolerance-window"
+        tnTestIdType="text"
+      >
         {{ twoFactorAuthConfig?.window }}
       </span>
     </div>
 
     <div class="details-item" [ixUiSearch]="searchableElements.elements.enableForSsh">
       <span class="label">{{ 'Two Factor Authentication for SSH' | translate }}:</span>
-      <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
+      <span
+        *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig"
+        class="value"
+        tnTestId="global-2fa-ssh"
+        tnTestIdType="text"
+      >
         {{ twoFactorAuthConfig?.services?.ssh ? ('Enabled' | translate) : ('Disabled' | translate) }}
       </span>
     </div>

@@ -8,7 +8,7 @@ import {
   TnMenuItemComponent,
   TnMenuTriggerDirective,
   TnTooltipDirective,
-  tnIconMarker,
+  tnIconMarker, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -26,6 +26,7 @@ import { BootPoolActionEvent, BootPoolActionType } from 'app/pages/system/booten
   styleUrls: ['./bootenv-node-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnIconComponent,
     TnIconButtonComponent,
     TnTooltipDirective,

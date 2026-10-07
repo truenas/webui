@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { enclosureDiskStatusLabels } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -13,6 +14,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   styleUrls: ['./disk-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TranslateModule,
     MapValuePipe,
     DecimalPipe,

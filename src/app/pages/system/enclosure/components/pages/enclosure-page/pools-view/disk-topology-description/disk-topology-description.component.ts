@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -11,7 +12,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   styleUrl: './disk-topology-description.component.scss',
   templateUrl: './disk-topology-description.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslateModule, MapValuePipe],
+  imports: [TnTestIdDirective, TranslateModule, MapValuePipe],
 })
 export class DiskTopologyDescriptionComponent {
   selectedSlot = input.required<DashboardEnclosureSlot>();

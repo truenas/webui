@@ -2,19 +2,19 @@
   <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
     @if (!isJobCompleted()) {
       <p>
-        <strong>
+        <strong tnTestId="delete-message" tnTestIdType="text">
           {{ 'The following { n, plural, one {boot environment} other {# boot environments} } will be deleted. Are you sure you want to proceed?' | translate: { n: bulkItems.size } }}
         </strong>
       </p>
     } @else {
       <p>
         @if (failedCount) {
-          <strong>
+          <strong tnTestId="delete-failed" tnTestIdType="text">
             {{ 'Warning: {n} of {total} boot environments could not be deleted.' | translate: { n: failedCount, total: bulkItems.size } }}
           </strong>
         }
         @if (successCount) {
-          <strong>
+          <strong tnTestId="delete-succeeded" tnTestIdType="text">
             {{ '{n, plural, one {# boot environment} other {# boot environments}} has been deleted.' | translate: { n: successCount } }}
           </strong>
         }
@@ -24,7 +24,7 @@
     <div class="bulk-list">
       @for (bulkItem of bulkItems | keyvalue; track trackByKey($index, bulkItem)) {
         <ix-bulk-list-item [item]="bulkItem.value">
-          <span>{{ bulkItem.value.item.id }}</span>
+          <span tnTestIdType="text" [tnTestId]="['boot-environment', bulkItem.value.item.id]">{{ bulkItem.value.item.id }}</span>
         </ix-bulk-list-item>
       }
     </div>

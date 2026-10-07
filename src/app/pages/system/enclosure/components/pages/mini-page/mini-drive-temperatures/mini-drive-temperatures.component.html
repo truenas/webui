@@ -4,12 +4,12 @@
   <ul>
     @for (disk of disks(); track disk.dev) {
       <li class="disk">
-        <strong class="dev">{{ disk.dev }}:</strong>
+        <strong class="dev" tnTestIdType="text" [tnTestId]="['drive', disk.dev]">{{ disk.dev }}:</strong>
 
         @if (isLoading()) {
           <ngx-skeleton-loader [theme]="{ margin: 0, background: 'var(--alt-bg2)' }"></ngx-skeleton-loader>
         } @else {
-          <span class="temperature">{{ disk.temperature | orNotAvailable }}</span>
+          <span class="temperature" tnTestIdType="text" [tnTestId]="['drive-temperature', disk.dev]">{{ disk.temperature | orNotAvailable }}</span>
           @if (!disk.temperature) {
             <ix-tooltip
               class="tooltip-icon"

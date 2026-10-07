@@ -4,6 +4,6 @@
       class="disk-circle"
       [style.background]="item[1]"
     ></div>
-    <span class="label">{{ item[0] }}</span>
+    <span class="label" tnTestIdType="text" [tnTestId]="['status-legend', item[0]]">{{ item[0] }}</span>
   </div>
 }

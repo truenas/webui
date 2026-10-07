@@ -5,7 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import {
@@ -40,6 +40,7 @@ export interface SyslogConfig {
   templateUrl: './syslog-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnCardComponent,
     TnCardFooterActionsDirective,
     UiSearchDirective,

@@ -2,7 +2,7 @@
   <div class="details" [ixUiSearch]="searchableElements.elements.card">
     <div class="details-item">
       <span class="label">{{ 'Enabled' | translate }}:</span>
-      <span class="value">
+      <span class="value" tnTestId="failover-enabled" tnTestIdType="text">
         @if (isLoading()) {
           <ngx-skeleton-loader></ngx-skeleton-loader>
         } @else {
@@ -14,14 +14,14 @@
     @if (!isLoading() && !config()?.disabled) {
       <div class="details-item">
         <span class="label">{{ 'Default Controller' | translate }}:</span>
-        <span class="value">
+        <span class="value" tnTestId="failover-default-controller" tnTestIdType="text">
           {{ config().master | yesNo }}
         </span>
       </div>
 
       <div class="details-item">
         <span class="label">{{ 'Network Timeout Before Initiating Failover' | translate }}:</span>
-        <span class="value">
+        <span class="value" tnTestId="failover-network-timeout" tnTestIdType="text">
           {{ '{seconds}s' | translate: { seconds: config().timeout } }}
         </span>
       </div>

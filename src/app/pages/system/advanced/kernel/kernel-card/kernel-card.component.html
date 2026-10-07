@@ -6,7 +6,12 @@
   <div class="details">
     <div class="details-item" [ixUiSearch]="searchableElements.elements.enableKernelDebug">
       <span class="label">{{ 'Enable Debug Kernel' | translate }}:</span>
-      <span *ixWithLoadingState="debugKernel$ as debugKernel" class="value">
+      <span
+        *ixWithLoadingState="debugKernel$ as debugKernel"
+        class="value"
+        tnTestId="enable-debug-kernel"
+        tnTestIdType="text"
+      >
         {{ debugKernel ? ('Enabled' | translate) : ('Disabled' | translate) }}
       </span>
     </div>

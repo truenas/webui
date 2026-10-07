@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, OnChan
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnFormFieldComponent, TnSelectComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { UpdateProfileChoices } from 'app/interfaces/system-update.interface';
@@ -18,6 +18,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './update-profile-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     ReactiveFormsModule,
     TnFormFieldComponent,
     TnSelectComponent,

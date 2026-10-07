@@ -11,7 +11,7 @@ import {
   TnListComponent,
   TnListItemComponent,
   TnSlideToggleComponent,
-  TnTooltipDirective,
+  TnTooltipDirective, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { Observable, of, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -35,6 +35,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['../../common-settings-card.scss', './sys-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     ReactiveFormsModule,
     RequiresRolesDirective,
     TnButtonComponent,

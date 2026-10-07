@@ -32,7 +32,7 @@
     <form (submit)="onSubmit()">
       @for (cls of selectedCategory.classes; track cls.id) {
         <div class="class-row" [formGroup]="form.controls[cls.id]">
-          <span class="class-label">{{ cls.title | translate }}</span>
+          <span class="class-label" tnTestIdType="text" [tnTestId]="[cls.title, 'title']">{{ cls.title | translate }}</span>
           <tn-form-field
             [label]="'Set Warning Level' | translate"
             [tooltip]="helptext.levelTooltip | translate"

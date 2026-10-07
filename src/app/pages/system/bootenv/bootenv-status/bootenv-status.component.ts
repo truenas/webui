@@ -13,7 +13,7 @@ import {
   TnTreeComponent,
   TnTreeExpansion,
   TnTreeNodeOutletDirective,
-  createNestedTreeControl,
+  createNestedTreeControl, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { filter, tap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -48,6 +48,7 @@ export interface BootPoolActionEvent {
   styleUrls: ['./bootenv-status.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     FakeProgressBarComponent,
     UiSearchDirective,
     TnExpansionPanelComponent,

@@ -16,13 +16,18 @@
   <tn-list>
     <tn-list-item [ixUiSearch]="searchableElements.elements.timezone">
       <span class="label">{{ helptext.timezone.label | translate }}:</span>
-      <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+      <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value" tnTestId="timezone" tnTestIdType="text">
         {{ generalConfig.timezone }}
       </span>
     </tn-list-item>
     <tn-list-item [ixUiSearch]="searchableElements.elements.consoleKeyboardMap">
       <span class="label">{{ helptext.kbdmap.label | translate }}:</span>
-      <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+      <span
+        *ixWithLoadingState="generalConfig$ as generalConfig"
+        class="value"
+        tnTestId="console-keyboard-map"
+        tnTestIdType="text"
+      >
         <ng-container *ixWithLoadingState="mapChoices$ as mapChoices">
           {{ getKeyboardMapValue(mapChoices, generalConfig) }}
         </ng-container>

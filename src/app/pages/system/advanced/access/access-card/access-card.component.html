@@ -8,14 +8,24 @@
     @if (hasDirectoryServices()) {
       <div class="details-item">
         <span class="label">{{ 'Allow Directory Service users UI / API access' | translate }}:</span>
-        <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+        <span
+          *ixWithLoadingState="generalConfig$ as generalConfig"
+          class="value"
+          tnTestId="access-allow-directory-service-users"
+          tnTestIdType="text"
+        >
           {{ generalConfig | yesNo }}
         </span>
       </div>
     }
     <div class="details-item" [ixUiSearch]="searchableElements.elements.loginBanner">
       <span class="label">{{ 'Login Banner' | translate }}:</span>
-      <span *ixWithLoadingState="loginBanner$ as loginBanner" class="value">
+      <span
+        *ixWithLoadingState="loginBanner$ as loginBanner"
+        class="value"
+        tnTestId="access-login-banner"
+        tnTestIdType="text"
+      >
         {{ loginBanner || '–' }}
       </span>
     </div>
