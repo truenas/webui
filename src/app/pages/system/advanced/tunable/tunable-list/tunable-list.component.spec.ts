@@ -149,6 +149,21 @@ describe('TunableListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
+  it('tags each row by variable, not by the value that editing it changes', () => {
+    const rows = spectator.queryAll('tbody tr[data-test]').map((row) => row.getAttribute('data-test'));
+
+    expect(rows).toEqual([
+      'row-tunable-kernel-hostname',
+      'row-tunable-kernel-watchdog',
+      'row-tunable-l-2-arc-noprefetch',
+      'row-tunable-l-2-arc-write-boost',
+      'row-tunable-l-2-arc-write-max',
+      'row-tunable-zfs-arc-max',
+      'row-tunable-zfs-dirty-data-max-max',
+      'row-tunable-zfs-vdev-sync-write-max-active',
+    ]);
+  });
+
   it('shows add form when Add button is pressed', async () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();

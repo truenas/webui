@@ -146,6 +146,12 @@ describe('SnapshotTaskCardComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
+  it('tags each row by dataset, not by the task state that changes while it runs', () => {
+    const rows = spectator.queryAll('tbody tr[data-test]').map((row) => row.getAttribute('data-test'));
+
+    expect(rows).toEqual(['row-snapshot-task-apps-test-2']);
+  });
+
   it('shows form to edit an existing Snapshot Task when Edit button is pressed', async () => {
     const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
     await menu.open();

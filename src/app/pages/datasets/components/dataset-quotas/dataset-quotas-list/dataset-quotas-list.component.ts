@@ -173,7 +173,12 @@ export class DatasetQuotasListComponent implements OnInit {
       ],
     }),
   ], {
-    uniqueRowTag: (row: DatasetQuota) => `${this.helpTextKey}-quota-${row.name}${this.emptyValue}${row.obj_quota}`,
+    // Keyed on identity only: the quota values are what a user edits here, so they must not rename the row.
+    // An unmapped uid/gid has no name; its fallback is prefixed so it cannot collide with a user named `1000`.
+    uniqueRowTag: (row: DatasetQuota) => {
+      const key = row.name || `id-${row.id}`;
+      return `${this.helpTextKey}-quota-${key}`;
+    },
     ariaLabels: (row) => [row.name, this.translate.instant('Dataset Quota')],
   });
 

@@ -93,6 +93,12 @@ describe('TunableCardComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
+  it('tags each row by variable, not by the value that editing it changes', () => {
+    const rows = spectator.queryAll('tbody tr[data-test]').map((row) => row.getAttribute('data-test'));
+
+    expect(rows).toEqual(['row-tunable-zfs-arc-max', 'row-tunable-vfs-zfs-arc-min']);
+  });
+
   it('shows form to edit a tunable variable when Edit button is pressed', async () => {
     const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 4);
     await editButton.click();

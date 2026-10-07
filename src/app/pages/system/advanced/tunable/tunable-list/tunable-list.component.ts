@@ -109,7 +109,8 @@ export class TunableListComponent implements OnInit {
       ],
     }),
   ], {
-    uniqueRowTag: (row) => 'tunable-' + row.var + '-' + row.value,
+    // Keyed on `var` only: `value` is what a user edits, so it must not rename the row.
+    uniqueRowTag: (row) => 'tunable-' + row.var,
     ariaLabels: (row) => [row.var, this.translate.instant('Tunable')],
   });
 

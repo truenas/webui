@@ -143,7 +143,8 @@ export class SnapshotTaskCardComponent implements OnInit {
       ],
     }),
   ], {
-    uniqueRowTag: (row) => 'snapshot-task-' + row.dataset + '-' + row.state.state,
+    // Keyed on identity only: `state.state` changes as the task runs, so it must not rename the row.
+    uniqueRowTag: (row) => 'snapshot-task-' + row.dataset,
     ariaLabels: (row) => [row.dataset, this.translate.instant('Snapshot Task')],
   });
 
