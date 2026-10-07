@@ -29,7 +29,7 @@ describe('WidgetMemoryComponent', () => {
     ],
     providers: [
       mockProvider(ThemeService, {
-        getRgbBackgroundColorByIndex: () => [0, 0, 0],
+        getRgbBackgroundColorByIndex: () => 'rgb(0, 0, 0)',
       }),
       provideMockStore({
         selectors: [

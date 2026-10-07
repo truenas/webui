@@ -69,14 +69,15 @@ describe('SearchInputComponent', () => {
   });
 
   it('emits "queryChange" and "runSearch" when "BasicSearchComponent" emits events', () => {
-    jest.spyOn(spectator.component.queryChange, 'emit').mockImplementation();
+    const queryChange = jest.fn();
+    spectator.component.query.subscribe(queryChange);
     jest.spyOn(spectator.component.runSearch, 'emit').mockImplementation();
 
     expect(spectator.queryAll(BasicSearchComponent)).toHaveLength(1);
-    spectator.query(BasicSearchComponent)!.queryChange.emit('query string');
+    spectator.query(BasicSearchComponent)!.query.set('query string');
     spectator.query(BasicSearchComponent)!.runSearch.emit();
 
-    expect(spectator.component.queryChange.emit).toHaveBeenCalledWith({
+    expect(queryChange).toHaveBeenCalledWith({
       isBasicQuery: true,
       query: 'query string',
     });
@@ -85,7 +86,8 @@ describe('SearchInputComponent', () => {
   });
 
   it('emits "queryChange" and "runSearch" when "AdvancedSearchComponent" emits events', () => {
-    jest.spyOn(spectator.component.queryChange, 'emit').mockImplementation();
+    const queryChange = jest.fn();
+    spectator.component.query.subscribe(queryChange);
     jest.spyOn(spectator.component.runSearch, 'emit').mockImplementation();
 
     spectator.setInput('query', {
@@ -100,7 +102,7 @@ describe('SearchInputComponent', () => {
     advanced[0].paramsChange.emit(filters);
     advanced[0].runSearch.emit();
 
-    expect(spectator.component.queryChange.emit).toHaveBeenCalledWith({
+    expect(queryChange).toHaveBeenCalledWith({
       isBasicQuery: false,
       filters,
     });

@@ -2,14 +2,14 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { TnTabsHarness } from '@truenas/ui-components';
-import { MarkdownModule } from 'ngx-markdown';
+import { provideMarkdown } from 'ngx-markdown';
 import { DynamicMarkdownComponent } from './dynamic-markdown.component';
 
 describe('DynamicMarkdownComponent', () => {
   let spectator: Spectator<DynamicMarkdownComponent>;
   const createComponent = createComponentFactory({
     component: DynamicMarkdownComponent,
-    imports: [MarkdownModule.forRoot()],
+    providers: [provideMarkdown()],
   });
 
   it('should create', () => {

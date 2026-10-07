@@ -2,7 +2,7 @@ import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
-import { MarkdownModule } from 'ngx-markdown';
+import { MarkdownComponent } from 'ngx-markdown';
 
 export interface AppNotesDialogData {
   name: string;
@@ -18,7 +18,7 @@ export interface AppNotesDialogData {
     TnDialogShellComponent,
     TnButtonComponent,
     TranslateModule,
-    MarkdownModule,
+    MarkdownComponent,
   ],
 })
 export class AppNotesDialog {

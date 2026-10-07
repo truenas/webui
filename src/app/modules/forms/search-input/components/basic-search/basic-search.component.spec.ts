@@ -7,6 +7,7 @@ import { BasicSearchHarness } from 'app/modules/forms/search-input/components/ba
 describe('BasicSearchComponent', () => {
   let spectator: Spectator<BasicSearchComponent>;
   let searchHarness: BasicSearchHarness;
+  let queryChange: jest.Mock;
   const createComponent = createComponentFactory({
     component: BasicSearchComponent,
     imports: [
@@ -16,7 +17,8 @@ describe('BasicSearchComponent', () => {
 
   beforeEach(async () => {
     spectator = createComponent();
-    jest.spyOn(spectator.component.queryChange, 'emit');
+    queryChange = jest.fn();
+    spectator.component.query.subscribe(queryChange);
     jest.spyOn(spectator.component.switchToAdvanced, 'emit');
     searchHarness = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, BasicSearchHarness);
   });
@@ -24,7 +26,7 @@ describe('BasicSearchComponent', () => {
   it('emits (queryChange) when user types in the field', async () => {
     await searchHarness.setValue('test');
 
-    expect(spectator.component.queryChange.emit).toHaveBeenCalledWith('test');
+    expect(queryChange).toHaveBeenCalledWith('test');
   });
 
   it('resets the field when the clear action is pressed', async () => {
@@ -32,7 +34,7 @@ describe('BasicSearchComponent', () => {
     await searchHarness.clearInput();
 
     expect(await searchHarness.getValue()).toBe('');
-    expect(spectator.component.queryChange.emit).toHaveBeenCalledWith('');
+    expect(queryChange).toHaveBeenCalledWith('');
   });
 
   describe('allowAdvanced', () => {

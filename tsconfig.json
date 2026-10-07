@@ -5,6 +5,7 @@
     "strict": false,
     "paths": {
       "app/*": ["./src/app/*"],
+      "assets/*": ["./src/assets/*"],
       "environments/*": ["./src/environments/*"]
     },
     "sourceMap": true,

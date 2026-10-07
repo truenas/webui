@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import {
   TnCardComponent, TnCardHeaderDirective, TnDialog, TnIconButtonComponent,
 } from '@truenas/ui-components';
-import { MarkdownModule } from 'ngx-markdown';
+import { MarkdownComponent } from 'ngx-markdown';
 import { App } from 'app/interfaces/app.interface';
 import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
 import {
@@ -23,7 +23,7 @@ import { appNotesCardAnchorId } from 'app/pages/apps/components/installed-apps/i
     TnCardHeaderDirective,
     CardExpandCollapseComponent,
     TranslateModule,
-    MarkdownModule,
+    MarkdownComponent,
     TnIconButtonComponent,
   ],
 })

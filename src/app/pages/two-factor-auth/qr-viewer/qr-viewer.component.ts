@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent } from '@truenas/ui-components';
-import { QrCodeModule } from 'ng-qrcode';
+import { QrCodeComponent } from 'ng-qrcode';
 import { helptext2fa } from 'app/helptext/system/2fa';
 
 @Component({
@@ -13,7 +13,7 @@ import { helptext2fa } from 'app/helptext/system/2fa';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnBannerComponent,
-    QrCodeModule,
+    QrCodeComponent,
     TranslateModule,
   ],
 })

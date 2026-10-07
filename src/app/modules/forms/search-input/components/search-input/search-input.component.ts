@@ -27,7 +27,6 @@ export class SearchInputComponent<T> implements OnChanges {
   readonly advancedSearchPlaceholder = input<string>('');
   readonly basicSearchPlaceholder = input<string>('');
 
-  readonly queryChange = output<SearchQuery<T>>();
   readonly runSearch = output();
 
   // TODO: Outside of scope for this component. Solve elsewhere.
@@ -42,7 +41,6 @@ export class SearchInputComponent<T> implements OnChanges {
   protected toggleAdvancedMode(): void {
     this.isInAdvancedMode = !this.isInAdvancedMode;
     this.updateQuery();
-    this.queryChange.emit(this.query());
   }
 
   protected basicQuery: string;
@@ -51,13 +49,11 @@ export class SearchInputComponent<T> implements OnChanges {
   protected basicSearchUpdated(query: string): void {
     this.basicQuery = query;
     this.updateQuery();
-    this.queryChange.emit(this.query());
   }
 
   protected advancedSearchUpdated(query: QueryFilters<T>): void {
     this.advancedQuery = query;
     this.updateQuery();
-    this.queryChange.emit(this.query());
   }
 
   private updateQuery(): void {

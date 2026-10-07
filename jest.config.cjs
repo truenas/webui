@@ -10,6 +10,7 @@ const esmPatterns = [
   'ip-regex',
   'cidr-regex',
   'lodash-es',
+  'marked',
   'internmap',
   'd3',
   'delaunator',
