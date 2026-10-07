@@ -12,6 +12,11 @@ mat-checkbox {
   display: flex;
   flex-direction: column;
 
+  .checkbox-text {
+    display: flex;
+    flex-direction: column;
+  }
+
   .checkbox-label {
     display: block;
     font-weight: 500;

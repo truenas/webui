@@ -8,9 +8,17 @@
       [required]="true"
     ></ix-input>
 
-    <mat-checkbox formControlName="updateGlobalSettings" ixTest="update-global-settings" aria-describedby="update-global-hint">
-      <span class="checkbox-label">{{ 'Update global settings (applies to all disks/pools)' | translate }}</span>
-      <span id="update-global-hint" class="checkbox-hint">{{ 'Save this password to the system configuration for future use with these disks.' | translate }}</span>
+    <mat-checkbox
+      formControlName="updateGlobalSettings"
+      color="primary"
+      ixTest="update-global-settings"
+      aria-describedby="update-global-hint"
+    >
+      <!-- A single column wrapper keeps the hint under the label rather than beside it. -->
+      <span class="checkbox-text">
+        <span class="checkbox-label">{{ 'Update global settings (applies to all disks/pools)' | translate }}</span>
+        <span id="update-global-hint" class="checkbox-hint">{{ 'Save this password to the system configuration for future use with these disks.' | translate }}</span>
+      </span>
     </mat-checkbox>
 
     <div class="exceptions-section">
