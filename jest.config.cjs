@@ -35,7 +35,7 @@ module.exports = {
   cacheDirectory: "<rootDir>/.jest/cache",
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
-    ...pathsToModuleNameMapper(compilerOptions.paths || {}),
+    ...pathsToModuleNameMapper(compilerOptions.paths || {}, { prefix: '<rootDir>/' }),
   },
   testPathIgnorePatterns: [
     '<rootDir>/dist/',

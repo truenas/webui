@@ -18,7 +18,7 @@ export interface GroupsState extends EntityState<Group> {
 }
 
 export const adapter = createEntityAdapter<Group>({
-  selectId: (group) => group.id,
+  selectId: (group: Group) => group.id,
   sortComparer: (a, b) => a.group.localeCompare(b.group),
 });
 
