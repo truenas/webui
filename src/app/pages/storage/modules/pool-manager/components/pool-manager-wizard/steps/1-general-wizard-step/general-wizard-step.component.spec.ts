@@ -6,7 +6,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnStepperComponent,
 } from '@truenas/ui-components';
-import { of, Subject } from 'rxjs';
+import { BehaviorSubject, of, Subject } from 'rxjs';
 import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
@@ -221,6 +221,8 @@ describe('GeneralWizardStepComponent with SED disks and no global password', () 
   let loader: HarnessLoader;
 
   const startOver$ = new Subject<void>();
+  // The store loads the disks after the step is created; tests that care flip this to `true` first.
+  const isLoading$ = new BehaviorSubject(false);
 
   const createComponent = createComponentFactory({
     component: GeneralWizardStepComponent,
@@ -240,7 +242,7 @@ describe('GeneralWizardStepComponent with SED disks and no global password', () 
       }),
       mockProvider(PoolManagerStore, {
         startOver$,
-        isLoading$: of(false),
+        isLoading$,
         hasSedCapableDisks$: of(true),
         encryptionType$: of(EncryptionType.None),
         setGeneralOptions: jest.fn(),
@@ -260,6 +262,7 @@ describe('GeneralWizardStepComponent with SED disks and no global password', () 
   });
 
   beforeEach(() => {
+    isLoading$.next(false);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
@@ -291,6 +294,28 @@ describe('GeneralWizardStepComponent with SED disks and no global password', () 
     const infoMessage = spectator.query('ix-warning');
     expect(infoMessage).toBeTruthy();
     expect(infoMessage).toHaveText('The Global SED Password is a system-wide setting that applies to all pools using SED encryption.');
+  });
+
+  it('selects SED once the disk load finishes', () => {
+    isLoading$.next(true);
+    spectator = createComponent();
+
+    expect(spectator.component.form.value.encryptionType).toBe(EncryptionType.None);
+
+    isLoading$.next(false);
+
+    expect(spectator.component.form.value.encryptionType).toBe(EncryptionType.Sed);
+  });
+
+  it('keeps an encryption type picked while the disks were loading', async () => {
+    isLoading$.next(true);
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+    await (await loader.getHarness(TnRadioHarness.with({ label: 'Software Encryption (ZFS)' }))).check();
+    isLoading$.next(false);
+
+    expect(spectator.component.form.value.encryptionType).toBe(EncryptionType.Software);
   });
 });
 

@@ -170,30 +170,38 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   }
 
   private resetForm(): void {
-    this.getDefaultEncryptionType$()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((defaultEncryptionType) => {
-        // When adding VDEVs to existing pool, preserve the pool name (it's read-only)
-        // When creating new pool, clear the name field (undefined allows form.reset to clear it)
-        const poolName = this.isAddingVdevs() ? this.pool()?.name || '' : undefined;
+    // When adding VDEVs to existing pool, preserve the pool name (it's read-only)
+    // When creating new pool, clear the name field (undefined allows form.reset to clear it)
+    const poolName = this.isAddingVdevs() ? this.pool()?.name || '' : undefined;
 
-        this.form.reset({
-          name: poolName,
-          encryptionType: defaultEncryptionType,
-        });
-      });
+    // Reset straight away, so the step is usable while the store reloads the disks; the SED default follows
+    // once they are in.
+    this.form.reset({
+      name: poolName,
+      encryptionType: EncryptionType.None,
+    });
+    this.applySedDefault();
   }
 
   private initSedDefaults(): void {
-    // Set SED as default if SED-capable disks detected and the system is entitled to SED
     if (this.isAddingVdevs()) {
       return;
     }
 
+    this.applySedDefault();
+  }
+
+  /**
+   * Selects SED once the disks are loaded, if any are SED-capable and the system is entitled to SED.
+   *
+   * The step is interactive while the disks load, so a choice the user made in the meantime is kept: the
+   * default only applies to a control nobody has touched.
+   */
+  private applySedDefault(): void {
     this.getDefaultEncryptionType$()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((defaultEncryptionType) => {
-        if (defaultEncryptionType === EncryptionType.Sed) {
+        if (defaultEncryptionType === EncryptionType.Sed && this.form.controls.encryptionType.pristine) {
           this.form.patchValue({ encryptionType: defaultEncryptionType });
         }
       });
