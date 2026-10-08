@@ -40,6 +40,7 @@ jobs:
       - name: Install
         uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
         with:
+          node-version: '24.15.0'
           cache-jest: 'true'
 
   build:
@@ -52,6 +53,7 @@ jobs:
       - name: Install
         uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
         with:
+          node-version: '24.15.0'
           cache-jest: 'true'
       - name: Build
         run: yarn build:prod
@@ -68,6 +70,7 @@ jobs:
       - name: Install
         uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
         with:
+          node-version: '24.15.0'
           cache-jest: 'true'
       - name: Generate default environment file
         run: yarn run check-env
@@ -116,6 +119,7 @@ jobs:
       - name: Install
         uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
         with:
+          node-version: '24.15.0'
           cache-jest: 'true'
       - name: Run tests
         run: yarn test:pr --maxWorkers=50
@@ -146,6 +150,7 @@ jobs:
       - name: Install
         uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
         with:
+          node-version: '24.15.0'
           cache-jest: 'true'
       - name: Run tests
         run: yarn test:pr --maxWorkers=2

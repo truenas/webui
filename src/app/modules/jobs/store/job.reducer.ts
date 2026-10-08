@@ -15,7 +15,7 @@ export interface JobsState extends EntityState<Job> {
 }
 
 export const adapter = createEntityAdapter<Job>({
-  selectId: (job) => job.id,
+  selectId: (job: Job) => job.id,
   sortComparer: (a, b) => b.time_started.$date - a.time_started.$date,
 });
 

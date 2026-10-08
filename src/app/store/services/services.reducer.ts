@@ -9,7 +9,7 @@ export interface ServicesState extends EntityState<Service> {
 }
 
 export const adapter = createEntityAdapter<Service>({
-  selectId: (service) => service.id,
+  selectId: (service: Service) => service.id,
   sortComparer: (a, b) => {
     const aName = serviceNames.get(a.service);
     const bName = serviceNames.get(b.service);

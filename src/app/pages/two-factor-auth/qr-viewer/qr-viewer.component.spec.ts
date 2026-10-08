@@ -3,8 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { TnBannerHarness } from '@truenas/ui-components';
-import { MockModule } from 'ng-mocks';
-import { QrCodeComponent, QrCodeDirective, QrCodeModule } from 'ng-qrcode';
+import { QrCodeComponent, QrCodeDirective } from 'ng-qrcode';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 
@@ -17,7 +16,6 @@ describe('QrViewerComponent', () => {
     imports: [
       QrCodeComponent,
       QrCodeDirective,
-      MockModule(QrCodeModule),
     ],
   });
 

@@ -1,5 +1,7 @@
 import { OVERLAY_DEFAULT_CONFIG } from '@angular/cdk/overlay';
-import { provideHttpClient, withInterceptorsFromDi, HttpClient } from '@angular/common/http';
+import {
+  provideHttpClient, withInterceptorsFromDi, withXhr, HttpClient,
+} from '@angular/common/http';
 import {
   enableProdMode, ErrorHandler, importProvidersFrom, inject, provideAppInitializer,
 } from '@angular/core';
@@ -28,7 +30,7 @@ import {
 import { TN_TEST_ATTR, TnSpriteLoaderService } from '@truenas/ui-components';
 import { environment } from 'environments/environment';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
-import { MarkdownModule } from 'ngx-markdown';
+import { provideMarkdown } from 'ngx-markdown';
 import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
@@ -94,8 +96,8 @@ bootstrapApplication(AppComponent, {
           opacity: 0.25,
         },
       }),
-      MarkdownModule.forRoot({ loader: HttpClient }),
     ),
+    provideMarkdown({ loader: HttpClient }),
     provideStore(rootReducers, {
       runtimeChecks: {
         strictStateImmutability: true,
@@ -181,7 +183,7 @@ bootstrapApplication(AppComponent, {
     }),
     ApiService,
     provideCharts(withDefaultRegisterables()),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withXhr(), withInterceptorsFromDi()),
     provideRouter(
       rootRoutes,
       withPreloading(PreloadAllModules),

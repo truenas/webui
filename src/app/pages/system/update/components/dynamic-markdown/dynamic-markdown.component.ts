@@ -2,7 +2,7 @@ import {
   Component, input, computed, ChangeDetectionStrategy,
 } from '@angular/core';
 import { TnTabComponent, TnTabPanelComponent, TnTabsComponent } from '@truenas/ui-components';
-import { MarkdownModule } from 'ngx-markdown';
+import { MarkdownComponent } from 'ngx-markdown';
 
 type MarkdownContext = Record<string, unknown>;
 
@@ -34,7 +34,7 @@ const highlightPatterns = {
   styleUrls: ['./dynamic-markdown.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MarkdownModule, TnTabsComponent, TnTabComponent, TnTabPanelComponent],
+  imports: [MarkdownComponent, TnTabsComponent, TnTabComponent, TnTabPanelComponent],
 })
 export class DynamicMarkdownComponent {
   readonly content = input.required<string>();

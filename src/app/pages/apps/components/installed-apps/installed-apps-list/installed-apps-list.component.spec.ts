@@ -161,7 +161,7 @@ describe('InstalledAppsListComponent', () => {
   it('shows an empty list when there are no search results', () => {
     expect(spectator.query(EmptyComponent)).not.toExist();
 
-    spectator.query(BasicSearchComponent)!.queryChange.emit('test-app-3');
+    spectator.query(BasicSearchComponent)!.query.set('test-app-3');
     spectator.detectChanges();
 
     expect(spectator.query('tn-table')).not.toExist();
