@@ -69,7 +69,11 @@ export const helptextSystemGeneral = {
  target="_blank">HTTP Strict Transport Security (HSTS)</a> maximum age\
  to <i>31536000</i> seconds (one year). This means that after a\
  browser connects to the web interface for the first time, the browser\
- continues to use HTTPS and renews this setting every year.',
+ continues to use HTTPS and renews this setting every year. The HSTS header\
+ includes the <i>includeSubDomains</i> directive, so browsers also redirect all\
+ subdomains of the TrueNAS hostname to <i>HTTPS</i>. Do not host HTTP-only\
+ services (such as an IPMI interface) on a TrueNAS subdomain. For example, use\
+ <i>truenas-ipmi.example.com</i> instead of <i>ipmi.truenas.example.com</i>.',
     ),
   },
 
@@ -151,7 +155,9 @@ When disabled, anonymous usage statistics consisting only of the software versio
   redirectConfirmTitle: T('Enable HTTPS Redirect'),
   redirectConfirmMessage: T('Enabling redirect will require all URLs served from current\
  host to be served via HTTPS regardless of port used. This may make some App portals\
- inaccessible if they don\'t use HTTPS. Do you wish to continue?'),
+ inaccessible if they don\'t use HTTPS. Browsers will also redirect all subdomains of\
+ this host to HTTPS, so HTTP-only services hosted on those subdomains will become\
+ unreachable. Do you wish to continue?'),
 
   restartTitle: T('Restart Web Service'),
   restartMessage: T('The web service must restart for the protocol changes to take effect. The UI will be temporarily unavailable. Restart the service?'),
