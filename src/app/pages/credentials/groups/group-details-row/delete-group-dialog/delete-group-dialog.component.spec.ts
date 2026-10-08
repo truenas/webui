@@ -4,12 +4,12 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   DeleteGroupDialog,
 } from 'app/pages/credentials/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
@@ -24,8 +24,8 @@ describe('DeleteGroupDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('group.delete'),
+      mockTypedApi([
+        mockTypedCall('group.delete', null),
       ]),
       mockProvider(SnackbarService),
       mockProvider(DialogService),
@@ -57,7 +57,7 @@ describe('DeleteGroupDialogComponent', () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('group.delete', [2, { delete_users: true }]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('group.delete', [2, { delete_users: true }]);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Group deleted');
   });

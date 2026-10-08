@@ -7,13 +7,14 @@ import {
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CertificateAcmeAddComponent } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add/csr-add.component';
@@ -48,8 +49,8 @@ describe('CertificateSigningRequestsListComponent', () => {
   const createComponent = createComponentFactory({
     component: CertificateSigningRequestsListComponent,
     providers: [
-      mockApi([
-        mockJob('certificate.delete', fakeSuccessfulJob(true)),
+      mockTypedApi([
+        mockTypedJob('certificate.delete', { state: JobState.Success, result: true }),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
@@ -151,7 +152,7 @@ describe('CertificateSigningRequestsListComponent', () => {
       buttonText: 'Delete',
     });
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.delete', [csrs[0].id, false]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('certificate.delete', [csrs[0].id, false]);
   });
 
   it('emits csrsUpdated when add succeeds', async () => {

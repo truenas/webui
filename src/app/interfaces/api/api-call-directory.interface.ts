@@ -6,7 +6,7 @@ import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { AdvancedConfig, AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
 import { AlertCategory, AlertClasses, AlertClassesUpdate } from 'app/interfaces/alert.interface';
-import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
+import { ApiKey } from 'app/interfaces/api-key.interface';
 import { ApiEventMethod } from 'app/interfaces/api-message.interface';
 import { AuditConfig, AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
@@ -14,11 +14,6 @@ import {
   AuthTokenParams, LoginExOtpTokenQuery, LoginExQuery, LoginExResponse,
 } from 'app/interfaces/auth.interface';
 import { BootenvCloneParams, BootEnvironment, BootenvKeepParams } from 'app/interfaces/boot-environment.interface';
-import {
-  Certificate,
-  CertificateProfiles,
-  ExtendedKeyUsageChoices,
-} from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import {
   CloudBackup,
@@ -39,17 +34,9 @@ import { Cronjob, CronjobUpdate } from 'app/interfaces/cronjob.interface';
 import {
   Dataset, DatasetCreate, ExtraDatasetQueryOptions,
 } from 'app/interfaces/dataset.interface';
-import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Disk, DiskDetailsResponse, ExtraDiskQueryOptions, DiskDetailsParams } from 'app/interfaces/disk.interface';
-import {
-  AuthenticatorSchema,
-  CreateDnsAuthenticator,
-  DnsAuthenticator, UpdateDnsAuthenticator,
-} from 'app/interfaces/dns-authenticator.interface';
 import { DockerStatusData } from 'app/interfaces/docker-config.interface';
-import {
-  DsUncachedGroup, LoggedInUser,
-} from 'app/interfaces/ds-cache.interface';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { DashboardEnclosure, Enclosure, SetDriveBayLightStatus } from 'app/interfaces/enclosure.interface';
 import {
   FailoverConfig,
@@ -64,9 +51,7 @@ import {
 } from 'app/interfaces/fibre-channel.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { GpuPciChoices } from 'app/interfaces/gpu-pci-choice.interface';
-import {
-  CreateGroup, DeleteGroupParams, Group, UpdateGroup,
-} from 'app/interfaces/group.interface';
+import { Group } from 'app/interfaces/group.interface';
 import {
   CreateInitShutdownScript,
   InitShutdownScript,
@@ -97,7 +82,6 @@ import {
   KeychainSshCredentials,
   SshKeyPair,
 } from 'app/interfaces/keychain-credential.interface';
-import { KmipConfig } from 'app/interfaces/kmip-config.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { MailConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
 import {
@@ -138,7 +122,7 @@ import { MapOption } from 'app/interfaces/option.interface';
 import {
   Pool, PoolInstance,
 } from 'app/interfaces/pool.interface';
-import { Privilege, PrivilegeRole, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
+import { Privilege } from 'app/interfaces/privilege.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ReplicationConfigUpdate } from 'app/interfaces/replication-config-update.interface';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
@@ -148,9 +132,6 @@ import {
 import { ResilverConfig, ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import {
-  S3AccessKey,
-  S3AccessKeyCreate,
-  S3AccessKeyUpdate,
   S3Bucket,
   S3BucketCreate,
   S3BucketUpdate,
@@ -178,9 +159,7 @@ import {
 import { TruenasConnectConfig, TruenasConnectUpdate } from 'app/interfaces/truenas-connect-config.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
-import {
-  DeleteUserParams, User, UserUpdate,
-} from 'app/interfaces/user.interface';
+import { User } from 'app/interfaces/user.interface';
 import { WebShare, WebShareUpdate } from 'app/interfaces/webshare-config.interface';
 import { ZfsTierConfig, ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { Zpool } from 'app/interfaces/zpool.interface';
@@ -197,11 +176,6 @@ import {
  */
 export interface ApiCallDirectory {
   // Acme DNS
-  'acme.dns.authenticator.authenticator_schemas': { params: void; response: AuthenticatorSchema[] };
-  'acme.dns.authenticator.create': { params: [CreateDnsAuthenticator]; response: DnsAuthenticator };
-  'acme.dns.authenticator.delete': { params: [id: number]; response: boolean };
-  'acme.dns.authenticator.query': { params: void; response: DnsAuthenticator[] };
-  'acme.dns.authenticator.update': { params: [number, Partial<UpdateDnsAuthenticator>]; response: DnsAuthenticator };
 
   // Alert
   'alert.list_categories': { params: void; response: AlertCategory[] };
@@ -217,10 +191,7 @@ export interface ApiCallDirectory {
   'alertservice.update': { params: [id: number, update: AlertServiceEdit]; response: AlertService };
 
   // API Key
-  'api_key.create': { params: [CreateApiKeyRequest]; response: ApiKey };
-  'api_key.delete': { params: [id: number]; response: boolean };
   'api_key.query': { params: QueryParams<ApiKey>; response: ApiKey[] };
-  'api_key.update': { params: UpdateApiKeyRequest; response: ApiKey };
 
   // Audit
   'audit.config': { params: void; response: AuditConfig };
@@ -230,7 +201,6 @@ export interface ApiCallDirectory {
 
   // Auth
   'auth.generate_token': { params: AuthTokenParams; response: string };
-  'auth.generate_onetime_password': { params: [{ username: string }]; response: string };
   'auth.login_ex': { params: [LoginExQuery]; response: LoginExResponse };
   'auth.login_ex_continue': { params: [LoginExOtpTokenQuery]; response: LoginExResponse };
   'auth.logout': { params: void; response: void };
@@ -255,10 +225,6 @@ export interface ApiCallDirectory {
   'boot.environment.keep': { params: BootenvKeepParams; response: unknown };
 
   // Certificate
-  'certificate.acme_server_choices': { params: void; response: Choices };
-  'certificate.ec_curve_choices': { params: void; response: Choices };
-  'certificate.extended_key_usage_choices': { params: void; response: ExtendedKeyUsageChoices };
-  'certificate.query': { params: QueryParams<Certificate>; response: Certificate[] };
 
   // CloudBackup
   'cloud_backup.query': { params: [id?: QueryParams<CloudBackup>]; response: CloudBackup[] };
@@ -292,7 +258,6 @@ export interface ApiCallDirectory {
   'cronjob.update': { params: [id: number, update: Partial<CronjobUpdate>]; response: Cronjob };
 
   // Directory Services
-  'directoryservices.status': { params: void; response: DirectoryServicesStatus };
 
   // LDAP
   'ldap.config': { params: void; response: LdapConfig };
@@ -333,12 +298,7 @@ export interface ApiCallDirectory {
   'filesystem.stat': { params: [path: string]; response: FileSystemStat };
 
   // Group
-  'group.create': { params: [CreateGroup]; response: number };
-  'group.delete': { params: DeleteGroupParams; response: number };
-  'group.get_group_obj': { params: [{ groupname?: string; gid?: number }]; response: DsUncachedGroup };
-  'group.get_next_gid': { params: void; response: number };
   'group.query': { params: QueryParams<Group>; response: Group[] };
-  'group.update': { params: [number, Partial<UpdateGroup>]; response: number };
 
   // Initshutdownscript
   'initshutdownscript.create': { params: [CreateInitShutdownScript]; response: InitShutdownScript };
@@ -432,10 +392,6 @@ export interface ApiCallDirectory {
   'keychaincredential.used_by': { params: [id: number]; response: KeychainCredentialUsedBy[] };
 
   // KMIP
-  'kmip.clear_sync_pending_keys': { params: void; response: void };
-  'kmip.config': { params: void; response: KmipConfig };
-  'kmip.kmip_sync_pending': { params: void; response: boolean };
-  'kmip.sync_keys': { params: void; response: void };
 
   // Docker
   'docker.status': { params: void; response: DockerStatusData };
@@ -506,11 +462,7 @@ export interface ApiCallDirectory {
   'pool.scrub.delete': { params: [id: number]; response: boolean };
 
   // Privilege
-  'privilege.create': { params: [PrivilegeUpdate]; response: Privilege };
-  'privilege.delete': { params: [id: number]; response: boolean };
   'privilege.query': { params: QueryParams<Privilege>; response: Privilege[] };
-  'privilege.roles': { params: QueryParams<PrivilegeRole>; response: PrivilegeRole[] };
-  'privilege.update': { params: [id: number, update: Partial<PrivilegeUpdate>]; response: Privilege };
 
   // RDMA
   'rdma.capable_protocols': { params: []; response: RdmaProtocolName[] };
@@ -525,10 +477,6 @@ export interface ApiCallDirectory {
   'rsynctask.query': { params: QueryParams<RsyncTask>; response: RsyncTask[] };
 
   // S3
-  's3.accesskey.query': { params: QueryParams<S3AccessKey>; response: S3AccessKey[] };
-  's3.accesskey.create': { params: [S3AccessKeyCreate]; response: S3AccessKey };
-  's3.accesskey.update': { params: [id: number, update: S3AccessKeyUpdate]; response: S3AccessKey };
-  's3.accesskey.delete': { params: [id: number]; response: boolean };
 
   // Sharing
   'sharing.nfs.create': { params: [NfsShareUpdate]; response: NfsShare };
@@ -624,14 +572,9 @@ export interface ApiCallDirectory {
   'update.update': { params: [Partial<UpdateConfig>]; response: UpdateConfig };
 
   // User
-  'user.create': { params: [UserUpdate]; response: User };
-  'user.update': { params: [id: number, update: Partial<UserUpdate>]; response: User };
-  'user.delete': { params: DeleteUserParams; response: number };
-  'user.get_next_uid': { params: void; response: number };
   'user.query': { params: QueryParams<User>; response: User[] };
   'user.renew_2fa_secret': { params: [string, { interval: number; otp_digits: number }]; response: User };
   'user.unset_2fa_secret': { params: [string]; response: User };
-  'user.shell_choices': { params: [ids: number[]]; response: Choices };
 
   'system.advanced.get_gpu_pci_choices': { params: void; response: GpuPciChoices };
 
@@ -642,8 +585,6 @@ export interface ApiCallDirectory {
   'webui.main.dashboard.sys_info': { params: void; response: SystemInfo };
 
   // WebUI Crypto
-  'webui.crypto.csr_profiles': { params: void; response: CertificateProfiles };
-  'webui.crypto.get_certificate_domain_names': { params: [number]; response: string[] };
 
   // ZFS
 

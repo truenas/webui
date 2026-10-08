@@ -1,7 +1,11 @@
+import { CallResponse, JobParams } from '@truenas/api-client';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+
+type D = WebUiApiDirectory;
 
 export interface Certificate {
   id: number;
@@ -92,8 +96,6 @@ export interface CertificateProfile {
 
 export type CertificateExtension = keyof CertificateExtensions;
 
-export type ExtendedKeyUsageChoices = Record<string, string>;
-
 export interface CertificateCreate {
   name: string;
   create_type: CertificateCreateType;
@@ -122,8 +124,32 @@ export interface CertificateCreate {
   renew_days?: number;
 }
 
-export interface CertificateUpdate {
-  renew_days?: number;
-  add_to_trusted_store?: boolean;
-  name?: string;
+/**
+ * Reads a `certificate.query` row into the shape the certificate pages are written against. The generated
+ * entry types `key_type` as a plain string where the UI reads its enum, and does not mark the fields that are
+ * `null` for a CSR or an imported certificate; it describes the same object.
+ */
+export function toCertificate(certificate: WebUiQueryEntity<'certificate.query'>): Certificate {
+  return certificate as unknown as Certificate;
+}
+
+/**
+ * Reads `webui.crypto.csr_profiles` into a record keyed by profile name. Middleware declares the profiles it
+ * ships as fixed keys, which an interface without an index signature cannot be read as.
+ */
+export function toCertificateProfiles(profiles: CallResponse<D, 'webui.crypto.csr_profiles'>): CertificateProfiles {
+  return profiles as unknown as CertificateProfiles;
+}
+
+/** What `certificate.create` takes, as middleware declares it. */
+export type CertificateCreateArgs = JobParams<D, 'certificate.create'>[0];
+
+/**
+ * Hands a certificate form's payload to `certificate.create` unchanged. Middleware narrows `create_type`,
+ * `key_type`, `key_length`, `ec_curve` and `digest_algorithm` to the values it accepts, and the forms only offer
+ * those values, so they are the same payload typed loosely. The ACME form's `dns_mapping` carries the selected
+ * authenticators' ids.
+ */
+export function toCertificateCreateArgs(payload: CertificateCreate): CertificateCreateArgs {
+  return payload as unknown as CertificateCreateArgs;
 }

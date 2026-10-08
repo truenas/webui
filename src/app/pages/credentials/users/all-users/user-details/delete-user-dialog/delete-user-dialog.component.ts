@@ -11,7 +11,7 @@ import { User } from 'app/interfaces/user.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -31,7 +31,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class DeleteUserDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private loader = inject(LoaderService);
   user = inject<User>(DIALOG_DATA);
   protected dialogRef = inject<DialogRef<unknown, DeleteUserDialog>>(DialogRef);
@@ -65,14 +65,14 @@ export class DeleteUserDialog implements OnInit {
   }
 
   private checkIfLastGroupMember(): void {
-    this.api.call('group.query', [[['id', '=', this.user.group.id]]])
+    this.api.query('group.query', [['id', '=', this.user.group.id]])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((groups) => {
-        this.isLastGroupMember = groups[0].users.length === 1;
+        this.isLastGroupMember = groups[0]?.users?.length === 1;
         this.cdr.markForCheck();
       });
   }

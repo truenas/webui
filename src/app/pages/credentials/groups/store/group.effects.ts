@@ -6,10 +6,9 @@ import { of } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
-import { CollectionChangeType } from 'app/enums/api.enum';
-import { Group } from 'app/interfaces/group.interface';
-import { QueryParams } from 'app/interfaces/query-api.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { toGroup } from 'app/interfaces/group.interface';
+import { TypedQueryFilter, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   groupPageEntered,
   groupRemoved,
@@ -23,7 +22,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 @Injectable()
 export class GroupEffects {
   private actions$ = inject(Actions);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
 
@@ -31,12 +30,11 @@ export class GroupEffects {
     ofType(groupPageEntered, builtinGroupsToggled),
     switchMap(() => this.store$.pipe(waitForPreferences)),
     switchMap((preferences) => {
-      let params: QueryParams<Group> = [];
-      if (preferences.hideBuiltinGroups) {
-        params = [[['builtin', '=', false]]];
-      }
-      return this.api.call('group.query', params).pipe(
-        map((groups) => groupsLoaded({ groups })),
+      const filters: TypedQueryFilter<WebUiQueryEntity<'group.query'>>[] = preferences.hideBuiltinGroups
+        ? [['builtin', '=', false]]
+        : [];
+      return this.api.query('group.query', filters).pipe(
+        map((groups) => groupsLoaded({ groups: groups.map(toGroup) })),
         catchError((error: unknown) => {
           console.error(error);
           // TODO: See if it would make sense to parse middleware error.
@@ -54,7 +52,7 @@ export class GroupEffects {
     ofType(groupsLoaded),
     switchMap(() => {
       return this.api.subscribe('group.query').pipe(
-        filter((event) => event.msg === CollectionChangeType.Removed),
+        filter((event) => event.msg === 'removed'),
         map((event) => groupRemoved({ id: event.id as number })),
       );
     }),

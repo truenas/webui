@@ -10,7 +10,9 @@ import {
   TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { filter, switchMap, tap } from 'rxjs';
+import {
+  filter, map, switchMap, tap,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -18,7 +20,7 @@ import { Role } from 'app/enums/role.enum';
 import { s3AccessKeyStatusLabels } from 'app/enums/s3.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
-import { S3AccessKey } from 'app/interfaces/s3.interface';
+import { S3AccessKey, toS3AccessKey } from 'app/interfaces/s3.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -36,7 +38,7 @@ import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   S3AccessKeyCredentialsDialogComponent,
 } from 'app/pages/credentials/s3-access-keys/s3-access-key-credentials-dialog/s3-access-key-credentials-dialog.component';
@@ -73,7 +75,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class S3AccessKeyListComponent implements OnInit {
   private loader = inject(LoaderService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   private tnDialog = inject(TnDialog);
@@ -89,7 +91,8 @@ export class S3AccessKeyListComponent implements OnInit {
 
   protected readonly searchQuery = signal('');
 
-  private readonly keys$ = this.api.call('s3.accesskey.query').pipe(
+  private readonly keys$ = this.api.query('s3.accesskey.query').pipe(
+    map((keys) => keys.map(toS3AccessKey)),
     tap((keys) => this.accessKeys = keys),
     takeUntilDestroyed(this.destroyRef),
   );

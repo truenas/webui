@@ -6,15 +6,14 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, startWith, tap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { CollectionChangeType } from 'app/enums/api.enum';
-import { User } from 'app/interfaces/user.interface';
+import { toUser, User } from 'app/interfaces/user.interface';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { PaginationServerSide } from 'app/modules/tn-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/tn-table/classes/api-data-provider/sorting-server-side.class';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AllUsersHeaderComponent } from 'app/pages/credentials/users/all-users/all-users-header/all-users-header.component';
 import { allUsersElements } from 'app/pages/credentials/users/all-users/all-users.elements';
 import { UserDetailHeaderComponent } from 'app/pages/credentials/users/all-users/user-details/user-detail-header/user-detail-header.component';
@@ -45,7 +44,7 @@ import { AppState } from 'app/store';
   ],
 })
 export class AllUsersComponent implements OnInit, OnDestroy {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private activatedRoute = inject(ActivatedRoute);
   private location = inject(Location);
   private cdr = inject(ChangeDetectorRef);
@@ -112,18 +111,18 @@ export class AllUsersComponent implements OnInit, OnDestroy {
       startWith(null),
       tap((event) => {
         switch (event?.msg) {
-          case CollectionChangeType.Added:
+          case 'added':
             // The Add panel only reports success as a boolean, so capture the created user here
             // to restore the legacy "auto-expand the newly added row" behaviour.
             if (this.expandNextAddedUser && event.fields) {
               this.expandNextAddedUser = false;
-              this.dataProvider.expandedRow = event.fields;
+              this.dataProvider.expandedRow = toUser(event.fields);
               setUsernameInUrl(this.location, event.fields.username);
             }
             this.dataProvider.load();
             break;
-          case CollectionChangeType.Changed:
-          case CollectionChangeType.Removed:
+          case 'changed':
+          case 'removed':
             this.dataProvider.load();
             break;
           default:

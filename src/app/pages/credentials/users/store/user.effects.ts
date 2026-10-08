@@ -5,8 +5,8 @@ import { of } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
-import { CollectionChangeType } from 'app/enums/api.enum';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { toUser } from 'app/interfaces/user.interface';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   userPageEntered,
   userRemoved,
@@ -17,7 +17,7 @@ import {
 @Injectable()
 export class UserEffects {
   private actions$ = inject(Actions);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
 
   // Note: This effect loads users into NgRx store for use by user-form.component.ts
@@ -26,8 +26,8 @@ export class UserEffects {
   loadUsers$ = createEffect(() => this.actions$.pipe(
     ofType(userPageEntered),
     switchMap(() => {
-      return this.api.call('user.query').pipe(
-        map((users) => usersLoaded({ users })),
+      return this.api.query('user.query').pipe(
+        map((users) => usersLoaded({ users: users.map(toUser) })),
         catchError((error: unknown) => {
           console.error(error);
           // TODO: See if it would make sense to parse middleware error.
@@ -45,7 +45,7 @@ export class UserEffects {
     ofType(usersLoaded),
     switchMap(() => {
       return this.api.subscribe('user.query').pipe(
-        filter((event) => event.msg === CollectionChangeType.Removed),
+        filter((event) => event.msg === 'removed'),
         map((event) => userRemoved({ id: event.id as number })),
       );
     }),

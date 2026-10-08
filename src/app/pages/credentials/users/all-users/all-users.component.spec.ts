@@ -3,9 +3,9 @@ import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
@@ -16,6 +16,7 @@ import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master
 import { MockMasterDetailViewComponent } from 'app/modules/master-detail-view/testing/mock-master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { AllUsersHeaderComponent } from 'app/pages/credentials/users/all-users/all-users-header/all-users-header.component';
 import { mockUsers } from 'app/pages/credentials/users/all-users/testing/mock-user-api-data-provider';
 import { UserDetailHeaderComponent } from 'app/pages/credentials/users/all-users/user-details/user-detail-header/user-detail-header.component';
@@ -55,7 +56,7 @@ const mockLoggedInUser = {
 
 describe('AllUsersComponent', () => {
   let spectator: Spectator<AllUsersComponent>;
-  let api: MockApiService;
+  let api: MockTypedApiService;
   let location: Location;
 
   const createComponent = createComponentFactory({
@@ -70,8 +71,8 @@ describe('AllUsersComponent', () => {
       UserDetailsComponent,
     ],
     providers: [
-      mockApi([
-        mockCall('user.query', mockUsers),
+      mockTypedApi([
+        mockTypedQuery('user.query', mockUsers as unknown as WebUiQueryEntity<'user.query'>[]),
       ]),
       mockProvider(FormSidePanelService),
       mockAuth(),
@@ -95,7 +96,7 @@ describe('AllUsersComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    api = spectator.inject(MockApiService);
+    api = spectator.inject(MockTypedApiService);
     location = spectator.inject(Location);
     jest.spyOn(location, 'replaceState');
   });
@@ -146,7 +147,7 @@ describe('AllUsersComponent', () => {
     );
   });
 
-  it('auto-expands the newly added user once its added event arrives', () => {
+  it('auto-expands the newly added user once its added event arrives', async () => {
     const newUser = {
       id: 3,
       username: 'new_test_user',
@@ -154,16 +155,16 @@ describe('AllUsersComponent', () => {
       roles: [],
     } as User;
     // The reloaded page must contain the new user so it is re-selected by username.
-    api.mockCall('user.query', [...mockUsers, newUser]);
+    api.mockQuery('user.query', [...mockUsers, newUser] as unknown as WebUiQueryEntity<'user.query'>[]);
 
     // Add arms the capture; the server then pushes the "added" event carrying the record.
     spectator.query(AllUsersHeaderComponent).addUser.emit();
-    api.emitSubscribeEvent({
+    api.emitEvent('user.query', {
       id: newUser.id,
       msg: CollectionChangeType.Added,
-      collection: 'user.query',
-      fields: newUser,
+      fields: newUser as unknown as WebUiQueryEntity<'user.query'>,
     });
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
 
     const userDetails = spectator.query(UserDetailsComponent);

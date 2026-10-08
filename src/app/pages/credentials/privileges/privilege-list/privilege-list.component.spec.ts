@@ -2,8 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Role } from 'app/enums/role.enum';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Privilege } from 'app/interfaces/privilege.interface';
@@ -11,7 +11,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/privileges/privilege-form/privilege-form.component';
 import { PrivilegeListComponent } from 'app/pages/credentials/privileges/privilege-list/privilege-list.component';
 
@@ -45,10 +46,10 @@ describe('PrivilegeListComponent', () => {
       PageHeaderComponent,
     ],
     providers: [
-      mockApi([
-        mockCall('privilege.query', fakePrivilegeDataSource),
-        mockCall('privilege.delete', true),
-        mockCall('group.query', []),
+      mockTypedApi([
+        mockTypedQuery('privilege.query', fakePrivilegeDataSource as unknown as WebUiQueryEntity<'privilege.query'>[]),
+        mockTypedCall('privilege.delete', true),
+        mockTypedQuery('group.query', []),
       ]),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
@@ -99,6 +100,6 @@ describe('PrivilegeListComponent', () => {
       call: expect.any(Function),
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('privilege.delete', [2]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('privilege.delete', [2]);
   });
 });

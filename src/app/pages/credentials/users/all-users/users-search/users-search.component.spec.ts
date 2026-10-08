@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnSelectHarness, TnSlideToggleHarness } from '@truenas/ui-components';
 import { BehaviorSubject } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -39,8 +39,8 @@ describe('UsersSearchComponent', () => {
       SearchInputComponent,
     ],
     providers: [
-      mockApi([
-        mockCall('directoryservices.status', {
+      mockTypedApi([
+        mockTypedCall('directoryservices.status', {
           status: DirectoryServiceStatus.Healthy,
           type: null,
           status_msg: null,
@@ -230,8 +230,8 @@ describe('UsersSearchComponent', () => {
       component: UsersSearchComponent,
       imports: [SearchInputComponent],
       providers: [
-        mockApi([
-          mockCall('directoryservices.status', {
+        mockTypedApi([
+          mockTypedCall('directoryservices.status', {
             status: DirectoryServiceStatus.Disabled,
             type: null,
             status_msg: null,

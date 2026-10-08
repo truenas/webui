@@ -2,11 +2,13 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnInputHarness, TnSelectHarness, TnStepperComponent } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import {
   CsrIdentifierAndTypeComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-identifier-and-type/csr-identifier-and-type.component';
@@ -32,11 +34,11 @@ describe('CsrIdentifierAndTypeComponent', () => {
     ],
     providers: [
       mockProvider(TnStepperComponent),
-      mockApi([
-        mockCall('webui.crypto.csr_profiles', {
+      mockTypedApi([
+        mockTypedCall('webui.crypto.csr_profiles', {
           'HTTPS ECC Certificate': httpsProfile,
           'Openvpn Client Certificate': openvpnProfile,
-        }),
+        } as unknown as CallResponse<WebUiApiDirectory, 'webui.crypto.csr_profiles'>),
       ]),
       mockProvider(DialogService),
     ],

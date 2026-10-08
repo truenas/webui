@@ -3,14 +3,15 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AcmeDnsAuthenticatorListComponent } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/acmedns-form/acmedns-form.component';
 
@@ -31,9 +32,9 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
   const createComponent = createComponentFactory({
     component: AcmeDnsAuthenticatorListComponent,
     providers: [
-      mockApi([
-        mockCall('acme.dns.authenticator.query', authenticators),
-        mockCall('acme.dns.authenticator.delete', true),
+      mockTypedApi([
+        mockTypedQuery('acme.dns.authenticator.query', authenticators as unknown as WebUiQueryEntity<'acme.dns.authenticator.query'>[]),
+        mockTypedCall('acme.dns.authenticator.delete', true),
       ]),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
@@ -93,7 +94,7 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
       call: expect.any(Function),
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('acme.dns.authenticator.delete', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('acme.dns.authenticator.delete', [1]);
   });
 
   it('should show table rows', async () => {

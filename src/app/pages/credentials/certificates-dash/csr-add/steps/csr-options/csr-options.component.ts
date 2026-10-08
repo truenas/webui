@@ -20,7 +20,7 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Component({
   selector: 'ix-csr-options',
@@ -43,7 +43,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 export class CsrOptionsComponent implements SummaryProvider {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
 
   hasLifetime = input(false);
 

@@ -5,11 +5,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TnTestIdDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { finalize, timer } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import { AuditEntry } from 'app/interfaces/audit/audit.interface';
+import { map, switchMap } from 'rxjs/operators';
+import { AuditEntry, toAuditEntries } from 'app/interfaces/audit/audit.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
@@ -27,7 +27,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   ],
 })
 export class UserLastActionComponent implements OnChanges {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private urlOptions = inject(UrlOptionsService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
@@ -62,7 +62,7 @@ export class UserLastActionComponent implements OnChanges {
           return this.api.call('audit.query', [{
             'query-filters': [['username', '=', this.username()]],
             'query-options': { limit: 1, order_by: ['-message_timestamp'] },
-          }]);
+          }]).pipe(map(toAuditEntries));
         }),
         finalize(() => this.isLoading.set(false)),
         this.errorHandler.withErrorHandler(),

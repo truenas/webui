@@ -25,8 +25,9 @@
  * when that has happened and you have forgotten.
  */
 export const migratedApiPaths = [
-  // Phase 0's whole-feature pilot: eight components, their forms and their specs.
-  'src/app/pages/credentials/backup-credentials',
+  // Phase 0's whole-feature pilot was Backup Credentials; NAS-144003 moved the rest of credentials —
+  // certificates and ACME, groups, KMIP, privileges, S3 access keys, users and their API keys.
+  'src/app/pages/credentials',
   // The two shared services the Backup Credentials page runs on. Both are consumed from
   // elsewhere as well (`ix-ssh-credentials-select`, the cloud sync forms), so they are pinned
   // as files rather than waiting for `src/app/services` as a whole.

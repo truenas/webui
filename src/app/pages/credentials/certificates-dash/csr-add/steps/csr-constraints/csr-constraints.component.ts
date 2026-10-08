@@ -24,7 +24,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { SummaryItem, SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   extensionsToSelectValues,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-constraints/extensions-to-select-values.utils';
@@ -58,7 +58,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class CsrConstraintsComponent implements OnInit, SummaryProvider {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);

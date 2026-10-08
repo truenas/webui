@@ -3,8 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { User } from 'app/interfaces/user.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { DeleteUserDialog } from 'app/pages/credentials/users/all-users/user-details/delete-user-dialog/delete-user-dialog.component';
@@ -52,10 +52,10 @@ describe('UserDetailHeaderComponent', () => {
         })),
       }),
       mockProvider(FormSidePanelService),
-      mockApi([
-        mockCall('user.update'),
-        mockCall('group.query', []),
-        mockCall('user.delete'),
+      mockTypedApi([
+        mockTypedCall('user.update', null),
+        mockTypedQuery('group.query', []),
+        mockTypedCall('user.delete', null),
       ]),
     ],
   });

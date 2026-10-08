@@ -43,7 +43,7 @@ import { SortingServerSide } from 'app/modules/tn-table/classes/api-data-provide
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/user-api-keys.elements';
 
@@ -75,7 +75,7 @@ import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/u
 export class UserApiKeysComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialog = inject(DialogService);
 
   private authService = inject(AuthService);
@@ -121,7 +121,7 @@ export class UserApiKeysComponent implements OnInit {
     this.dataProvider.setSorting(mapTnSortToTableSort<ApiKey>(event, this.displayedColumns));
   }
 
-  private readonly apiKeys$ = this.api.call('api_key.query').pipe(shareReplay({ bufferSize: 1, refCount: true }));
+  private readonly apiKeys$ = this.api.query('api_key.query').pipe(shareReplay({ bufferSize: 1, refCount: true }));
 
   protected readonly nameSuggestions$ = this.apiKeys$.pipe(
     map((keys) => uniq(keys.map((key) => ({ label: key.name, value: key.name })))),

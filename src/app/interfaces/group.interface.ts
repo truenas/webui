@@ -1,5 +1,6 @@
 import { Role } from 'app/enums/role.enum';
 import { UsernsIdmap } from 'app/interfaces/user.interface';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export interface Group {
   builtin: boolean;
@@ -20,26 +21,10 @@ export interface Group {
   users?: number[];
 }
 
-export type DeleteGroupParams = [
-  id: number,
-  params: { delete_users: boolean },
-];
-
-export interface CreateGroup {
-  gid: number;
-  name: string;
-  smb: boolean;
-  sudo_commands_nopasswd?: string[];
-  sudo_commands?: string[];
-  users?: number[];
-  userns_idmap?: UsernsIdmap;
-}
-
-export interface UpdateGroup {
-  name?: string;
-  smb?: boolean;
-  sudo_commands_nopasswd?: string[];
-  sudo_commands?: string[];
-  users?: number[];
-  userns_idmap?: UsernsIdmap;
+/**
+ * Reads a `group.query` row into the UI's `Group`. Middleware types `roles` as plain strings where the UI
+ * reads its `Role` enum; it describes the same object.
+ */
+export function toGroup(entry: WebUiQueryEntity<'group.query'>): Group {
+  return entry as Group;
 }

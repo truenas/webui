@@ -36,7 +36,7 @@ import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
@@ -72,7 +72,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CertificateSigningRequestsListComponent {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);

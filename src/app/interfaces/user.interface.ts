@@ -1,5 +1,9 @@
+import { CallParams, CallResponse } from '@truenas/api-client';
 import { Role } from 'app/enums/role.enum';
 import { FormPreset } from 'app/interfaces/form-preset.interface';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+
+type D = WebUiApiDirectory;
 
 export const directIdMapping = 'DIRECT' as const;
 
@@ -49,11 +53,6 @@ export interface UserGroup {
   bsdgrp_smb: boolean;
 }
 
-export type DeleteUserParams = [
-  id: number,
-  params: { delete_group: boolean },
-];
-
 export interface UserUpdate {
   uid?: number;
   username?: string;
@@ -95,3 +94,23 @@ export interface UserUpdate {
  * point is what it can honestly offer.
  */
 export type UserFormPreset = FormPreset<Pick<UserUpdate, 'smb' | 'password_disabled'>, 'smb'>;
+
+/**
+ * Reads a `user.query` row, or the user `user.create` / `user.update` return, into the UI's `User`. Middleware
+ * types `roles` as plain strings, `group` as a loose record and `last_password_change` as a string, where the
+ * wire carries the `{ $date }` envelope (gap 15); it describes the same object.
+ */
+export function toUser(entry: WebUiQueryEntity<'user.query'> | CallResponse<D, 'user.update'>): User {
+  return entry as unknown as User;
+}
+
+/** What `user.create` takes, as middleware declares it. */
+export type UserCreateArgs = CallParams<D, 'user.create'>[0];
+
+/**
+ * Hands the user form's payload to `user.create` unchanged. Middleware requires `username` and `full_name`,
+ * which the form always fills; `UserUpdate` leaves them optional because the same shape serves an edit.
+ */
+export function toUserCreateArgs(payload: UserUpdate): UserCreateArgs {
+  return payload as UserCreateArgs;
+}

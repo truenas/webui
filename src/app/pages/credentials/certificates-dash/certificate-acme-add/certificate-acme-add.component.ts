@@ -14,17 +14,18 @@ import {
   TnInputComponent,
   TnSelectComponent,
 } from '@truenas/ui-components';
+import { map } from 'rxjs';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions, idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
-import { Certificate } from 'app/interfaces/certificate.interface';
+import { Certificate, CertificateCreate, toCertificateCreateArgs } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Component({
   selector: 'ix-certificate-acme-add',
@@ -49,7 +50,7 @@ export class CertificateAcmeAddComponent extends IxFormHostForm implements OnIni
   private formBuilder = inject(FormBuilder);
   private validatorsService = inject(IxValidatorsService);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
 
   protected readonly requiredRoles = [Role.CertificateWrite];
@@ -79,7 +80,7 @@ export class CertificateAcmeAddComponent extends IxFormHostForm implements OnIni
   readonly csr = input.required<Certificate>();
 
   protected readonly acmeDirectoryUris$ = this.api.call('certificate.acme_server_choices').pipe(choicesToOptions());
-  protected readonly authenticators$ = this.api.call('acme.dns.authenticator.query').pipe(idNameArrayToOptions());
+  protected readonly authenticators$ = this.api.query('acme.dns.authenticator.query').pipe(idNameArrayToOptions());
 
   protected readonly helptext = helptextSystemCertificates;
 
@@ -99,7 +100,7 @@ export class CertificateAcmeAddComponent extends IxFormHostForm implements OnIni
       };
     }, {} as Record<string, string>);
 
-    const payload = {
+    const payload: CertificateCreate = {
       name: formValues.name,
       csr_id: this.csr().id,
       tos: formValues.tos,
@@ -111,7 +112,7 @@ export class CertificateAcmeAddComponent extends IxFormHostForm implements OnIni
 
     return {
       request$: this.dialogService.jobDialog(
-        this.api.job('certificate.create', [payload]),
+        this.api.job('certificate.create', [toCertificateCreateArgs(payload)]),
         {
           title: this.translate.instant('Creating ACME Certificate'),
         },
@@ -122,7 +123,8 @@ export class CertificateAcmeAddComponent extends IxFormHostForm implements OnIni
 
   private loadDomains(csr: Certificate): void {
     this.loadFormConfig(
-      this.api.call('webui.crypto.get_certificate_domain_names', [csr.id]),
+      // Middleware declares the names as `unknown[]`; they are the CSR's domains, as strings.
+      this.api.call('webui.crypto.get_certificate_domain_names', [csr.id]).pipe(map((names) => names as string[])),
       (domains) => {
         // `loadFormConfig` replays `patch` on retry, so rebuild the array rather than
         // appending to whatever a previous attempt left behind.

@@ -9,17 +9,17 @@ import {
   tnIconMarker,
 } from '@truenas/ui-components';
 import { forkJoin, Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
-import { Group } from 'app/interfaces/group.interface';
-import { User } from 'app/interfaces/user.interface';
+import { Group, toGroup } from 'app/interfaces/group.interface';
+import { toUser, User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { ReadOnlyComponent } from 'app/modules/page-header/readonly-badge/readonly-badge.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { CanComponentDeactivate } from 'app/modules/unsaved-changes/unsaved-form.guard';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -39,7 +39,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class GroupMembersComponent implements OnInit, CanComponentDeactivate {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
@@ -163,8 +163,8 @@ export class GroupMembersComponent implements OnInit, CanComponentDeactivate {
     this.isLoading.set(true);
     this.activatedRoute.params.pipe(
       switchMap((params) => forkJoin([
-        this.api.call('group.query', [[['id', '=', parseInt(params.pk as string)]]]),
-        this.api.call('user.query', [[['local', '=', true]]]),
+        this.api.query('group.query', [['id', '=', parseInt(params.pk as string)]]).pipe(map((rows) => rows.map(toGroup))),
+        this.api.query('user.query', [['local', '=', true]]).pipe(map((rows) => rows.map(toUser))),
       ])),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
