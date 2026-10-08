@@ -44,7 +44,6 @@ jobs:
 
   build:
     name: Build
-    needs: [install]
     runs-on: ubuntu-latest
     # Built the way scale-build builds the nightly, not the way the other jobs
     # are prepared: same Debian release, and the same commands as the
