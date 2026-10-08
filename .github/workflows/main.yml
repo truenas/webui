@@ -99,8 +99,11 @@ jobs:
         run: |
           deb=$(ls ../truenas-webui_*_all.deb)
           dpkg-deb --info "$deb"
+          # Listed to a file once: `grep -q` on a pipe exits at the first match
+          # and dpkg-deb then reports a broken pipe.
+          dpkg-deb --contents "$deb" > ../contents.txt
           for file in index.html sw.js assets/buildtime; do
-            dpkg-deb --contents "$deb" | grep -q " ./usr/share/truenas/webui/$file\$" \
+            grep -q " ./usr/share/truenas/webui/$file\$" ../contents.txt \
               || { echo "::error::$file is missing from $deb"; exit 1; }
           done
 
