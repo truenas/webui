@@ -4,13 +4,13 @@
 
     <div class="summary-item">
       <div class="label">{{ 'Pool Name' | translate }}</div>
-      <div class="value">{{ state.name || ('Not Set' | translate) }}</div>
+      <div class="value" tnTestId="review-pool-name" tnTestIdType="text">{{ state.name || ('Not Set' | translate) }}</div>
     </div>
 
     @if (state.encryptionType !== EncryptionType.None) {
       <div class="summary-item">
         <div class="label">{{ 'Encryption' | translate }}</div>
-        <div class="value">
+        <div class="value" tnTestId="review-encryption" tnTestIdType="text">
           @if (state.encryptionType === EncryptionType.Software) {
             {{ 'Software (ZFS)' | translate }}
           } @else if (state.encryptionType === EncryptionType.Sed) {
@@ -27,10 +27,10 @@
 
     @for (category of nonEmptyTopologyCategories; track category[0]) {
       <div class="summary-item">
-        <div class="label">
+        <div class="label" tnTestIdType="text" [tnTestId]="['review', category[0], 'label']">
           {{ category[0] | mapValue: vdevTypeLabels | translate }}
         </div>
-        <div class="value">
+        <div class="value" tnTestIdType="text" [tnTestId]="['review', category[0]]">
           {{ category[1] | ixTopologyCategoryDescription: !isLimitedToOneLayout(category[0]) : category[0] === vDevType.Spare }}
         </div>
       </div>
@@ -44,13 +44,13 @@
 
     <div class="summary-item">
       <div class="label">{{ 'Est. Usable Raw Capacity' | translate }}</div>
-      <div class="value">{{ (totalCapacity$ | async) | ixFileSize }}</div>
+      <div class="value" tnTestId="review-est-usable-raw-capacity" tnTestIdType="text">{{ (totalCapacity$ | async) | ixFileSize }}</div>
     </div>
 
     @if (state.enclosureSettings.maximizeEnclosureDispersal || limitToEnclosureName) {
       <div class="summary-item">
         <div class="label">{{ 'Dispersal Strategy' | translate }}</div>
-        <div class="value">
+        <div class="value" tnTestId="review-dispersal-strategy" tnTestIdType="text">
           @if (state.enclosureSettings.maximizeEnclosureDispersal) {
             {{ 'Maximize Dispersal' | translate }}
           }
@@ -68,7 +68,7 @@
       <h4>{{ 'Warnings' | translate }}</h4>
       @for (error of poolCreationErrors; track error.severity + error.text) {
         <div>
-          <div [class]="[error.severity, 'summary-item']">
+          <div tnTestIdType="text" [tnTestId]="['review-warning', $index]" [class]="[error.severity, 'summary-item']">
             {{ error.text }}
           </div>
         </div>

@@ -1,7 +1,7 @@
 import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective, TnTestIdDirective } from '@truenas/ui-components';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -19,7 +19,7 @@ import {
   templateUrl: './topology-item-node.component.html',
   styleUrls: ['./topology-item-node.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TopologyItemIconComponent, NgClass, TnIconComponent, TnTooltipDirective],
+  imports: [TnTestIdDirective, TopologyItemIconComponent, NgClass, TnIconComponent, TnTooltipDirective],
 })
 export class TopologyItemNodeComponent {
   protected translate = inject(TranslateService);

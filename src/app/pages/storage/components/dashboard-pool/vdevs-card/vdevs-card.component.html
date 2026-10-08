@@ -48,7 +48,7 @@
               </span>
               <span class="offline-data-vdevs">{{ 'Offline VDEVs' | translate }}</span>
             } @else {
-              <span class="vdev-value">{{ topologyState.data.text }}</span>
+              <span class="vdev-value" tnTestIdType="text" [tnTestId]="[poolState().name, 'data-vdevs']">{{ topologyState.data.text }}</span>
             }
           </div>
         </div>
@@ -60,7 +60,7 @@
             <b>
               {{ row.titleKey | translate }}
               @if (row.tierLabelKey && showTierLabels()) {
-                <span class="tier-label">({{ row.tierLabelKey | translate }})</span>
+                <span class="tier-label" tnTestIdType="text" [tnTestId]="[poolState().name, row.key, 'tier-label']">({{ row.tierLabelKey | translate }})</span>
               }
             </b>
             <div class="vdev-stats">
@@ -69,7 +69,7 @@
                   <tn-icon name="alert-circle" library="mdi" class="pool-icon icon-warning"></tn-icon>
                 </span>
               }
-              <span class="vdev-value">{{ topologyState[row.key].text }}</span>
+              <span class="vdev-value" tnTestIdType="text" [tnTestId]="[poolState().name, row.key, 'vdevs']">{{ topologyState[row.key].text }}</span>
             </div>
           </div>
         }

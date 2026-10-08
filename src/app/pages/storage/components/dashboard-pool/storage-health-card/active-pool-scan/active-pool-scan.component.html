@@ -1,13 +1,13 @@
 <div class="scan-in-progress">
   <div class="scan-description">
-    <span class="scan-label">
+    <span class="scan-label" tnTestIdType="text" [tnTestId]="[pool().name, 'scan-label']">
       {{ scanLabel() }}
     </span>
     {{ scan().percentage / 100 | percent: '1.2-2' }}
   </div>
 
   @if (scan().total_secs_left && !isScrubPaused()) {
-    <div class="time-left">
+    <div class="time-left" tnTestIdType="text" [tnTestId]="[pool().name, 'scan-time-left']">
       {{ timeLeftString() }}
     </div>
   }

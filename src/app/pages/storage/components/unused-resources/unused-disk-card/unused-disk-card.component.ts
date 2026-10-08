@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCardComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -13,6 +13,7 @@ import { DetailsDisk } from 'app/interfaces/disk.interface';
   styleUrls: ['./unused-disk-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnCardComponent,
     RequiresRolesDirective,
     TnButtonComponent,
@@ -22,6 +23,8 @@ import { DetailsDisk } from 'app/interfaces/disk.interface';
 export class UnusedDiskCardComponent {
   readonly title = input<string>('');
   readonly disks = input.required<DetailsDisk[]>();
+  /** Two of these cards can share a page, so the count's id is keyed by the call site. */
+  readonly testId = input.required<string>();
 
   readonly addToStorage = output();
 

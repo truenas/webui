@@ -6,7 +6,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnStepperPreviousDirective,
+  TnButtonComponent,
+  TnCheckboxComponent,
+  TnDialog,
+  TnFormFieldComponent,
+  TnStepperPreviousDirective,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -39,6 +44,7 @@ import { EntitlementsService } from 'app/services/entitlements.service';
   styleUrls: ['./review-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnButtonComponent,
     TnStepperPreviousDirective,
     RequiresRolesDirective,

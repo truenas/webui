@@ -2,7 +2,13 @@ import { UpperCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, output, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent, TnDialog, type TnCardAction, type TnMenuItem } from '@truenas/ui-components';
+import {
+  TnCardComponent,
+  TnDialog,
+  type TnCardAction,
+  type TnMenuItem,
+  TnTestIdDirective,
+} from '@truenas/ui-components';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { VDevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -33,6 +39,7 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
   styleUrls: ['./zfs-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnCardComponent,
     TranslateModule,
     UpperCasePipe,

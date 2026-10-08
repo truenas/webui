@@ -40,7 +40,7 @@
               class="disk-icon"
               [attr.aria-hidden]="true"
             ></tn-icon>
-            <span class="disk-name">{{ diskName }}</span>
+            <span class="disk-name" tnTestIdType="text" [tnTestId]="['bulk-edit-disk', diskName]">{{ diskName }}</span>
           </div>
         }
       </div>

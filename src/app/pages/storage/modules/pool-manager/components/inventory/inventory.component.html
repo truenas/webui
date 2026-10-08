@@ -13,8 +13,8 @@
           @if (item.value) {
             <div class="details-item">
               <tn-icon name="hdd" library="custom"></tn-icon>
-              <div class="label">{{ getFilesize(item.key) }} </div>
-              <div class="value"> × {{ item.value.length }}</div>
+              <div class="label" tnTestIdType="text" [tnTestId]="['inventory-hdd', item.key, 'size']">{{ getFilesize(item.key) }} </div>
+              <div class="value" tnTestIdType="text" [tnTestId]="['inventory-hdd', item.key, 'count']"> × {{ item.value.length }}</div>
             </div>
           }
         </div>
@@ -24,8 +24,8 @@
           @if (item.value) {
             <div class="details-item">
               <tn-icon name="ssd" library="custom"></tn-icon>
-              <div class="label">{{ getFilesize(item.key) }} </div>
-              <div class="value"> × {{ item.value.length }}</div>
+              <div class="label" tnTestIdType="text" [tnTestId]="['inventory-ssd', item.key, 'size']">{{ getFilesize(item.key) }} </div>
+              <div class="value" tnTestIdType="text" [tnTestId]="['inventory-ssd', item.key, 'count']"> × {{ item.value.length }}</div>
             </div>
           }
         </div>

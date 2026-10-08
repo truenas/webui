@@ -1,7 +1,7 @@
 import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
-import { PoolScanUpdate } from 'app/interfaces/pool.interface';
+import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import {
   LastPoolScanComponent,
 } from 'app/pages/storage/components/dashboard-pool/storage-health-card/last-pool-scan/last-pool-scan.component';
@@ -22,6 +22,7 @@ describe('LastPoolScanComponent', () => {
           end_time: { $date: 1655917125000 },
           errors: 1,
         } as PoolScanUpdate,
+        pool: { name: 'tank' } as Pool,
       },
     });
   });

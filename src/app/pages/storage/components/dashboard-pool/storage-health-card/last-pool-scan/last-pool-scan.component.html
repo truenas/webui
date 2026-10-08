@@ -2,7 +2,7 @@
   <div class="details-item">
     <span class="blank-spacer"></span>
     <div class="label">{{ 'Last Scan' | translate }}:</div>
-    <div class="value">
+    <div class="value" tnTestIdType="text" [tnTestId]="[pool().name, 'last-scan']">
       {{ scanExplanation() | translate: { date: (scan().end_time.$date | formatDateTime) } }}
     </div>
   </div>
@@ -11,13 +11,13 @@
 <div class="details-item">
   <span class="blank-spacer"></span>
   <div class="label">{{ 'Last Scan Errors' | translate }}:</div>
-  <div class="value">{{ scan().errors | number }}</div>
+  <div class="value" tnTestIdType="text" [tnTestId]="[pool().name, 'last-scan-errors']">{{ scan().errors | number }}</div>
 </div>
 
 @if (scanDuration()) {
   <div class="details-item">
     <span class="blank-spacer"></span>
     <div class="label">{{ 'Last Scan Duration' | translate }}:</div>
-    <div class="value">{{ scanDuration() }}</div>
+    <div class="value" tnTestIdType="text" [tnTestId]="[pool().name, 'last-scan-duration']">{{ scanDuration() }}</div>
   </div>
 }

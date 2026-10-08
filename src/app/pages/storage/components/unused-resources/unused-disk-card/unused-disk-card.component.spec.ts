@@ -31,6 +31,7 @@ describe('UnusedDiskCardComponent', () => {
           { devname: 'sdc', identifier: '{uuid}7ad07324-f0e9-49a4-a7a4-92edd82a4929', size: 123456789 },
         ] as DetailsDisk[],
         title: 'Unassigned Disks',
+        testId: 'unassigned-disks',
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);

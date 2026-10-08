@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnCardComponent, TnDialog, type TnCardAction } from '@truenas/ui-components';
+import { TnCardComponent, TnDialog, type TnCardAction, TnTestIdDirective } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -28,6 +28,7 @@ import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.s
   styleUrls: ['./disk-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnCardComponent,
     CopyButtonComponent,
     TranslateModule,

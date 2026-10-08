@@ -2,14 +2,14 @@
   <tn-card padding="small" [title]="'Hardware Disk Encryption' | translate">
     <div class="details-item">
       <div class="label">{{ 'Self-Encrypting Drive (SED)' | translate }}:</div>
-      <div class="value">{{ sedStatusLabel() | translate }}</div>
+      <div class="value" tnTestId="sed-status" tnTestIdType="text">{{ sedStatusLabel() | translate }}</div>
     </div>
 
     <!-- Neither password applies to a disk that cannot self-encrypt. -->
     @if (supportsSed()) {
       <div class="details-item">
         <div class="label">{{ 'SED Password' | translate }}:</div>
-        <div class="value">
+        <div class="value" tnTestId="sed-password" tnTestIdType="text">
           {{ hasDiskEncryption()
             ? ('Password is set' | translate)
             : ('Password is not set' | translate)
@@ -35,7 +35,7 @@
 
       <div class="details-item">
         <div class="label">{{ 'Global SED Password' | translate }}:</div>
-        <div class="value">
+        <div class="value" tnTestId="global-sed-password" tnTestIdType="text">
           {{ hasGlobalEncryption()
             ? ('Password is set' | translate)
             : ('Password is not set' | translate)

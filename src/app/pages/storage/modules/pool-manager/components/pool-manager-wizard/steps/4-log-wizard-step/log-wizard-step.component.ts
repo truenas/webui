@@ -2,7 +2,12 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnStepperNextDirective, TnStepperPreviousDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnStepperNextDirective,
+  TnStepperPreviousDirective,
+  TnTestIdDirective,
+} from '@truenas/ui-components';
 import { map } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
@@ -17,6 +22,7 @@ import { resolveTopologyLayout } from 'app/pages/storage/modules/pool-manager/ut
   templateUrl: './log-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     LayoutStepComponent,
     FormActionsComponent,
     TnButtonComponent,

@@ -4,9 +4,17 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCellDefDirective, TnDetailRowDefDirective, TnDialog, TnEmptyComponent,
-  TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent,
+  TnButtonComponent,
+  TnCellDefDirective,
+  TnDetailRowDefDirective,
+  TnDialog,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
   type TnSortEvent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   defer, filter, forkJoin, map, Observable, of, Subject,
@@ -108,6 +116,7 @@ function rowToDisk(row: DiskRow): Disk {
   styleUrls: ['./disk-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TableTextCellComponent,
     PageHeaderComponent,
     BasicSearchComponent,

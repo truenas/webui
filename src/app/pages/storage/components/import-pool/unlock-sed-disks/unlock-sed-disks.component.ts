@@ -9,8 +9,14 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType,
-  TnButtonComponent, TnCheckboxComponent, TnCheckboxLabelDirective, TnFormFieldComponent,
-  TnIconButtonComponent, TnInputComponent, TnSelectComponent,
+  TnButtonComponent,
+  TnCheckboxComponent,
+  TnCheckboxLabelDirective,
+  TnFormFieldComponent,
+  TnIconButtonComponent,
+  TnInputComponent,
+  TnSelectComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import { of, startWith } from 'rxjs';
@@ -36,6 +42,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./unlock-sed-disks.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     ReactiveFormsModule,
     TnFormFieldComponent,
     TnInputComponent,
