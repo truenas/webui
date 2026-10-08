@@ -2,9 +2,10 @@
 
 ## Requirements
 
-- Node.js at the version in [`.node-version`](../.node-version). Version managers such as `fnm`, `nodenv`, `asdf` and
-  `mise` read that file on their own; with `nvm`, run `nvm install $(cat .node-version)`. Other versions that satisfy
-  `engines` in `package.json` may work, but this is the one CI and the nightly build use.
+- Node.js at the version in [`.node-version`](../.node-version). `fnm` and `nodenv` read that file on their own; with
+  `nvm`, run `nvm install $(cat .node-version)`. Other version managers may need a setting turned on before they read
+  it. Other versions that satisfy `engines` in `package.json` may work, but this is the one CI and the nightly build
+  use.
 - Yarn 4, through Corepack: run `corepack enable` once and the version pinned in `package.json` is used automatically.
 - Running instance with TrueNAS nightly (VM is fine).
 
