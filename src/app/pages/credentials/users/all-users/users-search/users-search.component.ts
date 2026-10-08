@@ -14,7 +14,7 @@ import {
 } from 'rxjs';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
-import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
+import { toDirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { QueryFilters, QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -154,7 +154,8 @@ export class UsersSearchComponent implements OnInit {
   private readonly api = inject(TypedApiService);
   private readonly isActiveDirectoryEnabled = toSignal(
     this.api.call('directoryservices.status').pipe(
-      map((state: DirectoryServicesStatus) => state.status !== DirectoryServiceStatus.Disabled),
+      map(toDirectoryServicesStatus),
+      map((state) => state.status !== DirectoryServiceStatus.Disabled),
       catchError(() => of(false)),
     ),
     { initialValue: false },

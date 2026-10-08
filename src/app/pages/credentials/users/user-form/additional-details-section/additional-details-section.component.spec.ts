@@ -436,7 +436,9 @@ describe('AdditionalDetailsSectionComponent', () => {
     }));
 
     it('skips SMB home share query when editing a user to preserve existing home path', () => {
-      expect(spectator.inject(TypedApiService).query).not.toHaveBeenCalledWith('sharing.smb.query', expect.anything());
+      const smbQueries = jest.mocked(spectator.inject(TypedApiService).query).mock.calls
+        .filter(([method]) => method === 'sharing.smb.query');
+      expect(smbQueries).toHaveLength(0);
     });
 
     it('does not modify home validators when home editable is opened for an existing user', async () => {
