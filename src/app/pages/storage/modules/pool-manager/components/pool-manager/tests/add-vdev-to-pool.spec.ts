@@ -3,15 +3,14 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AddVdevsComponent } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/add-vdevs.component';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { existingPool, existingPoolDisks } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/add-vdev-to-pool-data';
@@ -35,9 +34,9 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
     ],
     componentProviders: [
       ...commonProviders,
-      mockApi([
-        mockCall('pool.validate_name', true),
-        mockCall('disk.details', {
+      mockTypedApi([
+        mockTypedCall('pool.validate_name', true),
+        mockTypedCall('disk.details', {
           used: [
             {
               devname: 'ada0',
@@ -127,9 +126,9 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
             },
           ] as DetailsDisk[],
         }),
-        mockCall('enclosure2.query', [] as Enclosure[]),
-        mockCall('pool.query', []),
-        mockJob('pool.update', fakeSuccessfulJob()),
+        mockTypedQuery('enclosure2.query', []),
+        mockTypedQuery('pool.query', []),
+        mockTypedJob('pool.update', { state: JobState.Success }),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),
@@ -253,7 +252,7 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
     await wizard.clickUpdatePoolButton();
 
     expect(spectator.inject(DialogService, true).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(ApiService, true).job).toHaveBeenCalledWith('pool.update', [
+    expect(spectator.inject(TypedApiService, true).job).toHaveBeenCalledWith('pool.update', [
       1,
       {
         topology: {

@@ -5,11 +5,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   DiskWipeDialog,
 } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
@@ -23,8 +24,8 @@ describe('DiskWipeDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockJob('disk.wipe'),
+      mockTypedApi([
+        mockTypedJob('disk.wipe', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -52,6 +53,6 @@ describe('DiskWipeDialogComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('disk.wipe', ['sda', DiskWipeMethod.Full]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('disk.wipe', ['sda', DiskWipeMethod.Full]);
   });
 });

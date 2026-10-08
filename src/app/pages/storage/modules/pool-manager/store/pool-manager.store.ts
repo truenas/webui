@@ -15,8 +15,8 @@ import {
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
-import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { Enclosure, toEnclosure } from 'app/interfaces/enclosure.interface';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import {
   DispersalStrategy,
@@ -136,7 +136,7 @@ export const initialState: PoolManagerState = {
 @Injectable()
 export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   private diskStore = inject(DiskStore);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private generateVdevs = inject(GenerateVdevsService);
   private tnDialog = inject(TnDialog);
@@ -244,7 +244,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
 
   loadStateInitialData(): Observable<[Enclosure[], DiskDetailsResponse]> {
     return forkJoin([
-      this.api.call('enclosure2.query'),
+      this.api.query('enclosure2.query').pipe(map((enclosures) => enclosures.map(toEnclosure))),
       this.diskStore.loadDisks(),
     ]).pipe(
       switchMap(([enclosures, diskDetails]) => {

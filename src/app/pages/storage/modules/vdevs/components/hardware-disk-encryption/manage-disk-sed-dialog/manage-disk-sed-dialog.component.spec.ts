@@ -4,12 +4,12 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { Disk } from 'app/interfaces/disk.interface';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ManageDiskSedDialog } from './manage-disk-sed-dialog.component';
 
 describe('ManageDiskSedDialogComponent', () => {
@@ -23,14 +23,14 @@ describe('ManageDiskSedDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('disk.query', [
+      mockTypedApi([
+        mockTypedQuery('disk.query', [
           {
             identifier: 'disk1234',
             passwd: '123456',
           },
-        ] as Disk[]),
-        mockCall('disk.update'),
+        ] as WebUiQueryEntity<'disk.query'>[]),
+        mockTypedCall('disk.update', null),
       ]),
       mockProvider(DialogRef),
       mockProvider(DialogService),
@@ -49,8 +49,8 @@ describe('ManageDiskSedDialogComponent', () => {
   });
 
   it('loads and shows if password is currently set for the current disk', async () => {
-    expect(spectator.inject(ApiService).call)
-      .toHaveBeenCalledWith('disk.query', [[['devname', '=', 'sda']], { extra: { passwords: true } }]);
+    expect(spectator.inject(TypedApiService).query)
+      .toHaveBeenCalledWith('disk.query', [['devname', '=', 'sda']], { extra: { passwords: true } });
 
     expect(await passwordInput.getValue()).toBe('123456');
   });
@@ -59,7 +59,7 @@ describe('ManageDiskSedDialogComponent', () => {
     const clearButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clear SED Password' }));
     await clearButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['disk1234', { passwd: '' }]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('disk.update', ['disk1234', { passwd: '' }]);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('SED password updated.');
   });
@@ -70,7 +70,7 @@ describe('ManageDiskSedDialogComponent', () => {
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['disk1234', { passwd: 'new-password' }]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('disk.update', ['disk1234', { passwd: 'new-password' }]);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('SED password updated.');
   });

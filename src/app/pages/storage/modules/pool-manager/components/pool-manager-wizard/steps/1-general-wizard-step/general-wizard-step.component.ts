@@ -12,7 +12,9 @@ import {
 import {
   combineLatest, map, Observable,
 } from 'rxjs';
-import { startWith, take } from 'rxjs/operators';
+import {
+  filter, startWith, switchMap, take,
+} from 'rxjs/operators';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { translated } from 'app/helpers/translated.helper';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
@@ -23,7 +25,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { WarningComponent } from 'app/modules/warning/warning.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
@@ -52,7 +54,7 @@ import { EntitlementsService } from 'app/services/entitlements.service';
   ],
 })
 export class GeneralWizardStepComponent implements OnInit, OnChanges {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private entitlements = inject(EntitlementsService);
   private formBuilder = inject(FormBuilder);
   private dialog = inject(DialogService);
@@ -85,7 +87,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   protected readonly helptext = helptextPoolCreation;
 
   isLoading$ = this.store.isLoading$;
-  poolNames$ = this.api.call('pool.query', [[], { select: ['name'], order_by: ['name'] }]).pipe(
+  poolNames$ = this.api.query('pool.query', [], { select: ['name'], order_by: ['name'] }).pipe(
     map((pools) => pools.map((pool) => pool.name)),
   );
 
@@ -154,7 +156,12 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
    * available SED-capable disks and the SED entitlement.
    */
   private getDefaultEncryptionType$(): Observable<EncryptionType> {
-    return combineLatest([this.hasSedCapableDisks$, this.hasSedEntitlement$]).pipe(
+    // The store loads the disks after this step is created, so wait for that load to finish before reading
+    // whether any are SED-capable; reading earlier always sees the initial `false`.
+    return this.store.isLoading$.pipe(
+      filter((isLoading) => !isLoading),
+      take(1),
+      switchMap(() => combineLatest([this.hasSedCapableDisks$, this.hasSedEntitlement$])),
       take(1),
       map(([hasSedDisks, hasSedEntitlement]) => {
         return (hasSedDisks && hasSedEntitlement) ? EncryptionType.Sed : EncryptionType.None;
@@ -163,30 +170,38 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   }
 
   private resetForm(): void {
-    this.getDefaultEncryptionType$()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((defaultEncryptionType) => {
-        // When adding VDEVs to existing pool, preserve the pool name (it's read-only)
-        // When creating new pool, clear the name field (undefined allows form.reset to clear it)
-        const poolName = this.isAddingVdevs() ? this.pool()?.name || '' : undefined;
+    // When adding VDEVs to existing pool, preserve the pool name (it's read-only)
+    // When creating new pool, clear the name field (undefined allows form.reset to clear it)
+    const poolName = this.isAddingVdevs() ? this.pool()?.name || '' : undefined;
 
-        this.form.reset({
-          name: poolName,
-          encryptionType: defaultEncryptionType,
-        });
-      });
+    // Reset straight away, so the step is usable while the store reloads the disks; the SED default follows
+    // once they are in.
+    this.form.reset({
+      name: poolName,
+      encryptionType: EncryptionType.None,
+    });
+    this.applySedDefault();
   }
 
   private initSedDefaults(): void {
-    // Set SED as default if SED-capable disks detected and the system is entitled to SED
     if (this.isAddingVdevs()) {
       return;
     }
 
+    this.applySedDefault();
+  }
+
+  /**
+   * Selects SED once the disks are loaded, if any are SED-capable and the system is entitled to SED.
+   *
+   * The step is interactive while the disks load, so a choice the user made in the meantime is kept: the
+   * default only applies to a control nobody has touched.
+   */
+  private applySedDefault(): void {
     this.getDefaultEncryptionType$()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((defaultEncryptionType) => {
-        if (defaultEncryptionType === EncryptionType.Sed) {
+        if (defaultEncryptionType === EncryptionType.Sed && this.form.controls.encryptionType.pristine) {
           this.form.patchValue({ encryptionType: defaultEncryptionType });
         }
       });

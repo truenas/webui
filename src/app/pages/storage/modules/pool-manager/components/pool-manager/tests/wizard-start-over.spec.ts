@@ -3,11 +3,10 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnRadioHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   PoolManagerComponent,
@@ -31,9 +30,9 @@ describe('PoolManagerComponent – start over functionality', () => {
     ],
     providers: [
       ...commonProviders,
-      mockApi([
-        mockCall('pool.validate_name', true),
-        mockCall('disk.details', {
+      mockTypedApi([
+        mockTypedCall('pool.validate_name', true),
+        mockTypedCall('disk.details', {
           used: [
             {
               devname: 'ada0',
@@ -122,8 +121,8 @@ describe('PoolManagerComponent – start over functionality', () => {
             },
           ] as DetailsDisk[],
         }),
-        mockCall('enclosure2.query', [] as Enclosure[]),
-        mockCall('pool.query', []),
+        mockTypedQuery('enclosure2.query', []),
+        mockTypedQuery('pool.query', []),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),

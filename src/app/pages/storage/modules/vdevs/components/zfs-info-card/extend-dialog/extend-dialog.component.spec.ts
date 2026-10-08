@@ -8,16 +8,14 @@ import {
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
@@ -62,9 +60,7 @@ describe('ExtendDialogComponent', () => {
           used: [],
         }),
         ...mockSedDiskPasswordCalls(),
-      ]),
-      mockApi([
-        mockJob('pool.attach', fakeSuccessfulJob()),
+        mockTypedJob('pool.attach', { state: JobState.Success }),
       ]),
       mockProvider(DialogRef),
       mockProvider(SnackbarService),
@@ -99,7 +95,7 @@ describe('ExtendDialogComponent', () => {
     await extendButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.attach', [
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('pool.attach', [
       4,
       {
         new_disk: 'sde',
@@ -163,6 +159,6 @@ describe('ExtendDialogComponent', () => {
     await spectator.fixture.whenStable();
 
     expect(api.call).toHaveBeenCalledWith('disk.unlock_sed', [{ name: 'sde', password: 'disk-secret' }]);
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.attach', [4, expect.objectContaining({ new_disk: 'sde' })]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('pool.attach', [4, expect.objectContaining({ new_disk: 'sde' })]);
   });
 });

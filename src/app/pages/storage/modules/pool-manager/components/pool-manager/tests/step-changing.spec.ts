@@ -2,13 +2,12 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { Enclosure } from 'app/interfaces/enclosure.interface';
 import {
   PoolManagerComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
@@ -33,9 +32,9 @@ describe('PoolManagerComponent – step changing', () => {
     ],
     componentProviders: [
       ...commonProviders,
-      mockApi([
-        mockCall('pool.validate_name', true),
-        mockCall('disk.details', {
+      mockTypedApi([
+        mockTypedCall('pool.validate_name', true),
+        mockTypedCall('disk.details', {
           used: [
             {
               devname: 'ada0',
@@ -124,9 +123,9 @@ describe('PoolManagerComponent – step changing', () => {
             },
           ] as DetailsDisk[],
         }),
-        mockCall('enclosure2.query', [] as Enclosure[]),
-        mockCall('pool.query', []),
-        mockJob('pool.create', fakeSuccessfulJob()),
+        mockTypedQuery('enclosure2.query', []),
+        mockTypedQuery('pool.query', []),
+        mockTypedJob('pool.create', { state: JobState.Success }),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),

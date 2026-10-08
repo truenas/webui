@@ -2,6 +2,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnDialog } from '@truenas/ui-components';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
@@ -98,7 +99,9 @@ export const commonImports = [
   MapValuePipe,
   CastPipe,
   WarningComponent,
-  FakeProgressBarComponent,
+  // Stubbed: the typed double answers on a microtask, so the wizard is still loading after a render, and a real
+  // bar outliving its grace period starts an `interval` that keeps the zone — and every harness call — from settling.
+  MockComponent(FakeProgressBarComponent),
   ConfigurationPreviewComponent,
   ExistingConfigurationPreviewComponent,
   InspectVdevsDialog,

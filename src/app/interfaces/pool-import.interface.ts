@@ -1,15 +1,5 @@
-import { PoolStatus } from 'app/enums/pool-status.enum';
+import { JobResult } from '@truenas/api-client';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
-export interface PoolFindResult {
-  guid: string;
-  hostname: string;
-  name: string;
-  status: PoolStatus;
-}
-
-export interface PoolImportParams {
-  guid: string;
-  name?: string;
-  passphrase?: string;
-  enable_attachments?: boolean;
-}
+/** A pool `pool.import_find` offers to import. */
+export type PoolFindResult = JobResult<WebUiApiDirectory, 'pool.import_find'>[number];

@@ -1,11 +1,12 @@
+import { CallResponse } from '@truenas/api-client';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { EnclosureAndSlot, TemperatureAgg } from 'app/interfaces/storage.interface';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export interface Disk {
   advpowermgmt: DiskPowerLevel;
@@ -109,10 +110,6 @@ export interface DetailsDisk {
   imported_zpool: string;
 }
 
-export type DiskWipeParams = [
-  disk: string,
-  method: DiskWipeMethod,
-];
 export type DiskTemperatures = Record<string, number | null>;
 export type DiskTemperatureAgg = Record<string, TemperatureAgg>;
 
@@ -124,4 +121,20 @@ export interface DiskDetailsParams {
 export interface DiskDetailsResponse {
   used: DetailsDisk[];
   unused: DetailsDisk[];
+}
+
+/**
+ * Reads a `disk.query` row into `Disk`. Middleware types `bus`, `type`, the power settings and the SED status as
+ * plain strings the UI narrows to its enums; it describes the same object.
+ */
+export function toDisk(disk: WebUiQueryEntity<'disk.query'>): Disk {
+  return disk as Disk;
+}
+
+/**
+ * Reads `disk.details` called without a `type`: the used/unused split. Middleware declares the response loosely
+ * because its shape depends on `type`, so there is nothing in the generated type to check this against.
+ */
+export function toDiskDetails(response: CallResponse<WebUiApiDirectory, 'disk.details'>): DiskDetailsResponse {
+  return response as unknown as DiskDetailsResponse;
 }

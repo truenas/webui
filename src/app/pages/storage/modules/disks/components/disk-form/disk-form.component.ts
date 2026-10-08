@@ -19,7 +19,7 @@ import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { translateOptions } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
 
 export type DiskFormResponse = (DiskUpdate & { identifier: string })[];
@@ -59,7 +59,7 @@ interface DiskFormValues {
 })
 export class DiskFormComponent extends IxFormHostForm<DiskFormResponse> implements OnInit {
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private entitlements = inject(EntitlementsService);
   private fb = inject(NonNullableFormBuilder);
   private destroyRef = inject(DestroyRef);

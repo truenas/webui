@@ -4,14 +4,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   ScrubFormComponent, ScrubFormParams,
 } from 'app/pages/storage/components/dashboard-pool/disk-health-card/scrub-form/scrub-form.component';
@@ -47,9 +47,9 @@ describe('ScrubTaskFormComponent', () => {
       }),
       mockAuth(),
       mockProvider(DialogService),
-      mockApi([
-        mockCall('pool.scrub.create'),
-        mockCall('pool.scrub.update'),
+      mockTypedApi([
+        mockTypedCall('pool.scrub.create', null),
+        mockTypedCall('pool.scrub.update', null),
       ]),
       provideMockStore({
         selectors: [
@@ -89,8 +89,9 @@ describe('ScrubTaskFormComponent', () => {
       await (await getInput('threshold')).setValue('30');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.scrub.create', [{
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.scrub.create', [{
         pool: 2,
         enabled: true,
         schedule: {
@@ -125,8 +126,9 @@ describe('ScrubTaskFormComponent', () => {
       await (await getInput('threshold')).setValue('20');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.scrub.update', [13, {
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.scrub.update', [13, {
         enabled: false,
         pool: 2,
         schedule: {

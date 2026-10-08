@@ -6,8 +6,8 @@ import {
   combineLatest, filter, switchMap, tap,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { Pool, PoolTopology, toPool } from 'app/interfaces/pool.interface';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -26,7 +26,7 @@ const initialState: AddVdevsState = {
 @Injectable()
 export class AddVdevsStore extends ComponentStore<AddVdevsState> {
   private diskStore = inject(DiskStore);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
 
   readonly isLoading$ = this.select((state) => state.isLoading);
@@ -58,7 +58,7 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
     return triggers$.pipe(
       tap(() => this.patchState({ isLoading: true })),
       switchMap((poolId) => {
-        return this.api.call('pool.query', [[['id', '=', +poolId]]]);
+        return this.api.query('pool.query', [['id', '=', +poolId]]).pipe(map((pools) => pools.map(toPool)));
       }),
       tapResponse({
         next: (pools) => {

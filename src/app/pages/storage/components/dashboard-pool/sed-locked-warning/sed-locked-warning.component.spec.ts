@@ -5,10 +5,11 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SedLockedWarningComponent } from './sed-locked-warning.component';
 
 describe('SedLockedWarningComponent', () => {
@@ -31,8 +32,8 @@ describe('SedLockedWarningComponent', () => {
           afterClosed: () => of(fakeSuccessfulJob()),
         })),
       }),
-      mockApi([
-        mockJob('pool.reimport', fakeSuccessfulJob()),
+      mockTypedApi([
+        mockTypedJob('pool.reimport', { state: JobState.Success }),
       ]),
     ],
   });
@@ -64,7 +65,7 @@ describe('SedLockedWarningComponent', () => {
     const importButton = await loader.getHarness(TnButtonHarness.with({ label: 'Import Again' }));
     await importButton.click();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.reimport', [pool.id]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('pool.reimport', [pool.id]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(importSuccessSpy).toHaveBeenCalled();
   });

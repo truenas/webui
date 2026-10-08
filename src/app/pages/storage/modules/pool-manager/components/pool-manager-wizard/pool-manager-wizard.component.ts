@@ -14,12 +14,12 @@ import {
 } from 'rxjs/operators';
 import { StepActivationDirective } from 'app/directives/step-activation.directive';
 import {
-  CreatePool, Pool, UpdatePool,
+  CreatePool, Pool, toPoolCreateArgs, toPoolUpdateArgs, UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import {
   DownloadKeyDialog, DownloadKeyDialogParams,
@@ -81,7 +81,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   private poolManagerValidation = inject(PoolManagerValidationService);
   private addVdevsStore = inject(AddVdevsStore);
   private dialogService = inject(DialogService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
@@ -171,7 +171,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     sedPasswordUpdate$.pipe(
       switchMap(() => {
         return this.dialogService.jobDialog(
-          this.api.job('pool.create', [payload]),
+          this.api.job('pool.create', [toPoolCreateArgs(payload)]),
           { title: this.translate.instant('Create Pool') },
         ).afterClosed();
       }),
@@ -294,7 +294,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     }
 
     this.dialogService.jobDialog(
-      this.api.job('pool.update', [this.existingPool.id, payload]),
+      this.api.job('pool.update', [this.existingPool.id, toPoolUpdateArgs(payload)]),
       { title: this.translate.instant('Update Pool') },
     )
       .afterClosed()

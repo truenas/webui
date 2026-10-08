@@ -301,7 +301,6 @@
     "./src/app/interfaces/pool-attachment.interface.ts",
     "./src/app/interfaces/pool-export.interface.ts",
     "./src/app/interfaces/pool-import.interface.ts",
-    "./src/app/interfaces/pool-remove.interface.ts",
     "./src/app/interfaces/pool-scrub.interface.ts",
     "./src/app/interfaces/pool.interface.ts",
     "./src/app/interfaces/posix-permissions.interface.ts",

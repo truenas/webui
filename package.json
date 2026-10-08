@@ -120,7 +120,7 @@
     "@stylistic/eslint-plugin": "~2.9.0",
     "@truenas/api-client": "~8.0.0",
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master",
-    "@truenas/ui-components": "~0.7.12",
+    "@truenas/ui-components": "~0.8.10",
     "@types/cheerio": "~0.22.35",
     "@types/d3": "~7.4.3",
     "@types/dygraphs": "^2.1.10",

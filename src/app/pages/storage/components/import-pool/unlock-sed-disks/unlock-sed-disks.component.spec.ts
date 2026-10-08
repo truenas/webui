@@ -2,15 +2,18 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { JobResult } from '@truenas/api-client';
 import { TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { LockedSedDisk } from 'app/pages/storage/components/import-pool/utils/sed-disk.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UnlockSedDisksComponent } from './unlock-sed-disks.component';
@@ -37,9 +40,9 @@ describe('UnlockSedDisksComponent', () => {
     component: UnlockSedDisksComponent,
     imports: [ReactiveFormsModule],
     providers: [
-      mockApi([
-        mockJob('core.bulk', fakeSuccessfulJob(mockBulkResponse)),
-        mockCall('system.advanced.update'),
+      mockTypedApi([
+        mockTypedJob('core.bulk', { state: JobState.Success, result: mockBulkResponse as JobResult<WebUiApiDirectory, 'core.bulk'> }),
+        mockTypedCall('system.advanced.update', null),
       ]),
       mockProvider(SnackbarService),
       mockProvider(ErrorHandlerService),
@@ -88,7 +91,7 @@ describe('UnlockSedDisksComponent', () => {
   });
 
   it('calls system.advanced.update and core.bulk when unlock is clicked with default settings', async () => {
-    const api = spectator.inject(ApiService);
+    const api = spectator.inject(TypedApiService);
     jest.spyOn(spectator.component.unlocked, 'emit');
 
     await (await getGlobalPassword()).setValue('testpassword');
@@ -107,7 +110,7 @@ describe('UnlockSedDisksComponent', () => {
   });
 
   it('does not call system.advanced.update when updateGlobalSettings is unchecked', async () => {
-    const api = spectator.inject(ApiService);
+    const api = spectator.inject(TypedApiService);
 
     await (await getGlobalPassword()).setValue('testpassword');
 
@@ -189,9 +192,9 @@ describe('UnlockSedDisksComponent', () => {
       component: UnlockSedDisksComponent,
       imports: [ReactiveFormsModule],
       providers: [
-        mockApi([
-          mockJob('core.bulk', fakeSuccessfulJob(partialSuccessResponse)),
-          mockCall('system.advanced.update'),
+        mockTypedApi([
+          mockTypedJob('core.bulk', { state: JobState.Success, result: partialSuccessResponse as JobResult<WebUiApiDirectory, 'core.bulk'> }),
+          mockTypedCall('system.advanced.update', null),
         ]),
         mockProvider(SnackbarService),
         mockProvider(ErrorHandlerService),
@@ -232,9 +235,9 @@ describe('UnlockSedDisksComponent', () => {
       component: UnlockSedDisksComponent,
       imports: [ReactiveFormsModule],
       providers: [
-        mockApi([
-          mockJob('core.bulk', fakeSuccessfulJob(allFailResponse)),
-          mockCall('system.advanced.update'),
+        mockTypedApi([
+          mockTypedJob('core.bulk', { state: JobState.Success, result: allFailResponse as JobResult<WebUiApiDirectory, 'core.bulk'> }),
+          mockTypedCall('system.advanced.update', null),
         ]),
         mockProvider(SnackbarService),
         mockProvider(ErrorHandlerService),

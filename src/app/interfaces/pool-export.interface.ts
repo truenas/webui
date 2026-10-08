@@ -1,14 +1,5 @@
 import { isObject } from 'lodash-es';
 
-export type PoolExportParams = [
-  id: number,
-  params: {
-    cascade: boolean;
-    destroy: boolean;
-    restart_services: boolean;
-  },
-];
-
 export interface ServicesToBeRestartedInfo {
   stop_services: string[];
   restart_services: string[];
