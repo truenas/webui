@@ -45,38 +45,64 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    # Built the way scale-build builds the nightly, not the way the other jobs
-    # are prepared: same Debian release, and the same commands as the
-    # `truenas_webui` entry in scale-build's conf/build.manifest. Node comes
-    # from debian/fetch_node.sh rather than setup-node, so a Node version the
-    # Debian build cannot fetch or verify fails here and not in the nightly.
+    # Builds the Debian package the way scale-build builds the nightly, not the
+    # way the other jobs are prepared: same Debian release, and the same
+    # commands as the `truenas_webui` entry in scale-build's
+    # conf/build.manifest followed by the `dpkg-buildpackage` scale-build runs
+    # for every package. Node comes from debian/fetch_node.sh rather than
+    # setup-node. So a Node version the Debian build cannot fetch or verify, or
+    # a change that breaks debian/rules, fails here and not in the nightly.
+    #
+    # Two deliberate differences from scale-build:
+    # - Build dependencies are installed by name below instead of with
+    #   `mk-build-deps`, and `dpkg-buildpackage` gets `-d` to skip its own
+    #   check. debian/control asks for a `yarn` package, which scale-build
+    #   takes from the TrueNAS apt mirror and stock Debian does not have. The
+    #   `yarn` the build really uses is the Corepack one either way.
+    # - debian/changelog is not re-stamped with `dch`, so the package carries
+    #   the placeholder version already in that file.
     container: debian:trixie
     env:
       COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'
+      # scale-build exports the release it is building; debian/rules writes it
+      # into src/environments/release.ts.
+      RELEASE_VERSION: CI
     steps:
       # git before checkout, so the checkout is a real clone; Yarn also needs
-      # it for the one git dependency.
+      # it for the one git dependency. debhelper brings dpkg-dev and make.
       - name: Install build prerequisites
-        run: apt-get update && apt-get -y install --no-install-recommends ca-certificates git wget xz-utils
+        run: apt-get update && apt-get -y install --no-install-recommends ca-certificates debhelper git wget xz-utils
       - name: Checkout
         uses: actions/checkout@v4
       # The workspace belongs to the runner's user and the container runs as
       # root, so git refuses to read the repository ("dubious ownership").
       # Checkout only trusts it for its own step. Without this the build still
       # passes, but stamps the service worker version with `unknown` instead of
-      # the commit hash, and `yarn check-env` cannot find the repository root.
+      # the commit hash.
       - name: Trust the workspace
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Install Node the way scale-build does
         run: sh -ex debian/fetch_node.sh
+      # The rest of scale-build's prebuildcmd. node_modules is handed to
+      # debian/rules as a tarball because `dpkg-buildpackage` starts with
+      # `debian/rules clean`, which deletes the directory.
       - name: Install packages
         run: |
           corepack enable
           yarn install --immutable --network-timeout 100000
-      - name: Build
-        run: yarn build:prod
-      - name: Check strict null checks
-        run: yarn run check-env && yarn run strict-null-checks
+          tar czf node_files.tgz node_modules/
+          rm -rf node_modules
+      - name: Build the Debian package
+        run: dpkg-buildpackage -us -uc -b -d
+      # dpkg-buildpackage writes the package next to the source directory.
+      - name: Check the package contents
+        run: |
+          deb=$(ls ../truenas-webui_*_all.deb)
+          dpkg-deb --info "$deb"
+          for file in index.html sw.js assets/buildtime; do
+            dpkg-deb --contents "$deb" | grep -q " ./usr/share/truenas/webui/$file\$" \
+              || { echo "::error::$file is missing from $deb"; exit 1; }
+          done
 
   # Build above runs on x64, so it only proves the linux-x64 checksum in
   # debian/fetch_node.sh. scale-build also builds on arm64; this runs just the
@@ -110,6 +136,10 @@ jobs:
         run: yarn run check-env
       - name: Run linter
         run: yarn lint
+      # Lives here rather than in Build: that job hands node_modules to the
+      # Debian package build, which deletes it.
+      - name: Check strict null checks
+        run: yarn strict-null-checks
       # Migrations drop `data-test` attributes silently — six accepted tickets so far, each
       # found downstream rather than here. Checks that tn-table rows and clickable elements
       # stay addressable. See scripts/check-test-ids.ts.
