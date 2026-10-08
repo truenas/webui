@@ -2,10 +2,10 @@
   <div>
     @for (category of topology$ | async | keyvalue; track category.key) {
       <div class="details-item">
-        <span class="label">
+        <span class="label" tnTestIdType="text" [tnTestId]="['new-devices', category.key, 'label']">
           {{ category.key | mapValue: vdevTypeLabels | translate }}:
         </span>
-        <span class="value">
+        <span class="value" tnTestIdType="text" [tnTestId]="['new-devices', category.key]">
           {{ category.value | ixTopologyCategoryDescription: !isLimitedToOneLayout(category.key | cast) : category.key === vDevType.Spare }}
         </span>
       </div>

@@ -6,7 +6,7 @@
 
       <ul>
         @for (service of servicesInfo.stop_services; track service) {
-          <li>{{ service | translate }}</li>
+          <li tnTestIdType="text" [tnTestId]="['stop-service', service]">{{ service | translate }}</li>
         }
       </ul>
     </div>
@@ -18,7 +18,7 @@
 
       <ul>
         @for (service of servicesInfo.restart_services; track service) {
-          <li>{{ service | translate }}</li>
+          <li tnTestIdType="text" [tnTestId]="['restart-service', service]">{{ service | translate }}</li>
         }
       </ul>
     </div>

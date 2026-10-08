@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 
 @Component({
@@ -9,7 +10,7 @@ import { DetailsDisk } from 'app/interfaces/disk.interface';
   templateUrl: './disk-info.component.html',
   styleUrls: ['./disk-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslateModule],
+  imports: [TnTestIdDirective, TranslateModule],
 })
 export class DiskInfoComponent {
   readonly disk = input.required<DetailsDisk>();

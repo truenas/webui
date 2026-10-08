@@ -27,7 +27,7 @@
   <div class="card-content">
     <div class="details-item">
       <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
-      <div class="label status">
+      <div class="label status" tnTestIdType="text" [tnTestId]="[pool().name, 'storage-health-status']">
         {{ getErrorText() }}
       </div>
       @if (hasErrors()) {
@@ -58,7 +58,7 @@
       </div>
 
       @if (scrub()?.enabled) {
-        <div class="value">
+        <div class="value" tnTestIdType="text" [tnTestId]="[pool().name, 'scheduled-scrub']">
           {{ scrub().schedule | scheduleDescription }}
         </div>
         <button
@@ -72,7 +72,7 @@
         </button>
       }
       @else {
-        <div class="value">
+        <div class="value" tnTestIdType="text" [tnTestId]="[pool().name, 'scheduled-scrub']">
           {{ 'Not Set' | translate }}
         </div>
         <button
@@ -102,7 +102,7 @@
           [pool]="pool()"
         ></ix-active-pool-scan>
       } @else {
-        <ix-last-pool-scan [scan]="scan()"></ix-last-pool-scan>
+        <ix-last-pool-scan [scan]="scan()" [pool]="pool()"></ix-last-pool-scan>
       }
     }
 

@@ -4,7 +4,11 @@ import {
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnFormFieldComponent, TnFormSectionComponent, TnIconComponent, TnSelectComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnIconComponent,
+  TnSelectComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { filter, map, take } from 'rxjs/operators';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
@@ -41,6 +45,7 @@ interface DiskBulkResult {
   styleUrl: 'disk-bulk-edit.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     IxFormComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,

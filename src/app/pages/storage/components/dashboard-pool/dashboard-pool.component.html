@@ -1,7 +1,7 @@
 @if (!isLoading()) {
   <div class="pool-container">
     <div class="pool-header">
-      <h2 class="pool-name">{{ pool()?.name }}</h2>
+      <h2 class="pool-name" tnTestIdType="text" [tnTestId]="[pool()?.name, 'pool-name']">{{ pool()?.name }}</h2>
       <div class="pool-actions">
         @if (!pool()?.is_upgraded && isOnline()) {
           <tn-button

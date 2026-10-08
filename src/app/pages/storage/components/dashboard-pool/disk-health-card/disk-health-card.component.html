@@ -19,7 +19,7 @@
       <div class="label">
         {{ 'Disks temperature related alerts' | translate }}:
       </div>
-      <div class="value">
+      <div class="value" tnTestIdType="text" [tnTestId]="[poolState().name, 'disk-temperature-alerts']">
         {{ diskState.alerts | number }}
       </div>
     </div>
@@ -27,7 +27,7 @@
     @if (isTemperatureDataAvailable) {
       <div class="details-item">
         <div class="label">{{ 'Highest Temperature' | translate }}:</div>
-        <div class="value">
+        <div class="value" tnTestIdType="text" [tnTestId]="[poolState().name, 'highest-temperature']">
           @if (isHighestTempReady) {
             {{ diskState.highestTemperature | number }}
             {{ diskState.unit }}
@@ -39,7 +39,7 @@
 
       <div class="details-item">
         <div class="label">{{ 'Lowest Temperature' | translate }}:</div>
-        <div class="value">
+        <div class="value" tnTestIdType="text" [tnTestId]="[poolState().name, 'lowest-temperature']">
           @if (isLowestTempReady) {
             {{ diskState.lowestTemperature | number }}
             {{ diskState.unit }}
@@ -51,7 +51,7 @@
 
       <div class="details-item">
         <div class="label">{{ 'Average Disk Temperature' | translate }}:</div>
-        <div class="value">
+        <div class="value" tnTestIdType="text" [tnTestId]="[poolState().name, 'average-disk-temperature']">
           @if (isAverageTempReady) {
             {{ diskState.averageTemperature | number }}
             {{ diskState.unit }}

@@ -1,7 +1,12 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnStepperNextDirective, TnStepperPreviousDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnStepperNextDirective,
+  TnStepperPreviousDirective,
+  TnTestIdDirective,
+} from '@truenas/ui-components';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -13,6 +18,7 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   templateUrl: './cache-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     LayoutStepComponent,
     FormActionsComponent,
     TnButtonComponent,

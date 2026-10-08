@@ -4,8 +4,14 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnDialog, TnIconButtonComponent,
-  TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective,
+  TnButtonComponent,
+  TnCardComponent,
+  TnDialog,
+  TnIconButtonComponent,
+  TnMenuComponent,
+  TnMenuItemComponent,
+  TnMenuTriggerDirective,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, switchMap, tap } from 'rxjs/operators';
@@ -47,6 +53,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./dashboard-pool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     RequiresRolesDirective,
     TnButtonComponent,
     TnIconButtonComponent,

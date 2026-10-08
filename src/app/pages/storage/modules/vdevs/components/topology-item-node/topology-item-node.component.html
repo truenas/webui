@@ -7,7 +7,7 @@
       ></ix-topology-item-icon>
     </div>
     <div class="name">
-      <span>{{ name() }}</span>
+      <span tnTestIdType="text" [tnTestId]="['vdev', topologyItem().guid, 'name']">{{ name() }}</span>
       @if (hasDescendantWarning()) {
         <tn-icon
           role="img"
@@ -22,12 +22,12 @@
     </div>
   </div>
   <div class="cell cell-status" [ngClass]="statusClass()">
-    <span>{{ status() }}</span>
+    <span tnTestIdType="text" [tnTestId]="['vdev', topologyItem().guid, 'status']">{{ status() }}</span>
   </div>
   <div class="cell cell-capacity">
-    <span>{{ capacity() }}</span>
+    <span tnTestIdType="text" [tnTestId]="['vdev', topologyItem().guid, 'capacity']">{{ capacity() }}</span>
   </div>
   <div class="cell cell-errors">
-    <span>{{ errors() }}</span>
+    <span tnTestIdType="text" [tnTestId]="['vdev', topologyItem().guid, 'errors']">{{ errors() }}</span>
   </div>
 </div>

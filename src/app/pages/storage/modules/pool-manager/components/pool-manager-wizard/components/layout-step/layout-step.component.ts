@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
@@ -14,7 +15,7 @@ import { CustomLayoutAppliedComponent } from './custom-layout-applied/custom-lay
   templateUrl: './layout-step.component.html',
   styleUrls: ['./layout-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AutomatedDiskSelectionComponent, CustomLayoutAppliedComponent],
+  imports: [TnTestIdDirective, AutomatedDiskSelectionComponent, CustomLayoutAppliedComponent],
 })
 export class LayoutStepComponent implements OnInit {
   private store = inject(PoolManagerStore);

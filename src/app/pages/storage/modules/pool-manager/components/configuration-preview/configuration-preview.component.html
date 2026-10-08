@@ -1,21 +1,21 @@
 <tn-card class="card" [title]="'Configuration Preview' | translate">
   <div class="details-item">
     <div class="label">{{ 'Name' | translate }}:</div>
-    <div class="value">{{ (name$ | async) || unknownProp }}</div>
+    <div class="value" tnTestId="config-preview-name" tnTestIdType="text">{{ (name$ | async) || unknownProp }}</div>
   </div>
   @for (category of topology$ | async | keyvalue; track category.key) {
     <div class="details-item">
-      <div class="label">
+      <div class="label" tnTestIdType="text" [tnTestId]="['config-preview', category.key, 'label']">
         {{ category.key | mapValue: vdevTypeLabels | translate }}:
       </div>
-      <div class="value">
+      <div class="value" tnTestIdType="text" [tnTestId]="['config-preview', category.key]">
         {{ category.value | ixTopologyCategoryDescription: !isLimitedToOneLayout(category.key | cast) : category.key === vDevType.Spare }}
       </div>
     </div>
   }
   <div class="details-item">
     <div class="label">{{ 'Encryption' | translate }}:</div>
-    <div class="value">
+    <div class="value" tnTestId="config-preview-encryption" tnTestIdType="text">
       @if ((encryptionType$ | async) === EncryptionType.None) {
         {{ 'None' | translate }}
       } @else if ((encryptionType$ | async) === EncryptionType.Software) {
@@ -29,6 +29,6 @@
   </div>
   <div class="details-item">
     <div class="label">{{ 'Total Raw Capacity' | translate }}:</div>
-    <div class="value">{{ totalCapacity$ | async | ixFileSize }}</div>
+    <div class="value" tnTestId="config-preview-total-raw-capacity" tnTestIdType="text">{{ totalCapacity$ | async | ixFileSize }}</div>
   </div>
 </tn-card>

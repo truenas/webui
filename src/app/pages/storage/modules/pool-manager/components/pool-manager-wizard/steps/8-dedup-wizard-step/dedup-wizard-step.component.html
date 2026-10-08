@@ -9,7 +9,7 @@
 ></ix-layout-step>
 
 @if (stepWarning()) {
-  <p class="error-warning">
+  <p class="error-warning" tnTestId="dedup-step-warning" tnTestIdType="text">
     {{ stepWarning() }}
   </p>
 }

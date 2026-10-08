@@ -4,11 +4,12 @@ import {
 } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { formatDuration } from 'date-fns';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { secondsToDuration } from 'app/helpers/time.helpers';
-import { PoolScanUpdate } from 'app/interfaces/pool.interface';
+import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 
 @Component({
@@ -17,6 +18,7 @@ import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/for
   styleUrls: ['./last-pool-scan.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TranslateModule,
     DecimalPipe,
     FormatDateTimePipe,
@@ -24,6 +26,7 @@ import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/for
 })
 export class LastPoolScanComponent {
   scan = input.required<PoolScanUpdate>();
+  pool = input.required<Pool>();
 
   protected readonly isScrub = computed(() => this.scan()?.function === PoolScanFunction.Scrub);
 

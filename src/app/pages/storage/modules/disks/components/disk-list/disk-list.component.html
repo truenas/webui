@@ -21,7 +21,7 @@
   user the batch bar just appeared — would be the one announcement missed. The visible copy below
   is `aria-hidden` so this is the single spoken source of the count.
 -->
-<span class="sr-only" aria-live="polite">{{ selectionAnnouncement() }}</span>
+<span class="sr-only" aria-live="polite" tnTestId="disks-selection-announcement" tnTestIdType="text">{{ selectionAnnouncement() }}</span>
 
 @if (selectedDisks().length) {
   <div
@@ -35,7 +35,7 @@
         changes, so a selection only ever covers the rows on screen. Naming the number makes
         that visible instead of leaving the user to assume earlier pages are still included.
       -->
-      <span class="selection-count" aria-hidden="true">{{ selectionCountText() }}</span>
+      <span class="selection-count" aria-hidden="true" tnTestId="disks-selection-count" tnTestIdType="text">{{ selectionCountText() }}</span>
     </div>
     <div class="actions">
       <tn-button

@@ -5,8 +5,13 @@ import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective,
-  TnIconComponent, TnTooltipDirective,
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCardHeaderDirective,
+  TnIconComponent,
+  TnTooltipDirective,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
@@ -67,6 +72,7 @@ export type EmptyDiskObject = Record<
   styleUrls: ['./vdevs-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnCardComponent,
     TnCardHeaderDirective,
     TnCardFooterActionsDirective,

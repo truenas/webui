@@ -2,7 +2,7 @@ import { PercentPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnProgressBarComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnProgressBarComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { formatDuration } from 'date-fns';
 import { filter, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -18,6 +18,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 @Component({
   selector: 'ix-active-pool-scan',
   imports: [
+    TnTestIdDirective,
     TnProgressBarComponent,
     PercentPipe,
     TnButtonComponent,

@@ -33,7 +33,7 @@
           [topologyItem]="selectedNode | cast"
           [disk]="vDevsStore.getDisk(selectedNode.children[0] || selectedNode)"
         ></ix-topology-item-icon>
-        <span class="device-name">
+        <span class="device-name" tnTestId="vdev-details-title" tnTestIdType="text">
           {{ getTitle(selectedNode | cast) | translate }}
         </span>
       }

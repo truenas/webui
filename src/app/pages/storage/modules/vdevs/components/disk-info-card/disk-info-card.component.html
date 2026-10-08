@@ -8,29 +8,29 @@
     <div class="details-item">
       <div class="label">{{ 'Disk Size' | translate }}:</div>
       @if (disk()?.size) {
-        <div class="value">
+        <div class="value" tnTestId="disk-size" tnTestIdType="text">
           {{ disk().size | ixFileSize }}
         </div>
       } @else {
-        <div class="value">{{ 'N/A' | translate }}</div>
+        <div class="value" tnTestId="disk-size" tnTestIdType="text">{{ 'N/A' | translate }}</div>
       }
     </div>
     <div class="details-item">
       <div class="label">{{ 'Transfer Mode' | translate }}:</div>
-      <div class="value">
+      <div class="value" tnTestId="disk-transfer-mode" tnTestIdType="text">
         {{ disk()?.transfermode | orNotAvailable }}
       </div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Serial' | translate }}:</div>
-      <div class="value">
+      <div class="value" tnTestId="disk-serial" tnTestIdType="text">
         {{ disk()?.serial }}
         <ix-copy-button [text]="disk()?.serial || ''"></ix-copy-button>
       </div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Model' | translate }}:</div>
-      <div class="value">
+      <div class="value" tnTestId="disk-model" tnTestIdType="text">
         {{ disk()?.model | orNotAvailable }}
       </div>
     </div>
@@ -40,26 +40,26 @@
         <div class="label">{{ 'Rotation Rate' | translate }}:</div>
         @let rotationRate = disk()?.rotationrate;
         @if (rotationRate) {
-          <div class="value">
+          <div class="value" tnTestId="disk-rotation-rate" tnTestIdType="text">
             {{ '{n} RPM' | translate: { n: rotationRate } }}
           </div>
         } @else {
-          <div class="value">{{ 'N/A' | translate }}</div>
+          <div class="value" tnTestId="disk-rotation-rate" tnTestIdType="text">{{ 'N/A' | translate }}</div>
         }
       </div>
     }
 
     <div class="details-item">
       <div class="label">{{ 'Type' | translate }}:</div>
-      <div class="value">{{ disk()?.type | orNotAvailable }}</div>
+      <div class="value" tnTestId="disk-type" tnTestIdType="text">{{ disk()?.type | orNotAvailable }}</div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'HDD Standby' | translate }}:</div>
-      <div class="value">{{ disk()?.hddstandby | orNotAvailable }}</div>
+      <div class="value" tnTestId="disk-hdd-standby" tnTestIdType="text">{{ disk()?.hddstandby | orNotAvailable }}</div>
     </div>
     <div class="details-item">
       <div class="label">{{ 'Description' | translate }}:</div>
-      <div class="value">{{ disk()?.description || ('N/A' | translate) }}</div>
+      <div class="value" tnTestId="disk-description" tnTestIdType="text">{{ disk()?.description || ('N/A' | translate) }}</div>
     </div>
   } @else {
     <div>{{ 'Disk is unavailable' | translate }}</div>

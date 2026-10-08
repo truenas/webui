@@ -2,6 +2,7 @@
   @if (noPoolsDisks.length) {
     <ix-unused-disk-card
       class="unused-resources"
+      testId="unassigned-disks"
       [title]="'Unassigned Disks' | translate"
       [disks]="noPoolsDisks"
       (addToStorage)="addNoPoolDisksToStorage()"
@@ -10,6 +11,7 @@
   @if (exportedPoolsDisks.length) {
     <ix-unused-disk-card
       class="unused-resources"
+      testId="exported-pool-disks"
       [title]="'Disks with exported pools' | translate"
       [disks]="exportedPoolsDisks"
       (addToStorage)="addExportedPoolDisksToStorage()"
