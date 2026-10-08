@@ -1,7 +1,7 @@
 import { KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { cloneDeep } from 'lodash-es';
 import {
   CreateVdevLayout, TopologyItemType, VDevType, vdevTypeLabels,
@@ -35,6 +35,7 @@ const defaultCategory: PoolManagerTopologyCategory = {
   styleUrls: ['./existing-configuration-preview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnCardComponent,
     TranslateModule,
     CastPipe,

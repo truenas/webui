@@ -4,7 +4,11 @@ import {
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnFormFieldComponent, TnFormSectionComponent, TnIconComponent, TnSelectComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnIconComponent,
+  TnSelectComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { filter, map, take } from 'rxjs/operators';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
@@ -21,7 +25,7 @@ import {
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { translateOptions } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   advPowerManagementOptionTestId, DiskFormResponse,
 } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
@@ -41,6 +45,7 @@ interface DiskBulkResult {
   styleUrl: 'disk-bulk-edit.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     IxFormComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
@@ -53,7 +58,7 @@ interface DiskBulkResult {
 export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse> implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private dialogService = inject(DialogService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
 

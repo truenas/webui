@@ -20,7 +20,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 })
 export class AppStateCellComponent {
   app = input.required<App>();
-  job = input<Job<void, AppStartQueryParams>>();
+  job = input<Job<unknown, AppStartQueryParams>>();
   showIcon = input<boolean>(false);
 
   @HostBinding('class') get hostClasses(): string[] {

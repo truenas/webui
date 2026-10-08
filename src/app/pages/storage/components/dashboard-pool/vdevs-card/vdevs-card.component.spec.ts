@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { GiB } from 'app/constants/bytes.constant';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Disk } from 'app/interfaces/disk.interface';
@@ -34,7 +34,7 @@ describe('VDevsCardComponent', () => {
       MockComponent(PoolCardIconComponent),
     ],
     providers: [
-      mockApi([]),
+      mockTypedApi([]),
       mockProvider(Router),
     ],
   });
@@ -2440,7 +2440,7 @@ describe('VDevsCardComponent', () => {
         MockComponent(PoolCardIconComponent),
       ],
       providers: [
-        mockApi([]),
+        mockTypedApi([]),
         mockSharingTierService({ enabled: true }),
       ],
     });

@@ -26,7 +26,7 @@ import {
   createTable, mapTnSortToProviderSorting, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/tn-table/utils';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { dockerRegistriesListElements } from 'app/pages/apps/components/docker-registries/docker-registries-list/docker-registries-list.elements';
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
 
@@ -61,7 +61,7 @@ export class DockerRegistriesListComponent implements OnInit {
 
   protected emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
   private destroyRef = inject(DestroyRef);
@@ -88,7 +88,7 @@ export class DockerRegistriesListComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataProvider = new AsyncDataProvider(
-      this.api.call('app.registry.query').pipe(
+      this.api.query('app.registry.query').pipe(
         tap((registries) => {
           this.isLoggedIntoDockerHub.set(
             registries.some((registry) => registry.uri.includes(dockerHubRegistry)),

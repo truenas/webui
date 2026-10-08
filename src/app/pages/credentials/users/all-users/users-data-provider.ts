@@ -5,19 +5,20 @@ import {
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ApiCallResponseType } from 'app/interfaces/api/api-call-directory.interface';
 import { QueryFilters, QueryParams } from 'app/interfaces/query-api.interface';
-import { User } from 'app/interfaces/user.interface';
+import { toUser, User } from 'app/interfaces/user.interface';
 import { ApiDataProvider } from 'app/modules/tn-table/classes/api-data-provider/api-data-provider';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 export class UsersDataProvider extends ApiDataProvider<'user.query'> {
   private additionalUsername: string;
 
   constructor(
-    // Re-declared at its own type: `load` makes a second, legacy-typed `user.query` call.
-    protected override api: ApiService,
+    // Kept at its own type for the second, typed `user.query` read in `load`; the paged read goes through the
+    // provider's loose client, as the base class does.
+    private typedApi: TypedApiService,
     params: QueryParams<User>,
   ) {
-    super(api, 'user.query', params);
+    super(typedApi, 'user.query', params);
   }
 
   shouldLoadUser(username: string): void {
@@ -37,8 +38,8 @@ export class UsersDataProvider extends ApiDataProvider<'user.query'> {
             return of(users);
           }
 
-          return this.api.call('user.query', [[['username', '=', this.additionalUsername]]]).pipe(
-            map((additionalUsers) => [...additionalUsers, ...users]),
+          return this.typedApi.query('user.query', [['username', '=', this.additionalUsername]]).pipe(
+            map((additionalUsers) => [...additionalUsers.map(toUser), ...users]),
           );
         }),
       ).subscribe({

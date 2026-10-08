@@ -7,12 +7,10 @@ import {
   EMPTY, Observable, Subscription, catchError,
   combineLatest, filter, of, switchMap, tap,
 } from 'rxjs';
-import { CollectionChangeType } from 'app/enums/api.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App } from 'app/interfaces/app.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AppQueryEvent, ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -133,7 +131,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
     }
 
     this.installedAppsSubscription = this.appsService.getInstalledAppsUpdates().pipe(
-      tap((apiEvent: ApiEvent<App>) => {
+      tap((apiEvent) => {
         this.handleApiEvent(apiEvent);
         this.patchState({ isLoading: false });
       }),
@@ -141,23 +139,16 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
     ).subscribe();
   }
 
-  private handleApiEvent(apiEvent: ApiEvent<App>): void {
-    switch (apiEvent.msg) {
-      case CollectionChangeType.Removed:
-        this.handleRemovedEvent(apiEvent);
-        break;
-      case CollectionChangeType.Added:
-      case CollectionChangeType.Changed:
-        this.handleAddedOrUpdatedEvent(apiEvent);
-        break;
-      default:
-        console.error('Unknown API event type');
-        break;
+  private handleApiEvent(apiEvent: AppQueryEvent): void {
+    if (apiEvent.msg === 'removed') {
+      this.handleRemovedEvent(apiEvent);
+    } else {
+      this.handleAddedOrUpdatedEvent(apiEvent);
     }
   }
 
-  private handleRemovedEvent(apiEvent: ApiEvent<App>): void {
-    const appId = apiEvent.id.toString();
+  private handleRemovedEvent(apiEvent: Extract<AppQueryEvent, { msg: 'removed' }>): void {
+    const appId = apiEvent.id;
 
     this.patchState((state: InstalledAppsState): InstalledAppsState => ({
       ...state,
@@ -181,7 +172,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
     }));
   }
 
-  private handleAddedOrUpdatedEvent(apiEvent: ApiEvent<App>): void {
+  private handleAddedOrUpdatedEvent(apiEvent: Exclude<AppQueryEvent, { msg: 'removed' }>): void {
     const app = apiEvent.fields;
     if (!app) {
       console.error('No app data in API event');
@@ -189,7 +180,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
     }
 
     this.patchState((state: InstalledAppsState): InstalledAppsState => {
-      if (apiEvent.msg === CollectionChangeType.Added) {
+      if (apiEvent.msg === 'added') {
         return { ...state, installedApps: [...state.installedApps, app] };
       }
 

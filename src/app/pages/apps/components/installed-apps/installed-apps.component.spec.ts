@@ -12,8 +12,8 @@ import { MockComponent, MockDeclaration } from 'ng-mocks';
 import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
 import { BehaviorSubject, of } from 'rxjs';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AppState } from 'app/enums/app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { App } from 'app/interfaces/app.interface';
@@ -114,7 +114,7 @@ describe('InstalledAppsComponent', () => {
           fields: { arguments: ['test-app', { replica_count: 1 }], state: JobState.Success },
         })),
       }),
-      mockApi([]),
+      mockTypedApi([]),
       mockAuth(),
       mockProvider(AppsStatsService, {
         getStatsForApp: jest.fn(() => of(null)),

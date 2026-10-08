@@ -13,12 +13,12 @@ import { map, startWith } from 'rxjs/operators';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
-import { CertificateProfile, CertificateProfiles } from 'app/interfaces/certificate.interface';
+import { CertificateProfile, CertificateProfiles, toCertificateProfiles } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -41,7 +41,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private validators = inject(IxValidatorsService);
@@ -109,7 +109,7 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
 
   private loadProfiles(): void {
     this.api.call('webui.crypto.csr_profiles')
-      .pipe(this.errorHandler.withErrorHandler(), takeUntilDestroyed(this.destroyRef))
+      .pipe(map(toCertificateProfiles), this.errorHandler.withErrorHandler(), takeUntilDestroyed(this.destroyRef))
       .subscribe((profiles) => {
         this.profiles = profiles;
         const profileOptions = Object.keys(profiles).map((name) => ({ label: name, value: name }));

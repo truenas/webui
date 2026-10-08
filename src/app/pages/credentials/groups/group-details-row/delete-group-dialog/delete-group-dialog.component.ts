@@ -11,7 +11,7 @@ import { Group } from 'app/interfaces/group.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -31,7 +31,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class DeleteGroupDialog {
   private loader = inject(LoaderService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   protected dialogRef = inject<DialogRef<unknown, DeleteGroupDialog>>(DialogRef);

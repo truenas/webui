@@ -18,7 +18,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { WarningComponent } from 'app/modules/warning/warning.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -45,7 +45,7 @@ export class DiskWipeDialog {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   protected dialogRef = inject<DialogRef<unknown, DiskWipeDialog>>(DialogRef);
   data = inject<{
     diskName: string;

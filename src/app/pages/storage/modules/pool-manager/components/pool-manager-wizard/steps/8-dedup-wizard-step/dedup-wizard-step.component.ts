@@ -4,7 +4,12 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnStepperNextDirective, TnStepperPreviousDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnStepperNextDirective,
+  TnStepperPreviousDirective,
+  TnTestIdDirective,
+} from '@truenas/ui-components';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -18,6 +23,7 @@ import { nonDraidLayouts, parityLock$ } from 'app/pages/storage/modules/pool-man
   templateUrl: './dedup-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     LayoutStepComponent,
     FormActionsComponent,
     TnButtonComponent,

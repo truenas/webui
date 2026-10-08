@@ -4,14 +4,14 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnButtonHarness, TnDialog, TnIconButtonHarness, TnTableComponent, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DockerImageDeleteDialog } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { fakeDockerImagesDataSource } from 'app/pages/apps/components/docker-images/test/fake-docker-images';
 import { DockerImagesListComponent } from './docker-images-list.component';
@@ -29,9 +29,8 @@ describe('DockerImagesListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('app.image.query', fakeDockerImagesDataSource),
-        mockCall('app.image.delete'),
+      mockTypedApi([
+        mockTypedQuery('app.image.query', fakeDockerImagesDataSource),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -54,7 +53,7 @@ describe('DockerImagesListComponent', () => {
   });
 
   it('queries the images and shows them as table rows', async () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.image.query');
+    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('app.image.query');
 
     expect(await table.getRowCount()).toBe(2);
     expect(await table.getHeaderTexts()).toEqual(expect.arrayContaining(['Image ID', 'Tags', 'Image Size']));

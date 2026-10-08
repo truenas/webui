@@ -4,12 +4,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, of } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { Role } from 'app/enums/role.enum';
-import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { FormSubmitEvent } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormFieldDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { getGroupFormConfig, GroupFormValue } from 'app/pages/credentials/groups/group-form/group.form-config';
 import { groupAdded, groupChanged } from 'app/pages/credentials/groups/store/group.actions';
 import { AppState } from 'app/store';
@@ -43,16 +42,20 @@ describe('group form config', () => {
   const translate = { instant: (key: string) => key } as TranslateService;
   const store$ = { dispatch: jest.fn() } as unknown as Store<AppState>;
 
-  const makeApi = (): ApiService => ({
-    call: jest.fn((method: ApiCallMethod) => {
+  const makeApi = (
+    privileges: Privilege[] = fakePrivileges,
+    groups = [{ group: 'existing', gid: 9999 }] as Group[],
+  ): TypedApiService => ({
+    call: jest.fn((method: string) => {
       switch (method) {
-        case 'privilege.query': return of(fakePrivileges);
-        case 'group.query': return of([{ group: 'existing', gid: 9999 }] as Group[]);
         case 'group.get_next_gid': return of(1234);
+        case 'privilege.update': return of(privileges[0]);
         default: return of(undefined);
       }
     }),
-  } as unknown as ApiService);
+    query: jest.fn((method: string) => of(method === 'privilege.query' ? privileges : groups)),
+    queryOne: jest.fn(() => of(groups[0])),
+  } as unknown as TypedApiService);
 
   const fieldByName = (
     definition: ReturnType<typeof getGroupFormConfig>,
@@ -157,16 +160,7 @@ describe('group form config', () => {
         { ...fakePrivileges[0], id: 1, builtin_name: Role.FullAdmin },
         { ...fakePrivileges[1], id: 2, builtin_name: null },
       ] as unknown as Privilege[];
-      const api = {
-        call: jest.fn((method: ApiCallMethod) => {
-          switch (method) {
-            case 'privilege.query': return of(privileges);
-            case 'group.query': return of([{ id: 7, gid: 1234 }] as Group[]);
-            case 'privilege.update': return of(privileges[0]);
-            default: return of(undefined);
-          }
-        }),
-      } as unknown as ApiService;
+      const api = makeApi(privileges, [{ id: 7, gid: 1234 }] as Group[]);
       const definition = getGroupFormConfig(api, translate, store$, undefined);
 
       const submitEvent = { ...event, isEdit: false, allValues: { ...allValues, privileges: [1, 2] } };

@@ -13,9 +13,9 @@
   >
     <div class="outer-container">
       <div class="type-container">
-        <h3>{{ layout() }}</h3>
+        <h3 tnTestIdType="text" [tnTestId]="['vdev-layout', layout(), position()]">{{ layout() }}</h3>
         @if (minDisks[layout()] <= vdev()?.disks?.length) {
-          <p>
+          <p tnTestIdType="text" [tnTestId]="['vdev-capacity-estimate', layout(), position()]">
             {{ sizeEstimation | ixFileSize }}{{ ' Est. Usable Raw Capacity' | translate }}
           </p>
         } @else {
@@ -92,7 +92,7 @@
     }
 
     @if (vdevErrorMessage) {
-      <div class="error">
+      <div class="error" tnTestIdType="text" [tnTestId]="['vdev-error', layout(), position()]">
         {{ vdevErrorMessage | translate }}
       </div>
     }

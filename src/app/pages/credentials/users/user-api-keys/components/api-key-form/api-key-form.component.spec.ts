@@ -3,14 +3,14 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnAutocompleteHarness, TnCheckboxHarness, TnDateInputHarness, TnDialog, TnInputHarness,
 } from '@truenas/ui-components';
 import { parseISO } from 'date-fns';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { User } from 'app/interfaces/user.interface';
 import {
@@ -20,8 +20,7 @@ import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-fo
 import { LocaleService } from 'app/modules/language/locale.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { KeyCreatedDialog } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
@@ -49,11 +48,9 @@ describe('ApiKeyFormComponent', () => {
           { id: 1, uid: 1000, username: 'root' },
           { id: 2, uid: 1001, username: 'operator' },
         ] as WebUiQueryEntity<'user.query'>[]),
-      ]),
-      mockApi([
-        mockCall('api_key.query', []),
-        mockCall('api_key.create', { key: 'generated-key' } as ApiKey),
-        mockCall('api_key.update', {} as ApiKey),
+        mockTypedQuery('api_key.query', []),
+        mockTypedCall('api_key.create', { key: 'generated-key' } as unknown as CallResponse<WebUiApiDirectory, 'api_key.create'>),
+        mockTypedCall('api_key.update', {} as unknown as CallResponse<WebUiApiDirectory, 'api_key.update'>),
       ]),
       mockProvider(DialogRef),
       mockProvider(DialogService),
@@ -92,8 +89,9 @@ describe('ApiKeyFormComponent', () => {
     await nameInput.setValue('My key');
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('api_key.create', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('api_key.create', [{
       name: 'My key',
       username: 'root',
       expires_at: null,
@@ -126,8 +124,9 @@ describe('ApiKeyFormComponent', () => {
     await nonExpiring.check();
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('api_key.update', [1, {
+    expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('api_key.update', [1, {
       name: 'My key',
       reset: false,
       expires_at: null,
@@ -150,7 +149,10 @@ describe('ApiKeyFormComponent', () => {
   it('allows existing api key to be reset and shows newly generated key', async () => {
     await setupTest({ editingKey });
     const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
-    spectator.inject(MockApiService).mockCallOnce('api_key.update', { key: 'generated-key' } as ApiKey);
+    spectator.inject(MockTypedApiService).mockCall(
+      'api_key.update',
+      { key: 'generated-key' } as unknown as CallResponse<WebUiApiDirectory, 'api_key.update'>,
+    );
 
     const nameInput = await loader.getHarness(TnInputHarness.with({ name: 'name' }));
     await nameInput.setValue('My key');
@@ -165,8 +167,9 @@ describe('ApiKeyFormComponent', () => {
     await reset.check();
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('api_key.update', [1, {
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('api_key.update', [1, {
       name: 'My key',
       reset: true,
       expires_at: {

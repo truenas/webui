@@ -1,39 +1,8 @@
-import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+import { CallParams, JobParams } from '@truenas/api-client';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
-export interface PullContainerImageParams {
-  auth_config?: {
-    username: string;
-    password: string;
-  };
-  image: string;
-}
+export type PullContainerImageParams = JobParams<WebUiApiDirectory, 'app.image.pull'>[0];
 
-export type DeleteContainerImageParams = [
-  id: string,
-  forceSetting?: { force: boolean },
-];
+export type DeleteContainerImageParams = CallParams<WebUiApiDirectory, 'app.image.delete'>;
 
-export interface PullContainerImageResponse {
-  status: string;
-}
-
-export interface ParsedRepoTag {
-  image: string;
-  tag: string;
-  registry: string;
-  complete_tag: string;
-}
-
-export interface ContainerImage {
-  id: string;
-  repo_tags: string[];
-  repo_digests: string[];
-  size: number;
-  dangling: boolean;
-  created: ApiTimestamp;
-  author: string;
-  comment: string;
-  parsed_repo_tags: ParsedRepoTag[];
-
-  state?: string;
-}
+export type ContainerImage = WebUiQueryEntity<'app.image.query'>;

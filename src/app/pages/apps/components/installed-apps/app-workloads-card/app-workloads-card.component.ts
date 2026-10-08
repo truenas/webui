@@ -74,7 +74,7 @@ export class AppWorkloadsCardComponent {
   protected readonly helptext = helptextApps;
 
   protected readonly hostPorts = computed(() => {
-    const hostPorts: { hostIp: string; hostPort: string; containerPort: string; protocol: string }[] = [];
+    const hostPorts: { hostIp: string; hostPort: number; containerPort: number; protocol: string }[] = [];
 
     this.app().active_workloads.used_ports.forEach((port) => {
       port.host_ports?.forEach((hostPort) => {

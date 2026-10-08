@@ -4,19 +4,20 @@ import { ReactiveFormsModule } from '@angular/forms';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnBannerHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { SchemaType } from 'app/enums/schema.enum';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { Schema } from 'app/interfaces/schema.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/acmedns-form/acmedns-form.component';
 
 describe('AcmednsFormComponent', () => {
@@ -48,10 +49,10 @@ describe('AcmednsFormComponent', () => {
     providers: [
       ...ixFormTestingProviders(),
       mockProvider(DialogService),
-      mockApi([
-        mockCall('acme.dns.authenticator.create'),
-        mockCall('acme.dns.authenticator.update'),
-        mockCall('acme.dns.authenticator.authenticator_schemas', [{
+      mockTypedApi([
+        mockTypedCall('acme.dns.authenticator.create', null),
+        mockTypedCall('acme.dns.authenticator.update', null),
+        mockTypedCall('acme.dns.authenticator.authenticator_schemas', [{
           key: DnsAuthenticatorType.Cloudflare,
           schema: {
             properties: {
@@ -65,7 +66,7 @@ describe('AcmednsFormComponent', () => {
                 _name_: 'api_token', _required_: false, title: 'API Token', type: SchemaType.String,
               },
             },
-          } as unknown as Schema,
+          } as unknown as CallResponse<WebUiApiDirectory, 'acme.dns.authenticator.authenticator_schemas'>[number]['schema'],
         }, {
           key: DnsAuthenticatorType.Route53,
           schema: {
@@ -77,7 +78,7 @@ describe('AcmednsFormComponent', () => {
                 _name_: 'secret_access_key', _required_: true, title: 'Secret Access Key', type: SchemaType.String,
               },
             },
-          } as unknown as Schema,
+          } as unknown as CallResponse<WebUiApiDirectory, 'acme.dns.authenticator.authenticator_schemas'>[number]['schema'],
         }]),
       ]),
       mockAuth(),
@@ -98,7 +99,7 @@ describe('AcmednsFormComponent', () => {
       let authenticator: Option[] = [];
       spectator.component.authenticatorOptions$.subscribe((options) => authenticator = options);
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('acme.dns.authenticator.authenticator_schemas');
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('acme.dns.authenticator.authenticator_schemas');
 
       expect(authenticator).toEqual([
         { label: 'cloudflare', value: 'cloudflare' },
@@ -137,8 +138,9 @@ describe('AcmednsFormComponent', () => {
       const closeSpy = jest.fn();
       spectator.component.closed.subscribe(closeSpy);
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith(
         'acme.dns.authenticator.update',
         [
           123,
@@ -173,8 +175,9 @@ describe('AcmednsFormComponent', () => {
       const closeSpy = jest.fn();
       spectator.component.closed.subscribe(closeSpy);
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('acme.dns.authenticator.create', [{
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('acme.dns.authenticator.create', [{
         name: 'name_new',
         attributes: {
           authenticator: 'cloudflare',

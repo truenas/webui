@@ -6,18 +6,18 @@ import {
   TnBannerHarness, TnButtonHarness, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { TierConfigFormComponent } from 'app/pages/storage/components/tier-config-form/tier-config-form.component';
 
 describe('TierConfigFormComponent', () => {
   let spectator: Spectator<TierConfigFormComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const mockConfig = {
     enabled: true,
@@ -33,9 +33,9 @@ describe('TierConfigFormComponent', () => {
     imports: [ReactiveFormsModule],
     providers: [
       ...ixFormTestingProviders(),
-      mockApi([
-        mockCall('zfs.tier.config', mockConfig),
-        mockCall('zfs.tier.update', mockConfig),
+      mockTypedApi([
+        mockTypedCall('zfs.tier.config', mockConfig),
+        mockTypedCall('zfs.tier.update', mockConfig),
       ]),
       mockProvider(FormErrorHandlerService),
       mockAuth(),
@@ -45,7 +45,7 @@ describe('TierConfigFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
   });
 
   function getInput(formControlName: string): Promise<TnInputHarness> {
@@ -79,6 +79,7 @@ describe('TierConfigFormComponent', () => {
     await (await getInput('special_class_metadata_reserve_pct')).setValue('20');
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(api.call).toHaveBeenCalledWith('zfs.tier.update', [{
       enabled: false,

@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialog, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
-import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   catchError, filter, finalize, forkJoin, map, Observable, of, shareReplay, switchMap,
@@ -60,7 +59,6 @@ import { selectIsTruenasHardware } from 'app/store/system-info/system-info.selec
     ReactiveFormsModule,
     PageHeaderComponent,
     UpdateProfileCard,
-    MarkdownModule,
     DynamicMarkdownComponent,
   ],
 })

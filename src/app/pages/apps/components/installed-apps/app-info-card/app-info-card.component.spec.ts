@@ -9,16 +9,17 @@ import {
   TnButtonHarness, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockJob, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AppState } from 'app/enums/app-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
@@ -105,13 +106,13 @@ describe('AppInfoCardComponent', () => {
       }),
       mockProvider(RedirectService),
       mockAuth(),
-      mockApi([
-        mockJob('app.convert_to_custom'),
-        mockJob('app.upgrade'),
-        mockJob('app.delete'),
-        mockJob('app.create'),
-        mockJob('app.update'),
-        mockCall('app.rollback_versions', ['1.2.1']),
+      mockTypedApi([
+        mockTypedJob('app.convert_to_custom', { state: JobState.Success }),
+        mockTypedJob('app.upgrade', { state: JobState.Success }),
+        mockTypedJob('app.delete', { state: JobState.Success }),
+        mockTypedJob('app.create', { state: JobState.Success }),
+        mockTypedJob('app.update', { state: JobState.Success }),
+        mockTypedCall('app.rollback_versions', ['1.2.1']),
       ]),
     ],
   });
@@ -236,7 +237,7 @@ describe('AppInfoCardComponent', () => {
     await menu.clickItem({ label: 'Convert to custom app' });
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).job).toHaveBeenLastCalledWith('app.convert_to_custom', ['test-user-app-name']);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenLastCalledWith('app.convert_to_custom', ['test-user-app-name']);
   });
 
   it('navigates to app edit page when Edit button is pressed', async () => {
@@ -280,7 +281,7 @@ describe('AppInfoCardComponent', () => {
       AppDeleteDialog,
       { data: { name: 'test-user-app-name', showRemoveVolumes: true } },
     );
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
       'app.delete',
       [fakeApp.name, { remove_images: true, remove_ix_volumes: true }],
     );
@@ -324,6 +325,9 @@ describe('AppInfoCardComponent', () => {
 
   it('opens rollback app dialog when Roll Back button is pressed', async () => {
     setupTest(fakeApp);
+    // The button shows once `app.rollback_versions` answers.
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
 
     const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Roll Back' }));
     await rollbackButton.click();

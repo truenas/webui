@@ -6,10 +6,12 @@ import {
   forkJoin, map, Observable, switchMap, tap,
 } from 'rxjs';
 import { DockerStatus } from 'app/enums/docker-status.enum';
-import { DockerConfig, DockerStatusData } from 'app/interfaces/docker-config.interface';
+import {
+  DockerConfig, DockerConfigUpdate, DockerStatusData, toDockerStatusData,
+} from 'app/interfaces/docker-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface DockerConfigState {
@@ -32,7 +34,7 @@ const initialState: DockerConfigState = {
 
 @Injectable()
 export class DockerStore extends ComponentStore<DockerConfigState> {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
@@ -76,13 +78,15 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
   }
 
   private getDockerStatus(): Observable<DockerStatusData> {
-    return this.api.call('docker.status');
+    return this.api.call('docker.status').pipe(map(toDockerStatusData));
   }
 
   setDockerPool(poolName: string | null, migrateApps?: boolean): Observable<Job<DockerConfig>> {
+    // Unsetting the pool sends `pool: null`, which middleware accepts and the generated input
+    // (`pool?: string`) does not declare; the request is unchanged.
     const payload = {
       pool: poolName,
-    } as DockerConfig;
+    } as DockerConfigUpdate;
 
     if (migrateApps) {
       payload.migrate_applications = migrateApps;
@@ -111,7 +115,9 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
    */
   dockerStatusEventUpdates(): Observable<DockerStatusData> {
     return this.api.subscribe('docker.state').pipe(
-      map((event) => event.fields),
+      // Only a change carries the status; `docker.state` sends nothing else.
+      filter((event) => event.msg === 'changed'),
+      map((event) => toDockerStatusData(event.fields)),
       tap((statusData) => {
         this.patchState({ statusData });
       }),
@@ -121,9 +127,10 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
   dockerConfigEventUpdates(): Observable<DockerConfig> {
     return this.api.subscribe('core.get_jobs')
       .pipe(
-        filter((event) => event.fields.method === 'docker.update' && !!event.fields.result),
-        map((event) => event.fields.result),
-        tap((dockerConfig: DockerConfig) => this.patchState({ dockerConfig })),
+        filter((event) => event.msg !== 'removed' && event.fields.method === 'docker.update' && !!event.fields.result),
+        // The job's result is what `docker.update` returns; the generated job entry types it `unknown`.
+        map((event) => (event as { fields: { result: DockerConfig } }).fields.result),
+        tap((dockerConfig) => this.patchState({ dockerConfig })),
       );
   }
 }

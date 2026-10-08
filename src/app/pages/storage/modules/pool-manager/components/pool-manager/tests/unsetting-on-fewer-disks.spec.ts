@@ -3,11 +3,11 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnCheckboxHarness, TnRadioHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import {
   PoolManagerComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
@@ -30,9 +30,9 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
     ],
     providers: [
       ...commonProviders,
-      mockApi([
-        mockCall('pool.validate_name', true),
-        mockCall('disk.details', {
+      mockTypedApi([
+        mockTypedCall('pool.validate_name', true),
+        mockTypedCall('disk.details', {
           used: [
             {
               devname: 'ada0',
@@ -106,7 +106,7 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
             },
           ] as DetailsDisk[],
         }),
-        mockCall('enclosure2.query', [
+        mockTypedQuery('enclosure2.query', [
           {
             id: 'id1',
             name: 'enclosure1',
@@ -117,9 +117,9 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
             name: 'enclosure0',
             label: 'Second Enclosure',
           },
-        ] as Enclosure[]),
-        mockCall('pool.query', []),
-        mockCall('pool.validate_name', true),
+        ] as unknown as WebUiQueryEntity<'enclosure2.query'>[]),
+        mockTypedQuery('pool.query', []),
+        mockTypedCall('pool.validate_name', true),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),

@@ -13,12 +13,12 @@ import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
-import { CertificateCreate } from 'app/interfaces/certificate.interface';
+import { CertificateCreate, toCertificateCreateArgs } from 'app/interfaces/certificate.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { normalizeCertificateNewlines } from 'app/pages/credentials/certificates-dash/utils/normalize-certificate.utils';
 
 @Component({
@@ -38,7 +38,7 @@ import { normalizeCertificateNewlines } from 'app/pages/credentials/certificates
   ],
 })
 export class ImportCertificateComponent extends IxFormHostForm {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private validators = inject(IxValidatorsService);
@@ -73,7 +73,7 @@ export class ImportCertificateComponent extends IxFormHostForm {
   protected handleSubmit = (): SubmitResult => ({
     // `api.job` reports progress before it finishes; wait for the terminal Success state rather
     // than letting `<ix-form>`'s `take(1)` treat the queued job as a completed save.
-    request$: this.api.job('certificate.create', [this.getPayload()]).pipe(
+    request$: this.api.job('certificate.create', [toCertificateCreateArgs(this.getPayload())]).pipe(
       filter((job) => job.state === JobState.Success),
       take(1),
     ),

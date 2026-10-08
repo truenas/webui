@@ -18,7 +18,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Component({
   selector: 'ix-docker-registry-form',
@@ -36,7 +36,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class DockerRegistryFormComponent extends IxFormHostForm implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private fb = inject(FormBuilder);
   private urlValidationService = inject(UrlValidationService);
   private translate = inject(TranslateService);

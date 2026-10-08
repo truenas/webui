@@ -7,19 +7,19 @@ import {
 import {
   TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DockerRegistry, dockerHubRegistry } from 'app/interfaces/docker-registry.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
 
 describe('DockerRegistryFormComponent', () => {
   let spectator: Spectator<DockerRegistryFormComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const mockRegistry = {
     id: 1,
@@ -34,9 +34,9 @@ describe('DockerRegistryFormComponent', () => {
     imports: [ReactiveFormsModule],
     providers: [
       ...ixFormTestingProviders(),
-      mockApi([
-        mockCall('app.registry.create'),
-        mockCall('app.registry.update'),
+      mockTypedApi([
+        mockTypedCall('app.registry.create', null),
+        mockTypedCall('app.registry.update', null),
       ]),
       mockProvider(DialogService),
       mockProvider(FormErrorHandlerService),
@@ -48,7 +48,7 @@ describe('DockerRegistryFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('initializes the form with default values for Docker Hub as a URI and submits with default values', async () => {
@@ -62,6 +62,7 @@ describe('DockerRegistryFormComponent', () => {
 
       const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('app.registry.create', [
         {
@@ -85,6 +86,7 @@ describe('DockerRegistryFormComponent', () => {
 
       const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('app.registry.create', [
         {
@@ -104,7 +106,7 @@ describe('DockerRegistryFormComponent', () => {
         props: { registry: mockRegistry },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('populates the form with existing registry values', async () => {
@@ -125,6 +127,7 @@ describe('DockerRegistryFormComponent', () => {
 
       const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('app.registry.update', [
         1,
@@ -145,7 +148,7 @@ describe('DockerRegistryFormComponent', () => {
         props: { isLoggedInToDockerHub: true },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('initializes the form with empty string and does not show URI select', async () => {

@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TnDialog, TnIconButtonHarness } from '@truenas/ui-components';
-import { MarkdownModule } from 'ngx-markdown';
+import { provideMarkdown } from 'ngx-markdown';
 import { App, ChartFormValue } from 'app/interfaces/app.interface';
 import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
 import {
@@ -54,10 +54,10 @@ describe('AppNotesCardComponent', () => {
   const createComponent = createComponentFactory({
     component: AppNotesCardComponent,
     imports: [
-      MarkdownModule.forRoot(),
       CardExpandCollapseComponent,
     ],
     providers: [
+      provideMarkdown(),
       mockProvider(TnDialog),
     ],
   });

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -13,6 +13,7 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   styleUrls: ['./custom-layout-applied.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnButtonComponent,
     TranslateModule,
   ],

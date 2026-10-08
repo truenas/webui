@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TnDialogHarness } from '@truenas/ui-components';
-import { MarkdownModule } from 'ngx-markdown';
+import { provideMarkdown } from 'ngx-markdown';
 import {
   AppNotesDialog,
   AppNotesDialogData,
@@ -20,10 +20,8 @@ describe('AppNotesDialog', () => {
 
   const createComponent = createComponentFactory({
     component: AppNotesDialog,
-    imports: [
-      MarkdownModule.forRoot(),
-    ],
     providers: [
+      provideMarkdown(),
       mockProvider(DialogRef),
       { provide: DIALOG_DATA, useValue: data },
     ],

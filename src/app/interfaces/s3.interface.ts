@@ -12,7 +12,7 @@ import {
 } from 'app/enums/s3.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { SharingTierInfo } from 'app/interfaces/zfs-tier.interface';
-import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 /**
  * A list of audit action names, or the literal `ALL`.
@@ -126,4 +126,34 @@ export interface S3AccessKeyUpdate {
   expires_at?: ApiTimestamp | null;
   manage_buckets?: boolean;
   rotate?: boolean;
+}
+
+/**
+ * Reads an `s3.accesskey.query` row, or the key `s3.accesskey.create` / `update` return, into the UI's
+ * `S3AccessKey`. The generated entry types the timestamps as strings where the wire carries `{ $date }`
+ * envelopes (gap 15), and `status` as the wire literal; it describes the same object.
+ */
+export function toS3AccessKey(
+  entry: WebUiQueryEntity<'s3.accesskey.query'>,
+): S3AccessKey {
+  return entry as unknown as S3AccessKey;
+}
+
+/** What `s3.accesskey.create` takes, as middleware declares it. */
+export type S3AccessKeyCreateArgs = CallParams<WebUiApiDirectory, 's3.accesskey.create'>[0];
+
+/** What `s3.accesskey.update` takes as its changes, as middleware declares it. */
+export type S3AccessKeyUpdateArgs = CallParams<WebUiApiDirectory, 's3.accesskey.update'>[1];
+
+/**
+ * Hands the form's payload to `s3.accesskey.create` unchanged. Middleware declares `expires_at` as a string; the
+ * wire takes the `{ $date }` envelope the form sends, and `null` for a key that does not expire (gap 15).
+ */
+export function toS3AccessKeyCreateArgs(payload: S3AccessKeyCreate): S3AccessKeyCreateArgs {
+  return payload as unknown as S3AccessKeyCreateArgs;
+}
+
+/** {@link toS3AccessKeyCreateArgs} for `s3.accesskey.update`. */
+export function toS3AccessKeyUpdateArgs(payload: S3AccessKeyUpdate): S3AccessKeyUpdateArgs {
+  return payload as unknown as S3AccessKeyUpdateArgs;
 }

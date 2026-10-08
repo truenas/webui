@@ -2,7 +2,12 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnStepperNextDirective, TnStepperPreviousDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnStepperNextDirective,
+  TnStepperPreviousDirective,
+  TnTestIdDirective,
+} from '@truenas/ui-components';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -16,6 +21,7 @@ import { nonDraidLayouts, parityLock$ } from 'app/pages/storage/modules/pool-man
   templateUrl: './metadata-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     LayoutStepComponent,
     FormActionsComponent,
     TnButtonComponent,

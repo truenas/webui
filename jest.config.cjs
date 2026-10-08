@@ -10,6 +10,7 @@ const esmPatterns = [
   'ip-regex',
   'cidr-regex',
   'lodash-es',
+  'marked',
   'internmap',
   'd3',
   'delaunator',
@@ -35,7 +36,7 @@ module.exports = {
   cacheDirectory: "<rootDir>/.jest/cache",
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
-    ...pathsToModuleNameMapper(compilerOptions.paths || {}),
+    ...pathsToModuleNameMapper(compilerOptions.paths || {}, { prefix: '<rootDir>/' }),
   },
   testPathIgnorePatterns: [
     '<rootDir>/dist/',

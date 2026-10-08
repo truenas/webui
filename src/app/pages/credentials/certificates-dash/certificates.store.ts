@@ -1,9 +1,9 @@
 import { computed, Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { Observable, of, tap } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
-import { Certificate } from 'app/interfaces/certificate.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { Certificate, toCertificate } from 'app/interfaces/certificate.interface';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface CertificatesState {
@@ -20,7 +20,7 @@ const initialState: CertificatesState = {
 
 @Injectable()
 export class CertificatesStore extends ComponentStore<CertificatesState> {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
 
   readonly isLoading = computed(() => this.state().isLoading);
@@ -39,7 +39,8 @@ export class CertificatesStore extends ComponentStore<CertificatesState> {
         });
       }),
       switchMap(() => {
-        return this.api.call('certificate.query').pipe(
+        return this.api.query('certificate.query').pipe(
+          map((entries) => entries.map(toCertificate)),
           tap((allCertificates) => {
             const certificates = allCertificates.filter((cert) => cert.certificate !== null);
             const csrs = allCertificates.filter((cert) => cert.CSR !== null);

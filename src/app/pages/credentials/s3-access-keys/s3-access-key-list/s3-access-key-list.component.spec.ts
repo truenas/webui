@@ -2,12 +2,13 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnButtonHarness, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnSelectHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { S3AccessKeyStatus } from 'app/enums/s3.enum';
 import { S3AccessKey } from 'app/interfaces/s3.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -16,7 +17,8 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   S3AccessKeyCredentialsDialogComponent,
 } from 'app/pages/credentials/s3-access-keys/s3-access-key-credentials-dialog/s3-access-key-credentials-dialog.component';
@@ -85,10 +87,10 @@ describe('S3AccessKeyListComponent', () => {
           { selector: selectGeneralConfig, value: { timezone: 'UTC' } },
         ],
       }),
-      mockApi([
-        mockCall('s3.accesskey.query', keys),
-        mockCall('s3.accesskey.update', rotatedKey),
-        mockCall('s3.accesskey.delete'),
+      mockTypedApi([
+        mockTypedQuery('s3.accesskey.query', keys as unknown as WebUiQueryEntity<'s3.accesskey.query'>[]),
+        mockTypedCall('s3.accesskey.update', rotatedKey as unknown as CallResponse<WebUiApiDirectory, 's3.accesskey.update'>),
+        mockTypedCall('s3.accesskey.delete', null),
       ]),
     ],
   });
@@ -140,7 +142,7 @@ describe('S3AccessKeyListComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       buttonColor: 'warn',
     }));
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('s3.accesskey.update', [1, { rotate: true }]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('s3.accesskey.update', [1, { rotate: true }]);
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
       S3AccessKeyCredentialsDialogComponent,
       { data: rotatedKey },

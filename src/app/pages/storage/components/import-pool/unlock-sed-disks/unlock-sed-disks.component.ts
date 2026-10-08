@@ -9,8 +9,14 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType,
-  TnButtonComponent, TnCheckboxComponent, TnCheckboxLabelDirective, TnFormFieldComponent,
-  TnIconButtonComponent, TnInputComponent, TnSelectComponent,
+  TnButtonComponent,
+  TnCheckboxComponent,
+  TnCheckboxLabelDirective,
+  TnFormFieldComponent,
+  TnIconButtonComponent,
+  TnInputComponent,
+  TnSelectComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import { of, startWith } from 'rxjs';
@@ -26,7 +32,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { LockedSedDisk } from 'app/pages/storage/components/import-pool/utils/sed-disk.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -36,6 +42,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./unlock-sed-disks.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     ReactiveFormsModule,
     TnFormFieldComponent,
     TnInputComponent,
@@ -56,7 +63,7 @@ export class UnlockSedDisksComponent {
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 

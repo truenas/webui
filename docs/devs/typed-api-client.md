@@ -381,9 +381,10 @@ above. Each is a change for `truenas/api-client-ts`.
    subscription params (`method:param` style, e.g. file tailing), which the
    legacy `subscribe` supports. Needed before Phase 1 step 4. Until then the
    log tails stay on `ApiService`: `ConsoleMessagesStore` and the job progress
-   dialog's `filesystem.file_tail_follow`, next to `NetworkService`'s
-   `reporting.realtime`, and the dashboard's `WidgetResourcesService`, which
-   streams `reporting.realtime` and `app.stats`.
+   dialog's `filesystem.file_tail_follow`, the installed app's container logs
+   (`app.container_log_follow`), next to `NetworkService`'s `reporting.realtime`,
+   and the dashboard's `WidgetResourcesService`, which streams
+   `reporting.realtime` and `app.stats`.
 6. **Query, message and connection types are not exported.** `QueryFilters`
    and `QueryProjection` are internal, so the wrapper forwards the query verbs
    through `Parameters<>` rather than declaring them; `TrueNasMessage` and
@@ -485,7 +486,9 @@ above. Each is a change for `truenas/api-client-ts`.
     streaming after the page that wanted it is closed, so those must not move
     until the client releases subscriptions, even once gap 5 lets them compile.
     `container.metrics` takes no params and already compiles, so
-    `ContainersStore` keeps `ApiService` for that one subscription.
+    `ContainersStore` keeps `ApiService` for that one subscription. The apps
+    pages do the same for `app.stats` (`AppsStatsService`) and
+    `reporting.realtime` (the app details' resources card).
 
 18. **`directoryservices.update` asks for a discriminant the form never sends.**
     The generated input requires `service_type` inside `configuration` as well
@@ -565,6 +568,84 @@ above. Each is a change for `truenas/api-client-ts`.
     - `pool.dataset.encryption_summary` and `pool.dataset.unlock` stay in the job directory:
       `UploadService.uploadAsJob` takes the legacy `ApiJobMethod`, and the unlock dialog starts both
       through it when a key file is uploaded.
+
+23. **Drift found moving storage.** Handled at one site each:
+    - The query rows are read into the UI interfaces through a `toX` adapter per interface: `toPool`
+      (`pool.query`: enums as literals, timestamps as strings per gap 15, and no `is_upgraded` or tier
+      sizes), `toDisk` (`disk.query`: `bus`, `type` and the power settings as strings), `toEnclosure`
+      (`enclosure2.query`) and `toScrubTask` (`pool.scrub.query`). `disk.temperature_alerts` returns
+      alerts, so it shares `toAlert` with the alerts store, which now lives in `alert.interface.ts`.
+    - `disk.details` is declared as a loose record or list, because its shape depends on `type`.
+      `toDiskDetails` reads the used/unused split every caller asks for, the unused-disk select
+      included.
+    - `pool.create` and `pool.update` narrow each vdev class to the layouts it allows and `checksum`
+      to its algorithms; the wizard builds every class from one `CreateVdevLayout`.
+      `toPoolCreateArgs` and `toPoolUpdateArgs` hand the payload over unchanged.
+    - Some UI interfaces described fields middleware does not send, or missed ones it does.
+      `SystemDatasetConfig` named `is_decrypted`, `uuid_a` and `uuid_b` and is now the generated
+      config; `ZfsTierConfig` gains the `id` it carries; `PoolAttachParams` (no `passphrase`,
+      `target_vdev` and `new_disk` required), `PruneDedupTableParams` and `PoolFindResult` alias the
+      generated types.
+    - `core.get_jobs` is a query method, so `PoolExtendJobService` reads it with `query`, and the
+      export dialog's pool count is `queryCount` rather than a `{ count: true }` cast.
+    - The legacy specs' synchronous mocks hid an ordering bug. The pool wizard's general step picked
+      its default encryption type once, on init, before the store's disk load could land, so SED
+      never became the default on a real box. It now waits for the load to finish. The same
+      synchronous answers had also kept the wizard's fake progress bar from ever starting its
+      `interval` in the integration specs; they stub the bar now.
+
+24. **Drift found moving apps.** Handled at one site each:
+    - `app.query`, `app.available` / `app.latest` / `app.similar` and `catalog.get_app_details` are
+      open models (`{ [k: string]: unknown }`) where the pages read the catalog's structure:
+      `metadata`, `capabilities`, `run_as_context`, `versions`, `app_metadata`. They do not overlap
+      the UI's `App`, `AvailableApp` and `CatalogApp`, so `toApp`, `toAvailableApp` and
+      `toCatalogApp` convert through `unknown`, once, in `ApplicationsService`. The available
+      apps' `last_update` is gap 15's `{ $date }` envelope again.
+    - A workload's `container_port` and `host_port` are numbers on the wire; the UI had them as
+      strings. `AppUsedPort` and `AppHostPort` now say `number`.
+    - `docker.status` and `docker.state` declare `MIGRATING` and `MIGRATION_FAILED`, which
+      `DockerStatus` does not have. `toDockerStatusData` reads the status as the enum, so those two
+      show no label, as before.
+    - `docker.update` declares `pool?: string`, while choosing no pool for apps has always sent
+      `pool: null`. The request is unchanged and asserted to the generated input in
+      `DockerStore.setDockerPool`; worth a box check before changing it.
+    - `core.bulk` answers each call as `{ job_id, error, result }`, in the order given, so the
+      image delete dialog reads its rows by index from the arguments it sent, rather than from the
+      job's echoed `arguments`.
+
+25. **Drift found moving credentials.** Handled at one site each:
+    - The query rows are read into the UI interfaces through a `toX` adapter per interface: `toCertificate`,
+      `toDnsAuthenticator`, `toPrivilege` and `toPrivilegeRole`, `toS3AccessKey`, `toApiKey`, and `toUser` /
+      `toGroup`, which move out of `UserService` into their interface files now that the pages share them.
+      Middleware spells roles, statuses and key types as plain strings, and the timestamps of API keys and
+      S3 access keys as strings where the wire carries `{ $date }` envelopes (gap 15).
+    - `acme.dns.authenticator.authenticator_schemas` declares each schema as a bare `{ _name_, title, _required_ }`,
+      where the wire carries the whole JSON schema the form builds its fields from; `toAuthenticatorSchemas`
+      reads it as the UI's `Schema`. Create and update type `attributes` as a union of one schema per provider,
+      which the form edits as one record; `toDnsAuthenticatorCreateArgs` hands it over unchanged.
+    - `webui.crypto.csr_profiles` declares its profiles as fixed keys (`toCertificateProfiles`), and
+      `webui.crypto.get_certificate_domain_names` as `unknown[]`, read as the strings it returns.
+    - `certificate.create` narrows the key type, length, curve and digest to the values it accepts, and
+      `dns_mapping` to authenticator ids; the forms send those values typed loosely, through
+      `toCertificateCreateArgs`. `user.create` requires `username` and `full_name`, which the form always fills
+      (`toUserCreateArgs`); `api_key.*` and `s3.accesskey.*` take `expires_at` as the `{ $date }` envelope or
+      `null` (`toApiKeyCreateArgs`, `toS3AccessKeyCreateArgs` and their update twins).
+    - `audit.query` declares one response for every `query-options`, a count and a single entry included;
+      `toAuditEntries` reads the rows of a plain query, for the user details' last action.
+    - `ApiDataProvider` is still typed by the legacy directory, so `user.query`, `privilege.query` and
+      `api_key.query` keep their entries as types, not call sites: the users, privileges and API keys lists
+      hand it `TypedApiService` as its structural client, and the fake answers the query frames it sends
+      through `call` from `mockTypedQuery` rows, counts included. `group.query`, `sharing.smb.query`,
+      `system.general.update`, `system.security.config` and the 2FA secret calls keep theirs for the sharing,
+      system and two-factor pages that still use them. The `user.query`, `group.query` and
+      `directoryservices.status` event and call-and-subscribe entries had no legacy consumer left and are gone,
+      with `kmip-config.interface.ts`, `CertificateUpdate` and the group, user, API key and DNS authenticator
+      param types only the directory read.
+    - Spec traps: `privilege.roles` is a query method without the `.query` suffix, so the codemod scripted it
+      with `mockTypedCall`; a spec that imports its own `TranslateModule.forRoot()` lost ICU interpolation
+      once `mockApi()`'s `TranslateService` went, and reads the global one now; and a fixture that depends on
+      the filters (the privilege form's `group in` lookups) answers through `connection.autoReply`, since
+      `mockTypedQuery` returns the same rows whatever the filters.
 
 ## Version policy
 

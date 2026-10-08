@@ -35,17 +35,17 @@ describe('AppContainersCardComponent', () => {
         containers: 1,
         used_ports: [
           {
-            container_port: '20489',
+            container_port: 20489,
             protocol: 'tcp',
             host_ports: [
-              { host_port: '20489', host_ip: '0.0.0.0' },
+              { host_port: 20489, host_ip: '0.0.0.0' },
             ],
           },
           {
-            container_port: '80',
+            container_port: 80,
             protocol: 'tcp',
             host_ports: [
-              { host_port: '8080', host_ip: '0.0.0.0' },
+              { host_port: 8080, host_ip: '0.0.0.0' },
             ],
           },
         ],

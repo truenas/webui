@@ -16,7 +16,7 @@ export interface UsersState extends EntityState<User> {
 }
 
 export const adapter = createEntityAdapter<User>({
-  selectId: (user) => user.id,
+  selectId: (user: User) => user.id,
   sortComparer: (a, b) => a.username.localeCompare(b.username),
 });
 

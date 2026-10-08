@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { LockedSedDisk } from 'app/pages/storage/components/import-pool/utils/sed-disk.utils';
 
 @Component({
@@ -11,6 +11,7 @@ import { LockedSedDisk } from 'app/pages/storage/components/import-pool/utils/se
   styleUrls: ['./locked-sed-disks.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnIconComponent,
     TnButtonComponent,
     TranslateModule,

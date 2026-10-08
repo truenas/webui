@@ -1,7 +1,7 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
@@ -10,6 +10,7 @@ import { TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { DiskDetailsPanelComponent } from 'app/pages/storage/modules/vdevs/components/disk-details-panel/disk-details-panel.component';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -126,9 +127,9 @@ describe('DiskDetailsPanel', () => {
   const createComponent = createComponentFactory({
     component: DiskDetailsPanelComponent,
     providers: [
-      mockApi([
-        mockCall('system.advanced.sed_global_password_is_set', false),
-        mockCall('disk.query', [{ passwd: '' } as unknown as Disk]),
+      mockTypedApi([
+        mockTypedCall('system.advanced.sed_global_password_is_set', false),
+        mockTypedQuery('disk.query', [{ passwd: '' } as WebUiQueryEntity<'disk.query'>]),
       ]),
       mockAuth(),
       provideMockStore({

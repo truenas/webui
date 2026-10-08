@@ -1,17 +1,20 @@
 import { computed, Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
+import { CallResponse } from '@truenas/api-client';
 import { groupBy, keyBy, sortBy } from 'lodash-es';
 import {
   combineLatest, forkJoin, Observable, of, tap,
 } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
-import { Alert } from 'app/interfaces/alert.interface';
-import { Dataset } from 'app/interfaces/dataset.interface';
-import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/disk.interface';
-import { ScrubTask } from 'app/interfaces/pool-scrub.interface';
-import { Pool } from 'app/interfaces/pool.interface';
-import { Zpool } from 'app/interfaces/zpool.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { Alert, toAlert } from 'app/interfaces/alert.interface';
+import { Dataset, toDataset } from 'app/interfaces/dataset.interface';
+import {
+  Disk, DiskTemperatureAgg, StorageDashboardDisk, toDisk,
+} from 'app/interfaces/disk.interface';
+import { ScrubTask, toScrubTask } from 'app/interfaces/pool-scrub.interface';
+import { Pool, toPool } from 'app/interfaces/pool.interface';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
 
@@ -37,7 +40,7 @@ const initialState: PoolsDashboardState = {
 @Injectable()
 export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
   private errorHandler = inject(ErrorHandlerService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private poolStoreService = inject(poolStore);
 
   readonly pools = computed(() => this.state().pools);
@@ -87,12 +90,16 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     );
   });
 
-  private loadPoolsAndRootDatasets(): Observable<[Pool[], Dataset[], Zpool[]]> {
+  private loadPoolsAndRootDatasets(): Observable<[Pool[], Dataset[], CallResponse<WebUiApiDirectory, 'zpool.query'>]> {
     return combineLatest([
-      this.api.callAndSubscribe('pool.query', [[], { extra: { is_upgraded: true } }]),
-      this.api.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]),
-      // TODO: `zpool.query` is not in the events-subscribable directory (see ApiEventDirectory),
-      // so it cannot use callAndSubscribe. When `pool.query` re-emits via its live subscription,
+      this.api.queryAndSubscribe('pool.query', [], { extra: { is_upgraded: true } }).pipe(
+        map((pools) => pools.map(toPool)),
+      ),
+      this.api.query('pool.dataset.query', [], { extra: { retrieve_children: false } }).pipe(
+        map((datasets) => datasets.map(toDataset)),
+      ),
+      // TODO: `zpool.query` is not an event source in the generated event directory,
+      // so it cannot use queryAndSubscribe. When `pool.query` re-emits via its live subscription,
       // combineLatest reuses this stale `zpool.query` value, meaning tier numbers
       // (class_normal_*, class_special_*) won't reflect the current state until the next
       // loadDashboard() call. Revisit once `zpool.query` events are supported.
@@ -114,7 +121,8 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
           // in which case the pool is shown with the numbers pool.query gave us.
           const properties = zpoolsByName[pool.name]?.properties;
           if (!properties) return pool;
-          const toBytes = (raw: number | string | undefined | null): number => Number(raw ?? 0);
+          // Middleware types a property's value as any scalar; the size classes read here are numbers.
+          const toBytes = (raw: number | string | boolean | undefined | null): number => Number(raw ?? 0);
           // The metadata reserve is derived in the Usage card from
           // zfs.tier.config (special_class_metadata_reserve_pct), so the raw
           // ZFS values are passed through here untouched.
@@ -145,7 +153,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
         switchMap(this.getDashboardDataForDisks.bind(this)),
         switchMap(this.processDisks.bind(this)),
       ),
-      this.api.call('pool.scrub.query'),
+      this.api.query('pool.scrub.query').pipe(map((scrubs) => scrubs.map(toScrubTask))),
     ]).pipe(
       tap(([disks, scrubs]) => {
         this.patchState({
@@ -158,7 +166,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
   }
 
   loadDisks(): Observable<Disk[]> {
-    return this.api.call('disk.query', [[], { extra: { pools: true } }]);
+    return this.api.query('disk.query', [], { extra: { pools: true } }).pipe(map((disks) => disks.map(toDisk)));
   }
 
   private getDashboardDataForDisks(disks: StorageDashboardDisk[]): Observable<{
@@ -169,7 +177,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     const disksNames = disks.map((disk) => disk.name);
     return combineLatest({
       disks: of(disks),
-      alerts: this.api.call('disk.temperature_alerts', [disksNames]),
+      alerts: this.api.call('disk.temperature_alerts', [disksNames]).pipe(map((alerts) => alerts.map(toAlert))),
       tempAgg: this.api.call('disk.temperature_agg', [disksNames, 14]),
     });
   }

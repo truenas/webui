@@ -54,8 +54,8 @@
             (change)="checkboxChanged(item.key, $event)"
           >
             <div tnCheckboxLabel class="label">
-              <strong class="pool-name">{{ item.key }}</strong>
-              <small class="disk-name">{{ item.value.join(', ') }}</small>
+              <strong class="pool-name" tnTestIdType="text" [tnTestId]="[item.key, 'exported-pool-name']">{{ item.key }}</strong>
+              <small class="disk-name" tnTestIdType="text" [tnTestId]="[item.key, 'exported-pool-disks']">{{ item.value.join(', ') }}</small>
             </div>
           </tn-checkbox>
         }

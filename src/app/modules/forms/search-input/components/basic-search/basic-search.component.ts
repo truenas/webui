@@ -28,7 +28,6 @@ export class BasicSearchComponent implements AfterViewInit {
   readonly placeholder = input<string>('');
 
   readonly switchToAdvanced = output();
-  readonly queryChange = output<string>();
   readonly runSearch = output();
 
   private readonly searchInput = viewChild(TnInputComponent);
@@ -39,7 +38,6 @@ export class BasicSearchComponent implements AfterViewInit {
 
   protected resetInput(): void {
     this.query.set('');
-    this.queryChange.emit('');
     this.runSearch.emit();
     this.focusInput();
   }

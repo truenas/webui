@@ -49,7 +49,7 @@
       <div class="captions">
         <div class="capacity-caption">
           <b>{{ 'Usable Capacity' | translate }}:</b>
-          <span class="value-caption">
+          <span class="value-caption" tnTestIdType="text" [tnTestId]="[poolState().name, 'usable-capacity']">
             {{ capacity() | ixFileSize }}
           </span>
         </div>
@@ -59,7 +59,7 @@
             <li class="item-caption">
               <span class="used-caption">
                 <b>{{ 'Used' | translate }}:</b>
-                <span class="value-caption">
+                <span class="value-caption" tnTestIdType="text" [tnTestId]="[poolState().name, 'used']">
                   {{ used() | ixFileSize }}
                 </span>
               </span>
@@ -67,7 +67,7 @@
             <li class="item-caption">
               <span class="available-caption">
                 <b>{{ 'Available' | translate }}:</b>
-                <span class="value-caption">
+                <span class="value-caption" tnTestIdType="text" [tnTestId]="[poolState().name, 'available']">
                   {{ available() | ixFileSize }}
                 </span>
               </span>

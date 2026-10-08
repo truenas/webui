@@ -1,7 +1,7 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { ServicesToBeRestartedInfo } from 'app/interfaces/pool-export.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -12,6 +12,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
   styleUrl: './services-to-be-restarted-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnDialogShellComponent,
     FormActionsComponent,
     TnButtonComponent,

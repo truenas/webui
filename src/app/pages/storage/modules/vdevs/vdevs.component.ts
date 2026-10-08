@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, signal, OnInit, AfterVi
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { map, Observable } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -26,6 +26,7 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
   styleUrls: ['./vdevs.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     VDevsListComponent,
     PageHeaderComponent,
     RequiresRolesDirective,

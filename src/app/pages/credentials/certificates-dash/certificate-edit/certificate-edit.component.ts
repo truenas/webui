@@ -21,7 +21,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import {
   SidePanelFooterMenu, SidePanelFooterMenuItem,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
@@ -51,7 +51,7 @@ import {
 })
 export class CertificateEditComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);

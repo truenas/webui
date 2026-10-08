@@ -9,6 +9,7 @@ import { map, throttleTime } from 'rxjs';
 import { MemoryUpdate } from 'app/interfaces/reporting.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
 @Component({
@@ -24,7 +25,13 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   ],
 })
 export class AppResourcesCardComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
+  /**
+   * For `reporting.realtime` alone: an event source middleware pushes on a timer, which must not
+   * move while the typed client never releases a subscription (gap 17 in
+   * docs/devs/typed-api-client.md) — it would keep streaming after the page is left.
+   */
+  private legacyApi = inject(ApiService);
   private dockerStore = inject(DockerStore);
   private destroyRef = inject(DestroyRef);
 
@@ -40,7 +47,7 @@ export class AppResourcesCardComponent implements OnInit {
   }
 
   private getResourcesUsageUpdates(): void {
-    this.api.subscribe('reporting.realtime').pipe(
+    this.legacyApi.subscribe('reporting.realtime').pipe(
       map((event) => event.fields),
       throttleTime(2000),
       takeUntilDestroyed(this.destroyRef),

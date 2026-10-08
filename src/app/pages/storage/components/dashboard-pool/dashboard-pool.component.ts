@@ -4,8 +4,14 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnDialog, TnIconButtonComponent,
-  TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective,
+  TnButtonComponent,
+  TnCardComponent,
+  TnDialog,
+  TnIconButtonComponent,
+  TnMenuComponent,
+  TnMenuItemComponent,
+  TnMenuTriggerDirective,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, switchMap, tap } from 'rxjs/operators';
@@ -25,7 +31,7 @@ import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { dashboardPoolElements } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.elements';
 import { DiskHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/disk-health-card/disk-health-card.component';
 import {
@@ -47,6 +53,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./dashboard-pool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     RequiresRolesDirective,
     TnButtonComponent,
     TnIconButtonComponent,
@@ -70,7 +77,7 @@ export class DashboardPoolComponent implements OnChanges {
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private snackbar = inject(SnackbarService);
   private store = inject(PoolsDashboardStore);
   private searchDirectives = inject(UiSearchDirectivesService);

@@ -1,35 +1,23 @@
+import { CallResponse, JobParams } from '@truenas/api-client';
 import { DockerStatus } from 'app/enums/docker-status.enum';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
-export interface DockerConfig {
-  id: number;
-  pool: string;
-  dataset: string;
-  enable_image_updates: boolean;
-  address_pools: DockerAddressPool[];
-  migrate_applications?: boolean;
-  registry_mirrors?: RegistryMirror[];
-}
+export type DockerConfig = CallResponse<WebUiApiDirectory, 'docker.config'>;
 
-export interface RegistryMirror {
-  url: string;
-  insecure?: boolean;
-}
-
-export interface DockerAddressPool {
-  base: string;
-  size: number;
-}
-
-export interface DockerConfigUpdate {
-  pool?: string | null;
-  address_pools?: DockerAddressPool[];
-  cidr_v6?: string;
-  enable_image_updates?: boolean;
-  migrate_applications?: boolean;
-  registry_mirrors?: RegistryMirror[];
-}
+export type DockerConfigUpdate = JobParams<WebUiApiDirectory, 'docker.update'>[0];
 
 export interface DockerStatusData {
   status: DockerStatus;
   description: string;
+}
+
+/**
+ * Reads a `docker.status` response, or a `docker.state` event's fields, into the UI's
+ * `DockerStatusData`. The generated model spells `status` as the wire literal, which the apps pages
+ * compare with and look labels up by `DockerStatus`.
+ */
+export function toDockerStatusData(
+  status: CallResponse<WebUiApiDirectory, 'docker.status'> | { status: string; description: string },
+): DockerStatusData {
+  return status as DockerStatusData;
 }

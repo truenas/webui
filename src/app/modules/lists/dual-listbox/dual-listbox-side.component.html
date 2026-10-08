@@ -35,6 +35,7 @@
     [suffixIconAriaLabel]="'Clear search' | translate"
     [suffixActionTestId]="'clear-search-' + listType()"
     [ngModel]="side().search()"
+    [ngModelOptions]="{ standalone: true }"
     (ngModelChange)="side().search.set($event)"
     (onSuffixAction)="side().search.set('')"
     (keydown.enter)="$event.preventDefault()"

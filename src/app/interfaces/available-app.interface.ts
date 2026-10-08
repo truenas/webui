@@ -1,5 +1,6 @@
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Capability, AppRunAsContext } from 'app/interfaces/app.interface';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export interface AvailableApp {
   healthy: boolean;
@@ -34,4 +35,17 @@ export interface AppMaintainer {
   email: string;
   name: string;
   url: string;
+}
+
+/**
+ * Reads an `app.available` / `app.latest` / `app.similar` row into the shape the apps pages are
+ * written against. It describes the same object, but the two types do not overlap, so the
+ * conversion goes through `unknown`:
+ * - `last_update` is typed as a plain string where middleware sends a `{ $date }` envelope
+ *   (gap 15 in docs/devs/typed-api-client.md);
+ * - `capabilities`, `run_as_context` and `versions` arrive through the model's open
+ *   `{ [k: string]: unknown }` rather than as declared fields.
+ */
+export function toAvailableApp(app: WebUiQueryEntity<'app.available'>): AvailableApp {
+  return app as unknown as AvailableApp;
 }

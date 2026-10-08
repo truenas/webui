@@ -2,7 +2,7 @@ import { PercentPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnProgressBarComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnProgressBarComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { formatDuration } from 'date-fns';
 import { filter, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -12,12 +12,13 @@ import { Role } from 'app/enums/role.enum';
 import { secondsToDuration } from 'app/helpers/time.helpers';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-active-pool-scan',
   imports: [
+    TnTestIdDirective,
     TnProgressBarComponent,
     PercentPipe,
     TnButtonComponent,
@@ -31,7 +32,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class ActivePoolScanComponent {
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 

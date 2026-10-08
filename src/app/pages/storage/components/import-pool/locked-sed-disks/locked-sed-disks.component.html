@@ -15,10 +15,10 @@
         <div class="disk-info">
           <tn-icon name="lock" library="mdi" class="disk-icon" [attr.aria-hidden]="true"></tn-icon>
           <div class="disk-details">
-            <span class="disk-name">{{ disk.name }}</span>
+            <span class="disk-name" tnTestIdType="text" [tnTestId]="['locked-disk', disk.name, 'name']">{{ disk.name }}</span>
             <div class="disk-meta-row">
-              <span class="disk-meta">{{ disk.model }}</span>
-              <span class="disk-meta">{{ 'Serial' | translate }}: {{ disk.serial }}</span>
+              <span class="disk-meta" tnTestIdType="text" [tnTestId]="['locked-disk', disk.name, 'model']">{{ disk.model }}</span>
+              <span class="disk-meta" tnTestIdType="text" [tnTestId]="['locked-disk', disk.name, 'serial']">{{ 'Serial' | translate }}: {{ disk.serial }}</span>
             </div>
           </div>
         </div>

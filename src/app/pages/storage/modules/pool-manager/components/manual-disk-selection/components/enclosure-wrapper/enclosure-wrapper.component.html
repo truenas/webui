@@ -11,7 +11,7 @@
     <div class="horizontal-border bottom-border"></div>
     <div class="enclosure-container">
       <tn-icon name="enclosure" library="custom"></tn-icon>
-      <strong>{{ label() }}</strong>
+      <strong tnTestIdType="text" [tnTestId]="['enclosure', enclosure().id, 'label']">{{ label() }}</strong>
     </div>
     <div class="horizontal-border bottom-border"></div>
   </div>

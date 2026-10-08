@@ -8,8 +8,8 @@ import { TnButtonHarness, TnCheckboxHarness, TnSelectHarness } from '@truenas/ui
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { SelectPoolDialog } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -62,7 +62,7 @@ describe('SelectPoolDialogComponent', () => {
 
   it('shows a warning when no pools are available and takes user to create one', () => {
     const appService = spectator.inject(ApplicationsService);
-    jest.spyOn(appService, 'getPoolList').mockReturnValue(of([] as Pool[]));
+    jest.spyOn(appService, 'getPoolList').mockReturnValue(of([] as WebUiQueryEntity<'pool.query'>[]));
     spectator.component.ngOnInit();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({

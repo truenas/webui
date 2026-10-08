@@ -4,8 +4,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnFormFieldComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
-  TnStepperNextDirective, TnStepperPreviousDirective,
+  TnButtonComponent,
+  TnFormFieldComponent,
+  TnRadioComponent,
+  TnRadioGroupComponent,
+  TnSelectComponent,
+  TnStepperNextDirective,
+  TnStepperPreviousDirective,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { timer } from 'rxjs';
 import {
@@ -30,6 +36,7 @@ export enum DispersalStrategy {
   styleUrls: ['./enclosure-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     AsyncPipe,
     ReactiveFormsModule,
     TnFormFieldComponent,

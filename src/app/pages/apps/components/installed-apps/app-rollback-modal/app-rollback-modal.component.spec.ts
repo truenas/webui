@@ -5,11 +5,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockJob, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
 
 describe('AppRollbackModalComponent', () => {
@@ -29,9 +30,9 @@ describe('AppRollbackModalComponent', () => {
         } as App,
       },
       mockAuth(),
-      mockApi([
-        mockJob('app.rollback'),
-        mockCall('app.rollback_versions', ['0.9.8', '0.9.9']),
+      mockTypedApi([
+        mockTypedJob('app.rollback', { state: JobState.Success }),
+        mockTypedCall('app.rollback_versions', ['0.9.8', '0.9.9']),
       ]),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -64,7 +65,7 @@ describe('AppRollbackModalComponent', () => {
     await rollbackButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
       'app.rollback',
       ['my-app', { app_version: '0.9.8', rollback_snapshot: true }],
     );

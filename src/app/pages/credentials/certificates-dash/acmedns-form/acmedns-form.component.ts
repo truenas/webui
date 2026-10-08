@@ -10,12 +10,16 @@ import {
   TnBannerComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
   TnSelectComponent,
 } from '@truenas/ui-components';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import {
+  BehaviorSubject, map, Observable, of,
+} from 'rxjs';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { getDynamicFormSchemaNode } from 'app/helpers/get-dynamic-form-schema-node';
 import { helptextSystemAcme as helptext } from 'app/helptext/system/acme';
-import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
+import {
+  AuthenticatorSchema, DnsAuthenticator, toAuthenticatorSchemas, toDnsAuthenticatorCreateArgs,
+} from 'app/interfaces/dns-authenticator.interface';
 import {
   DynamicFormSchema, DynamicFormSchemaNode,
 } from 'app/interfaces/dynamic-form-schema.interface';
@@ -28,7 +32,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CloudflareAuthValidator } from 'app/pages/credentials/certificates-dash/acmedns-form/cloudflare-auth.validator';
 
 interface DnsAuthenticatorList {
@@ -57,7 +61,7 @@ interface DnsAuthenticatorList {
 export class AcmednsFormComponent extends IxFormHostForm implements OnInit {
   private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
@@ -99,7 +103,7 @@ export class AcmednsFormComponent extends IxFormHostForm implements OnInit {
   readonly helptext = helptext;
 
   private getAuthenticatorSchemas(): Observable<AuthenticatorSchema[]> {
-    return this.api.call('acme.dns.authenticator.authenticator_schemas');
+    return this.api.call('acme.dns.authenticator.authenticator_schemas').pipe(map(toAuthenticatorSchemas));
   }
 
   authenticatorOptions$: Observable<Option[]>;
@@ -243,8 +247,8 @@ export class AcmednsFormComponent extends IxFormHostForm implements OnInit {
 
     return {
       request$: editingAcmedns
-        ? this.api.call('acme.dns.authenticator.update', [editingAcmedns.id, values])
-        : this.api.call('acme.dns.authenticator.create', [values]),
+        ? this.api.call('acme.dns.authenticator.update', [editingAcmedns.id, toDnsAuthenticatorCreateArgs(values)])
+        : this.api.call('acme.dns.authenticator.create', [toDnsAuthenticatorCreateArgs(values)]),
       successMessage: event.isEdit
         ? this.translate.instant('DNS authenticator updated.')
         : this.translate.instant('DNS authenticator created.'),

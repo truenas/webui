@@ -4,14 +4,14 @@ import { ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { CatalogConfig } from 'app/interfaces/catalog.interface';
 import { DockerConfig } from 'app/interfaces/docker-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -19,6 +19,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { SelectPoolDialog } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
@@ -41,15 +42,15 @@ describe('AppSettingsButtonComponent', () => {
     component: AppSettingsButtonComponent,
     providers: [
       mockAuth(),
-      // ApiService calls issued by the AppsSettings form rendered inside the side panel.
-      mockApi([
-        mockCall('catalog.trains', ['stable']),
-        mockCall('catalog.config', { preferred_trains: [] } as CatalogConfig),
-        mockCall('docker.status'),
-        mockCall('docker.config', { address_pools: [], enable_image_updates: false } as DockerConfig),
-        mockCall('system.advanced.nvidia_present', false),
-        mockCall('system.advanced.config', { nvidia: false } as AdvancedConfig),
-        mockJob('docker.update', fakeSuccessfulJob()),
+      // TypedApiService calls issued by the AppsSettings form rendered inside the side panel.
+      mockTypedApi([
+        mockTypedCall('catalog.trains', ['stable']),
+        mockTypedCall('catalog.config', { preferred_trains: [] } as CatalogConfig),
+        mockTypedCall('docker.status', null),
+        mockTypedCall('docker.config', { address_pools: [], enable_image_updates: false } as DockerConfig),
+        mockTypedCall('system.advanced.nvidia_present', false),
+        mockTypedCall('system.advanced.config', { nvidia: false } as CallResponse<WebUiApiDirectory, 'system.advanced.config'>),
+        mockTypedJob('docker.update', { state: JobState.Success }),
       ]),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({

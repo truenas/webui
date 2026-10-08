@@ -54,8 +54,9 @@
               "node_modules/@truenas/ui-components/src/styles/themes.css",
               "src/assets/styles/index.scss"
             ],
-            "scripts": [
-              "node_modules/marked/marked.min.js"
+            "scripts": [],
+            "externalDependencies": [
+              "marked-katex-extension"
             ],
             "extractLicenses": false,
             "sourceMap": true,

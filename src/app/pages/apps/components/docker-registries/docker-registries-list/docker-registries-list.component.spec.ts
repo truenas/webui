@@ -7,8 +7,8 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { dockerHubRegistry, DockerRegistry } from 'app/interfaces/docker-registry.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -16,7 +16,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DockerRegistriesListComponent } from 'app/pages/apps/components/docker-registries/docker-registries-list/docker-registries-list.component';
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -46,11 +46,11 @@ describe('DockerRegistriesListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('app.registry.query', dockerRegistries),
-        mockCall('app.registry.delete'),
-        mockCall('app.registry.create'),
-        mockCall('app.registry.update'),
+      mockTypedApi([
+        mockTypedQuery('app.registry.query', dockerRegistries),
+        mockTypedCall('app.registry.delete', null),
+        mockTypedCall('app.registry.create', null),
+        mockTypedCall('app.registry.update', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -78,7 +78,7 @@ describe('DockerRegistriesListComponent', () => {
   });
 
   it('queries the registries and shows them as table rows', async () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.registry.query');
+    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('app.registry.query');
 
     expect(await table.getRowCount()).toBe(1);
     expect(await table.getHeaderTexts()).toEqual(expect.arrayContaining(['Name', 'Username', 'URI']));
@@ -106,7 +106,7 @@ describe('DockerRegistriesListComponent', () => {
       call: expect.any(Function),
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.registry.delete', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('app.registry.delete', [1]);
   });
 
   it('opens the form in a side panel with the row when the "Edit" button is pressed', async () => {

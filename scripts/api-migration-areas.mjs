@@ -25,8 +25,9 @@
  * when that has happened and you have forgotten.
  */
 export const migratedApiPaths = [
-  // Phase 0's whole-feature pilot: eight components, their forms and their specs.
-  'src/app/pages/credentials/backup-credentials',
+  // Phase 0's whole-feature pilot was Backup Credentials; NAS-144003 moved the rest of credentials —
+  // certificates and ACME, groups, KMIP, privileges, S3 access keys, users and their API keys.
+  'src/app/pages/credentials',
   // The two shared services the Backup Credentials page runs on. Both are consumed from
   // elsewhere as well (`ix-ssh-credentials-select`, the cloud sync forms), so they are pinned
   // as files rather than waiting for `src/app/services` as a whole.
@@ -101,9 +102,6 @@ export const migratedApiPaths = [
   'src/app/pages/dashboard/widgets',
   'src/app/pages/dashboard/services/dashboard.store.ts',
   'src/app/pages/dashboard/services/dashboard.store.spec.ts',
-  // NAS-144116: the SED password choice shared by the VDEVs Extend and Replace dialogs, typed from
-  // the start. The dialogs around it still start their jobs through `ApiService`.
-  'src/app/pages/storage/modules/vdevs/components/sed-disk-password',
   // NAS-143997: directory services, the service config forms and the shutdown / restart / failover /
   // config reset pages. `pages/directory-service` and `pages/services` are pinned below their roots:
   // `kerberos.keytab.kerberos_principal_choices` (the credential step of the directory services
@@ -146,6 +144,35 @@ export const migratedApiPaths = [
   // NAS-144001: datasets — the tree and details cards, the dataset and zvol forms, quotas, encryption,
   // permissions and ACL editing, and snapshots.
   'src/app/pages/datasets',
+  // NAS-144002: storage — the pools dashboard and its cards, import, the pool creation wizard and Add VDEVs,
+  // disks, VDEVs and hardware disk encryption. It absorbs the SED password entry pinned above.
+  'src/app/pages/storage',
+  // NAS-143999: apps. `pages/apps` is pinned below its root: `AppsStatsService` (`app.stats`) and the
+  // resources card (`reporting.realtime`) keep `ApiService` for event sources middleware pushes on a
+  // timer (gap 17), and the container logs tail `app.container_log_follow`, a parameterised
+  // subscription the typed client cannot make yet (gap 5).
+  'src/app/pages/apps/services',
+  'src/app/pages/apps/components/app-detail-view/app-detail-view.component.ts',
+  'src/app/pages/apps/components/app-detail-view/app-detail-view.component.spec.ts',
+  'src/app/pages/apps/components/app-wizard',
+  'src/app/pages/apps/components/available-apps',
+  'src/app/pages/apps/components/catalog-settings',
+  'src/app/pages/apps/components/custom-app-form',
+  'src/app/pages/apps/components/docker-images',
+  'src/app/pages/apps/components/docker-registries',
+  'src/app/pages/apps/components/install-app-button',
+  'src/app/pages/apps/components/installed-apps/installed-apps.component.ts',
+  'src/app/pages/apps/components/installed-apps/installed-apps.component.spec.ts',
+  'src/app/pages/apps/components/installed-apps/app-bulk-update',
+  'src/app/pages/apps/components/installed-apps/app-info-card',
+  'src/app/pages/apps/components/installed-apps/app-rollback-modal',
+  'src/app/pages/apps/components/installed-apps/app-settings-button',
+  'src/app/pages/apps/components/installed-apps/installed-apps-list',
+  'src/app/pages/apps/components/select-pool-dialog',
+  'src/app/pages/apps/store/apps-store.service.ts',
+  'src/app/pages/apps/store/apps-store.service.spec.ts',
+  'src/app/pages/apps/store/docker.store.ts',
+  'src/app/pages/apps/store/docker.store.spec.ts',
 ];
 
 /**

@@ -3,24 +3,25 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import {
-  mockCall, mockJob, mockApi,
-} from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 import { KmipComponent } from './kmip.component';
@@ -35,8 +36,8 @@ describe('KmipComponent', () => {
       WithManageCertificatesLinkComponent,
     ],
     providers: [
-      mockApi([
-        mockCall('kmip.config', {
+      mockTypedApi([
+        mockTypedCall('kmip.config', {
           server: 'kmip.truenas.com',
           enabled: false,
           id: 1,
@@ -45,11 +46,11 @@ describe('KmipComponent', () => {
           certificate_authority: 1,
           manage_sed_disks: true,
           manage_zfs_keys: false,
-        }),
-        mockCall('kmip.kmip_sync_pending', false),
-        mockCall('kmip.clear_sync_pending_keys'),
-        mockCall('kmip.sync_keys'),
-        mockJob('kmip.update'),
+        } as unknown as CallResponse<WebUiApiDirectory, 'kmip.config'>),
+        mockTypedCall('kmip.kmip_sync_pending', false),
+        mockTypedCall('kmip.clear_sync_pending_keys', null),
+        mockTypedCall('kmip.sync_keys', null),
+        mockTypedJob('kmip.update', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -80,7 +81,7 @@ describe('KmipComponent', () => {
   });
 
   it('loads current KMIP config and shows it in the form', async () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('kmip.config');
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('kmip.config');
 
     const serverInput = await loader.getHarness(TnInputHarness.with({ name: 'server' }));
     const portInput = await loader.getHarness(TnInputHarness.with({ name: 'port' }));
@@ -119,7 +120,7 @@ describe('KmipComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
       'kmip.update',
       [{
         port: 5697,
@@ -136,7 +137,9 @@ describe('KmipComponent', () => {
     );
 
     // Guard against the Number input regressing to a string payload (the legacy number input used to coerce this).
-    const [, [payload]] = jest.mocked(spectator.inject(ApiService).job).mock.calls[0];
+    const [, [payload]] = jest.mocked(spectator.inject(TypedApiService).job).mock.calls[0] as [
+      string, [{ port: unknown }],
+    ];
     expect(typeof payload.port).toBe('number');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
       'Settings saved.',
@@ -146,13 +149,13 @@ describe('KmipComponent', () => {
   it('checks whether KMIP sync is pending and shows KMIP status', () => {
     const statusText = spectator.query('.key-status')!;
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('kmip.kmip_sync_pending');
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('kmip.kmip_sync_pending');
     expect(statusText.textContent).toContain('Disabled');
   });
 
   describe('pending sync', () => {
     beforeEach(() => {
-      spectator.inject(MockApiService).mockCall('kmip.kmip_sync_pending', true);
+      spectator.inject(MockTypedApiService).mockCall('kmip.kmip_sync_pending', true);
       spectator.component.ngOnInit();
     });
 
@@ -168,7 +171,7 @@ describe('KmipComponent', () => {
       const syncKeysButton = await loader.getHarness(TnButtonHarness.with({ label: 'Sync Keys' }));
       await syncKeysButton.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('kmip.sync_keys');
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('kmip.sync_keys');
       expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
         helptextSystemKmip.syncInfoDialog.title,
         helptextSystemKmip.syncInfoDialog.info,
@@ -179,7 +182,7 @@ describe('KmipComponent', () => {
       const clearSyncKeysButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clear Sync Keys' }));
       await clearSyncKeysButton.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('kmip.clear_sync_pending_keys');
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('kmip.clear_sync_pending_keys');
       expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
         helptextSystemKmip.clearSyncKeyInfoDialog.title,
         helptextSystemKmip.clearSyncKeyInfoDialog.info,

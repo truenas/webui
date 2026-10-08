@@ -2,7 +2,7 @@ import { KeyValue, AsyncPipe, KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent, TnCardHeaderDirective, TnIconComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnCardHeaderDirective, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { map } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -18,6 +18,7 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
   styleUrls: ['./inventory.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnCardComponent,
     TnCardHeaderDirective,
     TnIconComponent,
