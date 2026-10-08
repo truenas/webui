@@ -20,7 +20,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { mapTnSortToProviderSorting, toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DockerImageDeleteDialog } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { dockerImagesListElements } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.elements';
 import { getPullImageFormConfig } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image.form-config';
@@ -51,7 +51,7 @@ export class DockerImagesListComponent implements OnInit {
   protected readonly uniqueRowTag = (row: ContainerImage): string => toUniqueRowTag(`docker-image-${row.id}`);
 
   protected emptyService = inject(EmptyService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private tnDialog = inject(TnDialog);
   private dialogService = inject(DialogService);
   private formPanel = inject(FormSidePanelService);
@@ -70,7 +70,7 @@ export class DockerImagesListComponent implements OnInit {
   private readonly tnTable = viewChild(TnTableComponent);
 
   ngOnInit(): void {
-    this.dataProvider = new AsyncDataProvider(this.api.call('app.image.query'));
+    this.dataProvider = new AsyncDataProvider(this.api.query('app.image.query'));
     this.refresh();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());

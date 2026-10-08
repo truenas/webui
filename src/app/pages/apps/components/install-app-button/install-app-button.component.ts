@@ -13,7 +13,7 @@ import { Role } from 'app/enums/role.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SelectPoolDialog } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
@@ -35,7 +35,7 @@ export class InstallAppButtonComponent {
   private authService = inject(AuthService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private viewContainerRef = inject(ViewContainerRef);
   private destroyRef = inject(DestroyRef);
 

@@ -748,7 +748,7 @@ describe('FormErrorHandlerService', () => {
     it('falls back to error modal for non-validation job errors', () => {
       const nonValidationJobError = new FailedJobError({
         id: 1,
-        method: 'app.create',
+        method: 'pool.create',
         arguments: [],
         state: JobState.Failed,
         error: '[EPERM] Permission denied',

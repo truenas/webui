@@ -8,23 +8,12 @@ import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.int
 import { AlertCategory, AlertClasses, AlertClassesUpdate } from 'app/interfaces/alert.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { ApiEventMethod } from 'app/interfaces/api-message.interface';
-import {
-  App,
-  AppQueryParams,
-  AppUpgradeParams,
-} from 'app/interfaces/app.interface';
-import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { AuditConfig, AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
 import {
   AuthTokenParams, LoginExOtpTokenQuery, LoginExQuery, LoginExResponse,
 } from 'app/interfaces/auth.interface';
-import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { BootenvCloneParams, BootEnvironment, BootenvKeepParams } from 'app/interfaces/boot-environment.interface';
-import {
-  CatalogConfig, CatalogApp,
-  CatalogUpdate, GetItemDetailsParams,
-} from 'app/interfaces/catalog.interface';
 import {
   Certificate,
   CertificateProfiles,
@@ -44,9 +33,6 @@ import {
   CloudSyncCredentialVerify, CloudSyncCredentialVerifyResult, CloudSyncOneDriveDrive, CloudSyncOneDriveParams,
 } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
-import {
-  ContainerImage, DeleteContainerImageParams,
-} from 'app/interfaces/container-image.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { CoreOptions } from 'app/interfaces/core-options.interface';
 import { Cronjob, CronjobUpdate } from 'app/interfaces/cronjob.interface';
@@ -60,9 +46,7 @@ import {
   CreateDnsAuthenticator,
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
-import { DockerConfig, DockerStatusData } from 'app/interfaces/docker-config.interface';
-import { DockerRegistry, DockerRegistryPayload } from 'app/interfaces/docker-registry.interface';
-import { DockerHubRateLimit } from 'app/interfaces/dockerhub-rate-limit.interface';
+import { DockerStatusData } from 'app/interfaces/docker-config.interface';
 import {
   DsUncachedGroup, LoggedInUser,
 } from 'app/interfaces/ds-cache.interface';
@@ -238,29 +222,6 @@ export interface ApiCallDirectory {
   'api_key.query': { params: QueryParams<ApiKey>; response: ApiKey[] };
   'api_key.update': { params: UpdateApiKeyRequest; response: ApiKey };
 
-  // App
-  'app.query': { params: AppQueryParams; response: App[] };
-  'app.upgrade_summary': { params: AppUpgradeParams; response: AppUpgradeSummary };
-  'app.available': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
-  'app.available_space': { params: void; response: number };
-  'app.categories': { params: void; response: string[] };
-  'app.latest': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
-  'app.similar': { params: [app_name: string, train: string]; response: AvailableApp[] };
-  'app.rollback_versions': { params: [app_name: string]; response: string[] };
-  'app.ix_volume.exists': { params: [string]; response: boolean };
-
-  // App/Docker Registry
-  'app.registry.create': { params: [DockerRegistryPayload]; response: DockerRegistry };
-  'app.registry.delete': { params: [number]; response: null };
-  'app.registry.update': { params: [number, Partial<DockerRegistryPayload>]; response: DockerRegistry };
-  'app.registry.get_instance': { params: [number]; response: DockerRegistry };
-  'app.registry.query': { params: QueryParams<DockerRegistryPayload>; response: DockerRegistry[] };
-
-  // App Image
-  'app.image.delete': { params: DeleteContainerImageParams; response: boolean };
-  'app.image.dockerhub_rate_limit': { params: void; response: DockerHubRateLimit };
-  'app.image.query': { params: QueryParams<ContainerImage>; response: ContainerImage[] };
-
   // Audit
   'audit.config': { params: void; response: AuditConfig };
   'audit.query': { params: [AuditQueryParams]; response: AuditEntry[] };
@@ -292,12 +253,6 @@ export interface ApiCallDirectory {
   'boot.environment.destroy': { params: [{ id: string }]; response: unknown };
   'boot.environment.clone': { params: BootenvCloneParams; response: unknown };
   'boot.environment.keep': { params: BootenvKeepParams; response: unknown };
-
-  // Catalog
-  'catalog.get_app_details': { params: [name: string, params: GetItemDetailsParams]; response: CatalogApp };
-  'catalog.trains': { params: void; response: string[] };
-  'catalog.update': { params: [Partial<CatalogUpdate>]; response: CatalogConfig };
-  'catalog.config': { params: void; response: CatalogConfig };
 
   // Certificate
   'certificate.acme_server_choices': { params: void; response: Choices };
@@ -483,7 +438,6 @@ export interface ApiCallDirectory {
   'kmip.sync_keys': { params: void; response: void };
 
   // Docker
-  'docker.config': { params: void; response: DockerConfig };
   'docker.status': { params: void; response: DockerStatusData };
 
   // Mail

@@ -4,13 +4,14 @@ import { Observable, of, firstValueFrom, filter, throwError } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { mockJob } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App } from 'app/interfaces/app.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsState, AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -70,9 +71,9 @@ describe('AppsStore', () => {
       mockProvider(ErrorHandlerService, {
         showErrorModal: jest.fn(),
       }),
-      mockProvider(ApiService, {
-        job: jest.fn(() => mockJob('catalog.sync')),
-      }),
+      mockTypedApi([
+        mockTypedJob('catalog.sync', { state: JobState.Success }),
+      ]),
       mockProvider(TranslateService, {
         instant: jest.fn((key: string) => key),
       }),
@@ -131,7 +132,7 @@ describe('AppsStore', () => {
   it('does not trigger catalog sync when data is available', async () => {
     // This test verifies that when catalog has data, sync is not triggered
     // and loading is cleared immediately after data load
-    const apiService = spectator.inject(ApiService);
+    const apiService = spectator.inject(TypedApiService);
     const jobSpy = jest.spyOn(apiService, 'job');
 
     // Clear any previous calls
@@ -170,9 +171,9 @@ describe('AppsStore', () => {
         mockProvider(ErrorHandlerService, {
           showErrorModal: jest.fn(),
         }),
-        mockProvider(ApiService, {
-          job: jest.fn(() => mockJob('catalog.sync')),
-        }),
+        mockTypedApi([
+          mockTypedJob('catalog.sync', { state: JobState.Success }),
+        ]),
         mockProvider(TranslateService, {
           instant: jest.fn((key: string) => key),
         }),
@@ -216,7 +217,7 @@ describe('AppsStore', () => {
     });
 
     it('calls catalog.sync job', () => {
-      expect(emptySpectator.inject(ApiService).job).toHaveBeenCalledWith('catalog.sync');
+      expect(emptySpectator.inject(TypedApiService).job).toHaveBeenCalledWith('catalog.sync');
     });
 
     it('reloads catalog data after sync completes', () => {
@@ -254,7 +255,7 @@ describe('AppsStore', () => {
     });
 
     it('does not sync again when catalog has data', () => {
-      const initialCallCount = (emptySpectator.inject(ApiService).job as jest.Mock).mock.calls.length;
+      const initialCallCount = (emptySpectator.inject(TypedApiService).job as jest.Mock).mock.calls.length;
 
       // After first sync, update mocks to return data
       jest.spyOn(appsServiceMock, 'getAvailableApps').mockReturnValue(of(availableApps));
@@ -264,7 +265,7 @@ describe('AppsStore', () => {
       // Second initialization should not trigger another sync because data exists
       emptySpectator.service.initialize();
 
-      const finalCallCount = (emptySpectator.inject(ApiService).job as jest.Mock).mock.calls.length;
+      const finalCallCount = (emptySpectator.inject(TypedApiService).job as jest.Mock).mock.calls.length;
       // Should still be the same count since catalog now has data
       expect(finalCallCount).toBe(initialCallCount);
     });

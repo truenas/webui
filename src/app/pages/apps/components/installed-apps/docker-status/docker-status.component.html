@@ -42,6 +42,20 @@
       </div>
     }
 
+    @case (DockerStatus.Migrating) {
+      <div class="status-wrapper">
+        <tn-spinner [diameter]="20" [ariaLabel]="status | mapValue: dockerStatusLabels | translate"></tn-spinner>
+        <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
+      </div>
+    }
+
+    @case (DockerStatus.MigrationFailed) {
+      <div class="status-wrapper" [tnTooltip]="(statusDescription$ | async) || ''">
+        <tn-icon name="close-circle" library="mdi" class="error"></tn-icon>
+        <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
+      </div>
+    }
+
     @case (DockerStatus.Pending) {
       <div class="status-wrapper">
         <tn-icon name="clock-outline" library="mdi"></tn-icon>

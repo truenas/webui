@@ -24,7 +24,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
@@ -60,7 +60,7 @@ import { RedirectService } from 'app/services/redirect.service';
   ],
 })
 export class AppInfoCardComponent {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private loader = inject(LoaderService);
   private redirect = inject(RedirectService);
   private errorHandler = inject(ErrorHandlerService);

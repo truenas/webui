@@ -146,6 +146,32 @@ export const migratedApiPaths = [
   // NAS-144002: storage — the pools dashboard and its cards, import, the pool creation wizard and Add VDEVs,
   // disks, VDEVs and hardware disk encryption. It absorbs the SED password entry pinned above.
   'src/app/pages/storage',
+  // NAS-143999: apps. `pages/apps` is pinned below its root: `AppsStatsService` (`app.stats`) and the
+  // resources card (`reporting.realtime`) keep `ApiService` for event sources middleware pushes on a
+  // timer (gap 17), and the container logs tail `app.container_log_follow`, a parameterised
+  // subscription the typed client cannot make yet (gap 5).
+  'src/app/pages/apps/services',
+  'src/app/pages/apps/components/app-detail-view/app-detail-view.component.ts',
+  'src/app/pages/apps/components/app-detail-view/app-detail-view.component.spec.ts',
+  'src/app/pages/apps/components/app-wizard',
+  'src/app/pages/apps/components/available-apps',
+  'src/app/pages/apps/components/catalog-settings',
+  'src/app/pages/apps/components/custom-app-form',
+  'src/app/pages/apps/components/docker-images',
+  'src/app/pages/apps/components/docker-registries',
+  'src/app/pages/apps/components/install-app-button',
+  'src/app/pages/apps/components/installed-apps/installed-apps.component.ts',
+  'src/app/pages/apps/components/installed-apps/installed-apps.component.spec.ts',
+  'src/app/pages/apps/components/installed-apps/app-bulk-update',
+  'src/app/pages/apps/components/installed-apps/app-info-card',
+  'src/app/pages/apps/components/installed-apps/app-rollback-modal',
+  'src/app/pages/apps/components/installed-apps/app-settings-button',
+  'src/app/pages/apps/components/installed-apps/installed-apps-list',
+  'src/app/pages/apps/components/select-pool-dialog',
+  'src/app/pages/apps/store/apps-store.service.ts',
+  'src/app/pages/apps/store/apps-store.service.spec.ts',
+  'src/app/pages/apps/store/docker.store.ts',
+  'src/app/pages/apps/store/docker.store.spec.ts',
 ];
 
 /**

@@ -59,6 +59,16 @@ describe('DockerStatusComponent', () => {
     expect(spectator.query('.status-wrapper span')).toHaveText('Apps Service Not Configured');
   });
 
+  it('checks status for Migrating docker status', () => {
+    setupTest(DockerStatus.Migrating);
+    expect(spectator.query('.status-wrapper span')).toHaveText('Migrating Apps Service');
+  });
+
+  it('checks status for MigrationFailed docker status', () => {
+    setupTest(DockerStatus.MigrationFailed);
+    expect(spectator.query('.status-wrapper span')).toHaveText('Apps Service Migration Failed');
+  });
+
   it('hides docker status when it is not set', () => {
     setupTest(null);
     expect(spectator.query('.status-wrapper span')).not.toExist();

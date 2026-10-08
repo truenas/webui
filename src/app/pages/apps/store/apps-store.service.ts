@@ -8,7 +8,7 @@ import {
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -41,7 +41,7 @@ const initialState: AppsState = {
 export class AppsStore extends ComponentStore<AppsState> {
   private errorHandler = inject(ErrorHandlerService);
   private appsService = inject(ApplicationsService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
 

@@ -6,9 +6,6 @@ export const fakeDockerImagesDataSource = [{
     'truenas/webui:3.1',
   ],
   size: 742472,
-  created: {
-    $date: 1513776649000,
-  },
   dangling: false,
 }, {
   id: 'sha256:test2',
@@ -16,8 +13,5 @@ export const fakeDockerImagesDataSource = [{
     'truenas/middleware:0.1.2',
   ],
   size: 6099268,
-  created: {
-    $date: 1558543231000,
-  },
   dangling: false,
 }] as ContainerImage[];

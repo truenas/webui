@@ -4,12 +4,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnExpansionPanelHarness } from '@truenas/ui-components';
+import { MockComponent } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AppState } from 'app/enums/app-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { CoreBulkQuery } from 'app/interfaces/core-bulk.interface';
@@ -17,7 +18,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AppBulkUpdateComponent } from 'app/pages/apps/components/installed-apps/app-bulk-update/app-bulk-update.component';
 
 const fakeAppOne = {
@@ -94,11 +96,13 @@ describe('AppBulkUpdateComponent', () => {
     imports: [
       ReactiveFormsModule,
       ImgFallbackModule,
-      FakeProgressBarComponent,
     ],
     declarations: [
       BulkListItemComponent,
       FakeFormatDateTimePipe,
+      // The real bar animates on an interval while a summary loads, and the typed double answers on a
+      // microtask, so the bar would be running when the harness waits for the zone to settle.
+      MockComponent(FakeProgressBarComponent),
     ],
     providers: [
       {
@@ -108,10 +112,13 @@ describe('AppBulkUpdateComponent', () => {
       mockProvider(DialogRef),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockApi([
-        mockJob('core.bulk'),
-        mockCall('app.upgrade_summary', fakeUpgradeSummary),
-        mockJob('app.upgrade', fakeSuccessfulJob(fakeAppOne)),
+      mockTypedApi([
+        mockTypedJob('core.bulk', { state: JobState.Success }),
+        mockTypedCall('app.upgrade_summary', fakeUpgradeSummary),
+        mockTypedJob('app.upgrade', {
+          state: JobState.Success,
+          result: fakeAppOne as unknown as WebUiQueryEntity<'app.query'>,
+        }),
       ]),
       mockAuth(),
     ],
@@ -141,7 +148,7 @@ describe('AppBulkUpdateComponent', () => {
     const updatedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Update' }));
     await updatedButton.click();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Updating Apps. Please check on the progress in Task Manager.');
   });
 
