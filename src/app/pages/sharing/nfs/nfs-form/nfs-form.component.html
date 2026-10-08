@@ -119,17 +119,19 @@
     >
       @for (network of form.controls.networks.controls; track network; let i = $index) {
         <tn-form-list-item
-          testId="remove-from-list"
+          [testId]="['remove-network', i]"
           [label]="'Networks' | translate"
           [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Networks' | translate }"
           (delete)="removeNetworkControl(i)"
         >
           <tn-form-field
+            [testId]="['network', i]"
             [required]="true"
             [label]="'Network' | translate"
           >
             <ix-ip-input-with-netmask
               [formControlName]="i"
+              [testId]="['network', i]"
               [required]="true"
             ></ix-ip-input-with-netmask>
           </tn-form-field>
@@ -149,17 +151,18 @@
     >
       @for (network of form.controls.hosts.controls; track network; let i = $index) {
         <tn-form-list-item
-          testId="remove-from-list"
+          [testId]="['remove-host', i]"
           [label]="'Hosts' | translate"
           [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Hosts' | translate }"
           (delete)="removeHostControl(i)"
         >
           <tn-form-field
+            [testId]="['host', i]"
             [required]="true"
             [label]="'Authorized Hosts and IP addresses' | translate"
             [tooltip]="helptext.hostsTooltip | translate"
           >
-            <tn-input [formControlName]="i"></tn-input>
+            <tn-input [formControlName]="i" [testId]="['host', i]"></tn-input>
           </tn-form-field>
         </tn-form-list-item>
       }

@@ -38,6 +38,11 @@
 @if (!hasFieldChrome) {
   @let control = controlDirective.control;
   @if (control) {
-    <ix-errors [control]="control" [label]="label()"></ix-errors>
+    <ix-errors
+      tnTestIdType="text"
+      [tnTestId]="[controlDirective.name, 'errors']"
+      [control]="control"
+      [label]="label()"
+    ></ix-errors>
   }
 }
