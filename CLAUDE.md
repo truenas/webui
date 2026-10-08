@@ -17,6 +17,7 @@ This claude agent an expert in TypeScript, Angular, and scalable web application
 - Run `yarn ui remote -i <some_ip>` to prepare UI for being served. Re-run this command after running `yarn build`.
 - Generate authenticated URL: `yarn auth-url /target-path` (for Playwright testing)
 - Ignore strict null check, i.e. don't run: `yarn strict-null-checks`
+- Node version is pinned in `.node-version`. Bumping it also needs both `SHA256SUM` values in `debian/fetch_node.sh` updated — see "Updating Node.js" in `docs/setup.md`.
 
 ## High-Level Architecture
 

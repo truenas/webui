@@ -29,9 +29,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
-        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        uses: ./.github/actions/prepare
         with:
-          node-version: '24.15.0'
           cache-jest: 'true'
 
   lint-translations:
@@ -42,9 +41,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
-        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        uses: ./.github/actions/prepare
         with:
-          node-version: '24.15.0'
           cache-jest: 'true'
       - name: Validate
         run: yarn run validate-translations

@@ -38,23 +38,35 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
-        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        uses: ./.github/actions/prepare
         with:
-          node-version: '24.15.0'
           cache-jest: 'true'
 
   build:
     name: Build
     needs: [install]
     runs-on: ubuntu-latest
+    # Built the way scale-build builds the nightly, not the way the other jobs
+    # are prepared: same Debian release, and the same commands as the
+    # `truenas_webui` entry in scale-build's conf/build.manifest. Node comes
+    # from debian/fetch_node.sh rather than setup-node, so a Node version the
+    # Debian build cannot fetch or verify fails here and not in the nightly.
+    container: debian:trixie
+    env:
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'
     steps:
+      # git before checkout, so the checkout is a real clone; Yarn also needs
+      # it for the one git dependency.
+      - name: Install build prerequisites
+        run: apt-get update && apt-get -y install --no-install-recommends ca-certificates git wget xz-utils
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install
-        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
-        with:
-          node-version: '24.15.0'
-          cache-jest: 'true'
+      - name: Install Node the way scale-build does
+        run: sh -ex debian/fetch_node.sh
+      - name: Install packages
+        run: |
+          corepack enable
+          yarn install --immutable --network-timeout 100000
       - name: Build
         run: yarn build:prod
       - name: Check strict null checks
@@ -68,9 +80,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
-        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        uses: ./.github/actions/prepare
         with:
-          node-version: '24.15.0'
           cache-jest: 'true'
       - name: Generate default environment file
         run: yarn run check-env
@@ -117,9 +128,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
-        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        uses: ./.github/actions/prepare
         with:
-          node-version: '24.15.0'
           cache-jest: 'true'
       - name: Run tests
         run: yarn test:pr --maxWorkers=50
@@ -148,9 +158,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
-        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        uses: ./.github/actions/prepare
         with:
-          node-version: '24.15.0'
           cache-jest: 'true'
       - name: Run tests
         run: yarn test:pr --maxWorkers=2

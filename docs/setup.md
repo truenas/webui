@@ -2,8 +2,10 @@
 
 ## Requirements
 
-- yarn >= 1.22
-- Node.js >= 20.19
+- Node.js at the version in [`.node-version`](../.node-version). Version managers such as `fnm`, `nodenv`, `asdf` and
+  `mise` read that file on their own; with `nvm`, run `nvm install $(cat .node-version)`. Other versions that satisfy
+  `engines` in `package.json` may work, but this is the one CI and the nightly build use.
+- Yarn 4, through Corepack: run `corepack enable` once and the version pinned in `package.json` is used automatically.
 - Running instance with TrueNAS nightly (VM is fine).
 
 > [!TIP]
@@ -42,5 +44,18 @@ yarn start
 
 - Open WebUI in your browser. By default, it's on http://localhost:4200.
 
+## Updating Node.js
 
+The Node.js version is pinned in one place, `.node-version`. GitHub workflows read it through
+`.github/actions/prepare`, and the Debian package build (run nightly by
+[scale-build](https://github.com/truenas/scale-build)) reads it in `debian/fetch_node.sh`.
 
+To move to a new version:
+
+1. Change the version in `.node-version`.
+2. Replace both `SHA256SUM` values in `debian/fetch_node.sh` (`linux-x64` and `linux-arm64`) with the ones from
+   `https://nodejs.org/dist/v<version>/SHASUMS256.txt`.
+3. If the new version is outside the `engines.node` range in `package.json`, update that range too.
+
+Step 2 is easy to forget. The `Build` job in `.github/workflows/main.yml` runs `debian/fetch_node.sh` in a Debian
+container, so a missed checksum fails on the pull request rather than in the nightly build.

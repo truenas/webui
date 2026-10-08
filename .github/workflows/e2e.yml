@@ -140,9 +140,7 @@ jobs:
 
       # Same Node pin and install path as every job in main.yml, so a failure
       # here is the runner and not a difference in how the tree was prepared.
-      - uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
-        with:
-          node-version: '24.15.0'
+      - uses: ./.github/actions/prepare
 
       # The browser runs in Playwright's own image rather than on the runner.
       # The runner is a TrueNAS box: read-only root, no apt, and `playwright
