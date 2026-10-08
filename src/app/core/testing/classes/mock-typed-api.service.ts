@@ -58,7 +58,7 @@ interface LooseApi {
 @Injectable()
 export class MockTypedApiService implements OnDestroy {
   readonly client: FakeTrueNasClient<D> = withSpies(
-    createFakeClient({ version: 'v27.0.0', strict: true }),
+    createFakeClient({ version: 'v28.0.0', strict: true }),
     jest.fn,
   );
 

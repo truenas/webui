@@ -1,4 +1,4 @@
-import { CallParams, v27_0_0 } from '@truenas/api-client';
+import { CallParams, v28_0_0 } from '@truenas/api-client';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
@@ -8,7 +8,7 @@ type D = WebUiApiDirectory;
 /**
  * A keychain credential, discriminated on `type`.
  *
- * Middleware's entry model (`v27_0_0.KeychainCredentialEntry`) types
+ * Middleware's entry model (`v28_0_0.KeychainCredentialEntry`) types
  * `attributes` as the union of both kinds without tying it to `type`, so the
  * UI keeps the discrimination and takes each half's shape from the client.
  *
@@ -17,7 +17,7 @@ type D = WebUiApiDirectory;
  */
 export type KeychainCredential = KeychainSshKeyPair | KeychainSshCredentials;
 
-type KeychainCredentialBase = Omit<v27_0_0.KeychainCredentialEntry, 'type' | 'attributes'>;
+type KeychainCredentialBase = Omit<v28_0_0.KeychainCredentialEntry, 'type' | 'attributes'>;
 
 export interface KeychainSshKeyPair extends KeychainCredentialBase {
   type: `${KeychainCredentialType.SshKeyPair}`;
@@ -30,12 +30,12 @@ export interface KeychainSshCredentials extends KeychainCredentialBase {
 }
 
 /** Either key may be absent: middleware derives the public key from the private one. */
-export type SshKeyPair = v27_0_0.SSHKeyPair;
+export type SshKeyPair = v28_0_0.SSHKeyPair;
 
 export type KeychainCredentialCreate = CallParams<D, 'keychaincredential.create'>[0];
 
 export type KeychainCredentialUpdate = CallParams<D, 'keychaincredential.update'>[1];
 
-export type KeychainCredentialDeleteOptions = v27_0_0.KeychainCredentialDeleteOptions;
+export type KeychainCredentialDeleteOptions = v28_0_0.KeychainCredentialDeleteOptions;
 
-export type KeychainCredentialUsedBy = v27_0_0.UsedKeychainCredential;
+export type KeychainCredentialUsedBy = v28_0_0.UsedKeychainCredential;

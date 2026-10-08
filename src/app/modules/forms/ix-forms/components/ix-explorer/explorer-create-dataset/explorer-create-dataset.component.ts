@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, forwardRef, inject, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
-import { v27_0_0 } from '@truenas/api-client';
+import { v28_0_0 } from '@truenas/api-client';
 import { firstValueFrom, MonoTypeOperatorFunction } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { maxDatasetPath } from 'app/constants/dataset.constants';
@@ -16,7 +16,7 @@ import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.servi
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
 /** What a host presets on the datasets the picker creates. The name comes from the inline row. */
-export type ExplorerDatasetProperties = Omit<v27_0_0.PoolDatasetCreateFilesystem, 'name'>;
+export type ExplorerDatasetProperties = Omit<v28_0_0.PoolDatasetCreateFilesystem, 'name'>;
 
 type DatasetEntry = WebUiQueryEntity<'pool.dataset.query'>;
 

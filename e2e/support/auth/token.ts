@@ -6,7 +6,7 @@
  * profile cannot use. That is why the suite owns this one.
  *
  * Uses `auth.generate_token`, not the `reconnect_token` webui asks for via
- * `login_options`: that field only exists from v26.0.0, while
+ * `login_options`: that field only exists from v27.0.0, while
  * `auth.generate_token` works across every version the client supports and
  * takes an explicit TTL rather than the server's default (R4.3).
  */

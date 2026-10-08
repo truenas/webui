@@ -153,7 +153,7 @@ describe('AuthService', () => {
     sessionLifetime$ = new Subject<number>();
     connected$().next(true);
     sessionUp$().next(true);
-    client = withSpies(createFakeClient({ version: 'v27.0.0', authenticated: false }), jest.fn);
+    client = withSpies(createFakeClient({ version: 'v28.0.0', authenticated: false }), jest.fn);
     // The authenticator waits for an answer to its `auth.logout` frame.
     client.connection.autoReply('auth.logout', ({ id }) => {
       client.connection.receive({ jsonrpc: '2.0', id, result: true });

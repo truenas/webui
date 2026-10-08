@@ -1,6 +1,6 @@
 import { inject, InjectionToken } from '@angular/core';
 import {
-  ApiDirectoryV27_0_0,
+  ApiDirectoryV28_0_0,
   ApplianceProtocol,
   consoleLogger,
   createTrueNasClient,
@@ -24,7 +24,7 @@ import { limitConcurrentCalls } from 'app/modules/websocket/typed-api/limit-conc
  * and responses from this directory. Bumping it is a one-line change here and
  * a compile pass everywhere else.
  */
-export type WebUiApiDirectory = ApiDirectoryV27_0_0;
+export type WebUiApiDirectory = ApiDirectoryV28_0_0;
 
 /** A client typed against {@link WebUiApiDirectory}. */
 export type WebUiApiClient = TrueNasApiClient<WebUiApiDirectory>;
@@ -58,7 +58,7 @@ export type TypedQueryFilter<E>
  * startup rather than on first use.
  *
  * The version is stated as a literal *at this call site* on purpose. That is
- * how the client derives its typed surface (`ApiDirectoryV27_0_0`) from the
+ * how the client derives its typed surface (`ApiDirectoryV28_0_0`) from the
  * string instead of asserting it — forward it through a variable or a wrapper
  * and the surface silently widens to the oldest supported version.
  */
@@ -79,7 +79,7 @@ export const TYPED_API_CLIENT = new InjectionToken<Observable<WebUiApiClient>>(
         uuid: 'webui',
         hostnames: [environment.remote],
         enabled: true,
-        version: 'v27.0.0',
+        version: 'v28.0.0',
         protocol,
         logger: environment.production ? noopLogger : consoleLogger,
       })).pipe(

@@ -26,7 +26,7 @@ describe('ConnectionService', () => {
   });
 
   beforeEach(() => {
-    client = createFakeClient({ version: 'v27.0.0', opened: false });
+    client = createFakeClient({ version: 'v28.0.0', opened: false });
     spectator = createService();
   });
 

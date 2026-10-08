@@ -37,7 +37,7 @@ describe('TypedApiService', () => {
   beforeEach(() => {
     // Not strict: these specs answer frames by hand with `connection.reply`.
     client = withSpies(
-      createFakeClient({ version: 'v27.0.0', authenticated: false, opened: false }),
+      createFakeClient({ version: 'v28.0.0', authenticated: false, opened: false }),
       jest.fn,
     );
     wsStatus = {
