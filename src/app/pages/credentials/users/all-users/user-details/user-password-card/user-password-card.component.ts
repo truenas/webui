@@ -14,7 +14,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { userPasswordCardElements } from 'app/pages/credentials/users/all-users/user-details/user-password-card/user-password-card.elements';
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -40,7 +40,7 @@ export class UserPasswordCardComponent {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private tnDialog = inject(TnDialog);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);

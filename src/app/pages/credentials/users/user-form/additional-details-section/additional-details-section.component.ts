@@ -27,7 +27,6 @@ import { Role, roleNames } from 'app/enums/role.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
-import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
@@ -42,7 +41,7 @@ import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { defaultHomePath, UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 import { SudoCommandsValidatorService } from 'app/pages/credentials/users/user-form/validators/sudo-commands-validator.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -81,7 +80,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   private storageService = inject(StorageService);
   private filesystemService = inject(FilesystemService);
   private fb = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private userFormStore = inject(UserFormStore);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
@@ -115,10 +114,10 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   protected homeDirectoryViewValue: Signal<string>;
 
-  readonly groupOptions$ = this.api.call('group.query', [[
+  readonly groupOptions$ = this.api.query('group.query', [
     ['local', '=', true],
     ['immutable', '=', false],
-  ]]).pipe(
+  ]).pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
     tap((options) => {
       options.forEach((option) => this.groupNameCache.set(option.value, option.label));
@@ -389,7 +388,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     }
 
     missingIds.forEach((missingId) => this.groupNameCache.set(missingId, ''));
-    (this.api.call('group.query', [[['id', 'in', missingIds]]]) as Observable<Group[]>).pipe(
+    this.api.query('group.query', [['id', 'in', missingIds]]).pipe(
       take(1),
       tap((groups) => {
         groups.forEach((group) => {
@@ -672,10 +671,10 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   private setHomeSharePath(): void {
     if (this.editingUser()) return;
 
-    this.api.call('sharing.smb.query', [[
+    this.api.query('sharing.smb.query', [
       ['enabled', '=', true],
       ['options.home', '=', true],
-    ]]).pipe(
+    ]).pipe(
       filter((shares) => !!shares?.length),
       map((shares) => shares[0].path),
       takeUntilDestroyed(this.destroyRef),

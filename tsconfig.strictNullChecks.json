@@ -285,7 +285,6 @@
     "./src/app/interfaces/kerberos-config.interface.ts",
     "./src/app/interfaces/kerberos-realm.interface.ts",
     "./src/app/interfaces/keychain-credential.interface.ts",
-    "./src/app/interfaces/kmip-config.interface.ts",
     "./src/app/interfaces/ldap-config.interface.ts",
     "./src/app/interfaces/mail-config.interface.ts",
     "./src/app/interfaces/menu-item.interface.ts",

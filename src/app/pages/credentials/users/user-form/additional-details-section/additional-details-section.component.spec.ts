@@ -4,19 +4,18 @@ import { signal } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnCheckboxHarness, TnChipInputHarness, TnFormFieldHarness, TnInputHarness,
 } from '@truenas/ui-components';
 import { BehaviorSubject, map, throwError } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { Choices } from 'app/interfaces/choices.interface';
-import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
-import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
@@ -24,7 +23,8 @@ import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-expl
 import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { IxGroupComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/users/user-form/additional-details-section/additional-details-section.component';
 import { UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 import { ApiCallError } from 'app/services/errors/error.classes';
@@ -102,13 +102,13 @@ describe('AdditionalDetailsSectionComponent', () => {
         }))),
       }),
       mockProvider(SnackbarService),
-      mockApi([
-        mockCall('user.shell_choices', {
+      mockTypedApi([
+        mockTypedCall('user.shell_choices', {
           '/usr/sbin/nologin': 'nologin',
           '/usr/bin/bash': 'bash',
           '/usr/bin/zsh': 'zsh',
         } as Choices),
-        mockCall('group.query', [
+        mockTypedQuery('group.query', [
           {
             id: 101,
             group: 'test-group',
@@ -121,11 +121,11 @@ describe('AdditionalDetailsSectionComponent', () => {
             id: 103,
             group: 'test-group-3',
           },
-        ] as Group[]),
-        mockCall('sharing.smb.query', []),
-        mockCall('filesystem.stat', {
+        ] as unknown as WebUiQueryEntity<'group.query'>[]),
+        mockTypedQuery('sharing.smb.query', []),
+        mockTypedCall('filesystem.stat', {
           mode: 16889,
-        } as FileSystemStat),
+        } as unknown as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
       ]),
       provideTnFormFieldErrors(),
     ],
@@ -364,11 +364,12 @@ describe('AdditionalDetailsSectionComponent', () => {
       }));
     }));
 
-    it('pre-populates home with SMB share path for new users when a home share exists', () => {
-      const mockApiService = spectator.inject(MockApiService);
-      mockApiService.mockCall('sharing.smb.query', [{ path: '/mnt/tank/homes', enabled: true }] as never);
+    it('pre-populates home with SMB share path for new users when a home share exists', async () => {
+      const mockApiService = spectator.inject(MockTypedApiService);
+      mockApiService.mockQuery('sharing.smb.query', [{ path: '/mnt/tank/homes', enabled: true }] as never);
 
       spectator = createComponent();
+      await spectator.fixture.whenStable();
 
       expect(spectator.component.form.controls.home.value).toBe('/mnt/tank/homes');
     });
@@ -435,9 +436,9 @@ describe('AdditionalDetailsSectionComponent', () => {
     }));
 
     it('skips SMB home share query when editing a user to preserve existing home path', () => {
-      const smbCalls = (spectator.inject(ApiService).call as jest.Mock).mock.calls
-        .filter(([method]: [string]) => method === 'sharing.smb.query');
-      expect(smbCalls).toHaveLength(0);
+      const smbQueries = jest.mocked(spectator.inject(TypedApiService).query).mock.calls
+        .filter(([method]) => method === 'sharing.smb.query');
+      expect(smbQueries).toHaveLength(0);
     });
 
     it('does not modify home validators when home editable is opened for an existing user', async () => {

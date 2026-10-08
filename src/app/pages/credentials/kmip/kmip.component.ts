@@ -18,7 +18,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { kmipElements } from 'app/pages/credentials/kmip/kmip.elements';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -47,7 +47,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   ],
 })
 export class KmipComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private entitlements = inject(EntitlementsService);
   private formBuilder = inject(FormBuilder);
   private errorHandler = inject(ErrorHandlerService);

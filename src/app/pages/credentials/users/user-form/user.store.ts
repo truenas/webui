@@ -3,12 +3,13 @@ import { ComponentStore } from '@ngrx/component-store';
 import { TnDialog } from '@truenas/ui-components';
 import { merge } from 'lodash-es';
 import {
-  combineLatest, Observable, of, switchMap, tap,
+  combineLatest, map, Observable, of, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
-import { User, UserUpdate } from 'app/interfaces/user.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  toUser, toUserCreateArgs, User, UserUpdate,
+} from 'app/interfaces/user.interface';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 
 export enum UserStigPasswordOption {
@@ -61,7 +62,7 @@ const initialState: UserFormState = {
 
 @Injectable()
 export class UserFormStore extends ComponentStore<UserFormState> {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private tnDialog = inject(TnDialog);
 
   readonly isStigMode = computed(() => this.state().isStigMode);
@@ -90,11 +91,10 @@ export class UserFormStore extends ComponentStore<UserFormState> {
     super(initialState);
   }
 
-  private setStigMode(): Observable<SystemSecurityConfig> {
+  private setStigMode(): Observable<boolean> {
     return this.api.call('system.security.config').pipe(
-      tap((config: SystemSecurityConfig) => {
-        this.patchState({ isStigMode: config.enable_gpos_stig });
-      }),
+      map((config) => config.enable_gpos_stig),
+      tap((isStigMode) => this.patchState({ isStigMode })),
     );
   }
 
@@ -128,8 +128,8 @@ export class UserFormStore extends ComponentStore<UserFormState> {
       delete payload.random_password;
     }
 
-    return this.api.call('user.create', [payload]).pipe(
-      switchMap((user) => this.generateOneTimePasswordIfNeeded(user)),
+    return this.api.call('user.create', [toUserCreateArgs(payload)]).pipe(
+      switchMap((user) => this.generateOneTimePasswordIfNeeded(toUser(user))),
     );
   }
 
@@ -147,9 +147,10 @@ export class UserFormStore extends ComponentStore<UserFormState> {
           delete payload.home;
           return this.api.call('user.update', [id, payload]);
         }),
+        map(toUser),
       );
     }
-    return this.api.call('user.update', [id, payload]);
+    return this.api.call('user.update', [id, payload]).pipe(map(toUser));
   }
 
   updateUserConfig = this.updater((state, userConfig: UserUpdate) => {

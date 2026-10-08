@@ -6,8 +6,8 @@ import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonComponent, TnButtonHarness, TnDialog, TnTooltipDirective } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import {
@@ -37,10 +37,10 @@ describe('GroupDetailsRowComponent', () => {
       TnTooltipDirective,
     ],
     providers: [
-      mockApi([
-        mockCall('user.query'),
-        mockCall('group.delete'),
-        mockCall('group.query', []),
+      mockTypedApi([
+        mockTypedQuery('user.query', []),
+        mockTypedCall('group.delete', null),
+        mockTypedQuery('group.query', []),
       ]),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({

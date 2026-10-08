@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnFormFieldComponent, TnFormFieldHarness, TnInputComponent, TnInputHarness,
 } from '@truenas/ui-components';
@@ -15,17 +15,16 @@ import { MockComponents, MockInstance } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Choices } from 'app/interfaces/choices.interface';
-import { Group } from 'app/interfaces/group.interface';
-import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { User, UserFormPreset } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/users/user-form/additional-details-section/additional-details-section.component';
 import { AllowedAccessSectionComponent } from 'app/pages/credentials/users/user-form/allowed-access-section/allowed-access-section.component';
@@ -97,7 +96,7 @@ describe('UserFormComponent', () => {
     shell: new FormControl('/usr/bin/bash'),
   });
 
-  function lastUpdatePayload(api: ApiService): Record<string, unknown> {
+  function lastUpdatePayload(api: TypedApiService): Record<string, unknown> {
     const calls = (api.call as jest.Mock).mock.calls.filter(([method]) => method === 'user.update');
     return calls[calls.length - 1][1][1] as Record<string, unknown>;
   }
@@ -119,7 +118,6 @@ describe('UserFormComponent', () => {
     component: UserFormComponent,
     imports: [
       ReactiveFormsModule,
-      TranslateModule.forRoot(),
       TnFormFieldComponent,
       TnInputComponent,
     ],
@@ -133,22 +131,22 @@ describe('UserFormComponent', () => {
     providers: [
       ...ixFormTestingProviders(),
       mockAuth(),
-      mockApi([
-        mockCall('group.query', [{
+      mockTypedApi([
+        mockTypedQuery('group.query', [{
           id: 101,
           group: 'test-group',
         }, {
           id: 102,
           group: 'mock-group',
-        }] as Group[]),
-        mockCall('user.shell_choices', {
+        }] as unknown as WebUiQueryEntity<'group.query'>[]),
+        mockTypedCall('user.shell_choices', {
           '/usr/bin/bash': 'bash',
           '/usr/bin/zsh': 'zsh',
         } as Choices),
-        mockCall('user.create', { username: 'new-user' } as User),
-        mockCall('user.update', { username: 'test' } as User),
-        mockCall('system.security.config', { enable_gpos_stig: false } as SystemSecurityConfig),
-        mockCall('user.get_next_uid', 1005),
+        mockTypedCall('user.create', { username: 'new-user' } as unknown as CallResponse<WebUiApiDirectory, 'user.create'>),
+        mockTypedCall('user.update', { username: 'test' } as unknown as CallResponse<WebUiApiDirectory, 'user.update'>),
+        mockTypedCall('system.security.config', { enable_gpos_stig: false } as unknown as CallResponse<WebUiApiDirectory, 'system.security.config'>),
+        mockTypedCall('user.get_next_uid', 1005),
       ]),
       UserFormStore,
       mockProvider(ErrorHandlerService),
@@ -394,11 +392,12 @@ describe('UserFormComponent', () => {
         await spectator.fixture.whenStable();
 
         spectator.component.submit();
+        await spectator.fixture.whenStable();
 
         spectator.detectChanges();
         await spectator.fixture.whenStable();
 
-        expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.create', [
+        expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('user.create', [
           expect.objectContaining({
             username: 'newuser',
           }),
@@ -424,6 +423,7 @@ describe('UserFormComponent', () => {
         await spectator.fixture.whenStable();
 
         spectator.component.submit();
+        await spectator.fixture.whenStable();
         spectator.detectChanges();
 
         // Awaiting the user's confirmation — already part of the save, so Save reads "Saving…".
@@ -451,6 +451,7 @@ describe('UserFormComponent', () => {
         await spectator.fixture.whenStable();
 
         spectator.component.submit();
+        await spectator.fixture.whenStable();
 
         spectator.detectChanges();
         await spectator.fixture.whenStable();
@@ -480,10 +481,11 @@ describe('UserFormComponent', () => {
         store().updateSetupDetails({ homeModeOldValue: '700' });
       });
 
-      it('should call user.update API when saving changes', () => {
+      it('should call user.update API when saving changes', async () => {
         spectator.component.submit();
+        await spectator.fixture.whenStable();
 
-        expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.update', [
+        expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('user.update', [
           69,
           expect.objectContaining({
             username: 'test',
@@ -491,43 +493,47 @@ describe('UserFormComponent', () => {
         ]);
       });
 
-      it('leaves the home directory out of the payload when it was not touched', () => {
+      it('leaves the home directory out of the payload when it was not touched', async () => {
         // The home fields still hold what the record was loaded with, and `user.update` acts on
         // every home key it is given — relocating the account and re-permissioning the directory.
         spectator.component.submit();
+        await spectator.fixture.whenStable();
 
-        const payload = lastUpdatePayload(spectator.inject(ApiService));
+        const payload = lastUpdatePayload(spectator.inject(TypedApiService));
         expect(payload).not.toHaveProperty('home');
         expect(payload).not.toHaveProperty('home_create');
         expect(payload).not.toHaveProperty('home_mode');
       });
 
-      it('sends the home directory when it was changed', () => {
+      it('sends the home directory when it was changed', async () => {
         additionalDetailsForm.controls.home.setValue('/mnt/tank/elsewhere');
 
         spectator.component.submit();
+        await spectator.fixture.whenStable();
 
         // The values are the seeded store's — what matters is that the keys survive.
-        const payload = lastUpdatePayload(spectator.inject(ApiService));
+        const payload = lastUpdatePayload(spectator.inject(TypedApiService));
         expect(payload).toHaveProperty('home');
         expect(payload).toHaveProperty('home_create');
         expect(payload).toHaveProperty('home_mode');
       });
 
-      it('sends the home directory when its permissions were changed', () => {
+      it('sends the home directory when its permissions were changed', async () => {
         additionalDetailsForm.controls.home_mode.setValue('755');
 
         spectator.component.submit();
+        await spectator.fixture.whenStable();
 
-        const payload = lastUpdatePayload(spectator.inject(ApiService));
+        const payload = lastUpdatePayload(spectator.inject(TypedApiService));
         expect(payload).toHaveProperty('home');
         expect(payload).toHaveProperty('home_mode');
       });
 
-      it('emits the updated user through the closed output after successful update', () => {
+      it('emits the updated user through the closed output after successful update', async () => {
         const emitSpy = jest.spyOn(spectator.component.closed, 'emit');
 
         spectator.component.submit();
+        await spectator.fixture.whenStable();
 
         expect(emitSpy).toHaveBeenCalledWith(expect.objectContaining({ username: 'test' }));
       });

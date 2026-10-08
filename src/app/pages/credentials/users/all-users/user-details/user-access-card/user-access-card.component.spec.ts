@@ -5,8 +5,8 @@ import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectat
 import { TnButtonHarness, TnCardComponent, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
@@ -16,7 +16,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { UserAccessCardComponent } from 'app/pages/credentials/users/all-users/user-details/user-access-card/user-access-card.component';
 import { UserLastActionComponent } from 'app/pages/credentials/users/all-users/user-details/user-last-action/user-last-action.component';
 import {
@@ -64,7 +64,6 @@ function createTestComponent(
     ],
     providers: [
       mockAuth(),
-      mockProvider(ApiService),
       mockProvider(AuthService, {
         getGlobalTwoFactorConfig: jest.fn(() => of(globalTwoFactorConfig)),
         hasRole: jest.fn(() => of(true)),
@@ -74,9 +73,9 @@ function createTestComponent(
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockApi([
-        mockCall('user.update'),
-        mockCall('user.unset_2fa_secret'),
+      mockTypedApi([
+        mockTypedCall('user.update', null),
+        mockTypedCall('user.unset_2fa_secret', null),
       ]),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -166,7 +165,7 @@ describe('UserAccessCardComponent', () => {
     await button.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.unset_2fa_secret', [mockUser.username]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('user.unset_2fa_secret', [mockUser.username]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Two-Factor Authentication settings cleared');
   });
 
@@ -175,7 +174,7 @@ describe('UserAccessCardComponent', () => {
     await lockButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.update', [mockUser.id, {
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('user.update', [mockUser.id, {
       locked: true,
     }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -188,7 +187,7 @@ describe('UserAccessCardComponent', () => {
     await unlockButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.update', [mockUser.id, {
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('user.update', [mockUser.id, {
       locked: false,
     }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -351,7 +350,6 @@ describe('UserAccessCardComponent', () => {
       ],
       providers: [
         mockAuth(),
-        mockProvider(ApiService),
         mockProvider(AuthService, {
           getGlobalTwoFactorConfig: jest.fn(() => of({
             ...mockGlobalTwoFactorConfig,
@@ -364,9 +362,9 @@ describe('UserAccessCardComponent', () => {
         mockProvider(DialogService, {
           confirm: jest.fn(() => of(true)),
         }),
-        mockApi([
-          mockCall('user.update'),
-          mockCall('user.unset_2fa_secret'),
+        mockTypedApi([
+          mockTypedCall('user.update', null),
+          mockTypedCall('user.unset_2fa_secret', null),
         ]),
         mockProvider(FormSidePanelService, {
           open: jest.fn(() => SlideInResult.empty()),

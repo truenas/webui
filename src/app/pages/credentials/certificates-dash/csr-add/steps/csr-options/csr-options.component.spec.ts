@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnInputHarness, TnSelectHarness, TnStepperComponent } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import {
@@ -28,8 +28,8 @@ describe('CsrOptionsComponent', () => {
     ],
     providers: [
       mockProvider(TnStepperComponent),
-      mockApi([
-        mockCall('certificate.ec_curve_choices', {
+      mockTypedApi([
+        mockTypedCall('certificate.ec_curve_choices', {
           BrainpoolP512R1: 'BrainpoolP512R1',
           SECP256K1: 'SECP256K1',
         }),

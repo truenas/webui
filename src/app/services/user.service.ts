@@ -3,8 +3,8 @@ import { CallResponse } from '@truenas/api-client';
 import { Observable } from 'rxjs';
 import { finalize, map, shareReplay, tap } from 'rxjs/operators';
 import { DsUncachedGroup } from 'app/interfaces/ds-cache.interface';
-import { Group } from 'app/interfaces/group.interface';
-import { User } from 'app/interfaces/user.interface';
+import { Group, toGroup } from 'app/interfaces/group.interface';
+import { toUser, User } from 'app/interfaces/user.interface';
 import {
   TypedQueryFilter, WebUiApiDirectory, WebUiQueryEntity,
 } from 'app/modules/websocket/typed-api/typed-api-client.token';
@@ -12,19 +12,6 @@ import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.servi
 
 type GroupFilter = TypedQueryFilter<WebUiQueryEntity<'group.query'>>;
 type UserFilter = TypedQueryFilter<WebUiQueryEntity<'user.query'>>;
-
-/**
- * Where the generated entries meet the UI's `User` and `Group`. Middleware
- * types `roles` as plain strings, and `group` and `last_password_change` as
- * loose values; the UI narrows them to what it reads.
- */
-function toUser(entry: WebUiQueryEntity<'user.query'>): User {
-  return entry as unknown as User;
-}
-
-function toGroup(entry: WebUiQueryEntity<'group.query'>): Group {
-  return entry as Group;
-}
 
 @Injectable({ providedIn: 'root' })
 export class UserService {

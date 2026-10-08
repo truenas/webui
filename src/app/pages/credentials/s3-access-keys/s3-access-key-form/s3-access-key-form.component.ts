@@ -8,14 +8,16 @@ import {
   TnCheckboxComponent, TnDateInputComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent,
 } from '@truenas/ui-components';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSharingS3 } from 'app/helptext/sharing';
-import { S3AccessKey } from 'app/interfaces/s3.interface';
+import {
+  S3AccessKey, toS3AccessKey, toS3AccessKeyCreateArgs, toS3AccessKeyUpdateArgs,
+} from 'app/interfaces/s3.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   S3AccessKeyCredentialsDialogComponent,
 } from 'app/pages/credentials/s3-access-keys/s3-access-key-credentials-dialog/s3-access-key-credentials-dialog.component';
@@ -38,7 +40,7 @@ import { s3UserDirectoryOptions, s3UserFormPreset } from 'app/pages/sharing/s3/u
   ],
 })
 export class S3AccessKeyFormComponent extends IxFormHostForm implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private tnDialog = inject(TnDialog);
@@ -100,12 +102,12 @@ export class S3AccessKeyFormComponent extends IxFormHostForm implements OnInit {
     // No `withLoader()`: the panel's own progress bar and disabled Save now cover the save, and a
     // full-screen blocking overlay on top of them was always redundant.
     const request$: Observable<S3AccessKey> = accessKey
-      ? this.api.call('s3.accesskey.update', [accessKey.id, {
+      ? this.api.call('s3.accesskey.update', [accessKey.id, toS3AccessKeyUpdateArgs({
           name, enabled, expires_at: expiresAt, manage_buckets: manageBuckets,
-        }])
-      : this.api.call('s3.accesskey.create', [{
+        })]).pipe(map(toS3AccessKey))
+      : this.api.call('s3.accesskey.create', [toS3AccessKeyCreateArgs({
           name, username, enabled, expires_at: expiresAt, manage_buckets: manageBuckets,
-        }]);
+        })]).pipe(map(toS3AccessKey));
 
     return {
       request$,

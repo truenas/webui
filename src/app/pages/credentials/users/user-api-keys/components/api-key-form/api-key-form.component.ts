@@ -11,13 +11,15 @@ import {
 import { filter, map } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextApiKeys } from 'app/helptext/api-keys';
-import { ApiKey } from 'app/interfaces/api-key.interface';
+import {
+  ApiKey, toApiKey, toApiKeyCreateArgs, toApiKeyUpdateArgs,
+} from 'app/interfaces/api-key.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   KeyCreatedDialog,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
@@ -43,7 +45,7 @@ import { DirectoryQueryOptions } from 'app/services/user-directory.service';
 export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private tnDialog = inject(TnDialog);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private authService = inject(AuthService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
@@ -102,9 +104,8 @@ export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
     ],
   };
 
-  protected readonly forbiddenNames$ = this.api.call('api_key.query', [
-    [], { select: ['name'], order_by: ['name'] },
-  ]).pipe(map((keys) => keys.map((key) => key.name)));
+  protected readonly forbiddenNames$ = this.api.query('api_key.query', [], { select: ['name'], order_by: ['name'] })
+    .pipe(map((keys) => keys.map((key) => key.name)));
 
   ngOnInit(): void {
     const editingKey = this.editingKey();
@@ -143,9 +144,10 @@ export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
       : { $date: expiresAtValue.getTime() };
 
     const editingRow = this.editingRow();
-    const request$ = editingRow
-      ? this.api.call('api_key.update', [editingRow.id, { name, reset, expires_at: expiresAt }])
-      : this.api.call('api_key.create', [{ name, username, expires_at: expiresAt }]);
+    const request$ = (editingRow
+      ? this.api.call('api_key.update', [editingRow.id, toApiKeyUpdateArgs({ name, reset, expires_at: expiresAt })])
+      : this.api.call('api_key.create', [toApiKeyCreateArgs({ name, username, expires_at: expiresAt })])
+    ).pipe(map(toApiKey));
 
     return {
       request$,

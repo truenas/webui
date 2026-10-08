@@ -25,7 +25,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
 import { mapTnSortToTableSort, memoizedRowTag } from 'app/modules/tn-table/utils';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
 import { getGroupFormConfig } from 'app/pages/credentials/groups/group-form/group.form-config';
 import { groupListElements } from 'app/pages/credentials/groups/group-list/group-list.elements';
@@ -64,7 +64,7 @@ export class GroupListComponent implements OnInit {
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
   private formPanel = inject(FormSidePanelService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private authService = inject(AuthService);
 
   protected readonly requiredRoles = [Role.AccountWrite];

@@ -10,15 +10,15 @@ import {
   TnTableHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { ImportCertificateComponent } from 'app/pages/credentials/certificates-dash/import-certificate/import-certificate.component';
 import { StorageService } from 'app/services/storage.service';
@@ -53,9 +53,9 @@ describe('CertificateListComponent', () => {
   const createComponent = createComponentFactory({
     component: CertificateListComponent,
     providers: [
-      mockApi([
-        mockJob('certificate.delete', fakeSuccessfulJob(true)),
-        mockJob('certificate.update', fakeSuccessfulJob()),
+      mockTypedApi([
+        mockTypedJob('certificate.delete', { state: JobState.Success, result: true }),
+        mockTypedJob('certificate.update', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => {
@@ -142,7 +142,7 @@ describe('CertificateListComponent', () => {
       buttonText: 'Delete',
     });
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.delete', [certificates[0].id, true]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('certificate.delete', [certificates[0].id, true]);
   });
 
   it('should show table rows', async () => {

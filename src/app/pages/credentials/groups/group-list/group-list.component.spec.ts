@@ -7,8 +7,8 @@ import { TnButtonComponent, TnButtonHarness, TnTableHarness } from '@truenas/ui-
 import { MockComponent } from 'ng-mocks';
 import { BehaviorSubject } from 'rxjs';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
@@ -87,10 +87,10 @@ describe('GroupListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('privilege.query', []),
-        mockCall('group.query', []),
-        mockCall('group.get_next_gid', 1234),
+      mockTypedApi([
+        mockTypedQuery('privilege.query', []),
+        mockTypedQuery('group.query', []),
+        mockTypedCall('group.get_next_gid', 1234),
       ]),
       mockProvider(DialogService),
       mockProvider(FormSidePanelService, {

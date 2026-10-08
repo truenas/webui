@@ -10,13 +10,13 @@ import { merge } from 'lodash-es';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { CertificateCreate, CertificateProfile } from 'app/interfaces/certificate.interface';
+import { CertificateCreate, CertificateProfile, toCertificateCreateArgs } from 'app/interfaces/certificate.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { SummarySection } from 'app/modules/summary/summary.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   CsrConstraintsComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-constraints/csr-constraints.component';
@@ -57,7 +57,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CsrAddComponent implements SidePanelHostCloseable {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
@@ -143,7 +143,7 @@ export class CsrAddComponent implements SidePanelHostCloseable {
     this.isLoading.set(true);
 
     const payload = this.preparePayload();
-    this.api.job('certificate.create', [payload])
+    this.api.job('certificate.create', [toCertificateCreateArgs(payload)])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         complete: () => {

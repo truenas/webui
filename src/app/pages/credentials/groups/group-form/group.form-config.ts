@@ -11,12 +11,12 @@ import {
 import { allCommands } from 'app/constants/all-commands.constant';
 import { Role } from 'app/enums/role.enum';
 import { helptextGroups } from 'app/helptext/account/groups';
-import { Group } from 'app/interfaces/group.interface';
-import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
+import { Group, toGroup } from 'app/interfaces/group.interface';
+import { Privilege, PrivilegeUpdate, toPrivilege } from 'app/interfaces/privilege.interface';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { groupAdded, groupChanged } from 'app/pages/credentials/groups/store/group.actions';
 import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
@@ -49,13 +49,14 @@ export interface GroupFormValue {
  * `editingGroup` (the closure) rather than `event.isEdit`.
  */
 export function getGroupFormConfig(
-  api: ApiService,
+  api: TypedApiService,
   translate: TranslateService,
   store$: Store<AppState>,
   editingGroup: Group | undefined,
 ): FormDefinition<GroupFormValue> {
   // One privilege.query, shared by the chips options, loadData (current selection) and submit.
-  const privileges$ = api.call('privilege.query').pipe(
+  const privileges$ = api.query('privilege.query').pipe(
+    map((privileges) => privileges.map(toPrivilege)),
     shareReplay({ bufferSize: 1, refCount: false }),
   );
   const privilegeOptions$ = privileges$.pipe(
@@ -65,7 +66,7 @@ export function getGroupFormConfig(
     }))),
   );
   // Cached existing group names for the async uniqueness check (fetched once on first edit).
-  const existingNames$ = api.call('group.query').pipe(
+  const existingNames$ = api.query('group.query').pipe(
     map((groups) => groups.map((group) => group.group)),
     shareReplay({ bufferSize: 1, refCount: false }),
   );
@@ -164,8 +165,8 @@ export function getGroupFormConfig(
         ? api.call('group.update', [editingGroup.id, commonBody])
         : api.call('group.create', [{ ...commonBody, gid: values.gid as number }])
       ).pipe(
-        switchMap((id) => api.call('group.query', [[['id', '=', id]]])),
-        map((groups) => groups[0]),
+        switchMap((id) => api.queryOne('group.query', [['id', '=', id]])),
+        map(toGroup),
         // Re-uses the shared (cached) privilege list to diff assignments and derive roles.
         switchMap((group) => privileges$.pipe(
           take(1),
@@ -219,24 +220,22 @@ function groupNameInUseValidator(
 
 /** Adds the group to newly-selected privileges and removes it from de-selected ones. */
 function togglePrivilegesForGroup(
-  api: ApiService,
+  api: TypedApiService,
   privileges: Privilege[],
   initialPrivilegeIds: number[],
   groupId: number,
   selectedIds: (string | number)[],
 ): Observable<Privilege[]> {
   const requests$: Observable<Privilege>[] = [];
+  const update = (privilege: Privilege, localGroups: number[]): Observable<Privilege> => api.call('privilege.update', [
+    privilege.id,
+    mapPrivilegeToPrivilegeUpdate(privilege, localGroups),
+  ]).pipe(map(toPrivilege));
 
   const added = privileges.filter((privilege) => selectedIds.some((id) => id === privilege.id));
   added.forEach((privilege) => {
     requests$.push(
-      api.call('privilege.update', [
-        privilege.id,
-        mapPrivilegeToPrivilegeUpdate(
-          privilege,
-          Array.from(new Set([...privilege.local_groups.map((group) => group.gid), groupId])),
-        ),
-      ]),
+      update(privilege, Array.from(new Set([...privilege.local_groups.map((group) => group.gid), groupId]))),
     );
   });
 
@@ -246,13 +245,7 @@ function togglePrivilegesForGroup(
   const removed = privileges.filter((privilege) => removedIds.some((id) => id === privilege.id));
   removed.forEach((privilege) => {
     requests$.push(
-      api.call('privilege.update', [
-        privilege.id,
-        mapPrivilegeToPrivilegeUpdate(
-          privilege,
-          privilege.local_groups.map((group) => group.gid).filter((gid) => gid !== groupId),
-        ),
-      ]),
+      update(privilege, privilege.local_groups.map((group) => group.gid).filter((gid) => gid !== groupId)),
     );
   });
 

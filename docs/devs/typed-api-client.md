@@ -613,6 +613,40 @@ above. Each is a change for `truenas/api-client-ts`.
       image delete dialog reads its rows by index from the arguments it sent, rather than from the
       job's echoed `arguments`.
 
+25. **Drift found moving credentials.** Handled at one site each:
+    - The query rows are read into the UI interfaces through a `toX` adapter per interface: `toCertificate`,
+      `toDnsAuthenticator`, `toPrivilege` and `toPrivilegeRole`, `toS3AccessKey`, `toApiKey`, and `toUser` /
+      `toGroup`, which move out of `UserService` into their interface files now that the pages share them.
+      Middleware spells roles, statuses and key types as plain strings, and the timestamps of API keys and
+      S3 access keys as strings where the wire carries `{ $date }` envelopes (gap 15).
+    - `acme.dns.authenticator.authenticator_schemas` declares each schema as a bare `{ _name_, title, _required_ }`,
+      where the wire carries the whole JSON schema the form builds its fields from; `toAuthenticatorSchemas`
+      reads it as the UI's `Schema`. Create and update type `attributes` as a union of one schema per provider,
+      which the form edits as one record; `toDnsAuthenticatorCreateArgs` hands it over unchanged.
+    - `webui.crypto.csr_profiles` declares its profiles as fixed keys (`toCertificateProfiles`), and
+      `webui.crypto.get_certificate_domain_names` as `unknown[]`, read as the strings it returns.
+    - `certificate.create` narrows the key type, length, curve and digest to the values it accepts, and
+      `dns_mapping` to authenticator ids; the forms send those values typed loosely, through
+      `toCertificateCreateArgs`. `user.create` requires `username` and `full_name`, which the form always fills
+      (`toUserCreateArgs`); `api_key.*` and `s3.accesskey.*` take `expires_at` as the `{ $date }` envelope or
+      `null` (`toApiKeyCreateArgs`, `toS3AccessKeyCreateArgs` and their update twins).
+    - `audit.query` declares one response for every `query-options`, a count and a single entry included;
+      `toAuditEntries` reads the rows of a plain query, for the user details' last action.
+    - `ApiDataProvider` is still typed by the legacy directory, so `user.query`, `privilege.query` and
+      `api_key.query` keep their entries as types, not call sites: the users, privileges and API keys lists
+      hand it `TypedApiService` as its structural client, and the fake answers the query frames it sends
+      through `call` from `mockTypedQuery` rows, counts included. `group.query`, `sharing.smb.query`,
+      `system.general.update`, `system.security.config` and the 2FA secret calls keep theirs for the sharing,
+      system and two-factor pages that still use them. The `user.query`, `group.query` and
+      `directoryservices.status` event and call-and-subscribe entries had no legacy consumer left and are gone,
+      with `kmip-config.interface.ts`, `CertificateUpdate` and the group, user, API key and DNS authenticator
+      param types only the directory read.
+    - Spec traps: `privilege.roles` is a query method without the `.query` suffix, so the codemod scripted it
+      with `mockTypedCall`; a spec that imports its own `TranslateModule.forRoot()` lost ICU interpolation
+      once `mockApi()`'s `TranslateService` went, and reads the global one now; and a fixture that depends on
+      the filters (the privilege form's `group in` lookups) answers through `connection.autoReply`, since
+      `mockTypedQuery` returns the same rows whatever the filters.
+
 ## Version policy
 
 `WebUiApiDirectory` pins `v27.0.0`. The literal must stay at the

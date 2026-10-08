@@ -1,7 +1,6 @@
 import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { SetAcl } from 'app/interfaces/acl.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
-import { Certificate, CertificateCreate, CertificateUpdate } from 'app/interfaces/certificate.interface';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import {
   DatasetEncryptionSummary,
@@ -12,7 +11,6 @@ import { ExportParams } from 'app/interfaces/export-params.interface';
 import { FailoverUpgradeParams } from 'app/interfaces/failover.interface';
 import { FilesystemPutParams } from 'app/interfaces/filesystem-stat.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
 import { PoolScrubTaskParams } from 'app/interfaces/pool-scrub.interface';
 import { CreatePool, Pool } from 'app/interfaces/pool.interface';
@@ -33,9 +31,6 @@ export interface ApiJobDirectory {
   'boot.scrub': { params: void; response: void };
 
   // Certificate
-  'certificate.create': { params: [CertificateCreate]; response: Certificate };
-  'certificate.delete': { params: [id: number, force?: boolean]; response: boolean };
-  'certificate.update': { params: [id: number, update: Partial<CertificateUpdate>]; response: Certificate };
 
   // CloudBackup
   'cloud_backup.sync': { params: [id: number, params?: { dry_run: boolean }]; response: void };
@@ -63,7 +58,6 @@ export interface ApiJobDirectory {
   'ipmi.sel.clear': { params: void; response: void };
 
   // KMIP
-  'kmip.update': { params: [Partial<KmipConfigUpdate>]; response: KmipConfig };
 
   // Mail
   'mail.send': { params: [SendMailParams, MailConfigUpdate]; response: boolean };

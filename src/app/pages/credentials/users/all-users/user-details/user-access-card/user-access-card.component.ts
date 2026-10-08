@@ -20,7 +20,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { userAccessCardElements } from 'app/pages/credentials/users/all-users/user-details/user-access-card/user-access-card.elements';
 import { UserLastActionComponent } from 'app/pages/credentials/users/all-users/user-details/user-last-action/user-last-action.component';
 import {
@@ -51,7 +51,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
 })
 export class UserAccessCardComponent {
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private loader = inject(LoaderService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);

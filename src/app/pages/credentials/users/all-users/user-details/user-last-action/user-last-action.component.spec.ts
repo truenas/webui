@@ -1,12 +1,14 @@
 import { fakeAsync, flush, tick } from '@angular/core/testing';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { MockComponent } from 'ng-mocks';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AuditEvent } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { UserLastActionComponent } from 'app/pages/credentials/users/all-users/user-details/user-last-action/user-last-action.component';
 
 describe('UserLastActionComponent', () => {
@@ -18,11 +20,11 @@ describe('UserLastActionComponent', () => {
       MockComponent(IxDateComponent),
     ],
     providers: [
-      mockApi([
-        mockCall('audit.query', [{
+      mockTypedApi([
+        mockTypedCall('audit.query', [{
           event: AuditEvent.Login,
           message_timestamp: 1749822469,
-        } as AuditEntry]),
+        }] as AuditEntry[] as unknown as CallResponse<WebUiApiDirectory, 'audit.query'>),
       ]),
     ],
   });
@@ -35,7 +37,7 @@ describe('UserLastActionComponent', () => {
     tick(500);
     spectator.detectChanges();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('audit.query', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('audit.query', [{
       'query-filters': [['username', '=', 'john']],
       'query-options': { limit: 1, order_by: ['-message_timestamp'] },
     }]);

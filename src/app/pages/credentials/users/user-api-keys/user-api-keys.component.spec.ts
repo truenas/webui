@@ -5,9 +5,9 @@ import { TnButtonHarness, TnDialog, TnIconHarness, TnTableHarness } from '@truen
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -16,7 +16,8 @@ import { LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { UserApiKeysComponent } from 'app/pages/credentials/users/user-api-keys/user-api-keys.component';
 
@@ -76,9 +77,9 @@ describe('UserApiKeysComponent', () => {
           closed: of(true),
         })),
       }),
-      mockApi([
-        mockCall('api_key.query', apiKeys),
-        mockCall('api_key.delete'),
+      mockTypedApi([
+        mockTypedQuery('api_key.query', apiKeys as unknown as WebUiQueryEntity<'api_key.query'>[]),
+        mockTypedCall('api_key.delete', null),
       ]),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -140,6 +141,6 @@ describe('UserApiKeysComponent', () => {
       call: expect.any(Function),
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('api_key.delete', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('api_key.delete', [1]);
   });
 });

@@ -19,13 +19,13 @@ import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { helptextPrivilege } from 'app/helptext/account/priviledge';
-import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
-import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
+import { DirectoryServicesStatus, toDirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
+import { Privilege, PrivilegeUpdate, toPrivilegeRole } from 'app/interfaces/privilege.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-chips.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { DirectoryQueryOptions } from 'app/services/user-directory.service';
 import { AppState } from 'app/store';
@@ -54,7 +54,7 @@ export class PrivilegeFormComponent extends IxFormHostForm implements OnInit {
   private destroyRef = inject(DestroyRef);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private entitlements = inject(EntitlementsService);
   private errorHandler = inject(FormErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
@@ -88,9 +88,9 @@ export class PrivilegeFormComponent extends IxFormHostForm implements OnInit {
   protected readonly hasDirectoryServices = this.entitlements.entitled(EntitlementFeature.DirectoryServicesAuth);
   protected existingPrivilege: Privilege | undefined;
 
-  readonly rolesOptions$ = this.api.call('privilege.roles').pipe(
+  readonly rolesOptions$ = this.api.query('privilege.roles').pipe(
     map((roles) => {
-      const sortedRoles = roles.toSorted((a, b) => {
+      const sortedRoles = roles.map(toPrivilegeRole).toSorted((a, b) => {
         // Show compound roles first, then sort by name.
         if (a.builtin === b.builtin) {
           return a.name.localeCompare(b.name);
@@ -129,6 +129,7 @@ export class PrivilegeFormComponent extends IxFormHostForm implements OnInit {
 
     // Load directory services status once on init (cache it)
     this.api.call('directoryservices.status').pipe(
+      map(toDirectoryServicesStatus),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((status) => {
       this.dsStatus.set(status);
@@ -265,10 +266,10 @@ export class PrivilegeFormComponent extends IxFormHostForm implements OnInit {
     }
 
     // Fetch all groups in a single batch query
-    return this.api.call('group.query', [[
+    return this.api.query('group.query', [
       ['local', '=', true],
       ['group', 'in', groupNames],
-    ]]).pipe(
+    ]).pipe(
       map((groups) => {
         // Validate that all requested groups were found
         const foundNames = new Set(groups.map((group) => group.group));
@@ -304,10 +305,10 @@ export class PrivilegeFormComponent extends IxFormHostForm implements OnInit {
     }
 
     // Fetch all groups in a single batch query
-    return this.api.call('group.query', [[
+    return this.api.query('group.query', [
       ['local', '=', false],
       ['group', 'in', groupNames],
-    ]]).pipe(
+    ]).pipe(
       map((groups) => {
         // Validate that all requested groups were found
         const foundNames = new Set(groups.map((group) => group.group));
