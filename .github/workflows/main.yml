@@ -60,6 +60,13 @@ jobs:
         run: apt-get update && apt-get -y install --no-install-recommends ca-certificates git wget xz-utils
       - name: Checkout
         uses: actions/checkout@v4
+      # The workspace belongs to the runner's user and the container runs as
+      # root, so git refuses to read the repository ("dubious ownership").
+      # Checkout only trusts it for its own step. Without this the build still
+      # passes, but stamps the service worker version with `unknown` instead of
+      # the commit hash, and `yarn check-env` cannot find the repository root.
+      - name: Trust the workspace
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Install Node the way scale-build does
         run: sh -ex debian/fetch_node.sh
       - name: Install packages
