@@ -24,7 +24,7 @@ describe('SedFormComponent', () => {
     providers: [
       mockApi([
         mockCall('system.advanced.update'),
-        mockCall('system.advanced.sed_global_password', '***'),
+        mockCall('system.advanced.sed_global_password', 'savedpassword'),
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true })),
@@ -44,13 +44,14 @@ describe('SedFormComponent', () => {
     api = spectator.inject(ApiService);
   });
 
-  it('shows current system advanced sed values when form is being edited without *** content', async () => {
+  it('pre-fills both fields with the saved global SED password', async () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
+    expect(api.call).toHaveBeenCalledWith('system.advanced.sed_global_password');
     expect(values).toEqual({
-      'SED Password': '',
-      'Confirm SED Password': '',
+      'SED Password': 'savedpassword',
+      'Confirm SED Password': 'savedpassword',
     });
   });
 
