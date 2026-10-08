@@ -4,8 +4,9 @@
 # accidental changes to host OS if developer tries to build the debian package
 # outside of a chroot environment.
 #
-# The same script runs in the Build job of .github/workflows/main.yml, so a
-# version or checksum that would break the nightly fails on the PR instead.
+# The same script runs in .github/workflows/main.yml, in the Build job (x64)
+# and the Fetch Node job (arm64), so a version or checksum that would break
+# the nightly fails on the PR instead.
 
 # The version comes from .node-version at the repo root, which CI and local
 # version managers read too. Bumping Node means editing that file AND the two

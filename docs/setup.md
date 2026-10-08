@@ -57,5 +57,6 @@ To move to a new version:
    `https://nodejs.org/dist/v<version>/SHASUMS256.txt`.
 3. If the new version is outside the `engines.node` range in `package.json`, update that range too.
 
-Step 2 is easy to forget. The `Build` job in `.github/workflows/main.yml` runs `debian/fetch_node.sh` in a Debian
-container, so a missed checksum fails on the pull request rather than in the nightly build.
+Step 2 is easy to forget. `.github/workflows/main.yml` runs `debian/fetch_node.sh` in a Debian container on both
+architectures (the `Build` job on x64, `Fetch Node (arm64)` on arm64), so a missed checksum fails on the pull request
+rather than in the nightly build.

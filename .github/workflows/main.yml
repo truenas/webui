@@ -78,6 +78,23 @@ jobs:
       - name: Check strict null checks
         run: yarn run check-env && yarn run strict-null-checks
 
+  # Build above runs on x64, so it only proves the linux-x64 checksum in
+  # debian/fetch_node.sh. scale-build also builds on arm64; this runs just the
+  # fetch there, so a stale or mistyped linux-arm64 checksum fails here too.
+  fetch-node-arm64:
+    name: Fetch Node (arm64)
+    runs-on: ubuntu-24.04-arm
+    container: debian:trixie
+    steps:
+      - name: Install prerequisites
+        run: apt-get update && apt-get -y install --no-install-recommends ca-certificates wget xz-utils
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Node the way scale-build does
+        run: sh -ex debian/fetch_node.sh
+      - name: Report Node version
+        run: node --version
+
   lint:
     name: Validate code style
     needs: [install]
