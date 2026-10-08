@@ -15,7 +15,6 @@ import {
   DatasetEncryptionSummaryQueryParams,
 } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
-import { DiskWipeParams } from 'app/interfaces/disk.interface';
 import { DockerConfig, DockerConfigUpdate } from 'app/interfaces/docker-config.interface';
 import { ExportParams } from 'app/interfaces/export-params.interface';
 import { FailoverUpgradeParams } from 'app/interfaces/failover.interface';
@@ -23,18 +22,8 @@ import { FilesystemPutParams } from 'app/interfaces/filesystem-stat.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
-import { PoolExportParams } from 'app/interfaces/pool-export.interface';
-import { PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
-import { PoolRemoveParams } from 'app/interfaces/pool-remove.interface';
 import { PoolScrubTaskParams } from 'app/interfaces/pool-scrub.interface';
-import {
-  CreatePool,
-  Pool,
-  PoolAttachParams,
-  PoolExpandParams,
-  PoolReplaceParams, PruneDedupTableParams,
-  UpdatePool,
-} from 'app/interfaces/pool.interface';
+import { CreatePool, Pool } from 'app/interfaces/pool.interface';
 import { ServiceControlOptions } from 'app/interfaces/service.interface';
 import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-dataset-config.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
@@ -86,7 +75,6 @@ export interface ApiJobDirectory {
   'core.bulk': { params: CoreBulkQuery; response: CoreBulkResponse[] };
 
   // Disk
-  'disk.wipe': { params: DiskWipeParams; response: void };
 
   // Failover
   'failover.events.vrrp_master': { params: void; response: void };
@@ -109,23 +97,13 @@ export interface ApiJobDirectory {
   'mail.send': { params: [SendMailParams, MailConfigUpdate]; response: boolean };
 
   // Pool
-  'pool.attach': { params: [id: number, params: PoolAttachParams]; response: void };
   'pool.create': { params: [CreatePool]; response: Pool };
-  'pool.expand': { params: PoolExpandParams; response: null };
-  'pool.export': { params: PoolExportParams; response: void };
-  'pool.import_find': { params: void; response: PoolFindResult[] };
-  'pool.import_pool': { params: [PoolImportParams]; response: boolean };
-  'pool.reimport': { params: [id: number]; response: boolean };
-  'pool.remove': { params: PoolRemoveParams; response: void };
-  'pool.replace': { params: [id: number, params: PoolReplaceParams]; response: boolean };
   'pool.scrub': { params: PoolScrubTaskParams; response: void };
-  'pool.update': { params: [id: number, update: Partial<UpdatePool>]; response: Pool };
   'pool.dataset.encryption_summary': {
     params: [path: string, params?: DatasetEncryptionSummaryQueryParams];
     response: DatasetEncryptionSummary[];
   };
   'pool.dataset.unlock': { params: [path: string, params: DatasetUnlockParams]; response: DatasetUnlockResult };
-  'pool.ddt_prune': { params: [PruneDedupTableParams]; response: void };
 
   // Replication
   'replication.run': { params: [id: number]; response: number };

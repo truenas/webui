@@ -3,14 +3,14 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { settleDeferredTree } from 'app/core/testing/utils/settle-deferred-tree.utils';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
-import { Disk } from 'app/interfaces/disk.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { HardwareDiskEncryptionComponent } from 'app/pages/storage/modules/vdevs/components/hardware-disk-encryption/hardware-disk-encryption.component';
 import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
 import { VDevsComponent } from 'app/pages/storage/modules/vdevs/vdevs.component';
@@ -192,9 +192,9 @@ describe('VDevsComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('system.advanced.sed_global_password_is_set', false),
-        mockCall('disk.query', [{ passwd: '' } as unknown as Disk]),
+      mockTypedApi([
+        mockTypedCall('system.advanced.sed_global_password_is_set', false),
+        mockTypedQuery('disk.query', [{ passwd: '' } as WebUiQueryEntity<'disk.query'>]),
       ]),
       mockProvider(RoutePartsService),
       mockProvider(ActivatedRoute, {

@@ -2,6 +2,7 @@ import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { TierRewriteJobStatus } from 'app/enums/tier-rewrite-job-status.enum';
 
 export interface ZfsTierConfig {
+  id: number;
   enabled: boolean;
   max_concurrent_jobs: number;
   max_used_percentage: number;

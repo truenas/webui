@@ -14,7 +14,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SedDiskPasswordComponent } from 'app/pages/storage/modules/vdevs/components/sed-disk-password/sed-disk-password.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -44,7 +44,7 @@ export interface ReplaceDiskDialogData {
 })
 export class ReplaceDiskDialog {
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   protected dialogRef = inject<DialogRef<unknown, ReplaceDiskDialog>>(DialogRef);
   private snackbar = inject(SnackbarService);

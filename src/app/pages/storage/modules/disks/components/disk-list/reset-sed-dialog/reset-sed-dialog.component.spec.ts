@@ -3,11 +3,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnDialogHarness, TnInputHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ResetSedDialog } from './reset-sed-dialog.component';
 
 describe('ResetSedDialog', () => {
@@ -18,8 +18,8 @@ describe('ResetSedDialog', () => {
     component: ResetSedDialog,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('disk.reset_sed'),
+      mockTypedApi([
+        mockTypedCall('disk.reset_sed', null),
       ]),
       mockProvider(DialogRef),
       mockProvider(SnackbarService),
@@ -79,7 +79,7 @@ describe('ResetSedDialog', () => {
     const resetButton = await loader.getHarness(TnButtonHarness.with({ label: 'Perform SED Reset' }));
     await resetButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.reset_sed', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('disk.reset_sed', [{
       name: 'sdf',
       psid: 'TESTPSID12345678',
     }]);
@@ -103,6 +103,6 @@ describe('ResetSedDialog', () => {
   it('does not reset the disk when the form is submitted natively while invalid', () => {
     spectator.query('form')!.dispatchEvent(new Event('submit'));
 
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('disk.reset_sed', expect.anything());
+    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('disk.reset_sed', expect.anything());
   });
 });

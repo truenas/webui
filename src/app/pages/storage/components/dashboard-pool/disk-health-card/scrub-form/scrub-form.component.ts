@@ -19,7 +19,7 @@ import {
   crontabToSchedule,
 } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 export interface ScrubFormParams {
   poolId: number;
@@ -44,7 +44,7 @@ export interface ScrubFormParams {
 export class ScrubFormComponent extends IxFormHostForm implements OnInit {
   private translate = inject(TranslateService);
   private fb = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
 
   /** Read by the hosting `FormSidePanelContainerComponent` to gate its Save action. */
   readonly requiredRoles = [Role.PoolScrubWrite];

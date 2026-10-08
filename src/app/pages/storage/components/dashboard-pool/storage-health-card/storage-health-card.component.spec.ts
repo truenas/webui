@@ -14,7 +14,7 @@ import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
+import { PoolScanEvent } from 'app/helpers/pool-scan-event.helper';
 import { ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
@@ -23,7 +23,7 @@ import { LocaleService } from 'app/modules/language/locale.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   ScrubFormComponent,
 } from 'app/pages/storage/components/dashboard-pool/disk-health-card/scrub-form/scrub-form.component';
@@ -88,8 +88,8 @@ describe('StorageHealthCardComponent', () => {
     },
   } as ScrubTask;
 
-  let api: ApiService;
-  const websocketSubscription$ = new Subject<ApiEvent<PoolScan>>();
+  let api: TypedApiService;
+  const websocketSubscription$ = new Subject<PoolScanEvent>();
 
   const createComponent = createComponentFactory({
     component: StorageHealthCardComponent,
@@ -117,17 +117,8 @@ describe('StorageHealthCardComponent', () => {
       mockProvider(LocaleService, {
         timezone: 'America/New_York',
       }),
-      mockProvider(ApiService, {
+      mockProvider(TypedApiService, {
         subscribe: jest.fn(() => websocketSubscription$),
-        call: jest.fn((method: string) => {
-          if (method === 'pool.scrub.query') {
-            return of([
-              { id: 1 },
-            ] as ScrubTask[]);
-          }
-
-          return of(undefined);
-        }),
         startJob: jest.fn(() => of(undefined)),
       }),
       mockAuth(),
@@ -143,7 +134,7 @@ describe('StorageHealthCardComponent', () => {
       props: { pool },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
   });
 
   describe('health indication', () => {
@@ -329,9 +320,11 @@ describe('StorageHealthCardComponent', () => {
           },
         } as PoolScan;
 
+        // Middleware sends the scan under `fields`, where the generated event model has none (gap 16).
         websocketSubscription$.next({
+          msg: 'changed',
           fields: activeScrub,
-        } as ApiEvent<PoolScan>);
+        } as unknown as PoolScanEvent);
 
         spectator.detectChanges();
 

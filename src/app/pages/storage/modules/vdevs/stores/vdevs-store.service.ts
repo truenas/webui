@@ -3,13 +3,15 @@ import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import { keyBy } from 'lodash-es';
 import { EMPTY, Observable, of } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import {
+  catchError, map, switchMap, tap,
+} from 'rxjs/operators';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { VDevNestedDataNode, isVdevGroup, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
-import { Disk } from 'app/interfaces/disk.interface';
-import { PoolTopology } from 'app/interfaces/pool.interface';
+import { Disk, toDisk } from 'app/interfaces/disk.interface';
+import { PoolTopology, toPool } from 'app/interfaces/pool.interface';
 import { isTopologyDisk, TopologyDisk, VDevItem } from 'app/interfaces/storage.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -37,7 +39,7 @@ const initialState: VDevsState = {
   providedIn: 'root',
 })
 export class VDevsStore extends ComponentStore<VDevsState> {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
 
@@ -84,12 +86,14 @@ export class VDevsStore extends ComponentStore<VDevsState> {
         });
       }),
       switchMap((poolId) => {
-        return this.api.call('pool.query', [[['id', '=', poolId]]]).pipe(
+        return this.api.query('pool.query', [['id', '=', poolId]]).pipe(
+          map((pools) => pools.map(toPool)),
           switchMap((pools) => {
             if (!pools?.length) {
               return of([]);
             }
-            return this.api.call('disk.query', [[['pool', '=', pools[0].name]], { extra: { pools: true } }]).pipe(
+            return this.api.query('disk.query', [['pool', '=', pools[0].name]], { extra: { pools: true } }).pipe(
+              map((disks) => disks.map(toDisk)),
               tap((disks) => {
                 this.patchState({
                   isLoading: false,

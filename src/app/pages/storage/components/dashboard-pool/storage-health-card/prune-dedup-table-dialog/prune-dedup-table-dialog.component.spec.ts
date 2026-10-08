@@ -4,11 +4,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness, TnRadioGroupHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   PruneDedupTableDialog,
 } from 'app/pages/storage/components/dashboard-pool/storage-health-card/prune-dedup-table-dialog/prune-dedup-table-dialog.component';
@@ -19,8 +19,8 @@ describe('PruneDedupTableDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: PruneDedupTableDialog,
     providers: [
-      mockApi([
-        mockJob('pool.ddt_prune', fakeSuccessfulJob()),
+      mockTypedApi([
+        mockTypedJob('pool.ddt_prune', { state: JobState.Success }),
       ]),
       mockProvider(DialogRef),
       mockProvider(SnackbarService),
@@ -55,7 +55,7 @@ describe('PruneDedupTableDialogComponent', () => {
     const pruneButton = await loader.getHarness(TnButtonHarness.with({ label: 'Prune' }));
     await pruneButton.click();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.ddt_prune', [{ pool_name: 'pewl', percentage: 50 }]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('pool.ddt_prune', [{ pool_name: 'pewl', percentage: 50 }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -71,7 +71,7 @@ describe('PruneDedupTableDialogComponent', () => {
     const pruneButton = await loader.getHarness(TnButtonHarness.with({ label: 'Prune' }));
     await pruneButton.click();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.ddt_prune', [{ pool_name: 'pewl', days: 10 }]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('pool.ddt_prune', [{ pool_name: 'pewl', days: 10 }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

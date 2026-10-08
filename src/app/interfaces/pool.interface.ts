@@ -1,3 +1,4 @@
+import { JobParams } from '@truenas/api-client';
 import { DeduplicationSetting, NewDeduplicationQuotaSetting } from 'app/enums/deduplication-setting.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
@@ -7,6 +8,9 @@ import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+
+type D = WebUiApiDirectory;
 
 export interface Pool {
   autotrim: ZfsProperty<string>;
@@ -126,26 +130,8 @@ export interface DataPoolTopologyUpdate {
   draid_spare_disks?: number;
 }
 
-export interface PoolAttachParams {
-  target_vdev?: string;
-  new_disk?: string;
-  passphrase?: string;
-  allow_duplicate_serials?: boolean;
-}
-
-export interface PoolReplaceParams {
-  label: string;
-  disk: string;
-  force?: boolean;
-  passphrase?: string;
-  preserve_settings?: boolean;
-  preserve_description?: boolean;
-}
-
-export type PoolExpandParams = [
-  id: number,
-  params?: { geli: { passphrase: string } },
-];
+/** What `pool.attach` takes, as middleware declares it. */
+export type PoolAttachParams = JobParams<D, 'pool.attach'>[1];
 
 export interface PoolInstance {
   id: number;
@@ -171,8 +157,37 @@ export interface PoolInstance {
   topology: PoolTopology;
 }
 
-export interface PruneDedupTableParams {
-  pool_name: string;
-  percentage?: number;
-  days?: number;
+/** What `pool.ddt_prune` takes, as middleware declares it. */
+export type PruneDedupTableParams = JobParams<D, 'pool.ddt_prune'>[0];
+
+/**
+ * Reads a `pool.query` row, or the entry `pool.create` / `pool.update` return, into the shape the storage pages
+ * are written against. The generated entry spells `status`, the scan and the topology's enums as wire literals,
+ * types the timestamps as strings although they arrive as `ApiTimestamp` envelopes (gap 15), and does not declare
+ * `is_upgraded` or the tier sizes the dashboard adds; it describes the same object.
+ *
+ * The cast checks nothing, so a regenerated entry that drops or renames a field still compiles and reads `undefined`.
+ */
+export function toPool(pool: WebUiQueryEntity<'pool.query'>): Pool {
+  return pool as unknown as Pool;
+}
+
+/** What `pool.create` takes, as middleware declares it. */
+export type PoolCreateArgs = JobParams<D, 'pool.create'>[0];
+
+/** What `pool.update` takes as its changes, as middleware declares it. */
+export type PoolUpdateArgs = JobParams<D, 'pool.update'>[1];
+
+/**
+ * Hands the pool wizard's payload to `pool.create` unchanged. Middleware narrows each vdev class to the layouts it
+ * allows (a cache vdev is only a `STRIPE`) and `checksum` to its algorithms; the wizard builds every class from the
+ * one `CreateVdevLayout` and offers only what middleware accepts, so they are the same values typed loosely.
+ */
+export function toPoolCreateArgs(payload: CreatePool): PoolCreateArgs {
+  return payload as PoolCreateArgs;
+}
+
+/** {@link toPoolCreateArgs} for `pool.update`. */
+export function toPoolUpdateArgs(payload: UpdatePool): PoolUpdateArgs {
+  return payload as PoolUpdateArgs;
 }

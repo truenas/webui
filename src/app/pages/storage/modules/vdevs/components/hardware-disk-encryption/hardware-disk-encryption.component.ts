@@ -11,9 +11,9 @@ import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
 import { NavigateAndHighlightDirective } from 'app/directives/navigate-and-interact/navigate-and-highlight.directive';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
-import { Disk } from 'app/interfaces/disk.interface';
+import { toDisk } from 'app/interfaces/disk.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { sedStatusLabel } from 'app/pages/storage/modules/disks/utils/sed-status-label.utils';
 import {
   ManageDiskSedDialog,
@@ -35,7 +35,7 @@ import { EntitlementsService } from 'app/services/entitlements.service';
 })
 export class HardwareDiskEncryptionComponent {
   private tnDialog = inject(TnDialog);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private entitlements = inject(EntitlementsService);
   private destroyRef = inject(DestroyRef);
 
@@ -62,9 +62,12 @@ export class HardwareDiskEncryptionComponent {
       this.refreshDisk$.pipe(startWith(undefined)),
     ]).pipe(
       switchMap(([topologyItem]) => {
-        return this.api.call('disk.query', [[['devname', '=', topologyItem.disk]],
-          { extra: { passwords: true, sed_status: true } }]).pipe(
-          map(([disk]) => (disk as Disk | undefined) ?? null),
+        return this.api.query(
+          'disk.query',
+          [['devname', '=', topologyItem.disk]],
+          { extra: { passwords: true, sed_status: true } },
+        ).pipe(
+          map(([disk]) => (disk ? toDisk(disk) : null)),
         );
       }),
     ),

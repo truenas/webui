@@ -7,13 +7,15 @@ import { TnDialog, TnStepperHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, Subject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import {
   DownloadKeyDialog,
@@ -92,7 +94,7 @@ describe('PoolManagerWizardComponent', () => {
     },
   } as PoolManagerState;
   const state$ = new BehaviorSubject(state);
-  const createdPool = {} as Pool;
+  const createdPool = {} as WebUiQueryEntity<'pool.query'>;
   const existingPool$ = new BehaviorSubject<Pool | null>(null);
 
   const createComponent = createComponentFactory({
@@ -119,10 +121,10 @@ describe('PoolManagerWizardComponent', () => {
         startOver$,
         isLoading$: of(false),
       }),
-      mockApi([
-        mockCall('pool.query', []),
-        mockJob('pool.create', fakeSuccessfulJob(createdPool)),
-        mockJob('pool.update', fakeSuccessfulJob(createdPool)),
+      mockTypedApi([
+        mockTypedQuery('pool.query', []),
+        mockTypedJob('pool.create', { state: JobState.Success, result: createdPool }),
+        mockTypedJob('pool.update', { state: JobState.Success, result: createdPool }),
       ]),
       mockProvider(ActivatedRoute, {
         params: of({}),
@@ -218,7 +220,7 @@ describe('PoolManagerWizardComponent', () => {
       spectator.query(ReviewWizardStepComponent)!.createPool.emit();
 
       expect(spectator.inject(DialogService, true).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(ApiService, true).job).toHaveBeenCalledWith('pool.create', [{
+      expect(spectator.inject(TypedApiService, true).job).toHaveBeenCalledWith('pool.create', [{
         name: 'pewl',
         allow_duplicate_serials: true,
         encryption: false,
@@ -268,7 +270,7 @@ describe('PoolManagerWizardComponent', () => {
       await wizard.selectStep((await wizard.getStepLabels()).indexOf('Review'));
       spectator.query(ReviewWizardStepComponent)!.createPool.emit();
 
-      expect(spectator.inject(ApiService, true).job).toHaveBeenCalledWith('pool.create', [
+      expect(spectator.inject(TypedApiService, true).job).toHaveBeenCalledWith('pool.create', [
         expect.objectContaining({
           encryption: true,
           encryption_options: { generate_key: true },
@@ -282,7 +284,7 @@ describe('PoolManagerWizardComponent', () => {
       await wizard.selectStep((await wizard.getStepLabels()).indexOf('Review'));
       spectator.query(ReviewWizardStepComponent)!.createPool.emit();
 
-      expect(spectator.inject(ApiService, true).job).toHaveBeenCalledWith('pool.create', [
+      expect(spectator.inject(TypedApiService, true).job).toHaveBeenCalledWith('pool.create', [
         expect.objectContaining({ force_topology: true }),
       ]);
 
@@ -310,7 +312,7 @@ describe('PoolManagerWizardComponent', () => {
       await wizard.selectStep((await wizard.getStepLabels()).indexOf('Review'));
       spectator.query(ReviewWizardStepComponent)!.createPool.emit();
 
-      expect(spectator.inject(ApiService, true).job).toHaveBeenCalledWith('pool.update', [
+      expect(spectator.inject(TypedApiService, true).job).toHaveBeenCalledWith('pool.update', [
         existingPool.id,
         expect.objectContaining({ force_topology: true }),
       ]);

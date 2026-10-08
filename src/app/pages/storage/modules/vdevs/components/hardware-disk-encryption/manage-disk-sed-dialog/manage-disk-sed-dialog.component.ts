@@ -7,14 +7,15 @@ import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
   InputType,
 } from '@truenas/ui-components';
+import { map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
-import { Disk } from 'app/interfaces/disk.interface';
+import { Disk, toDisk } from 'app/interfaces/disk.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -35,7 +36,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class ManageDiskSedDialog implements OnInit {
   protected readonly InputType = InputType;
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   protected dialogRef = inject<DialogRef<unknown, ManageDiskSedDialog>>(DialogRef);
@@ -69,8 +70,9 @@ export class ManageDiskSedDialog implements OnInit {
   }
 
   private loadDiskSedInfo(): void {
-    this.api.call('disk.query', [[['devname', '=', this.diskName]], { extra: { passwords: true } }])
+    this.api.query('disk.query', [['devname', '=', this.diskName]], { extra: { passwords: true } })
       .pipe(
+        map((disks) => disks.map(toDisk)),
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),

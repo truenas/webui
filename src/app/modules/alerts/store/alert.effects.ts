@@ -2,14 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { CallResponse } from '@truenas/api-client';
 import {
   EMPTY, forkJoin, Observable, of,
 } from 'rxjs';
 import {
   catchError, map, mergeMap, pairwise, switchMap, tap, withLatestFrom,
 } from 'rxjs/operators';
-import { Alert } from 'app/interfaces/alert.interface';
+import { Alert, toAlert } from 'app/interfaces/alert.interface';
 import {
   dismissAlertPressed, dismissAllAlertsPressed,
   reopenAlertPressed,
@@ -25,21 +24,10 @@ import {
 import {
   AlertSlice, selectDismissedAlerts, selectIsAlertPanelOpen, selectUnreadAlerts,
 } from 'app/modules/alerts/store/alert.selectors';
-import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
-
-type AlertEntry = CallResponse<WebUiApiDirectory, 'alert.list'>[number];
-
-/**
- * Middleware types `klass` and `level` as open strings the UI reads through its enums, and the
- * timestamps as strings although they arrive as `ApiTimestamp` envelopes.
- */
-function toAlert(alert: AlertEntry): Alert {
-  return alert as unknown as Alert;
-}
 
 type AlertCallResult = { id: string; ok: true } | { id: string; ok: false; error: unknown };
 

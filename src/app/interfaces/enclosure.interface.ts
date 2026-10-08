@@ -8,6 +8,7 @@ import {
   DriveBayLightStatus,
 } from 'app/enums/enclosure-slot-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export interface Enclosure {
   name: string;
@@ -117,4 +118,12 @@ export interface SetDriveBayLightStatus {
   enclosure_id: string;
   slot: number;
   status: DriveBayLightStatus;
+}
+
+/**
+ * Reads an `enclosure2.query` row into `Enclosure`. Middleware types the model, the element statuses and the slot
+ * map loosely where the UI reads them through its enums; it describes the same object.
+ */
+export function toEnclosure(enclosure: WebUiQueryEntity<'enclosure2.query'>): Enclosure {
+  return enclosure as unknown as Enclosure;
 }
