@@ -1,0 +1,31 @@
+name: 'Prepare: Node and Yarn'
+description: 'Runs the shared prepare action on the Node version pinned in .node-version.'
+
+# A thin wrapper, and the only place a workflow in this repo should set up
+# Node. The shared action takes an exact version as input; this reads it from
+# .node-version so the workflows, local version managers and the Debian build
+# (debian/fetch_node.sh) cannot drift apart. They did once: CI moved to a Node
+# that Angular required while the Debian build stayed behind, and the nightly
+# broke with every PR check green.
+#
+# The caller must `actions/checkout` first.
+
+inputs:
+  cache-jest:
+    description: "Cache .jest/cache, keyed on yarn.lock."
+    required: false
+    default: 'false'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Read pinned Node version
+      id: node
+      shell: bash
+      run: echo "version=$(tr -d '[:space:]' < .node-version)" >> "$GITHUB_OUTPUT"
+
+    - name: Install
+      uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+      with:
+        node-version: ${{ steps.node.outputs.version }}
+        cache-jest: ${{ inputs.cache-jest }}
