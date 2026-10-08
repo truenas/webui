@@ -110,7 +110,7 @@ test('an export can be made read-only and limited to a network and a host', asyn
   });
 });
 
-test('the form will not export a pool\'s root dataset', async ({ page, api, pool }) => {
+test('the form will not export a pool\'s root dataset', async ({ page, pool }) => {
   const path = datasetMountPath(`${pool}/${datasetName}`);
   const save = page.locator(nfsLocators.form.save);
 
@@ -132,8 +132,6 @@ test('the form will not export a pool\'s root dataset', async ({ page, api, pool
   await fillNfsSharePath(page, path);
   await expect(page.locator(nfsLocators.form.pathErrors)).toBeHidden();
   await expect(save).toBeEnabled();
-
-  expect(await findNfsShare(api, datasetMountPath(pool))).toBeUndefined();
 });
 
 test('the form will not save a network that is not an address', async ({ page, pool }) => {

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NgControl, ReactiveFormsModule } from '@angular/forms';
 import {
-  injectTnFormFieldAria, TnSelectComponent, TnSelectOption, TnTestIdDirective,
+  injectTnFormFieldAria, TnSelectComponent, TnSelectOption, TnTestIdDirective, TnTestIdValue,
 } from '@truenas/ui-components';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { NetworkService } from 'app/services/network.service';
@@ -42,11 +42,11 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
    * but a control in a form array is named by its index, so every array on a form resolves to the
    * same `input-0`. Pass an id that names the list as well, e.g. `['network', i]`.
    */
-  readonly testId = input<string | (string | number)[]>();
+  readonly testId = input<TnTestIdValue>();
 
   protected readonly netmaskTestId = computed(() => {
     const testId = this.testId();
-    if (testId === undefined) {
+    if (testId === undefined || testId === null) {
       return 'netmasks';
     }
     return [...(Array.isArray(testId) ? testId : [testId]), 'netmask'];

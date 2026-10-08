@@ -258,8 +258,9 @@ form did not have: the first network and the first host both resolved to
 `input-0`, the control name of a form array's first member, and neither field
 nor the path had an id for its error text. They are now `input-network-<i>`,
 `input-host-<i>`, `form-field-network-<i>` and `text-path-errors` — the last
-from `ix-explorer`, so every explorer has it — and `button-remove-from-list`
-went the same way (`button-remove-network-<i>`, `button-remove-host-<i>`).
+from `ix-explorer`, so every explorer that renders its own errors has it —
+and `button-remove-from-list` went the same way (`button-remove-network-<i>`,
+`button-remove-host-<i>`).
 `nfs-list` unshares and edits from the row menu beside a second share, on two
 datasets rather than one. `nfs-service` covers the service from its three
 entry points: accepting the start offer after a save (which also enables it at
@@ -273,7 +274,7 @@ is typed and not left is on screen while Save still answers for the old one —
 before it is saved, so a hostname that does not resolve is refused, and the
 refusal arrives as an error dialog rather than under the field.
 
-The framework is done and the coverage is not. Seventy-one tests — seventy
+The framework is done and the coverage is not. Eighty tests — seventy-nine
 journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
