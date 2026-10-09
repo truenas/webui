@@ -6,6 +6,7 @@ import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, pipe } from 'rxjs';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
@@ -24,6 +25,8 @@ describe('SnapshotDetailsRowComponent', () => {
   let spectator: SpectatorRouting<SnapshotDetailsRowComponent>;
   let loader: HarnessLoader;
   let api: TypedApiService;
+  /** What `pool.dataset.query` answers when asked which datasets have this snapshot as their origin. */
+  let clonesOfSnapshot: WebUiQueryEntity<'pool.dataset.query'>[] = [];
 
   const createComponent = createRoutingFactory({
     component: SnapshotDetailsRowComponent,
@@ -44,6 +47,7 @@ describe('SnapshotDetailsRowComponent', () => {
       }),
       mockTypedApi([
         mockTypedQuery('pool.snapshot.query', [fakeZfsSnapshot as unknown as WebUiQueryEntity<'pool.snapshot.query'>]),
+        mockTypedQuery('pool.dataset.query', []),
         mockTypedCall('pool.snapshot.hold', null),
         mockTypedCall('pool.snapshot.release', null),
         mockTypedCall('pool.snapshot.delete', null),
@@ -56,7 +60,10 @@ describe('SnapshotDetailsRowComponent', () => {
       props: {
         snapshot: fakeZfsSnapshot,
       },
+      detectChanges: false,
     });
+    spectator.inject(MockTypedApiService).mockQuery('pool.dataset.query', clonesOfSnapshot);
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(TypedApiService);
   });
@@ -117,6 +124,36 @@ describe('SnapshotDetailsRowComponent', () => {
 
     await holdCheckbox.toggle();
     expect(api.call).toHaveBeenCalledWith('pool.snapshot.hold', [fakeZfsSnapshot.name]);
+  });
+
+  it('offers Delete for a snapshot nothing was cloned from', async () => {
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
+
+    expect(await deleteButton.isDisabled()).toBe(false);
+  });
+
+  describe('when a dataset was cloned from the snapshot', () => {
+    // Set before the outer `beforeEach` creates the row, which asks once, as it opens.
+    beforeAll(() => {
+      clonesOfSnapshot = [{ id: 'test-dataset-clone' } as WebUiQueryEntity<'pool.dataset.query'>];
+    });
+
+    afterAll(() => {
+      clonesOfSnapshot = [];
+    });
+
+    it('disables Delete', async () => {
+      const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
+
+      // Found from the clone's side — the dataset whose origin is this snapshot — because neither
+      // snapshot query returns a `clones` property.
+      expect(api.query).toHaveBeenCalledWith(
+        'pool.dataset.query',
+        [['origin.rawvalue', '=', fakeZfsSnapshot.name]],
+        { select: ['id'], extra: { properties: ['origin'] } },
+      );
+      expect(await deleteButton.isDisabled()).toBe(true);
+    });
   });
 
   it('should delete snapshot when `Delete` button click', async () => {

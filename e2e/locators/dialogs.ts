@@ -23,3 +23,15 @@ export const confirmDialogLocators = {
   confirm: '[data-test="button-dialog-confirm"]',
   cancel: '[data-test="button-dialog-cancel"]',
 } as const;
+
+/**
+ * webui's error dialog — what a refused middleware call is reported in.
+ *
+ * Shared chrome like the confirm dialog above, raised over whatever was on
+ * screen. Its close button is `errorDialogClose` in `support/constants.ts`,
+ * which the harness also watches for; the title is here for a journey whose
+ * claim is that an action *was* refused.
+ */
+export const errorDialogLocators = {
+  title: '[data-test="dialog-title-error"]',
+} as const;

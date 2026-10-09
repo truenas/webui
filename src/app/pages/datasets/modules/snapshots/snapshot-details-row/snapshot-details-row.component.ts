@@ -9,11 +9,12 @@ import {
 import { isEmpty } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  map,
+  filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { toZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -48,6 +49,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private api = inject(TypedApiService);
+  private authService = inject(AuthService);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
@@ -59,13 +61,20 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
 
   isLoading = true;
   snapshotInfo: ZfsSnapshot | undefined;
-  holdControl = new FormControl(false);
+  /**
+   * Disabled until the row knows whether the snapshot is held: a tick before then would be made
+   * against a guess, and would be overwritten when the answer arrived.
+   */
+  holdControl = new FormControl({ value: false, disabled: true });
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
 
-  get hasClones(): boolean {
-    return !!this.snapshotInfo?.properties?.clones?.value;
-  }
+  /**
+   * Whether a dataset was cloned from this snapshot, which ZFS will not delete while one exists.
+   * False until {@link checkForClones} answers, and if it fails: the lookup only spares the user
+   * a delete middleware would refuse anyway.
+   */
+  protected hasClones = false;
 
   protected get usedBytes(): number | undefined {
     return getFiniteNumber(this.snapshotInfo?.properties?.used?.parsed);
@@ -81,6 +90,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getSnapshotInfo();
+    this.checkForClones();
     this.holdControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.doHoldOrRelease());
@@ -106,6 +116,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
         next: (snapshot) => {
           this.snapshotInfo = snapshot;
           this.holdControl.setValue(!isEmpty(snapshot.holds), { emitEvent: false });
+          this.holdControl.enable({ emitEvent: false });
           this.isLoading = false;
           this.cdr.markForCheck();
         },
@@ -117,9 +128,37 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Asked of the datasets rather than of the snapshot: neither snapshot query returns a `clones`
+   * property, whether or not it is requested, so a clone is only findable from its own side —
+   * as the dataset whose `origin` is this snapshot.
+   *
+   * Only for a user who is shown Delete at all, and only for the one property the filter reads:
+   * unfiltered by id, this walks every dataset, and it runs each time a row is opened.
+   */
+  private checkForClones(): void {
+    this.authService.hasRole(this.requiredRoles).pipe(
+      take(1),
+      filter(Boolean),
+      switchMap(() => this.api.query(
+        'pool.dataset.query',
+        [['origin.rawvalue', '=', this.snapshot().name]],
+        { select: ['id'], extra: { properties: ['origin'] } },
+      )),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (clones) => {
+        this.hasClones = clones.length > 0;
+        this.cdr.markForCheck();
+      },
+      error: (error: unknown) => console.error(error),
+    });
+  }
+
   private doHoldOrRelease(): void {
     const holdOrRelease = this.holdControl.value ? 'pool.snapshot.hold' : 'pool.snapshot.release';
-    this.api.call(holdOrRelease, [this.snapshotInfo.name])
+    // The row's own name, not `snapshotInfo`'s: the tick box is live before that query answers.
+    this.api.call(holdOrRelease, [this.snapshot().name])
       .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         error: (error: unknown) => {
