@@ -1,6 +1,6 @@
 <tn-card class="card" [padContent]="false">
   <div class="wrapper">
-    <h3>{{ name | translate }}</h3>
+    <h3 tnTestIdType="text" [tnTestId]="['cpu-temperature-recent', 'title']">{{ name | translate }}</h3>
     @if (isLoading()) {
       <ngx-skeleton-loader
         class="skeleton"

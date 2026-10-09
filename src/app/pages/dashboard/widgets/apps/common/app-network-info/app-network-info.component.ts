@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, computed, signal, effect, inject } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnTooltipDirective } from '@truenas/ui-components';
+import { TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import { ChartData } from 'chart.js';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -22,12 +22,15 @@ import { RateChartComponent } from 'app/pages/dashboard/widgets/network/common/r
     RateChartComponent,
     TranslateModule,
     NetworkSpeedPipe,
+    TnTestIdDirective,
   ],
 })
 export class AppNetworkInfoComponent {
   private theme = inject(ThemeService);
   private translate = inject(TranslateService);
 
+  /** The app's name: one app's stats can show in several widgets, and several apps' on one dashboard. */
+  testId = input.required<string>();
   stats = input.required<LoadingState<AppStats>>();
   aspectRatio = input<number>(3);
 

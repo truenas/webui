@@ -1,12 +1,12 @@
 <tn-card class="card" [padContent]="false">
   <div *ixWithLoadingState="app() as application" class="card-content">
     <div class="header">
-      <h3>{{ appName() }}</h3>
+      <h3 tnTestIdType="text" [tnTestId]="['app-memory', appName(), 'title']">{{ appName() }}</h3>
       <ix-app-controls [app]="app() | async"></ix-app-controls>
     </div>
 
     <div [class]="['container', size()]">
-      <ix-app-memory-info [stats]="stats() | async"></ix-app-memory-info>
+      <ix-app-memory-info [testId]="appName()" [stats]="stats() | async"></ix-app-memory-info>
     </div>
   </div>
 </tn-card>

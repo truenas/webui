@@ -2,7 +2,9 @@ import { Component, ChangeDetectionStrategy, input, computed, signal, inject } f
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent, TnIconButtonComponent, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnCardComponent, TnIconButtonComponent, TnIconComponent, TnTestIdDirective, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { ChartData } from 'chart.js';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -46,6 +48,7 @@ import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/w
     TranslateModule,
     NetworkSpeedPipe,
     WidgetStaleDataNoticeComponent,
+    TnTestIdDirective,
   ],
 })
 export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterfaceIpSettings> {

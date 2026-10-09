@@ -2,6 +2,7 @@
   <ix-widget-datapoint
     *ixWithLoadingState="systemInfo$ as systemInfo"
     [size]="size()"
+    [testId]="'system-uptime'"
     [label]="name | translate"
     [text]="uptime() | uptime: datetime()"
   ></ix-widget-datapoint>

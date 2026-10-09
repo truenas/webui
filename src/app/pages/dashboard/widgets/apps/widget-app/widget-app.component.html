@@ -18,21 +18,25 @@
       @if (stats$) {
         <ix-app-cpu-info
           class="square"
+          [testId]="appName()"
           [stats]="stats$ | async"
         ></ix-app-cpu-info>
 
         <ix-app-network-info
           class="rectangle"
+          [testId]="appName()"
           [stats]="stats$ | async"
         ></ix-app-network-info>
 
         <ix-app-memory-info
           class="square"
+          [testId]="appName()"
           [stats]="stats$ | async"
         ></ix-app-memory-info>
 
         <ix-app-disk-info
           class="rectangle"
+          [testId]="appName()"
           [stats]="stats$ | async"
         ></ix-app-disk-info>
       }

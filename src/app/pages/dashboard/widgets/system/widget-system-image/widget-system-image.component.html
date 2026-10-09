@@ -1,7 +1,7 @@
 <tn-card class="card" [padContent]="false">
   <div class="card-content">
     <div class="header">
-      <h3>{{ name | translate }}</h3>
+      <h3 tnTestIdType="text" [tnTestId]="['system-image', 'title']">{{ name | translate }}</h3>
     </div>
 
     <div [class]="['container', size()]">

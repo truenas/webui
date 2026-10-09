@@ -21,7 +21,11 @@
         @if (systemInfo()?.system_serial && isIxHardware()) {
           <div class="hostname">
             @if (isLoaded()) {
-              <span [tnTooltip]="'Hostname: {hostname}' | translate: { hostname: systemInfo()?.hostname }">
+              <span
+                tnTestIdType="text"
+                [tnTestId]="['system-info-active', 'hostname']"
+                [tnTooltip]="'Hostname: {hostname}' | translate: { hostname: systemInfo()?.hostname }"
+              >
                 {{ systemInfo()?.hostname }}
               </span>
             }
@@ -73,7 +77,7 @@
           <tn-list-item>
             <strong>{{ 'Platform' | translate }}:</strong>
             @if (isLoaded()) {
-              <span>
+              <span tnTestIdType="text" [tnTestId]="['system-info-active', 'platform']">
                 @if (systemInfo()?.platform && isIxHardware()) {
                   {{ systemInfo()?.platform }}
                 } @else {
@@ -88,7 +92,7 @@
           <tn-list-item>
             <strong>{{ 'Edition' | translate }}:</strong>
             @if (isLoaded()) {
-              <span>
+              <span tnTestIdType="text" [tnTestId]="['system-info-active', 'edition']">
                 @switch (productType()) {
                   @case (ProductType.Enterprise) {
                     {{ 'Enterprise' | translate }}
@@ -111,7 +115,7 @@
             @if (isLoaded()) {
               <div class="copy-version">
                 <div class="copy-version-text" [tnTooltip]="version()">
-                  <span>
+                  <span tnTestIdType="text" [tnTestId]="['system-info-active', 'version']">
                     {{ version() }}
                     {{ rendered() }}
                   </span>
@@ -153,7 +157,7 @@
           @if (systemInfo()?.system_serial && isIxHardware()) {
             <tn-list-item>
               <strong>{{ 'System Serial' | translate }}:</strong>
-              <span>
+              <span tnTestIdType="text" [tnTestId]="['system-info-active', 'system-serial']">
                 {{ systemInfo()?.system_serial }}
               </span>
             </tn-list-item>
@@ -161,7 +165,7 @@
             <tn-list-item>
               <strong>{{ 'Hostname' | translate }}:</strong>
               @if (isLoaded()) {
-                <span>
+                <span tnTestIdType="text" [tnTestId]="['system-info-active', 'hostname']">
                   {{ systemInfo()?.hostname }}
                 </span>
               } @else {
@@ -173,7 +177,7 @@
           <tn-list-item>
             <strong>{{ 'Uptime' | translate }}:</strong>
             @if (isLoaded()) {
-              <span>
+              <span tnTestIdType="text" [tnTestId]="['system-info-active', 'uptime']">
                 {{ uptime() | uptime: datetime() }}
               </span>
             } @else {

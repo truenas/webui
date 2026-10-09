@@ -1,6 +1,11 @@
 <div class="app-header">
-  <h3 *ixWithLoadingState="app() as app" class="name">{{ app.name }}</h3>
-  <div *ixWithLoadingState="app() as app" class="version">
+  <h3
+    *ixWithLoadingState="app() as app"
+    class="name"
+    tnTestIdType="text"
+    [tnTestId]="[app.name, 'app-name']"
+  >{{ app.name }}</h3>
+  <div *ixWithLoadingState="app() as app" class="version" tnTestIdType="text" [tnTestId]="[app.name, 'app-version']">
     {{ app.metadata?.app_version }}
   </div>
 </div>

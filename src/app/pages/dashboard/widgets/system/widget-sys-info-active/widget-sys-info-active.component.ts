@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker, TnButtonComponent, TnCardComponent, TnIconButtonComponent, TnIconComponent,
-  TnListComponent, TnListItemComponent, TnTooltipDirective,
+  TnListComponent, TnListItemComponent, TnTestIdDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, map } from 'rxjs';
@@ -50,6 +50,7 @@ import {
     TranslateModule,
     UptimePipe,
     UseEnterpriseMarketingLinkComponent,
+    TnTestIdDirective,
   ],
 })
 export class WidgetSysInfoActiveComponent {

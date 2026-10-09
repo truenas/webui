@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input, inject } from '@an
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import uniqBy from 'lodash-es/uniqBy';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
@@ -10,7 +10,7 @@ import { mapLoadedValue } from 'app/modules/loader/directives/with-loading-state
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
-import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
+import { SlotSize, WidgetType } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 import {
   WidgetInterfaceIpSettings,
@@ -39,6 +39,7 @@ interface CategorizedIpAddresses {
     WidgetDatapointComponent,
     TranslateModule,
     TnCardComponent,
+    TnTestIdDirective,
   ],
 })
 export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfaceIpSettings> {
@@ -60,6 +61,11 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
 
   protected interfaceType = computed(() => {
     return this.settings()?.widgetName?.includes('v6') ? NetworkInterfaceAliasType.Inet6 : NetworkInterfaceAliasType.Inet;
+  });
+
+  /** Test-id base: the IPv4 and IPv6 cards for one NIC can sit side by side. */
+  protected widgetType = computed(() => {
+    return this.interfaceType() === NetworkInterfaceAliasType.Inet6 ? WidgetType.Ipv6Address : WidgetType.Ipv4Address;
   });
 
   protected widgetName = computed(() => {

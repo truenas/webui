@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input, signal, inject } f
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TinyColor } from '@ctrl/tinycolor';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { ChartData, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -26,6 +26,7 @@ import { cpuTemperatureRecentWidget } from 'app/pages/dashboard/widgets/cpu/widg
     NgxSkeletonLoaderModule,
     BaseChartDirective,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class WidgetCpuTempRecentComponent implements WidgetComponent {

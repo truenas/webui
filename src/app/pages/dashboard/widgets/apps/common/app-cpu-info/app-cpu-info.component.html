@@ -1,4 +1,4 @@
-<h3 *ixWithLoadingState="stats() as stats">
+<h3 *ixWithLoadingState="stats() as stats" tnTestIdType="text" [tnTestId]="[testId(), 'cpu-usage']">
   <span>{{ stats.cpu_usage.toFixed(0) }}</span>
   <small>%</small>
 </h3>

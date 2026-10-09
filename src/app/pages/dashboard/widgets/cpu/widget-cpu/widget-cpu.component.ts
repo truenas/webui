@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnCardComponent, TnIconButtonComponent, TnListComponent, TnListItemComponent,
+  TnCardComponent, TnIconButtonComponent, TnListComponent, TnListItemComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { map } from 'rxjs/operators';
@@ -33,6 +33,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     NgxSkeletonLoaderModule,
     CpuCoreBarComponent,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class WidgetCpuComponent {

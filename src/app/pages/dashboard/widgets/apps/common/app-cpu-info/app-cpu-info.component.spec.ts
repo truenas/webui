@@ -14,6 +14,7 @@ describe('AppCpuInfoComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
+        testId: 'plex',
         stats: {
           isLoading: false,
           error: null,
@@ -28,6 +29,10 @@ describe('AppCpuInfoComponent', () => {
   it('checks value', () => {
     const value = spectator.query('h3 span');
     expect(value).toHaveText('12');
+  });
+
+  it('names the usage readout after the app', () => {
+    expect(spectator.query('h3')).toHaveAttribute('data-test', 'text-plex-cpu-usage');
   });
 
   it('checks unit', () => {

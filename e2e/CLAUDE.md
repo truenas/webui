@@ -244,6 +244,26 @@ Scope it by what tells the instances apart: a key the component already holds (`
 component renders one value. A component that appears once per page — a dialog, the page header,
 the jobs panel — takes a plain static id.
 
+**Dashboard widgets** are the hard case: any widget can be added more than once, into any group,
+and one generic presenter (`ix-widget-datapoint`) backs a dozen widget types. The rule there, decided
+once, is to key an id by **what the value is about, never by where it sits**:
+
+- A widget-level value takes the widget's `WidgetType` as its base: `text-cpu-model`,
+  `text-system-info-active-uptime`, `text-hostname-active-value`. `ix-widget-datapoint` has a
+  required `testId` input for exactly this; each widget passes its type.
+- A value about something the widget's settings pick — a pool, a NIC, an app — adds that entity:
+  `['interface', interface.name, 'link-state']`, `['ipv4-address', nic, 'title']`,
+  `[app.name, 'cpu-usage']`. A leaf several widget types share (`ix-pool-usage-gauge`,
+  `ix-app-cpu-info` and its siblings) is keyed by the entity alone, so the same value has one id
+  whichever widget renders it.
+- **Never a group index or slot number.** Reordering the dashboard would rename every id after the
+  move, and a suite would select a different widget without failing.
+
+The consequence is accepted on purpose: two copies of the same widget with the same settings — or
+the App card next to the App CPU card for the same app — render the same id. They also render the
+same value, read from the same store, so a suite takes `.first()` and is still right. A repeat is
+only a bug when the two elements can disagree; that is what the entity segment is there to prevent.
+
 When you do tag a readout, the convention is `tnTestIdType="text"` with the base named after the
 **label beside it**, not the expression behind it: a row labelled "Last Scrub Date" should emit
 `text-last-scrub-date`, because that is what a test author looks for. `pool().scan.end_time.$date`

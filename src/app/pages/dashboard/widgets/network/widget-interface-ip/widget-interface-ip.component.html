@@ -3,18 +3,30 @@
     <tn-card *ixWithLoadingState="ipAddressList() as ipList" class="card" [padContent]="false">
       <div class="card-content">
         <div class="header">
-          <h3>{{ widgetName() }}</h3>
+          <h3 tnTestIdType="text" [tnTestId]="[widgetType(), interfaceId(), 'title']">{{ widgetName() }}</h3>
 
           @if (description()) {
-            <div class="header-description">{{ description() }}</div>
+            <div
+              class="header-description"
+              tnTestIdType="text"
+              [tnTestId]="[widgetType(), interfaceId(), 'description']"
+            >{{ description() }}</div>
           }
         </div>
         <div class="ip-addresses" role="list" [attr.aria-label]="'Network addresses' | translate">
           @for (ipData of ipList; track ipData.address) {
             <div class="ip-line" role="listitem">
-              <span class="ip-address">{{ ipData.address }}</span>
+              <span
+                class="ip-address"
+                tnTestIdType="text"
+                [tnTestId]="[widgetType(), interfaceId(), ipData.address]"
+              >{{ ipData.address }}</span>
               @if (ipData.label) {
-                <span class="ip-label">{{ ipData.label }}</span>
+                <span
+                  class="ip-label"
+                  tnTestIdType="text"
+                  [tnTestId]="[widgetType(), interfaceId(), ipData.address, 'label']"
+                >{{ ipData.label }}</span>
               }
             </div>
           }
@@ -25,6 +37,7 @@
     <ix-widget-datapoint
       *ixWithLoadingState="ips() as ips"
       [size]="size()"
+      [testId]="[widgetType(), interfaceId()]"
       [label]="widgetName()"
       [description]="description()"
       [text]="ips"

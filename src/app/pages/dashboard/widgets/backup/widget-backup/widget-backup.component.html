@@ -2,7 +2,7 @@
   <div class="card-content">
     <div class="header">
       <div class="title">
-        <h3>{{ name | translate }}</h3>
+        <h3 tnTestIdType="text" [tnTestId]="['backup-tasks', 'title']">{{ name | translate }}</h3>
 
         @if (!!allCount) {
           <div class="status-container">
@@ -12,7 +12,7 @@
                 library="mdi"
                 class="icon warning"
               ></tn-icon>
-              <span>
+              <span tnTestIdType="text" [tnTestId]="['backup-tasks', 'failed']">
                 {{ '{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed' | translate : { failedCount, allCount } }}
               </span>
             } @else {

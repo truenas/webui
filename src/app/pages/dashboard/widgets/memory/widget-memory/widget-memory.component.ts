@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { TinyColor } from '@ctrl/tinycolor';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent, TnIconButtonComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnIconButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { ChartData, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -31,6 +31,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     TranslateModule,
     AsyncPipe,
     WidgetStaleDataNoticeComponent,
+    TnTestIdDirective,
   ],
 })
 export class WidgetMemoryComponent {

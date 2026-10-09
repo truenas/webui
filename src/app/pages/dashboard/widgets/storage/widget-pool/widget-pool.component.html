@@ -2,7 +2,7 @@
   <tn-card class="card" [padContent]="false">
     <div class="card-content">
       <div class="header">
-        <h3>{{ name | translate }}</h3>
+        <h3 tnTestIdType="text" [tnTestId]="['pool', pool()?.name, 'title']">{{ name | translate }}</h3>
 
         <tn-icon-button
           name="chart-box"
@@ -33,6 +33,7 @@
 @if (!poolExists) {
   <ix-widget-datapoint
     [size]="size()"
+    [testId]="'pool'"
     [label]="name | translate"
     [text]="'Pool does not exist' | translate"
   ></ix-widget-datapoint>

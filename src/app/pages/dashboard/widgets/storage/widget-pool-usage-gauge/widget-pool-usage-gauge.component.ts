@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, inject } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, switchMap, tap } from 'rxjs';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -23,6 +23,7 @@ import { poolUsageGaugeWidget } from 'app/pages/dashboard/widgets/storage/widget
     PoolUsageGaugeComponent,
     WidgetDatapointComponent,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class WidgetPoolUsageGaugeComponent implements WidgetComponent {

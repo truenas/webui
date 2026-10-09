@@ -21,6 +21,7 @@
 @if (!poolExists) {
   <ix-widget-datapoint
     [size]="size()"
+    [testId]="'pool-disk-with-zfs-errors'"
     [label]="name | translate"
     [text]="'Pool does not exist' | translate"
   ></ix-widget-datapoint>

@@ -3,7 +3,7 @@
     <div class="card-content">
       @if (size() === SlotSize.Full) {
         <div class="header">
-          <h3>{{ name | translate }}</h3>
+          <h3 tnTestIdType="text" [tnTestId]="['pool-usage-gauge', pool()?.name, 'title']">{{ name | translate }}</h3>
         </div>
       } @else {
         <div class="header">
@@ -24,7 +24,11 @@
         ></ix-pool-usage-gauge>
 
         @if (size() === SlotSize.Quarter) {
-          <h6 class="divider-label">{{ name | translate }}</h6>
+          <h6
+            class="divider-label"
+            tnTestIdType="text"
+            [tnTestId]="['pool-usage-gauge', pool()?.name, 'title']"
+          >{{ name | translate }}</h6>
         }
       </div>
     </div>
@@ -34,6 +38,7 @@
 @if (!poolExists) {
   <ix-widget-datapoint
     [size]="size()"
+    [testId]="'pool-usage-gauge'"
     [label]="name | translate"
     [text]="'Pool does not exist' | translate"
   ></ix-widget-datapoint>

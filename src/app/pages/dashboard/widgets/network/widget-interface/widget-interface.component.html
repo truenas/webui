@@ -20,9 +20,18 @@
       @if (isStale()) {
         <div class="nic-info">
           <div class="info-header">
-            <h3 class="info-header-title">{{ interface.name }}</h3>
+            <h3
+              class="info-header-title"
+              tnTestIdType="text"
+              [tnTestId]="['interface', interface.name, 'name']"
+            >{{ interface.name }}</h3>
             @if (interface.description) {
-              <div class="info-header-description" [tnTooltip]="interface.description">{{ interface.description }}</div>
+              <div
+                class="info-header-description"
+                tnTestIdType="text"
+                [tnTestId]="['interface', interface.name, 'description']"
+                [tnTooltip]="interface.description"
+              >{{ interface.description }}</div>
             }
           </div>
         </div>
@@ -30,9 +39,18 @@
       } @else {
         <div class="nic-info">
         <div class="info-header">
-          <h3 class="info-header-title">{{ interface.name }}</h3>
+          <h3
+            class="info-header-title"
+            tnTestIdType="text"
+            [tnTestId]="['interface', interface.name, 'name']"
+          >{{ interface.name }}</h3>
           @if (interface.description) {
-            <div class="info-header-description" [tnTooltip]="interface.description">{{ interface.description }}</div>
+            <div
+              class="info-header-description"
+              tnTestIdType="text"
+              [tnTestId]="['interface', interface.name, 'description']"
+              [tnTooltip]="interface.description"
+            >{{ interface.description }}</div>
           }
         </div>
         <div class="info-body">
@@ -48,7 +66,10 @@
                     <tn-icon name="close" library="mdi" size="sm" [tnTooltip]="linkStateLabel()"></tn-icon>
                   </span>
                 }
-                <span>{{ linkStateLabel() }}</span>
+                <span
+                  tnTestIdType="text"
+                  [tnTestId]="['interface', interface.name, 'link-state']"
+                >{{ linkStateLabel() }}</span>
               </div>
             } @else {
               <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
@@ -63,7 +84,10 @@
                 @if (!isLoading()) {
                   <div class="info-list-item in">
                     <span>{{ 'In' | translate }}:</span>
-                    <span>{{ bitsIn() | ixNetworkSpeed }}</span>
+                    <span
+                      tnTestIdType="text"
+                      [tnTestId]="['interface', interface.name, 'in']"
+                    >{{ bitsIn() | ixNetworkSpeed }}</span>
                   </div>
                 } @else {
                   <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
@@ -71,7 +95,10 @@
                 @if (!isLoading()) {
                   <div class="info-list-item out">
                     <span>{{ 'Out' | translate }}:</span>
-                    <span>{{ bitsOut() | ixNetworkSpeed }}</span>
+                    <span
+                      tnTestIdType="text"
+                      [tnTestId]="['interface', interface.name, 'out']"
+                    >{{ bitsOut() | ixNetworkSpeed }}</span>
                   </div>
                 } @else {
                   <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
@@ -84,7 +111,10 @@
               @if (!isLoading()) {
                 <div class="info-list-item">
                   <span>{{ 'Media Type' | translate }}:</span>
-                  <span>{{ interface.state.active_media_type }}</span>
+                  <span
+                    tnTestIdType="text"
+                    [tnTestId]="['interface', interface.name, 'media-type']"
+                  >{{ interface.state.active_media_type }}</span>
                 </div>
               } @else {
                 <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
@@ -92,7 +122,10 @@
               @if (!isLoading()) {
                 <div class="info-list-item">
                   <span>{{ 'Media Subtype' | translate }}:</span>
-                  <span>{{ interface.state.active_media_subtype }}</span>
+                  <span
+                    tnTestIdType="text"
+                    [tnTestId]="['interface', interface.name, 'media-subtype']"
+                  >{{ interface.state.active_media_subtype }}</span>
                 </div>
               } @else {
                 <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
@@ -100,7 +133,10 @@
               @if (!isLoading()) {
                 <div class="info-list-item">
                   <span>{{ 'IP' | translate }}:</span>
-                  <span>{{ getIpAddress(interface) }}</span>
+                  <span
+                    tnTestIdType="text"
+                    [tnTestId]="['interface', interface.name, 'ip']"
+                  >{{ getIpAddress(interface) }}</span>
                 </div>
               } @else {
                 <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
