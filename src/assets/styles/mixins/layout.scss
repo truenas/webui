@@ -63,11 +63,12 @@ $scrollbar-offset: 20px;
       max-width: $singlecolumn-max-width;
     }
 
-    // Two Cards Columns. This is as wide as the details panel ever gets: the cards hold
-    // short label/value rows, so past two slim columns they only get emptier. Every extra
-    // pixel goes to the master table instead.
+    // Two Cards Columns, growing to half the row on wide screens. Two slim columns is the
+    // floor; past the point where the master table would take more than half the row, the
+    // panel takes the other half and its cards flow into extra columns. Capping it at two
+    // columns outright left an ultrawide screen with a 2400px tree beside a 750px panel.
     @media (min-width: $breakpoint-dualcolumn-slim) {
-      max-width: ($dualcolumn-slim-max-width + $scrollbar-offset);
+      max-width: max(#{$dualcolumn-slim-max-width + $scrollbar-offset}, 50%);
     }
   }
 
@@ -267,10 +268,11 @@ $scrollbar-offset: 20px;
       min-width: calc($table-min-width + 0px);
     }
 
-    // Two Cards Slim Columns. The details panel stops growing here, so the table takes
-    // the whole remainder no matter how wide the screen gets.
+    // Two Cards Slim Columns. The table takes what the two-column details panel leaves,
+    // but never more than half the row: on wide screens the details panel gets the other
+    // half (see .details-container above) instead of the table stretching on its own.
     @media (min-width: $breakpoint-dualcolumn-slim) {
-      max-width: calc(100% - $dualcolumn-slim-max-width - 16px - $scrollbar-offset);
+      max-width: min(calc(100% - #{$dualcolumn-slim-max-width} - 16px - #{$scrollbar-offset}), 50%);
       min-width: calc($table-min-width + 0px);
     }
   }
