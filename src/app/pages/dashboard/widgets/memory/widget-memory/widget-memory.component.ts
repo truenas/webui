@@ -62,16 +62,19 @@ export class WidgetMemoryComponent {
 
     return [
       {
+        key: 'free',
         name: this.translate.instant('Free'),
         color: colors[0],
         value: memory?.physical_memory_available || 0,
       },
       {
+        key: 'zfs-cache',
         name: this.translate.instant('ZFS Cache'),
         color: colors[1],
         value: memory?.arc_size || 0,
       },
       {
+        key: 'services',
         name: this.translate.instant('Services'),
         color: colors[2],
         value: services,

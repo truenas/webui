@@ -246,7 +246,7 @@ the jobs panel — takes a plain static id.
 
 **Dashboard widgets** are the hard case: any widget can be added more than once, into any group,
 and one generic presenter (`ix-widget-datapoint`) backs a dozen widget types. The rule there, decided
-once, is to key an id by **what the value is about, never by where it sits**:
+once (NAS-143980), is to key an id by **what the value is about, never by where it sits**:
 
 - A widget-level value takes the widget's `WidgetType` as its base: `text-cpu-model`,
   `text-system-info-active-uptime`, `text-hostname-active-value`. `ix-widget-datapoint` has a
@@ -256,6 +256,10 @@ once, is to key an id by **what the value is about, never by where it sits**:
   `[app.name, 'cpu-usage']`. A leaf several widget types share (`ix-pool-usage-gauge`,
   `ix-app-cpu-info` and its siblings) is keyed by the entity alone, so the same value has one id
   whichever widget renders it.
+- **Never a translated string.** A key built from `translate.instant(...)` — the memory legend's
+  `Free`, a backup tile's `Cloud Sync` — renames itself with the UI language, and in a non-Latin
+  locale kebab-cases to nothing, collapsing every row onto one id. Key by an untranslated value
+  instead (`legendItem.key`, `tile.type`).
 - **Never a group index or slot number.** Reordering the dashboard would rename every id after the
   move, and a suite would select a different widget without failing.
 

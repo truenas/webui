@@ -5,7 +5,7 @@
         <h4
           class="title"
           tnTestIdType="text"
-          [tnTestId]="['backup-tasks', tile.title, 'title']"
+          [tnTestId]="['backup-tasks', tile.type, 'title']"
         >{{ tile.title | translate }}</h4>
         @if (showBackupActions()) {
           <div class="backup-actions">
@@ -21,7 +21,7 @@
           <span [class]="['icon', tile.failedSend ? 'warn' : 'safe']">
             <tn-icon library="mdi" size="sm" [name]="tile.failedSend ? 'alert' : 'check-circle'"></tn-icon>
           </span>
-          <span class="label" tnTestIdType="text" [tnTestId]="['backup-tasks', tile.title, 'send-tasks']">
+          <span class="label" tnTestIdType="text" [tnTestId]="['backup-tasks', tile.type, 'send-tasks']">
             {{ '{tasks, plural, =1 {# send task} other {# send tasks} }' | translate : { tasks: tile.totalSend } }}
           </span>
         </li>
@@ -29,7 +29,7 @@
           <span [class]="['icon', tile.failedReceive ? 'warn' : 'safe']">
             <tn-icon library="mdi" size="sm" [name]="tile.failedReceive ? 'alert' : 'check-circle'"></tn-icon>
           </span>
-          <span class="label" tnTestIdType="text" [tnTestId]="['backup-tasks', tile.title, 'receive-tasks']">
+          <span class="label" tnTestIdType="text" [tnTestId]="['backup-tasks', tile.type, 'receive-tasks']">
             {{ '{tasks, plural, =1 {# receive task} other {# receive tasks} }' | translate : { tasks: tile.totalReceive } }}
           </span>
         </li>
@@ -37,7 +37,7 @@
           <span [class]="['icon', tile.failedSend + tile.failedReceive ? 'warn' : 'safe']">
             <tn-icon library="mdi" size="sm" [name]="tile.failedSend + tile.failedReceive ? 'alert' : 'check-circle'"></tn-icon>
           </span>
-          <span class="label" tnTestIdType="text" [tnTestId]="['backup-tasks', tile.title, 'total-failed']">
+          <span class="label" tnTestIdType="text" [tnTestId]="['backup-tasks', tile.type, 'total-failed']">
             {{ 'Total failed' | translate }}: {{ tile.failedSend + tile.failedReceive }}
           </span>
         </li>
@@ -48,7 +48,7 @@
       <ul class="activity">
         <li>
           @if (tile.lastWeekSend) {
-            <span class="label" tnTestIdType="text" [tnTestId]="['backup-tasks', tile.title, 'sent-this-week']">
+            <span class="label" tnTestIdType="text" [tnTestId]="['backup-tasks', tile.type, 'sent-this-week']">
               {{ '{tasks, plural, =1 {# sent task} other {# sent tasks}} this week' | translate : { tasks: tile.lastWeekSend } }}
             </span>
           } @else {
@@ -57,7 +57,7 @@
         </li>
         <li>
           @if (tile.lastWeekReceive) {
-            <span class="label" tnTestIdType="text" [tnTestId]="['backup-tasks', tile.title, 'received-this-week']">
+            <span class="label" tnTestIdType="text" [tnTestId]="['backup-tasks', tile.type, 'received-this-week']">
               {{ '{tasks, plural, =1 {# received task} other {# received tasks}} this week' | translate : { tasks: tile.lastWeekReceive } }}
           </span>
           } @else {
@@ -65,7 +65,7 @@
           }
         </li>
         <li>
-          <span class="label" tnTestIdType="text" [tnTestId]="['backup-tasks', tile.title, 'last-successful']">
+          <span class="label" tnTestIdType="text" [tnTestId]="['backup-tasks', tile.type, 'last-successful']">
             {{ 'Last successful' | translate }}:
             {{ tile.lastSuccessfulTask ? (tile.lastSuccessfulTask.$date | formatDateTime) : ('Never' | translate) }}
           </span>
