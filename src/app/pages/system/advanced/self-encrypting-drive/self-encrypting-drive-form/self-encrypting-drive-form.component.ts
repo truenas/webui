@@ -89,7 +89,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isFormLoading.set(false);
+    this.loadSavedPassword();
   }
 
   onSubmit(): void {
@@ -104,6 +104,22 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.slideInRef.close({ response: true });
         this.store$.dispatch(advancedConfigUpdated());
+      },
+      error: (error: unknown) => {
+        this.isFormLoading.set(false);
+        this.errorHandler.showErrorModal(error);
+      },
+    });
+  }
+
+  // Pre-fill the saved global password, matching the per-disk SED password dialog,
+  // so users can reveal it to confirm what will be used to unlock their disks.
+  private loadSavedPassword(): void {
+    this.isFormLoading.set(true);
+    this.api.call('system.advanced.sed_global_password').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (password) => {
+        this.form.patchValue({ sed_passwd: password, sed_passwd2: password });
+        this.isFormLoading.set(false);
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);
