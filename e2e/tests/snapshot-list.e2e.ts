@@ -11,7 +11,7 @@ import {
   ensureSnapshotPresent, ensureSnapshotsAbsent, findSnapshot, isSnapshotHeld, snapshotId,
 } from '../fixtures/snapshots';
 import { ensureDatasetAbsent, ensureDatasetPresent, findDataset } from '../fixtures/storage';
-import { expandSnapshot, openSnapshotList } from '../flows/snapshots';
+import { actionTimeoutMs, expandSnapshot, openSnapshotList } from '../flows/snapshots';
 import { confirmDestructiveAction } from '../flows/storage';
 import { confirmDialogLocators } from '../locators/dialogs';
 import { snapshotLocators } from '../locators/snapshots';
@@ -113,7 +113,7 @@ test('cloning a snapshot makes a new dataset from it', async ({ page, api, pool 
   await page.locator(dialog.datasetName).fill(clone);
   await page.locator(dialog.submit).click();
 
-  await expect(page.locator(dialog.goToDatasets)).toBeVisible({ timeout: 60_000 });
+  await expect(page.locator(dialog.goToDatasets)).toBeVisible({ timeout: actionTimeoutMs });
   await page.locator(dialog.close).click();
   await expect(page.locator(dialog.title)).toBeHidden();
 

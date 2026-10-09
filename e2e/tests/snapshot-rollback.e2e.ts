@@ -15,9 +15,13 @@ import {
   directoryExists, ensureDirectoryPresent, ensureSnapshotPresent, ensureSnapshotsAbsent, findSnapshot,
 } from '../fixtures/snapshots';
 import { datasetMountPath, ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
-import { closeRollbackDialogAfterSuccess, confirmAndSubmitRollback, openRollbackDialog } from '../flows/snapshots';
+import {
+  actionTimeoutMs, closeRollbackDialogAfterSuccess, confirmAndSubmitRollback, openRollbackDialog,
+} from '../flows/snapshots';
+import { errorDialogLocators } from '../locators/dialogs';
 import { snapshotLocators } from '../locators/snapshots';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
+import { errorDialogClose } from '../support/constants';
 import { expect, test } from '../support/fixtures';
 
 const datasetName = 'e2e_snap_rollback';
@@ -81,8 +85,8 @@ test('a rollback is refused while a newer snapshot would be lost', async ({ page
 
   // Refused in a dialog of its own, over a rollback dialog that stays open for
   // another try.
-  await expect(page.locator(snapshotLocators.errorDialog.title)).toBeVisible({ timeout: 60_000 });
-  await page.locator(snapshotLocators.errorDialog.close).click();
+  await expect(page.locator(errorDialogLocators.title)).toBeVisible({ timeout: actionTimeoutMs });
+  await page.locator(errorDialogClose).click();
   await expect(page.locator(snapshotLocators.rollbackDialog.submit)).toBeVisible();
 
   // And nothing happened — which the error alone does not establish. A

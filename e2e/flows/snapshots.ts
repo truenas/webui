@@ -13,7 +13,7 @@ import { datasetLocators } from '../locators/storage';
 const pageSettleTimeoutMs = 60_000;
 
 /** A snapshot, rollback or clone is one middleware call, but not a quick one. */
-const actionTimeoutMs = 60_000;
+export const actionTimeoutMs = 60_000;
 
 /** Selects a dataset in the tree, and waits for its Data Protection card. */
 async function openDataset(page: Page, dataset: string): Promise<void> {
@@ -58,9 +58,10 @@ export async function openSnapshotList(page: Page, dataset: string): Promise<voi
  * Expands a snapshot's row, which is where its actions are.
  *
  * Waits for the creation date rather than for a button. The row looks its
- * snapshot up when it opens, and Hold and the three buttons render before that
- * answer arrives: a click that lands in between acts on a row that does not yet
- * know whether the snapshot is held or has a clone.
+ * snapshot up when it opens, and the three buttons render before that answer
+ * arrives — as does Hold, disabled until then. Whether the snapshot has a clone
+ * is a second lookup this does not wait on; a caller asserting on Delete's
+ * state relies on the assertion's own retry.
  */
 export async function expandSnapshot(page: Page, dataset: string, name: string): Promise<void> {
   const cell = page.locator(snapshotLocators.list.nameCell(dataset, name));

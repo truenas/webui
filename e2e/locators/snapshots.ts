@@ -109,10 +109,4 @@ export const snapshotLocators = {
     goToDatasets: '[data-test="button-go-to-datasets"]',
     close: '[data-test="button-close"]',
   },
-
-  /** The app's error dialog, which is where a refused rollback is reported. */
-  errorDialog: {
-    title: '[data-test="dialog-title-error"]',
-    close: '[data-test="button-close-error-dialog"]',
-  },
 } as const;

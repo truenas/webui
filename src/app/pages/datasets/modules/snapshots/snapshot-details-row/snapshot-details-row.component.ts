@@ -9,11 +9,12 @@ import {
 import { isEmpty } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  map,
+  filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { toZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -48,6 +49,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private api = inject(TypedApiService);
+  private authService = inject(AuthService);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
@@ -59,7 +61,11 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
 
   isLoading = true;
   snapshotInfo: ZfsSnapshot | undefined;
-  holdControl = new FormControl(false);
+  /**
+   * Disabled until the row knows whether the snapshot is held: a tick before then would be made
+   * against a guess, and would be overwritten when the answer arrived.
+   */
+  holdControl = new FormControl({ value: false, disabled: true });
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
 
@@ -110,6 +116,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
         next: (snapshot) => {
           this.snapshotInfo = snapshot;
           this.holdControl.setValue(!isEmpty(snapshot.holds), { emitEvent: false });
+          this.holdControl.enable({ emitEvent: false });
           this.isLoading = false;
           this.cdr.markForCheck();
         },
@@ -125,17 +132,27 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
    * Asked of the datasets rather than of the snapshot: neither snapshot query returns a `clones`
    * property, whether or not it is requested, so a clone is only findable from its own side —
    * as the dataset whose `origin` is this snapshot.
+   *
+   * Only for a user who is shown Delete at all, and only for the one property the filter reads:
+   * unfiltered by id, this walks every dataset, and it runs each time a row is opened.
    */
   private checkForClones(): void {
-    this.api.query('pool.dataset.query', [['origin.rawvalue', '=', this.snapshot().name]], { select: ['id'] })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (clones) => {
-          this.hasClones = clones.length > 0;
-          this.cdr.markForCheck();
-        },
-        error: (error: unknown) => console.error(error),
-      });
+    this.authService.hasRole(this.requiredRoles).pipe(
+      take(1),
+      filter(Boolean),
+      switchMap(() => this.api.query(
+        'pool.dataset.query',
+        [['origin.rawvalue', '=', this.snapshot().name]],
+        { select: ['id'], extra: { properties: ['origin'] } },
+      )),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (clones) => {
+        this.hasClones = clones.length > 0;
+        this.cdr.markForCheck();
+      },
+      error: (error: unknown) => console.error(error),
+    });
   }
 
   private doHoldOrRelease(): void {

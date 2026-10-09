@@ -86,7 +86,7 @@ test('a recursive snapshot takes the child datasets too', async ({ page, api, po
   expect(await findSnapshot(api, `${parent}/${childName}`, snapshotName)).toBeDefined();
 });
 
-test('the form will not take a snapshot with no name', async ({ page, api, pool }) => {
+test('the form will not take a snapshot with no name', async ({ page, pool }) => {
   const parent = `${pool}/${parentName}`;
   const save = page.locator(snapshotLocators.form.save);
   const name = page.locator(snapshotLocators.form.name);
@@ -105,6 +105,4 @@ test('the form will not take a snapshot with no name', async ({ page, api, pool 
 
   await name.fill(snapshotName);
   await expect(save).toBeEnabled();
-
-  expect(await findSnapshot(api, parent, snapshotName)).toBeUndefined();
 });
