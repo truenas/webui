@@ -28,8 +28,6 @@ export interface ApiJobDirectory {
   'boot.replace': { params: [oldDisk: string, newDisk: string]; response: void };
   'boot.scrub': { params: void; response: void };
 
-  // Certificate
-
   // CloudBackup
   'cloud_backup.sync': { params: [id: number, params?: { dry_run: boolean }]; response: void };
 
@@ -42,8 +40,6 @@ export interface ApiJobDirectory {
   // Core
   'core.bulk': { params: CoreBulkQuery; response: CoreBulkResponse[] };
 
-  // Disk
-
   // Failover
   'failover.events.vrrp_master': { params: void; response: void };
   'failover.upgrade': { params: [FailoverUpgradeParams]; response: boolean };
@@ -54,8 +50,6 @@ export interface ApiJobDirectory {
 
   // IPMI
   'ipmi.sel.clear': { params: void; response: void };
-
-  // KMIP
 
   // Mail
   'mail.send': { params: [SendMailParams, MailConfigUpdate]; response: boolean };
@@ -74,8 +68,6 @@ export interface ApiJobDirectory {
 
   // Rsync
   'rsynctask.run': { params: [id: number]; response: null };
-
-  // Service
 
   // Support
   'support.attach_ticket': { params: AttachTicketParams; response: Job };

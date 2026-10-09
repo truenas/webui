@@ -114,8 +114,6 @@ import {
  * For events from `subscribed` see ApiEventDirectory.
  */
 export interface ApiCallDirectory {
-  // Acme DNS
-
   // Alert
   'alert.list_categories': { params: void; response: AlertCategory[] };
   'alert.list_policies': { params: void; response: AlertPolicy[] };
@@ -163,8 +161,6 @@ export interface ApiCallDirectory {
   'boot.environment.clone': { params: BootenvCloneParams; response: unknown };
   'boot.environment.keep': { params: BootenvKeepParams; response: unknown };
 
-  // Certificate
-
   // CloudBackup
   'cloud_backup.query': { params: [id?: QueryParams<CloudBackup>]; response: CloudBackup[] };
 
@@ -196,8 +192,6 @@ export interface ApiCallDirectory {
   'cronjob.run': { params: [id: number]; response: void };
   'cronjob.update': { params: [id: number, update: Partial<CronjobUpdate>]; response: Cronjob };
 
-  // Directory Services
-
   // LDAP
   'ldap.config': { params: void; response: LdapConfig };
   'ldap.ssl_choices': { params: void; response: string[] };
@@ -220,14 +214,6 @@ export interface ApiCallDirectory {
   'failover.sync_from_peer': { params: void; response: void };
   'failover.sync_to_peer': { params: [{ reboot?: boolean }]; response: void };
   'failover.update': { params: [Partial<FailoverUpdate>]; response: FailoverConfig };
-
-  // Fibre Channel Host
-
-  // Fibre Channel Port
-
-  // Filesystem
-
-  // Group
 
   // Initshutdownscript
   'initshutdownscript.create': { params: [CreateInitShutdownScript]; response: InitShutdownScript };
@@ -267,8 +253,6 @@ export interface ApiCallDirectory {
   'ipmi.sel.elist': { params: void; response: IpmiEvent[] };
   'ipmi.lan.update': { params: [id: number, update: IpmiUpdate]; response: Ipmi };
 
-  // iSCSI
-
   // Jbof
   'jbof.licensed': { params: void; response: number };
   'jbof.query': { params: [QueryParams<Jbof>]; response: Jbof[] };
@@ -289,8 +273,6 @@ export interface ApiCallDirectory {
   'keychaincredential.update': { params: [id: number, credential: Partial<KeychainCredentialUpdate>]; response: KeychainCredential };
   'keychaincredential.used_by': { params: [id: number]; response: KeychainCredentialUsedBy[] };
 
-  // KMIP
-
   // Docker
   'docker.status': { params: void; response: DockerStatusData };
 
@@ -308,9 +290,6 @@ export interface ApiCallDirectory {
   // NFS
   'nfs.add_principal': { params: [AddNfsPrincipal]; response: boolean };
 
-  // NVMe-oF
-
-
   // Pool
   'pool.dataset.export_keys_for_replication': { params: [id: number]; response: unknown };
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
@@ -321,8 +300,6 @@ export interface ApiCallDirectory {
   // Privilege
   'privilege.query': { params: QueryParams<Privilege>; response: Privilege[] };
 
-  // RDMA
-
   // Replication
   'replication.config.config': { params: void; response: ReplicationConfig };
   'replication.config.update': { params: [Partial<ReplicationConfigUpdate>]; response: ReplicationConfig };
@@ -331,12 +308,6 @@ export interface ApiCallDirectory {
 
   // Rsynctask
   'rsynctask.query': { params: QueryParams<RsyncTask>; response: RsyncTask[] };
-
-  // S3
-
-  // Sharing
-
-  // SMB
 
   // Static route
   'staticroute.create': { params: [UpdateStaticRoute]; response: StaticRoute };
@@ -409,17 +380,8 @@ export interface ApiCallDirectory {
 
   'system.advanced.get_gpu_pci_choices': { params: void; response: GpuPciChoices };
 
-  // Vmware
-
-  // WebUI main
   // TODO: Incorrect response definition here or for system.info.
   'webui.main.dashboard.sys_info': { params: void; response: SystemInfo };
-
-  // WebUI Crypto
-
-  // ZFS
-
-  // ZPool
 
   // ZFS Tier
   'zfs.tier.rewrite_job_status': { params: [{ tier_job_id: string }]; response: ZfsTierRewriteJobEntry };

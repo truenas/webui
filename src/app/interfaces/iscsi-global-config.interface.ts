@@ -1,4 +1,3 @@
-
 export interface IscsiGlobalSession {
   initiator: string;
   initiator_addr: string;
