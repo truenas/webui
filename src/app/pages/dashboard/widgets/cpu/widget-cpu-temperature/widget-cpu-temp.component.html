@@ -1,6 +1,7 @@
 <ix-widget-datapoint
   *ixWithLoadingState="cpuTemp$ as cpuTemp"
   [size]="size()"
+  [testId]="'cpu-temp-widget'"
   [label]="name | translate"
   [text]="cpuTemp"
 ></ix-widget-datapoint>

@@ -106,9 +106,9 @@ describe('WidgetMemoryComponent', () => {
 
     const stats = spectator.queryAll('.stats-item');
     expect(stats).toHaveLength(3);
-    expect(stats[0]).toHaveText('Free: 9.0 GiB');
-    expect(stats[1]).toHaveText('ZFS Cache: 0.2 GiB');
-    expect(stats[2]).toHaveText('Services: 6.8 GiB');
+    expect(stats[0]).toHaveText('Free:9.0 GiB');
+    expect(stats[1]).toHaveText('ZFS Cache:0.2 GiB');
+    expect(stats[2]).toHaveText('Services:6.8 GiB');
   });
 
   it('shows a chart with memory stats', () => {

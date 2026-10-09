@@ -14,6 +14,7 @@ describe('AppMemoryInfoComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
+        testId: 'plex',
         stats: {
           isLoading: false,
           error: null,

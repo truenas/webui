@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input,
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent, TnIconButtonComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnIconButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import {
   combineLatest, filter, switchMap, tap,
 } from 'rxjs';
@@ -30,6 +30,7 @@ import { PoolUsageGaugeComponent } from './common/pool-usage-gauge/pool-usage-ga
     LastScanErrorsComponent,
     WidgetDatapointComponent,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class WidgetPoolComponent implements WidgetComponent {

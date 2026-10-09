@@ -1,6 +1,7 @@
 <ix-widget-datapoint
   *ixWithLoadingState="systemInfo$ as systemInfo"
   [size]="size()"
+  [testId]="'serial-passive'"
   [label]="name | translate"
   [text]="systemInfo.remote_info.system_serial"
 ></ix-widget-datapoint>

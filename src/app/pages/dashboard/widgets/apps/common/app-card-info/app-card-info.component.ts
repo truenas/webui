@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -15,6 +16,7 @@ import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps
     WithLoadingStateDirective,
     AppStateCellComponent,
     AppUpdateCellComponent,
+    TnTestIdDirective,
   ],
 })
 export class AppCardInfoComponent {

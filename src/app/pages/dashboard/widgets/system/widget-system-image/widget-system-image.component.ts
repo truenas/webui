@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { filter, map } from 'rxjs';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
@@ -24,6 +24,7 @@ import { selectHasEnclosureSupport, selectIsEnterprise, selectIsIxHardware } fro
     TnCardComponent,
     ProductImageComponent,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class WidgetSystemImageComponent implements WidgetComponent {

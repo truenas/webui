@@ -2,6 +2,7 @@ import { PercentPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { formatDuration } from 'date-fns';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, switchMap } from 'rxjs';
@@ -35,6 +36,7 @@ import { StorageService } from 'app/services/storage.service';
     FileSizePipe,
     PercentPipe,
     WidgetStaleDataNoticeComponent,
+    TnTestIdDirective,
   ],
 })
 export class PoolUsageGaugeComponent {

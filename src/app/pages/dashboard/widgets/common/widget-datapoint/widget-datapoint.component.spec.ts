@@ -20,7 +20,7 @@ describe('WidgetDatapointComponent', () => {
     subText?: string;
     description?: string;
   }): void {
-    spectator = createComponent({ props });
+    spectator = createComponent({ props: { testId: 'hostname-active', ...props } });
   }
 
   describe('when size is full', () => {
@@ -41,6 +41,11 @@ describe('WidgetDatapointComponent', () => {
 
     it(`it has sub text '${subText}'`, () => {
       expect(spectator.query('.container .sub-text')).toHaveText(subText);
+    });
+
+    it('scopes each readout id by the testId the widget passes', () => {
+      expect(spectator.query('.header h3')).toHaveAttribute('data-test', 'text-hostname-active-title');
+      expect(spectator.query('.container .sub-text')).toHaveAttribute('data-test', 'text-hostname-active-sub-text');
     });
 
     it('has no description line when no description is provided', () => {

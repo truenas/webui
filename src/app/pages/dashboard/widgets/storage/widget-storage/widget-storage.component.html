@@ -31,6 +31,8 @@
                   <h4 class="tile-header-title">
                     <span
                       tnTooltipPosition="above"
+                      tnTestIdType="text"
+                      [tnTestId]="['storage', poolInfo.name, 'name']"
                       [tnTooltip]="poolInfo.name"
                     >
                       {{ poolInfo.name }}
@@ -43,22 +45,49 @@
                       <span [class]="['icon', poolInfo.status.level]">
                         <tn-icon size="sm" [name]="poolInfo.status.icon"></tn-icon>
                       </span>
-                      <span class="label"> {{ poolInfo.status.label }}: </span>
-                      <span class="value" [tnTooltip]="poolInfo.status.value"> {{ poolInfo.status.value }} </span>
+                      <span
+                        class="label"
+                        tnTestIdType="text"
+                        [tnTestId]="['storage', poolInfo.name, 'status-label']"
+                      > {{ poolInfo.status.label }}: </span>
+                      <span
+                        class="value"
+                        tnTestIdType="text"
+                        [tnTestId]="['storage', poolInfo.name, 'status']"
+                        [tnTooltip]="poolInfo.status.value"
+                      > {{ poolInfo.status.value }} </span>
                     </li>
                     <li>
                       <span [class]="['icon', poolInfo.usedSpace.level]">
                         <tn-icon size="sm" [name]="poolInfo.usedSpace.icon"></tn-icon>
                       </span>
-                      <span class="label">{{ poolInfo.usedSpace.label }}:</span>
-                      <span class="value" [tnTooltip]="poolInfo.usedSpace.value">{{ poolInfo.usedSpace.value }}</span>
+                      <span
+                        class="label"
+                        tnTestIdType="text"
+                        [tnTestId]="['storage', poolInfo.name, 'used-space-label']"
+                      >{{ poolInfo.usedSpace.label }}:</span>
+                      <span
+                        class="value"
+                        tnTestIdType="text"
+                        [tnTestId]="['storage', poolInfo.name, 'used-space']"
+                        [tnTooltip]="poolInfo.usedSpace.value"
+                      >{{ poolInfo.usedSpace.value }}</span>
                     </li>
                     <li>
                       <span [class]="['icon', poolInfo.disksWithError.level]">
                         <tn-icon size="sm" [name]="poolInfo.disksWithError.icon"></tn-icon>
                       </span>
-                      <span class="label"> {{ poolInfo.disksWithError.label }}: </span>
-                      <span class="value" [tnTooltip]="poolInfo.disksWithError.value"> {{ poolInfo.disksWithError.value }} </span>
+                      <span
+                        class="label"
+                        tnTestIdType="text"
+                        [tnTestId]="['storage', poolInfo.name, 'disks-with-errors-label']"
+                      > {{ poolInfo.disksWithError.label }}: </span>
+                      <span
+                        class="value"
+                        tnTestIdType="text"
+                        [tnTestId]="['storage', poolInfo.name, 'disks-with-errors']"
+                        [tnTooltip]="poolInfo.disksWithError.value"
+                      > {{ poolInfo.disksWithError.value }} </span>
                     </li>
                     @if (!isThreeTilesInColumn && (isTwoTilesInRow || getColumnsInTile(poolInfo.name) === 1)) {
                       <li>
@@ -69,10 +98,16 @@
                             [tnTooltip]="poolInfo.scan.value"
                           ></tn-icon>
                         </span>
-                        <span class="label"> {{ poolInfo.scan.label }} </span>
+                        <span
+                          class="label"
+                          tnTestIdType="text"
+                          [tnTestId]="['storage', poolInfo.name, 'scan-label']"
+                        > {{ poolInfo.scan.label }} </span>
                         @if (!isTwoTilesInRow && getColumnsInTile(poolInfo.name) === 1) {
                           <span
                             class="value"
+                            tnTestIdType="text"
+                            [tnTestId]="['storage', poolInfo.name, 'scan']"
                             [tnTooltip]="poolInfo.scan.value"
                           >{{ poolInfo.scan.value }}</span>
                         }
@@ -83,7 +118,11 @@
                     <div class="divider"></div>
                     <ul [style.max-width.%]="100 / getColumnsInTile(poolInfo.name)">
                       <li>
-                        <span class="label"> {{ poolInfo.scan.label }}: </span>
+                        <span
+                          class="label"
+                          tnTestIdType="text"
+                          [tnTestId]="['storage', poolInfo.name, 'scan-label']"
+                        > {{ poolInfo.scan.label }}: </span>
                         <span [class]="['icon', poolInfo.scan.level]">
                           <tn-icon
                             size="sm"
@@ -94,11 +133,21 @@
                       </li>
                       <li>
                         <span class="label"> {{ 'Free Space' | translate }}: </span>
-                        <span class="value" [tnTooltip]="poolInfo.freeSpace"> {{ poolInfo.freeSpace }} </span>
+                        <span
+                          class="value"
+                          tnTestIdType="text"
+                          [tnTestId]="['storage', poolInfo.name, 'free-space']"
+                          [tnTooltip]="poolInfo.freeSpace"
+                        > {{ poolInfo.freeSpace }} </span>
                       </li>
                       <li>
                         <span class="label"> {{ 'Total Disks' | translate }}: </span>
-                        <span class="value" [tnTooltip]="poolInfo.totalDisks"> {{ poolInfo.totalDisks }} </span>
+                        <span
+                          class="value"
+                          tnTestIdType="text"
+                          [tnTestId]="['storage', poolInfo.name, 'total-disks']"
+                          [tnTooltip]="poolInfo.totalDisks"
+                        > {{ poolInfo.totalDisks }} </span>
                       </li>
                     </ul>
                   }
@@ -107,15 +156,27 @@
                     <ul [style.max-width.%]="100 / getColumnsInTile(poolInfo.name)">
                       <li>
                         <span class="label"> {{ 'Data' | translate }}: </span>
-                        <span class="value"> {{ poolInfo.topology.data.length }} vdev </span>
+                        <span
+                          class="value"
+                          tnTestIdType="text"
+                          [tnTestId]="['storage', poolInfo.name, 'data']"
+                        > {{ poolInfo.topology.data.length }} vdev </span>
                       </li>
                       <li>
                         <span class="label"> {{ 'Caches' | translate }}: </span>
-                        <span class="value"> {{ poolInfo.topology.cache.length }} </span>
+                        <span
+                          class="value"
+                          tnTestIdType="text"
+                          [tnTestId]="['storage', poolInfo.name, 'caches']"
+                        > {{ poolInfo.topology.cache.length }} </span>
                       </li>
                       <li>
                         <span class="label"> {{ 'Spares' | translate }}: </span>
-                        <span class="value"> {{ poolInfo.topology.spare.length }} </span>
+                        <span
+                          class="value"
+                          tnTestIdType="text"
+                          [tnTestId]="['storage', poolInfo.name, 'spares']"
+                        > {{ poolInfo.topology.spare.length }} </span>
                       </li>
                     </ul>
                   }

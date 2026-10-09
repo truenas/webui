@@ -79,6 +79,8 @@ export enum CloudBackupSnapshotDirectoryFileType {
 }
 
 export interface BackupTile {
+  /** Untranslated kind of task, e.g. `Cloud Sync`. Test ids key on it; `title` changes with the locale. */
+  type: string;
   title: string;
   totalSend: number;
   totalReceive: number;

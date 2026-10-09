@@ -45,11 +45,18 @@
                 class="legend-swatch"
                 [style.background-color]="legendItem.color"
               ></div>
-              <span class="label">{{ legendItem.name }}:</span>
+              <span
+                class="label"
+                tnTestIdType="text"
+                [tnTestId]="['memory', legendItem.key, 'label']"
+              >{{ legendItem.name }}:</span>
               @if (isLoading()) {
                 <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
               } @else {
-                {{ formatUnit(legendItem.value) }} GiB
+                <span
+                  tnTestIdType="text"
+                  [tnTestId]="['memory', legendItem.key]"
+                >{{ formatUnit(legendItem.value) }} GiB</span>
               }
             </div>
           }

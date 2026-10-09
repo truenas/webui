@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy, Component, TemplateRef, computed, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { BackupTile } from 'app/interfaces/cloud-backup.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-actions/backup-task-actions.component';
@@ -18,6 +18,7 @@ import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/w
     TranslateModule,
     FormatDateTimePipe,
     NgTemplateOutlet,
+    TnTestIdDirective,
   ],
 })
 export class BackupTaskTileComponent {

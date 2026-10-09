@@ -6,7 +6,7 @@
       [tnTooltip]="'Incoming network traffic rate in bits per second' | translate"
     >
       <span>{{ 'In' | translate }}:</span>
-      <span *ixWithLoadingState="stats() as stats">
+      <span *ixWithLoadingState="stats() as stats" tnTestIdType="text" [tnTestId]="[testId(), 'network-in']">
         {{ incomingTrafficBits() | ixNetworkSpeed }}
       </span>
     </div>
@@ -15,7 +15,7 @@
       [tnTooltip]="'Outgoing network traffic rate in bits per second' | translate"
     >
       <span>{{ 'Out' | translate }}:</span>
-      <span *ixWithLoadingState="stats() as stats">
+      <span *ixWithLoadingState="stats() as stats" tnTestIdType="text" [tnTestId]="[testId(), 'network-out']">
         {{ outgoingTrafficBits() | ixNetworkSpeed }}
       </span>
     </div>

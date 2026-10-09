@@ -1,6 +1,7 @@
 <div class="wrapper">
   <ix-widget-datapoint
     [size]="size()"
+    [testId]="['arbitrary-text', settings().widgetTitle]"
     [label]="settings().widgetTitle | translate"
     [text]="settings().widgetText | translate"
     [subText]="settings().widgetSubText | translate"

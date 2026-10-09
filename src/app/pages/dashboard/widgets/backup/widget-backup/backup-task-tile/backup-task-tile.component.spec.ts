@@ -16,6 +16,7 @@ describe('BackupTaskTileComponent', () => {
   describe('Conditional rendering based on tile input', () => {
     it('should display tile content if tile is provided', () => {
       const mockTile = {
+        type: 'Cloud Sync',
         title: 'Backup Summary',
         totalSend: 5,
         failedSend: 1,
@@ -28,6 +29,8 @@ describe('BackupTaskTileComponent', () => {
       spectator.detectChanges();
 
       expect(spectator.query('.title')).toHaveText('Backup Summary');
+      // Keyed by the untranslated type, so the id survives a change of UI language.
+      expect(spectator.query('.title')).toHaveAttribute('data-test', 'text-backup-tasks-cloud-sync-title');
       expect(spectator.queryAll('.label')[1]).toHaveText('3 receive tasks');
       expect(spectator.queryAll('.label')[2]).toHaveText('Total failed: 1');
       expect(spectator.queryAll('.label')[3]).toHaveText('2 sent tasks this week');

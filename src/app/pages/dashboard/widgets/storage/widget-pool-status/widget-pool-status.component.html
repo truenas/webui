@@ -22,6 +22,7 @@
 @if (!poolExists) {
   <ix-widget-datapoint
     [size]="size()"
+    [testId]="'pool-status'"
     [label]="name | translate"
     [text]="'Pool does not exist' | translate"
   ></ix-widget-datapoint>

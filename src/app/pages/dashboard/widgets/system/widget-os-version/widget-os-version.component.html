@@ -2,6 +2,7 @@
   <ix-widget-datapoint
     *ixWithLoadingState="systemInfo$ as systemInfo"
     [size]="size()"
+    [testId]="'os-version'"
     [label]="name | translate"
     [text]="systemInfo.version"
   ></ix-widget-datapoint>

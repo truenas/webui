@@ -1,7 +1,7 @@
 <tn-card class="card" [padContent]="false">
   <div class="card-content">
     <div class="header">
-      <h3>{{ name | translate }}</h3>
+      <h3 tnTestIdType="text" [tnTestId]="['cpu', 'title']">{{ name | translate }}</h3>
 
       <tn-icon-button
         name="chart-box"
@@ -18,7 +18,10 @@
     <div [class]="['container', size()]">
       <div class="content">
         <div class="cpu-model">
-          <span>{{ cpuModel() ? cpuModel() : ('Unknown CPU' | translate) }}</span>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="['cpu', 'model']"
+          >{{ cpuModel() ? cpuModel() : ('Unknown CPU' | translate) }}</span>
         </div>
         <div class="cpu-load-wrapper">
           <ix-cpu-chart-gauge class="chart-gauge"></ix-cpu-chart-gauge>

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { ChartData, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -26,6 +26,7 @@ import { cpuUsageRecentWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu
     NgxSkeletonLoaderModule,
     BaseChartDirective,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class WidgetCpuUsageRecentComponent implements WidgetComponent {

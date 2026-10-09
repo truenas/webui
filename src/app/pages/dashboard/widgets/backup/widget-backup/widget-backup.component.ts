@@ -109,19 +109,19 @@ export class WidgetBackupComponent implements OnInit {
   get backupsTiles(): BackupTile[] {
     const tiles: BackupTile[] = [];
     if (this.cloudSyncTasks.length) {
-      tiles.push(this.getTile(this.translate.instant('Cloud Sync'), this.cloudSyncTasks));
+      tiles.push(this.getTile(BackupType.CloudSync, this.translate.instant('Cloud Sync'), this.cloudSyncTasks));
     }
 
     if (this.replicationTasks.length) {
-      tiles.push(this.getTile(this.translate.instant('Replication'), this.replicationTasks));
+      tiles.push(this.getTile(BackupType.Replication, this.translate.instant('Replication'), this.replicationTasks));
     }
 
     if (this.rsyncTasks.length) {
-      tiles.push(this.getTile(this.translate.instant('Rsync'), this.rsyncTasks));
+      tiles.push(this.getTile(BackupType.Rsync, this.translate.instant('Rsync'), this.rsyncTasks));
     }
 
     if (this.cloudBackupTasks.length) {
-      tiles.push(this.getTile(this.translate.instant('TrueCloud Backup'), this.cloudBackupTasks));
+      tiles.push(this.getTile(BackupType.CloudBackup, this.translate.instant('TrueCloud Backup'), this.cloudBackupTasks));
     }
     return tiles;
   }
@@ -203,12 +203,13 @@ export class WidgetBackupComponent implements OnInit {
       .onSuccess(() => this.getBackups(), this.destroyRef);
   }
 
-  private getTile(title: string, tasks: BackupRow[]): BackupTile {
+  private getTile(type: BackupType, title: string, tasks: BackupRow[]): BackupTile {
     const successfulTasks = tasks.filter((backup) => this.successStates.includes(backup.state));
     const lastSuccessfulTask = successfulTasks
       .toSorted((a, b) => b.timestamp.$date - a.timestamp.$date)[0]?.timestamp;
 
     return {
+      type,
       title,
       totalSend: tasks.filter((backup) => this.isSendTask(backup)).length,
       totalReceive: tasks.filter((backup) => !this.isSendTask(backup)).length,

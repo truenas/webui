@@ -7,7 +7,7 @@
 
     <div [class]="['container', 'grid', size()]">
       <ix-app-card-logo [url]="application?.metadata?.icon"></ix-app-card-logo>
-      <ix-app-network-info [stats]="stats() | async"></ix-app-network-info>
+      <ix-app-network-info [testId]="appName()" [stats]="stats() | async"></ix-app-network-info>
     </div>
   </div>
 </tn-card>
