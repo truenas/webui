@@ -19,7 +19,7 @@ import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
 @Component({
@@ -43,7 +43,7 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class PortalFormComponent extends IxFormHostForm implements OnInit {
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
-  protected api = inject(ApiService);
+  protected api = inject(TypedApiService);
   protected iscsiService = inject(IscsiService);
 
   /** Edit data supplied by the `<tn-side-panel>` host. */

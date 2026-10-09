@@ -10,14 +10,14 @@ import {
   TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { of, tap } from 'rxjs';
+import { map, of, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { s3ObjectOwnershipLabels, s3PermissionsModelLabels, s3VersioningLabels } from 'app/enums/s3.enum';
 import { helptextSharingS3 } from 'app/helptext/sharing';
-import { S3Bucket } from 'app/interfaces/s3.interface';
+import { S3Bucket, toS3Bucket } from 'app/interfaces/s3.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -33,7 +33,7 @@ import {
 } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { TierStatusComponent } from 'app/pages/sharing/components/tier-status/tier-status.component';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
@@ -76,7 +76,7 @@ import { poolStore } from 'app/services/global-store/stores.constant';
   ],
 })
 export class S3BucketListComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   private router = inject(Router);
@@ -93,7 +93,8 @@ export class S3BucketListComponent implements OnInit {
 
   protected readonly searchQuery = signal('');
 
-  private readonly buckets$ = this.api.call('sharing.s3.query').pipe(
+  private readonly buckets$ = this.api.query('sharing.s3.query').pipe(
+    map((buckets) => buckets.map(toS3Bucket)),
     tap((buckets) => this.buckets = buckets),
     takeUntilDestroyed(this.destroyRef),
   );

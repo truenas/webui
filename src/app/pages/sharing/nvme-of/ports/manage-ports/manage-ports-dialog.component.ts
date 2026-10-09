@@ -17,7 +17,7 @@ import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provi
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { dataProviderLoading, dataProviderRows, toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemPortOrHostDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-port-ot-host-delete-dialog/subsystem-port-ot-host-delete-dialog.component';
@@ -48,7 +48,7 @@ export class ManagePortsDialog implements OnInit {
   private nvmeOfStore = inject(NvmeOfStore);
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private tnDialog = inject(TnDialog);

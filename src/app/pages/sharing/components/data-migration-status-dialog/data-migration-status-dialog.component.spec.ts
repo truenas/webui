@@ -4,13 +4,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { Subject, of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { TierRewriteJobStatus } from 'app/enums/tier-rewrite-job-status.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { ZfsTierRewriteJobEntry, ZfsTierRewriteJobStats } from 'app/interfaces/zfs-tier.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   DataMigrationStatusDialogComponent,
 } from 'app/pages/sharing/components/data-migration-status-dialog/data-migration-status-dialog.component';
@@ -46,9 +47,10 @@ describe('DataMigrationStatusDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: DataMigrationStatusDialogComponent,
     providers: [
-      mockApi([
-        mockCall('zfs.tier.rewrite_job_cancel'),
+      mockTypedApi([
+        mockTypedCall('zfs.tier.rewrite_job_cancel', null),
       ]),
+      mockProvider(ApiService),
       mockProvider(DialogRef, { close: jest.fn() }),
       mockProvider(ErrorHandlerService),
       mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
@@ -231,7 +233,7 @@ describe('DataMigrationStatusDialogComponent', () => {
       const cancelButton = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
       await cancelButton.click();
 
-      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith(
         'zfs.tier.rewrite_job_cancel',
         expect.any(Array),
       );
@@ -243,7 +245,7 @@ describe('DataMigrationStatusDialogComponent', () => {
       const cancelButton = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
       await cancelButton.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
         'zfs.tier.rewrite_job_cancel',
         [{ tier_job_id: 'job-1' }],
       );

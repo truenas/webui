@@ -15,7 +15,7 @@ import {
 import { mapToOptions } from 'app/helpers/options.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { createS3GrantFormGroup, S3GrantFormGroup } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
 import {
   s3PrincipalOptions, s3PrincipalPageSize,
@@ -52,7 +52,7 @@ interface GrantProviders {
 })
 export class S3GrantsListComponent {
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private destroyRef = inject(DestroyRef);
 
   readonly formArray = input.required<FormArray<S3GrantFormGroup>>();

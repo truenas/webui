@@ -6,8 +6,8 @@ import { createRoutingFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnTabsHarness } from '@truenas/ui-components';
 import { MockComponent, MockComponents } from 'ng-mocks';
 import { BehaviorSubject } from 'rxjs';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -33,7 +33,7 @@ describe('IscsiComponent', () => {
         entitled$: () => hasFibreChannel$,
       }),
       mockAuth(),
-      mockApi(),
+      mockTypedApi(),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),

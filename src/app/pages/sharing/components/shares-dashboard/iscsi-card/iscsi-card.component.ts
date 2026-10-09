@@ -25,7 +25,7 @@ import {
   TnDialog,
 } from '@truenas/ui-components';
 import {
-  filter, tap,
+  filter, map, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -33,7 +33,7 @@ import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { IscsiTarget } from 'app/interfaces/iscsi.interface';
+import { IscsiTarget, toIscsiTarget } from 'app/interfaces/iscsi.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -48,7 +48,7 @@ import {
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { iscsiCardElements } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.elements';
 import {
   ServiceActionsMenuService,
@@ -96,7 +96,7 @@ import { selectService } from 'app/store/services/services.selectors';
 export class IscsiCardComponent implements OnInit {
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   protected emptyService = inject(EmptyService);
   private store$ = inject<Store<ServicesState>>(Store);
   private tnDialog = inject(TnDialog);
@@ -140,7 +140,8 @@ export class IscsiCardComponent implements OnInit {
     });
   }
 
-  private readonly iscsiShares$ = this.api.call('iscsi.target.query').pipe(
+  private readonly iscsiShares$ = this.api.query('iscsi.target.query').pipe(
+    map((targets) => targets.map(toIscsiTarget)),
     tap((targets) => {
       this.targets.set(targets);
     }),

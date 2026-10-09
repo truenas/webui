@@ -7,20 +7,20 @@ import {
   TnButtonHarness, TnCheckboxHarness, TnIconButtonHarness, TnInputHarness,
 } from '@truenas/ui-components';
 import { firstValueFrom, of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
-import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { InitiatorFormComponent } from 'app/pages/sharing/iscsi/initiator/initiator-form/initiator-form.component';
 
 describe('InitiatorFormComponent', () => {
   let spectator: SpectatorRouting<InitiatorFormComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
   const createComponent = createRoutingFactory({
     component: InitiatorFormComponent,
     imports: [
@@ -34,14 +34,14 @@ describe('InitiatorFormComponent', () => {
           userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
         },
       }),
-      mockApi([
-        mockCall('iscsi.global.sessions', [{
+      mockTypedApi([
+        mockTypedQuery('iscsi.global.sessions', [{
           initiator: 'inr1',
           initiator_addr: '10.0.0.1',
-        }] as IscsiGlobalSession[]),
-        mockCall('iscsi.initiator.query', [{ id: 1, comment: 'comment1', initiators: ['inr11', 'inr12'] }]),
-        mockCall('iscsi.initiator.create'),
-        mockCall('iscsi.initiator.update'),
+        }] as WebUiQueryEntity<'iscsi.global.sessions'>[]),
+        mockTypedQuery('iscsi.initiator.query', [{ id: 1, comment: 'comment1', initiators: ['inr11', 'inr12'] }]),
+        mockTypedCall('iscsi.initiator.create', null),
+        mockTypedCall('iscsi.initiator.update', null),
       ]),
       mockProvider(DialogService),
       mockProvider(UnsavedChangesService, {
@@ -60,18 +60,20 @@ describe('InitiatorFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
   });
 
   it('shows current initiator values when form is being edited', async () => {
     spectator.setRouteParam('pk', '1');
     spectator.detectChanges();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
 
     expect(spectator.queryAll('tn-list[aria-label="Connected Initiators"] tn-list-item')).toHaveLength(1);
     expect(spectator.queryAll('tn-list[aria-label="Allowed Initiators"] tn-list-item')).toHaveLength(2);
 
-    expect(api.call).toHaveBeenCalledWith('iscsi.global.sessions');
-    expect(api.call).toHaveBeenCalledWith('iscsi.initiator.query', [[['id', '=', 1]]]);
+    expect(api.query).toHaveBeenCalledWith('iscsi.global.sessions');
+    expect(api.query).toHaveBeenCalledWith('iscsi.initiator.query', [['id', '=', 1]]);
 
     expect(await (await getTnCheckbox('all')).isChecked()).toBe(false);
     expect(await (await getTnInput('new_initiator')).getValue()).toBe('');
@@ -80,6 +82,8 @@ describe('InitiatorFormComponent', () => {
 
   it('sends an update payload to websocket and closes modal when Save button is pressed', async () => {
     spectator.setRouteParam('pk', '1');
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
 
     const available = spectator.queryAll('tn-list[aria-label="Connected Initiators"] tn-list-item');
@@ -162,6 +166,8 @@ describe('InitiatorFormComponent', () => {
   it('does not save on implicit form submission, since Save lives outside the form', async () => {
     spectator.setRouteParam('pk', '1');
     spectator.detectChanges();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
 
     // What pressing Enter in a text field does: with "Allow All" on there is one text field left
     // and no submit button, which is exactly the shape the HTML spec submits implicitly.
@@ -174,6 +180,8 @@ describe('InitiatorFormComponent', () => {
   it('leaves the page without a prompt when nothing was changed', async () => {
     spectator.setRouteParam('pk', '1');
     spectator.detectChanges();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
 
     await expect(firstValueFrom(spectator.component.canDeactivate())).resolves.toBe(true);
     expect(spectator.inject(UnsavedChangesService).showConfirmDialog).not.toHaveBeenCalled();
@@ -181,6 +189,8 @@ describe('InitiatorFormComponent', () => {
 
   it('asks to confirm leaving the page when the description was changed', async () => {
     spectator.setRouteParam('pk', '1');
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
 
     await (await getTnInput('comment')).setValue('new_comment');
@@ -191,6 +201,8 @@ describe('InitiatorFormComponent', () => {
 
   it('asks to confirm leaving the page when the allowed initiators were changed', async () => {
     spectator.setRouteParam('pk', '1');
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
 
     await (await getTnInput('new_initiator')).setValue('new_initiator_1');
@@ -203,6 +215,8 @@ describe('InitiatorFormComponent', () => {
   it('does not ask about text left sitting in the Add IQN field', async () => {
     spectator.setRouteParam('pk', '1');
     spectator.detectChanges();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
 
     await (await getTnInput('new_initiator')).setValue('not_added_yet');
 
@@ -213,6 +227,8 @@ describe('InitiatorFormComponent', () => {
   it('stays on the page when the unsaved changes prompt is declined', async () => {
     spectator.setRouteParam('pk', '1');
     spectator.detectChanges();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
     jest.spyOn(spectator.inject(UnsavedChangesService), 'showConfirmDialog').mockReturnValue(of(false));
 
     await (await getTnInput('comment')).setValue('new_comment');
@@ -222,6 +238,8 @@ describe('InitiatorFormComponent', () => {
 
   it('stops asking to confirm once the changes are saved', async () => {
     spectator.setRouteParam('pk', '1');
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
 
     await (await getTnInput('comment')).setValue('new_comment');
@@ -235,6 +253,6 @@ describe('InitiatorFormComponent', () => {
     const button = await loader.getHarness(TnButtonHarness.with({ label: 'Refresh' }));
     await button.click();
 
-    expect(api.call).toHaveBeenLastCalledWith('iscsi.global.sessions');
+    expect(api.query).toHaveBeenLastCalledWith('iscsi.global.sessions');
   });
 });

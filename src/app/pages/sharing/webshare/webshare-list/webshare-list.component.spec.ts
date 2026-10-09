@@ -4,12 +4,13 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnBannerHarness, TnDialog, TnEmptyHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
@@ -24,7 +25,8 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { WebShareSharesFormComponent } from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
 import { WebShareService } from 'app/pages/sharing/webshare/webshare.service';
 import { selectService } from 'app/store/services/services.selectors';
@@ -34,7 +36,7 @@ import { WebShareListComponent } from './webshare-list.component';
 describe('WebShareListComponent', () => {
   let spectator: Spectator<WebShareListComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
   let formPanel: FormSidePanelService;
   let table: TnTableHarness;
 
@@ -63,11 +65,11 @@ describe('WebShareListComponent', () => {
     imports: [],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('sharing.webshare.query', mockWebShares),
-        mockCall('sharing.webshare.delete', true),
-        mockCall('tn_connect.ips_with_hostnames', {}),
-        mockCall('interface.websocket_local_ip', '192.168.1.100'),
+      mockTypedApi([
+        mockTypedQuery('sharing.webshare.query', mockWebShares as WebUiQueryEntity<'sharing.webshare.query'>[]),
+        mockTypedCall('sharing.webshare.delete', null),
+        mockTypedCall('tn_connect.ips_with_hostnames', {}),
+        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -117,7 +119,7 @@ describe('WebShareListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
     formPanel = spectator.inject(FormSidePanelService);
     spectator.detectChanges();
 
@@ -275,11 +277,11 @@ describe('WebShareListComponent - TrueNAS Connect not configured', () => {
     imports: [],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('sharing.webshare.query', []),
-        mockCall('tn_connect.config', mockTruenasConnectConfigDisabled),
-        mockCall('tn_connect.ips_with_hostnames', {}),
-        mockCall('interface.websocket_local_ip', '192.168.1.100'),
+      mockTypedApi([
+        mockTypedQuery('sharing.webshare.query', []),
+        mockTypedCall('tn_connect.config', mockTruenasConnectConfigDisabled as unknown as CallResponse<WebUiApiDirectory, 'tn_connect.config'>),
+        mockTypedCall('tn_connect.ips_with_hostnames', {}),
+        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -364,10 +366,10 @@ describe('WebShareListComponent - No WebShare users configured', () => {
     imports: [],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('sharing.webshare.query', []),
-        mockCall('tn_connect.config', mockTruenasConnectConfig),
-        mockCall('user.query', []),
+      mockTypedApi([
+        mockTypedQuery('sharing.webshare.query', []),
+        mockTypedCall('tn_connect.config', mockTruenasConnectConfig as unknown as CallResponse<WebUiApiDirectory, 'tn_connect.config'>),
+        mockTypedQuery('user.query', []),
       ]),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),

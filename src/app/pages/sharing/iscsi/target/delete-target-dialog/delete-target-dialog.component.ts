@@ -11,7 +11,7 @@ import { Role } from 'app/enums/role.enum';
 import { IscsiTarget, IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
@@ -31,7 +31,7 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class DeleteTargetDialog implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formBuilder = inject(FormBuilder);
   protected dialogRef = inject<DialogRef<unknown, DeleteTargetDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);

@@ -36,7 +36,7 @@ import {
   advancedModeFooterAction, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { translateOptions } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
@@ -74,7 +74,7 @@ export interface NfsFormData {
   ],
 })
 export class NfsFormComponent extends IxFormHostForm implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private entitlements = inject(EntitlementsService);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);

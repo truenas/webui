@@ -5,13 +5,13 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { NvmeOfHost, NvmeOfPort, NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   AddSubsystemHostsComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-hosts/add-subsystem-hosts.component';
@@ -46,9 +46,9 @@ describe('AddSubsystemComponent', () => {
         associateHosts: jest.fn(() => of(undefined)),
       }),
       mockAuth(),
-      mockApi([
-        mockCall('nvmet.subsys.create', newSubsystem),
-        mockCall('nvmet.namespace.create'),
+      mockTypedApi([
+        mockTypedCall('nvmet.subsys.create', newSubsystem),
+        mockTypedCall('nvmet.namespace.create', null),
       ]),
     ],
   });
@@ -112,7 +112,7 @@ describe('AddSubsystemComponent', () => {
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.subsys.create', [
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('nvmet.subsys.create', [
       {
         name: 'subsystem1',
         subnqn: 'my-nqn',
@@ -122,13 +122,13 @@ describe('AddSubsystemComponent', () => {
     expect(spectator.inject(NvmeOfService).associatePorts).toHaveBeenCalledWith(newSubsystem, [{ id: 100 }]);
     expect(spectator.inject(NvmeOfService).associateHosts).toHaveBeenCalledWith(newSubsystem, [{ id: 200 }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.namespace.create', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('nvmet.namespace.create', [{
       subsys_id: 7,
       device_type: NvmeOfNamespaceType.Zvol,
       device_path: '/dev/zvol/pool/zvol1',
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.namespace.create', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('nvmet.namespace.create', [{
       subsys_id: 7,
       device_type: NvmeOfNamespaceType.File,
       device_path: '/mnt/pool/file.img',

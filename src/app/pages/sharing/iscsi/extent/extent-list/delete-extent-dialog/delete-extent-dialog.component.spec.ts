@@ -4,12 +4,12 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   DeleteExtentDialog,
 } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
@@ -24,8 +24,8 @@ describe('DeleteExtentDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('iscsi.extent.delete'),
+      mockTypedApi([
+        mockTypedCall('iscsi.extent.delete', null),
       ]),
       mockProvider(DialogRef),
       mockProvider(DialogService),
@@ -50,7 +50,7 @@ describe('DeleteExtentDialogComponent', () => {
     const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await submitButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.delete', [1, false, true]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('iscsi.extent.delete', [1, false, true]);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 
@@ -77,7 +77,7 @@ describe('DeleteExtentDialogComponent', () => {
     const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await submitButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.delete', [1, true, true]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('iscsi.extent.delete', [1, true, true]);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 });

@@ -1,3 +1,6 @@
+import { CallResponse } from '@truenas/api-client';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+
 export type SmbStatus = SmbSession | SmbLockInfo | SmbShareInfo | SmbNotificationInfo;
 
 interface SmbServerId {
@@ -105,4 +108,12 @@ export interface SmbNotificationInfo {
   filter: string;
   subdir_filter: string;
   creation_time: string;
+}
+
+/**
+ * Reads what `smb.status` returns for one info level. Middleware declares the rows as loose records whatever the
+ * level, where each level sends its own shape.
+ */
+export function toSmbStatus<T extends SmbStatus>(response: CallResponse<WebUiApiDirectory, 'smb.status'>): T[] {
+  return response as unknown as T[];
 }

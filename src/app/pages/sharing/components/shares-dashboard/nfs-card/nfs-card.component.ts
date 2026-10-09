@@ -25,12 +25,12 @@ import {
   TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
-import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { NfsShare, toNfsShare } from 'app/interfaces/nfs-share.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -48,7 +48,7 @@ import {
 import {
   TableToggleCellComponent,
 } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import {
   ServiceActionsMenuService,
@@ -97,7 +97,7 @@ export class NfsCardComponent implements OnInit {
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   private store$ = inject<Store<ServicesState>>(Store);
   protected emptyService = inject(EmptyService);
@@ -191,7 +191,10 @@ export class NfsCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const nfsShares$ = this.api.call('sharing.nfs.query').pipe(takeUntilDestroyed(this.destroyRef));
+    const nfsShares$ = this.api.query('sharing.nfs.query').pipe(
+      map((shares) => shares.map(toNfsShare)),
+      takeUntilDestroyed(this.destroyRef),
+    );
     this.dataProvider = new AsyncDataProvider<NfsShare>(nfsShares$);
     this.setDefaultSort();
 

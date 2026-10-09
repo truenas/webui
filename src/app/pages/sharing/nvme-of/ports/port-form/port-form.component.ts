@@ -17,13 +17,13 @@ import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
-import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
+import { NvmeOfPort, toNvmeOfPort, toNvmeOfPortCreateArgs } from 'app/interfaces/nvme-of.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 
 @Component({
@@ -43,7 +43,7 @@ import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.servic
   ],
 })
 export class PortFormComponent extends IxFormHostForm<NvmeOfPort | null> implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private nvmeOfService = inject(NvmeOfService);
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
@@ -125,9 +125,10 @@ export class PortFormComponent extends IxFormHostForm<NvmeOfPort | null> impleme
       payload.addr_trsvcid = 4420;
     }
 
-    const request$ = this.isNew()
-      ? this.api.call('nvmet.port.create', [payload])
-      : this.api.call('nvmet.port.update', [this.existingPort().id, payload]);
+    const request$ = (this.isNew()
+      ? this.api.call('nvmet.port.create', [toNvmeOfPortCreateArgs(payload)])
+      : this.api.call('nvmet.port.update', [this.existingPort().id, toNvmeOfPortCreateArgs(payload)])
+    ).pipe(map(toNvmeOfPort));
 
     return {
       request$,

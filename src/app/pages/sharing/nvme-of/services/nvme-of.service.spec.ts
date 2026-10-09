@@ -1,34 +1,35 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import {
-  NvmeOfHost, NvmeOfPort, NvmeOfSubsystem, SubsystemPortAssociation,
+  NvmeOfHost, NvmeOfPort, NvmeOfSubsystem,
 } from 'app/interfaces/nvme-of.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 
 describe('NvmeOfService', () => {
   let spectator: SpectatorService<NvmeOfService>;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const createService = createServiceFactory({
     service: NvmeOfService,
     providers: [
-      mockApi([
-        mockCall('nvmet.port_subsys.create'),
-        mockCall('nvmet.host_subsys.create'),
-        mockCall('rdma.capable_protocols', [RdmaProtocolName.Nvmet]),
-        mockCall('nvmet.port_subsys.delete'),
+      mockTypedApi([
+        mockTypedCall('nvmet.port_subsys.create', null),
+        mockTypedCall('nvmet.host_subsys.create', null),
+        mockTypedCall('rdma.capable_protocols', [RdmaProtocolName.Nvmet]),
+        mockTypedCall('nvmet.port_subsys.delete', true),
       ]),
     ],
   });
 
   beforeEach(() => {
     spectator = createService();
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
   });
 
   describe('associatePorts', () => {
@@ -54,12 +55,12 @@ describe('NvmeOfService', () => {
 
   describe('removePortAssociation', () => {
     it('queries for subsystem-port association and deletes it', async () => {
-      const mockedApi = spectator.inject(MockApiService);
-      mockedApi.mockCall('nvmet.port_subsys.query', [{ id: 1 } as SubsystemPortAssociation]);
+      const mockedApi = spectator.inject(MockTypedApiService);
+      mockedApi.mockQuery('nvmet.port_subsys.query', [{ id: 1 } as WebUiQueryEntity<'nvmet.port_subsys.query'>]);
 
       await firstValueFrom(spectator.service.removePortAssociation({ id: 1 }, { id: 1 } as NvmeOfPort));
 
-      expect(api.call).toHaveBeenCalledWith('nvmet.port_subsys.query', [[['subsys_id', '=', 1], ['port_id', '=', 1]]]);
+      expect(api.query).toHaveBeenCalledWith('nvmet.port_subsys.query', [['subsys_id', '=', 1], ['port_id', '=', 1]]);
       expect(api.call).toHaveBeenCalledWith('nvmet.port_subsys.delete', [1]);
     });
   });
@@ -93,7 +94,7 @@ describe('NvmeOfService', () => {
     });
 
     it('returns only TCP when system is not RDMA capable', async () => {
-      spectator.inject(MockApiService).mockCall('rdma.capable_protocols', []);
+      spectator.inject(MockTypedApiService).mockCall('rdma.capable_protocols', []);
 
       const newSpectator = createService();
       const transports = await firstValueFrom(newSpectator.service.getSupportedTransports());
@@ -112,12 +113,12 @@ describe('NvmeOfService', () => {
     it('should return true when NVMET is in capable protocols', async () => {
       const result = await firstValueFrom(spectator.service.isRdmaCapable());
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rdma.capable_protocols');
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('rdma.capable_protocols');
       expect(result).toBe(true);
     });
 
     it('should return false when NVMET is not in capable protocols', async () => {
-      const mockedApi = spectator.inject(MockApiService);
+      const mockedApi = spectator.inject(MockTypedApiService);
       mockedApi.mockCall('rdma.capable_protocols', [RdmaProtocolName.Nfs, RdmaProtocolName.Iser]);
 
       // Create a new service instance to test with different mock data
@@ -128,7 +129,7 @@ describe('NvmeOfService', () => {
     });
 
     it('should return false when API call fails', async () => {
-      const mockedApi = spectator.inject(MockApiService);
+      const mockedApi = spectator.inject(MockTypedApiService);
       mockedApi.mockCall('rdma.capable_protocols', new Error('API Error'));
 
       // Create a new service instance to test error handling
@@ -143,14 +144,14 @@ describe('NvmeOfService', () => {
       const second = await firstValueFrom(spectator.service.isRdmaCapable());
       const third = await firstValueFrom(spectator.service.isRdmaCapable());
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledTimes(1);
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledTimes(1);
       expect(first).toBe(true);
       expect(second).toBe(true);
       expect(third).toBe(true);
     });
 
     it('should return false when capable_protocols returns empty array', async () => {
-      const mockedApi = spectator.inject(MockApiService);
+      const mockedApi = spectator.inject(MockTypedApiService);
       mockedApi.mockCall('rdma.capable_protocols', []);
 
       const newSpectator = createService();

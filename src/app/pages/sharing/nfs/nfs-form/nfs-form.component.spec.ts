@@ -9,8 +9,8 @@ import {
   TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnFormListHarness, TnInputHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
@@ -29,7 +29,7 @@ import {
   IxGroupComboboxHarness,
   IxUserComboboxHarness,
 } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
@@ -58,7 +58,7 @@ describe('NfsFormComponent', () => {
   let spectator: Spectator<NfsFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let api: ApiService;
+  let api: TypedApiService;
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
 
@@ -98,10 +98,10 @@ describe('NfsFormComponent', () => {
   };
 
   const makeProviders = (nfsConfig: NfsConfig): (Provider | Provider[])[] => [
-    mockApi([
-      mockCall('sharing.nfs.create'),
-      mockCall('sharing.nfs.update'),
-      mockCall('nfs.config', nfsConfig),
+    mockTypedApi([
+      mockTypedCall('sharing.nfs.create', null),
+      mockTypedCall('sharing.nfs.update', null),
+      mockTypedCall('nfs.config', nfsConfig),
     ]),
     mockAuth(),
     mockProvider(FilesystemService),
@@ -164,7 +164,7 @@ describe('NfsFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
@@ -236,6 +236,7 @@ describe('NfsFormComponent', () => {
       spectator.component.closed.subscribe(closed);
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('sharing.nfs.create', [{
         path: '/mnt/new/ds',
@@ -288,7 +289,7 @@ describe('NfsFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
@@ -334,6 +335,7 @@ describe('NfsFormComponent', () => {
       spectator.component.closed.subscribe(closed);
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('sharing.nfs.update', [
         1,
@@ -361,6 +363,7 @@ describe('NfsFormComponent', () => {
       await setDescription('Updated share');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
     });
@@ -372,7 +375,7 @@ describe('NfsFormComponent', () => {
         props: { nfsShareData: { existingNfsShare: existingShare } },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('resolves incoming data from the nfsShareData input and emits closed when saved', async () => {
@@ -382,6 +385,7 @@ describe('NfsFormComponent', () => {
       await setDescription('Panel edit');
       expect(spectator.component.canSubmit()).toBe(true);
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('sharing.nfs.update', [
         1,

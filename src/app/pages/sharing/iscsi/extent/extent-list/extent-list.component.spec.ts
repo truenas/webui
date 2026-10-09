@@ -7,9 +7,8 @@ import {
   TnButtonHarness, TnCardComponent, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -45,9 +44,7 @@ describe('ExtentListComponent', () => {
       mockProvider(EmptyService),
       mockTypedApi([
         mockTypedQuery('iscsi.extent.query', extents as WebUiQueryEntity<'iscsi.extent.query'>[]),
-      ]),
-      mockApi([
-        mockCall('iscsi.extent.delete'),
+        mockTypedCall('iscsi.extent.delete', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

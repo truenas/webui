@@ -8,13 +8,13 @@ import {
   Observable, catchError, debounceTime, distinctUntilChanged, of, switchMap, take,
 } from 'rxjs';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SmbValidationService {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
 
   private nameExistsError = T('Share with this name already exists');

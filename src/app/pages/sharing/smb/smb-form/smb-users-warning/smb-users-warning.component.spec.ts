@@ -1,8 +1,8 @@
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 import { SmbUsersWarningComponent } from './smb-users-warning.component';
 
@@ -14,8 +14,8 @@ describe('SmbUsersWarningComponent', () => {
     component: SmbUsersWarningComponent,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('sharing.smb.share_precheck'),
+      mockTypedApi([
+        mockTypedCall('sharing.smb.share_precheck', null),
       ]),
       mockProvider(Router),
       mockProvider(SmbValidationService, {

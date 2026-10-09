@@ -5,8 +5,8 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { TnDialog } from '@truenas/ui-components';
 import { Subject, firstValueFrom, of } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -23,7 +23,8 @@ describe('SharingTierService', () => {
   const createService = createServiceFactory({
     service: SharingTierService,
     providers: [
-      mockApi([]),
+      mockTypedApi([]),
+      mockProvider(ApiService),
       mockProvider(TnDialog, { open: matDialogOpen }),
       mockProvider(ErrorHandlerService),
       mockProvider(TranslateService, {
@@ -169,7 +170,7 @@ describe('SharingTierService', () => {
     });
 
     it('hides the action for a row the dialog could not act on', async () => {
-      const api = spectator.inject(MockApiService);
+      const api = spectator.inject(MockTypedApiService);
       api.mockCall('zfs.tier.config', { enabled: true } as ZfsTierConfig);
       await firstValueFrom(spectator.service.getTierConfig());
       const action = spectator.service.createChangeDatasetTierAction({ destroyRef, reload: jest.fn() });
@@ -188,8 +189,9 @@ describe('SharingTierService', () => {
 
     beforeEach(() => {
       jobUpdates$ = new Subject();
-      const api = spectator.inject(ApiService);
-      jest.spyOn(api, 'subscribe').mockReturnValue(jobUpdates$);
+      jest.spyOn(spectator.inject(ApiService), 'subscribe').mockReturnValue(
+        jobUpdates$ as unknown as ReturnType<ApiService['subscribe']>,
+      );
     });
 
     describe('wireTierJobRefresh', () => {

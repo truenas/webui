@@ -4,7 +4,7 @@ import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectat
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   AddSubsystemNamespaceComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-namespaces/add-subsystem-namespace/add-subsystem-namespace.component';
@@ -24,7 +24,7 @@ describe('AddSubsystemNamespaceComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(FilesystemService),
-      mockProvider(ApiService),
+      mockProvider(TypedApiService),
     ],
   });
 
@@ -51,7 +51,7 @@ describe('AddSubsystemNamespaceComponent', () => {
       filesize: undefined,
     } as NamespaceChanges);
     // The wizard creates namespaces itself once the subsystem is created.
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
+    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalled();
   });
 
   it('does not emit while the form is incomplete', () => {

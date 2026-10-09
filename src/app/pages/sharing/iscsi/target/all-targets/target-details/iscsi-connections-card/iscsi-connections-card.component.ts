@@ -8,7 +8,7 @@ import { finalize, take } from 'rxjs';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Component({
   selector: 'ix-iscsi-connections-card',
@@ -24,7 +24,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class IscsiConnectionsCardComponent {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private destroyRef = inject(DestroyRef);
 
   readonly target = input.required<IscsiTarget>();
@@ -41,7 +41,7 @@ export class IscsiConnectionsCardComponent {
   }
 
   private getConnectionsByInitiatorId(): void {
-    this.api.call('iscsi.global.sessions', [[['target_alias', '=', this.target().name]]])
+    this.api.query('iscsi.global.sessions', [['target_alias', '=', this.target().name]])
       .pipe(
         take(1),
         finalize(() => this.isLoading.set(false)),

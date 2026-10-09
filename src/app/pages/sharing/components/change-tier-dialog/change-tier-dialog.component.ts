@@ -13,9 +13,10 @@ import { forkJoin, tap } from 'rxjs';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { toDataset } from 'app/interfaces/dataset.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { getTierLabelKey } from 'app/pages/sharing/components/tier-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -42,7 +43,7 @@ export interface ChangeTierDialogData {
   ],
 })
 export class ChangeTierDialogComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private fb = inject(FormBuilder);
@@ -149,7 +150,7 @@ export class ChangeTierDialogComponent implements OnInit {
         pool_names: [this.data.poolName],
         properties: ['class_normal_available', 'class_special_available'],
       }]),
-      this.api.call('pool.dataset.query', [[['id', '=', this.data.datasetName]]]),
+      this.api.query('pool.dataset.query', [['id', '=', this.data.datasetName]]),
     ]).pipe(
       tap({ error: () => this.loadFailed.set(true) }),
       this.errorHandler.withErrorHandler(),
@@ -167,7 +168,7 @@ export class ChangeTierDialogComponent implements OnInit {
         }
 
         if (datasets.length) {
-          const dataset = datasets[0];
+          const dataset = toDataset(datasets[0]);
           this.estimatedRewriteSize.set(buildNormalizedFileSize(dataset.usedbydataset.parsed, 'B', 2));
           this.hasSnapshots.set(dataset.usedbysnapshots.parsed > 0);
         }
@@ -179,11 +180,11 @@ export class ChangeTierDialogComponent implements OnInit {
     const mountpoint = `${mntPath}/${this.data.datasetName}`;
 
     forkJoin([
-      this.api.call('sharing.smb.query', [[['path', '=', mountpoint]], { select: ['id', 'name'] }]),
-      this.api.call('sharing.nfs.query', [[['path', '=', mountpoint]], { select: ['id'] }]),
-      this.api.call('sharing.webshare.query', [[['path', '=', mountpoint]], { select: ['id', 'name'] }]),
+      this.api.query('sharing.smb.query', [['path', '=', mountpoint]], { select: ['id', 'name'] }),
+      this.api.query('sharing.nfs.query', [['path', '=', mountpoint]], { select: ['id'] }),
+      this.api.query('sharing.webshare.query', [['path', '=', mountpoint]], { select: ['id', 'name'] }),
       // S3 buckets are keyed by dataset name rather than by mount path.
-      this.api.call('sharing.s3.query', [[['dataset', '=', this.data.datasetName]], { select: ['id', 'name'] }]),
+      this.api.query('sharing.s3.query', [['dataset', '=', this.data.datasetName]], { select: ['id', 'name'] }),
     ]).pipe(
       tap({ error: () => this.loadFailed.set(true) }),
       this.errorHandler.withErrorHandler(),

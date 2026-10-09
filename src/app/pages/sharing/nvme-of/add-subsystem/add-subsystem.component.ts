@@ -18,7 +18,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import {
-  CreateNvmeOfNamespace, NvmeOfHost, NvmeOfPort, NvmeOfSubsystem,
+  CreateNvmeOfNamespace, NvmeOfHost, NvmeOfPort, NvmeOfSubsystem, toNvmeOfSubsystem,
 } from 'app/interfaces/nvme-of.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
@@ -26,7 +26,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   AddSubsystemHostsComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-hosts/add-subsystem-hosts.component';
@@ -71,7 +71,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 })
 export class AddSubsystemComponent implements SidePanelHostCloseable<NvmeOfSubsystem> {
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
@@ -180,7 +180,7 @@ export class AddSubsystemComponent implements SidePanelHostCloseable<NvmeOfSubsy
       allow_any_host: values.allowAnyHost,
     };
 
-    return this.api.call('nvmet.subsys.create', [payload]);
+    return this.api.call('nvmet.subsys.create', [payload]).pipe(map(toNvmeOfSubsystem));
   }
 
   private createNamespaces(subsystem: NvmeOfSubsystem, namespaces: NamespaceChanges[]): Observable<unknown>[] {

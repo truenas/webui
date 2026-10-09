@@ -11,7 +11,7 @@ import {
   TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
-import { of, Subject, throwError } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import type { Observable } from 'rxjs';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import {
@@ -19,19 +19,15 @@ import {
   provideTnFormFieldErrors,
 } from 'app/core/providers/tn-form-field-errors.provider';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
-import { JsonRpcError } from 'app/interfaces/api-message.interface';
-import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Service } from 'app/interfaces/service.interface';
-import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import {
   FcpSmbShare,
   LegacySmbShareOptions,
@@ -48,8 +44,8 @@ import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-fo
 import { IxGroupChipsHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbUsersWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-users-warning/smb-users-warning.component';
 import { EntitlementsService } from 'app/services/entitlements.service';
@@ -65,6 +61,8 @@ import { SmbFormComponent } from './smb-form.component';
 // `MockComponent(SmbUsersWarningComponent)` deep-mocks that child's import graph, which now
 // includes `tn-banner` — and that mock leaks onto the banner this form renders itself.
 ngMocks.globalKeep(TnBannerComponent);
+
+type SmbConfigResponse = CallResponse<WebUiApiDirectory, 'smb.config'>;
 
 describe('SmbFormComponent', () => {
   const existingShare = {
@@ -87,6 +85,7 @@ describe('SmbFormComponent', () => {
       aapl_name_mangling: true,
     },
   } as SmbShare;
+  const existingShareEntry = existingShare as unknown as WebUiQueryEntity<'sharing.smb.query'>;
 
   const formLabels: Record<string, string> = {
     path: 'Path',
@@ -94,7 +93,7 @@ describe('SmbFormComponent', () => {
 
   let spectator: Spectator<SmbFormComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
 
@@ -156,19 +155,17 @@ describe('SmbFormComponent', () => {
         mockTypedQuery('group.query', [{ id: 1, group: 'test', builtin: false }] as WebUiQueryEntity<'group.query'>[]),
         mockTypedCall('group.get_group_obj', { gr_gid: 1000, gr_name: 'test', gr_mem: [] } as CallResponse<WebUiApiDirectory, 'group.get_group_obj'>),
         mockTypedQuery('user.query', []),
-      ]),
-      mockApi([
-        mockCall('sharing.smb.create', { ...existingShare }),
-        mockCall('sharing.smb.update', { ...existingShare }),
-        mockCall('sharing.smb.share_precheck', null),
-        mockCall('sharing.smb.query', [
-          { ...existingShare },
+        mockTypedCall('sharing.smb.create', { ...existingShareEntry }),
+        mockTypedCall('sharing.smb.update', { ...existingShareEntry }),
+        mockTypedCall('sharing.smb.share_precheck', null),
+        mockTypedQuery('sharing.smb.query', [
+          { ...existingShareEntry },
         ]),
-        mockCall('filesystem.stat', {
+        mockTypedCall('filesystem.stat', {
           acl: true,
-        } as FileSystemStat),
-        mockCall('smb.config', { aapl_extensions: true } as SmbConfig),
-        mockJob('service.control', fakeSuccessfulJob()),
+        } as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
+        mockTypedCall('smb.config', { aapl_extensions: true } as SmbConfigResponse),
+        mockTypedJob('service.control', { state: JobState.Success }),
       ]),
       mockProvider(Router),
       mockProvider(LoaderService),
@@ -225,7 +222,7 @@ describe('SmbFormComponent', () => {
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     mockStore$ = spectator.inject(MockStore);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
 
     // The Advanced/Basic toggle is rendered by the side-panel host from `footerActions`;
     // only invoke it when it currently offers to reveal the advanced section.
@@ -254,8 +251,9 @@ describe('SmbFormComponent', () => {
   }
 
   /** The side-panel host's footer Save drives the form through `submit()`. */
-  function clickSave(): void {
+  async function clickSave(): Promise<void> {
     spectator.component.submit();
+    await spectator.fixture.whenStable();
   }
 
   describe('legacy share', () => {
@@ -296,7 +294,7 @@ describe('SmbFormComponent', () => {
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
       await pathControl.setValue('/mnt/pool123/new');
 
-      clickSave();
+      await clickSave();
 
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(RestartSmbDialog);
 
@@ -322,7 +320,7 @@ describe('SmbFormComponent', () => {
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
       await pathControl.setValue('/mnt/pool123/new');
 
-      clickSave();
+      await clickSave();
 
       expect(tnDialog.open).toHaveBeenCalledWith(RestartSmbDialog);
       // The wrapper still shows its own "SMB share updated" success toast, but the
@@ -367,7 +365,7 @@ describe('SmbFormComponent', () => {
       await applyCommonValues();
       await (await getTnCheckbox('aapl_name_mangling')).check();
 
-      clickSave();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [{
         purpose: SmbSharePurpose.DefaultShare,
@@ -401,7 +399,7 @@ describe('SmbFormComponent', () => {
       await (await getTnCheckbox('auto_dataset_creation')).check();
       await (await getTnInput('dataset_naming_schema')).setValue('%u');
 
-      clickSave();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -424,7 +422,7 @@ describe('SmbFormComponent', () => {
       await applyCommonValues();
       await (await getTnCheckbox('aapl_name_mangling')).check();
 
-      clickSave();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -444,7 +442,7 @@ describe('SmbFormComponent', () => {
       await (await getTnInput('grace_period')).setValue('900');
       await (await getTnCheckbox('aapl_name_mangling')).check();
 
-      clickSave();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -466,7 +464,7 @@ describe('SmbFormComponent', () => {
       await (await getTnInput('auto_quota')).setValue('20');
       await (await getTnCheckbox('aapl_name_mangling')).check();
 
-      clickSave();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -489,7 +487,7 @@ describe('SmbFormComponent', () => {
       await setTnCheckbox('enabled', true);
       await (await getTnChipInput('remote_path')).addChip('192.168.0.1\\SHARE');
 
-      clickSave();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -505,7 +503,7 @@ describe('SmbFormComponent', () => {
       await selectPurpose('Veeam Repository Share');
       await applyCommonValues();
 
-      clickSave();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -522,7 +520,7 @@ describe('SmbFormComponent', () => {
       await selectPurpose('Final Cut Pro Storage Share');
       await applyCommonValues();
 
-      clickSave();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -556,7 +554,7 @@ describe('SmbFormComponent', () => {
       await hostsAllow.addChip('10.0.0.1');
       await (await getTnChipInput('hostsdeny')).addChip('172.16.0.0/16');
 
-      clickSave();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -579,7 +577,7 @@ describe('SmbFormComponent', () => {
       await applyCommonValues();
       await (await getTnInput('timemachine_quota')).setValue('10');
 
-      clickSave();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -600,7 +598,7 @@ describe('SmbFormComponent', () => {
 
       expect(await (await getTnInput('timemachine_quota')).getValue()).toBe('1500 MiB');
 
-      clickSave();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.update', [
         1,
@@ -626,7 +624,7 @@ describe('SmbFormComponent', () => {
 
       expect(await quota.getValue()).toBe('1500 MiB');
 
-      clickSave();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.update', [
         1,
@@ -726,9 +724,9 @@ describe('SmbFormComponent', () => {
       await setupTest();
 
       // Use component's private property to set the config
-      (spectator.component as unknown as { smbConfig: { set: (config: SmbConfig) => void } }).smbConfig.set({
+      (spectator.component as unknown as { smbConfig: { set: (config: SmbConfigResponse) => void } }).smbConfig.set({
         aapl_extensions: false,
-      } as SmbConfig);
+      } as SmbConfigResponse);
 
       await selectPurpose('Final Cut Pro Storage Share');
 
@@ -877,7 +875,7 @@ describe('SmbFormComponent', () => {
       mockStore$.refreshState();
 
       await applyCommonValues();
-      clickSave();
+      await clickSave();
 
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
     });
@@ -940,17 +938,12 @@ describe('SmbFormComponent', () => {
   describe('smb validation', () => {
     beforeEach(() => {
       spectator = createComponent();
-      api = spectator.inject(ApiService);
-      jest.spyOn(api, 'call').mockImplementation((method) => {
-        if (method === 'sharing.smb.share_precheck') {
-          return throwError(() => new ApiCallError({
-            data: { reason: '[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists. [EINVAL] sharing.smb.share_precheck: TrueNAS server must be joined to a directory service or have at least one local SMB user before creating an SMB share.' },
-          } as JsonRpcError));
-        }
-        return of(null);
+      api = spectator.inject(TypedApiService);
+      spectator.inject(MockTypedApiService).mockCallError('sharing.smb.share_precheck', {
+        reason: '[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists. [EINVAL] sharing.smb.share_precheck: TrueNAS server must be joined to a directory service or have at least one local SMB user before creating an SMB share.',
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
@@ -976,25 +969,9 @@ describe('SmbFormComponent', () => {
   describe('handle error', () => {
     beforeEach(() => {
       spectator = createComponent();
-      api = spectator.inject(ApiService);
-      jest.spyOn(api, 'call').mockImplementation((method) => {
-        switch (method) {
-          case 'group.query':
-            return of([{ group: 'test' }] as Group[]);
-          case 'sharing.smb.update':
-          case 'sharing.smb.query':
-            return of({ ...existingShare });
-          case 'filesystem.stat':
-            return of({ acl: true } as FileSystemStat);
-          case 'sharing.smb.create':
-            return throwError(() => new ApiCallError({
-              data: {
-                reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.',
-              },
-            } as JsonRpcError));
-          default:
-            return of(null);
-        }
+      api = spectator.inject(TypedApiService);
+      spectator.inject(MockTypedApiService).mockCallError('sharing.smb.create', {
+        reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.',
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
@@ -1006,7 +983,7 @@ describe('SmbFormComponent', () => {
       await (await getTnInput('name')).setValue('test-share');
       await selectPurpose('Default Share');
 
-      clickSave();
+      await clickSave();
 
       // Wait for async operations to complete
       await new Promise<void>((resolve) => {
@@ -1429,7 +1406,7 @@ describe('SmbFormComponent', () => {
         isGroupCachedAsNonExistent: jest.Mock;
       };
       const delayedObservable$ = new Subject<Group[]>();
-      jest.spyOn(spectator.inject(ApiService), 'call')
+      jest.spyOn(spectator.inject(TypedApiService), 'call')
         .mockReturnValue(delayedObservable$.asObservable() as Observable<never>);
       userService.isGroupInAutocompleteCache = jest.fn(() => false);
       userService.isGroupCachedAsNonExistent = jest.fn(() => false);
@@ -1525,7 +1502,7 @@ describe('SmbFormComponent', () => {
       await (await getTnInput('name')).setValue('time-machine');
       await (await getTnCheckbox('auto_dataset_creation')).check();
 
-      clickSave();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -1561,7 +1538,7 @@ describe('SmbFormComponent', () => {
 
       await spectator.fixture.whenStable();
 
-      clickSave();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -1607,7 +1584,7 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
       expect(await (await getTnInput('dataset_naming_schema')).getValue()).toBe('custom-schema');
 
-      clickSave();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -1642,7 +1619,7 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // Leave field empty (should send null for server defaults)
-      clickSave();
+      await clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -1658,16 +1635,11 @@ describe('SmbFormComponent', () => {
   describe('Submit button behavior with Apple SMB2/3 extensions', () => {
     beforeEach(() => {
       spectator = createComponent();
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       mockStore$ = spectator.inject(MockStore);
 
-      jest.spyOn(api, 'call').mockImplementation((method) => {
-        if (method === 'smb.config') {
-          return of({ aapl_extensions: false } as SmbConfig);
-        }
-        return of(null);
-      });
+      spectator.inject(MockTypedApiService).mockCall('smb.config', { aapl_extensions: false } as SmbConfigResponse);
     });
 
     it('should disable submit button when extensions warning is shown', async () => {
@@ -1679,7 +1651,7 @@ describe('SmbFormComponent', () => {
 
       // Manually set the smbConfig signal to trigger the warning
       // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfig);
+      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfigResponse);
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['updateExtensionsWarning']();
       spectator.detectChanges();
@@ -1705,7 +1677,7 @@ describe('SmbFormComponent', () => {
 
       // Set config to show warning
       // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfig);
+      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfigResponse);
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['updateExtensionsWarning']();
       spectator.detectChanges();
@@ -1736,7 +1708,7 @@ describe('SmbFormComponent', () => {
       await (await getTnInput('name')).setValue('default');
 
       // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfig);
+      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfigResponse);
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['updateExtensionsWarning']();
       spectator.detectChanges();
@@ -1769,7 +1741,7 @@ describe('SmbFormComponent', () => {
 
       // Switch to FCP Share (another purpose requiring extensions with extensions disabled)
       // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfig);
+      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfigResponse);
       await selectPurpose('Final Cut Pro Storage Share');
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['updateExtensionsWarning']();

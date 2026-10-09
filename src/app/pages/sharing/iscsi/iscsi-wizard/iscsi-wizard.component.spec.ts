@@ -9,7 +9,6 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
@@ -19,7 +18,7 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FibreChannelHost, FibreChannelPortChoices } from 'app/interfaces/fibre-channel.interface';
 import {
-  IscsiAuthAccess, IscsiExtent, IscsiInitiatorGroup, IscsiPortal, IscsiTarget, IscsiTargetExtent,
+  IscsiAuthAccess, IscsiInitiatorGroup, IscsiPortal, IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
 import { newOption } from 'app/interfaces/option.interface';
 import { Service } from 'app/interfaces/service.interface';
@@ -29,7 +28,7 @@ import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { fillControlValues, indexFormControls } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { ExtentWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/extent-wizard-step/extent-wizard-step.component';
@@ -74,21 +73,19 @@ describe('IscsiWizardComponent', () => {
         mockTypedQuery('fcport.query', []),
         mockTypedCall('fcport.create', null),
         mockTypedCall('fc.fc_host.update', null),
-      ]),
-      mockApi([
-        mockCall('pool.dataset.create', { id: 'my pool/test_zvol' } as Dataset),
-        mockCall('iscsi.extent.create', { id: 11 } as IscsiExtent),
-        mockCall('iscsi.auth.create', { id: 12, tag: 12 } as IscsiAuthAccess),
-        mockCall('iscsi.portal.create', { id: 13 } as IscsiPortal),
-        mockCall('iscsi.initiator.create', { id: 14 } as IscsiInitiatorGroup),
-        mockCall('iscsi.target.create', { id: 15 } as IscsiTarget),
-        mockCall('iscsi.targetextent.create', { id: 16 } as IscsiTargetExtent),
-        mockCall('fcport.port_choices', {
+        mockTypedCall('pool.dataset.create', { id: 'my pool/test_zvol' } as WebUiQueryEntity<'pool.dataset.query'>),
+        mockTypedCall('iscsi.extent.create', { id: 11 } as WebUiQueryEntity<'iscsi.extent.query'>),
+        mockTypedCall('iscsi.auth.create', { id: 12, tag: 12 } as IscsiAuthAccess),
+        mockTypedCall('iscsi.portal.create', { id: 13 } as IscsiPortal),
+        mockTypedCall('iscsi.initiator.create', { id: 14 } as IscsiInitiatorGroup),
+        mockTypedCall('iscsi.target.create', { id: 15 } as WebUiQueryEntity<'iscsi.target.query'>),
+        mockTypedCall('iscsi.targetextent.create', { id: 16 } as IscsiTargetExtent),
+        mockTypedCall('fcport.port_choices', {
           fc0: { wwpn: '10:00:00:00:c9:20:00:00', wwpn_b: '10:00:00:00:c9:20:00:01' },
           fc1: { wwpn: '10:00:00:00:c9:30:00:00', wwpn_b: '10:00:00:00:c9:30:00:01' },
           'fc0/1': { wwpn: '10:00:00:00:c9:20:01:00', wwpn_b: '10:00:00:00:c9:20:01:01' },
         } as FibreChannelPortChoices),
-        mockCall('fc.fc_host.query', [
+        mockTypedQuery('fc.fc_host.query', [
           {
             id: 1, alias: 'fc0', npiv: 1, wwpn: '10:00:00:00:c9:20:00:00', wwpn_b: '10:00:00:00:c9:20:00:01',
           },
@@ -211,13 +208,13 @@ describe('IscsiWizardComponent', () => {
     await fillIscsiWizard();
     await submitWizard();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
       name: 'new_pool/test-name',
       type: 'VOLUME',
       volsize: 1073741824,
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.create', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('iscsi.extent.create', [{
       blocksize: 512,
       disk: 'zvol/my+pool/test_zvol',
       insecure_tpc: true,
@@ -229,17 +226,17 @@ describe('IscsiWizardComponent', () => {
       xen: false,
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.portal.create', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('iscsi.portal.create', [{
       comment: 'test-name',
       listen: [{ ip: '::' }],
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.initiator.create', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('iscsi.initiator.create', [{
       comment: 'test-name',
       initiators: ['initiator1', 'initiator2'],
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.target.create', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('iscsi.target.create', [{
       name: 'test-name',
       mode: 'ISCSI',
       groups: [{
@@ -250,7 +247,7 @@ describe('IscsiWizardComponent', () => {
       }],
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.targetextent.create', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('iscsi.targetextent.create', [{
       extent: 11,
       target: 15,
     }]);
@@ -287,13 +284,13 @@ describe('IscsiWizardComponent', () => {
     await submitWizard();
 
     // FC targets carry no iSCSI portal/initiator groups.
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.target.create', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('iscsi.target.create', [{
       name: 'test-name',
       mode: 'FC',
       groups: [],
     }]);
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('iscsi.portal.create', expect.anything());
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('iscsi.initiator.create', expect.anything());
+    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('iscsi.portal.create', expect.anything());
+    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('iscsi.initiator.create', expect.anything());
 
     // The chosen port is linked to the created target.
     expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('fcport.create', [{

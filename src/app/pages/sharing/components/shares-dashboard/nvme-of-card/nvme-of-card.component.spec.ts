@@ -6,8 +6,8 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnDialog, TnMenuHarness, TnSlideToggleHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NvmeOfHost, NvmeOfNamespace, NvmeOfPort } from 'app/interfaces/nvme-of.interface';
@@ -16,7 +16,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboard/nvme-of-card/nvme-of-card.component';
 import {
   ServiceActionsMenuService,
@@ -60,8 +60,8 @@ describe('NvmeOfCardComponent', () => {
           closed: of({ confirmed: true, force: true }),
         })),
       }),
-      mockApi([
-        mockCall('nvmet.subsys.delete'),
+      mockTypedApi([
+        mockTypedCall('nvmet.subsys.delete', true),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -113,7 +113,7 @@ describe('NvmeOfCardComponent', () => {
     await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SubsystemDeleteDialogComponent, expect.anything());
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.subsys.delete', [1, { force: true }]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('nvmet.subsys.delete', [1, { force: true }]);
   });
 
   it('opens the NVMe-oF form when the projected Add button is clicked', async () => {

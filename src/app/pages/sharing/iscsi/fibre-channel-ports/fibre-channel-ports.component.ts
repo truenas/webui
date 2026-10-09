@@ -9,18 +9,22 @@ import {
   TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { finalize, forkJoin, of } from 'rxjs';
+import {
+  finalize, forkJoin, map, of,
+} from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { FibreChannelHost, FibreChannelPort, FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
+import {
+  toFibreChannelHost, toFibreChannelPort, toFibreChannelStatuses,
+} from 'app/interfaces/fibre-channel.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { dataProviderRows, mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   buildPortsTableRow,
   FibreChannelPortRow,
@@ -54,7 +58,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   ],
 })
 export class FibreChannelPortsComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);
   private tnDialog = inject(TnDialog);
@@ -201,9 +205,9 @@ export class FibreChannelPortsComponent implements OnInit {
     this.isLoading.set(true);
     this.dataProvider.setEmptyType(EmptyType.Loading);
     forkJoin([
-      this.api.call('fc.fc_host.query'),
-      this.api.call('fcport.query'),
-      this.api.call('fcport.status'),
+      this.api.query('fc.fc_host.query').pipe(map((hosts) => hosts.map(toFibreChannelHost))),
+      this.api.query('fcport.query').pipe(map((ports) => ports.map(toFibreChannelPort))),
+      this.api.call('fcport.status').pipe(map(toFibreChannelStatuses)),
     ])
       .pipe(
         // `withErrorHandler()` is an operator, not a `catchError` selector — handed to `catchError`
@@ -214,7 +218,7 @@ export class FibreChannelPortsComponent implements OnInit {
         finalize(() => this.isLoading.set(false)),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(([hosts, ports, statuses]: [FibreChannelHost[], FibreChannelPort[], FibreChannelStatus[]]) => {
+      .subscribe(([hosts, ports, statuses]) => {
         this.rows.set(buildPortsTableRow(hosts, ports, statuses));
         this.applyFilter();
       });

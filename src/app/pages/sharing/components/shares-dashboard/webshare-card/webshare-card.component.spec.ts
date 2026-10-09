@@ -4,12 +4,13 @@ import { signal, Signal } from '@angular/core';
 import { provideRouter, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnBannerHarness, TnButtonHarness, TnSlideToggleHarness, TnTableHarness, type TnMenuItem,
 } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
@@ -17,7 +18,6 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
-import { User } from 'app/interfaces/user.interface';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -28,7 +28,8 @@ import {
   TablePagerShowMoreComponent,
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
 import {
   ServiceActionsMenuService,
@@ -91,13 +92,13 @@ describe('WebShareCardComponent', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(FormErrorHandlerService),
-      mockApi([
-        mockCall('sharing.webshare.query', mockWebShares),
-        mockCall('sharing.webshare.delete'),
-        mockCall('tn_connect.config', mockTnConnectConfig),
-        mockCall('tn_connect.ips_with_hostnames', {}),
-        mockCall('interface.websocket_local_ip', '192.168.1.100'),
-        mockCall('user.query', [{ id: 1, username: 'testuser', webshare: true } as User]),
+      mockTypedApi([
+        mockTypedQuery('sharing.webshare.query', mockWebShares as WebUiQueryEntity<'sharing.webshare.query'>[]),
+        mockTypedCall('sharing.webshare.delete', null),
+        mockTypedCall('tn_connect.config', mockTnConnectConfig as unknown as CallResponse<WebUiApiDirectory, 'tn_connect.config'>),
+        mockTypedCall('tn_connect.ips_with_hostnames', {}),
+        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
+        mockTypedQuery('user.query', [{ id: 1, username: 'testuser', webshare: true } as WebUiQueryEntity<'user.query'>]),
       ]),
       provideMockStore({
         initialState: {
@@ -133,9 +134,11 @@ describe('WebShareCardComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
     spectator = createComponent();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -231,7 +234,7 @@ describe('WebShareCardComponent', () => {
       call: expect.any(Function),
       successMessage: 'WebShare deleted',
     });
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.webshare.delete', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('sharing.webshare.delete', [1]);
   });
 
   it('does not delete when confirmation is cancelled', () => {
@@ -241,7 +244,7 @@ describe('WebShareCardComponent', () => {
     deleteButtons[0].dispatchEvent(new Event('click'));
     spectator.detectChanges();
 
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('sharing.webshare.delete', expect.anything());
+    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('sharing.webshare.delete', expect.anything());
   });
 
   it('does not show the TrueNAS Connect banner when TrueNAS Connect is configured', async () => {
@@ -300,11 +303,11 @@ describe('WebShareCardComponent - TrueNAS Connect not configured', () => {
       mockAuth(),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockApi([
-        mockCall('sharing.webshare.query', []),
-        mockCall('user.query', []),
-        mockCall('tn_connect.ips_with_hostnames', {}),
-        mockCall('interface.websocket_local_ip', '192.168.1.100'),
+      mockTypedApi([
+        mockTypedQuery('sharing.webshare.query', []),
+        mockTypedQuery('user.query', []),
+        mockTypedCall('tn_connect.ips_with_hostnames', {}),
+        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       provideMockStore({
         initialState: {
@@ -345,8 +348,10 @@ describe('WebShareCardComponent - TrueNAS Connect not configured', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -403,11 +408,11 @@ describe('WebShareCardComponent - No WebShare users configured', () => {
       mockAuth(),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockApi([
-        mockCall('sharing.webshare.query', []),
-        mockCall('user.query', []),
-        mockCall('tn_connect.ips_with_hostnames', {}),
-        mockCall('interface.websocket_local_ip', '192.168.1.100'),
+      mockTypedApi([
+        mockTypedQuery('sharing.webshare.query', []),
+        mockTypedQuery('user.query', []),
+        mockTypedCall('tn_connect.ips_with_hostnames', {}),
+        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       provideMockStore({
         initialState: {
@@ -441,8 +446,10 @@ describe('WebShareCardComponent - No WebShare users configured', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -490,11 +497,11 @@ describe('WebShareCardComponent - WebShare service not running', () => {
       }),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockApi([
-        mockCall('sharing.webshare.query', []),
-        mockCall('user.query', [{ id: 1, username: 'testuser', webshare: true } as User]),
-        mockCall('tn_connect.ips_with_hostnames', {}),
-        mockCall('interface.websocket_local_ip', '192.168.1.100'),
+      mockTypedApi([
+        mockTypedQuery('sharing.webshare.query', []),
+        mockTypedQuery('user.query', [{ id: 1, username: 'testuser', webshare: true } as WebUiQueryEntity<'user.query'>]),
+        mockTypedCall('tn_connect.ips_with_hostnames', {}),
+        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       provideMockStore({
         initialState: {
@@ -535,8 +542,10 @@ describe('WebShareCardComponent - WebShare service not running', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -580,11 +589,11 @@ describe('WebShareCardComponent - TrueNAS Connect not configured but service run
       mockAuth(),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockApi([
-        mockCall('sharing.webshare.query', []),
-        mockCall('user.query', []),
-        mockCall('tn_connect.ips_with_hostnames', {}),
-        mockCall('interface.websocket_local_ip', '192.168.1.100'),
+      mockTypedApi([
+        mockTypedQuery('sharing.webshare.query', []),
+        mockTypedQuery('user.query', []),
+        mockTypedCall('tn_connect.ips_with_hostnames', {}),
+        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       provideMockStore({
         initialState: {
@@ -625,8 +634,10 @@ describe('WebShareCardComponent - TrueNAS Connect not configured but service run
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

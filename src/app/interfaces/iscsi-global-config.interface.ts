@@ -1,16 +1,3 @@
-import { Optional } from 'utility-types';
-
-export interface IscsiGlobalConfig {
-  iser?: boolean;
-  alua: boolean;
-  basename: string;
-  id: number;
-  isns_servers: string[];
-  pool_avail_threshold: number;
-  listen_port: number;
-}
-
-export type IscsiGlobalConfigUpdate = Optional<Omit<IscsiGlobalConfig, 'id'>, 'alua'>;
 
 export interface IscsiGlobalSession {
   initiator: string;

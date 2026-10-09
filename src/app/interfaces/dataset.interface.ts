@@ -86,14 +86,6 @@ export interface Dataset {
   volblocksize?: ZfsProperty<string, number>;
 }
 
-export interface ExtraDatasetQueryOptions {
-  extra?: {
-    retrieve_children?: boolean;
-    flat?: boolean;
-    properties?: string[];
-  };
-}
-
 export interface DatasetCreate {
   name: string;
   type?: DatasetType;

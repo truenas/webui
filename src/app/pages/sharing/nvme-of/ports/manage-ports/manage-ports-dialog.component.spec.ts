@@ -4,13 +4,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnDialog, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { NvmeOfPort, NvmeOfSubsystem, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ManagePortsDialog } from 'app/pages/sharing/nvme-of/ports/manage-ports/manage-ports-dialog.component';
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
@@ -55,8 +55,8 @@ describe('ManagePortsDialog', () => {
     component: ManagePortsDialog,
     providers: [
       mockProvider(DialogRef),
-      mockApi([
-        mockCall('nvmet.port.delete'),
+      mockTypedApi([
+        mockTypedCall('nvmet.port.delete', true),
       ]),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
@@ -123,7 +123,7 @@ describe('ManagePortsDialog', () => {
       minWidth: '500px',
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.port.delete', [1, { force: true }]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('nvmet.port.delete', [1, { force: true }]);
 
     expect(spectator.inject(NvmeOfStore).reloadPorts).toHaveBeenCalled();
   });

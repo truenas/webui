@@ -3,8 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCardComponent, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -12,6 +12,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TargetListComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 
@@ -31,10 +32,10 @@ describe('TargetListComponent', () => {
     component: TargetListComponent,
     providers: [
       mockProvider(EmptyService),
-      mockApi([
-        mockCall('iscsi.target.query', targets),
-        mockCall('iscsi.target.delete'),
-        mockCall('iscsi.global.sessions', []),
+      mockTypedApi([
+        mockTypedQuery('iscsi.target.query', targets as WebUiQueryEntity<'iscsi.target.query'>[]),
+        mockTypedCall('iscsi.target.delete', null),
+        mockTypedQuery('iscsi.global.sessions', []),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

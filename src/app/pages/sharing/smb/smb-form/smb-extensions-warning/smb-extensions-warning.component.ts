@@ -4,7 +4,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnBannerActionDirective, TnBannerComponent, TnButtonComponent } from '@truenas/ui-components';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Component({
   selector: 'ix-smb-extensions-warning',
@@ -19,7 +19,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class SmbExtensionsWarningComponent {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);

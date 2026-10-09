@@ -4,16 +4,17 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnAutocompleteHarness, TnFormListHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { SmbSharesec, SmbSharesecAce } from 'app/interfaces/smb-share.interface';
-import { User, User as TnUser } from 'app/interfaces/user.interface';
+import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { UserService } from 'app/services/user.service';
 import { SmbAclComponent } from './smb-acl.component';
 
@@ -22,7 +23,6 @@ describe('SmbAclComponent', () => {
   let loader: HarnessLoader;
   let entriesList: TnFormListHarness;
   const mockAcl = {
-    id: 13,
     share_name: 'myshare',
     share_acl: [
       {
@@ -32,7 +32,8 @@ describe('SmbAclComponent', () => {
           id_type: NfsAclTag.Everyone,
         },
         ae_perm: SmbSharesecPermission.Read,
-      } as SmbSharesecAce,
+        // Middleware declares `ae_who_id` for users and groups only; the editor also reads everyone from it.
+      } as unknown as SmbSharesecAce,
       {
         ae_who_sid: 'S-1-1-1',
         ae_type: SmbSharesecType.Denied,
@@ -79,15 +80,15 @@ describe('SmbAclComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('sharing.smb.getacl', mockAcl),
-        mockCall('sharing.smb.setacl'),
-        mockCall('user.query', [{
+      mockTypedApi([
+        mockTypedCall('sharing.smb.getacl', mockAcl),
+        mockTypedCall('sharing.smb.setacl', mockAcl),
+        mockTypedQuery('user.query', [{
           id: 3001, uid: 3001, username: 'myuser', smb: true,
-        }] as TnUser[]),
-        mockCall('group.query', [{
+        }] as WebUiQueryEntity<'user.query'>[]),
+        mockTypedQuery('group.query', [{
           group: 'wheel', id: 1, gid: 1, smb: true,
-        }] as Group[]),
+        }] as WebUiQueryEntity<'group.query'>[]),
       ]),
       mockProvider(DialogService),
       ...ixFormTestingProviders(),
@@ -95,7 +96,7 @@ describe('SmbAclComponent', () => {
         smbUserQueryDsCache: () => of([
           { username: 'root', id: 0, uid: 0 },
           { username: 'trunk' },
-        ] as TnUser[]),
+        ] as User[]),
         smbGroupQueryDsCache: () => of([
           { group: 'wheel', id: 1, gid: 1 },
           { group: 'vip' },
@@ -190,7 +191,7 @@ describe('SmbAclComponent', () => {
   });
 
   it('loads and shows current acl for a share', async () => {
-    expect(spectator.inject(ApiService).call)
+    expect(spectator.inject(TypedApiService).call)
       .toHaveBeenCalledWith('sharing.smb.getacl', [{ share_name: 'myshare' }]);
 
     const whoSelects = await getSelects('ae_who');
@@ -237,7 +238,7 @@ describe('SmbAclComponent', () => {
     // The submit pipeline resolves each ACE's user/group id before calling setacl.
     await spectator.fixture.whenStable();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('sharing.smb.setacl', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('sharing.smb.setacl', [{
       share_name: 'myshare',
       share_acl: [
         { ae_perm: SmbSharesecPermission.Read, ae_type: SmbSharesecType.Allowed, ae_who_sid: 'S-1-1-0' },

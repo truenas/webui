@@ -9,7 +9,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   SubsystemDeleteDialogComponent,
 } from 'app/pages/sharing/nvme-of/subsystem-details-header/subsystem-delete-dialog/subsystem-delete-dialog.component';
@@ -29,7 +29,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class SubsystemsDetailsHeaderComponent {
   private tnDialog = inject(TnDialog);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);

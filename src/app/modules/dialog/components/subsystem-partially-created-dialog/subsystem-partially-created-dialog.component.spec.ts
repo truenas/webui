@@ -17,7 +17,7 @@ describe('SubsystemPartiallyCreatedDialog', () => {
     serial: '1234567890',
     allow_any_host: true,
     pi_enable: null,
-    qix_max: null,
+    qid_max: null,
     ieee_oui: null,
     ana: null,
     ports: [1, 2],

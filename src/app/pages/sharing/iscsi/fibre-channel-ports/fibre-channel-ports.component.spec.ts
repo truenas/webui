@@ -8,14 +8,15 @@ import {
 } from '@truenas/ui-components';
 import { EMPTY, Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { FibreChannelHost, FibreChannelPort, FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
+import { FibreChannelHost, FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchHarness } from 'app/modules/forms/search-input/components/basic-search/basic-search.harness';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   VirtualPortsNumberDialog,
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/virtual-ports-number-dialog/virtual-ports-number-dialog.component';
@@ -62,7 +63,7 @@ describe('FibreChannelPortsComponent', () => {
         iscsi_target_name: 'target2',
       },
     },
-  ] as FibreChannelPort[];
+  ] as unknown as WebUiQueryEntity<'fcport.query'>[];
 
   const statuses = [
     {
@@ -89,10 +90,10 @@ describe('FibreChannelPortsComponent', () => {
     component: FibreChannelPortsComponent,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('fc.fc_host.query', hosts),
-        mockCall('fcport.query', ports),
-        mockCall('fcport.status', statuses),
+      mockTypedApi([
+        mockTypedQuery('fc.fc_host.query', hosts),
+        mockTypedQuery('fcport.query', ports),
+        mockTypedCall('fcport.status', statuses),
       ]),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
@@ -220,7 +221,7 @@ describe('FibreChannelPortsComponent', () => {
   it('reports a failed load and shows the error empty state', () => {
     const error = new Error('Failed to query ports');
     spectator = createComponent({ detectChanges: false });
-    jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(throwError(() => error));
+    jest.spyOn(spectator.inject(TypedApiService), 'query').mockReturnValue(throwError(() => error));
 
     spectator.detectChanges();
 

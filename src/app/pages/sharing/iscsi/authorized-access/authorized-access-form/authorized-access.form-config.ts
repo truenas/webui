@@ -11,7 +11,7 @@ import {
   doesNotEqualFgValidator,
   matchOthersFgValidator,
 } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 export interface AuthorizedAccessFormValues {
   tag: number | null;
@@ -27,7 +27,7 @@ export interface AuthorizedAccessFormValues {
 const tooltips = helptextIscsi.authaccess;
 
 export function getAuthorizedAccessFormConfig(
-  api: ApiService,
+  api: TypedApiService,
   translate: TranslateService,
   editingAccess: IscsiAuthAccess | undefined,
 ): FormDefinition<AuthorizedAccessFormValues> {

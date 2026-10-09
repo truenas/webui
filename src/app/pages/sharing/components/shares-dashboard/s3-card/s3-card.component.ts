@@ -24,12 +24,12 @@ import {
   TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { map, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { helptextSharingS3 } from 'app/helptext/sharing';
-import { S3Bucket } from 'app/interfaces/s3.interface';
+import { S3Bucket, toS3Bucket } from 'app/interfaces/s3.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -43,7 +43,7 @@ import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-co
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
 import {
   ServiceActionsMenuService,
@@ -95,7 +95,7 @@ export class S3CardComponent implements OnInit {
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   private router = inject(Router);
   private store$ = inject<Store<ServicesState>>(Store);
@@ -190,7 +190,10 @@ export class S3CardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const buckets$ = this.api.call('sharing.s3.query').pipe(takeUntilDestroyed(this.destroyRef));
+    const buckets$ = this.api.query('sharing.s3.query').pipe(
+      map((buckets) => buckets.map(toS3Bucket)),
+      takeUntilDestroyed(this.destroyRef),
+    );
     this.dataProvider = new AsyncDataProvider<S3Bucket>(buckets$);
     this.setDefaultSort();
 

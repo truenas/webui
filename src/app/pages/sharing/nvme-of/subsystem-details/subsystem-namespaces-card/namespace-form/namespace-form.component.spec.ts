@@ -2,14 +2,14 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { MiB } from 'app/constants/bytes.constant';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   mockExplorerCreateZvol, selectNamespaceType,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/testing/namespace-form.testing';
@@ -33,9 +33,9 @@ describe('NamespaceFormComponent', () => {
     component: NamespaceFormComponent,
     overrideComponents: [mockExplorerCreateZvol()],
     providers: [
-      mockApi([
-        mockCall('nvmet.namespace.create'),
-        mockCall('nvmet.namespace.update'),
+      mockTypedApi([
+        mockTypedCall('nvmet.namespace.create', null),
+        mockTypedCall('nvmet.namespace.update', null),
       ]),
       mockAuth(),
       ...ixFormTestingProviders(),
@@ -64,8 +64,9 @@ describe('NamespaceFormComponent', () => {
       });
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.namespace.create', [{
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('nvmet.namespace.create', [{
         device_path: '/mnt/tank/new-file',
         device_type: NvmeOfNamespaceType.File,
         filesize: undefined,
@@ -120,8 +121,9 @@ describe('NamespaceFormComponent', () => {
       });
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.namespace.update', [2, {
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('nvmet.namespace.update', [2, {
         device_path: '/mnt/tank/updated-file',
         device_type: NvmeOfNamespaceType.File,
         filesize: undefined,

@@ -4,8 +4,8 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnTableHarness } from '@truenas/ui-components';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SmbShareInfo } from 'app/interfaces/smb-status.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -40,7 +40,7 @@ describe('SmbShareListComponent', () => {
       BasicSearchComponent,
     ],
     providers: [
-      mockApi([mockCall('smb.status', shares)]),
+      mockTypedApi([mockTypedCall('smb.status', shares as unknown as Record<string, unknown>[])]),
       provideMockStore({
         selectors: [
           {
@@ -66,10 +66,10 @@ describe('SmbShareListComponent', () => {
   });
 
   it('sorts Encryption by the cipher the cell shows, not by the object behind it', async () => {
-    spectator.inject(MockApiService).mockCall('smb.status', [
+    spectator.inject(MockTypedApiService).mockCall('smb.status', [
       { ...shares[0], machine: 'a', encryption: { cipher: 'AES-128-GCM', degree: 'full' } },
       { ...shares[0], machine: 'b', encryption: { cipher: '-', degree: 'none' } },
-    ] as SmbShareInfo[]);
+    ] as unknown as Record<string, unknown>[]);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(TnTableHarness);

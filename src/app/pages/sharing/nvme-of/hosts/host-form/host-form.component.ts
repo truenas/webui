@@ -12,11 +12,13 @@ import {
   TnSelectComponent, TnTestIdDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { omit } from 'lodash-es';
-import { finalize, switchMap } from 'rxjs';
+import { finalize, map, switchMap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
-import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
+import {
+  NvmeOfDhchapHash, NvmeOfHost, toNvmeOfHost, toNvmeOfHostCreateArgs,
+} from 'app/interfaces/nvme-of.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
@@ -24,7 +26,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -52,7 +54,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class HostFormComponent extends IxFormHostForm<NvmeOfHost | null> implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
@@ -163,7 +165,7 @@ export class HostFormComponent extends IxFormHostForm<NvmeOfHost | null> impleme
 
   protected generateHostKey(): void {
     this.isGeneratingHostKey.set(true);
-    this.api.call('nvmet.host.generate_key', [this.form.value.dhchap_hash, this.form.value.hostnqn])
+    this.api.call('nvmet.host.generate_key', [this.form.value.dhchap_hash as NvmeOfDhchapHash, this.form.value.hostnqn])
       .pipe(
         finalize(() => this.isGeneratingHostKey.set(false)),
         this.errorHandler.withErrorHandler(),
@@ -180,7 +182,7 @@ export class HostFormComponent extends IxFormHostForm<NvmeOfHost | null> impleme
     this.isGeneratingTrueNasKey.set(true);
     this.api.call('nvmet.global.config').pipe(
       switchMap((config) => {
-        return this.api.call('nvmet.host.generate_key', [this.form.value.dhchap_hash, config.basenqn]);
+        return this.api.call('nvmet.host.generate_key', [this.form.value.dhchap_hash as NvmeOfDhchapHash, config.basenqn]);
       }),
     )
       .pipe(
@@ -203,9 +205,9 @@ export class HostFormComponent extends IxFormHostForm<NvmeOfHost | null> impleme
       dhchap_dhgroup: (value.requireHostAuthentication && value.addDhKeyExchange) ? value.dhchap_dhgroup : null,
     };
 
-    const request$ = this.isNew()
-      ? this.api.call('nvmet.host.create', [payload])
-      : this.api.call('nvmet.host.update', [this.existingHost().id, payload]);
+    const request$ = (this.isNew()
+      ? this.api.call('nvmet.host.create', [toNvmeOfHostCreateArgs(payload)])
+      : this.api.call('nvmet.host.update', [this.existingHost().id, toNvmeOfHostCreateArgs(payload)])).pipe(map(toNvmeOfHost));
 
     return {
       request$,

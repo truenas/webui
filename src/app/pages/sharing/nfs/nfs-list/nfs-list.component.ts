@@ -10,14 +10,14 @@ import {
   TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { tap } from 'rxjs';
+import { map, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { shared } from 'app/helptext/sharing';
-import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { NfsShare, toNfsShare } from 'app/interfaces/nfs-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -33,7 +33,7 @@ import {
 } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { TierStatusComponent } from 'app/pages/sharing/components/tier-status/tier-status.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
@@ -73,7 +73,7 @@ import { poolStore } from 'app/services/global-store/stores.constant';
   ],
 })
 export class NfsListComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private entitlements = inject(EntitlementsService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
@@ -90,7 +90,8 @@ export class NfsListComponent implements OnInit {
 
   protected readonly searchQuery = signal('');
 
-  private readonly shares$ = this.api.call('sharing.nfs.query').pipe(
+  private readonly shares$ = this.api.query('sharing.nfs.query').pipe(
+    map((shares) => shares.map(toNfsShare)),
     tap((shares) => this.nfsShares = shares),
     takeUntilDestroyed(this.destroyRef),
   );

@@ -1,10 +1,11 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedQuery, settleTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import {
   NvmeOfHost,
   NvmeOfNamespace, NvmeOfPort, NvmeOfSubsystem,
 } from 'app/interfaces/nvme-of.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 
 const mockedSubsystem1 = {
@@ -14,7 +15,7 @@ const mockedSubsystem1 = {
   ieee_oui: 'ieee_oui-1',
   ana: false,
   pi_enable: true,
-  qix_max: 4,
+  qid_max: 4,
   serial: 'serial-1',
   subnqn: 'subnqn-1',
   hosts: [],
@@ -29,7 +30,7 @@ const mockedSubsystem2 = {
   ieee_oui: 'ieee_oui-2',
   ana: false,
   pi_enable: true,
-  qix_max: 4,
+  qid_max: 4,
   serial: 'serial-2',
   subnqn: 'subnqn-2',
   namespaces: [1],
@@ -61,11 +62,11 @@ describe('NvmeOfstore', () => {
   const createService = createServiceFactory({
     service: NvmeOfStore,
     providers: [
-      mockApi([
-        mockCall('nvmet.subsys.query', mockedSubsystems),
-        mockCall('nvmet.namespace.query', mockedNameSpaces),
-        mockCall('nvmet.port.query', mockedPorts),
-        mockCall('nvmet.host.query', mockedHosts),
+      mockTypedApi([
+        mockTypedQuery('nvmet.subsys.query', mockedSubsystems),
+        mockTypedQuery('nvmet.namespace.query', mockedNameSpaces as WebUiQueryEntity<'nvmet.namespace.query'>[]),
+        mockTypedQuery('nvmet.port.query', mockedPorts),
+        mockTypedQuery('nvmet.host.query', mockedHosts as WebUiQueryEntity<'nvmet.host.query'>[]),
       ]),
     ],
   });
@@ -74,15 +75,16 @@ describe('NvmeOfstore', () => {
     spectator = createService();
   });
 
-  it('loads subsystems, namespaces, hosts and ports and updates the state', () => {
-    const api = spectator.inject(ApiService);
+  it('loads subsystems, namespaces, hosts and ports and updates the state', async () => {
+    const api = spectator.inject(TypedApiService);
 
     spectator.service.initialize();
+    await settleTypedApi();
 
-    expect(api.call).toHaveBeenCalledWith('nvmet.subsys.query', [[], { extra: { verbose: true } }]);
-    expect(api.call).toHaveBeenCalledWith('nvmet.namespace.query');
-    expect(api.call).toHaveBeenCalledWith('nvmet.host.query');
-    expect(api.call).toHaveBeenCalledWith('nvmet.port.query');
+    expect(api.query).toHaveBeenCalledWith('nvmet.subsys.query', [], { extra: { verbose: true } });
+    expect(api.query).toHaveBeenCalledWith('nvmet.namespace.query');
+    expect(api.query).toHaveBeenCalledWith('nvmet.host.query');
+    expect(api.query).toHaveBeenCalledWith('nvmet.port.query');
 
     expect(spectator.service.state()).toEqual({
       subsystems: mockedSubsystems,
@@ -94,8 +96,9 @@ describe('NvmeOfstore', () => {
   });
 
   describe('subsystems()', () => {
-    it('returns an array of subsystems together with their relations as NvmeOfSubsystemDetails', () => {
+    it('returns an array of subsystems together with their relations as NvmeOfSubsystemDetails', async () => {
       spectator.service.initialize();
+      await settleTypedApi();
 
       const subsystems = spectator.service.subsystems();
 

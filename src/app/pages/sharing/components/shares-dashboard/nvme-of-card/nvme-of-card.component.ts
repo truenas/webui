@@ -42,7 +42,7 @@ import { mapTnSortToTableSort, rowTagPair } from 'app/modules/tn-table/utils';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
@@ -94,7 +94,7 @@ export class NvmeOfCardComponent implements OnInit {
   private store$ = inject<Store<ServicesState>>(Store);
   private nvmeOfStore = inject(NvmeOfStore);
   private tnDialog = inject(TnDialog);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);

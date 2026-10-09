@@ -1,6 +1,10 @@
+import { CallParams } from '@truenas/api-client';
 import {
   IscsiAuthMethod, IscsiExtentRpm, IscsiExtentType, IscsiTargetMode,
 } from 'app/enums/iscsi.enum';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+
+type D = WebUiApiDirectory;
 
 export interface IscsiPortal {
   comment?: string;
@@ -33,8 +37,6 @@ export interface IscsiAuthAccess {
   user: string;
   discovery_auth?: IscsiAuthMethod;
 }
-
-export type IscsiAuthAccessUpdate = Omit<IscsiAuthAccess, 'id'>;
 
 export interface IscsiTarget {
   alias?: string;
@@ -89,4 +91,36 @@ export type IscsiTargetExtentUpdate = Omit<IscsiTargetExtent, 'id'>;
 export interface AssociatedTargetDialogData {
   target: IscsiTarget;
   extents: IscsiExtent[];
+}
+
+/**
+ * Reads an `iscsi.target.query` row, or the entry `iscsi.target.create` / `update` return, into `IscsiTarget`.
+ * Middleware spells `mode` and each group's `authmethod` as literals where the pages compare them with the UI's
+ * enums; it describes the same object.
+ */
+export function toIscsiTarget(
+  entry: WebUiQueryEntity<'iscsi.target.query'>,
+): IscsiTarget {
+  return entry as IscsiTarget;
+}
+
+/**
+ * Reads an `iscsi.extent.query` row, or the entry `iscsi.extent.create` returns, into `IscsiExtent`. Middleware
+ * types `type` and `rpm` as literals and `filesize` as a number or a string; the UI narrows them.
+ */
+export function toIscsiExtent(
+  entry: WebUiQueryEntity<'iscsi.extent.query'>,
+): IscsiExtent {
+  return entry as IscsiExtent;
+}
+
+/** What `iscsi.extent.create` takes, as middleware declares it. */
+export type IscsiExtentCreateArgs = CallParams<D, 'iscsi.extent.create'>[0];
+
+/**
+ * Hands an extent payload to `iscsi.extent.create` or `update` unchanged. Middleware narrows `blocksize` to the
+ * sizes it accepts, which the form offers as plain numbers.
+ */
+export function toIscsiExtentCreateArgs(payload: IscsiExtentUpdate): IscsiExtentCreateArgs {
+  return payload as IscsiExtentCreateArgs;
 }

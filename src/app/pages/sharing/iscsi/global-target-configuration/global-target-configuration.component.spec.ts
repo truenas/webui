@@ -4,19 +4,21 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnDialog, TnCheckboxHarness, TnChipInputHarness, TnFormFieldHarness, TnInputHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
-import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -27,7 +29,7 @@ import { selectProductType } from 'app/store/system-info/system-info.selectors';
 describe('TargetGlobalConfigurationComponent', () => {
   let spectator: Spectator<GlobalTargetConfigurationComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
 
@@ -51,15 +53,15 @@ describe('TargetGlobalConfigurationComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('rdma.capable_protocols', [RdmaProtocolName.Iser]),
-        mockCall('iscsi.global.config', {
+      mockTypedApi([
+        mockTypedCall('rdma.capable_protocols', [RdmaProtocolName.Iser]),
+        mockTypedCall('iscsi.global.config', {
           basename: 'iqn.2005-10.org.freenas.ctl',
           isns_servers: ['188.23.4.23', '92.233.1.1'],
           pool_avail_threshold: 20,
           listen_port: 3260,
-        } as IscsiGlobalConfig),
-        mockCall('iscsi.global.update'),
+        } as CallResponse<WebUiApiDirectory, 'iscsi.global.config'>),
+        mockTypedCall('iscsi.global.update', null),
       ]),
       mockProvider(TnDialog),
       mockProvider(DialogService, {
@@ -97,7 +99,7 @@ describe('TargetGlobalConfigurationComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
     mockStore$ = spectator.inject(MockStore);
     store$ = spectator.inject(Store);
     jest.spyOn(store$, 'dispatch');
@@ -144,6 +146,7 @@ describe('TargetGlobalConfigurationComponent', () => {
     await (await getTnCheckbox('alua')).uncheck();
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     // `iser` is now part of the payload: the control is enabled whenever iSER is an RDMA
     // capable protocol, and a disabled control is omitted from `form.value`.
@@ -158,7 +161,7 @@ describe('TargetGlobalConfigurationComponent', () => {
     expect(closed).toHaveBeenCalledWith(true);
   });
 
-  it('checks if iSCSI service is enabled and does nothing if it is', () => {
+  it('checks if iSCSI service is enabled and does nothing if it is', async () => {
     mockStore$.overrideSelector(selectServices, [{
       id: 13,
       service: ServiceName.Iscsi,
@@ -167,11 +170,12 @@ describe('TargetGlobalConfigurationComponent', () => {
     mockStore$.refreshState();
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
   });
 
-  it('if iSCSI service is not running, asks user if service needs to be enabled', () => {
+  it('if iSCSI service is not running, asks user if service needs to be enabled', async () => {
     mockStore$.overrideSelector(selectServices, [{
       id: 13,
       service: ServiceName.Iscsi,
@@ -180,6 +184,7 @@ describe('TargetGlobalConfigurationComponent', () => {
     mockStore$.refreshState();
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
   });
@@ -191,12 +196,7 @@ describe('TargetGlobalConfigurationComponent', () => {
   it('disables the iSER field when iSER is not an RDMA capable protocol', async () => {
     // An empty list is how both "no capable NIC" and "not entitled" reach the UI:
     // `rdma.capable_protocols` already accounts for the RDMA entitlement.
-    jest.spyOn(api, 'call').mockImplementation((method: string) => {
-      if (method === 'rdma.capable_protocols') {
-        return of([]);
-      }
-      return of(undefined);
-    });
+    spectator.inject(MockTypedApiService).mockCall('rdma.capable_protocols', []);
 
     // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
     // re-initialising an already-initialised form re-registers its valueChanges subscriptions.
@@ -206,21 +206,15 @@ describe('TargetGlobalConfigurationComponent', () => {
   });
 
   it('keeps the loaded ALUA value across a change in HA license status', async () => {
-    jest.spyOn(api, 'call').mockImplementation((method: string) => {
-      if (method === 'iscsi.global.config') {
-        return of({
-          basename: 'iqn.2005-10.org.freenas.ctl',
-          isns_servers: [],
-          pool_avail_threshold: 20,
-          listen_port: 3260,
-          alua: true,
-        } as IscsiGlobalConfig);
-      }
-      if (method === 'rdma.capable_protocols') {
-        return of([]);
-      }
-      return of(null);
-    });
+    const mockApi = spectator.inject(MockTypedApiService);
+    mockApi.mockCall('iscsi.global.config', {
+      basename: 'iqn.2005-10.org.freenas.ctl',
+      isns_servers: [],
+      pool_avail_threshold: 20,
+      listen_port: 3260,
+      alua: true,
+    } as CallResponse<WebUiApiDirectory, 'iscsi.global.config'>);
+    mockApi.mockCall('rdma.capable_protocols', []);
 
     recreateComponent();
     expect(await (await getTnCheckbox('alua')).isChecked()).toBe(true);
@@ -273,20 +267,12 @@ describe('TargetGlobalConfigurationComponent', () => {
 
   it('allows saving form when only modifying non-basename fields, even with non-conforming basename', async () => {
     // Setup a mock with a non-conforming basename (uppercase)
-    jest.spyOn(api, 'call').mockImplementation((method: string) => {
-      if (method === 'iscsi.global.config') {
-        return of({
-          basename: 'IQN.2005-10.ORG.FREENAS.CTL', // Non-conforming
-          isns_servers: ['188.23.4.23'],
-          pool_avail_threshold: 20,
-          listen_port: 3260,
-        } as IscsiGlobalConfig);
-      }
-      if (method === 'iscsi.global.update') {
-        return of(null);
-      }
-      return of(null);
-    });
+    spectator.inject(MockTypedApiService).mockCall('iscsi.global.config', {
+      basename: 'IQN.2005-10.ORG.FREENAS.CTL', // Non-conforming
+      isns_servers: ['188.23.4.23'],
+      pool_avail_threshold: 20,
+      listen_port: 3260,
+    } as CallResponse<WebUiApiDirectory, 'iscsi.global.config'>);
 
     recreateComponent();
 
@@ -297,6 +283,7 @@ describe('TargetGlobalConfigurationComponent', () => {
     expect(spectator.component.canSubmit()).toBe(true);
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     // Should successfully call the API
     expect(api.call).toHaveBeenCalledWith('iscsi.global.update', [

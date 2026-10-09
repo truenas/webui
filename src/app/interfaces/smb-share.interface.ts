@@ -1,7 +1,9 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { NfsAclTag } from 'app/enums/nfs-acl.enum';
-import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
+import { CallParams, CallResponse } from '@truenas/api-client';
 import { SharingTierInfo } from 'app/interfaces/zfs-tier.interface';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+
+type D = WebUiApiDirectory;
 
 export interface BaseShare {
   id: number;
@@ -199,19 +201,31 @@ export interface VeeamRepositorySmbShareOptions {
   hostsdeny?: string[];
 }
 
-export interface SmbSharesec {
-  id: number;
-  share_acl: SmbSharesecAce[];
-  share_name: string;
+/** What `sharing.smb.getacl` and `sharing.smb.setacl` return: the share's name and its share-level ACL. */
+export type SmbSharesec = CallResponse<D, 'sharing.smb.getacl'>;
+
+/**
+ * One share ACL entry. `ae_who_id` names a user or group; everyone is `ae_who_sid` `S-1-1-0`, and middleware
+ * may also report a `CUSTOM` permission the editor does not offer.
+ */
+export type SmbSharesecAce = NonNullable<SmbSharesec['share_acl']>[number];
+
+/**
+ * Reads a `sharing.smb.query` row, or the share `sharing.smb.create` / `sharing.smb.update` return, into the UI's
+ * `SmbShare`. Middleware types `options` as one union for every purpose, not paired with `purpose`, and `locked`
+ * as nullable; it describes the same object.
+ */
+export function toSmbShare(entry: WebUiQueryEntity<'sharing.smb.query'>): SmbShare {
+  return entry as unknown as SmbShare;
 }
 
-export interface SmbSharesecAce {
-  ae_perm: SmbSharesecPermission;
-  ae_type: SmbSharesecType;
-  ae_who_id: {
-    id_type: NfsAclTag.Everyone | NfsAclTag.UserGroup | NfsAclTag.User | null;
-    id: number;
-  };
-  ae_who_sid?: string;
-  ae_who_str?: NfsAclTag.Everyone | number | null;
+/** What `sharing.smb.create` takes, as middleware declares it. */
+export type SmbShareCreateArgs = CallParams<D, 'sharing.smb.create'>[0];
+
+/**
+ * Hands the SMB form's payload to `sharing.smb.create` / `sharing.smb.update` unchanged. The form builds the
+ * options for the chosen purpose, which middleware declares per field with the input variants of the same shapes.
+ */
+export function toSmbShareCreateArgs(share: SmbShare): SmbShareCreateArgs {
+  return share as unknown as SmbShareCreateArgs;
 }

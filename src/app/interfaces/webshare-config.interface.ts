@@ -5,5 +5,3 @@ export interface WebShare {
   locked?: boolean;
   is_home_base?: boolean;
 }
-
-export type WebShareUpdate = Omit<WebShare, 'id' | 'locked'>;

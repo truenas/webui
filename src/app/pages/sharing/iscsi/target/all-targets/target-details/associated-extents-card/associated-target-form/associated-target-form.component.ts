@@ -17,7 +17,7 @@ import { AssociatedTargetDialogData, IscsiTargetExtentUpdate } from 'app/interfa
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Component({
   selector: 'ix-associated-target-form',
@@ -41,7 +41,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 export class AssociatedTargetFormComponent {
   protected readonly InputType = InputType;
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(FormErrorHandlerService);
   private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);

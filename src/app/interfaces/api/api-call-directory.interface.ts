@@ -1,8 +1,4 @@
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
-import { DatasetTier } from 'app/enums/dataset-tier.enum';
-import { DatasetType } from 'app/enums/dataset.enum';
-import { RdmaProtocolName } from 'app/enums/service-name.enum';
-import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { AdvancedConfig, AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
 import { AlertCategory, AlertClasses, AlertClassesUpdate } from 'app/interfaces/alert.interface';
@@ -31,9 +27,6 @@ import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { CoreOptions } from 'app/interfaces/core-options.interface';
 import { Cronjob, CronjobUpdate } from 'app/interfaces/cronjob.interface';
-import {
-  Dataset, DatasetCreate, ExtraDatasetQueryOptions,
-} from 'app/interfaces/dataset.interface';
 import { Disk, DiskDetailsResponse, ExtraDiskQueryOptions, DiskDetailsParams } from 'app/interfaces/disk.interface';
 import { DockerStatusData } from 'app/interfaces/docker-config.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
@@ -42,16 +35,7 @@ import {
   FailoverConfig,
   FailoverUpdate,
 } from 'app/interfaces/failover.interface';
-import {
-  FibreChannelHost,
-  FibreChannelPort,
-  FibreChannelPortChoices,
-  FibreChannelPortUpdate,
-  FibreChannelStatus,
-} from 'app/interfaces/fibre-channel.interface';
-import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { GpuPciChoices } from 'app/interfaces/gpu-pci-choice.interface';
-import { Group } from 'app/interfaces/group.interface';
 import {
   CreateInitShutdownScript,
   InitShutdownScript,
@@ -60,17 +44,6 @@ import {
 import {
   Ipmi, IpmiChassis, IpmiChassisIdentifyParams, IpmiChassisInfoParams, IpmiEvent, IpmiQueryParams, IpmiUpdate,
 } from 'app/interfaces/ipmi.interface';
-import {
-  IscsiGlobalConfig,
-  IscsiGlobalConfigUpdate,
-  IscsiGlobalSession,
-} from 'app/interfaces/iscsi-global-config.interface';
-import {
-  IscsiAuthAccess, IscsiAuthAccessUpdate, IscsiExtent, IscsiExtentUpdate,
-  IscsiInitiatorGroup, IscsiInitiatorGroupUpdate,
-  IscsiPortal, IscsiPortalUpdate,
-  IscsiTarget, IscsiTargetExtent, IscsiTargetExtentUpdate, IscsiTargetUpdate,
-} from 'app/interfaces/iscsi.interface';
 import { Jbof, JbofUpdate } from 'app/interfaces/jbof.interface';
 import { Job } from 'app/interfaces/job.interface';
 import {
@@ -94,30 +67,8 @@ import {
   ServiceRestartedOnNetworkSync,
 } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
-import { AddNfsPrincipal, NfsConfig } from 'app/interfaces/nfs-config.interface';
-import {
-  Nfs3Session, Nfs4Session, NfsShare, NfsShareUpdate,
-} from 'app/interfaces/nfs-share.interface';
+import { AddNfsPrincipal } from 'app/interfaces/nfs-config.interface';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
-import {
-  AssociateSubsystemHost,
-  AssociateSubsystemPort,
-  CreateNvmeOfHost,
-  CreateNvmeOfNamespace,
-  CreateNvmeOfPort,
-  CreateNvmeOfSubsystem,
-  DeleteNamespaceParams, GenerateNvmeHostParams,
-  NvmeOfGlobalConfig,
-  NvmeOfGlobalConfigUpdate, NvmeOfHost,
-  NvmeOfNamespace,
-  NvmeOfPort,
-  NvmeOfSubsystem,
-  NvmeOfTransportParams, SubsystemHostAssociation,
-  SubsystemPortAssociation, UpdateNvmeOfHost,
-  UpdateNvmeOfNamespace,
-  UpdateNvmeOfPort,
-  UpdateNvmeOfSubsystem,
-} from 'app/interfaces/nvme-of.interface';
 import { MapOption } from 'app/interfaces/option.interface';
 import {
   Pool, PoolInstance,
@@ -131,17 +82,7 @@ import {
 } from 'app/interfaces/replication-task.interface';
 import { ResilverConfig, ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
-import {
-  S3Bucket,
-  S3BucketCreate,
-  S3BucketUpdate,
-} from 'app/interfaces/s3.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
-import { SmbConfig, SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
-import {
-  SmbShare, SmbSharesec, SmbSharesecAce,
-} from 'app/interfaces/smb-share.interface';
-import { SmbStatus } from 'app/interfaces/smb-status.interface';
 import {
   RemoteSshScanParams,
   SshConnectionSetup,
@@ -160,9 +101,7 @@ import { TruenasConnectConfig, TruenasConnectUpdate } from 'app/interfaces/truen
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { User } from 'app/interfaces/user.interface';
-import { WebShare, WebShareUpdate } from 'app/interfaces/webshare-config.interface';
-import { ZfsTierConfig, ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
-import { Zpool } from 'app/interfaces/zpool.interface';
+import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import {
   SimilarIssue,
   SimilarIssuesParams,
@@ -283,22 +222,12 @@ export interface ApiCallDirectory {
   'failover.update': { params: [Partial<FailoverUpdate>]; response: FailoverConfig };
 
   // Fibre Channel Host
-  'fc.fc_host.query': { params: QueryParams<FibreChannelHost>; response: FibreChannelHost[] };
-  'fc.fc_host.update': { params: [id: number, changes: Partial<FibreChannelHost>]; response: void };
 
   // Fibre Channel Port
-  'fcport.create': { params: [FibreChannelPortUpdate]; response: FibreChannelPort };
-  'fcport.update': { params: [id: number, update: Partial<FibreChannelPortUpdate>]; response: FibreChannelPort };
-  'fcport.delete': { params: [id: number]; response: true };
-  'fcport.port_choices': { params: [include_used?: boolean]; response: FibreChannelPortChoices };
-  'fcport.query': { params: QueryParams<FibreChannelPort>; response: FibreChannelPort[] };
-  'fcport.status': { params: []; response: FibreChannelStatus[] };
 
   // Filesystem
-  'filesystem.stat': { params: [path: string]; response: FileSystemStat };
 
   // Group
-  'group.query': { params: QueryParams<Group>; response: Group[] };
 
   // Initshutdownscript
   'initshutdownscript.create': { params: [CreateInitShutdownScript]; response: InitShutdownScript };
@@ -328,7 +257,6 @@ export interface ApiCallDirectory {
   'interface.services_restarted_on_sync': { params: void; response: ServiceRestartedOnNetworkSync[] };
   'interface.update': { params: [id: string, update: Partial<NetworkInterfaceUpdate>]; response: NetworkInterface };
   'interface.vlan_parent_interface_choices': { params: void; response: Choices };
-  'interface.websocket_local_ip': { params: void; response: string };
   'interface.xmit_hash_policy_choices': { params: void; response: Choices };
 
   // IPMI
@@ -340,36 +268,6 @@ export interface ApiCallDirectory {
   'ipmi.lan.update': { params: [id: number, update: IpmiUpdate]; response: Ipmi };
 
   // iSCSI
-  'iscsi.auth.create': { params: [IscsiAuthAccessUpdate]; response: IscsiAuthAccess };
-  'iscsi.auth.delete': { params: [id: number]; response: boolean };
-  'iscsi.auth.query': { params: QueryParams<IscsiAuthAccess>; response: IscsiAuthAccess[] };
-  'iscsi.auth.update': { params: [id: number, auth: Partial<IscsiAuthAccessUpdate>]; response: IscsiAuthAccess };
-  'iscsi.extent.create': { params: [IscsiExtentUpdate]; response: IscsiExtent };
-  'iscsi.extent.delete': { params: [id: number, remove: boolean, force: boolean]; response: boolean };
-  'iscsi.extent.disk_choices': { params: void; response: Choices };
-  'iscsi.extent.query': { params: QueryParams<IscsiExtent>; response: IscsiExtent[] };
-  'iscsi.extent.update': { params: [id: number, update: Partial<IscsiExtentUpdate>]; response: IscsiExtent };
-  'iscsi.global.config': { params: void; response: IscsiGlobalConfig };
-  'iscsi.global.sessions': { params: QueryParams<IscsiGlobalSession>; response: IscsiGlobalSession[] };
-  'iscsi.global.update': { params: [Partial<IscsiGlobalConfigUpdate>]; response: IscsiGlobalConfig };
-  'iscsi.initiator.create': { params: [IscsiInitiatorGroupUpdate]; response: IscsiInitiatorGroup };
-  'iscsi.initiator.delete': { params: [id: number]; response: boolean };
-  'iscsi.initiator.query': { params: QueryParams<IscsiInitiatorGroup>; response: IscsiInitiatorGroup[] };
-  'iscsi.initiator.update': { params: [id: number, initiator: Partial<IscsiInitiatorGroupUpdate>]; response: IscsiInitiatorGroup };
-  'iscsi.portal.create': { params: [IscsiPortalUpdate]; response: IscsiPortal };
-  'iscsi.portal.delete': { params: [number]; response: boolean };
-  'iscsi.portal.listen_ip_choices': { params: void; response: Choices };
-  'iscsi.portal.query': { params: QueryParams<IscsiPortal>; response: IscsiPortal[] };
-  'iscsi.portal.update': { params: [id: number, target: Partial<IscsiPortalUpdate>]; response: IscsiPortal };
-  'iscsi.target.create': { params: [IscsiTargetUpdate]; response: IscsiTarget };
-  'iscsi.target.delete': { params: [id: number, force?: boolean, delete_extents?: boolean]; response: boolean };
-  'iscsi.target.query': { params: QueryParams<IscsiTarget>; response: IscsiTarget[] };
-  'iscsi.target.update': { params: [id: number, target: Partial<IscsiTargetUpdate>]; response: IscsiTarget };
-  'iscsi.targetextent.create': { params: [IscsiTargetExtentUpdate]; response: IscsiTargetExtent };
-  'iscsi.targetextent.delete': { params: [id: number, force?: boolean]; response: boolean };
-  'iscsi.targetextent.query': { params: QueryParams<IscsiTargetExtent>; response: IscsiTargetExtent[] };
-  'iscsi.targetextent.update': { params: [id: number, extent: Partial<IscsiTargetExtentUpdate>]; response: IscsiTargetExtent };
-  'iscsi.target.validate_name': { params: string[]; response: null | string };
 
   // Jbof
   'jbof.licensed': { params: void; response: number };
@@ -409,53 +307,12 @@ export interface ApiCallDirectory {
 
   // NFS
   'nfs.add_principal': { params: [AddNfsPrincipal]; response: boolean };
-  'nfs.config': { params: void; response: NfsConfig };
-  'nfs.get_nfs3_clients': { params: [params?: QueryParams<Nfs3Session>]; response: Nfs3Session[] };
-  'nfs.get_nfs4_clients': { params: [params?: QueryParams<Nfs4Session>]; response: Nfs4Session[] };
 
   // NVMe-oF
-  'nvmet.global.config': { params: void; response: NvmeOfGlobalConfig };
-  'nvmet.global.update': { params: [Partial<NvmeOfGlobalConfigUpdate>]; response: NvmeOfGlobalConfig };
 
-  'nvmet.subsys.query': { params: QueryParams<NvmeOfSubsystem, { extra: { verbose: boolean } }>; response: NvmeOfSubsystem[] };
-  'nvmet.subsys.create': { params: [CreateNvmeOfSubsystem]; response: NvmeOfSubsystem };
-  'nvmet.subsys.update': { params: [id: number, update: Partial<UpdateNvmeOfSubsystem>]; response: NvmeOfSubsystem };
-  'nvmet.subsys.delete': { params: [id: number, { force: boolean }?]; response: void };
-
-  'nvmet.port.query': { params: QueryParams<NvmeOfPort>; response: NvmeOfPort[] };
-  'nvmet.port.create': { params: [CreateNvmeOfPort]; response: NvmeOfPort };
-  'nvmet.port.update': { params: [id: number, update: Partial<UpdateNvmeOfPort>]; response: NvmeOfPort };
-  'nvmet.port.delete': { params: [id: number, { force: boolean }?]; response: void };
-
-  'nvmet.port_subsys.query': { params: QueryParams<SubsystemPortAssociation>; response: SubsystemPortAssociation[] };
-  'nvmet.port_subsys.create': { params: [AssociateSubsystemPort]; response: void };
-  'nvmet.port_subsys.delete': { params: [id: number]; response: void };
-
-  'nvmet.host.query': { params: QueryParams<NvmeOfHost>; response: NvmeOfHost[] };
-  'nvmet.host.create': { params: [CreateNvmeOfHost]; response: NvmeOfHost };
-  'nvmet.host.update': { params: [id: number, update: Partial<UpdateNvmeOfHost>]; response: NvmeOfHost };
-  'nvmet.host.delete': { params: [id: number, { force: boolean }?]; response: void };
-  'nvmet.host.generate_key': { params: GenerateNvmeHostParams; response: string };
-  'nvmet.host.dhchap_dhgroup_choices': { params: void; response: string[] };
-  'nvmet.host.dhchap_hash_choices': { params: void; response: string[] };
-
-  'nvmet.host_subsys.query': { params: QueryParams<SubsystemHostAssociation>; response: SubsystemHostAssociation[] };
-  'nvmet.host_subsys.create': { params: [AssociateSubsystemHost]; response: void };
-  'nvmet.host_subsys.delete': { params: [id: number]; response: void };
-
-  'nvmet.namespace.query': { params: QueryParams<NvmeOfNamespace>; response: NvmeOfNamespace[] };
-  'nvmet.namespace.create': { params: [CreateNvmeOfNamespace]; response: NvmeOfNamespace };
-  'nvmet.namespace.update': { params: [id: number, update: Partial<UpdateNvmeOfNamespace>]; response: NvmeOfNamespace };
-  'nvmet.namespace.delete': { params: DeleteNamespaceParams; response: void };
-
-  'nvmet.port.transport_address_choices': { params: NvmeOfTransportParams; response: Choices };
 
   // Pool
-  'pool.dataset.create': { params: [DatasetCreate]; response: Dataset };
-  'pool.dataset.delete': { params: [path: string, params: { recursive: boolean; force?: boolean }]; response: boolean };
   'pool.dataset.export_keys_for_replication': { params: [id: number]; response: unknown };
-  'pool.dataset.query': { params: QueryParams<Dataset, ExtraDatasetQueryOptions>; response: Dataset[] };
-  'pool.filesystem_choices': { params: [DatasetType[]?]; response: string[] };
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
   'pool.resilver.config': { params: void; response: ResilverConfig };
   'pool.resilver.update': { params: [Partial<ResilverConfigUpdate>]; response: ResilverConfig };
@@ -465,7 +322,6 @@ export interface ApiCallDirectory {
   'privilege.query': { params: QueryParams<Privilege>; response: Privilege[] };
 
   // RDMA
-  'rdma.capable_protocols': { params: []; response: RdmaProtocolName[] };
 
   // Replication
   'replication.config.config': { params: void; response: ReplicationConfig };
@@ -479,32 +335,8 @@ export interface ApiCallDirectory {
   // S3
 
   // Sharing
-  'sharing.nfs.create': { params: [NfsShareUpdate]; response: NfsShare };
-  'sharing.nfs.delete': { params: [id: number]; response: boolean };
-  'sharing.nfs.query': { params: QueryParams<NfsShare>; response: NfsShare[] };
-  'sharing.nfs.update': { params: [id: number, update: Partial<NfsShareUpdate>]; response: NfsShare };
-  'sharing.s3.audit_choices': { params: void; response: Choices };
-  'sharing.s3.create': { params: [S3BucketCreate]; response: S3Bucket };
-  'sharing.s3.delete': { params: [id: number]; response: boolean };
-  'sharing.s3.force_disable_versioning': { params: [id: number]; response: S3Bucket };
-  'sharing.s3.query': { params: QueryParams<S3Bucket>; response: S3Bucket[] };
-  'sharing.s3.update': { params: [id: number, update: S3BucketUpdate]; response: S3Bucket };
-  'sharing.smb.create': { params: [Partial<SmbShare>]; response: SmbShare };
-  'sharing.smb.delete': { params: [id: number]; response: boolean };
-  'sharing.smb.getacl': { params: [{ share_name: string }]; response: SmbSharesec };
-  'sharing.smb.query': { params: QueryParams<SmbShare>; response: SmbShare[] };
-  'sharing.smb.setacl': { params: [{ share_name: string; share_acl: SmbSharesecAce[] }]; response: SmbSharesec };
-  'sharing.smb.share_precheck': { params: [{ name: string }]; response: null | { reason: string } };
-  'sharing.smb.update': { params: [id: number, update: Partial<SmbShare>]; response: SmbShare };
-  'sharing.webshare.create': { params: [WebShareUpdate]; response: WebShare };
-  'sharing.webshare.delete': { params: [id: number]; response: boolean };
-  'sharing.webshare.query': { params: QueryParams<WebShare>; response: WebShare[] };
-  'sharing.webshare.update': { params: [id: number, update: Partial<WebShareUpdate>]; response: WebShare };
 
   // SMB
-  'smb.config': { params: void; response: SmbConfig };
-  'smb.status': { params: [level: SmbInfoLevel, params?: QueryParams<SmbStatus>]; response: SmbStatus[] };
-  'smb.update': { params: [Partial<SmbConfigUpdate>]; response: SmbConfig };
 
   // Static route
   'staticroute.create': { params: [UpdateStaticRoute]; response: StaticRoute };
@@ -550,7 +382,6 @@ export interface ApiCallDirectory {
   'tn_connect.update': { params: [Partial<TruenasConnectUpdate>]; response: TruenasConnectConfig };
   'tn_connect.generate_claim_token': { params: void; response: string };
   'tn_connect.get_registration_uri': { params: void; response: string };
-  'tn_connect.ips_with_hostnames': { params: void; response: Record<string, string> };
 
   // TrueNAS
   'truenas.get_eula': { params: void; response: string };
@@ -589,13 +420,9 @@ export interface ApiCallDirectory {
   // ZFS
 
   // ZPool
-  'zpool.query': { params: [{ properties?: string[]; pool_names?: string[] }?]; response: Zpool[] };
 
   // ZFS Tier
-  'zfs.tier.config': { params: void; response: ZfsTierConfig };
   'zfs.tier.rewrite_job_status': { params: [{ tier_job_id: string }]; response: ZfsTierRewriteJobEntry };
-  'zfs.tier.rewrite_job_cancel': { params: [{ tier_job_id: string }]; response: void };
-  'zfs.tier.dataset_set_tier': { params: [{ dataset_name: string; tier_type: DatasetTier; move_existing_data?: boolean }]; response: ZfsTierRewriteJobEntry };
 }
 
 /**

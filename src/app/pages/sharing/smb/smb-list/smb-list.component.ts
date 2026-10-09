@@ -11,14 +11,16 @@ import {
   TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { of, tap } from 'rxjs';
+import { map, of, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { shared } from 'app/helptext/sharing';
-import { SmbSharePurpose, SmbShare, ExternalSmbShareOptions } from 'app/interfaces/smb-share.interface';
+import {
+  SmbSharePurpose, SmbShare, ExternalSmbShareOptions, toSmbShare,
+} from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -35,7 +37,7 @@ import {
 } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { TierStatusComponent } from 'app/pages/sharing/components/tier-status/tier-status.component';
@@ -82,7 +84,7 @@ import { selectService } from 'app/store/services/services.selectors';
 })
 export class SmbListComponent implements OnInit {
   private loader = inject(LoaderService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
@@ -104,7 +106,8 @@ export class SmbListComponent implements OnInit {
 
   protected searchQuery = signal('');
 
-  private readonly shares$ = this.api.call('sharing.smb.query').pipe(
+  private readonly shares$ = this.api.query('sharing.smb.query').pipe(
+    map((shares) => shares.map((share) => toSmbShare(share))),
     tap((shares) => this.smbShares = shares),
     takeUntilDestroyed(this.destroyRef),
   );

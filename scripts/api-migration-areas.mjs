@@ -71,8 +71,6 @@ export const migratedApiPaths = [
   'src/app/services/user.service.spec.ts',
   'src/app/services/vm.service.ts',
   'src/app/services/vm.service.spec.ts',
-  // Its last legacy import was the extent step's spec feeding `IscsiService`, which moved above.
-  'src/app/pages/sharing/iscsi/iscsi-wizard/steps',
   // NAS-143994: the root NgRx effects — system info and config, entitlements, HA, reboot info,
   // services, EULA, network check-in and preferences.
   'src/app/store',
@@ -173,6 +171,25 @@ export const migratedApiPaths = [
   'src/app/pages/apps/store/apps-store.service.spec.ts',
   'src/app/pages/apps/store/docker.store.ts',
   'src/app/pages/apps/store/docker.store.spec.ts',
+  // NAS-144004: sharing — the shares dashboard and its cards, SMB, NFS, S3, WebShare, iSCSI (absorbing the wizard
+  // steps pinned with the services above), Fibre Channel and NVMe-oF. `pages/sharing` is pinned below its root:
+  // `SharingTierService` keeps `ApiService` for `zfs.tier.rewrite_job_query` and `zfs.tier.rewrite_job_status`,
+  // event sources that take subscription params (gap 5), and the data migration dialog's spec builds the real
+  // service.
+  'src/app/pages/sharing/sharing.routes.ts',
+  'src/app/pages/sharing/iscsi',
+  'src/app/pages/sharing/nfs',
+  'src/app/pages/sharing/nvme-of',
+  'src/app/pages/sharing/s3',
+  'src/app/pages/sharing/smb',
+  'src/app/pages/sharing/utils',
+  'src/app/pages/sharing/webshare',
+  'src/app/pages/sharing/components/change-tier-dialog',
+  'src/app/pages/sharing/components/shares-dashboard',
+  'src/app/pages/sharing/components/testing',
+  'src/app/pages/sharing/components/tier-status',
+  'src/app/pages/sharing/components/tier-status.utils.ts',
+  'src/app/pages/sharing/components/data-migration-status-dialog/data-migration-status-dialog.component.ts',
 ];
 
 /**

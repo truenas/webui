@@ -12,7 +12,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { normalizeTestIdParts, normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
@@ -29,7 +29,7 @@ import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.ser
 @Injectable({ providedIn: 'root' })
 export class ServiceActionsMenuService {
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private router = inject(Router);
   private formPanel = inject(FormSidePanelService);
   private urlOptions = inject(UrlOptionsService);

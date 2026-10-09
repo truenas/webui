@@ -1,4 +1,3 @@
-import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { SetAcl } from 'app/interfaces/acl.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
@@ -14,7 +13,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
 import { PoolScrubTaskParams } from 'app/interfaces/pool-scrub.interface';
 import { CreatePool, Pool } from 'app/interfaces/pool.interface';
-import { ServiceControlOptions } from 'app/interfaces/service.interface';
 import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-dataset-config.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { UpdateParams } from 'app/interfaces/system-update.interface';
@@ -78,10 +76,6 @@ export interface ApiJobDirectory {
   'rsynctask.run': { params: [id: number]; response: null };
 
   // Service
-  'service.control': {
-    params: [operation: ServiceOperation, service: ServiceName, options?: ServiceControlOptions];
-    response: boolean;
-  };
 
   // Support
   'support.attach_ticket': { params: AttachTicketParams; response: Job };

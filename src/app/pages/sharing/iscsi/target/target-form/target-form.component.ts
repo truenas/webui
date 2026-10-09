@@ -19,7 +19,7 @@ import { Role } from 'app/enums/role.enum';
 import { createFormArraySnapshot } from 'app/helpers/form-array-snapshot.helper';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextIscsi } from 'app/helptext/sharing';
-import { IscsiTarget, IscsiTargetGroup } from 'app/interfaces/iscsi.interface';
+import { IscsiTarget, IscsiTargetGroup, toIscsiTarget } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import {
   IxIpInputWithNetmaskComponent,
@@ -30,7 +30,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   FcMpioInfoBannerComponent,
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-mpio-info-banner/fc-mpio-info-banner.component';
@@ -72,7 +72,7 @@ export class TargetFormComponent extends IxFormHostForm implements OnInit {
   private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private fcService = inject(FibreChannelService);
   private entitlements = inject(EntitlementsService);
   private targetNameValidationService = inject(TargetNameValidationService);
@@ -191,7 +191,7 @@ export class TargetFormComponent extends IxFormHostForm implements OnInit {
     );
 
     // Load FC hosts for validation
-    this.api.call('fc.fc_host.query').pipe(
+    this.api.query('fc.fc_host.query').pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((hosts) => {
       this.fcHosts.set(hosts.map((host) => ({ id: host.id, alias: host.alias })));
@@ -233,6 +233,7 @@ export class TargetFormComponent extends IxFormHostForm implements OnInit {
     const request$: Observable<IscsiTarget> = (this.editingTarget
       ? this.api.call('iscsi.target.update', [this.editingTarget.id, values])
       : this.api.call('iscsi.target.create', [values])).pipe(
+      map(toIscsiTarget),
       switchMap((target) => {
         if (!this.showPortControls) {
           return of(target);
