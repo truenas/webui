@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, inject,
+} from '@angular/core';
 import { ControlValueAccessor, FormsModule, NgControl, ReactiveFormsModule } from '@angular/forms';
 import {
-  injectTnFormFieldAria, TnSelectComponent, TnSelectOption, TnTestIdDirective,
+  injectTnFormFieldAria, TnSelectComponent, TnSelectOption, TnTestIdDirective, TnTestIdValue,
 } from '@truenas/ui-components';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { NetworkService } from 'app/services/network.service';
@@ -33,6 +35,22 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
    * `aria-labelledby`, and setting this would override it.
    */
   readonly ariaLabel = input<string>();
+
+  /**
+   * Test id for the address input, with the netmask select's derived from it. Left unset, the
+   * input falls back to its control name and the select to `netmasks` — fine for a lone control,
+   * but a control in a form array is named by its index, so every array on a form resolves to the
+   * same `input-0`. Pass an id that names the list as well, e.g. `['network', i]`.
+   */
+  readonly testId = input<TnTestIdValue>();
+
+  protected readonly netmaskTestId = computed(() => {
+    const testId = this.testId();
+    if (testId === undefined || testId === null) {
+      return 'netmasks';
+    }
+    return [...(Array.isArray(testId) ? testId : [testId]), 'netmask'];
+  });
 
   /**
    * ARIA wiring from the enclosing `tn-form-field`. This control renders no label of its own —

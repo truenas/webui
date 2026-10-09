@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Option } from 'app/interfaces/option.interface';
@@ -15,12 +15,13 @@ import { NetworkService } from 'app/services/network.service';
 
 @Component({
   selector: 'ix-test-ip-input-host',
-  template: '<ix-ip-input-with-netmask [formControl]="control"></ix-ip-input-with-netmask>',
+  template: '<ix-ip-input-with-netmask [formControl]="control" [testId]="testId()"></ix-ip-input-with-netmask>',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule, IxIpInputWithNetmaskComponent],
 })
 class TestHostComponent {
   readonly control = new FormControl<string | null>(null);
+  readonly testId = signal<(string | number)[] | undefined>(undefined);
 }
 
 describe('IxIpInputWithNetmaskComponent', () => {
@@ -43,6 +44,24 @@ describe('IxIpInputWithNetmaskComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     harness = await loader.getHarness(IxIpInputWithNetmaskHarness);
+  });
+
+  function renderedTestIds(): (string | null)[] {
+    return spectator.queryAll('[data-test]').map((element) => element.getAttribute('data-test'));
+  }
+
+  it('keeps the netmask select on its fixed test id when none is passed', () => {
+    expect(renderedTestIds()).toContain('select-netmasks');
+  });
+
+  it('names the address input and the netmask select after the test id it is given', () => {
+    // A control in a form array is named by its index, so without this every array on a form
+    // resolves its first address to the same `input-0`.
+    spectator.component.testId.set(['network', 0]);
+    spectator.detectChanges();
+
+    expect(renderedTestIds()).toEqual(expect.arrayContaining(['input-network-0', 'select-network-0-netmask']));
+    expect(renderedTestIds()).not.toContain('select-netmasks');
   });
 
   it('shows the address and netmask of the value the control starts with', async () => {

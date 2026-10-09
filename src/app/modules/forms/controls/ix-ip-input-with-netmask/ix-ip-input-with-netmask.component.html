@@ -4,7 +4,7 @@
     type="text"
     tnTestIdType="input"
     [required]="required()"
-    [tnTestId]="controlDirective.name"
+    [tnTestId]="testId() ?? controlDirective.name"
     [disabled]="isDisabled"
     [value]="address"
     [attr.aria-label]="ariaLabel()"
@@ -17,7 +17,7 @@
   <div class="slash">/</div>
   <tn-select
     class="select"
-    testId="netmasks"
+    [testId]="netmaskTestId()"
     [disabled]="isDisabled"
     [options]="netmaskOptions"
     [ngModel]="netmask"

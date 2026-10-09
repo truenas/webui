@@ -244,7 +244,37 @@ tag uses the library normalizer while the cells inside the same row use lodash;
 "Configure ACL" prompt depends on `filesystem.stat(path).acl` rather than on the
 purpose, which is why these specs never see it and `fresh-install` always does.
 
-The framework is done and the coverage is not. Seventy-one tests — seventy
+NFS shares followed, in `tests/nfs-form.e2e.ts`, `tests/nfs-list.e2e.ts` and
+`tests/nfs-service.e2e.ts`, on the same plan as SMB with one difference that
+runs through all of it: an NFS share has no name. Its path is its identity, and
+the card folds the description in as well, so a row's ids are
+`…-<path>-<description>` and **editing the description renames every id on the
+row**. `nfs-form` publishes a share and holds the untouched access defaults to
+what the appliance stored, then narrows them — read-only, one network, one
+host — and asserts those through `sharing.nfs.query`, since none of it is on
+the card. Its two refusals (a pool's root dataset, a network that is not an
+address) are asserted on the message as well as on Save, which took ids the
+form did not have: the first network and the first host both resolved to
+`input-0`, the control name of a form array's first member, and neither field
+nor the path had an id for its error text. They are now `input-network-<i>`,
+`input-host-<i>`, `form-field-network-<i>` and `text-path-errors` — the last
+from `ix-explorer`, so every explorer that renders its own errors has it —
+and `button-remove-from-list` went the same way (`button-remove-network-<i>`,
+`button-remove-host-<i>`).
+`nfs-list` unshares and edits from the row menu beside a second share, on two
+datasets rather than one. `nfs-service` covers the service from its three
+entry points: accepting the start offer after a save (which also enables it at
+boot, the dialog's toggle being on), the card's switch (which does not), and a
+row's Enabled switch (which leaves the service alone).
+
+Two things here were read off a running appliance rather than the template.
+The path field hands its value to the form when it loses focus, so a path that
+is typed and not left is on screen while Save still answers for the old one —
+`fillNfsSharePath` blurs for that reason. And a host is resolved by middleware
+before it is saved, so a hostname that does not resolve is refused, and the
+refusal arrives as an error dialog rather than under the field.
+
+The framework is done and the coverage is not. Eighty tests — seventy-nine
 journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
@@ -289,8 +319,11 @@ a number. See `05-ci.md`.
    locators the first of those needs. SMB shares are covered from the Shares
    dashboard — publish, the purpose presets, edit, enable, unshare, the service
    switch — but not the share and filesystem ACL editors, the standalone list
-   page, or anything a real SMB client would have to prove. NFS is the
-   near-copy to take after it. S3 is covered as a feature — create, configure,
+   page, or anything a real SMB client would have to prove. NFS shares are
+   covered the same way — publish, read-only, networks, hosts, edit, enable,
+   unshare, the service switch and the start offer — but not the maproot and
+   mapall mappings, the Security select (NFSv4 only), the service's own
+   settings, the standalone list and sessions pages, or a real mount. S3 is covered as a feature — create, configure,
    edit, toggle, rotate, delete — except auditing, which is licence-gated and
    needs an Enterprise appliance. List-driven journeys (deleting a pool, dataset
    or share from a list) are no longer blocked: `tn-table` still writes nothing
