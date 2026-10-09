@@ -153,20 +153,20 @@ describe('SnapshotListComponent', () => {
       .map((element) => element.getAttribute('data-test'));
 
     expect(testIds).toEqual([
-      'text-dataset-snapshot-2-row-text',
-      'text-snapshot-snapshot-2-row-text',
-      'text-used-snapshot-2-row-size',
+      'text-dataset-snapshot-test-dataset-second-snapshot-row-text',
+      'text-snapshot-snapshot-test-dataset-second-snapshot-row-text',
+      'text-used-snapshot-test-dataset-second-snapshot-row-size',
       // `date-date-created-…` before the migration: the library's composeTestId drops a base
       // segment that repeats the type prefix, so this one id is a rename, not a restoration.
-      'date-created-snapshot-2-row-date',
-      'text-referenced-snapshot-2-row-size',
+      'date-created-snapshot-test-dataset-second-snapshot-row-date',
+      'text-referenced-snapshot-test-dataset-second-snapshot-row-size',
     ]);
   });
 
   it('tags the row itself with the snapshot it shows, so e2e can address the row rather than a cell', () => {
     const row = spectator.query('tbody tr[data-test]');
 
-    expect(row?.getAttribute('data-test')).toBe('row-snapshot-2');
+    expect(row?.getAttribute('data-test')).toBe('row-snapshot-test-dataset-second-snapshot');
   });
 
   it('snaps the extra-columns toggle back when the confirmation is cancelled', async () => {

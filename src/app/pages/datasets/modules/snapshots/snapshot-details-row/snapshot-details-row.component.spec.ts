@@ -6,6 +6,7 @@ import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, pipe } from 'rxjs';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
@@ -44,6 +45,7 @@ describe('SnapshotDetailsRowComponent', () => {
       }),
       mockTypedApi([
         mockTypedQuery('pool.snapshot.query', [fakeZfsSnapshot as unknown as WebUiQueryEntity<'pool.snapshot.query'>]),
+        mockTypedQuery('pool.dataset.query', []),
         mockTypedCall('pool.snapshot.hold', null),
         mockTypedCall('pool.snapshot.release', null),
         mockTypedCall('pool.snapshot.delete', null),
@@ -117,6 +119,33 @@ describe('SnapshotDetailsRowComponent', () => {
 
     await holdCheckbox.toggle();
     expect(api.call).toHaveBeenCalledWith('pool.snapshot.hold', [fakeZfsSnapshot.name]);
+  });
+
+  it('offers Delete for a snapshot nothing was cloned from', async () => {
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
+
+    expect(await deleteButton.isDisabled()).toBe(false);
+  });
+
+  it('disables Delete for a snapshot a dataset was cloned from', async () => {
+    // Found from the clone's side — the dataset whose origin is this snapshot — because neither
+    // snapshot query returns a `clones` property.
+    spectator.inject(MockTypedApiService).mockQuery(
+      'pool.dataset.query',
+      [{ id: 'test-dataset-clone' } as WebUiQueryEntity<'pool.dataset.query'>],
+    );
+    // The row asks once, as it opens — so it is opened again against the new answer.
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
+
+    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith(
+      'pool.dataset.query',
+      [['origin.rawvalue', '=', fakeZfsSnapshot.name]],
+      { select: ['id'] },
+    );
+    expect(await deleteButton.isDisabled()).toBe(true);
   });
 
   it('should delete snapshot when `Delete` button click', async () => {

@@ -63,9 +63,12 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
 
-  get hasClones(): boolean {
-    return !!this.snapshotInfo?.properties?.clones?.value;
-  }
+  /**
+   * Whether a dataset was cloned from this snapshot, which ZFS will not delete while one exists.
+   * False until {@link checkForClones} answers, and if it fails: the lookup only spares the user
+   * a delete middleware would refuse anyway.
+   */
+  protected hasClones = false;
 
   protected get usedBytes(): number | undefined {
     return getFiniteNumber(this.snapshotInfo?.properties?.used?.parsed);
@@ -81,6 +84,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getSnapshotInfo();
+    this.checkForClones();
     this.holdControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.doHoldOrRelease());
@@ -117,9 +121,27 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Asked of the datasets rather than of the snapshot: neither snapshot query returns a `clones`
+   * property, whether or not it is requested, so a clone is only findable from its own side —
+   * as the dataset whose `origin` is this snapshot.
+   */
+  private checkForClones(): void {
+    this.api.query('pool.dataset.query', [['origin.rawvalue', '=', this.snapshot().name]], { select: ['id'] })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (clones) => {
+          this.hasClones = clones.length > 0;
+          this.cdr.markForCheck();
+        },
+        error: (error: unknown) => console.error(error),
+      });
+  }
+
   private doHoldOrRelease(): void {
     const holdOrRelease = this.holdControl.value ? 'pool.snapshot.hold' : 'pool.snapshot.release';
-    this.api.call(holdOrRelease, [this.snapshotInfo.name])
+    // The row's own name, not `snapshotInfo`'s: the tick box is live before that query answers.
+    this.api.call(holdOrRelease, [this.snapshot().name])
       .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         error: (error: unknown) => {
