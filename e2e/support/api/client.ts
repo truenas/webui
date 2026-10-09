@@ -8,7 +8,7 @@
  */
 import {
   createTrueNasClient, SUPPORTED_API_VERSIONS,
-  type ApiDirectoryV27_0_0, type AuthResponse, type TrueNasApiClient,
+  type ApiDirectoryV28_0_0, type AuthResponse, type TrueNasApiClient,
 } from '@truenas/api-client';
 import { filter, firstValueFrom, take, timeout } from 'rxjs';
 import type { TargetConfig } from '../config';
@@ -29,7 +29,7 @@ import type { TargetConfig } from '../config';
  * `CallResponse<E2eApiDirectory, 'some.method'>`, which is how they name a shape
  * the package declares without exporting.
  */
-export type E2eApiDirectory = ApiDirectoryV27_0_0;
+export type E2eApiDirectory = ApiDirectoryV28_0_0;
 
 /** A connected client typed against {@link E2eApiDirectory}. */
 export type E2eApiClient = TrueNasApiClient<E2eApiDirectory>;
@@ -46,8 +46,8 @@ export type E2eApiClient = TrueNasApiClient<E2eApiDirectory>;
  * typo or a version ahead of the client fails to compile.
  */
 const expectedApiVersion = {
-  year: 27,
-  label: 'v27.0.0' satisfies (typeof SUPPORTED_API_VERSIONS)[number],
+  year: 28,
+  label: 'v28.0.0' satisfies (typeof SUPPORTED_API_VERSIONS)[number],
 } as const;
 
 /** Log context only — the client uses it for correlation, not identity. */

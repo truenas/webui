@@ -63,7 +63,7 @@ describe('WebSocketHandlerService Error Handling', () => {
 
     // Closed, so nothing this spec schedules reaches the wire: every test here
     // drives the private paths directly.
-    client = createFakeClient({ version: 'v27.0.0', opened: false });
+    client = createFakeClient({ version: 'v28.0.0', opened: false });
 
     spectator = createService();
     service = spectator.service;

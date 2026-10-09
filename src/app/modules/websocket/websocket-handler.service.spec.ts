@@ -45,7 +45,7 @@ describe('WebSocketHandlerService', () => {
     debugPanelWasEnabled = Boolean(environment.debugPanel?.enabled);
     environment.debugPanel = { ...environment.debugPanel, enabled: false };
 
-    client = createFakeClient({ version: 'v27.0.0', opened: false });
+    client = createFakeClient({ version: 'v28.0.0', opened: false });
     spectator = createService();
   });
 

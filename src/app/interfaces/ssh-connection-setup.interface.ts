@@ -1,4 +1,4 @@
-import { CallParams, v27_0_0 } from '@truenas/api-client';
+import { CallParams, v28_0_0 } from '@truenas/api-client';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 /**
@@ -8,10 +8,10 @@ import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-cli
  */
 export type SshConnectionSetup = CallParams<WebUiApiDirectory, 'keychaincredential.setup_ssh_connection'>[0];
 
-export type SshConnectionManualSetup = v27_0_0.SetupSSHConnectionManual;
+export type SshConnectionManualSetup = v28_0_0.SetupSSHConnectionManual;
 
-export type SshConnectionSemiAutomaticSetup = v27_0_0.SetupSSHConnectionSemiautomatic;
+export type SshConnectionSemiAutomaticSetup = v28_0_0.SetupSSHConnectionSemiautomatic;
 
 export type SshConnectionSetupPrivateKey = SshConnectionSetup['private_key'];
 
-export type RemoteSshScanParams = v27_0_0.KeychainCredentialRemoteSshHostKeyScanArgs;
+export type RemoteSshScanParams = v28_0_0.KeychainCredentialRemoteSshHostKeyScanArgs;

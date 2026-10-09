@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { v27_0_0 } from '@truenas/api-client';
+import { v28_0_0 } from '@truenas/api-client';
 import { map, Observable } from 'rxjs';
 import {
   CloudSyncBucket, CloudSyncCredential, CloudSyncCredentialEntry, CloudSyncCredentialVerifyResult,
@@ -8,7 +8,7 @@ import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 /** The create payload as middleware declares it: a name and one provider model, discriminated on `type`. */
-export type CloudCredentialPayload = v27_0_0.CloudCredentialCreate;
+export type CloudCredentialPayload = v28_0_0.CloudCredentialCreate;
 
 /** One provider's attributes, as middleware declares them. */
 export type CloudCredentialProviderPayload = CloudCredentialPayload['provider'];

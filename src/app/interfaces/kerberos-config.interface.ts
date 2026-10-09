@@ -1,3 +1,3 @@
-import { v27_0_0 } from '@truenas/api-client';
+import { v28_0_0 } from '@truenas/api-client';
 
-export type KerberosKeytab = v27_0_0.KerberosKeytabEntry;
+export type KerberosKeytab = v28_0_0.KerberosKeytabEntry;

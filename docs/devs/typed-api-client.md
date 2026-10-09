@@ -19,13 +19,13 @@ rewrite. To see where it stands, run `yarn check-api-migration --report`.
 | Piece | Where |
 |---|---|
 | `@truenas/api-client` as a runtime dependency (8.0.0 at the time of writing) | `package.json` |
-| The client instance, typed against `v27.0.0` | `src/app/modules/websocket/typed-api/typed-api-client.token.ts` |
+| The client instance, typed against `v28.0.0` | `src/app/modules/websocket/typed-api/typed-api-client.token.ts` |
 | `TypedApiService`, the migration target for `ApiService` | `src/app/modules/websocket/typed-api/typed-api.service.ts` |
 | The version the UI is written against | `WebUiApiDirectory` in the token file |
 | `mockTypedApi()` and `MockTypedApiService`, the spec double | `src/app/core/testing/utils/mock-typed-api.utils.ts`, `src/app/core/testing/classes/mock-typed-api.service.ts` |
 | `EmptyTypedApiService`, the global guard against unmocked specs | `src/app/core/testing/utils/empty-typed-api.service.ts`, registered in `src/setup-jest.ts` |
 
-The typed client owns **the** WebSocket — one per tab, on `/api/v27.0.0`. It
+The typed client owns **the** WebSocket — one per tab, on `/api/v28.0.0`. It
 is opened at startup by an app initializer in `main.ts`, unconditionally on
 purpose: migrated pages run entirely on it, so there is no build in which it
 can be left closed.
@@ -211,7 +211,7 @@ Where things differ:
 - The Backup Credentials page, cloud credentials included, as the first whole
   feature area: eight components, `CloudCredentialService`,
   `KeychainCredentialService`, and the `mockTypedApi()` spec helper.
-- Its interfaces alias the client's generated types (`v27_0_0.*` where the
+- Its interfaces alias the client's generated types (`v28_0_0.*` where the
   namespace names the type, derived from the directory where it does not);
   `keychain-credential.interface.ts` is the pattern.
 - The global `EmptyTypedApiService` guard, added after the first service
@@ -437,14 +437,14 @@ above. Each is a change for `truenas/api-client-ts`.
     form tries to write those fields through the typed client. Still so in
     7.0.1, which regenerated the types.
 13. **Version namespaces are type-only and partial.** Generated model types
-    are reachable as `v27_0_0.Name`, and that is how the UI's interface files
+    are reachable as `v28_0_0.Name`, and that is how the UI's interface files
     now alias them (`keychain-credential.interface.ts` is the pattern). Two
     limits, both in the client's `.d.ts` bundling: the const objects the
     generator emits for enums are exported type-only, so
-    `v27_0_0.KeychainCredentialEntryType.SshKeyPair` does not compile in any
+    `v28_0_0.KeychainCredentialEntryType.SshKeyPair` does not compile in any
     version namespace, and a later namespace carries only the types that
     changed in that version, so `SSHKeyPairEntry` and
-    `CredentialsVerifyResult` exist under `v25_10_0` but not `v27_0_0`. Until
+    `CredentialsVerifyResult` exist under `v25_10_0` but not `v28_0_0`. Until
     fixed (still so in 7.0.1): keep the UI's enums as value holders, and
     derive a missing type from the directory
     (`CallResponse<D, 'keychaincredential.create'>`) rather than importing it
@@ -690,7 +690,7 @@ above. Each is a change for `truenas/api-client-ts`.
 
 ## Version policy
 
-`WebUiApiDirectory` pins `v27.0.0`. The literal must stay at the
+`WebUiApiDirectory` pins `v28.0.0`. The literal must stay at the
 `createTrueNasClient` call site — forwarding it through a variable widens the
 derived surface to the oldest supported version without a compile error.
 Bumping the version is a one-line change followed by a compile pass; methods

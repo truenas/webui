@@ -1,4 +1,4 @@
-import { CallResponse, v27_0_0 } from '@truenas/api-client';
+import { CallResponse, v28_0_0 } from '@truenas/api-client';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
@@ -17,13 +17,13 @@ export interface CloudSyncCredential {
  * model per provider. `CloudSyncCredential` is the UI's reading of the same
  * wire object; `CloudCredentialService` converts between the two.
  */
-export type CloudSyncCredentialEntry = v27_0_0.CredentialsEntry;
+export type CloudSyncCredentialEntry = v28_0_0.CredentialsEntry;
 
 export type CloudSyncCredentialUpdate = Omit<CloudSyncCredential, 'id'>;
 
 export type CloudSyncCredentialVerify = CloudSyncCredential['provider'];
 
-/** Not in the client's `v27_0_0` namespace (unchanged since v25.10), so derived from the directory. */
+/** Not in the client's `v28_0_0` namespace (unchanged since v25.10), so derived from the directory. */
 export type CloudSyncCredentialVerifyResult = CallResponse<WebUiApiDirectory, 'cloudsync.credentials.verify'>;
 
 export interface CloudSyncBucket {
@@ -33,6 +33,6 @@ export interface CloudSyncBucket {
 }
 
 /** `drive_type` is the wire literal; compare against `OneDriveType`. */
-export type CloudSyncOneDriveDrive = v27_0_0.CloudSyncOneDriveListDrivesDrive;
+export type CloudSyncOneDriveDrive = v28_0_0.CloudSyncOneDriveListDrivesDrive;
 
-export type CloudSyncOneDriveParams = v27_0_0.CloudSyncOneDriveListDrivesArgs;
+export type CloudSyncOneDriveParams = v28_0_0.CloudSyncOneDriveListDrivesArgs;

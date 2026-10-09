@@ -190,7 +190,7 @@ describe('limitConcurrentCalls', () => {
   });
 
   it('holds back the calls the client makes through its own verbs', () => {
-    const client = createFakeClient({ version: 'v27.0.0', authenticated: true, opened: true });
+    const client = createFakeClient({ version: 'v28.0.0', authenticated: true, opened: true });
     limitConcurrentCalls(client.connection, 1);
     const sentBefore = client.connection.sent.length;
 

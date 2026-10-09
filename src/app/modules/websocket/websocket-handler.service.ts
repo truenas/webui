@@ -57,7 +57,7 @@ type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>> & { js
  * retries on its own), `core.set_options` on open (the client sends it), and
  * the ping timer (the client pings every 20s).
  *
- * The traffic itself moved from `/api/current` to `/api/v27.0.0`, which is the
+ * The traffic itself moved from `/api/current` to `/api/v28.0.0`, which is the
  * path the client opens. Middleware serves the same methods on both.
  */
 @Injectable({
