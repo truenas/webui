@@ -2,15 +2,17 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnBannerHarness, TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import {
-  EMPTY, Observable, catchError, of, throwError,
+  EMPTY, Observable, catchError,
 } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   ChangeTierDialogComponent, ChangeTierDialogData,
 } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
@@ -28,13 +30,13 @@ describe('ChangeTierDialogComponent — share usage list', () => {
   const createComponent = createComponentFactory({
     component: ChangeTierDialogComponent,
     providers: [
-      mockApi([
-        mockCall('zpool.query', []),
-        mockCall('pool.dataset.query', []),
-        mockCall('sharing.smb.query', []),
-        mockCall('sharing.nfs.query', []),
-        mockCall('sharing.webshare.query', []),
-        mockCall('sharing.s3.query', []),
+      mockTypedApi([
+        mockTypedCall('zpool.query', []),
+        mockTypedQuery('pool.dataset.query', []),
+        mockTypedQuery('sharing.smb.query', []),
+        mockTypedQuery('sharing.nfs.query', []),
+        mockTypedQuery('sharing.webshare.query', []),
+        mockTypedQuery('sharing.s3.query', []),
       ]),
       { provide: DIALOG_DATA, useValue: dialogData },
       mockProvider(DialogRef),
@@ -47,11 +49,11 @@ describe('ChangeTierDialogComponent — share usage list', () => {
     webshare?: { id: number; name: string }[];
     s3?: { id: number; name: string }[];
   }): void {
-    const mockService = spectator.inject(MockApiService);
-    mockService.mockCall('sharing.smb.query', shares.smb ?? []);
-    mockService.mockCall('sharing.nfs.query', shares.nfs ?? []);
-    mockService.mockCall('sharing.webshare.query', shares.webshare ?? []);
-    mockService.mockCall('sharing.s3.query', shares.s3 ?? []);
+    const mockService = spectator.inject(MockTypedApiService);
+    mockService.mockQuery('sharing.smb.query', shares.smb ?? []);
+    mockService.mockQuery('sharing.nfs.query', shares.nfs ?? []);
+    mockService.mockQuery('sharing.webshare.query', shares.webshare ?? []);
+    mockService.mockQuery('sharing.s3.query', shares.s3 ?? []);
   }
 
   beforeEach(() => {
@@ -83,6 +85,7 @@ describe('ChangeTierDialogComponent — share usage list', () => {
     });
     spectator.detectChanges();
     await spectator.fixture.whenStable();
+    spectator.detectChanges();
 
     const block = spectator.query('.share-usage');
     expect(block).not.toBeNull();
@@ -99,6 +102,7 @@ describe('ChangeTierDialogComponent — share usage list', () => {
     setShares({ s3: [{ id: 1, name: 'photos' }] });
     spectator.detectChanges();
     await spectator.fixture.whenStable();
+    spectator.detectChanges();
 
     const block = spectator.query('.share-usage');
     expect(block).not.toBeNull();
@@ -110,6 +114,7 @@ describe('ChangeTierDialogComponent — share usage list', () => {
     setShares({ nfs: [{ id: 1 }] });
     spectator.detectChanges();
     await spectator.fixture.whenStable();
+    spectator.detectChanges();
 
     const block = spectator.query('.share-usage');
     expect(block.textContent).toContain('1 share');
@@ -119,6 +124,7 @@ describe('ChangeTierDialogComponent — share usage list', () => {
     setShares({ smb: [{ id: 1, name: 'OnlySmb' }] });
     spectator.detectChanges();
     await spectator.fixture.whenStable();
+    spectator.detectChanges();
 
     const block = spectator.query('.share-usage');
     expect(block.textContent).toContain('SMB Share');
@@ -140,13 +146,13 @@ describe('ChangeTierDialogComponent — load failure', () => {
   const createComponent = createComponentFactory({
     component: ChangeTierDialogComponent,
     providers: [
-      mockApi([
-        mockCall('zpool.query', []),
-        mockCall('pool.dataset.query', []),
-        mockCall('sharing.smb.query', []),
-        mockCall('sharing.nfs.query', []),
-        mockCall('sharing.webshare.query', []),
-        mockCall('sharing.s3.query', []),
+      mockTypedApi([
+        mockTypedCall('zpool.query', []),
+        mockTypedQuery('pool.dataset.query', []),
+        mockTypedQuery('sharing.smb.query', []),
+        mockTypedQuery('sharing.nfs.query', []),
+        mockTypedQuery('sharing.webshare.query', []),
+        mockTypedQuery('sharing.s3.query', []),
       ]),
       { provide: DIALOG_DATA, useValue: dialogData },
       mockProvider(DialogRef),
@@ -161,13 +167,7 @@ describe('ChangeTierDialogComponent — load failure', () => {
 
   it('disables the Apply button when loadDetails fails', async () => {
     spectator = createComponent({ detectChanges: false });
-    const api = spectator.inject(ApiService);
-    jest.spyOn(api, 'call').mockImplementation((method) => {
-      if (method === 'zpool.query') {
-        return throwError(() => new Error('boom')) as ReturnType<ApiService['call']>;
-      }
-      return of([]) as ReturnType<ApiService['call']>;
-    });
+    spectator.inject(MockTypedApiService).mockCallError('zpool.query');
     spectator.detectChanges();
     await spectator.fixture.whenStable();
     spectator.detectChanges();
@@ -191,23 +191,23 @@ describe('ChangeTierDialogComponent — loadDetails parsing', () => {
   const createComponent = createComponentFactory({
     component: ChangeTierDialogComponent,
     providers: [
-      mockApi([
-        mockCall('zpool.query', [{
+      mockTypedApi([
+        mockTypedCall('zpool.query', [{
           name: 'tank',
           properties: {
             class_normal_available: { value: 1024 * 1024 * 1024 * 4 }, // 4 GiB
             class_special_available: { value: 1024 * 1024 * 1024 * 2 }, // 2 GiB
           },
-        }]),
-        mockCall('pool.dataset.query', [{
+        }] as unknown as CallResponse<WebUiApiDirectory, 'zpool.query'>),
+        mockTypedQuery('pool.dataset.query', [{
           id: 'tank/SHARE',
           usedbydataset: { parsed: 1024 * 1024 * 512 }, // 512 MiB
           usedbysnapshots: { parsed: 0 },
-        }]),
-        mockCall('sharing.smb.query', []),
-        mockCall('sharing.nfs.query', []),
-        mockCall('sharing.webshare.query', []),
-        mockCall('sharing.s3.query', []),
+        }] as WebUiQueryEntity<'pool.dataset.query'>[]),
+        mockTypedQuery('sharing.smb.query', []),
+        mockTypedQuery('sharing.nfs.query', []),
+        mockTypedQuery('sharing.webshare.query', []),
+        mockTypedQuery('sharing.s3.query', []),
       ]),
       { provide: DIALOG_DATA, useValue: dialogData },
       mockProvider(DialogRef),
@@ -229,11 +229,11 @@ describe('ChangeTierDialogComponent — loadDetails parsing', () => {
 
   it('flags hasSnapshots when usedbysnapshots > 0', async () => {
     spectator = createComponent({ detectChanges: false });
-    spectator.inject(MockApiService).mockCall('pool.dataset.query', [{
+    spectator.inject(MockTypedApiService).mockQuery('pool.dataset.query', [{
       id: 'tank/SHARE',
       usedbydataset: { parsed: 1024 },
       usedbysnapshots: { parsed: 4096 },
-    }]);
+    }] as WebUiQueryEntity<'pool.dataset.query'>[]);
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
@@ -254,14 +254,14 @@ describe('ChangeTierDialogComponent — apply', () => {
   const createComponent = createComponentFactory({
     component: ChangeTierDialogComponent,
     providers: [
-      mockApi([
-        mockCall('zpool.query', []),
-        mockCall('pool.dataset.query', []),
-        mockCall('sharing.smb.query', []),
-        mockCall('sharing.nfs.query', []),
-        mockCall('sharing.webshare.query', []),
-        mockCall('sharing.s3.query', []),
-        mockCall('zfs.tier.dataset_set_tier'),
+      mockTypedApi([
+        mockTypedCall('zpool.query', []),
+        mockTypedQuery('pool.dataset.query', []),
+        mockTypedQuery('sharing.smb.query', []),
+        mockTypedQuery('sharing.nfs.query', []),
+        mockTypedQuery('sharing.webshare.query', []),
+        mockTypedQuery('sharing.s3.query', []),
+        mockTypedCall('zfs.tier.dataset_set_tier', null),
       ]),
       { provide: DIALOG_DATA, useValue: dialogData },
       mockProvider(DialogRef),
@@ -305,7 +305,7 @@ describe('ChangeTierDialogComponent — apply', () => {
     const applyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Apply' }));
     await applyButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.tier.dataset_set_tier', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('zfs.tier.dataset_set_tier', [{
       dataset_name: 'tank/SHARE',
       tier_type: DatasetTier.Performance,
       move_existing_data: false,

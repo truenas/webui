@@ -384,7 +384,9 @@ above. Each is a change for `truenas/api-client-ts`.
    dialog's `filesystem.file_tail_follow`, the installed app's container logs
    (`app.container_log_follow`), next to `NetworkService`'s `reporting.realtime`,
    and the dashboard's `WidgetResourcesService`, which streams
-   `reporting.realtime` and `app.stats`.
+   `reporting.realtime` and `app.stats`. `SharingTierService` keeps `ApiService` for the storage
+   tier's rewrite jobs, `zfs.tier.rewrite_job_query` and `zfs.tier.rewrite_job_status:<args>`: both
+   declare `subscriptionParams`, so neither is an `EventName`, even the one the UI subscribes to bare.
 6. **Query, message and connection types are not exported.** `QueryFilters`
    and `QueryProjection` are internal, so the wrapper forwards the query verbs
    through `Parameters<>` rather than declaring them; `TrueNasMessage` and
@@ -646,6 +648,45 @@ above. Each is a change for `truenas/api-client-ts`.
       once `mockApi()`'s `TranslateService` went, and reads the global one now; and a fixture that depends on
       the filters (the privilege form's `group in` lookups) answers through `connection.autoReply`, since
       `mockTypedQuery` returns the same rows whatever the filters.
+
+26. **Drift found moving sharing.** Handled at one site each:
+    - The query rows are read into the UI interfaces through a `toX` adapter per interface: `toSmbShare`,
+      `toNfsShare`, `toS3Bucket`, `toIscsiTarget`, `toIscsiExtent`, `toFibreChannelPort` / `toFibreChannelHost`,
+      and `toNvmeOfSubsystem` / `Namespace` / `Host` / `Port`. Middleware spells enums as literals, leaves its
+      defaulted fields optional, and types `sharing.smb.query`'s `options` as one union not paired with `purpose`.
+      `fcport.query` declares the port's `target`, and `nfs.get_nfs4_clients` its `info`, as loose records;
+      `fcport.status` is `unknown[]` (`toFibreChannelStatuses`) and `smb.status` a loose record per row for every
+      info level (`toSmbStatus`). `SharingWebshareEntry` reads as `WebShare` unchanged.
+    - `iscsi.global.sessions`, `nfs.get_nfs3_clients` and `nfs.get_nfs4_clients` are query methods without the
+      `.query` suffix, so they are read with `query` and scripted with `mockTypedQuery`; `zpool.query` takes one
+      object and stays a `call`.
+    - Payloads typed more loosely than the generated inputs go through a `*CreateArgs` adapter unchanged:
+      `iscsi.extent.*` narrows `blocksize` to 512–4096 (`toIscsiExtentCreateArgs`), `sharing.s3.*` narrows
+      `audit` to the action names `sharing.s3.audit_choices` returns (`toS3BucketCreateArgs` / `UpdateArgs`),
+      `sharing.smb.*` takes the input variants of the option shapes (`toSmbShareCreateArgs`), `nvmet.host.*`
+      narrows `dhchap_hash` and `dhchap_dhgroup` to the values its choices calls return
+      (`toNvmeOfHostCreateArgs`), and `nvmet.port.*` is a union of one shape per transport that the form edits
+      as one (`toNvmeOfPortCreateArgs`).
+    - `nvmet.port_subsys.query` and `nvmet.host_subsys.query` rows carry the whole `port` / `host` and `subsys`,
+      so their entity has no `subsys_id`, `port_id` or `host_id`, while the UI filters on those columns. The
+      requests are unchanged, with the filters asserted to `TypedQueryFilter`; worth a box check before
+      switching to `subsys.id`. The UI's `qix_max` was a typo for the wire's `qid_max`, and the namespace's
+      `subsystem` is `subsys`; neither was read.
+    - `sharing.smb.getacl` has no `id`, makes `share_acl` optional, types `ae_who_id.id_type` as `USER` or `GROUP`
+      only, and adds `CUSTOM` to `ae_perm`. `SmbSharesec` and `SmbSharesecAce` alias the generated types, and the
+      editor casts `ae_perm` and `ae_type` to the UI enums where it patches. The old `id_type !== Everyone`
+      guards could never be false and collapsed to `ae_who_id?.id`; how middleware reports an everyone entry
+      wants a box check.
+    - The legacy directory lost every `sharing.*`, `iscsi.*`, `fc.*`, `fcport.*` and `nvmet.*` entry, with
+      `smb.config` / `update` / `status`, `nfs.config`, `group.query`, `pool.dataset.query` / `create` /
+      `delete`, `zfs.tier.config`, `service.control` and a few lookups, plus the types only the directory read:
+      `IscsiGlobalConfig`, `zpool.interface.ts`, and the NVMe-oF, iSCSI, NFS and WebShare update and
+      association shapes. `user.query`, `pool.query` and `tn_connect.config` keep theirs for `ApiDataProvider`,
+      the system pages and TrueNAS Connect.
+    - Spec traps: the codemod split mock lists in two in a dozen specs, and the later `mockTypedApi` hid the
+      earlier one's `pool.query`, which rendered exported-pool toggles enabled; row factories
+      (`mockCall('sharing.s3.query', () => rows)`) became `connection.autoReply`; and the WebShare validator spec
+      lost ICU interpolation with `mockApi()` and moved to `createServiceFactory`.
 
 ## Version policy
 

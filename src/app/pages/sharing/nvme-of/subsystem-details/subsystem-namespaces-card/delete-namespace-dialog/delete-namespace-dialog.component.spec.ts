@@ -4,10 +4,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DeleteNamespaceDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-namespaces-card/delete-namespace-dialog/delete-namespace-dialog.component';
 
 describe('DeleteNamespaceDialogComponent', () => {
@@ -18,7 +18,7 @@ describe('DeleteNamespaceDialogComponent', () => {
     imports: [ReactiveFormsModule],
     providers: [
       mockProvider(DialogRef),
-      mockApi([mockCall('nvmet.namespace.delete')]),
+      mockTypedApi([mockTypedCall('nvmet.namespace.delete', true)]),
     ],
   });
 
@@ -48,7 +48,7 @@ describe('DeleteNamespaceDialogComponent', () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.namespace.delete', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('nvmet.namespace.delete', [1]);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 
@@ -66,7 +66,7 @@ describe('DeleteNamespaceDialogComponent', () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.namespace.delete', [2, { remove: true }]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('nvmet.namespace.delete', [2, { remove: true }]);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 });

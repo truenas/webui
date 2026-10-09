@@ -1,7 +1,7 @@
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { IscsiConnectionsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/iscsi-connections-card/iscsi-connections-card.component';
 
 describe('IscsiConnectionsCardComponent', () => {
@@ -10,11 +10,11 @@ describe('IscsiConnectionsCardComponent', () => {
   const createComponent = createComponentFactory({
     component: IscsiConnectionsCardComponent,
     providers: [
-      mockApi([
-        mockCall('iscsi.global.sessions', [
+      mockTypedApi([
+        mockTypedQuery('iscsi.global.sessions', [
           { initiator: 'iqn.1991-05.com.microsoft:initiator1', initiator_addr: '192.168.1.100' },
           { initiator: 'iqn.1991-05.com.microsoft:initiator2', initiator_addr: '192.168.1.101' },
-        ] as IscsiGlobalSession[]),
+        ] as WebUiQueryEntity<'iscsi.global.sessions'>[]),
       ]),
     ],
   });

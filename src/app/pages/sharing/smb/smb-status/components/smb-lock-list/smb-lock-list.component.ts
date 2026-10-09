@@ -9,9 +9,9 @@ import {
   TnTestIdDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { tap } from 'rxjs';
+import { map, tap } from 'rxjs';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
-import { SmbLockInfo, SmbOpenInfo } from 'app/interfaces/smb-status.interface';
+import { SmbLockInfo, SmbOpenInfo, toSmbStatus } from 'app/interfaces/smb-status.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
@@ -21,7 +21,7 @@ import { TableColumnPickerComponent } from 'app/modules/tn-table/components/tabl
 import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/tn-table/utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SmbOpenFilesComponent } from 'app/pages/sharing/smb/smb-status/components/smb-open-files/smb-open-files.component';
 
 @Component({
@@ -48,7 +48,7 @@ import { SmbOpenFilesComponent } from 'app/pages/sharing/smb/smb-status/componen
   ],
 })
 export class SmbLockListComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
@@ -56,6 +56,7 @@ export class SmbLockListComponent implements OnInit {
 
   searchQuery = signal('');
   private readonly smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Locks]).pipe(
+    map((response) => toSmbStatus<SmbLockInfo>(response)),
     tap((locks: SmbLockInfo[]) => {
       this.locks = locks;
       if (this.searchQuery()) {

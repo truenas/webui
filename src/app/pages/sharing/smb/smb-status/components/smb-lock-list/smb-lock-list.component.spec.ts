@@ -4,8 +4,8 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnTableHarness } from '@truenas/ui-components';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SmbLockInfo, SmbOpenInfo } from 'app/interfaces/smb-status.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { SmbLockListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-lock-list/smb-lock-list.component';
@@ -65,8 +65,8 @@ describe('SmbLockListComponent', () => {
       BasicSearchComponent,
     ],
     providers: [
-      mockApi([
-        mockCall('smb.status', locks),
+      mockTypedApi([
+        mockTypedCall('smb.status', locks as unknown as Record<string, unknown>[]),
       ]),
       provideMockStore({
         selectors: [
@@ -105,11 +105,11 @@ describe('SmbLockListComponent', () => {
   });
 
   it('sorts File ID by each numeric part, not by the joined text', async () => {
-    spectator.inject(MockApiService).mockCall('smb.status', [
+    spectator.inject(MockTypedApiService).mockCall('smb.status', [
       { ...locks[0], filename: 'a', fileid: { devid: 70, inode: 30, extid: 0 } },
       { ...locks[0], filename: 'b', fileid: { devid: 70, inode: 3, extid: 0 } },
       { ...locks[0], filename: 'c', fileid: { devid: 9, inode: 1, extid: 0 } },
-    ] as SmbLockInfo[]);
+    ] as unknown as Record<string, unknown>[]);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(TnTableHarness);

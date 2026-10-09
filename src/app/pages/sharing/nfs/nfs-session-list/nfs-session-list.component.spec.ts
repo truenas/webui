@@ -5,9 +5,10 @@ import { createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonToggleHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Nfs3Session, Nfs4Session } from 'app/interfaces/nfs-share.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { NfsSessionListComponent } from './nfs-session-list.component';
 
@@ -47,9 +48,9 @@ describe('NfsSessionListComponent', () => {
       MockComponent(PageHeaderComponent),
     ],
     providers: [
-      mockApi([
-        mockCall('nfs.get_nfs3_clients', nfs3Sessions),
-        mockCall('nfs.get_nfs4_clients', nfs4Sessions),
+      mockTypedApi([
+        mockTypedQuery('nfs.get_nfs3_clients', nfs3Sessions),
+        mockTypedQuery('nfs.get_nfs4_clients', nfs4Sessions as unknown as WebUiQueryEntity<'nfs.get_nfs4_clients'>[]),
       ]),
       provideMockStore({
         selectors: [

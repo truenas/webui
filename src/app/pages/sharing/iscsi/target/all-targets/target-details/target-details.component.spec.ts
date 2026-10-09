@@ -1,12 +1,11 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
-import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
-import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import {
   AssociatedExtentsCardComponent,
 } from 'app/pages/sharing/iscsi/target/all-targets/target-details/associated-extents-card/associated-extents-card.component';
@@ -21,13 +20,13 @@ import { TargetDetailsComponent } from './target-details.component';
 
 describe('TargetDetailsComponent', () => {
   let spectator: Spectator<TargetDetailsComponent>;
-  let mockApiService: jest.Mocked<ApiService>;
+  let mockApiService: MockTypedApiService;
 
   const mockPort = {
     id: 1,
     wwpn: '10:00:00:00:c9:20:00:00',
     wwpn_b: '10:00:00:00:c9:20:00:01',
-  } as FibreChannelPort;
+  } as WebUiQueryEntity<'fcport.query'>;
 
   const createComponent = createComponentFactory({
     component: TargetDetailsComponent,
@@ -41,14 +40,14 @@ describe('TargetDetailsComponent', () => {
       ),
     ],
     providers: [
-      mockApi([
-        mockCall('fcport.query', [mockPort]),
-        mockCall('fcport.status', []),
-        mockCall('iscsi.extent.query', []),
-        mockCall('iscsi.targetextent.query', []),
-        mockCall('iscsi.global.sessions', []),
-        mockCall('iscsi.target.query', []),
-        mockCall('iscsi.initiator.query', []),
+      mockTypedApi([
+        mockTypedQuery('fcport.query', [mockPort]),
+        mockTypedCall('fcport.status', []),
+        mockTypedQuery('iscsi.extent.query', []),
+        mockTypedQuery('iscsi.targetextent.query', []),
+        mockTypedQuery('iscsi.global.sessions', []),
+        mockTypedQuery('iscsi.target.query', []),
+        mockTypedQuery('iscsi.initiator.query', []),
       ]),
     ],
   });
@@ -64,7 +63,7 @@ describe('TargetDetailsComponent', () => {
       },
     });
 
-    mockApiService = spectator.inject(ApiService);
+    mockApiService = spectator.inject(MockTypedApiService);
   });
 
   it('renders AuthorizedNetworksCardComponent if target has authorized networks', () => {
@@ -94,7 +93,6 @@ describe('TargetDetailsComponent', () => {
   });
 
   it('calls API to fetch Fibre Channel ports when target ID changes', () => {
-    mockApiService.call.mockReturnValue(of([]));
     spectator.setInput({
       target: {
         id: 2,
@@ -105,6 +103,6 @@ describe('TargetDetailsComponent', () => {
 
     spectator.detectChanges();
 
-    expect(mockApiService.call).toHaveBeenCalledWith('fcport.query', [[['target.id', '=', 2]]]);
+    expect(mockApiService.query).toHaveBeenCalledWith('fcport.query', [['target.id', '=', 2]]);
   });
 });

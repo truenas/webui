@@ -1,28 +1,31 @@
 import { signal } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
 import { FormControl, ValidationErrors } from '@angular/forms';
+import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom, Observable, throwError } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { WebShareValidatorService } from './webshare-validator.service';
 
 describe('WebShareValidatorService', () => {
+  let spectator: SpectatorService<WebShareValidatorService>;
   let service: WebShareValidatorService;
-  let api: ApiService;
+  let api: TypedApiService;
+
+  // A spectator factory, so the spec reads the global ICU-aware `TranslateService`.
+  const createService = createServiceFactory({
+    service: WebShareValidatorService,
+    providers: [
+      mockTypedApi([
+        mockTypedCall('filesystem.stat', { id: 'test' } as never),
+      ]),
+    ],
+  });
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        WebShareValidatorService,
-        mockApi([
-          mockCall('filesystem.stat', { id: 'test' } as never),
-        ]),
-      ],
-    });
-
-    service = TestBed.inject(WebShareValidatorService);
-    api = TestBed.inject(ApiService);
+    spectator = createService();
+    service = spectator.service;
+    api = spectator.inject(TypedApiService);
   });
 
   describe('validateWebShareName', () => {

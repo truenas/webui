@@ -12,6 +12,7 @@ import {
 } from '@truenas/ui-components';
 import {
   lastValueFrom, forkJoin,
+  map,
   of,
 } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -29,7 +30,9 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { createFormArraySnapshot } from 'app/helpers/form-array-snapshot.helper';
-import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
+import {
+  Dataset, DatasetCreate, toDataset, toDatasetCreateArgs,
+} from 'app/interfaces/dataset.interface';
 import {
   IscsiExtent,
   IscsiExtentUpdate,
@@ -42,13 +45,16 @@ import {
   IscsiTargetExtent,
   IscsiTargetExtentUpdate, IscsiTargetGroup,
   IscsiTargetUpdate,
+  toIscsiExtent,
+  toIscsiExtentCreateArgs,
+  toIscsiTarget,
 } from 'app/interfaces/iscsi.interface';
 import { newOption } from 'app/interfaces/option.interface';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ProtocolOptionsWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/protocol-options-wizard-step/protocol-options-wizard-step.component';
 import { TargetWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/target-wizard-step/target-wizard-step.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -82,7 +88,7 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
   private fb = inject(FormBuilder);
   private iscsiService = inject(IscsiService);
   private fcService = inject(FibreChannelService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
@@ -365,7 +371,7 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
         this.form.controls.options.controls.fcPorts.enable();
 
         // Load FC hosts for validation
-        this.api.call('fc.fc_host.query').pipe(
+        this.api.query('fc.fc_host.query').pipe(
           takeUntilDestroyed(this.destroyRef),
         ).subscribe((hosts) => {
           this.fcHosts.set(hosts.map((host) => ({ id: host.id, alias: host.alias })));
@@ -387,11 +393,11 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
   }
 
   private createZvol(payload: DatasetCreate): Promise<Dataset> {
-    return lastValueFrom(this.api.call('pool.dataset.create', [payload]));
+    return lastValueFrom(this.api.call('pool.dataset.create', [toDatasetCreateArgs(payload)]).pipe(map(toDataset)));
   }
 
   private createExtent(payload: IscsiExtentUpdate): Promise<IscsiExtent> {
-    return lastValueFrom(this.api.call('iscsi.extent.create', [payload]));
+    return lastValueFrom(this.api.call('iscsi.extent.create', [toIscsiExtentCreateArgs(payload)]).pipe(map(toIscsiExtent)));
   }
 
   private createPortal(payload: IscsiPortalUpdate): Promise<IscsiPortal> {
@@ -403,7 +409,7 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
   }
 
   private createTarget(payload: IscsiTargetUpdate): Promise<IscsiTarget> {
-    return lastValueFrom(this.api.call('iscsi.target.create', [payload]));
+    return lastValueFrom(this.api.call('iscsi.target.create', [payload]).pipe(map(toIscsiTarget)));
   }
 
   private createTargetFiberChannel(targetId: number): Promise<unknown> {

@@ -8,9 +8,9 @@ import {
   TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { tap } from 'rxjs';
+import { map, tap } from 'rxjs';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
-import { SmbNotificationInfo } from 'app/interfaces/smb-status.interface';
+import { SmbNotificationInfo, toSmbStatus } from 'app/interfaces/smb-status.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
@@ -20,7 +20,7 @@ import { TableColumnPickerComponent } from 'app/modules/tn-table/components/tabl
 import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/tn-table/utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Component({
   selector: 'ix-smb-notification-list',
@@ -44,7 +44,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class SmbNotificationListComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
@@ -52,6 +52,7 @@ export class SmbNotificationListComponent implements OnInit {
 
   searchQuery = signal('');
   private readonly smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Notifications]).pipe(
+    map((response) => toSmbStatus<SmbNotificationInfo>(response)),
     tap((shares: SmbNotificationInfo[]) => {
       this.notifications = shares;
       if (this.searchQuery()) {

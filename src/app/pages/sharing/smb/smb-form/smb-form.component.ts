@@ -17,6 +17,7 @@ import {
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { CallResponse } from '@truenas/api-client';
 import {
   InputType, TnBannerComponent, TnFormErrorsComponent, TnCheckboxComponent, TnChipInputComponent, TnDialog,
   TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent, TnTestIdDirective,
@@ -34,13 +35,12 @@ import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { mapToOptionsWithHoverTooltips } from 'app/helpers/options.helper';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { SelectOption } from 'app/interfaces/option.interface';
-import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import {
   externalSmbSharePath,
   FcpSmbShareOptions,
   smbSharePurposeTooltips, SmbSharePurpose, smbSharePurposeLabels, SmbShare,
   TimeMachineSmbShareOptions,
-  LegacySmbShareOptions, SmbShareOptions,
+  LegacySmbShareOptions, SmbShareOptions, toSmbShare, toSmbShareCreateArgs,
 } from 'app/interfaces/smb-share.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -58,7 +58,8 @@ import {
   advancedModeFooterAction, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbExtensionsWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-extensions-warning/smb-extensions-warning.component';
 import { presetEnabledFields } from 'app/pages/sharing/smb/smb-form/smb-form-presets';
@@ -101,7 +102,7 @@ import { selectService } from 'app/store/services/services.selectors';
 })
 export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterViewInit {
   private formBuilder = inject(NonNullableFormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private entitlements = inject(EntitlementsService);
   private tnDialog = inject(TnDialog);
   private dialogService = inject(DialogService);
@@ -166,7 +167,7 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
   }
 
   private wasStripAclWarningShown = false;
-  private smbConfig = signal<SmbConfig | null>(null);
+  private smbConfig = signal<CallResponse<WebUiApiDirectory, 'smb.config'> | null>(null);
 
   title: string = helptextSharingSmb.formTitleAdd;
 
@@ -745,9 +746,11 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
       timeMachineOptions.timemachine_quota = 0;
     }
 
-    const apiCall$: Observable<SmbShare> = this.existingSmbShare
-      ? this.api.call('sharing.smb.update', [this.existingSmbShare.id, smbShare])
-      : this.api.call('sharing.smb.create', [smbShare]);
+    const payload = toSmbShareCreateArgs(smbShare);
+    const apiCall$ = (this.existingSmbShare
+      ? this.api.call('sharing.smb.update', [this.existingSmbShare.id, payload])
+      : this.api.call('sharing.smb.create', [payload])
+    ).pipe(map((share) => toSmbShare(share)));
 
     // The root-level dataset warning prompts confirmation before the create/update fires;
     // a cancel completes the chain without emitting, so the wrapper just resets its loading state.

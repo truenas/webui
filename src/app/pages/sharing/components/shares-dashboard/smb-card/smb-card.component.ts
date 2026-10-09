@@ -33,7 +33,7 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
 import {
-  ExternalSmbShareOptions, LegacySmbShareOptions, SmbShare, SmbSharesec,
+  ExternalSmbShareOptions, LegacySmbShareOptions, SmbShare, SmbSharesec, toSmbShare,
 } from 'app/interfaces/smb-share.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -53,7 +53,7 @@ import {
 import {
   TableToggleCellComponent,
 } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import {
   ServiceActionsMenuService,
@@ -105,7 +105,7 @@ export class SmbCardComponent implements OnInit {
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   protected emptyService = inject(EmptyService);
   private router = inject(Router);
@@ -222,7 +222,10 @@ export class SmbCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const smbShares$ = this.api.call('sharing.smb.query').pipe(takeUntilDestroyed(this.destroyRef));
+    const smbShares$ = this.api.query('sharing.smb.query').pipe(
+      map((shares) => shares.map((share) => toSmbShare(share))),
+      takeUntilDestroyed(this.destroyRef),
+    );
     this.dataProvider = new AsyncDataProvider<SmbShare>(smbShares$);
     this.setDefaultSort();
 

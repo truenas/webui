@@ -26,7 +26,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { CanComponentDeactivate } from 'app/modules/unsaved-changes/unsaved-form.guard';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { initiatorFormElements } from 'app/pages/sharing/iscsi/initiator/initiator-form/initiator-form.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -62,7 +62,7 @@ interface InitiatorSnapshot {
   ],
 })
 export class InitiatorFormComponent implements OnInit, CanComponentDeactivate {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
@@ -243,7 +243,7 @@ export class InitiatorFormComponent implements OnInit, CanComponentDeactivate {
   }
 
   protected getConnectedInitiators(): void {
-    this.api.call('iscsi.global.sessions').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.api.query('iscsi.global.sessions').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (sessions) => {
         this.connectedInitiators.set(unionBy(sessions, (item) => item.initiator && item.initiator_addr));
       },
@@ -265,7 +265,7 @@ export class InitiatorFormComponent implements OnInit, CanComponentDeactivate {
   }
 
   private setForm(): void {
-    this.api.call('iscsi.initiator.query', [[['id', '=', this.pk]]])
+    this.api.query('iscsi.initiator.query', [['id', '=', this.pk]])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (initiators) => {

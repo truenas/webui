@@ -6,20 +6,22 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { TnInputHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { WebShareValidatorService } from 'app/pages/sharing/webshare/webshare-validator.service';
 import { WebShareFormData, WebShareSharesFormComponent } from './webshare-shares-form.component';
 
 describe('WebShareSharesFormComponent', () => {
   let spectator: Spectator<WebShareSharesFormComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   beforeEach(() => {
     // Suppress benign warnings: reactive-form disabled-state notices, the <ix-form> wrapper's
@@ -51,11 +53,11 @@ describe('WebShareSharesFormComponent', () => {
     providers: [
       WebShareValidatorService,
       mockAuth(),
-      mockApi([
-        mockCall('sharing.webshare.query', mockWebShares),
-        mockCall('sharing.webshare.create', mockWebShares[0]),
-        mockCall('sharing.webshare.update', mockWebShares[0]),
-        mockCall('filesystem.stat'),
+      mockTypedApi([
+        mockTypedQuery('sharing.webshare.query', mockWebShares as WebUiQueryEntity<'sharing.webshare.query'>[]),
+        mockTypedCall('sharing.webshare.create', mockWebShares[0] as WebUiQueryEntity<'sharing.webshare.query'>),
+        mockTypedCall('sharing.webshare.update', mockWebShares[0] as WebUiQueryEntity<'sharing.webshare.query'>),
+        mockTypedCall('filesystem.stat', null),
       ]),
       // Mocks the services `<ix-form>` injects, and zeroes the min-feedback hold so a
       // successful close stays synchronous.
@@ -87,7 +89,7 @@ describe('WebShareSharesFormComponent', () => {
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
       spectator.detectChanges();
     });
 
@@ -133,6 +135,7 @@ describe('WebShareSharesFormComponent', () => {
       spectator.detectChanges();
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.create', [{
         name: 'new_share',
@@ -161,7 +164,7 @@ describe('WebShareSharesFormComponent', () => {
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
       spectator.detectChanges();
     });
 
@@ -187,6 +190,7 @@ describe('WebShareSharesFormComponent', () => {
       spectator.detectChanges();
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.update', [1, {
         name: 'documents',
@@ -203,6 +207,7 @@ describe('WebShareSharesFormComponent', () => {
       spectator.detectChanges();
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.update', [1, {
         name: 'updated_documents',
@@ -214,6 +219,7 @@ describe('WebShareSharesFormComponent', () => {
     it('should disable home share checkbox when another share is already home', async () => {
       const form = spectator.component.form;
       await spectator.fixture.whenStable();
+      spectator.detectChanges();
 
       // The checkbox should be disabled because 'home' share already has is_home_base enabled
       expect(form.controls.is_home_base.disabled).toBe(true);
@@ -249,7 +255,7 @@ describe('WebShareSharesFormComponent', () => {
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
       spectator.detectChanges();
     });
 
@@ -267,6 +273,7 @@ describe('WebShareSharesFormComponent', () => {
       spectator.detectChanges();
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.update', [3, {
         name: 'home',
@@ -314,8 +321,6 @@ describe('WebShareSharesFormComponent', () => {
 
   describe('Error handling', () => {
     it('should handle error when loading WebShares fails', () => {
-      const mockApiCall = jest.fn().mockReturnValue(throwError(() => new Error('Failed to load shares')));
-
       spectator = createComponent({
         detectChanges: false,
         props: {
@@ -325,10 +330,10 @@ describe('WebShareSharesFormComponent', () => {
             path: '',
           } as WebShareFormData,
         },
-        providers: [
-          mockProvider(ApiService, { call: mockApiCall }),
-        ],
       });
+      jest.spyOn(spectator.inject(TypedApiService), 'query').mockReturnValue(
+        throwError(() => new Error('Failed to load shares')),
+      );
 
       const closedSpy = jest.fn();
       spectator.component.closed.subscribe(closedSpy);
@@ -347,17 +352,6 @@ describe('WebShareSharesFormComponent', () => {
     });
 
     it('should handle update API errors gracefully', async () => {
-      const mockApiCall = jest.fn((method: string) => {
-        if (method === 'sharing.webshare.query') {
-          return of(mockWebShares);
-        }
-        if (method === 'sharing.webshare.update') {
-          return throwError(() => new Error('Update failed'));
-        }
-        // For other methods like filesystem.stat, return success
-        return of({});
-      });
-
       spectator = createComponent({
         props: {
           webShareData: {
@@ -367,10 +361,8 @@ describe('WebShareSharesFormComponent', () => {
             path: '/mnt/tank/documents',
           } as WebShareFormData,
         },
-        providers: [
-          mockProvider(ApiService, { call: mockApiCall }),
-        ],
       });
+      spectator.inject(MockTypedApiService).mockCallError('sharing.webshare.update');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
       const errorHandler = spectator.inject(FormErrorHandlerService);
@@ -383,6 +375,7 @@ describe('WebShareSharesFormComponent', () => {
       spectator.detectChanges();
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(handleErrorSpy).toHaveBeenCalled();
     });

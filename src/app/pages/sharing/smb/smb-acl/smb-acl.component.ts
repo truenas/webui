@@ -11,18 +11,19 @@ import {
   TnSelectComponent,
 } from '@truenas/ui-components';
 import { isNumber } from 'lodash-es';
-import { concatMap, firstValueFrom, from, mergeMap, Observable, of, toArray } from 'rxjs';
+import {
+  concatMap, firstValueFrom, from, map, mergeMap, Observable, of, toArray,
+} from 'rxjs';
 import { ComboboxQueryType } from 'app/enums/combobox.enum';
 import { NfsAclTag, smbAclTagLabels } from 'app/enums/nfs-acl.enum';
 import { Role } from 'app/enums/role.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSharingSmb } from 'app/helptext/sharing';
-import { Group } from 'app/interfaces/group.interface';
+import { Group, toGroup } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { SmbSharesecAce } from 'app/interfaces/smb-share.interface';
-import { User } from 'app/interfaces/user.interface';
+import { toUser, User } from 'app/interfaces/user.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
@@ -30,7 +31,7 @@ import {
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { DirectoryQueryOptions, PrincipalOption } from 'app/services/user-directory.service';
 import { UserService } from 'app/services/user.service';
@@ -69,7 +70,7 @@ interface FormAclEntry {
 })
 export class SmbAclComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
@@ -188,20 +189,22 @@ export class SmbAclComponent extends IxFormHostForm implements OnInit {
       .subscribe({
         next: (shareAcl) => {
           this.shareAclName = shareAcl.share_name;
-          shareAcl.share_acl.forEach((ace, i) => {
+          const shareAces = shareAcl.share_acl ?? [];
+          shareAces.forEach((ace, i) => {
             this.addAce();
 
+            // An entry names a user or group through `ae_who_id`, and everyone without one.
             this.form.controls.entries.at(i).patchValue({
               ae_who_sid: ace.ae_who_sid,
-              ae_who: ace.ae_who_id?.id_type || ace.ae_who_str as NfsAclTag.Everyone,
-              ae_perm: ace.ae_perm,
-              ae_type: ace.ae_type,
-              both: ace.ae_who_id?.id_type !== NfsAclTag.Everyone ? ace.ae_who_id?.id : null,
-              group: ace.ae_who_id?.id_type !== NfsAclTag.Everyone ? ace.ae_who_id?.id : null,
-              user: ace.ae_who_id?.id_type !== NfsAclTag.Everyone ? ace.ae_who_id?.id : null,
+              ae_who: (ace.ae_who_id?.id_type || ace.ae_who_str) as FormAclEntry['ae_who'],
+              ae_perm: ace.ae_perm as SmbSharesecPermission,
+              ae_type: ace.ae_type as SmbSharesecType,
+              both: ace.ae_who_id?.id,
+              group: ace.ae_who_id?.id,
+              user: ace.ae_who_id?.id,
             });
           });
-          this.extractOptionFromAcl(shareAcl.share_acl);
+          this.extractOptionFromAcl(shareAces);
         },
         error: (error: unknown) => {
           this.errorHandler.showErrorModal(error);
@@ -251,14 +254,17 @@ export class SmbAclComponent extends IxFormHostForm implements OnInit {
   private initialValueDataFromAce(
     ace: SmbSharesecAce,
   ): Observable<Group[]> | Observable<User[]> | Observable<string[]> {
-    if (ace.ae_who_id?.id_type === NfsAclTag.UserGroup) {
-      const queryArgs: QueryFilter<Group>[] = [['gid', '=', ace.ae_who_id?.id], ['smb', '=', true]];
-      return this.api.call('group.query', [queryArgs]);
+    const idType = ace.ae_who_id?.id_type as NfsAclTag | undefined;
+    if (idType === NfsAclTag.UserGroup) {
+      return this.api.query('group.query', [['gid', '=', ace.ae_who_id.id], ['smb', '=', true]]).pipe(
+        map((groups) => groups.map((group) => toGroup(group))),
+      );
     }
 
-    if (ace.ae_who_id?.id_type === NfsAclTag.User) {
-      const queryArgs: QueryFilter<User>[] = [['uid', '=', ace.ae_who_id?.id], ['smb', '=', true]];
-      return this.api.call('user.query', [queryArgs]);
+    if (idType === NfsAclTag.User) {
+      return this.api.query('user.query', [['uid', '=', ace.ae_who_id.id], ['smb', '=', true]]).pipe(
+        map((users) => users.map((user) => toUser(user))),
+      );
     }
 
     return of([]);

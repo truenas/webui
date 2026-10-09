@@ -4,8 +4,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -30,8 +30,8 @@ describe('SubsystemDetailsCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SubsystemDetailsCardComponent,
     providers: [
-      mockApi([
-        mockCall('nvmet.subsys.update'),
+      mockTypedApi([
+        mockTypedCall('nvmet.subsys.update', null),
       ]),
       mockProvider(Clipboard, {
         copy: jest.fn(() => true),

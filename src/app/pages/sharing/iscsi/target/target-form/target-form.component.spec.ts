@@ -8,10 +8,10 @@ import {
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
-import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
 import {
   IscsiAuthAccess, IscsiInitiatorGroup, IscsiPortal, IscsiTarget,
@@ -23,7 +23,7 @@ import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   FcMpioInfoBannerComponent,
@@ -38,7 +38,7 @@ const groupsListPredicate = TnFormListHarness.with({ selector: '[formArrayName="
 describe('TargetFormComponent', () => {
   let spectator: Spectator<TargetFormComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const existingTarget = {
     id: 123,
@@ -171,14 +171,12 @@ describe('TargetFormComponent', () => {
           secret: 'secret_2',
           user: 'user_2',
         }] as IscsiAuthAccess[]),
-      ]),
-      mockApi([
-        mockCall('tn_connect.config'),
-        mockCall('fc.fc_host.query', []),
-        mockCall('fcport.port_choices', {}),
-        mockCall('iscsi.target.create'),
-        mockCall('iscsi.target.update', { id: 123 } as IscsiTarget),
-        mockCall('iscsi.target.validate_name', null),
+        mockTypedCall('tn_connect.config', null),
+        mockTypedQuery('fc.fc_host.query', []),
+        mockTypedCall('fcport.port_choices', {}),
+        mockTypedCall('iscsi.target.create', null),
+        mockTypedCall('iscsi.target.update', { id: 123 } as WebUiQueryEntity<'iscsi.target.query'>),
+        mockTypedCall('iscsi.target.validate_name', null),
       ]),
       mockAuth(),
       provideTnFormFieldErrors(),
@@ -190,7 +188,7 @@ describe('TargetFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       jest.spyOn(console, 'warn').mockImplementation();
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('add new target when form is submitted', async () => {
@@ -229,6 +227,7 @@ describe('TargetFormComponent', () => {
       spectator.component.closed.subscribe(closed);
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('iscsi.target.create', [{
         name: 'name_new',
@@ -263,7 +262,7 @@ describe('TargetFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       jest.spyOn(console, 'warn').mockImplementation();
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     // Reads the group back, rather than only the form model it writes to: binding the control to
@@ -288,6 +287,7 @@ describe('TargetFormComponent', () => {
       spectator.component.closed.subscribe(closed);
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenLastCalledWith(
         'iscsi.target.update',
@@ -374,13 +374,7 @@ describe('TargetFormComponent', () => {
   describe('validation error handling', () => {
     beforeEach(() => {
       spectator = createComponent();
-      api = spectator.inject(ApiService);
-      jest.spyOn(api, 'call').mockImplementation((method) => {
-        if (method === 'iscsi.target.validate_name') {
-          return of('Target with this name already exists');
-        }
-        return of(null);
-      });
+      spectator.inject(MockTypedApiService).mockCall('iscsi.target.validate_name', 'Target with this name already exists');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       jest.spyOn(console, 'warn').mockImplementation();
     });
@@ -444,13 +438,14 @@ describe('TargetFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       jest.spyOn(console, 'warn').mockImplementation();
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('sends empty groups array when submitting with FC mode', async () => {
       await setMode('Fibre Channel');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenLastCalledWith(
         'iscsi.target.update',
@@ -464,8 +459,9 @@ describe('TargetFormComponent', () => {
       );
     });
 
-    it('sends groups array when submitting with iSCSI mode', () => {
+    it('sends groups array when submitting with iSCSI mode', async () => {
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenLastCalledWith(
         'iscsi.target.update',
@@ -483,6 +479,7 @@ describe('TargetFormComponent', () => {
       await setMode('Both');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenLastCalledWith(
         'iscsi.target.update',
@@ -502,7 +499,7 @@ describe('TargetFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       jest.spyOn(console, 'warn').mockImplementation();
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('preserves groups when switching from iSCSI to FC and back to iSCSI', async () => {
@@ -572,6 +569,7 @@ describe('TargetFormComponent', () => {
       await setMode('Fibre Channel');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenLastCalledWith(
         'iscsi.target.create',
@@ -589,6 +587,7 @@ describe('TargetFormComponent', () => {
       await setMode('iSCSI');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenLastCalledWith(
         'iscsi.target.create',

@@ -9,7 +9,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   BaseNamespaceFormComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
@@ -32,7 +32,7 @@ export interface NamespaceFormParams {
   ],
 })
 export class NamespaceFormComponent extends IxFormHostForm {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
 

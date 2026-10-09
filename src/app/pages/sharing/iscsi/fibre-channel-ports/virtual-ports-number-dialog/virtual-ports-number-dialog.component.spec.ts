@@ -3,9 +3,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnFormFieldHarness, TnInputHarness } from '@truenas/ui-components';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { FibreChannelHost } from 'app/interfaces/fibre-channel.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   VirtualPortsNumberDialog,
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/virtual-ports-number-dialog/virtual-ports-number-dialog.component';
@@ -16,8 +16,8 @@ describe('VirtualPortsNumberDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: VirtualPortsNumberDialog,
     providers: [
-      mockApi([
-        mockCall('fc.fc_host.update'),
+      mockTypedApi([
+        mockTypedCall('fc.fc_host.update', null),
       ]),
       mockProvider(DialogRef),
       {
@@ -50,7 +50,7 @@ describe('VirtualPortsNumberDialogComponent', () => {
     const changeButton = await loader.getHarness(TnButtonHarness.with({ label: 'Change' }));
     await changeButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('fc.fc_host.update', [123, { npiv: 5 }]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('fc.fc_host.update', [123, { npiv: 5 }]);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 });

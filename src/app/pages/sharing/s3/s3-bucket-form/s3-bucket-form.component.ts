@@ -42,7 +42,9 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSharingS3 } from 'app/helptext/sharing';
-import { S3AuditMask, S3Bucket, S3BucketCreate } from 'app/interfaces/s3.interface';
+import {
+  S3AuditMask, S3Bucket, S3BucketCreate, toS3Bucket, toS3BucketCreateArgs, toS3BucketUpdateArgs,
+} from 'app/interfaces/s3.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
@@ -55,7 +57,7 @@ import {
   advancedModeOptionLabels, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { createS3GrantFormGroup, S3GrantFormGroup, toS3Grants } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
 import { S3GrantsListComponent } from 'app/pages/sharing/s3/s3-grants-list/s3-grants-list.component';
 import { s3UserDirectoryOptions, s3UserFormPreset } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
@@ -93,7 +95,7 @@ export const s3BucketNamePattern = /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/;
   ],
 })
 export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialog = inject(DialogService);
   private snackbar = inject(SnackbarService);
   private errorHandler = inject(ErrorHandlerService);
@@ -443,9 +445,9 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     let request$: Observable<S3Bucket>;
     if (bucket) {
       const { dataset, ...update } = payload;
-      request$ = this.api.call('sharing.s3.update', [bucket.id, update]);
+      request$ = this.api.call('sharing.s3.update', [bucket.id, toS3BucketUpdateArgs(update)]).pipe(map(toS3Bucket));
     } else {
-      request$ = this.api.call('sharing.s3.create', [payload]);
+      request$ = this.api.call('sharing.s3.create', [toS3BucketCreateArgs(payload)]).pipe(map(toS3Bucket));
     }
 
     return {

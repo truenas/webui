@@ -7,10 +7,9 @@ import {
   TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { Subject, of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
-import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
@@ -70,11 +69,9 @@ describe('NfsListComponent', () => {
       ...commonProviders,
       mockTypedApi([
         mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
-      ]),
-      mockApi([
-        mockCall('sharing.nfs.query', shares as NfsShare[]),
-        mockCall('sharing.nfs.delete'),
-        mockCall('sharing.nfs.update'),
+        mockTypedQuery('sharing.nfs.query', shares as unknown as WebUiQueryEntity<'sharing.nfs.query'>[]),
+        mockTypedCall('sharing.nfs.delete', null),
+        mockTypedCall('sharing.nfs.update', shares[0] as unknown as WebUiQueryEntity<'sharing.nfs.query'>),
       ]),
       mockSharingTierService({ enabled: false }),
     ],
@@ -157,14 +154,12 @@ describe('NfsListComponent', () => {
         ...commonProviders,
         mockTypedApi([
           mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
-        ]),
-        mockApi([
-          mockCall('sharing.nfs.query', [{
+          mockTypedQuery('sharing.nfs.query', [{
             ...shares[0],
             path: '/mnt/exported/data',
-          }] as NfsShare[]),
-          mockCall('sharing.nfs.delete'),
-          mockCall('sharing.nfs.update'),
+          }] as unknown as WebUiQueryEntity<'sharing.nfs.query'>[]),
+          mockTypedCall('sharing.nfs.delete', null),
+          mockTypedCall('sharing.nfs.update', shares[0] as unknown as WebUiQueryEntity<'sharing.nfs.query'>),
         ]),
         mockSharingTierService({ enabled: false }),
       ],
@@ -188,15 +183,13 @@ describe('NfsListComponent', () => {
         ...commonProviders,
         mockTypedApi([
           mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
-        ]),
-        mockApi([
-          mockCall('sharing.nfs.query', [{
+          mockTypedQuery('sharing.nfs.query', [{
             ...shares[0],
             locked: true,
             path: '/mnt/pool/data',
-          }] as NfsShare[]),
-          mockCall('sharing.nfs.delete'),
-          mockCall('sharing.nfs.update'),
+          }] as unknown as WebUiQueryEntity<'sharing.nfs.query'>[]),
+          mockTypedCall('sharing.nfs.delete', null),
+          mockTypedCall('sharing.nfs.update', shares[0] as unknown as WebUiQueryEntity<'sharing.nfs.query'>),
         ]),
         mockSharingTierService({ enabled: false }),
       ],
@@ -222,11 +215,9 @@ describe('NfsListComponent', () => {
         ...commonProviders,
         mockTypedApi([
           mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
-        ]),
-        mockApi([
-          mockCall('sharing.nfs.query', shares as NfsShare[]),
-          mockCall('sharing.nfs.delete'),
-          mockCall('sharing.nfs.update'),
+          mockTypedQuery('sharing.nfs.query', shares as unknown as WebUiQueryEntity<'sharing.nfs.query'>[]),
+          mockTypedCall('sharing.nfs.delete', null),
+          mockTypedCall('sharing.nfs.update', shares[0] as unknown as WebUiQueryEntity<'sharing.nfs.query'>),
         ]),
         mockSharingTierService({ enabled: true, jobUpdates$ }),
       ],
@@ -251,15 +242,13 @@ describe('NfsListComponent', () => {
         ...commonProviders,
         mockTypedApi([
           mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
-        ]),
-        mockApi([
-          mockCall('sharing.nfs.query', [{
+          mockTypedQuery('sharing.nfs.query', [{
             ...shares[0],
             path: '/mnt/pool/data',
             tier: null,
-          }] as NfsShare[]),
-          mockCall('sharing.nfs.delete'),
-          mockCall('sharing.nfs.update'),
+          }] as unknown as WebUiQueryEntity<'sharing.nfs.query'>[]),
+          mockTypedCall('sharing.nfs.delete', null),
+          mockTypedCall('sharing.nfs.update', shares[0] as unknown as WebUiQueryEntity<'sharing.nfs.query'>),
         ]),
         mockSharingTierService({ enabled: true }),
       ],
@@ -285,16 +274,14 @@ describe('NfsListComponent', () => {
         ...commonProviders,
         mockTypedApi([
           mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
-        ]),
-        mockApi([
-          mockCall('sharing.nfs.query', [{
+          mockTypedQuery('sharing.nfs.query', [{
             ...shares[0],
             path: '/mnt/pool/data',
             locked: true,
             tier: { tier_type: DatasetTier.Performance, tier_job: null },
-          }] as NfsShare[]),
-          mockCall('sharing.nfs.delete'),
-          mockCall('sharing.nfs.update'),
+          }] as unknown as WebUiQueryEntity<'sharing.nfs.query'>[]),
+          mockTypedCall('sharing.nfs.delete', null),
+          mockTypedCall('sharing.nfs.update', shares[0] as unknown as WebUiQueryEntity<'sharing.nfs.query'>),
         ]),
         mockSharingTierService({ enabled: true }),
       ],
@@ -321,9 +308,7 @@ describe('NfsListComponent', () => {
         mockEntitlements([EntitlementFeature.NfsSnapshot]),
         mockTypedApi([
           mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
-        ]),
-        mockApi([
-          mockCall('sharing.nfs.query', shares as NfsShare[]),
+          mockTypedQuery('sharing.nfs.query', shares as unknown as WebUiQueryEntity<'sharing.nfs.query'>[]),
         ]),
         mockSharingTierService({ enabled: false }),
       ],

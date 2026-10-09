@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, input, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { finalize, take } from 'rxjs';
+import { finalize, map, take } from 'rxjs';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
-import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
+import {
+  FibreChannelPort, toFibreChannelPort, toFibreChannelStatuses,
+} from 'app/interfaces/fibre-channel.interface';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AssociatedExtentsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/associated-extents-card/associated-extents-card.component';
 import {
   AuthorizedNetworksCardComponent,
@@ -28,7 +30,7 @@ import { IscsiGroupsCardComponent } from 'app/pages/sharing/iscsi/target/all-tar
   ],
 })
 export class TargetDetailsComponent {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private destroyRef = inject(DestroyRef);
 
   readonly target = input.required<IscsiTarget>();
@@ -36,7 +38,7 @@ export class TargetDetailsComponent {
   targetPorts = signal<FibreChannelPort[]>([]);
   isLoading = signal<boolean>(false);
 
-  connections = toSignal(this.api.call('fcport.status'), { initialValue: [] });
+  connections = toSignal(this.api.call('fcport.status').pipe(map(toFibreChannelStatuses)), { initialValue: [] });
 
   protected hasIscsiCards = computed(() => [
     IscsiTargetMode.Iscsi,
@@ -62,8 +64,9 @@ export class TargetDetailsComponent {
   private getPortsByTargetId(id: number): void {
     this.isLoading.set(true);
 
-    this.api.call('fcport.query', [[['target.id', '=', id]]])
+    this.api.query('fcport.query', [['target.id', '=', id]])
       .pipe(
+        map((ports) => ports.map(toFibreChannelPort)),
         take(1),
         finalize(() => this.isLoading.set(false)),
         takeUntilDestroyed(this.destroyRef),

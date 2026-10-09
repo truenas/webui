@@ -1,12 +1,14 @@
 import { computed, Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
-import { forkJoin, switchMap, tap } from 'rxjs';
+import {
+  forkJoin, map, switchMap, tap,
+} from 'rxjs';
 import {
   NvmeOfHost, NvmeOfNamespace, NvmeOfPort, NvmeOfSubsystem,
-  NvmeOfSubsystemDetails,
+  NvmeOfSubsystemDetails, toNvmeOfHost, toNvmeOfNamespace, toNvmeOfPort, toNvmeOfSubsystem,
 } from 'app/interfaces/nvme-of.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface NvmeOfState {
@@ -29,7 +31,7 @@ const initialState: NvmeOfState = {
   providedIn: 'root',
 })
 export class NvmeOfStore extends ComponentStore<NvmeOfState> {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
 
   readonly subsystems = computed((): NvmeOfSubsystemDetails[] => {
@@ -61,10 +63,12 @@ export class NvmeOfStore extends ComponentStore<NvmeOfState> {
       }),
       switchMap(() => {
         return forkJoin([
-          this.api.call('nvmet.subsys.query', [[], { extra: { verbose: true } }]),
-          this.api.call('nvmet.namespace.query'),
-          this.api.call('nvmet.host.query'),
-          this.api.call('nvmet.port.query'),
+          this.api.query('nvmet.subsys.query', [], { extra: { verbose: true } }).pipe(
+            map((subsystems) => subsystems.map(toNvmeOfSubsystem)),
+          ),
+          this.api.query('nvmet.namespace.query').pipe(map((namespaces) => namespaces.map(toNvmeOfNamespace))),
+          this.api.query('nvmet.host.query').pipe(map((hosts) => hosts.map(toNvmeOfHost))),
+          this.api.query('nvmet.port.query').pipe(map((ports) => ports.map(toNvmeOfPort))),
         ]).pipe(
           tapResponse({
             next: ([
@@ -97,9 +101,9 @@ export class NvmeOfStore extends ComponentStore<NvmeOfState> {
   reloadPorts = this.effect((trigger$) => {
     return trigger$.pipe(
       switchMap(() => {
-        return this.api.call('nvmet.port.query').pipe(
+        return this.api.query('nvmet.port.query').pipe(
           this.errorHandler.withErrorHandler(),
-          tap((ports) => this.patchState({ ports })),
+          tap((ports) => this.patchState({ ports: ports.map(toNvmeOfPort) })),
         );
       }),
     );
@@ -108,9 +112,9 @@ export class NvmeOfStore extends ComponentStore<NvmeOfState> {
   reloadHosts = this.effect((trigger$) => {
     return trigger$.pipe(
       switchMap(() => {
-        return this.api.call('nvmet.host.query').pipe(
+        return this.api.query('nvmet.host.query').pipe(
           this.errorHandler.withErrorHandler(),
-          tap((hosts) => this.patchState({ hosts })),
+          tap((hosts) => this.patchState({ hosts: hosts.map(toNvmeOfHost) })),
         );
       }),
     );

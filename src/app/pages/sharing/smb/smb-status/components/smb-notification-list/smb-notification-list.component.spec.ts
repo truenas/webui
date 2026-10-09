@@ -4,7 +4,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnTableHarness } from '@truenas/ui-components';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SmbNotificationInfo } from 'app/interfaces/smb-status.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { SmbNotificationListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-notification-list/smb-notification-list.component';
@@ -34,7 +34,7 @@ describe('SmbNotificationListComponent', () => {
       BasicSearchComponent,
     ],
     providers: [
-      mockApi([mockCall('smb.status', notifications)]),
+      mockTypedApi([mockTypedCall('smb.status', notifications as unknown as Record<string, unknown>[])]),
       provideMockStore({
         selectors: [
           {

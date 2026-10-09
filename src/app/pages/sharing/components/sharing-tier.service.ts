@@ -14,6 +14,7 @@ import { Role } from 'app/enums/role.enum';
 import { SharingTierInfo, ZfsTierConfig, ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   ChangeTierDialogComponent, ChangeTierDialogData,
 } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
@@ -43,7 +44,10 @@ interface ChangeTierActionOptions {
   providedIn: 'root',
 })
 export class SharingTierService {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
+  // The rewrite job topics take subscription params, which the typed client cannot subscribe to yet
+  // (gap 5 in docs/devs/typed-api-client.md).
+  private legacyApi = inject(ApiService);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
@@ -89,7 +93,7 @@ export class SharingTierService {
   }
 
   subscribeTierJobUpdates(): Observable<ZfsTierRewriteJobEntry> {
-    return this.api.subscribe('zfs.tier.rewrite_job_query').pipe(
+    return this.legacyApi.subscribe('zfs.tier.rewrite_job_query').pipe(
       map((event) => event.fields),
     );
   }
@@ -109,7 +113,7 @@ export class SharingTierService {
    * and safe to embed without further escaping.
    */
   subscribeTierJobStatus(tierJobId: string): Observable<ZfsTierRewriteJobEntry> {
-    return this.api.subscribe(`zfs.tier.rewrite_job_status:${JSON.stringify({ tier_job_id: tierJobId })}`).pipe(
+    return this.legacyApi.subscribe(`zfs.tier.rewrite_job_status:${JSON.stringify({ tier_job_id: tierJobId })}`).pipe(
       map((event) => event.fields),
     );
   }

@@ -7,17 +7,17 @@ import {
   TnButtonHarness, TnDialogHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AssociatedTargetFormComponent } from './associated-target-form.component';
 
 describe('AssociatedTargetFormComponent', () => {
   let spectator: Spectator<AssociatedTargetFormComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const dialogData = {
     target: { id: 1, name: 'Target 1' },
@@ -30,8 +30,8 @@ describe('AssociatedTargetFormComponent', () => {
     providers: [
       mockAuth(),
       provideTnFormFieldErrors(),
-      mockApi([
-        mockCall('iscsi.targetextent.create', { id: 7 } as IscsiTargetExtent),
+      mockTypedApi([
+        mockTypedCall('iscsi.targetextent.create', { id: 7 } as IscsiTargetExtent),
       ]),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogRef),
@@ -45,7 +45,7 @@ describe('AssociatedTargetFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
   });
 
   it('shows the dialog title with target name', async () => {

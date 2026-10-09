@@ -5,9 +5,8 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnDialog, TnMenuHarness, TnSlideToggleHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -22,8 +21,8 @@ import {
   TablePagerShowMoreComponent,
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
 import {
   ServiceActionsMenuService,
@@ -103,11 +102,9 @@ describe('NfsCardComponent', () => {
       ...commonProviders,
       mockTypedApi([
         mockTypedQuery('pool.query', [{ path: '/mnt/x' }] as WebUiQueryEntity<'pool.query'>[]),
-      ]),
-      mockApi([
-        mockCall('sharing.nfs.query', nfsShares),
-        mockCall('sharing.nfs.delete'),
-        mockCall('sharing.nfs.update', { id: 10 } as NfsShare),
+        mockTypedQuery('sharing.nfs.query', nfsShares as unknown as WebUiQueryEntity<'sharing.nfs.query'>[]),
+        mockTypedCall('sharing.nfs.delete', null),
+        mockTypedCall('sharing.nfs.update', { id: 10 } as WebUiQueryEntity<'sharing.nfs.query'>),
       ]),
       mockSharingTierService({ enabled: false }),
     ],
@@ -176,7 +173,7 @@ describe('NfsCardComponent', () => {
 
       await toggle.uncheck();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
         'sharing.nfs.update',
         [10, { enabled: false }],
       );
@@ -197,14 +194,12 @@ describe('NfsCardComponent', () => {
         ...commonProviders,
         mockTypedApi([
           mockTypedQuery('pool.query', [{ path: '/mnt/x' }] as WebUiQueryEntity<'pool.query'>[]),
-        ]),
-        mockApi([
-          mockCall('sharing.nfs.query', [{
+          mockTypedQuery('sharing.nfs.query', [{
             ...nfsShares[0],
             path: '/mnt/exported/data',
-          }] as NfsShare[]),
-          mockCall('sharing.nfs.delete'),
-          mockCall('sharing.nfs.update', { id: 10 } as NfsShare),
+          }] as unknown as WebUiQueryEntity<'sharing.nfs.query'>[]),
+          mockTypedCall('sharing.nfs.delete', null),
+          mockTypedCall('sharing.nfs.update', { id: 10 } as WebUiQueryEntity<'sharing.nfs.query'>),
         ]),
       ],
     });
@@ -229,14 +224,12 @@ describe('NfsCardComponent', () => {
         ...commonProviders,
         mockTypedApi([
           mockTypedQuery('pool.query', [{ path: '/mnt/x' }] as WebUiQueryEntity<'pool.query'>[]),
-        ]),
-        mockApi([
-          mockCall('sharing.nfs.query', [{
+          mockTypedQuery('sharing.nfs.query', [{
             ...nfsShares[0],
             locked: true,
-          }] as NfsShare[]),
-          mockCall('sharing.nfs.delete'),
-          mockCall('sharing.nfs.update', { id: 10 } as NfsShare),
+          }] as unknown as WebUiQueryEntity<'sharing.nfs.query'>[]),
+          mockTypedCall('sharing.nfs.delete', null),
+          mockTypedCall('sharing.nfs.update', { id: 10 } as WebUiQueryEntity<'sharing.nfs.query'>),
         ]),
       ],
     });

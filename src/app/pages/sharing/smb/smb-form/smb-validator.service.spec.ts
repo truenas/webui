@@ -3,7 +3,7 @@ import { FormControl, ValidationErrors } from '@angular/forms';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { Observable, of, throwError } from 'rxjs';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
 
@@ -11,7 +11,7 @@ describe('SmbValidationService', () => {
   let spectator: SpectatorService<SmbValidationService>;
   const createService = createServiceFactory({
     service: SmbValidationService,
-    providers: [mockProvider(ApiService)],
+    providers: [mockProvider(TypedApiService)],
   });
 
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe('SmbValidationService', () => {
   });
 
   function refuseWith(reason: string): void {
-    jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(
+    jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(
       throwError(() => new ApiCallError({ data: { reason } } as JsonRpcError)),
     );
   }
@@ -36,7 +36,7 @@ describe('SmbValidationService', () => {
   }
 
   it('accepts a name the appliance has nothing to say about', fakeAsync(() => {
-    jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(of(null));
+    jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(of(null));
 
     expect(validate('share')).toBeNull();
   }));

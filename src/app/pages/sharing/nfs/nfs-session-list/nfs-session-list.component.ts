@@ -12,7 +12,9 @@ import {
 import { combineLatest, map, tap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
-import { Nfs3Session, Nfs4Session, NfsType } from 'app/interfaces/nfs-share.interface';
+import {
+  Nfs3Session, Nfs4Session, NfsType, toNfs4Session,
+} from 'app/interfaces/nfs-share.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -22,7 +24,7 @@ import { TableColumnPickerComponent } from 'app/modules/tn-table/components/tabl
 import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/tn-table/utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.elements';
 
 let nextLabelId = 0;
@@ -51,7 +53,7 @@ let nextLabelId = 0;
   ],
 })
 export class NfsSessionListComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
@@ -129,7 +131,7 @@ export class NfsSessionListComponent implements OnInit {
   protected readonly trackByNfs3 = (_index: number, row: Nfs3Session): string => `${row.export}-${row.ip}`;
   protected readonly trackByNfs4 = (_index: number, row: Nfs4Session['info']): string => `${row.address}-${row.clientid}`;
 
-  private readonly nfs3ProviderRequest$ = this.api.call('nfs.get_nfs3_clients', []).pipe(
+  private readonly nfs3ProviderRequest$ = this.api.query('nfs.get_nfs3_clients').pipe(
     tap((sessions) => {
       this.sessions = sessions;
       if (this.searchQuery()) {
@@ -144,8 +146,8 @@ export class NfsSessionListComponent implements OnInit {
   protected readonly nfs3Loading = dataProviderLoading(this.nfs3DataProvider);
   protected readonly nfs3EmptyType = toSignal(this.nfs3DataProvider.emptyType$);
 
-  private readonly nfs4ProviderRequest$ = this.api.call('nfs.get_nfs4_clients', []).pipe(
-    map((sessions) => sessions.map((session) => session.info)),
+  private readonly nfs4ProviderRequest$ = this.api.query('nfs.get_nfs4_clients').pipe(
+    map((sessions) => sessions.map((session) => toNfs4Session(session).info)),
     tap((sessions) => {
       this.sessions = sessions;
       if (this.searchQuery()) {

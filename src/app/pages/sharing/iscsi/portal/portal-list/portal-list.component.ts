@@ -26,7 +26,7 @@ import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
 import { portalListElements } from 'app/pages/sharing/iscsi/portal/portal-list/portal-list.elements';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -58,7 +58,7 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class PortalListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private dialogService = inject(DialogService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   private iscsiService = inject(IscsiService);
@@ -73,7 +73,7 @@ export class PortalListComponent implements OnInit {
   ];
 
   protected readonly searchQuery = signal('');
-  protected readonly dataProvider = new AsyncDataProvider<IscsiPortal>(this.api.call('iscsi.portal.query', []));
+  protected readonly dataProvider = new AsyncDataProvider<IscsiPortal>(this.api.query('iscsi.portal.query'));
   protected readonly rows = dataProviderRows(this.dataProvider);
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
   protected readonly emptyType = toSignal(this.dataProvider.emptyType$);

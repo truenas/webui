@@ -11,7 +11,7 @@ import {
 import { FibreChannelHost } from 'app/interfaces/fibre-channel.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -30,7 +30,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class VirtualPortsNumberDialog {
   protected readonly InputType = InputType;
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private loader = inject(LoaderService);
   protected dialogRef = inject<DialogRef<unknown, VirtualPortsNumberDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);

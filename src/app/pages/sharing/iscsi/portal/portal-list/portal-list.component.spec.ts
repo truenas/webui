@@ -5,16 +5,16 @@ import { provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnCardComponent, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
 } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Choices } from 'app/interfaces/choices.interface';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
 import { PortalListComponent } from 'app/pages/sharing/iscsi/portal/portal-list/portal-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -44,10 +44,8 @@ describe('PortalListComponent', () => {
       mockProvider(EmptyService),
       mockTypedApi([
         mockTypedCall('iscsi.portal.listen_ip_choices', { '0.0.0.0': '0.0.0.0' } as Choices),
-      ]),
-      mockApi([
-        mockCall('iscsi.portal.query', portals),
-        mockCall('iscsi.portal.delete'),
+        mockTypedQuery('iscsi.portal.query', portals),
+        mockTypedCall('iscsi.portal.delete', null),
       ]),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
@@ -115,7 +113,7 @@ describe('PortalListComponent', () => {
       call: expect.any(Function),
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.portal.delete', [1]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('iscsi.portal.delete', [1]);
   });
 
   it('should show table rows', async () => {

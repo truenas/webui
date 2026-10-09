@@ -8,12 +8,11 @@ import {
   TnButtonHarness, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { Subject, of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { Pool } from 'app/interfaces/pool.interface';
 import { S3Bucket } from 'app/interfaces/s3.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
@@ -25,7 +24,8 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   TablePagerShowMoreComponent,
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { S3CardComponent } from 'app/pages/sharing/components/shares-dashboard/s3-card/s3-card.component';
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
@@ -54,11 +54,14 @@ describe('S3CardComponent', () => {
 
   const commonProviders = [
     mockAuth(),
-    mockApi([
-      mockCall('sharing.s3.query', () => listedBuckets),
-      mockCall('sharing.s3.delete'),
-      mockCall('sharing.s3.update', { id: 10 } as S3Bucket),
-      mockCall('pool.query', [{ path: '/mnt/tank' }] as Pool[]),
+    mockTypedApi([
+      mockTypedCall('sharing.s3.delete', null),
+      mockTypedCall('sharing.s3.update', { id: 10 } as WebUiQueryEntity<'sharing.s3.query'>),
+      mockTypedQuery('pool.query', [{ path: '/mnt/tank' }] as WebUiQueryEntity<'pool.query'>[]),
+      // The rows change per test, so each query frame is answered with what `listedBuckets` holds when it is sent.
+      (api) => api.client.connection.autoReply('sharing.s3.query', ({ id }) => {
+        queueMicrotask(() => api.client.connection.receive({ jsonrpc: '2.0', id, result: listedBuckets }));
+      }),
     ]),
     mockProvider(DialogService, {
       confirm: jest.fn(() => of(true)),
@@ -169,7 +172,7 @@ describe('S3CardComponent', () => {
 
     await toggle.uncheck();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.s3.update', [10, { enabled: false }]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('sharing.s3.update', [10, { enabled: false }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('S3 bucket «photos» disabled');
   });
 

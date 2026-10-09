@@ -13,7 +13,7 @@ import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import {
   getTierJobEndTimeLabelKey, getTierJobStatusClass, getTierJobStatusLabelKey, getTierLabelKey, isTierJobRunning,
@@ -42,7 +42,7 @@ export interface DataMigrationStatusDialogData {
   ],
 })
 export class DataMigrationStatusDialogComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);

@@ -9,18 +9,15 @@ import {
   TnFormListHarness, TnInputHarness, TnSelectHarness, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
-import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import {
   S3Access, S3MultipartEtag, S3ObjectLockMode, S3ObjectOwnership, S3PermissionsModel, S3PrincipalType, S3Versioning,
 } from 'app/enums/s3.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { Group } from 'app/interfaces/group.interface';
 import { S3Bucket } from 'app/interfaces/s3.interface';
-import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxUserComboboxComponent,
@@ -28,8 +25,8 @@ import {
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { s3UserFormPreset } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 import { DatasetService } from 'app/services/dataset/dataset.service';
@@ -52,7 +49,7 @@ describe('S3BucketFormComponent', () => {
   let spectator: Spectator<S3BucketFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let api: ApiService;
+  let api: TypedApiService;
   let store$: Store<AppState>;
 
   const existingBucket = {
@@ -109,20 +106,16 @@ describe('S3BucketFormComponent', () => {
     component: S3BucketFormComponent,
     imports: [ReactiveFormsModule],
     providers: [
-      // The owner picker reads users through `UserDirectoryService` on the typed client; the grant
-      // rows' principal pickers still read them over the legacy one.
+      // The owner picker reads users through `UserDirectoryService`, and the grant rows' principal
+      // pickers read them directly.
       mockTypedApi([
         mockTypedQuery('user.query', users as WebUiQueryEntity<'user.query'>[]),
         mockTypedQuery('group.query', groups as WebUiQueryEntity<'group.query'>[]),
-      ]),
-      mockApi([
-        mockCall('sharing.s3.create'),
-        mockCall('sharing.s3.update'),
-        mockCall('sharing.s3.force_disable_versioning'),
-        mockCall('sharing.s3.audit_choices', { GetObject: 'GetObject', PutObject: 'PutObject' }),
-        mockCall('pool.filesystem_choices', ['tank', 'tank/buckets', 'tank/buckets/photos']),
-        mockCall('user.query', users as User[]),
-        mockCall('group.query', groups as Group[]),
+        mockTypedCall('sharing.s3.create', {} as WebUiQueryEntity<'sharing.s3.query'>),
+        mockTypedCall('sharing.s3.update', {} as WebUiQueryEntity<'sharing.s3.query'>),
+        mockTypedCall('sharing.s3.force_disable_versioning', null),
+        mockTypedCall('sharing.s3.audit_choices', { GetObject: 'GetObject', PutObject: 'PutObject' }),
+        mockTypedCall('pool.filesystem_choices', ['tank', 'tank/buckets', 'tank/buckets/photos']),
       ]),
       mockAuth(),
       mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
@@ -147,7 +140,7 @@ describe('S3BucketFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
     });
@@ -221,6 +214,7 @@ describe('S3BucketFormComponent', () => {
       await (await getInput('object_lock_default_days')).setValue('30');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
         versioning: S3Versioning.Enabled,
@@ -249,6 +243,7 @@ describe('S3BucketFormComponent', () => {
       await (await getCheckbox('object_lock')).uncheck();
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
         versioning: S3Versioning.Off,
@@ -293,6 +288,7 @@ describe('S3BucketFormComponent', () => {
       await (await getSelect('permissions_model')).selectOption('Multiprotocol');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
         permissions_model: S3PermissionsModel.Multiprotocol,
@@ -339,6 +335,7 @@ describe('S3BucketFormComponent', () => {
       const closed = jest.fn();
       spectator.component.closed.subscribe(closed);
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [{
         name: 'videos',
@@ -377,6 +374,7 @@ describe('S3BucketFormComponent', () => {
       await (await getSelect('access')).selectOption('Read Only');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
         dataset: 'tank/shared',
@@ -476,7 +474,7 @@ describe('S3BucketFormComponent', () => {
         providers: [mockEntitlements([EntitlementFeature.S3Versioning])],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
       await clickAdvancedOptions();
 
       expect(premiumBadge('Versioning')).not.toBeNull();
@@ -498,6 +496,7 @@ describe('S3BucketFormComponent', () => {
       await (await loader.getHarness(IxFormHarness)).fillForm({ 'Parent Dataset': 'tank/buckets' });
       await setOwner('alice');
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
         versioning: S3Versioning.Off,
@@ -527,7 +526,7 @@ describe('S3BucketFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
 
       await form.fillForm({
         Name: 'videos',
@@ -535,6 +534,7 @@ describe('S3BucketFormComponent', () => {
         Owner: 'alice',
       });
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       // Read off the actual call rather than matched in place: a
       // `not.objectContaining` nested in the expected array passes whatever the
@@ -563,7 +563,7 @@ describe('S3BucketFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
 
       await form.fillForm({
         Name: 'videos',
@@ -571,6 +571,7 @@ describe('S3BucketFormComponent', () => {
         Owner: 'alice',
       });
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       const createCall = jest.mocked(api.call).mock.calls
         .find(([method]) => method === 'sharing.s3.create');
@@ -580,7 +581,7 @@ describe('S3BucketFormComponent', () => {
       expect(payload).toHaveProperty('audit_overflow');
     });
 
-    it('keeps the object lock a bucket already has when the versioning key is missing', () => {
+    it('keeps the object lock a bucket already has when the versioning key is missing', async () => {
       // Middleware latches object lock on the dataset root and gates the transition rather than
       // the state, so a bucket that has it keeps it on an unentitled appliance. Clearing the
       // control here would turn a save of something else on the form into an attempt to unlock.
@@ -594,9 +595,10 @@ describe('S3BucketFormComponent', () => {
         props: { bucket: lockedBucket },
         providers: [mockEntitlements([EntitlementFeature.S3Versioning])],
       });
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('sharing.s3.update', [7, expect.objectContaining({
         object_lock: true,
@@ -611,7 +613,7 @@ describe('S3BucketFormComponent', () => {
       spectator = createComponent({ props: { bucket: existingBucket } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('shows existing values with the dataset read only', async () => {
@@ -820,6 +822,7 @@ describe('S3BucketFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(true);
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('sharing.s3.update', [7, expect.objectContaining({
         snapshot_versions: [],
@@ -862,6 +865,7 @@ describe('S3BucketFormComponent', () => {
       const closed = jest.fn();
       spectator.component.closed.subscribe(closed);
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('sharing.s3.update', [7, {
         name: 'photos',

@@ -19,7 +19,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { WebShareTableRow } from 'app/pages/sharing/webshare/webshare-table-row.interface';
 import { LicenseService } from 'app/services/license.service';
 import { AppState } from 'app/store';
@@ -31,7 +31,7 @@ import { WebShareSharesFormComponent, WebShareFormData } from './webshare-shares
 })
 export class WebShareService {
   private window = inject(WINDOW);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private licenseService = inject(LicenseService);
@@ -162,7 +162,7 @@ export class WebShareService {
    * replaying a session-long cached value.
    */
   readonly hasWebshareUsers$ = defer(() => {
-    return this.api.call('user.query', [[['webshare', '=', true], ['local', '=', true]]]);
+    return this.api.query('user.query', [['webshare', '=', true], ['local', '=', true]]);
   }).pipe(
     map((users) => users.length > 0),
     catchError(() => of(false)),
@@ -247,7 +247,7 @@ export class WebShareService {
    * @returns Observable that emits an array of WebShare table rows
    */
   getWebShareTableRows(): Observable<WebShareTableRow[]> {
-    return this.api.call('sharing.webshare.query', [[]]).pipe(
+    return this.api.query('sharing.webshare.query', []).pipe(
       map((shares) => this.transformToTableRows(shares)),
     );
   }

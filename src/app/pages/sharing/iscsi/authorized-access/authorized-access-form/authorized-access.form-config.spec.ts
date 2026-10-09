@@ -2,7 +2,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
 import { FormSubmitEvent } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   AuthorizedAccessFormValues,
   getAuthorizedAccessFormConfig,
@@ -27,7 +27,7 @@ describe('getAuthorizedAccessFormConfig', () => {
     discovery_auth: IscsiAuthMethod.None,
   } as AuthorizedAccessFormValues;
 
-  const api = { call: jest.fn(() => undefined) } as unknown as ApiService;
+  const api = { call: jest.fn((): undefined => undefined) } as unknown as TypedApiService;
   const translate = { instant: (key: string) => key } as TranslateService;
 
   beforeEach(() => jest.clearAllMocks());

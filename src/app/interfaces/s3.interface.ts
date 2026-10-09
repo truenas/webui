@@ -83,6 +83,36 @@ export interface S3BucketCreate extends Partial<Omit<S3Bucket, 'id' | 'owner_uid
 
 export type S3BucketUpdate = Partial<Omit<S3BucketCreate, 'dataset'>>;
 
+/**
+ * Reads a `sharing.s3.query` row, or the bucket `sharing.s3.create` / `update` return, into the UI's `S3Bucket`.
+ * The generated entry spells the enums and the audit actions as wire literals and leaves the fields middleware
+ * defaults optional; it describes the same object.
+ */
+export function toS3Bucket(
+  entry: WebUiQueryEntity<'sharing.s3.query'>,
+): S3Bucket {
+  return entry as S3Bucket;
+}
+
+/** What `sharing.s3.create` takes, as middleware declares it. */
+export type S3BucketCreateArgs = CallParams<WebUiApiDirectory, 'sharing.s3.create'>[0];
+
+/** What `sharing.s3.update` takes as its changes, as middleware declares it. */
+export type S3BucketUpdateArgs = CallParams<WebUiApiDirectory, 'sharing.s3.update'>[1];
+
+/**
+ * Hands the bucket form's payload to `sharing.s3.create` unchanged. Middleware narrows `audit` to the actions it
+ * knows; the form sends what `sharing.s3.audit_choices` offered, typed as strings.
+ */
+export function toS3BucketCreateArgs(payload: S3BucketCreate): S3BucketCreateArgs {
+  return payload as S3BucketCreateArgs;
+}
+
+/** {@link toS3BucketCreateArgs} for `sharing.s3.update`. */
+export function toS3BucketUpdateArgs(payload: S3BucketUpdate): S3BucketUpdateArgs {
+  return payload as S3BucketUpdateArgs;
+}
+
 export interface S3AccessKey {
   id: number;
   name: string;

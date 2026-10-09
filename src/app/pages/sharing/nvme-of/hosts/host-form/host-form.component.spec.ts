@@ -1,30 +1,32 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NvmeOfGlobalConfig, NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
 
 describe('HostFormComponent', () => {
-  const savedHost = { id: 1 } as NvmeOfHost;
+  const savedHost = { id: 1 } as CallResponse<WebUiApiDirectory, 'nvmet.host.create'>;
   const createComponent = createComponentFactory({
     component: HostFormComponent,
     providers: [
-      mockApi([
-        mockCall('nvmet.host.create', savedHost),
-        mockCall('nvmet.host.update', savedHost),
-        mockCall('nvmet.host.generate_key', '123456'),
-        mockCall('nvmet.host.dhchap_hash_choices', ['SHA-256', 'SHA-512']),
-        mockCall('nvmet.host.dhchap_dhgroup_choices', ['2048-BIT', '4096-BIT']),
-        mockCall('nvmet.global.config', {
+      mockTypedApi([
+        mockTypedCall('nvmet.host.create', savedHost),
+        mockTypedCall('nvmet.host.update', savedHost),
+        mockTypedCall('nvmet.host.generate_key', '123456'),
+        mockTypedCall('nvmet.host.dhchap_hash_choices', ['SHA-256', 'SHA-512']),
+        mockTypedCall('nvmet.host.dhchap_dhgroup_choices', ['2048-BIT', '4096-BIT']),
+        mockTypedCall('nvmet.global.config', {
           basenqn: 'nqn.2011-06.com.truenas',
         } as NvmeOfGlobalConfig),
       ]),
@@ -36,7 +38,7 @@ describe('HostFormComponent', () => {
   let spectator: ReturnType<typeof createComponent>;
   let component: HostFormComponent;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -56,7 +58,7 @@ describe('HostFormComponent', () => {
     spectator = createComponent();
     component = spectator.component;
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
   });
 
   it('creates a new host when form is submitted', async () => {
@@ -79,6 +81,7 @@ describe('HostFormComponent', () => {
     expect(component.canSubmit()).toBe(true);
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(api.call).toHaveBeenCalledWith('nvmet.host.create', [{
       hostnqn: 'nqn.2014-08.org',
@@ -107,7 +110,7 @@ describe('HostFormComponent', () => {
       });
       component = spectator.component;
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('shows current values when editing an existing host', async () => {
@@ -137,6 +140,7 @@ describe('HostFormComponent', () => {
       await (await getTnCheckbox('requireHostAuthentication')).uncheck();
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(closedSpy).toHaveBeenCalledWith(savedHost);
       expect(api.call).toHaveBeenCalledWith('nvmet.host.update', [23, {
@@ -242,6 +246,7 @@ describe('HostFormComponent', () => {
       await (await getTnInput('description')).setValue('Test host description');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenLastCalledWith('nvmet.host.create', [{
         hostnqn: 'nqn.2014-08.org.example',
@@ -264,11 +269,12 @@ describe('HostFormComponent', () => {
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
 
       await (await getTnInput('description')).setValue('Updated description');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenLastCalledWith('nvmet.host.update', [24, {
         hostnqn: 'nqn.2014-08.org',

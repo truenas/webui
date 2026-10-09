@@ -25,7 +25,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextIscsi } from 'app/helptext/sharing';
-import { IscsiExtent, IscsiExtentUpdate } from 'app/interfaces/iscsi.interface';
+import { IscsiExtent, IscsiExtentUpdate, toIscsiExtentCreateArgs } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import {
   ExplorerCreateDatasetComponent,
@@ -37,7 +37,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
@@ -66,7 +66,7 @@ export class ExtentFormComponent extends IxFormHostForm implements OnInit {
   protected iscsiService = inject(IscsiService);
   private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private filesystemService = inject(FilesystemService);
   private destroyRef = inject(DestroyRef);
 
@@ -211,8 +211,8 @@ export class ExtentFormComponent extends IxFormHostForm implements OnInit {
     }
 
     const request$: Observable<unknown> = this.editingExtent
-      ? this.api.call('iscsi.extent.update', [this.editingExtent.id, values])
-      : this.api.call('iscsi.extent.create', [values]);
+      ? this.api.call('iscsi.extent.update', [this.editingExtent.id, toIscsiExtentCreateArgs(values)])
+      : this.api.call('iscsi.extent.create', [toIscsiExtentCreateArgs(values)]);
 
     return {
       request$,

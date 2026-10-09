@@ -5,14 +5,17 @@ import {
 import { catchError, map, shareReplay, take } from 'rxjs/operators';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { RdmaProtocolName } from 'app/enums/service-name.enum';
-import { NvmeOfHost, NvmeOfPort, NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  NvmeOfHost, NvmeOfPort, NvmeOfSubsystem, toNvmeOfSubsystem,
+} from 'app/interfaces/nvme-of.interface';
+import { TypedQueryFilter, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NvmeOfService {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
 
   private maxConcurrentRequests = 15;
 
@@ -66,7 +69,13 @@ export class NvmeOfService {
   }
 
   removePortAssociation(subsystem: { id: number }, port: NvmeOfPort): Observable<unknown> {
-    return this.api.call('nvmet.port_subsys.query', [[['subsys_id', '=', subsystem.id], ['port_id', '=', port.id]]]).pipe(
+    // Middleware filters these rows on the association's own columns, which its entity does not declare:
+    // the row carries the whole `port` and `subsys` instead.
+    const filters = [
+      ['subsys_id', '=', subsystem.id],
+      ['port_id', '=', port.id],
+    ] as unknown as TypedQueryFilter<WebUiQueryEntity<'nvmet.port_subsys.query'>>[];
+    return this.api.query('nvmet.port_subsys.query', filters).pipe(
       switchMap((connection) => {
         if (connection.length === 0) {
           return of(undefined);
@@ -91,7 +100,11 @@ export class NvmeOfService {
   }
 
   removeHostAssociation(subsystem: { id: number }, host: NvmeOfHost): Observable<unknown> {
-    return this.api.call('nvmet.host_subsys.query', [[['subsys_id', '=', subsystem.id], ['host_id', '=', host.id]]]).pipe(
+    const filters = [
+      ['subsys_id', '=', subsystem.id],
+      ['host_id', '=', host.id],
+    ] as unknown as TypedQueryFilter<WebUiQueryEntity<'nvmet.host_subsys.query'>>[];
+    return this.api.query('nvmet.host_subsys.query', filters).pipe(
       switchMap((connection) => {
         if (connection.length === 0) {
           return of(undefined);
@@ -103,6 +116,6 @@ export class NvmeOfService {
   }
 
   updateSubsystem(subsystem: { id: number }, params: Partial<NvmeOfSubsystem>): Observable<NvmeOfSubsystem> {
-    return this.api.call('nvmet.subsys.update', [subsystem.id, { ...params }]);
+    return this.api.call('nvmet.subsys.update', [subsystem.id, { ...params }]).pipe(map(toNvmeOfSubsystem));
   }
 }

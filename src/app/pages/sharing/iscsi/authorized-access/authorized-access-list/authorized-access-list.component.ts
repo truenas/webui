@@ -25,7 +25,7 @@ import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   getAuthorizedAccessFormConfig,
 } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access.form-config';
@@ -60,7 +60,7 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class AuthorizedAccessListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private dialogService = inject(DialogService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   private iscsiService = inject(IscsiService);

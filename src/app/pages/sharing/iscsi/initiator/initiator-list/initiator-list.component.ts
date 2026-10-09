@@ -25,7 +25,7 @@ import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { initiatorListElements } from 'app/pages/sharing/iscsi/initiator/initiator-list/initiator-list.elements';
 import { IscsiService } from 'app/services/iscsi.service';
 
@@ -56,7 +56,7 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class InitiatorListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private dialogService = inject(DialogService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private iscsiService = inject(IscsiService);
   private router = inject(Router);

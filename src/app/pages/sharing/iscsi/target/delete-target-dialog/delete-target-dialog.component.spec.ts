@@ -4,10 +4,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiTarget, IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { IscsiService } from 'app/services/iscsi.service';
 
@@ -29,8 +29,8 @@ describe('DeleteTargetDialogComponent', () => {
     imports: [],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('iscsi.target.delete'),
+      mockTypedApi([
+        mockTypedCall('iscsi.target.delete', null),
       ]),
       mockProvider(IscsiService, {
         getGlobalSessions: jest.fn(() => of([{
@@ -57,7 +57,7 @@ describe('DeleteTargetDialogComponent', () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.target.delete', [1, false, true]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('iscsi.target.delete', [1, false, true]);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 

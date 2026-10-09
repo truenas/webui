@@ -8,9 +8,9 @@ import {
   TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { tap } from 'rxjs';
+import { map, tap } from 'rxjs';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
-import { SmbSession } from 'app/interfaces/smb-status.interface';
+import { SmbSession, toSmbStatus } from 'app/interfaces/smb-status.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
@@ -19,7 +19,7 @@ import { TableColumnPickerComponent } from 'app/modules/tn-table/components/tabl
 import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/tn-table/utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Component({
   selector: 'ix-smb-session-list',
@@ -43,7 +43,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class SmbSessionListComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
@@ -51,6 +51,7 @@ export class SmbSessionListComponent implements OnInit {
 
   searchQuery = signal('');
   private readonly smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Sessions]).pipe(
+    map((response) => toSmbStatus<SmbSession>(response)),
     tap((sessions: SmbSession[]) => {
       this.sessions = sessions;
       if (this.searchQuery()) {

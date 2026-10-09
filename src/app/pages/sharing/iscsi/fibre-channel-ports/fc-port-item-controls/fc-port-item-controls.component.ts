@@ -10,7 +10,7 @@ import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components'
 import { map } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { optionTestIdByKebabLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { configurePortControlsForMode } from 'app/pages/sharing/iscsi/fibre-channel-ports/helpers/port-mode-control.helper';
 
 @Component({
@@ -26,7 +26,7 @@ import { configurePortControlsForMode } from 'app/pages/sharing/iscsi/fibre-chan
   ],
 })
 export class FcPortItemControlsComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
   private translate = inject(TranslateService);
@@ -83,7 +83,7 @@ export class FcPortItemControlsComponent implements OnInit {
     return options;
   });
 
-  protected readonly creatingPortOptions$ = this.api.call('fc.fc_host.query').pipe(
+  protected readonly creatingPortOptions$ = this.api.query('fc.fc_host.query').pipe(
     map((hosts) => hosts.map((host) => ({
       label: `${host.alias}/${host.npiv + 1}`,
       value: host.id,

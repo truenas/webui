@@ -5,12 +5,11 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnDialog, TnMenuHarness, TnSlideToggleHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -19,6 +18,7 @@ import {
   TablePagerShowMoreComponent,
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
 import {
   ServiceActionsMenuService,
@@ -50,7 +50,7 @@ describe('IscsiCardComponent', () => {
         },
       ],
     },
-  ] as IscsiTarget[];
+  ] as WebUiQueryEntity<'iscsi.target.query'>[];
 
   const createComponent = createComponentFactory({
     component: IscsiCardComponent,
@@ -58,9 +58,9 @@ describe('IscsiCardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('iscsi.target.query', iscsiShares),
-        mockCall('iscsi.target.delete'),
+      mockTypedApi([
+        mockTypedQuery('iscsi.target.query', iscsiShares),
+        mockTypedCall('iscsi.target.delete', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

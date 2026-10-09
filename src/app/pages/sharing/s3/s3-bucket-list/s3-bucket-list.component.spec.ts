@@ -7,11 +7,10 @@ import {
   TnButtonHarness, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { Subject, of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { S3ObjectOwnership, S3PermissionsModel, S3Versioning } from 'app/enums/s3.enum';
-import { Pool } from 'app/interfaces/pool.interface';
 import { S3Bucket } from 'app/interfaces/s3.interface';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -19,7 +18,8 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { S3BucketListComponent } from 'app/pages/sharing/s3/s3-bucket-list/s3-bucket-list.component';
@@ -66,11 +66,14 @@ describe('S3BucketListComponent', () => {
     provideMockStore({
       selectors: [{ selector: selectPreferences, value: {} }],
     }),
-    mockApi([
-      mockCall('sharing.s3.query', () => listedBuckets),
-      mockCall('sharing.s3.delete'),
-      mockCall('sharing.s3.update'),
-      mockCall('pool.query', [{ path: '/mnt/tank' }] as Pool[]),
+    mockTypedApi([
+      mockTypedCall('sharing.s3.delete', null),
+      mockTypedCall('sharing.s3.update', { id: 10 } as WebUiQueryEntity<'sharing.s3.query'>),
+      mockTypedQuery('pool.query', [{ path: '/mnt/tank' }] as WebUiQueryEntity<'pool.query'>[]),
+      // The rows change per test, so each query frame is answered with what `listedBuckets` holds when it is sent.
+      (api) => api.client.connection.autoReply('sharing.s3.query', ({ id }) => {
+        queueMicrotask(() => api.client.connection.receive({ jsonrpc: '2.0', id, result: listedBuckets }));
+      }),
     ]),
   ];
 
@@ -154,7 +157,7 @@ describe('S3BucketListComponent', () => {
     expect(await toggle.isChecked()).toBe(true);
     // The failure arrives after the flip has been applied, as a real API error would.
     const update$ = new Subject<S3Bucket>();
-    jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(update$ as never);
+    jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(update$ as never);
 
     await toggle.uncheck();
     expect(await toggle.isChecked()).toBe(false);

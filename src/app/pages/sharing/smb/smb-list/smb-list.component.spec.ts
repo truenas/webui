@@ -8,9 +8,8 @@ import {
 } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
@@ -19,8 +18,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
@@ -89,12 +88,10 @@ describe('SmbListComponent', () => {
       ...commonProviders,
       mockTypedApi([
         mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
-      ]),
-      mockApi([
-        mockCall('sharing.smb.query', shares as SmbShare[]),
-        mockCall('sharing.smb.delete'),
-        mockCall('sharing.smb.update'),
-        mockCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
+        mockTypedQuery('sharing.smb.query', shares as unknown as WebUiQueryEntity<'sharing.smb.query'>[]),
+        mockTypedCall('sharing.smb.delete', null),
+        mockTypedCall('sharing.smb.update', { id: 1 } as WebUiQueryEntity<'sharing.smb.query'>),
+        mockTypedCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
       ]),
       mockSharingTierService({ enabled: false }),
     ],
@@ -185,7 +182,7 @@ describe('SmbListComponent', () => {
 
     await toggle.uncheck();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
       'sharing.smb.update',
       [1, { enabled: false }],
     );
@@ -208,15 +205,13 @@ describe('SmbListComponent', () => {
         ...commonProviders,
         mockTypedApi([
           mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
-        ]),
-        mockApi([
-          mockCall('sharing.smb.query', [{
+          mockTypedQuery('sharing.smb.query', [{
             ...shares[0],
             path: '/mnt/exported/data',
-          }] as SmbShare[]),
-          mockCall('sharing.smb.delete'),
-          mockCall('sharing.smb.update'),
-          mockCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
+          }] as unknown as WebUiQueryEntity<'sharing.smb.query'>[]),
+          mockTypedCall('sharing.smb.delete', null),
+          mockTypedCall('sharing.smb.update', { id: 1 } as WebUiQueryEntity<'sharing.smb.query'>),
+          mockTypedCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
         ]),
         mockSharingTierService({ enabled: false }),
       ],
@@ -252,16 +247,14 @@ describe('SmbListComponent', () => {
         ...commonProviders,
         mockTypedApi([
           mockTypedQuery('pool.query', [{ path: '/mnt/pool' }] as WebUiQueryEntity<'pool.query'>[]),
-        ]),
-        mockApi([
-          mockCall('sharing.smb.query', [{
+          mockTypedQuery('sharing.smb.query', [{
             ...shares[0],
             locked: true,
             path: '/mnt/pool/data',
-          }] as SmbShare[]),
-          mockCall('sharing.smb.delete'),
-          mockCall('sharing.smb.update'),
-          mockCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
+          }] as unknown as WebUiQueryEntity<'sharing.smb.query'>[]),
+          mockTypedCall('sharing.smb.delete', null),
+          mockTypedCall('sharing.smb.update', { id: 1 } as WebUiQueryEntity<'sharing.smb.query'>),
+          mockTypedCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
         ]),
         mockSharingTierService({ enabled: false }),
       ],

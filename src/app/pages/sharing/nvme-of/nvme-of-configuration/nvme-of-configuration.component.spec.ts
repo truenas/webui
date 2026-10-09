@@ -6,8 +6,8 @@ import {
   TnCheckboxHarness, TnInputHarness, TnRadioHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -15,7 +15,7 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NvmeOfGlobalConfig } from 'app/interfaces/nvme-of.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
@@ -31,9 +31,9 @@ describe('NvmeOfConfigurationComponent', () => {
     component: NvmeOfConfigurationComponent,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('nvmet.global.update'),
-        mockCall('nvmet.global.config', {
+      mockTypedApi([
+        mockTypedCall('nvmet.global.update', null),
+        mockTypedCall('nvmet.global.config', {
           ana: true,
           rdma: true,
           kernel: true,
@@ -77,7 +77,7 @@ describe('NvmeOfConfigurationComponent', () => {
   });
 
   it('loads current global config when component is initialized', () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.global.config');
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('nvmet.global.config');
   });
 
   it('shows current values for global settings', async () => {
@@ -110,8 +110,9 @@ describe('NvmeOfConfigurationComponent', () => {
 
     expect(spectator.component.canSubmit()).toBe(true);
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.global.update', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('nvmet.global.update', [{
       ana: true,
       basenqn: 'new.2005-10.org.freenas:ctl',
       rdma: true,
@@ -182,7 +183,7 @@ describe('NvmeOfConfigurationComponent', () => {
     expect(radios).toHaveLength(0);
   });
 
-  it('omits kernel from the payload when the system is not entitled to NVMEOF_SPDK', () => {
+  it('omits kernel from the payload when the system is not entitled to NVMEOF_SPDK', async () => {
     spectator.inject(MockStore).overrideSelector(selectEntitlements, {
       [EntitlementFeature.NvmeOfSpdk]: {
         entitled: false,
@@ -193,10 +194,13 @@ describe('NvmeOfConfigurationComponent', () => {
     spectator.inject(MockStore).refreshState();
     spectator.inject(NvmeOfService).isRdmaCapable.mockReturnValue(of(true));
     spectator = createComponent();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.global.update', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('nvmet.global.update', [{
       ana: true,
       basenqn: 'iqn.2005-10.org.freenas:ctl',
       rdma: true,
