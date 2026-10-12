@@ -127,7 +127,7 @@ jobs:
     name: e2e (${{ matrix.shard }}/${{ needs.plan.outputs.total }})
     # A runner with a TrueNAS appliance disk attached: the GARM pool's extra
     # specs are {"disks": ["truenas_appliance:nightly"]}.
-    runs-on: garm-truenas-appliancce  # TEMP: does the scale set match by name only?
+    runs-on: [self-hosted, truenas-appliance]
     # Bounded so that a hang gives the runner back in an hour and a half,
     # not GitHub's 360-minute default.
     timeout-minutes: 90
