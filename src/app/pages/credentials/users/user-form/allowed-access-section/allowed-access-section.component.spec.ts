@@ -271,6 +271,16 @@ describe('AllowedAccessSectionComponent', () => {
     ]);
   });
 
+  it('links to the custom roles docs from one hint sentence', async () => {
+    const truenasCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'TrueNAS Access' }));
+    await truenasCheckbox.check();
+
+    expect(spectator.query('.role-hint')).toHaveExactTrimmedText('Learn about custom roles.');
+    const link = spectator.query('.role-hint a')!;
+    expect(link.textContent).toBe('custom roles');
+    expect(link).toHaveAttribute('href', 'https://www.truenas.com/docs/scale/credentials/adminroles/');
+  });
+
   it('updates store when role is changed', async () => {
     const truenasCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'TrueNAS Access' }));
     await truenasCheckbox.check();
