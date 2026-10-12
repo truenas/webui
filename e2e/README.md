@@ -193,11 +193,11 @@ silently miss.
 
 ## CI
 
-The suite runs in GitHub Actions on a self-hosted TrueNAS runner, against a
-nested VM installed fresh for every run, driving the UI built from the change
-under test rather than the one in the appliance's ISO. `docs/05-ci.md`
-describes the pipeline, what the lab box has to provide, and what each early
-failure taught.
+The suite runs in GitHub Actions on ephemeral GARM runners, each booting a
+TrueNAS appliance of its own under qemu from a disk its scale set attaches,
+and drives the UI built from the change under test rather than the one in the
+appliance image. `docs/05-ci.md` describes the pipeline, what it needs outside
+this repository, and what each early failure taught.
 It runs nightly, on every push to master that touches the UI or the suite,
 and on same-repo pull requests that touch the suite or the pipeline. Any other
 branch can ask for a run:
