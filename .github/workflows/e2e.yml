@@ -88,9 +88,9 @@ on:
       shards:
         description: >-
           How many runners, each with its own appliance, to split the suite
-          across (Playwright's --shard).
+          across (Playwright's --shard). One until sharding is measured.
         type: number
-        default: 2
+        default: 1
 
 # Reads code, uploads artifacts. No reason to write to the repository.
 permissions:
@@ -113,7 +113,7 @@ jobs:
     steps:
       - id: shards
         env:
-          SHARDS: ${{ inputs.shards || 2 }}
+          SHARDS: ${{ inputs.shards || 1 }}
         run: |
           echo "total=$SHARDS" >> "$GITHUB_OUTPUT"
           echo "shards=$(jq -cn --argjson n "$SHARDS" '[range(1; $n + 1)]')" >> "$GITHUB_OUTPUT"
