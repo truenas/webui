@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Observable, of } from 'rxjs';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Option } from 'app/interfaces/option.interface';
@@ -99,10 +99,56 @@ describe('PreferencesFormComponent', () => {
 
     expect(values).toEqual({
       Theme: 'Dark',
-      'Session Timeout': '600',
+      'Session Timeout (minutes)': '10',
       Language: 'English (en)',
       'Date Format': '2021-10-16',
       'Time Format': '16:22:14 (24 Hours)',
+    });
+  });
+
+  it('spells out a Session Timeout of an hour or more as a readable duration', async () => {
+    expect(spectator.query('mat-hint')).not.toExist();
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({ 'Session Timeout (minutes)': '1530' });
+
+    expect(spectator.query('mat-hint')).toHaveText('1 day 1 hour 30 minutes');
+  });
+
+  describe('lifetime saved in seconds before the field moved to minutes', () => {
+    beforeEach(() => {
+      const store$ = spectator.inject(MockStore);
+      store$.overrideSelector(selectPreferences, { lifetime: 30, userTheme: 'ix-dark', language: 'en' } as Preferences);
+      store$.refreshState();
+      spectator.detectChanges();
+    });
+
+    it('shows the exact stored value and keeps it when the field is not edited', async () => {
+      const store$ = spectator.inject(Store);
+      jest.spyOn(store$, 'dispatch');
+
+      const form = await loader.getHarness(IxFormHarness);
+      expect((await form.getValues())['Session Timeout (minutes)']).toBe('1');
+      expect(spectator.query('mat-hint')).toHaveText('Currently 30 seconds');
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(store$.dispatch).toHaveBeenCalledWith(lifetimeTokenUpdated({ lifetime: 30 }));
+    });
+
+    it('saves whole minutes once the field is edited', async () => {
+      const store$ = spectator.inject(Store);
+      jest.spyOn(store$, 'dispatch');
+
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({ 'Session Timeout (minutes)': '5' });
+      expect(spectator.query('mat-hint')).not.toExist();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(store$.dispatch).toHaveBeenCalledWith(lifetimeTokenUpdated({ lifetime: 300 }));
     });
   });
 
@@ -125,7 +171,7 @@ describe('PreferencesFormComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       Theme: 'Blue',
-      'Session Timeout': '120',
+      'Session Timeout (minutes)': '2',
       Language: 'French (fr)',
       'Date Format': 'October 16, 2021',
       'Time Format': '04:22:14 PM',

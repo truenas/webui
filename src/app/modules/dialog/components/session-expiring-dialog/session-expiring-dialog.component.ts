@@ -3,9 +3,11 @@ import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
 } from '@angular/material/dialog';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
+import { SplitLinkPipe } from 'app/modules/pipes/split-link/split-link.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -27,12 +29,16 @@ export interface SessionExpiringDialogOptions {
     MatButton,
     TranslateModule,
     TestDirective,
+    SplitLinkPipe,
   ],
 })
 export class SessionExpiringDialog {
   private dialogRef = inject<MatDialogRef<SessionExpiringDialog>>(MatDialogRef);
   private slideIn = inject(SlideIn);
   private navigateAndHighlight = inject(NavigateAndHighlightService);
+
+  // One sentence for translators; `splitLink` renders the <link> part as the Preferences button.
+  protected readonly changeTimeoutHint = T('Change Session Timeout in <link>Preferences</link>');
 
   options: SessionExpiringDialogOptions;
 

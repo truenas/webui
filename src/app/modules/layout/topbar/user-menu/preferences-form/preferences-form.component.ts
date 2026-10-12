@@ -1,13 +1,15 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { formatDuration } from 'date-fns';
 import { of } from 'rxjs';
+import { secondsToDuration } from 'app/helpers/time.helpers';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
@@ -23,13 +25,21 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
+import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
-import { defaultPreferences, minSessionLifetime } from 'app/store/preferences/default-preferences.constant';
+import {
+  defaultPreferences, maxSessionLifetime, minSessionLifetime,
+} from 'app/store/preferences/default-preferences.constant';
 import { guiFormSubmitted, lifetimeTokenUpdated,
   localizationFormSubmitted, themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
+
+// Lifetimes saved before the field moved to minutes may not be whole minutes; never drop below 1.
+function secondsToMinutes(seconds: number): number {
+  return Math.max(1, Math.round(seconds / 60));
+}
 
 @Component({
   selector: 'ix-preferences-form',
@@ -63,16 +73,40 @@ export class PreferencesFormComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
+  // The stored lifetime in seconds. Values saved before the field moved to minutes may not be
+  // whole minutes (e.g. 30 or 305); they are kept as-is unless the user edits the field.
+  private storedLifetime = signal(defaultPreferences.lifetime);
+
   protected form = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
     language: ['', [Validators.required]],
     date_format: [''],
     time_format: [''],
-    token_lifetime: [defaultPreferences.lifetime, [
+    // Edited in minutes; the stored preference (and AuthService) stays in seconds.
+    token_lifetime: [secondsToMinutes(defaultPreferences.lifetime), [
       Validators.required,
-      Validators.min(minSessionLifetime),
-      Validators.max(2147482),
+      Validators.min(Math.ceil(minSessionLifetime / 60)),
+      Validators.max(Math.floor(maxSessionLifetime / 60)),
     ]],
+  });
+
+  private tokenLifetime = toSignal(
+    this.form.controls.token_lifetime.valueChanges,
+    { initialValue: this.form.controls.token_lifetime.value },
+  );
+
+  protected sessionTimeoutHint = computed((): TranslatedString => {
+    const minutes = Number(this.tokenLifetime());
+    // `tokenLifetime` emits after the control is marked dirty, so `pristine` is current here.
+    if (this.keepsStoredLifetime()) {
+      return this.translate.instant('Currently {duration}', {
+        duration: formatDuration(secondsToDuration(this.storedLifetime())),
+      });
+    }
+    // Long timeouts are easier to read as hours/days ("1440" → "1 day").
+    return Number.isInteger(minutes) && minutes >= 60
+      ? ignoreTranslation(formatDuration(secondsToDuration(minutes * 60)))
+      : '';
   });
 
   protected themeOptions = of(
@@ -100,12 +134,13 @@ export class PreferencesFormComponent implements OnInit {
     });
 
     this.store$.pipe(waitForPreferences, takeUntilDestroyed(this.destroyRef)).subscribe((preferences) => {
+      this.storedLifetime.set(preferences.lifetime || defaultPreferences.lifetime);
       this.form.patchValue({
         theme: preferences.userTheme,
         language: preferences.language || defaultPreferences.language,
         date_format: preferences.dateFormat || defaultPreferences.dateFormat,
         time_format: preferences.timeFormat || defaultPreferences.timeFormat,
-        token_lifetime: preferences.lifetime || defaultPreferences.lifetime,
+        token_lifetime: secondsToMinutes(this.storedLifetime()),
       });
     });
   }
@@ -113,7 +148,9 @@ export class PreferencesFormComponent implements OnInit {
   protected onSubmit(): void {
     const values = this.form.getRawValue();
 
-    this.store$.dispatch(lifetimeTokenUpdated({ lifetime: values.token_lifetime }));
+    this.store$.dispatch(lifetimeTokenUpdated({
+      lifetime: this.keepsStoredLifetime() ? this.storedLifetime() : values.token_lifetime * 60,
+    }));
     this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
     this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(values.theme));
 
@@ -129,6 +166,10 @@ export class PreferencesFormComponent implements OnInit {
 
     this.snackbar.success(this.translate.instant('Preferences saved'));
     this.slideInRef.close({ response: true });
+  }
+
+  private keepsStoredLifetime(): boolean {
+    return this.storedLifetime() % 60 !== 0 && this.form.controls.token_lifetime.pristine;
   }
 
   private setTimeOptions(tz: string): void {
