@@ -1,5 +1,5 @@
 @switch (currentStep()) {
-  @case ('loading') {
+  @case (ImportStep.Loading) {
     <!--
       The step the panel opens on: `disk.details` + `system.advanced.sed_global_password`, then the
       `pool.import_find` job — several seconds of work. Without this case the `@switch` matched
@@ -10,14 +10,14 @@
       <p class="loading-message">{{ 'Searching for pools available for import...' | translate }}</p>
     </div>
   }
-  @case ('locked-sed') {
+  @case (ImportStep.LockedSed) {
     <ix-locked-sed-disks
       [lockedDisks]="lockedSedDisks()"
       (skip)="onLockedSedSkip()"
       (unlock)="onLockedSedUnlock()"
     ></ix-locked-sed-disks>
   }
-  @case ('unlock-sed') {
+  @case (ImportStep.UnlockSed) {
     <ix-unlock-sed-disks
       [lockedDisks]="lockedSedDisks()"
       [globalSedPassword]="globalSedPassword()"
@@ -25,7 +25,7 @@
       (unlocked)="onUnlockSuccess()"
     ></ix-unlock-sed-disks>
   }
-  @case ('import') {
+  @case (ImportStep.Import) {
     <!-- `PoolsDashboardComponent` opens this panel footerless (the multi-step flow has steps with
          no submit at all), so the Import button below is the form's own submit trigger. -->
     <ix-form

@@ -8,6 +8,7 @@ import { FormBuilder, FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import { map } from 'rxjs';
+import { NewOrExisting } from 'app/enums/new-or-existing.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { optionTestIdByKebabLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
@@ -45,13 +46,15 @@ export class FcPortItemControlsComponent implements OnInit {
   readonly usedPhysicalPorts = input.required<string[]>();
   readonly availablePorts = input.required<string[]>();
 
+  protected readonly NewOrExisting = NewOrExisting;
+
   // Local mode control (not part of parent form)
-  protected modeControl = this.fb.control<'existing' | 'new'>('existing');
+  protected modeControl = this.fb.control<NewOrExisting>(NewOrExisting.Existing);
 
   // Mode options for dropdown. A plain array: tn-select takes a synchronous [options].
   protected readonly modeOptions = [
-    { label: this.translate.instant('Use existing port'), value: 'existing' },
-    { label: this.translate.instant('Create new virtual port'), value: 'new' },
+    { label: this.translate.instant('Use existing port'), value: NewOrExisting.Existing },
+    { label: this.translate.instant('Create new virtual port'), value: NewOrExisting.New },
   ] as Option[];
 
   /**
@@ -95,7 +98,7 @@ export class FcPortItemControlsComponent implements OnInit {
     effect(() => {
       const currentPortValue = this.currentPort();
       if (this.isEdit() && currentPortValue) {
-        this.modeControl.setValue('existing');
+        this.modeControl.setValue(NewOrExisting.Existing);
         this.form().controls.port.setValue(currentPortValue);
         this.form().controls.host_id.setValue(null);
       }

@@ -13,25 +13,25 @@
 
 <div role="tabpanel" [attr.aria-label]="navLinks[activeTabIndex()]?.label">
   @switch (activeTab()) {
-    @case ('sessions') {
+    @case (SmbStatusTab.Sessions) {
       <ix-smb-session-list
         [ixUiSearch]="searchableElements.elements.sessions"
       ></ix-smb-session-list>
     }
 
-    @case ('locks') {
+    @case (SmbStatusTab.Locks) {
       <ix-smb-lock-list
         [ixUiSearch]="searchableElements.elements.locks"
       ></ix-smb-lock-list>
     }
 
-    @case ('shares') {
+    @case (SmbStatusTab.Shares) {
       <ix-smb-share-list
         [ixUiSearch]="searchableElements.elements.shares"
       ></ix-smb-share-list>
     }
 
-    @case ('notifications') {
+    @case (SmbStatusTab.Notifications) {
       <ix-smb-notification-list
         [ixUiSearch]="searchableElements.elements.notifications"
       ></ix-smb-notification-list>

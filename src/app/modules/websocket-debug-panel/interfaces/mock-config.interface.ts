@@ -1,3 +1,5 @@
+import { JobState } from 'app/enums/job-state.enum';
+
 export interface MockConfig {
   id: string;
   enabled: boolean;
@@ -83,7 +85,7 @@ export interface MockEvent {
     error?: string | null;
     exception?: string | null;
     exc_info?: unknown;
-    state: 'RUNNING' | 'SUCCESS' | 'FAILED' | 'ABORTED' | 'WAITING';
+    state: JobState;
     time_started?: { $date: number };
     time_finished?: { $date: number } | null;
     credentials?: unknown;

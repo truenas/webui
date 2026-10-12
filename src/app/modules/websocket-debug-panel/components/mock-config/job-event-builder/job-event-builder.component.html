@@ -81,7 +81,7 @@
               </tn-form-field>
             }
 
-            @if (getEventControl(i).get('state')?.value === 'FAILED') {
+            @if (getEventControl(i).get('state')?.value === JobState.Failed) {
               <tn-form-field [label]="'Error Message' | translate">
                 <tn-input
                   testId="error-input"

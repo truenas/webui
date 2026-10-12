@@ -9,6 +9,7 @@ import { SmbLockListComponent } from 'app/pages/sharing/smb/smb-status/component
 import { SmbNotificationListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-notification-list/smb-notification-list.component';
 import { SmbSessionListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-session-list/smb-session-list.component';
 import { SmbShareListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-share-list/smb-share-list.component';
+import { SmbStatusTab } from 'app/pages/sharing/smb/smb-status/smb-status-tab.enum';
 import { SmbStatusComponent } from 'app/pages/sharing/smb/smb-status/smb-status.component';
 
 describe('SmbStatusComponent', () => {
@@ -27,7 +28,7 @@ describe('SmbStatusComponent', () => {
     ],
     providers: [],
     params: {
-      activeTab: 'sessions',
+      activeTab: SmbStatusTab.Sessions,
     },
   });
 
@@ -48,7 +49,7 @@ describe('SmbStatusComponent', () => {
   });
 
   it('shows the list matching the active tab', () => {
-    spectator.setInput('activeTab', 'locks');
+    spectator.setInput('activeTab', SmbStatusTab.Locks);
 
     expect(spectator.query(SmbLockListComponent)).toExist();
     expect(spectator.query(SmbSessionListComponent)).not.toExist();

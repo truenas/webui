@@ -127,16 +127,16 @@ export class VDevsCardComponent implements OnInit, OnChanges {
    * it has a unique "Offline VDEVs" branch driven by isPoolOffline().
    */
   protected readonly otherVdevRows: {
-    key: 'special' | 'log' | 'cache' | 'spare' | 'dedup';
+    key: Exclude<VDevType, VDevType.Data>;
     titleKey: string;
     tierLabelKey?: string;
     hidden?: () => boolean;
   }[] = [
-    { key: 'special', titleKey: T('Special VDEVs'), tierLabelKey: T('Performance Tier') },
-    { key: 'log', titleKey: T('Log VDEVs') },
-    { key: 'cache', titleKey: T('Cache VDEVs') },
-    { key: 'spare', titleKey: T('Spare VDEVs'), hidden: () => this.isDraidLayoutDataVdevs },
-    { key: 'dedup', titleKey: T('Dedup VDEVs') },
+    { key: VDevType.Special, titleKey: T('Special VDEVs'), tierLabelKey: T('Performance Tier') },
+    { key: VDevType.Log, titleKey: T('Log VDEVs') },
+    { key: VDevType.Cache, titleKey: T('Cache VDEVs') },
+    { key: VDevType.Spare, titleKey: T('Spare VDEVs'), hidden: () => this.isDraidLayoutDataVdevs },
+    { key: VDevType.Dedup, titleKey: T('Dedup VDEVs') },
   ];
 
   protected iconType = computed(() => {

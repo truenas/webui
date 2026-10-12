@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { TnTabComponent, TnTabsComponent, type TabChangeEvent } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { SmbStatusTab } from 'app/pages/sharing/smb/smb-status/smb-status-tab.enum';
 import { smbStatusElements } from 'app/pages/sharing/smb/smb-status/smb-status.elements';
 import { SmbLockListComponent } from './components/smb-lock-list/smb-lock-list.component';
 import { SmbNotificationListComponent } from './components/smb-notification-list/smb-notification-list.component';
@@ -30,24 +31,25 @@ export class SmbStatusComponent {
   private translate = inject(TranslateService);
   private router = inject(Router);
 
-  readonly activeTab = input('sessions');
+  readonly activeTab = input<SmbStatusTab>(SmbStatusTab.Sessions);
+  protected readonly SmbStatusTab = SmbStatusTab;
 
   protected readonly navLinks = [{
     label: this.translate.instant('Sessions'),
     path: '/sharing/smb/status/sessions',
-    slug: 'sessions',
+    slug: SmbStatusTab.Sessions,
   }, {
     label: this.translate.instant('Locks'),
     path: '/sharing/smb/status/locks',
-    slug: 'locks',
+    slug: SmbStatusTab.Locks,
   }, {
     label: this.translate.instant('Shares'),
     path: '/sharing/smb/status/shares',
-    slug: 'shares',
+    slug: SmbStatusTab.Shares,
   }, {
     label: this.translate.instant('Notifications'),
     path: '/sharing/smb/status/notifications',
-    slug: 'notifications',
+    slug: SmbStatusTab.Notifications,
   }];
 
   protected readonly activeTabIndex = computed(() => {

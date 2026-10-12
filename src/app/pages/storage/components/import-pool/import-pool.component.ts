@@ -29,7 +29,12 @@ import { LockedSedDisksComponent } from './locked-sed-disks/locked-sed-disks.com
 import { UnlockSedDisksComponent } from './unlock-sed-disks/unlock-sed-disks.component';
 import { filterLockedSedDisks, LockedSedDisk } from './utils/sed-disk.utils';
 
-type ImportStep = 'loading' | 'locked-sed' | 'unlock-sed' | 'import';
+enum ImportStep {
+  Loading = 'loading',
+  LockedSed = 'locked-sed',
+  UnlockSed = 'unlock-sed',
+  Import = 'import',
+}
 
 @Component({
   selector: 'ix-import-pool',
@@ -64,7 +69,8 @@ export class ImportPoolComponent extends IxFormHostForm implements OnInit {
   protected readonly requiredRoles = [Role.PoolWrite];
 
   protected readonly helptext = helptextImport;
-  protected currentStep = signal<ImportStep>('loading');
+  protected readonly ImportStep = ImportStep;
+  protected currentStep = signal<ImportStep>(ImportStep.Loading);
   protected lockedSedDisks = signal<LockedSedDisk[]>([]);
   protected globalSedPassword = signal('');
 
@@ -104,7 +110,7 @@ export class ImportPoolComponent extends IxFormHostForm implements OnInit {
   // `loadFormConfig`: these run before the `<ix-form>` exists, and they chain into one another —
   // a nested `loadFormConfig` would cancel the load that started it.
   private checkForLockedDisks(): void {
-    this.currentStep.set('loading');
+    this.currentStep.set(ImportStep.Loading);
 
     forkJoin([
       this.api.call('disk.details').pipe(map(toDiskDetails)),
@@ -120,7 +126,7 @@ export class ImportPoolComponent extends IxFormHostForm implements OnInit {
         this.lockedSedDisks.set(lockedDisks);
 
         if (lockedDisks.length > 0) {
-          this.currentStep.set('locked-sed');
+          this.currentStep.set(ImportStep.LockedSed);
         } else {
           this.loadImportablePools();
         }
@@ -133,7 +139,7 @@ export class ImportPoolComponent extends IxFormHostForm implements OnInit {
 
   private loadImportablePools(): void {
     // Show the spinner step while the find job runs, instead of leaving the SED step on screen.
-    this.currentStep.set('loading');
+    this.currentStep.set(ImportStep.Loading);
 
     this.api.job('pool.import_find').pipe(
       observeJob(),
@@ -152,7 +158,7 @@ export class ImportPoolComponent extends IxFormHostForm implements OnInit {
           value: pool.guid,
         } as Option)));
 
-        this.currentStep.set('import');
+        this.currentStep.set(ImportStep.Import);
       },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
@@ -165,7 +171,7 @@ export class ImportPoolComponent extends IxFormHostForm implements OnInit {
   }
 
   protected onLockedSedUnlock(): void {
-    this.currentStep.set('unlock-sed');
+    this.currentStep.set(ImportStep.UnlockSed);
   }
 
   protected onUnlockSkip(): void {

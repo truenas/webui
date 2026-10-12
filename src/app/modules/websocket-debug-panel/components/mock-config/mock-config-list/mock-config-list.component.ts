@@ -220,8 +220,12 @@ export class MockConfigListComponent {
     return parts.length > 0 ? parts.join(' • ') : 'Empty response';
   }
 
+  protected isErrorConfig(config: MockConfig): boolean {
+    return config.response?.type === 'error';
+  }
+
   protected getResponseTypeLabel(config: MockConfig): string {
-    return config.response?.type === 'error' ? 'Error' : 'Success';
+    return this.isErrorConfig(config) ? 'Error' : 'Success';
   }
 
   private buildDescriptionParts(config: MockConfig): string[] {

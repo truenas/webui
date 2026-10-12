@@ -20,6 +20,7 @@ import {
 import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, debounceTime, map, shareReplay, tap } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
+import { NewOrExisting } from 'app/enums/new-or-existing.enum';
 import { VmDeviceType, VmDiskMode, vmDiskModeLabels } from 'app/enums/vm.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
@@ -38,11 +39,6 @@ import {
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
 import { ImageVirtualSizeValidatorService } from 'app/pages/vm/utils/image-virtual-size-validator.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-
-export enum NewOrExistingDisk {
-  New = 'new',
-  Existing = 'existing',
-}
 
 const validImageExtensions = ['.qcow2', '.qed', '.raw', '.vdi', '.vhdx', '.vmdk'];
 
@@ -84,7 +80,7 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
   private virtualSizeCache = new Map<string, Observable<number | null>>();
 
   form = this.formBuilder.group({
-    newOrExisting: [NewOrExistingDisk.New],
+    newOrExisting: [NewOrExisting.New],
     hdd_type: [VmDiskMode.Ahci],
     datastore: [''],
     volsize: [null as number | null],
@@ -102,11 +98,11 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
   readonly newOrExistingOptions$ = of([
     {
       label: this.translate.instant('Create new disk image'),
-      value: NewOrExistingDisk.New,
+      value: NewOrExisting.New,
     },
     {
       label: this.translate.instant('Use existing disk image'),
-      value: NewOrExistingDisk.Existing,
+      value: NewOrExisting.Existing,
     },
   ]);
 
@@ -149,7 +145,7 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
   });
 
   get isCreatingNewDisk(): boolean {
-    return this.form.controls.newOrExisting.value === NewOrExistingDisk.New;
+    return this.form.controls.newOrExisting.value === NewOrExisting.New;
   }
 
   get isImportingImage(): boolean {

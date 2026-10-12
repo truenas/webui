@@ -38,9 +38,9 @@
   <button
     class="filter-button"
     tnTestIdType="button"
-    [class.active]="severityFilter() === 'all'"
+    [class.active]="severityFilter() === AlertPanelFilter.All"
     [tnTestId]="['filter', 'all']"
-    (click)="setSeverityFilter('all')"
+    (click)="setSeverityFilter(AlertPanelFilter.All)"
   >
     {{ 'All Alerts' | translate }}
     <span class="count">{{ alertCounts().all }}</span>
@@ -48,9 +48,9 @@
   <button
     class="filter-button"
     tnTestIdType="button"
-    [class.active]="severityFilter() === 'critical'"
+    [class.active]="severityFilter() === AlertPanelFilter.Critical"
     [tnTestId]="['filter', 'critical']"
-    (click)="setSeverityFilter('critical')"
+    (click)="setSeverityFilter(AlertPanelFilter.Critical)"
   >
     {{ 'Critical' | translate }}
     <span class="count">{{ alertCounts().critical }}</span>
@@ -58,9 +58,9 @@
   <button
     class="filter-button"
     tnTestIdType="button"
-    [class.active]="severityFilter() === 'warning'"
+    [class.active]="severityFilter() === AlertPanelFilter.Warning"
     [tnTestId]="['filter', 'warning']"
-    (click)="setSeverityFilter('warning')"
+    (click)="setSeverityFilter(AlertPanelFilter.Warning)"
   >
     {{ 'Warnings' | translate }}
     <span class="count">{{ alertCounts().warning }}</span>
@@ -68,9 +68,9 @@
   <button
     class="filter-button"
     tnTestIdType="button"
-    [class.active]="severityFilter() === 'info'"
+    [class.active]="severityFilter() === AlertPanelFilter.Info"
     [tnTestId]="['filter', 'info']"
-    (click)="setSeverityFilter('info')"
+    (click)="setSeverityFilter(AlertPanelFilter.Info)"
   >
     {{ 'Info' | translate }}
     <span class="count">{{ alertCounts().info }}</span>
@@ -78,9 +78,9 @@
   <button
     class="filter-button"
     tnTestIdType="button"
-    [class.active]="severityFilter() === 'dismissed'"
+    [class.active]="severityFilter() === AlertPanelFilter.Dismissed"
     [tnTestId]="['filter', 'dismissed']"
-    (click)="setSeverityFilter('dismissed')"
+    (click)="setSeverityFilter(AlertPanelFilter.Dismissed)"
   >
     {{ 'Dismissed' | translate }}
     <span class="count">{{ alertCounts().dismissed }}</span>

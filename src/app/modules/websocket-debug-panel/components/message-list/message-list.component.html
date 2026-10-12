@@ -45,14 +45,14 @@
     <div #messageViewport class="message-viewport">
       @for (message of filteredMessagesArray; track message.id) {
         <div class="message-item"
-             [class.outgoing]="message.direction === 'out'"
-             [class.incoming]="message.direction === 'in'"
+             [class.outgoing]="message.direction === MessageDirection.Out"
+             [class.incoming]="message.direction === MessageDirection.In"
              [class.mocked]="message.isMocked"
              [class.expanded]="message.isExpanded">
           
           <div class="message-header">
           <span class="direction-icon">
-            @if (message.direction === 'out') {
+            @if (message.direction === MessageDirection.Out) {
               <tn-icon name="arrow-right" library="mdi" class="icon-out"></tn-icon>
             } @else {
               <tn-icon name="arrow-left" library="mdi" class="icon-in"></tn-icon>

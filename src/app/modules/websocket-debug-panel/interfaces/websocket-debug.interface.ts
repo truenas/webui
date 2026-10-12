@@ -1,9 +1,14 @@
 import { IncomingMessage, RequestMessage } from 'app/interfaces/api-message.interface';
 
+export enum MessageDirection {
+  In = 'in',
+  Out = 'out',
+}
+
 export interface WebSocketDebugMessage {
   id: string;
   timestamp: string; // ISO string for serialization
-  direction: 'in' | 'out';
+  direction: MessageDirection;
   message: IncomingMessage | RequestMessage;
   isMocked?: boolean;
   methodName?: string; // Cached method name for incoming responses

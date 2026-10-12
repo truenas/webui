@@ -16,8 +16,13 @@ interface ProcessedContent {
   sections: ContentSection[];
 }
 
+enum ContentSectionType {
+  Markdown = 'markdown',
+  Tabs = 'tabs',
+}
+
 interface ContentSection {
-  type: 'markdown' | 'tabs';
+  type: ContentSectionType;
   content?: string;
   tabs?: TabSection[];
 }
@@ -37,6 +42,8 @@ const highlightPatterns = {
   imports: [MarkdownComponent, TnTabsComponent, TnTabComponent, TnTabPanelComponent],
 })
 export class DynamicMarkdownComponent {
+  protected readonly ContentSectionType = ContentSectionType;
+
   readonly content = input.required<string>();
   readonly context = input<MarkdownContext>({});
 
@@ -150,7 +157,7 @@ export class DynamicMarkdownComponent {
         const markdownContent = content.substring(lastIndex, match.index).trim();
         if (markdownContent) {
           sections.push({
-            type: 'markdown',
+            type: ContentSectionType.Markdown,
             content: markdownContent,
           });
         }
@@ -160,7 +167,7 @@ export class DynamicMarkdownComponent {
       const tabs = this.extractTabs(match[1]);
       if (tabs.length > 0) {
         sections.push({
-          type: 'tabs',
+          type: ContentSectionType.Tabs,
           tabs,
         });
       }
@@ -173,7 +180,7 @@ export class DynamicMarkdownComponent {
       const remainingContent = content.substring(lastIndex).trim();
       if (remainingContent) {
         sections.push({
-          type: 'markdown',
+          type: ContentSectionType.Markdown,
           content: remainingContent,
         });
       }
@@ -182,7 +189,7 @@ export class DynamicMarkdownComponent {
     // If no sections were added, treat entire content as markdown
     if (sections.length === 0 && content.trim()) {
       sections.push({
-        type: 'markdown',
+        type: ContentSectionType.Markdown,
         content,
       });
     }

@@ -51,6 +51,7 @@ export class SyslogFormComponent extends IxFormHostForm implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
+  protected readonly SyslogTransport = SyslogTransport;
 
   private subscriptions: Subscription[] = [];
 
