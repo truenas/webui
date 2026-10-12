@@ -5,10 +5,11 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { TnToastType } from '@truenas/ui-components';
-import { format } from 'date-fns';
+import { format, formatDuration } from 'date-fns';
 import {
   filter, Subscription,
 } from 'rxjs';
+import { secondsToDuration } from 'app/helpers/time.helpers';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Timeout } from 'app/interfaces/timeout.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -174,7 +175,10 @@ export class SessionTimeoutService {
   private showWarningDialog(showConfirmTime: number, lifetime: number): DialogRef<boolean, SessionExpiringDialog> {
     return this.dialogService.sessionExpiring({
       title: this.translate.instant('Logout'),
-      message: this.translate.instant('It looks like your session has been inactive for more than {lifetime} seconds.<br>\nFor security reasons we will log you out at {time}.', { time: format(new Date(new Date().getTime() + showConfirmTime), this.localeService.getPreferredTimeFormat()), lifetime }),
+      message: this.translate.instant('It looks like your session has been inactive for more than {lifetime}.<br>\nFor security reasons we will log you out at {time}.', {
+        time: format(new Date(new Date().getTime() + showConfirmTime), this.localeService.getPreferredTimeFormat()),
+        lifetime: formatDuration(secondsToDuration(lifetime)),
+      }),
       buttonText: this.translate.instant('Extend session'),
     });
   }

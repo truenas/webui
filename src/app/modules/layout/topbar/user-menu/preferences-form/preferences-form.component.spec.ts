@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnAutocompleteHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
@@ -118,10 +118,56 @@ describe('PreferencesFormComponent', () => {
 
     expect(await syncCheckbox.isChecked()).toBe(false);
     expect(await themeSelect.getDisplayText()).toBe('Dark');
-    expect(await timeoutInput.getValue()).toBe('600');
+    expect(await timeoutInput.getValue()).toBe('10');
     expect(await languageAutocomplete.getInputValue()).toBe('English (en)');
     expect(await dateFormatSelect.getDisplayText()).toBe('2021-10-16');
     expect(await timeFormatSelect.getDisplayText()).toBe('16:22:14 (24 Hours)');
+  });
+
+  it('spells out a Session Timeout of an hour or more as a readable duration', async () => {
+    expect(spectator.query('.tn-form-field-hint')).not.toExist();
+
+    await (
+      await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="token_lifetime"]' }))
+    ).setValue('1530');
+    expect(spectator.query('.tn-form-field-hint')).toHaveText('1 day 1 hour 30 minutes');
+  });
+
+  describe('lifetime saved in seconds before the field moved to minutes', () => {
+    const getTimeoutInput = (): Promise<TnInputHarness> => loader.getHarness(
+      TnInputHarness.with({ selector: '[formControlName="token_lifetime"]' }),
+    );
+
+    beforeEach(() => {
+      const store$ = spectator.inject(MockStore);
+      store$.overrideSelector(selectPreferences, { lifetime: 30, userTheme: 'ix-dark', language: 'en' } as Preferences);
+      store$.refreshState();
+      spectator.detectChanges();
+    });
+
+    it('shows the exact stored value and keeps it when the field is not edited', async () => {
+      const store$ = spectator.inject(Store);
+      jest.spyOn(store$, 'dispatch');
+
+      expect(await (await getTimeoutInput()).getValue()).toBe('1');
+      expect(spectator.query('.tn-form-field-hint')).toHaveText('Currently 30 seconds');
+
+      spectator.component.submit();
+
+      expect(store$.dispatch).toHaveBeenCalledWith(lifetimeTokenUpdated({ lifetime: 30 }));
+    });
+
+    it('saves whole minutes once the field is edited', async () => {
+      const store$ = spectator.inject(Store);
+      jest.spyOn(store$, 'dispatch');
+
+      await (await getTimeoutInput()).setValue('5');
+      expect(spectator.query('.tn-form-field-hint')).not.toExist();
+
+      spectator.component.submit();
+
+      expect(store$.dispatch).toHaveBeenCalledWith(lifetimeTokenUpdated({ lifetime: 300 }));
+    });
   });
 
   it('dispatches themeChangedInGuiForm when theme is changed', async () => {
@@ -141,7 +187,7 @@ describe('PreferencesFormComponent', () => {
     await (await getSelect('theme')).selectOption('Blue');
     await (
       await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="token_lifetime"]' }))
-    ).setValue('120');
+    ).setValue('2');
     const languageAutocomplete = await loader.getHarness(TnAutocompleteHarness);
     await languageAutocomplete.setInputValue('French');
     await languageAutocomplete.selectOption('French (fr)');

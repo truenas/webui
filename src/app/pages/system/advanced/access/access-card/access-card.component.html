@@ -18,6 +18,27 @@
         </span>
       </div>
     }
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.sessionTimeout">
+      <span class="label">{{ 'Session Timeout' | translate }}:</span>
+      <span
+        *ixWithLoadingState="sessionTimeout$ as sessionTimeout"
+        class="value"
+        tnTestId="access-session-timeout"
+        tnTestIdType="text"
+      >
+        {{ sessionTimeout }}
+      </span>
+      @let preferencesHint = changeTimeoutHint | translate | splitLink;
+      <span class="session-timeout-hint">
+        {{ preferencesHint.before }}<button
+          type="button"
+          class="preferences-link"
+          tnTestIdType="button"
+          [tnTestId]="'access-open-preferences'"
+          (click)="openPreferences()"
+        >{{ preferencesHint.link }}</button>{{ preferencesHint.after }}
+      </span>
+    </div>
     <div class="details-item" [ixUiSearch]="searchableElements.elements.loginBanner">
       <span class="label">{{ 'Login Banner' | translate }}:</span>
       <span
