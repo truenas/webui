@@ -134,7 +134,9 @@ describe('AccessCardComponent', () => {
   });
 
   it('opens Preferences when the Session Timeout link is pressed', () => {
-    spectator.click(spectator.query('button.preferences-link')!);
+    const preferencesLink = spectator.query('button.preferences-link')!;
+    expect(preferencesLink.textContent).toBe('Preferences');
+    spectator.click(preferencesLink);
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       PreferencesFormComponent,

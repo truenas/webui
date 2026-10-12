@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -36,6 +37,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { SplitLinkPipe } from 'app/modules/pipes/split-link/split-link.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
@@ -80,6 +82,7 @@ import { waitForAdvancedConfig, waitForGeneralConfig } from 'app/store/system-co
     TablePagerShowMoreComponent,
     TranslateModule,
     YesNoPipe,
+    SplitLinkPipe,
     AsyncPipe,
   ],
 })
@@ -99,6 +102,8 @@ export class AccessCardComponent implements OnInit {
 
   protected readonly searchableElements = accessCardElements;
   protected readonly requiredRoles = [Role.AuthSessionsWrite];
+  // One sentence for translators; `splitLink` renders the <link> part as the Preferences button.
+  protected readonly changeTimeoutHint = T('Change Session Timeout in <link>Preferences</link>');
   protected readonly hasDirectoryServices = this.entitlements.entitled(EntitlementFeature.DirectoryServicesAuth);
 
   readonly generalConfig$ = this.store$.pipe(

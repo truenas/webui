@@ -59,6 +59,7 @@ describe('SessionExpiringDialog', () => {
     jest.useFakeTimers();
 
     const preferencesLink = spectator.query('.preferences-link')!;
+    expect(preferencesLink.textContent).toBe('Preferences');
     spectator.click(preferencesLink);
 
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
