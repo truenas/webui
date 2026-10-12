@@ -1,7 +1,7 @@
 <tn-card class="card" [title]="'Data Protection' | translate">
   <div class="details-item">
     <div class="label">{{ 'Snapshots' | translate }}:</div>
-    <div class="total-snapshots value">{{ dataset().snapshot_count }}</div>
+    <div class="total-snapshots value" tnTestIdType="text" [tnTestId]="'data-protection-snapshots'">{{ dataset().snapshot_count }}</div>
     <a
       class="action"
       tnTestIdType="link" [tnTestId]="'manage-snapshots'"
@@ -13,7 +13,7 @@
   </div>
   <div class="details-item">
     <div class="label">{{ 'Snapshot Tasks' | translate }}:</div>
-    <div class="snapshot-tasks value">{{ dataset().snapshot_tasks_count }}</div>
+    <div class="snapshot-tasks value" tnTestIdType="text" [tnTestId]="'data-protection-snapshot-tasks'">{{ dataset().snapshot_tasks_count }}</div>
     <a
       class="action"
       tnTestIdType="link" [tnTestId]="'manage-snapshot-tasks'"
@@ -24,7 +24,7 @@
     </a>
   </div>
   <div class="details-item">
-    <div class="label backup-tasks">{{ backupTasksLabel() }}</div>
+    <div class="label backup-tasks" tnTestIdType="text" [tnTestId]="'data-protection-backup-tasks'">{{ backupTasksLabel() }}</div>
     <a
       class="action"
       tnTestIdType="link" [tnTestId]="'manage-backups'"

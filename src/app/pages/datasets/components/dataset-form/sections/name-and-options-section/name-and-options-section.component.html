@@ -5,7 +5,7 @@
   @if (parent() && !existing()) {
     <ix-details-table>
       <ix-details-item [label]="'Parent Path:' | translate">
-        {{ parent()?.name }}
+        <span tnTestIdType="text" [tnTestId]="'parent-path'">{{ parent()?.name }}</span>
       </ix-details-item>
     </ix-details-table>
   }

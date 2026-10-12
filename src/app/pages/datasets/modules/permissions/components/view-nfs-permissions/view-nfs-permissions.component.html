@@ -18,7 +18,11 @@
       @if (permissionDetails[i]; as details) {
         <div class="permission-details">
           <div class="details-section">
-            <div class="details-title">
+            <div
+              class="details-title"
+              tnTestIdType="text"
+              [tnTestId]="['acl-item', permissionItems[i].name, 'permissions-type']"
+            >
               {{
                 details.arePermissionsBasic
                   ? ('Permissions Basic' | translate)
@@ -38,7 +42,11 @@
           </div>
           @if (details.flags.length) {
             <div class="details-section">
-              <div class="details-title">
+              <div
+                class="details-title"
+                tnTestIdType="text"
+                [tnTestId]="['acl-item', permissionItems[i].name, 'flags-type']"
+              >
                 {{
                   details.areFlagsBasic
                     ? ('Flags Basic' | translate)

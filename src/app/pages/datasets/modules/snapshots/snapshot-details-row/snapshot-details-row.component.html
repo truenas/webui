@@ -4,7 +4,7 @@
     @if (isLoading) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
-      <dd>
+      <dd tnTestIdType="text" [tnTestId]="['used', snapshot().snapshot_name]">
         @if (usedBytes !== undefined) {
           {{ usedBytes | ixFileSize }}
         } @else {
@@ -36,7 +36,7 @@
     @if (isLoading) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
-      <dd>
+      <dd tnTestIdType="text" [tnTestId]="['referenced', snapshot().snapshot_name]">
         @if (referencedBytes !== undefined) {
           {{ referencedBytes | ixFileSize }}
         } @else {

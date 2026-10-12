@@ -6,8 +6,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  InputType, TnButtonToggleComponent, TnButtonToggleGroupComponent, TnCheckboxComponent,
-  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+  InputType, TnButtonToggleComponent, TnButtonToggleGroupComponent, TnCheckboxComponent, TnFormFieldComponent,
+  TnFormSectionComponent, TnInputComponent, TnSelectComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   finalize, forkJoin, map, Observable, switchMap, tap, throwError,
@@ -90,6 +90,7 @@ const volsizeUnchangedRelativeTolerance = 0.001;
     DetailsTableComponent,
     DetailsItemComponent,
     FileSizePipe,
+    TnTestIdDirective,
   ],
 })
 export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit {

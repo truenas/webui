@@ -11,5 +11,5 @@
     }
   }
 </div>
-<div class="name">{{ item().name }}</div>
-<div class="permissions">{{ item().description }}</div>
+<div class="name" tnTestIdType="text" [tnTestId]="['permissions-item', item().name, 'name']">{{ item().name }}</div>
+<div class="permissions" tnTestIdType="text" [tnTestId]="['permissions-item', item().name, 'permissions']">{{ item().description }}</div>
