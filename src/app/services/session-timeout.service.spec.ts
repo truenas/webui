@@ -139,7 +139,7 @@ describe('SessionTimeoutService', () => {
     tick(300 * 1000);
     expect(spectator.inject(DialogService).sessionExpiring).toHaveBeenCalledWith({
       buttonText: 'Extend session',
-      message: expect.any(String),
+      message: expect.stringContaining('inactive for more than 5 minutes.'),
       title: 'Logout',
     });
   }));

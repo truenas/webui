@@ -118,10 +118,19 @@ describe('PreferencesFormComponent', () => {
 
     expect(await syncCheckbox.isChecked()).toBe(false);
     expect(await themeSelect.getDisplayText()).toBe('Dark');
-    expect(await timeoutInput.getValue()).toBe('600');
+    expect(await timeoutInput.getValue()).toBe('10');
     expect(await languageAutocomplete.getInputValue()).toBe('English (en)');
     expect(await dateFormatSelect.getDisplayText()).toBe('2021-10-16');
     expect(await timeFormatSelect.getDisplayText()).toBe('16:22:14 (24 Hours)');
+  });
+
+  it('spells out a Session Timeout of an hour or more as a readable duration', async () => {
+    expect(spectator.query('.tn-form-field-hint')).not.toExist();
+
+    await (
+      await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="token_lifetime"]' }))
+    ).setValue('1530');
+    expect(spectator.query('.tn-form-field-hint')).toHaveText('1 day 1 hour 30 minutes');
   });
 
   it('dispatches themeChangedInGuiForm when theme is changed', async () => {
@@ -141,7 +150,7 @@ describe('PreferencesFormComponent', () => {
     await (await getSelect('theme')).selectOption('Blue');
     await (
       await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="token_lifetime"]' }))
-    ).setValue('120');
+    ).setValue('2');
     const languageAutocomplete = await loader.getHarness(TnAutocompleteHarness);
     await languageAutocomplete.setInputValue('French');
     await languageAutocomplete.selectOption('French (fr)');

@@ -2,6 +2,11 @@
 
 @include settings-card-details;
 
+// Separate the summary rows from the sessions table below them.
+.details {
+  margin-bottom: 16px;
+}
+
 .session-timeout-hint {
   color: var(--fg2);
   font-size: 12px;

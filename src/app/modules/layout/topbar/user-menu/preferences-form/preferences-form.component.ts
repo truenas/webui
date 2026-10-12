@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -15,9 +15,11 @@ import {
   TnSelectComponent,
   TnSelectOption,
 } from '@truenas/ui-components';
+import { formatDuration } from 'date-fns';
 import {
   Subscription, defer, merge, of, startWith,
 } from 'rxjs';
+import { secondsToDuration } from 'app/helpers/time.helpers';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
@@ -28,11 +30,18 @@ import { ThemeService } from 'app/modules/theme/theme.service';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
-import { defaultPreferences, minSessionLifetime } from 'app/store/preferences/default-preferences.constant';
+import {
+  defaultPreferences, maxSessionLifetime, minSessionLifetime,
+} from 'app/store/preferences/default-preferences.constant';
 import { guiFormSubmitted, lifetimeTokenUpdated,
   localizationFormSubmitted, themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
+
+// Lifetimes saved before the field moved to minutes may not be whole minutes; never drop below 1.
+function secondsToMinutes(seconds: number): number {
+  return Math.max(1, Math.round(seconds / 60));
+}
 
 @Component({
   selector: 'ix-preferences-form',
@@ -71,10 +80,11 @@ export class PreferencesFormComponent extends IxFormHostForm implements OnInit {
     language: ['', [Validators.required]],
     date_format: [''],
     time_format: [''],
-    token_lifetime: [defaultPreferences.lifetime, [
+    // Edited in minutes; the stored preference (and AuthService) stays in seconds.
+    token_lifetime: [secondsToMinutes(defaultPreferences.lifetime), [
       Validators.required,
-      Validators.min(minSessionLifetime),
-      Validators.max(2147482),
+      Validators.min(Math.ceil(minSessionLifetime / 60)),
+      Validators.max(Math.floor(maxSessionLifetime / 60)),
     ]],
   });
 
@@ -82,6 +92,17 @@ export class PreferencesFormComponent extends IxFormHostForm implements OnInit {
     this.form.controls.syncThemeWithOS.valueChanges.pipe(startWith(false)),
     { initialValue: false },
   );
+
+  private tokenLifetime = toSignal(
+    this.form.controls.token_lifetime.valueChanges,
+    { initialValue: this.form.controls.token_lifetime.value },
+  );
+
+  // Long timeouts are easier to read as hours/days ("1440" → "1 day").
+  protected sessionTimeoutHint = computed(() => {
+    const minutes = Number(this.tokenLifetime());
+    return Number.isInteger(minutes) && minutes >= 60 ? formatDuration(secondsToDuration(minutes * 60)) : '';
+  });
 
   protected readonly InputType = InputType;
 
@@ -133,7 +154,7 @@ export class PreferencesFormComponent extends IxFormHostForm implements OnInit {
         language: preferences.language || defaultPreferences.language,
         date_format: preferences.dateFormat || defaultPreferences.dateFormat,
         time_format: preferences.timeFormat || defaultPreferences.timeFormat,
-        token_lifetime: preferences.lifetime || defaultPreferences.lifetime,
+        token_lifetime: secondsToMinutes(preferences.lifetime || defaultPreferences.lifetime),
       });
     });
 
@@ -171,7 +192,7 @@ export class PreferencesFormComponent extends IxFormHostForm implements OnInit {
     const values = this.form.getRawValue();
 
     this.previewSubscription.unsubscribe();
-    this.store$.dispatch(lifetimeTokenUpdated({ lifetime: values.token_lifetime }));
+    this.store$.dispatch(lifetimeTokenUpdated({ lifetime: values.token_lifetime * 60 }));
     this.store$.dispatch(guiFormSubmitted({
       theme: values.theme,
       syncThemeWithOS: values.syncThemeWithOS,
