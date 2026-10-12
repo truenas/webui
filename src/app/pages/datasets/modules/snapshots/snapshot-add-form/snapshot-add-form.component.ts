@@ -8,8 +8,8 @@ import {
 } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
-  TnInputComponent, TnSelectComponent,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnSelectComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { format } from 'date-fns';
 import { isEmpty, omit } from 'lodash-es';
@@ -53,6 +53,7 @@ const vmCheckError = 'vmCheckFailed';
     TnButtonComponent,
     TranslateModule,
     AsyncPipe,
+    TnTestIdDirective,
   ],
 })
 export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {

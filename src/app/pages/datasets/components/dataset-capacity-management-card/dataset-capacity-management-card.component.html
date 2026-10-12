@@ -10,7 +10,7 @@
         @if (dataset()?.refreservation.parsed) {
           <div class="details-item">
             <div class="label">{{ 'Reserved for Dataset' | translate }}:</div>
-            <div class="value">
+            <div class="value" tnTestIdType="text" [tnTestId]="'space-management-reserved-for-dataset'">
               {{ dataset().refreservation.parsed | ixFileSize }}
             </div>
           </div>
@@ -20,7 +20,7 @@
             <div class="label">
               {{ 'Reserved for Dataset & Children' | translate }}:
             </div>
-            <div class="value">
+            <div class="value" tnTestIdType="text" [tnTestId]="'space-management-reserved-for-dataset-and-children'">
               {{ dataset().reservation.parsed | ixFileSize }}
             </div>
           </div>
@@ -31,12 +31,12 @@
         <div class="details-item">
           <div class="label">{{ 'Provisioning Type' | translate }}:</div>
           @if (dataset().thick_provisioned) {
-            <div class="value">
+            <div class="value" tnTestIdType="text" [tnTestId]="'space-management-provisioning-type'">
               {{ 'Thick' | translate }}
             </div>
           }
           @if (!dataset().thick_provisioned) {
-            <div class="value">
+            <div class="value" tnTestIdType="text" [tnTestId]="'space-management-provisioning-type'">
               {{ 'Sparse' | translate }}
             </div>
           }
@@ -44,7 +44,7 @@
         @if (dataset()?.volsize.parsed) {
           <div class="details-item">
             <div class="label">{{ 'Volume Size' | translate }}:</div>
-            <div class="value">
+            <div class="value" tnTestIdType="text" [tnTestId]="'space-management-volume-size'">
               {{ +dataset().volsize.parsed | ixFileSize }}
             </div>
           </div>
@@ -70,14 +70,14 @@
             }
           }
         </div>
-        <div class="value">
+        <div class="value" tnTestIdType="text" [tnTestId]="'space-management-available-space'">
           {{ dataset().available.parsed | ixFileSize }}
         </div>
       </div>
       @if (showPerformanceTierAvailable()) {
         <div class="details-item">
           <div class="label">{{ 'Pool Performance Tier Available' | translate }}:</div>
-          <div class="value">
+          <div class="value" tnTestIdType="text" [tnTestId]="'space-management-performance-tier-available'">
             {{ performanceTierAvailable() | ixFileSize }}
           </div>
         </div>
@@ -86,7 +86,7 @@
         <div class="details-item">
           <div class="label">{{ 'Applied Dataset Quota' | translate }}:</div>
           @if (hasQuota()) {
-            <div class="value">
+            <div class="value" tnTestIdType="text" [tnTestId]="'space-management-applied-dataset-quota'">
               {{
                 '{n} (applies to descendants)' | translate : {
                 n: dataset().quota.parsed | ixFileSize
@@ -94,7 +94,7 @@
               }}
             </div>
           } @else {
-            <div class="value">
+            <div class="value" tnTestIdType="text" [tnTestId]="'space-management-applied-dataset-quota'">
               {{ dataset().refquota.parsed | ixFileSize }}
             </div>
           }
@@ -103,7 +103,7 @@
       @if (hasInheritedQuotas()) {
         <div class="details-item">
           <div class="label">{{ 'Inherited Quotas' | translate }}:</div>
-          <div class="value">
+          <div class="value" tnTestIdType="text" [tnTestId]="'space-management-inherited-quotas'">
             {{
               '{n} from {dataset}' | translate : {
                 n: inheritedQuotasDataset.quota.parsed | ixFileSize,
@@ -128,7 +128,7 @@
         <div class="label">{{ 'User Quotas' | translate }}:</div>
           @if (checkQuotas()) {
             @if (!isLoadingQuotas) {
-              <div class="value">
+              <div class="value" tnTestIdType="text" [tnTestId]="'space-management-user-quotas'">
                 @if (userQuotas) {
                   {{ 'Quotas set for {n, plural, one {# user} other {# users} }' | translate: { n: userQuotas } }}
                 } @else {
@@ -156,7 +156,7 @@
         <div class="label">{{ 'Group Quotas' | translate }}:</div>
         @if (checkQuotas()) {
           @if (!isLoadingQuotas) {
-            <div class="value">
+            <div class="value" tnTestIdType="text" [tnTestId]="'space-management-group-quotas'">
               @if (groupQuotas) {
                 {{ 'Quotas set for {n, plural, one {# group} other {# groups} }' | translate: { n: groupQuotas } }}
               } @else {

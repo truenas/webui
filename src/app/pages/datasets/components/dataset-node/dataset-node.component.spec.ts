@@ -54,6 +54,13 @@ describe('DatasetNodeComponent', () => {
     expect(spectator.query('.name')).toHaveText('child');
   });
 
+  it('names its readouts after the dataset, so a suite can read one tree row', () => {
+    expect(spectator.query('.name')).toHaveAttribute('data-test', 'text-dataset-root-dataset-child-name');
+    expect(spectator.query('.cell-used span')).toHaveAttribute('data-test', 'text-dataset-root-dataset-child-used');
+    expect(spectator.query('.cell-available span'))
+      .toHaveAttribute('data-test', 'text-dataset-root-dataset-child-available');
+  });
+
   it('shows a dataset encryption cell', () => {
     const cell = spectator.query(DatasetEncryptionCellComponent)!;
     expect(cell).toBeTruthy();

@@ -6,7 +6,7 @@
 
     <div class="dataset-path">
       <div class="dataset-path-label">{{ 'Dataset' | translate }}:</div>
-      <div class="dataset-path-value" [tnTooltip]="datasetPath">
+      <div class="dataset-path-value" tnTestIdType="text" [tnTestId]="'dataset-path'" [tnTooltip]="datasetPath">
         {{ datasetPath }}
       </div>
     </div>
@@ -69,12 +69,12 @@
             <tr>
               <td></td>
               @for (column of accessModeColumns; track column.suffix) {
-                <th class="access-mode__header" scope="col">{{ column.label | translate }}</th>
+                <th class="access-mode__header" scope="col" tnTestIdType="text" [tnTestId]="['access-mode', column.testId]">{{ column.label | translate }}</th>
               }
             </tr>
             @for (row of accessModeRows; track row.prefix) {
               <tr>
-                <th class="access-mode__header" scope="row">{{ row.label | translate }}</th>
+                <th class="access-mode__header" scope="row" tnTestIdType="text" [tnTestId]="['access-mode', row.testId]">{{ row.label | translate }}</th>
                 @for (column of accessModeColumns; track column.suffix) {
                   <td class="access-mode__cell">
                     <tn-checkbox

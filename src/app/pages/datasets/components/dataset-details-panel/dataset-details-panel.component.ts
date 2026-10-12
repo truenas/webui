@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnButtonComponent, TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import { filter, take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -47,6 +47,7 @@ import { doesDatasetHaveShares, isIocageMounted } from 'app/pages/datasets/utils
     DataProtectionCardComponent,
     UsageCardComponent,
     PermissionsCardComponent,
+    TnTestIdDirective,
   ],
 })
 export class DatasetDetailsPanelComponent {

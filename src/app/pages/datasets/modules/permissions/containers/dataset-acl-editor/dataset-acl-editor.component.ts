@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnSpinnerComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import { Observable, of } from 'rxjs';
@@ -59,6 +60,7 @@ import { AclEditorSaveControlsComponent } from './acl-editor-save-controls/acl-e
     EditPosixAceComponent,
     TranslateModule,
     CastPipe,
+    TnTestIdDirective,
   ],
 })
 export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate {
