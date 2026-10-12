@@ -200,7 +200,7 @@ jobs:
       # TN_BASELINE in the job environment, as the lab's claim did. Its ports
       # are on the runner's loopback and Docker's bridge, nowhere else.
       - name: Boot the appliance
-        uses: iXsystems/ux-github-workflows/.github/actions/truenas-appliance-runner@e2e-appliances
+        uses: iXsystems/ux-github-workflows/.github/actions/truenas-appliance-runner@master
         with:
           baseline: fresh-install
 

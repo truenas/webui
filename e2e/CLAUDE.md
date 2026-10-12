@@ -357,9 +357,9 @@ services and HA fit in. Its `E` numbers are cited the same way. Draft, but
 reconciled with the pipeline as built: read it before designing anything that
 provisions or reshapes an appliance.
 
-`docs/05-ci.md` is the pipeline as it actually runs: what the lab runner has
-to provide, the measured timings, and the failure behind every rule in
-`.github/workflows/e2e.yml` and the `truenas-appliance` action's
+`docs/05-ci.md` is the pipeline as it actually runs: what it needs outside
+this repository, the measured timings, and the failure behind every rule in
+`.github/workflows/e2e.yml` and the `truenas-appliance-runner` action's
 `appliance.sh` in iXsystems/ux-github-workflows. Check it before touching
 either.
 
