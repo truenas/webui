@@ -14,12 +14,12 @@ import {
   TnTestIdDirective,
   tnIconMarker,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { map, of } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { translated } from 'app/helpers/translated.helper';
 import { WINDOW } from 'app/helpers/window.helper';
-import { Ipmi } from 'app/interfaces/ipmi.interface';
+import { Ipmi, toIpmiChannels } from 'app/interfaces/ipmi.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
@@ -28,7 +28,7 @@ import { convertStringToId, dataProviderLoading, dataProviderRows } from 'app/mo
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ipmiCardElements } from 'app/pages/system/network/components/ipmi-card/ipmi-card.elements';
 import {
   IpmiEventsDialog,
@@ -56,7 +56,7 @@ import { IpmiFormComponent } from 'app/pages/system/network/components/ipmi-card
   ],
 })
 export class IpmiCardComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formPanel = inject(FormSidePanelService);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
@@ -66,7 +66,11 @@ export class IpmiCardComponent implements OnInit {
 
   protected readonly searchableElements = ipmiCardElements.elements;
 
-  private readonly ipmi$ = this.api.call('ipmi.lan.query').pipe(takeUntilDestroyed(this.destroyRef));
+  private readonly ipmi$ = this.api.call('ipmi.lan.query').pipe(
+    map(toIpmiChannels),
+    takeUntilDestroyed(this.destroyRef),
+  );
+
   protected dataProvider = new AsyncDataProvider<Ipmi>(this.ipmi$);
   protected readonly rows = dataProviderRows(this.dataProvider);
   protected readonly isLoading = dataProviderLoading(this.dataProvider);

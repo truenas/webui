@@ -19,7 +19,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { WarningComponent } from 'app/modules/warning/warning.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
 import { selectService } from 'app/store/services/services.selectors';
@@ -44,7 +44,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   ],
 })
 export class StorageSettingsFormComponent extends IxFormHostForm implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);

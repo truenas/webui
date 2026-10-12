@@ -3,13 +3,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { Store, StoreModule } from '@ngrx/store';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnCheckboxHarness, TnDialog, TnFormListHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import {
@@ -29,7 +30,8 @@ import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-fo
 import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   DefaultGatewayDialog,
 } from 'app/pages/system/network/components/default-gateway-dialog/default-gateway-dialog.component';
@@ -50,7 +52,7 @@ import { systemInfoStateKey } from 'app/store/system-info/system-info.selectors'
 describe('InterfaceFormComponent', () => {
   let spectator: Spectator<InterfaceFormComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
   let aliasesList: TnFormListHarness | null;
 
   async function setSelectValue(fcName: string, ...labels: string[]): Promise<void> {
@@ -130,27 +132,26 @@ describe('InterfaceFormComponent', () => {
     ],
     providers: [
       ...ixFormTestingProviders(),
-      mockApi([
-        mockCall('interface.xmit_hash_policy_choices', {
+      mockTypedApi([
+        mockTypedCall('interface.xmit_hash_policy_choices', {
           [XmitHashPolicy.Layer2]: XmitHashPolicy.Layer2,
           [XmitHashPolicy.Layer2Plus3]: XmitHashPolicy.Layer2Plus3,
-        }),
-        mockCall('interface.lacpdu_rate_choices', {
+        } as unknown as CallResponse<WebUiApiDirectory, 'interface.xmit_hash_policy_choices'>),
+        mockTypedCall('interface.lacpdu_rate_choices', {
           [LacpduRate.Slow]: LacpduRate.Slow,
           [LacpduRate.Fast]: LacpduRate.Fast,
         }),
-        mockCall('interface.create'),
-        mockCall('interface.update'),
-        mockCall('interface.save_default_route'),
-        mockCall('network.configuration.update'),
-        mockCall('network.general.summary', {
+        mockTypedCall('interface.create', null),
+        mockTypedCall('interface.update', null),
+        mockTypedCall('network.configuration.update', null),
+        mockTypedCall('network.general.summary', {
           default_routes: ['1.1.1.1'],
           nameservers: ['8.8.8.8', '8.8.4.4'],
         } as NetworkSummary),
-        mockCall('interface.network_config_to_be_removed', { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' }),
-        mockCall('interface.available_fec_modes', []),
-        mockCall('failover.node', 'A'),
-        mockCall('failover.config', {
+        mockTypedCall('interface.network_config_to_be_removed', { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' } as unknown as CallResponse<WebUiApiDirectory, 'interface.network_config_to_be_removed'>),
+        mockTypedCall('interface.available_fec_modes', []),
+        mockTypedCall('failover.node', 'A'),
+        mockTypedCall('failover.config', {
           disabled: true,
         } as FailoverConfig),
       ]),
@@ -207,7 +208,7 @@ describe('InterfaceFormComponent', () => {
       spectator.component.closed.subscribe(closedSpy);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       aliasesList = await loader.getHarness(TnFormListHarness.with({ label: 'Static IP Addresses' }));
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('auto-generates name when type is changed', async () => {
@@ -238,6 +239,7 @@ describe('InterfaceFormComponent', () => {
       await setCheckbox('Enable Learning', true);
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [{
         type: NetworkInterfaceType.Bridge,
@@ -285,6 +287,7 @@ describe('InterfaceFormComponent', () => {
       await setSelectValue('lag_ports', 'enp0s3');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [{
         type: NetworkInterfaceType.LinkAggregation,
@@ -341,6 +344,7 @@ describe('InterfaceFormComponent', () => {
       await setSelectValue('vlan_pcp', 'Excellent effort');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [{
         type: NetworkInterfaceType.Vlan,
@@ -415,7 +419,7 @@ describe('InterfaceFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       aliasesList = await loader.getHarness(TnFormListHarness.with({ label: 'Static IP Addresses' }));
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('shows values for a network interface when it is opened for edit', async () => {
@@ -447,7 +451,7 @@ describe('InterfaceFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       aliasesList = await loader.getHarness(TnFormListHarness.with({ label: 'Static IP Addresses' }));
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('disables parent interface fields when VLAN is opened for edit', async () => {
@@ -472,7 +476,7 @@ describe('InterfaceFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       aliasesList = await loader.getHarness(TnFormListHarness.with({ label: 'Static IP Addresses' }));
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('reloads bridge member choices when bridge interface is opened for edit', () => {
@@ -498,7 +502,7 @@ describe('InterfaceFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       aliasesList = await loader.getHarness(TnFormListHarness.with({ label: 'Static IP Addresses' }));
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('reloads lag ports when link aggregation is opened for edit', () => {
@@ -522,7 +526,7 @@ describe('InterfaceFormComponent', () => {
 
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       aliasesList = await loader.getHarness(TnFormListHarness.with({ label: 'Static IP Addresses' }));
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('checks whether failover is licensed for', () => {
@@ -544,6 +548,7 @@ describe('InterfaceFormComponent', () => {
       await setSelectValue('failover_group', '1');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [
         expect.objectContaining({
@@ -579,6 +584,7 @@ describe('InterfaceFormComponent', () => {
       await setInputValue('failover_virtual_address', '192.168.1.3');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [
         expect.objectContaining({
@@ -618,14 +624,14 @@ describe('InterfaceFormComponent', () => {
       const store$ = spectator.inject(Store);
       store$.dispatch(entitlementsLoaded({ entitlements: {} }));
 
-      const websocketMock = spectator.inject(MockApiService);
+      const websocketMock = spectator.inject(MockTypedApiService);
       websocketMock.mockCall('interface.available_fec_modes', ['auto', 'rs', 'baser', 'off']);
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('loads available FEC modes for the interface', () => {
@@ -649,6 +655,7 @@ describe('InterfaceFormComponent', () => {
 
       expect(spectator.component.canSubmit()).toBe(true);
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('interface.update', [
         'enp0s6',
@@ -702,7 +709,7 @@ describe('InterfaceFormComponent', () => {
       const store$ = spectator.inject(Store);
       store$.dispatch(entitlementsLoaded({ entitlements: {} }));
 
-      const websocketMock = spectator.inject(MockApiService);
+      const websocketMock = spectator.inject(MockTypedApiService);
       websocketMock.mockCall('interface.available_fec_modes', []);
 
       spectator.detectChanges();

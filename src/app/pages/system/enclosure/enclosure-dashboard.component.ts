@@ -6,7 +6,7 @@ import {
   TnButtonComponent, TnEmptyComponent, TnSpinnerComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ViewElementsMenuComponent } from 'app/pages/system/enclosure/components/enclosure-header/view-elements-menu/view-elements-menu.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
@@ -33,7 +33,7 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
 export class EnclosureDashboardComponent {
   private enclosureStore = inject(EnclosureStore);
   private route = inject(ActivatedRoute);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly isJbofLicensed = toSignal(this.api.call('jbof.licensed'), { initialValue: 0 });

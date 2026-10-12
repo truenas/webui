@@ -3,8 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnDialog, TnIconButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -31,9 +31,9 @@ describe('StaticRoutesCardComponent', () => {
       TablePagerShowMoreComponent,
     ],
     providers: [
-      mockApi([
-        mockCall('staticroute.query', staticRoutes),
-        mockCall('staticroute.delete'),
+      mockTypedApi([
+        mockTypedQuery('staticroute.query', staticRoutes),
+        mockTypedCall('staticroute.delete', null),
       ]),
       mockProvider(DialogService, {
         confirm: () => of(true),

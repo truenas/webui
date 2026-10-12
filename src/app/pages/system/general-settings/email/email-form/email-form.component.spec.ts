@@ -8,11 +8,12 @@ import {
 } from '@truenas/ui-components';
 import { when } from 'jest-when';
 import { of, throwError } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { HardwareType } from 'app/enums/hardware-type.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { MailConfig, MailOauthConfig } from 'app/interfaces/mail-config.interface';
@@ -23,7 +24,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { EmailFormComponent } from './email-form.component';
 
@@ -44,7 +46,7 @@ describe('EmailFormComponent', () => {
   let spectator: Spectator<EmailFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -83,13 +85,13 @@ describe('EmailFormComponent', () => {
           { selector: selectSystemInfo, value: { hostname: 'host.truenas.com' } },
         ],
       }),
-      mockApi([
-        mockCall('mail.local_administrator_email', 'authuser@ixsystems.com'),
-        mockCall('mail.update'),
-        mockCall('user.query', [
+      mockTypedApi([
+        mockTypedCall('mail.local_administrator_email', 'authuser@ixsystems.com'),
+        mockTypedCall('mail.update', null),
+        mockTypedQuery('user.query', [
           { email: 'root@truenas.com' },
-        ] as User[]),
-        mockJob('mail.send'),
+        ] as User[] as unknown as WebUiQueryEntity<'user.query'>[]),
+        mockTypedJob('mail.send', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         jobDialog: () => ({
@@ -125,15 +127,16 @@ describe('EmailFormComponent', () => {
       spectator = createComponent({ props: { config: fakeEmailConfig } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
-    it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', () => {
-      spectator.inject(MockApiService).mockCall('mail.local_administrator_email', null);
+    it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', async () => {
+      spectator.inject(MockTypedApiService).mockCall('mail.local_administrator_email', null);
 
       clickSendTestMail();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('mail.local_administrator_email');
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('mail.local_administrator_email');
       expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
         'Email',
         'No e-mail address is set for root user or any other local administrator. Please, configure such an email address first.',
@@ -189,6 +192,7 @@ describe('EmailFormComponent', () => {
       await logInButton.click();
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('mail.update', [{
         fromemail: 'newfrom@ixsystems.com',
@@ -212,8 +216,9 @@ describe('EmailFormComponent', () => {
       await logInButton.click();
 
       clickSendTestMail();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
         'mail.send',
         [
           {
@@ -283,6 +288,7 @@ describe('EmailFormComponent', () => {
       await logInButton.click();
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('mail.update', [{
         fromemail: 'newfrom@ixsystems.com',
@@ -309,8 +315,9 @@ describe('EmailFormComponent', () => {
       await logInButton.click();
 
       clickSendTestMail();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
         'mail.send',
         [
           {
@@ -343,7 +350,7 @@ describe('EmailFormComponent', () => {
       spectator = createComponent({ props: { config: fakeEmailConfig } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('saves SMTP config when form is filled and Save is pressed', async () => {
@@ -355,6 +362,7 @@ describe('EmailFormComponent', () => {
       await (await getCheckbox('smtp')).uncheck();
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('mail.update', [{
         fromemail: 'newfrom@ixsystems.com',
@@ -381,10 +389,11 @@ describe('EmailFormComponent', () => {
       expect(await (await getInput('user')).getValue()).toBe('authuser@ixsystems.com');
     });
 
-    it('sends test email with SMTP settings when SMTP form is used and Send Test Mail is pressed', () => {
+    it('sends test email with SMTP settings when SMTP form is used and Send Test Mail is pressed', async () => {
       clickSendTestMail();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
         'mail.send',
         [
           {
@@ -425,7 +434,7 @@ describe('EmailFormComponent', () => {
       spectator = createComponent({ props: { config: fakeGmailEmailConfig as MailConfig } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('shows current Gmail config when Gmail is set', async () => {
@@ -453,14 +462,14 @@ describe('EmailFormComponent', () => {
 
       beforeEach(async () => {
         spectator = createComponent({ detectChanges: false });
-        spectator.inject(MockApiService).mockCall('mail.config', fakeGmailConfig);
+        spectator.inject(MockTypedApiService).mockCall('mail.config', fakeGmailConfig);
         spectator.detectChanges();
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
       });
 
       it('fetches email config from API and shows Gmail config with Save enabled', async () => {
-        expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('mail.config');
+        expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('mail.config');
 
         expect(await (await getInput('fromemail')).getValue()).toBe('from@ixsystems.com');
         expect(await (await getInput('fromname')).getValue()).toBe('John Smith');
@@ -473,11 +482,13 @@ describe('EmailFormComponent', () => {
     describe('with SMTP config', () => {
       beforeEach(async () => {
         spectator = createComponent({ detectChanges: false });
-        spectator.inject(MockApiService).mockCall('mail.config', fakeEmailConfig);
+        spectator.inject(MockTypedApiService).mockCall('mail.config', fakeEmailConfig);
         spectator.detectChanges();
+        await spectator.fixture.whenStable();
+        spectator.detectComponentChanges();
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        api = spectator.inject(ApiService);
+        api = spectator.inject(TypedApiService);
       });
 
       it('fetches email config from API and shows SMTP config', async () => {
@@ -498,6 +509,7 @@ describe('EmailFormComponent', () => {
         await (await getInput('fromname')).setValue('Jeremy');
 
         spectator.component.submit();
+        await spectator.fixture.whenStable();
 
         expect(api.call).toHaveBeenCalledWith('mail.update', [{
           fromemail: 'newfrom@ixsystems.com',
@@ -519,7 +531,7 @@ describe('EmailFormComponent', () => {
       spectator = createComponent({ detectChanges: false });
       const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
 
-      when(spectator.inject(MockApiService).call)
+      when(spectator.inject(MockTypedApiService).call)
         .calledWith('mail.config')
         .mockReturnValue(throwError(() => new Error('Connection error')));
 
@@ -544,7 +556,7 @@ describe('EmailFormComponent', () => {
       spectator = createComponent({ props: { config: fakeOutlookEmailConfig as MailConfig } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      api = spectator.inject(ApiService);
+      api = spectator.inject(TypedApiService);
     });
 
     it('shows current Outlook config when Outlook is set', async () => {

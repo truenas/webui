@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -13,7 +13,7 @@ export interface KernelFormValues {
 }
 
 export function getKernelFormConfig(
-  api: ApiService,
+  api: TypedApiService,
   translate: TranslateService,
   store$: Store<AppState>,
 ): FormDefinition<KernelFormValues> {

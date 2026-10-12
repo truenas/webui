@@ -113,11 +113,6 @@ export interface DetailsDisk {
 export type DiskTemperatures = Record<string, number | null>;
 export type DiskTemperatureAgg = Record<string, TemperatureAgg>;
 
-export interface DiskDetailsParams {
-  join_partitions?: boolean;
-  type?: string;
-}
-
 export interface DiskDetailsResponse {
   used: DetailsDisk[];
   unused: DetailsDisk[];

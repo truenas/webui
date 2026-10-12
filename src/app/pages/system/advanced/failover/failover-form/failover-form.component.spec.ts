@@ -4,15 +4,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { FailoverFormComponent } from 'app/pages/system/advanced/failover/failover-form/failover-form.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
@@ -35,16 +35,16 @@ describe('FailoverFormComponent', () => {
     providers: [
       ...ixFormTestingProviders(),
       mockAuth(),
-      mockApi([
-        mockCall('failover.config', {
+      mockTypedApi([
+        mockTypedCall('failover.config', {
           id: 3,
           master: true,
           disabled: false,
           timeout: 0,
         } as FailoverConfig),
-        mockCall('failover.update'),
-        mockCall('failover.sync_to_peer'),
-        mockCall('failover.sync_from_peer'),
+        mockTypedCall('failover.update', null),
+        mockTypedCall('failover.sync_to_peer', null),
+        mockTypedCall('failover.sync_from_peer', null),
       ]),
       mockProvider(SnackbarService),
       mockProvider(WebSocketStatusService, {
@@ -70,10 +70,11 @@ describe('FailoverFormComponent', () => {
     // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     spectator.detectChanges();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('failover.update', [{
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('failover.update', [{
       disabled: false,
       master: true,
       timeout: 20,
@@ -89,7 +90,7 @@ describe('FailoverFormComponent', () => {
     const syncButton = await loader.getHarness(TnButtonHarness.with({ label: 'Sync To Peer' }));
     await syncButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('failover.sync_to_peer', [{ reboot: true }]);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('failover.sync_to_peer', [{ reboot: true }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
       helptextSystemFailover.confirmDialogs.syncToMessage,
     );
@@ -104,7 +105,7 @@ describe('FailoverFormComponent', () => {
     const syncButton = await loader.getHarness(TnButtonHarness.with({ label: 'Sync From Peer' }));
     await syncButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('failover.sync_from_peer');
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('failover.sync_from_peer');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
       helptextSystemFailover.confirmDialogs.syncFromMessage,
     );

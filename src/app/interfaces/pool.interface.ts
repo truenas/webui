@@ -1,4 +1,4 @@
-import { JobParams } from '@truenas/api-client';
+import { CallResponse, JobParams } from '@truenas/api-client';
 import { DeduplicationSetting, NewDeduplicationQuotaSetting } from 'app/enums/deduplication-setting.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
@@ -155,6 +155,15 @@ export interface PoolInstance {
   fragmentation: string;
   autotrim: ZfsProperty<string>;
   topology: PoolTopology;
+}
+
+/**
+ * Reads `boot.get_state`, the boot pool, into the shape the boot pool status page is written against. Middleware
+ * spells the status and the topology's enums as literals and does not declare the `id`, `guid` or encryption
+ * fields `PoolInstance` names; of those, only `guid` is read, as the tree's root node id.
+ */
+export function toBootPoolInstance(state: CallResponse<D, 'boot.get_state'>): PoolInstance {
+  return state as unknown as PoolInstance;
 }
 
 /** What `pool.ddt_prune` takes, as middleware declares it. */

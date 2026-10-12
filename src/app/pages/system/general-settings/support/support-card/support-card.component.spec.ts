@@ -15,9 +15,9 @@ import { TnBannerActionDirective,
   TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, throwError } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { LicenseType } from 'app/enums/license-type.enum';
 import { ContractType, License, SystemInfo } from 'app/interfaces/system-info.interface';
@@ -27,7 +27,7 @@ import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface
 import { LocaleService } from 'app/modules/language/locale.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
@@ -87,11 +87,11 @@ describe('SupportCardComponent', () => {
       mockProvider(LocaleService, {
         getPreferredDateFormat: jest.fn(() => 'yyyy-MM-dd'),
       }),
-      mockApi([
-        mockCall('truenas.is_production', true),
-        mockJob('truenas.set_production', fakeSuccessfulJob()),
-        mockCall('support.is_available', true),
-        mockCall('support.is_available_and_enabled', false),
+      mockTypedApi([
+        mockTypedCall('truenas.is_production', true),
+        mockTypedJob('truenas.set_production', { state: JobState.Success }),
+        mockTypedCall('support.is_available', true),
+        mockTypedCall('support.is_available_and_enabled', false),
       ]),
       provideMockStore({
         selectors: [
@@ -133,7 +133,7 @@ describe('SupportCardComponent', () => {
 
     describe('Proactive support availability', () => {
       it('checks if proactive support is available when license is present', () => {
-        expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('support.is_available');
+        expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('support.is_available');
       });
 
       it('sets isProactiveSupportAvailable signal to true when support is available', () => {
@@ -141,7 +141,7 @@ describe('SupportCardComponent', () => {
       });
 
       it('sets isProactiveSupportAvailable signal to false when support is not available', () => {
-        const api = spectator.inject(ApiService);
+        const api = spectator.inject(TypedApiService);
         jest.spyOn(api, 'call').mockReturnValue(of(false));
 
         emitSystemInfo();
@@ -152,7 +152,7 @@ describe('SupportCardComponent', () => {
       it('handles errors when checking proactive support availability', () => {
         spectator.component.isProactiveSupportAvailable.set(false);
 
-        const api = spectator.inject(ApiService);
+        const api = spectator.inject(TypedApiService);
         jest.spyOn(api, 'call').mockImplementation((method: string) => {
           if (method === 'support.is_available') {
             return throwError(() => new Error('API error'));
@@ -189,7 +189,7 @@ describe('SupportCardComponent', () => {
         const formPanel = spectator.inject(FormSidePanelService);
         jest.spyOn(formPanel, 'open').mockReturnValue(SlideInResult.cancel());
 
-        const api = spectator.inject(ApiService);
+        const api = spectator.inject(TypedApiService);
         const apiCallSpy = jest.spyOn(api, 'call');
         apiCallSpy.mockClear();
 
@@ -200,7 +200,7 @@ describe('SupportCardComponent', () => {
       });
 
       it('hides proactive support banner when enabled', async () => {
-        const api = spectator.inject(ApiService);
+        const api = spectator.inject(TypedApiService);
         jest.spyOn(api, 'call').mockImplementation((method: string) => {
           if (method === 'support.is_available_and_enabled') {
             return of(true);
@@ -332,7 +332,7 @@ describe('SupportCardComponent', () => {
 
   describe('Bronze license (proactive support not available)', () => {
     beforeEach(() => {
-      const api = spectator.inject(ApiService);
+      const api = spectator.inject(TypedApiService);
       jest.spyOn(api, 'call').mockImplementation((method: string) => {
         if (method === 'support.is_available') {
           return of(false);

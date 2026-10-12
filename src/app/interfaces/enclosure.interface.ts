@@ -114,12 +114,6 @@ export type DashboardEnclosureElements = Overwrite<EnclosureElements, {
   [EnclosureElementType.ArrayDeviceSlot]: Record<number, DashboardEnclosureSlot>;
 }>;
 
-export interface SetDriveBayLightStatus {
-  enclosure_id: string;
-  slot: number;
-  status: DriveBayLightStatus;
-}
-
 /**
  * Reads an `enclosure2.query` row into `Enclosure`. Middleware types the model, the element statuses and the slot
  * map loosely where the UI reads them through its enums; it describes the same object.

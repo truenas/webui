@@ -29,11 +29,14 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextInterfacesForm } from 'app/helptext/network/interfaces/interfaces-form';
-import { ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
+import { Choices } from 'app/interfaces/choices.interface';
 import {
+  NetworkConfigToBeRemoved,
   NetworkInterface,
   NetworkInterfaceCreate,
   NetworkInterfaceUpdate,
+  toNetworkConfigToBeRemoved,
+  toNetworkInterfaceCreateArgs,
 } from 'app/interfaces/network-interface.interface';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -46,7 +49,7 @@ import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/forms/ix-for
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-list.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   DefaultGatewayDialog,
 } from 'app/pages/system/network/components/default-gateway-dialog/default-gateway-dialog.component';
@@ -93,7 +96,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
 export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private entitlements = inject(EntitlementsService);
   private translate = inject(TranslateService);
   private networkService = inject(NetworkService);
@@ -180,8 +183,17 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
 
   lagProtocols$ = this.networkService.getLaggProtocolChoices().pipe(singleArrayToOptions());
   lagPorts$ = this.networkService.getLaggPortsChoices().pipe(choicesToOptions());
-  xmitHashPolicies$ = this.api.call('interface.xmit_hash_policy_choices').pipe(choicesToOptions());
-  lacpduRates$ = this.api.call('interface.lacpdu_rate_choices').pipe(choicesToOptions());
+  // Middleware declares both choices as a fixed set of keys, which an interface without an index signature
+  // cannot be read as.
+  xmitHashPolicies$ = this.api.call('interface.xmit_hash_policy_choices').pipe(
+    map((choices): Choices => ({ ...choices })),
+    choicesToOptions(),
+  );
+
+  lacpduRates$ = this.api.call('interface.lacpdu_rate_choices').pipe(
+    map((choices): Choices => ({ ...choices })),
+    choicesToOptions(),
+  );
 
   vlanPcpOptions$ = of([
     { value: 0, label: this.translate.instant('Best effort (default)') },
@@ -296,17 +308,17 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
 
   protected handleSubmit = (
     event: FormSubmitEvent,
-  ): SubmitResult<boolean, ApiCallResponse<'interface.network_config_to_be_removed'>> => {
+  ): SubmitResult<boolean, NetworkConfigToBeRemoved> => {
     const params = this.prepareSubmitParams();
     const existingInterface = this.existingInterface;
 
     const request$ = (existingInterface
-      ? this.api.call('interface.update', [existingInterface.id, params])
-      : this.api.call('interface.create', [params])
+      ? this.api.call('interface.update', [existingInterface.id, toNetworkInterfaceCreateArgs(params)])
+      : this.api.call('interface.create', [toNetworkInterfaceCreateArgs(params)])
     ).pipe(
       switchMap(() => {
         this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
-        return this.api.call('interface.network_config_to_be_removed');
+        return this.api.call('interface.network_config_to_be_removed').pipe(map(toNetworkConfigToBeRemoved));
       }),
     );
 

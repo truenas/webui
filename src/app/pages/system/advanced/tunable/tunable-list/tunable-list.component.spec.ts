@@ -4,11 +4,9 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnMenuHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import {
-  mockApi, mockCall, mockJob,
-} from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { ConfirmDeleteJobOptions } from 'app/interfaces/dialog.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -17,7 +15,8 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { TunableListComponent } from 'app/pages/system/advanced/tunable/tunable-list/tunable-list.component';
 
 describe('TunableListComponent', () => {
@@ -113,10 +112,10 @@ describe('TunableListComponent', () => {
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteJobOptions) => options.job()),
       }),
-      mockApi([
-        mockCall('core.get_jobs'),
-        mockCall('tunable.query', tunables),
-        mockJob('tunable.delete', fakeSuccessfulJob()),
+      mockTypedApi([
+        mockTypedQuery('core.get_jobs', []),
+        mockTypedQuery('tunable.query', tunables as unknown as WebUiQueryEntity<'tunable.query'>[]),
+        mockTypedJob('tunable.delete', { state: JobState.Success }),
       ]),
       mockAuth(),
     ],
@@ -188,6 +187,6 @@ describe('TunableListComponent', () => {
       successMessage: 'Tunable "kernel.hostname" deleted',
     });
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('tunable.delete', [12]);
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('tunable.delete', [12]);
   });
 });

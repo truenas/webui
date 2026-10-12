@@ -7,15 +7,16 @@ import { Router } from '@angular/router';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnDialog, TnIconHarness } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { of, throwError } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ApiErrorName } from 'app/enums/api.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { UpdateCode } from 'app/enums/system-update.enum';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import {
@@ -27,7 +28,9 @@ import {
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { jobsInitialState } from 'app/modules/jobs/store/job.reducer';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   SaveConfigDialog,
 } from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
@@ -65,20 +68,25 @@ describe('UpdateComponent', () => {
     component: UpdateComponent,
     overrideComponents: [[
       UpdateComponent,
-      { remove: { imports: [DynamicMarkdownComponent] }, add: { imports: [MockComponent(DynamicMarkdownComponent)] } },
+      // The page header's fake progress bar runs an interval while the page loads, which keeps the fixture from
+      // ever settling now that the typed double answers asynchronously.
+      {
+        remove: { imports: [DynamicMarkdownComponent, PageHeaderComponent] },
+        add: { imports: [MockComponent(DynamicMarkdownComponent), MockComponent(PageHeaderComponent)] },
+      },
     ]],
     imports: [
       MockComponent(UpdateProfileCard),
     ],
     providers: [
-      mockApi([
-        mockJob('update.run', fakeSuccessfulJob()),
-        mockJob('failover.upgrade', fakeSuccessfulJob()),
-        mockCall('webui.main.dashboard.sys_info', {
+      mockTypedApi([
+        mockTypedJob('update.run', { state: JobState.Success }),
+        mockTypedJob('failover.upgrade', { state: JobState.Success }),
+        mockTypedCall('webui.main.dashboard.sys_info', {
           version: '22.12.3',
-        } as SystemInfo),
-        mockCall('update.profile_choices', profileChoices),
-        mockCall('update.status', {
+        } as SystemInfo as unknown as CallResponse<WebUiApiDirectory, 'webui.main.dashboard.sys_info'>),
+        mockTypedCall('update.profile_choices', profileChoices),
+        mockTypedCall('update.status', {
           code: UpdateCode.Normal,
           error: null,
           status: {
@@ -87,8 +95,8 @@ describe('UpdateComponent', () => {
             },
             new_version: null,
           },
-        } as UpdateStatus),
-        mockCall('update.config', updateConfig),
+        } as UpdateStatus as unknown as CallResponse<WebUiApiDirectory, 'update.status'>),
+        mockTypedCall('update.config', updateConfig),
       ]),
       mockAuth(),
       mockEntitlements(),
@@ -129,9 +137,11 @@ describe('UpdateComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
   });
 
   describe('page elements', () => {
@@ -155,7 +165,7 @@ describe('UpdateComponent', () => {
     });
 
     it('queries update status, config and profile choices on page load', () => {
-      const api = spectator.inject(ApiService);
+      const api = spectator.inject(TypedApiService);
 
       expect(api.call).toHaveBeenCalledWith('update.profile_choices');
       expect(api.call).toHaveBeenCalledWith('update.status');
@@ -163,7 +173,7 @@ describe('UpdateComponent', () => {
     });
 
     it('reloads update info when profile is switched', () => {
-      const api = spectator.inject(ApiService);
+      const api = spectator.inject(TypedApiService);
       jest.clearAllMocks();
 
       const updateProfileCard = spectator.query(UpdateProfileCard);
@@ -186,8 +196,8 @@ describe('UpdateComponent', () => {
   });
 
   describe('when there are updates', () => {
-    beforeEach(() => {
-      const mockedApi = spectator.inject(MockApiService);
+    beforeEach(async () => {
+      const mockedApi = spectator.inject(MockTypedApiService);
       mockedApi.mockCall('update.status', {
         code: UpdateCode.Normal,
         error: null,
@@ -204,9 +214,12 @@ describe('UpdateComponent', () => {
             release_notes_url: 'http://truenas.com/release-notes/22.12.4',
           },
         },
-      } as UpdateStatus);
+      } as UpdateStatus as unknown as CallResponse<WebUiApiDirectory, 'update.status'>);
 
       spectator.component.ngOnInit();
+
+      await spectator.fixture.whenStable();
+
       spectator.detectChanges();
     });
 
@@ -222,8 +235,8 @@ describe('UpdateComponent', () => {
       expect(changelogElement).toHaveText('Important changes');
     });
 
-    it('exposes hardware, HA, license and support flags to release-notes markdown', () => {
-      spectator.inject(MockApiService).mockCall('update.status', {
+    it('exposes hardware, HA, license and support flags to release-notes markdown', async () => {
+      spectator.inject(MockTypedApiService).mockCall('update.status', {
         code: UpdateCode.Normal,
         error: null,
         status: {
@@ -235,8 +248,9 @@ describe('UpdateComponent', () => {
             release_notes: '# Release notes',
           },
         },
-      } as UpdateStatus);
+      } as UpdateStatus as unknown as CallResponse<WebUiApiDirectory, 'update.status'>);
       spectator.component.ngOnInit();
+      await spectator.fixture.whenStable();
       spectator.detectChanges();
 
       const markdown = spectator.debugElement.query(By.directive(DynamicMarkdownComponent));
@@ -279,7 +293,7 @@ describe('UpdateComponent', () => {
       const installButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install Update' }));
       await installButton.click();
 
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('update.run', [{ reboot: true }]);
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('update.run', [{ reboot: true }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalledWith(
         expect.any(Object),
         { title: 'Update' },
@@ -296,7 +310,7 @@ describe('UpdateComponent', () => {
       await installButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('update.run', [{ reboot: true }]);
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('update.run', [{ reboot: true }]);
 
       openSpy.mockReturnValue({
         close: jest.fn(),
@@ -314,7 +328,7 @@ describe('UpdateComponent', () => {
       await installButton.click();
 
       expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
-      expect(spectator.inject(ApiService).job).not.toHaveBeenCalled();
+      expect(spectator.inject(TypedApiService).job).not.toHaveBeenCalled();
 
       openSpy.mockReturnValue({
         close: jest.fn(),
@@ -330,13 +344,13 @@ describe('UpdateComponent', () => {
       const installButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install Update' }));
       await installButton.click();
 
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('failover.upgrade');
+      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('failover.upgrade');
     });
   });
 
   describe('when there is an error getting an update', () => {
-    it('shows the error', () => {
-      const mockedApi = spectator.inject(MockApiService);
+    it('shows the error', async () => {
+      const mockedApi = spectator.inject(MockTypedApiService);
       mockedApi.mockCall('update.status', {
         code: UpdateCode.Error,
         error: {
@@ -344,9 +358,12 @@ describe('UpdateComponent', () => {
           reason: 'Failed to check for updates',
         },
         status: null,
-      } as UpdateStatus);
+      } as UpdateStatus as unknown as CallResponse<WebUiApiDirectory, 'update.status'>);
 
       spectator.component.ngOnInit();
+
+      await spectator.fixture.whenStable();
+
       spectator.detectChanges();
 
       const errorElement = spectator.query(byText('Failed to check for updates'));
@@ -427,23 +444,26 @@ describe('UpdateComponent', () => {
   });
 
   describe('when network activity is disabled', () => {
-    it('shows network activity disabled message', () => {
-      const mockedApi = spectator.inject(MockApiService);
+    it('shows network activity disabled message', async () => {
+      const mockedApi = spectator.inject(MockTypedApiService);
       mockedApi.mockCall('update.status', {
         code: UpdateCode.NetworkActivityDisabled,
         error: null,
         status: null,
-      } as UpdateStatus);
+      } as UpdateStatus as unknown as CallResponse<WebUiApiDirectory, 'update.status'>);
 
       spectator.component.ngOnInit();
+
+      await spectator.fixture.whenStable();
+
       spectator.detectChanges();
 
       const networkDisabledMessage = spectator.query(byText('Network activity has been administratively disabled for update operation. Please use Manual Update.'));
       expect(networkDisabledMessage).toBeTruthy();
     });
 
-    it('does not show error field when network activity is disabled', () => {
-      const mockedApi = spectator.inject(MockApiService);
+    it('does not show error field when network activity is disabled', async () => {
+      const mockedApi = spectator.inject(MockTypedApiService);
       mockedApi.mockCall('update.status', {
         code: UpdateCode.NetworkActivityDisabled,
         error: {
@@ -451,9 +471,12 @@ describe('UpdateComponent', () => {
           reason: 'Some error message that should not be shown',
         },
         status: null,
-      } as UpdateStatus);
+      } as UpdateStatus as unknown as CallResponse<WebUiApiDirectory, 'update.status'>);
 
       spectator.component.ngOnInit();
+
+      await spectator.fixture.whenStable();
+
       spectator.detectChanges();
 
       const errorElement = spectator.query(byText('Some error message that should not be shown'));
@@ -466,8 +489,8 @@ describe('UpdateComponent', () => {
       jest.clearAllMocks();
     });
 
-    it('does not show error dialog for ENONET errors', () => {
-      const api = spectator.inject(ApiService);
+    it('does not show error dialog for ENONET errors', async () => {
+      const api = spectator.inject(TypedApiService);
       const errorHandler = spectator.inject(ErrorHandlerService);
 
       const enonetError = new ApiCallError({
@@ -492,25 +515,28 @@ describe('UpdateComponent', () => {
             code: UpdateCode.Normal,
             status: null,
             error: null,
-          } as UpdateStatus);
+          } as UpdateStatus as unknown as CallResponse<WebUiApiDirectory, 'update.status'>);
         }
         if (method === 'update.config') {
           return of(updateConfig);
         }
         if (method === 'webui.main.dashboard.sys_info') {
-          return of({ version: '22.12.3' } as SystemInfo);
+          return of({ version: '22.12.3' } as SystemInfo as unknown as CallResponse<WebUiApiDirectory, 'webui.main.dashboard.sys_info'>);
         }
         return throwError(() => new Error(`Unmocked call: ${method}`));
       });
 
       spectator.component.ngOnInit();
+
+      await spectator.fixture.whenStable();
+
       spectator.detectChanges();
 
       expect(errorHandler.showErrorModal).not.toHaveBeenCalled();
     });
 
-    it('shows error dialog for other API errors', () => {
-      const api = spectator.inject(ApiService);
+    it('shows error dialog for other API errors', async () => {
+      const api = spectator.inject(TypedApiService);
       const errorHandler = spectator.inject(ErrorHandlerService);
 
       const validationError = new ApiCallError({
@@ -535,25 +561,28 @@ describe('UpdateComponent', () => {
             code: UpdateCode.Normal,
             status: null,
             error: null,
-          } as UpdateStatus);
+          } as UpdateStatus as unknown as CallResponse<WebUiApiDirectory, 'update.status'>);
         }
         if (method === 'update.config') {
           return of(updateConfig);
         }
         if (method === 'webui.main.dashboard.sys_info') {
-          return of({ version: '22.12.3' } as SystemInfo);
+          return of({ version: '22.12.3' } as SystemInfo as unknown as CallResponse<WebUiApiDirectory, 'webui.main.dashboard.sys_info'>);
         }
         return throwError(() => new Error(`Unmocked call: ${method}`));
       });
 
       spectator.component.ngOnInit();
+
+      await spectator.fixture.whenStable();
+
       spectator.detectChanges();
 
       expect(errorHandler.showErrorModal).toHaveBeenCalledWith(validationError);
     });
 
-    it('handles multiple API errors correctly', () => {
-      const api = spectator.inject(ApiService);
+    it('handles multiple API errors correctly', async () => {
+      const api = spectator.inject(TypedApiService);
       const errorHandler = spectator.inject(ErrorHandlerService);
 
       const enonetError = new ApiCallError({
@@ -592,12 +621,15 @@ describe('UpdateComponent', () => {
           return of(updateConfig);
         }
         if (method === 'webui.main.dashboard.sys_info') {
-          return of({ version: '22.12.3' } as SystemInfo);
+          return of({ version: '22.12.3' } as SystemInfo as unknown as CallResponse<WebUiApiDirectory, 'webui.main.dashboard.sys_info'>);
         }
         return throwError(() => new Error(`Unmocked call: ${method}`));
       });
 
       spectator.component.ngOnInit();
+
+      await spectator.fixture.whenStable();
+
       spectator.detectChanges();
 
       // ENONET error should not trigger error dialog
@@ -606,8 +638,8 @@ describe('UpdateComponent', () => {
       expect(errorHandler.showErrorModal).toHaveBeenCalledWith(validationError);
     });
 
-    it('shows network error dialog for ECONNRESET errors', () => {
-      const api = spectator.inject(ApiService);
+    it('shows network error dialog for ECONNRESET errors', async () => {
+      const api = spectator.inject(TypedApiService);
       const errorHandler = spectator.inject(ErrorHandlerService);
 
       const connectionResetError = new ApiCallError({
@@ -634,20 +666,23 @@ describe('UpdateComponent', () => {
           return of(updateConfig);
         }
         if (method === 'webui.main.dashboard.sys_info') {
-          return of({ version: '22.12.3' } as SystemInfo);
+          return of({ version: '22.12.3' } as SystemInfo as unknown as CallResponse<WebUiApiDirectory, 'webui.main.dashboard.sys_info'>);
         }
         return throwError(() => new Error(`Unmocked call: ${method}`));
       });
 
       spectator.component.ngOnInit();
+
+      await spectator.fixture.whenStable();
+
       spectator.detectChanges();
 
       // The error handler should be called, which will internally show the network error dialog
       expect(errorHandler.showErrorModal).toHaveBeenCalledWith(connectionResetError);
     });
 
-    it('shows network error dialog for ETIMEDOUT errors', () => {
-      const api = spectator.inject(ApiService);
+    it('shows network error dialog for ETIMEDOUT errors', async () => {
+      const api = spectator.inject(TypedApiService);
       const errorHandler = spectator.inject(ErrorHandlerService);
 
       const timedOutError = new ApiCallError({
@@ -674,20 +709,23 @@ describe('UpdateComponent', () => {
           return of(updateConfig);
         }
         if (method === 'webui.main.dashboard.sys_info') {
-          return of({ version: '22.12.3' } as SystemInfo);
+          return of({ version: '22.12.3' } as SystemInfo as unknown as CallResponse<WebUiApiDirectory, 'webui.main.dashboard.sys_info'>);
         }
         return throwError(() => new Error(`Unmocked call: ${method}`));
       });
 
       spectator.component.ngOnInit();
+
+      await spectator.fixture.whenStable();
+
       spectator.detectChanges();
 
       // The error handler should be called, which will internally show the network error dialog
       expect(errorHandler.showErrorModal).toHaveBeenCalledWith(timedOutError);
     });
 
-    it('shows custom error message for ECONNRESET in update.status response', () => {
-      const api = spectator.inject(ApiService);
+    it('shows custom error message for ECONNRESET in update.status response', async () => {
+      const api = spectator.inject(TypedApiService);
 
       // Override the API call to return ECONNRESET error in update.status response
       jest.spyOn(api, 'call').mockImplementation((method) => {
@@ -702,18 +740,21 @@ describe('UpdateComponent', () => {
               reason: 'Connection reset by peer',
             },
             status: null,
-          } as UpdateStatus);
+          } as UpdateStatus as unknown as CallResponse<WebUiApiDirectory, 'update.status'>);
         }
         if (method === 'update.config') {
           return of(updateConfig);
         }
         if (method === 'webui.main.dashboard.sys_info') {
-          return of({ version: '22.12.3' } as SystemInfo);
+          return of({ version: '22.12.3' } as SystemInfo as unknown as CallResponse<WebUiApiDirectory, 'webui.main.dashboard.sys_info'>);
         }
         return throwError(() => new Error(`Unmocked call: ${method}`));
       });
 
       spectator.component.ngOnInit();
+
+      await spectator.fixture.whenStable();
+
       spectator.detectChanges();
 
       // The custom error message should be displayed
@@ -721,8 +762,8 @@ describe('UpdateComponent', () => {
       expect(errorElement).toBeTruthy();
     });
 
-    it('shows custom error message for ETIMEDOUT in update.status response', () => {
-      const api = spectator.inject(ApiService);
+    it('shows custom error message for ETIMEDOUT in update.status response', async () => {
+      const api = spectator.inject(TypedApiService);
 
       // Override the API call to return ETIMEDOUT error in update.status response
       jest.spyOn(api, 'call').mockImplementation((method) => {
@@ -737,18 +778,21 @@ describe('UpdateComponent', () => {
               reason: 'Connection timed out',
             },
             status: null,
-          } as UpdateStatus);
+          } as UpdateStatus as unknown as CallResponse<WebUiApiDirectory, 'update.status'>);
         }
         if (method === 'update.config') {
           return of(updateConfig);
         }
         if (method === 'webui.main.dashboard.sys_info') {
-          return of({ version: '22.12.3' } as SystemInfo);
+          return of({ version: '22.12.3' } as SystemInfo as unknown as CallResponse<WebUiApiDirectory, 'webui.main.dashboard.sys_info'>);
         }
         return throwError(() => new Error(`Unmocked call: ${method}`));
       });
 
       spectator.component.ngOnInit();
+
+      await spectator.fixture.whenStable();
+
       spectator.detectChanges();
 
       // The custom error message should be displayed
@@ -756,8 +800,8 @@ describe('UpdateComponent', () => {
       expect(errorElement).toBeTruthy();
     });
 
-    it('shows custom error message for ENETUNREACH in update.status response', () => {
-      const api = spectator.inject(ApiService);
+    it('shows custom error message for ENETUNREACH in update.status response', async () => {
+      const api = spectator.inject(TypedApiService);
 
       // Override the API call to return ENETUNREACH error in update.status response
       jest.spyOn(api, 'call').mockImplementation((method) => {
@@ -772,18 +816,21 @@ describe('UpdateComponent', () => {
               reason: 'Network is unreachable',
             },
             status: null,
-          } as UpdateStatus);
+          } as UpdateStatus as unknown as CallResponse<WebUiApiDirectory, 'update.status'>);
         }
         if (method === 'update.config') {
           return of(updateConfig);
         }
         if (method === 'webui.main.dashboard.sys_info') {
-          return of({ version: '22.12.3' } as SystemInfo);
+          return of({ version: '22.12.3' } as SystemInfo as unknown as CallResponse<WebUiApiDirectory, 'webui.main.dashboard.sys_info'>);
         }
         return throwError(() => new Error(`Unmocked call: ${method}`));
       });
 
       spectator.component.ngOnInit();
+
+      await spectator.fixture.whenStable();
+
       spectator.detectChanges();
 
       // The custom error message should be displayed

@@ -2,13 +2,15 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { PasswordComplexityRuleset } from 'app/enums/password-complexity-ruleset.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { SystemSecurityCardComponent } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.component';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -39,8 +41,8 @@ describe('SystemSecurityCardComponent', () => {
         ],
       }),
       mockAuth(),
-      mockApi([
-        mockCall('system.security.config', fakeSystemSecurityConfig),
+      mockTypedApi([
+        mockTypedCall('system.security.config', fakeSystemSecurityConfig as unknown as CallResponse<WebUiApiDirectory, 'system.security.config'>),
       ]),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.cancel()),
@@ -48,8 +50,10 @@ describe('SystemSecurityCardComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     formPanel = spectator.inject(FormSidePanelService);
   });

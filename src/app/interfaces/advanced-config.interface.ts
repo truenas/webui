@@ -1,5 +1,7 @@
+import { CallParams } from '@truenas/api-client';
 import { SedUser } from 'app/enums/sed-user.enum';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export interface SyslogServer {
   host: string;
@@ -41,3 +43,14 @@ export interface AdvancedConfig {
 }
 
 export type AdvancedConfigUpdate = Partial<Omit<AdvancedConfig, 'id' | 'isolated_gpu_pci_ids'>>;
+
+export type AdvancedConfigUpdateArgs = CallParams<WebUiApiDirectory, 'system.advanced.update'>[0];
+
+/**
+ * `system.advanced.update` narrows `syslogservers` to at most two and `serialspeed` to the baud rates it
+ * accepts; the forms build a list and a string, and cap the servers themselves. The payload is handed over
+ * unchanged.
+ */
+export function toAdvancedConfigUpdateArgs(update: AdvancedConfigUpdate): AdvancedConfigUpdateArgs {
+  return update as AdvancedConfigUpdateArgs;
+}

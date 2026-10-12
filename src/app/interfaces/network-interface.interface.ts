@@ -1,3 +1,4 @@
+import { CallParams, CallResponse } from '@truenas/api-client';
 import {
   CreateNetworkInterfaceType, LacpduRate,
   LinkAggregationProtocol,
@@ -6,6 +7,7 @@ import {
   NetworkInterfaceFlag,
   NetworkInterfaceType, XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export interface BaseNetworkInterface {
   aliases: NetworkInterfaceAlias[];
@@ -103,12 +105,6 @@ export interface CarpConfig {
   state: string; // Enum? "MASTER"
 }
 
-export interface ServiceRestartedOnNetworkSync {
-  type: string;
-  service: string;
-  ips: string[];
-}
-
 export interface NetworkInterfaceCreate {
   name?: string;
   description?: string;
@@ -137,3 +133,43 @@ export interface NetworkInterfaceCreate {
 }
 
 export type NetworkInterfaceUpdate = Omit<NetworkInterfaceCreate, 'type'>;
+
+type D = WebUiApiDirectory;
+
+/**
+ * Reads an `interface.query` row. Middleware spells the interface type, link state and protocols as literals,
+ * declares one model for every interface type, and leaves the type-specific fields optional.
+ */
+export function toNetworkInterface(networkInterface: WebUiQueryEntity<'interface.query'>): NetworkInterface {
+  return networkInterface as unknown as NetworkInterface;
+}
+
+export type NetworkInterfaceCreateArgs = CallParams<D, 'interface.create'>[0];
+
+/**
+ * `interface.create` and `interface.update` narrow the protocols, hash policies and LACPDU rates to the values
+ * their choices calls return; the form builds them as strings. The payload is handed over unchanged.
+ */
+export function toNetworkInterfaceCreateArgs(
+  params: NetworkInterfaceCreate | NetworkInterfaceUpdate,
+): NetworkInterfaceCreateArgs {
+  return params as NetworkInterfaceCreateArgs;
+}
+
+/** The settings an interface change is about to drop, as the default gateway dialog offers to replace them. */
+export interface NetworkConfigToBeRemoved {
+  ipv4gateway?: string;
+  nameserver1?: string;
+  nameserver2?: string;
+  nameserver3?: string;
+}
+
+/**
+ * Reads `interface.network_config_to_be_removed`. Middleware declares a list of the setting names, while the
+ * dialog has always read their values off an object; worth a box check.
+ */
+export function toNetworkConfigToBeRemoved(
+  config: CallResponse<D, 'interface.network_config_to_be_removed'>,
+): NetworkConfigToBeRemoved {
+  return config as unknown as NetworkConfigToBeRemoved;
+}

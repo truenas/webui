@@ -16,11 +16,11 @@ import {
   TnTablePagerComponent,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { tap } from 'rxjs';
+import { map, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { Tunable } from 'app/interfaces/tunable.interface';
+import { toTunable, Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -35,7 +35,7 @@ import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { getTunableFormConfig } from 'app/pages/system/advanced/tunable/tunable-form/tunable.form-config';
 import { tunableListElements } from 'app/pages/system/advanced/tunable/tunable-list/tunable-list.elements';
 
@@ -64,7 +64,7 @@ import { tunableListElements } from 'app/pages/system/advanced/tunable/tunable-l
   ],
 })
 export class TunableListComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private cdr = inject(ChangeDetectorRef);
@@ -105,7 +105,8 @@ export class TunableListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const tunables$ = this.api.call('tunable.query').pipe(
+    const tunables$ = this.api.query('tunable.query').pipe(
+      map((tunables) => tunables.map(toTunable)),
       tap((tunables) => this.tunables = tunables),
       takeUntilDestroyed(this.destroyRef),
     );

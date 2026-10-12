@@ -24,14 +24,6 @@ export interface BaseAuditEntry {
   success: boolean;
 }
 
-export interface AuditConfig {
-  retention: number;
-  reservation: number;
-  quota: number;
-  quota_fill_warning: number;
-  quota_fill_critical: number;
-}
-
 export type AuditEntry = SmbAuditEntry | MiddlewareAuditEntry | SudoAuditEntry | SystemAuditEntry;
 
 export interface AuditVersions {
