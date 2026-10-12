@@ -127,10 +127,12 @@
 
         @if (!isNew && affectedSnapshots().length > 0) {
           <div class="retention-warning">
+            @let warning = retentionWarning | translate: { n: affectedSnapshots().length } | splitTag: 'b';
             <p class="warning-text">
-              {{ 'Warning: This change will affect the retention of' | translate }}
-              <strong tnTestId="affected-snapshots" tnTestIdType="text">{{ affectedSnapshots().length }}</strong>
-              {{ 'existing snapshot(s)' | translate }}.
+              {{ warning.before }}<strong
+                tnTestId="affected-snapshots"
+                tnTestIdType="text"
+              >{{ warning.inner }}</strong>{{ warning.after }}
             </p>
             <tn-form-field [tooltip]="tooltips.fixate_removal_date | translate">
               <tn-checkbox
