@@ -10,7 +10,7 @@ import { Role, roleNames } from 'app/enums/role.enum';
 import { hasShellAccess, hasSshAccess } from 'app/helpers/user.helper';
 import { User, UserFormPreset } from 'app/interfaces/user.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { SplitLinkPipe } from 'app/modules/pipes/split-link/split-link.pipe';
+import { SplitTagPipe } from 'app/modules/pipes/split-tag/split-tag.pipe';
 import { defaultRole, UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 
 @Component({
@@ -27,7 +27,7 @@ import { defaultRole, UserFormStore } from 'app/pages/credentials/users/user-for
     TnCheckboxLabelDirective,
     ReactiveFormsModule,
     TranslateModule,
-    SplitLinkPipe,
+    SplitTagPipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -43,7 +43,7 @@ export class AllowedAccessSectionComponent {
   /** What a create flow wants this section to start as. Ignored while editing. */
   preset = input<UserFormPreset | undefined>(undefined);
 
-  // One sentence for translators; `splitLink` renders the <link> part as the docs link.
+  // One sentence for translators; `splitTag` renders the <link> part as the docs link.
   protected readonly customRolesHint = T('Learn about <link>custom roles</link>.');
 
   protected sshAccess = this.userFormStore.sshAccess;

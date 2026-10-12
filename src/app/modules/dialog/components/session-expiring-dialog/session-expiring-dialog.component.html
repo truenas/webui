@@ -3,14 +3,14 @@
     <div class="message-content">
       <span [innerHTML]="options.message | translate"></span>
 
-      @let preferencesHint = changeTimeoutHint | translate | splitLink;
+      @let preferencesHint = changeTimeoutHint | translate | splitTag;
       <p>
         {{ preferencesHint.before }}<button
           class="preferences-link"
           tnTestIdType="button"
           [tnTestId]="'open-preferences'"
           (click)="openPreferences()"
-        >{{ preferencesHint.link }}</button>{{ preferencesHint.after }}
+        >{{ preferencesHint.inner }}</button>{{ preferencesHint.after }}
       </p>
     </div>
   </div>
