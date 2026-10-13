@@ -318,7 +318,15 @@ two below their defaults; deleting or disabling a tunable puts the old value
 back. The row tag is `tunable-<var>`, and Variable is disabled on edit, so an
 edit never renames the row. UDEV and ZFS tunables are not covered.
 
-The framework is done and the coverage is not. Ninety-two tests — ninety-one
+SSH keypairs came next, in `tests/ssh-keypairs.e2e.ts`: generating one with the
+form's Generate Keypair button and deleting one, from the SSH Keypairs card on
+Credentials > Backup Credentials. The generate test reads the pair the form
+filled in and requires `keychaincredential.query` to hold that same pair, so a
+save that dropped or regenerated the keys fails. The delete runs beside a second
+keypair that must come through untouched. Pasting a key in, editing, downloading
+and deleting a keypair an SSH connection still uses are not covered.
+
+The framework is done and the coverage is not. Ninety-four tests — ninety-three
 journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built

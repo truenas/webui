@@ -21,6 +21,7 @@ const expectedRoute = {
   users: /\/credentials\/users/,
   groups: /\/credentials\/groups\/?$/,
   s3AccessKeys: /\/credentials\/s3-access-keys/,
+  backupCredentials: /\/credentials\/backup-credentials\/?$/,
   advancedSettings: /\/system\/advanced\/?$/,
 } as const;
 
@@ -86,6 +87,12 @@ export async function goToGroups(page: Page): Promise<void> {
 export async function goToS3AccessKeys(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.credentials).click();
   await clickAndArrive(page, navLocators.s3AccessKeys, expectedRoute.s3AccessKeys);
+}
+
+/** Backup Credentials — cloud credentials, SSH connections and SSH keypairs — is under Credentials too. */
+export async function goToBackupCredentials(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.credentials).click();
+  await clickAndArrive(page, navLocators.backupCredentials, expectedRoute.backupCredentials);
 }
 
 /** System is a slide-out too, so Advanced Settings takes two clicks the same way. */

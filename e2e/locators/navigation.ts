@@ -19,6 +19,8 @@ export const navLocators = {
   groups: '[data-test="link-groups"]',
   /** `S3 Access Keys` under Credentials; the submenu writes the raw item name. */
   s3AccessKeys: '[data-test="link-s3-access-keys"]',
+  /** `Backup Credentials` under Credentials, raw item name again. */
+  backupCredentials: '[data-test="link-backup-credentials"]',
   /** A slide-out, like Credentials. */
   system: '[data-test="link-system-menu"]',
   advancedSettings: '[data-test="link-advanced-settings"]',
