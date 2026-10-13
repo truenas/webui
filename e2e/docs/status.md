@@ -353,8 +353,20 @@ that must come through untouched. The share presets other than Generic, quotas,
 encryption and zvols are not covered here; `smb-dataset-preset` covers the SMB
 preset.
 
-The framework is done and the coverage is not. Ninety-nine tests — ninety-eight
-journeys and the smoke — against 19 top-level feature areas. What the work
+NTP servers came next, in `tests/ntp-servers.e2e.ts`: adding, editing and
+deleting a server from the card on System > Advanced Settings, each asserted on
+the card and through `system.ntpserver.query`, and edit and delete each beside a
+second server that must come through untouched. Middleware queries a server
+before saving it and refuses one that does not answer unless Force is ticked, so
+every address is in 192.0.2.0/24, reserved for documentation and reachable from
+nowhere, and every save ticks Force. That keeps the outcome independent of
+whether the appliance can reach the internet. The row tag is
+`ntp-server-<address>-<minpoll>-<maxpoll>`, so an edit to either interval
+renames the row. Unlike the other cards on that page, this one raises no
+first-time warning. The refusal without Force is not covered.
+
+The framework is done and the coverage is not. A hundred and two tests — a
+hundred and one journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
