@@ -26,11 +26,17 @@ describe('ServiceWebshareComponent', () => {
   let spectator: Spectator<ServiceWebshareComponent>;
   let loader: HarnessLoader;
 
-  const mockWebShareConfig: WebShareConfig = {
+  const mockWebShareConfig = {
     id: 1,
     search: true,
     passkey: WebSharePasskey.Enabled,
-  };
+    groups: ['ad_staff'],
+    mcp_enabled: false,
+    mcp_allowed_groups: [],
+    mcp_allow_write: false,
+  } as WebShareConfig;
+
+  const mcpDefaults = { mcp_enabled: false, mcp_allowed_groups: [] as string[], mcp_allow_write: false };
 
   const tnConnectConfig = signal<TruenasConnectConfig | undefined>(
     { status: TruenasConnectStatus.Configured } as TruenasConnectConfig,
@@ -90,7 +96,7 @@ describe('ServiceWebshareComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.update', [{ search: false, passkey: WebSharePasskey.Required }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.update', [{ search: false, passkey: WebSharePasskey.Required, ...mcpDefaults }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Service configuration saved');
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });
   });
@@ -102,7 +108,7 @@ describe('ServiceWebshareComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('webshare.update', [{ search: false, passkey: WebSharePasskey.Enabled }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('webshare.update', [{ search: false, passkey: WebSharePasskey.Enabled, ...mcpDefaults }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });
   });
 
@@ -142,14 +148,14 @@ describe('ServiceWebshareComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.update', [{ search: true, passkey: WebSharePasskey.Enabled }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.update', [{ search: true, passkey: WebSharePasskey.Enabled, ...mcpDefaults }]);
   });
 
   it('initializes form with default values when config has search disabled', async () => {
     const api = spectator.inject(ApiService);
     jest.spyOn(api, 'call').mockImplementation((method) => {
       if (method === 'webshare.config') {
-        return of({ id: 1, search: false, passkey: WebSharePasskey.Disabled } as WebShareConfig);
+        return of({ ...mockWebShareConfig, search: false, passkey: WebSharePasskey.Disabled });
       }
       return of(null);
     });
@@ -172,6 +178,97 @@ describe('ServiceWebshareComponent', () => {
     const searchCheckbox = await getSearchCheckbox();
     expect(await searchCheckbox.isDisabled()).toBe(true);
     expect(await searchCheckbox.getValue()).toBe(false);
+  });
+
+  describe('MCP', () => {
+    const getMcpCheckbox = (label: string): Promise<IxCheckboxHarness> => loader.getHarness(
+      IxCheckboxHarness.with({ label }),
+    );
+    const getGroupsSelect = (): Promise<IxSelectHarness | null> => loader.getHarnessOrNull(
+      IxSelectHarness.with({ label: 'Allowed Groups' }),
+    );
+    const save = async (): Promise<void> => {
+      await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
+    };
+    const reloadWithConfig = async (config: Partial<WebShareConfig>): Promise<void> => {
+      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
+        return of(method === 'webshare.config' ? { ...mockWebShareConfig, ...config } : mockWebShareConfig);
+      });
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+    };
+
+    it('hides the MCP group and write settings while MCP is disabled', async () => {
+      expect(await (await getMcpCheckbox('Enable MCP')).getValue()).toBe(false);
+      expect(await getGroupsSelect()).toBeNull();
+      expect(await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Allow Write' }))).toBeNull();
+    });
+
+    it('prefills truenas_webshare and offers only groups that grant Webshare access when MCP is enabled', async () => {
+      await (await getMcpCheckbox('Enable MCP')).setValue(true);
+
+      const groupsSelect = await getGroupsSelect();
+      expect(await groupsSelect!.getValue()).toEqual(['truenas_webshare']);
+      expect(await groupsSelect!.getOptionLabels()).toEqual(['truenas_webshare', 'ad_staff']);
+    });
+
+    it('hides the group picker and submits truenas_webshare when there are no login groups', async () => {
+      await reloadWithConfig({ groups: [] });
+      await (await getMcpCheckbox('Enable MCP')).setValue(true);
+
+      expect(await getGroupsSelect()).toBeNull();
+
+      await save();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.update', [expect.objectContaining({
+        mcp_enabled: true,
+        mcp_allowed_groups: ['truenas_webshare'],
+      })]);
+    });
+
+    it('submits MCP settings', async () => {
+      await (await getMcpCheckbox('Enable MCP')).setValue(true);
+      await (await getGroupsSelect())!.setValue(['truenas_webshare', 'ad_staff']);
+      await (await getMcpCheckbox('Allow Write')).setValue(true);
+
+      await save();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.update', [expect.objectContaining({
+        mcp_enabled: true,
+        mcp_allowed_groups: ['truenas_webshare', 'ad_staff'],
+        mcp_allow_write: true,
+      })]);
+    });
+
+    it('loads saved MCP settings without prefilling over them', async () => {
+      await reloadWithConfig({ mcp_enabled: true, mcp_allowed_groups: ['ad_staff'], mcp_allow_write: true });
+
+      expect(await (await getMcpCheckbox('Enable MCP')).getValue()).toBe(true);
+      expect(await (await getGroupsSelect())!.getValue()).toEqual(['ad_staff']);
+      expect(await (await getMcpCheckbox('Allow Write')).getValue()).toBe(true);
+    });
+
+    it('keeps saved MCP groups and write access when MCP is turned off', async () => {
+      await reloadWithConfig({ mcp_enabled: true, mcp_allowed_groups: ['ad_staff'], mcp_allow_write: true });
+      await (await getMcpCheckbox('Enable MCP')).setValue(false);
+
+      await save();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.update', [expect.objectContaining({
+        mcp_enabled: false,
+        mcp_allowed_groups: ['ad_staff'],
+        mcp_allow_write: true,
+      })]);
+    });
+
+    it('does not allow saving MCP enabled without a group', async () => {
+      await (await getMcpCheckbox('Enable MCP')).setValue(true);
+      await (await getGroupsSelect())!.setValue([]);
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+    });
   });
 
   describe('when the system is not entitled to TRUESEARCH', () => {
@@ -243,7 +340,7 @@ describe('ServiceWebshareComponent', () => {
     spectator.detectChanges();
 
     // Backend reports stale search=true after the effect already disabled the control.
-    config$.next({ id: 1, search: true, passkey: WebSharePasskey.Enabled });
+    config$.next({ ...mockWebShareConfig, search: true });
     spectator.detectChanges();
 
     expect(await (await getSearchCheckbox()).getValue()).toBe(false);

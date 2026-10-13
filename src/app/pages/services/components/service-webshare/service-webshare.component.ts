@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef, computed, effect,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -15,6 +15,7 @@ import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WebSharePasskey, webSharePasskeyLabels } from 'app/enums/webshare-passkey.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceWebshare } from 'app/helptext/services/components/service-webshare';
+import { Option } from 'app/interfaces/option.interface';
 import { WebShareConfig } from 'app/interfaces/webshare-config.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -28,6 +29,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
+
+/** Grants Webshare access on its own, so it is always a valid MCP group. */
+const webshareGroup = 'truenas_webshare';
 
 @Component({
   selector: 'ix-service-webshare',
@@ -67,10 +71,29 @@ export class ServiceWebshareComponent implements OnInit {
   form = this.fb.group({
     search: [false],
     passkey: [WebSharePasskey.Disabled, Validators.required],
+    mcp_enabled: [false],
+    mcp_allowed_groups: [{ value: [] as string[], disabled: true }, Validators.required],
+    mcp_allow_write: [{ value: false, disabled: true }],
   });
 
   readonly helptext = helptextServiceWebshare;
   readonly passkeyOptions$ = of(mapToOptions(webSharePasskeyLabels, this.translate));
+
+  /**
+   * Middleware only accepts MCP groups that also grant Webshare access: `truenas_webshare` or one of
+   * the Directory Service login `groups`. Those are fixed while this form is open, so only valid
+   * choices are offered. Saved MCP groups are kept as options too, so they still display.
+   */
+  private readonly mcpGroupOptions = signal<Option<string>[]>(this.toGroupOptions([webshareGroup]));
+  protected readonly mcpGroupOptions$ = toObservable(this.mcpGroupOptions);
+
+  protected readonly isMcpEnabled = signal(false);
+
+  /**
+   * With no Directory Service login groups, `truenas_webshare` is the only valid MCP group, so the
+   * picker would offer a single choice. It is hidden then, and enabling MCP prefills that group.
+   */
+  protected readonly hasMcpGroupChoice = computed(() => this.mcpGroupOptions().length > 1);
 
   /**
    * TrueSearch depends on TrueNAS Connect, so it can only be enabled while Connect is
@@ -123,6 +146,12 @@ export class ServiceWebshareComponent implements OnInit {
         searchControl.disable({ emitEvent: false });
       }
     });
+
+    // The MCP settings stay in the payload while MCP is off, so saving does not wipe them; disabling
+    // them only keeps the required group list from blocking a save that does not enable MCP.
+    this.form.controls.mcp_enabled.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((isEnabled) => this.onMcpEnabledChanged(isEnabled));
   }
 
   ngOnInit(): void {
@@ -136,6 +165,14 @@ export class ServiceWebshareComponent implements OnInit {
           search: config.search && this.canUseTrueSearch(),
           passkey: config.passkey,
         });
+
+        this.mcpGroupOptions.set(this.toGroupOptions([webshareGroup, ...config.groups, ...config.mcp_allowed_groups]));
+        // Groups and write access first, so enabling MCP below does not prefill over saved groups.
+        this.form.patchValue({
+          mcp_allowed_groups: config.mcp_allowed_groups,
+          mcp_allow_write: config.mcp_allow_write,
+        });
+        this.form.controls.mcp_enabled.setValue(config.mcp_enabled);
         this.isFormLoading.set(false);
       },
       error: (error: unknown) => {
@@ -160,5 +197,25 @@ export class ServiceWebshareComponent implements OnInit {
         this.formErrorHandler.handleValidationErrors(error, this.form);
       },
     });
+  }
+
+  private onMcpEnabledChanged(isEnabled: boolean): void {
+    this.isMcpEnabled.set(isEnabled);
+    const { mcp_allowed_groups: groupsControl, mcp_allow_write: allowWriteControl } = this.form.controls;
+    if (!isEnabled) {
+      groupsControl.disable();
+      allowWriteControl.disable();
+      return;
+    }
+
+    groupsControl.enable();
+    allowWriteControl.enable();
+    if (!groupsControl.value.length) {
+      groupsControl.setValue([webshareGroup]);
+    }
+  }
+
+  private toGroupOptions(groups: string[]): Option<string>[] {
+    return [...new Set(groups)].map((group) => ({ label: group, value: group }));
   }
 }
