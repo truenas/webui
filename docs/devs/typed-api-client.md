@@ -38,8 +38,10 @@ moved — goes over the same connection: `WebSocketHandlerService.responses$` is
 tab, which showed up as two entries in `auth.sessions` and every audited call
 recorded twice. That is gone.
 
-What the handler still owns is what the client has no seam for: the legacy call
-queue, the debug panel's logging, and its mock interception. The ceiling on
+What the handler still owns is the legacy call queue. The debug panel's logging
+and mock interception moved to the connection in NAS-144008
+(`interceptConnection`, installed by the `TYPED_API_CLIENT` factory when the
+panel is enabled), so they see and answer both clients' traffic. The ceiling on
 concurrent calls is no longer the handler's alone: middleware refuses the 21st
 call in flight on a connection, whoever sent it, so `limitConcurrentCalls` holds
 the whole tab to 19 on the connection's `send`, one short of the ceiling to
@@ -323,8 +325,9 @@ Once most call sites are typed, move what still depends on the legacy socket:
   `prepareShutdown()` / `isSystemShuttingDown` and the access-restricted
   acknowledgement. The guard, the shutdown / restart / failover / config-reset
   pages, the GUI form and the forced password change read it instead of the
-  handler, which is now only the legacy call queue and the debug panel.
-- **Debug panel and mocks.** Need a hook on the client (see gaps).
+  handler, which is now only the legacy call queue.
+- **Debug panel and mocks.** Done (NAS-144008), on the connection seam rather
+  than a client hook — see gap 7 for the one path it cannot reach.
 
 ### Phase 3 — remove the legacy client
 
@@ -400,12 +403,19 @@ above. Each is a change for `truenas/api-client-ts`.
    `TrueNasErrorFrame` extends the *client's* `JsonRpcError` and carries
    `TrueNasErrorData`, while `ApiCallError` takes the UI's `JsonRpcError` with
    `ApiErrorDetails`. Converging those two is what would retire the cast.
-7. **No message hook.** The debug panel and mock responses intercept messages
-   in `WebSocketHandlerService`; the client has no equivalent seam. Since
-   NAS-143989 the panel's *incoming* log is complete anyway — the handler reads
-   the shared connection, so typed replies pass through it — but outgoing typed
-   frames are still invisible, and a mock can only intercept a call scheduled
-   through the handler. Needed before the handler can be deleted.
+7. **No message hook.** The client has no interception seam, so
+   `interceptConnection` (NAS-144008) wraps the connection's `send` and
+   `messages()` the way `limitConcurrentCalls` wraps `send`: every frame either
+   client writes is logged and checked against the mock configs, and mocked
+   answers are mixed into `messages()` on a later tick (the client's verbs send
+   before they listen, so an answer inside `send` would be lost). It is installed
+   after the gate, so a mocked call takes no place in flight. One path stays out
+   of reach: `TrueNasApi` builds its `jobEvents` stream from `messages()` in a
+   field initializer, before anything can wrap it, so a mocked job's synthetic
+   `core.get_jobs` events reach the legacy jobs store but not a typed `job()`.
+   Library ask: read `messages()` lazily there (`defer`), or take a message
+   interceptor in `createTrueNasClient`. Frames the client writes straight to
+   the socket (the keepalive `core.ping`) are not seen either.
 8. **Job type drift.** The client's `Job` is honest about `result` and
    `time_started` being `null` before a job starts; the UI's is not. The
    wrapper narrows for now; the UI should adopt the client's type.
