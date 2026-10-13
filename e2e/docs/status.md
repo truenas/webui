@@ -296,7 +296,18 @@ form, which opens on the signed-in admin, and ties the key the one-time dialog
 showed to the stored record by its `<id>-` prefix. Editing, resetting and an
 expiry date are not covered.
 
-The framework is done and the coverage is not. Eighty-five tests — eighty-four
+Cron jobs came next, in `tests/cron-jobs.e2e.ts`: adding, editing, running and
+deleting a job from the card on System > Advanced Settings, each beside a second
+job that must come through untouched. It sits on the same card shape as
+init/shutdown scripts, and the first-time warning both cards raise now lives in
+`flows/advanced-settings.ts`. Its row tag is `card-cron-<command>-<user>`, so
+editing the command renames the row. "Run job" is the one action with no record
+to read back: it starts a `cronjob.run` job, so the spec waits for a new one for
+that job's id in `core.get_jobs` to reach `SUCCESS`, and checks that none started
+for the bystander. Custom schedules, built in the scheduler's own dialog, are not
+covered.
+
+The framework is done and the coverage is not. Eighty-nine tests — eighty-eight
 journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built

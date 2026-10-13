@@ -23,3 +23,15 @@ export const confirmDialogLocators = {
   confirm: '[data-test="button-dialog-confirm"]',
   cancel: '[data-test="button-dialog-cancel"]',
 } as const;
+
+/**
+ * webui's shared information dialog (`DialogService.info` and `.warn`).
+ *
+ * Raised by the first-time warning in front of every form on Advanced Settings,
+ * and by any action that reports its result in a dialog rather than a snackbar.
+ */
+export const infoDialogLocators = {
+  title: '[data-test="text-info-title"]',
+  message: '[data-test="text-info-message"]',
+  close: '[data-test="button-dialog-close"]',
+} as const;

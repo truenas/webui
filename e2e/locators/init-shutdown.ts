@@ -59,17 +59,6 @@ export const initShutdownLocators = {
     ),
   },
 
-  /**
-   * The warning Advanced Settings raises the first time an admin opens any of
-   * its forms in a session — `DialogService.warn`, which renders the shared info
-   * dialog. Held in memory by `FirstTimeWarningService`, so a fresh page always
-   * sees it once and never twice.
-   */
-  firstTimeWarning: {
-    title: '[data-test="text-info-title"]',
-    close: '[data-test="button-dialog-close"]',
-  },
-
   form: {
     comment: '[data-test="input-comment"]',
     /** Shown only while Type is Command, which is the default. */
