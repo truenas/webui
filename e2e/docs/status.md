@@ -365,8 +365,18 @@ whether the appliance can reach the internet. The row tag is
 renames the row. Unlike most cards on that page, this one raises no
 first-time warning. The refusal without Force is not covered.
 
-The framework is done and the coverage is not. A hundred and two tests — a
-hundred and one journeys and the smoke — against 19 top-level feature areas. What the work
+Syslog settings came next, in `tests/syslog-settings.e2e.ts`: one test sets
+every field on the Syslog card's form, starting from the defaults, and the other
+starts from everything set and undoes it, removing the server. Each is asserted
+on the card's readouts and through `system.advanced.config`. The settings are
+one config record rather than a list, so there is nothing to delete; like the
+preferences spec, each test starts from a fixed baseline, middleware's defaults,
+and teardown writes it back. The servers are a form array whose Host and
+Transport carry no index in their ids, so the specs never put two servers in
+the form, and the two-server limit and the TLS certificate are not covered.
+
+The framework is done and the coverage is not. A hundred and four tests — a
+hundred and three journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
