@@ -16,7 +16,7 @@
         <h3 tnTestIdType="text" [tnTestId]="['vdev-layout', layout(), position()]">{{ layout() }}</h3>
         @if (minDisks[layout()] <= vdev()?.disks?.length) {
           <p tnTestIdType="text" [tnTestId]="['vdev-capacity-estimate', layout(), position()]">
-            {{ sizeEstimation | ixFileSize }}{{ ' Est. Usable Raw Capacity' | translate }}
+            {{ '{size} Est. Usable Raw Capacity' | translate: { size: sizeEstimation | ixFileSize } }}
           </p>
         } @else {
           <p>{{ 'Add the required no. of disks to get a vdev size estimate' | translate }}</p>

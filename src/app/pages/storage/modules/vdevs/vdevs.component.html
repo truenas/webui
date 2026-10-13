@@ -27,15 +27,19 @@
 
     <ng-container detail-header>
       @if (selectedNode) {
-        <span>{{ 'Details for ' | translate }}</span>
+        @let detailsTitle = detailsTitleText | translate: { name: getTitle(selectedNode | cast) | translate } | splitTag: 'name';
+        <span>{{ detailsTitle.before }}</span>
         <ix-topology-item-icon
           class="title-icon"
           [topologyItem]="selectedNode | cast"
           [disk]="vDevsStore.getDisk(selectedNode.children[0] || selectedNode)"
         ></ix-topology-item-icon>
         <span class="device-name" tnTestId="vdev-details-title" tnTestIdType="text">
-          {{ getTitle(selectedNode | cast) | translate }}
+          {{ detailsTitle.inner }}
         </span>
+        @if (detailsTitle.after) {
+          <span>{{ detailsTitle.after }}</span>
+        }
       }
     </ng-container>
 

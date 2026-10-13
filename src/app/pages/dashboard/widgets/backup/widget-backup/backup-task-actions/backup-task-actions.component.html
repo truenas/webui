@@ -1,25 +1,19 @@
 @if (!!allCount()) {
-  {{ 'Backup' | translate }}
-  <a
+  @let cloud = backupSentence | translate | splitTag: 'cloud';
+  @let truenas = cloud.after | splitTag: 'truenas';
+  {{ cloud.before }}<a
     *ixRequiresRoles="[Role.CloudSyncWrite]"
     class="backup-action"
     tnTestIdType="link"
     [tnTestId]="'cloud'"
     (click)="addCloudSyncTask.emit()"
-  >
-    {{ 'to cloud' | translate }}
-  </a>
-  {{ 'or' | translate }}
-  <a
+  >{{ cloud.inner }}</a>{{ truenas.before }}<a
     *ixRequiresRoles="[Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull]"
     class="backup-action"
     tnTestIdType="link"
     [tnTestId]="'another-TrueNAS'"
     (click)="addReplicationTask.emit()"
-  >
-    {{ 'to another TrueNAS' | translate }}
-  </a>
+  >{{ truenas.inner }}</a>{{ truenas.after }}
 } @else {
   {{ 'Backup to Cloud or another TrueNAS via links below' | translate }}
 }
-

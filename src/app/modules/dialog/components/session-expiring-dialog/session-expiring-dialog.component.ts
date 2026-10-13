@@ -5,7 +5,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
-import { SplitLinkPipe } from 'app/modules/pipes/split-link/split-link.pipe';
+import { SplitTagPipe } from 'app/modules/pipes/split-tag/split-tag.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 
 export interface SessionExpiringDialogOptions {
@@ -24,7 +24,7 @@ export interface SessionExpiringDialogOptions {
     TnButtonComponent,
     TranslateModule,
     TnTestIdDirective,
-    SplitLinkPipe,
+    SplitTagPipe,
   ],
 })
 export class SessionExpiringDialog {
@@ -33,7 +33,7 @@ export class SessionExpiringDialog {
   private translate = inject(TranslateService);
   private navigateAndHighlight = inject(NavigateAndHighlightService);
 
-  // One sentence for translators; `splitLink` renders the <link> part as the Preferences button.
+  // One sentence for translators; `splitTag` renders the <link> part as the Preferences button.
   protected readonly changeTimeoutHint = T('Change Session Timeout in <link>Preferences</link>');
 
   options: SessionExpiringDialogOptions;

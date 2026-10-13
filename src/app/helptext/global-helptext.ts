@@ -5,8 +5,8 @@ export const helptextGlobal = {
   sysUpdateMessagePt2: T('This system will restart when the update completes.'),
 
   humanReadable: {
-    suggestionTooltip: T('This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).\
- If units are not specified, the value defaults to'),
+    bytesTooltip: T('This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).\
+ If units are not specified, the value defaults to bytes.'),
 
     suggestionLabel: T('(Examples: 500 KiB, 500M, 2 TB)'),
   },

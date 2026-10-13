@@ -9,7 +9,7 @@
       size="lg"
       testId="user-menu"
       [dense]="true"
-      [ariaLabel]="('Open user menu for' | translate) + ' ' + user.pw_name"
+      [ariaLabel]="'Open user menu for {username}' | translate: { username: user.pw_name }"
       [tooltip]="tooltips.settings | translate"
       [tnMenuTriggerFor]="userMenu"
       [ixUiSearch]="searchableElements.elements.userMenu"

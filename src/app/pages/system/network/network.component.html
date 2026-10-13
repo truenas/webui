@@ -11,7 +11,8 @@
               <p>{{ helptext.pendingChangesText | translate }}</p>
 
               <p class="checkin-text">
-                {{ helptext.checkinText | translate }}
+                @let checkin = helptext.checkinText | translate | splitTag: 'input';
+                {{ checkin.before }}{{ checkin.inner }}
                 <tn-input
                   class="timeout-field"
                   [inputType]="InputType.Number"
@@ -22,7 +23,7 @@
                   [ngModel]="checkinTimeout()"
                   (ngModelChange)="checkinTimeout.set($event)"
                 ></tn-input>
-                {{ helptext.checkinText2 | translate }}
+                {{ checkin.after }}
               </p>
 
               @if (isCheckinTimeoutFieldInvalid()) {

@@ -3,6 +3,7 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, signal, OnInit, AfterViewInit, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { map, Observable } from 'rxjs';
@@ -13,6 +14,7 @@ import { isTopologyDisk, VDevItem } from 'app/interfaces/storage.interface';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
+import { SplitTagPipe } from 'app/modules/pipes/split-tag/split-tag.pipe';
 import { DiskDetailsPanelComponent } from 'app/pages/storage/modules/vdevs/components/disk-details-panel/disk-details-panel.component';
 import { TopologyItemIconComponent } from 'app/pages/storage/modules/vdevs/components/topology-item-icon/topology-item-icon.component';
 import { VDevsListComponent } from 'app/pages/storage/modules/vdevs/components/vdevs-list/vdevs-list.component';
@@ -33,6 +35,7 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
     TranslateModule,
     TnButtonComponent,
     CastPipe,
+    SplitTagPipe,
     DiskDetailsPanelComponent,
     MasterDetailViewComponent,
     AsyncPipe,
@@ -50,6 +53,8 @@ export class VDevsComponent implements OnInit, AfterViewInit {
   protected poolName = toSignal(this.vDevsStore.poolName$, { initialValue: '' });
 
   protected readonly requiredRoles = [Role.PoolWrite];
+  // `splitTag` renders the <name> part next to the vdev icon.
+  protected readonly detailsTitleText = T('Details for <name>{name}</name>');
 
   protected isMobileView = signal(false);
   protected showMobileDetails = signal(false);

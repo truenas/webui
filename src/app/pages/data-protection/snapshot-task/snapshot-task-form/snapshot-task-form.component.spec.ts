@@ -249,10 +249,10 @@ describe('SnapshotTaskComponent', () => {
 
       spectator.detectChanges();
 
-      const warningElement = spectator.query('.retention-warning');
-      expect(warningElement).toBeTruthy();
-      expect(warningElement.textContent).toContain('3');
-      expect(warningElement.textContent).toContain('existing snapshot(s)');
+      expect(spectator.query('.retention-warning .warning-text')).toHaveExactTrimmedText(
+        'Warning: This change will affect the retention of 3 existing snapshots.',
+      );
+      expect(spectator.query('.retention-warning strong')).toHaveExactTrimmedText('3');
     });
 
     it('shows error message when retention check fails', async () => {

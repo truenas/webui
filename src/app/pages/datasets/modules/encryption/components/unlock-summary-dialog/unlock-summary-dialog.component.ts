@@ -1,6 +1,6 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent, TnDividerComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { helptextUnlock } from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import { DatasetUnlockParams } from 'app/interfaces/dataset-lock.interface';
@@ -28,6 +28,7 @@ import {
 export class UnlockSummaryDialog {
   dialogRef = inject<DialogRef>(DialogRef);
   private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
 
   title: string = helptextUnlock.unlockDatasetDialog.title;
   errorsMessage: string = helptextUnlock.unlockDatasetDialog.errorsMessage;
@@ -71,7 +72,7 @@ export class UnlockSummaryDialog {
   showError(dataset: { name: string; unlock_error?: string }): void {
     if (this.dialogService && dataset.unlock_error) {
       this.dialogService.warn(
-        helptextUnlock.unlockDatasetDialog.errorDialogTitle + dataset.name,
+        this.translate.instant(helptextUnlock.unlockDatasetDialog.errorDialogTitle, { name: dataset.name }),
         dataset.unlock_error,
       );
     }
