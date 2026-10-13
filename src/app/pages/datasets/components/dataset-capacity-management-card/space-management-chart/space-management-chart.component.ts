@@ -2,6 +2,7 @@ import { PercentPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { Color, ChartDataset, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { DatasetType } from 'app/enums/dataset.enum';
@@ -22,6 +23,7 @@ import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.se
     BaseChartDirective,
     FileSizePipe,
     PercentPipe,
+    TnTestIdDirective,
   ],
 })
 export class SpaceManagementChartComponent {

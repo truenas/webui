@@ -72,6 +72,10 @@ export class PreferencesFormComponent extends IxFormHostForm implements OnInit {
 
   private previewSubscription: Subscription;
 
+  // The stored lifetime in seconds. Values saved before the field moved to minutes may not be
+  // whole minutes (e.g. 30 or 305); they are kept as-is unless the user edits the field.
+  private storedLifetime = signal(defaultPreferences.lifetime);
+
   protected readonly form = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
     syncThemeWithOS: [false],
@@ -98,9 +102,15 @@ export class PreferencesFormComponent extends IxFormHostForm implements OnInit {
     { initialValue: this.form.controls.token_lifetime.value },
   );
 
-  // Long timeouts are easier to read as hours/days ("1440" → "1 day").
   protected sessionTimeoutHint = computed(() => {
     const minutes = Number(this.tokenLifetime());
+    // `tokenLifetime` emits after the control is marked dirty, so `pristine` is current here.
+    if (this.keepsStoredLifetime()) {
+      return this.translate.instant('Currently {duration}', {
+        duration: formatDuration(secondsToDuration(this.storedLifetime())),
+      });
+    }
+    // Long timeouts are easier to read as hours/days ("1440" → "1 day").
     return Number.isInteger(minutes) && minutes >= 60 ? formatDuration(secondsToDuration(minutes * 60)) : '';
   });
 
@@ -146,6 +156,7 @@ export class PreferencesFormComponent extends IxFormHostForm implements OnInit {
     });
 
     this.store$.pipe(waitForPreferences, takeUntilDestroyed(this.destroyRef)).subscribe((preferences) => {
+      this.storedLifetime.set(preferences.lifetime || defaultPreferences.lifetime);
       this.form.patchValue({
         theme: preferences.userTheme,
         syncThemeWithOS: preferences.syncThemeWithOS ?? false,
@@ -154,7 +165,7 @@ export class PreferencesFormComponent extends IxFormHostForm implements OnInit {
         language: preferences.language || defaultPreferences.language,
         date_format: preferences.dateFormat || defaultPreferences.dateFormat,
         time_format: preferences.timeFormat || defaultPreferences.timeFormat,
-        token_lifetime: secondsToMinutes(preferences.lifetime || defaultPreferences.lifetime),
+        token_lifetime: secondsToMinutes(this.storedLifetime()),
       });
     });
 
@@ -192,7 +203,9 @@ export class PreferencesFormComponent extends IxFormHostForm implements OnInit {
     const values = this.form.getRawValue();
 
     this.previewSubscription.unsubscribe();
-    this.store$.dispatch(lifetimeTokenUpdated({ lifetime: values.token_lifetime * 60 }));
+    this.store$.dispatch(lifetimeTokenUpdated({
+      lifetime: this.keepsStoredLifetime() ? this.storedLifetime() : values.token_lifetime * 60,
+    }));
     this.store$.dispatch(guiFormSubmitted({
       theme: values.theme,
       syncThemeWithOS: values.syncThemeWithOS,
@@ -213,6 +226,10 @@ export class PreferencesFormComponent extends IxFormHostForm implements OnInit {
     this.window.localStorage.setItem('dateFormat', values.date_format);
     this.window.localStorage.setItem('timeFormat', values.time_format);
     this.langService.setLanguage(values.language);
+  }
+
+  private keepsStoredLifetime(): boolean {
+    return this.storedLifetime() % 60 !== 0 && this.form.controls.token_lifetime.pristine;
   }
 
   private setTimeOptions(tz: string): void {

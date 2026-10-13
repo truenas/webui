@@ -19,12 +19,12 @@
   }
   <div class="details-item">
     <div class="label">{{ 'Sync' | translate }}:</div>
-    <div class="value">{{ dataset().sync.value | orNotAvailable }}</div>
+    <div class="value" tnTestIdType="text" [tnTestId]="'dataset-details-sync'">{{ dataset().sync.value | orNotAvailable }}</div>
   </div>
   @if (datasetCompression() && dataset().compression?.value !== OnOff.Off) {
     <div class="details-item">
       <div class="label">{{ 'Compression' | translate }}:</div>
-      <div class="value">
+      <div class="value" tnTestIdType="text" [tnTestId]="'dataset-details-compression'">
         @if (datasetCompression()) {
           {{ datasetCompression() }}
         }
@@ -34,19 +34,19 @@
   @if (!isZvol()) {
     <div class="details-item">
       <div class="label">{{ 'Enable Atime' | translate }}:</div>
-      <div class="value">
+      <div class="value" tnTestIdType="text" [tnTestId]="'dataset-details-enable-atime'">
       {{ (dataset().atime.parsed ? OnOff.On : OnOff.Off) | translate }}
       </div>
     </div>
   }
   <div class="details-item">
     <div class="label">{{ 'ZFS Deduplication' | translate }}:</div>
-    <div class="value">{{ dataset().deduplication.value | orNotAvailable }}</div>
+    <div class="value" tnTestIdType="text" [tnTestId]="'dataset-details-zfs-deduplication'">{{ dataset().deduplication.value | orNotAvailable }}</div>
   </div>
   @if (!isZvol()) {
     <div class="details-item">
       <div class="label">{{ 'Case Sensitivity' | translate }}:</div>
-      <div class="value">
+      <div class="value" tnTestIdType="text" [tnTestId]="'dataset-details-case-sensitivity'">
         {{ (
             dataset().casesensitivity.value === DatasetCaseSensitivity.Sensitive
               ? OnOff.On
@@ -73,7 +73,8 @@
     <div
       tnTooltipPosition="above"
       class="value dataset-path"
-      tnTooltipClass="dataset-path-tooltip"
+      tnTestIdType="text" tnTooltipClass="dataset-path-tooltip"
+      [tnTestId]="'dataset-details-path'"
       [tnTooltip]="dataset().name"
     >
       {{ dataset().name }}
@@ -83,7 +84,7 @@
   @if (hasComments()) {
     <div class="details-item">
       <div class="label">{{ 'Comments' | translate }}:</div>
-      <div class="value dataset-comments">{{ commentsValue() }}</div>
+      <div class="value dataset-comments" tnTestIdType="text" [tnTestId]="'dataset-details-comments'">{{ commentsValue() }}</div>
     </div>
   }
 

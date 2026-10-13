@@ -141,7 +141,7 @@
     </tn-form-field>
 
     @if (hasRecordsizeWarning) {
-      <div class="recordsize-warning">
+      <div class="recordsize-warning" tnTestIdType="text" [tnTestId]="'recordsize-warning'">
         {{ helptext.recordsizeWarning | translate: { size: minimumRecommendedRecordsize } }}
       </div>
     }

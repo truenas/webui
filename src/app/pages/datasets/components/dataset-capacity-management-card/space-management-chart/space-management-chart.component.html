@@ -13,7 +13,7 @@
 <div class="chart-description">
   <h3 class="chart-header">
     <span class="chart-title">{{ 'Total Allocation' | translate }}:</span>
-    <span>
+    <span tnTestIdType="text" [tnTestId]="'space-management-total-allocation'">
       {{ dataset().used.parsed | ixFileSize }}
     </span>
   </h3>
@@ -31,7 +31,7 @@
             {{ 'Data Written' | translate }}
           }
         </span>
-        <span class="legend-value">
+        <span class="legend-value" tnTestIdType="text" [tnTestId]="'space-management-data-written'">
           {{ dataset().usedbydataset.parsed | ixFileSize }}
           @if (dataset().usedbydataset.parsed) {
             ({{ dataset().usedbydataset.parsed / dataset().used.parsed | percent }})
@@ -50,7 +50,7 @@
             ></span>
             {{ 'Children' | translate }}
           </span>
-          <span class="legend-value">
+          <span class="legend-value" tnTestIdType="text" [tnTestId]="'space-management-children'">
             {{dataset().usedbychildren.parsed | ixFileSize }}
             @if (dataset().usedbychildren.parsed) {
               ({{ dataset().usedbychildren.parsed / dataset().used.parsed | percent }})
