@@ -343,7 +343,17 @@ fails at the start if its rows would not fit. Custom schedules, exclusions,
 the full list page, the Enabled switch and deleting a task that has snapshots
 are not covered.
 
-The framework is done and the coverage is not. Ninety-seven tests — ninety-six
+The dataset form came next, in `tests/datasets-form.e2e.ts`: creating a dataset
+under a pool and editing one, both through Other Options, the form's advanced
+half. Each save is checked in the tree or on the details card and through
+`pool.dataset.query`. There every field is a ZFS property whose `source` reads
+`LOCAL` only if the form actually sent it, so the spec also asserts that
+fields it left alone stayed inherited. The edit runs beside a sibling dataset
+that must come through untouched. The share presets other than Generic, quotas,
+encryption and zvols are not covered here; `smb-dataset-preset` covers the SMB
+preset.
+
+The framework is done and the coverage is not. Ninety-nine tests — ninety-eight
 journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built

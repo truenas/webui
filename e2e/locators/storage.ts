@@ -90,6 +90,22 @@ export const datasetLocators = {
   treeNode: (name: string) => `[data-test="dataset-${kebabTestSegment(name)}"]`,
 
   addDataset: '[data-test="button-add-dataset"]',
+  /**
+   * "Edit" on the dataset details card — `testId: 'edit-dataset'` in
+   * `dataset-details-card.component.ts`. A zvol gets `edit-zvol` instead.
+   */
+  editDataset: '[data-test="button-edit-dataset"]',
+
+  /**
+   * The new dataset's parent, shown only when adding. It is the dataset the form
+   * will file the new one under, so it doubles as a readback that "Add Dataset"
+   * acted on the node that was selected.
+   */
+  parentPath: '[data-test="text-parent-path"]',
+  /**
+   * `<tn-input formControlName="name">`. On edit it is disabled and holds the
+   * dataset's full name, which makes it the signal that the record has loaded.
+   */
   name: '[data-test="input-name"]',
   /** `<tn-select formControlName="share_type">`, id via control-name fallback. */
   shareType: '[data-test="select-share-type"]',
@@ -111,7 +127,37 @@ export const datasetLocators = {
    * readback for whether the toggle went the way we intended. */
   smbName: '[data-test="input-smb-name"]',
 
+  /**
+   * The Advanced/Basic toggle in the side panel's footer. The form pins
+   * `testId: 'toggle-advanced'` rather than the shared default. Only rendered
+   * when adding: an edit opens in advanced mode and has no toggle.
+   */
+  advancedToggle: '[data-test="button-toggle-advanced"]',
+
+  /** Other Options, rendered only in advanced mode. Ids via control-name fallback. */
+  comments: '[data-test="input-comments"]',
+  sync: '[data-test="select-sync"]',
+  /**
+   * By the label the select shows: `Standard`, `Always`, `Disabled`. Under a
+   * parent the list also opens with `Inherit (<parent's value>)`.
+   */
+  syncOption: (label: string) => `[data-test="option-sync-${kebabTestSegment(label)}"]`,
+  atime: '[data-test="select-atime"]',
+  /** `On` or `Off`, plus `Inherit (<parent's value>)` under a parent. */
+  atimeOption: (label: string) => `[data-test="option-atime-${kebabTestSegment(label)}"]`,
+
   save: '[data-test="button-save"]',
+} as const;
+
+/**
+ * Readouts on the details card for whichever dataset the tree has selected.
+ * Each is `tnTestIdType="text"` with a static base, so there is one per page.
+ */
+export const datasetDetailsLocators = {
+  /** Rendered only when the dataset has a comment of its own. */
+  comments: '[data-test="text-dataset-details-comments"]',
+  /** The raw ZFS value, `ALWAYS` rather than the form's `Always`. */
+  sync: '[data-test="text-dataset-details-sync"]',
 } as const;
 
 /**
