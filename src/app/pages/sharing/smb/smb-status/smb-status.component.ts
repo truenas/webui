@@ -12,6 +12,12 @@ import { SmbNotificationListComponent } from './components/smb-notification-list
 import { SmbSessionListComponent } from './components/smb-session-list/smb-session-list.component';
 import { SmbShareListComponent } from './components/smb-share-list/smb-share-list.component';
 
+const smbStatusTabs = Object.values(SmbStatusTab) as string[];
+
+function toSmbStatusTab(slug: string): SmbStatusTab {
+  return smbStatusTabs.includes(slug) ? slug as SmbStatusTab : SmbStatusTab.Sessions;
+}
+
 @Component({
   selector: 'ix-smb-status',
   templateUrl: './smb-status.component.html',
@@ -31,7 +37,8 @@ export class SmbStatusComponent {
   private translate = inject(TranslateService);
   private router = inject(Router);
 
-  readonly activeTab = input<SmbStatusTab>(SmbStatusTab.Sessions);
+  // The `:activeTab` route param matches any string; an unknown slug falls back to Sessions.
+  readonly activeTab = input(SmbStatusTab.Sessions, { transform: toSmbStatusTab });
   protected readonly SmbStatusTab = SmbStatusTab;
 
   protected readonly navLinks = [{

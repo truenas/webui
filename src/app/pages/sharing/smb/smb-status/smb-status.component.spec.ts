@@ -55,6 +55,14 @@ describe('SmbStatusComponent', () => {
     expect(spectator.query(SmbSessionListComponent)).not.toExist();
   });
 
+  it('falls back to the Sessions tab for an unknown route slug', async () => {
+    spectator.setInput('activeTab', 'unknown');
+
+    const tabs = await loader.getHarness(TnTabsHarness);
+    expect(await (await tabs.getSelectedTab()).getLabel()).toBe('Sessions');
+    expect(spectator.query(SmbSessionListComponent)).toExist();
+  });
+
   it('navigates to the tab route when a tab is selected', async () => {
     const router = spectator.inject(Router);
     jest.spyOn(router, 'navigate').mockResolvedValue(true);
