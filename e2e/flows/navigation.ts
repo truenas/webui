@@ -21,6 +21,7 @@ const expectedRoute = {
   users: /\/credentials\/users/,
   groups: /\/credentials\/groups\/?$/,
   s3AccessKeys: /\/credentials\/s3-access-keys/,
+  advancedSettings: /\/system\/advanced\/?$/,
 } as const;
 
 /**
@@ -85,4 +86,10 @@ export async function goToGroups(page: Page): Promise<void> {
 export async function goToS3AccessKeys(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.credentials).click();
   await clickAndArrive(page, navLocators.s3AccessKeys, expectedRoute.s3AccessKeys);
+}
+
+/** System is a slide-out too, so Advanced Settings takes two clicks the same way. */
+export async function goToAdvancedSettings(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.system).click();
+  await clickAndArrive(page, navLocators.advancedSettings, expectedRoute.advancedSettings);
 }
