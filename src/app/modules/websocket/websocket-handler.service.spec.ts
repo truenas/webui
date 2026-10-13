@@ -1,12 +1,9 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { createFakeClient, FakeTrueNasClient } from '@truenas/api-client/testing';
-import { environment } from 'environments/environment';
-import { EMPTY, firstValueFrom, of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TYPED_API_CLIENT, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
-import { MockResponseService } from 'app/modules/websocket-debug-panel/services/mock-response.service';
-import { WebSocketDebugService } from 'app/modules/websocket-debug-panel/services/websocket-debug.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 /** The fake writes and answers frames on a microtask, as a socket would. */
@@ -17,7 +14,6 @@ const settle = (): Promise<void> => new Promise((resolve) => {
 describe('WebSocketHandlerService', () => {
   let spectator: SpectatorService<WebSocketHandlerService>;
   let client: FakeTrueNasClient<WebUiApiDirectory>;
-  let debugPanelWasEnabled: boolean;
 
   const createService = createServiceFactory({
     service: WebSocketHandlerService,
@@ -31,27 +27,18 @@ describe('WebSocketHandlerService', () => {
       // subject of half of these tests.
       WebSocketStatusService,
       mockProvider(DialogService),
-      mockProvider(WebSocketDebugService),
-      mockProvider(MockResponseService, { responses$: EMPTY }),
     ],
   });
 
   const sentMethods = (): string[] => client.connection.sent.map((frame) => String(frame.method));
 
   beforeEach(() => {
-    // The debug panel's interception is exercised in
-    // `websocket-handler-error-handling.spec.ts`; here it would only stand
-    // between a scheduled call and the wire.
-    debugPanelWasEnabled = Boolean(environment.debugPanel?.enabled);
-    environment.debugPanel = { ...environment.debugPanel, enabled: false };
-
     client = createFakeClient({ version: 'v28.0.0', opened: false });
     spectator = createService();
   });
 
   afterEach(() => {
     client.close();
-    environment.debugPanel = { ...environment.debugPanel, enabled: debugPanelWasEnabled };
   });
 
   it('sends a scheduled call over the typed client’s connection', async () => {
