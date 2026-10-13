@@ -5,7 +5,7 @@ import { expect, type Page } from '@playwright/test';
 import { goToDatasets, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
 import {
-  datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolWizardLocators,
+  datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolWizardLocators,
 } from '../locators/storage';
 
 /**
@@ -158,6 +158,56 @@ export async function createSmbDataset(page: Page, pool: string, name: string): 
   await page.locator(datasetLocators.createSmbShare).click();
   await expect(page.locator(datasetLocators.smbName)).toBeHidden();
 
+  await page.locator(datasetLocators.save).click();
+  await expect(page.locator(datasetLocators.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Selects `parent` in the tree and opens the Add Dataset form under it.
+ *
+ * Waits for the form's own Parent Path to name `parent`. The form loads the
+ * parent before it will save, and this is the readback that it loaded the one
+ * that was selected.
+ */
+export async function openAddDatasetForm(page: Page, parent: string): Promise<void> {
+  await goToDatasets(page);
+
+  const node = page.locator(datasetLocators.treeNode(parent));
+  await expect(node).toBeVisible();
+  await node.click();
+
+  await page.locator(datasetLocators.addDataset).click();
+  await expect(page.locator(datasetLocators.parentPath)).toHaveText(parent);
+}
+
+/**
+ * Selects a dataset in the tree and opens its edit form from the details card.
+ *
+ * The page lands with the pool root selected, and the root's card has an Edit
+ * too, so the card's Path has to name `name` before the click. Otherwise Edit
+ * can open the root's form.
+ *
+ * Then waits for the disabled Name field to hold the dataset's full name. It is
+ * patched in only once the record has loaded, and so are the values in
+ * Other Options, so changing a field before that would change it on an empty form.
+ */
+export async function openEditDatasetForm(page: Page, name: string): Promise<void> {
+  await goToDatasets(page);
+
+  const node = page.locator(datasetLocators.treeNode(name));
+  await expect(node).toBeVisible();
+  await node.click();
+  await expect(page.locator(datasetDetailsLocators.path)).toHaveText(name);
+
+  const edit = page.locator(datasetLocators.editDataset);
+  await expect(edit).toBeVisible();
+  await edit.click();
+
+  await expect(page.locator(datasetLocators.name)).toHaveValue(name);
+}
+
+/** Saves the open dataset form and waits for the panel to close. */
+export async function saveDatasetForm(page: Page): Promise<void> {
   await page.locator(datasetLocators.save).click();
   await expect(page.locator(datasetLocators.save)).toBeHidden({ timeout: saveTimeoutMs });
 }
