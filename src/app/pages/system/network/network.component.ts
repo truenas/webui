@@ -20,6 +20,7 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { SplitTagPipe } from 'app/modules/pipes/split-tag/split-tag.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -54,6 +55,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     IpmiCardComponent,
     TranslateModule,
     TnTestIdDirective,
+    SplitTagPipe,
   ],
   providers: [
     InterfacesStore,
