@@ -327,8 +327,8 @@ keypair that must come through untouched. The card lists five keypairs, oldest
 first, before View All. The delete test presses it when there are more. The
 generate test cannot, because the card reloads after the save with nothing to
 wait on, so it fails at the start if the new keypair would not fit on the card.
-Pasting a key in, editing, downloading
-and deleting a keypair an SSH connection still uses are not covered.
+Pasting a key in, editing, downloading and deleting a keypair an SSH connection
+still uses are not covered.
 
 The framework is done and the coverage is not. Ninety-four tests — ninety-three
 journeys and the smoke — against 19 top-level feature areas. What the work
