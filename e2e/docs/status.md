@@ -362,7 +362,7 @@ every address is in 192.0.2.0/24, reserved for documentation and reachable from
 nowhere, and every save ticks Force. That keeps the outcome independent of
 whether the appliance can reach the internet. The row tag is
 `ntp-server-<address>-<minpoll>-<maxpoll>`, so an edit to either interval
-renames the row. Unlike the other cards on that page, this one raises no
+renames the row. Unlike most cards on that page, this one raises no
 first-time warning. The refusal without Force is not covered.
 
 The framework is done and the coverage is not. A hundred and two tests — a
