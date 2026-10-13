@@ -143,7 +143,7 @@ describe('SessionTimeoutService', () => {
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SessionExpiringDialog, {
       data: {
         buttonText: 'Extend session',
-        message: expect.any(String),
+        message: expect.stringContaining('inactive for more than 5 minutes.'),
         title: 'Logout',
       },
       disableClose: true,

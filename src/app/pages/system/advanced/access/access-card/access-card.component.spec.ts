@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
@@ -16,6 +17,7 @@ import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { LocaleService } from 'app/modules/language/locale.service';
+import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -24,6 +26,7 @@ import { AccessCardComponent } from 'app/pages/system/advanced/access/access-car
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('AccessCardComponent', () => {
@@ -76,6 +79,12 @@ describe('AccessCardComponent', () => {
         },
         selectors: [
           {
+            selector: selectPreferences,
+            value: {
+              lifetime: 2147482,
+            },
+          },
+          {
             selector: selectGeneralConfig,
             value: {
               ds_auth: true,
@@ -99,6 +108,7 @@ describe('AccessCardComponent', () => {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockProvider(SlideInRef),
+      mockProvider(NavigateAndHighlightService),
       mockProvider(SystemGeneralService),
       mockAuth(),
     ],
@@ -114,8 +124,23 @@ describe('AccessCardComponent', () => {
     expect(await allowed.getFullText()).toBe('Allow Directory Service users UI / API access: Yes');
   });
 
+  it('shows current Session Timeout with a link to Preferences', async () => {
+    const sessionTimeout = (await loader.getAllHarnesses(MatListItemHarness))[1];
+    expect((await sessionTimeout.getFullText()).replace(/\s+/g, ' ')).toBe(
+      'Session Timeout: 24 days 20 hours 31 minutes 22 seconds Change Session Timeout in Preferences',
+    );
+  });
+
+  it('opens Preferences when the Session Timeout link is pressed', () => {
+    const preferencesLink = spectator.query('button.preferences-link')!;
+    expect(preferencesLink.textContent).toBe('Preferences');
+    spectator.click(preferencesLink);
+
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PreferencesFormComponent);
+  });
+
   it('shows current login banner', async () => {
-    const loginBanner = (await loader.getAllHarnesses(MatListItemHarness))[1];
+    const loginBanner = (await loader.getAllHarnesses(MatListItemHarness))[2];
     expect(await loginBanner.getFullText()).toBe('Login Banner: Hello World!');
   });
 

@@ -8,6 +8,12 @@ import { Preferences } from 'app/interfaces/preferences.interface';
  */
 export const minSessionLifetime = 30;
 
+/**
+ * The longest Session Timeout the UI accepts. `SessionTimeoutService` arms a `setTimeout` for the
+ * whole lifetime in milliseconds, and browsers overflow anything past 2^31 - 1 ms (~24.8 days).
+ */
+export const maxSessionLifetime = 2147482;
+
 export const defaultPreferences: Preferences = {
   userTheme: 'default',
   dateFormat: 'yyyy-MM-DD',

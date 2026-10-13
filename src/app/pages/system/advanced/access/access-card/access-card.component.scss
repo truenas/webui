@@ -1,0 +1,15 @@
+.session-timeout-hint {
+  color: var(--fg2);
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.preferences-link {
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-decoration: underline;
+}
