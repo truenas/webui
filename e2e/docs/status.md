@@ -307,7 +307,18 @@ that job's id in `core.get_jobs` to reach `SUCCESS`, and checks that none starte
 for the bystander. Custom schedules, built in the scheduler's own dialog, are not
 covered.
 
-The framework is done and the coverage is not. Eighty-nine tests — eighty-eight
+Sysctl variables came next, in `tests/sysctl-tunables.e2e.ts`: adding, editing
+and deleting one from the Tunable card on System > Advanced Settings, each
+asserted on the card and through `tunable.query`, and edit and delete each beside
+a second tunable that must come through untouched. Unlike the two cards before
+it, its form is built by `ix-form-renderer`, and every write is a job, so the
+fixtures go through `runJob`. A sysctl tunable sets the kernel variable when it
+is saved, so the spec moves three TCP keepalive and timeout settings a step or
+two below their defaults; deleting or disabling a tunable puts the old value
+back. The row tag is `tunable-<var>`, and Variable is disabled on edit, so an
+edit never renames the row. UDEV and ZFS tunables are not covered.
+
+The framework is done and the coverage is not. Ninety-two tests — ninety-one
 journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
