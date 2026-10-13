@@ -18,6 +18,7 @@ const expectedRoute = {
   storage: /\/storage\/?$/,
   datasets: /\/datasets/,
   shares: /\/sharing/,
+  dataProtection: /\/data-protection\/?$/,
   users: /\/credentials\/users/,
   groups: /\/credentials\/groups\/?$/,
   s3AccessKeys: /\/credentials\/s3-access-keys/,
@@ -56,6 +57,14 @@ export async function goToDatasets(page: Page): Promise<void> {
 
 export async function goToShares(page: Page): Promise<void> {
   await clickAndArrive(page, navLocators.shares, expectedRoute.shares);
+}
+
+/**
+ * Data Protection is a plain link, not a slide-out. Anchored to the end because
+ * each card's full list lives under it (`/data-protection/snapshot`).
+ */
+export async function goToDataProtection(page: Page): Promise<void> {
+  await clickAndArrive(page, navLocators.dataProtection, expectedRoute.dataProtection);
 }
 
 /** Credentials is a slide-out, so reaching Users takes two clicks. */

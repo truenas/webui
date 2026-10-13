@@ -13,6 +13,8 @@ export const navLocators = {
   storage: '[data-test="link-storage-menu"]',
   datasets: '[data-test="link-datasets-menu"]',
   shares: '[data-test="link-shares-menu"]',
+  /** `Data Protection` — `getItemName` turns the space into an underscore, which normalizes to a hyphen. */
+  dataProtection: '[data-test="link-data-protection-menu"]',
   /** A slide-out, not a link — opens a submenu rather than navigating. */
   credentials: '[data-test="link-credentials-menu"]',
   users: '[data-test="link-users"]',

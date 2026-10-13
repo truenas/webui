@@ -330,7 +330,20 @@ wait on, so it fails at the start if the new keypair would not fit on the card.
 Pasting a key in, editing, downloading and deleting a keypair an SSH connection
 still uses are not covered.
 
-The framework is done and the coverage is not. Ninety-four tests — ninety-three
+Periodic snapshot tasks came next, in `tests/periodic-snapshot-tasks.e2e.ts`:
+adding, editing and deleting a task from the card on Data Protection, each
+asserted on the card and through `pool.snapshottask.query`, which holds the
+retention, naming schema and schedule the card does not show. Edit and delete
+each run beside a second task that must come through untouched. A task has no
+name, so the row tag is `snapshot-task-<dataset>`, and each task gets a dataset
+of its own, made fresh per test so no snapshot an earlier run's task took can
+put the "keep snapshots" box in the delete dialog. The card lists four tasks,
+and its View All leaves for the full list rather than expanding, so each test
+fails at the start if its rows would not fit. Custom schedules, exclusions,
+the full list page, the Enabled switch and deleting a task that has snapshots
+are not covered.
+
+The framework is done and the coverage is not. Ninety-seven tests — ninety-six
 journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
