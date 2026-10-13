@@ -13,9 +13,7 @@
  * The settings are one config record, so there is nothing to delete afterwards.
  * Teardown writes middleware's defaults back. See `fixtures/syslog.ts`.
  */
-import {
-  readSyslogSettings, setSyslogSettings, syslogBaseline, type SyslogSettings,
-} from '../fixtures/syslog';
+import { readSyslogSettings, setSyslogSettings, syslogBaseline } from '../fixtures/syslog';
 import {
   addSyslogServer, chooseSyslogLevel, openSyslogForm, saveSyslogForm,
 } from '../flows/syslog';
@@ -64,38 +62,48 @@ test('an admin sets up syslog forwarding, and the appliance keeps every setting'
   expect(saved.syslogservers[0]).toMatchObject({ host, transport: 'TCP' });
 });
 
-test('an admin removes the syslog server and turns every setting back off', async ({ page, api }) => {
+/**
+ * Written in a hook rather than in the test, because the app reads these
+ * settings once, as `page` signs in, and never again on its way to the card. A
+ * write in the test body runs after that read, so the card would still show the
+ * baseline. The file-level `beforeEach` runs first, so this lands on top of it.
+ */
+test.describe('starting with every setting on', () => {
   const host = '192.0.2.22';
   const level: SyslogLevel = 'F_DEBUG';
-  const configured: SyslogSettings = {
-    fqdn_syslog: true,
-    sysloglevel: level,
-    syslog_audit: true,
-    syslogservers: [{ host, transport: 'UDP', tls_certificate: null }],
-  };
-  await setSyslogSettings(api, configured);
 
-  await openSyslogForm(page, level);
-  await expect(page.locator(syslogLocators.card.servers)).toHaveText(`${host} (UDP)`);
-  // The server the API wrote is in the form. That is what makes removing it a real edit.
-  await expect(page.locator(syslogLocators.form.host)).toHaveValue(host);
+  test.beforeEach(async ({ api }) => {
+    await setSyslogSettings(api, {
+      fqdn_syslog: true,
+      sysloglevel: level,
+      syslog_audit: true,
+      syslogservers: [{ host, transport: 'UDP', tls_certificate: null }],
+    });
+  });
 
-  await page.locator(syslogLocators.form.removeFirstServer).click();
-  await expect(page.locator(syslogLocators.form.host)).toBeHidden();
-  await page.locator(syslogLocators.form.useFqdn).click();
-  await chooseSyslogLevel(page, 'F_ERR');
-  await page.locator(syslogLocators.form.includeAuditLogs).click();
-  await saveSyslogForm(page);
+  test('an admin removes the syslog server and turns every setting back off', async ({ page, api }) => {
+    await openSyslogForm(page, level);
+    await expect(page.locator(syslogLocators.card.servers)).toHaveText(`${host} (UDP)`);
+    // The server the API wrote is in the form. That is what makes removing it a real edit.
+    await expect(page.locator(syslogLocators.form.host)).toHaveValue(host);
 
-  await expect(page.locator(syslogLocators.card.useFqdn)).toHaveText('Disabled');
-  await expect(page.locator(syslogLocators.card.level)).toHaveText('Error');
-  await expect(page.locator(syslogLocators.card.servers)).toHaveText('None');
-  await expect(page.locator(syslogLocators.card.includeAuditLogs)).toHaveText('No');
+    await page.locator(syslogLocators.form.removeFirstServer).click();
+    await expect(page.locator(syslogLocators.form.host)).toBeHidden();
+    await page.locator(syslogLocators.form.useFqdn).click();
+    await chooseSyslogLevel(page, 'F_ERR');
+    await page.locator(syslogLocators.form.includeAuditLogs).click();
+    await saveSyslogForm(page);
 
-  expect(await readSyslogSettings(api)).toEqual({
-    fqdn_syslog: false,
-    sysloglevel: 'F_ERR',
-    syslog_audit: false,
-    syslogservers: [],
+    await expect(page.locator(syslogLocators.card.useFqdn)).toHaveText('Disabled');
+    await expect(page.locator(syslogLocators.card.level)).toHaveText('Error');
+    await expect(page.locator(syslogLocators.card.servers)).toHaveText('None');
+    await expect(page.locator(syslogLocators.card.includeAuditLogs)).toHaveText('No');
+
+    expect(await readSyslogSettings(api)).toEqual({
+      fqdn_syslog: false,
+      sysloglevel: 'F_ERR',
+      syslog_audit: false,
+      syslogservers: [],
+    });
   });
 });
