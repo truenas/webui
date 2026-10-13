@@ -70,13 +70,20 @@ export async function openDeleteInitShutdownDialog(
 }
 
 /**
- * Confirms the open delete dialog and waits for it to go.
+ * Ticks the confirmation, confirms the open delete dialog and waits for it to go.
  *
- * `confirmDelete` raises the shared confirm dialog without a confirmation
- * checkbox, so the button is live as soon as the dialog is.
+ * `confirmDelete` does not pass `hideCheckbox`, so Delete stays **disabled**
+ * until the box is ticked — asserted on the way, so a dialog that lost its gate
+ * fails here rather than passing a test that never needed it.
  */
 export async function confirmInitShutdownDeletion(page: Page): Promise<void> {
-  await page.locator(confirmDialogLocators.confirm).click();
+  const confirm = page.locator(confirmDialogLocators.confirm);
+
+  await expect(confirm).toBeDisabled();
+  await page.locator(confirmDialogLocators.checkbox).click();
+  await expect(confirm).toBeEnabled();
+
+  await confirm.click();
   await expect(page.locator(confirmDialogLocators.title)).toBeHidden({ timeout: saveTimeoutMs });
 }
 
