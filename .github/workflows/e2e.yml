@@ -209,6 +209,11 @@ jobs:
       # other branch has none and builds below. So does a WebUI run that
       # finished without the artifact, or one still going after ten minutes.
       # Each falls back to building rather than failing the job.
+      #
+      # The newest such run is taken. For a pull request that is the one that
+      # built this checkout's merge commit, except in one rare case: a re-run
+      # of an older attempt after master moved and a newer WebUI run of the
+      # same head commit built a newer merge.
       - name: Find the WebUI build
         id: shipped-build
         if: (inputs.ui || 'built') == 'built'
