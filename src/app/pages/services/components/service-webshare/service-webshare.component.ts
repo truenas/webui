@@ -1,11 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, inject, computed, effect,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, computed, effect, signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
 import { combineLatest, take } from 'rxjs';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
@@ -32,8 +33,14 @@ function createWebshareForm(fb: NonNullableFormBuilder) {
   return fb.group({
     search: [false],
     passkey: [WebSharePasskey.Disabled, Validators.required],
+    mcp_enabled: [false],
+    mcp_allowed_groups: [{ value: [] as string[], disabled: true }, Validators.required],
+    mcp_allow_write: [{ value: false, disabled: true }],
   });
 }
+
+/** Grants Webshare access on its own, so it is always a valid MCP group. */
+const webshareGroup = 'truenas_webshare';
 
 /** The form's own value shape rather than the `webshare.update` payload, which `search` can drift from. */
 type WebShareFormValue = ReturnType<ReturnType<typeof createWebshareForm>['getRawValue']>;
@@ -62,11 +69,27 @@ export class ServiceWebshareComponent extends IxFormHostForm<boolean, WebShareFo
   private translate = inject(TranslateService);
   private truenasConnectService = inject(TruenasConnectService);
   private entitlements = inject(EntitlementsService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly form = createWebshareForm(this.fb);
 
   readonly helptext = helptextServiceWebshare;
   readonly passkeyOptions = mapToOptions(webSharePasskeyLabels, this.translate);
+
+  /**
+   * Middleware only accepts MCP groups that also grant Webshare access: `truenas_webshare` or one of
+   * the Directory Service login `groups`. Those are fixed while this form is open, so only valid
+   * choices are offered. Saved MCP groups are kept as options too, so they still display.
+   */
+  protected readonly mcpGroupOptions = signal<TnSelectOption<string>[]>(this.toGroupOptions([webshareGroup]));
+
+  protected readonly isMcpEnabled = signal(false);
+
+  /**
+   * With no Directory Service login groups, `truenas_webshare` is the only valid MCP group, so the
+   * picker would offer a single choice. It is hidden then, and enabling MCP prefills that group.
+   */
+  protected readonly hasMcpGroupChoice = computed(() => this.mcpGroupOptions().length > 1);
 
   /**
    * TrueSearch depends on TrueNAS Connect, so it can only be enabled while Connect is
@@ -118,6 +141,12 @@ export class ServiceWebshareComponent extends IxFormHostForm<boolean, WebShareFo
         searchControl.disable({ emitEvent: false });
       }
     });
+
+    // The MCP settings stay in the payload while MCP is off, so saving does not wipe them; disabling
+    // them only keeps the required group list from blocking a save that does not enable MCP.
+    this.form.controls.mcp_enabled.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((isEnabled) => this.onMcpEnabledChanged(isEnabled));
   }
 
   ngOnInit(): void {
@@ -135,6 +164,14 @@ export class ServiceWebshareComponent extends IxFormHostForm<boolean, WebShareFo
         // `webshare.config` spells it as the wire literal; the control holds the UI's enum of the same values.
         passkey: config.passkey as WebSharePasskey,
       });
+
+      this.mcpGroupOptions.set(this.toGroupOptions([webshareGroup, ...config.groups, ...config.mcp_allowed_groups]));
+      // Groups and write access first, so enabling MCP below does not prefill over saved groups.
+      this.form.patchValue({
+        mcp_allowed_groups: config.mcp_allowed_groups,
+        mcp_allow_write: config.mcp_allow_write,
+      });
+      this.form.controls.mcp_enabled.setValue(config.mcp_enabled);
     });
   }
 
@@ -144,4 +181,24 @@ export class ServiceWebshareComponent extends IxFormHostForm<boolean, WebShareFo
     request$: this.api.call('webshare.update', [allValues]),
     successMessage: this.translate.instant(serviceConfigSavedMessage),
   });
+
+  private onMcpEnabledChanged(isEnabled: boolean): void {
+    this.isMcpEnabled.set(isEnabled);
+    const { mcp_allowed_groups: groupsControl, mcp_allow_write: allowWriteControl } = this.form.controls;
+    if (!isEnabled) {
+      groupsControl.disable();
+      allowWriteControl.disable();
+      return;
+    }
+
+    groupsControl.enable();
+    allowWriteControl.enable();
+    if (!groupsControl.value.length) {
+      groupsControl.setValue([webshareGroup]);
+    }
+  }
+
+  private toGroupOptions(groups: string[]): TnSelectOption<string>[] {
+    return [...new Set(groups)].map((group) => ({ label: group, value: group }));
+  }
 }
