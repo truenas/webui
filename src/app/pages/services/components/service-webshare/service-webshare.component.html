@@ -19,4 +19,30 @@
       <tn-select formControlName="passkey" [options]="passkeyOptions"></tn-select>
     </tn-form-field>
   </tn-form-section>
+
+  <tn-form-section [heading]="'AI Assistant (MCP)' | translate">
+    <tn-form-field [tooltip]="helptext.mcp_enabled_tooltip | translate">
+      <tn-checkbox formControlName="mcp_enabled" [label]="'Enable MCP' | translate"></tn-checkbox>
+    </tn-form-field>
+
+    @if (isMcpEnabled()) {
+      @if (hasMcpGroupChoice()) {
+        <tn-form-field
+          [label]="'Allowed Groups' | translate"
+          [tooltip]="helptext.mcp_allowed_groups_tooltip | translate"
+          [required]="true"
+        >
+          <tn-select
+            formControlName="mcp_allowed_groups"
+            [multiple]="true"
+            [options]="mcpGroupOptions()"
+          ></tn-select>
+        </tn-form-field>
+      }
+
+      <tn-form-field [tooltip]="helptext.mcp_allow_write_tooltip | translate">
+        <tn-checkbox formControlName="mcp_allow_write" [label]="'Allow Write' | translate"></tn-checkbox>
+      </tn-form-field>
+    }
+  </tn-form-section>
 </ix-form>
