@@ -5,7 +5,7 @@ import { expect, type Page } from '@playwright/test';
 import { goToDatasets, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
 import {
-  datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolWizardLocators,
+  datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolWizardLocators,
 } from '../locators/storage';
 
 /**
@@ -183,7 +183,11 @@ export async function openAddDatasetForm(page: Page, parent: string): Promise<vo
 /**
  * Selects a dataset in the tree and opens its edit form from the details card.
  *
- * Waits for the disabled Name field to hold the dataset's full name. It is
+ * The page lands with the pool root selected, and the root's card has an Edit
+ * too, so the card's Path has to name `name` before the click. Otherwise Edit
+ * can open the root's form.
+ *
+ * Then waits for the disabled Name field to hold the dataset's full name. It is
  * patched in only once the record has loaded, and so are the values in
  * Other Options, so changing a field before that would change it on an empty form.
  */
@@ -193,6 +197,7 @@ export async function openEditDatasetForm(page: Page, name: string): Promise<voi
   const node = page.locator(datasetLocators.treeNode(name));
   await expect(node).toBeVisible();
   await node.click();
+  await expect(page.locator(datasetDetailsLocators.path)).toHaveText(name);
 
   const edit = page.locator(datasetLocators.editDataset);
   await expect(edit).toBeVisible();

@@ -154,6 +154,8 @@ export const datasetLocators = {
  * Each is `tnTestIdType="text"` with a static base, so there is one per page.
  */
 export const datasetDetailsLocators = {
+  /** The selected dataset's full name, `pool/child`. */
+  path: '[data-test="text-dataset-details-path"]',
   /** Rendered only when the dataset has a comment of its own. */
   comments: '[data-test="text-dataset-details-comments"]',
   /** The raw ZFS value, `ALWAYS` rather than the form's `Always`. */
