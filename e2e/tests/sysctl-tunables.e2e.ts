@@ -11,11 +11,11 @@
  * whichever row's menu was opened, and a row-targeting bug changes the wrong
  * tunable without failing anything else.
  *
- * Every variable is a TCP timer that nothing in a test run depends on, and every
- * value is one below its kernel default. An enabled tunable sets its variable
- * the moment it is saved, and middleware puts the old value back only when the
- * tunable is deleted or disabled, so a run that dies before its teardown leaves
- * one changed until the next run's cleanup.
+ * Every variable is a TCP keepalive or timeout setting that nothing in a test
+ * run depends on, and every value is a step or two below its kernel default. An
+ * enabled tunable sets its variable the moment it is saved, and middleware puts
+ * the old value back only when the tunable is deleted or disabled, so a run that
+ * dies before its teardown leaves one changed until the next run's cleanup.
  */
 import { ensureTunableAbsent, ensureTunablePresent, findTunable } from '../fixtures/tunable';
 import {

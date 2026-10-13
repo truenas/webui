@@ -313,8 +313,9 @@ asserted on the card and through `tunable.query`, and edit and delete each besid
 a second tunable that must come through untouched. Unlike the two cards before
 it, its form is built by `ix-form-renderer`, and every write is a job, so the
 fixtures go through `runJob`. A sysctl tunable sets the kernel variable when it
-is saved, so the spec moves three TCP timers one below their defaults; deleting
-or disabling a tunable puts the old value back. The row tag is `tunable-<var>`,
+is saved, so the spec moves three TCP keepalive and timeout settings a step or
+two below their defaults; deleting or disabling a tunable puts the old value
+back. The row tag is `tunable-<var>`,
 and Variable is disabled on edit, so an edit never renames the row. UDEV and ZFS
 tunables are not covered.
 
