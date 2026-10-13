@@ -41,6 +41,13 @@ export const usersLocators = {
     confirm: '[data-test="button-delete"]',
   },
 
+  /**
+   * "View API Keys" on the selected user's Access card — `tnTestIdType="link"`
+   * with `[tnTestId]="['view-api-keys', user.username]"`. Rendered only for a
+   * user who already holds a key; one with none is offered "Add API Key" instead.
+   */
+  viewApiKeys: (username: string): string => `[data-test="link-view-api-keys-${kebabTestSegment(username)}"]`,
+
   form: {
     /** `<tn-input [testId]="'username'">` in user-form.component.html */
     username: '[data-test="input-username"]',
