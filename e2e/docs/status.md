@@ -286,7 +286,17 @@ in memory by `FirstTimeWarningService` — certain on the fresh page each test
 gets, which is why the flows wait for it rather than probe. Script-type entries,
 which pick a file through `ix-explorer`, are not covered.
 
-The framework is done and the coverage is not. Eighty-three tests — eighty-two
+API keys came next, in `tests/api-keys.e2e.ts`: creating a key for a user and
+deleting one, from the API Keys page under Credentials > Users, each beside a
+second key on the same account that must come through untouched. The page has no
+sidebar entry, so the spec reaches it the way an admin does — the user's Access
+card, whose "View API Keys" link exists only once that user holds a key, which is
+the second reason the bystander is there. The create picks the account in the
+form, which opens on the signed-in admin, and ties the key the one-time dialog
+showed to the stored record by its `<id>-` prefix. Editing, resetting and an
+expiry date are not covered.
+
+The framework is done and the coverage is not. Eighty-five tests — eighty-four
 journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
