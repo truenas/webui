@@ -222,19 +222,27 @@ jobs:
           get() { curl -fsS -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "$1"; }
           deadline=$((SECONDS + 600))
           while :; do
-            run=$(get "$api/workflows/main.yml/runs?head_sha=$SHA&event=$event&per_page=1" | jq -c '.workflow_runs[0] // empty')
+            # A failed query (a 5xx, the token's rate limit) falls back to
+            # building rather than failing the job.
+            if ! runs=$(get "$api/workflows/main.yml/runs?head_sha=$SHA&event=$event&per_page=1"); then
+              echo "::notice::Could not query the WebUI runs; building the UI here"
+              exit 0
+            fi
+            run=$(jq -c '.workflow_runs[0] // empty' <<< "$runs")
             if [ -z "$run" ]; then
               echo "No WebUI $event run of $SHA; building the UI here"
               exit 0
             fi
             id=$(jq -r .id <<< "$run")
-            if get "$api/runs/$id/artifacts?name=webui-dist" | jq -e '.artifacts | length > 0' > /dev/null; then
+            # The list keeps an artifact past its retention, marked expired,
+            # and download-artifact cannot fetch that one.
+            if get "$api/runs/$id/artifacts?name=webui-dist" | jq -e '[.artifacts[] | select(.expired | not)] | length > 0' > /dev/null; then
               echo "run-id=$id" >> "$GITHUB_OUTPUT"
               echo "Using the UI WebUI run $id built, $(jq -r .html_url <<< "$run"), after waiting ${SECONDS}s"
               exit 0
             fi
             if [ "$(jq -r .status <<< "$run")" = completed ]; then
-              echo "::notice::WebUI run $id finished without webui-dist; building the UI here"
+              echo "::notice::WebUI run $id finished with no webui-dist to download (failed, or expired); building the UI here"
               exit 0
             fi
             if [ "$SECONDS" -ge "$deadline" ]; then
