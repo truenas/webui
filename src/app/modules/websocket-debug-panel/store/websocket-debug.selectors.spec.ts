@@ -1,7 +1,7 @@
 import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
-import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
+import { WebSocketDebugMessage, MessageDirection } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 import { WebSocketDebugState } from './websocket-debug.reducer';
 import * as fromSelectors from './websocket-debug.selectors';
 
@@ -10,7 +10,7 @@ describe('WebSocketDebug Selectors', () => {
     {
       id: '1',
       timestamp: '2024-01-01T10:00:00Z',
-      direction: 'out',
+      direction: MessageDirection.Out,
       message: {
         jsonrpc: '2.0', id: '1', method: 'test.method' as never, params: [],
       },
@@ -18,20 +18,20 @@ describe('WebSocketDebug Selectors', () => {
     {
       id: '2',
       timestamp: '2024-01-01T10:00:01Z',
-      direction: 'in',
+      direction: MessageDirection.In,
       message: { jsonrpc: '2.0', id: '1', result: { success: true } },
     },
     {
       id: '3',
       timestamp: '2024-01-01T10:00:02Z',
-      direction: 'in',
+      direction: MessageDirection.In,
       message: { jsonrpc: '2.0', id: '2', result: { data: 'mocked' } },
       isMocked: true,
     },
     {
       id: '4',
       timestamp: '2024-01-01T10:00:03Z',
-      direction: 'out',
+      direction: MessageDirection.Out,
       message: { jsonrpc: '2.0', id: '3', method: 'another.method' as never },
     },
   ];
@@ -225,14 +225,14 @@ describe('WebSocketDebug Selectors', () => {
       expect(result).toHaveLength(2);
       expect(result[0].id).toBe('2');
       expect(result[1].id).toBe('3');
-      expect(result.every((msg) => msg.direction === 'in')).toBe(true);
+      expect(result.every((msg) => msg.direction === MessageDirection.In)).toBe(true);
     });
 
     it('should return empty array when no incoming messages', () => {
       const outgoingOnlyState = {
         webSocketDebug: {
           ...initialState,
-          messages: mockMessages.filter((msg) => msg.direction === 'out'),
+          messages: mockMessages.filter((msg) => msg.direction === MessageDirection.Out),
         },
       };
       const result = fromSelectors.selectIncomingMessages(outgoingOnlyState);
@@ -246,14 +246,14 @@ describe('WebSocketDebug Selectors', () => {
       expect(result).toHaveLength(2);
       expect(result[0].id).toBe('1');
       expect(result[1].id).toBe('4');
-      expect(result.every((msg) => msg.direction === 'out')).toBe(true);
+      expect(result.every((msg) => msg.direction === MessageDirection.Out)).toBe(true);
     });
 
     it('should return empty array when no outgoing messages', () => {
       const incomingOnlyState = {
         webSocketDebug: {
           ...initialState,
-          messages: mockMessages.filter((msg) => msg.direction === 'in'),
+          messages: mockMessages.filter((msg) => msg.direction === MessageDirection.In),
         },
       };
       const result = fromSelectors.selectOutgoingMessages(incomingOnlyState);

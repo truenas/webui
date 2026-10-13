@@ -2,6 +2,7 @@
 import { signal } from '@angular/core';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { JobState } from 'app/enums/job-state.enum';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import * as WebSocketDebugActions from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 import { selectMockConfigs, selectPrefilledMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
@@ -28,7 +29,7 @@ describe('MockConfigListComponent', () => {
         {
           delay: 1000,
           fields: {
-            state: 'RUNNING',
+            state: JobState.Running,
             description: 'Event 1',
             result: { data: 1 },
           },

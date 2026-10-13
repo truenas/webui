@@ -14,6 +14,7 @@ import {
   filter, map, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { AlertBadgeType } from 'app/enums/alert-badge-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { helptextTopbar } from 'app/helptext/topbar';
@@ -116,19 +117,20 @@ export class TopbarComponent implements OnInit {
 
   protected readonly hasConsoleFooter = toSignal(this.store$.select(selectHasConsoleFooter), { initialValue: false });
 
+  protected readonly AlertBadgeType = AlertBadgeType;
   protected readonly alertSeverity = toSignal(this.store$.select(selectTopAlertSeverity), { initialValue: null });
   protected readonly alertTooltip = computed(() => {
     switch (this.alertSeverity()) {
-      case 'critical': return this.translate.instant(this.tooltips.alertsCritical);
-      case 'warning': return this.translate.instant(this.tooltips.alertsWarning);
+      case AlertBadgeType.Critical: return this.translate.instant(this.tooltips.alertsCritical);
+      case AlertBadgeType.Warning: return this.translate.instant(this.tooltips.alertsWarning);
       default: return this.translate.instant(this.tooltips.alerts);
     }
   });
 
   protected readonly alertIconClass = computed(() => {
     switch (this.alertSeverity()) {
-      case 'critical': return 'alert-critical';
-      case 'warning': return 'alert-warning';
+      case AlertBadgeType.Critical: return 'alert-critical';
+      case AlertBadgeType.Warning: return 'alert-warning';
       default: return '';
     }
   });
@@ -140,7 +142,7 @@ export class TopbarComponent implements OnInit {
     if (count === 0) {
       return null;
     }
-    const isSeverityColoured = this.alertSeverity() === 'critical' || this.alertSeverity() === 'warning';
+    const isSeverityColoured = this.alertSeverity() !== null;
     return {
       label: String(count),
       background: isSeverityColoured ? 'var(--bg2)' : 'var(--primary)',

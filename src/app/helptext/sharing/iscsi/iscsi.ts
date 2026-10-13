@@ -1,5 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { IscsiAuthMethod, IscsiExtentType } from 'app/enums/iscsi.enum';
+import { IscsiAuthMethod, IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { Option } from 'app/interfaces/option.interface';
 
 export const helptextIscsi = {
@@ -206,12 +206,12 @@ export const helptextIscsi = {
     enabledTooltip: T('Set to enable the iSCSI extent.'),
 
     rpmOptions: [
-      { label: 'UNKNOWN', value: 'UNKNOWN' },
-      { label: 'SSD', value: 'SSD' },
-      { label: '5400', value: '5400' },
-      { label: '7200', value: '7200' },
-      { label: '10000', value: '10000' },
-      { label: '15000', value: '15000' },
+      { label: 'UNKNOWN', value: IscsiExtentRpm.Unknown },
+      { label: 'SSD', value: IscsiExtentRpm.Ssd },
+      { label: '5400', value: IscsiExtentRpm.Rpm5400 },
+      { label: '7200', value: IscsiExtentRpm.Rpm7200 },
+      { label: '10000', value: IscsiExtentRpm.Rpm10000 },
+      { label: '15000', value: IscsiExtentRpm.Rpm15000 },
     ],
 
     typeOptions: [

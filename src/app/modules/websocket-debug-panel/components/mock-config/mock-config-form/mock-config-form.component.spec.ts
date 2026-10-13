@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { TnRadioHarness } from '@truenas/ui-components';
+import { JobState } from 'app/enums/job-state.enum';
 import { MockConfig, MockEvent } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import * as WebSocketDebugActions from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 import { MockConfigFormComponent } from './mock-config-form.component';
@@ -28,7 +29,7 @@ describe('MockConfigFormComponent', () => {
       {
         delay: 1000,
         fields: {
-          state: 'RUNNING',
+          state: JobState.Running,
           description: 'Test event',
           result: { test: 'data' },
         },
@@ -99,7 +100,7 @@ describe('MockConfigFormComponent', () => {
           {
             delay: 1000,
             fields: {
-              state: 'RUNNING',
+              state: JobState.Running,
               description: 'Test event',
               result: { test: 'data' },
             },
@@ -262,7 +263,7 @@ describe('MockConfigFormComponent', () => {
         {
           delay: 100,
           fields: {
-            state: 'RUNNING',
+            state: JobState.Running,
             description: 'Event 1',
             result: { data: 1 },
           },
@@ -270,7 +271,7 @@ describe('MockConfigFormComponent', () => {
         {
           delay: 200,
           fields: {
-            state: 'SUCCESS',
+            state: JobState.Success,
             description: 'Event 2',
             result: { data: 2 },
           },
@@ -413,7 +414,7 @@ describe('MockConfigFormComponent', () => {
         {
           delay: 500,
           fields: {
-            state: 'RUNNING',
+            state: JobState.Running,
             description: 'New event',
             result: { test: true },
           },

@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { v4 as uuidv4 } from 'uuid';
 import { IncomingMessage, RequestMessage } from 'app/interfaces/api-message.interface';
 import { cacheCleanupIntervalMs, maxCacheSize } from 'app/modules/websocket-debug-panel/constants';
-import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
+import { WebSocketDebugMessage, MessageDirection } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 import * as WebSocketDebugActions from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 
 @Injectable({
@@ -26,7 +26,7 @@ export class WebSocketDebugService {
     const debugMessage: WebSocketDebugMessage = {
       id: uuidv4(),
       timestamp: new Date().toISOString(),
-      direction: 'out',
+      direction: MessageDirection.Out,
       // Deep clone to prevent NgRx strictActionImmutability from freezing the original message
       message: structuredClone(message),
       isMocked,
@@ -52,7 +52,7 @@ export class WebSocketDebugService {
     const debugMessage: WebSocketDebugMessage = {
       id: uuidv4(),
       timestamp: new Date().toISOString(),
-      direction: 'in',
+      direction: MessageDirection.In,
       // Deep clone to prevent NgRx strictActionImmutability from freezing the original message
       message: structuredClone(message),
       isMocked,

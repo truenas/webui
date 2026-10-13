@@ -3,6 +3,7 @@
 import { fakeAsync, tick } from '@angular/core/testing';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { JobState } from 'app/enums/job-state.enum';
 import { MockEvent } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { JobEventBuilderComponent } from './job-event-builder.component';
 
@@ -13,7 +14,7 @@ describe('JobEventBuilderComponent', () => {
     {
       delay: 1000,
       fields: {
-        state: 'RUNNING',
+        state: JobState.Running,
         description: 'Starting job',
         progress: {
           percent: 25,
@@ -24,7 +25,7 @@ describe('JobEventBuilderComponent', () => {
     {
       delay: 3000,
       fields: {
-        state: 'SUCCESS',
+        state: JobState.Success,
         description: 'Job completed',
         result: { success: true, data: 'test' },
         progress: {
@@ -62,7 +63,7 @@ describe('JobEventBuilderComponent', () => {
       const firstEvent = spectator.component['getEventControl'](0);
       expect(firstEvent.value).toEqual({
         delay: 1000,
-        state: 'RUNNING',
+        state: JobState.Running,
         description: 'Starting job',
         progressPercent: 25,
         progressDescription: 'Processing...',
@@ -73,7 +74,7 @@ describe('JobEventBuilderComponent', () => {
       const secondEvent = spectator.component['getEventControl'](1);
       expect(secondEvent.value).toEqual({
         delay: 3000,
-        state: 'SUCCESS',
+        state: JobState.Success,
         description: 'Job completed',
         progressPercent: 100,
         progressDescription: 'Done',
@@ -86,7 +87,7 @@ describe('JobEventBuilderComponent', () => {
       const minimalEvent: MockEvent = {
         delay: 500,
         fields: {
-          state: 'WAITING',
+          state: JobState.Waiting,
         },
       };
 
@@ -96,7 +97,7 @@ describe('JobEventBuilderComponent', () => {
       const eventControl = spectator.component['getEventControl'](0);
       expect(eventControl.value).toEqual({
         delay: 500,
-        state: 'WAITING',
+        state: JobState.Waiting,
         description: '',
         progressPercent: 0,
         progressDescription: '',
@@ -107,10 +108,10 @@ describe('JobEventBuilderComponent', () => {
 
     it('should handle various delay value formats', () => {
       const eventsWithVariousDelays: MockEvent[] = [
-        { delay: '2500' as unknown as number, fields: { state: 'RUNNING' } },
-        { delay: null as unknown as number, fields: { state: 'RUNNING' } },
-        { delay: undefined as unknown as number, fields: { state: 'RUNNING' } },
-        { delay: 'invalid' as unknown as number, fields: { state: 'RUNNING' } },
+        { delay: '2500' as unknown as number, fields: { state: JobState.Running } },
+        { delay: null as unknown as number, fields: { state: JobState.Running } },
+        { delay: undefined as unknown as number, fields: { state: JobState.Running } },
+        { delay: 'invalid' as unknown as number, fields: { state: JobState.Running } },
       ];
 
       spectator.setInput('events', eventsWithVariousDelays);
@@ -134,7 +135,7 @@ describe('JobEventBuilderComponent', () => {
       const newEvent = spectator.component['getEventControl'](0);
       expect(newEvent.value).toEqual({
         delay: 2000,
-        state: 'RUNNING',
+        state: JobState.Running,
         description: 'Processing...',
         progressPercent: 0,
         progressDescription: 'Starting...',
@@ -167,7 +168,7 @@ describe('JobEventBuilderComponent', () => {
       spectator.component['addEvent']();
       const eventControl = spectator.component['getEventControl'](0);
 
-      eventControl.patchValue({ state: 'FAILED', error: 'Test error' });
+      eventControl.patchValue({ state: JobState.Failed, error: 'Test error' });
 
       tick(350); // Wait for debounce
 
@@ -175,7 +176,7 @@ describe('JobEventBuilderComponent', () => {
         expect.objectContaining({
           delay: 2000,
           fields: expect.objectContaining({
-            state: 'FAILED',
+            state: JobState.Failed,
             error: 'Test error',
           }),
         }),
@@ -209,7 +210,7 @@ describe('JobEventBuilderComponent', () => {
       spectator.component['addEvent']();
       const eventControl = spectator.component['getEventControl'](0);
 
-      eventControl.patchValue({ state: 'SUCCESS' });
+      eventControl.patchValue({ state: JobState.Success });
 
       expect(spectator.component['isResultVisible'](0)).toBe(true);
     });
@@ -218,7 +219,7 @@ describe('JobEventBuilderComponent', () => {
       spectator.component['addEvent']();
       const eventControl = spectator.component['getEventControl'](0);
 
-      eventControl.patchValue({ state: 'FAILED' });
+      eventControl.patchValue({ state: JobState.Failed });
 
       expect(spectator.component['isResultVisible'](0)).toBe(true);
     });
@@ -240,7 +241,7 @@ describe('JobEventBuilderComponent', () => {
       const eventControl = spectator.component['getEventControl'](0);
 
       eventControl.patchValue({
-        state: 'SUCCESS',
+        state: JobState.Success,
         result: '{"test": "data", "number": 123}',
       });
 
@@ -253,7 +254,7 @@ describe('JobEventBuilderComponent', () => {
       const eventControl = spectator.component['getEventControl'](0);
 
       eventControl.patchValue({
-        state: 'SUCCESS',
+        state: JobState.Success,
         result: 'invalid json {',
       });
 
@@ -314,7 +315,7 @@ describe('JobEventBuilderComponent', () => {
       const event1: MockEvent = {
         delay: 1000,
         fields: {
-          state: 'SUCCESS',
+          state: JobState.Success,
           result: { nested: { value: 42 } },
         },
       };
@@ -322,7 +323,7 @@ describe('JobEventBuilderComponent', () => {
       const event2: MockEvent = {
         delay: 1000,
         fields: {
-          state: 'SUCCESS',
+          state: JobState.Success,
           result: { nested: { value: 42 } },
         },
       };
@@ -330,7 +331,7 @@ describe('JobEventBuilderComponent', () => {
       const event3: MockEvent = {
         delay: 1000,
         fields: {
-          state: 'SUCCESS',
+          state: JobState.Success,
           result: { nested: { value: 43 } },
         },
       };

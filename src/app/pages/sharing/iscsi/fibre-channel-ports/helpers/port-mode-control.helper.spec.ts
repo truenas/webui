@@ -1,4 +1,5 @@
 import { FormBuilder } from '@ngneat/reactive-forms';
+import { NewOrExisting } from 'app/enums/new-or-existing.enum';
 import { configurePortControlsForMode, PortModeControls } from './port-mode-control.helper';
 
 describe('configurePortControlsForMode', () => {
@@ -15,14 +16,14 @@ describe('configurePortControlsForMode', () => {
 
   describe('existing mode', () => {
     it('enables port control and disables host_id control', () => {
-      configurePortControlsForMode('existing', controls);
+      configurePortControlsForMode(NewOrExisting.Existing, controls);
 
       expect(controls.port.enabled).toBe(true);
       expect(controls.host_id.disabled).toBe(true);
     });
 
     it('sets required validator on port control', () => {
-      configurePortControlsForMode('existing', controls);
+      configurePortControlsForMode(NewOrExisting.Existing, controls);
 
       controls.port.setValue(null);
       expect(controls.port.hasError('required')).toBe(true);
@@ -33,12 +34,12 @@ describe('configurePortControlsForMode', () => {
 
     it('clears validators from host_id control', () => {
       // First set validators on host_id
-      configurePortControlsForMode('new', controls);
+      configurePortControlsForMode(NewOrExisting.New, controls);
       controls.host_id.setValue(null);
       expect(controls.host_id.hasError('required')).toBe(true);
 
       // Switch to existing mode
-      configurePortControlsForMode('existing', controls);
+      configurePortControlsForMode(NewOrExisting.Existing, controls);
       controls.host_id.setValue(null);
       expect(controls.host_id.hasError('required')).toBe(false);
     });
@@ -46,7 +47,7 @@ describe('configurePortControlsForMode', () => {
     it('clears host_id value', () => {
       controls.host_id.setValue(123);
 
-      configurePortControlsForMode('existing', controls);
+      configurePortControlsForMode(NewOrExisting.Existing, controls);
 
       expect(controls.host_id.value).toBeNull();
     });
@@ -55,7 +56,7 @@ describe('configurePortControlsForMode', () => {
       const portSpy = jest.spyOn(controls.port, 'updateValueAndValidity');
       const hostSpy = jest.spyOn(controls.host_id, 'updateValueAndValidity');
 
-      configurePortControlsForMode('existing', controls);
+      configurePortControlsForMode(NewOrExisting.Existing, controls);
 
       expect(portSpy).toHaveBeenCalled();
       expect(hostSpy).toHaveBeenCalled();
@@ -64,14 +65,14 @@ describe('configurePortControlsForMode', () => {
 
   describe('new mode', () => {
     it('enables host_id control and disables port control', () => {
-      configurePortControlsForMode('new', controls);
+      configurePortControlsForMode(NewOrExisting.New, controls);
 
       expect(controls.host_id.enabled).toBe(true);
       expect(controls.port.disabled).toBe(true);
     });
 
     it('sets required validator on host_id control', () => {
-      configurePortControlsForMode('new', controls);
+      configurePortControlsForMode(NewOrExisting.New, controls);
 
       controls.host_id.setValue(null);
       expect(controls.host_id.hasError('required')).toBe(true);
@@ -82,12 +83,12 @@ describe('configurePortControlsForMode', () => {
 
     it('clears validators from port control', () => {
       // First set validators on port
-      configurePortControlsForMode('existing', controls);
+      configurePortControlsForMode(NewOrExisting.Existing, controls);
       controls.port.setValue(null);
       expect(controls.port.hasError('required')).toBe(true);
 
       // Switch to new mode
-      configurePortControlsForMode('new', controls);
+      configurePortControlsForMode(NewOrExisting.New, controls);
       controls.port.setValue(null);
       expect(controls.port.hasError('required')).toBe(false);
     });
@@ -95,7 +96,7 @@ describe('configurePortControlsForMode', () => {
     it('clears port value', () => {
       controls.port.setValue('fc0');
 
-      configurePortControlsForMode('new', controls);
+      configurePortControlsForMode(NewOrExisting.New, controls);
 
       expect(controls.port.value).toBeNull();
     });
@@ -104,7 +105,7 @@ describe('configurePortControlsForMode', () => {
       const portSpy = jest.spyOn(controls.port, 'updateValueAndValidity');
       const hostSpy = jest.spyOn(controls.host_id, 'updateValueAndValidity');
 
-      configurePortControlsForMode('new', controls);
+      configurePortControlsForMode(NewOrExisting.New, controls);
 
       expect(portSpy).toHaveBeenCalled();
       expect(hostSpy).toHaveBeenCalled();
@@ -114,14 +115,14 @@ describe('configurePortControlsForMode', () => {
   describe('mode switching', () => {
     it('correctly transitions from existing to new mode', () => {
       // Start in existing mode
-      configurePortControlsForMode('existing', controls);
+      configurePortControlsForMode(NewOrExisting.Existing, controls);
       controls.port.setValue('fc0');
       expect(controls.port.value).toBe('fc0');
       expect(controls.port.enabled).toBe(true);
       expect(controls.host_id.disabled).toBe(true);
 
       // Switch to new mode
-      configurePortControlsForMode('new', controls);
+      configurePortControlsForMode(NewOrExisting.New, controls);
       expect(controls.port.value).toBeNull(); // Cleared
       expect(controls.port.disabled).toBe(true);
       expect(controls.host_id.enabled).toBe(true);
@@ -129,14 +130,14 @@ describe('configurePortControlsForMode', () => {
 
     it('correctly transitions from new to existing mode', () => {
       // Start in new mode
-      configurePortControlsForMode('new', controls);
+      configurePortControlsForMode(NewOrExisting.New, controls);
       controls.host_id.setValue(123);
       expect(controls.host_id.value).toBe(123);
       expect(controls.host_id.enabled).toBe(true);
       expect(controls.port.disabled).toBe(true);
 
       // Switch to existing mode
-      configurePortControlsForMode('existing', controls);
+      configurePortControlsForMode(NewOrExisting.Existing, controls);
       expect(controls.host_id.value).toBeNull(); // Cleared
       expect(controls.host_id.disabled).toBe(true);
       expect(controls.port.enabled).toBe(true);
@@ -144,11 +145,11 @@ describe('configurePortControlsForMode', () => {
 
     it('handles multiple mode switches without validator accumulation', () => {
       // Switch modes multiple times
-      configurePortControlsForMode('existing', controls);
-      configurePortControlsForMode('new', controls);
-      configurePortControlsForMode('existing', controls);
-      configurePortControlsForMode('new', controls);
-      configurePortControlsForMode('existing', controls);
+      configurePortControlsForMode(NewOrExisting.Existing, controls);
+      configurePortControlsForMode(NewOrExisting.New, controls);
+      configurePortControlsForMode(NewOrExisting.Existing, controls);
+      configurePortControlsForMode(NewOrExisting.New, controls);
+      configurePortControlsForMode(NewOrExisting.Existing, controls);
 
       // Verify validation still works correctly (no accumulated validators)
       controls.port.setValue(null);
@@ -164,13 +165,13 @@ describe('configurePortControlsForMode', () => {
     it('integrates correctly with form group', () => {
       const form = fb.group(controls);
 
-      configurePortControlsForMode('existing', controls);
+      configurePortControlsForMode(NewOrExisting.Existing, controls);
       expect(form.invalid).toBe(true); // port is required but null
 
       controls.port.setValue('fc0');
       expect(form.valid).toBe(true);
 
-      configurePortControlsForMode('new', controls);
+      configurePortControlsForMode(NewOrExisting.New, controls);
       expect(form.invalid).toBe(true); // host_id is required but null
 
       controls.host_id.setValue(1);
@@ -180,13 +181,13 @@ describe('configurePortControlsForMode', () => {
     it('returns correct getRawValue after mode switch', () => {
       const form = fb.group(controls);
 
-      configurePortControlsForMode('existing', controls);
+      configurePortControlsForMode(NewOrExisting.Existing, controls);
       controls.port.setValue('fc0');
 
       let rawValue = form.getRawValue();
       expect(rawValue).toEqual({ port: 'fc0', host_id: null });
 
-      configurePortControlsForMode('new', controls);
+      configurePortControlsForMode(NewOrExisting.New, controls);
       controls.host_id.setValue(123);
 
       rawValue = form.getRawValue();
