@@ -13,10 +13,10 @@
  * failing anything else.
  */
 import {
-  ensureSshKeypairAbsent, ensureSshKeypairPresent, findSshKeypair, keypairKeys,
+  countSshKeypairs, ensureSshKeypairAbsent, ensureSshKeypairPresent, findSshKeypair, keypairKeys,
 } from '../fixtures/ssh-keypairs';
 import {
-  deleteSshKeypair, generateKeypair, openAddSshKeypairForm, saveSshKeypairForm,
+  deleteSshKeypair, generateKeypair, openAddSshKeypairForm, saveSshKeypairForm, sshKeypairCardPageSize,
 } from '../flows/ssh-keypairs';
 import { sshKeypairLocators } from '../locators/ssh-keypairs';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
@@ -54,6 +54,17 @@ test.afterEach(async ({ api }) => {
 });
 
 test('an admin generates an SSH keypair, and the appliance stores that pair', async ({ page, api }) => {
+  // The new keypair is the newest, so the last row, and the card reloads after the
+  // save with no signal the test can wait on. View All pressed in that window
+  // sizes the list by the old count and hides the new row anyway, so instead of
+  // expanding, this needs the new row to fit on the card. A fresh appliance holds
+  // none; failing here says why rather than timing out on a hidden row.
+  const existing = await countSshKeypairs(api);
+  expect(
+    existing < sshKeypairCardPageSize,
+    `the card lists ${sshKeypairCardPageSize} keypairs before View All, and the appliance already holds ${existing}`,
+  ).toBe(true);
+
   await openAddSshKeypairForm(page);
   await page.locator(sshKeypairLocators.form.name).fill(generatedKeypair);
   const shown = await generateKeypair(page);
@@ -79,7 +90,7 @@ test('deleting a keypair from the card removes the keypair that was picked', asy
   await ensureSshKeypairPresent(api, targetKeypair);
   await ensureSshKeypairPresent(api, bystanderKeypair);
 
-  await deleteSshKeypair(page, targetKeypair);
+  await deleteSshKeypair(page, targetKeypair, await countSshKeypairs(api));
 
   // Polled rather than read once: the card reloads after the call, but a row can
   // also be hidden while the table is between loads, which proves nothing.

@@ -17,6 +17,14 @@ export const sshKeypairLocators = {
     /** `<tn-button [testId]="['add-ssh-keypair']">` in the card footer. */
     add: '[data-test="button-add-ssh-keypair"]',
 
+    /**
+     * The card's pager, `<ix-table-pager-show-more [testId]="['ssh-keypairs']">`,
+     * which scopes its buttons off that base. View All renders only while there
+     * are more keypairs than the card lists; Collapse only once it was pressed.
+     */
+    viewAll: '[data-test="button-ssh-keypairs-show-more"]',
+    collapse: '[data-test="button-ssh-keypairs-show-less"]',
+
     row: (name: string): string => `[data-test="row-${rowTag(name)}"]`,
 
     name: (name: string): string => `[data-test="text-name-${rowTag(name)}-row-text"]`,

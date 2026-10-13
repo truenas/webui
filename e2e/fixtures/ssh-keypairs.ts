@@ -31,6 +31,15 @@ export async function findSshKeypair(client: E2eApiClient, name: string): Promis
   return keypair as SshKeypairRecord | undefined;
 }
 
+/** How many SSH keypairs the appliance holds, whoever made them. */
+export async function countSshKeypairs(client: E2eApiClient): Promise<number> {
+  const keypairs = await firstValueFrom(
+    client.api.query('keychaincredential.query', [['type', '=', 'SSH_KEY_PAIR']]).pipe(timeout(readTimeoutMs)),
+  );
+
+  return keypairs.length;
+}
+
 /**
  * The keys a keypair holds, as middleware stores them; neither, for no keypair.
  *

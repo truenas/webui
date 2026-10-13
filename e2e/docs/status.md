@@ -323,7 +323,11 @@ form's Generate Keypair button and deleting one, from the SSH Keypairs card on
 Credentials > Backup Credentials. The generate test reads the pair the form
 filled in and requires `keychaincredential.query` to hold that same pair, so a
 save that dropped or regenerated the keys fails. The delete runs beside a second
-keypair that must come through untouched. Pasting a key in, editing, downloading
+keypair that must come through untouched. The card lists five keypairs, oldest
+first, before View All. The delete test presses it when there are more. The
+generate test cannot, because the card reloads after the save with nothing to
+wait on, so it fails at the start if the new keypair would not fit on the card.
+Pasting a key in, editing, downloading
 and deleting a keypair an SSH connection still uses are not covered.
 
 The framework is done and the coverage is not. Ninety-four tests — ninety-three
