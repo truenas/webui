@@ -208,12 +208,16 @@ jobs:
       # dispatch on master or the nightly finds master's. A dispatch on any
       # other branch has none and builds below. So does a WebUI run that
       # finished without the artifact, or one still going after ten minutes.
+      # Each falls back to building rather than failing the job.
       - name: Find the WebUI build
         id: shipped-build
         if: (inputs.ui || 'built') == 'built'
         env:
           GH_TOKEN: ${{ github.token }}
           SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          # The PR's branch, or the pushed one: a run of the same commit from
+          # another PR (a fork's, or one to another base) built another tree.
+          BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
           set -euo pipefail
           event=push
@@ -224,11 +228,11 @@ jobs:
           while :; do
             # A failed query (a 5xx, the token's rate limit) falls back to
             # building rather than failing the job.
-            if ! runs=$(get "$api/workflows/main.yml/runs?head_sha=$SHA&event=$event&per_page=1"); then
+            if ! runs=$(get "$api/workflows/main.yml/runs?head_sha=$SHA&event=$event&branch=$BRANCH&per_page=10"); then
               echo "::notice::Could not query the WebUI runs; building the UI here"
               exit 0
             fi
-            run=$(jq -c '.workflow_runs[0] // empty' <<< "$runs")
+            run=$(jq -c --arg repo "$GITHUB_REPOSITORY" '[.workflow_runs[] | select(.head_repository.full_name == $repo)][0] // empty' <<< "$runs")
             if [ -z "$run" ]; then
               echo "No WebUI $event run of $SHA; building the UI here"
               exit 0
@@ -249,7 +253,9 @@ jobs:
               echo "::notice::WebUI run $id has not uploaded webui-dist after 10 minutes; building the UI here"
               exit 0
             fi
-            sleep 10
+            # Two calls a round, on the token's 1,000 requests an hour that
+            # every workflow in the repository shares.
+            sleep 20
           done
 
       - name: Download the WebUI build
