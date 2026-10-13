@@ -106,6 +106,19 @@ jobs:
             grep -q " ./usr/share/truenas/webui/$file\$" ../contents.txt \
               || { echo "::error::$file is missing from $deb"; exit 1; }
           done
+          dpkg-deb -x "$deb" ../package
+          mv ../package/usr/share/truenas/webui webui-dist
+      # The UI as the package ships it, for e2e.yml: its job looks this up by
+      # commit and serves it instead of building the UI again. It waits for
+      # this upload only after its appliance has booted, so the two overlap;
+      # without it (a failed build, an expired artifact) e2e builds its own.
+      - name: Upload the UI for e2e
+        uses: actions/upload-artifact@v4
+        with:
+          name: webui-dist
+          path: webui-dist
+          if-no-files-found: error
+          retention-days: 7
 
   # Build above runs on x64, so it only proves the linux-x64 checksum in
   # debian/fetch_node.sh. scale-build also builds on arm64; this runs just the

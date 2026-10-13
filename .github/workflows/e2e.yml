@@ -92,9 +92,11 @@ on:
         type: number
         default: 1
 
-# Reads code, uploads artifacts. No reason to write to the repository.
+# Reads code, uploads artifacts, and reads the WebUI workflow's runs and
+# artifacts for its build of the UI. No reason to write to the repository.
 permissions:
   contents: read
+  actions: read
 
 # Runs share nothing, so a newer push to the same ref replaces an older run:
 # cancelling one leaks nothing, its runner and appliance are deleted with it.
@@ -172,25 +174,15 @@ jobs:
           $docker pull --quiet "$image"
           echo "PLAYWRIGHT_IMAGE=$image" >> "$GITHUB_ENV"
 
-      # The UI under test is the one in this checkout, not the one baked into
-      # the appliance's ISO. Same production build as main.yml's Build job —
-      # `--base-href /ui/`, so it is served where the appliance's nginx would
-      # serve it. Built before the appliance boots, so the build's memory is
-      # back before a 6GB guest starts.
-      #
-      # The web server is a stock nginx image driven by `docker/nginx.conf`,
-      # this repository's copy of the appliance's nginx routing. A stand-in
-      # rather than the real thing: the deb ships only `dist/`, so an appliance
-      # serves the UI through middleware's own config, not this file. Pulled
-      # here for the same fail-early reason as the Playwright image.
-      - name: Build the UI
+      # The web server for the UI under test is a stock nginx image driven by
+      # `docker/nginx.conf`, this repository's copy of the appliance's nginx
+      # routing. A stand-in rather than the real thing: the deb ships only
+      # `dist/`, so an appliance serves the UI through middleware's own
+      # config, not this file. Pulled here for the same fail-early reason as
+      # the Playwright image.
+      - name: Pull nginx
         if: (inputs.ui || 'built') == 'built'
-        run: |
-          set -euo pipefail
-          yarn build:prod
-          [ -f dist/index.html ] || { echo "::error::yarn build:prod produced no dist/index.html"; exit 1; }
-          $DOCKER pull --quiet "$NGINX_IMAGE"
-          echo "UI_DIST=$GITHUB_WORKSPACE/dist" >> "$GITHUB_ENV"
+        run: $DOCKER pull --quiet "$NGINX_IMAGE"
 
       # Boots the appliance disk this runner's pool attached, under qemu,
       # inside the runner; gives the admin a password made for this job;
@@ -203,6 +195,82 @@ jobs:
         uses: iXsystems/ux-github-workflows/.github/actions/truenas-appliance-runner@master
         with:
           baseline: fresh-install
+
+      # The UI under test is this checkout's, not the one baked into the
+      # appliance's ISO. main.yml's Build job already builds it, as the
+      # Debian package that ships, and uploads it as `webui-dist`; this finds
+      # that WebUI run by commit and waits for the upload. Looked for only
+      # now, after the boot, so its build and this job's boot overlap.
+      #
+      # Only a run that built the tree this job checked out counts: for a
+      # pull request, the WebUI run of the same head commit, which built
+      # the same merge commit; otherwise the push run of this commit, so a
+      # dispatch on master or the nightly finds master's. A dispatch on any
+      # other branch has none and builds below. So does a WebUI run that
+      # finished without the artifact, or one still going after ten minutes.
+      - name: Find the WebUI build
+        id: shipped-build
+        if: (inputs.ui || 'built') == 'built'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          event=push
+          [ "$GITHUB_EVENT_NAME" = pull_request ] && event=pull_request
+          api="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions"
+          get() { curl -fsS -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "$1"; }
+          deadline=$((SECONDS + 600))
+          while :; do
+            run=$(get "$api/workflows/main.yml/runs?head_sha=$SHA&event=$event&per_page=1" | jq -c '.workflow_runs[0] // empty')
+            if [ -z "$run" ]; then
+              echo "No WebUI $event run of $SHA; building the UI here"
+              exit 0
+            fi
+            id=$(jq -r .id <<< "$run")
+            if get "$api/runs/$id/artifacts?name=webui-dist" | jq -e '.artifacts | length > 0' > /dev/null; then
+              echo "run-id=$id" >> "$GITHUB_OUTPUT"
+              echo "Using the UI WebUI run $id built, $(jq -r .html_url <<< "$run"), after waiting ${SECONDS}s"
+              exit 0
+            fi
+            if [ "$(jq -r .status <<< "$run")" = completed ]; then
+              echo "::notice::WebUI run $id finished without webui-dist; building the UI here"
+              exit 0
+            fi
+            if [ "$SECONDS" -ge "$deadline" ]; then
+              echo "::notice::WebUI run $id has not uploaded webui-dist after 10 minutes; building the UI here"
+              exit 0
+            fi
+            sleep 10
+          done
+
+      - name: Download the WebUI build
+        if: steps.shipped-build.outputs.run-id != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: webui-dist
+          path: ${{ runner.temp }}/webui-dist
+          run-id: ${{ steps.shipped-build.outputs.run-id }}
+          github-token: ${{ github.token }}
+
+      # Same production build as main.yml's Build job — `--base-href /ui/`,
+      # so it is served where the appliance's nginx would serve it — for
+      # when there is no WebUI build to reuse. After the boot, so its memory
+      # and the 6GB guest's are in use at once; only on that fallback.
+      - name: Build the UI
+        if: (inputs.ui || 'built') == 'built'
+        env:
+          DOWNLOADED: ${{ steps.shipped-build.outputs.run-id != '' && format('{0}/webui-dist', runner.temp) || '' }}
+        run: |
+          set -euo pipefail
+          if [ -n "$DOWNLOADED" ]; then
+            dist="$DOWNLOADED"
+          else
+            yarn build:prod
+            dist="$GITHUB_WORKSPACE/dist"
+          fi
+          [ -f "$dist/index.html" ] || { echo "::error::$dist has no index.html"; exit 1; }
+          echo "UI_DIST=$dist" >> "$GITHUB_ENV"
 
       # nginx serves the build at /ui/ and proxies /api, /_upload, /_download
       # and the WebSocket to the appliance over plain HTTP, which is the
