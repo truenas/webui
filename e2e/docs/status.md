@@ -274,7 +274,19 @@ is typed and not left is on screen while Save still answers for the old one —
 before it is saved, so a hostname that does not resolve is refused, and the
 refusal arrives as an error dialog rather than under the field.
 
-The framework is done and the coverage is not. Eighty tests — seventy-nine
+Init/shutdown scripts came next, in `tests/init-shutdown-scripts.e2e.ts`: adding,
+editing and deleting a command script from the card on System > Advanced
+Settings, each asserted on the card and through `initshutdownscript.query`, and
+edit and delete each beside a second script that must come through untouched.
+Two things about the card shape the spec. Its row tag is
+`card-init-shutdown-<command>-<when>`, so editing either renames every id on the
+row and the spec looks it up again under the new values. And every form on
+Advanced Settings is preceded, once per page load, by a first-time warning held
+in memory by `FirstTimeWarningService` — certain on the fresh page each test
+gets, which is why the flows wait for it rather than probe. Script-type entries,
+which pick a file through `ix-explorer`, are not covered.
+
+The framework is done and the coverage is not. Eighty-three tests — eighty-two
 journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
