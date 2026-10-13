@@ -51,10 +51,12 @@ export const apiKeyLocators = {
   /**
    * `<tn-dialog-shell testId="key-created">`, raised once after a key is
    * created. The key is in a read-only `tn-input` and is shown nowhere else.
+   * That input is `[multiline]="true"`, which renders a `<textarea>` typed
+   * `textarea`, so `testId="api-key"` emits `textarea-api-key`, not `input-api-key`.
    */
   keyCreatedDialog: {
     title: '[data-test="dialog-title-key-created"]',
-    key: '[data-test="input-api-key"]',
+    key: '[data-test="textarea-api-key"]',
     close: '[data-test="button-close"]',
   },
 } as const;
