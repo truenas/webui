@@ -13,8 +13,8 @@
  *   features does a test drive": a feature is, roughly, the methods behind it.
  * - **Routes.** Every routed page in the router config, against the URLs the app reached.
  *
- * The recording side is `e2e/support/coverage.ts`. It counts from after the token sign-in, so the
- * dashboard every test lands on is not credited to all of them.
+ * The recording side is `e2e/support/coverage.ts`. It counts from each test's first navigation, so
+ * the dashboard every test signs in onto is not credited to all of them.
  *
  * The inventory is read statically and is approximate in a known direction. A method name built at
  * runtime, or passed through a helper (`getAppsFetchCall('app.latest')`), is not found. When a test
@@ -390,7 +390,7 @@ function main(): void {
     '# E2E coverage',
     '',
     `From ${results.length} test attempts${failedNote}.`,
-    'Counted from after sign-in; the inventory is read statically from `src/app`. See `scripts/e2e-coverage.ts`.',
+    'Counted from each test\'s first navigation; the inventory is read statically from `src/app`. See `scripts/e2e-coverage.ts`.',
     '',
     '| | Covered | Total | % |',
     '|---|---:|---:|---:|',

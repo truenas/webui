@@ -131,7 +131,7 @@ keep.
 ### Coverage
 
 Every test records the middleware methods the UI called and the routes it
-reached, from after sign-in, into `test-results/e2e-coverage/`. To compare them
+reached, from its first navigation, into `test-results/e2e-coverage/`. To compare them
 with what the UI can do:
 
 ```bash
