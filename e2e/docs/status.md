@@ -473,7 +473,11 @@ option's label is today's date in that format, so its id changes daily, and
 `dd/MM/yyyy` and `dd.MM.yyyy` always share one. And the `formatDateTime` pipe,
 which renders that cell, reads the format only from `localStorage`, which the
 form writes on save. So in a new browser the pipe shows the default, whatever the
-account holds. The keyboard map and the time format are not covered.
+account holds. Writing the spec turned up a bug there: the form announced the
+change before writing `localStorage`, so the pipe re-read the old format and
+dates already on screen kept it until a reload. It now writes first. A `shipped`
+run needs a nightly built after that fix. The keyboard map and the time format
+are not covered.
 
 The framework is done and the coverage is not. A hundred and twenty-five tests — a
 hundred and twenty-four journeys and the smoke — against 19 top-level feature areas. What the work
