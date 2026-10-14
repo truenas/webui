@@ -459,8 +459,24 @@ menu. Delete goes through the page's own dialog, which lists what it will delete
 Activating, unkeeping, the batch delete, scrubbing the boot pool and the
 Stats/Settings dialog are not covered.
 
-The framework is done and the coverage is not. A hundred and twenty-two tests — a
-hundred and twenty-one journeys and the smoke — against 19 top-level feature areas. What the work
+Localization came next, in `tests/localization.e2e.ts`: changing the timezone,
+the language and the date format. They are no longer saved in one place. The
+timezone is the appliance's, set from the Localization card on System > General
+Settings and checked on the card and through `system.general.config`. The
+language and the date format are the account's, set from the Localization
+section of the Preferences form and checked through `auth.me`, with the
+preferences spec's baseline and teardown. That baseline now pins English and the
+default date format too. German is checked by the card's Settings button
+reading `Einstellungen`, and the date format by the running boot environment's
+Date Created cell. Two things about the date format are worth knowing. Each
+option's label is today's date in that format, so its id changes daily, and
+`dd/MM/yyyy` and `dd.MM.yyyy` always share one. And the `formatDateTime` pipe,
+which renders that cell, reads the format only from `localStorage`, which the
+form writes on save. So in a new browser the pipe shows the default, whatever the
+account holds. The keyboard map and the time format are not covered.
+
+The framework is done and the coverage is not. A hundred and twenty-five tests — a
+hundred and twenty-four journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.

@@ -25,6 +25,8 @@ export const navLocators = {
   backupCredentials: '[data-test="link-backup-credentials"]',
   /** A slide-out, like Credentials. */
   system: '[data-test="link-system-menu"]',
+  /** `General Settings` under System, raw item name again. */
+  generalSettings: '[data-test="link-general-settings"]',
   advancedSettings: '[data-test="link-advanced-settings"]',
   /** `Network` under System, raw item name again. */
   network: '[data-test="link-network"]',

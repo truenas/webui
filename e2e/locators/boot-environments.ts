@@ -26,6 +26,13 @@ export const bootEnvironmentLocators = {
     /** The Keep cell, a translated Yes/No — hence the `row-yesno` suffix. */
     keep: (name: string): string => `[data-test="text-keep-${rowTag(name)}-row-yesno"]`,
 
+    /**
+     * The Date Created cell, in the account's date and time format. Its id starts
+     * from the *translated* column title, so it only matches while the app is in
+     * English.
+     */
+    dateCreated: (name: string): string => `[data-test="text-date-created-${rowTag(name)}-row-date"]`,
+
     clone: (name: string): string => `[data-test="button-${rowTag(name)}-mdi-content-copy-row-action"]`,
 
     /** Hidden once the flag is set, when Unkeep (`mdi-bookmark`) takes its place. */

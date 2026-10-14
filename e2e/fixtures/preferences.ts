@@ -45,6 +45,8 @@ export const preferenceBaseline = {
   userTheme: 'ix-dark',
   syncThemeWithOS: false,
   hideBuiltinGroups: true,
+  language: 'en',
+  dateFormat: 'yyyy-MM-DD',
 } as const;
 
 /**
