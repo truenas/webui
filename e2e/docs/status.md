@@ -548,8 +548,21 @@ set over `filesystem.setperm`. The card names each entry after its owner or
 group, so its ids change with them. The ACL editor, presets, and applying
 permissions recursively are not covered.
 
-The framework is done and the coverage is not. A hundred and forty-three tests — a
-hundred and forty-two journeys and the smoke — against 19 top-level feature areas. What the work
+Encrypted datasets came next, in `tests/datasets-encryption.e2e.ts`: creating a
+dataset encrypted with a passphrase from the form's Encryption Options, locking
+one from the Encryption card, and unlocking one from the card's Unlock page
+through both summary dialogs. Each is asserted on the card's Current State and
+through `pool.dataset.query`, which says whether the key is really loaded. Every
+dataset is its own encryption root with a passphrase, because the card offers
+Lock only for that. The lock and unlock tests start from one made over the API.
+Writing it turned up a `data-test` collision: the Lock dialog's own button emits
+`button-lock`, the same as the card's behind it. Rather than rename either, the
+dialog's action row now carries `actions-lock-dataset`, and the locator selects
+the button inside it. Key encryption, unlocking from a key file, child datasets
+that inherit encryption, Edit on the card, and exporting keys are not covered.
+
+The framework is done and the coverage is not. A hundred and forty-six tests — a
+hundred and forty-five journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
