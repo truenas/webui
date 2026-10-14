@@ -602,6 +602,22 @@ The row tag is `privilege-<name>` and the edit leaves the name alone. Picking a
 group in the form, directory-service groups, the Enable DS Authentication prompt,
 built-in privileges and the search are not covered.
 
+A pool's devices came next, in `tests/pool-devices.e2e.ts`: taking a disk offline
+and bringing it back online, and adding a spare, both from the pool's VDEVs page.
+That page is reached from View VDEVs on the pool's card on the Storage dashboard.
+Each change is asserted on the page and through `pool.query`. The spec builds its
+own pool, `e2e_devices_tank`, as a two-disk mirror, because a disk can only go
+offline from a vdev that survives losing it. It rebuilds the pool before each test
+and destroys it after. Offline and Online are in the ZFS Info card's menu. The
+spare is added through Add VDEV, which opens the pool wizard on that pool, on its
+Spare step. A vdev or disk in the tree is keyed by its ZFS guid, not its name. Two
+ids changed for the spec. View VDEVs was `button-manage-vdevs` on every pool's card,
+so with two pools on the dashboard a test could not say which one it meant. It is
+now `button-<pool>-manage-vdevs`, like the pool's Disconnect and View Datasets. The ZFS Info
+card's menu trigger now passes `button-zfs-actions` in full, as the other callers
+of that input do. Replace, Extend, Detach, Remove and the other kinds of vdev are
+not covered.
+
 Scrubbing a pool came next, in `tests/pool-scrub.e2e.ts`: one test starts a
 scrub from Scrub Now on the pool's Storage Health card and waits for it to
 finish. `pool.query` has to report a finished `SCRUB` with no errors. The card
@@ -614,8 +630,8 @@ Disconnect's, because the dashboard shows one per pool. Pause, Resume
 and Stop are not covered: a scrub of an empty pool ends before they can be
 clicked. The scheduled scrub form is not covered either.
 
-The framework is done and the coverage is not. A hundred and fifty-five tests — a
-hundred and fifty-four journeys and the smoke — against 19 top-level feature areas. What the work
+The framework is done and the coverage is not. A hundred and fifty-seven tests — a
+hundred and fifty-six journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.

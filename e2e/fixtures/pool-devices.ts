@@ -1,0 +1,132 @@
+/**
+ * A pool for the pool devices page: preconditions and readback, over the API.
+ *
+ * Taking a disk offline needs a vdev that survives losing it, so the pool here is
+ * a two-disk mirror rather than the one-disk stripe `ensurePoolPresent` builds.
+ * Adding a spare needs a third unused disk, which the wizard offers from the same
+ * inventory. Both tests change the pool's topology, so the pool is this spec's own
+ * and never the worker-scoped one other specs share.
+ */
+import type { QueryEntity } from '@truenas/api-client';
+import { firstValueFrom, timeout } from 'rxjs';
+import { findPool, getSelectableDisks } from './storage';
+import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
+import { runJob } from '../support/jobs';
+import { readTimeoutMs } from '../support/timeouts';
+
+type PoolEntry = QueryEntity<E2eApiDirectory['call'], 'pool.query'>;
+
+/** A disk in the pool's topology, as `pool.query` reports it. */
+export interface PoolDevice {
+  /** `sdb`. Null for a disk middleware cannot find. */
+  disk: string | null;
+  guid: string;
+  /** `ONLINE`, `OFFLINE`, `DEGRADED`, … */
+  status: string;
+}
+
+/** The fields of a `pool.query` topology entry that `toDevice` reads. */
+interface TopologyDevice {
+  disk?: string | null;
+  guid: string;
+  status: string;
+}
+
+interface TopologyVdev extends TopologyDevice {
+  children: TopologyDevice[];
+}
+
+/** The parts of a pool's `topology` read here. */
+interface Topology {
+  data?: TopologyVdev[];
+  spare?: TopologyDevice[];
+}
+
+const poolCreateTimeoutMs = 3 * 60_000;
+
+/**
+ * Builds a two-disk mirror by name, if it is not already there.
+ *
+ * The first disk the wizard's inventory lists, in `disk.details` order rather than
+ * the wizard's size order, and another of the same type and size, since a mirror
+ * of unlike disks is not one an admin could build there. The caller owns the removal,
+ * through `ensurePoolAbsent`, and it has to be unconditional: the pool holds two
+ * disks, and `fresh-install` needs nine alike.
+ */
+export async function ensureMirrorPoolPresent(client: E2eApiClient, name: string): Promise<void> {
+  if (await findPool(client, name)) {
+    return;
+  }
+
+  const disks = await getSelectableDisks(client);
+  const [first] = disks;
+  const second = disks.find((disk) => (
+    disk !== first && disk.type === first?.type && disk.size === first?.size
+  ));
+
+  if (!first || !second) {
+    throw new Error(
+      `Pool "${name}" needs two unused disks of one type and size for its mirror, and the appliance `
+      + 'does not have them, so the journey has no pool to act on.',
+    );
+  }
+
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('pool.create', [{
+      name,
+      topology: { data: [{ type: 'MIRROR', disks: [first.devname, second.devname] }] },
+    }]),
+    {
+      timeoutMs: poolCreateTimeoutMs,
+      whatItCosts: `Pool "${name}" was not created, so the journey has no pool to act on.`,
+    },
+  );
+}
+
+async function getPool(client: E2eApiClient, name: string): Promise<PoolEntry> {
+  // `query`, not `queryOne`. See "Talking to middleware" in `CLAUDE.md`.
+  const [pool] = await firstValueFrom(
+    client.api.query('pool.query', [['name', '=', name]]).pipe(timeout(readTimeoutMs)),
+  );
+
+  if (!pool) {
+    throw new Error(`The appliance reports no pool named "${name}".`);
+  }
+
+  return pool;
+}
+
+async function getTopology(client: E2eApiClient, name: string): Promise<Topology | null | undefined> {
+  // The API client types a pool's topology entries only as `unknown`, so the
+  // narrowing has to happen here.
+  return (await getPool(client, name)).topology as unknown as Topology | null | undefined;
+}
+
+/** The pool's first data vdev and the disks in it. */
+export async function readMirror(
+  client: E2eApiClient,
+  name: string,
+): Promise<{ guid: string; disks: PoolDevice[] }> {
+  const [mirror] = (await getTopology(client, name))?.data ?? [];
+
+  if (!mirror) {
+    throw new Error(`Pool "${name}" reports no data vdev.`);
+  }
+
+  return { guid: mirror.guid, disks: mirror.children.map((item) => toDevice(item)) };
+}
+
+/** The pool's spares, in topology order. */
+export async function listSpares(client: E2eApiClient, name: string): Promise<PoolDevice[]> {
+  return ((await getTopology(client, name))?.spare ?? []).map((item) => toDevice(item));
+}
+
+/** The pool's own status: `ONLINE`, or `DEGRADED` while a member is offline. */
+export async function readPoolStatus(client: E2eApiClient, name: string): Promise<string> {
+  return (await getPool(client, name)).status;
+}
+
+function toDevice(item: TopologyDevice): PoolDevice {
+  return { disk: item.disk ?? null, guid: item.guid, status: item.status };
+}
