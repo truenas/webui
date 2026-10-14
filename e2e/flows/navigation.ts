@@ -25,6 +25,7 @@ const expectedRoute = {
   backupCredentials: /\/credentials\/backup-credentials\/?$/,
   advancedSettings: /\/system\/advanced\/?$/,
   network: /\/system\/network\/?$/,
+  alertSettings: /\/system\/alert-settings\/?$/,
 } as const;
 
 /**
@@ -115,4 +116,13 @@ export async function goToAdvancedSettings(page: Page): Promise<void> {
 export async function goToNetwork(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.system).click();
   await clickAndArrive(page, navLocators.network, expectedRoute.network);
+}
+
+/**
+ * Alert Settings is under the same System slide-out. Anchored to the end because
+ * the standalone Alert Services list lives under it (`/system/alert-settings/services`).
+ */
+export async function goToAlertSettings(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.system).click();
+  await clickAndArrive(page, navLocators.alertSettings, expectedRoute.alertSettings);
 }

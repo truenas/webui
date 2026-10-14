@@ -28,4 +28,6 @@ export const navLocators = {
   advancedSettings: '[data-test="link-advanced-settings"]',
   /** `Network` under System, raw item name again. */
   network: '[data-test="link-network"]',
+  /** `Alert Settings` under System, raw item name again. */
+  alertSettings: '[data-test="link-alert-settings"]',
 } as const;
