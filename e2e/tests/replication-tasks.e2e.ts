@@ -1,7 +1,8 @@
 /**
  * Stories: an admin creates a replication task between two datasets on the same
  * appliance, and runs one, from the card on Data Protection — and the target
- * really ends up holding the source's snapshots.
+ * really ends up holding the source's snapshots. They also edit and delete a
+ * task from the card, and the appliance holds what they did.
  *
  * Each action is asserted on the card and on the appliance: `replication.query`
  * for the task as stored, `core.get_jobs` for whether the run worked, and
@@ -10,10 +11,15 @@
  *
  * Creating goes through the wizard with Run Once, which is the one path where
  * the UI does both halves itself: it snapshots the source, because there is
- * nothing to send yet, saves the task, and starts it. Running from the card acts
- * beside a second task that must not run. The row's actions sit in a kebab
- * menu, so a run belongs to whichever row's menu was opened, and a row-targeting
- * bug would replicate the wrong datasets without failing anything else.
+ * nothing to send yet, saves the task, and starts it. Running, editing and
+ * deleting from the card each act beside a second task that must come through
+ * untouched. The row's actions sit in a kebab menu, so an action belongs to
+ * whichever row's menu was opened, and a row-targeting bug would act on the
+ * wrong task without failing anything else.
+ *
+ * Edit opens the full replication form rather than the wizard. The edit renames
+ * the task, and the row's ids are built from its name, so the renamed row is
+ * found under its new name and the old one must be gone.
  *
  * Every source dataset is made fresh for each test. No target is: replication
  * creates its own, so a target that exists afterwards is evidence of a run.
@@ -32,10 +38,14 @@ import {
 } from '../fixtures/replication-tasks';
 import { ensureDatasetAbsent, ensureDatasetPresent, findDataset } from '../fixtures/storage';
 import {
+  chooseReplicationReadonlyPolicy,
+  deleteReplicationTask,
   fillLocalReplication,
+  openEditReplicationTaskForm,
   openReplicationWizard,
   replicationTaskCardPageSize,
   runReplicationTask,
+  saveReplicationTaskForm,
   saveReplicationToRunOnce,
 } from '../flows/replication-tasks';
 import { replicationTaskLocators } from '../locators/replication-tasks';
@@ -51,12 +61,16 @@ const createdName = 'e2e-replication-created';
 const createdSourceLeaf = 'e2e_repl_created_src';
 const createdTargetLeaf = 'e2e_repl_created_dst';
 
-/** Provisioned over the API, so there is something to run. */
+/** Provisioned over the API, so there is something to run, edit or delete. */
 const runName = 'e2e-replication-run';
 const runSourceLeaf = 'e2e_repl_run_src';
 const runTargetLeaf = 'e2e_repl_run_dst';
 
-/** Provisioned beside it, and must not run. */
+/** What the edit test renames that task to, and the retry count it gives it. */
+const editedName = 'e2e-replication-edited';
+const editedRetries = 2;
+
+/** Provisioned beside it, and must come through whatever is done to it untouched. */
 const bystanderName = 'e2e-replication-bystander';
 const bystanderSourceLeaf = 'e2e_repl_bystander_src';
 const bystanderTargetLeaf = 'e2e_repl_bystander_dst';
@@ -64,7 +78,7 @@ const bystanderTargetLeaf = 'e2e_repl_bystander_dst';
 /** Matches {@link replicationNamingSchema}, and is long past, so nothing the appliance takes can collide with it. */
 const seededSnapshot = 'auto-2000-01-01_00-00';
 
-const allNames = [createdName, runName, bystanderName];
+const allNames = [createdName, runName, editedName, bystanderName];
 const sourceLeaves = [createdSourceLeaf, runSourceLeaf, bystanderSourceLeaf];
 const targetLeaves = [createdTargetLeaf, runTargetLeaf, bystanderTargetLeaf];
 
@@ -82,6 +96,16 @@ async function requireRoomOnCard(api: E2eApiClient, adding: number): Promise<voi
     existing + adding <= replicationTaskCardPageSize,
     `the card lists ${replicationTaskCardPageSize} tasks, this test adds ${adding}, the appliance has ${existing}`,
   ).toBe(true);
+}
+
+/** Both tasks over the API: acting on one from the card is the thing under test. */
+async function seedTaskAndBystander(api: E2eApiClient, pool: string): Promise<void> {
+  await ensureReplicationTaskPresent(api, {
+    name: runName, source: `${pool}/${runSourceLeaf}`, target: `${pool}/${runTargetLeaf}`,
+  });
+  await ensureReplicationTaskPresent(api, {
+    name: bystanderName, source: `${pool}/${bystanderSourceLeaf}`, target: `${pool}/${bystanderTargetLeaf}`,
+  });
 }
 
 /**
@@ -167,10 +191,7 @@ test('running a replication task from the card replicates the task that was pick
 
   await createSnapshot(api, source, seededSnapshot);
   await createSnapshot(api, `${pool}/${bystanderSourceLeaf}`, seededSnapshot);
-  await ensureReplicationTaskPresent(api, { name: runName, source, target });
-  await ensureReplicationTaskPresent(api, {
-    name: bystanderName, source: `${pool}/${bystanderSourceLeaf}`, target: bystanderTarget,
-  });
+  await seedTaskAndBystander(api, pool);
   const task = await findReplicationTask(api, runName);
   const bystander = await findReplicationTask(api, bystanderName);
   const earlierRuns = await findReplicationRunJobIds(api);
@@ -187,4 +208,70 @@ test('running a replication task from the card replicates the task that was pick
   await expect(page.locator(replicationTaskLocators.card.row(bystanderName))).toBeVisible();
   expect(await findReplicationRuns(api, bystander?.id ?? -1, earlierRuns)).toEqual([]);
   expect(await findDataset(api, bystanderTarget)).toBeUndefined();
+});
+
+test('editing a replication task from the card changes the task that was picked', async ({ page, api, pool }) => {
+  await requireRoomOnCard(api, 2);
+  await seedTaskAndBystander(api, pool);
+  const before = await findReplicationTask(api, runName);
+  const bystanderBefore = await findReplicationTask(api, bystanderName);
+  if (!before || !bystanderBefore) {
+    throw new Error(`the seeded tasks "${runName}" and "${bystanderName}" are not both on the appliance`);
+  }
+  // Each value the edit sets has to differ from what the task starts with, or
+  // the readback below would pass without the edit having landed.
+  expect(before).toMatchObject({ readonly: 'IGNORE', enabled: true });
+  expect(before.retries).not.toBe(editedRetries);
+
+  const { form, card } = replicationTaskLocators;
+  await openEditReplicationTaskForm(page, runName);
+  await page.locator(form.name).fill(editedName);
+  await page.locator(form.retries).fill(String(editedRetries));
+  await chooseReplicationReadonlyPolicy(page, 'SET');
+  await page.locator(form.enabled).click();
+  await saveReplicationTaskForm(page);
+
+  await expect(page.locator(card.name(editedName))).toHaveText(editedName);
+  await expect(page.locator(card.row(runName))).toBeHidden();
+
+  // The same record, by id, under its new name and no longer under the old one:
+  // an update, not a delete and a create that leave the card looking the same.
+  expect(await findReplicationTasks(api, runName)).toEqual([]);
+  expect(await findReplicationTasks(api, editedName)).toHaveLength(1);
+  expect(await findReplicationTask(api, editedName)).toMatchObject({
+    id: before.id,
+    retries: editedRetries,
+    readonly: 'SET',
+    enabled: false,
+    // Untouched in the form, so they have to come back out the way they went in.
+    direction: 'PUSH',
+    transport: 'LOCAL',
+    source_datasets: before.source_datasets,
+    target_dataset: before.target_dataset,
+    auto: false,
+    also_include_naming_schema: [replicationNamingSchema],
+    retention_policy: before.retention_policy,
+  });
+
+  expect(await findReplicationTask(api, bystanderName)).toMatchObject({
+    id: bystanderBefore.id,
+    retries: bystanderBefore.retries,
+    readonly: 'IGNORE',
+    enabled: true,
+  });
+});
+
+test('deleting a replication task from the card removes the task that was picked', async ({ page, api, pool }) => {
+  await requireRoomOnCard(api, 2);
+  await seedTaskAndBystander(api, pool);
+
+  await deleteReplicationTask(page, runName);
+
+  // Polled rather than read once: the card reloads after the call, but a row can
+  // also be hidden while the table is between loads, which proves nothing.
+  await expect.poll(() => findReplicationTasks(api, runName)).toEqual([]);
+
+  // The whole point of the second task: the card looks right either way.
+  await expect(page.locator(replicationTaskLocators.card.name(bystanderName))).toHaveText(bystanderName);
+  expect(await findReplicationTasks(api, bystanderName)).toHaveLength(1);
 });

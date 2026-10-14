@@ -608,9 +608,12 @@ task and starts it. The run from the card sits beside a second task that must no
 run. No target dataset is made in advance, so a target that exists afterwards is
 evidence of a run. Middleware hands a deleted task's id to the next task and keeps
 finished jobs, so runs are counted only from jobs that did not exist before the
-action. Scheduled tasks and the periodic snapshot task the wizard makes for them,
-encryption, Edit, Restore, Delete and the full list page are not covered. Push
-over SSH is `tests/replication-ssh.e2e.ts`'s, below.
+action. Editing and deleting from the row menu followed, each beside a task that
+must come through untouched. Edit opens the full replication form, not the wizard.
+The test renames the task and changes its retries, read-only policy and Enabled,
+then reads back the same record by id. Scheduled tasks and the periodic snapshot
+task the wizard makes for them, encryption, Restore and the full list page are not
+covered. Push over SSH is `tests/replication-ssh.e2e.ts`'s, below.
 
 Privileges came next, in `tests/privileges.e2e.ts`: adding, editing and deleting
 a privilege from the list on Credentials > Privileges, each asserted on the list
