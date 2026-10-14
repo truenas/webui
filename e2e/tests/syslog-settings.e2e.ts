@@ -59,7 +59,7 @@ test('an admin sets up syslog forwarding, and the appliance keeps every setting'
   // Exactly one server: a form that sent the empty one it starts a new entry
   // with, or sent the entry twice, fails here.
   expect(saved.syslogservers).toHaveLength(1);
-  expect(saved.syslogservers[0]).toMatchObject({ host, transport: 'TCP' });
+  expect(saved.syslogservers?.[0]).toMatchObject({ host, transport: 'TCP' });
 });
 
 /**
