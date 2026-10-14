@@ -64,7 +64,9 @@ const principals: Record<QuotaKind, Principals> = {
 };
 
 for (const kind of ['user', 'group'] as const) {
-  const { target, bystander, ensurePresent, ensureAbsent } = principals[kind];
+  const {
+    target, bystander, ensurePresent, ensureAbsent,
+  } = principals[kind];
 
   test.describe(`${kind} quotas`, () => {
     test.beforeEach(async ({ api, pool }) => {
