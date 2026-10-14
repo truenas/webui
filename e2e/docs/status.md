@@ -561,8 +561,21 @@ dialog's action row now carries `actions-lock-dataset`, and the locator selects
 the button inside it. Key encryption, unlocking from a key file, child datasets
 that inherit encryption, Edit on the card, and exporting keys are not covered.
 
-The framework is done and the coverage is not. A hundred and forty-six tests — a
-hundred and forty-five journeys and the smoke — against 19 top-level feature areas. What the work
+Rsync tasks came next, in `tests/rsync-tasks.e2e.ts`: adding, editing and
+deleting a task from the card on Data Protection, each asserted on the card and
+through `rsynctask.query`, which holds the remote end, the direction, the
+schedule and the transfer options the card does not show. Edit and delete each
+run beside a second task that must come through untouched. Every task is in
+Module mode against `127.0.0.1`, where no rsync daemon listens: middleware
+connects to nothing on save in that mode, and a task that fires before teardown
+fails without touching data. The row tag is `card-rsync-task-<path>-<host>`, so
+each task syncs a dataset of its own and the edit leaves both alone. The card
+lists four tasks and its View All leaves for the full list, so each test fails at
+the start if its rows would not fit. SSH mode, Run job, the Enabled switch and
+the full list page are not covered.
+
+The framework is done and the coverage is not. A hundred and forty-nine tests — a
+hundred and forty-eight journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
