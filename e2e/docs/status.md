@@ -366,8 +366,8 @@ fails at the start if its rows would not fit. Two more tests watch a task run.
 Nothing in the UI runs one on demand, so each is scheduled every minute: one
 requires every snapshot on its fresh dataset to match its naming schema and the
 dataset's snapshot list to show one, and the other switches a task off with
-the card's Enabled switch and requires it to take nothing more, using a second
-task left on the same schedule as the clock. Custom schedules, exclusions, the
+the card's Enabled switch and requires it to take nothing after the tick already
+under way, using a second task left on the same schedule as the clock. Custom schedules, exclusions, the
 full list page and deleting a task that has snapshots are not covered.
 
 The dataset form came next, in `tests/datasets-form.e2e.ts`: creating a dataset

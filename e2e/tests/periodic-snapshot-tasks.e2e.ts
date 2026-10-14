@@ -93,7 +93,7 @@ const targetSnapshotName = /^e2e-target-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}$/;
 /** Both seeded schemas end in `%Y-%m-%d_%H-%M`, which comes out this long. */
 const stampLength = '2026-01-01_00-00'.length;
 
-/** The minute a snapshot was taken in, cut from its name. Compares as the times do. */
+/** The minute a snapshot was taken in, cut from its name. */
 function stampOf(snapshotName: string): string {
   return snapshotName.slice(-stampLength);
 }
@@ -105,7 +105,7 @@ function stampOf(snapshotName: string): string {
  */
 const oneTick = { timeout: 150_000, intervals: [5_000] };
 
-/** The names of a dataset's snapshots, oldest stamp first. */
+/** The names of a dataset's snapshots, sorted so a failure prints them in a stable order. */
 async function snapshotNames(api: E2eApiClient, dataset: string): Promise<string[]> {
   const snapshots = await listSnapshots(api, dataset);
   return snapshots.map((snapshot) => snapshot.snapshot_name).sort((a, b) => a.localeCompare(b));
@@ -282,8 +282,10 @@ test('a periodic snapshot task takes snapshots named by its naming schema', asyn
   }
 
   // And the list the user would look in shows what the appliance took.
+  const [first] = names;
+  expect(first).toBeDefined();
   await openSnapshotList(page, target);
-  await expect(page.locator(snapshotLocators.list.row(target, names[0]))).toBeVisible();
+  await expect(page.locator(snapshotLocators.list.row(target, first ?? ''))).toBeVisible();
 });
 
 test('switching a periodic snapshot task off on the card stops it taking snapshots', async ({
@@ -302,20 +304,23 @@ test('switching a periodic snapshot task off on the card stops it taking snapsho
   expect((await findSnapshotTask(api, bystander))?.enabled).toBe(true);
 
   // The bystander, still on the same schedule, is the clock: it fires on every
-  // minute the target would have. Its first new snapshot may come from a tick
-  // already under way when the switch flipped, so that minute is not counted.
-  // The second is the first minute wholly after it, and waiting for a third
-  // gives anything the target took in the second time to show up.
+  // minute the target would have, and stamps each snapshot with that minute just
+  // as the target would. Three new ones are three minutes after the switch, and
+  // a target still running would share every one of them but perhaps the last,
+  // still landing. A target that stopped shares at most one: a tick already
+  // under way when the switch flipped. Stamps are matched, never ordered — they
+  // are local time, which runs backwards once a year.
   const before = new Set(await snapshotNames(api, bystander));
   const newStamps = async (): Promise<string[]> => (await snapshotNames(api, bystander))
     .filter((name) => !before.has(name))
     .map(stampOf);
   await expect.poll(async () => (await newStamps()).length, { ...oneTick, timeout: 3 * oneTick.timeout })
     .toBeGreaterThanOrEqual(3);
-  const [, firstWholeMinute] = await newStamps();
 
-  const takenSince = (await snapshotNames(api, target)).map(stampOf).filter((stamp) => stamp >= firstWholeMinute);
-  expect(takenSince).toEqual([]);
+  const targetStamps = new Set((await snapshotNames(api, target)).map(stampOf));
+  const sharedMinutes = (await newStamps()).filter((stamp) => targetStamps.has(stamp));
+  expect(sharedMinutes.length, `the target also took snapshots in ${sharedMinutes.join(', ')}`)
+    .toBeLessThanOrEqual(1);
 
   // The switch itself left the bystander alone.
   expect(await findSnapshotTask(api, bystander)).toMatchObject({ enabled: true, schedule: everyMinute });
