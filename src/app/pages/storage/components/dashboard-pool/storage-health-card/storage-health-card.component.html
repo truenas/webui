@@ -8,7 +8,7 @@
     @if (!wasScanInitiated()) {
       <tn-button
         *ixRequiresRoles="[Role.PoolScrubWrite]"
-        [testId]="'scrub'"
+        [testId]="['scrub', pool().name]"
         [ixUiSearch]="searchableElements.elements.scrubNow"
         [label]="'Scrub Now' | translate"
         (onClick)="onStartScrub()"
