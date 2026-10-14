@@ -87,7 +87,7 @@ export async function readVmDevices(
   const attributes = devices.map((device) => device.attributes as unknown as DeviceAttributes);
 
   return {
-    types: attributes.map((attribute) => attribute.dtype).sort(),
+    types: attributes.map((attribute) => attribute.dtype).sort((a, b) => a.localeCompare(b)),
     diskPaths: attributes
       .filter((attribute) => attribute.dtype === 'DISK')
       .map((attribute) => attribute.path ?? ''),
