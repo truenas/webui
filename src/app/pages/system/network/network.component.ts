@@ -8,14 +8,13 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { InputType, TnButtonComponent, TnCardComponent, TnInputComponent, TnTestIdDirective } from '@truenas/ui-components';
-import {
-  firstValueFrom, lastValueFrom, switchMap,
-} from 'rxjs';
+import { firstValueFrom, lastValueFrom, map, switchMap } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
+import { toNetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -24,7 +23,7 @@ import { SplitTagPipe } from 'app/modules/pipes/split-tag/split-tag.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/system/network/components/interfaces-card/interfaces-card.component';
 import { IpmiCardComponent } from 'app/pages/system/network/components/ipmi-card/ipmi-card.component';
@@ -62,7 +61,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   ],
 })
 export class NetworkComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private router = inject(Router);
   private dialogService = inject(DialogService);
   private loader = inject(LoaderService);
@@ -365,8 +364,9 @@ export class NetworkComponent implements OnInit {
       return;
     }
 
-    this.api.call('interface.query', [[['id', '=', state.editInterface]]])
+    this.api.query('interface.query', [['id', '=', state.editInterface]])
       .pipe(
+        map((interfaces) => interfaces.map(toNetworkInterface)),
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),

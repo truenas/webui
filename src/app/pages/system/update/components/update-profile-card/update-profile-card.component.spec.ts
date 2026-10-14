@@ -5,11 +5,11 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { UpdateProfileChoices } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { UpdateProfileCard } from './update-profile-card.component';
 
 describe('UpdateProfileCard', () => {
@@ -43,8 +43,8 @@ describe('UpdateProfileCard', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockCall('update.update'),
+      mockTypedApi([
+        mockTypedCall('update.update', null),
       ]),
       provideMockStore(),
       {
@@ -86,7 +86,7 @@ describe('UpdateProfileCard', () => {
 
   it('opens confirm dialog and applies profile', async () => {
     const dialog = spectator.inject(DialogService);
-    const api = spectator.inject(ApiService);
+    const api = spectator.inject(TypedApiService);
     const snackbar = spectator.inject(SnackbarService);
 
     const select = await loader.getHarness(TnSelectHarness);

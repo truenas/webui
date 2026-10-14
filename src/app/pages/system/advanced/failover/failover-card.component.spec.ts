@@ -4,8 +4,8 @@ import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -29,11 +29,11 @@ describe('FailoverCardComponent', () => {
   const createComponent = createComponentFactory({
     component: FailoverCardComponent,
     providers: [
-      mockApi([
-        mockCall('failover.config', fakeConfig),
-        mockCall('failover.update'),
-        mockCall('failover.sync_to_peer'),
-        mockCall('failover.sync_from_peer'),
+      mockTypedApi([
+        mockTypedCall('failover.config', fakeConfig),
+        mockTypedCall('failover.update', null),
+        mockTypedCall('failover.sync_to_peer', null),
+        mockTypedCall('failover.sync_from_peer', null),
       ]),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
@@ -51,8 +51,10 @@ describe('FailoverCardComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     formPanel = spectator.inject(FormSidePanelService);
   });

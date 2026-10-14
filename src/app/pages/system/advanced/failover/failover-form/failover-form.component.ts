@@ -14,7 +14,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
 
@@ -36,7 +36,7 @@ import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
 })
 export class FailoverFormComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);

@@ -29,6 +29,13 @@ export interface AlertCategory {
   classes: AlertClass[];
 }
 
+/** Reads `alert.list_categories`. Middleware spells each class's `id` and `level` as plain strings. */
+export function toAlertCategories(
+  categories: CallResponse<WebUiApiDirectory, 'alert.list_categories'>,
+): AlertCategory[] {
+  return categories as AlertCategory[];
+}
+
 export interface AlertClass {
   id: AlertClassName;
   level: AlertLevel;

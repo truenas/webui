@@ -38,7 +38,7 @@ import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
 import { interfacesCardElements } from 'app/pages/system/network/components/interfaces-card/interfaces-card.elements';
 import {
@@ -81,7 +81,7 @@ export class InterfacesCardComponent implements OnInit {
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private networkService = inject(NetworkService);

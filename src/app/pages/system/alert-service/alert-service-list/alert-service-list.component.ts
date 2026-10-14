@@ -17,13 +17,13 @@ import {
   TnTablePagerComponent,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { tap } from 'rxjs';
+import { map, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { alertLevelLabels } from 'app/enums/alert-level.enum';
 import { alertServiceNames } from 'app/enums/alert-service-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { AlertService } from 'app/interfaces/alert-service.interface';
+import { AlertService, toAlertService } from 'app/interfaces/alert-service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -37,7 +37,7 @@ import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-co
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { alertServiceListElements } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.elements';
 
@@ -69,7 +69,7 @@ import { alertServiceListElements } from 'app/pages/system/alert-service/alert-s
 export class AlertServiceListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
   private loader = inject(LoaderService);
@@ -123,7 +123,8 @@ export class AlertServiceListComponent implements OnInit {
   private alertServices: AlertService[] = [];
 
   ngOnInit(): void {
-    const alertServices$ = this.api.call('alertservice.query').pipe(
+    const alertServices$ = this.api.query('alertservice.query').pipe(
+      map((services) => services.map(toAlertService)),
       tap((alertServices) => this.alertServices = alertServices),
       takeUntilDestroyed(this.destroyRef),
     );

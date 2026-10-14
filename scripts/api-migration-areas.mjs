@@ -192,6 +192,32 @@ export const migratedApiPaths = [
   'src/app/pages/sharing/components/tier-status',
   'src/app/pages/sharing/components/tier-status.utils.ts',
   'src/app/pages/sharing/components/data-migration-status-dialog/data-migration-status-dialog.component.ts',
+  // NAS-144005: system — advanced settings, general settings and support, alert services and alert settings, boot
+  // environments, enclosures and JBOFs, network and updates. `pages/system` is pinned below its root: the IPMI
+  // events dialog keeps `ApiService` for `ipmi.sel.elist`, which every generated directory declares as a job while
+  // the dialog reads it as a call since NAS-141809 (see the system drift notes in docs/devs/typed-api-client.md).
+  'src/app/pages/system/system.routes.ts',
+  'src/app/pages/system/advanced',
+  'src/app/pages/system/alert-config-form',
+  'src/app/pages/system/alert-service',
+  'src/app/pages/system/alert-settings',
+  'src/app/pages/system/bootenv',
+  'src/app/pages/system/enclosure',
+  'src/app/pages/system/general-settings',
+  'src/app/pages/system/update',
+  'src/app/pages/system/network/network.component.ts',
+  'src/app/pages/system/network/stores',
+  'src/app/pages/system/network/tests',
+  'src/app/pages/system/network/components/default-gateway-dialog',
+  'src/app/pages/system/network/components/interface-form',
+  'src/app/pages/system/network/components/interfaces-card',
+  'src/app/pages/system/network/components/network-configuration',
+  'src/app/pages/system/network/components/network-configuration-card',
+  'src/app/pages/system/network/components/static-route-delete-dialog',
+  'src/app/pages/system/network/components/static-route-form',
+  'src/app/pages/system/network/components/static-routes-card',
+  'src/app/pages/system/network/components/ipmi-card/ipmi-card.component.ts',
+  'src/app/pages/system/network/components/ipmi-card/ipmi-form',
 ];
 
 /**

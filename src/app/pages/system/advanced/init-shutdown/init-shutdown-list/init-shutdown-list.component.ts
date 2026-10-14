@@ -15,12 +15,13 @@ import {
   TnTablePagerComponent,
   type TnSortEvent,
 } from '@truenas/ui-components';
+import { map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { InitShutdownScriptType, initShutdownScriptTypeLabels } from 'app/enums/init-shutdown-script-type.enum';
 import { initShutdownScriptWhenLabels } from 'app/enums/init-shutdown-script-when.enum';
 import { Role } from 'app/enums/role.enum';
-import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
+import { InitShutdownScript, toInitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -33,7 +34,7 @@ import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
@@ -64,7 +65,7 @@ import { initShudownListElements } from 'app/pages/system/advanced/init-shutdown
 export class InitShutdownListComponent implements OnInit {
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formPanel = inject(FormSidePanelService);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
@@ -119,7 +120,9 @@ export class InitShutdownListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dataProvider = new AsyncDataProvider(this.api.call('initshutdownscript.query'));
+    this.dataProvider = new AsyncDataProvider(
+      this.api.query('initshutdownscript.query').pipe(map((scripts) => scripts.map(toInitShutdownScript))),
+    );
     this.dataProvider.load();
   }
 

@@ -17,7 +17,7 @@ import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { nvidiaDriversCardElements } from 'app/pages/system/advanced/nvidia-drivers/nvidia-drivers-card/nvidia-drivers-card.elements';
 import { getNvidiaDriversFormConfig } from 'app/pages/system/advanced/nvidia-drivers/nvidia-drivers-form/nvidia-drivers.form-config';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -42,7 +42,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 })
 export class NvidiaDriversCardComponent {
   private store$ = inject<Store<AppState>>(Store);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   private firstTimeWarning = inject(FirstTimeWarningService);

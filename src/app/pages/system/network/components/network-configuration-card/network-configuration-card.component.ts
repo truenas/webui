@@ -9,17 +9,17 @@ import {
   TnListComponent, TnListIconDirective, TnListItemComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
-import { combineLatest } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
-import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
+import { NetworkConfiguration, toNetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { NetworkConfigurationComponent } from 'app/pages/system/network/components/network-configuration/network-configuration.component';
 import {
   networkConfigurationCardElements,
@@ -48,7 +48,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   ],
 })
 export class NetworkConfigurationCardComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   private searchDirectives = inject(UiSearchDirectivesService);
@@ -195,7 +195,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
 
     combineLatest([
       this.api.call('network.general.summary'),
-      this.api.call('network.configuration.config'),
+      this.api.call('network.configuration.config').pipe(map(toNetworkConfiguration)),
     ])
       .pipe(
         this.errorHandler.withErrorHandler(),

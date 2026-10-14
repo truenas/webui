@@ -18,7 +18,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { WarningComponent } from 'app/modules/warning/warning.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -41,7 +41,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class ProactiveComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private errorHandler = inject(ErrorHandlerService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 

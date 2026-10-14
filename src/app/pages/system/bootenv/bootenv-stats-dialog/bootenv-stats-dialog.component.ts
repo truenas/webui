@@ -8,10 +8,11 @@ import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
   InputType, TnTestIdDirective,
 } from '@truenas/ui-components';
+import { map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PoolStatus, poolStatusLabels } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
-import { PoolInstance } from 'app/interfaces/pool.interface';
+import { PoolInstance, toBootPoolInstance } from 'app/interfaces/pool.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -19,7 +20,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -47,7 +48,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 })
 export class BootenvStatsDialog implements OnInit {
   protected readonly InputType = InputType;
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private loader = inject(LoaderService);
   private store$ = inject<Store<AppState>>(Store);
   protected dialogRef = inject<DialogRef<unknown, BootenvStatsDialog>>(DialogRef);
@@ -105,6 +106,7 @@ export class BootenvStatsDialog implements OnInit {
   private loadBootState(): void {
     this.api.call('boot.get_state')
       .pipe(
+        map(toBootPoolInstance),
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),

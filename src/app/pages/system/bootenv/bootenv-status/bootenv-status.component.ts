@@ -15,17 +15,18 @@ import {
   TnTreeNodeOutletDirective,
   createNestedTreeControl, TnTestIdDirective,
 } from '@truenas/ui-components';
+import { map } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
-import { PoolInstance } from 'app/interfaces/pool.interface';
+import { PoolInstance, toBootPoolInstance } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { BootPoolAttachDialog } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
 import { BootPoolReplaceDialog } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-dialog.component';
 import { bootEnvStatusElements } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.elements';
@@ -65,7 +66,7 @@ export interface BootPoolActionEvent {
 })
 export class BootStatusListComponent implements OnInit {
   private router = inject(Router);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private tnDialog = inject(TnDialog);
   private loader = inject(LoaderService);
@@ -101,6 +102,7 @@ export class BootStatusListComponent implements OnInit {
 
   private loadPoolInstance(): void {
     this.api.call('boot.get_state').pipe(
+      map(toBootPoolInstance),
       tap(() => this.isLoading.set(true)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({

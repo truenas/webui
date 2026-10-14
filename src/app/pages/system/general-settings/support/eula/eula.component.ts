@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnCardComponent, TnDividerComponent } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { eulaElements } from 'app/pages/system/general-settings/support/eula/eula.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -23,7 +23,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class EulaComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);

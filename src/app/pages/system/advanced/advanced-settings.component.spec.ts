@@ -4,8 +4,8 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
 import { of } from 'rxjs';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -78,7 +78,7 @@ describe('AdvancedSettingsComponent', () => {
       ),
     ],
     providers: [
-      mockApi(),
+      mockTypedApi(),
       mockAuth(),
       provideMockStore({
         selectors: [{
