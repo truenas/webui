@@ -12,7 +12,7 @@ export const dashboardLocators = {
      * keeping the same id, and only one of the two is ever rendered.
      */
     hostname: '[data-test="text-system-info-active-hostname"]',
-    /** The version string, followed by when it was released. */
+    /** The version string alone; the `rendered()` call beside it in the template emits nothing. */
     version: '[data-test="text-system-info-active-version"]',
   },
 } as const;

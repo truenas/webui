@@ -686,7 +686,7 @@ Three read-only pages followed, one test each: `tests/dashboard.e2e.ts`,
 `tests/reporting.e2e.ts` and `tests/audit-log.e2e.ts`. Each opens its page from the
 sidebar and checks a value the appliance supplied. On the Dashboard, the System
 Information widget's hostname and version have to match `system.info`. On
-Reporting, the CPU tab's `cpu` report has to show a Mean for at least one series.
+Reporting, the first series of the CPU tab's `cpu` report has to show a Mean.
 Its title, which every id on the report is keyed by, is read from
 `reporting.netdata_graphs`. On Audit, the newest middleware record from
 `audit.query` has to have its row, with the same user and event. That row's id

@@ -56,8 +56,8 @@ export async function readAuditSettings(client: E2eApiClient): Promise<AuditSett
  * The newest middleware audit record that carries a user and an event.
  *
  * Newest first, as the Audit page sorts it, so whatever the page lists on load is this record and
- * the few that arrive after it. Without a user or an event the page shows `-`, and the row id
- * spells the absent value, so a record missing either is not one a spec can name.
+ * the few that arrive after it. Without a user or an event the page shows `-` in that cell, so a
+ * record missing either cannot be checked by its cells.
  *
  * Cast because the client types `audit.query`'s response as every shape the call can return, a
  * count included. The webui narrows it to `AuditEntry` the same way.

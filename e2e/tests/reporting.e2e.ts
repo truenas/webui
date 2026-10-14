@@ -6,8 +6,8 @@
  * about whether data arrived. The report's title is read from `reporting.netdata_graphs` rather than
  * written here, because it is middleware's and every id on the report is keyed by it.
  *
- * "Shows live data" means the legend under the chart lists at least one series with a Mean,
- * computed by middleware from the samples it collected over the last hour. A report that failed
+ * "Shows live data" means the first series in the legend under the chart has a Mean holding a
+ * number, computed by middleware from the samples it collected over the last hour. A report that failed
  * to load shows an error in place of the chart and has no legend, and one still loading has
  * neither, so a Mean holding a number is the first point at which the page has drawn real data.
  *

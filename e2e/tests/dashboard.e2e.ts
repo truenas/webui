@@ -1,9 +1,10 @@
 /**
  * Story: an admin opens the Dashboard and the System Information widget describes this appliance.
  *
- * The widget is the first one in the default layout. Its hostname and version are read from
- * middleware when the page loads, so each is checked against what `system.info` reports. Uptime
- * is not checked: it moves every second.
+ * The widget is the first one in the default layout. It reads its hostname and version from
+ * `webui.main.dashboard.sys_info` when the page loads, and each is checked against what
+ * `system.info` reports, a separate call carrying the same fields. Uptime is not checked: it
+ * moves every second.
  *
  * The layout is the admin's own (`dashState` on the account), and nothing in the suite changes it.
  * On an appliance where someone has taken the widget off their dashboard this fails at its first
