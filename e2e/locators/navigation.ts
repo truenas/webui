@@ -15,6 +15,8 @@ export const navLocators = {
   shares: '[data-test="link-shares-menu"]',
   /** `Data Protection` — `getItemName` turns the space into an underscore, which normalizes to a hyphen. */
   dataProtection: '[data-test="link-data-protection-menu"]',
+  /** `Virtual Machines`, a plain link like Data Protection, and hidden without the VM entitlement. */
+  virtualMachines: '[data-test="link-virtual-machines-menu"]',
   /** A slide-out, not a link — opens a submenu rather than navigating. */
   credentials: '[data-test="link-credentials-menu"]',
   users: '[data-test="link-users"]',

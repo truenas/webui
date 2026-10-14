@@ -19,6 +19,7 @@ const expectedRoute = {
   datasets: /\/datasets/,
   shares: /\/sharing/,
   dataProtection: /\/data-protection\/?$/,
+  virtualMachines: /\/vm\/?$/,
   users: /\/credentials\/users/,
   groups: /\/credentials\/groups\/?$/,
   privileges: /\/credentials\/privileges\/?$/,
@@ -72,6 +73,14 @@ export async function goToShares(page: Page): Promise<void> {
  */
 export async function goToDataProtection(page: Page): Promise<void> {
   await clickAndArrive(page, navLocators.dataProtection, expectedRoute.dataProtection);
+}
+
+/**
+ * Virtual Machines is a plain link too. Anchored to the end because each VM's devices live under it
+ * (`/vm/:pk/devices`).
+ */
+export async function goToVirtualMachines(page: Page): Promise<void> {
+  await clickAndArrive(page, navLocators.virtualMachines, expectedRoute.virtualMachines);
 }
 
 /** Credentials is a slide-out, so reaching Users takes two clicks. */
