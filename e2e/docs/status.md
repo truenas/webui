@@ -659,8 +659,19 @@ group by the `comment` the wizard gives them. File extents, existing targets,
 portals and zvols in the wizard, initiators, Fibre Channel, Edit, the global
 configuration, the standalone pages and a real initiator login are not covered.
 
-The framework is done and the coverage is not. A hundred and sixty-one tests — a
-hundred and sixty journeys and the smoke — against 19 top-level feature areas. What the work
+The Services page under System followed, in `tests/services.e2e.ts`: starting FTP
+from its row's play button and stopping it from the stop button and its
+confirmation, and saving the SSH and FTP forms the rows' pencils open. A start or
+stop is asserted on the row's Status cell and through `service.query`, which also
+has to show the start did not turn on Start Automatically. A save is asserted
+through `ssh.config` or `ftp.config`, since the page shows no settings. The row
+tag is `service-<name>`. FTP is the service started because nothing the suite or
+CI uses depends on it; it goes back to stopped, and both forms' fields to a fixed
+baseline, before and after each test. The Start Automatically switch, the search,
+the other services' forms, advanced options and View Logs/Sessions are not covered.
+
+The framework is done and the coverage is not. A hundred and sixty-four tests — a
+hundred and sixty-three journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.

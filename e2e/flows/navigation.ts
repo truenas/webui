@@ -30,6 +30,7 @@ const expectedRoute = {
   network: /\/system\/network\/?$/,
   alertSettings: /\/system\/alert-settings\/?$/,
   boot: /\/system\/boot\/?$/,
+  services: /\/system\/services\/?$/,
 } as const;
 
 /**
@@ -156,4 +157,10 @@ export async function goToAlertSettings(page: Page): Promise<void> {
 export async function goToBootEnvironments(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.system).click();
   await clickAndArrive(page, navLocators.boot, expectedRoute.boot);
+}
+
+/** Services is under the same System slide-out. */
+export async function goToServices(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.system).click();
+  await clickAndArrive(page, navLocators.services, expectedRoute.services);
 }
