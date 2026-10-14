@@ -435,11 +435,21 @@ The row tag is `alert-service-<name>` and the edit leaves the name alone, so the
 row keeps its ids. Writing it turned up a `data-test` collision: the Category
 card beside the table also emitted `button-save`, so with the panel open the
 side panel's Save matched two elements. The card's is now
-`button-save-alert-config`. The other nine service types, Send Test Alert and
-the Category card itself are not covered.
+`button-save-alert-config`. The other nine service types and Send Test Alert are
+not covered.
 
-The framework is done and the coverage is not. A hundred and seventeen tests — a
-hundred and sixteen journeys and the smoke — against 19 top-level feature areas. What the work
+The Category card beside it came next, in `tests/alert-settings.e2e.ts`: changing
+one alert class's level, and another test its frequency, each asserted through
+`alertclasses.config` and on the card reopened from the sidebar. The card sends
+every override it holds and middleware replaces the set whole, so each test runs
+beside a second class whose own override must survive the save. The classes are
+picked from `alert.list_categories` when the file starts, from a category other
+than the one the card opens on, because their names belong to middleware. A
+row's ids are built from the class's title, not its id. Teardown writes back
+every override the appliance held before the first test.
+
+The framework is done and the coverage is not. A hundred and nineteen tests — a
+hundred and eighteen journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
