@@ -88,6 +88,7 @@ describe('DiskSizeSelectsComponent', () => {
           diskType: DiskType.Hdd,
           diskSize: 20 * GiB,
           treatDiskSizeAsMinimum: false,
+          isDiskSizeAutoSelected: false,
         },
       );
     });
@@ -130,6 +131,7 @@ describe('DiskSizeSelectsComponent', () => {
           diskSize: 10 * GiB,
           diskType: DiskType.Hdd,
           treatDiskSizeAsMinimum: true,
+          isDiskSizeAutoSelected: false,
         },
       );
     });
@@ -146,20 +148,61 @@ describe('DiskSizeSelectsComponent', () => {
     });
   });
 
-  it('selects disk size and type if there only one option available', async () => {
+  it('selects disk size and type if there only one option available, and marks it auto-selected', async () => {
     const singleDisk = { type: DiskType.Hdd, size: 10 * GiB, name: 'disk1' } as DetailsDisk;
     spectator.setInput('inventory', [singleDisk]);
 
     expect(await diskSizeSelect.getDisplayText()).toBe('10 GiB (HDD)');
-    expect(spectator.inject(PoolManagerStore).setTopologyCategoryDiskSizes).toHaveBeenCalledWith(
+    expect(spectator.inject(PoolManagerStore).setTopologyCategoryDiskSizes).toHaveBeenLastCalledWith(
       VDevType.Spare,
       {
         diskType: DiskType.Hdd,
         diskSize: 10 * GiB,
         treatDiskSizeAsMinimum: false,
+        isDiskSizeAutoSelected: true,
       },
     );
     expect(spectator.component.disksSelected.emit).toHaveBeenCalledWith([singleDisk]);
+  });
+
+  it('keeps a size the user picked as theirs when it becomes the only option', async () => {
+    await diskSizeSelect.selectOption('10 GiB (HDD)');
+    const store = spectator.inject(PoolManagerStore);
+    (store.setTopologyCategoryDiskSizes as jest.Mock).mockClear();
+
+    spectator.setInput('inventory', [
+      { type: DiskType.Hdd, size: 10 * GiB, name: 'disk1' },
+      { type: DiskType.Hdd, size: 10 * GiB, name: 'disk2' },
+    ] as DetailsDisk[]);
+
+    // The sole-option refresh re-sets the control (a new, deep-equal object), so the store hears
+    // about it — and must hear that the size is still the user's.
+    expect(store.setTopologyCategoryDiskSizes).toHaveBeenLastCalledWith(
+      VDevType.Spare,
+      {
+        diskType: DiskType.Hdd,
+        diskSize: 10 * GiB,
+        treatDiskSizeAsMinimum: false,
+        isDiskSizeAutoSelected: false,
+      },
+    );
+  });
+
+  it('stops treating an auto-selected size as auto-selected once the wizard is started over', async () => {
+    spectator.setInput('inventory', [{ type: DiskType.Hdd, size: 10 * GiB, name: 'disk1' }] as DetailsDisk[]);
+
+    startOver$.next();
+
+    expect(await diskSizeSelect.getDisplayText()).toBe('Select an option');
+    expect(spectator.inject(PoolManagerStore).setTopologyCategoryDiskSizes).toHaveBeenLastCalledWith(
+      VDevType.Spare,
+      {
+        diskType: null,
+        diskSize: null,
+        treatDiskSizeAsMinimum: false,
+        isDiskSizeAutoSelected: false,
+      },
+    );
   });
 
   it('re-emits an unchanged null selection to the store when the inventory changes', () => {
@@ -182,6 +225,7 @@ describe('DiskSizeSelectsComponent', () => {
         diskSize: null,
         diskType: null,
         treatDiskSizeAsMinimum: false,
+        isDiskSizeAutoSelected: false,
       },
     );
   });

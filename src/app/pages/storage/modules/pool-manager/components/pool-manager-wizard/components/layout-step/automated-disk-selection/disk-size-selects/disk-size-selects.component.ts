@@ -81,6 +81,10 @@ export class DiskSizeSelectsComponent implements OnChanges {
     treatDiskSizeAsMinimum: [false],
   });
 
+  // The value `updateOptions()` filled in by itself, kept until the control holds anything else.
+  // The store needs it to tell a suggested size from a picked one.
+  private autoSelectedSizeAndType: SizeAndType | null = null;
+
   constructor() {
     this.setControlRelations();
     this.updateStoreOnChanges();
@@ -137,10 +141,15 @@ export class DiskSizeSelectsComponent implements OnChanges {
     this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       const values = this.form.value;
 
+      if (!isEqual(this.form.controls.sizeAndType.value, this.autoSelectedSizeAndType)) {
+        this.autoSelectedSizeAndType = null;
+      }
+
       this.store.setTopologyCategoryDiskSizes(this.type(), {
         diskSize: this.selectedDiskSize,
         diskType: this.selectedDiskType,
         treatDiskSizeAsMinimum: values.treatDiskSizeAsMinimum,
+        isDiskSizeAutoSelected: this.autoSelectedSizeAndType !== null,
       });
     });
   }
@@ -179,6 +188,11 @@ export class DiskSizeSelectsComponent implements OnChanges {
     }
 
     if (nextOptions.length === 1 && this.isStepActive()) {
+      // Recorded as auto-selected only when it fills an empty control: a size the user already
+      // picked that happens to be the sole option stays the user's.
+      if (this.form.controls.sizeAndType.value === null) {
+        this.autoSelectedSizeAndType = nextOptions[0].value;
+      }
       setValueIfNotSame(this.form.controls.sizeAndType, nextOptions[0].value);
     }
   }

@@ -2,7 +2,9 @@ import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/sp
 import { provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
+import { GiB } from 'app/constants/bytes.constant';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
+import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import {
@@ -741,6 +743,79 @@ describe('PoolManagerValidationService', () => {
         const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
         const incompleteErrors = errors.filter((err) => err.text.includes('configuration is incomplete'));
         expect(incompleteErrors).toEqual([]);
+      });
+    });
+
+    describe('when the only disk size on offer was filled in on optional steps the user clicked through', () => {
+      const autoSelectedCategory: Partial<PoolManagerTopologyCategory> = {
+        ...emptyCategory,
+        diskSize: 10 * GiB,
+        diskType: DiskType.Hdd,
+        isDiskSizeAutoSelected: true,
+      };
+
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: dataCategory,
+              [VDevType.Log]: autoSelectedCategory,
+              [VDevType.Spare]: autoSelectedCategory,
+              [VDevType.Cache]: autoSelectedCategory,
+              [VDevType.Special]: autoSelectedCategory,
+              [VDevType.Dedup]: autoSelectedCategory,
+            }),
+          }),
+          ...sharedProviders,
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('does not flag any incomplete errors', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        const incompleteErrors = errors.filter((err) => err.text.includes('configuration is incomplete'));
+        expect(incompleteErrors).toEqual([]);
+      });
+    });
+
+    describe('when the user picked that same disk size on Log and left the rest empty', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: dataCategory,
+              [VDevType.Log]: {
+                ...emptyCategory,
+                diskSize: 10 * GiB,
+                diskType: DiskType.Hdd,
+                isDiskSizeAutoSelected: false,
+              },
+            }),
+          }),
+          ...sharedProviders,
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('flags Log step', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors).toContainEqual({
+          severity: PoolCreationSeverity.Error,
+          step: PoolCreationWizardStep.Log,
+          text: 'Log VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.',
+        });
       });
     });
   });

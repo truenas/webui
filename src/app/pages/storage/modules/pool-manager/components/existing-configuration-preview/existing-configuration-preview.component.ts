@@ -22,6 +22,7 @@ const defaultCategory: PoolManagerTopologyCategory = {
   width: null,
   diskSize: null,
   diskType: null,
+  isDiskSizeAutoSelected: false,
   vdevsNumber: null,
   treatDiskSizeAsMinimum: false,
   vdevs: [],
