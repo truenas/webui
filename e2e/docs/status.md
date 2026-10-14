@@ -525,8 +525,8 @@ has to show "Finished Scrub on …" and 0 errors without a reload. The spec buil
 its own one-disk pool, `e2e_scrub_tank`, and rebuilds it before each test, so
 the card cannot already show an old scrub. The shared `pool` fixture can be a
 developer's real pool, and scrubbing that could take hours. Scrub Now's id now
-carries the pool's name (`button-scrub-<pool>`, was `button-scrub`), like the
-other pool card actions, because the dashboard shows one per pool. Pause, Resume
+carries the pool's name (`button-scrub-<pool>`, was `button-scrub`), like
+Disconnect's, because the dashboard shows one per pool. Pause, Resume
 and Stop are not covered: a scrub of an empty pool ends before they can be
 clicked. The scheduled scrub form is not covered either.
 

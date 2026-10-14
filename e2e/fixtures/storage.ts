@@ -196,9 +196,10 @@ export async function findPool(client: E2eApiClient, name: string): Promise<Name
 /**
  * The part of a pool's `scan` a scrub journey reads.
  *
- * `null` on a pool that has never been scanned. `function` is `SCRUB` or
- * `RESILVER` and `state` is `SCANNING`, `FINISHED` or `CANCELED`, as in webui's
- * `PoolScanFunction` and `PoolScanState`.
+ * On a pool that has never been scanned, `function` and `state` are null, or the
+ * scan itself is. Otherwise `function` is `SCRUB` or `RESILVER` and `state` is
+ * `SCANNING`, `FINISHED` or `CANCELED`, as in webui's `PoolScanFunction` and
+ * `PoolScanState`.
  */
 export interface PoolScan {
   function: string | null;
@@ -216,8 +217,8 @@ export async function findPoolScan(client: E2eApiClient, name: string): Promise<
     throw new Error(`Cannot read the scan of pool "${name}": there is no such pool.`);
   }
 
-  // Narrowed by hand, the way `disk.details` is above: only these three fields
-  // are read, and the cast keeps the check independent of how the dump types the rest.
+  // Narrowed to the three fields read here, so a caller compares plain strings
+  // rather than depending on how the dump types the rest of the scan.
   return pool.scan as unknown as PoolScan | null;
 }
 
