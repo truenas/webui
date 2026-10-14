@@ -11,7 +11,7 @@
  * usual limits. Nothing depends on it matching a fresh install exactly. On an
  * appliance someone has reconfigured, a run puts these fields back to it.
  *
- * Neither service is started for these tests. Saving a stopped service's
+ * Neither settings test starts its service. Saving a stopped service's
  * settings only rewrites its configuration. On an appliance where SSH is
  * running, the port change restarts it on the new port until teardown.
  */
