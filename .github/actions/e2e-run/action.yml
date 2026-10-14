@@ -111,23 +111,35 @@ runs:
         retention-days: 14
 
     # What the run exercised — middleware methods and routes against the UI's
-    # inventory of both (scripts/e2e-coverage.ts) — into the job summary.
-    # Informational: never fails the job. With more than one shard each
-    # summary covers its own shard only; the per-test results are uploaded so
-    # they can be merged by hand (`yarn e2e:coverage <dir>`).
+    # inventory of both (scripts/e2e-coverage.ts). Informational: never fails
+    # the job. With more than one shard each report covers its own shard only;
+    # the per-test results are uploaded so they can be merged by hand
+    # (`yarn e2e:coverage <dir>`).
+    #
+    # Written three ways, because the job summary is only on the run's Summary
+    # page and is easy to miss from a job's log: the full report into the step
+    # log and the summary, and the headline as a notice, which shows on both.
     - if: always() && steps.suite.outcome != 'skipped'
       continue-on-error: true
       shell: bash
       env:
         TN_SHARD: ${{ inputs.shard }}
       run: |
+        set -euo pipefail
+        report="$RUNNER_TEMP/e2e-coverage.md"
+        yarn e2e:coverage --out "$report"
         {
           if [ "$TN_SHARD" != 1/1 ]; then
             echo "> Shard $TN_SHARD only."
             echo
           fi
-          yarn e2e:coverage
+          cat "$report"
         } >> "$GITHUB_STEP_SUMMARY"
+        node -e '
+          const { methods, routes } = require("./test-results/e2e-coverage/summary.json");
+          const part = (name, { covered, total }) => `${name} ${covered}/${total} (${Math.round(covered / total * 100)}%)`;
+          console.log(`::notice title=E2E coverage (shard ${process.argv[1]})::${part("methods", methods)}, ${part("routes", routes)}`);
+        ' "$TN_SHARD"
 
     - if: always() && steps.suite.outcome != 'skipped'
       uses: actions/upload-artifact@v4
