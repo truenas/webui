@@ -11,9 +11,10 @@ import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
-export type BootEnvironmentRecord = Extract<
-  CallResponse<E2eApiDirectory, 'boot.environment.query'>, unknown[]
->[number];
+/** A boot environment as middleware reports it, with its id narrowed — see `GroupRecord`. */
+type BootEnvironmentEntry = Extract<CallResponse<E2eApiDirectory, 'boot.environment.query'>, unknown[]>[number];
+
+export type BootEnvironmentRecord = BootEnvironmentEntry & { id: string };
 
 /**
  * The appliance's own record of a boot environment, or undefined.
@@ -28,7 +29,7 @@ export async function findBootEnvironment(
     client.api.query('boot.environment.query', [['id', '=', name]]).pipe(timeout(readTimeoutMs)),
   );
 
-  return bootEnvironment;
+  return bootEnvironment as BootEnvironmentRecord | undefined;
 }
 
 /** The boot environment the appliance is running from. There is always exactly one. */
@@ -40,7 +41,7 @@ export async function findRunningBootEnvironment(client: E2eApiClient): Promise<
     throw new Error('boot.environment.query reports no active boot environment');
   }
 
-  return running;
+  return running as BootEnvironmentRecord;
 }
 
 /**
