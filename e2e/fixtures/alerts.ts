@@ -2,9 +2,9 @@
  * Alerts, read over the API.
  *
  * Nothing here raises an alert directly: middleware offers no public call that
- * does. A spec that needs one makes something fail that reports itself as an
- * alert — see `startRsyncTaskRun` in `fixtures/rsync-tasks.ts` — and finds the
- * alert it raised with these helpers.
+ * does. A spec that needs one makes something happen that reports itself as an
+ * alert — see `nfsNetworkListAlertThreshold` below — and finds the alert it
+ * raised with these helpers.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -14,30 +14,40 @@ import { readTimeoutMs } from '../support/timeouts';
 /** An alert as middleware reports it, dismissed or not. */
 export type AlertRecord = CallResponse<E2eApiDirectory, 'alert.list'>[number];
 
+/**
+ * How many networks an NFS share may list before saving it raises
+ * `NFSNetworkListExcessive`: middleware's `NFS_NETWORKS_WARNING_THRESHOLD`.
+ *
+ * That class is the one to dismiss and reopen. It is a one-shot alert that
+ * middleware deletes automatically, so `alert.dismiss` marks it dismissed and
+ * `alert.restore` brings it back. A one-shot class that is *not* deleted
+ * automatically, such as `RsyncFailed`, is removed outright by `alert.dismiss`
+ * and there is nothing left to reopen.
+ */
+export const nfsNetworkListAlertThreshold = 100;
+
 /** Every alert middleware holds, dismissed or not. */
 export async function listAlerts(client: E2eApiClient): Promise<AlertRecord[]> {
   return firstValueFrom(client.api.call('alert.list').pipe(timeout(readTimeoutMs)));
 }
 
 /**
- * Every `RsyncFailed` alert middleware holds, dismissed or not.
+ * The `NFSNetworkListExcessive` alert raised for the share on one path, or undefined.
  *
- * Middleware keys the class by the task's id and carries it in `args.id`, and
- * creating or deleting a task's alert is middleware's own business: a run clears
- * the task's old one before it starts, and `rsynctask.delete` removes it.
+ * Middleware carries the path in `args.sharePath`. It raises the alert while it
+ * validates a share's create or update and removes it when the share is deleted.
+ * The class has no key of its own, so saving *any* NFS share with a short
+ * network list clears every alert of the class, not just that share's.
  */
-export async function findRsyncFailedAlerts(client: E2eApiClient): Promise<AlertRecord[]> {
+export async function findNfsNetworkListAlert(
+  client: E2eApiClient,
+  sharePath: string,
+): Promise<AlertRecord | undefined> {
   const alerts = await listAlerts(client);
-
-  return alerts.filter((alert) => alert.klass === 'RsyncFailed');
-}
-
-/** The `RsyncFailed` alert one task's last run raised, or undefined. */
-export async function findRsyncFailedAlert(client: E2eApiClient, taskId: number): Promise<AlertRecord | undefined> {
-  const alerts = await findRsyncFailedAlerts(client);
 
   return alerts.find((alert) => {
     const args: unknown = alert.args;
-    return typeof args === 'object' && args !== null && 'id' in args && args.id === taskId;
+    return alert.klass === 'NFSNetworkListExcessive'
+      && typeof args === 'object' && args !== null && 'sharePath' in args && args.sharePath === sharePath;
   });
 }

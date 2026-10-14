@@ -71,19 +71,6 @@ export async function ensureRsyncTasksAbsent(client: E2eApiClient, path: string)
 }
 
 /**
- * Starts a run of a task and returns the job's id without waiting for it.
- *
- * Every task here points at a host where nothing listens, so the run fails, and
- * a failed run is what raises a task's `RsyncFailed` alert. That is the reason
- * to start one: `runJob` would treat the failure as its own.
- */
-export async function startRsyncTaskRun(client: E2eApiClient, taskId: number): Promise<number> {
-  return firstValueFrom(
-    client.api.callAndGetJobId('rsynctask.run', [taskId]).pipe(timeout(slowCallTimeoutMs)),
-  );
-}
-
-/**
  * Creates a Module-mode push task on this path, as root, if it has none already.
  *
  * For the task an edit or a delete acts on, and for a bystander. Never for the
