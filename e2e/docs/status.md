@@ -384,8 +384,17 @@ form is built by `ix-form-renderer`, so its ids are the field names. The form's
 refusals (the range on each field, and Quota Fill Critical not above Quota Fill
 Warning) are not covered.
 
-The framework is done and the coverage is not. A hundred and six tests — a
-hundred and five journeys and the smoke — against 19 top-level feature areas. What the work
+Console settings came next, in `tests/console-settings.e2e.ts`, on the same plan:
+one test starts from the defaults, turns the serial console on at a new speed,
+hides the text console behind a password and changes the banner, and the other
+undoes all of it and empties the banner. Each is asserted on the card's readouts
+and through `system.advanced.config`, and teardown writes middleware's defaults
+back. The serial port is never changed, because which ports exist depends on
+the machine; the specs keep `ttyS0`, the port the CI appliance's console is read
+from.
+
+The framework is done and the coverage is not. A hundred and eight tests — a
+hundred and seven journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
