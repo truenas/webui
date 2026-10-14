@@ -30,4 +30,6 @@ export const navLocators = {
   network: '[data-test="link-network"]',
   /** `Alert Settings` under System, raw item name again. */
   alertSettings: '[data-test="link-alert-settings"]',
+  /** `Boot` under System, raw item name again. */
+  boot: '[data-test="link-boot"]',
 } as const;

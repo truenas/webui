@@ -26,6 +26,7 @@ const expectedRoute = {
   advancedSettings: /\/system\/advanced\/?$/,
   network: /\/system\/network\/?$/,
   alertSettings: /\/system\/alert-settings\/?$/,
+  boot: /\/system\/boot\/?$/,
 } as const;
 
 /**
@@ -125,4 +126,13 @@ export async function goToNetwork(page: Page): Promise<void> {
 export async function goToAlertSettings(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.system).click();
   await clickAndArrive(page, navLocators.alertSettings, expectedRoute.alertSettings);
+}
+
+/**
+ * Boot — the boot environment list — is under the same System slide-out. Anchored
+ * to the end because Boot Pool Status lives under it (`/system/boot/status`).
+ */
+export async function goToBootEnvironments(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.system).click();
+  await clickAndArrive(page, navLocators.boot, expectedRoute.boot);
 }

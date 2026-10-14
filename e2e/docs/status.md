@@ -448,8 +448,19 @@ than the one the card opens on, because their names belong to middleware. A
 row's ids are built from the class's title, not its id. Teardown writes back
 every override the appliance held before the first test.
 
-The framework is done and the coverage is not. A hundred and nineteen tests — a
-hundred and eighteen journeys and the smoke — against 19 top-level feature areas. What the work
+Boot environments came next, in `tests/boot-environments.e2e.ts`: cloning the
+running one, marking one to be kept, and deleting one, from the list on System >
+Boot, each asserted on the list and through `boot.environment.query`. Keep and
+delete each run beside a second boot environment that must come through
+untouched. Every one the suite makes is a clone of the running one, so none of
+them is booted into and nothing changes what the appliance boots next. The row
+tag is `bootenv-<name>`, and the row's actions are inline buttons, not a kebab
+menu. Delete goes through the page's own dialog, which lists what it will delete.
+Activating, unkeeping, the batch delete, scrubbing the boot pool and the
+Stats/Settings dialog are not covered.
+
+The framework is done and the coverage is not. A hundred and twenty-two tests — a
+hundred and twenty-one journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
