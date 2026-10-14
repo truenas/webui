@@ -670,8 +670,20 @@ CI uses depends on it; it goes back to stopped, and both forms' fields to a fixe
 baseline, before and after each test. The Start Automatically switch, the search,
 the other services' forms, advanced options and View Logs/Sessions are not covered.
 
-The framework is done and the coverage is not. A hundred and sixty-four tests — a
-hundred and sixty-three journeys and the smoke — against 19 top-level feature areas. What the work
+Virtual Machines followed, in `tests/virtual-machines.e2e.ts`: creating a Linux VM
+with the wizard on a new zvol, and editing and deleting one from its row's detail
+panel beside a bystander that must not change. Each is asserted through `vm.query`,
+and the created VM's disk and NIC through `vm.device.query`. No test starts a
+machine: the wizard turns Start on Boot and the VNC display off, every readback
+expects STOPPED, and rows are expanded through the Name cell rather than the row,
+which also holds the Running toggle. The spec fails rather than skips on an
+appliance without virtualization support, since the page then shows no list. The
+wizard's zvol goes under a dataset of its own, removed in teardown. Starting and
+stopping, devices, cloning, installation media, GPUs and the display are not
+covered.
+
+The framework is done and the coverage is not. A hundred and sixty-seven tests — a
+hundred and sixty-six journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
