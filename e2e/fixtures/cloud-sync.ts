@@ -127,8 +127,8 @@ export async function ensureLoopbackSftpCredentialPresent(client: E2eApiClient):
       name: loopbackCredentialName,
       provider: {
         type: 'SFTP',
+        // No `port`: middleware defaults it to 22, and the generated type for that field accepts no number.
         host: '127.0.0.1',
-        port: 22,
         user: 'root',
         private_key: keypair.id,
       },
