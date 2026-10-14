@@ -113,7 +113,9 @@ test('an admin dismisses an alert from the alerts panel, then reopens it', async
     throw new Error('beforeEach raised no alert to act on');
   }
   const { taskId, alert } = raised;
-  const { level, dismiss, reopen, filterAll, filterDismissed } = alertsPanelLocators;
+  const {
+    level, dismiss, reopen, filterAll, filterDismissed,
+  } = alertsPanelLocators;
 
   await openAlertsPanel(page);
   await expect(page.locator(level(alert.key))).toBeVisible();
