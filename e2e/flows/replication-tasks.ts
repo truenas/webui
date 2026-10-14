@@ -45,22 +45,24 @@ async function fillExplorer(page: Page, selector: string, value: string): Promis
 }
 
 /**
- * Fills What and Where for a replication from one dataset on this appliance to
- * another, names the task, and moves on to When.
+ * Fills What and Where from a dataset on this appliance, names the task, and
+ * moves on to When. `chooseTarget` picks where the target is, and leaves its
+ * explorer showing.
  *
  * In this order because each "from" select clears the field below it when it
  * changes, and the name is regenerated from the source and target whenever
  * either changes.
  */
-export async function fillLocalReplication(
+async function fillWhatAndWhere(
   page: Page,
   { source, target, name }: { source: string; target: string; name: string },
+  chooseTarget: () => Promise<void>,
 ): Promise<void> {
   const { wizard } = replicationTaskLocators;
 
   await selectOption(page, wizard.sourceFrom, wizard.sourceFromThisSystem);
   await fillExplorer(page, wizard.sourceDatasets, source);
-  await selectOption(page, wizard.targetFrom, wizard.targetFromThisSystem);
+  await chooseTarget();
   await fillExplorer(page, wizard.targetDataset, target);
   await page.locator(wizard.name).fill(name);
 
@@ -69,6 +71,37 @@ export async function fillLocalReplication(
   await expect(page.locator(wizard.next)).toBeEnabled();
   await page.locator(wizard.next).click();
   await expect(page.locator(wizard.runOnce)).toBeVisible();
+}
+
+/** Fills What and Where for a replication from one dataset on this appliance to another. */
+export async function fillLocalReplication(
+  page: Page,
+  values: { source: string; target: string; name: string },
+): Promise<void> {
+  const { wizard } = replicationTaskLocators;
+
+  await fillWhatAndWhere(page, values, async () => {
+    await selectOption(page, wizard.targetFrom, wizard.targetFromThisSystem);
+  });
+}
+
+/**
+ * Fills What and Where for a push from a dataset on this appliance to one on a
+ * different system, reached through the SSH connection named `connection`.
+ *
+ * The transport is left at the wizard's default, encrypted SSH. A connection
+ * that signs in as root raises no sudo prompt, so there is none to answer.
+ */
+export async function fillRemoteReplication(
+  page: Page,
+  { connection, ...values }: { source: string; target: string; name: string; connection: string },
+): Promise<void> {
+  const { wizard } = replicationTaskLocators;
+
+  await fillWhatAndWhere(page, values, async () => {
+    await selectOption(page, wizard.targetFrom, wizard.targetFromDifferentSystem);
+    await selectOption(page, wizard.sshConnection, wizard.sshConnectionOption(connection));
+  });
 }
 
 /**

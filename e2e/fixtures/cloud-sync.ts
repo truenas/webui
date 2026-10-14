@@ -9,13 +9,10 @@
  * `filesystem.listdir`. Middleware runs rclone on the appliance, so the address
  * is the appliance's own loopback, which needs nothing forwarded to the runner.
  *
- * Signing in as root with a key is what `sshd_config` allows without touching
- * password settings: middleware writes `PermitRootLogin without-password` unless
- * root has password login enabled. So {@link ensureLoopbackSftpCredentialPresent}
- * generates a keypair, appends its public key to root's `sshpubkey` with a marker
- * comment, makes sure SSH is running, and creates the credential on that
- * keypair. {@link ensureLoopbackSftpCredentialAbsent} undoes each part. Root's
- * other keys are left as they were: only lines carrying the marker are removed.
+ * Root signs in with a key — see `fixtures/loopback-ssh.ts`. So
+ * {@link ensureLoopbackSftpCredentialPresent} authorizes a keypair for root,
+ * makes sure SSH is running, and creates the credential on that keypair.
+ * {@link ensureLoopbackSftpCredentialAbsent} undoes each part.
  *
  * A task has no name. The card identifies a row by its description, so these
  * helpers key on that. Creating, updating and deleting a task are plain calls;
@@ -24,9 +21,7 @@
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
 import { ensureCronjobAbsent, ensureCronjobPresent, findCronjob } from './cron';
-import { ensureServiceRunning, ensureServiceStopped, queryService } from './services';
-import { ensureSshKeypairAbsent, ensureSshKeypairPresent, findSshKeypair, keypairKeys } from './ssh-keypairs';
-import { findUser } from './users';
+import { ensureLoopbackRootKeyAbsent, ensureLoopbackRootKeyPresent, type LoopbackRootKey } from './loopback-ssh';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
@@ -49,19 +44,14 @@ export interface CloudSyncSchedule {
 export const loopbackCredentialName = 'e2e-cloudsync-loopback';
 export const loopbackProviderLabel = 'SFTP';
 
-const loopbackKeypairName = 'e2e-cloudsync-loopback-key';
-
-/** Appended to the public key in root's `sshpubkey`, so teardown removes this key and only this key. */
-const authorizedKeyMarker = 'e2e-cloudsync-loopback';
+/** The marker goes on the public key in root's `sshpubkey`, so teardown removes this key and only this key. */
+const loopbackRootKey: LoopbackRootKey = {
+  keypairName: 'e2e-cloudsync-loopback-key',
+  marker: 'e2e-cloudsync-loopback',
+};
 
 /** A sync of one small file over loopback is seconds; this is room for a slow appliance. */
 export const cloudSyncRunTimeoutMs = 120_000;
-
-/**
- * Whether this spec started SSH, and so owes stopping it. Module state rather
- * than a return value because the start and the stop happen in different hooks.
- */
-let startedSsh = false;
 
 async function findLoopbackCredential(
   client: E2eApiClient,
@@ -74,48 +64,14 @@ async function findLoopbackCredential(
   return credential as { id: number } | undefined;
 }
 
-/** Root's authorized keys with every line this spec added taken out. */
-function withoutMarkedKeys(sshpubkey: string | null | undefined): string {
-  return (sshpubkey ?? '')
-    .split('\n')
-    .filter((line) => line.trim() !== '' && !line.trim().endsWith(` ${authorizedKeyMarker}`))
-    .join('\n');
-}
-
-async function setRootAuthorizedKeys(client: E2eApiClient, sshpubkey: string): Promise<void> {
-  const root = await findUser(client, 'root');
-  if (!root) {
-    throw new Error('user.query returned no root row, so the loopback key cannot be authorized.');
-  }
-
-  await firstValueFrom(
-    client.api.call('user.update', [root.id, { sshpubkey }]).pipe(timeout(slowCallTimeoutMs)),
-  );
-}
-
 /**
  * Makes the SFTP credential to `127.0.0.1`, and everything it needs, present.
  *
  * Returns the credential's id. Safe to call against an appliance an interrupted
- * run left half set up: a stale marked key is replaced rather than duplicated.
+ * run left half set up.
  */
 export async function ensureLoopbackSftpCredentialPresent(client: E2eApiClient): Promise<number> {
-  await ensureSshKeypairPresent(client, loopbackKeypairName);
-  const keypair = await findSshKeypair(client, loopbackKeypairName);
-  const { publicKey } = keypairKeys(keypair);
-  if (!keypair || !publicKey) {
-    throw new Error(`keypair "${loopbackKeypairName}" was not created with a public key.`);
-  }
-
-  const root = await findUser(client, 'root');
-  const kept = withoutMarkedKeys(root?.sshpubkey);
-  const marked = `${publicKey.trim()} ${authorizedKeyMarker}`;
-  await setRootAuthorizedKeys(client, kept ? `${kept}\n${marked}` : marked);
-
-  if ((await queryService(client, 'ssh'))?.state !== 'RUNNING') {
-    await ensureServiceRunning(client, 'ssh', 'the cloud sync specs cannot reach the appliance over SFTP');
-    startedSsh = true;
-  }
+  const keypair = await ensureLoopbackRootKeyPresent(client, loopbackRootKey);
 
   const existing = await findLoopbackCredential(client);
   if (existing) {
@@ -153,18 +109,7 @@ export async function ensureLoopbackSftpCredentialAbsent(client: E2eApiClient): 
     );
   }
 
-  const root = await findUser(client, 'root');
-  const kept = withoutMarkedKeys(root?.sshpubkey);
-  if (kept !== (root?.sshpubkey ?? '')) {
-    await setRootAuthorizedKeys(client, kept);
-  }
-
-  await ensureSshKeypairAbsent(client, loopbackKeypairName);
-
-  if (startedSsh) {
-    await ensureServiceStopped(client, 'ssh', 'SSH stays running after the cloud sync specs');
-    startedSsh = false;
-  }
+  await ensureLoopbackRootKeyAbsent(client, loopbackRootKey);
 }
 
 /** Every task with this description. `query`, so none is an ordinary answer. */
