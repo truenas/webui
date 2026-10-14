@@ -528,8 +528,18 @@ built from the value they show, so the spec opens them by their `text-<field>`
 view instead. Encryption, the block size, shrinking (which the form refuses) and
 the read-only/size interaction are not covered.
 
-The framework is done and the coverage is not. A hundred and thirty-four tests — a
-hundred and thirty-three journeys and the smoke — against 19 top-level feature areas. What the work
+User and group quotas came next, in `tests/dataset-quotas.e2e.ts`: setting,
+changing and removing a quota, once for users and once for groups, on a dataset
+of the spec's own, reached from the Manage links on the Space Management card.
+The two pages are one component routed twice, so each story runs per kind. Each
+is asserted in the list and through `pool.dataset.get_quota`, where the data
+quota typed as `1 GiB` has to arrive as bytes. Changing and removing each run
+beside a second principal whose own quota must come through untouched. The
+search, "Show all", Remove Invalid Quotas, unsetting both quotas from the edit
+form, and quotas for directory-service accounts are not covered.
+
+The framework is done and the coverage is not. A hundred and forty tests — a
+hundred and thirty-nine journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
