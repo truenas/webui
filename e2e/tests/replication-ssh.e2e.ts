@@ -95,7 +95,7 @@ test.afterEach(async ({ api, pool }) => {
   ]);
 });
 
-/** Separate steps, so a connection that will not delete still has root's key and SSH put back. */
+/** Separate steps, so a connection that will not delete still has root's key taken back out. */
 test.afterAll(async ({ api }) => {
   if (leavingTestData(`the SSH connection "${connectionName}", its keypair and root's key`)) {
     return;
