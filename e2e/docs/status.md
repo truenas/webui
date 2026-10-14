@@ -589,8 +589,21 @@ action. Scheduled tasks and the periodic snapshot task the wizard makes for them
 remote and SSH replication, encryption, Edit, Restore, Delete and the full list
 page are not covered.
 
-The framework is done and the coverage is not. A hundred and fifty-one tests — a
-hundred and fifty journeys and the smoke — against 19 top-level feature areas. What the work
+Privileges came next, in `tests/privileges.e2e.ts`: adding, editing and deleting
+a privilege from the list on Credentials > Privileges, each asserted on the list
+and through `privilege.query`, which holds the roles' wire values and the groups
+themselves where the list shows labels and a count. Edit and delete each run
+beside a second privilege that must come through untouched. The edited privilege
+names a local group of the spec's own, made over the API, and the edit leaves it
+alone: the form shows groups by name and resolves them back to gids on save, so
+the same gid has to come back. Roles is a multiple select whose panel stays open,
+so the flow closes it with Escape and checks the side panel did not close too.
+The row tag is `privilege-<name>` and the edit leaves the name alone. Picking a
+group in the form, directory-service groups, the Enable DS Authentication prompt,
+built-in privileges and the search are not covered.
+
+The framework is done and the coverage is not. A hundred and fifty-four tests — a
+hundred and fifty-three journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
