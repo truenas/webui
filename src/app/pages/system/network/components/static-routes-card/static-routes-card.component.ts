@@ -6,13 +6,13 @@ import {
   TnCellDefDirective, TnDialog, TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent,
   tnIconMarker, type TnSortEvent,
 } from '@truenas/ui-components';
-import { filter } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { translated } from 'app/helpers/translated.helper';
-import { StaticRoute } from 'app/interfaces/static-route.interface';
+import { StaticRoute, toStaticRoute } from 'app/interfaces/static-route.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
@@ -27,7 +27,7 @@ import {
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   StaticRouteDeleteDialog,
 } from 'app/pages/system/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
@@ -59,7 +59,7 @@ import { staticRoutesCardElements } from 'app/pages/system/network/components/st
 })
 export class StaticRoutesCardComponent implements OnInit {
   private tnDialog = inject(TnDialog);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private emptyService = inject(EmptyService);
@@ -68,7 +68,8 @@ export class StaticRoutesCardComponent implements OnInit {
   protected readonly searchableElements = staticRoutesCardElements.elements;
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
-  private readonly staticRoutes$ = this.api.call('staticroute.query').pipe(
+  private readonly staticRoutes$ = this.api.query('staticroute.query').pipe(
+    map((routes) => routes.map(toStaticRoute)),
     takeUntilDestroyed(this.destroyRef),
   );
 

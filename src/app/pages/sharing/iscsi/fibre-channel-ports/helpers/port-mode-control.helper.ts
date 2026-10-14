@@ -1,7 +1,6 @@
 import { Validators } from '@angular/forms';
 import { FormControl } from '@ngneat/reactive-forms';
-
-export type PortMode = 'existing' | 'new';
+import { NewOrExisting } from 'app/enums/new-or-existing.enum';
 
 export interface PortModeControls {
   port: FormControl<string | null>;
@@ -25,7 +24,7 @@ export interface PortModeControls {
  * - Clearing values from disabled controls
  * - Calling updateValueAndValidity() to trigger validation
  *
- * @param mode The selected mode ('existing' to use existing port, 'new' to create virtual port)
+ * @param mode The selected mode (`Existing` to use existing port, `New` to create virtual port)
  * @param controls Object containing both port and host_id form controls
  *
  * @example
@@ -39,10 +38,10 @@ export interface PortModeControls {
  * ```
  */
 export function configurePortControlsForMode(
-  mode: PortMode,
+  mode: NewOrExisting | null,
   controls: PortModeControls,
 ): void {
-  if (mode === 'new') {
+  if (mode === NewOrExisting.New) {
     // Creating new virtual port - use host_id
     controls.port.clearValidators();
     controls.port.disable();

@@ -31,6 +31,8 @@ const poolExportTimeoutMs = 6 * 60_000;
 interface NamedPool {
   id: number;
   name: string;
+  /** `ONLINE` for a healthy imported pool. */
+  status: string;
 }
 
 export interface UnusedDisk {

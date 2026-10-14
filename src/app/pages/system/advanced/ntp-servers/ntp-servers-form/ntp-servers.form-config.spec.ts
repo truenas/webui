@@ -14,7 +14,7 @@ import { FormSubmitEvent } from 'app/modules/forms/ix-forms/components/ix-form/i
 import { IxFormRendererComponent } from 'app/modules/forms/ix-forms/components/ix-form-renderer/ix-form-renderer.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { getNtpServersFormConfig } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers.form-config';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
@@ -24,7 +24,7 @@ describe('getNtpServersFormConfig', () => {
     address: 'ua.pool.ntp.org', burst: true, iburst: false, prefer: false, minpoll: 6, maxpoll: 10, force: false,
   } as CreateNtpServer;
 
-  const api = { call: jest.fn(() => undefined) } as unknown as ApiService;
+  const api = { call: jest.fn(() => undefined) } as unknown as TypedApiService;
   const translate = { instant: (key: string) => key } as TranslateService;
 
   beforeEach(() => jest.clearAllMocks());
@@ -91,7 +91,7 @@ describe('NTP server form — Force clears the unreachable-address error', () =>
   };
 
   beforeEach(async () => {
-    const rejectingApi = { call: jest.fn(() => throwError(() => unreachable)) } as unknown as ApiService;
+    const rejectingApi = { call: jest.fn(() => throwError(() => unreachable)) } as unknown as TypedApiService;
     const definition = getNtpServersFormConfig(
       rejectingApi,
       { instant: (key: string) => key } as TranslateService,

@@ -297,8 +297,336 @@ row tag from `snapshot.id`, and its query selects only `snapshot_name`,
 fixtures carry an `id` the real rows do not. The tag is built from `name` now,
 which is the value the legacy row carried.
 
-The framework is done and the coverage is not. Eighty-nine tests — eighty-eight
-journeys and the smoke — against 19 top-level feature areas. What the work
+Init/shutdown scripts came next, in `tests/init-shutdown-scripts.e2e.ts`: adding,
+editing and deleting a command script from the card on System > Advanced
+Settings, each asserted on the card and through `initshutdownscript.query`, and
+edit and delete each beside a second script that must come through untouched.
+Two things about the card shape the spec. Its row tag is
+`card-init-shutdown-<command>-<when>`, so editing either renames every id on the
+row and the spec looks it up again under the new values. And every form on
+Advanced Settings is preceded, once per page load, by a first-time warning held
+in memory by `FirstTimeWarningService` — certain on the fresh page each test
+gets, which is why the flows wait for it rather than probe. Script-type entries,
+which pick a file through `ix-explorer`, are not covered.
+
+API keys came next, in `tests/api-keys.e2e.ts`: creating a key for a user and
+deleting one, from the API Keys page under Credentials > Users, each beside a
+second key on the same account that must come through untouched. The page has no
+sidebar entry, so the spec reaches it the way an admin does — the user's Access
+card, whose "View API Keys" link exists only once that user holds a key, which is
+the second reason the bystander is there. The create picks the account in the
+form, which opens on the signed-in admin, and ties the key the one-time dialog
+showed to the stored record by its `<id>-` prefix. Editing, resetting and an
+expiry date are not covered.
+
+Cron jobs came next, in `tests/cron-jobs.e2e.ts`: adding, editing, running and
+deleting a job from the card on System > Advanced Settings, each beside a second
+job that must come through untouched. It sits on the same card shape as
+init/shutdown scripts, and the first-time warning both cards raise now lives in
+`flows/advanced-settings.ts`. Its row tag is `card-cron-<command>-<user>`, so
+editing the command renames the row. "Run job" is the one action with no record
+to read back: it starts a `cronjob.run` job, so the spec waits for a new one for
+that job's id in `core.get_jobs` to reach `SUCCESS`, and checks that none started
+for the bystander. Custom schedules, built in the scheduler's own dialog, are not
+covered.
+
+Sysctl variables came next, in `tests/sysctl-tunables.e2e.ts`: adding, editing
+and deleting one from the Tunable card on System > Advanced Settings, each
+asserted on the card and through `tunable.query`, and edit and delete each beside
+a second tunable that must come through untouched. Unlike the two cards before
+it, its form is built by `ix-form-renderer`, and every write is a job, so the
+fixtures go through `runJob`. A sysctl tunable sets the kernel variable when it
+is saved, so the spec moves three TCP keepalive and timeout settings a step or
+two below their defaults; deleting or disabling a tunable puts the old value
+back. The row tag is `tunable-<var>`, and Variable is disabled on edit, so an
+edit never renames the row. UDEV and ZFS tunables are not covered.
+
+SSH keypairs came next, in `tests/ssh-keypairs.e2e.ts`: generating one with the
+form's Generate Keypair button and deleting one, from the SSH Keypairs card on
+Credentials > Backup Credentials. The generate test reads the pair the form
+filled in and requires `keychaincredential.query` to hold that same pair, so a
+save that dropped or regenerated the keys fails. The delete runs beside a second
+keypair that must come through untouched. The card lists five keypairs, oldest
+first, before View All. The delete test presses it when there are more. The
+generate test cannot, because the card reloads after the save with nothing to
+wait on, so it fails at the start if the new keypair would not fit on the card.
+Pasting a key in, editing, downloading and deleting a keypair an SSH connection
+still uses are not covered.
+
+Periodic snapshot tasks came next, in `tests/periodic-snapshot-tasks.e2e.ts`:
+adding, editing and deleting a task from the card on Data Protection, each
+asserted on the card and through `pool.snapshottask.query`, which holds the
+retention, naming schema and schedule the card does not show. Edit and delete
+each run beside a second task that must come through untouched. A task has no
+name, so the row tag is `snapshot-task-<dataset>`, and each task gets a dataset
+of its own, made fresh per test so no snapshot an earlier run's task took can
+put the "keep snapshots" box in the delete dialog. The card lists four tasks,
+and its View All leaves for the full list rather than expanding, so each test
+fails at the start if its rows would not fit. Custom schedules, exclusions,
+the full list page, the Enabled switch and deleting a task that has snapshots
+are not covered.
+
+The dataset form came next, in `tests/datasets-form.e2e.ts`: creating a dataset
+under a pool and editing one, both through Other Options, the form's advanced
+half. Each save is checked in the tree or on the details card and through
+`pool.dataset.query`. There every field is a ZFS property whose `source` reads
+`LOCAL` only if the form actually sent it, so the spec also asserts that
+fields it left alone stayed inherited. The edit runs beside a sibling dataset
+that must come through untouched. The share presets other than Generic, quotas,
+encryption and zvols are not covered here; `smb-dataset-preset` covers the SMB
+preset.
+
+NTP servers came next, in `tests/ntp-servers.e2e.ts`: adding, editing and
+deleting a server from the card on System > Advanced Settings, each asserted on
+the card and through `system.ntpserver.query`, and edit and delete each beside a
+second server that must come through untouched. Middleware queries a server
+before saving it and refuses one that does not answer unless Force is ticked, so
+every address is in 192.0.2.0/24, reserved for documentation and reachable from
+nowhere, and every save ticks Force. That keeps the outcome independent of
+whether the appliance can reach the internet. The row tag is
+`ntp-server-<address>-<minpoll>-<maxpoll>`, so an edit to either interval
+renames the row. Unlike most cards on that page, this one raises no
+first-time warning. The refusal without Force is not covered.
+
+Syslog settings came next, in `tests/syslog-settings.e2e.ts`: one test sets
+every field on the Syslog card's form, starting from the defaults, and the other
+starts from everything set and undoes it, removing the server. Each is asserted
+on the card's readouts and through `system.advanced.config`. The settings are
+one config record rather than a list, so there is nothing to delete; like the
+preferences spec, each test starts from a fixed baseline, middleware's defaults,
+and teardown writes it back. The servers are a form array whose Host and
+Transport carry no index in their ids, so the specs never put two servers in
+the form, and the two-server limit and the TLS certificate are not covered.
+
+Audit settings came next, in `tests/audit-settings.e2e.ts`, on the same plan as
+syslog: one test changes all five fields from the defaults and sets a reservation
+and a quota on the audit dataset, and the other starts with both set and clears
+them, which the card shows as `None`. Each is asserted on the card's readouts
+and through `audit.config`, and teardown writes middleware's defaults back. The
+form is built by `ix-form-renderer`, so its ids are the field names. The form's
+refusals (the range on each field, and Quota Fill Critical not above Quota Fill
+Warning) are not covered.
+
+Console settings came next, in `tests/console-settings.e2e.ts`, on the same plan:
+one test starts from the defaults, turns the serial console on at a new speed,
+hides the text console behind a password and changes the banner, and the other
+undoes all of it and empties the banner. Each is asserted on the card's readouts
+and through `system.advanced.config`, and teardown writes middleware's defaults
+back. The serial port is never changed, because which ports exist depends on
+the machine; the specs keep `ttyS0`, the port the CI appliance's console is read
+from.
+
+The Access card's session timeout came next, in `tests/access-settings.e2e.ts`.
+The card only shows the timeout. It is the account's own `lifetime` preference,
+and the card's "Preferences" link opens the Preferences form, which edits it in
+minutes. One test raises it from ten minutes to two hours, asserted on the card
+and through `auth.me`, with the preferences spec's baseline and teardown. It only
+goes up, because a lower timeout drops an idle session. The rest of the card is
+not covered: the login banner, the directory service toggle, and the session
+list with its terminate actions.
+
+The Replication card's tasks limit came next, in `tests/replication-settings.e2e.ts`:
+one test sets a limit where there was none, and the other empties the field,
+which the form saves as no limit and the card shows as `–`. Each is asserted on
+the card and through `replication.config.config`. Middleware's schema declares
+no default for the limit, so teardown writes back what the appliance held
+before the first test rather than a fixed baseline.
+
+Static routes came next, in `tests/static-routes.e2e.ts`: adding, editing and
+deleting a route from the card on System > Network, the first spec to reach
+that page. Each is asserted on the card and through `staticroute.query`, which
+also carries the description the card does not show, and edit and delete each
+run beside a second route that must come through untouched. Every destination
+and gateway is reserved for documentation, so no route the suite adds can take
+a real path away. The row tag is `static-route-<destination>-<gateway>`, so the
+edit, which changes the gateway, renames the row. The card's Edit and Delete
+are inline buttons on the row, not a kebab menu, and Delete goes through the
+card's own dialog. The card lists four routes before View All, sorted by
+destination: edit and delete press View All when the appliance holds more, and
+the add test fails up front unless its new row will fit. The form's refusal of
+a gateway that is not an address is not covered.
+
+Alert services came next, in `tests/alert-services.e2e.ts`: adding, editing and
+deleting a service from the Alert Services table on System > Alert Settings,
+each asserted on the table and through `alertservice.query`, which also carries
+the webhook URL the table does not show. Edit and delete each run beside a
+second service that must come through untouched. Every service is a Slack one,
+whose only setting is a URL, and every URL is under `example.com`; saving a
+service sends nothing. The form renders the type's own fields a tick after it
+opens for an edit, so the edit waits for the stored URL before typing over it.
+The row tag is `alert-service-<name>` and the edit leaves the name alone, so the
+row keeps its ids. Writing it turned up a `data-test` collision: the Category
+card beside the table also emitted `button-save`, so with the panel open the
+side panel's Save matched two elements. The card's is now
+`button-save-alert-config`. The other nine service types and Send Test Alert are
+not covered.
+
+The Category card beside it came next, in `tests/alert-settings.e2e.ts`: changing
+one alert class's level, and another test its frequency, each asserted through
+`alertclasses.config` and on the card reopened from the sidebar. The card sends
+every override it holds and middleware replaces the set whole, so each test runs
+beside a second class whose own override must survive the save. The classes are
+picked from `alert.list_categories` when the file starts, from a category other
+than the one the card opens on, because their names belong to middleware. A
+row's ids are built from the class's title, not its id. Teardown writes back
+every override the appliance held before the first test.
+
+Boot environments came next, in `tests/boot-environments.e2e.ts`: cloning the
+running one, marking one to be kept, and deleting one, from the list on System >
+Boot, each asserted on the list and through `boot.environment.query`. Keep and
+delete each run beside a second boot environment that must come through
+untouched. Every one the suite makes is a clone of the running one, so none of
+them is booted into and nothing changes what the appliance boots next. The row
+tag is `bootenv-<name>`, and the row's actions are inline buttons, not a kebab
+menu. Delete goes through the page's own dialog, which lists what it will delete.
+Activating, unkeeping, the batch delete, scrubbing the boot pool and the
+Stats/Settings dialog are not covered.
+
+Localization came next, in `tests/localization.e2e.ts`: changing the timezone,
+the language and the date format. They are no longer saved in one place. The
+timezone is the appliance's, set from the Localization card on System > General
+Settings and checked on the card and through `system.general.config`. The
+language and the date format are the account's, set from the Localization
+section of the Preferences form and checked through `auth.me`, with the
+preferences spec's baseline and teardown. That baseline now pins English and the
+default date format too. German is checked by the card's Settings button
+reading `Einstellungen`, and the date format by the running boot environment's
+Date Created cell. Two things about the date format are worth knowing. Each
+option's label is today's date in that format, so its id changes daily, and
+`dd/MM/yyyy` and `dd.MM.yyyy` always share one. And the `formatDateTime` pipe,
+which renders that cell, reads the format only from `localStorage`, which the
+form writes on save. So in a new browser the pipe shows the default, whatever the
+account holds. Writing the spec turned up a bug there: the form announced the
+change before writing `localStorage`, so the pipe re-read the old format and
+dates already on screen kept it until a reload. It now writes first. A `shipped`
+run needs a nightly built after that fix. The keyboard map and the time format
+are not covered.
+
+The Email card beside it came next, in `tests/email-settings.e2e.ts`: setting up
+mail over SMTP with authentication from the defaults, and moving it to another
+server with authentication turned off, each asserted on the card's From line and
+through `mail.config`. Between them every SMTP control is changed. Every address
+is under `example.com`, and saving sends nothing. Teardown writes middleware's
+defaults back, so a run clears an appliance's real mail setup — except the sender,
+which `mail.update` will not accept empty, so it becomes `baseline@example.com`.
+With authentication off the form does not send the username, so middleware keeps
+the old one. The OAuth send methods need a real Google or Microsoft login and are
+not covered, and neither is Send Test Mail.
+
+The Disks page under Storage came next, in `tests/disks.e2e.ts`, the first spec
+to reach it. It is not in the sidebar, so the spec opens it from the Disks button
+in the Storage dashboard's header. One test checks that every disk `disk.query`
+reports has a row showing its name and serial, and that searching for one disk's
+serial keeps its row and hides another disk's. One edits a disk's description, HDD Standby and
+Advanced Power Management, asserted through `disk.query` and on a freshly opened
+page, where those columns are hidden and read from the expanded row. Teardown
+writes middleware's defaults back. The third wipes a disk, and a blank disk would
+show nothing for it, so the disk carries a pool exported without `destroy`. The
+page labels that disk `<pool> (Exported)`, and the wipe dialog warns that the
+pool will be lost. After the wipe, the Pool column reads `N/A` and `disk.details`
+no longer reports the pool on the disk. A disk left carrying an exported pool is
+one the pool wizard will not offer, so teardown wipes any that remain. Only the
+Quick method is used. The bulk edit, the column picker and the SED actions are
+not covered.
+
+Importing a pool came next, in `tests/pool-import.e2e.ts`: one test imports a
+pool that was exported, from the Import Pool button in the Storage dashboard's
+header. The pool is the spec's own, `e2e_import_tank`, built on one disk and
+exported over the API without `destroy`, which is how the disk wipe test gets
+its disk too. After the import, the pool's card is on the dashboard,
+`pool.query` reports it `ONLINE`, and `disk.details` no longer reports its disk
+as carrying an exported pool. The panel's options are `<name> | <guid>`, and
+the guid changes with every build, so the option is matched by name and the
+flow asserts there is exactly one. Teardown destroys the pool if it was
+imported and wipes its disk if it was not. Locked SED disks and a pool with an
+encrypted root are not covered.
+
+Zvols came next, in `tests/zvols.e2e.ts`: creating one from Add Zvol on the
+Datasets page, growing one and setting its Sync from Edit Zvol on the details card,
+and deleting one with the dialog fully confirmed. Each is asserted on screen and
+through `pool.dataset.query`, where the size is checked in bytes and Sync has to
+read `LOCAL`. Edit and delete each run beside a second zvol that must come through
+untouched. The form's ZFS properties are inline editables whose trigger id is
+built from the value they show, so the spec opens them by their `text-<field>`
+view instead. Encryption, the block size, shrinking (which the form refuses) and
+the read-only/size interaction are not covered.
+
+User and group quotas came next, in `tests/dataset-quotas.e2e.ts`: setting,
+changing and removing a quota, once for users and once for groups, on a dataset
+of the spec's own, reached from the Manage links on the Space Management card.
+The two pages are one component routed twice, so each story runs per kind. Each
+is asserted in the list and through `pool.dataset.get_quota`, where the data
+quota typed as `1 GiB` has to arrive as bytes. Changing and removing each run
+beside a second principal whose own quota must come through untouched. The
+search, "Show all", Remove Invalid Quotas, unsetting both quotas from the edit
+form, and quotas for directory-service accounts are not covered.
+
+A dataset's Unix permissions came next, in `tests/dataset-permissions.e2e.ts`:
+changing the owner, the group and the mode in the Unix Permissions Editor, which
+Edit on the Permissions card opens while the dataset's ACL is trivial. Each is
+asserted on the card the app returns to and through `filesystem.stat`, and each
+checks that the other two came through unchanged. The dataset is the spec's own,
+and every test starts it from one owner, group and mode with the ACL stripped,
+set over `filesystem.setperm`. The card names each entry after its owner or
+group, so its ids change with them. The ACL editor, presets, and applying
+permissions recursively are not covered.
+
+Encrypted datasets came next, in `tests/datasets-encryption.e2e.ts`: creating a
+dataset encrypted with a passphrase from the form's Encryption Options, locking
+one from the Encryption card, and unlocking one from the card's Unlock page
+through both summary dialogs. Each is asserted on the card's Current State and
+through `pool.dataset.query`, which says whether the key is really loaded. Every
+dataset is its own encryption root with a passphrase, because the card shows
+Lock only on a root and disables it there without one. The lock and unlock tests start from one made over the API.
+Writing it turned up a `data-test` collision: the Lock dialog's own button emits
+`button-lock`, the same as the card's behind it. Rather than rename either, the
+dialog's action row now carries `actions-lock-dataset`, and the locator selects
+the button inside it. Key encryption, unlocking from a key file, child datasets
+that inherit encryption, Edit on the card, and exporting keys are not covered.
+
+Rsync tasks came next, in `tests/rsync-tasks.e2e.ts`: adding, editing and
+deleting a task from the card on Data Protection, each asserted on the card and
+through `rsynctask.query`, which holds the remote end, the direction, the
+schedule and the transfer options the card does not show. Edit and delete each
+run beside a second task that must come through untouched. Every task is in
+Module mode against `127.0.0.1`, where no rsync daemon listens: middleware
+connects to nothing on save in that mode, and a task that fires before teardown
+fails without touching data. The row tag is `card-rsync-task-<path>-<host>`, so
+each task syncs a dataset of its own and the edit leaves both alone. The card
+lists four tasks and its View All leaves for the full list, so each test fails at
+the start if its rows would not fit. SSH mode, Run job, the Enabled switch and
+the full list page are not covered.
+
+Local replication followed, in `tests/replication-tasks.e2e.ts`: creating a task
+between two datasets on the same appliance through the card's wizard, with Run
+Once, and running a task from the card's row menu. Both assert the task through
+`replication.query`, the run through `core.get_jobs`, and the outcome through
+`pool.snapshot.query`, because the target holding the source's snapshots is the
+point of a replication and nothing on the screen shows it. Run Once is the one
+path where the UI does every step itself: it snapshots the empty source, saves the
+task and starts it. The run from the card sits beside a second task that must not
+run. No target dataset is made in advance, so a target that exists afterwards is
+evidence of a run. Middleware hands a deleted task's id to the next task and keeps
+finished jobs, so runs are counted only from jobs that did not exist before the
+action. Scheduled tasks and the periodic snapshot task the wizard makes for them,
+remote and SSH replication, encryption, Edit, Restore, Delete and the full list
+page are not covered.
+
+Privileges came next, in `tests/privileges.e2e.ts`: adding, editing and deleting
+a privilege from the list on Credentials > Privileges, each asserted on the list
+and through `privilege.query`, which holds the roles' wire values and the groups
+themselves where the list shows labels and a count. Edit and delete each run
+beside a second privilege that must come through untouched. The edited privilege
+names a local group of the spec's own, made over the API, and the edit leaves it
+alone: the form shows groups by name and resolves them back to gids on save, so
+the same gid has to come back. Roles is a multiple select whose panel stays open,
+so the flow closes it with Escape and checks the side panel did not close too.
+The row tag is `privilege-<name>` and the edit leaves the name alone. Picking a
+group in the form, directory-service groups, the Enable DS Authentication prompt,
+built-in privileges and the search are not covered.
+
+The framework is done and the coverage is not. A hundred and sixty-three tests — a
+hundred and sixty-two journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.

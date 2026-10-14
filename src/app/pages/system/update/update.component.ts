@@ -18,12 +18,14 @@ import { UpdateCode } from 'app/enums/system-update.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { Job } from 'app/interfaces/job.interface';
-import { UpdateConfig, UpdateProfileChoices, UpdateStatus } from 'app/interfaces/system-update.interface';
+import {
+  toUpdateStatus, UpdateConfig, UpdateProfileChoices, UpdateStatus,
+} from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { extractVersion } from 'app/modules/global-search/helpers/extract-version';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   SaveConfigDialog,
   SaveConfigDialogMessages,
@@ -66,7 +68,7 @@ export class UpdateComponent implements OnInit {
   private router = inject(Router);
   private translate = inject(TranslateService);
   private tnDialog = inject(TnDialog);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);
   private sysGenService = inject(SystemGeneralService);
@@ -78,7 +80,8 @@ export class UpdateComponent implements OnInit {
   protected readonly searchableElements = systemUpdateElements;
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
   protected readonly manualUpdateUrl = computed(() => {
-    const sysver = this.systemVersion();
+    // Rendered before `webui.main.dashboard.sys_info` answers, so the version may not be known yet.
+    const sysver = this.systemVersion() ?? '';
     const version = extractVersion(sysver);
 
     if (sysver.includes('MASTER') || !version) {
@@ -190,6 +193,7 @@ export class UpdateComponent implements OnInit {
         catchError((error: unknown) => this.handleApiError(error)),
       ),
       this.api.call('update.status').pipe(
+        map(toUpdateStatus),
         catchError((error: unknown) => this.handleApiError(error)),
       ),
       this.api.call('update.config').pipe(

@@ -1,35 +1,33 @@
 # TrueNAS WebUI end-to-end suite.
 #
-# Deliberately smaller than the design in `e2e/docs/04-environment-architecture.md`.
-# That design shards across appliances and reverts a VM snapshot between tests,
-# and neither is available yet. This runs the shape that works today — install
-# one appliance, run the suite on it, destroy it — so the parts nobody has
-# exercised get exercised: the runner reaching the appliance, the claim/release
-# contract, credentials arriving as environment variables, and teardown
-# releasing after a failure.
+# Each job runs on an ephemeral runner from a GARM pool on a TrueNAS box
+# (iXsystems/github-truenas-runner). The pool attaches a copy-on-write clone
+# of a prebuilt TrueNAS appliance image to the runner as a second disk, and
+# the `truenas-appliance-runner` action in iXsystems/ux-github-workflows
+# boots it under qemu, inside the runner: an appliance of the job's own,
+# with its API on the runner's loopback. Picking the runner label is the
+# claim; GARM deleting the runner when the job ends is the release, so
+# there is nothing to release and nothing that can leak.
 #
-# The runner is a TrueNAS box and the appliance is a nested VM on it, created
-# by `tn_guest.py` from iXsystems/api-ci-testbed through the box's own API.
-# The browser runs in Playwright's container on the same box. The appliance
-# is claimed and released by the `truenas-appliance` action in
-# iXsystems/ux-github-workflows; its appliance.sh is the contract with the
-# lab and documents the configuration it needs.
-#
-# Sharding and snapshot restore are layered on once they exist, with a
-# measured reason. See E1, E2 and E12 in the design.
+# So appliances are not shared: capacity is the pool's size, runs queue for
+# a runner instead of for the lab, and sharding is a matrix, each shard a
+# runner with its own appliance. The appliance is the newest nightly the
+# box's image-sync has rolled out (truenas_appliance:nightly), not an ISO
+# chosen here.
 #
 # ─── The `pull_request` trigger is same-repo only, and must stay that way ────
 #
 # `truenas/webui` is a PUBLIC repository and this job runs on a SELF-HOSTED
-# runner on the lab network with hypervisor access. An unguarded `pull_request`
+# runner that can reach the lab network. An unguarded `pull_request`
 # trigger lets anyone on the internet open a fork PR and execute code on that
 # machine — GitHub's own guidance is not to pair self-hosted runners with public
 # repositories for this reason.
 #
 # The guard is the `if:` on the job below: the head repository must be this
 # repository, so a fork PR queues nothing. Never use `pull_request_target` with
-# a checkout of PR code, which would defeat it. Configure the `e2e-lab`
-# environment with required reviewers as a second line.
+# a checkout of PR code, which would defeat it. The second line is the
+# runner group: kept from public repositories, or approval required for
+# every outside contributor (github-truenas-runner's docs/security.md).
 # ─────────────────────────────────────────────────────────────────────────────
 
 name: E2E
@@ -40,11 +38,10 @@ on:
   # UI built from the checkout, so a run on master is a run on master's code.
   schedule:
     - cron: '0 3 * * *'
-  # Every merged change to the UI or the suite. Not every pull request: one
-  # runner, one appliance, ~8 minutes a run, and a concurrency group that
-  # keeps one pending run at most, so under normal PR volume most pushes
-  # would never get a run and nobody could tell which. A PR that wants a run
-  # asks for one with `workflow_dispatch` on its branch.
+  # Every merged change to the UI or the suite. Pull requests that change
+  # the UI are the next step, once the pool's capacity is measured; until
+  # then a PR that wants a run asks for one with `workflow_dispatch` on its
+  # branch.
   push:
     branches: [master]
     paths:
@@ -65,7 +62,7 @@ on:
   pull_request:
     paths:
       - 'e2e/**'
-      # A documentation-only pull request should not claim a lab appliance.
+      # A documentation-only pull request should not take a runner.
       # Evaluated against every file the PR changes, not the latest push, so
       # this only helps PRs that touch nothing but docs.
       - '!e2e/docs/**'
@@ -88,34 +85,53 @@ on:
         type: choice
         default: built
         options: [built, shipped]
-      refresh_iso:
+      shards:
         description: >-
-          Install from the newest v27 nightly now, instead of the one chosen
-          this week or pinned by E2E_TN_GUEST_ISO. For a change merged to
-          middleware this morning.
-        type: boolean
-        default: false
+          How many runners, each with its own appliance, to split the suite
+          across (Playwright's --shard). One until sharding is measured.
+        type: number
+        default: 1
 
-# Reads code, uploads artifacts. No reason to write to the repository.
+# Reads code, uploads artifacts, and reads the WebUI workflow's runs and
+# artifacts for its build of the UI. No reason to write to the repository.
 permissions:
   contents: read
+  actions: read
 
-# The lab is one shared resource: two runs would destroy each other's pools.
-# Queue rather than cancel — a cancelled run holds an appliance and leaks it.
+# Runs share nothing, so a newer push to the same ref replaces an older run:
+# cancelling one leaks nothing, its runner and appliance are deleted with it.
 concurrency:
-  group: e2e-lab
-  cancel-in-progress: false
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  e2e:
-    # Fork PRs stop here. See the header.
+  plan:
+    # Fork PRs stop here, and so everything after. See the header.
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, linux, truenas-lab]
-    # Gate for secrets, and the hook for required reviewers.
-    environment: e2e-lab
-    # Bounded because this holds the appliance, the runner and the concurrency
-    # group at once. Without it the job inherits GitHub's 360-minute default and
-    # a hang blocks the lab for six hours.
+    runs-on: ubuntu-latest
+    outputs:
+      shards: ${{ steps.shards.outputs.shards }}
+      total: ${{ steps.shards.outputs.total }}
+    steps:
+      - id: shards
+        env:
+          SHARDS: ${{ inputs.shards || 1 }}
+        run: |
+          echo "total=$SHARDS" >> "$GITHUB_OUTPUT"
+          echo "shards=$(jq -cn --argjson n "$SHARDS" '[range(1; $n + 1)]')" >> "$GITHUB_OUTPUT"
+
+  e2e:
+    needs: plan
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+    name: e2e (${{ matrix.shard }}/${{ needs.plan.outputs.total }})
+    # A runner with a TrueNAS appliance disk attached: the GARM pool's extra
+    # specs are {"disks": ["truenas_appliance:nightly"]}.
+    runs-on: [self-hosted, truenas-appliance]
+    # Bounded so that a hang gives the runner back in an hour and a half,
+    # not GitHub's 360-minute default.
     timeout-minutes: 90
     env:
       # Serves the built UI. Debian-based on purpose: docker/nginx.conf runs
@@ -125,34 +141,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # The lab runner is a TrueNAS box, and TrueNAS mounts /tmp noexec. Yarn
-      # packs the one git dependency (`@truenas/common-typescript`) by writing
-      # a `yarn` shim into a temp directory and running it; on noexec /tmp the
-      # shim cannot execute, PATH lookup falls through to corepack, corepack
-      # finds no pinned package manager in the clone and downloads Yarn 1, and
-      # Yarn 1 produces a different archive from Yarn 4 — so `yarn install`
-      # fails with a checksum mismatch, on this runner only. RUNNER_TEMP is on
-      # the runner's own dataset, which allows exec. Node, npm and Playwright
-      # all honour TMPDIR, so this is the whole fix. A step rather than job
-      # `env:` because the `runner` context is not available there.
-      - name: Keep temp files off noexec /tmp
-        run: echo "TMPDIR=$RUNNER_TEMP" >> "$GITHUB_ENV"
-
       # Same Node pin and install path as the test and lint jobs in main.yml, so
       # a failure here is the runner and not a difference in how the tree was
       # prepared. (The Build job there shares the pin but installs Node with
       # debian/fetch_node.sh.)
       - uses: ./.github/actions/prepare
 
-      # The browser runs in Playwright's own image rather than on the runner.
-      # The runner is a TrueNAS box: read-only root, no apt, and `playwright
-      # install --with-deps` would need sudo for system libraries anyway. The
-      # image ships Chromium and every library it needs, and its tag must match
+      # The browser runs in Playwright's own image rather than on the runner:
+      # it ships Chromium and every library it needs, and its tag must match
       # the installed @playwright/test exactly or Playwright refuses to launch,
       # so the tag is read from node_modules rather than written down twice.
       #
-      # Checked before claiming, so a runner without a usable Docker fails here
-      # and never holds an appliance.
+      # Checked before the appliance boots, so a runner without a usable
+      # Docker fails here, early.
       - name: Resolve the Playwright image
         run: |
           set -euo pipefail
@@ -173,47 +174,122 @@ jobs:
           $docker pull --quiet "$image"
           echo "PLAYWRIGHT_IMAGE=$image" >> "$GITHUB_ENV"
 
-      # The UI under test is the one in this checkout, not the one baked into
-      # the appliance's ISO. Same production build as main.yml's Build job —
-      # `--base-href /ui/`, so it is served where the appliance's nginx would
-      # serve it. Built before the claim so the lab is not held during the
-      # build, and so the build's memory is back before a 6GB guest starts.
-      #
-      # The web server is a stock nginx image driven by `docker/nginx.conf`,
-      # this repository's copy of the appliance's nginx routing. A stand-in
-      # rather than the real thing: the deb ships only `dist/`, so an appliance
-      # serves the UI through middleware's own config, not this file. Pulled
-      # here for the same fail-early reason as the Playwright image.
-      - name: Build the UI
+      # The web server for the UI under test is a stock nginx image driven by
+      # `docker/nginx.conf`, this repository's copy of the appliance's nginx
+      # routing. A stand-in rather than the real thing: the deb ships only
+      # `dist/`, so an appliance serves the UI through middleware's own
+      # config, not this file. Pulled here for the same fail-early reason as
+      # the Playwright image.
+      - name: Pull nginx
         if: (inputs.ui || 'built') == 'built'
-        run: |
-          set -euo pipefail
-          yarn build:prod
-          [ -f dist/index.html ] || { echo "::error::yarn build:prod produced no dist/index.html"; exit 1; }
-          $DOCKER pull --quiet "$NGINX_IMAGE"
-          echo "UI_DIST=$GITHUB_WORKSPACE/dist" >> "$GITHUB_ENV"
+        run: $DOCKER pull --quiet "$NGINX_IMAGE"
 
-      # Resolves the ISO (the newest v27 nightly, kept for a week, or the
-      # E2E_TN_GUEST_ISO pin), claims an appliance — a clone of the template
-      # for that ISO, built on first use — and puts TN_PROFILE, TN_HOST,
-      # TN_HOST_HTTP, TN_USERNAME, TN_PASSWORD, TN_DOMAIN and TN_BASELINE in
-      # the job environment. Its
-      # post step releases the appliance whatever happens below, and the
-      # lease it sets covers a runner that never gets there. Lab facts stay
-      # in the e2e-lab environment's variables and secrets. A dispatch that
-      # asks for the newest nightly beats a standing pin.
-      - name: Claim an appliance
-        uses: iXsystems/ux-github-workflows/.github/actions/truenas-appliance@master
+      # Boots the appliance disk this runner's pool attached, under qemu,
+      # inside the runner; gives the admin a password made for this job;
+      # snapshots it as `fresh-install` (`truenas-appliance revert
+      # fresh-install` gets back to it in seconds); and puts TN_PROFILE,
+      # TN_HOST, TN_HOST_HTTP, TN_USERNAME, TN_PASSWORD, TN_DOMAIN and
+      # TN_BASELINE in the job environment, as the lab's claim did. Its ports
+      # are on the runner's loopback and Docker's bridge, nowhere else.
+      - name: Boot the appliance
+        uses: iXsystems/ux-github-workflows/.github/actions/truenas-appliance-runner@master
         with:
           baseline: fresh-install
-          pool: ${{ vars.E2E_TN_GUEST_POOL || 'tank' }}
-          iso: ${{ !inputs.refresh_iso && vars.E2E_TN_GUEST_ISO || '' }}
-          refresh-iso: ${{ inputs.refresh_iso && 'true' || 'false' }}
-          host-user: ${{ vars.E2E_TN_GUEST_HOST_USER || 'root' }}
-          host-api-key: ${{ secrets.TN_GUEST_HOST_API_KEY }}
-          host-password: ${{ secrets.TN_GUEST_HOST_PASSWORD }}
-          template-prefix: ${{ vars.E2E_TN_GUEST_TEMPLATE_PREFIX || 'e2e-template' }}
-          template-password: ${{ secrets.TN_GUEST_TEMPLATE_PASSWORD }}
+
+      # The UI under test is this checkout's, not the one baked into the
+      # appliance's ISO. main.yml's Build job already builds it, as the
+      # Debian package that ships, and uploads it as `webui-dist`; this finds
+      # that WebUI run by commit and waits for the upload. Looked for only
+      # now, after the boot, so its build and this job's boot overlap.
+      #
+      # Only a run that built the tree this job checked out counts: for a
+      # pull request, the WebUI run of the same head commit, which built
+      # the same merge commit; otherwise the push run of this commit, so a
+      # dispatch on master or the nightly finds master's. A dispatch on any
+      # other branch has none and builds below. So does a WebUI run that
+      # finished without the artifact, or one still going after ten minutes.
+      # Each falls back to building rather than failing the job.
+      #
+      # The newest such run is taken. For a pull request that is the one that
+      # built this checkout's merge commit, except in one rare case: a re-run
+      # of an older attempt after master moved and a newer WebUI run of the
+      # same head commit built a newer merge.
+      - name: Find the WebUI build
+        id: shipped-build
+        if: (inputs.ui || 'built') == 'built'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          # The PR's branch, or the pushed one: a run of the same commit from
+          # another PR (a fork's, or one to another base) built another tree.
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          set -euo pipefail
+          event=push
+          [ "$GITHUB_EVENT_NAME" = pull_request ] && event=pull_request
+          api="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions"
+          get() { curl -fsS -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "$1"; }
+          deadline=$((SECONDS + 600))
+          while :; do
+            # A failed query (a 5xx, the token's rate limit) falls back to
+            # building rather than failing the job.
+            if ! runs=$(get "$api/workflows/main.yml/runs?head_sha=$SHA&event=$event&branch=$BRANCH&per_page=10"); then
+              echo "::notice::Could not query the WebUI runs; building the UI here"
+              exit 0
+            fi
+            run=$(jq -c --arg repo "$GITHUB_REPOSITORY" '[.workflow_runs[] | select(.head_repository.full_name == $repo)][0] // empty' <<< "$runs")
+            if [ -z "$run" ]; then
+              echo "No WebUI $event run of $SHA; building the UI here"
+              exit 0
+            fi
+            id=$(jq -r .id <<< "$run")
+            # The list keeps an artifact past its retention, marked expired,
+            # and download-artifact cannot fetch that one.
+            if get "$api/runs/$id/artifacts?name=webui-dist" | jq -e '[.artifacts[] | select(.expired | not)] | length > 0' > /dev/null; then
+              echo "run-id=$id" >> "$GITHUB_OUTPUT"
+              echo "Using the UI WebUI run $id built, $(jq -r .html_url <<< "$run"), after waiting ${SECONDS}s"
+              exit 0
+            fi
+            if [ "$(jq -r .status <<< "$run")" = completed ]; then
+              echo "::notice::WebUI run $id finished with no webui-dist to download (failed, or expired); building the UI here"
+              exit 0
+            fi
+            if [ "$SECONDS" -ge "$deadline" ]; then
+              echo "::notice::WebUI run $id has not uploaded webui-dist after 10 minutes; building the UI here"
+              exit 0
+            fi
+            # Two calls a round, on the token's 1,000 requests an hour that
+            # every workflow in the repository shares.
+            sleep 20
+          done
+
+      - name: Download the WebUI build
+        if: steps.shipped-build.outputs.run-id != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: webui-dist
+          path: ${{ runner.temp }}/webui-dist
+          run-id: ${{ steps.shipped-build.outputs.run-id }}
+          github-token: ${{ github.token }}
+
+      # Same production build as main.yml's Build job — `--base-href /ui/`,
+      # so it is served where the appliance's nginx would serve it — for
+      # when there is no WebUI build to reuse. After the boot, so its memory
+      # and the 6GB guest's are in use at once; only on that fallback.
+      - name: Build the UI
+        if: (inputs.ui || 'built') == 'built'
+        env:
+          DOWNLOADED: ${{ steps.shipped-build.outputs.run-id != '' && format('{0}/webui-dist', runner.temp) || '' }}
+        run: |
+          set -euo pipefail
+          if [ -n "$DOWNLOADED" ]; then
+            dist="$DOWNLOADED"
+          else
+            yarn build:prod
+            dist="$GITHUB_WORKSPACE/dist"
+          fi
+          [ -f "$dist/index.html" ] || { echo "::error::$dist has no index.html"; exit 1; }
+          echo "UI_DIST=$dist" >> "$GITHUB_ENV"
 
       # nginx serves the build at /ui/ and proxies /api, /_upload, /_download
       # and the WebSocket to the appliance over plain HTTP, which is the
@@ -222,9 +298,8 @@ jobs:
       # `%%VERTAG%%` with a timestamp to bust the UI cache — and redirects the
       # syslog targets, which a container has no socket for. The
       # upstream is the appliance's forwarded port 80, reached from the
-      # container's bridge network through Docker's host gateway. It cannot
-      # share the host network: nginx binds the ports the TrueNAS host's own
-      # UI is on.
+      # container's bridge network through Docker's host gateway, which the
+      # appliance's forwards listen on as well as on loopback.
       #
       # Served over TLS with a throwaway self-signed certificate, and it has
       # to be: a production build ignores the login token on a plain-HTTP
@@ -311,8 +386,8 @@ jobs:
           # line: `${{ inputs.grep }}` there would be executed as code, on a
           # runner with hypervisor access.
           TN_GREP: ${{ inputs.grep }}
-        # Only the test run is containerised. Claim, release and log collection
-        # stay on the host, where tn_guest.py and its Python live.
+        # Only the test run is containerised; the appliance stays on the
+        # runner, under qemu.
         #
         # --network host: the container reaches the appliance exactly as the
         #   host does, no port mapping and no Docker DNS in the way.
@@ -323,7 +398,6 @@ jobs:
         #   no home inside the image.
         # The host's node_modules is reused: it is pure JavaScript apart from
         # the browsers, and the image already has those at its default path.
-        # TMPDIR is deliberately not passed in — it names a host path.
         #
         # Variables go through --env-file, not `-e NAME=value`. $DOCKER may be
         # `sudo -n docker`: sudo scrubs the environment, so `-e NAME` pass-
@@ -353,6 +427,7 @@ jobs:
             "TN_PASSWORD=$TN_PASSWORD" \
             "TN_DOMAIN=$TN_DOMAIN" \
             "TN_BASELINE=$TN_BASELINE" \
+            "TN_SHARD=${{ matrix.shard }}/${{ needs.plan.outputs.total }}" \
             > "$envFile"
           $DOCKER run --rm \
             --network host \
@@ -363,11 +438,15 @@ jobs:
             -w /work \
             --env-file "$envFile" \
             "$PLAYWRIGHT_IMAGE" \
-            bash -c 'if [ -n "${TN_GREP:-}" ]; then ./node_modules/.bin/playwright test --grep "$TN_GREP"; else ./node_modules/.bin/playwright test; fi'
+            bash -c 'if [ -n "${TN_GREP:-}" ]; then ./node_modules/.bin/playwright test --shard "$TN_SHARD" --grep "$TN_GREP"; else ./node_modules/.bin/playwright test --shard "$TN_SHARD"; fi'
 
-      # No middleware log collection (R7.2). The appliance sits behind hostfwd
-      # with only 80 and 443 forwarded, so there is no SSH to collect over. It
-      # needs an API route; until then the job log is what there is.
+      # The appliance's serial console, when anything failed: boot messages,
+      # middleware's crashes, panics. Middleware's own logs (R7.2) can come
+      # over ssh next (`ssh: true` on the action), now the job owns qemu.
+      - name: The appliance's console
+        if: failure()
+        run: truenas-appliance console 300 || true
+
       #
       # Runs whenever the suite ran, pass or fail, and then insists on the
       # file: JUnit is the run history R7.4 and R8.4 are built on, so a run
@@ -377,7 +456,7 @@ jobs:
         if: always() && steps.suite.outcome != 'skipped'
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-junit
+          name: e2e-junit-${{ matrix.shard }}
           path: test-results/junit.xml
           if-no-files-found: error
           retention-days: 14
@@ -391,9 +470,9 @@ jobs:
       # trace records action parameters verbatim — including the appliance
       # password `signIn` types and the login token in the setup project's
       # URL. Publishing them is safe because both are worthless by the time
-      # anyone can download this: the password is generated per claim, the
-      # token expires, and the appliance they belonged to is destroyed by the
-      # release step below. Do not upload these from a pipeline that reuses an
+      # anyone can download this: the password is generated per job, the
+      # token expires, and the appliance they belonged to is deleted with its
+      # runner when the job ends. Do not upload these from a pipeline that reuses an
       # appliance or a credential.
       #
       # Whenever the suite ran, not only when it failed. Playwright keeps a
@@ -406,7 +485,7 @@ jobs:
         if: always() && steps.suite.outcome != 'skipped'
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-failure-traces
+          name: e2e-failure-traces-${{ matrix.shard }}
           path: |
             test-results/**
             !test-results/junit.xml
@@ -422,5 +501,5 @@ jobs:
         if: always() && env.DOCKER != ''
         run: $DOCKER rm -f "e2e-ui-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" > /dev/null 2>&1 || true
 
-      # No release step: the claim action's post step releases the appliance,
-      # on success, failure and cancellation alike, after every step here.
+      # No release step: the appliance is deleted with the runner, on success,
+      # failure and cancellation alike.

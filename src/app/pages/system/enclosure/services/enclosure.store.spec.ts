@@ -4,8 +4,9 @@ import {
   mockProvider,
   SpectatorService,
 } from '@ngneat/spectator/jest';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { EventUnion } from '@truenas/api-client';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi, mockTypedCall, settleTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import {
@@ -14,7 +15,8 @@ import {
   DashboardEnclosureSlot, EnclosureVdevDisk,
 } from 'app/interfaces/enclosure.interface';
 import { ThemeService } from 'app/modules/theme/theme.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
@@ -52,21 +54,22 @@ describe('EnclosureStore', () => {
   const createService = createServiceFactory({
     service: EnclosureStore,
     providers: [
-      mockApi([
-        mockCall('webui.enclosure.dashboard', enclosures),
+      mockTypedApi([
+        mockTypedCall('webui.enclosure.dashboard', enclosures),
       ]),
       mockProvider(ThemeService),
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createService();
     spectator.service.initiate();
+    await settleTypedApi();
   });
 
   describe('initiate', () => {
     it('loads dashboard information', () => {
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webui.enclosure.dashboard');
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('webui.enclosure.dashboard');
 
       expect(spectator.service.state()).toMatchObject({
         enclosures,
@@ -84,16 +87,16 @@ describe('EnclosureStore', () => {
       jest.spyOn(spectator.service, 'patchState').mockImplementation();
       spectator.service.listenForDiskUpdates().subscribe();
 
-      spectator.inject(MockApiService).emitSubscribeEvent({
+      spectator.inject(MockTypedApiService).emitEvent('disk.query', {
         id: 'test-id-1',
         msg: CollectionChangeType.Changed,
         collection: 'disk.query',
         fields: null,
-      });
+      } as unknown as EventUnion<WebUiApiDirectory, 'disk.query'>);
 
       tick(1 * 1000);
-      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('disk.query');
-      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('webui.enclosure.dashboard');
+      expect(spectator.inject(TypedApiService).subscribe).toHaveBeenCalledWith('disk.query');
+      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('webui.enclosure.dashboard');
 
       expect(spectator.service.patchState).toHaveBeenLastCalledWith({ enclosures });
     }));
@@ -167,8 +170,9 @@ describe('EnclosureStore', () => {
   });
 
   describe('selectors', () => {
-    it('selectedEnclosureSlots - returns slots of currently selected enclosure', () => {
+    it('selectedEnclosureSlots - returns slots of currently selected enclosure', async () => {
       spectator.service.initiate();
+      await settleTypedApi();
 
       spectator.service.selectEnclosure('enc2');
 

@@ -18,9 +18,17 @@ const expectedRoute = {
   storage: /\/storage\/?$/,
   datasets: /\/datasets/,
   shares: /\/sharing/,
+  dataProtection: /\/data-protection\/?$/,
   users: /\/credentials\/users/,
   groups: /\/credentials\/groups\/?$/,
+  privileges: /\/credentials\/privileges\/?$/,
   s3AccessKeys: /\/credentials\/s3-access-keys/,
+  backupCredentials: /\/credentials\/backup-credentials\/?$/,
+  generalSettings: /\/system\/general\/?$/,
+  advancedSettings: /\/system\/advanced\/?$/,
+  network: /\/system\/network\/?$/,
+  alertSettings: /\/system\/alert-settings\/?$/,
+  boot: /\/system\/boot\/?$/,
 } as const;
 
 /**
@@ -56,6 +64,14 @@ export async function goToShares(page: Page): Promise<void> {
   await clickAndArrive(page, navLocators.shares, expectedRoute.shares);
 }
 
+/**
+ * Data Protection is a plain link, not a slide-out. Anchored to the end because
+ * each card's full list lives under it (`/data-protection/snapshot`).
+ */
+export async function goToDataProtection(page: Page): Promise<void> {
+  await clickAndArrive(page, navLocators.dataProtection, expectedRoute.dataProtection);
+}
+
 /** Credentials is a slide-out, so reaching Users takes two clicks. */
 export async function goToUsers(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.credentials).click();
@@ -74,6 +90,12 @@ export async function goToGroups(page: Page): Promise<void> {
   await clickAndArrive(page, navLocators.groups, expectedRoute.groups);
 }
 
+/** Privileges sits beside Groups under the same Credentials slide-out. */
+export async function goToPrivileges(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.credentials).click();
+  await clickAndArrive(page, navLocators.privileges, expectedRoute.privileges);
+}
+
 /**
  * S3 Access Keys lives under the same Credentials slide-out as Users.
  *
@@ -85,4 +107,46 @@ export async function goToGroups(page: Page): Promise<void> {
 export async function goToS3AccessKeys(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.credentials).click();
   await clickAndArrive(page, navLocators.s3AccessKeys, expectedRoute.s3AccessKeys);
+}
+
+/** Backup Credentials — cloud credentials, SSH connections and SSH keypairs — is under Credentials too. */
+export async function goToBackupCredentials(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.credentials).click();
+  await clickAndArrive(page, navLocators.backupCredentials, expectedRoute.backupCredentials);
+}
+
+/** System is a slide-out too, so General Settings takes two clicks the same way. */
+export async function goToGeneralSettings(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.system).click();
+  await clickAndArrive(page, navLocators.generalSettings, expectedRoute.generalSettings);
+}
+
+/** Advanced Settings sits beside General Settings under the same System slide-out. */
+export async function goToAdvancedSettings(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.system).click();
+  await clickAndArrive(page, navLocators.advancedSettings, expectedRoute.advancedSettings);
+}
+
+/** Network sits beside Advanced Settings under the same System slide-out. */
+export async function goToNetwork(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.system).click();
+  await clickAndArrive(page, navLocators.network, expectedRoute.network);
+}
+
+/**
+ * Alert Settings is under the same System slide-out. Anchored to the end because
+ * the standalone Alert Services list lives under it (`/system/alert-settings/services`).
+ */
+export async function goToAlertSettings(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.system).click();
+  await clickAndArrive(page, navLocators.alertSettings, expectedRoute.alertSettings);
+}
+
+/**
+ * Boot — the boot environment list — is under the same System slide-out. Anchored
+ * to the end because Boot Pool Status lives under it (`/system/boot/status`).
+ */
+export async function goToBootEnvironments(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.system).click();
+  await clickAndArrive(page, navLocators.boot, expectedRoute.boot);
 }

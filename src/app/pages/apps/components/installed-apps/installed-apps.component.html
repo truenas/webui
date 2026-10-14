@@ -42,8 +42,7 @@
 
   @if (masterDetailView.isMobileView()) {
     <ng-container detail-header>
-      {{ 'Details for' | translate }}
-      {{ selectedApp?.name }}
+      {{ 'Details for {name}' | translate: { name: selectedApp?.name ?? '' } }}
     </ng-container>
   }
 

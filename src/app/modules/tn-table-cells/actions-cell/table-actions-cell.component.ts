@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, signal,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, signal,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
@@ -57,6 +57,7 @@ export class TableActionsCellComponent<T = unknown> {
   protected readonly stopRowActivationKeys = stopRowActivationKeys;
 
   protected readonly visibleActions = signal<IconActionConfig<T>[]>([]);
+  protected readonly showsInlineActions = computed(() => this.mode() === 'inline' || this.visibleActions().length === 1);
 
   /** Async `hidden()` subscriptions for the current effect run; torn down before each re-run. */
   private hiddenSubscriptions = new Subscription();

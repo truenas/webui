@@ -7,13 +7,13 @@ import {
   TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { finalize, forkJoin, take } from 'rxjs';
+import { finalize, forkJoin, map, take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
+import { ResilverConfig, toResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { getResilverSummary } from 'app/pages/system/advanced/storage/storage-card/resilver-summary.util';
 import { storageCardElements } from 'app/pages/system/advanced/storage/storage-card/storage-card.elements';
 import {
@@ -41,7 +41,7 @@ export class StorageCardComponent implements OnInit {
   private firstTimeWarning = inject(FirstTimeWarningService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
@@ -70,7 +70,7 @@ export class StorageCardComponent implements OnInit {
 
     forkJoin([
       this.api.call('systemdataset.config'),
-      this.api.call('pool.resilver.config'),
+      this.api.call('pool.resilver.config').pipe(map(toResilverConfig)),
     ])
       .pipe(
         this.errorHandler.withErrorHandler(),

@@ -3,6 +3,7 @@ import { CallParams } from '@truenas/api-client';
 import {
   map, Observable, shareReplay, BehaviorSubject, Subject,
 } from 'rxjs';
+import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
@@ -150,7 +151,7 @@ export class ReportsService {
     return this.diskMetrics$.asObservable().pipe(
       map((options) => {
         if (!this.hasDiskTemperature) {
-          return options.filter((option) => option.value !== 'disktemp');
+          return options.filter((option) => option.value !== ReportingGraphName.DiskTemp);
         }
 
         return options;

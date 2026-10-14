@@ -17,6 +17,10 @@ export const helptextSnapshotForm = {
  datasets except <i>child1</i>. Separate entries by pressing\
  <code>Enter</code>.'),
 
+  // `<b>` marks the count, which the form renders as its own bold element (splitTag: 'b').
+  retentionWarning: T('Warning: This change will affect the retention of <b>{n}</b> existing\
+ {n, plural, one {snapshot} other {snapshots}}.'),
+
   lifetimeLabel: T('Snapshot Lifetime'),
   lifetimeTooltip: T('Define a length of time to retain the snapshot on this system. After the\
  time expires, the snapshot is removed. Snapshots which have been replicated\

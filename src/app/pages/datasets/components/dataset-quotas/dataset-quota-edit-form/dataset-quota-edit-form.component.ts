@@ -94,14 +94,12 @@ export class DatasetQuotaEditFormComponent extends IxFormHostForm implements OnI
 
   private getUserDataQuotaTooltip(): string {
     return this.translate.instant(helptextQuotas.users.dataQuota.tooltip)
-      + this.translate.instant(helptextGlobal.humanReadable.suggestionTooltip)
-      + this.translate.instant(' bytes.');
+      + ' ' + this.translate.instant(helptextGlobal.humanReadable.bytesTooltip);
   }
 
   private getGroupDataQuotaTooltip(): string {
     return this.translate.instant(helptextQuotas.groups.dataQuota.tooltip)
-      + this.translate.instant(helptextGlobal.humanReadable.suggestionTooltip)
-      + this.translate.instant(' bytes.');
+      + ' ' + this.translate.instant(helptextGlobal.humanReadable.bytesTooltip);
   }
 
   protected get objectQuotaTooltip(): string {

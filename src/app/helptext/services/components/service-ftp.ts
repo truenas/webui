@@ -1,5 +1,4 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { helptextGlobal } from 'app/helptext/global-helptext';
 
 export const helptextServiceFtp = {
   portTooltip: T('Set the port the FTP service listens on.'),
@@ -39,10 +38,9 @@ export const helptextServiceFtp = {
  means any port above 1023.'),
   passiveportsmaxTooltip: T('Used by clients in PASV mode. A default of <i>0</i>\
  means any port above 1023.'),
-  localuserbwLabel: T('Local User Upload Bandwidth: ') + helptextGlobal.humanReadable.suggestionLabel,
-  userbwTooltip: T('In KiBs or greater. A default of <i>0 KiB</i> means unlimited. ')
-    + helptextGlobal.humanReadable.suggestionTooltip
-    + ' KiB.',
+  userbwTooltip: T('In KiBs or greater. A default of <i>0 KiB</i> means unlimited.\
+ This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).\
+ If units are not specified, the value defaults to KiB.'),
   tlsTooltip: T('Allow encrypted connections. Requires a certificate\
  created or imported with the <b>System > Certificates</b> menu.'),
   tlsPolicyTooltip: T('Define whether the control channel,\

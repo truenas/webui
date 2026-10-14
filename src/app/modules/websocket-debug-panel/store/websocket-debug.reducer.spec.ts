@@ -1,7 +1,7 @@
 import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
-import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
+import { WebSocketDebugMessage, MessageDirection } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 import * as WebSocketDebugActions from './websocket-debug.actions';
 import { webSocketDebugReducer, initialState, WebSocketDebugState } from './websocket-debug.reducer';
 
@@ -32,7 +32,7 @@ describe('WebSocketDebugReducer', () => {
       const message: WebSocketDebugMessage = {
         id: 'msg-1',
         timestamp: new Date().toISOString(),
-        direction: 'in',
+        direction: MessageDirection.In,
         message: { jsonrpc: '2.0', id: '1', result: {} },
       };
 
@@ -47,7 +47,7 @@ describe('WebSocketDebugReducer', () => {
       const message: WebSocketDebugMessage = {
         id: 'msg-2',
         timestamp: new Date().toISOString(),
-        direction: 'out',
+        direction: MessageDirection.Out,
         message: {
           jsonrpc: '2.0', id: '2', method: 'test.method' as never, params: [],
         },
@@ -66,13 +66,13 @@ describe('WebSocketDebugReducer', () => {
         messageLimit: 3,
         messages: [
           {
-            id: '1', timestamp: '2024-01-01', direction: 'in', message: { jsonrpc: '2.0', id: '1', result: {} },
+            id: '1', timestamp: '2024-01-01', direction: MessageDirection.In, message: { jsonrpc: '2.0', id: '1', result: {} },
           },
           {
-            id: '2', timestamp: '2024-01-02', direction: 'out', message: { jsonrpc: '2.0', id: '2', method: 'test' as never },
+            id: '2', timestamp: '2024-01-02', direction: MessageDirection.Out, message: { jsonrpc: '2.0', id: '2', method: 'test' as never },
           },
           {
-            id: '3', timestamp: '2024-01-03', direction: 'in', message: { jsonrpc: '2.0', id: '3', result: {} },
+            id: '3', timestamp: '2024-01-03', direction: MessageDirection.In, message: { jsonrpc: '2.0', id: '3', result: {} },
           },
         ],
       };
@@ -80,7 +80,7 @@ describe('WebSocketDebugReducer', () => {
       const newMessage: WebSocketDebugMessage = {
         id: '4',
         timestamp: '2024-01-04',
-        direction: 'out',
+        direction: MessageDirection.Out,
         message: { jsonrpc: '2.0', id: '4', method: 'new' as never },
       };
 
@@ -97,10 +97,10 @@ describe('WebSocketDebugReducer', () => {
         ...initialState,
         messages: [
           {
-            id: '1', timestamp: '2024-01-01', direction: 'in', message: { jsonrpc: '2.0', id: '1', result: {} },
+            id: '1', timestamp: '2024-01-01', direction: MessageDirection.In, message: { jsonrpc: '2.0', id: '1', result: {} },
           },
           {
-            id: '2', timestamp: '2024-01-02', direction: 'out', message: { jsonrpc: '2.0', id: '2', method: 'test' as never },
+            id: '2', timestamp: '2024-01-02', direction: MessageDirection.Out, message: { jsonrpc: '2.0', id: '2', method: 'test' as never },
           },
         ],
       };
@@ -116,10 +116,10 @@ describe('WebSocketDebugReducer', () => {
         ...initialState,
         messages: [
           {
-            id: 'msg-1', timestamp: '2024-01-01', direction: 'in', message: { jsonrpc: '2.0', id: '1', result: {} }, isExpanded: false,
+            id: 'msg-1', timestamp: '2024-01-01', direction: MessageDirection.In, message: { jsonrpc: '2.0', id: '1', result: {} }, isExpanded: false,
           },
           {
-            id: 'msg-2', timestamp: '2024-01-02', direction: 'out', message: { jsonrpc: '2.0', id: '2', method: 'test' as never }, isExpanded: true,
+            id: 'msg-2', timestamp: '2024-01-02', direction: MessageDirection.Out, message: { jsonrpc: '2.0', id: '2', method: 'test' as never }, isExpanded: true,
           },
         ],
       };
@@ -252,7 +252,7 @@ describe('WebSocketDebugReducer', () => {
         ...initialState,
         messages: [
           {
-            id: 'msg-1', timestamp: '2024-01-01', direction: 'in', message: { jsonrpc: '2.0', id: '1', result: {} },
+            id: 'msg-1', timestamp: '2024-01-01', direction: MessageDirection.In, message: { jsonrpc: '2.0', id: '1', result: {} },
           },
         ],
         isPanelOpen: true,
@@ -349,7 +349,7 @@ describe('WebSocketDebugReducer', () => {
         ...initialState,
         messages: [
           {
-            id: 'msg-1', timestamp: '2024-01-01', direction: 'in', message: { jsonrpc: '2.0', id: '1', result: {} },
+            id: 'msg-1', timestamp: '2024-01-01', direction: MessageDirection.In, message: { jsonrpc: '2.0', id: '1', result: {} },
           },
         ],
         mockConfigs: [{
@@ -428,7 +428,7 @@ describe('WebSocketDebugReducer', () => {
         messages: [{
           id: 'msg-1',
           timestamp: '2024-01-01',
-          direction: 'in',
+          direction: MessageDirection.In,
           message: { jsonrpc: '2.0', id: '1', result: {} },
           isExpanded: false,
         }],

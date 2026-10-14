@@ -5,6 +5,9 @@ import {
 } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { maxDatasetNesting, maxDatasetPath } from 'app/constants/dataset.constants';
+import { DatasetSnapdir, DatasetSync } from 'app/enums/dataset.enum';
+import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
+import { OnOff } from 'app/enums/on-off.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, toDataset } from 'app/interfaces/dataset.interface';
@@ -77,11 +80,11 @@ export class DatasetFormService {
 
     // Whitelist of known enum values that should be converted from uppercase to title case
     // These are common ZFS property values that appear in parentheses
-    const enumValues = new Set([
-      'ON', 'OFF', // OnOff enum
-      'STANDARD', 'ALWAYS', 'DISABLED', // DatasetSync enum
-      'VISIBLE', 'HIDDEN', // DatasetSnapdir/Snapdev enum
-      'VERIFY', // DeduplicationSetting enum
+    const enumValues = new Set<string>([
+      OnOff.On, OnOff.Off,
+      DatasetSync.Standard, DatasetSync.Always, DatasetSync.Disabled,
+      DatasetSnapdir.Visible, DatasetSnapdir.Hidden,
+      DeduplicationSetting.Verify,
     ]);
 
     // Only convert whitelisted uppercase enum values to title case

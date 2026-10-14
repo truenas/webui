@@ -16,6 +16,8 @@
       <tn-form-section [heading]="section.title" [tooltip]="section.tooltip">
         @for (field of section.fields; track field.name) {
           @if (isFieldVisible(field)) {
+            <!-- eslint-disable no-restricted-syntax -- `field.type` is the discriminant of FormFieldDefinition,
+              written as a literal by every declarative form config; each @case narrows `field` to its variant. -->
             @switch (field.type) {
               @case ('checkbox') {
                 <tn-form-field [tooltip]="field.tooltip" [hint]="field.hint">
@@ -87,6 +89,7 @@
                 </tn-form-field>
               }
             }
+            <!-- eslint-enable no-restricted-syntax -->
           }
         }
       </tn-form-section>

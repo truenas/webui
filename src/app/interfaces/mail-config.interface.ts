@@ -1,4 +1,6 @@
+import { CallParams, CallResponse } from '@truenas/api-client';
 import { MailSecurity } from 'app/enums/mail-security.enum';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export interface MailConfig {
   fromemail: string;
@@ -20,32 +22,15 @@ export interface MailOauthConfig {
   provider: MailSendMethod;
 }
 
-export interface MailConfigUpdate {
-  // Smtp field is actually about smtp authentication.
-  smtp?: boolean;
-  fromemail: string;
-  fromname: string;
-  oauth: MailOauthConfig | null;
-  outgoingserver?: string;
-  pass?: string;
-  port?: number;
-  security?: MailSecurity;
-  user?: string;
+/**
+ * Reads `mail.config`. Middleware spells `security` as a literal and types an unset `oauth` as `null`, where
+ * the form has always been handed an empty object.
+ */
+export function toMailConfig(config: CallResponse<WebUiApiDirectory, 'mail.config'>): MailConfig {
+  return config as unknown as MailConfig;
 }
 
-export interface SendMailParams {
-  subject: string;
-  text?: string;
-  html?: string;
-  to?: string[];
-  cc?: string[];
-  interval?: number;
-  channel?: string;
-  timeout?: number;
-  attachments?: boolean;
-  queue?: boolean;
-  extra_headers?: Record<string, unknown>;
-}
+export type MailConfigUpdate = CallParams<WebUiApiDirectory, 'mail.update'>[0];
 
 export enum MailSendMethod {
   Smtp = 'smtp',

@@ -11,6 +11,7 @@ import {
   TnIconButtonComponent, TnInputComponent, TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
 import { debounceTime } from 'rxjs/operators';
+import { JobState } from 'app/enums/job-state.enum';
 import { MockEvent } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { parseDelay, safeJsonParse, safeJsonStringify } from 'app/modules/websocket-debug-panel/utils/type-guards';
 
@@ -42,12 +43,13 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
   private isUpdatingFromInput = false;
 
   protected readonly InputType = InputType;
-  protected readonly stateOptions: TnSelectOption<string>[] = [
-    { label: 'RUNNING', value: 'RUNNING' },
-    { label: 'SUCCESS', value: 'SUCCESS' },
-    { label: 'FAILED', value: 'FAILED' },
-    { label: 'ABORTED', value: 'ABORTED' },
-    { label: 'WAITING', value: 'WAITING' },
+  protected readonly JobState = JobState;
+  protected readonly stateOptions: TnSelectOption<JobState>[] = [
+    { label: 'RUNNING', value: JobState.Running },
+    { label: 'SUCCESS', value: JobState.Success },
+    { label: 'FAILED', value: JobState.Failed },
+    { label: 'ABORTED', value: JobState.Aborted },
+    { label: 'WAITING', value: JobState.Waiting },
   ];
 
   protected form = this.fb.group({
@@ -115,7 +117,7 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
       const formGroup = control as FormGroup;
       const value = formGroup.value as {
         delay: number;
-        state: string;
+        state: JobState;
         description: string;
         progressPercent: number;
         progressDescription: string;
@@ -125,7 +127,7 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
       const event: MockEvent = {
         delay: parseDelay(value.delay),
         fields: {
-          state: value.state as MockEvent['fields']['state'],
+          state: value.state,
           description: value.description || null,
           progress: {
             percent: value.progressPercent !== undefined && value.progressPercent !== null
@@ -157,7 +159,7 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
           percent: 0,
           description: 'Starting...',
         },
-        state: 'RUNNING',
+        state: JobState.Running,
       },
     };
     this.eventsFormArray.push(this.createEventFormGroup(newEvent));
@@ -177,8 +179,8 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
 
   protected isResultVisible(index: number): boolean {
     const control = this.getEventControl(index);
-    const state = control.controls.state?.value as string;
-    return state === 'SUCCESS' || state === 'FAILED';
+    const state = control.controls.state?.value as JobState;
+    return state === JobState.Success || state === JobState.Failed;
   }
 
   private areEventsEqual(events1: MockEvent[], events2: MockEvent[]): boolean {

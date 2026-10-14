@@ -8,14 +8,19 @@
  * The two ids that open it — the topbar trigger and the menu entry — live in
  * `topbar.ts` with the rest of that menu, not here.
  *
- * Only what the specs select on: the session timeout, language, date and time
- * format controls are on this form and deliberately absent below, because an
- * entry here reads as a verified fact about the screen and an unexercised one is
- * only a guess at it. Two warnings for whoever adds them. **Session Timeout
- * drops an idle session** — a test that lowers it and does not put it back ends
- * every later test in the run at the sign-in page. **Language translates the
- * whole app**, which is survivable for `data-test` selectors and not for any
- * assertion on text.
+ * Only what the specs select on: the time format control is on this form and
+ * deliberately absent below, because an entry here reads as a verified fact about
+ * the screen and an unexercised one is only a guess at it.
+ *
+ * Language and date format are here, for `tests/localization.e2e.ts`.
+ * **Language translates the whole app**, which is survivable for most `data-test`
+ * selectors and not for any assertion on text. Not all of them, though: a few ids
+ * are built from a translated string, such as the Date Created cell in
+ * `locators/boot-environments.ts`, and those change with the language too.
+ *
+ * Session Timeout is here, for `tests/access-settings.e2e.ts`. **It drops an
+ * idle session**, so a test that lowers it and does not put it back ends every
+ * later test in the run at the sign-in page.
  *
  * See `signin.ts` for a note on the type-prefixing that produces these values.
  */
@@ -44,6 +49,36 @@ export const preferencesLocators = {
      * survivable right up until it isn't.)
      */
     themeOption: (label: string): string => `[data-test="option-theme-${kebabTestSegment(label)}"]`,
+
+    /**
+     * In minutes, though the preference is stored in seconds. No `testId`, so
+     * the id falls back to the control name, `token_lifetime`.
+     */
+    sessionTimeout: '[data-test="input-token-lifetime"]',
+
+    /**
+     * `<tn-autocomplete [testId]="'language'">`: the input is
+     * `autocomplete-language` and its rows are `option-language-<label>`. A
+     * label is the language's own name and its code, `Deutsch (de)`.
+     */
+    language: '[data-test="autocomplete-language"]',
+    languageOption: (label: string): string => `[data-test="option-language-${kebabTestSegment(label)}"]`,
+
+    /** No `testId`, so the id falls back to the control name, `date_format`. */
+    dateFormat: '[data-test="select-date-format"]',
+
+    /**
+     * A date format option, by its label — and **a label is today's date** in
+     * that format, in the appliance's timezone (`LocaleService.getDateFormatOptions`),
+     * so the id changes every day. `monthDayYearLabel` in `flows/preferences.ts`
+     * builds the one label the specs use.
+     *
+     * Two formats can share an id. `MM/dd/yyyy` and `dd/MM/yyyy` give the same
+     * label on any day whose day and month are equal, and `dd/MM/yyyy` and
+     * `dd.MM.yyyy` always normalize to the same id. A spec picking one of those
+     * takes the first match, which is the earlier format in the list.
+     */
+    dateFormatOption: (label: string): string => `[data-test="option-date-format-${kebabTestSegment(label)}"]`,
 
     save: '[data-test="button-save"]',
     /** The panel's dismiss control; raises the unsaved-changes confirmation. */

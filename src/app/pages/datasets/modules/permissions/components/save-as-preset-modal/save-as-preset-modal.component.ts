@@ -8,6 +8,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnIconButtonComponent, TnInputComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { cloneDeep, concat } from 'lodash-es';
 import {
@@ -44,6 +45,7 @@ import { UserService } from 'app/services/user.service';
     FormActionsComponent,
     TnButtonComponent,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 export class SaveAsPresetModalComponent implements OnInit {

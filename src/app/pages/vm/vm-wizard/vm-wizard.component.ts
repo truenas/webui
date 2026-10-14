@@ -14,6 +14,7 @@ import { catchError, defaultIfEmpty, map } from 'rxjs/operators';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
+import { NewOrExisting } from 'app/enums/new-or-existing.enum';
 import { Role } from 'app/enums/role.enum';
 import { VmDeviceType, VmDisplayType, VmNicType, VmOs } from 'app/enums/vm.enum';
 import { toVirtualMachine, VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
@@ -30,7 +31,7 @@ import { OsStepComponent } from 'app/pages/vm/vm-wizard/steps/1-os-step/os-step.
 import {
   CpuAndMemoryStepComponent,
 } from 'app/pages/vm/vm-wizard/steps/2-cpu-and-memory-step/cpu-and-memory-step.component';
-import { DiskStepComponent, NewOrExistingDisk } from 'app/pages/vm/vm-wizard/steps/3-disk-step/disk-step.component';
+import { DiskStepComponent } from 'app/pages/vm/vm-wizard/steps/3-disk-step/disk-step.component';
 import {
   NetworkInterfaceStepComponent,
 } from 'app/pages/vm/vm-wizard/steps/4-network-interface-step/network-interface-step.component';
@@ -302,7 +303,7 @@ export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
     }
 
     // Normal flow: create new zvol or use existing
-    if (this.diskForm.newOrExisting === NewOrExistingDisk.New) {
+    if (this.diskForm.newOrExisting === NewOrExisting.New) {
       const hdd = this.diskForm.datastore + '/' + this.osForm.name.replace(/\s+/g, '-') + '-' + Math.random().toString(36).substring(7);
       return this.makeDeviceRequest(vm.id, {
         attributes: {
@@ -384,7 +385,7 @@ export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
   }
 
   private handleImageImportBeforeVmCreation(): Observable<string | null> {
-    if (this.diskForm.newOrExisting === NewOrExistingDisk.New) {
+    if (this.diskForm.newOrExisting === NewOrExisting.New) {
       // Create zvol first, then convert image to it
       const zvolName = this.diskForm.datastore + '/' + this.osForm.name.replace(/\s+/g, '-') + '-' + Math.random().toString(36).substring(7);
       const zvolPath = `/dev/zvol/${zvolName}`;

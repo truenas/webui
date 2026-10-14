@@ -17,9 +17,9 @@ import {
 } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
@@ -35,6 +35,7 @@ import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actio
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/system/network/components/interfaces-card/interfaces-card.component';
 import { IpmiCardComponent } from 'app/pages/system/network/components/ipmi-card/ipmi-card.component';
@@ -51,7 +52,7 @@ import { NetworkService } from 'app/services/network.service';
 describe('NetworkComponent', () => {
   let spectator: Spectator<NetworkComponent>;
   let loader: HarnessLoader;
-  let api: MockApiService;
+  let api: MockTypedApiService;
   const isHaEnabled$ = new BehaviorSubject(false);
 
   const existingInterface = {
@@ -100,30 +101,30 @@ describe('NetworkComponent', () => {
     providers: [
       InterfacesStore,
       mockAuth(),
-      mockApi([
-        mockCall('interface.checkin_waiting', () => (isTestingChanges ? 60 : null)),
-        mockCall('interface.has_pending_changes', () => wasEditMade),
-        mockCall('interface.services_restarted_on_sync', []),
-        mockCall('interface.checkin'),
-        mockCall('interface.cancel_rollback', (): undefined => {
+      mockTypedApi([
+        mockTypedCall('interface.checkin_waiting', () => (isTestingChanges ? 60 : null)),
+        mockTypedCall('interface.has_pending_changes', () => wasEditMade),
+        mockTypedCall('interface.services_restarted_on_sync', []),
+        mockTypedCall('interface.checkin', null),
+        mockTypedCall('interface.cancel_rollback', (): undefined => {
           isTestingChanges = false;
           return undefined;
         }),
-        mockCall('interface.rollback', (): undefined => {
+        mockTypedCall('interface.rollback', (): undefined => {
           wasEditMade = false;
           isTestingChanges = false;
           return undefined;
         }),
-        mockCall('interface.commit', (): undefined => {
+        mockTypedCall('interface.commit', (): undefined => {
           isTestingChanges = true;
           return undefined;
         }),
-        mockCall('failover.config', {
+        mockTypedCall('failover.config', {
           disabled: true,
         } as FailoverConfig),
-        mockCall('interface.query', () => [existingInterface]),
-        mockCall('interface.xmit_hash_policy_choices'),
-        mockCall('interface.lacpdu_rate_choices'),
+        mockTypedCall('interface.xmit_hash_policy_choices', null),
+        mockTypedCall('interface.lacpdu_rate_choices', null),
+        mockTypedQuery('interface.query', [existingInterface] as unknown as WebUiQueryEntity<'interface.query'>[]),
       ]),
       mockProvider(NetworkService, {
         subscribeToInOutUpdates: jest.fn(() => of(undefined)),
@@ -146,7 +147,7 @@ describe('NetworkComponent', () => {
     spectator = createComponent();
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(MockApiService);
+    api = spectator.inject(MockTypedApiService);
 
     isTestingChanges = false;
     wasEditMade = false;

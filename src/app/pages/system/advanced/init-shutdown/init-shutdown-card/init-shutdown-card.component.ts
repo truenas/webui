@@ -15,11 +15,12 @@ import {
   TnTableColumnDirective,
   TnTableComponent,
 } from '@truenas/ui-components';
+import { map } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
+import { InitShutdownScript, toInitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
@@ -30,7 +31,7 @@ import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { initShutdownCardElements } from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.elements';
 import {
   InitShutdownFormComponent,
@@ -61,7 +62,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 })
 export class InitShutdownCardComponent implements OnInit {
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialog = inject(DialogService);
   private firstTimeWarning = inject(FirstTimeWarningService);
   protected emptyService = inject(EmptyService);
@@ -116,7 +117,10 @@ export class InitShutdownCardComponent implements OnInit {
 
   private loadScripts(): void {
     if (!this.dataProvider) {
-      const scripts$ = this.api.call('initshutdownscript.query').pipe(takeUntilDestroyed(this.destroyRef));
+      const scripts$ = this.api.query('initshutdownscript.query').pipe(
+        map((scripts) => scripts.map(toInitShutdownScript)),
+        takeUntilDestroyed(this.destroyRef),
+      );
       this.dataProvider = new AsyncDataProvider<InitShutdownScript>(scripts$);
     }
     this.dataProvider.load();

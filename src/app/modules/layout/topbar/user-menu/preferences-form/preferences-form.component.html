@@ -35,8 +35,9 @@
       </tn-form-field>
     }
     <tn-form-field
-      [label]="'Session Timeout' | translate"
-      [tooltip]="'Time in seconds after which current user session will be disconnected. Interacting with UI extends the session.' | translate"
+      [label]="'Session Timeout (minutes)' | translate"
+      [hint]="sessionTimeoutHint()"
+      [tooltip]="'Time in minutes after which current user session will be disconnected. Interacting with UI extends the session.' | translate"
     >
       <tn-input
         id="session-timeout"

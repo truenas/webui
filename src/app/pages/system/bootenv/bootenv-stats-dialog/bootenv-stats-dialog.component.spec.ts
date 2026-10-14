@@ -4,11 +4,12 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
@@ -16,7 +17,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { BootenvStatsDialog } from './bootenv-stats-dialog.component';
 
@@ -34,7 +36,7 @@ const poolInstance = {
 describe('BootenvStatsDialogComponent', () => {
   let spectator: Spectator<BootenvStatsDialog>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
   const createComponent = createComponentFactory({
     component: BootenvStatsDialog,
     imports: [
@@ -46,9 +48,9 @@ describe('BootenvStatsDialogComponent', () => {
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockProvider(DialogRef),
-      mockApi([
-        mockCall('boot.get_state', poolInstance),
-        mockCall('boot.set_scrub_interval'),
+      mockTypedApi([
+        mockTypedCall('boot.get_state', poolInstance as unknown as CallResponse<WebUiApiDirectory, 'boot.get_state'>),
+        mockTypedCall('boot.set_scrub_interval', null),
       ]),
       mockAuth(),
       provideMockStore({
@@ -65,10 +67,12 @@ describe('BootenvStatsDialogComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
   });
 
   function getStatusItems(): Record<string, string> {
@@ -111,14 +115,15 @@ describe('BootenvStatsDialogComponent', () => {
     expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 
-  it('tells user to look at alerts if boot pool status is degraded', () => {
-    const websocketMock = spectator.inject(MockApiService);
+  it('tells user to look at alerts if boot pool status is degraded', async () => {
+    const websocketMock = spectator.inject(MockTypedApiService);
     websocketMock.mockCall('boot.get_state', {
       ...poolInstance,
       status: PoolStatus.Degraded,
     } as PoolInstance);
 
     spectator.component.ngOnInit();
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
 
     const conditionMessage = getStatusItems()['Boot Pool Condition:'];

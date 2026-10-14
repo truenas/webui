@@ -4,8 +4,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   NvidiaDriversCardComponent,
@@ -21,7 +21,7 @@ describe('NvidiaDriversCardComponent', () => {
     component: NvidiaDriversCardComponent,
     providers: [
       mockAuth(),
-      mockApi(),
+      mockTypedApi(),
       provideMockStore({
         selectors: [
           {

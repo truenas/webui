@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import {
   PermissionItem,
   PermissionsItemType,
@@ -12,7 +12,7 @@ import {
   templateUrl: 'permissions-item.component.html',
   styleUrls: ['./permissions-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TnIconComponent],
+  imports: [TnIconComponent, TnTestIdDirective],
 })
 export class PermissionsItemComponent {
   readonly item = input.required<PermissionItem>();

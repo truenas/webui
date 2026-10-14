@@ -1,6 +1,5 @@
 <span tnTestId="details-for" tnTestIdType="text">
-  {{ 'Details for' | translate }}
-  {{ subsystem()?.name }}
+  {{ 'Details for {name}' | translate: { name: subsystem()?.name ?? '' } }}
 </span>
 
 <div class="detail-actions">

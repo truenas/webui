@@ -9,7 +9,7 @@ import { debounceTime, finalize } from 'rxjs/operators';
 import { EnclosureElementType, DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, EnclosureVdevDisk } from 'app/interfaces/enclosure.interface';
 import { ThemeService } from 'app/modules/theme/theme.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 import { getDefaultSide } from 'app/pages/system/enclosure/utils/get-default-side.utils';
 import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
@@ -36,7 +36,7 @@ const initialState: EnclosureState = {
 
 @Injectable()
 export class EnclosureStore extends ComponentStore<EnclosureState> {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private theme = inject(ThemeService);
 

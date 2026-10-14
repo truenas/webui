@@ -1,5 +1,6 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { MockEnclosureConfig } from 'app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface';
+import { MessageDirection } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 import { WebSocketDebugState } from './websocket-debug.reducer';
 
 export const selectWebSocketDebugState = createFeatureSelector<WebSocketDebugState>('webSocketDebug');
@@ -46,12 +47,12 @@ export const selectMessageCount = createSelector(
 
 export const selectIncomingMessages = createSelector(
   selectMessages,
-  (messages) => messages.filter((msg) => msg.direction === 'in'),
+  (messages) => messages.filter((msg) => msg.direction === MessageDirection.In),
 );
 
 export const selectOutgoingMessages = createSelector(
   selectMessages,
-  (messages) => messages.filter((msg) => msg.direction === 'out'),
+  (messages) => messages.filter((msg) => msg.direction === MessageDirection.Out),
 );
 
 export const selectMockedMessages = createSelector(

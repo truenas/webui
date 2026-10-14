@@ -13,11 +13,11 @@
         <ul class="services">
           @for (service of attachments; track service) {
             <li>
-              <span class="service-name">{{ service.type }}:</span>
+              <span class="service-name" tnTestIdType="text" [tnTestId]="['attachment', service.type]">{{ service.type }}:</span>
               <ul class="service-attachments">
                 @for (attachment of service.attachments; track attachment) {
                   @for (item of attachment.split(','); track item) {
-                    <li>
+                    <li tnTestIdType="text" [tnTestId]="['attachment', service.type, item]">
                       {{ item }}
                     </li>
                   }
@@ -34,7 +34,7 @@
         {{ 'These running processes are using {datasetName}:' | translate: { datasetName: dataset.name } }}
         <ul>
           @for (process of knownProcesses; track process) {
-            <li>
+            <li tnTestIdType="text" [tnTestId]="['known-process', $index]">
               {{ process.name }}
             </li>
           }
@@ -47,7 +47,7 @@
         {{ 'These unknown processes are using the dataset:' }}
         <ul>
           @for (process of unknownProcesses; track process) {
-            <li>
+            <li tnTestIdType="text" [tnTestId]="['unknown-process', $index]">
               {{ process.pid || ('Unknown PID' | translate) }} -
               {{ process.cmdline?.substring(0, 40) }}
             </li>

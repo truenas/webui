@@ -2,13 +2,10 @@ import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/sp
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { createFakeClient, FakeTrueNasClient } from '@truenas/api-client/testing';
-import { environment } from 'environments/environment';
-import { of } from 'rxjs';
+import { firstValueFrom, Observable, of } from 'rxjs';
 import { RequestMessage } from 'app/interfaces/api-message.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TYPED_API_CLIENT, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { MockResponseService } from 'app/modules/websocket-debug-panel/services/mock-response.service';
-import { WebSocketDebugService } from 'app/modules/websocket-debug-panel/services/websocket-debug.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { MockGenerationError, MockServiceError, WebSocketSendError } from './errors';
 import { WebSocketHandlerService } from './websocket-handler.service';
@@ -17,7 +14,7 @@ type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>> & { js
 
 // Type-safe helpers for accessing private methods in tests
 interface WebSocketHandlerServicePrivate {
-  handleMockResponse(call: ApiCall): unknown;
+  processCall(call: ApiCall): Observable<unknown>;
   cleanupCall(callId: string): void;
   activeCalls: number;
   pendingCalls: Map<string, ApiCall>;
@@ -47,8 +44,6 @@ describe('WebSocketHandlerService Error Handling', () => {
       mockProvider(DialogService),
       mockProvider(TranslateService),
       mockProvider(WebSocketStatusService),
-      mockProvider(MockResponseService),
-      mockProvider(WebSocketDebugService),
       {
         provide: TYPED_API_CLIENT,
         useFactory: () => of(client),
@@ -57,10 +52,6 @@ describe('WebSocketHandlerService Error Handling', () => {
   });
 
   beforeEach(() => {
-    // Reset environment
-    const env = environment as { debugPanel?: { enabled: boolean } };
-    env.debugPanel = { enabled: false };
-
     // Closed, so nothing this spec schedules reaches the wire: every test here
     // drives the private paths directly.
     client = createFakeClient({ version: 'v28.0.0', opened: false });
@@ -75,91 +66,33 @@ describe('WebSocketHandlerService Error Handling', () => {
     });
   });
 
-  describe('handleMockResponse', () => {
-    it('should return null when debug panel is disabled', () => {
-      const privateService = service as unknown as WebSocketHandlerServicePrivate;
-      const result$ = privateService.handleMockResponse({
-        method: 'test', params: [], id: '1', jsonrpc: '2.0',
-      } as unknown as ApiCall);
-      expect(result$).toBeNull();
-    });
+  describe('processCall', () => {
+    const call = {
+      method: 'truenas.get_eula', params: [], id: '1', jsonrpc: '2.0',
+    } as unknown as ApiCall;
 
-    it('should return MockGenerationError when mock generation fails', async () => {
-      // Enable debug panel
-      const env = environment as { debugPanel?: { enabled: boolean } };
-      env.debugPanel = { enabled: true };
-
-      // Mock console.error to prevent test failure
+    it('passes on a debug panel mock error from the connection as it is', async () => {
       const errorSpy = jest.spyOn(console, 'error').mockImplementation();
-
-      // Mock the services
-      const mockResponseService = {
-        checkMock: jest.fn().mockReturnValue({ response: {} }),
-        generateMockResponse: jest.fn().mockImplementation(() => {
-          throw new Error('Generation failed');
-        }),
-      };
-      const debugService = { logOutgoingMessage: jest.fn() };
-
-      Object.assign(service, {
-        mockResponseService: mockResponseService as unknown as MockResponseService,
-        debugService: debugService as unknown as WebSocketDebugService,
+      jest.spyOn(client.connection, 'send').mockImplementation(() => {
+        throw new MockGenerationError('Failed to generate mock response for truenas.get_eula');
       });
 
       const privateService = service as unknown as WebSocketHandlerServicePrivate;
-      const result$ = privateService.handleMockResponse({
-        method: 'test.method', params: [], id: '1', jsonrpc: '2.0',
-      } as unknown as ApiCall);
-
-      expect(result$).toBeDefined();
-
-      await expect(new Promise((resolve, reject) => {
-        (result$ as { subscribe: (handlers: { next: () => void; error: (e: unknown) => void }) => void })?.subscribe({
-          next: () => reject(new Error('Should throw error')),
-          error: resolve,
-        });
-      })).resolves.toMatchObject({
-        message: expect.stringContaining('Failed to generate mock response for test.method'),
-        cause: { message: 'Generation failed' },
-      });
+      await expect(firstValueFrom(privateService.processCall(call))).rejects.toBeInstanceOf(MockGenerationError);
 
       errorSpy.mockRestore();
     });
 
-    it('should log but continue when mock config check fails', () => {
-      // Enable debug panel
-      const env2 = environment as { debugPanel?: { enabled: boolean } };
-      env2.debugPanel = { enabled: true };
-
-      // Mock the services
-      const mockResponseService = {
-        checkMock: jest.fn().mockImplementation(() => {
-          throw new Error('Config check failed');
-        }),
-      };
-      const debugService = { logOutgoingMessage: jest.fn() };
-
-      Object.assign(service, {
-        mockResponseService: mockResponseService as unknown as MockResponseService,
-        debugService: debugService as unknown as WebSocketDebugService,
+    it('wraps any other failure to send in WebSocketSendError', async () => {
+      const errorSpy = jest.spyOn(console, 'error').mockImplementation();
+      jest.spyOn(client.connection, 'send').mockImplementation(() => {
+        throw new Error('Network error');
       });
 
-      // Spy on console.warn
-      const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
-
       const privateService = service as unknown as WebSocketHandlerServicePrivate;
-      const result$ = privateService.handleMockResponse({
-        method: 'test.method', params: [], id: '1', jsonrpc: '2.0',
-      } as unknown as ApiCall);
+      await expect(firstValueFrom(privateService.processCall(call))).rejects.toBeInstanceOf(WebSocketSendError);
 
-      expect(result$).toBeNull();
-      expect(warnSpy).toHaveBeenCalledWith('Mock config check failed, proceeding with real request:', expect.any(Error));
-      // When checkMock throws, we return null immediately, so logOutgoingMessage is NOT called
-      expect(debugService.logOutgoingMessage).not.toHaveBeenCalled();
-
-      // Cleanup
-      warnSpy.mockRestore();
-      env2.debugPanel = { enabled: false };
+      errorSpy.mockRestore();
     });
   });
 

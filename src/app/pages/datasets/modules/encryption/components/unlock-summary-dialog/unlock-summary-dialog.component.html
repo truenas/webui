@@ -4,10 +4,10 @@
     @if (errorDatasets.length > 0) {
       <div class="errors-content">
         <tn-divider></tn-divider>
-        <p>{{ errorsMessage | translate }}</p>
+        <p tnTestIdType="text" [tnTestId]="'unlock-summary-error-message'">{{ errorsMessage | translate }}</p>
         @for (dataset of errorDatasets; track dataset) {
           <div class="row">
-            <strong>{{ dataset.name }}</strong>
+            <strong tnTestIdType="text" [tnTestId]="['unlock-summary-error', dataset.name]">{{ dataset.name }}</strong>
             <div>
               <a tnTestIdType="link" [tnTestId]="'unlock-summary-details'" (click)="showError(dataset)">
                 <u>{{ 'details' | translate }}</u>
@@ -21,10 +21,10 @@
     @if (skippedDatasets.length > 0) {
       <div class="skipped-content">
         <tn-divider></tn-divider>
-        <p>{{ skippedMessage | translate }}</p>
+        <p tnTestIdType="text" [tnTestId]="'unlock-summary-skipped-message'">{{ skippedMessage | translate }}</p>
         @for (dataset of skippedDatasets; track dataset) {
           <div class="row">
-            <strong>{{ dataset.name }}</strong>
+            <strong tnTestIdType="text" [tnTestId]="['unlock-summary-skipped', dataset.name]">{{ dataset.name }}</strong>
             <tn-icon name="close-circle" library="mdi" class="red-icon"></tn-icon>
           </div>
         }
@@ -33,10 +33,10 @@
     @if (unlockDatasets.length > 0) {
       <div class="unlock-content">
         <tn-divider></tn-divider>
-        <p>{{ unlockMessage | translate }}</p>
+        <p tnTestIdType="text" [tnTestId]="'unlock-summary-unlocked-message'">{{ unlockMessage | translate }}</p>
         @for (dataset of unlockDatasets; track dataset) {
           <div class="row">
-            <strong>{{ dataset.name }}</strong>
+            <strong tnTestIdType="text" [tnTestId]="['unlock-summary-unlocked', dataset.name]">{{ dataset.name }}</strong>
             <tn-icon name="check-circle" library="mdi" class="green-icon"></tn-icon>
           </div>
         }

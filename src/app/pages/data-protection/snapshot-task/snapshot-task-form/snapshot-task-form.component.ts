@@ -22,6 +22,7 @@ import {
 import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { SplitTagPipe } from 'app/modules/pipes/split-tag/split-tag.pipe';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
@@ -49,6 +50,7 @@ import { TaskService } from 'app/services/task.service';
     TnTestIdDirective,
     SchedulerComponent,
     TranslateModule,
+    SplitTagPipe,
   ],
 })
 export class SnapshotTaskFormComponent implements OnInit {
@@ -96,6 +98,7 @@ export class SnapshotTaskFormComponent implements OnInit {
   protected isLoading = signal(false);
   protected editingTask: PeriodicSnapshotTask | undefined;
   protected affectedSnapshots = signal<string[]>([]);
+  protected readonly retentionWarning = helptextSnapshotForm.retentionWarning;
   protected retentionCheckError = signal(false);
 
   readonly labels = {

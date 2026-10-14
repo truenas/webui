@@ -5,22 +5,27 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnIconHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LocaleService } from 'app/modules/language/locale.service';
+import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   TablePagerShowMoreComponent,
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('AccessCardComponent', () => {
@@ -56,12 +61,12 @@ describe('AccessCardComponent', () => {
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
       }),
-      mockApi([
-        mockCall('auth.sessions', sessions),
-        mockCall('auth.terminate_session'),
-        mockCall('auth.terminate_other_sessions'),
-        mockCall('system.general.update'),
-        mockCall('system.advanced.update'),
+      mockTypedApi([
+        mockTypedQuery('auth.sessions', sessions as unknown as WebUiQueryEntity<'auth.sessions'>[]),
+        mockTypedCall('auth.terminate_session', null),
+        mockTypedCall('auth.terminate_other_sessions', null),
+        mockTypedCall('system.general.update', null),
+        mockTypedCall('system.advanced.update', null),
       ]),
       provideMockStore({
         initialState: {
@@ -74,6 +79,12 @@ describe('AccessCardComponent', () => {
           },
         },
         selectors: [
+          {
+            selector: selectPreferences,
+            value: {
+              lifetime: 2147482,
+            },
+          },
           {
             selector: selectGeneralConfig,
             value: {
@@ -93,11 +104,13 @@ describe('AccessCardComponent', () => {
       }),
       mockProvider(FormSidePanelService, {
         openForm: jest.fn(() => SlideInResult.empty()),
+        open: jest.fn(),
       }),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockProvider(SnackbarService),
+      mockProvider(NavigateAndHighlightService),
       mockProvider(FormErrorHandlerService),
       mockProvider(SystemGeneralService),
       mockAuth(),
@@ -114,8 +127,26 @@ describe('AccessCardComponent', () => {
     expect(allowed.textContent.replace(/\s+/g, ' ').trim()).toBe('Allow Directory Service users UI / API access: Yes');
   });
 
+  it('shows current Session Timeout with a link to Preferences', () => {
+    const sessionTimeout = spectator.queryAll('.details-item')[1];
+    expect(sessionTimeout.textContent.replace(/\s+/g, ' ').trim()).toBe(
+      'Session Timeout: 24 days 20 hours 31 minutes 22 seconds Change Session Timeout in Preferences',
+    );
+  });
+
+  it('opens Preferences when the Session Timeout link is pressed', () => {
+    const preferencesLink = spectator.query('button.preferences-link')!;
+    expect(preferencesLink.textContent).toBe('Preferences');
+    spectator.click(preferencesLink);
+
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      PreferencesFormComponent,
+      { title: 'Preferences' },
+    );
+  });
+
   it('shows current login banner', () => {
-    const loginBanner = spectator.queryAll('.details-item')[1];
+    const loginBanner = spectator.queryAll('.details-item')[2];
     expect(loginBanner.textContent.replace(/\s+/g, ' ').trim()).toBe('Login Banner: Hello World!');
   });
 
@@ -141,14 +172,14 @@ describe('AccessCardComponent', () => {
       title: 'Terminate session',
       message: 'Are you sure you want to terminate the session?',
     });
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.terminate_session', ['e8a2892e-f2a3-429e-bd9e-442db8fc9480']);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('auth.terminate_session', ['e8a2892e-f2a3-429e-bd9e-442db8fc9480']);
   });
 
   it('terminates other sessions when corresponding Terminate Other Sessions is pressed', async () => {
     const terminateButton = await loader.getHarness(TnButtonHarness.with({ label: 'Terminate Other Sessions' }));
     await terminateButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.terminate_other_sessions');
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('auth.terminate_other_sessions');
   });
 
   it('should show table rows', async () => {

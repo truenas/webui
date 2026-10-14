@@ -5,7 +5,6 @@ import { environment } from 'environments/environment';
 import {
   combineLatest,
   filter,
-  merge,
   mergeMap,
   Observable,
   of,
@@ -24,13 +23,8 @@ import {
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ConnectionService, TypedConnection } from 'app/modules/websocket/connection.service';
 import { maxConcurrentCalls as middlewareCallLimit } from 'app/modules/websocket/typed-api/limit-concurrent-calls';
-import { MockResponseService } from 'app/modules/websocket-debug-panel/services/mock-response.service';
-import { WebSocketDebugService } from 'app/modules/websocket-debug-panel/services/websocket-debug.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
-import {
-  MockGenerationError, MockServiceError,
-  WebSocketSendError,
-} from './errors';
+import { MockServiceError, WebSocketSendError } from './errors';
 
 type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>> & { jsonrpc: '2.0' };
 
@@ -43,12 +37,11 @@ type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>> & { js
  * where the two sockets of Phase 0 meant two sessions, two entries in
  * `auth.sessions`, and every audited call recorded twice.
  *
- * What stays here is everything the typed client has no seam for, and that
- * the calls still riding this service depend on:
- *
- * - the call queue, and the 20-call ceiling on what it has in flight itself
- *   (the tab's total is held under that on the connection, by `limitConcurrentCalls`),
- * - the WebSocket debug panel's logging and its mock interception.
+ * What stays here is the call queue the calls still riding this service depend
+ * on, and the 20-call ceiling on what it has in flight itself (the tab's total
+ * is held under that on the connection, by `limitConcurrentCalls`). The
+ * WebSocket debug panel's logging and mock interception moved onto the
+ * connection too (`interceptConnection`, NAS-144008), so they see both clients.
  *
  * The connection status the app's reconnect, shutdown and failover flows read
  * moved to `ConnectionService` (NAS-143990), which reads the connection itself.
@@ -68,8 +61,6 @@ export class WebSocketHandlerService {
   private wsStatus = inject(WebSocketStatusService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
-  private debugService = inject(WebSocketDebugService);
-  private mockResponseService = inject(MockResponseService);
   private destroyRef = inject(DestroyRef);
 
   private readonly connection$ = this.connectionService.connection$;
@@ -92,8 +83,8 @@ export class WebSocketHandlerService {
   private callsInConcurrentCallsError = new Set<string>();
 
   /**
-   * Every message the appliance sends, merged with the debug panel's mocked
-   * answers.
+   * Every message the appliance sends, and with the debug panel on, its mocked
+   * answers: `interceptConnection` mixes those into the connection's own stream.
    *
    * Built once and kept: the client's `messages()` follows the connection
    * across reconnects, where the socket this service used to own had to be
@@ -101,24 +92,12 @@ export class WebSocketHandlerService {
    *
    * Typed calls ride the same socket, so their replies pass through here too.
    * Nothing correlates on them — every consumer filters by the id it sent, or
-   * by a collection it subscribed to — and the debug panel is the better for
-   * seeing the whole wire.
+   * by a collection it subscribed to.
    */
-  readonly responses$: Observable<IncomingMessage> = merge(
-    this.connection$.pipe(
-      switchMap((connection) => connection.messages()),
-    ) as unknown as Observable<IncomingMessage>,
-    this.mockResponseService.responses$,
-  ).pipe(
-    tap((message) => {
-      // Log incoming messages for debugging
-      if (environment.debugPanel?.enabled) {
-        const isMocked = this.mockResponseService.isMockedResponse(message);
-        this.debugService.logIncomingMessage(message, isMocked);
-      }
-    }),
+  readonly responses$: Observable<IncomingMessage> = this.connection$.pipe(
+    switchMap((connection) => connection.messages()),
     shareReplay({ bufferSize: 1, refCount: true }),
-  );
+  ) as unknown as Observable<IncomingMessage>;
 
   constructor() {
     this.trackConnection();
@@ -167,102 +146,35 @@ export class WebSocketHandlerService {
     this.triggerNextCall$.next();
   }
 
-  private handleMockResponse(call: ApiCall): Observable<unknown> | null {
-    if (!environment.debugPanel?.enabled) {
-      return null;
-    }
-
-    let mockConfig;
-    try {
-      mockConfig = this.mockResponseService.checkMock(call);
-    } catch (error) {
-      // Log mock config errors but don't fail the request
-      console.warn('Mock config check failed, proceeding with real request:', error);
-      return null;
-    }
-
-    if (!mockConfig) {
-      // Log normal outgoing message
-      try {
-        this.debugService.logOutgoingMessage(call, false);
-      } catch (error) {
-        console.error('Error logging outgoing message:', error);
-      }
-      return null;
-    }
-
-    // Handle mock response
-    try {
-      this.debugService.logOutgoingMessage(call, true);
-      this.mockResponseService.generateMockResponse(call, mockConfig);
-    } catch (error) {
-      console.error('Mock generation failed:', error);
-      this.cleanupCall(call.id);
-      return throwError(() => new MockGenerationError(
-        `Failed to generate mock response for ${call.method}`,
-        error,
-      ));
-    }
-
-    // Return observable for mock response
-    return this.responses$.pipe(
-      filter((message) => 'id' in message && message.id === call.id),
-      take(1),
-      tap(() => this.cleanupCall(call.id)),
-      catchError((error: unknown) => {
-        console.error('Mock response processing failed:', error);
-        this.cleanupCall(call.id);
-        // Wrap in MockServiceError if not already a mock error
-        if (error instanceof MockServiceError) {
-          return throwError(() => error);
-        }
-        return throwError(() => new MockServiceError(
-          'Failed to process mock response',
-          error,
-        ));
-      }),
-    );
-  }
-
   private processCall(call: ApiCall): Observable<unknown> {
     this.activeCalls++;
     this.pendingCalls.set(call.id, call);
 
     try {
-      // Check if we should handle this as a mock response
-      const mockResponse$ = this.handleMockResponse(call);
-      if (mockResponse$) {
-        return mockResponse$;
-      }
-
-      // Send the real request
-      try {
-        this.sendOverConnection(call);
-      } catch (error) {
-        console.error('Failed to send WebSocket message:', error);
-        this.cleanupCall(call.id);
-        return throwError(() => new WebSocketSendError(
-          `Failed to send ${call.method} over WebSocket`,
-          error,
-        ));
-      }
-
-      return this.responses$.pipe(
-        filter((message) => 'id' in message && message.id === call.id),
-        take(1),
-        tap(() => this.cleanupCall(call.id)),
-        catchError((error: unknown) => {
-          console.error('Error processing WebSocket response:', error);
-          this.cleanupCall(call.id);
-          return throwError(() => error);
-        }),
-      );
+      this.sendOverConnection(call);
     } catch (error) {
-      // Catch any unexpected errors
-      console.error('Unexpected error in processCall:', error);
+      console.error('Failed to send WebSocket message:', error);
       this.cleanupCall(call.id);
-      return throwError(() => new Error(`Unexpected error: ${error instanceof Error ? error.message : 'Unknown error'}`));
+      // The debug panel answers a mocked call inside `send`, and says so when it cannot.
+      if (error instanceof MockServiceError) {
+        return throwError(() => error);
+      }
+      return throwError(() => new WebSocketSendError(
+        `Failed to send ${call.method} over WebSocket`,
+        error,
+      ));
     }
+
+    return this.responses$.pipe(
+      filter((message) => 'id' in message && message.id === call.id),
+      take(1),
+      tap(() => this.cleanupCall(call.id)),
+      catchError((error: unknown) => {
+        console.error('Error processing WebSocket response:', error);
+        this.cleanupCall(call.id);
+        return throwError(() => error);
+      }),
+    );
   }
 
   /**

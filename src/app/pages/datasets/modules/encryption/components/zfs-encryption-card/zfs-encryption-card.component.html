@@ -1,7 +1,7 @@
 <tn-card class="card" [title]="'Encryption' | translate">
   <div class="details-item">
     <div class="label">{{ 'Current State' | translate }}:</div>
-    <div class="value">{{ currentStateLabel() }}</div>
+    <div class="value" tnTestIdType="text" [tnTestId]="'encryption-current-state'">{{ currentStateLabel() }}</div>
   </div>
   @if (dataset().encrypted) {
     <div class="details-item">
@@ -30,14 +30,14 @@
     </div>
     <div class="details-item">
       <div class="label">{{ 'Type' | translate }}:</div>
-      <div class="value">
+      <div class="value" tnTestIdType="text" [tnTestId]="'encryption-type'">
         {{ hasPassphrase() ? ('Passphrase' | translate) : ('Key' | translate) }}
       </div>
     </div>
     @if (algorithm()) {
       <div class="details-item">
         <div class="label">{{ 'Algorithm' | translate }}:</div>
-        <div class="value">{{ algorithm() }}</div>
+        <div class="value" tnTestIdType="text" [tnTestId]="'encryption-algorithm'">{{ algorithm() }}</div>
       </div>
     }
   }

@@ -3,6 +3,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import * as environment from 'environments/environment';
 import { firstValueFrom, take, toArray } from 'rxjs';
 import { CollectionChangeType } from 'app/enums/api.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import {
   CollectionUpdateMessage, IncomingMessage, RequestMessage, SuccessfulResponse,
 } from 'app/interfaces/api-message.interface';
@@ -150,7 +151,7 @@ describe('MockResponseService', () => {
       const event: MockEvent = {
         delay: 50,
         fields: {
-          state: 'RUNNING' as const,
+          state: JobState.Running as const,
           progress: { percent: 50, description: 'In progress' },
         },
       };
@@ -184,7 +185,7 @@ describe('MockResponseService', () => {
       expect(eventMessage.params.msg).toBe(CollectionChangeType.Changed);
       expect(eventMessage.params.collection).toBe('core.get_jobs');
       expect(eventMessage.params.fields).toMatchObject({
-        state: 'RUNNING',
+        state: JobState.Running,
         progress: { percent: 50, description: 'In progress' },
         message_ids: [mockRequest.id],
         method: mockRequest.method,
@@ -253,7 +254,7 @@ describe('MockResponseService', () => {
         ...mockConfig,
         events: [{
           delay: 0,
-          fields: { state: 'RUNNING' as const },
+          fields: { state: JobState.Running as const },
         }],
       };
 
@@ -338,7 +339,7 @@ describe('MockResponseService', () => {
       const configWithDelayAndEvents = {
         ...mockConfig,
         response: { ...mockConfig.response, delay: 1000 },
-        events: [{ delay: 1000, fields: { state: 'RUNNING' as const } }],
+        events: [{ delay: 1000, fields: { state: JobState.Running as const } }],
       };
 
       service.generateMockResponse(mockRequest, configWithDelayAndEvents);
@@ -365,9 +366,9 @@ describe('MockResponseService', () => {
   describe('event handling', () => {
     it('should handle multiple events with cumulative delays', async () => {
       const events: MockEvent[] = [
-        { delay: 50, fields: { state: 'RUNNING' as const, progress: { percent: 25, description: 'Starting' } } },
-        { delay: 50, fields: { state: 'RUNNING' as const, progress: { percent: 75, description: 'Almost done' } } },
-        { delay: 50, fields: { state: 'SUCCESS' as const, progress: { percent: 100, description: 'Complete' } } },
+        { delay: 50, fields: { state: JobState.Running as const, progress: { percent: 25, description: 'Starting' } } },
+        { delay: 50, fields: { state: JobState.Running as const, progress: { percent: 75, description: 'Almost done' } } },
+        { delay: 50, fields: { state: JobState.Success as const, progress: { percent: 100, description: 'Complete' } } },
       ];
 
       const configWithMultipleEvents = {
@@ -418,7 +419,7 @@ describe('MockResponseService', () => {
           arguments: [{ custom: 'args' }],
           transient: false,
           time_started: { $date: 123456789 },
-          state: 'RUNNING' as const,
+          state: JobState.Running as const,
         },
       };
 
@@ -447,7 +448,7 @@ describe('MockResponseService', () => {
         arguments: [{ custom: 'args' }],
         transient: false,
         time_started: { $date: 123456789 },
-        state: 'RUNNING',
+        state: JobState.Running,
       });
       // The id should be the generated job ID, not a custom value
       expect((customChangedEvent.params.fields as { id: number }).id).toBeDefined();

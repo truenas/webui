@@ -78,6 +78,8 @@ export class IxDynamicFormItemComponent implements OnInit, AfterViewInit {
   readonly dynamicSchema = input.required<DynamicFormSchemaNode>();
   readonly isEditMode = input<boolean>();
 
+  protected readonly InputType = InputType;
+
   readonly addListItem = output<AddListItemEvent>();
   readonly deleteListItem = output<DeleteListItemEvent>();
 

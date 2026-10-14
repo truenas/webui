@@ -6,8 +6,3 @@ import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-cli
  * middleware does not send.
  */
 export type SystemDatasetConfig = CallResponse<WebUiApiDirectory, 'systemdataset.config'>;
-
-export interface SystemDatasetUpdate {
-  pool?: string;
-  pool_exclude?: string;
-}

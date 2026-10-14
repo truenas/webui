@@ -1,4 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { AlertBadgeType } from 'app/enums/alert-badge-type.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { adapter, AlertsState } from 'app/modules/alerts/store/alert.reducer';
 
@@ -50,13 +51,13 @@ export const criticalLevels: AlertLevel[] = [
   AlertLevel.Critical, AlertLevel.Alert, AlertLevel.Emergency, AlertLevel.Error,
 ];
 
-export type AlertSeverity = 'critical' | 'warning' | null;
+export type AlertSeverity = AlertBadgeType.Critical | AlertBadgeType.Warning | null;
 
 export const selectTopAlertSeverity = createSelector(
   selectActionableAlerts,
   (alerts): AlertSeverity => {
     if (alerts.length === 0) return null;
-    if (alerts.some((alert) => criticalLevels.includes(alert.level))) return 'critical';
-    return 'warning';
+    if (alerts.some((alert) => criticalLevels.includes(alert.level))) return AlertBadgeType.Critical;
+    return AlertBadgeType.Warning;
   },
 );

@@ -16,6 +16,9 @@ import {
 import { WINDOW } from 'app/helpers/window.helper';
 import { QueryComparator } from 'app/interfaces/query-api.interface';
 import { limitConcurrentCalls } from 'app/modules/websocket/typed-api/limit-concurrent-calls';
+import { MockResponseService } from 'app/modules/websocket-debug-panel/services/mock-response.service';
+import { WebSocketDebugService } from 'app/modules/websocket-debug-panel/services/websocket-debug.service';
+import { interceptConnection } from 'app/modules/websocket-debug-panel/utils/intercept-connection';
 
 /**
  * The API surface the UI is written against.
@@ -69,6 +72,9 @@ export const TYPED_API_CLIENT = new InjectionToken<Observable<WebUiApiClient>>(
     providedIn: 'root',
     factory: () => {
       const window = inject<Window>(WINDOW);
+      const debugPanel = environment.debugPanel?.enabled
+        ? { debug: inject(WebSocketDebugService), mocks: inject(MockResponseService) }
+        : null;
 
       // The appliance serves the page in production, so the page's scheme is
       // the appliance's. `location.protocol` is a plain string that can be
@@ -85,6 +91,12 @@ export const TYPED_API_CLIENT = new InjectionToken<Observable<WebUiApiClient>>(
       })).pipe(
         // Before anything else holds the client, so every call it sends is counted.
         tap((client) => limitConcurrentCalls(client.connection)),
+        // After the gate, so a mocked call is answered without taking a place in it.
+        tap((client) => {
+          if (debugPanel) {
+            interceptConnection(client.connection, debugPanel.debug, debugPanel.mocks);
+          }
+        }),
         shareReplay({ bufferSize: 1, refCount: false }),
       );
     },

@@ -3,9 +3,13 @@
 **Status:** Draft 2026-08-08, rewritten 2026-09-02 against the pipeline as built
 **Prerequisite:** [`status.md`](./status.md); the pipeline itself is in [`05-ci.md`](./05-ci.md)
 
-> **What is actually running.** `.github/workflows/e2e.yml` is green: one
-> appliance per run, installed from a nightly ISO and destroyed afterwards. No
-> sharding, no snapshot restore. Everything in this document beyond E6, E11 and
+> **What is actually running** (2026-10-12). `.github/workflows/e2e.yml` is
+> green on runner-attached appliances: each shard is an ephemeral GARM runner
+> that boots its own TrueNAS appliance under qemu from a prebuilt image, and
+> takes a memory-and-disk snapshot of it that reverts in ~6 s. Sharding is a
+> matrix; the snapshot is taken but the suite does not revert to it yet. See
+> `05-ci.md` and E12; the restore figures below were argued before that
+> existed. Everything in this document beyond E6, E11 and
 > E12 is design for what comes next, argued from numbers that are now partly
 > measured and partly still guessed. The two that decide everything — the cost
 > of a restore (**Q0b**) and the length of a representative test (**Q1**) —
@@ -121,7 +125,8 @@ only to *build* a baseline, not to return to one.
 | Primitive | Cost | Restores | Used for |
 |---|---|---|---|
 | API cleanup — delete what you created | seconds | Objects the test created | Local, Contained |
-| `zfs rollback` of the deployment dataset, then boot | boot-dominated, unmeasured (**Q0b**) | Everything: config DB, system dataset, pools, on-disk state | Global, Infrastructural |
+| `zfs rollback` of the deployment dataset, then boot | boot-dominated, ~60–75 s on the lab (**Q0b**) | Everything: config DB, system dataset, pools, on-disk state | Global, Infrastructural |
+| `loadvm` of the runner-attached appliance (memory and disks) | ~6 s, measured 2026-10-12 | Everything, and the running state: no boot | Global, Infrastructural, once the suite uses it |
 | Full ISO install via `tn_guest.py` | ~210s (**Q0a**, measured) | Everything, plus installer coverage | Building a baseline; periodic fidelity run |
 
 **Why snapshots, having first rejected them.** This document's earlier drafts
@@ -585,8 +590,17 @@ artifact does not exist yet and has to be built.
 
 ## E12. CI: GitHub Actions on a self-hosted runner on the host
 
-Implemented; `05-ci.md` is the operational record. What this section keeps is
-the reasoning, and what the build settled.
+Implemented, then replaced on 2026-10-12; `05-ci.md` is the operational
+record. **The appliance is now inside the runner**: each job runs on an
+ephemeral GARM runner whose scale set attaches a clone of a prebuilt appliance
+image (iXsystems/github-truenas-runner), and boots it under qemu. That
+removes the claim, the lease, the lab lock and the host credential; makes the
+scale set's size the appliance budget (**Q5**); makes sharding a matrix with no
+shared resource; and gives the job SSH and the console (**E8**, **R7.2**). The
+price measured so far is a slower suite on the same tests (×1.3 in total),
+likeliest from the appliance and the browser sharing one VM. What follows is
+the reasoning for the lab arrangement it replaced, kept because its
+constraints still bind.
 
 **The runner is the TrueNAS host.** Every provisioning call is then the host's
 own API over localhost or a `zfs` command, with no remote hypervisor channel,

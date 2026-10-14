@@ -18,7 +18,7 @@ import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.en
 import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
-import { Ipmi, IpmiQueryParams, IpmiUpdate } from 'app/interfaces/ipmi.interface';
+import { Ipmi, IpmiQueryParams, IpmiUpdate, toIpmiChannels, toIpmiUpdateArgs } from 'app/interfaces/ipmi.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -28,7 +28,7 @@ import {
   SidePanelFooterMenu,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -53,7 +53,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   ],
 })
 export class IpmiFormComponent extends IxFormHostForm implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private redirect = inject(RedirectService);
   private fb = inject(FormBuilder);
@@ -81,7 +81,7 @@ export class IpmiFormComponent extends IxFormHostForm implements OnInit {
   // a `retryLoad` would otherwise turn into a second listener.
   private isRemoteControllerWatchWired = false;
 
-  queryParams: IpmiQueryParams;
+  queryParams: IpmiQueryParams | undefined;
   protected ipmiId: number | undefined;
 
   readonly helptext = helptextIpmi;
@@ -175,7 +175,7 @@ export class IpmiFormComponent extends IxFormHostForm implements OnInit {
   private loadFormData(): void {
     this.loadFormConfig(
       forkJoin([
-        this.api.call('ipmi.lan.query', this.queryParams),
+        this.api.call('ipmi.lan.query', this.queryParams).pipe(map(toIpmiChannels)),
         this.loadFlashingStatus(),
       ]).pipe(
         // Failover data decides whether the remote-controller selector exists at all, so it is part
@@ -246,7 +246,7 @@ export class IpmiFormComponent extends IxFormHostForm implements OnInit {
         // routes the swap through the same loading/failure gating as the initial one.
         this.loadFormConfig(
           forkJoin([
-            this.api.call('ipmi.lan.query', queryParams),
+            this.api.call('ipmi.lan.query', queryParams).pipe(map(toIpmiChannels)),
             this.api.call('ipmi.chassis.info', [chassisInfoParams]),
           ]),
           ([dataIpmi, chassisInfo]) => {
@@ -276,7 +276,7 @@ export class IpmiFormComponent extends IxFormHostForm implements OnInit {
     }
 
     return {
-      request$: this.api.call('ipmi.lan.update', [this.ipmiId, updateParams]),
+      request$: this.api.call('ipmi.lan.update', [this.ipmiId, toIpmiUpdateArgs(updateParams)]),
       successMessage: this.translate.instant('Successfully saved IPMI settings.'),
     };
   };

@@ -271,7 +271,7 @@ describe('WidgetBackupComponent', () => {
     it('shows backup actions only when one tile has received tasks', async () => {
       expect(await widgetBackup.getBannerMessage()).toBeNull();
       expect(await widgetBackup.getBackupActionMessages()).toEqual({
-        Replication: 'Backup  to cloud  or  to another TrueNAS',
+        Replication: 'Backup to cloud or to another TrueNAS',
         Rsync: null,
       });
     });
@@ -315,7 +315,7 @@ describe('WidgetBackupComponent', () => {
     it('shows backup actions only when one tile has received tasks', async () => {
       expect(await widgetBackup.getBannerMessage()).toBeNull();
       expect(await widgetBackup.getBackupActionMessages()).toEqual({
-        Replication: 'Backup  to cloud  or  to another TrueNAS',
+        Replication: 'Backup to cloud or to another TrueNAS',
         Rsync: null,
       });
     });
@@ -372,8 +372,8 @@ describe('WidgetBackupComponent', () => {
     it('shows backup actions on every group that only receives', async () => {
       expect(await widgetBackup.getBannerMessage()).toBeNull();
       expect(await widgetBackup.getBackupActionMessages()).toEqual({
-        'Cloud Sync': 'Backup  to cloud  or  to another TrueNAS',
-        Replication: 'Backup  to cloud  or  to another TrueNAS',
+        'Cloud Sync': 'Backup to cloud or to another TrueNAS',
+        Replication: 'Backup to cloud or to another TrueNAS',
         Rsync: null,
         'TrueCloud Backup': null,
       });

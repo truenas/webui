@@ -16,7 +16,7 @@ import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { IxCodeEditorComponent } from 'app/modules/forms/controls/ix-code-editor/ix-code-editor.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { scrollToBottomDelayMs } from 'app/modules/websocket-debug-panel/constants';
-import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
+import { WebSocketDebugMessage, MessageDirection } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 import { clearMessages, createMockFromResponse, toggleDuplicateNotifications, toggleMessageExpansion } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 import { selectDuplicateNotificationsEnabled, selectMessages } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 import { ClipboardService } from 'app/services/clipboard.service';
@@ -59,6 +59,7 @@ export class MessageListComponent implements AfterViewInit {
   private clipboard = inject(ClipboardService);
 
   @ViewChild('messageViewport', { read: ElementRef }) protected messageViewport?: ElementRef<HTMLDivElement>;
+  protected readonly MessageDirection = MessageDirection;
   protected messages$: Observable<WebSocketDebugMessage[]> = this.store$.select(selectMessages);
   protected readonly duplicateNotificationsEnabled = toSignal(
     this.store$.select(selectDuplicateNotificationsEnabled),
@@ -139,7 +140,7 @@ export class MessageListComponent implements AfterViewInit {
 
   protected canCreateMock(message: FormattedWebSocketDebugMessage): boolean {
     // Show icon for incoming responses that have a result and a known method name
-    return message.direction === 'in'
+    return message.direction === MessageDirection.In
       && this.isJsonRpcSuccessResponse(message.message)
       && !!message.methodName
       && message.methodName !== 'Unknown'
@@ -181,13 +182,13 @@ export class MessageListComponent implements AfterViewInit {
     }
 
     // Fallback to extracting from message content
-    if (message.direction === 'out' && 'method' in message.message) {
+    if (message.direction === MessageDirection.Out && 'method' in message.message) {
       return message.message.method;
     }
-    if (message.direction === 'in' && 'method' in message.message && message.message.method) {
+    if (message.direction === MessageDirection.In && 'method' in message.message && message.message.method) {
       return message.message.method;
     }
-    if (message.direction === 'in' && 'msg' in message.message) {
+    if (message.direction === MessageDirection.In && 'msg' in message.message) {
       if (message.message.msg === 'method') {
         return 'Response';
       }

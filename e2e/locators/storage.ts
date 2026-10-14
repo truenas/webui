@@ -90,6 +90,22 @@ export const datasetLocators = {
   treeNode: (name: string) => `[data-test="dataset-${kebabTestSegment(name)}"]`,
 
   addDataset: '[data-test="button-add-dataset"]',
+  /**
+   * "Edit" on the dataset details card — `testId: 'edit-dataset'` in
+   * `dataset-details-card.component.ts`. A zvol gets `edit-zvol` instead.
+   */
+  editDataset: '[data-test="button-edit-dataset"]',
+
+  /**
+   * The new dataset's parent, shown only when adding. It is the dataset the form
+   * will file the new one under, so it doubles as a readback that "Add Dataset"
+   * acted on the node that was selected.
+   */
+  parentPath: '[data-test="text-parent-path"]',
+  /**
+   * `<tn-input formControlName="name">`. On edit it is disabled and holds the
+   * dataset's full name, which makes it the signal that the record has loaded.
+   */
   name: '[data-test="input-name"]',
   /** `<tn-select formControlName="share_type">`, id via control-name fallback. */
   shareType: '[data-test="select-share-type"]',
@@ -111,7 +127,75 @@ export const datasetLocators = {
    * readback for whether the toggle went the way we intended. */
   smbName: '[data-test="input-smb-name"]',
 
+  /**
+   * The Advanced/Basic toggle in the side panel's footer. The form pins
+   * `testId: 'toggle-advanced'` rather than the shared default. Only rendered
+   * when adding: an edit opens in advanced mode and has no toggle.
+   */
+  advancedToggle: '[data-test="button-toggle-advanced"]',
+
+  /** Other Options, rendered only in advanced mode. Ids via control-name fallback. */
+  comments: '[data-test="input-comments"]',
+  sync: '[data-test="select-sync"]',
+  /**
+   * By the label the select shows: `Standard`, `Always`, `Disabled`. Under a
+   * parent the list also opens with `Inherit (<parent's value>)`.
+   */
+  syncOption: (label: string) => `[data-test="option-sync-${kebabTestSegment(label)}"]`,
+  atime: '[data-test="select-atime"]',
+  /** `On` or `Off`, plus `Inherit (<parent's value>)` under a parent. */
+  atimeOption: (label: string) => `[data-test="option-atime-${kebabTestSegment(label)}"]`,
+
   save: '[data-test="button-save"]',
+} as const;
+
+/**
+ * The zvol form, opened from "Add Zvol" in the details panel's header or "Edit Zvol" on the
+ * details card. It shares the side panel host, and so its Save, with the dataset form.
+ *
+ * Its ZFS properties are inline editables in a details table rather than form fields. Each one
+ * shows its value until clicked, and only then renders the `tn-select`. The editable's own trigger
+ * id is built from the value it is showing (`editable.component.ts`), so it changes with the value
+ * and cannot be named in advance. The view inside the trigger has a static id, and clicking that
+ * opens it the same way.
+ */
+export const zvolLocators = {
+  /** `<tn-button [testId]="'add-zvol'">` in the details panel's header, for a filesystem only. */
+  add: '[data-test="button-add-zvol"]',
+  /** "Edit Zvol" on the details card — `testId: 'edit-zvol'` in `dataset-details-card.component.ts`. */
+  edit: '[data-test="button-edit-zvol"]',
+
+  /** `<tn-input formControlName="name">`. On edit it is disabled and holds the zvol's full name. */
+  name: '[data-test="input-name"]',
+  /** `<tn-input formControlName="volsize">`, a size input that reads `64 MiB` and the like. */
+  volsize: '[data-test="input-volsize"]',
+  /** `<tn-checkbox formControlName="sparse">`. Only rendered when adding. */
+  sparse: '[data-test="checkbox-sparse"]',
+
+  /**
+   * The Sync editable's view, `tnTestIdType="text"` with `'sync'`. It is empty until the form
+   * has loaded its parent and worked out what is inherited.
+   */
+  syncValue: '[data-test="text-sync"]',
+  /** The select the Sync editable renders once opened. Id via control-name fallback. */
+  sync: '[data-test="select-sync"]',
+  /** By the label the select shows: `Standard`, `Always`, `Disabled`, plus `Inherit (<value>)`. */
+  syncOption: (label: string) => `[data-test="option-sync-${kebabTestSegment(label)}"]`,
+
+  save: '[data-test="button-save"]',
+} as const;
+
+/**
+ * Readouts on the details card for whichever dataset the tree has selected.
+ * Each is `tnTestIdType="text"` with a static base, so there is one per page.
+ */
+export const datasetDetailsLocators = {
+  /** The selected dataset's full name, `pool/child`. */
+  path: '[data-test="text-dataset-details-path"]',
+  /** Rendered only when the dataset has a comment of its own. */
+  comments: '[data-test="text-dataset-details-comments"]',
+  /** The raw ZFS value, `ALWAYS` rather than the form's `Always`. */
+  sync: '[data-test="text-dataset-details-sync"]',
 } as const;
 
 /**
@@ -158,6 +242,39 @@ export const poolDisconnectLocators = {
    */
   submit: '[data-test="button-disconnect"]',
   cancel: '[data-test="button-cancel"]',
+} as const;
+
+/**
+ * The Import Pool side panel, opened from the storage dashboard's header.
+ *
+ * It opens on a spinner while `pool.import_find` runs, and only then renders the
+ * form, so the pool select appearing is the signal that the search finished.
+ */
+export const poolImportLocators = {
+  /** "Import Pool" in the dashboard header. `[testId]="'import-pool'"` on a tn-button. */
+  open: '[data-test="button-import-pool"]',
+
+  /** `<tn-select formControlName="guid">`, id via control-name fallback. */
+  pool: '[data-test="select-guid"]',
+  /**
+   * The option for an exported pool, by its name.
+   *
+   * The select pins `optionTestIdByLabel`, and the label is `<name> | <guid>`, so
+   * the library's normalizer emits `option-guid-<name>-<guid>`. The guid is
+   * middleware's and changes with every pool built, so this is a prefix match on
+   * the name. A pool whose name starts with the same words would match too, so
+   * the flow asserts there is exactly one before picking it.
+   */
+  poolOption: (pool: string) => `[data-test^="option-guid-${kebabTestSegment(pool)}-"]`,
+
+  /** The form's own submit. `[testId]="'import'"`, not the header's `import-pool`. */
+  submit: '[data-test="button-import"]',
+} as const;
+
+/** A pool's card on the storage dashboard. */
+export const poolCardLocators = {
+  /** The card's heading. `tnTestIdType="text"` with `[pool()?.name, 'pool-name']`. */
+  name: (pool: string) => `[data-test="text-${kebabTestSegment(pool)}-pool-name"]`,
 } as const;
 
 /**

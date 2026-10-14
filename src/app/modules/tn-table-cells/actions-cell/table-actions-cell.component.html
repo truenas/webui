@@ -6,7 +6,7 @@
   (click)="$event.stopPropagation()"
   (keydown)="stopRowActivationKeys($event)"
 >
-  @if (mode() === 'inline' || visibleActions().length === 1) {
+  @if (showsInlineActions()) {
     @for (action of visibleActions(); track action) {
       @let isDisabled = action.disabled ? (action.disabled(row()) | async) : false;
       @let tooltip = action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : (action.tooltip || '');

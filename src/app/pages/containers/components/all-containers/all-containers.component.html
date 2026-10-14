@@ -15,8 +15,7 @@
   ></ix-container-list>
 
   <span detail-header tnTestId="details-for" tnTestIdType="text">
-    {{ 'Details for' | translate }}
-    {{ selectedContainer()?.name }}
+    {{ 'Details for {name}' | translate: { name: selectedContainer()?.name ?? '' } }}
   </span>
 
   <ng-container detail>

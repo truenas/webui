@@ -21,6 +21,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { DatasetType } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { NewOrExisting } from 'app/enums/new-or-existing.enum';
 import { Role } from 'app/enums/role.enum';
 import {
   VmDeviceType, vmDeviceTypeLabels, VmDiskMode, vmDiskModeLabels, VmNicType, vmNicTypeLabels,
@@ -170,7 +171,7 @@ export class DeviceFormComponent extends IxFormHostForm implements OnInit {
 
   typeControl = new FormControl(VmDeviceType.Cdrom, Validators.required);
   orderControl = new FormControl(null as number | null);
-  newOrExistingControl = new FormControl<'new' | 'existing'>('existing');
+  newOrExistingControl = new FormControl<NewOrExisting>(NewOrExisting.Existing);
 
   cdromForm = this.formBuilder.nonNullable.group({
     path: [mntPath, Validators.required],
@@ -246,10 +247,11 @@ export class DeviceFormComponent extends IxFormHostForm implements OnInit {
   readonly helptext = helptextDevice;
   readonly VmDeviceType = VmDeviceType;
   readonly VmDisplayType = VmDisplayType;
+  protected readonly NewOrExisting = NewOrExisting;
 
   readonly newOrExistingOptions = [
-    { label: this.translate.instant('Create new disk image'), value: 'new' as const },
-    { label: this.translate.instant('Use existing disk image'), value: 'existing' as const },
+    { label: this.translate.instant('Create new disk image'), value: NewOrExisting.New },
+    { label: this.translate.instant('Use existing disk image'), value: NewOrExisting.Existing },
   ];
 
   readonly datastoreOptions$ = this.api
@@ -415,7 +417,7 @@ export class DeviceFormComponent extends IxFormHostForm implements OnInit {
     }
 
     this.newOrExistingControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
-      this.setDiskFormValidators(value as 'new' | 'existing');
+      this.setDiskFormValidators(value);
     });
 
     if (this.hostData.virtualMachineId) {
@@ -696,8 +698,8 @@ export class DeviceFormComponent extends IxFormHostForm implements OnInit {
     }
   }
 
-  private setDiskFormValidators(mode: 'new' | 'existing'): void {
-    if (mode === 'new') {
+  private setDiskFormValidators(mode: NewOrExisting | null): void {
+    if (mode === NewOrExisting.New) {
       this.diskForm.controls.datastore.setValidators(Validators.required);
       this.diskForm.controls.volsize.setValidators(Validators.required);
       this.diskForm.controls.path.clearValidators();
@@ -729,7 +731,7 @@ export class DeviceFormComponent extends IxFormHostForm implements OnInit {
       }
 
       // Handle creating a new zvol for disk devices
-      if (this.typeControl.value === VmDeviceType.Disk && this.newOrExistingControl.value === 'new') {
+      if (this.typeControl.value === VmDeviceType.Disk && this.newOrExistingControl.value === NewOrExisting.New) {
         const randomSuffix = crypto.randomUUID().slice(0, 8);
         const vmName = this.vmName?.replace(/\s+/g, '-') || 'vm';
         const zvolName = `${this.diskForm.value.datastore}/${vmName}-${randomSuffix}`;

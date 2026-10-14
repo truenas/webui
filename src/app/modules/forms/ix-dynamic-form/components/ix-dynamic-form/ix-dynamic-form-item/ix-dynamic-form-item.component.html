@@ -122,7 +122,7 @@
               [placeholder]="inputSchema.placeholder ? (inputSchema.placeholder | translate) : ''"
               [required]="inputSchema.required || false"
               [inputType]="toInputType(inputSchema.inputType)"
-              [showPasswordToggle]="inputSchema.inputType === 'password'"
+              [showPasswordToggle]="toInputType(inputSchema.inputType) === InputType.Password"
             ></tn-input>
           </tn-form-field>
         }

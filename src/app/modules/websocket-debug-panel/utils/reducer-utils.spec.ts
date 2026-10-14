@@ -1,7 +1,7 @@
 import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { IncomingMessage } from 'app/interfaces/api-message.interface';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
-import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
+import { WebSocketDebugMessage, MessageDirection } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 import { WebSocketDebugState } from 'app/modules/websocket-debug-panel/store/websocket-debug.reducer';
 import { addMessageWithLimit } from './reducer-utils';
 
@@ -10,7 +10,7 @@ describe('reducer-utils', () => {
     const createMockMessage = (id: string): WebSocketDebugMessage => ({
       id,
       timestamp: new Date().toISOString(),
-      direction: 'in',
+      direction: MessageDirection.In,
       message: { id: 'test-123', result: 'test result', jsonrpc: '2.0' } as IncomingMessage,
       isMocked: false,
     });

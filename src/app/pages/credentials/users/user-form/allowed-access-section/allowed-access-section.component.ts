@@ -3,12 +3,14 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnCheckboxComponent, TnCheckboxLabelDirective, TnFormSectionComponent, TnIconComponent, TnSelectComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { hasShellAccess, hasSshAccess } from 'app/helpers/user.helper';
 import { User, UserFormPreset } from 'app/interfaces/user.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { SplitTagPipe } from 'app/modules/pipes/split-tag/split-tag.pipe';
 import { defaultRole, UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 
 @Component({
@@ -25,6 +27,7 @@ import { defaultRole, UserFormStore } from 'app/pages/credentials/users/user-for
     TnCheckboxLabelDirective,
     ReactiveFormsModule,
     TranslateModule,
+    SplitTagPipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -39,6 +42,9 @@ export class AllowedAccessSectionComponent {
   passwordDisabled = input<boolean>();
   /** What a create flow wants this section to start as. Ignored while editing. */
   preset = input<UserFormPreset | undefined>(undefined);
+
+  // One sentence for translators; `splitTag` renders the <link> part as the docs link.
+  protected readonly customRolesHint = T('Learn about <link>custom roles</link>.');
 
   protected sshAccess = this.userFormStore.sshAccess;
 

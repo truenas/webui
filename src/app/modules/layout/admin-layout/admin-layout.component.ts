@@ -103,6 +103,10 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.sidenavService.mode;
   }
 
+  get isSidenavOverlay(): boolean {
+    return this.sidenavMode === 'over';
+  }
+
   get isSidenavOpen(): boolean {
     return this.sidenavService.isOpen;
   }

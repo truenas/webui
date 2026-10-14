@@ -3,7 +3,10 @@ import { Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, DestroyR
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent, TnExpansionPanelComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnExpansionPanelComponent, TnFormFieldComponent,
+  TnTestIdDirective, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { filter, finalize, map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -31,6 +34,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     RequiresRolesDirective,
     TnButtonComponent,
     FormActionsComponent,
+    TnTestIdDirective,
   ],
 })
 export class SnapshotBatchDeleteDialog implements OnInit {

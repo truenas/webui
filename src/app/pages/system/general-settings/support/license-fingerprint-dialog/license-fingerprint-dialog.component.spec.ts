@@ -4,8 +4,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { TnButtonHarness, TnIconButtonHarness } from '@truenas/ui-components';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   buildFingerprintField,
@@ -97,14 +97,16 @@ describe('LicenseFingerprintDialog', () => {
     component: LicenseFingerprintDialog,
     providers: [
       mockAuth(),
-      mockApi([mockCall('truenas.license.fingerprint', base64)]),
+      mockTypedApi([mockTypedCall('truenas.license.fingerprint', base64)]),
       mockProvider(DialogRef),
       mockProvider(SnackbarService),
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -156,13 +158,15 @@ describe('LicenseFingerprintDialog fallback rendering', () => {
     component: LicenseFingerprintDialog,
     providers: [
       mockAuth(),
-      mockApi([mockCall('truenas.license.fingerprint', malformedRaw)]),
+      mockTypedApi([mockTypedCall('truenas.license.fingerprint', malformedRaw)]),
       mockProvider(DialogRef),
     ],
   });
 
-  it('renders the raw payload when decoding fails', () => {
+  it('renders the raw payload when decoding fails', async () => {
     const spectator = createComponent();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
     expect(spectator.query('.fingerprint-fields')).toBeNull();
     expect(spectator.query('.fingerprint-raw')!.textContent!.trim()).toBe(malformedRaw);
   });

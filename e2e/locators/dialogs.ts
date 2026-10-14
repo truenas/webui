@@ -25,6 +25,30 @@ export const confirmDialogLocators = {
 } as const;
 
 /**
+ * webui's shared general dialog (`DialogService.generalDialog`).
+ *
+ * Its buttons are whatever the caller asks for. A caller that passes only
+ * `cancelBtnMsg` gets a single button under `button-cancel`, whatever it is
+ * labelled.
+ */
+export const generalDialogLocators = {
+  title: '[data-test="dialog-title-general"]',
+  cancel: '[data-test="button-cancel"]',
+} as const;
+
+/**
+ * webui's shared information dialog (`DialogService.info` and `.warn`).
+ *
+ * Raised by the first-time warning in front of every form on Advanced Settings,
+ * and by any action that reports its result in a dialog rather than a snackbar.
+ */
+export const infoDialogLocators = {
+  title: '[data-test="text-info-title"]',
+  message: '[data-test="text-info-message"]',
+  close: '[data-test="button-dialog-close"]',
+} as const;
+
+/**
  * webui's error dialog — what a refused middleware call is reported in.
  *
  * Shared chrome like the confirm dialog above, raised over whatever was on

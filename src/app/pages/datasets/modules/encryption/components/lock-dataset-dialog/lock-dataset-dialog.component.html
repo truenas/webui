@@ -12,7 +12,11 @@
     ></tn-checkbox>
   </tn-form-field>
 </form>
-<ix-form-actions tnDialogAction>
+<!--
+  The Lock button below emits `button-lock`, as does the card's Lock that opened this dialog and
+  is still on the page behind it. This id scopes it to the dialog without renaming either.
+-->
+<ix-form-actions tnDialogAction tnTestIdType="actions" [tnTestId]="'lock-dataset'">
   <tn-button
     variant="outline"
     testId="cancel"

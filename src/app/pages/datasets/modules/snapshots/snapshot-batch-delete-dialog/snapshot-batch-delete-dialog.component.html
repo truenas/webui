@@ -14,7 +14,7 @@
     @for (dataset of dialogData.datasets; track dataset) {
       <tn-expansion-panel elevation="none" padding="small" [expanded]="true" [background]="false">
         <div slot="title">
-          <strong>{{ dataset }}</strong>
+          <strong tnTestIdType="text" [tnTestId]="['snapshot-dataset', dataset]">{{ dataset }}</strong>
           <span>
             ({{
             '{ n, plural, one {# snapshot} other {# snapshots} }' | translate: { n: dialogData.snapshots[dataset].length }
@@ -23,7 +23,7 @@
         </div>
         <ul>
           @for (snapshot of dialogData.snapshots[dataset]; track snapshot) {
-            <li>
+            <li tnTestIdType="text" [tnTestId]="['snapshot', snapshot]">
               {{ snapshot }}
             </li>
           }
@@ -46,7 +46,7 @@
       {{ 'Warning: {n} of {total} snapshots could not be deleted.' | translate: { n: jobErrors.length, total } }}
     </p>
     <div class="error-message-container">
-      <p>{{ getErrorMessage() }}</p>
+      <p tnTestIdType="text" [tnTestId]="'snapshot-delete-errors'">{{ getErrorMessage() }}</p>
     </div>
   } @else {
     <p class="result-message">

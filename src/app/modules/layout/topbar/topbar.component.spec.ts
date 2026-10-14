@@ -11,11 +11,14 @@ import {
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
+import { AlertBadgeType } from 'app/enums/alert-badge-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
-import { selectImportantUnreadAlertsCount, selectIsAlertPanelOpen, selectTopAlertSeverity } from 'app/modules/alerts/store/alert.selectors';
+import {
+  AlertSeverity, selectImportantUnreadAlertsCount, selectIsAlertPanelOpen, selectTopAlertSeverity,
+} from 'app/modules/alerts/store/alert.selectors';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
@@ -287,14 +290,14 @@ describe('TopbarComponent', () => {
   });
 
   describe('alert severity', () => {
-    function setSeverity(severity: 'critical' | 'warning' | null): void {
+    function setSeverity(severity: AlertSeverity): void {
       spectator.inject(MockStore).overrideSelector(selectTopAlertSeverity, severity);
       spectator.inject(MockStore).refreshState();
       spectator.detectChanges();
     }
 
     it('applies alert-critical class to bell icon when severity is critical', async () => {
-      setSeverity('critical');
+      setSeverity(AlertBadgeType.Critical);
 
       const bellIcon = await loader.getHarness(TnIconHarness.with({ name: 'bell' }));
       const host = await bellIcon.host();
@@ -302,7 +305,7 @@ describe('TopbarComponent', () => {
     });
 
     it('applies alert-warning class to bell icon when severity is warning', async () => {
-      setSeverity('warning');
+      setSeverity(AlertBadgeType.Warning);
 
       const bellIcon = await loader.getHarness(TnIconHarness.with({ name: 'bell' }));
       const host = await bellIcon.host();
@@ -317,7 +320,7 @@ describe('TopbarComponent', () => {
     });
 
     it('applies severity-critical class to alert button when severity is critical', async () => {
-      setSeverity('critical');
+      setSeverity(AlertBadgeType.Critical);
 
       const alertButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'bell' }));
       const host = await alertButton.host();
@@ -325,7 +328,7 @@ describe('TopbarComponent', () => {
     });
 
     it('applies severity-warning class to alert button when severity is warning', async () => {
-      setSeverity('warning');
+      setSeverity(AlertBadgeType.Warning);
 
       const alertButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'bell' }));
       const host = await alertButton.host();
@@ -336,13 +339,13 @@ describe('TopbarComponent', () => {
     // computed, and TnIconButtonHarness exposes no tooltip getter, so asserting the
     // aria-label here also covers the tooltip text.
     it('updates aria-label on alert button when severity is critical', () => {
-      setSeverity('critical');
+      setSeverity(AlertBadgeType.Critical);
 
       expect(spectator.query('[aria-label="Alerts - Critical alerts present"]')).not.toBeNull();
     });
 
     it('updates aria-label on alert button when severity is warning', () => {
-      setSeverity('warning');
+      setSeverity(AlertBadgeType.Warning);
 
       expect(spectator.query('[aria-label="Alerts - Warnings present"]')).not.toBeNull();
     });
