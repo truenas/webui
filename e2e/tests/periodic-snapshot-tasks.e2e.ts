@@ -16,6 +16,14 @@
  * that fires on its schedule leaves snapshots behind, and those go with the
  * dataset — and a dataset with snapshots would put a second box in the delete
  * dialog, which the delete test does not expect.
+ *
+ * Stories: a task the appliance runs takes snapshots named by its naming
+ * schema, and switching it off on the card stops it.
+ *
+ * Neither card nor list has a Run Now for these tasks — the schedule is the only
+ * thing that runs one — so those tests schedule theirs every minute and wait on
+ * it. A fresh dataset has no snapshots, so every snapshot found on one was
+ * taken by its task.
  */
 import {
   countSnapshotTasks,
@@ -25,6 +33,7 @@ import {
   findSnapshotTasks,
   type SnapshotTaskSchedule,
 } from '../fixtures/snapshot-tasks';
+import { listSnapshots } from '../fixtures/snapshots';
 import { ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
 import {
   chooseSnapshotTaskDataset,
@@ -35,9 +44,12 @@ import {
   openEditSnapshotTaskForm,
   saveSnapshotTaskForm,
   snapshotTaskCardPageSize,
+  toggleSnapshotTaskEnabled,
 } from '../flows/snapshot-tasks';
+import { openSnapshotList } from '../flows/snapshots';
 import { hourlyScheduleLabel } from '../locators/cron';
 import { snapshotTaskLocators } from '../locators/snapshot-tasks';
+import { snapshotLocators } from '../locators/snapshots';
 import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
@@ -70,6 +82,34 @@ const monthly: SnapshotTaskSchedule = {
 const hourly = {
   minute: '0', hour: '*', dom: '*', month: '*', dow: '*', begin: '00:00', end: '23:59',
 };
+/** Every minute, so a test can watch a task fire rather than wait on a real schedule. */
+const everyMinute: SnapshotTaskSchedule = {
+  minute: '*', hour: '*', dom: '*', month: '*', dow: '*',
+};
+
+/** What the target's task names a snapshot: {@link targetNamingSchema} with the minute filled in. */
+const targetSnapshotName = /^e2e-target-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}$/;
+
+/** Both seeded schemas end in `%Y-%m-%d_%H-%M`, which comes out this long. */
+const stampLength = '2026-01-01_00-00'.length;
+
+/** The minute a snapshot was taken in, cut from its name. Compares as the times do. */
+function stampOf(snapshotName: string): string {
+  return snapshotName.slice(-stampLength);
+}
+
+/**
+ * Waiting on a task due every minute: past the next minute boundary, with room
+ * for zettarepl to take the snapshot, and polled at a pace that does not hammer
+ * the appliance.
+ */
+const oneTick = { timeout: 150_000, intervals: [5_000] };
+
+/** The names of a dataset's snapshots, oldest stamp first. */
+async function snapshotNames(api: E2eApiClient, dataset: string): Promise<string[]> {
+  const snapshots = await listSnapshots(api, dataset);
+  return snapshots.map((snapshot) => snapshot.snapshot_name).sort((a, b) => a.localeCompare(b));
+}
 
 /**
  * Fails up front when the card cannot show every row a test needs.
@@ -87,12 +127,16 @@ async function requireRoomOnCard(api: E2eApiClient, adding: number): Promise<voi
 }
 
 /** Both tasks over the API: acting on one from the card is the thing under test. */
-async function seedTargetAndBystander(api: E2eApiClient, pool: string): Promise<void> {
+async function seedTargetAndBystander(
+  api: E2eApiClient,
+  pool: string,
+  schedule: SnapshotTaskSchedule = monthly,
+): Promise<void> {
   await ensureSnapshotTaskPresent(api, {
-    dataset: `${pool}/${targetLeaf}`, namingSchema: targetNamingSchema, schedule: monthly,
+    dataset: `${pool}/${targetLeaf}`, namingSchema: targetNamingSchema, schedule,
   });
   await ensureSnapshotTaskPresent(api, {
-    dataset: `${pool}/${bystanderLeaf}`, namingSchema: bystanderNamingSchema, schedule: monthly,
+    dataset: `${pool}/${bystanderLeaf}`, namingSchema: bystanderNamingSchema, schedule,
   });
 }
 
@@ -220,4 +264,59 @@ test('deleting a periodic snapshot task from the card removes the task that was 
   // The whole point of the second task: the card looks right either way.
   await expect(page.locator(snapshotTaskLocators.card.row(bystander))).toBeVisible();
   expect(await findSnapshotTask(api, bystander)).toBeDefined();
+});
+
+test('a periodic snapshot task takes snapshots named by its naming schema', async ({ page, api, pool }) => {
+  const target = `${pool}/${targetLeaf}`;
+  await ensureSnapshotTaskPresent(api, {
+    dataset: target, namingSchema: targetNamingSchema, schedule: everyMinute,
+  });
+
+  await expect.poll(() => snapshotNames(api, target), oneTick).not.toHaveLength(0);
+
+  // Every one, not just the first: anything else on a dataset made fresh for
+  // this test came from somewhere other than this task.
+  const names = await snapshotNames(api, target);
+  for (const name of names) {
+    expect(name).toMatch(targetSnapshotName);
+  }
+
+  // And the list the user would look in shows what the appliance took.
+  await openSnapshotList(page, target);
+  await expect(page.locator(snapshotLocators.list.row(target, names[0]))).toBeVisible();
+});
+
+test('switching a periodic snapshot task off on the card stops it taking snapshots', async ({
+  page, api, pool,
+}) => {
+  const target = `${pool}/${targetLeaf}`;
+  const bystander = `${pool}/${bystanderLeaf}`;
+  await requireRoomOnCard(api, 2);
+  await seedTargetAndBystander(api, pool, everyMinute);
+
+  // Running first, or stopping it would prove nothing.
+  await expect.poll(() => snapshotNames(api, target), oneTick).not.toHaveLength(0);
+
+  await toggleSnapshotTaskEnabled(page, target);
+  await expect.poll(async () => (await findSnapshotTask(api, target))?.enabled).toBe(false);
+  expect((await findSnapshotTask(api, bystander))?.enabled).toBe(true);
+
+  // The bystander, still on the same schedule, is the clock: it fires on every
+  // minute the target would have. Its first new snapshot may come from a tick
+  // already under way when the switch flipped, so that minute is not counted.
+  // The second is the first minute wholly after it, and waiting for a third
+  // gives anything the target took in the second time to show up.
+  const before = new Set(await snapshotNames(api, bystander));
+  const newStamps = async (): Promise<string[]> => (await snapshotNames(api, bystander))
+    .filter((name) => !before.has(name))
+    .map(stampOf);
+  await expect.poll(async () => (await newStamps()).length, { ...oneTick, timeout: 3 * oneTick.timeout })
+    .toBeGreaterThanOrEqual(3);
+  const [, firstWholeMinute] = await newStamps();
+
+  const takenSince = (await snapshotNames(api, target)).map(stampOf).filter((stamp) => stamp >= firstWholeMinute);
+  expect(takenSince).toEqual([]);
+
+  // The switch itself left the bystander alone.
+  expect(await findSnapshotTask(api, bystander)).toMatchObject({ enabled: true, schedule: everyMinute });
 });

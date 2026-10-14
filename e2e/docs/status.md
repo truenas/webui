@@ -362,9 +362,13 @@ name, so the row tag is `snapshot-task-<dataset>`, and each task gets a dataset
 of its own, made fresh per test so no snapshot an earlier run's task took can
 put the "keep snapshots" box in the delete dialog. The card lists four tasks,
 and its View All leaves for the full list rather than expanding, so each test
-fails at the start if its rows would not fit. Custom schedules, exclusions,
-the full list page, the Enabled switch and deleting a task that has snapshots
-are not covered.
+fails at the start if its rows would not fit. Two more tests watch a task run.
+Nothing in the UI runs one on demand, so each is scheduled every minute: one
+requires every snapshot on its fresh dataset to match its naming schema and the
+dataset's snapshot list to show one, and the other switches a task off with
+the card's Enabled switch and requires it to take nothing more, using a second
+task left on the same schedule as the clock. Custom schedules, exclusions, the
+full list page and deleting a task that has snapshots are not covered.
 
 The dataset form came next, in `tests/datasets-form.e2e.ts`: creating a dataset
 under a pool and editing one, both through Other Options, the form's advanced
