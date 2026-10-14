@@ -8,8 +8,8 @@
  * which is the evidence that a key pair was generated and a CSR signed with it.
  *
  * The delete runs beside a second CSR that must come through untouched. Every row
- * carries its own Delete button, so a row-targeting bug deletes the wrong request
- * without failing anything else.
+ * has its own Delete in its own row menu, so a row-targeting bug deletes the wrong
+ * request without failing anything else.
  */
 import {
   countCsrs, ensureCertificateAbsent, ensureCsrPresent, findCertificate, type CsrSeed,
