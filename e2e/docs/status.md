@@ -479,8 +479,18 @@ dates already on screen kept it until a reload. It now writes first. A `shipped`
 run needs a nightly built after that fix. The keyboard map and the time format
 are not covered.
 
-The framework is done and the coverage is not. A hundred and twenty-five tests — a
-hundred and twenty-four journeys and the smoke — against 19 top-level feature areas. What the work
+The Email card beside it came next, in `tests/email-settings.e2e.ts`: setting up
+mail over SMTP with authentication from the defaults, and moving it to another
+server with authentication turned off, each asserted on the card's From line and
+through `mail.config`. Between them every SMTP control is changed. Every address
+is under `example.com`, and saving sends nothing. Teardown writes middleware's
+defaults back, so a run clears an appliance's real mail setup. With authentication
+off the form does not send the username, so middleware keeps the old one. The
+OAuth send methods need a real Google or Microsoft login and are not covered, and
+neither is Send Test Mail.
+
+The framework is done and the coverage is not. A hundred and twenty-seven tests — a
+hundred and twenty-six journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
