@@ -1,5 +1,5 @@
 name: 'E2E: run the suite'
-description: "Runs the Playwright suite in Playwright's image against the TN_* target in the job environment, and uploads its JUnit results and failure traces."
+description: "Runs the Playwright suite in Playwright's image against the TN_* target in the job environment, and uploads its JUnit results, coverage and failure traces."
 
 # Only the test run is containerised; the appliance stays on the runner,
 # under qemu.
@@ -110,6 +110,33 @@ runs:
         if-no-files-found: error
         retention-days: 14
 
+    # What the run exercised — middleware methods and routes against the UI's
+    # inventory of both (scripts/e2e-coverage.ts) — into the job summary.
+    # Informational: never fails the job. With more than one shard each
+    # summary covers its own shard only; the per-test results are uploaded so
+    # they can be merged by hand (`yarn e2e:coverage <dir>`).
+    - if: always() && steps.suite.outcome != 'skipped'
+      continue-on-error: true
+      shell: bash
+      env:
+        TN_SHARD: ${{ inputs.shard }}
+      run: |
+        {
+          if [ "$TN_SHARD" != 1/1 ]; then
+            echo "> Shard $TN_SHARD only."
+            echo
+          fi
+          yarn e2e:coverage
+        } >> "$GITHUB_STEP_SUMMARY"
+
+    - if: always() && steps.suite.outcome != 'skipped'
+      uses: actions/upload-artifact@v4
+      with:
+        name: e2e-coverage${{ inputs.artifact-suffix }}
+        path: test-results/e2e-coverage/
+        if-no-files-found: ignore
+        retention-days: 14
+
     # Traces, screenshots and video for the tests that failed (R7.1): what
     # makes a failure triageable without a local reproduction (R6.2).
     #
@@ -135,6 +162,7 @@ runs:
           echo 'paths<<EOF'
           echo 'test-results/**'
           echo '!test-results/junit.xml'
+          echo '!test-results/e2e-coverage/**'
           echo 'EOF'
         } >> "$GITHUB_OUTPUT"
 
