@@ -77,10 +77,13 @@ export class CoverageRecorder {
     });
   }
 
-  /** Starts counting, taking the page's current route as the first one visited. */
-  start(page: Page): void {
+  /**
+   * Starts counting. The page the sign-in landed on is deliberately not recorded:
+   * it is the dashboard for every authenticated test. A route counts once a test
+   * navigates to it, which includes navigating back to the dashboard.
+   */
+  start(): void {
     this.recording = true;
-    this.recordRoute(page.url());
   }
 
   async save(testInfo: TestInfo): Promise<void> {
