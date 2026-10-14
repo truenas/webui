@@ -311,7 +311,7 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
     if (authenticate) {
       await signInWithToken(page, api, config);
     }
-    coverage.start(page);
+    coverage.start();
     try {
       await use(page);
     } finally {
