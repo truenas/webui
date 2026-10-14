@@ -506,8 +506,24 @@ one the pool wizard will not offer, so teardown wipes any that remain. Only the
 Quick method is used. The bulk edit, the column picker and the SED actions are
 not covered.
 
-The framework is done and the coverage is not. A hundred and thirty tests — a
-hundred and twenty-nine journeys and the smoke — against 19 top-level feature areas. What the work
+A pool's devices came next, in `tests/pool-devices.e2e.ts`: taking a disk offline
+and bringing it back online, and adding a spare, both from the pool's VDEVs page.
+That page is reached from View VDEVs on the pool's card on the Storage dashboard.
+Each change is asserted on the page and through `pool.query`. The spec builds its
+own pool, `e2e_devices_tank`, as a two-disk mirror, because a disk can only go
+offline from a vdev that survives losing it. It rebuilds the pool before each test
+and destroys it after. Offline and Online are in the ZFS Info card's menu. The
+spare is added through Add VDEV, which opens the pool wizard on that pool, on its
+Spare step. A vdev or disk in the tree is keyed by its ZFS guid, not its name. Two
+ids changed for the spec. View VDEVs was `button-manage-vdevs` on every pool's card,
+so with two pools on the dashboard a test could not say which one it meant. It is
+now `button-<pool>-manage-vdevs`, like the card's other buttons. The ZFS Info
+card's menu trigger now passes `button-zfs-actions` in full, as the other callers
+of that input do. Replace, Extend, Detach, Remove and the other kinds of vdev are
+not covered.
+
+The framework is done and the coverage is not. A hundred and thirty-two tests — a
+hundred and thirty-one journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
