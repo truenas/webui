@@ -432,8 +432,11 @@ whose only setting is a URL, and every URL is under `example.com`; saving a
 service sends nothing. The form renders the type's own fields a tick after it
 opens for an edit, so the edit waits for the stored URL before typing over it.
 The row tag is `alert-service-<name>` and the edit leaves the name alone, so the
-row keeps its ids. The other nine service types, Send Test Alert and the Alert
-Settings card beside the table are not covered.
+row keeps its ids. Writing it turned up a `data-test` collision: the Category
+card beside the table also emitted `button-save`, so with the panel open the
+side panel's Save matched two elements. The card's is now
+`button-save-alert-config`. The other nine service types, Send Test Alert and
+the Category card itself are not covered.
 
 The framework is done and the coverage is not. A hundred and seventeen tests — a
 hundred and sixteen journeys and the smoke — against 19 top-level feature areas. What the work

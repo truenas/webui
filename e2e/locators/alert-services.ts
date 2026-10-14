@@ -66,7 +66,11 @@ export const alertServiceLocators = {
      */
     slackUrl: '[data-test="input-url"]',
 
-    /** `<tn-button [testId]="'save'">` on the side panel container. */
+    /**
+     * `<tn-button [testId]="'save'">` on the side panel container. Unique on this
+     * page only because the Category card beside the table, which also had a
+     * `button-save`, now emits `button-save-alert-config`.
+     */
     save: '[data-test="button-save"]',
   },
 } as const;
