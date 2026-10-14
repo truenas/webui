@@ -538,8 +538,18 @@ beside a second principal whose own quota must come through untouched. The
 search, "Show all", Remove Invalid Quotas, unsetting both quotas from the edit
 form, and quotas for directory-service accounts are not covered.
 
-The framework is done and the coverage is not. A hundred and forty tests — a
-hundred and thirty-nine journeys and the smoke — against 19 top-level feature areas. What the work
+A dataset's Unix permissions came next, in `tests/dataset-permissions.e2e.ts`:
+changing the owner, the group and the mode in the Unix Permissions Editor, which
+Edit on the Permissions card opens while the dataset's ACL is trivial. Each is
+asserted on the card the app returns to and through `filesystem.stat`, and each
+checks that the other two came through unchanged. The dataset is the spec's own,
+and every test starts it from one owner, group and mode with the ACL stripped,
+set over `filesystem.setperm`. The card names each entry after its owner or
+group, so its ids change with them. The ACL editor, presets, and applying
+permissions recursively are not covered.
+
+The framework is done and the coverage is not. A hundred and forty-three tests — a
+hundred and forty-two journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
