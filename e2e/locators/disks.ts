@@ -18,8 +18,8 @@
 import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 
 /** The column titles a test reads. Each is the first segment of the cell's id. */
-export type DiskColumn =
-  | 'Name'
+export type DiskColumn
+  = | 'Name'
   | 'Serial'
   | 'Disk Size'
   | 'Pool'

@@ -494,7 +494,7 @@ The Disks page under Storage came next, in `tests/disks.e2e.ts`, the first spec
 to reach it. It is not in the sidebar, so the spec opens it from the Disks button
 in the Storage dashboard's header. One test checks that every disk `disk.query`
 reports has a row showing its name and serial, and that searching for one disk's
-serial leaves only that row. One edits a disk's description, HDD Standby and
+serial keeps its row and hides another disk's. One edits a disk's description, HDD Standby and
 Advanced Power Management, asserted through `disk.query` and on a freshly opened
 page, where those columns are hidden and read from the expanded row. Teardown
 writes middleware's defaults back. The third wipes a disk, and a blank disk would
