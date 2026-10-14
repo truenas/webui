@@ -14,4 +14,8 @@ export const topbarLocators = {
   preferences: '[data-test="button-preferences"]',
   /** `<tn-menu-item [testId]="'log-out'">` inside the user menu */
   logOut: '[data-test="button-log-out"]',
+  /** `<tn-icon-button testId="alerts-indicator">`, the bell that opens the alerts panel */
+  alertsIndicator: '[data-test="button-alerts-indicator"]',
+  /** `<tn-icon-button testId="jobs-manager">` in `ix-jobs-indicator`, which opens the jobs panel */
+  jobsIndicator: '[data-test="button-jobs-manager"]',
 } as const;

@@ -695,8 +695,23 @@ holding that widget, and nothing in the suite changes the layout. Editing the
 dashboard, the other widgets, the other reporting tabs, zooming and stepping, the
 audit search, the details panel and the export are not covered.
 
-The framework is done and the coverage is not. A hundred and seventy tests — a
-hundred and sixty-nine journeys and the smoke — against 19 top-level feature areas. What the work
+The topbar's two panels followed, one test each: `tests/alerts-panel.e2e.ts` and
+`tests/jobs-panel.e2e.ts`. Middleware has no public call that raises an alert, so
+the alerts spec runs a rsync task against a host where nothing listens: the run
+fails and raises a critical `RsyncFailed` alert keyed by the task, and deleting
+the task deletes it. The test dismisses that alert from the bell's panel and
+reopens it from the Dismissed filter, asserted in the panel and through
+`alert.list`. The panel folds every `RsyncFailed` alert into one entry, so the
+spec fails at the start if another is on the appliance. The jobs spec opens the
+panel, starts a `sleep 20` cron job over the API, and requires its row first in
+the running list and then in the finished one, with `core.get_jobs` reporting
+SUCCESS. The two lists had no ids, so a row could not say which it was in; they
+are now `list-ongoing-jobs` and `list-finished-jobs`. Dismiss All, the severity
+filters' counts, the smart actions, aborting a job and the job's log dialog are
+not covered.
+
+The framework is done and the coverage is not. A hundred and seventy-two tests — a
+hundred and seventy-one journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.

@@ -80,6 +80,16 @@ export async function ensureCronjobPresent(
 }
 
 /**
+ * Starts a run of a cron job and returns the `cronjob.run` job's id without
+ * waiting for it — for a spec whose subject is watching the job, not the run.
+ */
+export async function startCronRun(client: E2eApiClient, cronjobId: number): Promise<number> {
+  return firstValueFrom(
+    client.api.callAndGetJobId('cronjob.run', [cronjobId]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
  * Every `cronjob.run` job middleware remembers for one cron job, by job id.
  *
  * "Run job" on the card calls `cronjob.run`, which middleware runs as a job of
