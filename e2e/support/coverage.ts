@@ -53,14 +53,14 @@ export class CoverageRecorder {
   private readonly methods = new Set<string>();
   private readonly events = new Set<string>();
   private readonly routes = new Set<string>();
+  private armed = false;
   private recording = false;
 
   /**
-   * Listens from the moment the page exists, but records nothing until
-   * {@link start}. The app's socket is opened during sign-in and `websocket`
-   * only fires for new sockets, so listening has to begin before sign-in even
-   * though counting must not: every authenticated test signs in and lands on the
-   * dashboard, which would otherwise credit the dashboard's calls to all of them.
+   * Listens from the moment the page exists, but records nothing until the
+   * test's first navigation after {@link start}. The app's socket is opened
+   * during sign-in and `websocket` only fires for new sockets, so listening has
+   * to begin before sign-in even though counting must not.
    */
   constructor(page: Page, private readonly uiBaseUrl: string) {
     page.on('websocket', (socket) => {
@@ -71,19 +71,31 @@ export class CoverageRecorder {
       });
     });
     page.on('framenavigated', (frame) => {
-      if (this.recording && frame === page.mainFrame()) {
+      if (this.armed && frame === page.mainFrame()) {
+        this.recording = true;
         this.recordRoute(frame.url());
       }
     });
   }
 
   /**
-   * Starts counting. The page the sign-in landed on is deliberately not recorded:
-   * it is the dashboard for every authenticated test. A route counts once a test
-   * navigates to it, which includes navigating back to the dashboard.
+   * Counts from the test's first navigation, not from here.
+   *
+   * Every authenticated test signs in onto the dashboard, and the dashboard is
+   * still talking to middleware when the shell appears: its widgets mount only
+   * after the saved layout loads, then send their own queries. Starting the count
+   * at a point in time credits whichever of those calls happen to land after it
+   * to every test — 29 of 149 tests claimed `reporting.netdata_get_data` in the
+   * first CI run. A navigation is a point in the *test*: the router updates the
+   * URL only once the new page has replaced the dashboard, whose calls are gone
+   * with it.
+   *
+   * The cost is a test that never navigates — one that works in the topbar on
+   * the dashboard, like the preferences panel — records nothing. For the
+   * unauthenticated project the test's own `goto` is the first navigation.
    */
   start(): void {
-    this.recording = true;
+    this.armed = true;
   }
 
   async save(testInfo: TestInfo): Promise<void> {

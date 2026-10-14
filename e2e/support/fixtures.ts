@@ -276,8 +276,8 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
    * login also gets its own token.
    *
    * It also records what the test exercised for `yarn e2e:coverage`, counting
-   * from after the token sign-in so that the sign-in and the dashboard it lands
-   * on are not credited to every test. See `support/coverage.ts`.
+   * from the test's first navigation so that the sign-in and the dashboard it
+   * lands on are not credited to every test. See `support/coverage.ts`.
    */
   page: async ({
     page, authenticate, api, config,
