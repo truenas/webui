@@ -1,12 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { MailConfig, MailOauthConfig } from 'app/interfaces/mail-config.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { EmailCardComponent } from 'app/pages/system/general-settings/email/email-card/email-card.component';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
 
@@ -29,8 +31,8 @@ describe('EmailCardComponent with SMTP', () => {
   const createComponent = createComponentFactory({
     component: EmailCardComponent,
     providers: [
-      mockApi([
-        mockCall('mail.config', fakeEmailConfig),
+      mockTypedApi([
+        mockTypedCall('mail.config', fakeEmailConfig as unknown as CallResponse<WebUiApiDirectory, 'mail.config'>),
       ]),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -38,8 +40,10 @@ describe('EmailCardComponent with SMTP', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -67,11 +71,11 @@ describe('EmailCardComponent with Gmail OAuth', () => {
   const createComponent = createComponentFactory({
     component: EmailCardComponent,
     providers: [
-      mockApi([
-        mockCall('mail.config', {
+      mockTypedApi([
+        mockTypedCall('mail.config', {
           ...fakeEmailConfig,
           oauth: { client_id: '123', provider: 'gmail' } as MailOauthConfig,
-        }),
+        } as unknown as CallResponse<WebUiApiDirectory, 'mail.config'>),
       ]),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -79,8 +83,10 @@ describe('EmailCardComponent with Gmail OAuth', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
   });
 
   it('shows Email related settings', () => {
@@ -99,11 +105,11 @@ describe('EmailCardComponent with Outlook OAuth', () => {
   const createComponent = createComponentFactory({
     component: EmailCardComponent,
     providers: [
-      mockApi([
-        mockCall('mail.config', {
+      mockTypedApi([
+        mockTypedCall('mail.config', {
           ...fakeEmailConfig,
           oauth: { client_id: '123', provider: 'outlook' } as MailOauthConfig,
-        }),
+        } as unknown as CallResponse<WebUiApiDirectory, 'mail.config'>),
       ]),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -111,8 +117,10 @@ describe('EmailCardComponent with Outlook OAuth', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
   });
 
   it('shows Email related settings', () => {

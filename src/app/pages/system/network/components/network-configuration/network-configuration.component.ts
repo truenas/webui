@@ -8,19 +8,18 @@ import {
   TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
   TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { map, of } from 'rxjs';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { arrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextNetworkConfiguration } from 'app/helptext/network/configuration/configuration';
 import {
-  NetworkConfiguration,
-  NetworkConfigurationActivity,
+  NetworkConfiguration, NetworkConfigurationActivity, toNetworkConfiguration,
 } from 'app/interfaces/network-configuration.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ipv4Validator, ipv6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -59,7 +58,7 @@ export type UiNetworkActivityType = NetworkActivityType | SpecificActivityType;
   ],
 })
 export class NetworkConfigurationComponent extends IxFormHostForm implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private fb = inject(NonNullableFormBuilder);
   private systemGeneralService = inject(SystemGeneralService);
   private store$ = inject<Store<AppState>>(Store);
@@ -276,7 +275,7 @@ export class NetworkConfigurationComponent extends IxFormHostForm implements OnI
 
   private loadConfig(): void {
     this.loadFormConfig(
-      this.api.call('network.configuration.config'),
+      this.api.call('network.configuration.config').pipe(map(toNetworkConfiguration)),
       (config: NetworkConfiguration) => {
         const transformed = {
           hostname: config.hostname,

@@ -15,11 +15,11 @@ import {
   TnTableColumnDirective,
   TnTableComponent,
 } from '@truenas/ui-components';
-import { from, switchMap } from 'rxjs';
+import { from, map, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { Tunable } from 'app/interfaces/tunable.interface';
+import { toTunable, Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
@@ -30,7 +30,7 @@ import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { tunableCardElements } from 'app/pages/system/advanced/tunable/tunable-card/tunable-card.elements';
 import { getTunableFormConfig } from 'app/pages/system/advanced/tunable/tunable-form/tunable.form-config';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -60,7 +60,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 export class TunableCardComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialog = inject(DialogService);
   private firstTimeWarning = inject(FirstTimeWarningService);
   private formPanel = inject(FormSidePanelService);
@@ -97,7 +97,10 @@ export class TunableCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const tunables$ = this.api.call('tunable.query').pipe(takeUntilDestroyed(this.destroyRef));
+    const tunables$ = this.api.query('tunable.query').pipe(
+      map((tunables) => tunables.map(toTunable)),
+      takeUntilDestroyed(this.destroyRef),
+    );
     this.dataProvider = new AsyncDataProvider<Tunable>(tunables$);
     this.loadItems();
   }

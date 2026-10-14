@@ -5,16 +5,18 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import { TnFormListHarness, TnInputHarness } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { WarningComponent } from 'app/modules/warning/warning.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -22,7 +24,7 @@ describe('AllowedAddressesComponent', () => {
   let spectator: Spectator<AllowedAddressesFormComponent>;
   let closedSpy: jest.SpyInstance;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
   const createComponent = createComponentFactory({
     component: AllowedAddressesFormComponent,
     imports: [
@@ -30,12 +32,12 @@ describe('AllowedAddressesComponent', () => {
     ],
     providers: [
       ...ixFormTestingProviders(),
-      mockApi([
-        mockCall('system.general.update'),
-        mockCall('system.general.ui_restart'),
-        mockCall('system.general.config', {
+      mockTypedApi([
+        mockTypedCall('system.general.update', null),
+        mockTypedCall('system.general.ui_restart', null),
+        mockTypedCall('system.general.config', {
           ui_allowlist: ['1.1.1.1/32'],
-        } as SystemGeneralConfig),
+        } as SystemGeneralConfig as unknown as CallResponse<WebUiApiDirectory, 'system.general.config'>),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -52,11 +54,13 @@ describe('AllowedAddressesComponent', () => {
     return (await loader.getAllHarnesses(TnInputHarness))[index];
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
     closedSpy = jest.spyOn(spectator.component.closed, 'emit');
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
+    await spectator.fixture.whenStable();
+    spectator.detectComponentChanges();
   });
 
   it('shows allowed addresses when editing a form', async () => {
@@ -69,6 +73,7 @@ describe('AllowedAddressesComponent', () => {
     // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     spectator.detectChanges();
 
@@ -83,6 +88,7 @@ describe('AllowedAddressesComponent', () => {
     // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     spectator.detectChanges();
 
@@ -91,9 +97,10 @@ describe('AllowedAddressesComponent', () => {
     ]);
   });
 
-  it('closes the form normally when no changes are made', () => {
+  it('closes the form normally when no changes are made', async () => {
     // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
     spectator.component.submit();
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
 
     expect(api.call).not.toHaveBeenCalledWith('system.general.update');
@@ -111,7 +118,7 @@ describe('AllowedAddressesComponent', () => {
     });
 
     it('shows a warning when user changes form from no addresses to some addresses', async () => {
-      const mockedApi = spectator.inject(MockApiService);
+      const mockedApi = spectator.inject(MockTypedApiService);
       mockedApi.mockCall('system.general.config', {
         ui_allowlist: [],
       } as SystemGeneralConfig);
@@ -141,18 +148,20 @@ describe('AllowedAddressesComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
       expect(systemGeneralService.handleUiServiceRestart).toHaveBeenCalled();
     });
 
-    it('should not call SystemGeneralService.handleUiServiceRestart when no changes are made', () => {
+    it('should not call SystemGeneralService.handleUiServiceRestart when no changes are made', async () => {
       const systemGeneralService = spectator.inject(SystemGeneralService);
 
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
@@ -166,6 +175,7 @@ describe('AllowedAddressesComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
@@ -181,6 +191,7 @@ describe('AllowedAddressesComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
@@ -196,6 +207,7 @@ describe('AllowedAddressesComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
@@ -212,6 +224,7 @@ describe('AllowedAddressesComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
@@ -233,6 +246,7 @@ describe('AllowedAddressesComponent', () => {
       await (await getAddressInput()).setValue('7.7.7.7');
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
@@ -252,6 +266,7 @@ describe('AllowedAddressesComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 

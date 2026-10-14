@@ -13,7 +13,7 @@ import {
   IxFormComponent,
   SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Component({
   selector: 'ix-license',
@@ -31,7 +31,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 export class LicenseComponent {
   private fb = inject(FormBuilder);
   private dialogService = inject(DialogService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private window = inject<Window>(WINDOW);
 

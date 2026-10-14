@@ -4,10 +4,10 @@ import { Role } from 'app/enums/role.enum';
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 export function getJbofFormConfig(
-  api: ApiService,
+  api: TypedApiService,
   translate: TranslateService,
   editingJbof: Jbof | undefined,
 ): FormDefinition<Jbof> {

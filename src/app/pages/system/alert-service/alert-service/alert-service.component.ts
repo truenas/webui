@@ -21,7 +21,7 @@ import { alertServiceNames, AlertServiceType } from 'app/enums/alert-service-typ
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextAlertService } from 'app/helptext/system/alert-service';
-import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
+import { AlertService, AlertServiceEdit, toAlertServiceCreateArgs } from 'app/interfaces/alert-service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
@@ -31,7 +31,7 @@ import {
   SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   AwsSnsServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/aws-sns-service/aws-sns-service.component';
@@ -83,7 +83,7 @@ import {
 })
 export class AlertServiceComponent implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private errorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
@@ -232,7 +232,7 @@ export class AlertServiceComponent implements OnInit {
     this.testAlertLoading.set(true);
     const payload = this.generatePayload();
 
-    this.api.call('alertservice.test', [payload])
+    this.api.call('alertservice.test', [toAlertServiceCreateArgs(payload)])
       .pipe(
         finalize(() => this.testAlertLoading.set(false)),
         takeUntilDestroyed(this.destroyRef),
@@ -258,8 +258,8 @@ export class AlertServiceComponent implements OnInit {
     const payload = this.generatePayload();
 
     const request$ = this.existingAlertService
-      ? this.api.call('alertservice.update', [this.existingAlertService.id, payload])
-      : this.api.call('alertservice.create', [payload]);
+      ? this.api.call('alertservice.update', [this.existingAlertService.id, toAlertServiceCreateArgs(payload)])
+      : this.api.call('alertservice.create', [toAlertServiceCreateArgs(payload)]);
 
     return {
       request$,

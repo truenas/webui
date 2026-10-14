@@ -22,7 +22,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 @Component({
@@ -44,7 +44,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
   ],
 })
 export class InitShutdownFormComponent extends IxFormHostForm implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   private filesystemService = inject(FilesystemService);

@@ -8,13 +8,14 @@ import {
   TnCheckboxHarness, TnDialog, TnFileInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/components/manual-update-form/manual-update-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -31,15 +32,15 @@ describe('ManualUpdateFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockCall('pool.query', [
+      mockTypedApi([
+        mockTypedQuery('pool.query', [
           {
             name: 'pool2',
           } as Pool,
-        ]),
-        mockCall('failover.licensed'),
-        mockCall('core.get_jobs'),
-        mockCall('auth.set_attribute'),
+        ] as unknown as WebUiQueryEntity<'pool.query'>[]),
+        mockTypedCall('failover.licensed', null),
+        mockTypedQuery('core.get_jobs', []),
+        mockTypedCall('auth.set_attribute', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

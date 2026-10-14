@@ -5,9 +5,9 @@ import { TreeModule } from '@bugsplat/angular-tree-component';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
@@ -20,7 +20,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 describe('InitShutdownFormComponent', () => {
   let spectator: Spectator<InitShutdownFormComponent>;
   let loader: HarnessLoader;
-  let api: MockApiService;
+  let api: MockTypedApiService;
 
   const createComponent = createComponentFactory({
     component: InitShutdownFormComponent,
@@ -30,9 +30,9 @@ describe('InitShutdownFormComponent', () => {
     ],
     providers: [
       ...ixFormTestingProviders(),
-      mockApi([
-        mockCall('initshutdownscript.create'),
-        mockCall('initshutdownscript.update'),
+      mockTypedApi([
+        mockTypedCall('initshutdownscript.create', null),
+        mockTypedCall('initshutdownscript.update', null),
       ]),
       mockProvider(SystemGeneralService),
       mockProvider(FilesystemService, {
@@ -62,7 +62,7 @@ describe('InitShutdownFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(MockApiService);
+      api = spectator.inject(MockTypedApiService);
     });
 
     it('saves values for new script when form is being submitted', async () => {
@@ -75,6 +75,7 @@ describe('InitShutdownFormComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
@@ -99,6 +100,7 @@ describe('InitShutdownFormComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
@@ -129,7 +131,7 @@ describe('InitShutdownFormComponent', () => {
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(MockApiService);
+      api = spectator.inject(MockTypedApiService);
     });
 
     it('shows current values when form is being edited', async () => {
@@ -151,6 +153,7 @@ describe('InitShutdownFormComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 

@@ -27,17 +27,21 @@ import { DockerStatus } from 'app/enums/docker-status.enum';
 import { PasswordComplexityRuleset, passwordComplexityRulesetLabels } from 'app/enums/password-complexity-ruleset.enum';
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { toAuthSession } from 'app/interfaces/auth-session.interface';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
-import { QueryParams } from 'app/interfaces/query-api.interface';
-import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
+import { toDockerStatusData } from 'app/interfaces/docker-config.interface';
+import { toLoggedInUser } from 'app/interfaces/ds-cache.interface';
+import {
+  SystemSecurityConfig, toSystemSecurityConfig, toSystemSecurityUpdateArgs,
+} from 'app/interfaces/system-security-config.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
-import { User } from 'app/interfaces/user.interface';
+import { toUser, User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import {
   getGlobalTwoFactorFormConfig,
@@ -127,7 +131,7 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private store$ = inject(Store);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private authService = inject(AuthService);
   private errorHandler = inject(ErrorHandlerService);
   private formPanel = inject(FormSidePanelService);
@@ -192,7 +196,7 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
     // Wired before the load, so a retried `loadFormConfig` can't register a second listener.
     this.watchStigToggle();
 
-    this.loadFormConfig(this.api.call('system.security.config'), (config) => {
+    this.loadFormConfig(this.api.call('system.security.config').pipe(map(toSystemSecurityConfig)), (config) => {
       this.systemSecurityConfig.set(config);
       this.initSystemSecurityForm();
       if (config.enable_gpos_stig) {
@@ -228,15 +232,17 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
       tap((twoFactorConfig) => this.twoFactorConfig.set(twoFactorConfig)),
       map((twoFactorConfig): Partial<StigEnablementRequirements> => ({
         twoFactorAuthGloballyEnabled: twoFactorConfig.enabled,
-        twoFactorSshGloballyEnabled: twoFactorConfig.services ? twoFactorConfig.services.ssh : false,
+        twoFactorSshGloballyEnabled: twoFactorConfig.services.ssh ?? false,
       })),
     );
     const dockerServiceConfig$ = this.api.call('docker.status').pipe(
+      map(toDockerStatusData),
       map((dockerServiceConfig): Partial<StigEnablementRequirements> => ({
         dockerServiceDisabled: dockerServiceConfig.status === DockerStatus.Unconfigured,
       })),
     );
-    const userConfig$ = this.api.call('user.query', [[['local', '=', true]]]).pipe(
+    const userConfig$ = this.api.query('user.query', [['local', '=', true]]).pipe(
+      map((users) => users.map(toUser)),
       map((userConfig): Partial<StigEnablementRequirements> => {
         const rootUser: User | undefined = userConfig.find((user) => user.username === 'root');
         const truenasAdminUser: User | undefined = userConfig.find((user) => user.username === 'truenas_admin');
@@ -247,20 +253,20 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
         };
       }),
     );
-    const user2faConfig$ = this.api.call('user.query', [[
+    const user2faConfig$ = this.api.query('user.query', [
       ['builtin', '=', false],
       ['twofactor_auth_configured', '=', false],
       ['locked', '=', false],
       ['password_disabled', '=', false],
       ['roles', '!=', []],
-    ]]).pipe(
+    ]).pipe(
       map((user2faConfig): Partial<StigEnablementRequirements> => ({
         allUsersHave2fa: user2faConfig.length === 0,
       })),
     );
     const userAuthDetails$ = forkJoin([
-      this.api.call('auth.me'),
-      this.api.call('auth.sessions'),
+      this.api.call('auth.me').pipe(map(toLoggedInUser)),
+      this.api.query('auth.sessions').pipe(map((sessions) => sessions.map(toAuthSession))),
     ]).pipe(
       map(([myUser, sessionsList]) => ({
         user: myUser,
@@ -543,14 +549,14 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
 
   /** Resolves false when the user backs out of enabling STIG over users who would lose access. */
   private confirmStigLockout(): Observable<boolean> {
-    return this.api.call('user.query', [[
+    return this.api.query('user.query', [
       ['builtin', '=', false],
       ['twofactor_auth_configured', '=', false],
       ['locked', '=', false],
       ['password_disabled', '=', false],
       ['roles', '!=', []],
-    ]] as QueryParams<User>).pipe(
-      switchMap((users) => (users.length > 0 ? this.showStigWarningDialog(users) : of(true))),
+    ]).pipe(
+      switchMap((users) => (users.length > 0 ? this.showStigWarningDialog(users.map(toUser)) : of(true))),
     );
   }
 
@@ -583,7 +589,7 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
     this.rebootInfoSuppression.suppress();
 
     return this.dialogService.jobDialog(
-      this.api.job('system.security.update', [valuesToSave]),
+      this.api.job('system.security.update', [toSystemSecurityUpdateArgs(valuesToSave)]),
       {
         title: this.translate.instant('Saving settings'),
       },

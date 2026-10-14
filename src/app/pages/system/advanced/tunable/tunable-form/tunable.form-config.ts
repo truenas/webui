@@ -1,14 +1,16 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
+import { map } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemTunable as helptext } from 'app/helptext/system/tunable';
-import { Tunable } from 'app/interfaces/tunable.interface';
+import { Choices } from 'app/interfaces/choices.interface';
+import { Tunable, TunableCreateArgs } from 'app/interfaces/tunable.interface';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 export function getTunableFormConfig(
-  api: ApiService,
+  api: TypedApiService,
   translate: TranslateService,
   editingTunable: Tunable | undefined,
 ): FormDefinition<Tunable> {
@@ -25,7 +27,11 @@ export function getTunableFormConfig(
         label: T('Type'),
         required: true,
         disabled: !!editingTunable,
-        options: api.call('tunable.tunable_type_choices').pipe(choicesToOptions()),
+        options: api.call('tunable.tunable_type_choices').pipe(
+          // Middleware declares a fixed set of keys, which an interface without an index signature cannot be read as.
+          map((choices): Choices => ({ ...choices })),
+          choicesToOptions(),
+        ),
       },
       {
         name: 'var',
@@ -67,7 +73,8 @@ export function getTunableFormConfig(
               },
             ])
           : api.job('tunable.create', [{
-              type: values.type,
+              // The type select holds a value from `tunable.tunable_type_choices`.
+              type: values.type as TunableCreateArgs['type'],
               var: values.var,
               value: values.value,
               comment: values.comment,

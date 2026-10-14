@@ -24,6 +24,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
+import { toCronjob } from 'app/interfaces/cronjob.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -35,7 +36,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { mapTnSortToTableSort, memoizedRowTag } from 'app/modules/tn-table/utils';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CronDeleteDialog } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { cronElements } from 'app/pages/system/advanced/cron/cron-list/cron-list.elements';
@@ -69,7 +70,7 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class CronListComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private taskService = inject(TaskService);
   private dialog = inject(DialogService);
@@ -107,9 +108,9 @@ export class CronListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const cronjobs$ = this.api.call('cronjob.query').pipe(
+    const cronjobs$ = this.api.query('cronjob.query').pipe(
       map((cronjobs) => {
-        return cronjobs.map((job): CronjobRow => ({
+        return cronjobs.map(toCronjob).map((job): CronjobRow => ({
           ...job,
           next_run: this.taskService.getTaskNextRun(scheduleToCrontab(job.schedule)),
         }));
@@ -146,7 +147,7 @@ export class CronListComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.api.call('cronjob.run', [row.id])),
+      switchMap(() => this.api.startJob('cronjob.run', [row.id])),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {

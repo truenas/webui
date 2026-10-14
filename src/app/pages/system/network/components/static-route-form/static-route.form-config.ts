@@ -5,10 +5,10 @@ import { helptextStaticRoutes } from 'app/helptext/network/static-routes/static-
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
 import { ipv4or6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 export function getStaticRouteFormConfig(
-  api: ApiService,
+  api: TypedApiService,
   translate: TranslateService,
   editingRoute: StaticRoute | undefined,
 ): FormDefinition<UpdateStaticRoute> {

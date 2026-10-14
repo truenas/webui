@@ -38,7 +38,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { systemManualUpdateFormElements } from 'app/pages/system/update/components/manual-update-form/manual-update-form.elements';
 import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code.constant';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -77,7 +77,7 @@ export class ManualUpdateFormComponent implements OnInit {
   protected router = inject(Router);
   private systemService = inject(SystemGeneralService);
   private formBuilder = inject(NonNullableFormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);
@@ -132,7 +132,7 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   private setPoolOptions(): void {
-    this.api.call('pool.query').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((pools) => {
+    this.api.query('pool.query').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((pools) => {
       if (!pools) {
         return;
       }
@@ -160,7 +160,7 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   private checkForUpdateRunning(): void {
-    this.api.call('core.get_jobs', [[['method', '=', 'failover.upgrade'], ['state', '=', JobState.Running]]])
+    this.api.query('core.get_jobs', [['method', '=', 'failover.upgrade'], ['state', '=', JobState.Running]])
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (jobs) => {
           if (jobs && jobs.length > 0) {

@@ -518,6 +518,90 @@ flow asserts there is exactly one. Teardown destroys the pool if it was
 imported and wipes its disk if it was not. Locked SED disks and a pool with an
 encrypted root are not covered.
 
+Zvols came next, in `tests/zvols.e2e.ts`: creating one from Add Zvol on the
+Datasets page, growing one and setting its Sync from Edit Zvol on the details card,
+and deleting one with the dialog fully confirmed. Each is asserted on screen and
+through `pool.dataset.query`, where the size is checked in bytes and Sync has to
+read `LOCAL`. Edit and delete each run beside a second zvol that must come through
+untouched. The form's ZFS properties are inline editables whose trigger id is
+built from the value they show, so the spec opens them by their `text-<field>`
+view instead. Encryption, the block size, shrinking (which the form refuses) and
+the read-only/size interaction are not covered.
+
+User and group quotas came next, in `tests/dataset-quotas.e2e.ts`: setting,
+changing and removing a quota, once for users and once for groups, on a dataset
+of the spec's own, reached from the Manage links on the Space Management card.
+The two pages are one component routed twice, so each story runs per kind. Each
+is asserted in the list and through `pool.dataset.get_quota`, where the data
+quota typed as `1 GiB` has to arrive as bytes. Changing and removing each run
+beside a second principal whose own quota must come through untouched. The
+search, "Show all", Remove Invalid Quotas, unsetting both quotas from the edit
+form, and quotas for directory-service accounts are not covered.
+
+A dataset's Unix permissions came next, in `tests/dataset-permissions.e2e.ts`:
+changing the owner, the group and the mode in the Unix Permissions Editor, which
+Edit on the Permissions card opens while the dataset's ACL is trivial. Each is
+asserted on the card the app returns to and through `filesystem.stat`, and each
+checks that the other two came through unchanged. The dataset is the spec's own,
+and every test starts it from one owner, group and mode with the ACL stripped,
+set over `filesystem.setperm`. The card names each entry after its owner or
+group, so its ids change with them. The ACL editor, presets, and applying
+permissions recursively are not covered.
+
+Encrypted datasets came next, in `tests/datasets-encryption.e2e.ts`: creating a
+dataset encrypted with a passphrase from the form's Encryption Options, locking
+one from the Encryption card, and unlocking one from the card's Unlock page
+through both summary dialogs. Each is asserted on the card's Current State and
+through `pool.dataset.query`, which says whether the key is really loaded. Every
+dataset is its own encryption root with a passphrase, because the card shows
+Lock only on a root and disables it there without one. The lock and unlock tests start from one made over the API.
+Writing it turned up a `data-test` collision: the Lock dialog's own button emits
+`button-lock`, the same as the card's behind it. Rather than rename either, the
+dialog's action row now carries `actions-lock-dataset`, and the locator selects
+the button inside it. Key encryption, unlocking from a key file, child datasets
+that inherit encryption, Edit on the card, and exporting keys are not covered.
+
+Rsync tasks came next, in `tests/rsync-tasks.e2e.ts`: adding, editing and
+deleting a task from the card on Data Protection, each asserted on the card and
+through `rsynctask.query`, which holds the remote end, the direction, the
+schedule and the transfer options the card does not show. Edit and delete each
+run beside a second task that must come through untouched. Every task is in
+Module mode against `127.0.0.1`, where no rsync daemon listens: middleware
+connects to nothing on save in that mode, and a task that fires before teardown
+fails without touching data. The row tag is `card-rsync-task-<path>-<host>`, so
+each task syncs a dataset of its own and the edit leaves both alone. The card
+lists four tasks and its View All leaves for the full list, so each test fails at
+the start if its rows would not fit. SSH mode, Run job, the Enabled switch and
+the full list page are not covered.
+
+Local replication followed, in `tests/replication-tasks.e2e.ts`: creating a task
+between two datasets on the same appliance through the card's wizard, with Run
+Once, and running a task from the card's row menu. Both assert the task through
+`replication.query`, the run through `core.get_jobs`, and the outcome through
+`pool.snapshot.query`, because the target holding the source's snapshots is the
+point of a replication and nothing on the screen shows it. Run Once is the one
+path where the UI does every step itself: it snapshots the empty source, saves the
+task and starts it. The run from the card sits beside a second task that must not
+run. No target dataset is made in advance, so a target that exists afterwards is
+evidence of a run. Middleware hands a deleted task's id to the next task and keeps
+finished jobs, so runs are counted only from jobs that did not exist before the
+action. Scheduled tasks and the periodic snapshot task the wizard makes for them,
+remote and SSH replication, encryption, Edit, Restore, Delete and the full list
+page are not covered.
+
+Privileges came next, in `tests/privileges.e2e.ts`: adding, editing and deleting
+a privilege from the list on Credentials > Privileges, each asserted on the list
+and through `privilege.query`, which holds the roles' wire values and the groups
+themselves where the list shows labels and a count. Edit and delete each run
+beside a second privilege that must come through untouched. The edited privilege
+names a local group of the spec's own, made over the API, and the edit leaves it
+alone: the form shows groups by name and resolves them back to gids on save, so
+the same gid has to come back. Roles is a multiple select whose panel stays open,
+so the flow closes it with Escape and checks the side panel did not close too.
+The row tag is `privilege-<name>` and the edit leaves the name alone. Picking a
+group in the form, directory-service groups, the Enable DS Authentication prompt,
+built-in privileges and the search are not covered.
+
 Scrubbing a pool came next, in `tests/pool-scrub.e2e.ts`: one test starts a
 scrub from Scrub Now on the pool's Storage Health card and waits for it to
 finish. `pool.query` has to report a finished `SCRUB` with no errors. The card
@@ -530,8 +614,8 @@ Disconnect's, because the dashboard shows one per pool. Pause, Resume
 and Stop are not covered: a scrub of an empty pool ends before they can be
 clicked. The scheduled scrub form is not covered either.
 
-The framework is done and the coverage is not. A hundred and thirty-two tests — a
-hundred and thirty-one journeys and the smoke — against 19 top-level feature areas. What the work
+The framework is done and the coverage is not. A hundred and fifty-five tests — a
+hundred and fifty-four journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.

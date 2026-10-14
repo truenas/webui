@@ -1,4 +1,6 @@
+import { CallResponse } from '@truenas/api-client';
 import { UpdateCode } from 'app/enums/system-update.enum';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export interface UpdateParams {
   reboot: boolean;
@@ -65,4 +67,12 @@ export interface UpdateStatus {
   status: UpdateStatusDetails | null;
   error: UpdateStatusError | null;
   update_download_progress: UpdateDownloadProgress | null;
+}
+
+/**
+ * Reads `update.status`. Middleware spells `code` as a literal, declares the new version's `manifest` as a loose
+ * record, and types `release_notes` as nullable.
+ */
+export function toUpdateStatus(status: CallResponse<WebUiApiDirectory, 'update.status'>): UpdateStatus {
+  return status as unknown as UpdateStatus;
 }

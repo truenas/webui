@@ -13,13 +13,13 @@ import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnIconComponent, TnInputComponent,
   TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { map, of } from 'rxjs';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { productTypeLabels } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemEmail } from 'app/helptext/system/email';
 import {
-  MailConfig, MailConfigUpdate, MailOauthConfig, MailSendMethod,
+  MailConfig, MailConfigUpdate, MailOauthConfig, MailSendMethod, toMailConfig,
 } from 'app/interfaces/mail-config.interface';
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
 import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
@@ -35,7 +35,7 @@ import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-vali
 import { portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectProductType } from 'app/store/system-info/system-info.selectors';
@@ -62,7 +62,7 @@ import { selectProductType } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class EmailFormComponent extends IxFormHostForm implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
@@ -202,7 +202,7 @@ export class EmailFormComponent extends IxFormHostForm implements OnInit {
     // load-failure latch (which blocks Save over defaults the user never saw) and the snapshot.
     const preloaded = this.config();
     this.loadFormConfig(
-      preloaded ? of(preloaded) : this.api.call('mail.config'),
+      preloaded ? of(preloaded) : this.api.call('mail.config').pipe(map(toMailConfig)),
       (config) => this.initEmailForm(config),
     );
   }

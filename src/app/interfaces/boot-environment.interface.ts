@@ -1,4 +1,5 @@
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export interface BootEnvironment {
   /**
@@ -53,7 +54,7 @@ export type BootenvCloneParams = [{
   target: string;
 }];
 
-export type BootenvKeepParams = [{
-  id: string;
-  value: boolean;
-}];
+/** Reads a `boot.environment.query` row. `created` arrives as a `{ $date }` envelope, typed as a string (gap 15). */
+export function toBootEnvironment(environment: WebUiQueryEntity<'boot.environment.query'>): BootEnvironment {
+  return environment as unknown as BootEnvironment;
+}

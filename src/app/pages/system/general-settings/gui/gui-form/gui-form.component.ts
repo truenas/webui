@@ -14,8 +14,9 @@ import { filter, switchMap, take } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
-import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
-import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
+import {
+  SystemGeneralConfig, SystemGeneralConfigUpdate, toSystemGeneralUpdateArgs,
+} from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
 import {
@@ -24,8 +25,8 @@ import {
   SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { ConnectionService } from 'app/modules/websocket/connection.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -53,7 +54,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 export class GuiFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private sysGeneralService = inject(SystemGeneralService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private connection = inject(ConnectionService);
   private wsStatus = inject(WebSocketStatusService);
   private dialog = inject(DialogService);
@@ -112,7 +113,7 @@ export class GuiFormComponent implements OnInit {
     this.api.call('system.security.config').pipe(
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((config: SystemSecurityConfig) => {
+    ).subscribe((config) => {
       const isStigMode = config.enable_gpos_stig;
       this.isStigMode.set(isStigMode);
 
@@ -156,7 +157,7 @@ export class GuiFormComponent implements OnInit {
     return {
       request$: redirectConfirm$.pipe(
         filter(Boolean),
-        switchMap(() => this.api.call('system.general.update', [params])),
+        switchMap(() => this.api.call('system.general.update', [toSystemGeneralUpdateArgs(params)])),
       ),
       successMessage: this.translate.instant('Settings saved.'),
       onSuccess: () => this.handleServiceRestart(params),

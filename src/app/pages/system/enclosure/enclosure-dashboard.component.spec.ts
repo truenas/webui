@@ -8,8 +8,8 @@ import {
 import { TnButtonHarness, TnDialog, TnEmptyHarness, TnSpinnerComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import {
   EnclosureDashboardComponent,
@@ -35,8 +35,8 @@ describe('EnclosureDashboardComponent', () => {
       }),
     ],
     providers: [
-      mockApi([
-        mockCall('jbof.licensed', 5),
+      mockTypedApi([
+        mockTypedCall('jbof.licensed', 5),
       ]),
       mockProvider(TnDialog),
       mockAuth(),
@@ -125,8 +125,8 @@ describe('EnclosureDashboardComponent (unlicensed)', () => {
       }),
     ],
     providers: [
-      mockApi([
-        mockCall('jbof.licensed', 0),
+      mockTypedApi([
+        mockTypedCall('jbof.licensed', 0),
       ]),
       mockProvider(TnDialog),
       mockAuth(),

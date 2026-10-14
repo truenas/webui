@@ -4,10 +4,10 @@ import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 export function getReplicationSettingsFormConfig(
-  api: ApiService,
+  api: TypedApiService,
   translate: TranslateService,
 ): FormDefinition<ReplicationConfig> {
   return {

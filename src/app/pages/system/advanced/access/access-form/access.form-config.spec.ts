@@ -2,14 +2,14 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { FormSubmitEvent } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { getAccessFormConfig, AccessFormValues } from 'app/pages/system/advanced/access/access-form/access.form-config';
 import { advancedConfigUpdated, generalConfigUpdated, loginBannerUpdated } from 'app/store/system-config/system-config.actions';
 
 describe('getAccessFormConfig', () => {
   const allValues = { ds_auth: false, login_banner: 'Welcome' } as AccessFormValues;
 
-  const api = { call: jest.fn(() => of(undefined)) } as unknown as ApiService;
+  const api = { call: jest.fn(() => of(undefined)) } as unknown as TypedApiService;
   const store$ = { dispatch: jest.fn(), pipe: jest.fn() } as unknown as Store;
   const translate = { instant: (key: string) => key } as TranslateService;
 

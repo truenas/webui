@@ -308,7 +308,6 @@
     "./src/app/interfaces/process.interface.ts",
     "./src/app/interfaces/property-path.type.ts",
     "./src/app/interfaces/query-api.interface.ts",
-    "./src/app/interfaces/replication-config-update.interface.ts",
     "./src/app/interfaces/replication-config.interface.ts",
     "./src/app/interfaces/reporting-exporters.interface.ts",
     "./src/app/interfaces/reporting-graph.interface.ts",

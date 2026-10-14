@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
@@ -14,13 +14,13 @@ import {
 } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { LicenseComponent } from './license.component';
 
 describe('LicenseComponent', () => {
   let spectator: Spectator<LicenseComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   const createComponent = createComponentFactory({
     component: LicenseComponent,
@@ -28,8 +28,8 @@ describe('LicenseComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockCall('truenas.license.upload'),
+      mockTypedApi([
+        mockTypedCall('truenas.license.upload', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of()),
@@ -47,7 +47,7 @@ describe('LicenseComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
   });
 
   it('sends a create payload to websocket and closes the panel when submitted', async () => {
@@ -56,6 +56,7 @@ describe('LicenseComponent', () => {
 
     const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(api.call).toHaveBeenCalledWith('truenas.license.upload', ['test-license']);
     expect(closeSpy).toHaveBeenCalledWith(true);
@@ -68,6 +69,7 @@ describe('LicenseComponent', () => {
     await licenseInput.setValue('test-license');
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: helptext.updateLicense.reloadDialogTitle,

@@ -4,9 +4,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -28,19 +28,19 @@ describe('StorageCardComponent', () => {
     component: StorageCardComponent,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('systemdataset.config', {
+      mockTypedApi([
+        mockTypedCall('systemdataset.config', {
           pool: 'tank',
         } as SystemDatasetConfig),
-        mockCall('pool.resilver.config', {
+        mockTypedCall('pool.resilver.config', {
           enabled: true,
           begin: '15:00',
           end: '17:00',
           weekday: [2, 3],
         } as ResilverConfig),
-        mockCall('systemdataset.pool_choices', { tank: 'tank' }),
-        mockJob('systemdataset.update', fakeSuccessfulJob()),
-        mockCall('pool.resilver.update'),
+        mockTypedCall('systemdataset.pool_choices', { tank: 'tank' }),
+        mockTypedJob('systemdataset.update', { state: JobState.Success }),
+        mockTypedCall('pool.resilver.update', null),
       ]),
       mockProvider(SnackbarService),
       mockProvider(FormErrorHandlerService),
@@ -61,8 +61,10 @@ describe('StorageCardComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     formPanel = spectator.inject(FormSidePanelService);
   });

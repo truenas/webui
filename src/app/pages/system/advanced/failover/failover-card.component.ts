@@ -14,7 +14,7 @@ import { Role } from 'app/enums/role.enum';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { failoverCardElements } from 'app/pages/system/advanced/failover/failover-card.elements';
 import { FailoverFormComponent } from 'app/pages/system/advanced/failover/failover-form/failover-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -38,7 +38,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   ],
 })
 export class FailoverCardComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private firstTimeWarning = inject(FirstTimeWarningService);
   private translate = inject(TranslateService);

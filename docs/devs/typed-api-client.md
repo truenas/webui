@@ -698,6 +698,52 @@ above. Each is a change for `truenas/api-client-ts`.
       (`mockCall('sharing.s3.query', () => rows)`) became `connection.autoReply`; and the WebShare validator spec
       lost ICU interpolation with `mockApi()` and moved to `createServiceFactory`.
 
+27. **Drift found moving system.** Handled at one site each:
+    - The query rows are read into the UI interfaces through a `toX` adapter per interface: `toNtpServer`,
+      `toTunable`, `toInitShutdownScript`, `toCronjob`, `toStaticRoute`, `toAlertService`, `toBootEnvironment`,
+      `toJbof`, `toAuthSession` and `toNetworkInterface`. Middleware spells enums as literals and leaves its
+      defaulted fields optional; `boot.environment.query` and `auth.sessions` carry gap 15's `{ $date }` envelopes.
+      The config reads have one each: `toMailConfig`, `toResilverConfig`, `toNetworkConfiguration`,
+      `toUpdateStatus`, `toAlertCategories`, `toLoggedInUser` (`auth.me`) and `toBootPoolInstance`
+      (`boot.get_state`, which declares none of the `id`, `guid` or encryption fields `PoolInstance` names).
+    - `system.security.config` sends `password_complexity_ruleset` in the `{ $set: [...] }` envelope middleware's
+      JSON encoder writes for a Python set, and the form and card read `.$set`; the generated model declares a plain
+      list. `toSystemSecurityConfig` reads the wire shape and `toSystemSecurityUpdateArgs` hands the update over
+      unchanged, envelope included. `auth.me`'s privilege roles are the same envelope.
+    - `auth.sessions` and `core.get_jobs` are query methods without the `.query` suffix, and `ipmi.lan.query` is the
+      reverse: it takes its filters inside one object, next to `ipmi-options`, so it stays a `call` and
+      `toIpmiChannels` reads its rows. The codemod gets all three wrong; script them by hand.
+    - `cronjob.run` is a job in every generated directory, which the legacy client called and got a job id back.
+      It is started with `startJob`, which sends the same frame. `ipmi.sel.elist` is a job there too, but
+      NAS-141809 moved the IPMI events dialog from `job` to `call` to make events show at all, so the dialog keeps
+      `ApiService` and the request is unchanged until a box settles which is right.
+    - `interface.network_config_to_be_removed` is declared as a list of setting names, while the default gateway
+      dialog has always read their values off an object. `toNetworkConfigToBeRemoved` keeps the request and the
+      reading as they were; worth a box check.
+    - Payloads typed more loosely than the generated inputs go through an adapter unchanged:
+      `system.advanced.update` caps `syslogservers` at two and narrows `serialspeed` (`toAdvancedConfigUpdateArgs`),
+      `system.general.update` wants non-empty address lists and literal protocols (`toSystemGeneralUpdateArgs`),
+      `interface.create` / `update` narrow the protocols and hash policies (`toNetworkInterfaceCreateArgs`),
+      `ipmi.lan.update` is one shape per `dhcp` (`toIpmiUpdateArgs`), and `alertservice.*` takes `attributes` as one
+      model per service type (`toAlertServiceCreateArgs`). `GlobalTwoFactorConfig`, `MailConfigUpdate` and the
+      tunable's create args alias the generated types; `tunable.tunable_type_choices` and the interface form's
+      hash policy and LACPDU rate choices declare fixed keys and are copied into `Choices` first.
+    - `core.download` is declared as `unknown[]`; the debug button reads the `[jobId, url]` pair as
+      `CoreDownloadResponse`, as `DownloadService` does. `core.bulk` answers in the order given, so the boot
+      environment delete dialog reads its rows by index from the arguments it sent.
+    - The legacy directory lost 116 entries: every `system.*`, `alertservice.*`, `boot.*`, `cronjob.*`,
+      `initshutdownscript.*`, `interface.*`, `ipmi.*` (but `ipmi.sel.*`), `jbof.*`, `mail.*`, `staticroute.*`,
+      `support.*`, `tunable.*` and `update.*` entry this area was the last to use, with `docker.status`,
+      `disk.details` and `core.bulk`, plus the types only the directory read: `replication-config-update.interface.ts`,
+      the init/shutdown, NTP, cron job, static route, resilver, failover, system dataset and network configuration
+      update shapes, the IPMI chassis params and `SendMailParams`. `UpdateComponent` computed the manual update link
+      from a `toSignal` with no initial value, which the synchronous legacy mocks never let render before
+      `webui.main.dashboard.sys_info` answered; it now tolerates the version being unknown.
+    - Spec traps: the codemod again split two specs' mock lists (the boot pool attach and replace dialogs), and a
+      default `mockTypedJob('core.bulk')` collided with each test scripting its own. Several OnPush forms patched in
+      a subscription need `detectComponentChanges()` after settling, not `detectChanges()`; and the update page's
+      header runs the fake progress bar's interval while loading, so its spec mocks `PageHeaderComponent`.
+
 ## Version policy
 
 `WebUiApiDirectory` pins `v28.0.0`. The literal must stay at the

@@ -4,8 +4,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
@@ -21,8 +21,8 @@ describe('SelfEncryptingDriveCardComponent', () => {
     component: SelfEncryptingDriveCardComponent,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('system.advanced.sed_global_password', '12345678'),
+      mockTypedApi([
+        mockTypedCall('system.advanced.sed_global_password', '12345678'),
       ]),
       provideMockStore({
         selectors: [
@@ -43,8 +43,10 @@ describe('SelfEncryptingDriveCardComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

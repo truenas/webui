@@ -13,11 +13,12 @@ import { catchError, map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextNetworkConfiguration } from 'app/helptext/network/configuration/configuration';
+import { NetworkConfigToBeRemoved } from 'app/interfaces/network-interface.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -38,7 +39,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DefaultGatewayDialog implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
   protected dialogRef = inject<DialogRef<unknown, DefaultGatewayDialog>>(DialogRef);
@@ -46,12 +47,7 @@ export class DefaultGatewayDialog implements OnInit {
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);
-  data = inject<{
-    ipv4gateway?: string;
-    nameserver1?: string;
-    nameserver2?: string;
-    nameserver3?: string;
-  }>(DIALOG_DATA);
+  data = inject<NetworkConfigToBeRemoved>(DIALOG_DATA);
 
   private destroyRef = inject(DestroyRef);
 
