@@ -642,8 +642,24 @@ pager, so each test fails at the start if its rows would not fit. Importing a
 CSR, profiles, extensions, Edit, Download, ACME certificates, the Certificates
 card itself and ACME DNS authenticators are not covered.
 
-The framework is done and the coverage is not. A hundred and fifty-nine tests — a
-hundred and fifty-eight journeys and the smoke — against 19 top-level feature areas. What the work
+iSCSI shares followed, in `tests/iscsi-shares.e2e.ts`: creating a share with the
+iSCSI Wizard from the Block (iSCSI) Shares Targets card on the Shares dashboard,
+and deleting a target from its row there. The wizard makes a new zvol, an extent
+on it, a new portal listening on `0.0.0.0`, an initiator group, a target, and the
+association between target and extent, all named after the share. So the create
+is asserted record by record through the `iscsi.*` queries and
+`pool.dataset.query`, including the links between them. The delete ticks "Delete
+associated extents" and runs beside a second target that must come through
+untouched. The extent has to go and the zvol has to stay. The row tag is
+`card-iscsi-target-<name>` through lodash, so `e2e` reads `e-2-e` in every id
+on the row. The card lists four targets before its pager, so each test fails at
+the start if its rows would not fit. Teardown finds the portal and initiator
+group by the `comment` the wizard gives them. File extents, existing targets,
+portals and zvols in the wizard, initiators, Fibre Channel, Edit, the global
+configuration, the standalone pages and a real initiator login are not covered.
+
+The framework is done and the coverage is not. A hundred and sixty-one tests — a
+hundred and sixty journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
