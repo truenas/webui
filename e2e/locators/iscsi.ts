@@ -59,8 +59,11 @@ export const iscsiLocators = {
     /** Step 3, Protocol Options. "Portal" opens empty; "Create New" asks for the addresses it listens on. */
     portal: '[data-test="select-portal"]',
     portalCreateNew: '[data-test="option-portal-create-new"]',
-    /** "Add" under the new portal's IP Address list, whose form array is `listen`. */
-    addListen: '[data-test="button-add-item-listen"]',
+    /**
+     * "Add" under the new portal's IP Address list. `tn-form-list` names its Add
+     * control `['add-item', label]`, so this is the label, not the form array (`listen`).
+     */
+    addListen: '[data-test="button-add-item-ip-address"]',
     /**
      * A listen address, by its position in the list. The select is bound with
      * `[formControlName]="i"` and no `testId`, so its base is the index itself, and
