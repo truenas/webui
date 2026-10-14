@@ -79,7 +79,12 @@ export async function ensureRsyncTasksAbsent(client: E2eApiClient, path: string)
  */
 export async function ensureRsyncTaskPresent(
   client: E2eApiClient,
-  { path, remoteModule, description, schedule }: {
+  {
+    path,
+    remoteModule,
+    description,
+    schedule,
+  }: {
     path: string; remoteModule: string; description: string; schedule: RsyncTaskSchedule;
   },
 ): Promise<void> {
