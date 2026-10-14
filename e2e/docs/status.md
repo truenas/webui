@@ -574,8 +574,23 @@ lists four tasks and its View All leaves for the full list, so each test fails a
 the start if its rows would not fit. SSH mode, Run job, the Enabled switch and
 the full list page are not covered.
 
-The framework is done and the coverage is not. A hundred and forty-nine tests — a
-hundred and forty-eight journeys and the smoke — against 19 top-level feature areas. What the work
+Local replication followed, in `tests/replication-tasks.e2e.ts`: creating a task
+between two datasets on the same appliance through the card's wizard, with Run
+Once, and running a task from the card's row menu. Both assert the task through
+`replication.query`, the run through `core.get_jobs`, and the outcome through
+`pool.snapshot.query`, because the target holding the source's snapshots is the
+point of a replication and nothing on the screen shows it. Run Once is the one
+path where the UI does every step itself: it snapshots the empty source, saves the
+task and starts it. The run from the card sits beside a second task that must not
+run. No target dataset is made in advance, so a target that exists afterwards is
+evidence of a run. Middleware hands a deleted task's id to the next task and keeps
+finished jobs, so runs are counted only from jobs that did not exist before the
+action. Scheduled tasks and the periodic snapshot task the wizard makes for them,
+remote and SSH replication, encryption, Edit, Restore, Delete and the full list
+page are not covered.
+
+The framework is done and the coverage is not. A hundred and fifty-one tests — a
+hundred and fifty journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
