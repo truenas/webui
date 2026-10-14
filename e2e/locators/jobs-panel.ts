@@ -9,8 +9,14 @@
  * than an inference from which readouts the row happens to show.
  */
 export const jobsPanelLocators = {
-  /** The running-jobs count in the panel's header. Present whenever the panel is open. */
+  /** The running-jobs count in the panel's header. Present whenever the panel is open, loaded or not. */
   runningCount: '[data-test="text-running-jobs-count"]',
+  /**
+   * The recently-finished list, rendered once the panel's jobs have loaded — and
+   * only then is the app subscribed to job events, so a job started earlier can
+   * be missed.
+   */
+  finishedList: '[data-test="list-finished-jobs"]',
 
   /** A job anywhere in the panel. */
   job: (jobId: number): string => `[data-test="row-job-${jobId}"]`,
