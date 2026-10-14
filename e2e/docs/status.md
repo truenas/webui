@@ -630,8 +630,20 @@ Disconnect's, because the dashboard shows one per pool. Pause, Resume
 and Stop are not covered: a scrub of an empty pool ends before they can be
 clicked. The scheduled scrub form is not covered either.
 
-The framework is done and the coverage is not. A hundred and fifty-seven tests — a
-hundred and fifty-six journeys and the smoke — against 19 top-level feature areas. What the work
+Certificates followed, in `tests/certificates.e2e.ts`: creating a certificate
+signing request through the Add CSR wizard and deleting one from its row on the
+CSR card under Credentials > Certificates. Both are asserted on the card and
+through `certificate.query`, whose PEM request and parsed subject are the
+evidence that a key pair was generated and a request signed. The delete runs
+beside a second CSR that must come through untouched. The wizard is driven with
+its defaults (no profile, RSA 2048, SHA256, no extensions) and only the subject
+filled in. The row tag is `csr-<name>`. The card lists four CSRs before its
+pager, so each test fails at the start if its rows would not fit. Importing a
+CSR, profiles, extensions, Edit, Download, ACME certificates, the Certificates
+card itself and ACME DNS authenticators are not covered.
+
+The framework is done and the coverage is not. A hundred and fifty-nine tests — a
+hundred and fifty-eight journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.

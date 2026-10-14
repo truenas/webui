@@ -24,6 +24,8 @@ export const navLocators = {
   s3AccessKeys: '[data-test="link-s3-access-keys"]',
   /** `Backup Credentials` under Credentials, raw item name again. */
   backupCredentials: '[data-test="link-backup-credentials"]',
+  /** `Certificates` under Credentials, raw item name again. */
+  certificates: '[data-test="link-certificates"]',
   /** A slide-out, like Credentials. */
   system: '[data-test="link-system-menu"]',
   /** `General Settings` under System, raw item name again. */
