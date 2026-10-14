@@ -19,8 +19,9 @@ function rowTag(name: string): string {
   return kebabTestSegment(`replication-task-${name}`.toLowerCase());
 }
 
-/** What both "from" selects call this appliance. */
+/** What both "from" selects call this appliance, and anywhere else. */
 const thisSystemLabel = 'On this System';
+const differentSystemLabel = 'On a Different System';
 
 export const replicationTaskLocators = {
   card: {
@@ -53,6 +54,13 @@ export const replicationTaskLocators = {
     sourceDatasets: '[data-test="input-source-datasets"]',
     targetFrom: '[data-test="select-target-dataset-from"]',
     targetFromThisSystem: `[data-test="option-target-dataset-from-${kebabTestSegment(thisSystemLabel)}"]`,
+    targetFromDifferentSystem: `[data-test="option-target-dataset-from-${kebabTestSegment(differentSystemLabel)}"]`,
+    /**
+     * `ix-ssh-credentials-select`, shown once the target is on a different
+     * system. Its options are the connections' names.
+     */
+    sshConnection: '[data-test="select-ssh-credentials"]',
+    sshConnectionOption: (name: string): string => `[data-test="option-ssh-credentials-${kebabTestSegment(name)}"]`,
     /** Shown once a target location is picked. */
     targetDataset: '[data-test="input-target-dataset"]',
     /** Filled in from the source and target as they change, so set it after both. */

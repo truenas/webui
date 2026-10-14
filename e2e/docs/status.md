@@ -609,8 +609,8 @@ run. No target dataset is made in advance, so a target that exists afterwards is
 evidence of a run. Middleware hands a deleted task's id to the next task and keeps
 finished jobs, so runs are counted only from jobs that did not exist before the
 action. Scheduled tasks and the periodic snapshot task the wizard makes for them,
-remote and SSH replication, encryption, Edit, Restore, Delete and the full list
-page are not covered.
+encryption, Edit, Restore, Delete and the full list page are not covered. Push
+over SSH is `tests/replication-ssh.e2e.ts`'s, below.
 
 Privileges came next, in `tests/privileges.e2e.ts`: adding, editing and deleting
 a privilege from the list on Credentials > Privileges, each asserted on the list
@@ -749,6 +749,19 @@ to show it brings the file back. Edit and delete each run beside a second task. 
 row tag is `card-cloudsync-task-<description>`, so no test edits the description.
 Dry run, Stop, custom transfers and the wizard's other settings are #14404's; the
 Enabled switch, the full list page and other providers are not covered.
+
+Replication over SSH followed, in `tests/replication-ssh.e2e.ts`: creating a push
+task to a different system through the wizard, with Run Once, picking an SSH
+connection made over the API. The different system is the appliance itself: the
+connection points at `127.0.0.1` as root, trusts the host key
+`keychaincredential.remote_ssh_host_key_scan` reads, and signs in with a keypair
+authorized the same way the cloud sync spec's is. That part now lives in
+`fixtures/loopback-ssh.ts`, which both use, each with its own marker. The task is
+asserted through `replication.query`, including its SSH transport and connection,
+the run through `core.get_jobs`, and the target's snapshots through
+`pool.snapshot.query`. Pull from a different system, SSH+NETCAT, sudo, making the
+connection in the wizard's own "Add New" form and the SSH Connections page are not
+covered.
 
 The framework is done and the coverage is not. A hundred and seventy-nine tests — a
 hundred and seventy-eight journeys and the smoke — against 19 top-level feature areas. What the work
