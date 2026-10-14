@@ -13,9 +13,13 @@
  * Reservation and quota are set on the audit dataset in the boot pool, in GiB.
  * The specs keep both to a few GiB, which a fresh appliance's audit dataset is
  * far below and its boot pool can spare.
+ *
+ * It also reads the audit log itself, for the Audit page under System. That is
+ * a read only: middleware writes the log as the appliance is used.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
+import type { AuditRowKey } from '../locators/audit';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
@@ -46,6 +50,27 @@ export async function readAuditSettings(client: E2eApiClient): Promise<AuditSett
     quota_fill_warning: config.quota_fill_warning,
     quota_fill_critical: config.quota_fill_critical,
   };
+}
+
+/**
+ * The newest middleware audit record that carries a user and an event.
+ *
+ * Newest first, as the Audit page sorts it, so whatever the page lists on load is this record and
+ * the few that arrive after it. Without a user or an event the page shows `-` in that cell, so a
+ * record missing either cannot be checked by its cells.
+ *
+ * Cast because the client types `audit.query`'s response as every shape the call can return, a
+ * count included. The webui narrows it to `AuditEntry` the same way.
+ */
+export async function findNewestAuditRecord(client: E2eApiClient): Promise<AuditRowKey | undefined> {
+  const records = await firstValueFrom(
+    client.api.call('audit.query', [{
+      services: ['MIDDLEWARE'],
+      'query-options': { order_by: ['-message_timestamp'], limit: 20 },
+    }]).pipe(timeout(readTimeoutMs)),
+  ) as unknown as AuditRowKey[];
+
+  return records.find((record) => record.username && record.event);
 }
 
 /**
