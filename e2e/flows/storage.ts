@@ -5,7 +5,8 @@ import { expect, type Page } from '@playwright/test';
 import { goToDatasets, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
 import {
-  datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolWizardLocators,
+  datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolImportLocators,
+  poolWizardLocators,
 } from '../locators/storage';
 
 /**
@@ -16,6 +17,14 @@ import {
 const poolCreateTimeoutMs = 5 * 60_000;
 
 const saveTimeoutMs = 90_000;
+
+/**
+ * `pool.import_find` scans every disk before the Import Pool form renders, and
+ * `pool.import_pool` mounts the pool and restarts what depends on it. Both are
+ * jobs, so both get room well past what a one-disk pool takes.
+ */
+const poolImportFindTimeoutMs = 2 * 60_000;
+const poolImportTimeoutMs = 3 * 60_000;
 
 /** Picks an option from a `tn-select` by opening it and clicking the option. */
 export async function selectOption(page: Page, select: string, option: string): Promise<void> {
@@ -267,6 +276,34 @@ export async function openPoolDisconnectDialog(page: Page, pool: string): Promis
   await open.click();
 
   await expect(page.locator(poolDisconnectLocators.title)).toBeVisible();
+}
+
+/**
+ * Imports an exported pool by name, from the storage dashboard's Import Pool
+ * panel.
+ *
+ * Waits for the panel's Import button to go. The panel closes only after the
+ * import job's dialog has closed on the job finishing, so its closing is the
+ * app's own signal that the job ended. Whether it succeeded is the caller's to
+ * check through the API.
+ */
+export async function importPool(page: Page, pool: string): Promise<void> {
+  await goToStorage(page);
+  await page.locator(poolImportLocators.open).click();
+
+  // The select renders only once `pool.import_find` has finished.
+  const select = page.locator(poolImportLocators.pool);
+  await expect(select).toBeVisible({ timeout: poolImportFindTimeoutMs });
+  await select.click();
+
+  const option = page.locator(poolImportLocators.poolOption(pool));
+  await expect(option, `The Import Pool panel should offer exactly one pool named "${pool}".`).toHaveCount(1);
+  await option.click();
+
+  const submit = page.locator(poolImportLocators.submit);
+  await expect(submit).toBeEnabled();
+  await submit.click();
+  await expect(submit).toBeHidden({ timeout: poolImportTimeoutMs });
 }
 
 /**
