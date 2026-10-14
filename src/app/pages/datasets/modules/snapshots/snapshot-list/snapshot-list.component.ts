@@ -145,11 +145,14 @@ export class SnapshotListComponent implements OnInit {
   protected readonly trackBySnapshotId = (_: number, row: ZfsSnapshot): string => row.name;
 
   /**
-   * Row tag behind every cell's test id, kept at the value the legacy `ix-table` row carried
-   * (`row-snapshot-<id>`) so the ids Release Engineering already selects on still resolve.
-   * tn-table has no per-row test id of its own, so the cells are the row's only handle.
+   * Row tag behind the row's and every cell's test id: `snapshot-<dataset>@<name>`, which is the
+   * value the legacy `ix-table` row carried (`row-snapshot-<id>`), a snapshot's id being its name.
+   *
+   * Built from `name` rather than `id` because the list query selects only `snapshot_name`,
+   * `dataset` and `name` — so `id` is not on the rows this table renders, and a tag built from it
+   * comes out as the bare `snapshot` on every row.
    */
-  protected readonly uniqueRowTag = memoizedRowTag<ZfsSnapshot>((snapshot) => `snapshot-${snapshot.id}`);
+  protected readonly uniqueRowTag = memoizedRowTag<ZfsSnapshot>((snapshot) => `snapshot-${snapshot.name}`);
 
   /**
    * Selection identity. A snapshot's `name` carries both its dataset and its own name, so
