@@ -8,8 +8,40 @@
  * The form is built by `ix-form-renderer` from `audit.form-config.ts`, so every
  * field's id is its control name through the library normalizer — see
  * `locators/tunable.ts`.
+ *
+ * The Audit page under System is the log itself, a `tn-table` whose row tag is
+ * `audit-<service>-<username>-<event>-<audit id>` through lodash. Every record's
+ * id is a UUID, so the tag is unique and is split at each letter/digit boundary.
  */
+import { legacyKebabTestSegment } from './test-id';
+
+/** The fields of an audit record that its row tag is built from. */
+export interface AuditRowKey {
+  audit_id: string;
+  service: string;
+  username: string;
+  event: string;
+}
+
+/**
+ * `memoizedRowTag` in `audit-list.component.ts`. The app lowercases before lodash
+ * runs, so this does too: lodash alone would split a mixed-case username such as
+ * `jDoe` at its hump, where the app keeps it whole.
+ */
+const rowTag = (record: AuditRowKey): string => legacyKebabTestSegment(
+  `audit-${record.service}-${record.username}-${record.event}-${record.audit_id}`.toLowerCase(),
+);
+
 export const auditLocators = {
+  list: {
+    /** The `<tr>`, from `[rowTestId]`. */
+    row: (record: AuditRowKey): string => `[data-test="row-${rowTag(record)}"]`,
+    /** The User cell, which shows the username. */
+    user: (record: AuditRowKey): string => `[data-test="text-user-${rowTag(record)}-row-text"]`,
+    /** The Event cell, which shows middleware's event name verbatim (`METHOD_CALL`). */
+    event: (record: AuditRowKey): string => `[data-test="text-event-${rowTag(record)}-row-text"]`,
+  },
+
   card: {
     /** `<n> days`. */
     retention: '[data-test="text-audit-retention"]',

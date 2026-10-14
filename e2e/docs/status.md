@@ -705,8 +705,21 @@ wizard's zvol goes under a dataset of its own, removed in teardown. Starting and
 stopping, devices, cloning, installation media, GPUs and the display are not
 covered.
 
-The framework is done and the coverage is not. A hundred and seventy-six tests — a
-hundred and seventy-five journeys and the smoke — against 19 top-level feature areas. What the work
+Three read-only pages followed, one test each: `tests/dashboard.e2e.ts`,
+`tests/reporting.e2e.ts` and `tests/audit-log.e2e.ts`. Each opens its page from the
+sidebar and checks a value the appliance supplied. On the Dashboard, the System
+Information widget's hostname and version have to match `system.info`. On
+Reporting, the first series of the CPU tab's `cpu` report has to show a Mean.
+Its title, which every id on the report is keyed by, is read from
+`reporting.netdata_graphs`. On Audit, the newest middleware record from
+`audit.query` has to have its row, with the same user and event. That row's id
+ends in the record's UUID. The Dashboard spec relies on the admin's layout still
+holding that widget, and nothing in the suite changes the layout. Editing the
+dashboard, the other widgets, the other reporting tabs, zooming and stepping, the
+audit search, the details panel and the export are not covered.
+
+The framework is done and the coverage is not. A hundred and seventy-nine tests — a
+hundred and seventy-eight journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
