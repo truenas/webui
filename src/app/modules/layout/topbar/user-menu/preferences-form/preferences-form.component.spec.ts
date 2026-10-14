@@ -7,8 +7,10 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnAutocompleteHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
+import { isEqual } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
+import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
@@ -212,6 +214,30 @@ describe('PreferencesFormComponent', () => {
     expect(spectator.inject(ThemeService).updateThemeInLocalStorage).toHaveBeenCalled();
     expect(spectator.inject(LanguageService).setLanguage).toHaveBeenCalledWith('fr');
     expect(closedSpy).toHaveBeenCalledWith(true);
+  });
+
+  it('stores the date format before announcing it, so dates already on screen re-render in it', async () => {
+    const dispatch = jest.spyOn(spectator.inject(Store), 'dispatch');
+    const setItem = jest.mocked(spectator.inject<Window>(WINDOW).localStorage.setItem);
+    setItem.mockClear();
+    const announced = localizationFormSubmitted({
+      dateFormat: 'MMMM d, yyyy',
+      timeFormat: 'HH:mm:ss',
+      language: 'en',
+    });
+
+    await (await getSelect('date_format')).selectOption('October 16, 2021');
+    spectator.component.submit();
+
+    expect(setItem).toHaveBeenCalledWith('dateFormat', 'MMMM d, yyyy');
+    expect(dispatch).toHaveBeenCalledWith(announced);
+    const storedAt = setItem.mock.invocationCallOrder[
+      setItem.mock.calls.findIndex(([key]) => key === 'dateFormat')
+    ];
+    const announcedAt = dispatch.mock.invocationCallOrder[
+      dispatch.mock.calls.findIndex(([action]) => isEqual(action, announced))
+    ];
+    expect(storedAt).toBeLessThan(announcedAt);
   });
 
   it('shows Light Theme and Dark Theme dropdowns when Sync Theme With OS is checked', async () => {

@@ -217,14 +217,16 @@ export class PreferencesFormComponent extends IxFormHostForm implements OnInit {
       : values.theme;
     this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(effectiveTheme));
 
+    // Stored before the action is dispatched: `FormatDateTimePipe` re-reads these keys when it sees
+    // `localizationFormSubmitted`, and the dispatch reaches it synchronously.
+    this.window.localStorage.setItem('language', values.language);
+    this.window.localStorage.setItem('dateFormat', values.date_format);
+    this.window.localStorage.setItem('timeFormat', values.time_format);
     this.store$.dispatch(localizationFormSubmitted({
       dateFormat: values.date_format,
       timeFormat: values.time_format,
       language: values.language,
     }));
-    this.window.localStorage.setItem('language', values.language);
-    this.window.localStorage.setItem('dateFormat', values.date_format);
-    this.window.localStorage.setItem('timeFormat', values.time_format);
     this.langService.setLanguage(values.language);
   }
 

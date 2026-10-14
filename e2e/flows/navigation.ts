@@ -23,6 +23,7 @@ const expectedRoute = {
   groups: /\/credentials\/groups\/?$/,
   s3AccessKeys: /\/credentials\/s3-access-keys/,
   backupCredentials: /\/credentials\/backup-credentials\/?$/,
+  generalSettings: /\/system\/general\/?$/,
   advancedSettings: /\/system\/advanced\/?$/,
   network: /\/system\/network\/?$/,
   alertSettings: /\/system\/alert-settings\/?$/,
@@ -107,7 +108,13 @@ export async function goToBackupCredentials(page: Page): Promise<void> {
   await clickAndArrive(page, navLocators.backupCredentials, expectedRoute.backupCredentials);
 }
 
-/** System is a slide-out too, so Advanced Settings takes two clicks the same way. */
+/** System is a slide-out too, so General Settings takes two clicks the same way. */
+export async function goToGeneralSettings(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.system).click();
+  await clickAndArrive(page, navLocators.generalSettings, expectedRoute.generalSettings);
+}
+
+/** Advanced Settings sits beside General Settings under the same System slide-out. */
 export async function goToAdvancedSettings(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.system).click();
   await clickAndArrive(page, navLocators.advancedSettings, expectedRoute.advancedSettings);
