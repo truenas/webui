@@ -4,6 +4,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
@@ -23,6 +24,7 @@ import {
     TnFormFieldComponent,
     TnInputComponent,
     TnCheckboxComponent,
+    TnTestIdDirective,
     DetailsTableComponent,
     DetailsItemComponent,
     EditableComponent,

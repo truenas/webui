@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnCardComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { getUserType, isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 
@@ -11,6 +11,7 @@ import { User } from 'app/interfaces/user.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
+    TnTestIdDirective,
     TranslateModule,
   ],
 })

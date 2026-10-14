@@ -6,7 +6,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
-  TnInputComponent, TnSelectComponent,
+  TnInputComponent, TnSelectComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   combineLatest,
@@ -62,6 +62,7 @@ import { DirectoryQueryOptions, PrincipalOption } from 'app/services/user-direct
     TnSelectComponent,
     TnChipInputComponent,
     TnFormFieldComponent,
+    TnTestIdDirective,
     TranslateModule,
     IxGroupComboboxComponent,
     IxExplorerComponent,

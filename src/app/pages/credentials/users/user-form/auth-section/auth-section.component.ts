@@ -6,6 +6,7 @@ import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, Validatio
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnRadioComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { helptextUsers } from 'app/helptext/account/user-form';
@@ -24,6 +25,7 @@ import { UserFormStore, UserStigPasswordOption, defaultHomePath } from 'app/page
     TnRadioComponent,
     TnCheckboxComponent,
     TnFormSectionComponent,
+    TnTestIdDirective,
     TranslateModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
