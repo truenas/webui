@@ -14,8 +14,8 @@
  * used first, is deleted on dismiss and leaves nothing to reopen.
  *
  * The alert is raised in `beforeEach`, before the test's page exists, so the
- * panel finds it in what the app loads at sign-in. The panel's live updates are
- * not what this covers.
+ * panel finds it in the `alert.list` the app reads when the bell is pressed. The
+ * panel's live updates are not what this covers.
  *
  * Each step is asserted twice: the panel moves the alert between its open and
  * dismissed views, and `alert.list` says whether middleware has it dismissed.
