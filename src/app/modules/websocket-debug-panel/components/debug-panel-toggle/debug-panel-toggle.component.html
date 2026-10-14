@@ -1,9 +1,0 @@
-<tn-icon-button
-  class="debug-panel-toggle"
-  testId="debug-panel-toggle"
-  library="mdi"
-  [class.active-mocks]="hasActiveMocks()"
-  [name]="isPanelOpen() ? 'chevron-right' : 'bug'"
-  [attr.aria-label]="isPanelOpen() ? 'Close debug panel' : 'Open debug panel'"
-  (click)="onToggle()"
-></tn-icon-button>
