@@ -25,6 +25,13 @@ export interface PoolDevice {
   status: string;
 }
 
+/** The fields of a `pool.query` topology entry that `toDevice` reads. */
+interface TopologyDevice {
+  disk?: string | null;
+  guid: string;
+  status: string;
+}
+
 const poolCreateTimeoutMs = 3 * 60_000;
 
 /**
@@ -92,7 +99,8 @@ export async function readMirror(
     throw new Error(`Pool "${name}" reports no data vdev.`);
   }
 
-  return { guid: mirror.guid, disks: mirror.children.map((item) => toDevice(item)) };
+  // The API client types a vdev's `children` entries as `any`, so name the fields read here.
+  return { guid: mirror.guid, disks: mirror.children.map((item: TopologyDevice) => toDevice(item)) };
 }
 
 /** The pool's spares, in topology order. */
@@ -107,6 +115,6 @@ export async function readPoolStatus(client: E2eApiClient, name: string): Promis
   return (await getPool(client, name)).status;
 }
 
-function toDevice(item: { disk?: string | null; guid: string; status: string }): PoolDevice {
+function toDevice(item: TopologyDevice): PoolDevice {
   return { disk: item.disk ?? null, guid: item.guid, status: item.status };
 }
