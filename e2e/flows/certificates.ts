@@ -5,7 +5,6 @@ import { expect, type Page } from '@playwright/test';
 import { goToCertificates } from './navigation';
 import { csrLocators } from '../locators/certificates';
 import { confirmDialogLocators } from '../locators/dialogs';
-import { jobDialogLocators } from '../locators/encryption';
 
 /** Creating a CSR generates a key pair and deleting one is a job; neither is instant. */
 const saveTimeoutMs = 90_000;
@@ -69,24 +68,25 @@ export async function addCsr(page: Page, name: string, subject: CsrSubject): Pro
 }
 
 /**
- * Deletes a CSR from its row, through webui's shared confirm, starting from the
- * sidebar, and waits for its row to go.
+ * Deletes a CSR from its row's menu, through webui's shared confirm, starting from
+ * the sidebar, and waits for its row to go.
  *
  * The CSR card raises the confirm with `hideCheckbox: true`, so Delete is enabled
  * from the start — asserted, so a dialog that grew a gate fails here rather than
  * timing out on a disabled button. Force, its secondary checkbox, is left off.
- * The delete is a job, run in a progress dialog that closes on its own when the
- * job ends.
+ * The delete is a job; the card reloads only once it has finished, so the row
+ * going is the wait.
  */
 export async function deleteCsr(page: Page, name: string): Promise<void> {
+  const { list } = csrLocators;
   await goToCertificates(page);
-  await page.locator(csrLocators.list.delete(name)).click();
+  await page.locator(list.rowMenu(name)).click();
+  await page.locator(list.rowMenuDelete(name)).click();
   await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
 
   const confirm = page.locator(confirmDialogLocators.confirm);
   await expect(confirm).toBeEnabled();
   await confirm.click();
 
-  await expect(page.locator(jobDialogLocators.title)).toBeHidden({ timeout: saveTimeoutMs });
-  await expect(page.locator(csrLocators.list.row(name))).toBeHidden({ timeout: saveTimeoutMs });
+  await expect(page.locator(list.row(name))).toBeHidden({ timeout: saveTimeoutMs });
 }

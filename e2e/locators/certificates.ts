@@ -10,8 +10,8 @@
  * The CN column renders two of them, one for the common name and one for the
  * SANs, each only when the row has a value for it.
  *
- * The card's actions are icon buttons on the row, so their ids have no
- * `more-action`.
+ * The card does not ask for `mode="inline"` and an admin sees all four of its row
+ * actions, so they sit in a kebab menu behind the row's `more-action` trigger.
  */
 import { kebabTestSegment } from './test-id';
 
@@ -39,8 +39,13 @@ export const csrLocators = {
     /** The SAN array, interpolated as it stands. */
     san: (name: string): string => `[data-test="text-san-${rowTag(name)}-row-text"]`,
 
-    /** The row's own Delete button: the row tag, the icon, library and all, then `row-action`. */
-    delete: (name: string): string => `[data-test="button-${rowTag(name)}-mdi-delete-row-action"]`,
+    /** The row's kebab menu trigger. Its actions are Create ACME Certificate, Download, Edit and Delete. */
+    rowMenu: (name: string): string => `[data-test="button-${rowTag(name)}-more-action"]`,
+
+    /** Delete, inside that menu — the trigger's own id with the icon appended, library and all. */
+    rowMenuDelete: (name: string): string => (
+      `[data-test="button-${rowTag(name)}-more-action-mdi-delete-row-action"]`
+    ),
   },
 
   /**
