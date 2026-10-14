@@ -20,6 +20,7 @@ import {
   map,
   MonoTypeOperatorFunction,
   Observable,
+  pipe,
   switchMap,
   take,
   throwError,
@@ -27,8 +28,8 @@ import {
 import { ApiErrorName } from 'app/enums/api.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Job } from 'app/interfaces/job.interface';
-import { dispatchTypedCall } from 'app/modules/websocket/typed-api/dispatch-typed-call';
 import { followCollection } from 'app/modules/websocket/typed-api/follow-collection';
+import { rethrowAsApiCallError } from 'app/modules/websocket/typed-api/rethrow-as-api-call-error';
 import {
   TYPED_API_CLIENT,
   TypedQueryFilter,
@@ -68,8 +69,13 @@ type ClientApi = WebUiApiClient['api'];
  * ## What is deliberately not here yet
  *
  * - Calls are not intercepted by the WebSocket debug panel or its mocks.
- * - `query` / `queryOne` / `queryCount` are exposed straight from the client
- *   until the wrapper grows its own error handling for them.
+ *
+ * ## Errors
+ *
+ * Every verb throws a refusal as `ApiCallError` carrying the full JSON-RPC
+ * error, the same class the legacy `ApiService` throws, so
+ * `ErrorHandlerService` and form validation keep working unchanged. The verbs
+ * that need a session also end it on `ENOTAUTHENTICATED`, as `ApiService` does.
  */
 @Injectable({
   providedIn: 'root',
@@ -105,15 +111,12 @@ export class TypedApiService {
    * this.typedApi.call('nope.nope');                   // compile error
    * ```
    *
-   * Errors are thrown as `ApiCallError` carrying the full JSON-RPC error, the
-   * same class the legacy `ApiService` throws, so `ErrorHandlerService` and
-   * form validation keep working unchanged. See `dispatchTypedCall` for why
-   * this does not go through the client's own `call`.
+   * Errors are thrown as `ApiCallError`; see "Errors" above.
    */
   call<M extends CallMethod<D>>(method: M, ...params: ArgsOf<CallParams<D, M>>): Observable<CallResponse<D, M>> {
     return this.ready$.pipe(
-      switchMap((client) => dispatchTypedCall<CallResponse<D, M>>(client, method, params[0])),
-      this.endSessionOnRefusal(),
+      switchMap((client) => client.api.call(method, ...params)),
+      this.handleRefusal(),
     );
   }
 
@@ -130,7 +133,8 @@ export class TypedApiService {
   ): Observable<CallResponse<D, M>> {
     return this.client$.pipe(
       take(1),
-      switchMap((client) => dispatchTypedCall<CallResponse<D, M>>(client, method, params[0])),
+      switchMap((client) => client.api.call(method, ...params)),
+      rethrowAsApiCallError(),
     );
   }
 
@@ -149,24 +153,34 @@ export class TypedApiService {
    */
   readonly query = ((
     ...args: Parameters<ClientApi['query']>
-  ) => this.ready$.pipe(switchMap((client) => client.api.query(...args)))) as ClientApi['query'];
+  ) => this.ready$.pipe(
+    switchMap((client) => client.api.query(...args)),
+    this.handleRefusal(),
+  )) as ClientApi['query'];
 
   /** Query the single matching entry. Middleware errors unless exactly one matches. */
   readonly queryOne = ((
     ...args: Parameters<ClientApi['queryOne']>
-  ) => this.ready$.pipe(switchMap((client) => client.api.queryOne(...args)))) as ClientApi['queryOne'];
+  ) => this.ready$.pipe(
+    switchMap((client) => client.api.queryOne(...args)),
+    this.handleRefusal(),
+  )) as ClientApi['queryOne'];
 
   /** Count the matching entries. */
   readonly queryCount = ((
     ...args: Parameters<ClientApi['queryCount']>
-  ) => this.ready$.pipe(switchMap((client) => client.api.queryCount(...args)))) as ClientApi['queryCount'];
+  ) => this.ready$.pipe(
+    switchMap((client) => client.api.queryCount(...args)),
+    this.handleRefusal(),
+  )) as ClientApi['queryCount'];
 
   /**
    * Start a job and follow it to completion.
    *
    * Emits every update, completes on success and throws `FailedJobError` on
    * failure — the same contract as `ApiService.job`, so `observeJob`-based
-   * consumers migrate without changes.
+   * consumers migrate without changes. A method refused before it starts a
+   * job (validation, a missing role) throws `ApiCallError` instead.
    */
   job<M extends JobMethod<D>>(
     method: M,
@@ -174,6 +188,7 @@ export class TypedApiService {
   ): Observable<Job<JobResult<D, M>>> {
     return this.ready$.pipe(
       switchMap((client) => client.api.job(method, ...params)),
+      this.handleRefusal(),
       // The client's Job and the UI's Job describe the same wire object; the
       // client is merely honest about a few fields being null before the job
       // starts. Narrowing to the UI's shape keeps the existing operators and
@@ -185,10 +200,13 @@ export class TypedApiService {
 
   /**
    * Start a job and emit only its id. Use `job` when progress or the result matter.
+   *
+   * A method refused before it starts a job throws `ApiCallError`.
    */
   startJob<M extends JobMethod<D>>(method: M, ...params: ArgsOf<JobParams<D, M>>): Observable<number> {
     return this.ready$.pipe(
       switchMap((client) => client.api.callAndGetJobId(method, ...params)),
+      this.handleRefusal(),
     );
   }
 
@@ -250,23 +268,23 @@ export class TypedApiService {
   }
 
   /**
-   * Ends the app's session when middleware refuses a typed call for want of
-   * one, as `ApiService` does for the calls that still ride it: swallow the
-   * error, drop the session, and let the app fall back to the sign-in page,
-   * which logs straight back in when the stored token is still good.
-   *
-   * Only `call` gets this. It is the one verb that keeps the whole JSON-RPC
-   * error — the client's own verbs reduce it to a reason string, and
-   * `errname` is what distinguishes this refusal from any other.
+   * Rethrows a refusal as `ApiCallError`, and ends the app's session when
+   * middleware refused for want of one, as `ApiService` does for the calls
+   * that still ride it: swallow the error, drop the session, and let the app
+   * fall back to the sign-in page, which logs straight back in when the stored
+   * token is still good.
    */
-  private endSessionOnRefusal<T>(): MonoTypeOperatorFunction<T> {
-    return catchError((error: unknown) => {
-      if (error instanceof ApiCallError && error.error?.data?.errname === ApiErrorName.NotAuthenticated) {
-        this.wsStatus.setLoginStatus(false);
-        return EMPTY;
-      }
+  private handleRefusal<T>(): MonoTypeOperatorFunction<T> {
+    return pipe(
+      rethrowAsApiCallError<T>(),
+      catchError((error: unknown) => {
+        if (error instanceof ApiCallError && error.error?.data?.errname === ApiErrorName.NotAuthenticated) {
+          this.wsStatus.setLoginStatus(false);
+          return EMPTY;
+        }
 
-      return throwError(() => error);
-    });
+        return throwError(() => error);
+      }),
+    );
   }
 }
