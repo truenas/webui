@@ -13,10 +13,25 @@ export const navLocators = {
   storage: '[data-test="link-storage-menu"]',
   datasets: '[data-test="link-datasets-menu"]',
   shares: '[data-test="link-shares-menu"]',
+  /** `Data Protection` — `getItemName` turns the space into an underscore, which normalizes to a hyphen. */
+  dataProtection: '[data-test="link-data-protection-menu"]',
   /** A slide-out, not a link — opens a submenu rather than navigating. */
   credentials: '[data-test="link-credentials-menu"]',
   users: '[data-test="link-users"]',
   groups: '[data-test="link-groups"]',
   /** `S3 Access Keys` under Credentials; the submenu writes the raw item name. */
   s3AccessKeys: '[data-test="link-s3-access-keys"]',
+  /** `Backup Credentials` under Credentials, raw item name again. */
+  backupCredentials: '[data-test="link-backup-credentials"]',
+  /** A slide-out, like Credentials. */
+  system: '[data-test="link-system-menu"]',
+  /** `General Settings` under System, raw item name again. */
+  generalSettings: '[data-test="link-general-settings"]',
+  advancedSettings: '[data-test="link-advanced-settings"]',
+  /** `Network` under System, raw item name again. */
+  network: '[data-test="link-network"]',
+  /** `Alert Settings` under System, raw item name again. */
+  alertSettings: '[data-test="link-alert-settings"]',
+  /** `Boot` under System, raw item name again. */
+  boot: '[data-test="link-boot"]',
 } as const;

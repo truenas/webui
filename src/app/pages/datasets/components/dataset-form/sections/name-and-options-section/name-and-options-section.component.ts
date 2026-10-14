@@ -5,6 +5,7 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   delay, merge, of,
@@ -40,6 +41,7 @@ import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validat
     TnCheckboxComponent,
     TranslateModule,
     AsyncPipe,
+    TnTestIdDirective,
   ],
 })
 export class NameAndOptionsSectionComponent implements OnInit, OnChanges {

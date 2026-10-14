@@ -39,7 +39,7 @@
          select — a user standing on the retry button would hear nothing back. Mounted from the
          start, and empty until a check has failed: a live region inserted together with its text
          isn't reliably announced. -->
-    <div class="vm-check-status" role="status" aria-live="polite">{{ vmCheckStatus() }}</div>
+    <div class="vm-check-status" role="status" tnTestIdType="text" aria-live="polite" [tnTestId]="'vm-check-status'">{{ vmCheckStatus() }}</div>
 
     <tn-form-field
       [label]="helptext.nameLabel | translate"

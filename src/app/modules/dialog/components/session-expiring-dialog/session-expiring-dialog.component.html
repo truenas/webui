@@ -3,16 +3,14 @@
     <div class="message-content">
       <span [innerHTML]="options.message | translate"></span>
 
+      @let preferencesHint = changeTimeoutHint | translate | splitTag;
       <p>
-        {{ 'Change Session Timeout in' | translate }}
-        <button
+        {{ preferencesHint.before }}<button
           class="preferences-link"
           tnTestIdType="button"
           [tnTestId]="'open-preferences'"
           (click)="openPreferences()"
-        >
-          {{ 'Preferences' | translate }}
-        </button>
+        >{{ preferencesHint.inner }}</button>{{ preferencesHint.after }}
       </p>
     </div>
   </div>

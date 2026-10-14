@@ -8,8 +8,8 @@
       <div class="presets">
         @for (preset of presets; track preset.id) {
           <div class="preset" [ngClass]="{ 'preset-disabled': !isCurrentAclType(preset.acltype) }">
-            <div class="preset-name">{{ preset.name }}</div>
-            <div class="preset-type">{{ preset.acltype }}</div>
+            <div class="preset-name" tnTestIdType="text" [tnTestId]="['preset', preset.name, 'name']">{{ preset.name }}</div>
+            <div class="preset-type" tnTestIdType="text" [tnTestId]="['preset', preset.name, 'type']">{{ preset.acltype }}</div>
             @if (!preset.builtin) {
               <tn-icon-button
                 testId="remove-preset"

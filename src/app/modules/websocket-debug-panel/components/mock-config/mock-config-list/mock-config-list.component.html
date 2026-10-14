@@ -66,7 +66,7 @@
             <div class="config-info">
               <div class="method-name">
                 {{ config.methodName }}
-                <span class="response-type" [class.error-type]="config.response?.type === 'error'">
+                <span class="response-type" [class.error-type]="isErrorConfig(config)">
                   [{{ getResponseTypeLabel(config) }}]
                 </span>
               </div>

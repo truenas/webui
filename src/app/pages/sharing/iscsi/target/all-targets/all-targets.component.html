@@ -18,8 +18,7 @@
   <div detail-header class="detail-header">
     @if (target) {
       <span tnTestId="details-for" tnTestIdType="text">
-        {{ 'Details for' | translate }}
-        {{ target?.name }}
+        {{ 'Details for {name}' | translate: { name: target.name } }}
       </span>
 
       <div class="detail-actions">

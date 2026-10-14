@@ -74,7 +74,7 @@ export const helptextVmWizard = {
 
   global_label: helptextGlobal.humanReadable.suggestionLabel,
   memory_tooltip: T('Allocate RAM for the VM. Minimum value is 256 MiB.'),
-  global_tooltip: helptextGlobal.humanReadable.suggestionTooltip,
+  global_tooltip: helptextGlobal.humanReadable.bytesTooltip,
   memory_size_err: T('Allocate at least 256 MiB.'),
   memory_warning: T('Caution: Allocating too much memory can slow the system or prevent VMs from running.'),
   min_memory_tooltip: T('When not specified, guest system is given fixed amount of memory specified above.\n'

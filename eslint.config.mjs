@@ -159,6 +159,18 @@ const templateOverrides = {
   files: ['**/*.html'],
   rules: {
     'angular-test-ids/require-test-id': ['off'],
+    // `.ts` files are covered by `@typescript-eslint/no-unsafe-enum-comparison`, which needs type
+    // information that template linting does not have — and the compiler's strict template checks
+    // accept `enumValue === 'LITERAL'`, since TypeScript itself does. Without types, a rule cannot
+    // tell an enum from a plain string, so every non-empty string literal in a comparison or an
+    // `@case` is rejected. The empty string is exempt: `x === ''` names no value.
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector: 'Binary[operation=/^[!=]==?$/] > LiteralPrimitive[value=/./], SwitchBlockCase > ASTWithSource > LiteralPrimitive[value=/./]',
+        message: 'Do not compare against a string literal in a template. Compare against an enum member exposed on the component (`protected readonly MyEnum = MyEnum;`), or move the check into a `computed()`/method.',
+      },
+    ],
   },
 };
 

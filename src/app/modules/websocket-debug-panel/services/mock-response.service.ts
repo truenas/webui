@@ -6,6 +6,7 @@ import {
 } from 'rxjs';
 import { first, take } from 'rxjs/operators';
 import { CollectionChangeType, JsonRpcErrorCode } from 'app/enums/api.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import {
   CollectionUpdateMessage, ErrorResponse, IncomingMessage, RequestMessage, SuccessfulResponse,
@@ -193,7 +194,7 @@ export class MockResponseService implements OnDestroy {
           error: null,
           exception: null,
           exc_info: null,
-          state: 'WAITING',
+          state: JobState.Waiting,
           time_started: { $date: Date.now() },
           time_finished: null,
         },

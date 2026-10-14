@@ -24,7 +24,7 @@ export const helptextUnlock = {
     title: T('Unlock Datasets'),
     errors: T('Errors'),
     errorsMessage: T('The following datasets cannot be unlocked.'),
-    errorDialogTitle: T('Error details for '),
+    errorDialogTitle: T('Error details for {name}'),
     unlock: T('Unlock'),
     unlockMessage: T('These datasets will be unlocked with the provided credentials.'),
     continueButton: T('Continue'),

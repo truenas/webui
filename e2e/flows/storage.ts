@@ -5,7 +5,8 @@ import { expect, type Page } from '@playwright/test';
 import { goToDatasets, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
 import {
-  datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolWizardLocators,
+  datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolImportLocators,
+  poolWizardLocators,
 } from '../locators/storage';
 
 /**
@@ -16,6 +17,14 @@ import {
 const poolCreateTimeoutMs = 5 * 60_000;
 
 const saveTimeoutMs = 90_000;
+
+/**
+ * `pool.import_find` scans every disk before the Import Pool form renders, and
+ * `pool.import_pool` mounts the pool and restarts what depends on it. Both are
+ * jobs, so both get room well past what a one-disk pool takes.
+ */
+const poolImportFindTimeoutMs = 2 * 60_000;
+const poolImportTimeoutMs = 3 * 60_000;
 
 /** Picks an option from a `tn-select` by opening it and clicking the option. */
 export async function selectOption(page: Page, select: string, option: string): Promise<void> {
@@ -163,6 +172,56 @@ export async function createSmbDataset(page: Page, pool: string, name: string): 
 }
 
 /**
+ * Selects `parent` in the tree and opens the Add Dataset form under it.
+ *
+ * Waits for the form's own Parent Path to name `parent`. The form loads the
+ * parent before it will save, and this is the readback that it loaded the one
+ * that was selected.
+ */
+export async function openAddDatasetForm(page: Page, parent: string): Promise<void> {
+  await goToDatasets(page);
+
+  const node = page.locator(datasetLocators.treeNode(parent));
+  await expect(node).toBeVisible();
+  await node.click();
+
+  await page.locator(datasetLocators.addDataset).click();
+  await expect(page.locator(datasetLocators.parentPath)).toHaveText(parent);
+}
+
+/**
+ * Selects a dataset in the tree and opens its edit form from the details card.
+ *
+ * The page lands with the pool root selected, and the root's card has an Edit
+ * too, so the card's Path has to name `name` before the click. Otherwise Edit
+ * can open the root's form.
+ *
+ * Then waits for the disabled Name field to hold the dataset's full name. It is
+ * patched in only once the record has loaded, and so are the values in
+ * Other Options, so changing a field before that would change it on an empty form.
+ */
+export async function openEditDatasetForm(page: Page, name: string): Promise<void> {
+  await goToDatasets(page);
+
+  const node = page.locator(datasetLocators.treeNode(name));
+  await expect(node).toBeVisible();
+  await node.click();
+  await expect(page.locator(datasetDetailsLocators.path)).toHaveText(name);
+
+  const edit = page.locator(datasetLocators.editDataset);
+  await expect(edit).toBeVisible();
+  await edit.click();
+
+  await expect(page.locator(datasetLocators.name)).toHaveValue(name);
+}
+
+/** Saves the open dataset form and waits for the panel to close. */
+export async function saveDatasetForm(page: Page): Promise<void> {
+  await page.locator(datasetLocators.save).click();
+  await expect(page.locator(datasetLocators.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
  * Selects a dataset or zvol in the tree and opens its delete dialog.
  *
  * `name` is the full dataset id (`pool/child`) — the tree node's id is built
@@ -217,6 +276,34 @@ export async function openPoolDisconnectDialog(page: Page, pool: string): Promis
   await open.click();
 
   await expect(page.locator(poolDisconnectLocators.title)).toBeVisible();
+}
+
+/**
+ * Imports an exported pool by name, from the storage dashboard's Import Pool
+ * panel.
+ *
+ * Waits for the panel's Import button to go. The panel closes only after the
+ * import job's dialog has closed on the job finishing, so its closing is the
+ * app's own signal that the job ended. Whether it succeeded is the caller's to
+ * check through the API.
+ */
+export async function importPool(page: Page, pool: string): Promise<void> {
+  await goToStorage(page);
+  await page.locator(poolImportLocators.open).click();
+
+  // The select renders only once `pool.import_find` has finished.
+  const select = page.locator(poolImportLocators.pool);
+  await expect(select).toBeVisible({ timeout: poolImportFindTimeoutMs });
+  await select.click();
+
+  const option = page.locator(poolImportLocators.poolOption(pool));
+  await expect(option, `The Import Pool panel should offer exactly one pool named "${pool}".`).toHaveCount(1);
+  await option.click();
+
+  const submit = page.locator(poolImportLocators.submit);
+  await expect(submit).toBeEnabled();
+  await submit.click();
+  await expect(submit).toBeHidden({ timeout: poolImportTimeoutMs });
 }
 
 /**

@@ -4,7 +4,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { firstValueFrom } from 'rxjs';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
+import { WebSocketDebugMessage, MessageDirection } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 import * as WebSocketDebugActions from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 import { selectMessages } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 import { MessageListComponent } from './message-list.component';
@@ -17,7 +17,7 @@ describe('MessageListComponent', () => {
     {
       id: '1',
       timestamp: new Date(Date.now() - 5000).toISOString(),
-      direction: 'out',
+      direction: MessageDirection.Out,
       message: {
         jsonrpc: '2.0',
         id: '1',
@@ -30,7 +30,7 @@ describe('MessageListComponent', () => {
     {
       id: '2',
       timestamp: new Date(Date.now() - 60000).toISOString(),
-      direction: 'in',
+      direction: MessageDirection.In,
       message: {
         jsonrpc: '2.0',
         id: '2',
@@ -110,7 +110,7 @@ describe('MessageListComponent', () => {
       const outMessage: WebSocketDebugMessage = {
         id: '1',
         timestamp: new Date().toISOString(),
-        direction: 'out',
+        direction: MessageDirection.Out,
         message: {
           jsonrpc: '2.0',
           id: '1',
@@ -124,7 +124,7 @@ describe('MessageListComponent', () => {
       const inResponse: WebSocketDebugMessage = {
         id: '2',
         timestamp: new Date().toISOString(),
-        direction: 'in',
+        direction: MessageDirection.In,
         message: {
           jsonrpc: '2.0',
           id: '2',
@@ -138,7 +138,7 @@ describe('MessageListComponent', () => {
       const cachedMessage: WebSocketDebugMessage = {
         id: '3',
         timestamp: new Date().toISOString(),
-        direction: 'in',
+        direction: MessageDirection.In,
         message: {
           jsonrpc: '2.0',
           id: '3',
@@ -157,7 +157,7 @@ describe('MessageListComponent', () => {
       const shortMessage: WebSocketDebugMessage = {
         id: '1',
         timestamp: new Date().toISOString(),
-        direction: 'out',
+        direction: MessageDirection.Out,
         message: {
           jsonrpc: '2.0',
           id: '1',
@@ -173,7 +173,7 @@ describe('MessageListComponent', () => {
       const longMessage: WebSocketDebugMessage = {
         id: '2',
         timestamp: new Date().toISOString(),
-        direction: 'out',
+        direction: MessageDirection.Out,
         message: {
           jsonrpc: '2.0',
           id: '2',
@@ -205,7 +205,7 @@ describe('MessageListComponent', () => {
     const copyTestMessage: WebSocketDebugMessage = {
       id: '1',
       timestamp: new Date().toISOString(),
-      direction: 'out',
+      direction: MessageDirection.Out,
       message: {
         jsonrpc: '2.0',
         id: '1',
@@ -368,7 +368,7 @@ describe('MessageListComponent', () => {
       const message = {
         id: '1',
         timestamp: new Date().toISOString(),
-        direction: 'in' as const,
+        direction: MessageDirection.In as const,
         message: {
           jsonrpc: '2.0' as const,
           id: '1',
@@ -394,7 +394,7 @@ describe('MessageListComponent', () => {
       const message = {
         id: '1',
         timestamp: new Date().toISOString(),
-        direction: 'in' as const,
+        direction: MessageDirection.In as const,
         message: {
           jsonrpc: '2.0' as const,
           id: '1',
@@ -422,7 +422,7 @@ describe('MessageListComponent', () => {
       const message = {
         id: '1',
         timestamp: new Date().toISOString(),
-        direction: 'in' as const,
+        direction: MessageDirection.In as const,
         message: {
           jsonrpc: '2.0' as const,
           id: '1',
@@ -441,7 +441,7 @@ describe('MessageListComponent', () => {
       const message = {
         id: '1',
         timestamp: new Date().toISOString(),
-        direction: 'out' as const,
+        direction: MessageDirection.Out as const,
         message: {
           jsonrpc: '2.0' as const,
           id: '1',
@@ -460,7 +460,7 @@ describe('MessageListComponent', () => {
       const message = {
         id: '1',
         timestamp: new Date().toISOString(),
-        direction: 'in' as const,
+        direction: MessageDirection.In as const,
         message: {
           jsonrpc: '2.0' as const,
           id: '1',
@@ -479,7 +479,7 @@ describe('MessageListComponent', () => {
       const message = {
         id: '1',
         timestamp: new Date().toISOString(),
-        direction: 'in' as const,
+        direction: MessageDirection.In as const,
         message: {
           jsonrpc: '2.0' as const,
           id: '1',
@@ -498,7 +498,7 @@ describe('MessageListComponent', () => {
       const message = {
         id: '1',
         timestamp: new Date().toISOString(),
-        direction: 'in' as const,
+        direction: MessageDirection.In as const,
         message: {
           jsonrpc: '2.0' as const,
           id: '1',
@@ -517,7 +517,7 @@ describe('MessageListComponent', () => {
       const message = {
         id: '1',
         timestamp: new Date().toISOString(),
-        direction: 'in' as const,
+        direction: MessageDirection.In as const,
         message: {
           jsonrpc: '2.0' as const,
           id: '1',

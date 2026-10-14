@@ -6,6 +6,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   combineLatest, Observable, of,
@@ -41,6 +42,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FormActionsComponent,
     TnButtonComponent,
     RequiresRolesDirective,
+    TnTestIdDirective,
   ],
 })
 export class DeleteDatasetDialog implements OnInit {

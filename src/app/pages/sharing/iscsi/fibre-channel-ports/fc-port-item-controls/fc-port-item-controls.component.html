@@ -14,7 +14,7 @@
   ></tn-select>
 </tn-form-field>
 
-@if (modeControl.value === 'new') {
+@if (modeControl.value === NewOrExisting.New) {
   <tn-form-field
     [label]="'Choose Host for New Virtual Port' | translate"
     [tooltip]="'Select which physical port will host the new NPIV virtual port' | translate"
@@ -27,7 +27,7 @@
       [optionTestIdKey]="portOptionTestIdKey"
     ></tn-select>
   </tn-form-field>
-} @else if (modeControl.value === 'existing') {
+} @else if (modeControl.value === NewOrExisting.Existing) {
   <tn-form-field
     [label]="'Existing Port' | translate"
     [tooltip]="'Select an existing FC port to use for this target' | translate"

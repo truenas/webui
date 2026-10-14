@@ -86,6 +86,8 @@ export const migratedApiPaths = [
   'src/app/modules/forms',
   'src/app/modules/layout/topbar',
   'src/app/modules/truecommand',
+  // NAS-144008: the debug panel's connection interceptor, which names the typed client's connection.
+  'src/app/modules/websocket-debug-panel/utils',
   // Its only legacy dependant was a spec mocking `core.job_download_logs` for the logs dialog.
   'src/app/pages/jobs',
   // Nothing here imports a client; `pool-scan-event.helper.ts` names a generated event type.

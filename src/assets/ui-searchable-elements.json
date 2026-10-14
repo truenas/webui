@@ -2609,6 +2609,27 @@
       "System",
       "Advanced Settings",
       "Access",
+      "Session Timeout"
+    ],
+    "synonyms": [
+      "Token Lifetime"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "access-session-timeout",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "Access",
       "Login Banner"
     ],
     "synonyms": [

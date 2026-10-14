@@ -16,6 +16,7 @@ import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
+import { AlertPanelFilter } from 'app/modules/alerts/components/alerts-panel/alert-panel-filter.enum';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
 import { AlertsPanelPageObject } from 'app/modules/alerts/components/alerts-panel/alerts-panel.page-object';
 import { alertsLoaded } from 'app/modules/alerts/store/alert.actions';
@@ -154,7 +155,7 @@ describe('AlertsPanelComponent', () => {
     expect(alertPanel.unreadAlertComponents[0].isHaLicensed).toBe(true);
 
     // Switch to dismissed view to check dismissed alerts
-    spectator.component.setSeverityFilter('dismissed');
+    spectator.component.setSeverityFilter(AlertPanelFilter.Dismissed);
     spectator.detectChanges();
 
     expect(alertPanel.dismissedAlertComponents[0].isHaLicensed).toBe(true);
@@ -182,7 +183,7 @@ describe('AlertsPanelComponent', () => {
 
   it('shows a list of dismissed alerts', () => {
     // Switch to dismissed view
-    spectator.component.setSeverityFilter('dismissed');
+    spectator.component.setSeverityFilter(AlertPanelFilter.Dismissed);
     spectator.detectChanges();
 
     const dismissedAlertComponents = alertPanel.dismissedAlertComponents;
@@ -325,13 +326,13 @@ describe('AlertsPanelComponent', () => {
     expect(alertPanel.dismissAllButton).not.toExist();
 
     // Switch to dismissed view to check all dismissed alerts
-    spectator.component.setSeverityFilter('dismissed');
+    spectator.component.setSeverityFilter(AlertPanelFilter.Dismissed);
     spectator.detectChanges();
 
     expect(alertPanel.dismissedAlertComponents).toHaveLength(4);
 
     // Switch back to all view to verify no unread alerts
-    spectator.component.setSeverityFilter('all');
+    spectator.component.setSeverityFilter(AlertPanelFilter.All);
     spectator.detectChanges();
 
     expect(alertPanel.unreadAlertsSection).not.toExist();
@@ -339,7 +340,7 @@ describe('AlertsPanelComponent', () => {
 
   it('reopens all alerts when Reopen All Alerts is pressed', () => {
     // Switch to dismissed view to see the reopen button
-    spectator.component.setSeverityFilter('dismissed');
+    spectator.component.setSeverityFilter(AlertPanelFilter.Dismissed);
     spectator.detectChanges();
 
     spectator.click(alertPanel.reopenAllButton!);
@@ -350,13 +351,13 @@ describe('AlertsPanelComponent', () => {
     expect(alertPanel.reopenAllButton).not.toExist();
 
     // Switch back to all view to check unread alerts
-    spectator.component.setSeverityFilter('all');
+    spectator.component.setSeverityFilter(AlertPanelFilter.All);
     spectator.detectChanges();
 
     expect(alertPanel.unreadAlertComponents).toHaveLength(4);
 
     // Switch to dismissed view to verify no dismissed alerts
-    spectator.component.setSeverityFilter('dismissed');
+    spectator.component.setSeverityFilter(AlertPanelFilter.Dismissed);
     spectator.detectChanges();
 
     expect(alertPanel.dismissedAlertsSection).not.toExist();
@@ -406,7 +407,7 @@ describe('AlertsPanelComponent', () => {
     expect(alertPanel.unreadAlertComponents).toHaveLength(1);
 
     // Switch to dismissed view to check dismissed alerts
-    spectator.component.setSeverityFilter('dismissed');
+    spectator.component.setSeverityFilter(AlertPanelFilter.Dismissed);
     spectator.detectChanges();
 
     expect(alertPanel.dismissedAlertComponents).toHaveLength(3);

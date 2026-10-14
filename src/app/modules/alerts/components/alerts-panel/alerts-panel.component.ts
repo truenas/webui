@@ -17,6 +17,7 @@ import { Role } from 'app/enums/role.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { AlertWithDuplicates, EnhancedAlert, SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
+import { AlertPanelFilter } from 'app/modules/alerts/components/alerts-panel/alert-panel-filter.enum';
 import { AlertPanelOverlayContainer } from 'app/modules/alerts/components/alerts-panel/alert-panel-overlay-container.service';
 import { SmartAlertService } from 'app/modules/alerts/services/smart-alert.service';
 import {
@@ -81,8 +82,10 @@ export class AlertsPanelComponent implements OnInit {
   // on a language switch.
   private langChange = toSignal(this.translate.onLangChange, { initialValue: null });
 
+  protected readonly AlertPanelFilter = AlertPanelFilter;
+
   // Severity filter
-  protected severityFilter = signal<'all' | 'critical' | 'warning' | 'info' | 'dismissed'>('all');
+  protected severityFilter = signal<AlertPanelFilter>(AlertPanelFilter.All);
 
   // Convert observables to signals for enhanced alerts
   private unreadAlertsSignal = toSignal(this.store$.select(selectUnreadAlerts), { initialValue: [] });
@@ -194,7 +197,7 @@ export class AlertsPanelComponent implements OnInit {
     this.store$.dispatch(dismissAllAlertsPressed({ alertIds }));
   }
 
-  setSeverityFilter(filter: 'all' | 'critical' | 'warning' | 'info' | 'dismissed'): void {
+  setSeverityFilter(filter: AlertPanelFilter): void {
     this.severityFilter.set(filter);
   }
 
@@ -202,14 +205,14 @@ export class AlertsPanelComponent implements OnInit {
    * Check if we should show dismissed alerts section
    */
   protected shouldShowDismissed = computed(() => {
-    return this.severityFilter() === 'dismissed';
+    return this.severityFilter() === AlertPanelFilter.Dismissed;
   });
 
   /**
    * Check if we should show unread alerts section
    */
   protected shouldShowUnread = computed(() => {
-    return this.severityFilter() !== 'dismissed';
+    return this.severityFilter() !== AlertPanelFilter.Dismissed;
   });
 
   /**
@@ -219,11 +222,11 @@ export class AlertsPanelComponent implements OnInit {
     this.langChange();
     const filter = this.severityFilter();
     switch (filter) {
-      case 'critical':
+      case AlertPanelFilter.Critical:
         return this.translate.instant('Dismiss All Critical Alerts');
-      case 'warning':
+      case AlertPanelFilter.Warning:
         return this.translate.instant('Dismiss All Warnings');
-      case 'info':
+      case AlertPanelFilter.Info:
         return this.translate.instant('Dismiss All Info Alerts');
       default:
         return this.translate.instant('Dismiss All Alerts');
@@ -237,11 +240,11 @@ export class AlertsPanelComponent implements OnInit {
     this.langChange();
     const filter = this.severityFilter();
     switch (filter) {
-      case 'critical':
+      case AlertPanelFilter.Critical:
         return this.translate.instant('Re-Open All Critical Alerts');
-      case 'warning':
+      case AlertPanelFilter.Warning:
         return this.translate.instant('Re-Open All Warnings');
-      case 'info':
+      case AlertPanelFilter.Info:
         return this.translate.instant('Re-Open All Info Alerts');
       default:
         return this.translate.instant('Re-Open All Alerts');
@@ -250,16 +253,16 @@ export class AlertsPanelComponent implements OnInit {
 
   private filterBySeverity<T extends Alert & EnhancedAlert>(alerts: T[]): T[] {
     const filter = this.severityFilter();
-    if (filter === 'all') {
+    if (filter === AlertPanelFilter.All) {
       return alerts;
     }
-    if (filter === 'critical') {
+    if (filter === AlertPanelFilter.Critical) {
       return alerts.filter((a) => this.isCritical(a.level));
     }
-    if (filter === 'warning') {
+    if (filter === AlertPanelFilter.Warning) {
       return alerts.filter((a) => this.isWarning(a.level));
     }
-    if (filter === 'info') {
+    if (filter === AlertPanelFilter.Info) {
       return alerts.filter((a) => this.isInfo(a.level));
     }
     return alerts;

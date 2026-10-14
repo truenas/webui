@@ -1,7 +1,7 @@
 @for (section of processedData().sections; track $index; let sectionIndex = $index) {
-  @if (section.type === 'markdown') {
+  @if (section.type === ContentSectionType.Markdown) {
     <markdown [data]="section.content || ''"></markdown>
-  } @else if (section.type === 'tabs' && section.tabs) {
+  } @else if (section.type === ContentSectionType.Tabs && section.tabs) {
     <tn-tabs>
       @for (tab of section.tabs; track tab.label) {
         <tn-tab [label]="tab.label" [testId]="['update-notes-tab', sectionIndex, $index]"></tn-tab>

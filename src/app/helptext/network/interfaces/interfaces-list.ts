@@ -3,8 +3,8 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 export const helptextInterfaces = {
   pendingChangesText: T('There are unapplied network interface changes that must be tested before being permanently saved. Test changes now?'),
 
-  checkinText: T('Test network interface changes for '),
-  checkinText2: T(' seconds.'),
+  // `<input></input>` marks where the timeout field sits in the sentence.
+  checkinText: T('Test network interface changes for <input></input> seconds.'),
 
   pendingCheckinDialogText: T('Network interface changes have been temporarily applied for testing. Keep changes permanently?\
  Changes are automatically reverted after the testing delay if they are not permanently applied.'),

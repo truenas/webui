@@ -13,7 +13,7 @@
     [width]="sidenavWidth"
     [opened]="isSidenavOpen"
     [mode]="sidenavMode"
-    [disableClose]="sidenavMode !== 'over'"
+    [disableClose]="!isSidenavOverlay"
     (openedChange)="onSidenavOpenedChange($event)"
     (closed)="onMenuClosed()"
   >

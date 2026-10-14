@@ -39,7 +39,7 @@
             ></tn-select>
           </tn-form-field>
 
-          @if (server.value.transport === 'TLS') {
+          @if (server.value.transport === SyslogTransport.Tls) {
             <tn-form-field [label]="'TLS Certificate' | translate" [tooltip]="tooltips.syslog_tls_certificate | translate">
               <tn-select
                 formControlName="tls_certificate"
