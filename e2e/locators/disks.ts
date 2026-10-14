@@ -20,12 +20,12 @@ import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 /** The column titles a test reads. Each is the first segment of the cell's id. */
 export type DiskColumn
   = | 'Name'
-  | 'Serial'
-  | 'Disk Size'
-  | 'Pool'
-  | 'Description'
-  | 'HDD Standby'
-  | 'Adv. Power Management';
+    | 'Serial'
+    | 'Disk Size'
+    | 'Pool'
+    | 'Description'
+    | 'HDD Standby'
+    | 'Adv. Power Management';
 
 /** `disk-<name>`, as `toUniqueRowTag` writes it. */
 function rowTag(disk: string): string {
