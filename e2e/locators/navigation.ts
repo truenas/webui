@@ -37,4 +37,6 @@ export const navLocators = {
   alertSettings: '[data-test="link-alert-settings"]',
   /** `Boot` under System, raw item name again. */
   boot: '[data-test="link-boot"]',
+  /** `Services` under System, raw item name again. */
+  services: '[data-test="link-services"]',
 } as const;
