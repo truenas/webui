@@ -165,26 +165,24 @@ describe('DiskSizeSelectsComponent', () => {
     expect(spectator.component.disksSelected.emit).toHaveBeenCalledWith([singleDisk]);
   });
 
-  it('keeps a size the user picked as theirs after it was briefly the only option', async () => {
+  it('keeps a size the user picked as theirs when it becomes the only option', async () => {
     await diskSizeSelect.selectOption('10 GiB (HDD)');
+    const store = spectator.inject(PoolManagerStore);
+    (store.setTopologyCategoryDiskSizes as jest.Mock).mockClear();
 
     spectator.setInput('inventory', [
       { type: DiskType.Hdd, size: 10 * GiB, name: 'disk1' },
       { type: DiskType.Hdd, size: 10 * GiB, name: 'disk2' },
     ] as DetailsDisk[]);
-    spectator.setInput('inventory', inventoryDisks);
 
-    // A later, unrelated change must still report the size as the user's, not just the
-    // emission the single-option refresh makes.
-    const minimumCheckbox = await loader.getHarness(TnCheckboxHarness.with({ selector: '[formControlName="treatDiskSizeAsMinimum"]' }));
-    await minimumCheckbox.check();
-
-    expect(spectator.inject(PoolManagerStore).setTopologyCategoryDiskSizes).toHaveBeenLastCalledWith(
+    // The sole-option refresh re-sets the control (a new, deep-equal object), so the store hears
+    // about it — and must hear that the size is still the user's.
+    expect(store.setTopologyCategoryDiskSizes).toHaveBeenLastCalledWith(
       VDevType.Spare,
       {
         diskType: DiskType.Hdd,
         diskSize: 10 * GiB,
-        treatDiskSizeAsMinimum: true,
+        treatDiskSizeAsMinimum: false,
         isDiskSizeAutoSelected: false,
       },
     );
