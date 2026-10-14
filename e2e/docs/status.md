@@ -733,6 +733,23 @@ in; they are now `list-ongoing-jobs` and `list-finished-jobs`. Dismiss All, the
 severity filters' counts, the smart actions, aborting a job and the job's log
 dialog are not covered.
 
+Cloud Sync tasks followed, in `tests/cloud-sync-tasks.e2e.ts`: adding a task
+through the card's wizard, and editing, running, restoring from and deleting one
+from its row menu on Data Protection. Every task syncs through an SFTP credential
+pointing at `127.0.0.1`, so the remote is a dataset on the appliance itself and no
+outside service is involved. Root signs in with a key, which `sshd_config` allows
+without password settings: the spec generates a keypair, appends its public key to
+root's `sshpubkey` with a marker comment, starts SSH if it was stopped, and undoes
+all three once for the file. Each action is asserted through `cloudsync.query`; the
+run also through `core.get_jobs` and the remote's `filesystem.listdir`, beside a
+second task that must not run. The API has no public call that writes a file, so
+the file a run copies is written by a one-off cron job. A restore only creates the
+opposite, PULL, task, so the spec checks its fields and then runs it over the API
+to show it brings the file back. Edit and delete each run beside a second task. The
+row tag is `card-cloudsync-task-<description>`, so no test edits the description.
+Dry run, Stop, custom transfers and the wizard's other settings are #14404's; the
+Enabled switch, the full list page and other providers are not covered.
+
 The framework is done and the coverage is not. A hundred and seventy-nine tests — a
 hundred and seventy-eight journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
