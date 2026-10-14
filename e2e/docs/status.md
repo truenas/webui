@@ -402,8 +402,15 @@ goes up, because a lower timeout drops an idle session. The rest of the card is
 not covered: the login banner, the directory service toggle, and the session
 list with its terminate actions.
 
-The framework is done and the coverage is not. A hundred and nine tests — a
-hundred and eight journeys and the smoke — against 19 top-level feature areas. What the work
+The Replication card's tasks limit came next, in `tests/replication-settings.e2e.ts`:
+one test sets a limit where there was none, and the other empties the field,
+which the form saves as no limit and the card shows as `–`. Each is asserted on
+the card and through `replication.config.config`. Middleware's schema declares
+no default for the limit, so teardown writes back what the appliance held
+before the first test rather than a fixed baseline.
+
+The framework is done and the coverage is not. A hundred and eleven tests — a
+hundred and ten journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
