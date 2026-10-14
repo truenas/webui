@@ -6,7 +6,7 @@
  * what the app last loaded. The query says whether the key is really loaded or not.
  *
  * Every dataset here is encrypted with a passphrase and is its own encryption root, because the card
- * offers Lock only for a passphrase and only on a root. The lock and unlock tests start from a
+ * shows Lock only on a root and disables it unless the root has a passphrase. The lock and unlock tests start from a
  * dataset made over the API, already unlocked or already locked. The create test makes its own
  * through the form, because creating it is the thing under test.
  */

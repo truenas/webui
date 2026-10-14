@@ -15,7 +15,7 @@ import { slowCallTimeoutMs } from '../support/timeouts';
 /**
  * Creates `name` as its own encryption root, with a passphrase, if absent.
  *
- * A passphrase rather than a generated key, because the card offers Lock only for a passphrase.
+ * A passphrase rather than a generated key, because the card disables Lock without one.
  * `inherit_encryption: false` is what makes it a root of its own even under an encrypted parent.
  */
 export async function ensureEncryptedDatasetPresent(

@@ -553,8 +553,8 @@ dataset encrypted with a passphrase from the form's Encryption Options, locking
 one from the Encryption card, and unlocking one from the card's Unlock page
 through both summary dialogs. Each is asserted on the card's Current State and
 through `pool.dataset.query`, which says whether the key is really loaded. Every
-dataset is its own encryption root with a passphrase, because the card offers
-Lock only for that. The lock and unlock tests start from one made over the API.
+dataset is its own encryption root with a passphrase, because the card shows
+Lock only on a root and disables it there without one. The lock and unlock tests start from one made over the API.
 Writing it turned up a `data-test` collision: the Lock dialog's own button emits
 `button-lock`, the same as the card's behind it. Rather than rename either, the
 dialog's action row now carries `actions-lock-dataset`, and the locator selects
