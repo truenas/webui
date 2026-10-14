@@ -375,8 +375,17 @@ and teardown writes it back. The servers are a form array whose Host and
 Transport carry no index in their ids, so the specs never put two servers in
 the form, and the two-server limit and the TLS certificate are not covered.
 
-The framework is done and the coverage is not. A hundred and four tests — a
-hundred and three journeys and the smoke — against 19 top-level feature areas. What the work
+Audit settings came next, in `tests/audit-settings.e2e.ts`, on the same plan as
+syslog: one test changes all five fields from the defaults and sets a reservation
+and a quota on the audit dataset, and the other starts with both set and clears
+them, which the card shows as `None`. Each is asserted on the card's readouts
+and through `audit.config`, and teardown writes middleware's defaults back. The
+form is built by `ix-form-renderer`, so its ids are the field names. The form's
+refusals (the range on each field, and Quota Fill Critical not above Quota Fill
+Warning) are not covered.
+
+The framework is done and the coverage is not. A hundred and six tests — a
+hundred and five journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
