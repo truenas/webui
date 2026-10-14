@@ -274,6 +274,29 @@ is typed and not left is on screen while Save still answers for the old one —
 before it is saved, so a hostname that does not resolve is refused, and the
 refusal arrives as an error dialog rather than under the field.
 
+Manual snapshots came next, in `tests/snapshot-create.e2e.ts`,
+`tests/snapshot-list.e2e.ts` and `tests/snapshot-rollback.e2e.ts`, all reached
+the way a user reaches them: a dataset in the tree, then its Data Protection
+card. `snapshot-create` takes one from the card's form — which arrives with the
+dataset chosen and a name generated — and holds Recursive to its word on a
+child dataset, in both directions. `snapshot-list` deletes, holds and clones
+from the expanded row beside a second snapshot that must come through
+untouched; a hold is invisible everywhere else in the UI, and a clone is only
+known to be *of that snapshot* by the new dataset's `origin` — after which
+the row no longer offers Delete. `snapshot-rollback`
+is about a dataset's contents, so it makes a directory after the snapshot
+(`filesystem.mkdir`) and asks whether it survived: properties and child
+datasets outlive a rollback and cannot show one. It then pins the safety check
+as a pair — refused while a newer snapshot exists, with nothing changed, and
+carried out with "No Safety Check", which destroys that snapshot.
+
+Writing it found that **no snapshot row was addressable**: the list built its
+row tag from `snapshot.id`, and its query selects only `snapshot_name`,
+`dataset` and `name`, so every row and every cell resolved to the same
+`row-snapshot` / `text-…-snapshot-row-text`. The Jest spec passed because its
+fixtures carry an `id` the real rows do not. The tag is built from `name` now,
+which is the value the legacy row carried.
+
 Init/shutdown scripts came next, in `tests/init-shutdown-scripts.e2e.ts`: adding,
 editing and deleting a command script from the card on System > Advanced
 Settings, each asserted on the card and through `initshutdownscript.query`, and
@@ -697,21 +720,21 @@ audit search, the details panel and the export are not covered.
 
 The topbar's two panels followed, one test each: `tests/alerts-panel.e2e.ts` and
 `tests/jobs-panel.e2e.ts`. Middleware has no public call that raises an alert, so
-the alerts spec runs a rsync task against a host where nothing listens: the run
-fails and raises a critical `RsyncFailed` alert keyed by the task, and deleting
-the task deletes it. The test dismisses that alert from the bell's panel and
-reopens it from the Dismissed filter, asserted in the panel and through
-`alert.list`. The panel folds every `RsyncFailed` alert into one entry, so the
-spec fails at the start if another is on the appliance. The jobs spec opens the
-panel, starts a `sleep 20` cron job over the API, and requires its row first in
-the running list and then in the finished one, with `core.get_jobs` reporting
-SUCCESS. The two lists had no ids, so a row could not say which it was in; they
-are now `list-ongoing-jobs` and `list-finished-jobs`. Dismiss All, the severity
-filters' counts, the smart actions, aborting a job and the job's log dialog are
-not covered.
+the alerts spec creates an NFS share restricted to a hundred networks, which
+raises a `NFSNetworkListExcessive` warning as the share is saved; deleting the
+share deletes it. The class matters: middleware *deletes* a one-shot alert such
+as `RsyncFailed` when it is dismissed, so only a class it marks dismissed can be
+reopened. The test dismisses the alert from the bell's panel and reopens it from
+the Dismissed filter, asserted in the panel and through `alert.list`. The jobs
+spec opens the panel, starts a `sleep 20` cron job over the API, and requires its
+row first in the running list and then in the finished one, with `core.get_jobs`
+reporting SUCCESS. The two lists had no ids, so a row could not say which it was
+in; they are now `list-ongoing-jobs` and `list-finished-jobs`. Dismiss All, the
+severity filters' counts, the smart actions, aborting a job and the job's log
+dialog are not covered.
 
-The framework is done and the coverage is not. A hundred and seventy-two tests — a
-hundred and seventy-one journeys and the smoke — against 19 top-level feature areas. What the work
+The framework is done and the coverage is not. A hundred and seventy-nine tests — a
+hundred and seventy-eight journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
@@ -746,8 +769,10 @@ a number. See `05-ci.md`.
 
 ## Next steps
 
-1. **Widen coverage.** Dataset ACL and manual snapshot are the two uncovered
-   stories worth taking next. The confirmation-bypass class is now covered
+1. **Widen coverage.** Dataset ACL is the uncovered story worth taking next.
+   Manual snapshots are covered — take, recursive, delete, hold, clone, roll
+   back and its safety check — but not batch delete, the list's own Add
+   button, naming schemas, the extra columns or VMware sync. The confirmation-bypass class is now covered
    everywhere this suite can reach it — datasets, zvols and pool disconnect;
    what is left needs an app, SED hardware or a VM. ZFS tiering's configuration
    and a dataset's tier change are covered; the share-list tier action and the
@@ -836,6 +861,14 @@ a number. See `05-ci.md`.
   `smb-service.e2e.ts` covers the Apple-extensions gate and leaves the restart
   prompt alone: pinning the current behaviour would encode something that reads
   as unintended. Worth a product answer before it is tested either way.
+- **A snapshot row's selection tick box has no id**, so batch delete has no
+  test. `tn-table` renders the box itself (`aria-label="Select row N"`), which
+  the template cannot tag; it needs a row-scoped id from the library.
+- **The batch-delete dialog's clone guard never fires.** It disables Delete on
+  `properties.clones`, which middleware does not return from either snapshot
+  query, requested or not. The details row had the same dead guard and now asks
+  `pool.dataset.query` for datasets whose `origin` is the snapshot; the batch
+  dialog still relies on middleware refusing.
 - **The delete-group dialog's "delete these users too" checkbox is unreachable**,
   and so has no test. It renders when the group has members, while the button
   that opens the dialog is disabled for exactly that reason — two rules that
