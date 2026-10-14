@@ -518,8 +518,18 @@ flow asserts there is exactly one. Teardown destroys the pool if it was
 imported and wipes its disk if it was not. Locked SED disks and a pool with an
 encrypted root are not covered.
 
-The framework is done and the coverage is not. A hundred and thirty-one tests — a
-hundred and thirty journeys and the smoke — against 19 top-level feature areas. What the work
+Zvols came next, in `tests/zvols.e2e.ts`: creating one from Add Zvol on the
+Datasets page, growing one and setting its Sync from Edit Zvol on the details card,
+and deleting one with the dialog fully confirmed. Each is asserted on screen and
+through `pool.dataset.query`, where the size is checked in bytes and Sync has to
+read `LOCAL`. Edit and delete each run beside a second zvol that must come through
+untouched. The form's ZFS properties are inline editables whose trigger id is
+built from the value they show, so the spec opens them by their `text-<field>`
+view instead. Encryption, the block size, shrinking (which the form refuses) and
+the read-only/size interaction are not covered.
+
+The framework is done and the coverage is not. A hundred and thirty-four tests — a
+hundred and thirty-three journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
