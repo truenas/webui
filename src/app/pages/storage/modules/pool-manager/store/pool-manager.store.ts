@@ -40,6 +40,9 @@ export interface PoolManagerTopologyCategory {
   width: number | null;
   diskSize: number | null;
   diskType: DiskType | null;
+  // True while `diskSize`/`diskType` hold the sole option the wizard filled in by itself,
+  // rather than one the user picked.
+  isDiskSizeAutoSelected: boolean;
   vdevsNumber: number | null;
   treatDiskSizeAsMinimum: boolean;
   vdevs: DetailsDisk[][];
@@ -89,6 +92,7 @@ const initialTopology = Object.values(VDevType).reduce((topology, value) => {
       width: null,
       diskSize: null,
       diskType: null,
+      isDiskSizeAutoSelected: false,
       vdevsNumber: null,
       treatDiskSizeAsMinimum: false,
       vdevs: [] as DetailsDisk[][],
@@ -339,7 +343,10 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
 
   setTopologyCategoryDiskSizes(
     type: VDevType,
-    updates: Pick<TopologyCategoryUpdate, 'diskSize' | 'treatDiskSizeAsMinimum' | 'diskType'>,
+    updates: Pick<
+      TopologyCategoryUpdate,
+      'diskSize' | 'treatDiskSizeAsMinimum' | 'diskType' | 'isDiskSizeAutoSelected'
+    >,
   ): void {
     this.updateTopologyCategory(type, updates);
     this.regenerateVdevs();

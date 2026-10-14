@@ -76,6 +76,7 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Detai
         width: null,
         diskSize: null,
         diskType: null,
+        isDiskSizeAutoSelected: false,
         vdevsNumber: null,
         treatDiskSizeAsMinimum: false,
         vdevs: [],
