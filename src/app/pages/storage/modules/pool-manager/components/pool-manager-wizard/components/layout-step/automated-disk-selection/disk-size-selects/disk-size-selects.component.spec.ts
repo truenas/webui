@@ -174,8 +174,8 @@ describe('DiskSizeSelectsComponent', () => {
     ] as DetailsDisk[]);
     spectator.setInput('inventory', inventoryDisks);
 
-    // The next emission is what reports the flag; the inventory changes above emit nothing
-    // because the picked value stays valid throughout.
+    // A later, unrelated change must still report the size as the user's, not just the
+    // emission the single-option refresh makes.
     const minimumCheckbox = await loader.getHarness(TnCheckboxHarness.with({ selector: '[formControlName="treatDiskSizeAsMinimum"]' }));
     await minimumCheckbox.check();
 

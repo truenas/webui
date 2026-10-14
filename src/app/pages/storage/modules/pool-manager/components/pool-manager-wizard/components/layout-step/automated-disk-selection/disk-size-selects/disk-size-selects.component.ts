@@ -187,10 +187,12 @@ export class DiskSizeSelectsComponent implements OnChanges {
       this.form.controls.sizeAndType.setValue(null);
     }
 
-    // Only an empty control is filled, and only then is the value recorded as auto-selected:
-    // a size the user already picked that happens to be the sole option stays the user's.
-    if (nextOptions.length === 1 && this.isStepActive() && this.form.controls.sizeAndType.value === null) {
-      this.autoSelectedSizeAndType = nextOptions[0].value;
+    if (nextOptions.length === 1 && this.isStepActive()) {
+      // Recorded as auto-selected only when it fills an empty control: a size the user already
+      // picked that happens to be the sole option stays the user's.
+      if (this.form.controls.sizeAndType.value === null) {
+        this.autoSelectedSizeAndType = nextOptions[0].value;
+      }
       setValueIfNotSame(this.form.controls.sizeAndType, nextOptions[0].value);
     }
   }

@@ -108,6 +108,7 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Detai
     poolManagerTopology[category as VDevType] = {
       diskType: disks[0].type,
       diskSize: minSize,
+      isDiskSizeAutoSelected: false,
       layout,
       vdevsNumber: vdevs.length,
       width,
