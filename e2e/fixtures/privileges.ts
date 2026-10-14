@@ -42,7 +42,7 @@ export async function ensurePrivilegeAbsent(client: E2eApiClient, name: string):
 export interface PrivilegeSeed {
   name: string;
   /** Wire values, `READONLY_ADMIN`, not the labels the form shows. */
-  roles: PrivilegeEntry['roles'];
+  roles: NonNullable<PrivilegeEntry['roles']>;
   webShell: boolean;
   /** Gids, not group row ids — see `ensureNoWebUiAccessAccountPresent` in `fixtures/users.ts`. */
   localGroupGids: number[];

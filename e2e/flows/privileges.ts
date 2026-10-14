@@ -38,7 +38,7 @@ export async function openEditPrivilegeForm(page: Page, name: string): Promise<v
  * The side panel also closes on Escape, so the name field is asserted still there
  * afterwards: a panel that took the key would fail here rather than at Save.
  */
-export async function toggleRoles(page: Page, labels: string[]): Promise<void> {
+export async function toggleRoles(page: Page, labels: [string, ...string[]]): Promise<void> {
   const { form } = privilegeLocators;
   await page.locator(form.roles).click();
 
