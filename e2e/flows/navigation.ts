@@ -21,6 +21,7 @@ const expectedRoute = {
   dataProtection: /\/data-protection\/?$/,
   users: /\/credentials\/users/,
   groups: /\/credentials\/groups\/?$/,
+  privileges: /\/credentials\/privileges\/?$/,
   s3AccessKeys: /\/credentials\/s3-access-keys/,
   backupCredentials: /\/credentials\/backup-credentials\/?$/,
   generalSettings: /\/system\/general\/?$/,
@@ -87,6 +88,12 @@ export async function goToUsers(page: Page): Promise<void> {
 export async function goToGroups(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.credentials).click();
   await clickAndArrive(page, navLocators.groups, expectedRoute.groups);
+}
+
+/** Privileges sits beside Groups under the same Credentials slide-out. */
+export async function goToPrivileges(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.credentials).click();
+  await clickAndArrive(page, navLocators.privileges, expectedRoute.privileges);
 }
 
 /**
