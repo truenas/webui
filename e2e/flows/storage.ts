@@ -54,7 +54,7 @@ export async function selectOption(page: Page, select: string, option: string): 
  * select has closed. The result would be a wrong disk size in the slowest test
  * in the suite, which is a miserable way to spend an afternoon.
  */
-async function selectFirstOption(page: Page, select: string, options: string): Promise<void> {
+export async function selectFirstOption(page: Page, select: string, options: string): Promise<void> {
   await page.locator(select).click();
   await page.locator(options).first().click();
 }
