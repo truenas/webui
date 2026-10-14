@@ -461,6 +461,32 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+      # What the run exercised — middleware methods and routes against the UI's
+      # inventory of both (scripts/e2e-coverage.ts) — into the job summary.
+      # Informational: never fails the job. With more than one shard each
+      # summary covers its own shard only; the per-test results are uploaded so
+      # they can be merged by hand (`yarn e2e:coverage <dir>`).
+      - name: Coverage report
+        if: always() && steps.suite.outcome != 'skipped'
+        continue-on-error: true
+        run: |
+          {
+            if [ "${{ needs.plan.outputs.total }}" != 1 ]; then
+              echo "> Shard ${{ matrix.shard }} of ${{ needs.plan.outputs.total }} only."
+              echo
+            fi
+            yarn e2e:coverage
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload coverage results
+        if: always() && steps.suite.outcome != 'skipped'
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-coverage-${{ matrix.shard }}
+          path: test-results/e2e-coverage/
+          if-no-files-found: ignore
+          retention-days: 14
+
       # Traces, screenshots and video for the tests that failed (R7.1). These
       # are what make a failure triageable without a local reproduction
       # (R6.2): the trace holds a DOM snapshot per step, the network, and the
@@ -489,6 +515,7 @@ jobs:
           path: |
             test-results/**
             !test-results/junit.xml
+            !test-results/e2e-coverage/**
           if-no-files-found: ignore
           retention-days: 14
 
