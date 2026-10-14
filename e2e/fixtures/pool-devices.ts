@@ -32,6 +32,16 @@ interface TopologyDevice {
   status: string;
 }
 
+interface TopologyVdev extends TopologyDevice {
+  children: TopologyDevice[];
+}
+
+/** The parts of a pool's `topology` read here. */
+interface Topology {
+  data?: TopologyVdev[];
+  spare?: TopologyDevice[];
+}
+
 const poolCreateTimeoutMs = 3 * 60_000;
 
 /**
@@ -87,27 +97,29 @@ async function getPool(client: E2eApiClient, name: string): Promise<PoolEntry> {
   return pool;
 }
 
+async function getTopology(client: E2eApiClient, name: string): Promise<Topology | null | undefined> {
+  // The API client types a pool's topology entries only as `unknown`, so the
+  // narrowing has to happen here.
+  return (await getPool(client, name)).topology as unknown as Topology | null | undefined;
+}
+
 /** The pool's first data vdev and the disks in it. */
 export async function readMirror(
   client: E2eApiClient,
   name: string,
 ): Promise<{ guid: string; disks: PoolDevice[] }> {
-  const pool = await getPool(client, name);
-  const [mirror] = pool.topology?.data ?? [];
+  const [mirror] = (await getTopology(client, name))?.data ?? [];
 
   if (!mirror) {
     throw new Error(`Pool "${name}" reports no data vdev.`);
   }
 
-  // The API client types a vdev's `children` entries as `any`, so name the fields read here.
-  return { guid: mirror.guid, disks: mirror.children.map((item: TopologyDevice) => toDevice(item)) };
+  return { guid: mirror.guid, disks: mirror.children.map((item) => toDevice(item)) };
 }
 
 /** The pool's spares, in topology order. */
 export async function listSpares(client: E2eApiClient, name: string): Promise<PoolDevice[]> {
-  const pool = await getPool(client, name);
-
-  return (pool.topology?.spare ?? []).map((item) => toDevice(item));
+  return ((await getTopology(client, name))?.spare ?? []).map((item) => toDevice(item));
 }
 
 /** The pool's own status: `ONLINE`, or `DEGRADED` while a member is offline. */
