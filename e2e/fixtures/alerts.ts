@@ -14,6 +14,11 @@ import { readTimeoutMs } from '../support/timeouts';
 /** An alert as middleware reports it, dismissed or not. */
 export type AlertRecord = CallResponse<E2eApiDirectory, 'alert.list'>[number];
 
+/** Every alert middleware holds, dismissed or not. */
+export async function listAlerts(client: E2eApiClient): Promise<AlertRecord[]> {
+  return firstValueFrom(client.api.call('alert.list').pipe(timeout(readTimeoutMs)));
+}
+
 /**
  * Every `RsyncFailed` alert middleware holds, dismissed or not.
  *
@@ -22,7 +27,7 @@ export type AlertRecord = CallResponse<E2eApiDirectory, 'alert.list'>[number];
  * the task's old one before it starts, and `rsynctask.delete` removes it.
  */
 export async function findRsyncFailedAlerts(client: E2eApiClient): Promise<AlertRecord[]> {
-  const alerts = await firstValueFrom(client.api.call('alert.list').pipe(timeout(readTimeoutMs)));
+  const alerts = await listAlerts(client);
 
   return alerts.filter((alert) => alert.klass === 'RsyncFailed');
 }

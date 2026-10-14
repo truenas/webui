@@ -15,7 +15,9 @@
  * Each step is asserted twice: the panel moves the alert between its open and
  * dismissed views, and `alert.list` says whether middleware has it dismissed.
  */
-import { findRsyncFailedAlert, findRsyncFailedAlerts, type AlertRecord } from '../fixtures/alerts';
+import {
+  findRsyncFailedAlert, findRsyncFailedAlerts, listAlerts, type AlertRecord,
+} from '../fixtures/alerts';
 import {
   ensureRsyncTaskPresent,
   ensureRsyncTasksAbsent,
@@ -82,12 +84,19 @@ test.beforeEach(async ({ api, pool }) => {
     throw new Error(`the RsyncFailed alert for rsync task ${task.id} went away as soon as it appeared`);
   }
   expect(alert.dismissed).toBe(false);
+
+  // Every id on the panel's entry is built from the key alone, and middleware
+  // derives a key from an alert's arguments, so another class raised against an
+  // object with the same id shares it, and every locator would match twice.
+  const sharingKey = (await listAlerts(api)).filter((other) => other.key === alert.key && other.id !== alert.id);
+  expect(sharingKey.map((other) => other.klass), `no other alert may share the key ${alert.key}`).toEqual([]);
+
   raised = { taskId: task.id, alert };
 });
 
 test.afterEach(async ({ api, pool }) => {
   const dataset = `${pool}/${leaf}`;
-  if (leavingTestData(`the rsync task on, its RsyncFailed alert and the dataset ${dataset}`)) {
+  if (leavingTestData(`the rsync task on ${dataset}, its RsyncFailed alert and the dataset itself`)) {
     return;
   }
 
