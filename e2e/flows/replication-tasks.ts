@@ -13,6 +13,9 @@ import { replicationTaskLocators } from '../locators/replication-tasks';
  */
 const saveTimeoutMs = 90_000;
 
+/** Updating and deleting a task are one middleware call each, not instant. */
+const editTimeoutMs = 60_000;
+
 /**
  * How many tasks the card lists — its pager's `pageSize`. Sorted by name.
  *
@@ -127,6 +130,12 @@ export async function saveReplicationToRunOnce(page: Page): Promise<string> {
   return text;
 }
 
+/** Opens a row's kebab menu, starting from the sidebar. */
+async function openRowMenu(page: Page, name: string): Promise<void> {
+  await goToDataProtection(page);
+  await page.locator(replicationTaskLocators.card.rowMenu(name)).click();
+}
+
 /**
  * Runs a task from its row menu.
  *
@@ -136,13 +145,61 @@ export async function saveReplicationToRunOnce(page: Page): Promise<string> {
  * the appliance.
  */
 export async function runReplicationTask(page: Page, name: string): Promise<void> {
-  const { card } = replicationTaskLocators;
-
-  await goToDataProtection(page);
-  await page.locator(card.rowMenu(name)).click();
-  await page.locator(card.rowMenuRun(name)).click();
+  await openRowMenu(page, name);
+  await page.locator(replicationTaskLocators.card.rowMenuRun(name)).click();
 
   await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
   await page.locator(confirmDialogLocators.confirm).click();
   await expect(page.locator(confirmDialogLocators.title)).toBeHidden();
+}
+
+/**
+ * Opens the edit form for a task from its row menu.
+ *
+ * Waits on the task's name having been patched in, which is what says the panel
+ * is editing *this* task rather than showing an empty form.
+ */
+export async function openEditReplicationTaskForm(page: Page, name: string): Promise<void> {
+  await openRowMenu(page, name);
+  await page.locator(replicationTaskLocators.card.rowMenuEdit(name)).click();
+  await expect(page.locator(replicationTaskLocators.form.name)).toHaveValue(name);
+}
+
+/** Picks a destination read-only policy by its label, `SET`, `REQUIRE` or `IGNORE`. */
+export async function chooseReplicationReadonlyPolicy(page: Page, label: string): Promise<void> {
+  const { form } = replicationTaskLocators;
+  await selectOption(page, form.readonly, form.readonlyOption(label));
+}
+
+/**
+ * Saves the edit form and waits for the panel to close.
+ *
+ * The panel closing is the app's own signal that the save succeeded — a
+ * refusal leaves it open with the error attached.
+ */
+export async function saveReplicationTaskForm(page: Page): Promise<void> {
+  await page.locator(replicationTaskLocators.form.save).click();
+  await expect(page.locator(replicationTaskLocators.form.save)).toBeHidden({ timeout: editTimeoutMs });
+}
+
+/**
+ * Deletes a task from its row menu, and waits for its row to go.
+ *
+ * The card raises webui's shared confirm through `confirmDelete`, which does not
+ * pass `hideCheckbox`, so Delete stays **disabled** until the box is ticked —
+ * asserted on the way, so a dialog that lost its gate fails here rather than
+ * passing a test that never needed it.
+ */
+export async function deleteReplicationTask(page: Page, name: string): Promise<void> {
+  await openRowMenu(page, name);
+  await page.locator(replicationTaskLocators.card.rowMenuDelete(name)).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+
+  const confirm = page.locator(confirmDialogLocators.confirm);
+  await expect(confirm).toBeDisabled();
+  await page.locator(confirmDialogLocators.checkbox).click();
+  await expect(confirm).toBeEnabled();
+
+  await confirm.click();
+  await expect(page.locator(replicationTaskLocators.card.row(name))).toBeHidden({ timeout: editTimeoutMs });
 }

@@ -1,5 +1,6 @@
 /**
- * The Replication Tasks card on Data Protection, and the wizard its Add opens.
+ * The Replication Tasks card on Data Protection, the wizard its Add opens, and
+ * the form its Edit opens.
  *
  * Every id on a row is built from the card's own `uniqueRowTag`,
  * `convertStringToId('replication-task-' + name)`, which lowercases the tag and
@@ -12,6 +13,10 @@
  * owns its buttons. Its controls declare their `testId`s, and its two
  * `ix-explorer`s render a `tn-file-picker` whose inner `<input>` takes the
  * control name.
+ *
+ * Edit opens a different component, `ix-replication-form`: one long form in five
+ * sections, with Save in the side panel's footer. Its controls declare their
+ * `testId`s too.
  */
 import { kebabTestSegment } from './test-id';
 
@@ -44,6 +49,28 @@ export const replicationTaskLocators = {
     rowMenuRun: (name: string): string => (
       `[data-test="button-${rowTag(name)}-more-action-mdi-play-circle-row-action"]`
     ),
+
+    /** Edit, inside that menu. Same shape as {@link rowMenuRun}. */
+    rowMenuEdit: (name: string): string => (
+      `[data-test="button-${rowTag(name)}-more-action-mdi-pencil-row-action"]`
+    ),
+
+    /** Delete, inside that menu. Same shape as {@link rowMenuRun}. */
+    rowMenuDelete: (name: string): string => (
+      `[data-test="button-${rowTag(name)}-more-action-mdi-delete-row-action"]`
+    ),
+  },
+
+  form: {
+    /** General section. */
+    name: '[data-test="input-name"]',
+    retries: '[data-test="input-retries"]',
+    enabled: '[data-test="checkbox-enabled"]',
+    /** Destination section. Its options are labelled with the mode itself: SET, REQUIRE, IGNORE. */
+    readonly: '[data-test="select-readonly"]',
+    readonlyOption: (label: string): string => `[data-test="option-readonly-${kebabTestSegment(label)}"]`,
+    /** `<tn-button [testId]="'save'">` on the side panel container. */
+    save: '[data-test="button-save"]',
   },
 
   wizard: {
