@@ -506,8 +506,20 @@ one the pool wizard will not offer, so teardown wipes any that remain. Only the
 Quick method is used. The bulk edit, the column picker and the SED actions are
 not covered.
 
-The framework is done and the coverage is not. A hundred and thirty tests — a
-hundred and twenty-nine journeys and the smoke — against 19 top-level feature areas. What the work
+Importing a pool came next, in `tests/pool-import.e2e.ts`: one test imports a
+pool that was exported, from the Import Pool button in the Storage dashboard's
+header. The pool is the spec's own, `e2e_import_tank`, built on one disk and
+exported over the API without `destroy`, which is how the disk wipe test gets
+its disk too. After the import, the pool's card is on the dashboard,
+`pool.query` reports it `ONLINE`, and `disk.details` no longer reports its disk
+as carrying an exported pool. The panel's options are `<name> | <guid>`, and
+the guid changes with every build, so the option is matched by name and the
+flow asserts there is exactly one. Teardown destroys the pool if it was
+imported and wipes its disk if it was not. Locked SED disks and a pool with an
+encrypted root are not covered.
+
+The framework is done and the coverage is not. A hundred and thirty-one tests — a
+hundred and thirty journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.

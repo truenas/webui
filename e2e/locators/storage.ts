@@ -209,6 +209,39 @@ export const poolDisconnectLocators = {
 } as const;
 
 /**
+ * The Import Pool side panel, opened from the storage dashboard's header.
+ *
+ * It opens on a spinner while `pool.import_find` runs, and only then renders the
+ * form, so the pool select appearing is the signal that the search finished.
+ */
+export const poolImportLocators = {
+  /** "Import Pool" in the dashboard header. `[testId]="'import-pool'"` on a tn-button. */
+  open: '[data-test="button-import-pool"]',
+
+  /** `<tn-select formControlName="guid">`, id via control-name fallback. */
+  pool: '[data-test="select-guid"]',
+  /**
+   * The option for an exported pool, by its name.
+   *
+   * The select pins `optionTestIdByLabel`, and the label is `<name> | <guid>`, so
+   * the library's normalizer emits `option-guid-<name>-<guid>`. The guid is
+   * middleware's and changes with every pool built, so this is a prefix match on
+   * the name. A pool whose name starts with the same words would match too, so
+   * the flow asserts there is exactly one before picking it.
+   */
+  poolOption: (pool: string) => `[data-test^="option-guid-${kebabTestSegment(pool)}-"]`,
+
+  /** The form's own submit. `[testId]="'import'"`, not the header's `import-pool`. */
+  submit: '[data-test="button-import"]',
+} as const;
+
+/** A pool's card on the storage dashboard. */
+export const poolCardLocators = {
+  /** The card's heading. `tnTestIdType="text"` with `[pool()?.name, 'pool-name']`. */
+  name: (pool: string) => `[data-test="text-${kebabTestSegment(pool)}-pool-name"]`,
+} as const;
+
+/**
  * The delete-dataset dialog, which guards a destructive action with two gates:
  * the dataset's own name typed back, and a Confirm tick box.
  *
