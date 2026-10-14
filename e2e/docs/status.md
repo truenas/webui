@@ -484,10 +484,11 @@ mail over SMTP with authentication from the defaults, and moving it to another
 server with authentication turned off, each asserted on the card's From line and
 through `mail.config`. Between them every SMTP control is changed. Every address
 is under `example.com`, and saving sends nothing. Teardown writes middleware's
-defaults back, so a run clears an appliance's real mail setup. With authentication
-off the form does not send the username, so middleware keeps the old one. The
-OAuth send methods need a real Google or Microsoft login and are not covered, and
-neither is Send Test Mail.
+defaults back, so a run clears an appliance's real mail setup — except the sender,
+which `mail.update` will not accept empty, so it becomes `baseline@example.com`.
+With authentication off the form does not send the username, so middleware keeps
+the old one. The OAuth send methods need a real Google or Microsoft login and are
+not covered, and neither is Send Test Mail.
 
 The framework is done and the coverage is not. A hundred and twenty-seven tests — a
 hundred and twenty-six journeys and the smoke — against 19 top-level feature areas. What the work

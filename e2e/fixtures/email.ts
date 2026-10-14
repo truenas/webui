@@ -6,9 +6,11 @@
  * from a known baseline and teardown writes that baseline back, rather than
  * snapshotting what it found and restoring that.
  *
- * The baseline is middleware's own default: no sender, no server, port 25, no
- * encryption, no SMTP authentication and no OAuth. That is what a fresh appliance
- * holds. On an appliance someone has set up to send mail, a run clears that setup.
+ * The baseline is middleware's own default except for the sender address: no
+ * name, no server, port 25, no encryption, no SMTP authentication and no OAuth.
+ * A fresh appliance holds an empty sender, but `mail.update` refuses one
+ * (`[EINVAL] fromemail: This field is required`), so no update can write it back.
+ * On an appliance someone has set up to send mail, a run clears that setup.
  *
  * The stored username and password are left alone. Middleware ignores them while
  * SMTP authentication is off, and the form does not send them then either.
@@ -29,9 +31,12 @@ export type MailSettings = Pick<
   MailConfig, 'fromemail' | 'fromname' | 'outgoingserver' | 'port' | 'security' | 'smtp' | 'user'
 >;
 
-/** Middleware's defaults, less the username, which the baseline leaves alone. */
+/**
+ * Middleware's defaults, less the username, which the baseline leaves alone, and
+ * with a sender, which `mail.update` requires.
+ */
 export const mailBaseline: Omit<MailSettings, 'user'> = {
-  fromemail: '',
+  fromemail: 'baseline@example.com',
   fromname: '',
   outgoingserver: '',
   port: 25,

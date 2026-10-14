@@ -12,9 +12,10 @@
  * Google or Microsoft login.
  *
  * The settings are one config record, so there is nothing to delete afterwards.
- * Teardown writes middleware's defaults back. See `fixtures/email.ts`.
+ * Teardown writes middleware's defaults back, with a placeholder sender because
+ * `mail.update` refuses an empty one. See `fixtures/email.ts`.
  */
-import { readMailSettings, resetMailSettings, setAuthenticatedMail } from '../fixtures/email';
+import { mailBaseline, readMailSettings, resetMailSettings, setAuthenticatedMail } from '../fixtures/email';
 import { chooseMailSecurity, openEmailForm, saveEmailForm } from '../flows/email';
 import { emailLocators } from '../locators/email';
 import { leavingTestData } from '../support/cleanup';
@@ -40,8 +41,8 @@ test('an admin sets up mail over SMTP with authentication, and the appliance kee
 
   // The baseline's port.
   await openEmailForm(page, 25);
-  // Nothing is set yet, so the card has no From line.
-  await expect(page.locator(emailLocators.card.from)).toBeHidden();
+  // The baseline has a sender and no server, so the From line names no server yet.
+  await expect(page.locator(emailLocators.card.from)).toHaveText(mailBaseline.fromemail);
 
   await page.locator(emailLocators.form.fromEmail).fill(sender.email);
   await page.locator(emailLocators.form.fromName).fill(sender.name);
