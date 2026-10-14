@@ -16,7 +16,7 @@
 
   <ng-template tnCardFooterActions>
     <tn-button
-      [testId]="'manage-vdevs'"
+      [testId]="[poolState().name, 'manage-vdevs']"
       [ixUiSearch]="searchableElements.elements.viewVdevs"
       [label]="'View VDEVs' | translate"
       (onClick)="router.navigate(['/storage', this.poolState().id, 'vdevs'])"
