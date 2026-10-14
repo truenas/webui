@@ -2,7 +2,8 @@ import { Component, ChangeDetectionStrategy, computed, DestroyRef, input, inject
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnDialog, TnTooltipDirective,
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnDialog, TnTestIdDirective,
+  TnTooltipDirective,
 } from '@truenas/ui-components';
 import { filter, of, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -30,6 +31,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
     FormatDateTimePipe,
     TnTooltipDirective,
+    TnTestIdDirective,
     RequiresRolesDirective,
     TnButtonComponent,
     UiSearchDirective,

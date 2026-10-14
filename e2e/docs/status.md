@@ -641,8 +641,72 @@ card's menu trigger now passes `button-zfs-actions` in full, as the other caller
 of that input do. Replace, Extend, Detach, Remove and the other kinds of vdev are
 not covered.
 
-The framework is done and the coverage is not. A hundred and sixty-five tests — a
-hundred and sixty-four journeys and the smoke — against 19 top-level feature areas. What the work
+Scrubbing a pool came next, in `tests/pool-scrub.e2e.ts`: one test starts a
+scrub from Scrub Now on the pool's Storage Health card and waits for it to
+finish. `pool.query` has to report a finished `SCRUB` with no errors. The card
+has to show "Finished Scrub on …" and 0 errors without a reload. The spec builds
+its own one-disk pool, `e2e_scrub_tank`, and rebuilds it before each test, so
+the card cannot already show an old scrub. The shared `pool` fixture can be a
+developer's real pool, and scrubbing that could take hours. Scrub Now's id now
+carries the pool's name (`button-scrub-<pool>`, was `button-scrub`), like
+Disconnect's, because the dashboard shows one per pool. Pause, Resume
+and Stop are not covered: a scrub of an empty pool ends before they can be
+clicked. The scheduled scrub form is not covered either.
+
+Certificates followed, in `tests/certificates.e2e.ts`: creating a certificate
+signing request through the Add CSR wizard and deleting one from its row on the
+CSR card under Credentials > Certificates. Both are asserted on the card and
+through `certificate.query`, whose PEM request and parsed subject are the
+evidence that a key pair was generated and a request signed. The delete runs
+beside a second CSR that must come through untouched. The wizard is driven with
+its defaults (no profile, RSA 2048, SHA256, no extensions) and only the subject
+filled in. The row tag is `csr-<name>`. The card lists four CSRs before its
+pager, so each test fails at the start if its rows would not fit. Importing a
+CSR, profiles, extensions, Edit, Download, ACME certificates, the Certificates
+card itself and ACME DNS authenticators are not covered.
+
+iSCSI shares followed, in `tests/iscsi-shares.e2e.ts`: creating a share with the
+iSCSI Wizard from the Block (iSCSI) Shares Targets card on the Shares dashboard,
+and deleting a target from its row there. The wizard makes a new zvol, an extent
+on it, a new portal listening on `0.0.0.0`, an initiator group, a target, and the
+association between target and extent, all named after the share. The create
+is asserted through the `iscsi.*` queries and `pool.dataset.query`: the zvol, the
+extent on it, the target, its association with the extent and the portal its
+group points at. The initiator group is not read back. The delete ticks "Delete
+associated extents" and runs beside a second target that must come through
+untouched. The extent has to go and the zvol has to stay. The row tag is
+`card-iscsi-target-<name>` through lodash, so `e2e` reads `e-2-e` in every id
+on the row. The card lists four targets before its pager, so each test fails at
+the start if its rows would not fit. Teardown finds the portal and initiator
+group by the `comment` the wizard gives them. File extents, existing targets,
+portals and zvols in the wizard, initiators, Fibre Channel, Edit, the global
+configuration, the standalone pages and a real initiator login are not covered.
+
+The Services page under System followed, in `tests/services.e2e.ts`: starting FTP
+from its row's play button and stopping it from the stop button and its
+confirmation, and saving the SSH and FTP forms the rows' pencils open. A start or
+stop is asserted on the row's Status cell and through `service.query`, which also
+has to show the start did not turn on Start Automatically. A save is asserted
+through `ssh.config` or `ftp.config`, since the page shows no settings. The row
+tag is `service-<name>`. FTP is the service started because nothing the suite or
+CI uses depends on it; it goes back to stopped, and both forms' fields to a fixed
+baseline, before and after each test. The Start Automatically switch, the search,
+the other services' forms, advanced options and View Logs/Sessions are not covered.
+
+Virtual Machines followed, in `tests/virtual-machines.e2e.ts`: creating a Linux VM
+with the wizard on a new zvol, and editing and deleting one from its row's detail
+panel beside a bystander that must not change. Each is asserted through `vm.query`,
+and the created VM's disk and NIC through `vm.device.query`. No test starts a
+machine: the wizard turns Start on Boot and the VNC display off, every readback
+expects STOPPED, and rows are expanded through the Name cell rather than the row,
+which also holds the Running toggle. The spec fails rather than skips on an
+appliance without virtualization support, since the page then shows no list. The
+wizard's zvol goes under a dataset of its own, removed in teardown. Starting and
+stopping, devices, cloning, installation media, GPUs and the display are not
+covered.
+
+The framework is done and the coverage is not. A hundred and seventy-six tests — a
+hundred and seventy-five journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.

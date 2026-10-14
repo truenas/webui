@@ -2,7 +2,9 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, D
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { InputType, TnFormSectionComponent, TnInputComponent } from '@truenas/ui-components';
+import {
+  InputType, TnFormSectionComponent, TnInputComponent, TnTestIdDirective,
+} from '@truenas/ui-components';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
@@ -20,6 +22,7 @@ import {
   imports: [
     TnFormSectionComponent,
     TnInputComponent,
+    TnTestIdDirective,
     ReactiveFormsModule,
     DetailsTableComponent,
     DetailsItemComponent,

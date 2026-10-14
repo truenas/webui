@@ -1,24 +1,23 @@
 // Dynamic Markdown Component Global Styles
+// Highlights are inline-block, not flex: a flex container turns `**Label:** text`
+// into side-by-side columns instead of letting the text wrap as one paragraph.
 ix-dynamic-markdown {
-  .highlight-warning {
-    align-items: center;
-    background-color: rgba(var(--color-warning-rgb), 0.15);
+  .highlight-warning,
+  .highlight-error {
     border-radius: 4px;
-    color: var(--orange);
-    display: inline-flex;
+    display: inline-block;
     font-weight: 500;
+    max-width: 100%;
     padding: 2px 8px;
-    position: relative;
+  }
+
+  .highlight-warning {
+    background-color: color-mix(in srgb, var(--orange) 15%, transparent);
+    color: var(--orange);
   }
 
   .highlight-error {
-    align-items: center;
-    background-color: rgba(var(--color-error-rgb), 0.15);
-    border-radius: 4px;
+    background-color: color-mix(in srgb, var(--red) 15%, transparent);
     color: var(--red);
-    display: inline-flex;
-    font-weight: 500;
-    padding: 2px 8px;
-    position: relative;
   }
 }

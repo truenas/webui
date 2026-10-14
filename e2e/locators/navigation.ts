@@ -15,6 +15,8 @@ export const navLocators = {
   shares: '[data-test="link-shares-menu"]',
   /** `Data Protection` — `getItemName` turns the space into an underscore, which normalizes to a hyphen. */
   dataProtection: '[data-test="link-data-protection-menu"]',
+  /** `Virtual Machines`, a plain link like Data Protection, and hidden without the VM entitlement. */
+  virtualMachines: '[data-test="link-virtual-machines-menu"]',
   /** A slide-out, not a link — opens a submenu rather than navigating. */
   credentials: '[data-test="link-credentials-menu"]',
   users: '[data-test="link-users"]',
@@ -24,6 +26,8 @@ export const navLocators = {
   s3AccessKeys: '[data-test="link-s3-access-keys"]',
   /** `Backup Credentials` under Credentials, raw item name again. */
   backupCredentials: '[data-test="link-backup-credentials"]',
+  /** `Certificates` under Credentials, raw item name again. */
+  certificates: '[data-test="link-certificates"]',
   /** A slide-out, like Credentials. */
   system: '[data-test="link-system-menu"]',
   /** `General Settings` under System, raw item name again. */
@@ -35,4 +39,6 @@ export const navLocators = {
   alertSettings: '[data-test="link-alert-settings"]',
   /** `Boot` under System, raw item name again. */
   boot: '[data-test="link-boot"]',
+  /** `Services` under System, raw item name again. */
+  services: '[data-test="link-services"]',
 } as const;

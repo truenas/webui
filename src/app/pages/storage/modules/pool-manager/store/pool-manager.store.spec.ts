@@ -243,6 +243,7 @@ describe('PoolManagerStore', () => {
       expect(state.topology[VDevType.Data]).toEqual({
         diskSize: 2 * TiB,
         diskType: DiskType.Hdd,
+        isDiskSizeAutoSelected: false,
         hasCustomDiskSelection: false,
         layout: CreateVdevLayout.Stripe,
         treatDiskSizeAsMinimum: false,

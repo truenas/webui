@@ -19,16 +19,19 @@ const expectedRoute = {
   datasets: /\/datasets/,
   shares: /\/sharing/,
   dataProtection: /\/data-protection\/?$/,
+  virtualMachines: /\/vm\/?$/,
   users: /\/credentials\/users/,
   groups: /\/credentials\/groups\/?$/,
   privileges: /\/credentials\/privileges\/?$/,
   s3AccessKeys: /\/credentials\/s3-access-keys/,
   backupCredentials: /\/credentials\/backup-credentials\/?$/,
+  certificates: /\/credentials\/certificates\/?$/,
   generalSettings: /\/system\/general\/?$/,
   advancedSettings: /\/system\/advanced\/?$/,
   network: /\/system\/network\/?$/,
   alertSettings: /\/system\/alert-settings\/?$/,
   boot: /\/system\/boot\/?$/,
+  services: /\/system\/services\/?$/,
 } as const;
 
 /**
@@ -70,6 +73,14 @@ export async function goToShares(page: Page): Promise<void> {
  */
 export async function goToDataProtection(page: Page): Promise<void> {
   await clickAndArrive(page, navLocators.dataProtection, expectedRoute.dataProtection);
+}
+
+/**
+ * Virtual Machines is a plain link too. Anchored to the end because each VM's devices live under it
+ * (`/vm/:pk/devices`).
+ */
+export async function goToVirtualMachines(page: Page): Promise<void> {
+  await clickAndArrive(page, navLocators.virtualMachines, expectedRoute.virtualMachines);
 }
 
 /** Credentials is a slide-out, so reaching Users takes two clicks. */
@@ -115,6 +126,12 @@ export async function goToBackupCredentials(page: Page): Promise<void> {
   await clickAndArrive(page, navLocators.backupCredentials, expectedRoute.backupCredentials);
 }
 
+/** Certificates — certificates, CSRs and ACME DNS authenticators — is under Credentials too. */
+export async function goToCertificates(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.credentials).click();
+  await clickAndArrive(page, navLocators.certificates, expectedRoute.certificates);
+}
+
 /** System is a slide-out too, so General Settings takes two clicks the same way. */
 export async function goToGeneralSettings(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.system).click();
@@ -149,4 +166,10 @@ export async function goToAlertSettings(page: Page): Promise<void> {
 export async function goToBootEnvironments(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.system).click();
   await clickAndArrive(page, navLocators.boot, expectedRoute.boot);
+}
+
+/** Services is under the same System slide-out. */
+export async function goToServices(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.system).click();
+  await clickAndArrive(page, navLocators.services, expectedRoute.services);
 }

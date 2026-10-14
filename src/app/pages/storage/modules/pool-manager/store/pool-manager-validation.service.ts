@@ -426,6 +426,11 @@ export class PoolManagerValidationService {
    * Stripe for Spare/Cache. A non-null layout therefore does not imply that
    * the user engaged with the category.
    *
+   * The disk size is excluded on the same grounds while `isDiskSizeAutoSelected`
+   * is set: DiskSizeSelectsComponent fills in the sole size on offer whenever
+   * the inventory refreshes while the step is open, so an optional step the
+   * user only clicked through can carry one. A size the user picked still counts.
+   *
    * We use `!= null` (matching both null and undefined) rather than `!== null`
    * so partially-populated test fixtures — which cast `Partial<Category>` via
    * `as` and only fill the fields under test — still register as "not touched"
@@ -433,8 +438,10 @@ export class PoolManagerValidationService {
    * never leaves any of these fields undefined.
    */
   private isCategoryPartiallyConfigured(category: PoolManagerTopologyCategory): boolean {
-    return category.diskSize != null
-      || category.diskType != null
+    const hasPickedDiskSize = !category.isDiskSizeAutoSelected
+      && (category.diskSize != null || category.diskType != null);
+
+    return hasPickedDiskSize
       || category.width != null
       || category.vdevsNumber != null
       || category.draidDataDisks != null
