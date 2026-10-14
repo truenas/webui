@@ -101,7 +101,9 @@ export async function findSnapshotNames(client: E2eApiClient, dataset: string): 
     client.api.query('pool.snapshot.query', [['dataset', '=', dataset]]).pipe(timeout(readTimeoutMs)),
   );
 
-  return snapshots.map((snapshot) => snapshot.name.slice(snapshot.name.indexOf('@') + 1)).sort();
+  return snapshots
+    .map((snapshot) => snapshot.name.slice(snapshot.name.indexOf('@') + 1))
+    .sort((a, b) => a.localeCompare(b));
 }
 
 /** Takes a snapshot of one dataset, under a name the test chooses. */
