@@ -26,4 +26,6 @@ export const navLocators = {
   /** A slide-out, like Credentials. */
   system: '[data-test="link-system-menu"]',
   advancedSettings: '[data-test="link-advanced-settings"]',
+  /** `Network` under System, raw item name again. */
+  network: '[data-test="link-network"]',
 } as const;

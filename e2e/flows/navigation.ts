@@ -24,6 +24,7 @@ const expectedRoute = {
   s3AccessKeys: /\/credentials\/s3-access-keys/,
   backupCredentials: /\/credentials\/backup-credentials\/?$/,
   advancedSettings: /\/system\/advanced\/?$/,
+  network: /\/system\/network\/?$/,
 } as const;
 
 /**
@@ -108,4 +109,10 @@ export async function goToBackupCredentials(page: Page): Promise<void> {
 export async function goToAdvancedSettings(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.system).click();
   await clickAndArrive(page, navLocators.advancedSettings, expectedRoute.advancedSettings);
+}
+
+/** Network sits beside Advanced Settings under the same System slide-out. */
+export async function goToNetwork(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.system).click();
+  await clickAndArrive(page, navLocators.network, expectedRoute.network);
 }

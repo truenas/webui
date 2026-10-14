@@ -409,8 +409,20 @@ the card and through `replication.config.config`. Middleware's schema declares
 no default for the limit, so teardown writes back what the appliance held
 before the first test rather than a fixed baseline.
 
-The framework is done and the coverage is not. A hundred and eleven tests — a
-hundred and ten journeys and the smoke — against 19 top-level feature areas. What the work
+Static routes came next, in `tests/static-routes.e2e.ts`: adding, editing and
+deleting a route from the card on System > Network, the first spec to reach
+that page. Each is asserted on the card and through `staticroute.query`, which
+also carries the description the card does not show, and edit and delete each
+run beside a second route that must come through untouched. Every destination
+and gateway is reserved for documentation, so no route the suite adds can take
+a real path away. The row tag is `static-route-<destination>-<gateway>`, so the
+edit, which changes the gateway, renames the row. The card's Edit and Delete
+are inline buttons on the row, not a kebab menu, and Delete goes through the
+card's own dialog. The form's refusal of a gateway that is not an address is
+not covered.
+
+The framework is done and the coverage is not. A hundred and fourteen tests — a
+hundred and thirteen journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
