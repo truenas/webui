@@ -113,16 +113,16 @@ export async function createSnapshot(client: E2eApiClient, dataset: string, name
   );
 }
 
-/**
- * Every `replication.run` job middleware remembers, whichever task it ran.
- *
- * The return type is left to `query`, as `findCronRuns` does: it types a job's
- * `id` as a number, where the `core.get_jobs` call response leaves it optional.
- */
-async function queryReplicationRunJobs(client: E2eApiClient) {
-  return firstValueFrom(
+/** A job as `core.get_jobs` reports it, with its id narrowed — a job middleware returns always has one. */
+type ReplicationRunJob = Extract<CallResponse<E2eApiDirectory, 'core.get_jobs'>, unknown[]>[number] & { id: number };
+
+/** Every `replication.run` job middleware remembers, whichever task it ran. */
+async function queryReplicationRunJobs(client: E2eApiClient): Promise<ReplicationRunJob[]> {
+  const jobs = await firstValueFrom(
     client.api.query('core.get_jobs', [['method', '=', 'replication.run']]).pipe(timeout(readTimeoutMs)),
   );
+
+  return jobs as ReplicationRunJob[];
 }
 
 /**
