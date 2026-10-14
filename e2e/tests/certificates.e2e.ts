@@ -23,13 +23,16 @@ import { expect, test } from '../support/fixtures';
 /** Created through the wizard, never over the API — that is the thing under test. */
 const createdName = 'e2e-csr-created';
 
+/** The created CSR's one SAN, named so a test can use it without indexing `san`. */
+const createdSan = 'e2e-csr-created.example.com';
+
 const createdSubject: CsrSubject = {
   state: 'Tennessee',
   city: 'Maryville',
   organization: 'iXsystems E2E',
   email: 'e2e-csr@example.com',
   common: 'e2e-csr-created.example.com',
-  san: ['e2e-csr-created.example.com'],
+  san: [createdSan],
 };
 
 /** Provisioned over the API so there is something to delete. */
@@ -89,7 +92,7 @@ test('an admin creates a certificate signing request, and the appliance really h
 
   await expect(page.locator(list.name(createdName))).toHaveText(createdName);
   await expect(page.locator(list.common(createdName))).toHaveText(createdSubject.common);
-  await expect(page.locator(list.san(createdName))).toContainText(createdSubject.san[0]);
+  await expect(page.locator(list.san(createdName))).toContainText(createdSan);
 
   // A signed request in PEM is what the wizard exists to produce; the subject
   // fields come back parsed out of it, so they are what was really signed.
@@ -106,7 +109,7 @@ test('an admin creates a certificate signing request, and the appliance really h
     country: 'US',
   });
   // Middleware may store a SAN with its `DNS:` type in front, so the host is matched within it.
-  expect(created?.san).toEqual([expect.stringContaining(createdSubject.san[0])]);
+  expect(created?.san).toEqual([expect.stringContaining(createdSan)]);
 });
 
 test('deleting a certificate signing request from its row removes the one that was picked', async ({ page, api }) => {
