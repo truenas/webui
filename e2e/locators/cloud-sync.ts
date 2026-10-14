@@ -76,9 +76,10 @@ export const cloudSyncLocators = {
      * Each option is labelled `<name> (<provider>)`, so `option-cloud-credentials-<name>-sftp`.
      */
     credential: '[data-test="select-cloud-credentials"]',
-    credentialOption: (name: string, provider: string): string => (
-      `[data-test="option-cloud-credentials-${kebabTestSegment(`${name} (${provider})`)}"]`
-    ),
+    credentialOption: (name: string, provider: string): string => {
+      const label = `${name} (${provider})`;
+      return `[data-test="option-cloud-credentials-${kebabTestSegment(label)}"]`;
+    },
     /** The Provider step's Next. Disabled until a credential is picked. */
     next: '[data-test="button-next"]',
 

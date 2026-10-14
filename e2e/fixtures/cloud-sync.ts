@@ -307,6 +307,7 @@ export async function findFileNames(client: E2eApiClient, directory: string): Pr
   return (Array.isArray(entries) ? entries : [])
     .filter((entry) => entry.type === 'FILE')
     .map((entry) => entry.name)
+    .filter((name): name is string => typeof name === 'string')
     .sort((a, b) => a.localeCompare(b));
 }
 
