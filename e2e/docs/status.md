@@ -393,8 +393,17 @@ back. The serial port is never changed, because which ports exist depends on
 the machine; the specs keep `ttyS0`, the port the CI appliance's console is read
 from.
 
-The framework is done and the coverage is not. A hundred and eight tests — a
-hundred and seven journeys and the smoke — against 19 top-level feature areas. What the work
+The Access card's session timeout came next, in `tests/access-settings.e2e.ts`.
+The card only shows the timeout. It is the account's own `lifetime` preference,
+and the card's "Preferences" link opens the Preferences form, which edits it in
+minutes. One test raises it from ten minutes to two hours, asserted on the card
+and through `auth.me`, with the preferences spec's baseline and teardown. It only
+goes up, because a lower timeout drops an idle session. The rest of the card is
+not covered: the login banner, the directory service toggle, and the session
+list with its terminate actions.
+
+The framework is done and the coverage is not. A hundred and nine tests — a
+hundred and eight journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.

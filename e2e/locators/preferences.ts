@@ -8,14 +8,15 @@
  * The two ids that open it — the topbar trigger and the menu entry — live in
  * `topbar.ts` with the rest of that menu, not here.
  *
- * Only what the specs select on: the session timeout, language, date and time
- * format controls are on this form and deliberately absent below, because an
- * entry here reads as a verified fact about the screen and an unexercised one is
- * only a guess at it. Two warnings for whoever adds them. **Session Timeout
- * drops an idle session** — a test that lowers it and does not put it back ends
- * every later test in the run at the sign-in page. **Language translates the
- * whole app**, which is survivable for `data-test` selectors and not for any
- * assertion on text.
+ * Only what the specs select on: the language, date and time format controls
+ * are on this form and deliberately absent below, because an entry here reads as
+ * a verified fact about the screen and an unexercised one is only a guess at it.
+ * A warning for whoever adds them: **Language translates the whole app**, which
+ * is survivable for `data-test` selectors and not for any assertion on text.
+ *
+ * Session Timeout is here, for `tests/access-settings.e2e.ts`. **It drops an
+ * idle session**, so a test that lowers it and does not put it back ends every
+ * later test in the run at the sign-in page.
  *
  * See `signin.ts` for a note on the type-prefixing that produces these values.
  */
@@ -44,6 +45,12 @@ export const preferencesLocators = {
      * survivable right up until it isn't.)
      */
     themeOption: (label: string): string => `[data-test="option-theme-${kebabTestSegment(label)}"]`,
+
+    /**
+     * In minutes, though the preference is stored in seconds. No `testId`, so
+     * the id falls back to the control name, `token_lifetime`.
+     */
+    sessionTimeout: '[data-test="input-token-lifetime"]',
 
     save: '[data-test="button-save"]',
     /** The panel's dismiss control; raises the unsaved-changes confirmation. */
