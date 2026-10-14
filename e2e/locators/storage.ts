@@ -150,6 +150,42 @@ export const datasetLocators = {
 } as const;
 
 /**
+ * The zvol form, opened from "Add Zvol" in the details panel's header or "Edit Zvol" on the
+ * details card. It shares the side panel host, and so its Save, with the dataset form.
+ *
+ * Its ZFS properties are inline editables in a details table rather than form fields. Each one
+ * shows its value until clicked, and only then renders the `tn-select`. The editable's own trigger
+ * id is built from the value it is showing (`editable.component.ts`), so it changes with the value
+ * and cannot be named in advance. The view inside the trigger has a static id, and clicking that
+ * opens it the same way.
+ */
+export const zvolLocators = {
+  /** `<tn-button [testId]="'add-zvol'">` in the details panel's header, for a filesystem only. */
+  add: '[data-test="button-add-zvol"]',
+  /** "Edit Zvol" on the details card — `testId: 'edit-zvol'` in `dataset-details-card.component.ts`. */
+  edit: '[data-test="button-edit-zvol"]',
+
+  /** `<tn-input formControlName="name">`. On edit it is disabled and holds the zvol's full name. */
+  name: '[data-test="input-name"]',
+  /** `<tn-input formControlName="volsize">`, a size input that reads `64 MiB` and the like. */
+  volsize: '[data-test="input-volsize"]',
+  /** `<tn-checkbox formControlName="sparse">`. Only rendered when adding. */
+  sparse: '[data-test="checkbox-sparse"]',
+
+  /**
+   * The Sync editable's view, `tnTestIdType="text"` with `'sync'`. It is empty until the form
+   * has loaded its parent and worked out what is inherited.
+   */
+  syncValue: '[data-test="text-sync"]',
+  /** The select the Sync editable renders once opened. Id via control-name fallback. */
+  sync: '[data-test="select-sync"]',
+  /** By the label the select shows: `Standard`, `Always`, `Disabled`, plus `Inherit (<value>)`. */
+  syncOption: (label: string) => `[data-test="option-sync-${kebabTestSegment(label)}"]`,
+
+  save: '[data-test="button-save"]',
+} as const;
+
+/**
  * Readouts on the details card for whichever dataset the tree has selected.
  * Each is `tnTestIdType="text"` with a static base, so there is one per page.
  */

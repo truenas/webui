@@ -6,7 +6,7 @@ import { goToDatasets, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
 import {
   datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolImportLocators,
-  poolWizardLocators,
+  poolWizardLocators, zvolLocators,
 } from '../locators/storage';
 
 /**
@@ -215,10 +215,68 @@ export async function openEditDatasetForm(page: Page, name: string): Promise<voi
   await expect(page.locator(datasetLocators.name)).toHaveValue(name);
 }
 
-/** Saves the open dataset form and waits for the panel to close. */
+/**
+ * Saves the open dataset form and waits for the panel to close.
+ *
+ * Works for the zvol form too: both are hosted by the same side panel, and Save is the panel's.
+ */
 export async function saveDatasetForm(page: Page): Promise<void> {
   await page.locator(datasetLocators.save).click();
   await expect(page.locator(datasetLocators.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Selects `parent` in the tree and opens the Add Zvol form under it.
+ *
+ * Waits for the Sync readout to show something. The form loads the parent before it knows what
+ * a new zvol inherits, and the readout stays empty until then. A field changed before that would
+ * be on a form that has not finished setting itself up.
+ */
+export async function openAddZvolForm(page: Page, parent: string): Promise<void> {
+  await goToDatasets(page);
+
+  const node = page.locator(datasetLocators.treeNode(parent));
+  await expect(node).toBeVisible();
+  await node.click();
+  await expect(page.locator(datasetDetailsLocators.path)).toHaveText(parent);
+
+  await page.locator(zvolLocators.add).click();
+  // An empty element has no size, so Playwright does not count it as visible.
+  await expect(page.locator(zvolLocators.syncValue)).toBeVisible();
+}
+
+/**
+ * Selects a zvol in the tree and opens its edit form from the details card.
+ *
+ * Same order as `openEditDatasetForm`, and for the same reasons: the card has to belong to `name`
+ * before Edit Zvol is clicked, and the disabled Name field is patched in only once the record has
+ * loaded, in the same step that fills in the size and the properties.
+ */
+export async function openEditZvolForm(page: Page, name: string): Promise<void> {
+  await goToDatasets(page);
+
+  const node = page.locator(datasetLocators.treeNode(name));
+  await expect(node).toBeVisible();
+  await node.click();
+  await expect(page.locator(datasetDetailsLocators.path)).toHaveText(name);
+
+  const edit = page.locator(zvolLocators.edit);
+  await expect(edit).toBeVisible();
+  await edit.click();
+
+  await expect(page.locator(zvolLocators.name)).toHaveValue(name);
+}
+
+/**
+ * Sets Sync on the open zvol form, by the label its select shows.
+ *
+ * Sync is an inline editable, so the select is not on screen until the readout is clicked. The
+ * editable closes itself on the next click outside it, which for every caller here is Save.
+ */
+export async function setZvolSync(page: Page, label: string): Promise<void> {
+  await page.locator(zvolLocators.syncValue).click();
+  await expect(page.locator(zvolLocators.sync)).toBeVisible();
+  await selectOption(page, zvolLocators.sync, zvolLocators.syncOption(label));
 }
 
 /**
