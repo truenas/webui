@@ -5,8 +5,10 @@
  *
  * The wizard is several calls behind one Save — a zvol, an extent on it, a portal,
  * an initiator group, a target, and the association between target and extent —
- * so the create is checked record by record through the API, and the chain between
- * them is what is asserted: a target nothing is attached to exports nothing.
+ * so the create is checked through the API: the zvol, the extent on it, the target,
+ * the target's association with the extent and the portal its group points at. The
+ * chain is what matters, since a target nothing is attached to exports nothing. The
+ * initiator group is not read back.
  *
  * The delete runs beside a second target that must come through untouched, since
  * every row has its own Delete in its own menu. It ticks "Delete associated

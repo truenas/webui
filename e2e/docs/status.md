@@ -646,9 +646,10 @@ iSCSI shares followed, in `tests/iscsi-shares.e2e.ts`: creating a share with the
 iSCSI Wizard from the Block (iSCSI) Shares Targets card on the Shares dashboard,
 and deleting a target from its row there. The wizard makes a new zvol, an extent
 on it, a new portal listening on `0.0.0.0`, an initiator group, a target, and the
-association between target and extent, all named after the share. So the create
-is asserted record by record through the `iscsi.*` queries and
-`pool.dataset.query`, including the links between them. The delete ticks "Delete
+association between target and extent, all named after the share. The create
+is asserted through the `iscsi.*` queries and `pool.dataset.query`: the zvol, the
+extent on it, the target, its association with the extent and the portal its
+group points at. The initiator group is not read back. The delete ticks "Delete
 associated extents" and runs beside a second target that must come through
 untouched. The extent has to go and the zvol has to stay. The row tag is
 `card-iscsi-target-<name>` through lodash, so `e2e` reads `e-2-e` in every id
