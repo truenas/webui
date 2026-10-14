@@ -490,8 +490,24 @@ With authentication off the form does not send the username, so middleware keeps
 the old one. The OAuth send methods need a real Google or Microsoft login and are
 not covered, and neither is Send Test Mail.
 
-The framework is done and the coverage is not. A hundred and twenty-seven tests — a
-hundred and twenty-six journeys and the smoke — against 19 top-level feature areas. What the work
+The Disks page under Storage came next, in `tests/disks.e2e.ts`, the first spec
+to reach it. It is not in the sidebar, so the spec opens it from the Disks button
+in the Storage dashboard's header. One test checks that every disk `disk.query`
+reports has a row showing its name and serial, and that searching for one disk's
+serial keeps its row and hides another disk's. One edits a disk's description, HDD Standby and
+Advanced Power Management, asserted through `disk.query` and on a freshly opened
+page, where those columns are hidden and read from the expanded row. Teardown
+writes middleware's defaults back. The third wipes a disk, and a blank disk would
+show nothing for it, so the disk carries a pool exported without `destroy`. The
+page labels that disk `<pool> (Exported)`, and the wipe dialog warns that the
+pool will be lost. After the wipe, the Pool column reads `N/A` and `disk.details`
+no longer reports the pool on the disk. A disk left carrying an exported pool is
+one the pool wizard will not offer, so teardown wipes any that remain. Only the
+Quick method is used. The bulk edit, the column picker and the SED actions are
+not covered.
+
+The framework is done and the coverage is not. A hundred and thirty tests — a
+hundred and twenty-nine journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.

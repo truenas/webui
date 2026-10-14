@@ -25,6 +25,18 @@ export const confirmDialogLocators = {
 } as const;
 
 /**
+ * webui's shared general dialog (`DialogService.generalDialog`).
+ *
+ * Its buttons are whatever the caller asks for. A caller that passes only
+ * `cancelBtnMsg` gets a single button under `button-cancel`, whatever it is
+ * labelled.
+ */
+export const generalDialogLocators = {
+  title: '[data-test="dialog-title-general"]',
+  cancel: '[data-test="button-cancel"]',
+} as const;
+
+/**
  * webui's shared information dialog (`DialogService.info` and `.warn`).
  *
  * Raised by the first-time warning in front of every form on Advanced Settings,
