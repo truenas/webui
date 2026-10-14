@@ -193,6 +193,34 @@ export async function findPool(client: E2eApiClient, name: string): Promise<Name
   return pool;
 }
 
+/**
+ * The part of a pool's `scan` a scrub journey reads.
+ *
+ * `null` on a pool that has never been scanned. `function` is `SCRUB` or
+ * `RESILVER` and `state` is `SCANNING`, `FINISHED` or `CANCELED`, as in webui's
+ * `PoolScanFunction` and `PoolScanState`.
+ */
+export interface PoolScan {
+  function: string | null;
+  state: string | null;
+  errors: number | null;
+}
+
+/** A pool's last or current scan, or `null` when it has none. Throws when the pool is absent. */
+export async function findPoolScan(client: E2eApiClient, name: string): Promise<PoolScan | null> {
+  const [pool] = await firstValueFrom(
+    client.api.query('pool.query', [['name', '=', name]]).pipe(timeout(readTimeoutMs)),
+  );
+
+  if (!pool) {
+    throw new Error(`Cannot read the scan of pool "${name}": there is no such pool.`);
+  }
+
+  // Narrowed by hand, the way `disk.details` is above: only these three fields
+  // are read, and the cast keeps the check independent of how the dump types the rest.
+  return pool.scan as unknown as PoolScan | null;
+}
+
 /** An entry of an NFSv4 ACL, named from the library rather than hand-written. */
 type Nfs4Ace = Extract<
   CallResponse<E2eApiDirectory, 'filesystem.getacl'>, { acltype: 'NFS4' }

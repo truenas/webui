@@ -518,8 +518,20 @@ flow asserts there is exactly one. Teardown destroys the pool if it was
 imported and wipes its disk if it was not. Locked SED disks and a pool with an
 encrypted root are not covered.
 
-The framework is done and the coverage is not. A hundred and thirty-one tests — a
-hundred and thirty journeys and the smoke — against 19 top-level feature areas. What the work
+Scrubbing a pool came next, in `tests/pool-scrub.e2e.ts`: one test starts a
+scrub from Scrub Now on the pool's Storage Health card and waits for it to
+finish. `pool.query` has to report a finished `SCRUB` with no errors. The card
+has to show "Finished Scrub on …" and 0 errors without a reload. The spec builds
+its own one-disk pool, `e2e_scrub_tank`, and rebuilds it before each test, so
+the card cannot already show an old scrub. The shared `pool` fixture can be a
+developer's real pool, and scrubbing that could take hours. Scrub Now's id now
+carries the pool's name (`button-scrub-<pool>`, was `button-scrub`), like the
+other pool card actions, because the dashboard shows one per pool. Pause, Resume
+and Stop are not covered: a scrub of an empty pool ends before they can be
+clicked. The scheduled scrub form is not covered either.
+
+The framework is done and the coverage is not. A hundred and thirty-two tests — a
+hundred and thirty-one journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.

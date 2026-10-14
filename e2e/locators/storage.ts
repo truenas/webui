@@ -242,6 +242,28 @@ export const poolCardLocators = {
 } as const;
 
 /**
+ * Scrubbing, on the Storage Health card inside a pool's card.
+ *
+ * Every id carries the pool's name, because the dashboard shows one such card
+ * per pool and the worker-scoped `pool` fixture may well be on it too.
+ */
+export const poolScrubLocators = {
+  /**
+   * "Scrub Now" — `[testId]="['scrub', pool().name]"` on a tn-button. Rendered
+   * only while no scan is running.
+   */
+  start: (pool: string) => `[data-test="button-scrub-${kebabTestSegment(pool)}"]`,
+
+  /**
+   * "Last Scan", e.g. "Finished Scrub on <date>". Rendered only once the pool
+   * has a scan with an end time, so it is absent on a pool never scrubbed.
+   */
+  lastScan: (pool: string) => `[data-test="text-${kebabTestSegment(pool)}-last-scan"]`,
+  /** "Last Scan Errors", the count the last scan found. */
+  lastScanErrors: (pool: string) => `[data-test="text-${kebabTestSegment(pool)}-last-scan-errors"]`,
+} as const;
+
+/**
  * The delete-dataset dialog, which guards a destructive action with two gates:
  * the dataset's own name typed back, and a Confirm tick box.
  *

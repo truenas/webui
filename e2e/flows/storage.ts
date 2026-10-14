@@ -6,7 +6,7 @@ import { goToDatasets, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
 import {
   datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolImportLocators,
-  poolWizardLocators,
+  poolScrubLocators, poolWizardLocators,
 } from '../locators/storage';
 
 /**
@@ -304,6 +304,25 @@ export async function importPool(page: Page, pool: string): Promise<void> {
   await expect(submit).toBeEnabled();
   await submit.click();
   await expect(submit).toBeHidden({ timeout: poolImportTimeoutMs });
+}
+
+/**
+ * Starts a scrub of `pool` from the Scrub Now button on its Storage Health card.
+ *
+ * The button raises a confirmation with no tick box, and its Start Scrub is
+ * what starts the `pool.scrub` job. Returns once that dialog has closed; the
+ * scrub itself runs on afterwards, so waiting for it is the caller's.
+ */
+export async function startScrub(page: Page, pool: string): Promise<void> {
+  await goToStorage(page);
+
+  const start = page.locator(poolScrubLocators.start(pool));
+  await expect(start).toBeVisible({ timeout: saveTimeoutMs });
+  await start.click();
+
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+  await page.locator(confirmDialogLocators.confirm).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeHidden({ timeout: saveTimeoutMs });
 }
 
 /**
