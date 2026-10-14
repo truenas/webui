@@ -37,6 +37,7 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { webshareListElements } from 'app/pages/sharing/webshare/webshare-list/webshare-list.elements';
+import { WebShareOpenButtonComponent } from 'app/pages/sharing/webshare/webshare-open-button/webshare-open-button.component';
 import { WebShareSharesFormComponent } from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
 import { WebShareTableRow } from 'app/pages/sharing/webshare/webshare-table-row.interface';
 import { WebShareService } from 'app/pages/sharing/webshare/webshare.service';
@@ -71,6 +72,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TnIconComponent,
     TnTooltipDirective,
     TranslateModule,
+    WebShareOpenButtonComponent,
   ],
 })
 export class WebShareListComponent implements OnInit {
@@ -118,16 +120,9 @@ export class WebShareListComponent implements OnInit {
 
   protected readonly helptext = helptextSharingWebshare;
 
+  protected readonly openIconName = tnIconMarker('open-in-new', 'mdi');
+
   protected readonly actions: IconActionConfig<WebShareTableRow>[] = [
-    {
-      iconName: tnIconMarker('open-in-new', 'mdi'),
-      tooltip: this.translate.instant('Open'),
-      onClick: (row) => this.openWebShare(row),
-      disabled: () => this.webShareService.canOpenWebShare$.pipe(map((canOpen) => !canOpen)),
-      dynamicTooltip: () => this.webShareService.webShareUnavailableReason$.pipe(
-        map((reason) => reason ?? this.translate.instant('Open')),
-      ),
-    },
     {
       iconName: tnIconMarker('pencil', 'mdi'),
       tooltip: this.translate.instant('Edit'),
@@ -261,9 +256,5 @@ export class WebShareListComponent implements OnInit {
 
   navigateToUsers(): void {
     this.router.navigate(['/credentials', 'users']);
-  }
-
-  openWebShare(row: WebShareTableRow): void {
-    this.webShareService.openWebShare(row.name);
   }
 }

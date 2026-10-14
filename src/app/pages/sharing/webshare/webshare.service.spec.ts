@@ -425,15 +425,43 @@ describe('WebShareService - no hostname mapping', () => {
     expect(result.hostname).toBeUndefined();
   });
 
-  it('should keep canOpenWebShare as false when no hostname is resolved', async () => {
+  it('offers the mapped hostnames as choices when the local IP is not in the mapping', async () => {
     await firstValueFrom(spectator.service.hostnameMapping$);
 
-    expect(spectator.service.canOpenWebShare()).toBe(false);
+    expect(spectator.service.hostnameChoices()).toEqual([
+      { ip: '192.168.1.100', hostname: 'mynas.truenas.direct' },
+    ]);
+    expect(spectator.service.canOpenWebShare()).toBe(true);
+    expect(spectator.service.webShareUnavailableReason()).toBeNull();
   });
 
-  it('should expose the domain reason when TrueNAS Connect is configured but no hostname resolves', async () => {
+  it('opens WebShare through the chosen hostname', async () => {
     await firstValueFrom(spectator.service.hostnameMapping$);
 
+    spectator.service.openWebShare('documents', 'mynas.truenas.direct');
+
+    expect(mockWindow.open).toHaveBeenCalledWith(
+      'https://mynas.truenas.direct:755/webshare/documents',
+      '_blank',
+    );
+  });
+
+  it('does not open a hostname that is not one of the choices', async () => {
+    await firstValueFrom(spectator.service.hostnameMapping$);
+
+    spectator.service.openWebShare('documents', 'elsewhere.example.com');
+    spectator.service.openWebShare('documents');
+
+    expect(mockWindow.open).not.toHaveBeenCalled();
+  });
+
+  it('exposes the domain reason when TrueNAS Connect has no hostnames at all', async () => {
+    spectator.inject(MockTypedApiService).mockCall('tn_connect.ips_with_hostnames', {});
+
+    await firstValueFrom(spectator.service.hostnameMapping$);
+
+    expect(spectator.service.hostnameChoices()).toEqual([]);
+    expect(spectator.service.canOpenWebShare()).toBe(false);
     expect(spectator.service.webShareUnavailableReason()).toBe(
       'WebShare can only be opened when accessed via a .truenas.direct domain',
     );

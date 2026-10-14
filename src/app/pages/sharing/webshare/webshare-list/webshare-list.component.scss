@@ -41,3 +41,9 @@ tn-banner {
     flex-shrink: 0;
   }
 }
+
+.row-actions {
+  align-items: center;
+  display: flex;
+  margin-left: auto;
+}
