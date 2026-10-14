@@ -15,11 +15,13 @@ import { navLocators } from '../locators/navigation';
 
 /** Route each destination should land on, used to confirm arrival. */
 const expectedRoute = {
+  dashboard: /\/dashboard\/?$/,
   storage: /\/storage\/?$/,
   datasets: /\/datasets/,
   shares: /\/sharing/,
   dataProtection: /\/data-protection\/?$/,
   virtualMachines: /\/vm\/?$/,
+  reporting: /\/reportsdashboard\/cpu\/?$/,
   users: /\/credentials\/users/,
   groups: /\/credentials\/groups\/?$/,
   privileges: /\/credentials\/privileges\/?$/,
@@ -32,6 +34,7 @@ const expectedRoute = {
   alertSettings: /\/system\/alert-settings\/?$/,
   boot: /\/system\/boot\/?$/,
   services: /\/system\/services\/?$/,
+  audit: /\/system\/audit/,
 } as const;
 
 /**
@@ -53,6 +56,14 @@ function visibleNavLink(page: Page, locator: string): Locator {
 async function clickAndArrive(page: Page, locator: string, route: RegExp): Promise<void> {
   await visibleNavLink(page, locator).click();
   await expect(page).toHaveURL(route);
+}
+
+/**
+ * The Dashboard is where sign-in lands, so this click often stays put. It is still the entry a
+ * user would press to come back, which is what makes it worth going through.
+ */
+export async function goToDashboard(page: Page): Promise<void> {
+  await clickAndArrive(page, navLocators.dashboard, expectedRoute.dashboard);
 }
 
 export async function goToStorage(page: Page): Promise<void> {
@@ -81,6 +92,11 @@ export async function goToDataProtection(page: Page): Promise<void> {
  */
 export async function goToVirtualMachines(page: Page): Promise<void> {
   await clickAndArrive(page, navLocators.virtualMachines, expectedRoute.virtualMachines);
+}
+
+/** Reporting is a plain link that opens on the CPU tab, which is the tab this lands on. */
+export async function goToReporting(page: Page): Promise<void> {
+  await clickAndArrive(page, navLocators.reporting, expectedRoute.reporting);
 }
 
 /** Credentials is a slide-out, so reaching Users takes two clicks. */
@@ -172,4 +188,13 @@ export async function goToBootEnvironments(page: Page): Promise<void> {
 export async function goToServices(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.system).click();
   await clickAndArrive(page, navLocators.services, expectedRoute.services);
+}
+
+/**
+ * Audit is under the same System slide-out. Not anchored to the end, because the page can write its
+ * service, sorting and paging into the URL (`/system/audit/<options>`).
+ */
+export async function goToAudit(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.system).click();
+  await clickAndArrive(page, navLocators.audit, expectedRoute.audit);
 }

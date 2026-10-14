@@ -10,6 +10,7 @@
  * so they are `link-users` rather than `link-users-menu`.
  */
 export const navLocators = {
+  dashboard: '[data-test="link-dashboard-menu"]',
   storage: '[data-test="link-storage-menu"]',
   datasets: '[data-test="link-datasets-menu"]',
   shares: '[data-test="link-shares-menu"]',
@@ -17,6 +18,8 @@ export const navLocators = {
   dataProtection: '[data-test="link-data-protection-menu"]',
   /** `Virtual Machines`, a plain link like Data Protection, and hidden without the VM entitlement. */
   virtualMachines: '[data-test="link-virtual-machines-menu"]',
+  /** `Reporting`, a plain link to the CPU tab (`reportsdashboard/cpu`). */
+  reporting: '[data-test="link-reporting-menu"]',
   /** A slide-out, not a link — opens a submenu rather than navigating. */
   credentials: '[data-test="link-credentials-menu"]',
   users: '[data-test="link-users"]',
@@ -41,4 +44,6 @@ export const navLocators = {
   boot: '[data-test="link-boot"]',
   /** `Services` under System, raw item name again. */
   services: '[data-test="link-services"]',
+  /** `Audit` under System, raw item name again. */
+  audit: '[data-test="link-audit"]',
 } as const;
