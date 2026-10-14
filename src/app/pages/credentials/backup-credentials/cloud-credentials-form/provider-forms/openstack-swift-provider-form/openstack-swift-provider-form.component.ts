@@ -5,6 +5,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -27,6 +28,7 @@ import {
     TnFormFieldComponent,
     TnInputComponent,
     TnSelectComponent,
+    TnTestIdDirective,
     DetailsTableComponent,
     DetailsItemComponent,
     EditableComponent,
