@@ -43,7 +43,7 @@
   } @else {
     @let jobs = ongoingJobs$ | async;
     @if (jobs?.length) {
-      <div class="jobs-list">
+      <div class="jobs-list" tnTestId="ongoing-jobs" tnTestIdType="list">
         @for (job of jobs; track job.id) {
           <ix-job-item
             [job]="job"
@@ -61,7 +61,7 @@
     }
     <tn-divider class="list-divider"></tn-divider>
     <div class="recent-header">{{'Recently Completed Jobs' | translate}}</div>
-    <div class="finished-jobs-list">
+    <div class="finished-jobs-list" tnTestId="finished-jobs" tnTestIdType="list">
       @let finishedJobs = finishedJobs$ | async;
       @for (job of finishedJobs; track job.id) {
         <ix-job-item

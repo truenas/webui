@@ -60,17 +60,18 @@ export async function ensureNfsShareAbsent(client: E2eApiClient, path: string): 
  *
  * For the bystander in a deletion test and anything else that needs a share to
  * merely exist. Never for the share under test — that one goes through the form.
+ * `networks` restricts the export; left out, middleware's default of none applies.
  */
 export async function ensureNfsSharePresent(
   client: E2eApiClient,
-  { path, comment = '' }: { path: string; comment?: string },
+  { path, comment = '', networks = [] }: { path: string; comment?: string; networks?: string[] },
 ): Promise<void> {
   if (await findNfsShare(client, path)) {
     return;
   }
 
   await firstValueFrom(
-    client.api.call('sharing.nfs.create', [{ path, comment }]).pipe(timeout(slowCallTimeoutMs)),
+    client.api.call('sharing.nfs.create', [{ path, comment, networks }]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
 

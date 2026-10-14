@@ -5,8 +5,9 @@
  * user, so these helpers key on the command — and a spec keeps its commands
  * distinct from anything an appliance might already carry.
  *
- * Every job made here is a harmless `echo`: an enabled job really runs on its
- * schedule, and a run that dies before its teardown leaves one behind.
+ * Every job made here runs a harmless command, an `echo` or a short `sleep`: an
+ * enabled job really runs on its schedule, and a run that dies before its
+ * teardown leaves one behind.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -76,6 +77,16 @@ export async function ensureCronjobPresent(
     client.api.call('cronjob.create', [{
       command, description, schedule, user: 'root', enabled: true, stdout: true, stderr: false,
     }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
+ * Starts a run of a cron job and returns the `cronjob.run` job's id without
+ * waiting for it — for a spec whose subject is watching the job, not the run.
+ */
+export async function startCronRun(client: E2eApiClient, cronjobId: number): Promise<number> {
+  return firstValueFrom(
+    client.api.callAndGetJobId('cronjob.run', [cronjobId]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
 

@@ -718,6 +718,21 @@ holding that widget, and nothing in the suite changes the layout. Editing the
 dashboard, the other widgets, the other reporting tabs, zooming and stepping, the
 audit search, the details panel and the export are not covered.
 
+The topbar's two panels followed, one test each: `tests/alerts-panel.e2e.ts` and
+`tests/jobs-panel.e2e.ts`. Middleware has no public call that raises an alert, so
+the alerts spec creates an NFS share restricted to a hundred networks, which
+raises a `NFSNetworkListExcessive` warning as the share is saved; deleting the
+share deletes it. The class matters: middleware *deletes* a one-shot alert such
+as `RsyncFailed` when it is dismissed, so only a class it marks dismissed can be
+reopened. The test dismisses the alert from the bell's panel and reopens it from
+the Dismissed filter, asserted in the panel and through `alert.list`. The jobs
+spec opens the panel, starts a `sleep 20` cron job over the API, and requires its
+row first in the running list and then in the finished one, with `core.get_jobs`
+reporting SUCCESS. The two lists had no ids, so a row could not say which it was
+in; they are now `list-ongoing-jobs` and `list-finished-jobs`. Dismiss All, the
+severity filters' counts, the smart actions, aborting a job and the job's log
+dialog are not covered.
+
 The framework is done and the coverage is not. A hundred and seventy-nine tests — a
 hundred and seventy-eight journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
