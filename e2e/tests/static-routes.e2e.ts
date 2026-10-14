@@ -13,9 +13,11 @@
  *
  * Every address is reserved for documentation — see `fixtures/static-routes.ts`.
  */
-import { ensureStaticRouteAbsent, ensureStaticRoutePresent, findStaticRoute } from '../fixtures/static-routes';
 import {
-  deleteStaticRoute, openAddStaticRouteForm, openEditStaticRouteForm, saveStaticRouteForm,
+  countStaticRoutes, ensureStaticRouteAbsent, ensureStaticRoutePresent, findStaticRoute,
+} from '../fixtures/static-routes';
+import {
+  deleteStaticRoute, openAddStaticRouteForm, openEditStaticRouteForm, saveStaticRouteForm, staticRouteCardPageSize,
 } from '../flows/static-routes';
 import { staticRouteLocators, type StaticRouteRowKey } from '../locators/static-routes';
 import type { E2eApiClient } from '../support/api/client';
@@ -65,6 +67,16 @@ test.afterEach(async ({ api }) => {
 test('an admin adds a static route, and the appliance really has one', async ({ page, api }) => {
   const description = 'e2e static route created';
 
+  // The card reloads after the save with no signal the test can wait on, and
+  // View All pressed in that window sizes the list by the old count, so instead
+  // of expanding, this needs the new row to fit on the card. A fresh appliance
+  // holds none; failing here says why rather than timing out on a hidden row.
+  const existing = await countStaticRoutes(api);
+  expect(
+    existing < staticRouteCardPageSize,
+    `the card lists ${staticRouteCardPageSize} routes before View All, and the appliance already holds ${existing}`,
+  ).toBe(true);
+
   await openAddStaticRouteForm(page);
   await page.locator(staticRouteLocators.form.destination).fill(created.destination);
   await page.locator(staticRouteLocators.form.gateway).fill(created.gateway);
@@ -89,7 +101,7 @@ test('editing a static route from the card changes the route that was picked', a
   const edited: StaticRouteRowKey = { ...target, gateway: '192.0.2.32' };
   const editedDescription = 'e2e static route edited';
 
-  await openEditStaticRouteForm(page, target);
+  await openEditStaticRouteForm(page, target, await countStaticRoutes(api));
   await page.locator(staticRouteLocators.form.gateway).fill(edited.gateway);
   await page.locator(staticRouteLocators.form.description).fill(editedDescription);
   await saveStaticRouteForm(page);
@@ -116,7 +128,7 @@ test('editing a static route from the card changes the route that was picked', a
 test('deleting a static route from the card removes the route that was picked', async ({ page, api }) => {
   await seedTargetAndBystander(api);
 
-  await deleteStaticRoute(page, target);
+  await deleteStaticRoute(page, target, await countStaticRoutes(api));
 
   // Polled rather than read once: a row can also be hidden while the table is
   // between loads, which proves nothing.

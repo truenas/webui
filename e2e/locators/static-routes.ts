@@ -34,6 +34,14 @@ export const staticRouteLocators = {
     /** `<tn-button [testId]="['add-static-route']">` in the card footer. */
     add: '[data-test="button-add-static-route"]',
 
+    /**
+     * The card's pager, `<ix-table-pager-show-more [testId]="['static-routes']">`.
+     * View All renders only while there are more routes than the card lists, and
+     * Collapse only once it was pressed. It has no `routerLink`, so it expands in place.
+     */
+    viewAll: '[data-test="button-static-routes-show-more"]',
+    collapse: '[data-test="button-static-routes-show-less"]',
+
     row: (key: StaticRouteRowKey): string => `[data-test="row-${rowTag(key)}"]`,
 
     destination: (key: StaticRouteRowKey): string => `[data-test="text-destination-${rowTag(key)}-row-text"]`,

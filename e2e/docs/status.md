@@ -418,8 +418,10 @@ and gateway is reserved for documentation, so no route the suite adds can take
 a real path away. The row tag is `static-route-<destination>-<gateway>`, so the
 edit, which changes the gateway, renames the row. The card's Edit and Delete
 are inline buttons on the row, not a kebab menu, and Delete goes through the
-card's own dialog. The form's refusal of a gateway that is not an address is
-not covered.
+card's own dialog. The card lists four routes before View All, sorted by
+destination: edit and delete press View All when the appliance holds more, and
+the add test fails up front unless its new row will fit. The form's refusal of
+a gateway that is not an address is not covered.
 
 The framework is done and the coverage is not. A hundred and fourteen tests — a
 hundred and thirteen journeys and the smoke — against 19 top-level feature areas. What the work

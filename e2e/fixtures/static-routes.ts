@@ -31,6 +31,13 @@ async function findStaticRoutes(client: E2eApiClient, destination: string): Prom
   return routes as StaticRouteRecord[];
 }
 
+/** How many static routes the appliance holds, the suite's own included. */
+export async function countStaticRoutes(client: E2eApiClient): Promise<number> {
+  const routes = await firstValueFrom(client.api.query('staticroute.query', []).pipe(timeout(readTimeoutMs)));
+
+  return routes.length;
+}
+
 /**
  * The appliance's own record of the route to a destination, or undefined.
  *
