@@ -423,8 +423,23 @@ destination: edit and delete press View All when the appliance holds more, and
 the add test fails up front unless its new row will fit. The form's refusal of
 a gateway that is not an address is not covered.
 
-The framework is done and the coverage is not. A hundred and fourteen tests — a
-hundred and thirteen journeys and the smoke — against 19 top-level feature areas. What the work
+Alert services came next, in `tests/alert-services.e2e.ts`: adding, editing and
+deleting a service from the Alert Services table on System > Alert Settings,
+each asserted on the table and through `alertservice.query`, which also carries
+the webhook URL the table does not show. Edit and delete each run beside a
+second service that must come through untouched. Every service is a Slack one,
+whose only setting is a URL, and every URL is under `example.com`; saving a
+service sends nothing. The form renders the type's own fields a tick after it
+opens for an edit, so the edit waits for the stored URL before typing over it.
+The row tag is `alert-service-<name>` and the edit leaves the name alone, so the
+row keeps its ids. Writing it turned up a `data-test` collision: the Category
+card beside the table also emitted `button-save`, so with the panel open the
+side panel's Save matched two elements. The card's is now
+`button-save-alert-config`. The other nine service types, Send Test Alert and
+the Category card itself are not covered.
+
+The framework is done and the coverage is not. A hundred and seventeen tests — a
+hundred and sixteen journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
