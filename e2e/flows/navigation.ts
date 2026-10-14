@@ -24,6 +24,7 @@ const expectedRoute = {
   privileges: /\/credentials\/privileges\/?$/,
   s3AccessKeys: /\/credentials\/s3-access-keys/,
   backupCredentials: /\/credentials\/backup-credentials\/?$/,
+  certificates: /\/credentials\/certificates\/?$/,
   generalSettings: /\/system\/general\/?$/,
   advancedSettings: /\/system\/advanced\/?$/,
   network: /\/system\/network\/?$/,
@@ -113,6 +114,12 @@ export async function goToS3AccessKeys(page: Page): Promise<void> {
 export async function goToBackupCredentials(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.credentials).click();
   await clickAndArrive(page, navLocators.backupCredentials, expectedRoute.backupCredentials);
+}
+
+/** Certificates — certificates, CSRs and ACME DNS authenticators — is under Credentials too. */
+export async function goToCertificates(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.credentials).click();
+  await clickAndArrive(page, navLocators.certificates, expectedRoute.certificates);
 }
 
 /** System is a slide-out too, so General Settings takes two clicks the same way. */

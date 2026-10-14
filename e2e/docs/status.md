@@ -602,8 +602,20 @@ The row tag is `privilege-<name>` and the edit leaves the name alone. Picking a
 group in the form, directory-service groups, the Enable DS Authentication prompt,
 built-in privileges and the search are not covered.
 
-The framework is done and the coverage is not. A hundred and fifty-four tests — a
-hundred and fifty-three journeys and the smoke — against 19 top-level feature areas. What the work
+Certificates followed, in `tests/certificates.e2e.ts`: creating a certificate
+signing request through the Add CSR wizard and deleting one from its row on the
+CSR card under Credentials > Certificates. Both are asserted on the card and
+through `certificate.query`, whose PEM request and parsed subject are the
+evidence that a key pair was generated and a request signed. The delete runs
+beside a second CSR that must come through untouched. The wizard is driven with
+its defaults (no profile, RSA 2048, SHA256, no extensions) and only the subject
+filled in. The row tag is `csr-<name>`. The card lists four CSRs before its
+pager, so each test fails at the start if its rows would not fit. Importing a
+CSR, profiles, extensions, Edit, Download, ACME certificates, the Certificates
+card itself and ACME DNS authenticators are not covered.
+
+The framework is done and the coverage is not. A hundred and fifty-six tests — a
+hundred and fifty-five journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
 unconditional teardown, selector discipline and failure legibility are all built
 and proven against three different appliances.
