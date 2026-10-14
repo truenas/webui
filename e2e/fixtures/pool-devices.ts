@@ -30,8 +30,9 @@ const poolCreateTimeoutMs = 3 * 60_000;
 /**
  * Builds a two-disk mirror by name, if it is not already there.
  *
- * Two disks of the first type and size the wizard would offer, so that a mirror
- * of them is what an admin could have built by hand. The caller owns the removal,
+ * The first disk the wizard's inventory lists, in `disk.details` order rather than
+ * the wizard's size order, and another of the same type and size, since a mirror
+ * of unlike disks is not one an admin could build there. The caller owns the removal,
  * through `ensurePoolAbsent`, and it has to be unconditional: the pool holds two
  * disks, and `fresh-install` needs nine alike.
  */

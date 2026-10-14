@@ -517,7 +517,7 @@ spare is added through Add VDEV, which opens the pool wizard on that pool, on it
 Spare step. A vdev or disk in the tree is keyed by its ZFS guid, not its name. Two
 ids changed for the spec. View VDEVs was `button-manage-vdevs` on every pool's card,
 so with two pools on the dashboard a test could not say which one it meant. It is
-now `button-<pool>-manage-vdevs`, like the card's other buttons. The ZFS Info
+now `button-<pool>-manage-vdevs`, like the pool's Disconnect and View Datasets. The ZFS Info
 card's menu trigger now passes `button-zfs-actions` in full, as the other callers
 of that input do. Replace, Extend, Detach, Remove and the other kinds of vdev are
 not covered.

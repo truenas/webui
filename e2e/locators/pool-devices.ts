@@ -15,8 +15,8 @@ import { kebabTestSegment } from './test-id';
 export const vdevsPageLocators = {
   /**
    * "View VDEVs" on the pool's VDEVs card, `[testId]="[poolState().name, 'manage-vdevs']"`.
-   * Keyed by pool like the card's other buttons, so a dashboard with several
-   * pools has one per pool.
+   * Keyed by pool like the pool's other buttons on the dashboard (Disconnect,
+   * View Datasets), so a dashboard with several pools has one per pool.
    */
   entry: (pool: string): string => `[data-test="button-${kebabTestSegment(pool)}-manage-vdevs"]`,
 
