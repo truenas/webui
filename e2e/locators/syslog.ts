@@ -13,8 +13,8 @@
 import { kebabTestSegment } from './test-id';
 
 /** Middleware's values for `sysloglevel`. */
-export type SyslogLevel =
-  | 'F_EMERG' | 'F_ALERT' | 'F_CRIT' | 'F_ERR' | 'F_WARNING' | 'F_NOTICE' | 'F_INFO' | 'F_DEBUG';
+export type SyslogLevel
+  = | 'F_EMERG' | 'F_ALERT' | 'F_CRIT' | 'F_ERR' | 'F_WARNING' | 'F_NOTICE' | 'F_INFO' | 'F_DEBUG';
 
 /**
  * What the card and the Level select show for each level. The option ids are
