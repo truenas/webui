@@ -24,11 +24,13 @@ import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextAlertSettings } from 'app/helptext/system/alert-settings';
-import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
+import {
+  AlertCategory, AlertClassesUpdate, AlertClassSettings, toAlertCategories,
+} from 'app/interfaces/alert.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -57,7 +59,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class AlertConfigFormComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   protected translate = inject(TranslateService);
@@ -93,7 +95,7 @@ export class AlertConfigFormComponent implements OnInit {
     this.isFormLoading.set(true);
 
     forkJoin([
-      this.api.call('alert.list_categories'),
+      this.api.call('alert.list_categories').pipe(map(toAlertCategories)),
       this.api.call('alertclasses.config'),
     ])
       .pipe(takeUntilDestroyed(this.destroyRef))

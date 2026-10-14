@@ -13,10 +13,11 @@ import {
   TnTableColumnDirective,
   TnTableComponent,
 } from '@truenas/ui-components';
+import { map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { NtpServer } from 'app/interfaces/ntp-server.interface';
+import { NtpServer, toNtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
@@ -27,7 +28,7 @@ import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ntpServersElements } from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.elements';
 import { getNtpServersFormConfig } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers.form-config';
 
@@ -56,7 +57,7 @@ import { getNtpServersFormConfig } from 'app/pages/system/advanced/ntp-servers/n
 export class NtpServersCardComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private dialog = inject(DialogService);
   private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
@@ -94,7 +95,10 @@ export class NtpServersCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const ntpServers$ = this.api.call('system.ntpserver.query').pipe(takeUntilDestroyed(this.destroyRef));
+    const ntpServers$ = this.api.query('system.ntpserver.query').pipe(
+      map((servers) => servers.map(toNtpServer)),
+      takeUntilDestroyed(this.destroyRef),
+    );
     this.dataProvider = new AsyncDataProvider<NtpServer>(ntpServers$);
     this.loadItems();
   }

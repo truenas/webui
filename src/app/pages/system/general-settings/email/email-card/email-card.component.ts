@@ -11,13 +11,14 @@ import {
   TnButtonComponent,
   TnCardFooterActionsDirective, TnTestIdDirective,
 } from '@truenas/ui-components';
+import { map } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextSystemEmail } from 'app/helptext/system/email';
-import { MailConfig } from 'app/interfaces/mail-config.interface';
+import { MailConfig, toMailConfig } from 'app/interfaces/mail-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { emailCardElements } from 'app/pages/system/general-settings/email/email-card/email-card.elements';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
 
@@ -41,7 +42,7 @@ import { EmailFormComponent } from 'app/pages/system/general-settings/email/emai
 })
 export class EmailCardComponent implements OnInit {
   private formPanel = inject(FormSidePanelService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
@@ -62,6 +63,7 @@ export class EmailCardComponent implements OnInit {
   private loadEmailConfig(): void {
     this.api.call('mail.config')
       .pipe(
+        map(toMailConfig),
         toLoadingState(),
         takeUntilDestroyed(this.destroyRef),
       )

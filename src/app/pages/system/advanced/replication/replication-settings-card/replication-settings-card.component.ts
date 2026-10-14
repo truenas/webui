@@ -17,7 +17,7 @@ import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { replicationSettingsCardElements } from 'app/pages/system/advanced/replication/replication-settings-card/replication-settings-card.elements';
 import { getReplicationSettingsFormConfig } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings.form-config';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -39,7 +39,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   ],
 })
 export class ReplicationSettingsCardComponent {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   private firstTimeWarning = inject(FirstTimeWarningService);

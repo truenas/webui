@@ -5,8 +5,8 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnIconHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -20,7 +20,8 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   TablePagerShowMoreComponent,
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -60,12 +61,12 @@ describe('AccessCardComponent', () => {
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
       }),
-      mockApi([
-        mockCall('auth.sessions', sessions),
-        mockCall('auth.terminate_session'),
-        mockCall('auth.terminate_other_sessions'),
-        mockCall('system.general.update'),
-        mockCall('system.advanced.update'),
+      mockTypedApi([
+        mockTypedQuery('auth.sessions', sessions as unknown as WebUiQueryEntity<'auth.sessions'>[]),
+        mockTypedCall('auth.terminate_session', null),
+        mockTypedCall('auth.terminate_other_sessions', null),
+        mockTypedCall('system.general.update', null),
+        mockTypedCall('system.advanced.update', null),
       ]),
       provideMockStore({
         initialState: {
@@ -171,14 +172,14 @@ describe('AccessCardComponent', () => {
       title: 'Terminate session',
       message: 'Are you sure you want to terminate the session?',
     });
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.terminate_session', ['e8a2892e-f2a3-429e-bd9e-442db8fc9480']);
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('auth.terminate_session', ['e8a2892e-f2a3-429e-bd9e-442db8fc9480']);
   });
 
   it('terminates other sessions when corresponding Terminate Other Sessions is pressed', async () => {
     const terminateButton = await loader.getHarness(TnButtonHarness.with({ label: 'Terminate Other Sessions' }));
     await terminateButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.terminate_other_sessions');
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('auth.terminate_other_sessions');
   });
 
   it('should show table rows', async () => {

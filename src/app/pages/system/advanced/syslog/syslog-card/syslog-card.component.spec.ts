@@ -2,10 +2,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -14,6 +15,7 @@ import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { SyslogCardComponent } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -32,16 +34,16 @@ describe('SyslogCardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('system.advanced.syslog_certificate_choices', {
+      mockTypedApi([
+        mockTypedCall('system.advanced.syslog_certificate_choices', {
           1: 'Certificate 1',
           2: 'Certificate 2',
         }),
-        mockCall('system.advanced.syslog_certificate_authority_choices', {
+        mockTypedCall('system.advanced.syslog_certificate_authority_choices', {
           1: 'Authority 1',
           2: 'Authority 2',
-        }),
-        mockCall('system.advanced.update'),
+        } as unknown as CallResponse<WebUiApiDirectory, 'system.advanced.syslog_certificate_authority_choices'>),
+        mockTypedCall('system.advanced.update', null),
       ]),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.cancel()),

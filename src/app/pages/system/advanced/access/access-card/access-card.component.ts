@@ -30,7 +30,7 @@ import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { secondsToDuration } from 'app/helpers/time.helpers';
-import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
+import { AuthSession, AuthSessionCredentialsData, toAuthSession } from 'app/interfaces/auth-session.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -47,7 +47,7 @@ import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { accessCardElements } from 'app/pages/system/advanced/access/access-card/access-card.elements';
 import { getAccessFormConfig } from 'app/pages/system/advanced/access/access-form/access.form-config';
 import { EntitlementsService } from 'app/services/entitlements.service';
@@ -92,7 +92,7 @@ export class AccessCardComponent implements OnInit {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private firstTimeWarning = inject(FirstTimeWarningService);
   private formPanel = inject(FormSidePanelService);
   protected emptyService = inject(EmptyService);
@@ -142,7 +142,8 @@ export class AccessCardComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    const sessions$ = this.api.call('auth.sessions', [[['internal', '=', false]]]).pipe(
+    const sessions$ = this.api.query('auth.sessions', [['internal', '=', false]]).pipe(
+      map((sessions) => sessions.map(toAuthSession)),
       takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<AuthSession>(sessions$);

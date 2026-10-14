@@ -6,8 +6,8 @@ import { FormGroup } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { NEVER, of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { AlertService } from 'app/interfaces/alert-service.interface';
@@ -16,7 +16,7 @@ import {
   ixFormTestingProviders,
 } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import {
   AwsSnsServiceComponent,
@@ -121,10 +121,10 @@ describe('AlertServiceComponent', () => {
       mockProvider(DialogService, {
         info: jest.fn(),
       }),
-      mockApi([
-        mockCall('alertservice.test', true),
-        mockCall('alertservice.create'),
-        mockCall('alertservice.update'),
+      mockTypedApi([
+        mockTypedCall('alertservice.test', true),
+        mockTypedCall('alertservice.create', null),
+        mockTypedCall('alertservice.update', null),
       ]),
       mockAuth(),
     ],
@@ -153,13 +153,14 @@ describe('AlertServiceComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
       const awsSnsForm = spectator.query(AwsSnsServiceComponent)!;
       expect(awsSnsForm.getSubmitAttributes).toHaveBeenCalled();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alertservice.create', [{
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('alertservice.create', [{
         name: 'My Alert Service',
         enabled: true,
         level: AlertLevel.Error,
@@ -179,7 +180,7 @@ describe('AlertServiceComponent', () => {
       // Override alertservice.test with NEVER so the call stays in flight,
       // which keeps testAlertLoading=true and should feed the wrapper's
       // externalLoading gate. The save button must reflect that.
-      const api = spectator.inject(ApiService);
+      const api = spectator.inject(TypedApiService);
       (api.call as jest.Mock).mockImplementation((method: string) => {
         return method === 'alertservice.test' ? NEVER : of(undefined);
       });
@@ -209,11 +210,12 @@ describe('AlertServiceComponent', () => {
       // Send Test Alert is now a side-panel footer action (rendered by the host
       // container, not this component), so trigger it via the exposed action.
       spectator.component.footerActions[0].onClick();
+      await spectator.fixture.whenStable();
       spectator.detectChanges();
 
       const awsSnsForm = spectator.query(AwsSnsServiceComponent)!;
       expect(awsSnsForm.getSubmitAttributes).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alertservice.test', [{
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('alertservice.test', [{
         attributes: {
           type: AlertServiceType.AwsSns,
           aws_access_key_id: 'KEY1',
@@ -265,13 +267,14 @@ describe('AlertServiceComponent', () => {
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
       spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       spectator.detectChanges();
 
       const opsGenie = spectator.query(OpsGenieServiceComponent)!;
       expect(opsGenie.getSubmitAttributes).toHaveBeenCalled();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alertservice.update', [
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('alertservice.update', [
         4,
         {
           name: 'Updated Service',

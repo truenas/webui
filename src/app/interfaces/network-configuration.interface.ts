@@ -1,4 +1,6 @@
+import { CallResponse } from '@truenas/api-client';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export interface NetworkConfiguration extends NetworkConfigurationState {
   activity: NetworkConfigurationActivity;
@@ -36,14 +38,12 @@ export interface NetworkConfigurationActivity {
   activities: string[];
 }
 
-export interface NetworkConfigurationUpdate extends NetworkConfigurationState {
-  activity: NetworkConfigurationActivity;
-  domain: string;
-  domains: string[];
-  hostname: string;
-  hostname_b: string;
-  hostname_virtual: string;
-  hosts: string[];
-  httpproxy: string;
-  service_announcement: NetworkServiceAnnouncement;
+/**
+ * Reads `network.configuration.config`. Middleware spells the activity type as a literal and types the HA
+ * hostnames as nullable.
+ */
+export function toNetworkConfiguration(
+  config: CallResponse<WebUiApiDirectory, 'network.configuration.config'>,
+): NetworkConfiguration {
+  return config as unknown as NetworkConfiguration;
 }

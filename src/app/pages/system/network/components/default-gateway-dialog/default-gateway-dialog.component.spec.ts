@@ -5,19 +5,19 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnDialogHarness, TnInputHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DefaultGatewayDialog } from 'app/pages/system/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('DefaultGatewayDialogComponent', () => {
   let spectator: Spectator<DefaultGatewayDialog>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   async function getInputValues(harnessLoader: HarnessLoader): Promise<Record<string, string>> {
     const result: Record<string, string> = {};
@@ -31,14 +31,13 @@ describe('DefaultGatewayDialogComponent', () => {
 
   const defaultProviders = [
     mockAuth(),
-    mockApi([
-      mockCall('network.general.summary', {
+    mockTypedApi([
+      mockTypedCall('network.general.summary', {
         default_routes: ['1.1.1.1'],
         nameservers: ['8.8.8.8', '8.8.4.4'],
       } as NetworkSummary),
-      mockCall('interface.save_default_route'),
-      mockCall('interface.save_network_config'),
-      mockCall('network.configuration.update'),
+      mockTypedCall('interface.save_network_config', null),
+      mockTypedCall('network.configuration.update', null),
     ]),
     mockProvider(DialogRef),
     mockProvider(ErrorHandlerService, {
@@ -64,7 +63,7 @@ describe('DefaultGatewayDialogComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
   });
 
   it('shows the correct dialog title', async () => {

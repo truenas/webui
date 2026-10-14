@@ -15,11 +15,13 @@ import { Role } from 'app/enums/role.enum';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
-import { AdvancedConfigUpdate, SyslogServer } from 'app/interfaces/advanced-config.interface';
+import {
+  AdvancedConfigUpdate, SyslogServer, toAdvancedConfigUpdateArgs,
+} from 'app/interfaces/advanced-config.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { translateOptions } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -45,7 +47,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 })
 export class SyslogFormComponent extends IxFormHostForm implements OnInit {
   private fb = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
@@ -155,7 +157,7 @@ export class SyslogFormComponent extends IxFormHostForm implements OnInit {
     };
 
     return {
-      request$: this.api.call('system.advanced.update', [configUpdate]),
+      request$: this.api.call('system.advanced.update', [toAdvancedConfigUpdateArgs(configUpdate)]),
       successMessage: this.translate.instant('Settings saved'),
       onSuccess: () => this.store$.dispatch(advancedConfigUpdated()),
     };

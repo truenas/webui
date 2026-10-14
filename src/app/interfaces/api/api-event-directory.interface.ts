@@ -1,6 +1,5 @@
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { AppContainerLog, AppStats } from 'app/interfaces/app.interface';
-import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
 import { ContainerMetrics } from 'app/interfaces/container.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -13,7 +12,6 @@ import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 export interface ApiEventDirectory {
   'app.container_log_follow': { response: AppContainerLog };
   'app.stats': { response: AppStats[] };
-  'boot.environment.query': { response: BootEnvironment };
   'core.get_jobs': { response: Job };
   'disk.query': { response: Disk };
   'failover.status': { response: { status: FailoverStatus } };

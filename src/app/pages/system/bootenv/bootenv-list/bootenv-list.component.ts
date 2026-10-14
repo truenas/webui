@@ -18,12 +18,12 @@ import {
   TnTestIdDirective,
   tnIconMarker,
 } from '@truenas/ui-components';
-import { filter, of, switchMap } from 'rxjs';
+import { filter, map, of, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
-import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
+import { BootEnvironment, toBootEnvironment } from 'app/interfaces/boot-environment.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -40,7 +40,7 @@ import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-co
 import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { BootPoolDeleteDialog } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { getBootenvFormConfig } from 'app/pages/system/bootenv/bootenv-form/bootenv.form-config';
 import { bootListElements } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.elements';
@@ -76,7 +76,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class BootEnvironmentListComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
@@ -166,7 +166,9 @@ export class BootEnvironmentListComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.dataProvider = new AsyncDataProvider(this.api.call('boot.environment.query'));
+    this.dataProvider = new AsyncDataProvider(
+      this.api.query('boot.environment.query').pipe(map((environments) => environments.map(toBootEnvironment))),
+    );
     this.refresh();
     this.setDefaultSort();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {

@@ -5,7 +5,8 @@ import { expect, type Page } from '@playwright/test';
 import { goToDatasets, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
 import {
-  datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolWizardLocators,
+  datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolImportLocators,
+  poolWizardLocators, zvolLocators,
 } from '../locators/storage';
 
 /**
@@ -16,6 +17,14 @@ import {
 const poolCreateTimeoutMs = 5 * 60_000;
 
 const saveTimeoutMs = 90_000;
+
+/**
+ * `pool.import_find` scans every disk before the Import Pool form renders, and
+ * `pool.import_pool` mounts the pool and restarts what depends on it. Both are
+ * jobs, so both get room well past what a one-disk pool takes.
+ */
+const poolImportFindTimeoutMs = 2 * 60_000;
+const poolImportTimeoutMs = 3 * 60_000;
 
 /** Picks an option from a `tn-select` by opening it and clicking the option. */
 export async function selectOption(page: Page, select: string, option: string): Promise<void> {
@@ -206,10 +215,68 @@ export async function openEditDatasetForm(page: Page, name: string): Promise<voi
   await expect(page.locator(datasetLocators.name)).toHaveValue(name);
 }
 
-/** Saves the open dataset form and waits for the panel to close. */
+/**
+ * Saves the open dataset form and waits for the panel to close.
+ *
+ * Works for the zvol form too: both are hosted by the same side panel, and Save is the panel's.
+ */
 export async function saveDatasetForm(page: Page): Promise<void> {
   await page.locator(datasetLocators.save).click();
   await expect(page.locator(datasetLocators.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Selects `parent` in the tree and opens the Add Zvol form under it.
+ *
+ * Waits for the Sync readout to show something. The form loads the parent before it knows what
+ * a new zvol inherits, and the readout stays empty until then. A field changed before that would
+ * be on a form that has not finished setting itself up.
+ */
+export async function openAddZvolForm(page: Page, parent: string): Promise<void> {
+  await goToDatasets(page);
+
+  const node = page.locator(datasetLocators.treeNode(parent));
+  await expect(node).toBeVisible();
+  await node.click();
+  await expect(page.locator(datasetDetailsLocators.path)).toHaveText(parent);
+
+  await page.locator(zvolLocators.add).click();
+  // An empty element has no size, so Playwright does not count it as visible.
+  await expect(page.locator(zvolLocators.syncValue)).toBeVisible();
+}
+
+/**
+ * Selects a zvol in the tree and opens its edit form from the details card.
+ *
+ * Same order as `openEditDatasetForm`, and for the same reasons: the card has to belong to `name`
+ * before Edit Zvol is clicked, and the disabled Name field is patched in only once the record has
+ * loaded, in the same step that fills in the size and the properties.
+ */
+export async function openEditZvolForm(page: Page, name: string): Promise<void> {
+  await goToDatasets(page);
+
+  const node = page.locator(datasetLocators.treeNode(name));
+  await expect(node).toBeVisible();
+  await node.click();
+  await expect(page.locator(datasetDetailsLocators.path)).toHaveText(name);
+
+  const edit = page.locator(zvolLocators.edit);
+  await expect(edit).toBeVisible();
+  await edit.click();
+
+  await expect(page.locator(zvolLocators.name)).toHaveValue(name);
+}
+
+/**
+ * Sets Sync on the open zvol form, by the label its select shows.
+ *
+ * Sync is an inline editable, so the select is not on screen until the readout is clicked. The
+ * editable closes itself on the next click outside it, which for every caller here is Save.
+ */
+export async function setZvolSync(page: Page, label: string): Promise<void> {
+  await page.locator(zvolLocators.syncValue).click();
+  await expect(page.locator(zvolLocators.sync)).toBeVisible();
+  await selectOption(page, zvolLocators.sync, zvolLocators.syncOption(label));
 }
 
 /**
@@ -267,6 +334,34 @@ export async function openPoolDisconnectDialog(page: Page, pool: string): Promis
   await open.click();
 
   await expect(page.locator(poolDisconnectLocators.title)).toBeVisible();
+}
+
+/**
+ * Imports an exported pool by name, from the storage dashboard's Import Pool
+ * panel.
+ *
+ * Waits for the panel's Import button to go. The panel closes only after the
+ * import job's dialog has closed on the job finishing, so its closing is the
+ * app's own signal that the job ended. Whether it succeeded is the caller's to
+ * check through the API.
+ */
+export async function importPool(page: Page, pool: string): Promise<void> {
+  await goToStorage(page);
+  await page.locator(poolImportLocators.open).click();
+
+  // The select renders only once `pool.import_find` has finished.
+  const select = page.locator(poolImportLocators.pool);
+  await expect(select).toBeVisible({ timeout: poolImportFindTimeoutMs });
+  await select.click();
+
+  const option = page.locator(poolImportLocators.poolOption(pool));
+  await expect(option, `The Import Pool panel should offer exactly one pool named "${pool}".`).toHaveCount(1);
+  await option.click();
+
+  const submit = page.locator(poolImportLocators.submit);
+  await expect(submit).toBeEnabled();
+  await submit.click();
+  await expect(submit).toBeHidden({ timeout: poolImportTimeoutMs });
 }
 
 /**

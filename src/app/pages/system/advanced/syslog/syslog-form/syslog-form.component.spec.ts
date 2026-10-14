@@ -4,21 +4,24 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { CallResponse } from '@truenas/api-client';
 import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('SyslogFormComponent', () => {
   let spectator: Spectator<SyslogFormComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   // Helper to check FormArray length since toHaveLength doesn't work with @ngneat/reactive-forms FormArray
   const expectArrayLength = (array: { length: number }, expectedLength: number): void => {
@@ -40,17 +43,17 @@ describe('SyslogFormComponent', () => {
     ],
     providers: [
       ...ixFormTestingProviders(),
-      mockApi([
-        mockCall('system.advanced.syslog_certificate_choices', {
+      mockTypedApi([
+        mockTypedCall('system.advanced.syslog_certificate_choices', {
           1: 'Certificate 1',
           2: 'Certificate 2',
         }),
-        mockCall('system.advanced.syslog_certificate_authority_choices', {
+        mockTypedCall('system.advanced.syslog_certificate_authority_choices', {
           1: 'Authority 1',
           2: 'Authority 2',
-        }),
-        mockCall('system.advanced.update'),
-        mockJob('systemdataset.update'),
+        } as unknown as CallResponse<WebUiApiDirectory, 'system.advanced.syslog_certificate_authority_choices'>),
+        mockTypedCall('system.advanced.update', null),
+        mockTypedJob('systemdataset.update', { state: JobState.Success }),
       ]),
       mockProvider(DialogService),
       provideMockStore({
@@ -78,7 +81,7 @@ describe('SyslogFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
   });
 
   it('loads current settings for syslog form and shows them', async () => {
@@ -96,6 +99,7 @@ describe('SyslogFormComponent', () => {
     // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
     spectator.component.submit();
+    await spectator.fixture.whenStable();
 
     spectator.detectChanges();
 
@@ -115,7 +119,7 @@ describe('SyslogFormComponent', () => {
     ]);
   });
 
-  it('filters out servers without host on save', () => {
+  it('filters out servers without host on save', async () => {
     // Directly add an empty server to the form array
     spectator.component.syslogServersArray.push(spectator.inject(FormBuilder).group({
       host: [''],
@@ -126,6 +130,7 @@ describe('SyslogFormComponent', () => {
     // Submit with an empty second server
     // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
     spectator.component.submit();
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
 
     // Should only save servers with hosts
@@ -142,7 +147,7 @@ describe('SyslogFormComponent', () => {
     ]);
   });
 
-  it('handles TLS certificate as integer', () => {
+  it('handles TLS certificate as integer', async () => {
     // Add a server with TLS and certificate
     spectator.component.addServer();
     spectator.component.syslogServersArray.at(1).patchValue({
@@ -154,6 +159,7 @@ describe('SyslogFormComponent', () => {
     // Submit the form
     // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
     spectator.component.submit();
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
 
     // Should keep certificate as integer
@@ -226,7 +232,7 @@ describe('SyslogFormComponent', () => {
     expect(newServerGroup.controls.tls_certificate.hasError('required')).toBe(false);
   });
 
-  it('allows configuration with no syslog servers', () => {
+  it('allows configuration with no syslog servers', async () => {
     // Remove the existing server
     spectator.component.removeServer(0);
     expectArrayLength(spectator.component.syslogServersArray, 0);
@@ -234,6 +240,7 @@ describe('SyslogFormComponent', () => {
     // Save with no servers
     // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
     spectator.component.submit();
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
 
     expect(api.call).toHaveBeenCalledWith('system.advanced.update', [

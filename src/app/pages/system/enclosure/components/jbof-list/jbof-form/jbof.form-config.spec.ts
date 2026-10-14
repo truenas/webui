@@ -1,7 +1,7 @@
 import { TranslateService } from '@ngx-translate/core';
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { FormSubmitEvent } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { getJbofFormConfig } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof.form-config';
 
 describe('getJbofFormConfig', () => {
@@ -13,7 +13,7 @@ describe('getJbofFormConfig', () => {
     mgmt_password: 'qwerty',
   } as Partial<Jbof>;
 
-  const api = { call: jest.fn(() => undefined) } as unknown as ApiService;
+  const api = { call: jest.fn(() => undefined) } as unknown as TypedApiService;
   const translate = { instant: (key: string) => key } as TranslateService;
 
   beforeEach(() => jest.clearAllMocks());

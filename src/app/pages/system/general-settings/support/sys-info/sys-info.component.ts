@@ -20,7 +20,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport } from 'app/helptext/system/support';
 import { getLabelForContractType } from 'app/interfaces/system-info.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   LicenseFingerprintDialog,
 } from 'app/pages/system/general-settings/support/license-fingerprint-dialog/license-fingerprint-dialog.component';
@@ -48,7 +48,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class SysInfoComponent {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);

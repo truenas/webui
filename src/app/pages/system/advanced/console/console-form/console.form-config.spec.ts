@@ -2,13 +2,13 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { FormSubmitEvent } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ConsoleConfig } from 'app/pages/system/advanced/console/console-card/console-card.component';
 import { getConsoleFormConfig } from 'app/pages/system/advanced/console/console-form/console.form-config';
 import { AppState } from 'app/store';
 
 describe('getConsoleFormConfig', () => {
-  const api = { call: jest.fn(() => of([])) } as unknown as ApiService;
+  const api = { call: jest.fn(() => of([])) } as unknown as TypedApiService;
   const translate = { instant: (key: string) => key } as TranslateService;
   const store$ = { dispatch: jest.fn() } as unknown as Store<AppState>;
 

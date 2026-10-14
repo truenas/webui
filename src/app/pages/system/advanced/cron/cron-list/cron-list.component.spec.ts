@@ -6,8 +6,9 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnDialog, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent, MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { JobState } from 'app/enums/job-state.enum';
 import { User } from 'app/interfaces/user.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -16,7 +17,7 @@ import { LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CronDeleteDialog } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from 'app/pages/system/advanced/cron/cron-list/cron-list.component';
@@ -82,11 +83,11 @@ describe('CronListComponent', () => {
           },
         ],
       }),
-      mockApi([
-        mockCall('cronjob.query', cronJobs),
-        mockCall('cronjob.run'),
-        mockCall('cronjob.create'),
-        mockCall('cronjob.update'),
+      mockTypedApi([
+        mockTypedQuery('cronjob.query', cronJobs),
+        mockTypedJob('cronjob.run', { state: JobState.Success }),
+        mockTypedCall('cronjob.create', null),
+        mockTypedCall('cronjob.update', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -169,7 +170,7 @@ describe('CronListComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cronjob.run', [1]);
+    expect(spectator.inject(TypedApiService).startJob).toHaveBeenCalledWith('cronjob.run', [1]);
   });
 
   it('opens the Edit Cron Job form in the side panel with the selected row', async () => {

@@ -9,12 +9,10 @@ import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
-import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -37,7 +35,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class BootPoolDeleteDialog {
   private fb = inject(FormBuilder);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   protected dialogRef = inject<DialogRef<unknown, BootPoolDeleteDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   bootenvs = inject<BootEnvironment[]>(DIALOG_DATA);
@@ -89,11 +87,12 @@ export class BootPoolDeleteDialog {
     });
 
     this.api.job('core.bulk', ['boot.environment.destroy', bootenvsToDelete]).pipe(
-      filter((job: Job<CoreBulkResponse<void>[], { id: string }[][]>) => !!job.result?.length),
+      filter((job) => !!job.result?.length),
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((response) => {
-      response.arguments[1].flat().forEach((params, index: number) => {
+      // `core.bulk` answers each call in the order it was given.
+      bootenvsToDelete.flat().forEach((params, index: number) => {
         const bootenvId = params.id;
         const bulkItem = this.bulkItems.get(bootenvId);
         if (bulkItem) {

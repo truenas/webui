@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
-import { switchMap, tap } from 'rxjs/operators';
-import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { NetworkInterface, toNetworkInterface } from 'app/interfaces/network-interface.interface';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface InterfacesState {
@@ -17,7 +17,7 @@ const initialState: InterfacesState = {
 
 @Injectable()
 export class InterfacesStore extends ComponentStore<InterfacesState> {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
 
   constructor() {
@@ -28,7 +28,8 @@ export class InterfacesStore extends ComponentStore<InterfacesState> {
     return trigger$.pipe(
       tap(() => this.patchState({ isLoading: true })),
       switchMap(() => {
-        return this.api.call('interface.query').pipe(
+        return this.api.query('interface.query').pipe(
+          map((interfaces) => interfaces.map(toNetworkInterface)),
           tap({
             next: (interfaces) => this.patchState({ interfaces }),
             error: (error: unknown) => this.errorHandler.showErrorModal(error),
