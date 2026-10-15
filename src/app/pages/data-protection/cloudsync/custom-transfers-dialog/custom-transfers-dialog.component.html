@@ -10,7 +10,11 @@
   </tn-form-field>
 
   </form>
-<ix-form-actions tnDialogAction>
+<!--
+  The Save below emits `button-save`, as does the Save of the cloud sync form that opened this
+  dialog and is still open behind it. This id scopes it to the dialog without renaming either.
+-->
+<ix-form-actions tnDialogAction tnTestIdType="actions" [tnTestId]="'custom-transfers'">
   <tn-button
     variant="outline"
     testId="cancel"

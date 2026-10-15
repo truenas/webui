@@ -50,6 +50,12 @@ const loopbackRootKey: LoopbackRootKey = {
   marker: 'e2e-cloudsync-loopback',
 };
 
+/** One entry of a task's bandwidth schedule: from `time` (`HH:MM`) on, `bandwidth` bytes a second. */
+export interface CloudSyncBandwidthLimit {
+  time: string;
+  bandwidth: number;
+}
+
 /** A sync of one small file over loopback is seconds; this is room for a slow appliance. */
 export const cloudSyncRunTimeoutMs = 120_000;
 
@@ -160,7 +166,11 @@ export async function ensureCloudSyncTasksAbsent(client: E2eApiClient, descripti
  * For the task an edit, a run, a restore or a delete acts on, and for a
  * bystander. Never for the task under test in a create — that one goes through
  * the wizard. Everything not passed is left to middleware's defaults, which are
- * also the wizard's: COPY, enabled.
+ * also the wizard's: COPY, enabled, no bandwidth limit.
+ *
+ * `bwlimit` is how a run is made slow enough to stop: middleware hands it to
+ * rclone as `--bwlimit`, so a large file over loopback takes minutes rather than
+ * a second.
  */
 export async function ensureCloudSyncTaskPresent(
   client: E2eApiClient,
@@ -170,8 +180,14 @@ export async function ensureCloudSyncTaskPresent(
     path,
     remoteFolder,
     schedule,
+    bwlimit = [],
   }: {
-    description: string; credentialId: number; path: string; remoteFolder: string; schedule: CloudSyncSchedule;
+    description: string;
+    credentialId: number;
+    path: string;
+    remoteFolder: string;
+    schedule: CloudSyncSchedule;
+    bwlimit?: CloudSyncBandwidthLimit[];
   },
 ): Promise<void> {
   if (await findCloudSyncTask(client, description)) {
@@ -187,6 +203,7 @@ export async function ensureCloudSyncTaskPresent(
       direction: 'PUSH',
       transfer_mode: 'COPY',
       schedule,
+      bwlimit,
       enabled: true,
     }]).pipe(timeout(slowCallTimeoutMs)),
   );
@@ -208,12 +225,22 @@ export async function findCloudSyncRunJobIds(client: E2eApiClient): Promise<numb
  * so `core.get_jobs` is where a run that really happened shows up and its state
  * says whether it worked. Matched on the task's id, which is the job's first
  * argument — the same reading as `findReplicationRuns`.
+ *
+ * Dry Run calls the same method with `{ dry_run: true }` as its second
+ * argument, so `dryRun` is what tells the two apart. `logs` is the job's
+ * `logs_excerpt`, rclone's own account of what it did, or empty before the job
+ * has finished.
  */
 export async function findCloudSyncRuns(
   client: E2eApiClient,
   taskId: number,
   earlier: number[],
-): Promise<{ id: number; state: string }[]> {
+): Promise<{
+  id: number;
+  state: string;
+  dryRun: boolean;
+  logs: string;
+}[]> {
   const jobs = await firstValueFrom(
     client.api.query('core.get_jobs', [['method', '=', 'cloudsync.sync']]).pipe(timeout(readTimeoutMs)),
   );
@@ -221,7 +248,18 @@ export async function findCloudSyncRuns(
   return jobs
     .filter((job) => !earlier.includes(job.id))
     .filter((job) => Array.isArray(job.arguments) && job.arguments[0] === taskId)
-    .map((job) => ({ id: job.id, state: String(job.state) }));
+    .map((job) => {
+      const args: unknown[] = Array.isArray(job.arguments) ? job.arguments : [];
+      const options = args[1] as { dry_run?: unknown } | undefined;
+      const { logs_excerpt: logs } = job as { logs_excerpt?: unknown };
+
+      return {
+        id: job.id,
+        state: String(job.state),
+        dryRun: options?.dry_run === true,
+        logs: typeof logs === 'string' ? logs : '',
+      };
+    });
 }
 
 /**
@@ -263,9 +301,19 @@ export async function findFileNames(client: E2eApiClient, directory: string): Pr
  * is private and `filesystem.put` is an HTTP upload — so a one-off cron job runs
  * the write and is removed again. `name` must be a plain file name and `directory`
  * a path without spaces: the command goes to a shell as written.
+ *
+ * With `sizeBytes`, the file is that many zero bytes instead of one short line —
+ * for a run that has to last long enough to be stopped.
  */
-export async function writeFileOnAppliance(client: E2eApiClient, directory: string, name: string): Promise<void> {
-  const command = `echo e2e-cloudsync > ${directory}/${name}`;
+export async function writeFileOnAppliance(
+  client: E2eApiClient,
+  directory: string,
+  name: string,
+  sizeBytes?: number,
+): Promise<void> {
+  const command = sizeBytes === undefined
+    ? `echo e2e-cloudsync > ${directory}/${name}`
+    : `head -c ${sizeBytes} /dev/zero > ${directory}/${name}`;
 
   await ensureCronjobPresent(client, {
     command,

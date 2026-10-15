@@ -761,8 +761,13 @@ the file a run copies is written by a one-off cron job. A restore only creates t
 opposite, PULL, task, so the spec checks its fields and then runs it over the API
 to show it brings the file back. Edit and delete each run beside a second task. The
 row tag is `card-cloudsync-task-<description>`, so no test edits the description.
-Dry run, Stop, custom transfers and the wizard's other settings are #14404's; the
-Enabled switch, the full list page and other providers are not covered.
+A second wizard test makes a PULL task with SYNC and checks that the folders are
+stored the right way round. A dry run is read from its job: `dry_run` set, rclone's
+log naming the file, and nothing on the remote. Stop needs a run that lasts, so the
+task gets a `bwlimit` and a 32 MiB file, and its job has to end ABORTED. Custom
+Transfers is set through its dialog, whose Save shares `button-save` with the form
+behind it; the dialog's action row now carries `actions-custom-transfers` to scope
+it. The Enabled switch, the full list page and other providers are not covered.
 
 Replication over SSH followed, in `tests/replication-ssh.e2e.ts`: creating a push
 task to a different system through the wizard, with Run Once, picking an SSH

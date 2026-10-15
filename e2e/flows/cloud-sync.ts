@@ -75,6 +75,37 @@ export async function fillCloudSyncPush(
   await page.locator(wizard.description).fill(description);
 }
 
+/**
+ * Fills What and When for a pull from a folder on the remote into a local
+ * directory, with a transfer mode, and names the task.
+ *
+ * The same order as {@link fillCloudSyncPush}, for the same reasons. Pull is
+ * already the wizard's direction when it opens, and is picked anyway so the
+ * flow does not depend on that.
+ */
+export async function fillCloudSyncPull(
+  page: Page,
+  {
+    remoteFolder,
+    path,
+    transferMode,
+    description,
+  }: {
+    remoteFolder: string;
+    path: string;
+    transferMode: string;
+    description: string;
+  },
+): Promise<void> {
+  const { wizard } = cloudSyncLocators;
+
+  await selectOption(page, wizard.direction, wizard.directionOption('PULL'));
+  await selectOption(page, wizard.transferMode, wizard.transferModeOption(transferMode));
+  await fillExplorer(page, wizard.pathDestination, path);
+  await fillExplorer(page, wizard.folderSource, remoteFolder);
+  await page.locator(wizard.description).fill(description);
+}
+
 /** Picks a schedule preset in the wizard by its whole label — see `hourlyScheduleLabel` in `locators/cron.ts`. */
 export async function chooseCloudSyncWizardSchedule(page: Page, label: string): Promise<void> {
   const { wizard } = cloudSyncLocators;
@@ -120,6 +151,26 @@ export async function chooseCloudSyncTransferMode(page: Page, label: string): Pr
   await selectOption(page, form.transferMode, form.transferModeOption(label));
 }
 
+/**
+ * Sets Transfers to a number of the admin's own through Custom and its dialog.
+ *
+ * Picking Custom is what opens the dialog. Whether its number reached the form
+ * is for the spec to read back from the appliance once the form is saved.
+ */
+export async function chooseCloudSyncCustomTransfers(page: Page, transfers: number): Promise<void> {
+  const { form, customTransfers } = cloudSyncLocators;
+
+  await selectOption(page, form.transfers, form.transfersOption('Custom'));
+  await expect(page.locator(customTransfers.title)).toBeVisible();
+
+  await page.locator(customTransfers.transfers).fill(String(transfers));
+  const save = page.locator(customTransfers.save);
+  await expect(save).toBeEnabled();
+  await save.click();
+
+  await expect(page.locator(customTransfers.title)).toBeHidden();
+}
+
 /** Picks a schedule preset in the edit form by its whole label. */
 export async function chooseCloudSyncFormSchedule(page: Page, label: string): Promise<void> {
   const { form } = cloudSyncLocators;
@@ -138,19 +189,40 @@ export async function saveCloudSyncForm(page: Page): Promise<void> {
 }
 
 /**
- * Runs a task from its row menu.
+ * Picks one of a row's menu actions and answers its confirm.
  *
- * Run asks first through webui's shared confirm, raised with `hideCheckbox`, so
- * there is no box to tick. The answer is a snackbar, so there is nothing to
- * close; the spec reads the outcome from the appliance and the row's state.
+ * Run, Dry Run and Stop all ask first through webui's shared confirm, raised
+ * with `hideCheckbox`, so there is no box to tick. The answer is a snackbar, so
+ * there is nothing to close; the spec reads the outcome from the appliance and
+ * the row's state.
  */
-export async function runCloudSyncTaskFromCard(page: Page, description: string): Promise<void> {
+async function confirmRowAction(page: Page, description: string, action: string): Promise<void> {
   await openRowMenu(page, description);
-  await page.locator(cloudSyncLocators.card.rowMenuRun(description)).click();
+  await page.locator(action).click();
 
   await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
   await page.locator(confirmDialogLocators.confirm).click();
   await expect(page.locator(confirmDialogLocators.title)).toBeHidden();
+}
+
+/** Runs a task from its row menu. */
+export async function runCloudSyncTaskFromCard(page: Page, description: string): Promise<void> {
+  await confirmRowAction(page, description, cloudSyncLocators.card.rowMenuRun(description));
+}
+
+/** Starts a dry run from the row menu: the same job as Run, with `dry_run` set. */
+export async function dryRunCloudSyncTaskFromCard(page: Page, description: string): Promise<void> {
+  await confirmRowAction(page, description, cloudSyncLocators.card.rowMenuDryRun(description));
+}
+
+/**
+ * Stops a running task from the row menu.
+ *
+ * The menu offers Stop only while the row's job is running, so the caller waits
+ * for that first.
+ */
+export async function stopCloudSyncTaskFromCard(page: Page, description: string): Promise<void> {
+  await confirmRowAction(page, description, cloudSyncLocators.card.rowMenuStop(description));
 }
 
 /**

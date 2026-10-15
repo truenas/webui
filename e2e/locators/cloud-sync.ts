@@ -63,6 +63,16 @@ export const cloudSyncLocators = {
       `[data-test="button-${rowTag(description)}-more-action-mdi-play-circle-row-action"]`
     ),
 
+    /** Stop, inside that menu. Offered only while the row's job is running, in Run job's place. */
+    rowMenuStop: (description: string): string => (
+      `[data-test="button-${rowTag(description)}-more-action-mdi-stop-circle-row-action"]`
+    ),
+
+    /** Dry Run, inside that menu. Always offered, running or not. */
+    rowMenuDryRun: (description: string): string => (
+      `[data-test="button-${rowTag(description)}-more-action-mdi-sync-row-action"]`
+    ),
+
     /** Restore, inside that menu. Opens the restore dialog below. */
     rowMenuRestore: (description: string): string => (
       `[data-test="button-${rowTag(description)}-more-action-mdi-restore-row-action"]`
@@ -116,6 +126,18 @@ export const cloudSyncLocators = {
      * absolute path on the SFTP host goes in as it is.
      */
     folderDestination: '[data-test="input-folder-destination"]',
+    /** Where a pull lands locally. Rendered only in Pull; a single explorer, so a typed path is stored verbatim. */
+    pathDestination: '[data-test="input-path-destination"]',
+    /**
+     * What a pull fetches from the remote. Rendered only in Pull, and only once the
+     * credential has reached the step. Multiple mode, like `pathSource`.
+     */
+    folderSource: '[data-test="input-folder-source"]',
+    transferMode: '[data-test="select-transfer-mode"]',
+    /** Labelled SYNC, COPY and MOVE, so `option-transfer-mode-sync`. */
+    transferModeOption: (label: string): string => (
+      `[data-test="option-transfer-mode-${kebabTestSegment(label)}"]`
+    ),
     /** Filled in from the provider and the path as they change, so set it after both. */
     description: '[data-test="input-description"]',
     /** `ix-scheduler` renders a `tn-select` with `[testId]="[controlName, 'presets']"`. */
@@ -141,8 +163,26 @@ export const cloudSyncLocators = {
     ),
     /** Ticked by default. */
     enabled: '[data-test="checkbox-enabled"]',
+    /**
+     * Transfers: three bandwidth presets and Custom. Picking Custom opens the
+     * dialog below, and the number saved there comes back as a fourth option.
+     */
+    transfers: '[data-test="select-transfers"]',
+    transfersOption: (label: string): string => `[data-test="option-transfers-${kebabTestSegment(label)}"]`,
     /** `<tn-button [testId]="'save'">` on the side panel container. */
     save: '[data-test="button-save"]',
+  },
+
+  customTransfers: {
+    /** `<tn-dialog-shell testId="custom-transfers">`. What to wait on before acting on it. */
+    title: '[data-test="dialog-title-custom-transfers"]',
+    /** A number input. The form behind it holds `select-transfers`, so this one is unique. */
+    transfers: '[data-test="input-transfers"]',
+    /**
+     * The dialog's own Save. It emits `button-save` like the edit form's, which
+     * is still open behind it, so it is reached through the dialog's action row.
+     */
+    save: '[data-test="actions-custom-transfers"] [data-test="button-save"]',
   },
 
   restore: {
