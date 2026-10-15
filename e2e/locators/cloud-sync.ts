@@ -1,6 +1,6 @@
 /**
- * The Cloud Sync Tasks card on Data Protection, its wizard, its edit form and
- * its restore dialog.
+ * The Cloud Sync Tasks card on Data Protection, its full list, its wizard, its
+ * edit form and its restore dialog.
  *
  * Every id on a row is built from the card's own `uniqueRowTag`,
  * `convertStringToId('card-cloudsync-task-' + description)`, which lowercases
@@ -15,10 +15,22 @@
  * then What and When. Edit opens the full form. The two share their control
  * names, so most ids are the same in both.
  */
-import { kebabTestSegment } from './test-id';
+import { taskListDetailAction } from './data-protection';
+import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 
 function rowTag(description: string): string {
   return kebabTestSegment(`card-cloudsync-task-${description}`.toLowerCase());
+}
+
+/**
+ * The full list's row tag, `toUniqueRowTag('cloudsync-task-' + description)`.
+ *
+ * Not the card's. It has no `card-` prefix, and `toUniqueRowTag` runs the whole
+ * tag through lodash, which splits letters from digits, so `E2E …` comes out as
+ * `e-2-e-…` here where the card writes `e2e-…`.
+ */
+function listRowTag(description: string): string {
+  return legacyKebabTestSegment(`cloudsync-task-${description}`.toLowerCase());
 }
 
 export const cloudSyncLocators = {
@@ -96,6 +108,34 @@ export const cloudSyncLocators = {
   list: {
     /** The full list page's Add, in its page header. */
     add: '[data-test="button-add-task"]',
+
+    row: (description: string): string => `[data-test="row-${listRowTag(description)}"]`,
+
+    /** Every row on the list, whichever task it is: a prefix of {@link row}. */
+    anyRow: '[data-test^="row-cloudsync-task-"]',
+
+    /**
+     * The Description cell. Its base is the column title, so `text-description`.
+     * Clicking it opens the row's detail panel, like clicking anywhere else in the row.
+     */
+    description: (description: string): string => (
+      `[data-test="text-description-${listRowTag(description)}-row-text"]`
+    ),
+
+    /** The State cell, the same `ix-task-state-cell` as the card's, which reads SUCCESS as "Completed". */
+    state: (description: string): string => (
+      `[data-test="button-state-${listRowTag(description)}-row-state"]`
+    ),
+
+    /**
+     * Run Now, in the row's detail panel, keyed by the task's id rather than its
+     * description. Stop takes its place while the task's job is running.
+     */
+    runNow: (taskId: number): string => taskListDetailAction([taskId], 'run_now'),
+    /** Edit, in the row's detail panel. Opens the same form as the card's Edit. */
+    edit: (taskId: number): string => taskListDetailAction([taskId], 'edit'),
+    /** Delete, in the row's detail panel. */
+    delete: (taskId: number): string => taskListDetailAction([taskId], 'delete'),
   },
 
   wizard: {

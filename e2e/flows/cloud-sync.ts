@@ -1,7 +1,14 @@
 /**
- * Cloud sync tasks, driven through the UI from the Data Protection page.
+ * Cloud sync tasks, driven through the UI from the Data Protection page and
+ * from their full list.
  */
 import { expect, type Page } from '@playwright/test';
+import {
+  confirmTaskDelete,
+  confirmTaskRun,
+  expandTaskListRow,
+  openFullListFromCard,
+} from './data-protection';
 import { goToDataProtection } from './navigation';
 import { selectOption } from './storage';
 import { cloudSyncLocators } from '../locators/cloud-sync';
@@ -272,4 +279,61 @@ export async function deleteCloudSyncTask(page: Page, description: string): Prom
 
   await confirm.click();
   await expect(page.locator(cloudSyncLocators.card.row(description))).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/** Opens the full list, `/data-protection/cloudsync`, from the card's title, starting from the sidebar. */
+export async function openCloudSyncTaskList(page: Page): Promise<void> {
+  await openFullListFromCard(page, {
+    link: cloudSyncLocators.card.open,
+    route: /\/data-protection\/cloudsync\/?$/,
+    arrived: cloudSyncLocators.list.add,
+  });
+}
+
+/** Opens a row's detail panel on the full list, starting from the sidebar, and waits for `action` in it. */
+async function expandListRow(page: Page, description: string, action: string): Promise<void> {
+  await openCloudSyncTaskList(page);
+  await expandTaskListRow(page, cloudSyncLocators.list.description(description), action);
+}
+
+/**
+ * Runs a task from its row's detail panel on the full list, and answers the confirm.
+ *
+ * The panel's actions are keyed by the task's id, so the caller reads it over the API first.
+ */
+export async function runCloudSyncTaskFromList(
+  page: Page,
+  { description, id }: { description: string; id: number },
+): Promise<void> {
+  const runNow = cloudSyncLocators.list.runNow(id);
+  await expandListRow(page, description, runNow);
+  await page.locator(runNow).click();
+  await confirmTaskRun(page);
+}
+
+/**
+ * Opens the edit form for a task from its row's detail panel on the full list.
+ *
+ * The list opens the card's form, so this waits on the same thing: the task's
+ * description having been patched in.
+ */
+export async function openEditCloudSyncFormFromList(
+  page: Page,
+  { description, id }: { description: string; id: number },
+): Promise<void> {
+  const edit = cloudSyncLocators.list.edit(id);
+  await expandListRow(page, description, edit);
+  await page.locator(edit).click();
+  await expect(page.locator(cloudSyncLocators.form.description)).toHaveValue(description);
+}
+
+/** Deletes a task from its row's detail panel on the full list, and waits for its row to go. */
+export async function deleteCloudSyncTaskFromList(
+  page: Page,
+  { description, id }: { description: string; id: number },
+): Promise<void> {
+  const remove = cloudSyncLocators.list.delete(id);
+  await expandListRow(page, description, remove);
+  await page.locator(remove).click();
+  await confirmTaskDelete(page, cloudSyncLocators.list.row(description));
 }

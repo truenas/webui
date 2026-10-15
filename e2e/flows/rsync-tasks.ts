@@ -1,7 +1,9 @@
 /**
- * Rsync tasks, driven through the UI from the Data Protection page.
+ * Rsync tasks, driven through the UI from the Data Protection page and from
+ * their full list.
  */
 import { expect, type Page } from '@playwright/test';
+import { confirmTaskDelete, confirmTaskRun, openFullListFromCard } from './data-protection';
 import { goToDataProtection } from './navigation';
 import { selectOption } from './storage';
 import { confirmDialogLocators } from '../locators/dialogs';
@@ -132,4 +134,48 @@ export async function deleteRsyncTask(page: Page, path: string, remoteHost: stri
 
   await confirm.click();
   await expect(page.locator(rsyncTaskLocators.card.row(path, remoteHost))).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/** Opens the full list, `/data-protection/rsync`, from the card's title, starting from the sidebar. */
+export async function openRsyncTaskList(page: Page): Promise<void> {
+  await openFullListFromCard(page, {
+    link: rsyncTaskLocators.card.open,
+    route: /\/data-protection\/rsync\/?$/,
+    arrived: rsyncTaskLocators.list.add,
+  });
+}
+
+/** Opens a row's kebab menu on the full list, starting from the sidebar. */
+async function openListRowMenu(page: Page, path: string, remoteHost: string): Promise<void> {
+  await openRsyncTaskList(page);
+  await page.locator(rsyncTaskLocators.list.rowMenu(path, remoteHost)).click();
+}
+
+/**
+ * Opens the edit form for a task from its row menu on the full list.
+ *
+ * The list opens the card's form, so this waits on the same thing: the task's
+ * description having been patched in.
+ */
+export async function openEditRsyncTaskFormFromList(
+  page: Page,
+  { path, remoteHost, description }: { path: string; remoteHost: string; description: string },
+): Promise<void> {
+  await openListRowMenu(page, path, remoteHost);
+  await page.locator(rsyncTaskLocators.list.rowMenuEdit(path, remoteHost)).click();
+  await expect(page.locator(rsyncTaskLocators.form.description)).toHaveValue(description);
+}
+
+/** Runs a task from its row menu on the full list, and answers the confirm. */
+export async function runRsyncTaskFromList(page: Page, path: string, remoteHost: string): Promise<void> {
+  await openListRowMenu(page, path, remoteHost);
+  await page.locator(rsyncTaskLocators.list.rowMenuRun(path, remoteHost)).click();
+  await confirmTaskRun(page);
+}
+
+/** Deletes a task from its row menu on the full list, and waits for its row to go. */
+export async function deleteRsyncTaskFromList(page: Page, path: string, remoteHost: string): Promise<void> {
+  await openListRowMenu(page, path, remoteHost);
+  await page.locator(rsyncTaskLocators.list.rowMenuDelete(path, remoteHost)).click();
+  await confirmTaskDelete(page, rsyncTaskLocators.list.row(path, remoteHost));
 }

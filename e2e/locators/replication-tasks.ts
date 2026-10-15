@@ -1,6 +1,6 @@
 /**
- * The Replication Tasks card on Data Protection, the wizard its Add opens, the
- * form its Edit opens, and the dialog its Restore opens.
+ * The Replication Tasks card on Data Protection, its full list, the wizard its
+ * Add opens, the form its Edit opens, and the dialog its Restore opens.
  *
  * Every id on a row is built from the card's own `uniqueRowTag`,
  * `convertStringToId('replication-task-' + name)`, which lowercases the tag and
@@ -18,10 +18,21 @@
  * sections, with Save in the side panel's footer. Its controls declare their
  * `testId`s too.
  */
-import { kebabTestSegment } from './test-id';
+import { taskListDetailAction } from './data-protection';
+import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 
 function rowTag(name: string): string {
   return kebabTestSegment(`replication-task-${name}`.toLowerCase());
+}
+
+/**
+ * The full list's row tag. The list starts from the same `replication-task-` +
+ * name as the card, but passes it through `toUniqueRowTag`, which runs lodash
+ * over the whole tag and splits letters from digits. So `e2e-…` on the card is
+ * `e-2-e-…` here.
+ */
+function listRowTag(name: string): string {
+  return legacyKebabTestSegment(`replication-task-${name}`.toLowerCase());
 }
 
 /** What both "from" selects call this appliance, and anywhere else. */
@@ -91,6 +102,30 @@ export const replicationTaskLocators = {
      * the card's, which is gone by then with the route.
      */
     add: '[data-test="button-replication-task-add"]',
+
+    row: (name: string): string => `[data-test="row-${listRowTag(name)}"]`,
+
+    /** Every row on the list, whichever task it is: a prefix of {@link row}. */
+    anyRow: '[data-test^="row-replication-task-"]',
+
+    /** The Name cell. Clicking it opens the row's detail panel, like clicking anywhere else in the row. */
+    name: (name: string): string => `[data-test="text-name-${listRowTag(name)}-row-text"]`,
+
+    /**
+     * The row's Enabled switch, the same `ix-table-toggle-cell` as the card's.
+     * It writes on click, and there is no Save.
+     */
+    enabledToggle: (name: string): string => `[data-test="toggle-enabled-${listRowTag(name)}-row-toggle"]`,
+
+    /**
+     * Run Now, in the row's detail panel, keyed by the task's id rather than its
+     * name. Hidden while the task's job is running.
+     */
+    runNow: (taskId: number): string => taskListDetailAction([taskId], 'run_now'),
+    /** Edit, in the row's detail panel. Opens the same form as the card's Edit. */
+    edit: (taskId: number): string => taskListDetailAction([taskId], 'edit'),
+    /** Delete, in the row's detail panel. */
+    delete: (taskId: number): string => taskListDetailAction([taskId], 'delete'),
   },
 
   form: {

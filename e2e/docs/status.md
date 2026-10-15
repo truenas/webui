@@ -373,7 +373,8 @@ schema and schedule claim, and the "keep snapshots" box ticked or not. With it
 ticked, `pool.snapshot.query`'s `retention` must move from the task to a
 `property` on the snapshot with the same date, and a manual snapshot beside it
 must get none. With it unticked, the snapshot stays and has no removal date.
-Custom schedules, exclusions and the full list page are not covered.
+Custom schedules and exclusions are not covered. The full list page is
+`tests/snapshot-task-list.e2e.ts`'s, below.
 
 The dataset form came next, in `tests/datasets-form.e2e.ts`: creating a dataset
 under a pool and editing one, both through Other Options, the form's advanced
@@ -603,8 +604,9 @@ connects to nothing on save in that mode, and a task that fires before teardown
 fails without touching data. The row tag is `card-rsync-task-<path>-<host>`, so
 each task syncs a dataset of its own and the edit leaves both alone. The card
 lists four tasks and its View All leaves for the full list, so each test fails at
-the start if its rows would not fit. SSH mode, the Enabled switch and the full
-list page are not covered here; Run job is `tests/rsync-task-run.e2e.ts`, below.
+the start if its rows would not fit. SSH mode and the Enabled switch are not
+covered here; Run job is `tests/rsync-task-run.e2e.ts`, and the full list page
+`tests/rsync-task-list.e2e.ts`, both below.
 
 Local replication followed, in `tests/replication-tasks.e2e.ts`: creating a task
 between two datasets on the same appliance through the card's wizard, with Run
@@ -628,8 +630,9 @@ snapshot arriving there is the data coming back. Download keys is offered only
 for a source whose key middleware stores, which a passphrase never is. The source
 is therefore encrypted with a key the test chooses, and the downloaded file must
 map the target to exactly that key. Scheduled tasks and the periodic snapshot task
-the wizard makes for them, encrypting the target, and the full list page are not
-covered. Push over SSH is `tests/replication-ssh.e2e.ts`'s, below.
+the wizard makes for them, and encrypting the target, are not covered. Push over
+SSH is `tests/replication-ssh.e2e.ts`'s, and the full list page
+`tests/replication-task-list.e2e.ts`'s, both below.
 
 Privileges came next, in `tests/privileges.e2e.ts`: adding, editing and deleting
 a privilege from the list on Credentials > Privileges, each asserted on the list
@@ -772,7 +775,8 @@ log naming the file, and nothing on the remote. Stop needs a run that lasts, so 
 task gets a `bwlimit` and a 32 MiB file, and its job has to end ABORTED. Custom
 Transfers is set through its dialog, whose Save shares `button-save` with the form
 behind it; the dialog's action row now carries `actions-custom-transfers` to scope
-it. The Enabled switch, the full list page and other providers are not covered.
+it. The Enabled switch and other providers are not covered. The full list page is
+`tests/cloud-sync-task-list.e2e.ts`'s, below.
 
 Replication over SSH followed, in `tests/replication-ssh.e2e.ts`: creating a push
 task to a different system through the wizard, with Run Once, picking an SSH
@@ -803,7 +807,8 @@ each card's title opening its own full list, View All on a snapshot card holding
 five tasks, and the Enabled switch on a snapshot, replication, rsync and cloud sync
 row turning that task off and on again with the other three untouched. The four
 cards that had no id on their empty state now emit `text-<card>-task-empty`, as
-TrueCloud Backup's does. The full list pages themselves are not covered here.
+TrueCloud Backup's does. The full list pages themselves are covered by their own
+specs, below.
 
 Running a rsync task is `tests/rsync-task-run.e2e.ts`: Run job from the card's row
 menu on a push task in SSH mode, beside a Module-mode task that must not run. The
@@ -814,6 +819,20 @@ through `filesystem.listdir` on the target, which holds the source directory
 itself afterwards: middleware passes the local path to rsync with no trailing
 slash. The file it copies is written by the cloud sync spec's one-off cron job.
 SSH mode's own settings in the form and Pull are #14408's.
+
+The full list pages each have a spec of their own: `tests/replication-task-list.e2e.ts`,
+`tests/cloud-sync-task-list.e2e.ts`, `tests/rsync-task-list.e2e.ts` and
+`tests/snapshot-task-list.e2e.ts`. Each opens its list from the card's title,
+searches it down to one task, and edits and deletes a task from its row beside a
+second task that must come through untouched. Replication, cloud sync and rsync
+also run one, checked through `core.get_jobs` and by what the run copied.
+Replication's Enabled switch turns its task off and on again. The other three
+lists show Enabled as a Yes/No cell, so their edit tests switch the task off
+through the form instead. A list's ids are not its card's: `toUniqueRowTag` runs
+the whole row tag through lodash, so `e2e` is `e-2-e` there. The detail-panel
+actions are keyed by the task's id, or by a snapshot task's dataset and naming
+schema, rather than by the row tag. TrueCloud Backup's list is not covered, for
+the Storj reason above.
 
 The framework is done and the coverage is not. A hundred and seventy-nine tests — a
 hundred and seventy-eight journeys and the smoke — against 19 top-level feature areas. What the work
