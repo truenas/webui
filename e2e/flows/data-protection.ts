@@ -8,7 +8,7 @@
 import { expect, type Page } from '@playwright/test';
 import { goToDashboard, goToDataProtection } from './navigation';
 
-/** A card's Enabled switch writes on click, and the card reloads afterwards; quick, not instant. */
+/** How long a freshly loaded card has to render the row's switch. The write itself is the caller's to wait on. */
 const toggleTimeoutMs = 60_000;
 
 /** Where a card's link leads, and what says the page it leads to has rendered. */
