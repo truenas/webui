@@ -54,6 +54,45 @@ export async function openAddShareForm(page: Page): Promise<void> {
 }
 
 /**
+ * Opens the standalone SMB list from the title of the card on the Shares
+ * dashboard, which is how a user gets there.
+ *
+ * Waits for the list page's own Add, which the dashboard does not have.
+ */
+export async function openSmbListPage(page: Page): Promise<void> {
+  await goToShares(page);
+
+  const title = page.locator(smbLocators.cardTitle);
+  await expect(title).toBeVisible({ timeout: formSettleTimeoutMs });
+  await title.click();
+
+  await expect(page.locator(smbLocators.list.add)).toBeVisible({ timeout: formSettleTimeoutMs });
+}
+
+/** Opens the add-share panel from the Add on the list page that is open. */
+export async function openAddShareFormFromList(page: Page): Promise<void> {
+  await page.locator(smbLocators.list.add).click();
+  await expect(page.locator(smbLocators.form.name)).toBeVisible({ timeout: formSettleTimeoutMs });
+}
+
+/** Types into the search box of the list page that is open. It filters as you type. */
+export async function searchSmbList(page: Page, query: string): Promise<void> {
+  await page.locator(smbLocators.list.search).fill(query);
+}
+
+/**
+ * Opens one tab of the SMB status page that is open, and waits until that tab
+ * is the selected one and its list is on the page.
+ */
+export async function openSmbStatusTab(page: Page, slug: string): Promise<void> {
+  const tab = page.locator(smbLocators.status.tab(slug));
+
+  await tab.click();
+  await expect(tab).toHaveAttribute('aria-selected', 'true', { timeout: formSettleTimeoutMs });
+  await expect(page.locator(smbLocators.status.table)).toBeVisible({ timeout: formSettleTimeoutMs });
+}
+
+/**
  * Opens the edit panel for a share, from its row menu on the dashboard card.
  *
  * Waits for the name to be filled in rather than for the field to exist: the
