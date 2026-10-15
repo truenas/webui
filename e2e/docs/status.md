@@ -598,8 +598,8 @@ connects to nothing on save in that mode, and a task that fires before teardown
 fails without touching data. The row tag is `card-rsync-task-<path>-<host>`, so
 each task syncs a dataset of its own and the edit leaves both alone. The card
 lists four tasks and its View All leaves for the full list, so each test fails at
-the start if its rows would not fit. SSH mode, Run job, the Enabled switch and
-the full list page are not covered.
+the start if its rows would not fit. SSH mode, the Enabled switch and the full
+list page are not covered here; Run job is `tests/rsync-task-run.e2e.ts`, below.
 
 Local replication followed, in `tests/replication-tasks.e2e.ts`: creating a task
 between two datasets on the same appliance through the card's wizard, with Run
@@ -787,6 +787,16 @@ five tasks, and the Enabled switch on a snapshot, replication, rsync and cloud s
 row turning that task off and on again with the other three untouched. The four
 cards that had no id on their empty state now emit `text-<card>-task-empty`, as
 TrueCloud Backup's does. The full list pages themselves are not covered here.
+
+Running a rsync task is `tests/rsync-task-run.e2e.ts`: Run job from the card's row
+menu on a push task in SSH mode, beside a Module-mode task that must not run. The
+task signs in through an SSH connection to `127.0.0.1` made with
+`fixtures/ssh-connections.ts`, as the replication over SSH spec's does, under its
+own name. The run is asserted on the row's state, through `core.get_jobs`, and
+through `filesystem.listdir` on the target, which holds the source directory
+itself afterwards: middleware passes the local path to rsync with no trailing
+slash. The file it copies is written by the cloud sync spec's one-off cron job.
+SSH mode's own settings in the form and Pull are #14408's.
 
 The framework is done and the coverage is not. A hundred and seventy-nine tests — a
 hundred and seventy-eight journeys and the smoke — against 19 top-level feature areas. What the work

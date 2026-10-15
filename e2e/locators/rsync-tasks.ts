@@ -39,6 +39,15 @@ export const rsyncTaskLocators = {
     ),
 
     /**
+     * The State cell: `ix-task-state-cell` renders a `<button>` with the cell's
+     * `testId`, and shows a finished job's state through `jobStateDisplay`,
+     * which reads SUCCESS as "Completed".
+     */
+    state: (path: string, remoteHost: string): string => (
+      `[data-test="button-state-${rowTag(path, remoteHost)}-row-state"]`
+    ),
+
+    /**
      * The row's action menu trigger. The row has three actions (Edit, Run job,
      * Delete) and the card does not ask for `mode="inline"`, so they sit in a
      * kebab menu.
@@ -50,6 +59,11 @@ export const rsyncTaskLocators = {
     /** Edit, inside that menu — the trigger's own id with the icon appended, library and all. */
     rowMenuEdit: (path: string, remoteHost: string): string => (
       `[data-test="button-${rowTag(path, remoteHost)}-more-action-mdi-pencil-row-action"]`
+    ),
+
+    /** Run job, inside that menu. Hidden while a run is in progress. Same shape as {@link rowMenuEdit}. */
+    rowMenuRun: (path: string, remoteHost: string): string => (
+      `[data-test="button-${rowTag(path, remoteHost)}-more-action-mdi-play-circle-row-action"]`
     ),
 
     /** Delete, inside that menu. Same shape as {@link rowMenuEdit}. */
