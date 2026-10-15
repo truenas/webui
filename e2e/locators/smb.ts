@@ -21,6 +21,49 @@ export const smbLocators = {
    */
   addShare: '[data-test="button-smb-share-add"]',
 
+  /**
+   * The card's title, "Windows (SMB) Shares". A link to the standalone list
+   * page: `tnTestIdType="link"` with `['smb-share', 'open-in-new']`.
+   */
+  cardTitle: '[data-test="link-smb-share-open-in-new"]',
+
+  /** The standalone SMB list page at `/sharing/smb` (`smb-list.component.html`). */
+  list: {
+    /** The list page's own Add, `[testId]="'add-smb-share'"`. Opens the same form as the card's. */
+    add: '[data-test="button-add-smb-share"]',
+    /** `ix-basic-search`, a `tn-input` with `testId="search"`. Filters as you type. */
+    search: '[data-test="input-search"]',
+    /**
+     * "SMB Sessions", a plain anchor kept for its legacy `link-smb-sessions` id.
+     * Opens the status page on its Sessions tab.
+     */
+    sessionsLink: '[data-test="link-smb-sessions"]',
+
+    /**
+     * A share's row. The tag is `toUniqueRowTag('smb-' + name)`, which goes
+     * through lodash, so `e2e_x` is `e-2-e-x` here. The card's row spells the
+     * same name `e2e-x`.
+     */
+    row: (name: string): string => `[data-test="row-smb-${legacyKebabTestSegment(name)}"]`,
+    /** Every share row on the page, to count what a search left. */
+    anyRow: '[data-test^="row-smb-"]',
+  },
+
+  /**
+   * The SMB status page at `/sharing/smb/status/<tab>` (`smb-status.component.html`).
+   *
+   * One tab's list is mounted at a time, and all four lists give their table
+   * the same `table-table` id. `tn-table` applies it verbatim, with no type prefix.
+   *
+   * The empty state a list shows is a `tn-empty` that the library renders inside
+   * `tn-table` with no id at all, so a spec cannot select it.
+   */
+  status: {
+    /** `<tn-tab [testId]="slug">`. The slug is `sessions`, `locks`, `shares` or `notifications`. */
+    tab: (slug: string): string => `[data-test="tab-${slug}"]`,
+    table: '[data-test="table-table"]',
+  },
+
   form: {
     /**
      * The preset picker, and the most consequential control on the form:
