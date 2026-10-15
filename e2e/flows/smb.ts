@@ -4,6 +4,7 @@
 import { expect, type Page } from '@playwright/test';
 import { goToShares } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
+import { permissionsLocators } from '../locators/permissions';
 import { smbLocators } from '../locators/smb';
 
 /** Creating a share writes to middleware and then asks two follow-up questions. */
@@ -146,6 +147,79 @@ export async function createSmbShareAndStartService(page: Page, path: string, na
   await startService.click();
 
   await expect(page.locator(smbLocators.form.save)).toBeHidden({ timeout: startServiceSaveTimeoutMs });
+}
+
+/**
+ * Opens the Share ACL panel for a share, from its row menu on the dashboard card.
+ *
+ * The panel reads the ACL after it opens and fills one row per entry, all at
+ * once. Waits for the first row, since every share ACL has at least one entry.
+ */
+export async function openShareAclForm(page: Page, name: string): Promise<void> {
+  await goToShares(page);
+
+  await openShareRowMenu(page, name);
+  await page.locator(smbLocators.card.rowMenuShareAcl(name)).click();
+  await expect(page.locator(smbLocators.shareAcl.who).first()).toBeVisible({ timeout: formSettleTimeoutMs });
+}
+
+/**
+ * Appends an entry for one user to the open Share ACL panel.
+ *
+ * The new row is the last one, so every control is taken with `.last()`. The
+ * user field is an autocomplete over SMB users, and clicking the row is what
+ * commits the value.
+ */
+export async function addShareAclUserEntry(
+  page: Page,
+  { username, permission, type }: { username: string; permission: string; type: string },
+): Promise<void> {
+  const form = smbLocators.shareAcl;
+
+  await page.locator(form.add).click();
+
+  await page.locator(form.who).last().click();
+  await page.locator(form.whoOption('User')).click();
+
+  await page.locator(form.user).last().fill(username);
+  await page.locator(form.userOption(username)).click();
+
+  await page.locator(form.permission).last().click();
+  await page.locator(form.permissionOption(permission)).click();
+
+  await page.locator(form.type).last().click();
+  await page.locator(form.typeOption(type)).click();
+}
+
+/** Removes the entry at `index` from the open Share ACL panel. */
+export async function removeShareAclEntry(page: Page, index: number): Promise<void> {
+  await page.locator(smbLocators.shareAcl.remove).nth(index).click();
+}
+
+/** Saves the Share ACL panel and waits for it to close. */
+export async function saveShareAcl(page: Page): Promise<void> {
+  await page.locator(smbLocators.shareAcl.save).click();
+  await expect(page.locator(smbLocators.shareAcl.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Opens the ACL editor on a share's path, from Edit Filesystem ACL in its row menu.
+ *
+ * Waits for the editor to show a path, without checking which one. The test
+ * checks that.
+ */
+export async function openShareFilesystemAcl(page: Page, name: string): Promise<void> {
+  await goToShares(page);
+
+  await openShareRowMenu(page, name);
+  await page.locator(smbLocators.card.rowMenuFilesystemAcl(name)).click();
+  await expect(page.locator(permissionsLocators.aclEditor.path)).toBeVisible({ timeout: formSettleTimeoutMs });
+}
+
+/** Opens a share's row menu on the dashboard card, for a test that reads the menu itself. */
+export async function openShareActions(page: Page, name: string): Promise<void> {
+  await goToShares(page);
+  await openShareRowMenu(page, name);
 }
 
 /**

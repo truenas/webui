@@ -81,6 +81,44 @@ export async function ensureSmbSharePresent(
   );
 }
 
+/** One entry of a share's ACL, as `sharing.smb.getacl` reports it. */
+export type SmbShareAce = NonNullable<CallResponse<E2eApiDirectory, 'sharing.smb.getacl'>['share_acl']>[number];
+
+/** The SID middleware gives `everyone@` in a share ACL. */
+export const everyoneSid = 'S-1-1-0';
+
+/**
+ * A share's ACL, in the order middleware stores it.
+ *
+ * The order matters to a test: the Share ACL form lists the entries in this
+ * order, so it is how a spec finds which row of the form holds an entry.
+ */
+export async function readSmbShareAcl(client: E2eApiClient, shareName: string): Promise<SmbShareAce[]> {
+  const shareAcl = await firstValueFrom(
+    client.api.call('sharing.smb.getacl', [{ share_name: shareName }]).pipe(timeout(readTimeoutMs)),
+  );
+
+  return shareAcl.share_acl ?? [];
+}
+
+/**
+ * Replaces a share's ACL with `everyone@` and one user, each FULL and ALLOWED.
+ *
+ * A precondition for removing an entry through the form. `everyone@` stays as
+ * the entry that must survive the removal.
+ */
+export async function setSmbShareAclWithUser(client: E2eApiClient, shareName: string, uid: number): Promise<void> {
+  await firstValueFrom(
+    client.api.call('sharing.smb.setacl', [{
+      share_name: shareName,
+      share_acl: [
+        { ae_who_sid: everyoneSid, ae_perm: 'FULL', ae_type: 'ALLOWED' },
+        { ae_who_id: { id_type: 'USER', id: uid }, ae_perm: 'FULL', ae_type: 'ALLOWED' },
+      ],
+    }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
 /**
  * Returns the SMB service to stopped and not-auto-starting.
  *

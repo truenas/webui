@@ -160,6 +160,34 @@ export async function ensureUserPresent(
 }
 
 /**
+ * Creates a local user with SMB access if absent, for a share ACL to name.
+ *
+ * The share ACL form's user picker lists SMB users only, so an account made by
+ * {@link ensureUserPresent} is not offered there. Middleware will not create an
+ * SMB user without a password, so this one has a password, and nothing signs in
+ * with it.
+ */
+export async function ensureSmbUserPresent(
+  client: E2eApiClient,
+  { username, password }: { username: string; password: string },
+): Promise<void> {
+  if (await findUser(client, username)) {
+    return;
+  }
+
+  await firstValueFrom(
+    client.api.call('user.create', [{
+      username,
+      full_name: `E2E ${username}`,
+      password,
+      group_create: true,
+      groups: [],
+      smb: true,
+    }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
  * Two accounts the sign-in page must turn away. Both have working passwords —
  * these are the *authorization* refusals, not wrong credentials.
  *

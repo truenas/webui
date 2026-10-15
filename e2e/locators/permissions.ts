@@ -2,7 +2,7 @@
  * A dataset's Permissions card and the Unix Permissions Editor it opens.
  *
  * The card's Edit opens this editor only while the dataset's ACL is trivial. Anything else goes to
- * the ACL editor, which is not described here.
+ * the ACL editor, which is `aclEditor` below.
  */
 import { kebabTestSegment } from './test-id';
 
@@ -11,6 +11,9 @@ export type AccessWho = 'user' | 'group' | 'other';
 
 /** A column of the same table. The ids say `execute` where the form says `Exec`. */
 export type AccessRight = 'read' | 'write' | 'execute';
+
+/** `text-dataset-path`, which the Unix editor and the ACL editor both show. */
+const datasetPath = '[data-test="text-dataset-path"]';
 
 export const permissionsLocators = {
   card: {
@@ -29,7 +32,7 @@ export const permissionsLocators = {
 
   editor: {
     /** The mountpoint the editor is acting on, `/mnt/<dataset>`. */
-    datasetPath: '[data-test="text-dataset-path"]',
+    datasetPath,
 
     /**
      * `ix-user-combobox formControlName="owner"`, a library `tn-autocomplete`. The input is
@@ -51,5 +54,33 @@ export const permissionsLocators = {
 
     /** `<tn-button testId="save">`. Saving runs `filesystem.setperm` and returns to the dataset. */
     save: '[data-test="button-save"]',
+  },
+
+  /**
+   * The ACL editor (`dataset-acl-editor.component.html`) and its NFSv4 entry form
+   * (`edit-nfs-ace.component.html`).
+   *
+   * The entry form's selects have no `testId`, so their ids fall back to the
+   * control names (`tag`, `basicPermission`). There is one entry form on the page,
+   * for whichever entry is selected, so the fallback is unique.
+   */
+  aclEditor: {
+    /** The path being edited. */
+    path: datasetPath,
+    /** "Add Item". Appends an entry for a user, with Modify and Inherit, and selects it. */
+    addItem: '[data-test="button-add-acl-item"]',
+
+    /** `ix-user-combobox formControlName="user"` in the entry form. Rendered while Who is User. */
+    user: '[data-test="autocomplete-user"]',
+    userOption: (username: string): string => `[data-test="option-user-${kebabTestSegment(username)}"]`,
+    /** Rendered while Permissions Type is Basic, which a new entry is. */
+    basicPermission: '[data-test="select-basic-permission"]',
+    /** By label: "Read", "Modify", "Traverse" or "Full Control". */
+    basicPermissionOption: (label: string): string => (
+      `[data-test="option-basic-permission-${kebabTestSegment(label)}"]`
+    ),
+
+    /** "Save Access Control List". Runs `filesystem.setacl`, then returns to where the editor was opened. */
+    save: '[data-test="button-save-acl"]',
   },
 } as const;

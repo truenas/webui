@@ -251,6 +251,19 @@ tag uses the library normalizer while the cells inside the same row use lodash;
 "Configure ACL" prompt depends on `filesystem.stat(path).acl` rather than on the
 purpose, which is why these specs never see it and `fresh-install` always does.
 
+The two ACL actions in the row menu are in `tests/smb-share-acl.e2e.ts`. Edit
+Share ACL adds an entry for an SMB user and removes one, each asserted through
+`sharing.smb.getacl`. Edit Filesystem ACL opens the dataset ACL editor on the
+share's path and saves one entry there, read back through `filesystem.getacl`,
+and is disabled for a share on a pool's root. The share sits on a dataset made
+with the SMB preset, because a trivial ACL opens the editor on a preset picker
+instead of the entries. The Share ACL form gives every row the same ids, so the
+spec picks a row by its position in `getacl`. The NFSv4 entry form's selects
+have no `testId` and fall back to their control names (`select-tag`,
+`select-basic-permission`); there is one entry form on the page, so the
+fallback is unique. These ids were worked out from the templates, not read off
+an appliance. Beyond that one entry, the ACL editor is not covered.
+
 NFS shares followed, in `tests/nfs-form.e2e.ts`, `tests/nfs-list.e2e.ts` and
 `tests/nfs-service.e2e.ts`, on the same plan as SMB with one difference that
 runs through all of it: an NFS share has no name. Its path is its identity, and

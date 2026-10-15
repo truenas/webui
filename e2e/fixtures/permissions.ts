@@ -1,12 +1,14 @@
 /**
- * A dataset's owner, group and Unix mode, over the API.
+ * A dataset's owner, group and Unix mode, and its NFSv4 ACL entries, over the API.
  *
- * Provisioning only, plus the read a test asserts against. Changing them is what
- * `tests/dataset-permissions.e2e.ts` drives through the UI, so nothing here may stand in for it.
+ * Provisioning only, plus the reads a test asserts against. Changing them is what
+ * `tests/dataset-permissions.e2e.ts` and `tests/smb-share-acl.e2e.ts` drive through the UI, so
+ * nothing here may stand in for it.
  * There is no teardown of its own: the permissions live on the dataset's mountpoint, and the spec
  * deletes the dataset.
  */
 import { firstValueFrom, timeout } from 'rxjs';
+import type { Nfs4Ace } from './storage';
 import type { E2eApiClient } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
@@ -35,6 +37,25 @@ export async function readOwnership(client: E2eApiClient, path: string): Promise
     group: stat.group ?? String(stat.gid),
     mode: (stat.mode & 0o777).toString(8).padStart(3, '0'),
   };
+}
+
+/**
+ * The NFSv4 ACL entries on `path` that name the user with `uid`.
+ *
+ * What a test of the ACL editor asserts against. Throws if the path is not
+ * NFSv4, because an empty answer would then mean the wrong dataset, not a
+ * missing entry.
+ */
+export async function findUserAclEntries(client: E2eApiClient, path: string, uid: number): Promise<Nfs4Ace[]> {
+  const acl = await firstValueFrom(
+    client.api.call('filesystem.getacl', [path, true, true]).pipe(timeout(readTimeoutMs)),
+  );
+
+  if (acl.acltype !== 'NFS4') {
+    throw new Error(`"${path}" has ${acl.acltype} ACLs, where the test expects the NFSv4 the SMB preset gives.`);
+  }
+
+  return acl.acl.filter((entry) => entry.tag === 'USER' && entry.id === uid);
 }
 
 /**

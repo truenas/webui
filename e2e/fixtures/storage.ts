@@ -223,7 +223,7 @@ export async function findPoolScan(client: E2eApiClient, name: string): Promise<
 }
 
 /** An entry of an NFSv4 ACL, named from the library rather than hand-written. */
-type Nfs4Ace = Extract<
+export type Nfs4Ace = Extract<
   CallResponse<E2eApiDirectory, 'filesystem.getacl'>, { acltype: 'NFS4' }
 >['acl'][number];
 
@@ -420,6 +420,25 @@ export async function ensureDatasetPresent(client: E2eApiClient, name: string): 
 
   await firstValueFrom(
     client.api.call('pool.dataset.create', [{ name, type: 'FILESYSTEM' }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
+ * Creates a dataset with the SMB preset by full name if absent.
+ *
+ * The preset makes the dataset NFSv4 and gives it a non-trivial ACL. That
+ * matters to the ACL editor: it offers a preset picker first for a trivial ACL,
+ * and opens straight onto the entries for anything else.
+ */
+export async function ensureSmbDatasetPresent(client: E2eApiClient, name: string): Promise<void> {
+  if (await findDataset(client, name)) {
+    return;
+  }
+
+  await firstValueFrom(
+    client.api
+      .call('pool.dataset.create', [{ name, type: 'FILESYSTEM', share_type: 'SMB' }])
+      .pipe(timeout(slowCallTimeoutMs)),
   );
 }
 
