@@ -770,6 +770,16 @@ the run through `core.get_jobs`, and the target's snapshots through
 connection in the wizard's own "Add New" form and the SSH Connections page are not
 covered.
 
+TrueCloud Backup followed, in `tests/cloud-backup-tasks.e2e.ts`, and only as far as
+an appliance with no Storj account goes: the card's empty state, the full list page
+opened from the card's title and its own empty state, and the add form refusing
+Name, Keep Last and Password when each is touched and left empty. Neither empty
+state had an id; they are now `text-cloud-backup-task-empty` and
+`text-cloud-backup-list-empty`, and those three fields' `form-field-*` wrappers
+carry ids too. `cloud_backup.create` initializes a restic repository on Storj
+before it stores anything, so no task can be made here — saving, running,
+restoring, the row actions and the details page all need a real account.
+
 The framework is done and the coverage is not. A hundred and seventy-nine tests — a
 hundred and seventy-eight journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,

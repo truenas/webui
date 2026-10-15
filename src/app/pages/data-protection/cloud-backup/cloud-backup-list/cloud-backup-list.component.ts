@@ -9,6 +9,7 @@ import {
   TnTableColumnDirective,
   TnTableComponent,
   TnTablePagerComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   filter, of, switchMap, tap,
@@ -57,6 +58,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     UiSearchDirective,
     BasicSearchComponent,
     TnEmptyComponent,
+    TnTestIdDirective,
     TnTableComponent,
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
