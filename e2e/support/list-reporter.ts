@@ -148,6 +148,15 @@ function formatFailure(test: TestCase, index: number): string {
   return lines.join('\n');
 }
 
+/**
+ * A tally line with its tests beneath it, as Playwright writes a failed,
+ * interrupted or flaky count — the end of the log is where a reader looks for
+ * which test it was.
+ */
+function countWithTests(count: string, tests: TestCase[]): string[] {
+  return [count, ...tests.map((test) => `    ${testTitle(test)}`)];
+}
+
 interface FileDuration {
   duration: number;
   workers: Set<number>;
@@ -234,13 +243,13 @@ export default class ListReporter implements Reporter {
 
     const lines: string[] = [];
     if (unexpected.length) {
-      lines.push(`  ${unexpected.length} failed`);
+      lines.push(...countWithTests(`  ${unexpected.length} failed`, unexpected));
     }
     if (interrupted.length) {
-      lines.push(`  ${interrupted.length} interrupted`);
+      lines.push(...countWithTests(`  ${interrupted.length} interrupted`, interrupted));
     }
     if (flaky.length) {
-      lines.push(`  ${flaky.length} flaky`);
+      lines.push(...countWithTests(`  ${flaky.length} flaky`, flaky));
     }
     if (skipped) {
       lines.push(`  ${skipped} skipped`);
