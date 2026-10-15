@@ -22,11 +22,13 @@ type TargetEntry = Extract<CallResponse<E2eApiDirectory, 'iscsi.target.query'>, 
 type ExtentEntry = Extract<CallResponse<E2eApiDirectory, 'iscsi.extent.query'>, unknown[]>[number];
 type TargetExtentEntry = Extract<CallResponse<E2eApiDirectory, 'iscsi.targetextent.query'>, unknown[]>[number];
 type PortalEntry = Extract<CallResponse<E2eApiDirectory, 'iscsi.portal.query'>, unknown[]>[number];
+type InitiatorEntry = Extract<CallResponse<E2eApiDirectory, 'iscsi.initiator.query'>, unknown[]>[number];
 
 export type IscsiTargetRecord = TargetEntry & { id: number };
 export type IscsiExtentRecord = ExtentEntry & { id: number };
 export type IscsiTargetExtentRecord = TargetExtentEntry & { id: number };
 export type IscsiPortalRecord = PortalEntry & { id: number };
+export type IscsiInitiatorRecord = InitiatorEntry & { id: number };
 
 /** The target with this name, or undefined. `query`, not `queryOne` — absence is an ordinary answer here. */
 export async function findIscsiTarget(client: E2eApiClient, name: string): Promise<IscsiTargetRecord | undefined> {
@@ -153,16 +155,106 @@ export async function ensureIscsiSharePresent(
     return;
   }
 
-  const extent = await firstValueFrom(
-    client.api.call('iscsi.extent.create', [{ name, type: 'DISK', disk: `zvol/${zvol}` }])
-      .pipe(timeout(slowCallTimeoutMs)),
-  ) as IscsiExtentRecord;
+  const extent = await ensureIscsiZvolExtentPresent(client, { name, zvol });
   const target = await ensureIscsiTargetPresent(client, name);
 
   await firstValueFrom(
     client.api.call('iscsi.targetextent.create', [{ target: target.id, extent: extent.id }])
       .pipe(timeout(slowCallTimeoutMs)),
   );
+}
+
+/**
+ * Creates an extent on an existing zvol, if none has this name. `zvol` is the
+ * dataset id, `pool/child`; the description is left empty unless given.
+ */
+export async function ensureIscsiZvolExtentPresent(
+  client: E2eApiClient,
+  { name, zvol, comment = '' }: { name: string; zvol: string; comment?: string },
+): Promise<IscsiExtentRecord> {
+  const existing = await findIscsiExtent(client, name);
+  if (existing) {
+    return existing;
+  }
+
+  const created = await firstValueFrom(
+    client.api.call('iscsi.extent.create', [{
+      name,
+      comment,
+      type: 'DISK',
+      disk: `zvol/${zvol}`,
+    }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+
+  return created as IscsiExtentRecord;
+}
+
+/**
+ * Creates a File extent, if none has this name. Middleware makes the file at
+ * `path` with `filesize` bytes, and the directories above it, when it is absent.
+ * `filesize` must be a multiple of the 512-byte default block size.
+ */
+export async function ensureIscsiFileExtentPresent(
+  client: E2eApiClient,
+  { name, path, filesize }: { name: string; path: string; filesize: number },
+): Promise<IscsiExtentRecord> {
+  const existing = await findIscsiExtent(client, name);
+  if (existing) {
+    return existing;
+  }
+
+  const created = await firstValueFrom(
+    client.api.call('iscsi.extent.create', [{
+      name,
+      type: 'FILE',
+      path,
+      filesize,
+    }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+
+  return created as IscsiExtentRecord;
+}
+
+/**
+ * Creates a portal listening on every address, labelled with `comment`, if none
+ * carries that label — for a target's group to point at.
+ *
+ * Middleware refuses an address another portal already listens on, so this
+ * fails if a portal left by another spec still holds `0.0.0.0`.
+ */
+export async function ensureIscsiPortalPresent(client: E2eApiClient, comment: string): Promise<IscsiPortalRecord> {
+  const [existing] = await firstValueFrom(
+    client.api.query('iscsi.portal.query', [['comment', '=', comment]]).pipe(timeout(readTimeoutMs)),
+  );
+  if (existing) {
+    return existing as IscsiPortalRecord;
+  }
+
+  const created = await firstValueFrom(
+    client.api.call('iscsi.portal.create', [{ listen: [{ ip: '0.0.0.0' }], comment }])
+      .pipe(timeout(slowCallTimeoutMs)),
+  );
+
+  return created as IscsiPortalRecord;
+}
+
+/** Creates an initiator group that allows every initiator, labelled with `comment`, if none carries that label. */
+export async function ensureIscsiInitiatorPresent(
+  client: E2eApiClient,
+  comment: string,
+): Promise<IscsiInitiatorRecord> {
+  const [existing] = await firstValueFrom(
+    client.api.query('iscsi.initiator.query', [['comment', '=', comment]]).pipe(timeout(readTimeoutMs)),
+  );
+  if (existing) {
+    return existing as IscsiInitiatorRecord;
+  }
+
+  const created = await firstValueFrom(
+    client.api.call('iscsi.initiator.create', [{ initiators: [], comment }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+
+  return created as IscsiInitiatorRecord;
 }
 
 /**
