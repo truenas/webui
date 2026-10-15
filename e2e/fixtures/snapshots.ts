@@ -64,6 +64,58 @@ export async function findSnapshot(
   return snapshot as SnapshotRecord | undefined;
 }
 
+/**
+ * When the appliance will destroy a snapshot by itself, and what set that date.
+ *
+ * `source` is `periodic_snapshot_task` while a task's naming schema and
+ * schedule claim the snapshot. It is `property` once a removal date has been
+ * written onto the snapshot itself, which is what deleting a task with "keep
+ * snapshots" does.
+ */
+export interface SnapshotRetention {
+  source: string;
+  destroyAt: Date;
+}
+
+/** `retention` as `extra.retention` returns it. The date comes in a `$date` envelope, as the details row reads it. */
+interface RetentionOnWire {
+  datetime: { $date: number } | number | string;
+  source: string;
+}
+
+/**
+ * A snapshot's retention, or undefined when nothing will destroy it.
+ *
+ * Throws for a snapshot the appliance does not have, so that a missing
+ * snapshot cannot pass as one that is merely kept forever.
+ */
+export async function findSnapshotRetention(
+  client: E2eApiClient,
+  dataset: string,
+  name: string,
+): Promise<SnapshotRetention | undefined> {
+  const id = snapshotId(dataset, name);
+  const [snapshot] = await firstValueFrom(
+    client.api
+      .query('pool.snapshot.query', [['id', '=', id]], { extra: { retention: true } })
+      .pipe(timeout(readTimeoutMs)),
+  );
+  if (!snapshot) {
+    throw new Error(`the appliance has no snapshot ${id}`);
+  }
+
+  const { retention } = snapshot as unknown as { retention?: RetentionOnWire | null };
+  if (!retention) {
+    return undefined;
+  }
+
+  const { datetime } = retention;
+  return {
+    source: retention.source,
+    destroyAt: new Date(typeof datetime === 'object' ? datetime.$date : datetime),
+  };
+}
+
 /** Whether a snapshot the appliance has is held. False for one it does not have. */
 export async function isSnapshotHeld(client: E2eApiClient, dataset: string, name: string): Promise<boolean> {
   const snapshot = await findSnapshot(client, dataset, name);

@@ -367,8 +367,13 @@ Nothing in the UI runs one on demand, so each is scheduled every minute: one
 requires every snapshot on its fresh dataset to match its naming schema and the
 dataset's snapshot list to show one, and the other switches a task off with
 the card's Enabled switch and requires it to take nothing after the tick already
-under way, using a second task left on the same schedule as the clock. Custom schedules, exclusions, the
-full list page and deleting a task that has snapshots are not covered.
+under way, using a second task left on the same schedule as the clock. Two more
+delete a task that has a snapshot, seeded over the API with a name the task's
+schema and schedule claim, and the "keep snapshots" box ticked or not. With it
+ticked, `pool.snapshot.query`'s `retention` must move from the task to a
+`property` on the snapshot with the same date, and a manual snapshot beside it
+must get none. With it unticked, the snapshot stays and has no removal date.
+Custom schedules, exclusions and the full list page are not covered.
 
 The dataset form came next, in `tests/datasets-form.e2e.ts`: creating a dataset
 under a pool and editing one, both through Other Options, the form's advanced

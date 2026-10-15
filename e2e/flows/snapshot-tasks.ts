@@ -96,11 +96,24 @@ export async function saveSnapshotTaskForm(page: Page): Promise<void> {
  * **disabled** until the box is ticked — asserted on the way, so a dialog that
  * lost its gate fails here rather than passing a test that never needed it. A
  * task with no snapshots yet gets no second box, so there is nothing else to tick.
+ *
+ * Pass `keepSnapshots` for a task that has snapshots. The dialog then has to
+ * offer to keep them with their original retention, which is asserted, and the
+ * box is ticked or left alone as asked. Whether the choice reached middleware
+ * is the caller's to read back.
  */
-export async function deleteSnapshotTask(page: Page, dataset: string): Promise<void> {
+export async function deleteSnapshotTask(page: Page, dataset: string, keepSnapshots?: boolean): Promise<void> {
   await openRowMenu(page, dataset);
   await page.locator(snapshotTaskLocators.card.rowMenuDelete(dataset)).click();
   await expect(page.locator(confirmDialogLocators.title)).toBeVisible({ timeout: saveTimeoutMs });
+
+  if (keepSnapshots !== undefined) {
+    const keep = page.locator(confirmDialogLocators.secondaryCheckbox);
+    await expect(keep).toBeVisible();
+    if (keepSnapshots) {
+      await keep.click();
+    }
+  }
 
   const confirm = page.locator(confirmDialogLocators.confirm);
   await expect(confirm).toBeDisabled();
