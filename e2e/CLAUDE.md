@@ -287,6 +287,10 @@ is how it is computed, which is nobody's search term.
   that opens it returns `false` before it renders, silently skips the
   interaction, and surfaces minutes later as an unrelated timeout. Wait for
   dialogs with `expect(...).toBeVisible()`.
+- A request with nothing on screen to show for it — a Refresh whose answer has
+  not changed — is waited on as a request: `test.use({ recordApiCalls: true })`
+  in the spec, then `expect.poll` over `apiCallsTo` from `support/api-calls.ts`.
+  The fixture has to start recording before sign-in, where the socket opens.
 
 Give each operation an explicit, generous timeout rather than leaning on the
 global one — a wrong selector should fail in seconds, not burn the test budget.

@@ -5,12 +5,13 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnButtonToggleComponent, TnButtonToggleGroupComponent, TnCellDefDirective,
+  TnButtonComponent, TnButtonToggleComponent, TnButtonToggleGroupComponent, TnCellDefDirective, TnEmptyComponent,
   TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
 import { combineLatest, map, tap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import {
   Nfs3Session, Nfs4Session, NfsType, toNfs4Session,
@@ -42,6 +43,7 @@ let nextLabelId = 0;
     BasicSearchComponent,
     TnButtonComponent,
     TnTestIdDirective,
+    TnEmptyComponent,
     TableColumnPickerComponent,
     TnTableComponent,
     TnTableColumnDirective,
@@ -65,6 +67,7 @@ export class NfsSessionListComponent implements OnInit {
   protected readonly searchQuery = signal('');
   private sessions: Nfs3Session[] | Nfs4Session['info'][] = [];
   protected readonly NfsType = NfsType;
+  protected readonly EmptyType = EmptyType;
 
   protected readonly nfs3Columns = signal(createTable<Nfs3Session>([
     column({

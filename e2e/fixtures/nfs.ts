@@ -8,7 +8,7 @@
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
-import { ensureServiceStopped } from './services';
+import { ensureServiceRunning, ensureServiceStopped } from './services';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
@@ -87,5 +87,19 @@ export async function ensureNfsServiceStopped(client: E2eApiClient): Promise<voi
     client,
     nfsServiceName,
     'NFS service did not stop; the next run will not be offered the start prompt its saves expect.',
+  );
+}
+
+/**
+ * Starts the NFS service, for a journey that needs it running.
+ *
+ * The sessions page asks the running server which clients it has. Whoever
+ * calls this owes {@link ensureNfsServiceStopped} in teardown.
+ */
+export async function ensureNfsServiceRunning(client: E2eApiClient): Promise<void> {
+  await ensureServiceRunning(
+    client,
+    nfsServiceName,
+    'NFS service did not start, so the sessions page has no server to ask about clients.',
   );
 }

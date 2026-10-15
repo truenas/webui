@@ -18,6 +18,7 @@
  * than once through `storageState`.
  */
 import { expect, type Page, test as base } from '@playwright/test';
+import { recordApiCalls } from './api-calls';
 import type { E2eApiClient } from './api/client';
 import { connectAndLogin } from './api/client';
 import { buildTokenLoginUrl, generateAuthToken } from './auth/token';
@@ -161,6 +162,12 @@ export interface E2eTestOptions {
    * those tests cover sign-in itself and a bypass would defeat them (R4.2).
    */
   authenticate: boolean;
+  /**
+   * Whether `page` records the API calls it makes, for `apiCallsTo`. Off by
+   * default; a spec that asserts a request was sent turns it on with
+   * `test.use`. See `support/api-calls.ts`.
+   */
+  recordApiCalls: boolean;
 }
 
 export interface E2eWorkerFixtures {
@@ -212,6 +219,7 @@ export interface E2eWorkerFixtures {
  */
 export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
   authenticate: [true, { option: true }],
+  recordApiCalls: [false, { option: true }],
 
   config: [
     // eslint-disable-next-line no-empty-pattern
@@ -275,10 +283,14 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
    * login also gets its own token.
    */
   page: async ({
-    page, authenticate, api, config,
+    page, authenticate, recordApiCalls: recording, api, config,
   }, use) => {
     // Registered before the sign-in, because the sign-in is where it first bites.
     await dismissConcurrencyDialogs(page);
+    // Before the sign-in too: that is where the socket opens.
+    if (recording) {
+      recordApiCalls(page);
+    }
 
     if (authenticate) {
       await signInWithToken(page, api, config);

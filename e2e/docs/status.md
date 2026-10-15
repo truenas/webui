@@ -281,6 +281,22 @@ is typed and not left is on screen while Save still answers for the old one —
 before it is saved, so a hostname that does not resolve is refused, and the
 refusal arrives as an error dialog rather than under the field.
 
+`tests/nfs-list-page.e2e.ts` covers the standalone list at `/sharing/nfs`, opened
+from the card title: its search narrows three shares to one row, and its own Add
+(`add-nfs-share`) creates a share. Its row tag is
+`toUniqueRowTag('nfs-share-<path>-<description>')`, lodash all through, so the
+path is spelled differently from the card's row. `tests/nfs-sessions.e2e.ts`
+opens the Sessions page from "NFS Sessions" with the service running and no
+client mounted, which is all this suite can do: each version's empty state, the
+NFS 3 / NFS 4 switch in both directions, and Refresh. The empty states are a
+`tn-empty` per version (`text-nfs3-sessions-empty`, `text-nfs4-sessions-empty`)
+that the page now renders in place of its table, because the one `tn-table`
+draws inside itself has no id. Refresh leaves an identical page behind when
+nothing has changed, so the spec asserts the call it sends instead: with
+`test.use({ recordApiCalls: true })` the `page` fixture records the page's own
+JSON-RPC traffic from before sign-in (`support/api-calls.ts`), and the spec reads
+the new `nfs.get_nfs4_clients` call and its answer.
+
 Manual snapshots came next, in `tests/snapshot-create.e2e.ts`,
 `tests/snapshot-list.e2e.ts` and `tests/snapshot-rollback.e2e.ts`, all reached
 the way a user reaches them: a dataset in the tree, then its Data Protection
@@ -977,7 +993,7 @@ a number. See `05-ci.md`.
    covered the same way — publish, read-only, networks, hosts, edit, enable,
    unshare, the service switch and the start offer — but not the maproot and
    mapall mappings, the Security select (NFSv4 only), the service's own
-   settings, the standalone list and sessions pages, or a real mount. S3 is covered as a feature — create, configure,
+   settings, the sessions page with a client on it, or a real mount. S3 is covered as a feature — create, configure,
    edit, toggle, rotate, delete — except auditing, which is licence-gated and
    needs an Enterprise appliance. List-driven journeys (deleting a pool, dataset
    or share from a list) are no longer blocked: `tn-table` still writes nothing

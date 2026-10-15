@@ -143,5 +143,48 @@ export const nfsLocators = {
     enabledToggle: (path: string, description = ''): string => (
       `[data-test="toggle-enabled-card-nfs-share-${kebabTestSegment(rowTag(path, description))}-row-toggle"]`
     ),
+
+    /**
+     * The card's title, "UNIX (NFS) Shares". A link to the standalone list page:
+     * `tnTestIdType="link"` with `['nfs-share', 'open-in-new']`.
+     */
+    title: '[data-test="link-nfs-share-open-in-new"]',
+  },
+
+  /** The standalone NFS list page at `/sharing/nfs` (`nfs-list.component.html`). */
+  list: {
+    /** The list page's own Add, `[testId]="'add-nfs-share'"`. Opens the same form as the card's. */
+    add: '[data-test="button-add-nfs-share"]',
+    /** `ix-basic-search`, a `tn-input` with `testId="search"`. Filters as you type, on every field. */
+    search: '[data-test="input-search"]',
+    /** "NFS Sessions", a plain anchor kept for its legacy `link-nfs-sessions` id. */
+    sessionsLink: '[data-test="link-nfs-sessions"]',
+
+    /**
+     * A share's row. The tag is `toUniqueRowTag('nfs-share-' + path + '-' + comment)`,
+     * which goes through lodash as a whole, so `/mnt/tank/e2e_x` is `mnt-tank-e-2-e-x`
+     * here where the card's row has `mnt-tank-e2e-x`.
+     */
+    row: (path: string, description = ''): string => (
+      `[data-test="row-${legacyKebabTestSegment(`nfs-share-${rowTag(path, description)}`)}"]`
+    ),
+    /** Every share row on the page, to count what a search left. */
+    anyRow: '[data-test^="row-nfs-share-"]',
+  },
+
+  /** The NFS Sessions page at `/sharing/nfs/sessions` (`nfs-session-list.component.html`). */
+  sessions: {
+    /** The NFS 3 / NFS 4 switch: `<tn-button-toggle [testId]="['nfs', 'nfs-3']">`, and `nfs-4`. */
+    nfs3: '[data-test="button-toggle-nfs-nfs-3"]',
+    nfs4: '[data-test="button-toggle-nfs-nfs-4"]',
+    /** "Refresh", which queries the version that is showing again. */
+    refresh: '[data-test="button-refresh-data"]',
+    /**
+     * Each version's empty state, rendered in place of its table once a query
+     * has answered with no client. One per version, so which one is showing says
+     * which version answered.
+     */
+    nfs3Empty: '[data-test="text-nfs3-sessions-empty"]',
+    nfs4Empty: '[data-test="text-nfs4-sessions-empty"]',
   },
 } as const;

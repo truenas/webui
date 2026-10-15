@@ -78,6 +78,25 @@ describe('NfsSessionListComponent', () => {
     });
   });
 
+  describe('with no client mounted', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          mockTypedApi([
+            mockTypedQuery('nfs.get_nfs3_clients', []),
+            mockTypedQuery('nfs.get_nfs4_clients', []),
+          ]),
+        ],
+      });
+      spectator.detectChanges();
+    });
+
+    it('shows the empty state in place of the table', () => {
+      expect(spectator.query('tn-empty')).toExist();
+      expect(spectator.query('tn-table')).not.toExist();
+    });
+  });
+
   describe('NFS 4', () => {
     beforeEach(async () => {
       spectator = createComponent();
