@@ -75,6 +75,34 @@ export async function ensureNfsSharePresent(
   );
 }
 
+/** The NFS protocol versions the service offers, as `nfs.config` spells them (`NFSV3`, `NFSV4`). */
+export type NfsProtocols = CallResponse<E2eApiDirectory, 'nfs.config'>['protocols'];
+
+/**
+ * The protocol versions the NFS service has enabled.
+ *
+ * Read before a test that changes them, so teardown can put back what it found.
+ * The share form decides from this whether to offer Security at all.
+ */
+export async function readNfsProtocols(client: E2eApiClient): Promise<NfsProtocols> {
+  const config = await firstValueFrom(client.api.call('nfs.config').pipe(timeout(readTimeoutMs)));
+
+  return config.protocols;
+}
+
+/**
+ * Sets the protocol versions the NFS service offers. For preconditions and
+ * teardown only; a change under test goes through the service form.
+ *
+ * Only `protocols` is written, so nothing else the service holds is touched.
+ * Saving a stopped service's settings rewrites its configuration and starts nothing.
+ */
+export async function setNfsProtocols(client: E2eApiClient, protocols: NfsProtocols): Promise<void> {
+  await firstValueFrom(
+    client.api.call('nfs.update', [{ protocols }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
 /**
  * Returns the NFS service to stopped and not-auto-starting.
  *

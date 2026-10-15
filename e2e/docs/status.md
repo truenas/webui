@@ -243,6 +243,19 @@ service rather than the share: the Apple-extensions gate a Time Machine share
 is held behind (the write, `smb.update`, outlives the share, so the spec puts
 it back), a row's Enabled switch, and the card's own start/stop switch.
 
+`tests/smb-list-page.e2e.ts` covers the standalone list at `/sharing/smb`, opened
+from the card title: it lists the share the card has no room for, its search
+narrows the list to one row, and its own Add (`add-smb-share`) creates a share.
+Its row tags go through lodash, like the card's cells and unlike the card's
+rows. `tests/smb-status.e2e.ts` opens the status page from "SMB Sessions" and
+checks that each of its four tabs can be reached, with the service running.
+That is all it checks. `smb.status` reports clients, and at the `SHARES` level
+it lists tree connections, not configured shares, so a published share shows up
+there only while a client is connected to it. Nothing in the suite can be an
+SMB client. And the empty state each tab shows instead is a `tn-empty` that
+`tn-table` renders with no id, so no selector reaches it. Asserting it needs
+`@truenas/ui-components` to give that empty state an id.
+
 Four things in this area are not what the template implies, and were read off
 a running appliance: row actions collapse into a kebab menu whose items carry the
 icon *with its library* (`…-more-action-mdi-delete-row-action`); the card's row
@@ -272,7 +285,14 @@ and `button-remove-from-list` went the same way (`button-remove-network-<i>`,
 datasets rather than one. `nfs-service` covers the service from its three
 entry points: accepting the start offer after a save (which also enables it at
 boot, the dialog's toggle being on), the card's switch (which does not), and a
-row's Enabled switch (which leaves the service alone).
+row's Enabled switch (which leaves the service alone). `nfs-access` covers
+the rest of the Access section: a maproot user and group, a mapall user and
+group (one test each, since middleware refuses both users on one share), and
+the Security select, which the form renders only while `nfs.config` lists
+NFSv4 — so one test turns NFSv4 on from the card's Config Service and saves a
+Kerberos flavour, which middleware refuses without it, and one holds the
+select absent with NFSv4 off. The service form's Enabled Protocols select got
+an explicit `testId="protocols"` for this; the emitted id is unchanged.
 
 Two things here were read off a running appliance rather than the template.
 The path field hands its value to the form when it loses focus, so a path that
@@ -988,12 +1008,13 @@ a number. See `05-ci.md`.
    tier gating are next — the SMB specs brought the share fixture and row
    locators the first of those needs. SMB shares are covered from the Shares
    dashboard — publish, the purpose presets, edit, enable, unshare, the service
-   switch — but not the share and filesystem ACL editors, the standalone list
-   page, or anything a real SMB client would have to prove. NFS shares are
+   switch — and from the standalone list, and the status page's tabs can be
+   reached; but not the share and filesystem ACL editors, what those tabs show,
+   or anything a real SMB client would have to prove. NFS shares are
    covered the same way — publish, read-only, networks, hosts, edit, enable,
-   unshare, the service switch and the start offer — but not the maproot and
-   mapall mappings, the Security select (NFSv4 only), the service's own
-   settings, the sessions page with a client on it, or a real mount. S3 is covered as a feature — create, configure,
+   unshare, the service switch and the start offer, maproot, mapall and the
+   Security select — but not the service's own settings beyond turning NFSv4
+   on, the sessions page with a client on it, or a real mount. S3 is covered as a feature — create, configure,
    edit, toggle, rotate, delete — except auditing, which is licence-gated and
    needs an Enterprise appliance. List-driven journeys (deleting a pool, dataset
    or share from a list) are no longer blocked: `tn-table` still writes nothing
