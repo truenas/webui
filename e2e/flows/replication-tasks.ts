@@ -56,11 +56,11 @@ async function fillExplorer(page: Page, selector: string, value: string): Promis
  * changes, and the name is regenerated from the source and target whenever
  * either changes.
  *
- * The target is chosen before the source is typed. A source path makes the
- * wizard count its snapshots, and choosing a different system enables SSH
- * transport before an SSH connection is picked — a count sent in that gap is
+ * The target is chosen before the source is typed. Once there is a source path
+ * the wizard counts its snapshots, and choosing a different system enables SSH
+ * transport before an SSH connection is picked. Any count sent in that gap is
  * refused with "You should pass SSH credentials", and the error stays on the
- * source field if it lands after the connection is set.
+ * source field. With no source yet, no count is sent.
  */
 async function fillWhatAndWhere(
   page: Page,
