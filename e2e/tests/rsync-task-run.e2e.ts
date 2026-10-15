@@ -119,10 +119,10 @@ test.afterAll(async ({ api, pool }) => {
     return;
   }
 
+  const paths = allLeaves.map((leaf) => datasetMountPath(`${pool}/${leaf}`));
   await runCleanupSteps([
-    ...allLeaves.map((leaf): [string, () => Promise<void>] => [
-      `remove the rsync tasks on "${datasetMountPath(`${pool}/${leaf}`)}"`,
-      () => ensureRsyncTasksAbsent(api, datasetMountPath(`${pool}/${leaf}`)),
+    ...paths.map((path): [string, () => Promise<void>] => [
+      `remove the rsync tasks on "${path}"`, () => ensureRsyncTasksAbsent(api, path),
     ]),
     [`remove the SSH connection "${connectionName}"`, () => ensureSshConnectionAbsent(api, connectionName)],
     ['remove root\'s loopback key, its keypair, and SSH if it was started', () => (
