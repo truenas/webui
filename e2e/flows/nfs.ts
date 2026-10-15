@@ -232,3 +232,42 @@ export async function openDeleteNfsShareDialog(page: Page, share: NfsShareRow): 
   await page.locator(nfsLocators.card.rowMenuDelete(share.path, share.description)).click();
   await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
 }
+
+/**
+ * Opens the standalone NFS list from the title of the card on the Shares
+ * dashboard, which is how a user gets there.
+ *
+ * Waits for the list page's own Add, which the dashboard does not have.
+ */
+export async function openNfsListPage(page: Page): Promise<void> {
+  await goToShares(page);
+
+  const title = page.locator(nfsLocators.card.title);
+  await expect(title).toBeVisible({ timeout: formSettleTimeoutMs });
+  await title.click();
+
+  await expect(page.locator(nfsLocators.list.add)).toBeVisible({ timeout: formSettleTimeoutMs });
+}
+
+/** Opens the add-share panel from the Add on the list page that is open. */
+export async function openAddNfsShareFormFromList(page: Page): Promise<void> {
+  await page.locator(nfsLocators.list.add).click();
+  await expect(page.locator(nfsLocators.form.path)).toBeVisible({ timeout: formSettleTimeoutMs });
+}
+
+/** Types into the search box of the list page that is open. It filters as you type. */
+export async function searchNfsList(page: Page, query: string): Promise<void> {
+  await page.locator(nfsLocators.list.search).fill(query);
+}
+
+/**
+ * Opens the NFS Sessions page from its link on the list page that is open.
+ *
+ * Waits for the NFS 3 toggle to be the pressed one: the page opens on NFS 3,
+ * and the toggle is the page's own control, so it also says the page rendered.
+ */
+export async function openNfsSessionsPage(page: Page): Promise<void> {
+  await page.locator(nfsLocators.list.sessionsLink).click();
+  await expect(page.locator(nfsLocators.sessions.nfs3))
+    .toHaveAttribute('aria-pressed', 'true', { timeout: formSettleTimeoutMs });
+}

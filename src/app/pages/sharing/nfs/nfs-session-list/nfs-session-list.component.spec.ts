@@ -5,6 +5,7 @@ import { createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonToggleHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Nfs3Session, Nfs4Session } from 'app/interfaces/nfs-share.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -75,6 +76,23 @@ describe('NfsSessionListComponent', () => {
       expect(await table.getAllRowTexts()).toEqual([
         ['10.238.238.162', '10.238.238.162:/mnt/tank/nfs'],
       ]);
+    });
+  });
+
+  describe('with no client mounted', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      const api = spectator.inject(MockTypedApiService);
+      api.mockQuery('nfs.get_nfs3_clients', []);
+      api.mockQuery('nfs.get_nfs4_clients', []);
+      spectator = createComponent();
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
+    });
+
+    it('shows the empty state in place of the table', () => {
+      expect(spectator.query('tn-empty')).toExist();
+      expect(spectator.query('tn-table')).not.toExist();
     });
   });
 
