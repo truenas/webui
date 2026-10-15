@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnSliderComponent,
-  TnSliderThumbDirective, TnSpinnerComponent,
+  TnSliderThumbDirective, TnSpinnerComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   combineLatest, filter, map, Subscription, switchMap, tap,
@@ -37,6 +37,7 @@ import { ShellService } from 'app/services/shell.service';
     ReactiveFormsModule,
     TranslateModule,
     TnSpinnerComponent,
+    TnTestIdDirective,
   ],
 })
 export class ContainerLogsComponent implements OnInit {

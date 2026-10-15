@@ -5,8 +5,8 @@
       <img [src]="dialogConfig.appInfo.metadata.icon" [src-fallback]="imagePlaceholder" />
     </div>
     <div class="name-container">
-      <strong class="app-name">{{ dialogConfig.appInfo.name }}</strong>
-      <span class="version"> {{ dialogConfig.appInfo.human_version }}</span>
+      <strong class="app-name" tnTestIdType="text" [tnTestId]="'app-name'">{{ dialogConfig.appInfo.name }}</strong>
+      <span class="version" tnTestIdType="text" [tnTestId]="'installed-version'"> {{ dialogConfig.appInfo.human_version }}</span>
     </div>
   </div>
 

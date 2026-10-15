@@ -48,7 +48,7 @@
       <div class="details-item">
         <div class="label">{{ 'Name' | translate }}:</div>
         @if (app().custom_app) {
-          <span class="value">{{ name() | orNotAvailable }}</span>
+          <span class="value" tnTestIdType="text" [tnTestId]="[app().name, 'name']">{{ name() | orNotAvailable }}</span>
         } @else {
           <a class="value" tnTestIdType="link" [tnTestId]="[app().name, 'name-details']" [routerLink]="appDetailsRouterUrl()">
             {{ name() | orNotAvailable }}
@@ -57,13 +57,13 @@
       </div>
       <div class="details-item">
         <div class="label" [tnTooltip]="'Upstream Application Version' | translate">{{ 'Version' | translate }}:</div>
-        <div class="value">
+        <div class="value" tnTestIdType="text" [tnTestId]="[app().name, 'version']">
           {{ app().metadata.app_version | orNotAvailable }}
         </div>
       </div>
       <div class="details-item">
         <div class="label" [tnTooltip]="'TrueNAS Catalog Revision' | translate">{{ 'Revision' | translate }}:</div>
-        <div class="value">
+        <div class="value" tnTestIdType="text" [tnTestId]="[app().name, 'revision']">
           {{ app().version | orNotAvailable }}
         </div>
       </div>
@@ -92,7 +92,7 @@
 
       <div class="details-item">
         <div class="label">{{ 'Train' | translate }}:</div>
-        <div class="value">
+        <div class="value" tnTestIdType="text" [tnTestId]="[app().name, 'train']">
           {{ app().metadata.train | orNotAvailable }}
         </div>
       </div>

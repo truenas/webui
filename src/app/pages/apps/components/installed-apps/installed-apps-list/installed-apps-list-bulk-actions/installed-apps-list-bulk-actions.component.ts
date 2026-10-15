@@ -7,6 +7,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnIconComponent, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppState } from 'app/enums/app-state.enum';
@@ -26,6 +27,7 @@ import { App } from 'app/interfaces/app.interface';
     TnButtonComponent,
     TnIconComponent,
     TranslateModule,
+    TnTestIdDirective,
   ],
 })
 

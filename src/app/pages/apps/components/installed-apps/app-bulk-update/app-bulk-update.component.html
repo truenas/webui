@@ -17,8 +17,8 @@
         <div slot="title">
           <ix-fake-progress-bar [loading]="loadingMap().get(bulkItem.key)"></ix-fake-progress-bar>
           <ix-bulk-list-item [item]="bulkItem.value">
-            <span class="app-name-text">{{ bulkItem.key }}</span>
-            <span class="app-version">{{ extractAppVersion(bulkItem.value.item.human_version, bulkItem.value.item.version) }}</span>
+            <span class="app-name-text" tnTestIdType="text" [tnTestId]="['app-name', bulkItem.key]">{{ bulkItem.key }}</span>
+            <span class="app-version" tnTestIdType="text" [tnTestId]="['installed-version', bulkItem.key]">{{ extractAppVersion(bulkItem.value.item.human_version, bulkItem.value.item.version) }}</span>
 
             <div class="logo">
               <img
@@ -72,7 +72,7 @@
           }
 
           @if (hasErrors(bulkItem.key)) {
-            <span>{{ bulkItem.value.message ? (bulkItem.value.message | translate) : '' }}</span>
+            <span tnTestIdType="text" [tnTestId]="['error-message', bulkItem.key]">{{ bulkItem.value.message ? (bulkItem.value.message | translate) : '' }}</span>
           }
 
           @if (bulkItem.value.item.metadata.changelog_url) {

@@ -8,7 +8,7 @@
       <ix-app-card-logo [url]="app().icon_url"></ix-app-card-logo>
 
       <div>
-        <div class="train">
+        <div class="train" tnTestIdType="text" [tnTestId]="[app().train, app().name, 'train']">
           {{ app().train || ('N/A' | translate) }}
         </div>
       </div>
@@ -32,11 +32,11 @@
           [tnTooltip]="versionTooltip()"
         >
           {{ app().latest_app_version || ('N/A' | translate) }}
-          <span class="catalog-version">({{ app().latest_version || ('N/A' | translate) }})</span>
+          <span class="catalog-version" tnTestIdType="text" [tnTestId]="[app().train, app().name, 'catalog-version']">({{ app().latest_version || ('N/A' | translate) }})</span>
         </div>
       </div>
 
-      <div class="description">{{ description() }}</div>
+      <div class="description" tnTestIdType="text" [tnTestId]="[app().train, app().name, 'description']">{{ description() }}</div>
     </div>
   </div>
 </tn-card>

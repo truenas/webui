@@ -35,9 +35,9 @@
 <div class="logs-wrapper">
   <div class="meta-data">
     <label>{{ 'Application Name' | translate }}:</label>
-    <span class="name">{{ appName }}</span>
+    <span class="name" tnTestIdType="text" [tnTestId]="'application-name'">{{ appName }}</span>
     <label>{{ 'Container ID' | translate }}:</label>
-    <span class="name">{{ containerId }}</span>
+    <span class="name" tnTestIdType="text" [tnTestId]="'container-id'">{{ containerId }}</span>
   </div>
   <div
     #logContainer
@@ -47,10 +47,10 @@
     @if (isLoading()) {
       <tn-spinner class="spinner" [diameter]="40"></tn-spinner>
     } @else {
-      @for (podLog of logs(); track podLog) {
+      @for (podLog of logs(); track podLog; let index = $index) {
         <div class="log-row">
-          <span class="timestamp">{{ podLog.timestamp }}</span>
-          <span class="log-data">{{ podLog.data }}</span>
+          <span class="timestamp" tnTestIdType="text" [tnTestId]="['log-timestamp', index]">{{ podLog.timestamp }}</span>
+          <span class="log-data" tnTestIdType="text" [tnTestId]="['log-data', index]">{{ podLog.data }}</span>
         </div>
       } @empty {
         <div class="log-row">

@@ -5,6 +5,7 @@ import {
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import {
   Gallery, GalleryItem, GalleryModule, ImageItem,
 } from 'ng-gallery';
@@ -42,6 +43,7 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
     AppJsonDetailsCardComponent,
     LightboxModule,
     GalleryModule,
+    TnTestIdDirective,
   ],
 })
 export class AppDetailViewComponent implements OnInit {

@@ -4,7 +4,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent, TnDialog, TnIconButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnCardComponent, TnDialog, TnIconButtonComponent, TnTestIdDirective, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
@@ -32,6 +34,7 @@ import {
     TnIconButtonComponent,
     DecimalPipe,
     TooltipComponent,
+    TnTestIdDirective,
   ],
 })
 export class AppWorkloadsCardComponent {

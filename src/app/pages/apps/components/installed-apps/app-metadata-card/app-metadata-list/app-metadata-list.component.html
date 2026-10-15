@@ -36,8 +36,8 @@
   <div class="details-list">
     @for (item of appMetadata().host_mounts; track item) {
       <div class="details-item">
-        <div class="label">{{ item.hostPath }}</div>
-        <div class="value">{{ item.description }}</div>
+        <div class="label" tnTestIdType="text" [tnTestId]="['host-mount', item.hostPath]">{{ item.hostPath }}</div>
+        <div class="value" tnTestIdType="text" [tnTestId]="['host-mount-description', item.hostPath]">{{ item.description }}</div>
       </div>
     }
   </div>
@@ -48,8 +48,8 @@
   <div class="details-list">
     @for (item of appMetadata().capabilities; track item) {
       <div class="details-item">
-        <div class="label">{{ item.name }}</div>
-        <div class="value">{{ item.description }}</div>
+        <div class="label" tnTestIdType="text" [tnTestId]="['capability', item.name]">{{ item.name }}</div>
+        <div class="value" tnTestIdType="text" [tnTestId]="['capability-description', item.name]">{{ item.description }}</div>
       </div>
     }
   </div>
@@ -58,27 +58,27 @@
 <ng-template #runAsContextBody>
   <h4 class="card-subtitle">{{ 'Run As Context' | translate }}</h4>
   <div class="details-list">
-    @for (item of appMetadata().run_as_context; track item) {
+    @for (item of appMetadata().run_as_context; track item; let index = $index) {
       <div class="details-entry">
         <div class="details-item">
           <div class="label">{{ 'UID' | translate }}:</div>
-          <div class="value">{{ item.uid }}</div>
+          <div class="value" tnTestIdType="text" [tnTestId]="['uid', index]">{{ item.uid }}</div>
         </div>
         <div class="details-item">
           <div class="label">{{ 'GID' | translate }}:</div>
-          <div class="value">{{ item.gid }}</div>
+          <div class="value" tnTestIdType="text" [tnTestId]="['gid', index]">{{ item.gid }}</div>
         </div>
         <div class="details-item">
           <div class="label">{{ 'Username' | translate }}:</div>
-          <div class="value">{{ item.user_name }}</div>
+          <div class="value" tnTestIdType="text" [tnTestId]="['username', index]">{{ item.user_name }}</div>
         </div>
         <div class="details-item">
           <div class="label">{{ 'Groupname' | translate }}:</div>
-          <div class="value">{{ item.group_name }}</div>
+          <div class="value" tnTestIdType="text" [tnTestId]="['groupname', index]">{{ item.group_name }}</div>
         </div>
         <div class="details-item">
           <div class="label">{{ 'Description' | translate }}:</div>
-          <div class="value">{{ item.description }}</div>
+          <div class="value" tnTestIdType="text" [tnTestId]="['description', index]">{{ item.description }}</div>
         </div>
       </div>
     }

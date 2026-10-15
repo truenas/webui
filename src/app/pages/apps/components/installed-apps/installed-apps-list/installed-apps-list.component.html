@@ -130,8 +130,8 @@
         >
           @if (hasStats(row, ioStats)) {
             <span class="stat-pair">
-              <span class="stat-part">{{ ioStats.blkio.read | ixFileSize }}</span>
-              <span class="stat-part">- {{ ioStats.blkio.write | ixFileSize }}</span>
+              <span class="stat-part" tnTestIdType="text" [tnTestId]="['block-io-read', uniqueRowTag(row)]">{{ ioStats.blkio.read | ixFileSize }}</span>
+              <span class="stat-part" tnTestIdType="text" [tnTestId]="['block-io-write', uniqueRowTag(row)]">- {{ ioStats.blkio.write | ixFileSize }}</span>
             </span>
           } @else {
             {{ 'N/A' | translate }}
@@ -152,8 +152,8 @@
         >
           @if (hasStats(row, networkStats) && networkStats.networks?.length) {
             <span class="stat-pair">
-              <span class="stat-part">{{ incomingTrafficBits(networkStats) | ixNetworkSpeed }}</span>
-              <span class="stat-part">- {{ outgoingTrafficBits(networkStats) | ixNetworkSpeed }}</span>
+              <span class="stat-part" tnTestIdType="text" [tnTestId]="['network-incoming', uniqueRowTag(row)]">{{ incomingTrafficBits(networkStats) | ixNetworkSpeed }}</span>
+              <span class="stat-part" tnTestIdType="text" [tnTestId]="['network-outgoing', uniqueRowTag(row)]">- {{ outgoingTrafficBits(networkStats) | ixNetworkSpeed }}</span>
             </span>
           } @else {
             {{ 'N/A' | translate }}
