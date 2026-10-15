@@ -711,7 +711,28 @@ on the row. The card lists four targets before its pager, so each test fails at
 the start if its rows would not fit. Teardown finds the portal and initiator
 group by the `comment` the wizard gives them. File extents, existing targets,
 portals and zvols in the wizard, initiators, Fibre Channel, Edit, the global
-configuration, the standalone pages and a real initiator login are not covered.
+configuration and a real initiator login are not covered there.
+
+The Targets and Extents tabs of the full iSCSI page followed, in
+`tests/iscsi-targets-extents.e2e.ts`, reached through the card's title. On
+Targets: adding a target with an authorized network and one group pointing at a
+portal and an initiator group made over the API, and associating an extent with
+a target as a LUN and then unlinking it, which must leave both ends in place. On
+Extents: adding a Device extent on a zvol with a non-default block size, adding a
+File extent at a path that does not exist yet (its file must then exist), editing
+one extent's description beside a second that must not change, and deleting a
+File extent with "Remove file?" ticked, which must take its file and leave a
+second extent's. Everything is read back through the `iscsi.*` queries, and a
+file through `filesystem.listdir`. Row tags are `iscsi-target-<name>` and
+`iscsi-extent-<name>` through lodash. The Extents tab's Add button is
+`add-target`, the same id as the Targets tab's, and is left that way because a
+`data-test` is a Release Engineering contract; one tab is mounted at a time, so
+the flow clicks it once the Extents URL shows and checks for Extent Type.
+Teardown removes targets before extents, and extents before the portal and
+initiator group, since middleware refuses to delete an extent a target still
+uses.
+Editing a target, deleting one from this page, Force, the Initiators, Portals
+and Authorized Access tabs, CHAP and Fibre Channel are not covered.
 
 The Services page under System followed, in `tests/services.e2e.ts`: starting FTP
 from its row's play button and stopping it from the stop button and its
