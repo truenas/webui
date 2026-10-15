@@ -1,7 +1,7 @@
 /**
  * Replication tasks, driven through the UI from the Data Protection page.
  */
-import { expect, type Page } from '@playwright/test';
+import { expect, type Download, type Page } from '@playwright/test';
 import { goToDataProtection } from './navigation';
 import { selectOption } from './storage';
 import { confirmDialogLocators, infoDialogLocators } from '../locators/dialogs';
@@ -157,6 +157,51 @@ export async function runReplicationTask(page: Page, name: string): Promise<void
   await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
   await page.locator(confirmDialogLocators.confirm).click();
   await expect(page.locator(confirmDialogLocators.title)).toBeHidden();
+}
+
+/**
+ * Restores from a task through its row menu: names the reverse task, picks
+ * where the data goes, and waits for the dialog to close.
+ *
+ * Restore only creates the reverse task, disabled and unscheduled; it runs
+ * nothing. The dialog closing is the app's signal that the create succeeded — a
+ * refusal leaves it open with the error attached.
+ */
+export async function restoreReplicationTask(
+  page: Page,
+  name: string,
+  { restoredName, destination }: { restoredName: string; destination: string },
+): Promise<void> {
+  const { restore } = replicationTaskLocators;
+
+  await openRowMenu(page, name);
+  await page.locator(replicationTaskLocators.card.rowMenuRestore(name)).click();
+  await expect(page.locator(restore.title)).toBeVisible();
+
+  await page.locator(restore.name).fill(restoredName);
+  await fillExplorer(page, restore.destination, destination);
+
+  const confirm = page.locator(restore.restore);
+  await expect(confirm).toBeEnabled();
+  await confirm.click();
+  await expect(page.locator(restore.title)).toBeHidden({ timeout: editTimeoutMs });
+}
+
+/**
+ * Downloads a task's encryption keys from its row menu, and returns the download.
+ *
+ * The app asks middleware to prepare the file as a job, fetches it, and hands it
+ * to the browser as a blob, so the download starts some calls after the click.
+ */
+export async function downloadReplicationTaskKeys(page: Page, name: string): Promise<Download> {
+  await openRowMenu(page, name);
+
+  const [download] = await Promise.all([
+    page.waitForEvent('download', { timeout: editTimeoutMs }),
+    page.locator(replicationTaskLocators.card.rowMenuDownloadKeys(name)).click(),
+  ]);
+
+  return download;
 }
 
 /**

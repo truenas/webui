@@ -1,8 +1,9 @@
 /**
  * Stories: an admin creates a replication task between two datasets on the same
  * appliance, and runs one, from the card on Data Protection — and the target
- * really ends up holding the source's snapshots. They also edit and delete a
- * task from the card, and the appliance holds what they did.
+ * really ends up holding the source's snapshots. They also edit, delete and
+ * restore from a task, and download its encryption keys, from the card, and the
+ * appliance holds what they did.
  *
  * Each action is asserted on the card and on the appliance: `replication.query`
  * for the task as stored, `core.get_jobs` for whether the run worked, and
@@ -21,9 +22,22 @@
  * the task, and the row's ids are built from its name, so the renamed row is
  * found under its new name and the old one must be gone.
  *
- * Every source dataset is made fresh for each test. No target is: replication
- * creates its own, so a target that exists afterwards is evidence of a run.
+ * Restore makes the reverse task and runs nothing, so the restore test runs the
+ * original over the API first — that run is setup, not the thing under test —
+ * and then runs the restored task from the card into a dataset that did not
+ * exist. The stored task's direction and source say it pulls from the original's
+ * target; the new dataset holding that snapshot afterwards says the pull ran.
+ *
+ * Download keys is offered only for a source whose key middleware stores, which
+ * a passphrase never is. The source is encrypted with a key the test chooses,
+ * so the file can be checked for that exact key rather than for its shape.
+ *
+ * Every plain source dataset is made fresh for each test. No target is:
+ * replication creates its own, so a target that exists afterwards is evidence of
+ * a run.
  */
+import { readFile } from 'node:fs/promises';
+import { ensureKeyEncryptedDatasetPresent } from '../fixtures/encryption';
 import {
   countReplicationTasks,
   createSnapshot,
@@ -35,15 +49,18 @@ import {
   findReplicationTasks,
   findSnapshotNames,
   replicationNamingSchema,
+  runReplicationTaskOverApi,
 } from '../fixtures/replication-tasks';
 import { ensureDatasetAbsent, ensureDatasetPresent, findDataset } from '../fixtures/storage';
 import {
   chooseReplicationReadonlyPolicy,
   deleteReplicationTask,
+  downloadReplicationTaskKeys,
   fillLocalReplication,
   openEditReplicationTaskForm,
   openReplicationWizard,
   replicationTaskCardPageSize,
+  restoreReplicationTask,
   runReplicationTask,
   saveReplicationTaskForm,
   saveReplicationToRunOnce,
@@ -78,9 +95,24 @@ const bystanderTargetLeaf = 'e2e_repl_bystander_dst';
 /** Matches {@link replicationNamingSchema}, and is long past, so nothing the appliance takes can collide with it. */
 const seededSnapshot = 'auto-2000-01-01_00-00';
 
-const allNames = [createdName, runName, editedName, bystanderName];
+/** What a restore from the run task names the reverse task, and where it pulls the data back to. */
+const restoredName = 'e2e-replication-restored';
+const restoredTargetLeaf = 'e2e_repl_restored_dst';
+
+/** A task whose source is encrypted with {@link keysSourceKey}, so Download keys is offered for it. */
+const keysName = 'e2e-replication-keys';
+const keysSourceLeaf = 'e2e_repl_keys_src';
+const keysTargetLeaf = 'e2e_repl_keys_dst';
+
+/** Sixty-four hex digits, the form middleware takes a raw key in. Test data, not a secret. */
+const keysSourceKey = '0123456789abcdef'.repeat(4);
+
+const allNames = [createdName, runName, editedName, bystanderName, restoredName, keysName];
 const sourceLeaves = [createdSourceLeaf, runSourceLeaf, bystanderSourceLeaf];
-const targetLeaves = [createdTargetLeaf, runTargetLeaf, bystanderTargetLeaf];
+const targetLeaves = [createdTargetLeaf, runTargetLeaf, bystanderTargetLeaf, restoredTargetLeaf, keysTargetLeaf];
+
+/** Made encrypted by the one test that needs it, so only ever removed here, never made plain. */
+const encryptedSourceLeaves = [keysSourceLeaf];
 
 /**
  * Fails up front when the card cannot show every row a test needs.
@@ -118,7 +150,7 @@ test.beforeEach(async ({ api, pool }) => {
   for (const name of allNames) {
     await ensureReplicationTaskAbsent(api, name);
   }
-  for (const leaf of [...targetLeaves, ...sourceLeaves]) {
+  for (const leaf of [...targetLeaves, ...sourceLeaves, ...encryptedSourceLeaves]) {
     await ensureDatasetAbsent(api, `${pool}/${leaf}`);
   }
   for (const leaf of sourceLeaves) {
@@ -127,7 +159,7 @@ test.beforeEach(async ({ api, pool }) => {
 });
 
 test.afterEach(async ({ api, pool }) => {
-  const datasets = [...targetLeaves, ...sourceLeaves].map((leaf) => `${pool}/${leaf}`);
+  const datasets = [...targetLeaves, ...sourceLeaves, ...encryptedSourceLeaves].map((leaf) => `${pool}/${leaf}`);
   if (leavingTestData(`the replication tasks ${allNames.join(', ')} and the datasets ${datasets.join(', ')}`)) {
     return;
   }
@@ -274,4 +306,81 @@ test('deleting a replication task from the card removes the task that was picked
   // The whole point of the second task: the card looks right either way.
   await expect(page.locator(replicationTaskLocators.card.name(bystanderName))).toHaveText(bystanderName);
   expect(await findReplicationTasks(api, bystanderName)).toHaveLength(1);
+});
+
+test('restoring from a replication task creates the reverse task, and running it brings the data back', async ({
+  page, api, pool,
+}) => {
+  const source = `${pool}/${runSourceLeaf}`;
+  const target = `${pool}/${runTargetLeaf}`;
+  const restoredTarget = `${pool}/${restoredTargetLeaf}`;
+  await requireRoomOnCard(api, 2);
+
+  // Setup: the original has run, so its target holds something to bring back.
+  await createSnapshot(api, source, seededSnapshot);
+  await ensureReplicationTaskPresent(api, { name: runName, source, target });
+  const task = await findReplicationTask(api, runName);
+  if (!task) {
+    throw new Error(`the seeded task "${runName}" is not on the appliance`);
+  }
+  await runReplicationTaskOverApi(api, task.id, runTimeoutMs);
+  expect(await findSnapshotNames(api, target)).toEqual([seededSnapshot]);
+
+  await restoreReplicationTask(page, runName, { restoredName, destination: restoredTarget });
+
+  await expect(page.locator(replicationTaskLocators.card.name(restoredName))).toHaveText(restoredName);
+
+  // The reverse of the original: a pull from where it sent the data, matched by
+  // the schema it sent, and left for the admin to run.
+  expect(await findReplicationTasks(api, restoredName)).toHaveLength(1);
+  const restored = await findReplicationTask(api, restoredName);
+  if (!restored) {
+    throw new Error(`the restore did not leave a task named "${restoredName}"`);
+  }
+  expect(restored).toMatchObject({
+    direction: 'PULL',
+    transport: 'LOCAL',
+    source_datasets: [target],
+    target_dataset: restoredTarget,
+    naming_schema: [replicationNamingSchema],
+    recursive: false,
+    auto: false,
+    enabled: false,
+  });
+  expect(await findReplicationTask(api, runName)).toMatchObject({
+    id: task.id,
+    direction: 'PUSH',
+    source_datasets: [source],
+    target_dataset: target,
+  });
+
+  // Restore runs nothing, so the destination is made by the run below or not at all.
+  expect(await findDataset(api, restoredTarget)).toBeUndefined();
+  const restoredId = restored.id;
+  const earlierRuns = await findReplicationRunJobIds(api);
+
+  await runReplicationTask(page, restoredName);
+
+  await expect.poll(
+    async () => (await findReplicationRuns(api, restoredId, earlierRuns)).map((run) => run.state),
+    { timeout: runTimeoutMs },
+  ).toEqual(['SUCCESS']);
+  expect(await findSnapshotNames(api, restoredTarget)).toEqual([seededSnapshot]);
+});
+
+test('downloading keys for an encrypted replication task saves the key its target needs', async ({
+  page, api, pool,
+}) => {
+  const target = `${pool}/${keysTargetLeaf}`;
+  await requireRoomOnCard(api, 1);
+
+  await ensureKeyEncryptedDatasetPresent(api, `${pool}/${keysSourceLeaf}`, keysSourceKey);
+  await ensureReplicationTaskPresent(api, { name: keysName, source: `${pool}/${keysSourceLeaf}`, target });
+
+  const download = await downloadReplicationTaskKeys(page, keysName);
+
+  expect(download.suggestedFilename()).toBe(`${keysName}_encryption_keys.json`);
+  const contents: unknown = JSON.parse(await readFile(await download.path(), 'utf8'));
+  // Keyed by where the data lands, since that is the dataset the key unlocks.
+  expect(contents).toEqual({ [target]: keysSourceKey });
 });

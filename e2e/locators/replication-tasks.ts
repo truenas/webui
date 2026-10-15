@@ -1,6 +1,6 @@
 /**
- * The Replication Tasks card on Data Protection, the wizard its Add opens, and
- * the form its Edit opens.
+ * The Replication Tasks card on Data Protection, the wizard its Add opens, the
+ * form its Edit opens, and the dialog its Restore opens.
  *
  * Every id on a row is built from the card's own `uniqueRowTag`,
  * `convertStringToId('replication-task-' + name)`, which lowercases the tag and
@@ -64,6 +64,19 @@ export const replicationTaskLocators = {
       `[data-test="button-${rowTag(name)}-more-action-mdi-delete-row-action"]`
     ),
 
+    /** Restore, inside that menu. Same shape as {@link rowMenuRun}. Opens {@link replicationTaskLocators.restore}. */
+    rowMenuRestore: (name: string): string => (
+      `[data-test="button-${rowTag(name)}-more-action-mdi-restore-row-action"]`
+    ),
+
+    /**
+     * Download encryption keys, inside that menu. Same shape as {@link rowMenuRun}.
+     * Hidden unless the task's source holds a stored key, which a passphrase never is.
+     */
+    rowMenuDownloadKeys: (name: string): string => (
+      `[data-test="button-${rowTag(name)}-more-action-mdi-download-row-action"]`
+    ),
+
     /**
      * The row's Enabled switch. `ix-table-toggle-cell` composes `[title, row tag,
      * 'row-toggle']` and `tn-slide-toggle` puts its `toggle-` type in front. It
@@ -120,5 +133,15 @@ export const replicationTaskLocators = {
      */
     runOnce: `[data-test="radio-button-schedule-method-${kebabTestSegment('Run Once')}"]`,
     save: '[data-test="button-save"]',
+  },
+
+  restore: {
+    /** `<tn-dialog-shell testId="replication-restore">`. What to wait on before acting on it. */
+    title: '[data-test="dialog-title-replication-restore"]',
+    name: '[data-test="input-name"]',
+    /** Where the restored data goes. An `ix-explorer` in dataset names, so a typed value is stored verbatim. */
+    destination: '[data-test="input-target-dataset"]',
+    /** Disabled until the name and the destination are both filled. */
+    restore: '[data-test="button-restore"]',
   },
 } as const;
