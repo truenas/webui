@@ -1,7 +1,7 @@
 <tn-dialog-shell testId="show-logs" [title]="'Logs' | translate">
   @if (job.logs_excerpt) {
     <div class="logs">
-      <pre><code>{{ job.logs_excerpt }}</code></pre>
+      <pre tnTestId="logs-excerpt" tnTestIdType="text"><code>{{ job.logs_excerpt }}</code></pre>
       <ix-copy-button [text]="job.logs_excerpt"></ix-copy-button>
     </div>
   }

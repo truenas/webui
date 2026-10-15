@@ -834,6 +834,16 @@ actions are keyed by the task's id, or by a snapshot task's dataset and naming
 schema, rather than by the row tag. TrueCloud Backup's list is not covered, for
 the Storj reason above.
 
+A task's State, and the log behind it, is `tests/rsync-task-state.e2e.ts`. Every
+card renders its State through the same `ix-task-state-cell`, and rsync is the one
+where both outcomes need nothing outside the appliance: a Module-mode task against
+`127.0.0.1` fails with the connection refused, and an SSH-mode task with
+`--verbose` succeeds and names what it copied. Each run is started over the API —
+the card's Run job raises an error dialog of its own when a run fails, which would
+stand in for the one under test. Failed opens the error dialog with the job's log
+under View Details; Completed opens the logs dialog, whose text now carries
+`text-logs-excerpt`.
+
 The framework is done and the coverage is not. A hundred and seventy-nine tests — a
 hundred and seventy-eight journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,

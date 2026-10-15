@@ -138,8 +138,15 @@ export async function ensureRsyncSshTaskPresent(
     remotePath,
     description,
     schedule,
+    extra = [],
   }: {
-    path: string; connectionId: number; remotePath: string; description: string; schedule: RsyncTaskSchedule;
+    path: string;
+    connectionId: number;
+    remotePath: string;
+    description: string;
+    schedule: RsyncTaskSchedule;
+    /** Extra rsync arguments. `--verbose` makes a run name what it copied in its log. */
+    extra?: string[];
   },
 ): Promise<void> {
   if (await findRsyncTask(client, path)) {
@@ -158,6 +165,7 @@ export async function ensureRsyncSshTaskPresent(
       direction: 'PUSH',
       desc: description,
       schedule,
+      extra,
       enabled: true,
     }]).pipe(timeout(slowCallTimeoutMs)),
   );
@@ -193,15 +201,32 @@ export async function findRsyncRunJobIds(client: E2eApiClient): Promise<number[]
  * "Run job" on the card starts `rsynctask.run`, so `core.get_jobs` is where a
  * run that really happened shows up, and its state says whether it worked.
  * Matched on the task's id, which is the job's first argument — the same
- * reading as `findReplicationRuns`.
+ * reading as `findReplicationRuns`. `logs` is the job's `logs_excerpt`, rsync's
+ * own output, or empty before the job has finished.
  */
 export async function findRsyncRuns(
   client: E2eApiClient,
   taskId: number,
   earlier: number[],
-): Promise<{ id: number; state: string }[]> {
+): Promise<{ id: number; state: string; logs: string }[]> {
   return (await queryRsyncRunJobs(client))
     .filter((job) => !earlier.includes(job.id))
     .filter((job) => Array.isArray(job.arguments) && job.arguments[0] === taskId)
-    .map((job) => ({ id: job.id, state: String(job.state) }));
+    .map((job) => {
+      const { logs_excerpt: logs } = job as { logs_excerpt?: unknown };
+      return { id: job.id, state: String(job.state), logs: typeof logs === 'string' ? logs : '' };
+    });
+}
+
+/**
+ * Starts a run of a task over the API and returns without waiting for it.
+ *
+ * For a spec about what the screen says after a run, not about starting one —
+ * "Run job" on the card is that. The caller waits on {@link findRsyncRuns},
+ * because a run expected to fail is not something `runJob` can wait for.
+ */
+export async function startRsyncRun(client: E2eApiClient, taskId: number): Promise<void> {
+  await firstValueFrom(
+    client.api.callAndGetJobId('rsynctask.run', [taskId]).pipe(timeout(slowCallTimeoutMs)),
+  );
 }
