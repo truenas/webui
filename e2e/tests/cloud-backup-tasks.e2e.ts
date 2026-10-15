@@ -45,7 +45,7 @@ test('the TrueCloud Backup card shows its empty state when there is no task', as
 
   const { card } = cloudBackupLocators;
   await expect(page.locator(card.empty)).toBeVisible();
-  // The way to make the first task stays on the card while it is empty.
+  // The footer's Add renders either way; this checks the empty state did not displace it.
   await expect(page.locator(card.add)).toBeVisible();
 });
 
