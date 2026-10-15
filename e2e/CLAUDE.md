@@ -349,7 +349,8 @@ agreement with the code faster than they could be corrected.
 **Do not write the suite's test total into it**, in digits or in words. It is a
 derived value, and a shared counter every test-adding PR rewrites is a merge
 conflict between every pair of them in flight. The count is
-`<testsuites tests="N">` in any E2E run's `e2e-junit` artifact.
+`<testsuites tests="N">` in the `e2e-junit-<shard>` artifacts of an unfiltered
+E2E run, summed across shards.
 
 The `R`/`T`/`D` numbers in code comments came from those records. They survive as
 markers that a decision was deliberate, and `docs/status.md` carries a one-line
