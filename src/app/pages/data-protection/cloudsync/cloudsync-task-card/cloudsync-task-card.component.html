@@ -19,9 +19,11 @@
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
     <tn-empty
+      tnTestIdType="text"
       icon="cloud-outline"
       iconLibrary="mdi"
       iconSize="56px"
+      [tnTestId]="['cloudsync-task', 'empty']"
       [title]="'Sync data to a popular cloud storage provider, such as: Google Drive and Photos, Dropbox, Amazon S3 and many others.' | translate"
     ></tn-empty>
   } @else {

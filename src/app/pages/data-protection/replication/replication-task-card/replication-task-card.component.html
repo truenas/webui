@@ -19,9 +19,11 @@
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
     <tn-empty
+      tnTestIdType="text"
       icon="replication"
       iconLibrary="custom"
       iconSize="56px"
+      [tnTestId]="['replication-task', 'empty']"
       [title]="'Best if you\'re syncing with another TrueNAS or ZFS system — enables advanced features not available with other methods.' | translate"
     ></tn-empty>
   } @else {

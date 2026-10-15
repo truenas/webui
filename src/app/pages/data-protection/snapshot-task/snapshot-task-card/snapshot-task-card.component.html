@@ -21,9 +21,11 @@
 
   @if (isEmpty) {
     <tn-empty
+      tnTestIdType="text"
       icon="file-multiple-outline"
       iconLibrary="mdi"
       iconSize="56px"
+      [tnTestId]="['snapshot-task', 'empty']"
       [title]="'Automatically create point-in-time snapshots of selected datasets at regular intervals. These snapshots help preserve data states for recovery, backup, and versioning purposes, ensuring minimal data loss in case of accidental deletion or corruption.' | translate"
     ></tn-empty>
   } @else {

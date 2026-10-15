@@ -30,6 +30,10 @@ const differentSystemLabel = 'On a Different System';
 
 export const replicationTaskLocators = {
   card: {
+    /** The card title, `tnTestIdType="link"` with `['replication-task', 'open-in-new']`. Opens the full list. */
+    open: '[data-test="link-replication-task-open-in-new"]',
+    /** `<tn-empty>`, rendered in place of the table once the card has loaded and found no task. */
+    empty: '[data-test="text-replication-task-empty"]',
     /** `<tn-button [testId]="addTestId">` in the card footer, `replication-task-add`. */
     add: '[data-test="button-replication-task-add"]',
 
@@ -59,6 +63,21 @@ export const replicationTaskLocators = {
     rowMenuDelete: (name: string): string => (
       `[data-test="button-${rowTag(name)}-more-action-mdi-delete-row-action"]`
     ),
+
+    /**
+     * The row's Enabled switch. `ix-table-toggle-cell` composes `[title, row tag,
+     * 'row-toggle']` and `tn-slide-toggle` puts its `toggle-` type in front. It
+     * writes on click — there is no Save.
+     */
+    enabledToggle: (name: string): string => `[data-test="toggle-enabled-${rowTag(name)}-row-toggle"]`,
+  },
+
+  list: {
+    /**
+     * The full list page's Add, `['replication-task', 'add']` — the same id as
+     * the card's, which is gone by then with the route.
+     */
+    add: '[data-test="button-replication-task-add"]',
   },
 
   form: {

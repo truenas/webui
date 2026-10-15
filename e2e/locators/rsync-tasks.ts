@@ -24,6 +24,10 @@ function rowTag(path: string, remoteHost: string): string {
 
 export const rsyncTaskLocators = {
   card: {
+    /** The card title, `tnTestIdType="link"` with `['rsync-task', 'open-in-new']`. Opens the full list. */
+    open: '[data-test="link-rsync-task-open-in-new"]',
+    /** `<tn-empty>`, rendered in place of the table once the card has loaded and found no task. */
+    empty: '[data-test="text-rsync-task-empty"]',
     /** `<tn-button [testId]="addTestId">` in the card footer, `rsync-task-add`. */
     add: '[data-test="button-rsync-task-add"]',
 
@@ -52,6 +56,20 @@ export const rsyncTaskLocators = {
     rowMenuDelete: (path: string, remoteHost: string): string => (
       `[data-test="button-${rowTag(path, remoteHost)}-more-action-mdi-delete-row-action"]`
     ),
+
+    /**
+     * The row's Enabled switch. `ix-table-toggle-cell` composes `[title, row tag,
+     * 'row-toggle']` and `tn-slide-toggle` puts its `toggle-` type in front. It
+     * writes on click — there is no Save.
+     */
+    enabledToggle: (path: string, remoteHost: string): string => (
+      `[data-test="toggle-enabled-${rowTag(path, remoteHost)}-row-toggle"]`
+    ),
+  },
+
+  list: {
+    /** The full list page's Add, in its page header. */
+    add: '[data-test="button-add-task"]',
   },
 
   form: {
