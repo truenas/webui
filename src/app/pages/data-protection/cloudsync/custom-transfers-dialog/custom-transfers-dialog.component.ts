@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent, TnTestIdDirective,
   InputType,
 } from '@truenas/ui-components';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
@@ -21,6 +21,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
     TnInputComponent,
     FormActionsComponent,
     TnButtonComponent,
+    TnTestIdDirective,
     TranslateModule,
   ],
 })

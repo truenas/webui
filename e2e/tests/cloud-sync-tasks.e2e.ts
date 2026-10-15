@@ -12,12 +12,14 @@
  * for the task as stored, `core.get_jobs` for whether a run worked, and
  * `filesystem.listdir` for what it copied.
  *
- * Edit, run and delete each act beside a second task that must come through
- * untouched. The row's actions sit in a kebab menu, so an action belongs to
- * whichever row's menu was opened, and a row-targeting bug would act on the
- * wrong task without failing anything else.
+ * Edit, run, dry run, custom transfers and delete each act beside a second task
+ * that must come through untouched. The row's actions sit in a kebab menu, so an
+ * action belongs to whichever row's menu was opened, and a row-targeting bug
+ * would act on the wrong task without failing anything else.
  *
- * Dry run, Stop, custom transfers and the wizard's own settings are #14404's.
+ * Stopping needs a run that lasts: the task is given a bandwidth limit and a
+ * file large enough that the run would take minutes, and is stopped long
+ * before then.
  */
 import {
   cloudSyncRunTimeoutMs,
@@ -25,6 +27,7 @@ import {
   countCloudSyncTasks,
   ensureCloudSyncTaskPresent,
   ensureCloudSyncTasksAbsent,
+  type CloudSyncBandwidthLimit,
   ensureLoopbackSftpCredentialAbsent,
   ensureLoopbackSftpCredentialPresent,
   findCloudSyncRunJobIds,
@@ -40,11 +43,14 @@ import {
 import { datasetMountPath, ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
 import {
   chooseCloudSyncCredential,
+  chooseCloudSyncCustomTransfers,
   chooseCloudSyncFormSchedule,
   chooseCloudSyncTransferMode,
   chooseCloudSyncWizardSchedule,
   cloudSyncCardPageSize,
   deleteCloudSyncTask,
+  dryRunCloudSyncTaskFromCard,
+  fillCloudSyncPull,
   fillCloudSyncPush,
   openCloudSyncWizard,
   openEditCloudSyncForm,
@@ -52,6 +58,7 @@ import {
   runCloudSyncTaskFromCard,
   saveCloudSyncForm,
   saveCloudSyncWizard,
+  stopCloudSyncTaskFromCard,
 } from '../flows/cloud-sync';
 import { cloudSyncLocators } from '../locators/cloud-sync';
 import { hourlyScheduleLabel } from '../locators/cron';
@@ -61,6 +68,7 @@ import { expect, test } from '../support/fixtures';
 
 /** Made through the wizard, never over the API — that is the thing under test. */
 const createdDescription = 'E2E cloud sync created';
+const pulledDescription = 'E2E cloud sync pulled';
 
 /** Provisioned over the API, so there is something to edit, run, restore or delete. */
 const targetDescription = 'E2E cloud sync target';
@@ -71,7 +79,13 @@ const bystanderDescription = 'E2E cloud sync bystander';
 /** What the restore dialog names the task it creates. */
 const restoredDescription = 'E2E cloud sync restored';
 
-const allDescriptions = [createdDescription, targetDescription, bystanderDescription, restoredDescription];
+const allDescriptions = [
+  createdDescription,
+  pulledDescription,
+  targetDescription,
+  bystanderDescription,
+  restoredDescription,
+];
 
 /** The local directory a task sends, and where a restore brings files back to. */
 const sourceLeaf = 'e2e_cloudsync_src';
@@ -85,6 +99,18 @@ const allLeaves = [sourceLeaf, restoreLeaf, remoteLeaf, bystanderSourceLeaf, bys
 
 /** What a run copies. Written fresh for each test that needs one. */
 const seededFile = 'e2e-cloudsync.txt';
+
+/**
+ * What a run that is to be stopped copies: 32 MiB at 64 KiB a second is over
+ * eight minutes, so the run is still going whenever Stop is pressed. One entry
+ * from midnight on applies the limit all day.
+ */
+const largeFile = 'e2e-cloudsync-large.bin';
+const largeFileBytes = 32 * 1024 * 1024;
+const slowLimit: CloudSyncBandwidthLimit[] = [{ time: '00:00', bandwidth: 64 * 1024 }];
+
+/** Not one of the Transfers presets (4, 8 and 16), so it can only be stored through Custom. */
+const customTransfers = 12;
 
 /** The first of every month, which no preset the tests pick can be confused with. */
 const monthly: CloudSyncSchedule = {
@@ -214,6 +240,45 @@ test('an admin adds a cloud sync task, and the appliance really has one', async 
   });
 });
 
+test('a pull task made in the wizard keeps the direction, mode and folders that were picked', async ({
+  page,
+  api,
+  pool,
+}) => {
+  const path = datasetMountPath(`${pool}/${restoreLeaf}`);
+  const remoteFolder = datasetMountPath(`${pool}/${remoteLeaf}`);
+  await requireRoomOnCard(api, 1);
+
+  await openCloudSyncWizard(page);
+  await chooseCloudSyncCredential(page, loopbackCredentialName, loopbackProviderLabel);
+  // SYNC is not the wizard's default (COPY), and the push test above leaves the mode alone.
+  await fillCloudSyncPull(page, {
+    remoteFolder,
+    path,
+    transferMode: 'SYNC',
+    description: pulledDescription,
+  });
+  await chooseCloudSyncWizardSchedule(page, hourlyScheduleLabel);
+  await saveCloudSyncWizard(page);
+
+  await expect(page.locator(cloudSyncLocators.card.description(pulledDescription))).toHaveText(pulledDescription);
+
+  // A pull stores the local side as `path` and the remote as `attributes.folder`,
+  // the opposite way round from what the two explorers are called, so a swap
+  // between them in the wizard's payload shows here.
+  expect(await findCloudSyncTasks(api, pulledDescription)).toHaveLength(1);
+  expect(await findCloudSyncTask(api, pulledDescription)).toMatchObject({
+    description: pulledDescription,
+    credentials: { id: credentialId },
+    direction: 'PULL',
+    transfer_mode: 'SYNC',
+    path,
+    attributes: { folder: remoteFolder },
+    schedule: hourly,
+    enabled: true,
+  });
+});
+
 test('editing a cloud sync task from the card changes the task that was picked', async ({ page, api, pool }) => {
   await requireRoomOnCard(api, 2);
   await seedTargetAndBystander(api, pool);
@@ -251,6 +316,25 @@ test('editing a cloud sync task from the card changes the task that was picked',
   });
 });
 
+test('custom transfers saved from the edit form reach the task that was picked', async ({ page, api, pool }) => {
+  await requireRoomOnCard(api, 2);
+  await seedTargetAndBystander(api, pool);
+  const before = await findCloudSyncTask(api, targetDescription);
+  const bystanderBefore = await findCloudSyncTask(api, bystanderDescription);
+  // Otherwise the assertion below holds before the dialog is ever opened.
+  expect(before?.transfers).not.toBe(customTransfers);
+
+  await openEditCloudSyncForm(page, targetDescription);
+  await chooseCloudSyncCustomTransfers(page, customTransfers);
+  await saveCloudSyncForm(page);
+
+  expect(await findCloudSyncTask(api, targetDescription)).toMatchObject({
+    id: before?.id,
+    transfers: customTransfers,
+  });
+  expect((await findCloudSyncTask(api, bystanderDescription))?.transfers).toBe(bystanderBefore?.transfers);
+});
+
 test('running a cloud sync task from the card copies its files to the remote', async ({ page, api, pool }) => {
   const source = datasetMountPath(`${pool}/${sourceLeaf}`);
   const remote = datasetMountPath(`${pool}/${remoteLeaf}`);
@@ -280,6 +364,67 @@ test('running a cloud sync task from the card copies its files to the remote', a
   await expect(page.locator(cloudSyncLocators.card.row(bystanderDescription))).toBeVisible();
   expect(await findCloudSyncRuns(api, bystander?.id ?? -1, earlierRuns)).toEqual([]);
   expect(await findFileNames(api, bystanderRemote)).toEqual([]);
+});
+
+test('a dry run from the card completes and copies nothing to the remote', async ({ page, api, pool }) => {
+  const source = datasetMountPath(`${pool}/${sourceLeaf}`);
+  const remote = datasetMountPath(`${pool}/${remoteLeaf}`);
+  await requireRoomOnCard(api, 2);
+
+  await writeFileOnAppliance(api, source, seededFile);
+  await seedTargetAndBystander(api, pool);
+  const task = await findCloudSyncTask(api, targetDescription);
+  const bystander = await findCloudSyncTask(api, bystanderDescription);
+  const earlierRuns = await findCloudSyncRunJobIds(api);
+
+  await dryRunCloudSyncTaskFromCard(page, targetDescription);
+
+  await expect.poll(
+    async () => (await findCloudSyncRuns(api, task?.id ?? -1, earlierRuns)).map((run) => run.state),
+    { timeout: cloudSyncRunTimeoutMs },
+  ).toEqual(['SUCCESS']);
+  const [run] = await findCloudSyncRuns(api, task?.id ?? -1, earlierRuns);
+  expect(run?.dryRun).toBe(true);
+  // rclone names each file it would have copied. Without this, a dry run that
+  // found nothing to do would pass as well as one that skipped the file.
+  expect(run?.logs).toContain(seededFile);
+  // The one thing a dry run must not do: the same task run for real copies it (see the run test).
+  expect(await findFileNames(api, remote)).toEqual([]);
+  await expect(page.locator(cloudSyncLocators.card.state(targetDescription))).toHaveText('Completed');
+
+  expect(await findCloudSyncRuns(api, bystander?.id ?? -1, earlierRuns)).toEqual([]);
+});
+
+test('stopping a running cloud sync task from the card aborts its run', async ({ page, api, pool }) => {
+  const source = datasetMountPath(`${pool}/${sourceLeaf}`);
+  await requireRoomOnCard(api, 1);
+
+  await writeFileOnAppliance(api, source, largeFile, largeFileBytes);
+  await ensureCloudSyncTaskPresent(api, {
+    description: targetDescription,
+    credentialId,
+    path: source,
+    remoteFolder: datasetMountPath(`${pool}/${remoteLeaf}`),
+    schedule: monthly,
+    bwlimit: slowLimit,
+  });
+  const task = await findCloudSyncTask(api, targetDescription);
+  const earlierRuns = await findCloudSyncRunJobIds(api);
+  const runStates = async (): Promise<string[]> => (
+    (await findCloudSyncRuns(api, task?.id ?? -1, earlierRuns)).map((run) => run.state)
+  );
+
+  // Started from the card as an admin would. Stop is offered only once the row
+  // knows its job is running, so both the appliance and the row are waited on.
+  await runCloudSyncTaskFromCard(page, targetDescription);
+  await expect.poll(runStates, { timeout: cloudSyncRunTimeoutMs }).toEqual(['RUNNING']);
+  await expect(page.locator(cloudSyncLocators.card.state(targetDescription))).toHaveText('Running');
+
+  await stopCloudSyncTaskFromCard(page, targetDescription);
+
+  // The limit keeps this run going for minutes, so it ends inside this timeout
+  // only if Stop ended it — and then as ABORTED, not SUCCESS or FAILED.
+  await expect.poll(runStates, { timeout: cloudSyncRunTimeoutMs }).toEqual(['ABORTED']);
 });
 
 test('restoring from a cloud sync task makes a pull task that brings the files back', async ({ page, api, pool }) => {
