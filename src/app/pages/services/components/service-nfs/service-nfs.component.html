@@ -42,6 +42,7 @@
         [required]="true"
       >
         <tn-select
+          testId="protocols"
           formControlName="protocols"
           [options]="(protocolOptions$ | async) ?? []"
           [multiple]="true"

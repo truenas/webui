@@ -8,7 +8,7 @@ import { expect, type Page } from '@playwright/test';
 import { goToShares } from './navigation';
 import { formSettleTimeoutMs } from './smb';
 import { confirmDialogLocators } from '../locators/dialogs';
-import { nfsLocators } from '../locators/nfs';
+import { nfsLocators, type NfsProtocolName, type NfsSecurityFlavour } from '../locators/nfs';
 
 /** Saving a share writes to middleware and then asks about the service. */
 const saveTimeoutMs = 60_000;
@@ -105,6 +105,74 @@ export async function addNfsNetwork(
   const option = page.locator(nfsLocators.form.networkPrefixOption(index, prefixBits));
   await expect(option).toBeVisible({ timeout: formSettleTimeoutMs });
   await option.click();
+}
+
+/**
+ * Picks a user or group in one of the Access section's mapping fields.
+ *
+ * The field is an autocomplete over a middleware query, so the row is not in the
+ * DOM until the typed text has been sent and answered. Clicking the row is what
+ * commits the value — the text alone does not.
+ */
+export async function pickNfsMappingPrincipal(
+  page: Page,
+  { field, option, name }: { field: string; option: string; name: string },
+): Promise<void> {
+  await page.locator(field).fill(name);
+  await expect(page.locator(option)).toBeVisible({ timeout: formSettleTimeoutMs });
+  await page.locator(option).click();
+}
+
+/**
+ * Ticks these flavours in the Security select, then closes it.
+ *
+ * The select is multiple, so its panel stays open between clicks. Escape closes
+ * it — and would close the side panel too if the select had not taken the key,
+ * so the path field is asserted still there afterwards.
+ */
+export async function pickNfsSecurity(
+  page: Page,
+  flavours: [NfsSecurityFlavour, ...NfsSecurityFlavour[]],
+): Promise<void> {
+  await page.locator(nfsLocators.form.security).click();
+
+  for (const flavour of flavours) {
+    await page.locator(nfsLocators.form.securityOption(flavour)).click();
+  }
+
+  await page.keyboard.press('Escape');
+  await expect(page.locator(nfsLocators.form.securityOption(flavours[0]))).toBeHidden();
+  await expect(page.locator(nfsLocators.form.path)).toBeVisible();
+}
+
+/**
+ * Turns on one more protocol version in the NFS service settings, opened from
+ * the Shares dashboard card's header menu, and saves.
+ *
+ * Waits for Save to be enabled before touching the select: the form renders on
+ * its defaults (NFSv3 alone) and patches every control once `nfs.config`
+ * answers, so a click before that would toggle an option on the defaults and be
+ * overwritten. A click toggles, so the caller makes sure `protocol` is off first.
+ */
+export async function enableNfsProtocolFromCard(
+  page: Page,
+  serviceId: number,
+  protocol: NfsProtocolName,
+): Promise<void> {
+  const { serviceConfig } = nfsLocators;
+
+  await goToShares(page);
+  await page.locator(serviceConfig.cardMenuTrigger(serviceId)).click();
+  await page.locator(serviceConfig.open).click();
+  await expect(page.locator(serviceConfig.save)).toBeEnabled({ timeout: formSettleTimeoutMs });
+
+  await page.locator(serviceConfig.protocols).click();
+  await page.locator(serviceConfig.protocolOption(protocol)).click();
+  await page.keyboard.press('Escape');
+  await expect(page.locator(serviceConfig.protocolOption(protocol))).toBeHidden();
+
+  await page.locator(serviceConfig.save).click();
+  await expect(page.locator(serviceConfig.save)).toBeHidden({ timeout: saveTimeoutMs });
 }
 
 /** Adds a host to the export's allow-list, at the position it lands at. */
