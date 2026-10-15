@@ -24,6 +24,16 @@
  * thing that runs one — so those tests schedule theirs every minute and wait on
  * it. A fresh dataset has no snapshots, so every snapshot found on one was
  * taken by its task.
+ *
+ * Stories: deleting a task that has snapshots asks whether to keep them with
+ * their original retention. Kept, each one carries the removal date its task
+ * would have given it. Not kept, nothing will remove them. Either way the
+ * snapshots stay.
+ *
+ * Those tests seed the task's snapshot over the API rather than wait for the
+ * task to take one. Middleware counts a snapshot as the task's when its name
+ * parses with the naming schema at a minute the schedule fires on, which a
+ * name can satisfy without the task ever having run.
  */
 import {
   countSnapshotTasks,
@@ -33,7 +43,12 @@ import {
   findSnapshotTasks,
   type SnapshotTaskSchedule,
 } from '../fixtures/snapshot-tasks';
-import { listSnapshots } from '../fixtures/snapshots';
+import {
+  ensureSnapshotPresent,
+  findSnapshotRetention,
+  listSnapshots,
+  type SnapshotRetention,
+} from '../fixtures/snapshots';
 import { ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
 import {
   chooseSnapshotTaskDataset,
@@ -104,6 +119,33 @@ function stampOf(snapshotName: string): string {
  * the appliance.
  */
 const oneTick = { timeout: 150_000, intervals: [5_000] };
+
+/**
+ * A snapshot the target's task owns without having run: named by
+ * {@link targetNamingSchema}, at midnight on the first of a month, which is when
+ * {@link monthly} fires. It is dated years ahead so that the removal date a
+ * delete writes is still in the future, and nothing prunes the snapshot while
+ * a test reads it.
+ */
+const ownedSnapshotName = 'e2e-target-2099-01-01_00-00';
+
+/** The seeded task keeps snapshots for two weeks, so this is the day {@link ownedSnapshotName} is due to go. */
+const ownedSnapshotDestroyAt = Date.UTC(2099, 0, 15);
+
+/** The name is in the appliance's local time, so the date can be up to a day either side in UTC. */
+const oneDayMs = 24 * 60 * 60 * 1000;
+
+/** On the target's dataset, but it matches no naming schema, so no task owns it. */
+const manualSnapshotName = 'e2e-manual';
+
+/** Fails unless a retention falls on the day {@link ownedSnapshotDestroyAt} names. */
+function expectOwnedSnapshotDate(retention: SnapshotRetention | undefined): void {
+  const destroyAt = retention?.destroyAt.getTime() ?? Number.NaN;
+  expect(
+    Math.abs(destroyAt - ownedSnapshotDestroyAt),
+    `due at ${retention?.destroyAt.toISOString() ?? 'no date'}`,
+  ).toBeLessThanOrEqual(oneDayMs);
+}
 
 /** The names of a dataset's snapshots, sorted so a failure prints them in a stable order. */
 async function snapshotNames(api: E2eApiClient, dataset: string): Promise<string[]> {
@@ -263,6 +305,54 @@ test('deleting a periodic snapshot task from the card removes the task that was 
 
   // The whole point of the second task: the card looks right either way.
   await expect(page.locator(snapshotTaskLocators.card.row(bystander))).toBeVisible();
+  expect(await findSnapshotTask(api, bystander)).toBeDefined();
+});
+
+test('deleting a periodic snapshot task while keeping its snapshots gives them their removal date', async ({
+  page, api, pool,
+}) => {
+  const target = `${pool}/${targetLeaf}`;
+  const bystander = `${pool}/${bystanderLeaf}`;
+  await requireRoomOnCard(api, 2);
+  await seedTargetAndBystander(api, pool);
+  await ensureSnapshotPresent(api, target, ownedSnapshotName);
+  await ensureSnapshotPresent(api, target, manualSnapshotName);
+
+  // The task's own claim, before the delete: this is the date that has to survive it.
+  const owned = await findSnapshotRetention(api, target, ownedSnapshotName);
+  expect(owned?.source).toBe('periodic_snapshot_task');
+  expectOwnedSnapshotDate(owned);
+
+  await deleteSnapshotTask(page, target, true);
+  await expect.poll(() => findSnapshotTask(api, target)).toBeUndefined();
+
+  // The same date, now written onto the snapshot, because the task that set it is gone.
+  const kept = await findSnapshotRetention(api, target, ownedSnapshotName);
+  expect(kept?.source).toBe('property');
+  expectOwnedSnapshotDate(kept);
+
+  // Only the task's own snapshots get a date. A manual snapshot beside them does not.
+  expect(await findSnapshotRetention(api, target, manualSnapshotName)).toBeUndefined();
+  expect(await findSnapshotTask(api, bystander)).toBeDefined();
+});
+
+test('deleting a periodic snapshot task without keeping its snapshots leaves them with no removal date', async ({
+  page, api, pool,
+}) => {
+  const target = `${pool}/${targetLeaf}`;
+  const bystander = `${pool}/${bystanderLeaf}`;
+  await requireRoomOnCard(api, 2);
+  await seedTargetAndBystander(api, pool);
+  await ensureSnapshotPresent(api, target, ownedSnapshotName);
+
+  // Owned before the delete, or "no removal date" afterwards would prove nothing.
+  expect((await findSnapshotRetention(api, target, ownedSnapshotName))?.source).toBe('periodic_snapshot_task');
+
+  await deleteSnapshotTask(page, target, false);
+  await expect.poll(() => findSnapshotTask(api, target)).toBeUndefined();
+
+  // Still on the appliance, since findSnapshotRetention throws for a missing snapshot, and nothing will remove it now.
+  expect(await findSnapshotRetention(api, target, ownedSnapshotName)).toBeUndefined();
   expect(await findSnapshotTask(api, bystander)).toBeDefined();
 });
 

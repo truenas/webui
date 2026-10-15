@@ -17,6 +17,13 @@ export const confirmDialogLocators = {
    */
   checkbox: '[data-test="checkbox-confirm"]',
 
+  /**
+   * The caller's own extra option above the buttons, raised with `secondaryCheckbox: true` —
+   * "Keep snapshots with their original retention period" when a periodic snapshot task is deleted.
+   * It gates nothing; whether it was ticked is handed back to the caller with the confirmation.
+   */
+  secondaryCheckbox: '[data-test="checkbox-secondary-confirmation"]',
+
   /** `<tn-dialog-shell testId="confirm">`. What to wait on before acting on it. */
   title: '[data-test="dialog-title-confirm"]',
 
