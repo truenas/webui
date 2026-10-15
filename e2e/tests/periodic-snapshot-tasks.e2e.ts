@@ -17,13 +17,16 @@
  * dataset — and a dataset with snapshots would put a second box in the delete
  * dialog, which the delete test does not expect.
  *
- * Stories: a task the appliance runs takes snapshots named by its naming
- * schema, and switching it off on the card stops it.
+ * Story: a task the appliance runs takes snapshots named by its naming schema.
  *
  * Neither card nor list has a Run Now for these tasks — the schedule is the only
- * thing that runs one — so those tests schedule theirs every minute and wait on
- * it. A fresh dataset has no snapshots, so every snapshot found on one was
- * taken by its task.
+ * thing that runs one — so that test schedules its task every minute and waits
+ * for the first snapshot. A fresh dataset has no snapshots, so every snapshot
+ * found on one was taken by its task.
+ *
+ * Story: switching a task off on the card disables that task and no other. It
+ * asserts what the appliance now holds and does not wait to watch the
+ * scheduler skip it.
  *
  * Stories: deleting a task that has snapshots asks whether to keep them with
  * their original retention. Kept, each one carries the removal date its task
@@ -104,14 +107,6 @@ const everyMinute: SnapshotTaskSchedule = {
 
 /** What the target's task names a snapshot: {@link targetNamingSchema} with the minute filled in. */
 const targetSnapshotName = /^e2e-target-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}$/;
-
-/** Both seeded schemas end in `%Y-%m-%d_%H-%M`, which comes out this long. */
-const stampLength = '2026-01-01_00-00'.length;
-
-/** The minute a snapshot was taken in, cut from its name. */
-function stampOf(snapshotName: string): string {
-  return snapshotName.slice(-stampLength);
-}
 
 /**
  * Waiting on a task due every minute: past the next minute boundary, with room
@@ -378,40 +373,22 @@ test('a periodic snapshot task takes snapshots named by its naming schema', asyn
   await expect(page.locator(snapshotLocators.list.row(target, first ?? ''))).toBeVisible();
 });
 
-test('switching a periodic snapshot task off on the card stops it taking snapshots', async ({
+test('switching a periodic snapshot task off on the card disables that task and no other', async ({
   page, api, pool,
 }) => {
   const target = `${pool}/${targetLeaf}`;
   const bystander = `${pool}/${bystanderLeaf}`;
   await requireRoomOnCard(api, 2);
-  await seedTargetAndBystander(api, pool, everyMinute);
+  await seedTargetAndBystander(api, pool);
 
-  // Running first, or stopping it would prove nothing.
-  await expect.poll(() => snapshotNames(api, target), oneTick).not.toHaveLength(0);
+  // Enabled first, or reading it disabled afterwards would prove nothing.
+  expect((await findSnapshotTask(api, target))?.enabled).toBe(true);
 
   await toggleSnapshotTaskEnabled(page, target);
   await expect.poll(async () => (await findSnapshotTask(api, target))?.enabled).toBe(false);
-  expect((await findSnapshotTask(api, bystander))?.enabled).toBe(true);
 
-  // The bystander, still on the same schedule, is the clock: it fires on every
-  // minute the target would have, and stamps each snapshot with that minute just
-  // as the target would. Three new ones are three minutes after the switch, and
-  // a target still running would share every one of them but perhaps the last,
-  // still landing. A target that stopped shares at most one: a tick already
-  // under way when the switch flipped. Stamps are matched, never ordered — they
-  // are local time, which runs backwards once a year.
-  const before = new Set(await snapshotNames(api, bystander));
-  const newStamps = async (): Promise<string[]> => (await snapshotNames(api, bystander))
-    .filter((name) => !before.has(name))
-    .map(stampOf);
-  await expect.poll(async () => (await newStamps()).length, { ...oneTick, timeout: 3 * oneTick.timeout })
-    .toBeGreaterThanOrEqual(3);
-
-  const targetStamps = new Set((await snapshotNames(api, target)).map(stampOf));
-  const sharedMinutes = (await newStamps()).filter((stamp) => targetStamps.has(stamp));
-  expect(sharedMinutes.length, `the target also took snapshots in ${sharedMinutes.join(', ')}`)
-    .toBeLessThanOrEqual(1);
-
-  // The switch itself left the bystander alone.
-  expect(await findSnapshotTask(api, bystander)).toMatchObject({ enabled: true, schedule: everyMinute });
+  // The switch itself left the bystander alone. Whether the scheduler then skips
+  // the disabled task is middleware's behaviour, not this screen's — see
+  // "Assert the configuration" in e2e/CLAUDE.md.
+  expect(await findSnapshotTask(api, bystander)).toMatchObject({ enabled: true, schedule: monthly });
 });

@@ -17,6 +17,19 @@ Verifying through the API afterwards is fine and often valuable — it asks
 whether the appliance is really in the intended state, which is a different
 question from whether the screens said so.
 
+**Assert the configuration, not the backend's reaction to it.** A test drives
+the UI and then checks what middleware now holds. Whether middleware
+subsequently acts on that configuration — a scheduler firing, a job completing
+on time, a service converging — is middleware's behaviour and middleware's
+tests. Waiting for it makes the suite slow, makes it flaky, and tests something
+this repository does not own.
+
+A long timeout is fine as a **ceiling** on one action landing, which is why
+`smb-service` can poll for 90 seconds and return in two. It is not fine as a
+**floor** that always elapses. Switching a periodic snapshot task off once
+waited three scheduled ticks to watch it not fire — 234 seconds, six times the
+next slowest test — where reading `enabled: false` back was the whole claim.
+
 ## Navigate like a user
 
 **Click through the sidebar. Do not `page.goto()` a feature page.**
