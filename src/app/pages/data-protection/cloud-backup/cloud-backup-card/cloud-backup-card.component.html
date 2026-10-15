@@ -20,10 +20,10 @@
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
     <tn-empty
       tnTestIdType="text"
-      [tnTestId]="['cloud-backup-task', 'empty']"
       icon="true-cloud"
       iconLibrary="custom"
       iconSize="56px"
+      [tnTestId]="['cloud-backup-task', 'empty']"
       [title]="'Back up to the decentralized network provided by Storj in partnership with TrueNAS.' | translate"
     ></tn-empty>
   } @else {

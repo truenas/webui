@@ -69,12 +69,20 @@ test('the TrueCloud Backup form refuses each required field left empty', async (
   await expect(page.locator(form.save)).toBeDisabled();
 
   const requiredFields: { name: string; input: string; field: string; value: string }[] = [
-    { name: 'Name', input: form.description, field: form.descriptionField, value: 'E2E cloud backup' },
-    { name: 'Keep Last', input: form.keepLast, field: form.keepLastField, value: '3' },
-    { name: 'Password', input: form.password, field: form.passwordField, value: 'e2e-backup-password' },
+    {
+      name: 'Name', input: form.description, field: form.descriptionField, value: 'E2E cloud backup',
+    },
+    {
+      name: 'Keep Last', input: form.keepLast, field: form.keepLastField, value: '3',
+    },
+    {
+      name: 'Password', input: form.password, field: form.passwordField, value: 'e2e-backup-password',
+    },
   ];
 
-  for (const { name, input, field, value } of requiredFields) {
+  for (const {
+    name, input, field, value,
+  } of requiredFields) {
     // Not shown before the field is touched, so a message afterwards is this refusal.
     await expect(page.locator(field), `${name} before it was touched`).not.toContainText(requiredMessage);
 
