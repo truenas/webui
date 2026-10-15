@@ -139,7 +139,11 @@ export const smbLocators = {
     whoOption: (label: string): string => `[data-test="option-ae-who-${kebabTestSegment(label)}"]`,
     /** `ix-user-combobox [testId]="'user'"`. Lists SMB users only. Rendered while Who is User. */
     user: '[data-test="autocomplete-user"]',
-    userOption: (username: string): string => `[data-test="option-user-${kebabTestSegment(username)}"]`,
+    /**
+     * Keyed by uid, not username: this picker sets `valueField: 'uid'` and pins
+     * no `optionTestIdKey`, so the option id comes from the numeric value.
+     */
+    userOption: (uid: number): string => `[data-test="option-user-${uid}"]`,
     permission: '[data-test="select-ae-perm"]',
     /** By label: "FULL", "CHANGE" or "READ". */
     permissionOption: (label: string): string => `[data-test="option-ae-perm-${kebabTestSegment(label)}"]`,

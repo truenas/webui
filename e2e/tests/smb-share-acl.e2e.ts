@@ -100,7 +100,12 @@ test('an entry added in Edit Share ACL is what the appliance stores', async ({ p
   expect(entriesFor(await readSmbShareAcl(api, share), uid)).toEqual([]);
 
   await openShareAclForm(page, share);
-  await addShareAclUserEntry(page, { username: smbUser.username, permission: 'FULL', type: 'ALLOWED' });
+  await addShareAclUserEntry(page, {
+    username: smbUser.username,
+    uid,
+    permission: 'FULL',
+    type: 'ALLOWED',
+  });
   await saveShareAcl(page);
 
   expect(entriesFor(await readSmbShareAcl(api, share), uid)).toEqual([
