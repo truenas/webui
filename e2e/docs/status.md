@@ -10,6 +10,13 @@ content is in git history if the reasoning behind a decision is ever wanted.
 setup and running. `05-ci.md` is the CI pipeline as built. **This file is only
 status and direction — keep it that way, and keep it short.**
 
+**The suite's test total is not recorded here.** It reads like status but is a
+derived value: every PR that added a test rewrote the same sentence, and branches
+in flight together conflicted over it. The count lives in
+`<testsuites tests="N">` in the `e2e-junit-<shard>` artifacts of an unfiltered
+E2E run, summed across shards — cite the run id when a number is wanted. A PR adding tests touches only its own feature's
+paragraph here, or nothing.
+
 ---
 
 ## Where we are
@@ -864,11 +871,10 @@ the test chooses makes a target that is its own encryption root. Custom retentio
 passphrase and inherited encryption, a key stored on the target, and periodic
 snapshot tasks are not covered.
 
-The framework is done and the coverage is not. A hundred and seventy-nine tests — a
-hundred and seventy-eight journeys and the smoke — against 19 top-level feature areas. What the work
-bought is that the next twenty tests are cheap: the target seam, auth, fixtures,
-unconditional teardown, selector discipline and failure legibility are all built
-and proven against three different appliances.
+The framework is done and the coverage of the 19 top-level feature areas is
+not. What the work bought is that the next twenty tests are cheap: the target
+seam, auth, fixtures, unconditional teardown, selector discipline and failure
+legibility are all built and proven against three different appliances.
 
 **Flake rate has a number now.** Six consecutive full-suite runs on one
 appliance, zero failures and zero flaky — three from a golden snapshot and three
