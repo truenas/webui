@@ -229,6 +229,50 @@ export async function chooseReplicationReadonlyPolicy(page: Page, label: string)
   await selectOption(page, form.readonly, form.readonlyOption(label));
 }
 
+/** Picks a snapshot retention policy by its label, e.g. `Same as Source`. */
+export async function chooseReplicationRetentionPolicy(page: Page, label: string): Promise<void> {
+  const { form } = replicationTaskLocators;
+  await selectOption(page, form.retentionPolicy, form.retentionPolicyOption(label));
+}
+
+/**
+ * Switches a push task to picking its snapshots by naming schema, and adds
+ * `schema` as its one Also Include Naming Schema.
+ *
+ * The chip field renders only once the radio says naming schema, so a task that
+ * picked by regular expression shows it empty and nothing has to be removed.
+ */
+export async function useReplicationNamingSchema(page: Page, schema: string): Promise<void> {
+  const { form } = replicationTaskLocators;
+
+  await page.locator(form.schemaOrRegex('Matching naming schema')).click();
+  const field = page.locator(form.alsoIncludeNamingSchema);
+  await expect(field).toBeVisible();
+  await field.fill(schema);
+  await field.press('Enter');
+}
+
+/**
+ * Turns on encryption of the target with a HEX key the caller chooses, stored
+ * in this appliance's database — the form's default for where the key goes.
+ *
+ * The format is picked rather than left at the default: a task saved without
+ * encryption comes back with no format, and the key fields follow the format.
+ * Generate Encryption Key starts ticked, and the key field shows only once it
+ * is unticked, so that field becoming visible is the check that it was.
+ */
+export async function encryptReplicationTargetWithHexKey(page: Page, key: string): Promise<void> {
+  const { form } = replicationTaskLocators;
+
+  await page.locator(form.encryption).click();
+  await selectOption(page, form.encryptionKeyFormat, form.encryptionKeyFormatOption('HEX'));
+  await page.locator(form.encryptionKeyGenerate).click();
+
+  const field = page.locator(form.encryptionKeyHex);
+  await expect(field).toBeVisible();
+  await field.fill(key);
+}
+
 /**
  * Saves the edit form and waits for the panel to close.
  *
