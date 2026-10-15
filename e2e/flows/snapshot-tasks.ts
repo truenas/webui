@@ -63,6 +63,21 @@ export async function chooseSnapshotTaskSchedule(page: Page, label: string): Pro
 }
 
 /**
+ * Flips the Enabled switch on the row for a dataset's task, starting from the sidebar.
+ *
+ * The card writes the opposite of what the row was loaded with, and the switch
+ * moves on click whether or not that write lands — so the caller reads the
+ * appliance to learn what happened.
+ */
+export async function toggleSnapshotTaskEnabled(page: Page, dataset: string): Promise<void> {
+  await goToDataProtection(page);
+
+  const toggle = page.locator(snapshotTaskLocators.card.enabledToggle(dataset));
+  await expect(toggle).toBeVisible({ timeout: saveTimeoutMs });
+  await toggle.click();
+}
+
+/**
  * Saves the form and waits for the panel to close.
  *
  * The panel closing is the app's own signal that the save succeeded — a

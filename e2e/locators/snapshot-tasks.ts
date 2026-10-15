@@ -46,6 +46,13 @@ export const snapshotTaskLocators = {
     rowMenuDelete: (dataset: string): string => (
       `[data-test="button-${rowTag(dataset)}-more-action-mdi-delete-row-action"]`
     ),
+
+    /**
+     * The row's Enabled switch. `ix-table-toggle-cell` composes `[title, row tag,
+     * 'row-toggle']` and `tn-slide-toggle` puts its `toggle-` type in front. It
+     * writes on click — there is no Save.
+     */
+    enabledToggle: (dataset: string): string => `[data-test="toggle-enabled-${rowTag(dataset)}-row-toggle"]`,
   },
 
   form: {
