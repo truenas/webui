@@ -43,7 +43,9 @@
   @if (nfs3EmptyType() === EmptyType.NoPageData) {
     <tn-empty
       tnTestIdType="text"
+      iconSize="56px"
       [tnTestId]="['nfs3-sessions', 'empty']"
+      [ixUiSearch]="searchableElements.elements.nfsSessions"
       [icon]="emptyService.iconForType(EmptyType.NoPageData)"
       [title]="emptyService.titleForType(EmptyType.NoPageData)"
     ></tn-empty>
@@ -88,7 +90,9 @@
   @if (nfs4EmptyType() === EmptyType.NoPageData) {
     <tn-empty
       tnTestIdType="text"
+      iconSize="56px"
       [tnTestId]="['nfs4-sessions', 'empty']"
+      [ixUiSearch]="searchableElements.elements.nfsSessions"
       [icon]="emptyService.iconForType(EmptyType.NoPageData)"
       [title]="emptyService.titleForType(EmptyType.NoPageData)"
     ></tn-empty>

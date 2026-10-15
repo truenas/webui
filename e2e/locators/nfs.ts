@@ -21,6 +21,11 @@ import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
  */
 const rowTag = (path: string, description: string): string => `${path}-${description}`;
 
+/** The list page's row tag: {@link rowTag} behind `nfs-share-`, through lodash as a whole. */
+const listRowTag = (path: string, description: string): string => (
+  legacyKebabTestSegment(`nfs-share-${rowTag(path, description)}`)
+);
+
 export const nfsLocators = {
   /**
    * "Add" in the UNIX (NFS) Shares card on the Shares dashboard —
@@ -165,9 +170,7 @@ export const nfsLocators = {
      * which goes through lodash as a whole, so `/mnt/tank/e2e_x` is `mnt-tank-e-2-e-x`
      * here where the card's row has `mnt-tank-e2e-x`.
      */
-    row: (path: string, description = ''): string => (
-      `[data-test="row-${legacyKebabTestSegment(`nfs-share-${rowTag(path, description)}`)}"]`
-    ),
+    row: (path: string, description = ''): string => `[data-test="row-${listRowTag(path, description)}"]`,
     /** Every share row on the page, to count what a search left. */
     anyRow: '[data-test^="row-nfs-share-"]',
   },
