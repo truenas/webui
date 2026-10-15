@@ -17,7 +17,9 @@ import {
   ensureSmbShareAbsent, ensureSmbSharePresent, everyoneSid, readSmbShareAcl, setSmbShareAclWithUser,
   type SmbShareAce,
 } from '../fixtures/smb';
-import { datasetMountPath, ensureDatasetAbsent, ensureSmbDatasetPresent } from '../fixtures/storage';
+import {
+  datasetMountPath, ensureDatasetAbsent, ensureSmbDatasetPresent, findMixedAclChildren,
+} from '../fixtures/storage';
 import { ensureSmbUserPresent, ensureUserAbsent, findUser } from '../fixtures/users';
 import { addAclUserEntry, saveAcl } from '../flows/permissions';
 import {
@@ -159,6 +161,14 @@ test('Edit Filesystem ACL is disabled for a share on a pool root', async ({ page
   // dataset, and the share on it, go before the root share can exist.
   await ensureSmbShareAbsent(api, share);
   await ensureDatasetAbsent(api, `${pool}/${datasetLeaf}`);
+  // A developer's own pool can hold other such datasets, and those are not this
+  // spec's to remove.
+  const mixed = await findMixedAclChildren(api, pool);
+  test.skip(
+    mixed.length > 0,
+    `Pool "${pool}" holds datasets with another ACL type than its root (${mixed.join(', ')}), `
+    + 'so middleware refuses a share on the root.',
+  );
   await ensureSmbSharePresent(api, { name: rootShare, path: datasetMountPath(pool) });
 
   await openShareActions(page, rootShare);
