@@ -66,10 +66,18 @@ export async function ensureReplicationTaskAbsent(client: E2eApiClient, name: st
  * For the task a run acts on, and for a bystander. Never for the task under
  * test in a create — that one goes through the wizard. Not recursive, never
  * deletes a snapshot on the target, and runs only when asked.
+ *
+ * Picks its snapshots by {@link replicationNamingSchema}, or by `nameRegex`
+ * instead when one is given. Middleware takes one or the other, never both.
  */
 export async function ensureReplicationTaskPresent(
   client: E2eApiClient,
-  { name, source, target }: { name: string; source: string; target: string },
+  {
+    name,
+    source,
+    target,
+    nameRegex,
+  }: { name: string; source: string; target: string; nameRegex?: string },
 ): Promise<void> {
   if (await findReplicationTask(client, name)) {
     return;
@@ -83,7 +91,8 @@ export async function ensureReplicationTaskPresent(
       source_datasets: [source],
       target_dataset: target,
       recursive: false,
-      also_include_naming_schema: [replicationNamingSchema],
+      also_include_naming_schema: nameRegex ? [] : [replicationNamingSchema],
+      ...(nameRegex ? { name_regex: nameRegex } : {}),
       auto: false,
       retention_policy: 'NONE',
       readonly: 'IGNORE',
@@ -132,6 +141,13 @@ export async function runReplicationTaskOverApi(
 export async function createSnapshot(client: E2eApiClient, dataset: string, name: string): Promise<void> {
   await firstValueFrom(
     client.api.call('pool.snapshot.create', [{ dataset, name }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/** Deletes one snapshot of a dataset, by the name after the `@`. */
+export async function deleteSnapshot(client: E2eApiClient, dataset: string, name: string): Promise<void> {
+  await firstValueFrom(
+    client.api.call('pool.snapshot.delete', [`${dataset}@${name}`]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
 

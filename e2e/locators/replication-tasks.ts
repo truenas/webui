@@ -136,6 +136,33 @@ export const replicationTaskLocators = {
     /** Destination section. Its options are labelled with the mode itself: SET, REQUIRE, IGNORE. */
     readonly: '[data-test="select-readonly"]',
     readonlyOption: (label: string): string => `[data-test="option-readonly-${kebabTestSegment(label)}"]`,
+    /** Destination section. Custom is offered only while the Source section picks snapshots by naming schema. */
+    retentionPolicy: '[data-test="select-retention-policy"]',
+    retentionPolicyOption: (label: string): string => (
+      `[data-test="option-retention-policy-${kebabTestSegment(label)}"]`
+    ),
+    /** Destination section. Ticking it shows the key fields below; Inherit Encryption would hide them. */
+    encryption: '[data-test="checkbox-encryption"]',
+    encryptionKeyFormat: '[data-test="select-encryption-key-format"]',
+    encryptionKeyFormatOption: (label: string): string => (
+      `[data-test="option-encryption-key-format-${kebabTestSegment(label)}"]`
+    ),
+    /** Shown for a HEX key. Ticked, the form makes the key itself; unticked, {@link encryptionKeyHex} takes it. */
+    encryptionKeyGenerate: '[data-test="checkbox-encryption-key-generate"]',
+    encryptionKeyHex: '[data-test="input-encryption-key-hex"]',
+    /**
+     * Source section. How the task picks its snapshots, by naming schema or by
+     * regular expression. Same legacy `radio-button-<group>-<label>` shape as the
+     * wizard's {@link replicationTaskLocators.wizard.runOnce}.
+     */
+    schemaOrRegex: (label: string): string => (
+      `[data-test="radio-button-schema-or-regex-${kebabTestSegment(label)}"]`
+    ),
+    /**
+     * Source section, on a push task picking by naming schema. A `tn-chip-input`:
+     * the typable field is `chip-input-<testId>`, and Enter commits the text as a chip.
+     */
+    alsoIncludeNamingSchema: '[data-test="chip-input-also-include-naming-schema"]',
     /** `<tn-button [testId]="'save'">` on the side panel container. */
     save: '[data-test="button-save"]',
   },

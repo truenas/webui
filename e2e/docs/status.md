@@ -631,9 +631,10 @@ snapshot arriving there is the data coming back. Download keys is offered only
 for a source whose key middleware stores, which a passphrase never is. The source
 is therefore encrypted with a key the test chooses, and the downloaded file must
 map the target to exactly that key. Scheduled tasks and the periodic snapshot task
-the wizard makes for them, and encrypting the target, are not covered. Push over
-SSH is `tests/replication-ssh.e2e.ts`'s, and the full list page
-`tests/replication-task-list.e2e.ts`'s, both below.
+the wizard makes for them are not covered. Push over SSH is
+`tests/replication-ssh.e2e.ts`'s, the full list page
+`tests/replication-task-list.e2e.ts`'s, and the full form's retention, naming
+schema and encryption options `tests/replication-form-options.e2e.ts`'s, all below.
 
 Privileges came next, in `tests/privileges.e2e.ts`: adding, editing and deleting
 a privilege from the list on Credentials > Privileges, each asserted on the list
@@ -852,6 +853,16 @@ the card's Run job raises an error dialog of its own when a run fails, which wou
 stand in for the one under test. Failed opens the error dialog with the job's log
 under View Details; Completed opens the logs dialog, whose text now carries
 `text-logs-excerpt`.
+
+The full replication form's options are `tests/replication-form-options.e2e.ts`:
+each test edits one local task from the full list, reads it back through
+`replication.query`, and runs it. Same as Source retention removes from the target
+a snapshot the source has dropped, which middleware does in a pass after the task
+finishes, so the test polls for it. A naming schema set in place of a regular
+expression sends only the source snapshot it matches. Encryption with a HEX key
+the test chooses makes a target that is its own encryption root. Custom retention,
+passphrase and inherited encryption, a key stored on the target, and periodic
+snapshot tasks are not covered.
 
 The framework is done and the coverage is not. A hundred and seventy-nine tests — a
 hundred and seventy-eight journeys and the smoke — against 19 top-level feature areas. What the work
