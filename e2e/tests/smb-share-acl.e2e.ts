@@ -47,12 +47,12 @@ const smbUser = {
 
 /** The uid the appliance gave {@link smbUser}, which is what both kinds of ACL store. */
 async function smbUserUid(api: E2eApiClient): Promise<number> {
-  const user = await findUser(api, smbUser.username);
-  if (!user) {
+  const uid = (await findUser(api, smbUser.username))?.uid;
+  if (typeof uid !== 'number') {
     throw new Error(`User "${smbUser.username}" was created but cannot be found.`);
   }
 
-  return user.uid;
+  return uid;
 }
 
 /** Whether a share ACL entry names the user with `uid`. */
