@@ -12,14 +12,25 @@
  * share every id. The specs give each task a dataset of its own and never edit
  * the host.
  *
+ * A task saved from the form in SSH mode through a keychain connection has no
+ * host at all: the form sends `remotehost: null`, middleware keeps it, and the
+ * card's string concatenation writes it as `null`. So the card's locators take
+ * `null` for such a row, and its tag ends in `-null`.
+ *
  * The form's controls declare their `testId`s, its user is the same
  * `ix-user-combobox` the cron form uses, and its schedule is the shared
  * `ix-scheduler`.
  */
 import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 
-function rowTag(path: string, remoteHost: string): string {
-  return kebabTestSegment(`card-rsync-task-${path}-${remoteHost}`.toLowerCase());
+/** The Rsync Mode option for SSH. Labelled as written, untranslated. */
+export const rsyncSshModeLabel = 'SSH';
+
+/** The "Connect using:" option that signs in through a saved SSH connection. */
+export const rsyncKeychainConnectLabel = 'SSH connection from the keychain';
+
+function rowTag(path: string, remoteHost: string | null): string {
+  return kebabTestSegment(`card-rsync-task-${path}-${String(remoteHost)}`.toLowerCase());
 }
 
 /**
@@ -42,10 +53,10 @@ export const rsyncTaskLocators = {
     /** `<tn-button [testId]="addTestId">` in the card footer, `rsync-task-add`. */
     add: '[data-test="button-rsync-task-add"]',
 
-    row: (path: string, remoteHost: string): string => `[data-test="row-${rowTag(path, remoteHost)}"]`,
+    row: (path: string, remoteHost: string | null): string => `[data-test="row-${rowTag(path, remoteHost)}"]`,
 
     /** The Path cell. Its base is the column title, so `text-path`. */
-    path: (path: string, remoteHost: string): string => (
+    path: (path: string, remoteHost: string | null): string => (
       `[data-test="text-path-${rowTag(path, remoteHost)}-row-text"]`
     ),
 
@@ -54,7 +65,7 @@ export const rsyncTaskLocators = {
      * `testId`, and shows a finished job's state through `jobStateDisplay`,
      * which reads SUCCESS as "Completed".
      */
-    state: (path: string, remoteHost: string): string => (
+    state: (path: string, remoteHost: string | null): string => (
       `[data-test="button-state-${rowTag(path, remoteHost)}-row-state"]`
     ),
 
@@ -63,22 +74,22 @@ export const rsyncTaskLocators = {
      * Delete) and the card does not ask for `mode="inline"`, so they sit in a
      * kebab menu.
      */
-    rowMenu: (path: string, remoteHost: string): string => (
+    rowMenu: (path: string, remoteHost: string | null): string => (
       `[data-test="button-${rowTag(path, remoteHost)}-more-action"]`
     ),
 
     /** Edit, inside that menu — the trigger's own id with the icon appended, library and all. */
-    rowMenuEdit: (path: string, remoteHost: string): string => (
+    rowMenuEdit: (path: string, remoteHost: string | null): string => (
       `[data-test="button-${rowTag(path, remoteHost)}-more-action-mdi-pencil-row-action"]`
     ),
 
     /** Run job, inside that menu. Hidden while a run is in progress. Same shape as {@link rowMenuEdit}. */
-    rowMenuRun: (path: string, remoteHost: string): string => (
+    rowMenuRun: (path: string, remoteHost: string | null): string => (
       `[data-test="button-${rowTag(path, remoteHost)}-more-action-mdi-play-circle-row-action"]`
     ),
 
     /** Delete, inside that menu. Same shape as {@link rowMenuEdit}. */
-    rowMenuDelete: (path: string, remoteHost: string): string => (
+    rowMenuDelete: (path: string, remoteHost: string | null): string => (
       `[data-test="button-${rowTag(path, remoteHost)}-more-action-mdi-delete-row-action"]`
     ),
 
@@ -87,7 +98,7 @@ export const rsyncTaskLocators = {
      * 'row-toggle']` and `tn-slide-toggle` puts its `toggle-` type in front. It
      * writes on click — there is no Save.
      */
-    enabledToggle: (path: string, remoteHost: string): string => (
+    enabledToggle: (path: string, remoteHost: string | null): string => (
       `[data-test="toggle-enabled-${rowTag(path, remoteHost)}-row-toggle"]`
     ),
   },
@@ -159,6 +170,25 @@ export const rsyncTaskLocators = {
     /** Remote Host and Remote Module Name render only in Module mode, the form's default. */
     remoteHost: '[data-test="input-remotehost"]',
     remoteModule: '[data-test="input-remotemodule"]',
+    /** Rsync Mode, Module by default. Its options are labelled Module and {@link rsyncSshModeLabel}. */
+    mode: '[data-test="select-mode"]',
+    modeOption: (label: string): string => `[data-test="option-mode-${kebabTestSegment(label)}"]`,
+    /**
+     * "Connect using:", rendered only in SSH mode. It starts on a private key in
+     * the user's home directory; {@link rsyncKeychainConnectLabel} is the other.
+     */
+    sshConnectMode: '[data-test="select-sshconnectmode"]',
+    sshConnectModeOption: (label: string): string => (
+      `[data-test="option-sshconnectmode-${kebabTestSegment(label)}"]`
+    ),
+    /**
+     * `ix-ssh-credentials-select`, rendered once the keychain is picked. Its
+     * options are the connections' names, as in the replication wizard.
+     */
+    sshConnection: '[data-test="select-ssh-credentials"]',
+    sshConnectionOption: (name: string): string => `[data-test="option-ssh-credentials-${kebabTestSegment(name)}"]`,
+    /** Remote Path, rendered only in SSH mode. Starts as `/mnt`. */
+    remotePath: '[data-test="input-remotepath"]',
     /** `ix-scheduler` renders a `tn-select` with `[testId]="[controlName, 'presets']"`. */
     schedule: '[data-test="select-schedule-presets"]',
     scheduleOption: (label: string): string => (

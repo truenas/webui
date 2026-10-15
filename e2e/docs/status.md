@@ -605,8 +605,9 @@ fails without touching data. The row tag is `card-rsync-task-<path>-<host>`, so
 each task syncs a dataset of its own and the edit leaves both alone. The card
 lists four tasks and its View All leaves for the full list, so each test fails at
 the start if its rows would not fit. SSH mode and the Enabled switch are not
-covered here; Run job is `tests/rsync-task-run.e2e.ts`, and the full list page
-`tests/rsync-task-list.e2e.ts`, both below.
+covered here; Run job is `tests/rsync-task-run.e2e.ts`, SSH mode and Pull
+`tests/rsync-task-ssh.e2e.ts`, and the full list page
+`tests/rsync-task-list.e2e.ts`, all below.
 
 Local replication followed, in `tests/replication-tasks.e2e.ts`: creating a task
 between two datasets on the same appliance through the card's wizard, with Run
@@ -818,7 +819,15 @@ own name. The run is asserted on the row's state, through `core.get_jobs`, and
 through `filesystem.listdir` on the target, which holds the source directory
 itself afterwards: middleware passes the local path to rsync with no trailing
 slash. The file it copies is written by the cloud sync spec's one-off cron job.
-SSH mode's own settings in the form and Pull are #14408's.
+
+SSH mode in the form, and Pull, are `tests/rsync-task-ssh.e2e.ts`, through a
+connection of its own to the same loopback. Adding a Pull task in SSH mode through
+a keychain connection is read back through `rsynctask.query`; editing an SSH task's
+description must leave its mode, connection and remote path as they were; and a
+Pull task run from the card copies the remote directory into the local dataset
+with nothing going the other way. In keychain mode the form sends no host, so such
+a row's tag ends in `-null`. Saving with Validate Remote Path ticked, the form's
+default, signs in over the connection, so each remote path is a real dataset.
 
 The full list pages each have a spec of their own: `tests/replication-task-list.e2e.ts`,
 `tests/cloud-sync-task-list.e2e.ts`, `tests/rsync-task-list.e2e.ts` and

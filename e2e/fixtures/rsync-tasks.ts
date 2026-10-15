@@ -12,9 +12,9 @@
  * without touching data.
  *
  * The one exception is {@link ensureRsyncSshTaskPresent}, for a spec that runs a
- * task: SSH mode through an SSH connection back to the appliance itself — see
- * `fixtures/ssh-connections.ts` — so a run really copies files and the copy is a
- * directory the spec can read back. Running a task is a `rsynctask.run` job.
+ * task or edits one in SSH mode. It signs in through an SSH connection back to
+ * the appliance itself — see `fixtures/ssh-connections.ts` — so a run really
+ * copies files and the copy is a directory the spec can read back. Running a task is a `rsynctask.run` job.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -117,18 +117,19 @@ export async function ensureRsyncTaskPresent(
 }
 
 /**
- * Creates an SSH-mode push task on this path, as root, through an SSH
- * connection, if it has none already.
+ * Creates an SSH-mode task on this path, as root, through an SSH connection, if
+ * it has none already. A push unless `direction` says otherwise.
  *
  * Middleware takes the host, user and key from the connection and ignores
  * `remotehost` in this mode. It is set anyway, to the connection's own
  * `127.0.0.1`, because the card names the row after it.
  *
  * `validate_rpath` is off: it would sign in over SSH on save to check the remote
- * path, and the run is what this task exists to check.
+ * path, and saving this task is setup, not what a spec checks.
  *
- * rsync is given the local path with no trailing slash, so a run copies the
- * directory itself into `remotePath` — `<remotePath>/<last segment of path>/`.
+ * rsync is given both paths as written, with no trailing slash, so a run copies
+ * the source directory itself into the destination: a push writes
+ * `<remotePath>/<last segment of path>/`, a pull `<path>/<last segment of remotePath>/`.
  */
 export async function ensureRsyncSshTaskPresent(
   client: E2eApiClient,
@@ -138,6 +139,7 @@ export async function ensureRsyncSshTaskPresent(
     remotePath,
     description,
     schedule,
+    direction = 'PUSH',
     extra = [],
   }: {
     path: string;
@@ -145,6 +147,7 @@ export async function ensureRsyncSshTaskPresent(
     remotePath: string;
     description: string;
     schedule: RsyncTaskSchedule;
+    direction?: 'PUSH' | 'PULL';
     /** Extra rsync arguments. `--verbose` makes a run name what it copied in its log. */
     extra?: string[];
   },
@@ -162,7 +165,7 @@ export async function ensureRsyncSshTaskPresent(
       remotehost: rsyncRemoteHost,
       remotepath: remotePath,
       validate_rpath: false,
-      direction: 'PUSH',
+      direction,
       desc: description,
       schedule,
       extra,
