@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { provideRouter, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -433,5 +434,92 @@ describe('WebShareCardComponent - No WebShare users configured', () => {
     spectator.click('.info-message');
 
     expect(router.navigate).toHaveBeenCalledWith(['/credentials', 'users']);
+  });
+});
+
+describe('WebShareCardComponent - connection has no TrueNAS Connect hostname', () => {
+  let spectator: Spectator<WebShareCardComponent>;
+  let loader: HarnessLoader;
+  const mockWindow = {
+    location: {
+      origin: 'http://10.0.0.99',
+      hostname: '10.0.0.99',
+      protocol: 'http:',
+    } as Location,
+    open: jest.fn(() => ({})),
+  } as unknown as Window;
+
+  const mockTnConnectConfig = {
+    enabled: true,
+    status: TruenasConnectStatus.Configured,
+  } as TruenasConnectConfig;
+
+  const createComponent = createComponentFactory({
+    component: WebShareCardComponent,
+    imports: [IxTablePagerShowMoreComponent],
+    declarations: [
+      MockComponents(
+        ServiceStateButtonComponent,
+        ServiceExtraActionsComponent,
+      ),
+    ],
+    providers: [
+      mockAuth(),
+      mockProvider(SlideIn),
+      mockProvider(DialogService),
+      mockProvider(SnackbarService),
+      mockApi([
+        mockCall('sharing.webshare.query', [{ id: 1, name: 'documents', path: '/mnt/tank/documents' }]),
+        mockCall('tn_connect.ips_with_hostnames', {
+          '192.168.0.125': '192-168-0-125.abc.truenas.direct',
+          '10.0.0.5': '10-0-0-5.abc.truenas.direct',
+        }),
+        mockCall('interface.websocket_local_ip', null),
+        mockCall('user.query', [{ id: 1, username: 'testuser', webshare: true } as User]),
+      ]),
+      provideMockStore({
+        initialState: {
+          alerts: {
+            ids: [], entities: {}, isLoading: false, isPanelOpen: false, error: null,
+          },
+        },
+        selectors: [
+          { selector: selectSystemInfo, value: { license: { features: ['TRUENAS_CONNECT'] } } },
+          { selector: selectServices, value: [] },
+        ],
+      }),
+      mockProvider(TruenasConnectService, {
+        config$: of(mockTnConnectConfig),
+        config: signal(mockTnConnectConfig),
+      }),
+      provideRouter([]),
+      { provide: WINDOW, useValue: mockWindow },
+    ],
+  });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('lists each IP under Open WebShare and opens the chosen hostname', async () => {
+    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Open WebShare' }));
+    await menu.open();
+
+    const items = await menu.getItems();
+    expect(await Promise.all(items.map((item) => item.getText()))).toEqual(['10.0.0.5', '192.168.0.125']);
+
+    await menu.clickItem({ text: '192.168.0.125' });
+
+    expect(mockWindow.open).toHaveBeenCalledWith('https://192-168-0-125.abc.truenas.direct:755/webshare/', '_blank');
+  });
+
+  it('keeps the row open action disabled and points to the Open WebShare button', async () => {
+    const openRowButton = await loader.getHarness(
+      MatButtonHarness.with({ selector: '[aria-label^="Use Open WebShare on the Sharing screen"]' }),
+    );
+
+    expect(await openRowButton.isDisabled()).toBe(true);
   });
 });

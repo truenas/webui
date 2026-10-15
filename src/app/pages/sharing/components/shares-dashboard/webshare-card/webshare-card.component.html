@@ -17,18 +17,39 @@
     </div>
 
     <div class="actions">
-      <button
-        mat-button
-        [ixTest]="['webshare', 'open']"
-        [attr.aria-label]="'Open WebShare' | translate"
-        [disabled]="!canOpenWebShare()"
-        [matTooltip]="canOpenWebShare()
-          ? ('Open WebShare' | translate)
-          : ('WebShare can only be opened when accessed via a .truenas.direct domain' | translate)"
-        (click)="openWebShare()"
-      >
-        {{ 'Open WebShare' | translate }}
-      </button>
+      @if (hostnameChoices().length) {
+        <button
+          mat-button
+          [ixTest]="['webshare', 'open']"
+          [attr.aria-label]="'Open WebShare' | translate"
+          [matTooltip]="'Choose the IP address to open WebShare through' | translate"
+          [matMenuTriggerFor]="hostnameMenu"
+        >
+          {{ 'Open WebShare' | translate }}
+        </button>
+        <mat-menu #hostnameMenu="matMenu">
+          @for (choice of hostnameChoices(); track choice.ip) {
+            <button
+              mat-menu-item
+              [ixTest]="['webshare', 'open', 'hostname', choice.ip]"
+              (click)="openWebShareThrough(choice.hostname)"
+            >{{ choice.ip }}</button>
+          }
+        </mat-menu>
+      } @else {
+        <button
+          mat-button
+          [ixTest]="['webshare', 'open']"
+          [attr.aria-label]="'Open WebShare' | translate"
+          [disabled]="!canOpenWebShare()"
+          [matTooltip]="canOpenWebShare()
+            ? ('Open WebShare' | translate)
+            : ('WebShare can only be opened when accessed via a .truenas.direct domain' | translate)"
+          (click)="openWebShare()"
+        >
+          {{ 'Open WebShare' | translate }}
+        </button>
+      }
 
       <button
         *ixRequiresRoles="requiredRoles"
