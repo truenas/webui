@@ -615,8 +615,15 @@ finished jobs, so runs are counted only from jobs that did not exist before the
 action. Editing and deleting from the row menu followed, each beside a task that
 must come through untouched. Edit opens the full replication form, not the wizard.
 The test renames the task and changes its retries, read-only policy and Enabled,
-then reads back the same record by id. Scheduled tasks and the periodic snapshot
-task the wizard makes for them, encryption, Restore and the full list page are not
+then reads back the same record by id. Restore and Download keys followed in the
+same spec. Restore only creates the reverse task, a disabled local pull from the
+original's target. So the original is run over the API as setup, and the restored
+task is then run from the card into a dataset that did not exist; the original's
+snapshot arriving there is the data coming back. Download keys is offered only
+for a source whose key middleware stores, which a passphrase never is. The source
+is therefore encrypted with a key the test chooses, and the downloaded file must
+map the target to exactly that key. Scheduled tasks and the periodic snapshot task
+the wizard makes for them, encrypting the target, and the full list page are not
 covered. Push over SSH is `tests/replication-ssh.e2e.ts`'s, below.
 
 Privileges came next, in `tests/privileges.e2e.ts`: adding, editing and deleting

@@ -13,6 +13,7 @@
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
+import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 /** A replication task as middleware reports it, with its id narrowed — see `GroupRecord`. */
@@ -104,6 +105,27 @@ export async function findSnapshotNames(client: E2eApiClient, dataset: string): 
   return snapshots
     .map((snapshot) => snapshot.name.slice(snapshot.name.indexOf('@') + 1))
     .sort((a, b) => a.localeCompare(b));
+}
+
+/**
+ * Runs a task to completion over the API, for a test about what comes after a run.
+ *
+ * Never for the run under test — the card's Run job is that. `replication.run` is
+ * a job, so this waits on its own terminal state rather than on the target.
+ */
+export async function runReplicationTaskOverApi(
+  client: E2eApiClient,
+  taskId: number,
+  timeoutMs: number,
+): Promise<void> {
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('replication.run', [taskId]),
+    {
+      timeoutMs,
+      whatItCosts: `replication task ${taskId} did not run, so its target holds nothing to act on`,
+    },
+  );
 }
 
 /** Takes a snapshot of one dataset, under a name the test chooses. */
