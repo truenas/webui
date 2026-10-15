@@ -45,6 +45,8 @@ let dataset = '';
 const passphrase = 'e2e-tier-passphrase';
 
 test.beforeAll(async ({ api, entitlements }) => {
+  // Every story here switches tiering on or off, and `zfs.tier.update` refuses
+  // an appliance without the key.
   test.skip(
     !isEntitled(entitlements, entitlementFeature.zfsTier),
     'This appliance is not entitled to ZFSTIER, so middleware refuses to turn tiering on.',
