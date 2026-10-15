@@ -35,7 +35,10 @@ export interface RsyncTaskSchedule {
   dow: string;
 }
 
-/** Where every task the suite makes points: nothing listens there. */
+/**
+ * Where every task the suite makes points. No rsync daemon listens there, so a
+ * Module-mode task reaches nothing; an SSH-mode task reaches the appliance's own sshd.
+ */
 export const rsyncRemoteHost = '127.0.0.1';
 
 /** Every task syncing this local path. `query`, so none is an ordinary answer. */
