@@ -65,4 +65,24 @@ export const infoDialogLocators = {
  */
 export const errorDialogLocators = {
   title: '[data-test="dialog-title-error"]',
+
+  /** "View Details", which unfolds the details table. Rendered only when the error has details. */
+  viewDetails: '[data-test="link-view-details"]',
+
+  /**
+   * A failed job's log, as a row of that table. The row is labelled "Logs Excerpt" and
+   * folded behind its own Show link, so the text is in the DOM only once that is clicked.
+   */
+  showLogsExcerpt: '[data-test="link-show-detail-logs-excerpt"]',
+  logsExcerpt: '[data-test="text-error-detail-logs-excerpt"]',
+} as const;
+
+/**
+ * webui's logs dialog (`DialogService.showLogs`): a finished job's `logs_excerpt`,
+ * raised by a task's state on Data Protection when the job did not fail.
+ */
+export const showLogsDialogLocators = {
+  title: '[data-test="dialog-title-show-logs"]',
+  logs: '[data-test="text-logs-excerpt"]',
+  close: '[data-test="button-close"]',
 } as const;
