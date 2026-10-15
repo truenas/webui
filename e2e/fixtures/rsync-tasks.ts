@@ -12,9 +12,9 @@
  * without touching data.
  *
  * The one exception is {@link ensureRsyncSshTaskPresent}, for a spec that runs a
- * task or edits one in SSH mode: SSH mode through an SSH connection back to the appliance itself — see
- * `fixtures/ssh-connections.ts` — so a run really copies files and the copy is a
- * directory the spec can read back. Running a task is a `rsynctask.run` job.
+ * task or edits one in SSH mode. It signs in through an SSH connection back to
+ * the appliance itself — see `fixtures/ssh-connections.ts` — so a run really
+ * copies files and the copy is a directory the spec can read back. Running a task is a `rsynctask.run` job.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -125,7 +125,7 @@ export async function ensureRsyncTaskPresent(
  * `127.0.0.1`, because the card names the row after it.
  *
  * `validate_rpath` is off: it would sign in over SSH on save to check the remote
- * path, and the run is what this task exists to check.
+ * path, and saving this task is setup, not what a spec checks.
  *
  * rsync is given both paths as written, with no trailing slash, so a run copies
  * the source directory itself into the destination: a push writes
