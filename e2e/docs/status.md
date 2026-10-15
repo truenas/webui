@@ -871,6 +871,24 @@ the test chooses makes a target that is its own encryption root. Custom retentio
 passphrase and inherited encryption, a key stored on the target, and periodic
 snapshot tasks are not covered.
 
+NVMe-oF followed, in `tests/nvme-of.e2e.ts`: adding a subsystem with the Add
+Subsystem form from the NVMe-oF Subsystems card on the Shares dashboard, with a
+zvol namespace, one existing TCP port and one existing allowed host; adding and
+removing a namespace, a port and a host on its details page, beside a second
+subsystem whose links must not change; creating a host with Require Host
+Authentication and a generated key; deleting a subsystem from its card row with
+Force; and saving the global base NQN. Each is asserted through the `nvmet.*`
+queries, reading the association ids `nvmet.subsys.query` returns with
+`verbose`. Ports and hosts are shared objects, so unlinking or deleting has to
+leave them, and the zvols, in place. The ports listen on `0.0.0.0` on service ids
+of their own, and the service is never started. The card's row tag is
+`nvmeof-subsys-<name>` without lodash, so `e2e` stays `e2e` on the row, its Name
+cell and its actions. RDMA, ANA and the SPDK implementation need RDMA hardware,
+HA or an entitlement, so the test only checks that they are disabled or absent.
+Creating a port through the port form, File namespaces, Manage Ports and Manage
+Hosts, Diffie–Hellman, renaming, the standalone list's search and a real
+initiator connection are not covered.
+
 The framework is done and the coverage of the 19 top-level feature areas is
 not. What the work bought is that the next twenty tests are cheap: the target
 seam, auth, fixtures, unconditional teardown, selector discipline and failure
