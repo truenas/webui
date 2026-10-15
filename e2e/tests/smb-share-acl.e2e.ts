@@ -164,10 +164,10 @@ test('Edit Filesystem ACL is disabled for a share on a pool root', async ({ page
   // A developer's own pool can hold other such datasets, and those are not this
   // spec's to remove.
   const mixed = await findMixedAclChildren(api, pool);
+  const mixedList = mixed.join(', ');
   test.skip(
     mixed.length > 0,
-    `Pool "${pool}" holds datasets with another ACL type than its root (${mixed.join(', ')}), `
-    + 'so middleware refuses a share on the root.',
+    `Pool "${pool}" holds datasets of another ACL type than its root (${mixedList}), so a root share is refused.`,
   );
   await ensureSmbSharePresent(api, { name: rootShare, path: datasetMountPath(pool) });
 
