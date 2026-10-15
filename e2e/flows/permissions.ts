@@ -1,8 +1,10 @@
 /**
- * A dataset's owner, group and Unix mode, driven through the Unix Permissions Editor.
+ * A dataset's owner, group and Unix mode, driven through the Unix Permissions Editor, and its
+ * NFSv4 entries, driven through the ACL editor.
  */
 import { expect, type Page } from '@playwright/test';
 import { goToDatasets } from './navigation';
+import { selectOption } from './storage';
 import { datasetMountPath } from '../fixtures/storage';
 import { permissionsLocators, type AccessRight, type AccessWho } from '../locators/permissions';
 import { datasetDetailsLocators, datasetLocators } from '../locators/storage';
@@ -57,6 +59,37 @@ export async function chooseGroup(page: Page, group: string): Promise<void> {
 /** Ticks or clears one box of the Access Mode table. */
 export async function setAccess(page: Page, who: AccessWho, right: AccessRight, allowed: boolean): Promise<void> {
   await page.locator(editor.access(who, right)).setChecked(allowed);
+}
+
+/**
+ * Adds an entry for `username` in the ACL editor, with the given basic permission.
+ *
+ * "Add Item" appends an entry for a user and selects it, so the entry form on
+ * the right is the new entry's. Its flags stay at the default, Inherit.
+ */
+export async function addAclUserEntry(page: Page, username: string, permission: string): Promise<void> {
+  const aclEditor = permissionsLocators.aclEditor;
+
+  await page.locator(aclEditor.addItem).click();
+  await page.locator(aclEditor.user).fill(username);
+  await page.locator(aclEditor.userOption(username)).click();
+  await selectOption(page, aclEditor.basicPermission, aclEditor.basicPermissionOption(permission));
+}
+
+/**
+ * Saves the ACL and waits for the editor to close.
+ *
+ * Save stays disabled while any entry is invalid, and the user field is checked
+ * asynchronously, so it waits for Save to be enabled first. Saving runs
+ * `filesystem.setacl` as a job, and the editor navigates away only once it has
+ * succeeded.
+ */
+export async function saveAcl(page: Page): Promise<void> {
+  const save = page.locator(permissionsLocators.aclEditor.save);
+
+  await expect(save).toBeEnabled();
+  await save.click();
+  await expect(save).toBeHidden({ timeout: saveTimeoutMs });
 }
 
 /**

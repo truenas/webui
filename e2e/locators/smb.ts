@@ -163,6 +163,41 @@ export const smbLocators = {
    */
   enableAppleExtensions: '[data-test="button-enable-apple-extensions"]',
 
+  /**
+   * The Share ACL panel (`smb-acl.component.html`), one `tn-form-list` row per
+   * entry.
+   *
+   * Every row's controls carry the same ids, so with more than one row a
+   * selector matches all of them. Flows pick a row by its position, which is
+   * the order `sharing.smb.getacl` returns.
+   */
+  shareAcl: {
+    /** `tn-form-list` names its Add control `['add-item', label]`; the label is "ACL Entries". */
+    add: '[data-test="button-add-item-acl-entries"]',
+    /** A row's remove control, `testId="remove-from-list"` on the `tn-form-list-item`. */
+    remove: '[data-test="button-remove-from-list"]',
+
+    who: '[data-test="select-ae-who"]',
+    /** By label: "User", "Group" or "everyone@". */
+    whoOption: (label: string): string => `[data-test="option-ae-who-${kebabTestSegment(label)}"]`,
+    /** `ix-user-combobox [testId]="'user'"`. Lists SMB users only. Rendered while Who is User. */
+    user: '[data-test="autocomplete-user"]',
+    /**
+     * Keyed by username, not uid: the picker stores the uid, but the option id
+     * comes from the label, so `e2e_acl_user` renders `option-user-e2e-acl-user`.
+     */
+    userOption: (username: string): string => `[data-test="option-user-${kebabTestSegment(username)}"]`,
+    permission: '[data-test="select-ae-perm"]',
+    /** By label: "FULL", "CHANGE" or "READ". */
+    permissionOption: (label: string): string => `[data-test="option-ae-perm-${kebabTestSegment(label)}"]`,
+    type: '[data-test="select-ae-type"]',
+    /** By label: "ALLOWED" or "DENIED". */
+    typeOption: (label: string): string => `[data-test="option-ae-type-${kebabTestSegment(label)}"]`,
+
+    /** The side panel's own Save, which runs `sharing.smb.setacl`. */
+    save: '[data-test="button-save"]',
+  },
+
   card: {
     /**
      * The SMB service switch in the card header — `service-<name>` under the
@@ -198,6 +233,21 @@ export const smbLocators = {
 
     /** Edit, inside that menu. Same shape as {@link rowMenuDelete}. */
     rowMenuEdit: (name: string): string => `[data-test="button-card-smb-share-${kebabTestSegment(name)}-more-action-mdi-pencil-row-action"]`,
+
+    /** Edit Share ACL, inside that menu. Its icon is `share-variant`. Opens {@link smbLocators.shareAcl}. */
+    rowMenuShareAcl: (name: string): string => (
+      `[data-test="button-card-smb-share-${kebabTestSegment(name)}-more-action-mdi-share-variant-row-action"]`
+    ),
+
+    /**
+     * Edit Filesystem ACL, inside that menu. Its icon is `security`. Opens the
+     * dataset ACL editor on the share's path.
+     *
+     * Disabled for a share on a pool's root (`isRootShare`).
+     */
+    rowMenuFilesystemAcl: (name: string): string => (
+      `[data-test="button-card-smb-share-${kebabTestSegment(name)}-more-action-mdi-security-row-action"]`
+    ),
 
     /**
      * A share's Description cell.

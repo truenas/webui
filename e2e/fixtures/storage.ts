@@ -223,7 +223,7 @@ export async function findPoolScan(client: E2eApiClient, name: string): Promise<
 }
 
 /** An entry of an NFSv4 ACL, named from the library rather than hand-written. */
-type Nfs4Ace = Extract<
+export type Nfs4Ace = Extract<
   CallResponse<E2eApiDirectory, 'filesystem.getacl'>, { acltype: 'NFS4' }
 >['acl'][number];
 
@@ -412,6 +412,33 @@ export async function findDataset(
   return dataset;
 }
 
+/** The two fields of a `pool.dataset.query` row that {@link findMixedAclChildren} reads. */
+interface DatasetAclType {
+  id: string;
+  acltype?: { value?: string } | null;
+}
+
+/**
+ * The datasets under `pool` whose ACL type is not the pool root's.
+ *
+ * Middleware refuses an SMB share whose path holds one ("ACL type mismatch with
+ * child mountpoint"), so a share on the pool root can be made only while this
+ * is empty. Filesystems only: a zvol is never mounted and has no ACL type.
+ */
+export async function findMixedAclChildren(client: E2eApiClient, pool: string): Promise<string[]> {
+  // Narrowed to the two fields read here, as `findPoolScan` does with the scan.
+  const datasets = await firstValueFrom(
+    client.api
+      .query('pool.dataset.query', [['pool', '=', pool], ['type', '=', 'FILESYSTEM']])
+      .pipe(timeout(readTimeoutMs)),
+  ) as unknown as DatasetAclType[];
+  const rootAclType = datasets.find((dataset) => dataset.id === pool)?.acltype?.value;
+
+  return datasets
+    .filter((dataset) => dataset.id !== pool && dataset.acltype?.value !== rootAclType)
+    .map((dataset) => dataset.id);
+}
+
 /** Creates a plain filesystem dataset by full name (`pool/name`) if absent. */
 export async function ensureDatasetPresent(client: E2eApiClient, name: string): Promise<void> {
   if (await findDataset(client, name)) {
@@ -420,6 +447,25 @@ export async function ensureDatasetPresent(client: E2eApiClient, name: string): 
 
   await firstValueFrom(
     client.api.call('pool.dataset.create', [{ name, type: 'FILESYSTEM' }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
+ * Creates a dataset with the SMB preset by full name if absent.
+ *
+ * The preset makes the dataset NFSv4 and gives it a non-trivial ACL. That
+ * matters to the ACL editor: it offers a preset picker first for a trivial ACL,
+ * and opens straight onto the entries for anything else.
+ */
+export async function ensureSmbDatasetPresent(client: E2eApiClient, name: string): Promise<void> {
+  if (await findDataset(client, name)) {
+    return;
+  }
+
+  await firstValueFrom(
+    client.api
+      .call('pool.dataset.create', [{ name, type: 'FILESYSTEM', share_type: 'SMB' }])
+      .pipe(timeout(slowCallTimeoutMs)),
   );
 }
 
