@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { CallResponse } from '@truenas/api-client';
 import {
-  TnBannerHarness, TnButtonHarness, TnSlideToggleHarness, TnTableHarness, type TnMenuItem,
+  TnBannerHarness, TnButtonHarness, TnSlideToggleHarness, TnTableHarness, TnTooltipHarness, type TnMenuItem,
 } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -556,12 +556,15 @@ describe('WebShareCardComponent - WebShare service not running', () => {
     expect(await openButton.isDisabled()).toBe(true);
   });
 
-  it('explains why the button is disabled via the action tooltip', () => {
-    const openAction = (spectator.component as unknown as {
-      openAction: Signal<{ tooltip?: string } | undefined>;
-    }).openAction();
+  it('explains why the button is disabled via its tooltip', async () => {
+    const openButton = await loader.getHarness(
+      TnButtonHarness.with({ label: 'Open WebShare' }),
+    );
+    await (await openButton.host()).hover();
 
-    expect(openAction?.tooltip).toBe('WebShare is unavailable because the WebShare service is not running.');
+    const tooltip = await TestbedHarnessEnvironment.documentRootLoader(spectator.fixture)
+      .getHarness(TnTooltipHarness);
+    expect(await tooltip.getText()).toBe('WebShare is unavailable because the WebShare service is not running.');
   });
 });
 
