@@ -18,9 +18,9 @@
  * than once through `storageState`.
  */
 import { expect, type Page, test as base } from '@playwright/test';
-import { recordApiCalls } from './api-calls';
 import type { E2eApiClient } from './api/client';
 import { connectAndLogin } from './api/client';
+import { recordApiCalls } from './api-calls';
 import { buildTokenLoginUrl, generateAuthToken } from './auth/token';
 import { keepTestData } from './cleanup';
 import { loadTargetConfig, type TargetConfig } from './config';
