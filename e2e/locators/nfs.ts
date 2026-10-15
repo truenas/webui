@@ -21,6 +21,18 @@ import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
  */
 const rowTag = (path: string, description: string): string => `${path}-${description}`;
 
+/** Middleware's names for a share's security flavours, which are also the Security select's labels. */
+export type NfsSecurityFlavour = 'SYS' | 'KRB5' | 'KRB5I' | 'KRB5P';
+
+/** Middleware's names for the NFS protocol versions. */
+export type NfsProtocolName = 'NFSV3' | 'NFSV4';
+
+/** What the Enabled Protocols select shows for each version. Its option ids are keyed on these labels. */
+export const nfsProtocolLabels: Record<NfsProtocolName, string> = {
+  NFSV3: 'NFSv3',
+  NFSV4: 'NFSv4',
+};
+
 export const nfsLocators = {
   /**
    * "Add" in the UNIX (NFS) Shares card on the Shares dashboard —
@@ -46,6 +58,32 @@ export const nfsLocators = {
     advancedToggle: '[data-test="button-toggle-advanced-options"]',
     /** "Read Only" — in the Access section, so not rendered until {@link advancedToggle} is on. */
     readOnly: '[data-test="checkbox-ro"]',
+
+    /**
+     * The four mapping fields, also in the Access section. Each is an
+     * `ix-user-combobox` or `ix-group-combobox` with an explicit `testId`, which
+     * renders a library `tn-autocomplete`: the input is `autocomplete-<testId>`
+     * and its rows are `option-<testId>-<name>`.
+     */
+    maprootUser: '[data-test="autocomplete-maproot-user"]',
+    maprootUserOption: (user: string): string => `[data-test="option-maproot-user-${kebabTestSegment(user)}"]`,
+    maprootGroup: '[data-test="autocomplete-maproot-group"]',
+    maprootGroupOption: (group: string): string => `[data-test="option-maproot-group-${kebabTestSegment(group)}"]`,
+    mapallUser: '[data-test="autocomplete-mapall-user"]',
+    mapallUserOption: (user: string): string => `[data-test="option-mapall-user-${kebabTestSegment(user)}"]`,
+    mapallGroup: '[data-test="autocomplete-mapall-group"]',
+    mapallGroupOption: (group: string): string => `[data-test="option-mapall-group-${kebabTestSegment(group)}"]`,
+
+    /**
+     * "Security", a multiple `tn-select`. Rendered only while the NFS service has
+     * NFSv4 among its protocols, which the form reads from `nfs.config` as it opens.
+     * Options are keyed on their labels, which are the flavours' own names
+     * (`SYS`, `KRB5`, …), so they read like the values middleware stores.
+     */
+    security: '[data-test="select-security"]',
+    securityOption: (flavour: NfsSecurityFlavour): string => (
+      `[data-test="option-security-${kebabTestSegment(flavour)}"]`
+    ),
 
     /**
      * The path's validation message, when it has one. Rendered by `ix-explorer`
@@ -89,6 +127,27 @@ export const nfsLocators = {
   startService: '[data-test="button-enable-service"]',
   /** "No" on that same dialog. What a spec that only cares about the form clicks. */
   declineStartService: '[data-test="button-do-not-start"]',
+
+  /**
+   * The NFS service settings, reached from the card header's menu and opened in
+   * the card's own side panel. The form is `service-nfs.component.html`.
+   */
+  serviceConfig: {
+    /**
+     * The card header's menu trigger, `button-<service.id>-actions-menu` from
+     * `ServiceActionsMenuService.cardHeaderMenuTriggerTestId` — keyed on the
+     * service's numeric id, which the test reads over the API.
+     */
+    cardMenuTrigger: (serviceId: number): string => `[data-test="button-${serviceId}-actions-menu"]`,
+    /** "Config Service" in that menu: `['button', 'nfs', 'actions-menu', 'Config Service']`, joined. */
+    open: '[data-test="button-nfs-actions-menu-config-service"]',
+    /** "Enabled Protocols", a multiple `tn-select` with `testId="protocols"`. */
+    protocols: '[data-test="select-protocols"]',
+    protocolOption: (protocol: NfsProtocolName): string => (
+      `[data-test="option-protocols-${kebabTestSegment(nfsProtocolLabels[protocol])}"]`
+    ),
+    save: '[data-test="button-save"]',
+  },
 
   card: {
     /**
