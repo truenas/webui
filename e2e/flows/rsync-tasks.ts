@@ -97,6 +97,22 @@ export async function saveRsyncTaskForm(page: Page): Promise<void> {
 }
 
 /**
+ * Runs a task from its row menu.
+ *
+ * Run asks first through webui's shared confirm, raised with `hideCheckbox`, so
+ * there is no box to tick. The answer is a snackbar, so there is nothing to
+ * close; the spec reads the outcome from the appliance and the row's state.
+ */
+export async function runRsyncTaskFromCard(page: Page, path: string, remoteHost: string): Promise<void> {
+  await openRowMenu(page, path, remoteHost);
+  await page.locator(rsyncTaskLocators.card.rowMenuRun(path, remoteHost)).click();
+
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+  await page.locator(confirmDialogLocators.confirm).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeHidden();
+}
+
+/**
  * Deletes a task from its row menu, and waits for its row to go.
  *
  * The card raises webui's shared confirm through `confirmDelete`, which does not
