@@ -7,7 +7,7 @@ import { confirmTaskDelete, confirmTaskRun, openFullListFromCard } from './data-
 import { goToDataProtection } from './navigation';
 import { selectOption } from './storage';
 import { confirmDialogLocators } from '../locators/dialogs';
-import { rsyncTaskLocators } from '../locators/rsync-tasks';
+import { rsyncKeychainConnectLabel, rsyncSshModeLabel, rsyncTaskLocators } from '../locators/rsync-tasks';
 
 /** Creating, updating and deleting a task are middleware calls, not instant. */
 const saveTimeoutMs = 60_000;
@@ -79,6 +79,25 @@ export async function chooseRsyncTaskUser(page: Page, username: string): Promise
 export async function chooseRsyncTaskDirection(page: Page, label: string): Promise<void> {
   const { form } = rsyncTaskLocators;
   await selectOption(page, form.direction, form.directionOption(label));
+}
+
+/**
+ * Switches the form to SSH mode, signing in through a saved SSH connection, and
+ * sets the remote path.
+ *
+ * Each control renders only once the one before it has its value: the connect
+ * mode in SSH mode, and the connection select once the keychain is picked. The
+ * connection's options load from middleware, which the option click waits for.
+ */
+export async function connectRsyncTaskOverSsh(
+  page: Page,
+  { connection, remotePath }: { connection: string; remotePath: string },
+): Promise<void> {
+  const { form } = rsyncTaskLocators;
+  await selectOption(page, form.mode, form.modeOption(rsyncSshModeLabel));
+  await selectOption(page, form.sshConnectMode, form.sshConnectModeOption(rsyncKeychainConnectLabel));
+  await selectOption(page, form.sshConnection, form.sshConnectionOption(connection));
+  await page.locator(form.remotePath).fill(remotePath);
 }
 
 /** Picks a schedule preset by its whole label — see `hourlyScheduleLabel` in `locators/cron.ts`. */

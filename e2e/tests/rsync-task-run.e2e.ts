@@ -16,8 +16,8 @@
  * a kebab menu, so Run job belongs to whichever row's menu was opened, and a
  * row-targeting bug would run the wrong task without failing anything else.
  *
- * Add, edit and delete are `rsync-tasks.e2e.ts`. SSH mode settings and Pull are
- * #14408's.
+ * Add, edit and delete are `rsync-tasks.e2e.ts`. SSH mode in the form, and Pull,
+ * are `rsync-task-ssh.e2e.ts`.
  */
 import { findFileNames, writeFileOnAppliance } from '../fixtures/cloud-sync';
 import {

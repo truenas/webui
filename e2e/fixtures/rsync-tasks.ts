@@ -12,7 +12,7 @@
  * without touching data.
  *
  * The one exception is {@link ensureRsyncSshTaskPresent}, for a spec that runs a
- * task: SSH mode through an SSH connection back to the appliance itself — see
+ * task or edits one in SSH mode: SSH mode through an SSH connection back to the appliance itself — see
  * `fixtures/ssh-connections.ts` — so a run really copies files and the copy is a
  * directory the spec can read back. Running a task is a `rsynctask.run` job.
  */
@@ -117,8 +117,8 @@ export async function ensureRsyncTaskPresent(
 }
 
 /**
- * Creates an SSH-mode push task on this path, as root, through an SSH
- * connection, if it has none already.
+ * Creates an SSH-mode task on this path, as root, through an SSH connection, if
+ * it has none already. A push unless `direction` says otherwise.
  *
  * Middleware takes the host, user and key from the connection and ignores
  * `remotehost` in this mode. It is set anyway, to the connection's own
@@ -127,8 +127,9 @@ export async function ensureRsyncTaskPresent(
  * `validate_rpath` is off: it would sign in over SSH on save to check the remote
  * path, and the run is what this task exists to check.
  *
- * rsync is given the local path with no trailing slash, so a run copies the
- * directory itself into `remotePath` — `<remotePath>/<last segment of path>/`.
+ * rsync is given both paths as written, with no trailing slash, so a run copies
+ * the source directory itself into the destination: a push writes
+ * `<remotePath>/<last segment of path>/`, a pull `<path>/<last segment of remotePath>/`.
  */
 export async function ensureRsyncSshTaskPresent(
   client: E2eApiClient,
@@ -138,6 +139,7 @@ export async function ensureRsyncSshTaskPresent(
     remotePath,
     description,
     schedule,
+    direction = 'PUSH',
     extra = [],
   }: {
     path: string;
@@ -145,6 +147,7 @@ export async function ensureRsyncSshTaskPresent(
     remotePath: string;
     description: string;
     schedule: RsyncTaskSchedule;
+    direction?: 'PUSH' | 'PULL';
     /** Extra rsync arguments. `--verbose` makes a run name what it copied in its log. */
     extra?: string[];
   },
@@ -162,7 +165,7 @@ export async function ensureRsyncSshTaskPresent(
       remotehost: rsyncRemoteHost,
       remotepath: remotePath,
       validate_rpath: false,
-      direction: 'PUSH',
+      direction,
       desc: description,
       schedule,
       extra,
