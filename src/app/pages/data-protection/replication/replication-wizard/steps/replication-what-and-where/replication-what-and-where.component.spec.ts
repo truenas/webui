@@ -190,6 +190,19 @@ describe('ReplicationWhatAndWhereComponent', () => {
     expect(await nextButton.isDisabled()).toBe(false);
   });
 
+  it('keeps "Next" disabled while the name is still being checked', async () => {
+    const nextButton = await loader.getHarness(TnButtonHarness.with({ label: 'Next' }));
+    await (await getInput('name_regex')).setValue('.*');
+    spectator.fixture.detectChanges();
+    await spectator.fixture.whenStable();
+    expect(await nextButton.isDisabled()).toBe(false);
+
+    spectator.component.form.controls.name.markAsPending();
+
+    expect(spectator.component.completed()).toBe(false);
+    expect(await nextButton.isDisabled()).toBe(true);
+  });
+
   it('loads from an existing replication task', async () => {
     await (await getSelect('exist_replication')).selectOption('task1 (never ran)');
     const payload = spectator.component.getPayload();

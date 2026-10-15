@@ -149,7 +149,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     ],
   });
 
-  // Drives the stepper's linear gating (replaces mat's [stepControl]).
+  // Drives the stepper's linear gating (replaces mat's [stepControl]), and Next's
+  // disabled state with it. `form.invalid` is false while the name's async
+  // uniqueness check is pending, so Next would take a click the stepper refuses.
   readonly completed = toSignal(
     this.form.statusChanges.pipe(startWith(this.form.status), map(() => this.form.valid)),
     { initialValue: this.form.valid },
