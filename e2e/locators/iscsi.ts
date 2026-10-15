@@ -193,8 +193,12 @@ export const iscsiLocators = {
 
   /** The Extents tab. */
   extents: {
-    /** "Add" in the list's header. */
-    add: '[data-test="button-add-extent"]',
+    /**
+     * "Add" in the list's header. The same id as the Targets tab's Add — a frozen
+     * misnomer in `extent-list.component.html`. The page mounts one tab at a
+     * time, so this is only unambiguous once the Extents tab's URL is showing.
+     */
+    add: '[data-test="button-add-target"]',
 
     row: (name: string): string => `[data-test="row-${kebabTestSegment(extentRowTag(name))}"]`,
 

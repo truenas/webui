@@ -228,14 +228,19 @@ export async function removeIscsiExtentAssociation(page: Page, extentId: number)
   await expect(page.locator(targets.associatedExtent(extentId))).toBeHidden({ timeout: panelSaveTimeoutMs });
 }
 
-/** Opens the Add extent form from the Extents tab. */
+/**
+ * Opens the Add extent form from the Extents tab.
+ *
+ * Its Add button shares an id with the Targets tab's, so the form is confirmed
+ * by Extent Type, which the Add target form does not have.
+ */
 async function openAddIscsiExtentForm(page: Page): Promise<void> {
   const { extents, extentForm } = iscsiLocators;
   await goToIscsiExtents(page);
 
   await expect(page.locator(extents.add)).toBeVisible({ timeout: formSettleTimeoutMs });
   await page.locator(extents.add).click();
-  await expect(page.locator(extentForm.name)).toBeVisible({ timeout: formSettleTimeoutMs });
+  await expect(page.locator(extentForm.type)).toBeVisible({ timeout: formSettleTimeoutMs });
 }
 
 async function saveIscsiExtentForm(page: Page): Promise<void> {

@@ -724,8 +724,10 @@ one extent's description beside a second that must not change, and deleting a
 File extent with "Remove file?" ticked, which must take its file and leave a
 second extent's. Everything is read back through the `iscsi.*` queries, and a
 file through `filesystem.listdir`. Row tags are `iscsi-target-<name>` and
-`iscsi-extent-<name>` through lodash. The Extents tab's Add button was
-`add-target`, the same id as the Targets tab's, and is now `add-extent`.
+`iscsi-extent-<name>` through lodash. The Extents tab's Add button is
+`add-target`, the same id as the Targets tab's, and is left that way because a
+`data-test` is a Release Engineering contract; one tab is mounted at a time, so
+the flow clicks it once the Extents URL shows and checks for Extent Type.
 Teardown removes targets before extents, and extents before the portal and
 initiator group, since middleware refuses to delete an extent a target still
 uses.
