@@ -1,8 +1,9 @@
 /**
  * Stories: an admin creates a replication task between two datasets on the same
  * appliance, and runs one, from the card on Data Protection — and the target
- * really ends up holding the source's snapshots. They also edit and delete a
- * task from the card, and the appliance holds what they did.
+ * really ends up holding the source's snapshots. They also edit, delete and
+ * restore from a task, and download its encryption keys, from the card, and the
+ * appliance holds what they did.
  *
  * Each action is asserted on the card and on the appliance: `replication.query`
  * for the task as stored, `core.get_jobs` for whether the run worked, and
@@ -24,7 +25,8 @@
  * Restore makes the reverse task and runs nothing, so the restore test runs the
  * original over the API first — that run is setup, not the thing under test —
  * and then runs the restored task from the card into a dataset that did not
- * exist, which holding the original's snapshot afterwards proves was a pull back.
+ * exist. The stored task's direction and source say it pulls from the original's
+ * target; the new dataset holding that snapshot afterwards says the pull ran.
  *
  * Download keys is offered only for a source whose key middleware stores, which
  * a passphrase never is. The source is encrypted with a key the test chooses,
