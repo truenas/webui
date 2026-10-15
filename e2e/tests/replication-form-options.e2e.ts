@@ -240,15 +240,18 @@ test('encryption with a HEX key set in the form is saved, and a run makes an enc
   await encryptReplicationTargetWithHexKey(page, targetKey);
   await saveReplicationTaskForm(page);
 
-  expect(await findReplicationTask(api, encryptionName)).toMatchObject({
+  const saved = await findReplicationTask(api, encryptionName);
+  expect(saved).toMatchObject({
     id: before.id,
     encryption: true,
-    encryption_inherit: false,
     encryption_key_format: 'HEX',
     encryption_key: targetKey,
     // The form's "Store Encryption key in Sending TrueNAS database", which it leaves ticked.
     encryption_key_location: '$TrueNAS',
   });
+  // Not inheriting. A task saved without encryption holds null here, and the form sends back the
+  // value it loaded while Inherit Encryption stays unticked, so this is null rather than false.
+  expect(saved?.encryption_inherit).toBeFalsy();
 
   await runFromListAndWait(page, api, { name: encryptionName, id: before.id });
 
