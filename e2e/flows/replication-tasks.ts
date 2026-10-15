@@ -1,7 +1,14 @@
 /**
- * Replication tasks, driven through the UI from the Data Protection page.
+ * Replication tasks, driven through the UI from the Data Protection page and
+ * from their full list.
  */
 import { expect, type Download, type Page } from '@playwright/test';
+import {
+  confirmTaskDelete,
+  confirmTaskRun,
+  expandTaskListRow,
+  openFullListFromCard,
+} from './data-protection';
 import { goToDataProtection } from './navigation';
 import { selectOption } from './storage';
 import { confirmDialogLocators, infoDialogLocators } from '../locators/dialogs';
@@ -253,4 +260,77 @@ export async function deleteReplicationTask(page: Page, name: string): Promise<v
 
   await confirm.click();
   await expect(page.locator(replicationTaskLocators.card.row(name))).toBeHidden({ timeout: editTimeoutMs });
+}
+
+/** Opens the full list, `/data-protection/replication`, from the card's title, starting from the sidebar. */
+export async function openReplicationTaskList(page: Page): Promise<void> {
+  await openFullListFromCard(page, {
+    link: replicationTaskLocators.card.open,
+    route: /\/data-protection\/replication\/?$/,
+    arrived: replicationTaskLocators.list.add,
+  });
+}
+
+/** Opens a row's detail panel on the full list, starting from the sidebar, and waits for `action` in it. */
+async function expandListRow(page: Page, name: string, action: string): Promise<void> {
+  await openReplicationTaskList(page);
+  await expandTaskListRow(page, replicationTaskLocators.list.name(name), action);
+}
+
+/**
+ * Runs a task from its row's detail panel on the full list, and answers the confirm.
+ *
+ * The panel's actions are keyed by the task's id, so the caller reads it over the API first.
+ */
+export async function runReplicationTaskFromList(
+  page: Page,
+  { name, id }: { name: string; id: number },
+): Promise<void> {
+  const runNow = replicationTaskLocators.list.runNow(id);
+  await expandListRow(page, name, runNow);
+  await page.locator(runNow).click();
+  await confirmTaskRun(page);
+}
+
+/**
+ * Opens the edit form for a task from its row's detail panel on the full list.
+ *
+ * The list opens the card's form, so this waits on the same thing: the task's
+ * name having been patched in.
+ */
+export async function openEditReplicationTaskFormFromList(
+  page: Page,
+  { name, id }: { name: string; id: number },
+): Promise<void> {
+  const edit = replicationTaskLocators.list.edit(id);
+  await expandListRow(page, name, edit);
+  await page.locator(edit).click();
+  await expect(page.locator(replicationTaskLocators.form.name)).toHaveValue(name);
+}
+
+/** Deletes a task from its row's detail panel on the full list, and waits for its row to go. */
+export async function deleteReplicationTaskFromList(
+  page: Page,
+  { name, id }: { name: string; id: number },
+): Promise<void> {
+  const remove = replicationTaskLocators.list.delete(id);
+  await expandListRow(page, name, remove);
+  await page.locator(remove).click();
+  await confirmTaskDelete(page, replicationTaskLocators.list.row(name));
+}
+
+/**
+ * Flips the Enabled switch on a row of the full list, on a freshly loaded list.
+ *
+ * The list writes the opposite of what the row was loaded with, so going back
+ * to the list through the sidebar each time is what makes a second flip write
+ * from what the appliance holds after the first. The caller reads the appliance
+ * to learn what happened.
+ */
+export async function toggleReplicationTaskEnabledInList(page: Page, name: string): Promise<void> {
+  await openReplicationTaskList(page);
+
+  const toggle = page.locator(replicationTaskLocators.list.enabledToggle(name));
+  await expect(toggle).toBeVisible({ timeout: editTimeoutMs });
+  await toggle.click();
 }

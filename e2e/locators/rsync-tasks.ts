@@ -1,5 +1,5 @@
 /**
- * The Rsync Tasks card on Data Protection, and its form.
+ * The Rsync Tasks card on Data Protection, its full list, and its form.
  *
  * Every id on a row is built from the card's own `uniqueRowTag`,
  * `convertStringToId('card-rsync-task-' + path + '-' + remotehost)`, which
@@ -16,10 +16,21 @@
  * `ix-user-combobox` the cron form uses, and its schedule is the shared
  * `ix-scheduler`.
  */
-import { kebabTestSegment } from './test-id';
+import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 
 function rowTag(path: string, remoteHost: string): string {
   return kebabTestSegment(`card-rsync-task-${path}-${remoteHost}`.toLowerCase());
+}
+
+/**
+ * The full list's row tag, `toUniqueRowTag('rsync-task-' + path + '-' + remotehost)`.
+ *
+ * Not the card's. It has no `card-` prefix, and `toUniqueRowTag` runs the whole
+ * tag through lodash, which splits letters from digits, so a path under `e2e_…`
+ * comes out as `e-2-e-…` here where the card writes `e2e-…`.
+ */
+function listRowTag(path: string, remoteHost: string): string {
+  return legacyKebabTestSegment(`rsync-task-${path}-${remoteHost}`.toLowerCase());
 }
 
 export const rsyncTaskLocators = {
@@ -84,6 +95,48 @@ export const rsyncTaskLocators = {
   list: {
     /** The full list page's Add, in its page header. */
     add: '[data-test="button-add-task"]',
+
+    row: (path: string, remoteHost: string): string => `[data-test="row-${listRowTag(path, remoteHost)}"]`,
+
+    /** Every row on the list, whichever task it is: a prefix of {@link row}. */
+    anyRow: '[data-test^="row-rsync-task-"]',
+
+    /** The Path cell. Its base is the column title, so `text-path`. */
+    path: (path: string, remoteHost: string): string => (
+      `[data-test="text-path-${listRowTag(path, remoteHost)}-row-text"]`
+    ),
+
+    /**
+     * The Status cell. The same `ix-task-state-cell` as the card's State, but
+     * the list titles the column Status, so its base is `status`.
+     */
+    status: (path: string, remoteHost: string): string => (
+      `[data-test="button-status-${listRowTag(path, remoteHost)}-row-state"]`
+    ),
+
+    /**
+     * The row's action menu trigger. The list has the card's three actions (Run
+     * job, Edit, Delete) and does not ask for `mode="inline"` either, so they
+     * sit in a kebab menu here too.
+     */
+    rowMenu: (path: string, remoteHost: string): string => (
+      `[data-test="button-${listRowTag(path, remoteHost)}-more-action"]`
+    ),
+
+    /** Run job, inside that menu: the trigger's own id with the icon appended. */
+    rowMenuRun: (path: string, remoteHost: string): string => (
+      `[data-test="button-${listRowTag(path, remoteHost)}-more-action-mdi-play-circle-row-action"]`
+    ),
+
+    /** Edit, inside that menu. Same shape as {@link rowMenuRun}. */
+    rowMenuEdit: (path: string, remoteHost: string): string => (
+      `[data-test="button-${listRowTag(path, remoteHost)}-more-action-mdi-pencil-row-action"]`
+    ),
+
+    /** Delete, inside that menu. Same shape as {@link rowMenuRun}. */
+    rowMenuDelete: (path: string, remoteHost: string): string => (
+      `[data-test="button-${listRowTag(path, remoteHost)}-more-action-mdi-delete-row-action"]`
+    ),
   },
 
   form: {

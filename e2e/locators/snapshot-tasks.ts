@@ -1,5 +1,5 @@
 /**
- * The Periodic Snapshot Tasks card on Data Protection, and its form.
+ * The Periodic Snapshot Tasks card on Data Protection, its full list, and its form.
  *
  * Every id on a row is built from the card's own `uniqueRowTag`,
  * `convertStringToId('snapshot-task-' + dataset)`, which lowercases the tag and
@@ -15,10 +15,23 @@
  * The form's controls declare their `testId`s, and its schedule is the shared
  * `ix-scheduler` — the same control the cron form uses.
  */
-import { kebabTestSegment } from './test-id';
+import { taskListDetailAction } from './data-protection';
+import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 
 function rowTag(dataset: string): string {
   return kebabTestSegment(`snapshot-task-${dataset}`.toLowerCase());
+}
+
+/**
+ * The full list's row tag, `toUniqueRowTag('snapshot-task-' + dataset + '-' + naming_schema)`.
+ *
+ * Not the card's. It carries the naming schema as well, so editing the schema
+ * renames every id on the row. `toUniqueRowTag` also runs the whole tag through
+ * lodash, which splits letters from digits, so a dataset under `e2e_…` comes out
+ * as `e-2-e-…` here where the card writes `e2e-…`.
+ */
+function listRowTag(dataset: string, namingSchema: string): string {
+  return legacyKebabTestSegment(`snapshot-task-${dataset}-${namingSchema}`.toLowerCase());
 }
 
 export const snapshotTaskLocators = {
@@ -71,6 +84,33 @@ export const snapshotTaskLocators = {
   list: {
     /** The full list page's Add, in its page header. */
     add: '[data-test="button-add-task"]',
+
+    row: (dataset: string, namingSchema: string): string => (
+      `[data-test="row-${listRowTag(dataset, namingSchema)}"]`
+    ),
+
+    /** Every row on the list, whichever task it is: a prefix of {@link row}. */
+    anyRow: '[data-test^="row-snapshot-task-"]',
+
+    /**
+     * The Pool/Dataset cell. Its base is the column title, so `text-pool-dataset`.
+     * Clicking it opens the row's detail panel, like clicking anywhere else in the row.
+     */
+    dataset: (dataset: string, namingSchema: string): string => (
+      `[data-test="text-pool-dataset-${listRowTag(dataset, namingSchema)}-row-text"]`
+    ),
+
+    /**
+     * Edit, in the row's detail panel. The list has no Run and no Enabled
+     * switch, so Edit and Delete are the panel's only actions.
+     */
+    edit: (dataset: string, namingSchema: string): string => (
+      taskListDetailAction([dataset, namingSchema], 'edit')
+    ),
+    /** Delete, in the row's detail panel. */
+    delete: (dataset: string, namingSchema: string): string => (
+      taskListDetailAction([dataset, namingSchema], 'delete')
+    ),
   },
 
   form: {
