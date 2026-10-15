@@ -61,8 +61,13 @@ const bystanderHost = 'nqn.2014-08.org.nvmexpress:e2e-nvme-bystander-host';
 const authenticatedHost = 'nqn.2014-08.org.nvmexpress:e2e-nvme-auth-host';
 const hosts = [targetHost, bystanderHost, authenticatedHost];
 
-/** What the global configuration test sets, and must leave behind it. */
-const changedBaseNqn = 'nqn.2011-06.com.truenas:e2e-nvme-basenqn';
+/**
+ * What the global configuration test sets: whichever of the two differs from the
+ * base NQN it finds. Two, because a run that kept its test data leaves the one it
+ * set behind, and the next run reads that as the original.
+ */
+const firstBaseNqn = 'nqn.2011-06.com.truenas:e2e-nvme-basenqn-a';
+const secondBaseNqn = 'nqn.2011-06.com.truenas:e2e-nvme-basenqn-b';
 
 /** The card lists four subsystems, by name, before its pager. */
 const cardPageSize = 4;
@@ -159,7 +164,9 @@ test.beforeEach(async ({ api, pool }) => {
 });
 
 test.afterEach(async ({ api, pool }) => {
-  if (leavingTestData(`the NVMe-oF subsystems ${subsystemNames.join(', ')}, their hosts, ports and zvols on ${pool}`)) {
+  if (leavingTestData(
+    `the NVMe-oF subsystems ${subsystemNames.join(', ')}, their hosts, ports and zvols on ${pool}, and the base NQN`,
+  )) {
     return;
   }
 
@@ -334,7 +341,7 @@ test('deleting a subsystem from the card removes it and its associations', async
 });
 
 test('the global configuration saves the base NQN and keeps RDMA, ANA and SPDK out of reach', async ({ page, api }) => {
-  expect(originalBaseNqn, 'the base NQN this test changes must not already be its value').not.toBe(changedBaseNqn);
+  const changedBaseNqn = originalBaseNqn === firstBaseNqn ? secondBaseNqn : firstBaseNqn;
 
   await openNvmeOfGlobalConfiguration(page);
 
