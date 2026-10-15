@@ -26,6 +26,7 @@ import { loadTargetConfig, type TargetConfig } from './config';
 import {
   adminLayout, concurrentCallsDialogTitleId, errorDialog, errorDialogClose,
 } from './constants';
+import { CoverageRecorder } from './coverage';
 import { type EntitlementDecisions, readEntitlements } from '../fixtures/entitlements';
 import { poolLifecycle } from '../fixtures/pool';
 
@@ -273,17 +274,28 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
    * costs a few seconds — well under the fifteen the form takes, which is the
    * cost the token exists to avoid (R4.1). See `signInWithToken` for why each
    * login also gets its own token.
+   *
+   * It also records what the test exercised for `yarn e2e:coverage`, counting
+   * from the test's first navigation so that the sign-in and the dashboard it
+   * lands on are not credited to every test. See `support/coverage.ts`.
    */
   page: async ({
     page, authenticate, api, config,
-  }, use) => {
+  }, use, testInfo) => {
+    const coverage = new CoverageRecorder(page, config.uiBaseUrl);
+
     // Registered before the sign-in, because the sign-in is where it first bites.
     await dismissConcurrencyDialogs(page);
 
     if (authenticate) {
       await signInWithToken(page, api, config);
     }
-    await use(page);
+    coverage.start();
+    try {
+      await use(page);
+    } finally {
+      await coverage.save(testInfo);
+    }
   },
 });
 

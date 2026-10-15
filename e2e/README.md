@@ -128,6 +128,24 @@ yarn playwright show-trace test-results/<dir>/trace.zip
 `test-results/` is wiped at the start of every run. Copy anything you want to
 keep.
 
+### Coverage
+
+Every test records the middleware methods the UI called and the routes it
+reached, from its first navigation, into `test-results/e2e-coverage/`. To compare them
+with what the UI can do:
+
+```bash
+yarn e2e:coverage                     # markdown to stdout
+yarn e2e:coverage --out coverage.md   # and to a file
+yarn e2e:coverage <dir>               # a downloaded `e2e-coverage-*` CI artifact
+```
+
+The UI's full set of methods and routes is read from `src/app`: method names at
+API call sites, and the router config. A method name built at runtime is
+missed, and is listed under "seen in the run but not in the inventory" when a
+test calls it. CI writes the report into the job summary. The header of
+`scripts/e2e-coverage.ts` explains how it works and where it falls short.
+
 ## Layout
 
 ```
