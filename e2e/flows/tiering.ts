@@ -1,6 +1,7 @@
 /**
  * ZFS tiering, driven through the UI: the Tiering side panel on the storage
- * dashboard, and a dataset's Change Storage Tier and Data Migration dialogs.
+ * dashboard, and a dataset's Change Storage Tier and Data Migration dialogs —
+ * Change Storage Tier from the dataset details card or from a share's row.
  */
 import { expect, type Page } from '@playwright/test';
 import { goToDatasets, goToStorage } from './navigation';
@@ -82,7 +83,25 @@ export async function selectDataset(page: Page, name: string): Promise<void> {
  */
 export async function openChangeTierDialog(page: Page): Promise<void> {
   await page.locator(datasetTierLocators.change).click();
+  await waitForChangeTierDialog(page);
+}
 
+/**
+ * Opens Change Storage Tier from a share's row on the Shares dashboard: the row
+ * menu, then the action in it. The same dialog as {@link openChangeTierDialog},
+ * waited on the same way.
+ */
+export async function openChangeTierDialogFromShareRow(
+  page: Page,
+  { rowMenu, changeTier }: { rowMenu: string; changeTier: string },
+): Promise<void> {
+  await page.locator(rowMenu).click();
+  await page.locator(changeTier).click();
+  await waitForChangeTierDialog(page);
+}
+
+/** See {@link openChangeTierDialog} for why this is the signal. */
+async function waitForChangeTierDialog(page: Page): Promise<void> {
   await expect(page.locator(changeTierDialogLocators.title)).toBeVisible();
   await expect(
     page.locator(changeTierDialogLocators.currentTierSpace)

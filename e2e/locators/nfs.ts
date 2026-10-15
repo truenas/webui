@@ -202,5 +202,16 @@ export const nfsLocators = {
     enabledToggle: (path: string, description = ''): string => (
       `[data-test="toggle-enabled-card-nfs-share-${kebabTestSegment(rowTag(path, description))}-row-toggle"]`
     ),
+
+    /** The Storage Tier cell, present only while tiering is on. The library spelling, like the row. */
+    tier: (path: string, description = ''): string => (
+      `[data-test="text-card-nfs-share-${kebabTestSegment(rowTag(path, description))}-tier"]`
+    ),
+
+    /** Change Storage Tier, inside the row menu. Same shape as {@link rowMenuEdit}. */
+    rowMenuChangeTier: (path: string, description = ''): string => (
+      `[data-test="button-card-nfs-share-${kebabTestSegment(rowTag(path, description))}`
+      + '-more-action-mdi-swap-horizontal-row-action"]'
+    ),
   },
 } as const;

@@ -5,6 +5,8 @@
  * All of these render only when tiering is on and the dataset sits on a pool
  * with a special vdev — except the Tiering button, which needs neither.
  */
+import { legacyKebabTestSegment } from './test-id';
+
 export const tierConfigLocators = {
   /** "Tiering" in the storage dashboard's header — `[testId]="'tiering'"`. */
   open: '[data-test="button-tiering"]',
@@ -43,6 +45,15 @@ export const changeTierDialogLocators = {
   title: '[data-test="dialog-title-change-tier"]',
 
   datasetName: '[data-test="text-dataset-name"]',
+
+  /**
+   * An SMB share named under "This dataset is used by the following shares".
+   * The name goes through `normalizeTestIdString`, so the lodash spelling.
+   */
+  smbShare: (name: string): string => `[data-test="text-smb-share-${legacyKebabTestSegment(name)}"]`,
+  /** The NFS line there. A count, since an NFS share has no name to list. */
+  nfsShares: '[data-test="text-nfs-share"]',
+
   currentTier: '[data-test="text-current-tier"]',
   newTier: '[data-test="text-new-tier"]',
 

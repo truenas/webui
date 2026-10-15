@@ -224,5 +224,19 @@ export const smbLocators = {
      * the row and its actions — not the lodash spelling the text cells use.
      */
     enabledToggle: (name: string): string => `[data-test="toggle-enabled-card-smb-share-${kebabTestSegment(name)}-row-toggle"]`,
+
+    /**
+     * The Storage Tier cell — `ix-tier-status`, tagged `[uniqueRowTag, 'tier']`, so
+     * the library spelling like the row. The column exists only while tiering is on.
+     */
+    tier: (name: string): string => `[data-test="text-card-smb-share-${kebabTestSegment(name)}-tier"]`,
+
+    /**
+     * Change Storage Tier, inside the row menu (`mdi-swap-horizontal`). Hidden
+     * while tiering is off, and on a share whose dataset is locked.
+     */
+    rowMenuChangeTier: (name: string): string => (
+      `[data-test="button-card-smb-share-${kebabTestSegment(name)}-more-action-mdi-swap-horizontal-row-action"]`
+    ),
   },
 } as const;
