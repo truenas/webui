@@ -9,7 +9,7 @@
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
-import { ensureServiceStopped } from './services';
+import { ensureServiceRunning, ensureServiceStopped } from './services';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
@@ -122,5 +122,19 @@ export async function readSmbAppleExtensions(client: E2eApiClient): Promise<bool
 export async function setSmbAppleExtensions(client: E2eApiClient, enabled: boolean): Promise<void> {
   await firstValueFrom(
     client.api.call('smb.update', [{ aapl_extensions: enabled }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
+ * Starts the SMB service, for a journey that needs it running.
+ *
+ * The status page reads `smb.status`, which reports on the running server.
+ * Whoever calls this owes {@link ensureSmbServiceStopped} in teardown.
+ */
+export async function ensureSmbServiceRunning(client: E2eApiClient): Promise<void> {
+  await ensureServiceRunning(
+    client,
+    smbServiceName,
+    'SMB service did not start, so the status page has no server to report on.',
   );
 }
