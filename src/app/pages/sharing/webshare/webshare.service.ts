@@ -26,6 +26,11 @@ import { AppState } from 'app/store';
 import { selectService } from 'app/store/services/services.selectors';
 import { WebShareSharesFormComponent, WebShareFormData } from './webshare-shares-form/webshare-shares-form.component';
 
+export interface WebShareHostnameChoice {
+  ip: string;
+  hostname: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -84,6 +89,26 @@ export class WebShareService {
   private resolvedHostname = signal<string | null>(null);
 
   /**
+   * Every IP → `.truenas.direct` hostname pair TrueNAS Connect knows about.
+   */
+  private ipsWithHostnames = signal<Record<string, string>>({});
+
+  /**
+   * Hostnames the user can pick from when the current connection has no hostname of its own
+   * (e.g. `interface.websocket_local_ip` returned an IP that isn't in the mapping, or nothing).
+   * Empty whenever a single hostname can be used directly, or when TrueNAS Connect is not configured.
+   */
+  readonly hostnameChoices = computed<WebShareHostnameChoice[]>(() => {
+    if (!this.isTruenasConnectConfigured() || this.isTruenasDirectDomain || this.resolvedHostname()) {
+      return [];
+    }
+
+    return Object.entries(this.ipsWithHostnames())
+      .map(([ip, hostname]) => ({ ip, hostname }))
+      .sort((a, b) => a.ip.localeCompare(b.ip, undefined, { numeric: true }));
+  });
+
+  /**
    * Hostname to use when opening WebShare. Only available while TrueNAS Connect is
    * configured. When TrueNAS Connect is disabled this resolves to `null` so we never
    * generate a stale `.truenas.direct` URL that would produce SSL errors.
@@ -96,7 +121,7 @@ export class WebShareService {
 
   /**
    * Whether WebShare can be opened. Requires an accessible hostname
-   * (either the current `.truenas.direct` domain or a resolved hostname), that
+   * (the current `.truenas.direct` domain, a resolved hostname, or `hostnameChoices` to pick from), that
    * TrueNAS Connect is currently configured, AND that the WebShare service is not
    * known to be stopped — an unloaded services slice does not block, so the button
    * is usable while the state is still unknown rather than flashing a false reason.
@@ -122,7 +147,7 @@ export class WebShareService {
       return this.translate.instant('WebShare is unavailable because the WebShare service is not running.');
     }
 
-    if (!this.isTruenasDirectDomain && !this.resolvedHostname()) {
+    if (!this.isTruenasDirectDomain && !this.resolvedHostname() && !this.hostnameChoices().length) {
       return this.translate.instant('WebShare can only be opened when accessed via a .truenas.direct domain');
     }
 
@@ -144,7 +169,8 @@ export class WebShareService {
       const hostname = ipsWithHostnames[localIp];
       return { ipsWithHostnames, localIp, hostname };
     }),
-    tap(({ hostname }) => {
+    tap(({ ipsWithHostnames, hostname }) => {
+      this.ipsWithHostnames.set(ipsWithHostnames);
       this.resolvedHostname.set(hostname ?? null);
     }),
     catchError((error: unknown) => {
@@ -172,19 +198,24 @@ export class WebShareService {
    * Opens a WebShare in a new browser window/tab.
    * Uses the truenas.direct hostname if available (either from current domain or resolved from IP mapping).
    * @param shareName - Optional name of the specific share to open. If omitted, opens the root WebShare listing.
+   * @param hostname - Hostname picked from `hostnameChoices`. Required when there are choices to pick from.
    */
-  openWebShare(shareName?: string): void {
+  openWebShare(shareName?: string, hostname?: string): void {
     const unavailableReason = this.webShareUnavailableReason();
     if (unavailableReason) {
       this.snackbar.error(unavailableReason);
       return;
     }
 
-    const hostname = this.isTruenasDirectDomain
+    const targetHostname = this.isTruenasDirectDomain
       ? this.window.location.hostname
-      : this.truenasConnectHostname();
+      : this.truenasConnectHostname() ?? this.pickHostnameChoice(hostname);
+    if (!targetHostname) {
+      return;
+    }
+
     const path = shareName ? `/webshare/${shareName}` : '/webshare/';
-    const webShareUrl = `https://${hostname}:${this.webSharePort}${path}`;
+    const webShareUrl = `https://${targetHostname}:${this.webSharePort}${path}`;
     const newWindow = this.window.open(webShareUrl, '_blank');
 
     if (!newWindow) {
@@ -192,6 +223,13 @@ export class WebShareService {
         this.translate.instant('Unable to open WebShare. Please check your browser\'s popup blocker settings.'),
       );
     }
+  }
+
+  /**
+   * Only hostnames from the TrueNAS Connect mapping can be opened, never an arbitrary caller value.
+   */
+  private pickHostnameChoice(hostname?: string): string | null {
+    return this.hostnameChoices().find((choice) => choice.hostname === hostname)?.hostname ?? null;
   }
 
   /**

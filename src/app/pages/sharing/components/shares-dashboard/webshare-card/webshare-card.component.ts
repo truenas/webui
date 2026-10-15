@@ -23,7 +23,6 @@ import {
   TnTableComponent,
   TnTestIdDirective,
   TnTooltipDirective,
-  type TnCardAction,
   type TnSortEvent,
 } from '@truenas/ui-components';
 import {
@@ -55,6 +54,7 @@ import { ServiceWebshareComponent } from 'app/pages/services/components/service-
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
+import { WebShareOpenButtonComponent } from 'app/pages/sharing/webshare/webshare-open-button/webshare-open-button.component';
 import { WebShareSharesFormComponent } from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
 import { WebShareTableRow } from 'app/pages/sharing/webshare/webshare-table-row.interface';
 import { WebShareService } from 'app/pages/sharing/webshare/webshare.service';
@@ -90,6 +90,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TablePagerShowMoreComponent,
     CardAlertBadgeComponent,
     TableActionsCellComponent,
+    WebShareOpenButtonComponent,
   ],
 })
 export class WebShareCardComponent implements OnInit {
@@ -128,8 +129,6 @@ export class WebShareCardComponent implements OnInit {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  protected readonly canOpenWebShare = this.webShareService.canOpenWebShare;
-
   hasTruenasConnect$ = this.truenasConnectService.config$.pipe(
     map((config) => config?.status === TruenasConnectStatus.Configured),
   );
@@ -147,16 +146,6 @@ export class WebShareCardComponent implements OnInit {
 
   protected headerMenuTriggerTestId = computed(() => this.actionsMenu.cardHeaderMenuTriggerTestId(this.service()));
 
-  protected openAction = computed<TnCardAction | undefined>(() => {
-    return {
-      label: this.translate.instant('Open WebShare'),
-      disabled: !this.canOpenWebShare(),
-      tooltip: this.webShareService.webShareUnavailableReason() ?? undefined,
-      testId: 'button-webshare-open',
-      handler: () => this.openWebShare(),
-    };
-  });
-
   protected serviceMenu = computed(() => this.actionsMenu.buildServiceCardMenu(
     this.service(),
     this.hasAddRole(),
@@ -167,16 +156,9 @@ export class WebShareCardComponent implements OnInit {
     this.formPanel.open(ServiceWebshareComponent, { title: serviceNames.get(ServiceName.WebShare) });
   }
 
+  protected readonly openIconName = tnIconMarker('open-in-new', 'mdi');
+
   protected readonly actions: IconActionConfig<WebShareTableRow>[] = [
-    {
-      iconName: tnIconMarker('open-in-new', 'mdi'),
-      tooltip: this.translate.instant('Open'),
-      onClick: (row) => this.openWebShareByName(row),
-      disabled: () => this.webShareService.canOpenWebShare$.pipe(map((canOpen) => !canOpen)),
-      dynamicTooltip: () => this.webShareService.webShareUnavailableReason$.pipe(
-        map((reason) => reason ?? this.translate.instant('Open')),
-      ),
-    },
     {
       iconName: tnIconMarker('pencil', 'mdi'),
       tooltip: this.translate.instant('Edit'),
@@ -240,20 +222,12 @@ export class WebShareCardComponent implements OnInit {
     });
   }
 
-  openWebShare(): void {
-    this.webShareService.openWebShare();
-  }
-
   openTruenasConnectDialog(): void {
     this.truenasConnectService.openStatusModal();
   }
 
   navigateToUsers(): void {
     this.router.navigate(['/credentials', 'users']);
-  }
-
-  openWebShareByName(row: WebShareTableRow): void {
-    this.webShareService.openWebShare(row.name);
   }
 
   protected doEdit(row: WebShareTableRow): void {
