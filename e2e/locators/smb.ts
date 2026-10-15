@@ -56,18 +56,12 @@ export const smbLocators = {
    * the same `table-table` id. `tn-table` applies it verbatim, with no type prefix.
    *
    * The empty state a list shows is a `tn-empty` that the library renders inside
-   * `tn-table` with no id at all, so a spec cannot select it. What a spec can
-   * check is that the tab's table is there and holds no rows.
+   * `tn-table` with no id at all, so a spec cannot select it.
    */
   status: {
     /** `<tn-tab [testId]="slug">`. The slug is `sessions`, `locks`, `shares` or `notifications`. */
     tab: (slug: string): string => `[data-test="tab-${slug}"]`,
     table: '[data-test="table-table"]',
-    /**
-     * Every row of one tab's list, by the prefix of its row tag:
-     * `smb-session-`, `smb-lock-`, `smb-share-` or `smb-notification-`.
-     */
-    rows: (rowTagPrefix: string): string => `[data-test^="row-${rowTagPrefix}"]`,
   },
 
   form: {

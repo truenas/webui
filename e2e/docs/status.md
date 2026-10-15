@@ -248,12 +248,13 @@ from the card title: it lists the share the card has no room for, its search
 narrows the list to one row, and its own Add (`add-smb-share`) creates a share.
 Its row tags go through lodash, like the card's cells and unlike the card's
 rows. `tests/smb-status.e2e.ts` opens the status page from "SMB Sessions" and
-visits all four tabs with the service running. They can only be checked empty.
-`smb.status` reports clients, and at the `SHARES` level it lists tree
-connections, not configured shares, so a published share shows up there only
-while a client is connected to it. Nothing in the suite can be an SMB client.
-The empty state itself is a `tn-empty` that `tn-table` renders with no id, so
-the spec checks that the tab's table has no rows.
+checks that each of its four tabs can be reached, with the service running.
+That is all it checks. `smb.status` reports clients, and at the `SHARES` level
+it lists tree connections, not configured shares, so a published share shows up
+there only while a client is connected to it. Nothing in the suite can be an
+SMB client. And the empty state each tab shows instead is a `tn-empty` that
+`tn-table` renders with no id, so no selector reaches it. Asserting it needs
+`@truenas/ui-components` to give that empty state an id.
 
 Four things in this area are not what the template implies, and were read off
 a running appliance: row actions collapse into a kebab menu whose items carry the
@@ -984,9 +985,9 @@ a number. See `05-ci.md`.
    tier gating are next — the SMB specs brought the share fixture and row
    locators the first of those needs. SMB shares are covered from the Shares
    dashboard — publish, the purpose presets, edit, enable, unshare, the service
-   switch — and from the standalone list and the status page, but not the share
-   and filesystem ACL editors, or anything a real SMB client would have to prove,
-   such as a status page that is not empty. NFS shares are
+   switch — and from the standalone list, and the status page's tabs can be
+   reached; but not the share and filesystem ACL editors, what those tabs show,
+   or anything a real SMB client would have to prove. NFS shares are
    covered the same way — publish, read-only, networks, hosts, edit, enable,
    unshare, the service switch and the start offer — but not the maproot and
    mapall mappings, the Security select (NFSv4 only), the service's own

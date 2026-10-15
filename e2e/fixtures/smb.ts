@@ -7,7 +7,7 @@
  * so a test that starts it changes which dialog every later test is shown —
  * `CLAUDE.md` names that as the failure mode a passing suite hides.
  */
-import type { CallParams, CallResponse } from '@truenas/api-client';
+import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
 import { ensureServiceRunning, ensureServiceStopped } from './services';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
@@ -137,27 +137,4 @@ export async function ensureSmbServiceRunning(client: E2eApiClient): Promise<voi
     smbServiceName,
     'SMB service did not start, so the status page has no server to report on.',
   );
-}
-
-/** An `smb.status` info level, as the status page's four tabs ask for them. */
-export type SmbStatusLevel = 'SESSIONS' | 'LOCKS' | 'SHARES' | 'NOTIFICATIONS';
-
-/**
- * How many entries `smb.status` reports at one level.
- *
- * `SHARES` counts tree connections, one per client connected to a share. It
- * is not the configured shares, so with no client connected every level is
- * empty, whatever shares exist.
- */
-export async function countSmbStatusEntries(client: E2eApiClient, level: SmbStatusLevel): Promise<number> {
-  // Through `unknown`, because the generated client may type the level as an
-  // enum, and a string literal does not convert to one directly.
-  const params = [level] as unknown as CallParams<E2eApiDirectory, 'smb.status'>;
-  const entries = await firstValueFrom(
-    client.api.call('smb.status', params).pipe(timeout(readTimeoutMs)),
-  );
-
-  // Middleware types the rows as loose records whatever the level, as
-  // `toSmbStatus` in the app notes. Only the count matters here.
-  return (entries as unknown as unknown[]).length;
 }
