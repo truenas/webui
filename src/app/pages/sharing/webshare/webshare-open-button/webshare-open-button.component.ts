@@ -43,13 +43,19 @@ export class WebShareOpenButtonComponent {
   protected readonly hostnameChoices = this.webShareService.hostnameChoices;
   protected readonly unavailableReason = this.webShareService.webShareUnavailableReason;
 
+  /**
+   * Only offer the IP menu when WebShare can actually be opened; a stopped service or disabled
+   * TrueNAS Connect falls through to the disabled button with its reason.
+   */
+  protected readonly showsMenu = computed(() => !!this.hostnameChoices().length && !this.unavailableReason());
+
   protected readonly isIcon = computed(() => this.variant() === 'icon');
 
   protected readonly tooltip = computed(() => {
     if (this.unavailableReason()) {
       return this.unavailableReason();
     }
-    if (this.hostnameChoices().length) {
+    if (this.showsMenu()) {
       return this.translate.instant('Choose the IP address to open WebShare through');
     }
     return this.isIcon() ? this.translate.instant('Open') : '';
@@ -57,7 +63,10 @@ export class WebShareOpenButtonComponent {
 
   protected readonly iconAriaLabel = computed(() => [this.tooltip(), this.ariaLabel()].filter(Boolean).join(' '));
 
-  protected readonly menuTestId = computed(() => [this.testId(), 'hostname'].flat());
+  // Projected menu items don't inherit a `tn-menu` test id base, so each item carries the full id.
+  protected menuItemTestId(ip: string): TnTestIdValue {
+    return [this.testId(), 'hostname', ip].flat();
+  }
 
   protected open(hostname?: string): void {
     this.webShareService.openWebShare(this.shareName(), hostname);

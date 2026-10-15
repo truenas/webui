@@ -68,6 +68,15 @@ describe('WebShareOpenButtonComponent', () => {
       .toHaveBeenCalledWith('documents', '192-168-0-125.abc.truenas.direct');
   });
 
+  it('stays disabled instead of offering the IP menu when WebShare cannot be opened', async () => {
+    hostnameChoices.set([{ ip: '192.168.0.125', hostname: '192-168-0-125.abc.truenas.direct' }]);
+    unavailableReason.set('WebShare is unavailable because the WebShare service is not running.' as TranslatedString);
+    setup({ variant: 'icon' });
+
+    const button = await loader.getHarness(TnIconButtonHarness.with({ name: 'open-in-new' }));
+    expect(await button.isDisabled()).toBe(true);
+  });
+
   it('renders as an icon button in the icon variant', async () => {
     setup({ variant: 'icon', shareName: 'media' });
 

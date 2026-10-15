@@ -1,5 +1,5 @@
 @if (isIcon()) {
-  @if (hostnameChoices().length) {
+  @if (showsMenu()) {
     <tn-icon-button
       name="open-in-new"
       library="mdi"
@@ -20,7 +20,7 @@
     ></tn-icon-button>
   }
 } @else {
-  @if (hostnameChoices().length) {
+  @if (showsMenu()) {
     <tn-button
       variant="outline"
       color="default"
@@ -42,10 +42,11 @@
   }
 }
 
-<tn-menu #hostnameMenu [testId]="menuTestId()">
+<tn-menu #hostnameMenu>
   @for (choice of hostnameChoices(); track choice.ip) {
     <tn-menu-item
       [id]="choice.ip"
+      [testId]="menuItemTestId(choice.ip)"
       [label]="choice.ip"
       (itemClick)="open(choice.hostname)"
     ></tn-menu-item>
