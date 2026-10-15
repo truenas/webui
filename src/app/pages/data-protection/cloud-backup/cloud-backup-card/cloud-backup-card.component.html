@@ -19,6 +19,8 @@
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
     <tn-empty
+      tnTestIdType="text"
+      [tnTestId]="['cloud-backup-task', 'empty']"
       icon="true-cloud"
       iconLibrary="custom"
       iconSize="56px"

@@ -10,6 +10,8 @@
      migrated lists. -->
 @if (list.empty.type() === EmptyType.NoPageData && !list.empty.count()) {
   <tn-empty
+    tnTestIdType="text"
+    [tnTestId]="['cloud-backup-list', 'empty']"
     [icon]="emptyIcon.name"
     [iconLibrary]="emptyIcon.library"
     [iconSize]="emptyIcon.size"

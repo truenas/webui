@@ -133,7 +133,7 @@
     </tn-form-section>
 
     <tn-form-section class="fieldset" [heading]="helptext.taskSettings | translate">
-      <tn-form-field [label]="helptext.name | translate" [required]="true">
+      <tn-form-field testId="description" [label]="helptext.name | translate" [required]="true">
         <tn-input
           name="description"
           testId="description"
@@ -142,6 +142,7 @@
         ></tn-input>
       </tn-form-field>
       <tn-form-field
+        testId="keep-last"
         [label]="helptext.keepLast | translate"
         [tooltip]="helptext.keepLastTooltip | translate"
         [required]="true"
@@ -165,7 +166,7 @@
           [inputType]="InputType.Number"
         ></tn-input>
       </tn-form-field>
-      <tn-form-field [label]="helptext.password | translate" [required]="true">
+      <tn-form-field testId="password" [label]="helptext.password | translate" [required]="true">
         <tn-input
           name="password"
           testId="password"
