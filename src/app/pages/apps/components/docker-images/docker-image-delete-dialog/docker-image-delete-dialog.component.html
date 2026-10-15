@@ -3,19 +3,19 @@
   @if (isJobCompleted) {
     <p>
       @if (failedCount) {
-        <strong>
+        <strong tnTestIdType="text" [tnTestId]="'failed-count'">
           {{ 'Warning: {n} of {total} docker images could not be deleted.' | translate: { n: failedCount, total: bulkItems.size } }}
         </strong>
       }
       @if (successCount) {
-        <strong>
+        <strong tnTestIdType="text" [tnTestId]="'deleted-count'">
           {{ '{n, plural, one {# docker image} other {# docker images}} has been deleted.' | translate: { n: successCount } }}
         </strong>
       }
     </p>
   } @else {
     <p>
-      <strong>
+      <strong tnTestIdType="text" [tnTestId]="'delete-confirmation'">
         {{ 'The following { n, plural, one {docker image} other {# docker images} } will be deleted. Are you sure you want to proceed?' | translate: { n: bulkItems.size } }}
       </strong>
     </p>
@@ -24,7 +24,7 @@
   <div class="bulk-list">
     @for (bulkItem of bulkItems | keyvalue; track trackByKey($index, bulkItem)) {
       <ix-bulk-list-item [item]="bulkItem.value">
-        <span>
+        <span tnTestIdType="text" [tnTestId]="['docker-image', bulkItem.key]">
           {{ bulkItem.value.item.repo_tags.length ? bulkItem.value.item.repo_tags.join(', ') : bulkItem.value.item.id }}
         </span>
       </ix-bulk-list-item>

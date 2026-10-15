@@ -12,13 +12,17 @@
 <div class="app-status">
   <ix-app-state-cell
     *ixWithLoadingState="app() as app"
+    tnTestIdType="text"
     [app]="app"
+    [tnTestId]="[app.name, 'app-state']"
     [job]="job()"
     [showIcon]="true"
   ></ix-app-state-cell>
   <ix-app-update-cell
     *ixWithLoadingState="app() as app"
+    tnTestIdType="text"
     [app]="app"
+    [tnTestId]="[app.name, 'app-update']"
     [showIcon]="true"
   ></ix-app-update-cell>
 </div>

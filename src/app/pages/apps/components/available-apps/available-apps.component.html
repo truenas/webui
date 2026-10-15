@@ -53,7 +53,7 @@
   @if (appSection.apps; as apps) {
     <section>
       @if (apps.length) {
-        <h3 class="section-title">{{ appSection.title | translate }}</h3>
+        <h3 class="section-title" tnTestIdType="text" [tnTestId]="['section-title', appSection.category]">{{ appSection.title | translate }}</h3>
         <div class="apps">
           @for (app of apps; track trackByAppId($index, app)) {
             <a

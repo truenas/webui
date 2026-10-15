@@ -12,10 +12,10 @@
 
       @for (mount of containerDetails.volume_mounts; track mount.destination) {
         <tr tnTestIdType="row" [tnTestId]="['volume-mounts', mount.destination]">
-          <td>{{ mount.type }}</td>
-          <td class="path">{{ mount.source }}</td>
-          <td class="path">{{ mount.destination }}</td>
-          <td>{{ mount.mode }}</td>
+          <td tnTestIdType="text" [tnTestId]="['volume-mounts', mount.destination, 'type']">{{ mount.type }}</td>
+          <td class="path" tnTestIdType="text" [tnTestId]="['volume-mounts', mount.destination, 'source']">{{ mount.source }}</td>
+          <td class="path" tnTestIdType="text" [tnTestId]="['volume-mounts', mount.destination, 'destination']">{{ mount.destination }}</td>
+          <td tnTestIdType="text" [tnTestId]="['volume-mounts', mount.destination, 'mode']">{{ mount.mode }}</td>
         </tr>
       } @empty {
         <tr tnTestIdType="row" [tnTestId]="'no-volume-mounts'">

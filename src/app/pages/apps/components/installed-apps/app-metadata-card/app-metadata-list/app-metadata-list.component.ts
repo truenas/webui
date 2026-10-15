@@ -1,6 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { AppMetadata } from 'app/interfaces/app.interface';
 import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
 
@@ -13,6 +14,7 @@ import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/ca
     NgTemplateOutlet,
     TranslateModule,
     CardExpandCollapseComponent,
+    TnTestIdDirective,
   ],
 })
 export class AppMetadataListComponent {

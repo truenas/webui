@@ -68,6 +68,8 @@
 
       <ix-app-json-details-card
         class="app-info-card"
+        tnTestIdType="card"
+        [tnTestId]="'run-as-context'"
         [title]="'Run As Context' | translate"
         [jsonDetails]="app()?.run_as_context"
         [isLoading]="isLoading()"
@@ -75,6 +77,8 @@
 
       <ix-app-json-details-card
         class="app-info-card"
+        tnTestIdType="card"
+        [tnTestId]="'capabilities'"
         [title]="'Capabilities' | translate"
         [jsonDetails]="app()?.capabilities"
         [isLoading]="isLoading()"
