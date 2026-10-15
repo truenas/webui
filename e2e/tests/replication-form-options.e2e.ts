@@ -226,7 +226,7 @@ test('a naming schema set in the form instead of a regex is saved, and a run sen
   expect(await findSnapshotNames(api, target)).toEqual([manualSnapshot]);
 });
 
-test('encryption set in the form is saved, and a run makes an encrypted target with that key', async ({
+test('encryption with a HEX key set in the form is saved, and a run makes an encrypted target', async ({
   page, api, pool,
 }) => {
   const source = `${pool}/${encryptionSourceLeaf}`;
