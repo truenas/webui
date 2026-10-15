@@ -389,12 +389,12 @@ name, so the row tag is `snapshot-task-<dataset>`, and each task gets a dataset
 of its own, made fresh per test so no snapshot an earlier run's task took can
 put the "keep snapshots" box in the delete dialog. The card lists four tasks,
 and its View All leaves for the full list rather than expanding, so each test
-fails at the start if its rows would not fit. Two more tests watch a task run.
-Nothing in the UI runs one on demand, so each is scheduled every minute: one
-requires every snapshot on its fresh dataset to match its naming schema and the
-dataset's snapshot list to show one, and the other switches a task off with
-the card's Enabled switch and requires it to take nothing after the tick already
-under way, using a second task left on the same schedule as the clock. Two more
+fails at the start if its rows would not fit. One test watches a task run.
+Nothing in the UI runs one on demand, so it is scheduled every minute, and
+every snapshot on its fresh dataset must match its naming schema and the
+dataset's snapshot list must show one. Another switches a task off with the
+card's Enabled switch and requires `enabled: false` on that task and the second
+task untouched; it does not wait to watch the scheduler skip it. Two more
 delete a task that has a snapshot, seeded over the API with a name the task's
 schema and schedule claim, and the "keep snapshots" box ticked or not. With it
 ticked, `pool.snapshot.query`'s `retention` must move from the task to a
