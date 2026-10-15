@@ -55,6 +55,12 @@ async function fillExplorer(page: Page, selector: string, value: string): Promis
  * In this order because each "from" select clears the field below it when it
  * changes, and the name is regenerated from the source and target whenever
  * either changes.
+ *
+ * The target is chosen before the source is typed. Once there is a source path
+ * the wizard counts its snapshots, and choosing a different system enables SSH
+ * transport before an SSH connection is picked. Any count sent in that gap is
+ * refused with "You should pass SSH credentials", and the error stays on the
+ * source field. With no source yet, no count is sent.
  */
 async function fillWhatAndWhere(
   page: Page,
@@ -64,8 +70,8 @@ async function fillWhatAndWhere(
   const { wizard } = replicationTaskLocators;
 
   await selectOption(page, wizard.sourceFrom, wizard.sourceFromThisSystem);
-  await fillExplorer(page, wizard.sourceDatasets, source);
   await chooseTarget();
+  await fillExplorer(page, wizard.sourceDatasets, source);
   await fillExplorer(page, wizard.targetDataset, target);
   await page.locator(wizard.name).fill(name);
 

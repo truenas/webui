@@ -780,6 +780,14 @@ carry ids too. `cloud_backup.create` initializes a restic repository on Storj
 before it stores anything, so no task can be made here — saving, running,
 restoring, the row actions and the details page all need a real account.
 
+The Data Protection page as a whole is `tests/data-protection-dashboard.e2e.ts`:
+all five cards rendering together, each with its seeded task or its empty state,
+each card's title opening its own full list, View All on a snapshot card holding
+five tasks, and the Enabled switch on a snapshot, replication, rsync and cloud sync
+row turning that task off and on again with the other three untouched. The four
+cards that had no id on their empty state now emit `text-<card>-task-empty`, as
+TrueCloud Backup's does. The full list pages themselves are not covered here.
+
 The framework is done and the coverage is not. A hundred and seventy-nine tests — a
 hundred and seventy-eight journeys and the smoke — against 19 top-level feature areas. What the work
 bought is that the next twenty tests are cheap: the target seam, auth, fixtures,

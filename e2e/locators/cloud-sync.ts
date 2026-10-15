@@ -23,6 +23,10 @@ function rowTag(description: string): string {
 
 export const cloudSyncLocators = {
   card: {
+    /** The card title, `tnTestIdType="link"` with `['cloudsync-task', 'open-in-new']`. Opens the full list. */
+    open: '[data-test="link-cloudsync-task-open-in-new"]',
+    /** `<tn-empty>`, rendered in place of the table once the card has loaded and found no task. */
+    empty: '[data-test="text-cloudsync-task-empty"]',
     /** `<tn-button [testId]="addTestId">` in the card footer, `cloudsync-task-add`. */
     add: '[data-test="button-cloudsync-task-add"]',
 
@@ -68,6 +72,20 @@ export const cloudSyncLocators = {
     rowMenuDelete: (description: string): string => (
       `[data-test="button-${rowTag(description)}-more-action-mdi-delete-row-action"]`
     ),
+
+    /**
+     * The row's Enabled switch. `ix-table-toggle-cell` composes `[title, row tag,
+     * 'row-toggle']` and `tn-slide-toggle` puts its `toggle-` type in front. It
+     * writes on click — there is no Save.
+     */
+    enabledToggle: (description: string): string => (
+      `[data-test="toggle-enabled-${rowTag(description)}-row-toggle"]`
+    ),
+  },
+
+  list: {
+    /** The full list page's Add, in its page header. */
+    add: '[data-test="button-add-task"]',
   },
 
   wizard: {

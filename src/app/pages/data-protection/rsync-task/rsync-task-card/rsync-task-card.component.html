@@ -19,9 +19,11 @@
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
     <tn-empty
+      tnTestIdType="text"
       icon="desktop-classic"
       iconLibrary="mdi"
       iconSize="56px"
+      [tnTestId]="['rsync-task', 'empty']"
       [title]="'Best if you\'re syncing with a generic system that lacks ZFS capabilities.' | translate"
     ></tn-empty>
   } @else {

@@ -23,10 +23,23 @@ function rowTag(dataset: string): string {
 
 export const snapshotTaskLocators = {
   card: {
+    /** The card title, `tnTestIdType="link"` with `['snapshot-task', 'open-in-new']`. Opens the full list. */
+    open: '[data-test="link-snapshot-task-open-in-new"]',
+    /** `<tn-empty>`, rendered in place of the table once the card has loaded and found no task. */
+    empty: '[data-test="text-snapshot-task-empty"]',
+    /**
+     * The pager's View All, `<ix-table-pager-show-more [testId]="['snapshot-task']">`.
+     * Rendered only once there are more tasks than the card lists, and it leaves
+     * for the full list rather than expanding the card.
+     */
+    viewAll: '[data-test="button-snapshot-task-show-more"]',
     /** `<tn-button testId="snapshot-task-add">` in the card footer. */
     add: '[data-test="button-snapshot-task-add"]',
 
     row: (dataset: string): string => `[data-test="row-${rowTag(dataset)}"]`,
+
+    /** Every row on the card, whichever dataset it snapshots: a prefix of {@link row}. */
+    anyRow: '[data-test^="row-snapshot-task-"]',
 
     /** The Pool/Dataset cell. Its base is the column title, so `text-pool-dataset`. */
     dataset: (dataset: string): string => `[data-test="text-pool-dataset-${rowTag(dataset)}-row-text"]`,
@@ -53,6 +66,11 @@ export const snapshotTaskLocators = {
      * writes on click — there is no Save.
      */
     enabledToggle: (dataset: string): string => `[data-test="toggle-enabled-${rowTag(dataset)}-row-toggle"]`,
+  },
+
+  list: {
+    /** The full list page's Add, in its page header. */
+    add: '[data-test="button-add-task"]',
   },
 
   form: {
