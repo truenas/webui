@@ -696,6 +696,23 @@ pager, so each test fails at the start if its rows would not fit. Importing a
 CSR, profiles, extensions, Edit, Download, ACME certificates, the Certificates
 card itself and ACME DNS authenticators are not covered.
 
+The Portals, Initiators and Authorized Access tabs of the full iSCSI page, and
+its Global Target Configuration, are in `tests/iscsi-config.e2e.ts`, reached
+through the iSCSI card's title. A portal is added with a `0.0.0.0` listen
+address, and one is edited and one deleted beside a second that must not
+change; middleware refuses an address two portals share, so the second listens
+on `::`. An initiator group is added on the routed add page with two typed IQNs
+and edited from its row. An authorized access entry is added with Mutual CHAP,
+and one deleted beside a second. The global configuration gets an iSNS server
+and a pool available-space threshold, and teardown writes back what it found;
+the server is `127.0.0.1:443`, since Save is refused unless middleware can
+connect to it. Everything is read back through the `iscsi.*` queries. Row tags
+are `iscsi-portal-<comment>`, `iscsi-initiator-<id>` and
+`iscsi-authorized-access-<user>-<peer user>`, through lodash. The base name, the
+listen port, Edit on authorized access, the "Connected Initiators" list, ALUA
+and iSER are not covered. The Authorized Access Add button keeps its frozen id,
+`add-target-extent`.
+
 iSCSI shares followed, in `tests/iscsi-shares.e2e.ts`: creating a share with the
 iSCSI Wizard from the Block (iSCSI) Shares Targets card on the Shares dashboard,
 and deleting a target from its row there. The wizard makes a new zvol, an extent
