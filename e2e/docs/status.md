@@ -709,6 +709,23 @@ pager, so each test fails at the start if its rows would not fit. Importing a
 CSR, profiles, extensions, Edit, Download, ACME certificates, the Certificates
 card itself and ACME DNS authenticators are not covered.
 
+The Portals, Initiators and Authorized Access tabs of the full iSCSI page, and
+its Global Target Configuration, are in `tests/iscsi-config.e2e.ts`, reached
+through the iSCSI card's title. A portal is added with a `0.0.0.0` listen
+address, and one is edited and one deleted beside a second that must not
+change; middleware refuses an address two portals share, so the second listens
+on `::`. An initiator group is added on the routed add page with two typed IQNs
+and edited from its row. An authorized access entry is added with Mutual CHAP,
+and one deleted beside a second. The global configuration gets an iSNS server
+and a pool available-space threshold, and teardown writes back what it found;
+the server is `127.0.0.1:443`, since Save is refused unless middleware can
+connect to it. Everything is read back through the `iscsi.*` queries. Row tags
+are `iscsi-portal-<comment>`, `iscsi-initiator-<id>` and
+`iscsi-authorized-access-<user>-<peer user>`, through lodash. The base name, the
+listen port, Edit on authorized access, the "Connected Initiators" list, ALUA
+and iSER are not covered. The Authorized Access Add button keeps its frozen id,
+`add-target-extent`.
+
 iSCSI shares followed, in `tests/iscsi-shares.e2e.ts`: creating a share with the
 iSCSI Wizard from the Block (iSCSI) Shares Targets card on the Shares dashboard,
 and deleting a target from its row there. The wizard makes a new zvol, an extent
@@ -724,7 +741,28 @@ on the row. The card lists four targets before its pager, so each test fails at
 the start if its rows would not fit. Teardown finds the portal and initiator
 group by the `comment` the wizard gives them. File extents, existing targets,
 portals and zvols in the wizard, initiators, Fibre Channel, Edit, the global
-configuration, the standalone pages and a real initiator login are not covered.
+configuration and a real initiator login are not covered there.
+
+The Targets and Extents tabs of the full iSCSI page followed, in
+`tests/iscsi-targets-extents.e2e.ts`, reached through the card's title. On
+Targets: adding a target with an authorized network and one group pointing at a
+portal and an initiator group made over the API, and associating an extent with
+a target as a LUN and then unlinking it, which must leave both ends in place. On
+Extents: adding a Device extent on a zvol with a non-default block size, adding a
+File extent at a path that does not exist yet (its file must then exist), editing
+one extent's description beside a second that must not change, and deleting a
+File extent with "Remove file?" ticked, which must take its file and leave a
+second extent's. Everything is read back through the `iscsi.*` queries, and a
+file through `filesystem.listdir`. Row tags are `iscsi-target-<name>` and
+`iscsi-extent-<name>` through lodash. The Extents tab's Add button is
+`add-target`, the same id as the Targets tab's, and is left that way because a
+`data-test` is a Release Engineering contract; one tab is mounted at a time, so
+the flow clicks it once the Extents URL shows and checks for Extent Type.
+Teardown removes targets before extents, and extents before the portal and
+initiator group, since middleware refuses to delete an extent a target still
+uses.
+Editing a target, deleting one from this page, Force, the Initiators, Portals
+and Authorized Access tabs, CHAP and Fibre Channel are not covered.
 
 The Services page under System followed, in `tests/services.e2e.ts`: starting FTP
 from its row's play button and stopping it from the stop button and its
