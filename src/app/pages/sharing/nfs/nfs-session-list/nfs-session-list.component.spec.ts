@@ -80,12 +80,14 @@ describe('NfsSessionListComponent', () => {
   });
 
   describe('with no client mounted', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       spectator = createComponent();
       const api = spectator.inject(MockTypedApiService);
       api.mockQuery('nfs.get_nfs3_clients', []);
       api.mockQuery('nfs.get_nfs4_clients', []);
       spectator = createComponent();
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
     });
 
     it('shows the empty state in place of the table', () => {
