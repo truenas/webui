@@ -379,15 +379,17 @@ test('a dry run from the card completes and copies nothing to the remote', async
 
   await dryRunCloudSyncTaskFromCard(page, targetDescription);
 
+  // rclone names each file it would have copied, so `named` is what tells a dry
+  // run that skipped the file from one that found nothing to do. Polled with the
+  // state: middleware reports SUCCESS first and attaches the log in a later update.
   await expect.poll(
-    async () => (await findCloudSyncRuns(api, task?.id ?? -1, earlierRuns)).map((run) => run.state),
+    async () => (await findCloudSyncRuns(api, task?.id ?? -1, earlierRuns)).map((run) => ({
+      state: run.state,
+      dryRun: run.dryRun,
+      named: run.logs.includes(seededFile),
+    })),
     { timeout: cloudSyncRunTimeoutMs },
-  ).toEqual(['SUCCESS']);
-  const [run] = await findCloudSyncRuns(api, task?.id ?? -1, earlierRuns);
-  expect(run?.dryRun).toBe(true);
-  // rclone names each file it would have copied. Without this, a dry run that
-  // found nothing to do would pass as well as one that skipped the file.
-  expect(run?.logs).toContain(seededFile);
+  ).toEqual([{ state: 'SUCCESS', dryRun: true, named: true }]);
   // The one thing a dry run must not do: the same task run for real copies it (see the run test).
   expect(await findFileNames(api, remote)).toEqual([]);
   await expect(page.locator(cloudSyncLocators.card.state(targetDescription))).toHaveText('Completed');
