@@ -113,11 +113,11 @@ async function seedTask(
 async function runFromListAndWait(
   page: Page,
   api: E2eApiClient,
-  task: ReplicationTaskRecord,
+  task: { name: string; id: number },
 ): Promise<void> {
   const earlierRuns = await findReplicationRunJobIds(api);
 
-  await runReplicationTaskFromList(page, { name: task.name, id: task.id });
+  await runReplicationTaskFromList(page, task);
 
   await expect.poll(
     async () => (await findReplicationRuns(api, task.id, earlierRuns)).map((run) => run.state),
@@ -186,7 +186,7 @@ test('Same as Source retention set in the form is saved, and a run prunes what t
     retention_policy: 'SOURCE',
   });
 
-  await runFromListAndWait(page, api, before);
+  await runFromListAndWait(page, api, { name: retentionName, id: before.id });
 
   // Retention is a pass of its own after the task finishes, so it is polled for.
   await expect.poll(() => findSnapshotNames(api, target), { timeout: runTimeoutMs }).toEqual([newerSnapshot]);
@@ -221,7 +221,7 @@ test('a naming schema set in the form instead of a regex is saved, and a run sen
     periodic_snapshot_tasks: [],
   });
 
-  await runFromListAndWait(page, api, before);
+  await runFromListAndWait(page, api, { name: schemaName, id: before.id });
 
   expect(await findSnapshotNames(api, target)).toEqual([manualSnapshot]);
 });
@@ -250,7 +250,7 @@ test('encryption with a HEX key set in the form is saved, and a run makes an enc
     encryption_key_location: '$TrueNAS',
   });
 
-  await runFromListAndWait(page, api, before);
+  await runFromListAndWait(page, api, { name: encryptionName, id: before.id });
 
   expect(await findSnapshotNames(api, target)).toEqual([olderSnapshot]);
   // The source is not encrypted, so an encrypted target is the run following the task.
