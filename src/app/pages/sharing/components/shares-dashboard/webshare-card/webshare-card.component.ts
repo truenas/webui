@@ -5,6 +5,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
@@ -63,6 +64,9 @@ import { selectService } from 'app/store/services/services.selectors';
     MatToolbarRow,
     MatButton,
     MatTooltip,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
     RouterLink,
     TnIconComponent,
     RequiresRolesDirective,
@@ -114,6 +118,7 @@ export class WebShareCardComponent implements OnInit {
   );
 
   protected readonly canOpenWebShare = this.webShareService.canOpenWebShare;
+  protected readonly hostnameChoices = this.webShareService.hostnameChoices;
 
   hasTruenasConnect$ = this.truenasConnectService.config$.pipe(
     map((config) => config?.status === TruenasConnectStatus.Configured),
@@ -151,8 +156,8 @@ export class WebShareCardComponent implements OnInit {
           iconName: tnIconMarker('open-in-new', 'mdi'),
           tooltip: this.translate.instant('Open'),
           onClick: (row) => this.openWebShareByName(row),
-          disabled: () => this.webShareService.canOpenWebShare$.pipe(map((canOpen) => !canOpen)),
-          dynamicTooltip: () => this.webShareService.webShareUnavailableReason$.pipe(
+          disabled: () => this.webShareService.shareOpenUnavailableReason$.pipe(map((reason) => !!reason)),
+          dynamicTooltip: () => this.webShareService.shareOpenUnavailableReason$.pipe(
             map((reason) => reason ?? this.translate.instant('Open')),
           ),
         },
@@ -208,6 +213,10 @@ export class WebShareCardComponent implements OnInit {
 
   openWebShare(): void {
     this.webShareService.openWebShare();
+  }
+
+  protected openWebShareThrough(hostname: string): void {
+    this.webShareService.openWebShare(undefined, hostname);
   }
 
   openTruenasConnectDialog(): void {

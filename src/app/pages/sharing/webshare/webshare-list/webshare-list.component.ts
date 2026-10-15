@@ -139,8 +139,8 @@ export class WebShareListComponent implements OnInit {
           iconName: tnIconMarker('open-in-new', 'mdi'),
           tooltip: this.translate.instant('Open'),
           onClick: (row) => this.openWebShare(row),
-          disabled: () => this.webShareService.canOpenWebShare$.pipe(map((canOpen) => !canOpen)),
-          dynamicTooltip: () => this.webShareService.webShareUnavailableReason$.pipe(
+          disabled: () => this.webShareService.shareOpenUnavailableReason$.pipe(map((reason) => !!reason)),
+          dynamicTooltip: () => this.webShareService.shareOpenUnavailableReason$.pipe(
             map((reason) => reason ?? this.translate.instant('Open')),
           ),
         },

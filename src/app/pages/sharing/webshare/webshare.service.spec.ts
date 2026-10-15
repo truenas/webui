@@ -252,7 +252,9 @@ describe('WebShareService - non-TrueNAS Direct domain', () => {
         mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       mockProvider(SnackbarService),
-      mockProvider(TranslateService),
+      mockProvider(TranslateService, {
+        instant: jest.fn((key: string) => key),
+      }),
       mockProvider(LicenseService),
       mockProvider(SlideIn),
       mockProvider(TruenasConnectService, {
@@ -277,6 +279,12 @@ describe('WebShareService - non-TrueNAS Direct domain', () => {
 
   it('should return false for isTruenasDirectDomain when hostname does not contain .truenas.direct', () => {
     expect(spectator.service.isTruenasDirectDomain).toBe(false);
+  });
+  it('offers no hostname choices and cannot open when TrueNAS Connect has no hostnames at all', async () => {
+    await firstValueFrom(spectator.service.hostnameMapping$);
+
+    expect(spectator.service.hostnameChoices()).toEqual([]);
+    expect(spectator.service.canOpenWebShare()).toBe(false);
   });
 });
 
@@ -398,18 +406,39 @@ describe('WebShareService - no hostname mapping', () => {
     expect(result.hostname).toBeUndefined();
   });
 
-  it('should keep canOpenWebShare as false when no hostname is resolved', async () => {
+  it('offers the mapped hostnames as choices when the local IP is not in the mapping', async () => {
     await firstValueFrom(spectator.service.hostnameMapping$);
 
-    expect(spectator.service.canOpenWebShare()).toBe(false);
+    expect(spectator.service.hostnameChoices()).toEqual([
+      { ip: '192.168.1.100', hostname: 'mynas.truenas.direct' },
+    ]);
+    expect(spectator.service.canOpenWebShare()).toBe(true);
+    expect(spectator.service.webShareUnavailableReason()).toBeNull();
   });
 
-  it('should expose the domain reason when TrueNAS Connect is configured but no hostname resolves', async () => {
+  it('points share rows to the Open WebShare button while an IP has to be chosen', async () => {
     await firstValueFrom(spectator.service.hostnameMapping$);
 
-    expect(spectator.service.webShareUnavailableReason()).toBe(
-      'WebShare can only be opened when accessed via a .truenas.direct domain',
+    expect(spectator.service.shareOpenUnavailableReason()).toBe(
+      'Use Open WebShare on the Sharing screen to choose an IP address',
     );
+  });
+
+  it('opens WebShare through the chosen hostname', async () => {
+    await firstValueFrom(spectator.service.hostnameMapping$);
+
+    spectator.service.openWebShare(undefined, 'mynas.truenas.direct');
+
+    expect(mockWindow.open).toHaveBeenCalledWith('https://mynas.truenas.direct:755/webshare/', '_blank');
+  });
+
+  it('does not open a hostname that is not one of the choices', async () => {
+    await firstValueFrom(spectator.service.hostnameMapping$);
+
+    spectator.service.openWebShare(undefined, 'elsewhere.example.com');
+    spectator.service.openWebShare('documents');
+
+    expect(mockWindow.open).not.toHaveBeenCalled();
   });
 });
 
