@@ -102,7 +102,6 @@ test('an entry added in Edit Share ACL is what the appliance stores', async ({ p
   await openShareAclForm(page, share);
   await addShareAclUserEntry(page, {
     username: smbUser.username,
-    uid,
     permission: 'FULL',
     type: 'ALLOWED',
   });
@@ -155,17 +154,17 @@ test('Edit Filesystem ACL opens the share path and saves an entry to it', async 
 });
 
 test('Edit Filesystem ACL is disabled for a share on a pool root', async ({ page, api, pool }) => {
+  // Middleware refuses a share whose path holds a child dataset of another ACL
+  // type, and the SMB preset dataset is NFSv4 under a POSIX pool root. So that
+  // dataset, and the share on it, go before the root share can exist.
+  await ensureSmbShareAbsent(api, share);
+  await ensureDatasetAbsent(api, `${pool}/${datasetLeaf}`);
   await ensureSmbSharePresent(api, { name: rootShare, path: datasetMountPath(pool) });
 
   await openShareActions(page, rootShare);
   await expect(page.locator(smbLocators.card.rowMenuFilesystemAcl(rootShare))).toBeDisabled();
   // The same menu still offers Edit Share ACL, so the rule is about the
-  // filesystem action and not the whole menu.
+  // filesystem action and not the whole menu. That it is about the root, and
+  // not every share, is the story above: it clicks the action on a dataset.
   await expect(page.locator(smbLocators.card.rowMenuShareAcl(rootShare))).toBeEnabled();
-  // Close the menu, or its backdrop takes the next click.
-  await page.keyboard.press('Escape');
-
-  // And it is about the root. A share on a dataset keeps the action.
-  await openShareActions(page, share);
-  await expect(page.locator(smbLocators.card.rowMenuFilesystemAcl(share))).toBeEnabled();
 });

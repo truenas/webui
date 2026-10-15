@@ -205,28 +205,32 @@ export async function openShareAclForm(page: Page, name: string): Promise<void> 
 /**
  * Appends an entry for one user to the open Share ACL panel.
  *
- * The new row is the last one, so every control is taken with `.last()`. The
- * user field is an autocomplete over SMB users: it is searched by username,
- * its rows are keyed by uid, and clicking the row is what commits the value.
+ * The new row is the last one, so every control is taken with `.last()` — but
+ * only once that row has rendered. Before it does, `.last()` is the existing
+ * entry, and the flow would rewrite that one instead. The user field is an
+ * autocomplete over SMB users: it is searched by username, its options are
+ * keyed by username, and clicking the option is what commits the value.
  */
 export async function addShareAclUserEntry(
   page: Page,
   {
     username,
-    uid,
     permission,
     type,
-  }: { username: string; uid: number; permission: string; type: string },
+  }: { username: string; permission: string; type: string },
 ): Promise<void> {
   const form = smbLocators.shareAcl;
+  const rows = page.locator(form.who);
+  const rowsBefore = await rows.count();
 
   await page.locator(form.add).click();
+  await expect(rows).toHaveCount(rowsBefore + 1);
 
-  await page.locator(form.who).last().click();
+  await rows.last().click();
   await page.locator(form.whoOption('User')).click();
 
   await page.locator(form.user).last().fill(username);
-  await page.locator(form.userOption(uid)).click();
+  await page.locator(form.userOption(username)).click();
 
   await page.locator(form.permission).last().click();
   await page.locator(form.permissionOption(permission)).click();
