@@ -179,7 +179,10 @@ export default defineConfig<E2eTestOptions>({
   expect: { timeout: 15_000 },
 
   reporter: [
-    ['list'],
+    // `list`, reformatted: run time in a fixed column, no project tag. Its tally
+    // — `N flaky` above all — is the only place a retried test shows, so it keeps
+    // Playwright's wording exactly. See the file.
+    ['./e2e/support/list-reporter.ts'],
     ['html', { open: 'never' }],
     // Feeds the Jenkins JUnit plugin, which is what makes per-test flake history
     // — and therefore the R8.4 quarantine policy — measurable (R7.4).
