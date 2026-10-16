@@ -1054,6 +1054,16 @@ card's row tag is `cloud-cred-<name>`, so a rename changes every id on the row.
 Other providers, OAuth, Generate New for the private key, and deleting a
 credential a task still uses are not covered.
 
+Directory Services has `tests/kerberos.e2e.ts`. It covers the Kerberos Realms and
+Kerberos Keytab cards behind the page's Advanced Settings and its warning. A realm
+is added with a primary KDC, KDCs, admin servers and password servers. It is edited
+and deleted from its row beside a second realm that must stay the same. A keytab is
+uploaded through the file chooser and deleted. Each is checked through
+`kerberos.*.query`. Middleware runs `klist` over an uploaded keytab and refuses one
+with no entries, so `buildKeytab` in `fixtures/kerberos.ts` writes a one-entry MIT
+keytab in the test. Joining AD, LDAP or IPA needs a directory server, so those are
+not covered, and neither is the AD-only Sync button.
+
 The framework is done and the coverage of the 19 top-level feature areas is
 not. What the work bought is that the next twenty tests are cheap: the target
 seam, auth, fixtures, unconditional teardown, selector discipline and failure
