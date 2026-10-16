@@ -1,12 +1,14 @@
 /**
- * Certificate signing request preconditions, cleanup and readback, over the API.
+ * Certificate and certificate signing request preconditions, cleanup and
+ * readback, over the API.
  *
  * Keyed on the name, which middleware holds unique among certificates and CSRs
- * alike, and which the CSR card builds every id on a row from. Creating and
+ * alike, and which both cards build every id on a row from. Creating and
  * deleting one are jobs.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
+import { testCertificatePem, testPrivateKeyPem } from './test-certificate';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
@@ -27,6 +29,27 @@ export async function findCertificate(client: E2eApiClient, name: string): Promi
   );
 
   return certificate as CertificateRecord | undefined;
+}
+
+/** The certificate or CSR with this id, or undefined — for following one across a rename. */
+export async function findCertificateById(client: E2eApiClient, id: number): Promise<CertificateRecord | undefined> {
+  const [certificate] = await firstValueFrom(
+    client.api.query('certificate.query', [['id', '=', id]]).pipe(timeout(readTimeoutMs)),
+  );
+
+  return certificate as CertificateRecord | undefined;
+}
+
+/**
+ * How many certificates the appliance holds, by the rule the Certificates page
+ * itself uses to put a row on the Certificates card: a `certificate` that is not null.
+ */
+export async function countCertificates(client: E2eApiClient): Promise<number> {
+  const certificates = await firstValueFrom(
+    client.api.query('certificate.query', []).pipe(timeout(readTimeoutMs)),
+  );
+
+  return certificates.filter((certificate) => certificate.certificate !== null).length;
 }
 
 /**
@@ -55,6 +78,36 @@ export async function ensureCertificateAbsent(client: E2eApiClient, name: string
       timeoutMs: slowCallTimeoutMs,
       whatItCosts: `the certificate ${name} is still on the appliance, so the next run's create is refused`,
       confirm: async () => (await findCertificate(client, name)) === undefined,
+    },
+  );
+}
+
+/**
+ * Imports the checked-in test certificate and its key under this name, if
+ * nothing has this name already.
+ *
+ * For the certificate an edit, a view or a delete acts on, and for a bystander.
+ * Never for the certificate under test in an import — that one goes through the
+ * form. Middleware does not hold certificates unique by content, so several names
+ * can carry the same PEM.
+ */
+export async function ensureImportedCertificatePresent(client: E2eApiClient, name: string): Promise<void> {
+  if (await findCertificate(client, name)) {
+    return;
+  }
+
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('certificate.create', [{
+      name,
+      create_type: 'CERTIFICATE_CREATE_IMPORTED',
+      certificate: testCertificatePem,
+      privatekey: testPrivateKeyPem,
+    }]),
+    {
+      timeoutMs: slowCallTimeoutMs,
+      whatItCosts: `the certificate ${name} could not be imported, so there is nothing to act on`,
+      confirm: async () => (await findCertificate(client, name)) !== undefined,
     },
   );
 }
