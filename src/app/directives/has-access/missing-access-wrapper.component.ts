@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy, Component, input, TemplateRef,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnIconComponent, TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import { DisableFocusableElementsDirective } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
 
 @Component({
@@ -17,6 +17,7 @@ import { DisableFocusableElementsDirective } from 'app/directives/disable-focusa
     NgTemplateOutlet,
     TranslateModule,
     TnIconComponent,
+    TnTestIdDirective,
   ],
 })
 export class MissingAccessWrapperComponent {

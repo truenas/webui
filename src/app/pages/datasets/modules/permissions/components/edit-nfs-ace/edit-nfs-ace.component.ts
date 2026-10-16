@@ -5,7 +5,8 @@ import {
 } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnRadioGroupComponent, TnSelectComponent,
+  kebabTestSegment, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnRadioGroupComponent,
+  TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
 import { fromPairs } from 'lodash-es';
 import {
@@ -35,6 +36,21 @@ import {
   NfsFormPermsType,
   nfsFormPermsTypeLabels,
 } from './edit-nfs-ace-form.types';
+
+/**
+ * The test id segment of a Who option.
+ *
+ * The library derives it from the label, or from the value where the label normalizes to nothing (a
+ * non-Latin locale), and its normalizer drops the `@`, so "Group" and "group@" would both emit
+ * `option-tag-group`. Only `group@` moves, to `option-tag-group-at`; every other option follows the
+ * library's own rule, so it keeps the id it already had in every locale.
+ */
+export function nfsAclTagOptionTestId(option: TnSelectOption): string {
+  if (option.value === NfsAclTag.Group) {
+    return 'group-at';
+  }
+  return kebabTestSegment(option.label) ? option.label : String(option.value);
+}
 
 /** Builds a FormGroup with one boolean control per key of the given label map. */
 function booleanGroupFromLabels<T extends string>(labels: Map<T, string>): FormGroup<Record<T, FormControl<boolean>>> {
@@ -96,6 +112,7 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
   });
 
   readonly tags = mapToOptions(nfsAclTagLabels, this.translate);
+  protected readonly tagOptionTestId = nfsAclTagOptionTestId;
   readonly aclTypes = mapToOptions(nfsAclTypeLabels, this.translate);
   readonly permissionTypes = mapToOptions(nfsFormPermsTypeLabels, this.translate);
   readonly basicPermissions = mapToOptions(nfsBasicPermissionLabels, this.translate);

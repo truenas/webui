@@ -14,6 +14,11 @@
  * through `ssh.config` or `ftp.config` alone. Each test moves the fields it edits
  * away from the baseline, so a form that dropped any one of them fails.
  *
+ * Both forms hide most of their fields behind the footer's Advanced toggle. The
+ * advanced tests click it first, so a toggle that revealed nothing fails there.
+ * Bind interfaces and the auxiliary parameters are left alone: a wrong value can
+ * cut off SSH, which CI may use.
+ *
  * FTP goes back to stopped and not starting at boot, and both services' settings
  * to the baseline, before and after every test. See `fixtures/service-config.ts`.
  *
@@ -22,18 +27,22 @@
  * stopped, so the change restarts nothing, and written back to what the test
  * found. NVMe-oF is only opened and closed: saving it is `nvme-of.e2e.ts`'s.
  */
+import { findCertificate } from '../fixtures/certificates';
 import {
   readIscsiGlobalSettings, restoreIscsiGlobalSettings, type IscsiGlobalSettings,
 } from '../fixtures/iscsi-config';
 import { readNvmeOfBaseNqn } from '../fixtures/nvme-of';
 import {
-  ftpBaseline, readFtpSettings, readSshSettings, setFtpSettings, setSshSettings, sshBaseline,
+  ftpAdvancedBaseline, ftpBaseline, readFtpAdvancedSettings, readFtpCertificateId, readFtpSettings,
+  readSshAdvancedSettings, readSshSettings, setFtpSettings, setSshSettings, sshAdvancedBaseline, sshBaseline,
 } from '../fixtures/service-config';
 import { ensureServiceStopped, queryService } from '../fixtures/services';
 import { goToServices } from '../flows/navigation';
 import {
-  openServiceForm, saveServiceForm, serviceChangeTimeoutMs, startServiceFromList, stopServiceFromList,
+  openServiceForm, saveServiceForm, serviceChangeTimeoutMs, serviceSaveTimeoutMs, showAdvancedSettings,
+  startServiceFromList, stopServiceFromList, toggleWeakCiphers,
 } from '../flows/services';
+import { selectOption } from '../flows/storage';
 import { iscsiConfigLocators } from '../locators/iscsi-config';
 import { nvmeOfLocators } from '../locators/nvme-of';
 import { servicesLocators } from '../locators/services';
@@ -214,5 +223,107 @@ test('an admin saves the FTP settings, and the appliance keeps them', async ({ p
     loginattempt: 3,
     timeout_notransfer: 450,
     timeout: 900,
+  });
+});
+
+test('an admin saves the FTP access, passive port and bandwidth options', async ({ page, api }) => {
+  const form = servicesLocators.ftpForm;
+
+  await openServiceForm(page, 'ftp', form.port, String(ftpBaseline.port));
+  await showAdvancedSettings(page, form.alwaysChroot);
+
+  // Always Chroot is on in the baseline, as on a stock appliance, so the click
+  // turns it off. The other three start off and are turned on.
+  await page.locator(form.alwaysChroot).click();
+  await page.locator(form.localUserLogin).click();
+  await page.locator(form.transferResumption).click();
+  await page.locator(form.fxp).click();
+  await page.locator(form.passivePortsMin).fill('50000');
+  await page.locator(form.passivePortsMax).fill('50100');
+  await page.locator(form.localUserUploadBandwidth).fill('1 MiB');
+  await page.locator(form.localUserDownloadBandwidth).fill('2 MiB');
+  await saveServiceForm(page);
+
+  // The bandwidth inputs hold bytes and the form divides by 1024 on save, so
+  // `ftp.config` keeps KiB. The TLS fields are read back too, at the baseline,
+  // so a save that changed one it was not asked to fails here.
+  expect(await readFtpAdvancedSettings(api)).toEqual({
+    ...ftpAdvancedBaseline,
+    defaultroot: false,
+    onlylocal: true,
+    resume: true,
+    fxp: true,
+    passiveportsmin: 50000,
+    passiveportsmax: 50100,
+    localuserbw: 1024,
+    localuserdlbw: 2048,
+  });
+});
+
+test('an admin turns on FTP TLS with the appliance certificate', async ({ page, api }) => {
+  const form = servicesLocators.ftpForm;
+  const certificateName = 'truenas_default';
+  const certificate = await findCertificate(api, certificateName);
+  expect(certificate, `the appliance has no ${certificateName} certificate to pick`).toBeDefined();
+
+  await openServiceForm(page, 'ftp', form.port, String(ftpBaseline.port));
+  await showAdvancedSettings(page, form.tls);
+
+  // The certificate and the TLS options render only once Enable TLS is ticked.
+  await page.locator(form.tls).click();
+  await selectOption(page, form.certificate, form.certificateOption(certificateName));
+  // `.first()`, because `!Data` renders the same id after it. See `tlsPolicyOption`.
+  await page.locator(form.tlsPolicy).click();
+  await page.locator(form.tlsPolicyOption('Data')).first().click();
+  await page.locator(form.tlsAllowClientRenegotiations).click();
+  await saveServiceForm(page);
+
+  expect(await readFtpAdvancedSettings(api)).toEqual({
+    ...ftpAdvancedBaseline,
+    tls: true,
+    tls_policy: 'data',
+    tls_opt_allow_client_renegotiations: true,
+  });
+  expect(await readFtpCertificateId(api)).toBe(certificate?.id);
+});
+
+test('the FTP form refuses a maximum passive port below the minimum', async ({ page, api }) => {
+  const form = servicesLocators.ftpForm;
+
+  await openServiceForm(page, 'ftp', form.port, String(ftpBaseline.port));
+  await showAdvancedSettings(page, form.passivePortsMin);
+
+  // Each port is in range on its own, so the form sends them. The order is
+  // middleware's rule, and the message is its answer, attached to the field.
+  await page.locator(form.passivePortsMin).fill('50100');
+  await page.locator(form.passivePortsMax).fill('50000');
+  await page.locator(servicesLocators.save).click();
+
+  await expect(page.locator(form.passivePortsMaxField))
+    .toContainText('should be greater than', { timeout: serviceSaveTimeoutMs });
+  await expect(page.locator(servicesLocators.save)).toBeVisible();
+  expect(await readFtpAdvancedSettings(api)).toEqual(ftpAdvancedBaseline);
+});
+
+test('an admin saves the SSH advanced settings, and the appliance keeps them', async ({ page, api }) => {
+  const form = servicesLocators.sshForm;
+
+  await openServiceForm(page, 'ssh', form.port, String(sshBaseline.tcpport));
+  await showAdvancedSettings(page, form.compression);
+
+  await page.locator(form.compression).click();
+  await selectOption(page, form.sftpLogLevel, form.sftpLogLevelOption('Verbose'));
+  await selectOption(page, form.sftpLogFacility, form.sftpLogFacilityOption('Auth'));
+  // The baseline allows both weak ciphers, as a stock appliance does, so
+  // dropping None leaves AES128-CBC alone.
+  await toggleWeakCiphers(page, ['None']);
+  await saveServiceForm(page);
+
+  expect(await readSshAdvancedSettings(api)).toEqual({
+    ...sshAdvancedBaseline,
+    compression: true,
+    sftp_log_level: 'VERBOSE',
+    sftp_log_facility: 'AUTH',
+    weak_ciphers: ['AES128-CBC'],
   });
 });

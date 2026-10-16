@@ -18,4 +18,10 @@ export const topbarLocators = {
   alertsIndicator: '[data-test="button-alerts-indicator"]',
   /** `<tn-icon-button testId="jobs-manager">` in `ix-jobs-indicator`, which opens the jobs panel */
   jobsIndicator: '[data-test="button-jobs-manager"]',
+  /** `<tn-icon-button testId="power-menu">`, which opens Restart and Shut Down */
+  powerMenu: '[data-test="button-power-menu"]',
+  /** `<tn-menu-item [testId]="'restart'">` inside the power menu */
+  restart: '[data-test="button-restart"]',
+  /** `<tn-menu-item [testId]="'shut-down'">` inside the power menu */
+  shutDown: '[data-test="button-shut-down"]',
 } as const;

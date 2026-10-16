@@ -69,10 +69,31 @@ export const servicesLocators = {
     edit: (service: ServiceKey): string => `[data-test="button-${middlewareRowTag(service)}-edit-service"]`,
   },
 
+  /**
+   * The side panel footer's Advanced/Basic toggle on both forms. Each passes
+   * `advancedModeFooterAction` no `testId`, so both get its default, the same
+   * id as on the SMB and NFS share forms. The SSH form only relabels it
+   * "Advanced Settings".
+   */
+  advancedToggle: '[data-test="button-toggle-advanced-options"]',
+
   sshForm: {
     port: '[data-test="input-tcpport"]',
     passwordAuth: '[data-test="checkbox-passwordauth"]',
     tcpForwarding: '[data-test="checkbox-tcpfwd"]',
+
+    /** The rest are advanced fields, rendered only once {@link servicesLocators.advancedToggle} is on. */
+    compression: '[data-test="checkbox-compression"]',
+    sftpLogLevel: '[data-test="select-sftp-log-level"]',
+    /** Keyed on the option's label from `helptextServiceSsh`, e.g. `Verbose`. */
+    sftpLogLevelOption: (label: string): string => `[data-test="option-sftp-log-level-${kebabTestSegment(label)}"]`,
+    sftpLogFacility: '[data-test="select-sftp-log-facility"]',
+    sftpLogFacilityOption: (label: string): string => (
+      `[data-test="option-sftp-log-facility-${kebabTestSegment(label)}"]`
+    ),
+    /** A multiple select. Its labels are `None` and `AES128-CBC`. */
+    weakCiphers: '[data-test="select-weak-ciphers"]',
+    weakCiphersOption: (label: string): string => `[data-test="option-weak-ciphers-${kebabTestSegment(label)}"]`,
   },
 
   ftpForm: {
@@ -82,6 +103,34 @@ export const servicesLocators = {
     loginAttempts: '[data-test="input-loginattempt"]',
     notransferTimeout: '[data-test="input-timeout-notransfer"]',
     timeout: '[data-test="input-timeout"]',
+
+    /** The rest are advanced fields, rendered only once {@link servicesLocators.advancedToggle} is on. */
+    alwaysChroot: '[data-test="checkbox-defaultroot"]',
+    localUserLogin: '[data-test="checkbox-onlylocal"]',
+    transferResumption: '[data-test="checkbox-resume"]',
+    fxp: '[data-test="checkbox-fxp"]',
+    passivePortsMin: '[data-test="input-passiveportsmin"]',
+    passivePortsMax: '[data-test="input-passiveportsmax"]',
+    /** The field around Maximum Passive Port: its label and, once refused, the reason. */
+    passivePortsMaxField: '[data-test="form-field-passiveportsmax"]',
+    /** Size inputs that take `1 MiB` and the like. The form holds bytes and saves KiB. */
+    localUserUploadBandwidth: '[data-test="input-localuserbw"]',
+    localUserDownloadBandwidth: '[data-test="input-localuserdlbw"]',
+
+    tls: '[data-test="checkbox-tls"]',
+    /** Rendered only while Enable TLS is ticked. Options are keyed on the certificate's name. */
+    certificate: '[data-test="select-ssltls-certificate"]',
+    certificateOption: (name: string): string => `[data-test="option-ssltls-certificate-${kebabTestSegment(name)}"]`,
+    tlsPolicy: '[data-test="select-tls-policy"]',
+    /**
+     * Keyed on the option's label from `helptextServiceFtp`, e.g. `Data`.
+     *
+     * Two policies share an id: `Data` and `!Data` both normalize to `data`, and
+     * `Ctrl + Data` and `Ctrl + !Data` to `ctrl-data`. A spec picking one of those
+     * takes the first match, which is the one without the `!`.
+     */
+    tlsPolicyOption: (label: string): string => `[data-test="option-tls-policy-${kebabTestSegment(label)}"]`,
+    tlsAllowClientRenegotiations: '[data-test="checkbox-tls-opt-allow-client-renegotiations"]',
   },
 
   /** `service-snmp.component.html`. */
