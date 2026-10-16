@@ -17,10 +17,10 @@
 #                  shared by the two nodes and nothing else.
 #   data network   a second bridge, the runner at .1, dnsmasq handing each
 #                  node a fixed address by MAC; the VIP is set later.
-#   shared disks   LIO iSCSI LUNs on the runner, attached to both nodes as
-#                  scsi-block through qemu's own initiator, which passes
-#                  SCSI persistent reservations through: fenced needs them,
-#                  and pool.create needs fenced.
+#   shared disks   LIO LUNs on the runner, shown to each node through a
+#                  loopback target of its own and attached as scsi-block,
+#                  which passes SCSI persistent reservations through:
+#                  fenced needs them, and pool.create needs fenced.
 #
 #   ha.sh start   boot both, wait for both APIs; KEY=value on stdout
 #   ha.sh stop
@@ -42,8 +42,6 @@ declare -A IP=([a]=$NET.11 [b]=$NET.12)
 declare -A DATA_MAC=([a]=52:54:00:e2:a0:01 [b]=52:54:00:e2:b0:01)
 declare -A HB_MAC=([a]=52:54:00:e2:a0:02 [b]=52:54:00:e2:b0:02)
 declare -A SERIAL_SUFFIX=([a]=_c1 [b]=_c2)
-IQN=iqn.2026-10.net.truenas.e2e:ha
-initiator() { echo "iqn.2026-10.net.truenas.e2e:node-$1"; }
 SHARED="${HA_SHARED_DISKS:-4}"
 SHARED_GB="${HA_SHARED_DISK_GB:-10}"
 
@@ -93,23 +91,39 @@ network() {
         --log-dhcp --log-facility="$DIR/dnsmasq.log"
 }
 
+# scsi_disks: this runner's SCSI disks, as "HCTL NAME", one a line.
+scsi_disks() { lsblk -dn -o HCTL,NAME,TYPE | awk '$3 == "disk" && $1 ~ /:/ {print $1, $2}' | sort -V; }
+
+# storage: the shared disks. LIO's loopback fabric shows the same LUNs on
+# this runner twice, through one loopback target per node: two I_T nexuses
+# to LIO, so it tells the nodes' reservations apart, and two sets of
+# /dev/sd* here, one handed to each node as scsi-block. The kernel's SG_IO
+# carries the reservations; qemu's own iSCSI initiator garbled their
+# answers (LIO registered the key, the guest was told the LU failed).
 storage() {
-    say "storage: $SHARED LIO LUNs of ${SHARED_GB}G on 127.0.0.1:3260, an ACL per node"
-    local i
+    say "storage: $SHARED LIO LUNs of ${SHARED_GB}G, shown to each node through a loopback target of its own"
+    local i n wwn before
     sudo -n modprobe target_core_mod
-    sudo -n modprobe iscsi_target_mod
-    sudo -n targetcli /iscsi create "$IQN" >/dev/null
-    sudo -n targetcli "/iscsi/$IQN/tpg1/portals" delete 0.0.0.0 3260 >/dev/null 2>&1 || true
-    sudo -n targetcli "/iscsi/$IQN/tpg1/portals" create 127.0.0.1 3260 >/dev/null
-    sudo -n targetcli "/iscsi/$IQN/tpg1" set attribute authentication=0 >/dev/null
+    sudo -n modprobe tcm_loop
     for i in $(seq 1 "$SHARED"); do
         truncate -s "${SHARED_GB}G" "$DIR/shared$i.img"
         sudo -n targetcli /backstores/fileio create "name=tnha$i" "file_or_dev=$DIR/shared$i.img" write_back=false >/dev/null
-        sudo -n targetcli "/iscsi/$IQN/tpg1/luns" create "/backstores/fileio/tnha$i" >/dev/null
     done
-    sudo -n targetcli "/iscsi/$IQN/tpg1/acls" create "$(initiator a)" >/dev/null
-    sudo -n targetcli "/iscsi/$IQN/tpg1/acls" create "$(initiator b)" >/dev/null
-    sudo -n targetcli ls "/iscsi/$IQN" >&2
+    for n in a b; do
+        wwn="naa.50014050000e2${n}00"
+        before="$(scsi_disks)"
+        sudo -n targetcli /loopback create "$wwn" >/dev/null
+        for i in $(seq 1 "$SHARED"); do
+            sudo -n targetcli "/loopback/$wwn/luns" create "/backstores/fileio/tnha$i" >/dev/null
+        done
+        sudo -n udevadm settle
+        # The new disks, in LUN order: lun 0 is tnha1.
+        scsi_disks | grep -vxF -f <(echo "$before") | sort -t: -k4,4n | awk '{print "/dev/" $2}' > "$DIR/shared-$n.list"
+        [ "$(wc -l < "$DIR/shared-$n.list")" = "$SHARED" ] \
+            || die "node $n's loopback target showed $(wc -l < "$DIR/shared-$n.list") disks, not $SHARED: $(cat "$DIR/shared-$n.list")"
+        say "  node $n sees $(tr '\n' ' ' < "$DIR/shared-$n.list")"
+    done
+    sudo -n targetcli ls /loopback >&2
 }
 
 boot() {
@@ -118,13 +132,17 @@ boot() {
     mkdir -p "$d"
     qemu-img create -q -f qcow2 -F raw -b "$disk" "$d/os.qcow2"
     vars_qcow2 "$d/vars.qcow2"
-    local shared=(-device virtio-scsi-pci,id=scsi0,bus=pcie.0,addr=0x5)
-    for i in $(seq 1 "$SHARED"); do
-        shared+=(-blockdev "{\"driver\":\"iscsi\",\"node-name\":\"sh$i\",\"transport\":\"tcp\",\"portal\":\"127.0.0.1:3260\",\"target\":\"$IQN\",\"lun\":$((i - 1)),\"initiator-name\":\"$(initiator "$n")\"}"
+    local shared=(-device virtio-scsi-pci,id=scsi0,bus=pcie.0,addr=0x5) dev
+    i=0
+    while read -r dev; do
+        i=$((i + 1))
+        shared+=(-blockdev "{\"driver\":\"host_device\",\"filename\":\"$dev\",\"node-name\":\"sh$i\"}"
                  -device "scsi-block,bus=scsi0.0,channel=0,scsi-id=$i,lun=0,drive=sh$i")
-    done
+    done < "$DIR/shared-$n.list"
     say "booting node $n from $disk as ${name}${SERIAL_SUFFIX[$n]}: ${memory} MB, $vcpus vCPUs"
-    qemu-system-x86_64 -name "$name-$n" -machine q35,accel=kvm -cpu host -smp "$vcpus" -m "$memory" \
+    # As root: SG_IO passes PERSISTENT RESERVE OUT through only for a
+    # process with CAP_SYS_RAWIO. Its sockets and files are handed back.
+    sudo -n qemu-system-x86_64 -name "$name-$n" -machine q35,accel=kvm -cpu host -smp "$vcpus" -m "$memory" \
         -uuid "$(python3 -c 'import uuid; print(uuid.uuid4())')" \
         -smbios "type=1,manufacturer=QEMU,serial=${name}${SERIAL_SUFFIX[$n]}" \
         -drive "if=pflash,format=raw,readonly=on,file=$OVMF_CODE" \
@@ -141,6 +159,7 @@ boot() {
         -qmp "unix:$d/qmp.sock,server=on,wait=off" \
         -display none -serial "file:$d/console.log" \
         -daemonize -pidfile "$d/qemu.pid"
+    sudo -n chown "$(id -u)" "$d/qmp.sock" "$d/qemu.pid" "$d/console.log"
     skip_grub "$d/console.log" "$d/qmp.sock"
 }
 
@@ -150,11 +169,6 @@ start() {
     [ -w /dev/kvm ] || die "no /dev/kvm this user can use"
     needs qemu-system-x86_64 qemu-system-x86 qemu-img qemu-utils python3 python3 \
         targetcli targetcli-fb dnsmasq dnsmasq-base iptables iptables
-    # qemu's iSCSI initiator is a loadable block module, packaged apart.
-    if ! ls /usr/lib/*/qemu/block-iscsi.so >/dev/null 2>&1; then
-        say "installing qemu-block-extra (qemu's iSCSI initiator)"
-        sudo -n env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends qemu-block-extra >/dev/null
-    fi
     ovmf
     say "runner: $(nproc) vCPUs, $(free -m | awk '/^Mem:/ {print $2 " MB, " $7 " MB available"}'), kernel $(uname -r)"
 
@@ -204,7 +218,7 @@ EOF
 stop() {
     local n
     for n in a b; do
-        [ -f "$DIR/$n/qemu.pid" ] && kill "$(cat "$DIR/$n/qemu.pid")" 2>/dev/null || true
+        [ -f "$DIR/$n/qemu.pid" ] && sudo -n kill "$(cat "$DIR/$n/qemu.pid")" 2>/dev/null || true
     done
 }
 
