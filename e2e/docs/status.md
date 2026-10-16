@@ -983,6 +983,21 @@ Creating a port through the port form, File namespaces, Manage Ports and Manage
 Hosts, Diffie–Hellman, renaming, the standalone list's search and a real
 initiator connection are not covered.
 
+Cloud credentials followed, in `tests/cloud-credentials.e2e.ts`: adding an SFTP
+credential from the Cloud Credentials card on Credentials > Backup Credentials,
+checking it with Verify Credential, editing one and deleting one, each asserted
+on the card and through `cloudsync.credentials.query`. The remote is the
+appliance's own `127.0.0.1` as root, on a keypair the spec authorizes the way the
+cloud sync specs do. A valid credential is reported only in a toast with no
+`data-test`, so the spec records the page's `cloudsync.credentials.verify` call,
+waits for its answer, and then requires the error dialog to be absent; the same
+credential with a user that does not exist must raise that dialog and save
+nothing. Edit renames the credential and changes its user beside a second
+credential that must come through untouched, and delete runs beside one too. The
+card's row tag is `cloud-cred-<name>`, so a rename changes every id on the row.
+Other providers, OAuth, Generate New for the private key, and deleting a
+credential a task still uses are not covered.
+
 The framework is done and the coverage of the 19 top-level feature areas is
 not. What the work bought is that the next twenty tests are cheap: the target
 seam, auth, fixtures, unconditional teardown, selector discipline and failure
