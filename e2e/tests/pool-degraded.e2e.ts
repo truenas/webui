@@ -89,7 +89,7 @@ test('a mirror with a disk offline shows as degraded on the dashboard and its VD
 
   await openVdevsPage(page, pool);
   await expect(page.locator(vdevsPageLocators.nodeStatus(mirrorGuid))).toHaveText('DEGRADED');
-  // A mirror starts collapsed; selecting it shows its disks.
+  // The tree opens a vdev with a child that is not ONLINE on its own; selecting it keeps it open.
   await page.locator(vdevsPageLocators.node(mirrorGuid)).click();
   await expect(page.locator(vdevsPageLocators.nodeStatus(diskGuid))).toHaveText('OFFLINE');
 });
