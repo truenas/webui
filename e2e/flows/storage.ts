@@ -26,6 +26,13 @@ const saveTimeoutMs = 90_000;
 const poolImportFindTimeoutMs = 2 * 60_000;
 const poolImportTimeoutMs = 3 * 60_000;
 
+/**
+ * `pool.export` without `destroy` unmounts the pool and, when the pool holds
+ * the system dataset, moves that off first. Same ceiling as the Delete Pool
+ * case in `tests/pool-disconnect.e2e.ts`.
+ */
+const poolExportTimeoutMs = 3 * 60_000;
+
 /** Picks an option from a `tn-select` by opening it and clicking the option. */
 export async function selectOption(page: Page, select: string, option: string): Promise<void> {
   await page.locator(select).click();
@@ -396,4 +403,34 @@ export async function chooseDeletePool(page: Page): Promise<void> {
   // The name field appearing is how we know `destroy` actually went on — the
   // option card is a plain div, so its click has no other readback.
   await expect(page.locator(poolDisconnectLocators.name)).toBeVisible();
+}
+
+/**
+ * Exports the pool from the open Disconnect dialog, keeping its data on the
+ * disks, and returns once the dialog has closed.
+ *
+ * `deleteConfiguration` is the "Delete saved configurations from TrueNAS?" tick,
+ * which the form starts ticked, so it is set either way rather than only when
+ * it is wanted. The dialog closes only after the export job's own dialog has,
+ * which is the app's signal that the job ended. Whether it did what was asked
+ * is the caller's to check through the API.
+ */
+export async function exportPoolFromDialog(
+  page: Page,
+  { deleteConfiguration }: { deleteConfiguration: boolean },
+): Promise<void> {
+  await page.locator(poolDisconnectLocators.exportOption).click();
+
+  // Export's own checkboxes rendering is the readback for the click, as the
+  // name field is for Delete's.
+  const cascade = page.locator(poolDisconnectLocators.cascade);
+  await expect(cascade).toBeVisible();
+  await cascade.setChecked(deleteConfiguration);
+  await page.locator(poolDisconnectLocators.confirm).setChecked(true);
+
+  const submit = page.locator(poolDisconnectLocators.submit);
+  await expect(submit).toBeEnabled();
+  await submit.click();
+
+  await expect(page.locator(poolDisconnectLocators.title)).toBeHidden({ timeout: poolExportTimeoutMs });
 }
