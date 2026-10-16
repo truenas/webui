@@ -129,7 +129,9 @@ test('Download Public Key is offered only for a user with an SSH key', async ({ 
 
     const download = await downloadUserPublicKey(page, owner);
 
-    expect(download.suggestedFilename()).toBe(`${owner}_public_key_rsa`);
+    // The UI names the file without an extension; Chromium appends `.txt` from the
+    // blob's `text/plain` type.
+    expect(download.suggestedFilename()).toBe(`${owner}_public_key_rsa.txt`);
     expect((await readFile(await download.path(), 'utf8')).trim()).toBe(publicKey.trim());
   });
 });
