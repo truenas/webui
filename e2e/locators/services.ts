@@ -1,5 +1,5 @@
 /**
- * The Services page under System, and the SSH and FTP forms it opens.
+ * The Services page under System, and the SSH, FTP and WebShare forms it opens.
  *
  * Every id on a row is keyed on a row tag of `service-<name>`. The page builds it
  * from the display name (`SSH`) and the two cells from the middleware name
@@ -11,7 +11,7 @@
 import { kebabTestSegment } from './test-id';
 
 /** Middleware's name for each service the specs drive. */
-export type ServiceKey = 'ssh' | 'ftp';
+export type ServiceKey = 'ssh' | 'ftp' | 'webshare';
 
 const rowTag = (service: ServiceKey): string => `service-${kebabTestSegment(service)}`;
 
@@ -44,6 +44,25 @@ export const servicesLocators = {
     loginAttempts: '[data-test="input-loginattempt"]',
     notransferTimeout: '[data-test="input-timeout-notransfer"]',
     timeout: '[data-test="input-timeout"]',
+  },
+
+  webshareForm: {
+    /** Enable TrueSearch. Locked off unless TrueSearch is licensed and TrueNAS Connect is configured. */
+    search: '[data-test="checkbox-search"]',
+    /** The field around {@link search}. Its hint names the condition that keeps the box locked. */
+    searchField: '[data-test="form-field-search"]',
+    /** The trigger shows the chosen option's label: `Disabled`, `Enabled` or `Required`. */
+    passkey: '[data-test="select-passkey"]',
+    /** By the label `webSharePasskeyLabels` gives it. */
+    passkeyOption: (label: string): string => `[data-test="option-passkey-${kebabTestSegment(label)}"]`,
+    mcpEnabled: '[data-test="checkbox-mcp-enabled"]',
+    /**
+     * Rendered only while MCP is on, and then only when Directory Services
+     * offers login groups to choose from as well as `truenas_webshare`.
+     */
+    mcpAllowedGroups: '[data-test="select-mcp-allowed-groups"]',
+    /** Rendered only while MCP is on. */
+    mcpAllowWrite: '[data-test="checkbox-mcp-allow-write"]',
   },
 
   /** `<tn-button [testId]="'save'">` on the side panel container. */

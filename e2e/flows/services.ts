@@ -50,6 +50,21 @@ export async function openServiceForm(
 }
 
 /**
+ * {@link openServiceForm} for a form whose loaded value shows as text rather
+ * than as an input's value, such as the label a `tn-select` trigger displays.
+ */
+export async function openServiceFormShowing(
+  page: Page,
+  service: ServiceKey,
+  loadedField: string,
+  loadedText: string,
+): Promise<void> {
+  await goToServices(page);
+  await page.locator(servicesLocators.row.edit(service)).click();
+  await expect(page.locator(loadedField)).toHaveText(loadedText);
+}
+
+/**
  * Saves the open form and waits for the panel to close.
  *
  * The panel closing is the app's own signal that the save succeeded. A refusal
