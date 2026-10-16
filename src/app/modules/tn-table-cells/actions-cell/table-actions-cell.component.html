@@ -34,14 +34,16 @@
       [tooltip]="'Show Actions' | translate"
       [tnMenuTriggerFor]="actionMenu"
     ></tn-icon-button>
+    <!-- Not `*ixRequiresRoles`: tn-menu draws its own button from each item's inputs, so the
+      missing-access wrapper never reaches it. The lock has to go through `disabled`. -->
     <tn-menu #actionMenu>
       @for (action of visibleActions(); track action) {
         @let isDisabled = action.disabled ? (action.disabled(row()) | async) : false;
+        @let roles = (action.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || [];
         <tn-menu-item
-          *ixRequiresRoles="(action.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"
           [icon]="action.iconName"
           [testId]="menuItemTestId(action)"
-          [disabled]="!!isDisabled"
+          [disabled]="!!isDisabled || !(hasRoles(roles) | async)"
           (itemClick)="onActionClick(null, action)"
         >{{ action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip }}</tn-menu-item>
       }

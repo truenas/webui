@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import {
@@ -10,10 +10,10 @@ import {
   TnMenuTriggerDirective,
 } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { powerMenuElements } from 'app/modules/layout/topbar/power-menu/power-menu.elements';
 import { RebootOrShutdownDialog } from 'app/modules/layout/topbar/reboot-or-shutdown-dialog/reboot-or-shutdown-dialog.component';
 
@@ -27,7 +27,6 @@ import { RebootOrShutdownDialog } from 'app/modules/layout/topbar/reboot-or-shut
     TnMenuItemComponent,
     TnMenuTriggerDirective,
     TranslateModule,
-    RequiresRolesDirective,
     UiSearchDirective,
   ],
 })
@@ -35,9 +34,11 @@ export class PowerMenuComponent {
   private tnDialog = inject(TnDialog);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
+  private authService = inject(AuthService);
 
   protected readonly tooltips = helptextTopbar.tooltips;
-  protected readonly requiredRoles = [Role.FullAdmin];
+  private readonly requiredRoles = [Role.FullAdmin];
+  protected readonly hasRequiredRoles = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
   protected searchableElements = powerMenuElements;
 
   onReboot(): void {

@@ -9,8 +9,11 @@ import { servicesLocators, type ServiceKey } from '../locators/services';
 /** How long a service may take to start or stop. A job, not a call. */
 export const serviceChangeTimeoutMs = 90_000;
 
-/** Saving rewrites the service's configuration, and restarts it if it is running. */
-const saveTimeoutMs = 60_000;
+/**
+ * Saving rewrites the service's configuration, and restarts it if it is running.
+ * Also how long a refusal may take to come back from middleware.
+ */
+export const serviceSaveTimeoutMs = 60_000;
 
 /**
  * Starts a stopped service from its row's play button.
@@ -50,6 +53,52 @@ export async function openServiceForm(
 }
 
 /**
+ * {@link openServiceForm} for a form whose loaded value shows as text rather
+ * than as an input's value, such as the label a `tn-select` trigger displays.
+ */
+export async function openServiceFormShowing(
+  page: Page,
+  service: ServiceKey,
+  loadedField: string,
+  loadedText: string,
+): Promise<void> {
+  await goToServices(page);
+  await page.locator(servicesLocators.row.edit(service)).click();
+  await expect(page.locator(loadedField)).toHaveText(loadedText);
+}
+
+/**
+ * Reveals the open form's advanced fields from the footer toggle, and waits for
+ * `advancedField`, one of them, to render. A toggle that did nothing hides the
+ * whole section, so this is where that fails rather than on the first click.
+ */
+export async function showAdvancedSettings(page: Page, advancedField: string): Promise<void> {
+  await page.locator(servicesLocators.advancedToggle).click();
+  await expect(page.locator(advancedField)).toBeVisible();
+}
+
+/**
+ * Clicks each of these labels in the open SSH form's Weak Ciphers select. A
+ * click toggles a cipher, so this both picks and drops.
+ *
+ * The select is multiple, so its panel stays open between clicks. Escape closes
+ * it, and would close the side panel too if the select had not taken the key,
+ * so Save is asserted still there afterwards.
+ */
+export async function toggleWeakCiphers(page: Page, labels: [string, ...string[]]): Promise<void> {
+  const form = servicesLocators.sshForm;
+  await page.locator(form.weakCiphers).click();
+
+  for (const label of labels) {
+    await page.locator(form.weakCiphersOption(label)).click();
+  }
+
+  await page.keyboard.press('Escape');
+  await expect(page.locator(form.weakCiphersOption(labels[0]))).toBeHidden();
+  await expect(page.locator(servicesLocators.save)).toBeVisible();
+}
+
+/**
  * Saves the open form and waits for the panel to close.
  *
  * The panel closing is the app's own signal that the save succeeded. A refusal
@@ -57,5 +106,5 @@ export async function openServiceForm(
  */
 export async function saveServiceForm(page: Page): Promise<void> {
   await page.locator(servicesLocators.save).click();
-  await expect(page.locator(servicesLocators.save)).toBeHidden({ timeout: saveTimeoutMs });
+  await expect(page.locator(servicesLocators.save)).toBeHidden({ timeout: serviceSaveTimeoutMs });
 }

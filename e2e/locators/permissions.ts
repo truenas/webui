@@ -108,15 +108,49 @@ export const permissionsLocators = {
     applyOwner: '[data-test="checkbox-apply-owner"]',
     applyGroup: '[data-test="checkbox-apply-group"]',
 
+    /**
+     * One entry in the list on the left, by its position in `filesystem.getacl`. Clicking it
+     * selects it, and the entry form is then that entry's.
+     */
+    ace: (index: number): string => `[data-test="row-ace-${index}"]`,
+    /** The entry's remove control. Every NFSv4 entry has one. */
+    removeAce: (index: number): string => `[data-test="button-remove-ace-${index}"]`,
+
+    /** Who. Its options come from the label, except group@, which is `group-at` so it is not Group's. */
+    tag: '[data-test="select-tag"]',
+    tagGroup: '[data-test="option-tag-group"]',
+
     /** `ix-user-combobox formControlName="user"` in the entry form. Rendered while Who is User. */
     user: '[data-test="autocomplete-user"]',
     userOption: (username: string): string => `[data-test="option-user-${kebabTestSegment(username)}"]`,
+    /** `ix-group-combobox formControlName="group"`, the same control for groups. Rendered while Who is Group. */
+    group: '[data-test="autocomplete-group"]',
+    groupOption: (group: string): string => `[data-test="option-group-${kebabTestSegment(group)}"]`,
+
+    /** ACL Type, by label: "Allow" or "Deny". */
+    aceType: (label: string): string => `[data-test="radio-button-type-${kebabTestSegment(label)}"]`,
+
+    /** Permissions Type, by label: "Basic" or "Advanced". */
+    permissionType: (label: string): string => (
+      `[data-test="radio-button-permission-type-${kebabTestSegment(label)}"]`
+    ),
     /** Rendered while Permissions Type is Basic, which a new entry is. */
     basicPermission: '[data-test="select-basic-permission"]',
     /** By label: "Read", "Modify", "Traverse" or "Full Control". */
     basicPermissionOption: (label: string): string => (
       `[data-test="option-basic-permission-${kebabTestSegment(label)}"]`
     ),
+    /** Rendered while Permissions Type is Advanced. By label, for example "Read Data" or "Read ACL". */
+    advancedPermission: (label: string): string => (
+      `[data-test="checkbox-advanced-permissions-${kebabTestSegment(label)}"]`
+    ),
+
+    /** Flags Type, by label: "Basic" or "Advanced". */
+    flagsType: (label: string): string => `[data-test="radio-button-flags-type-${kebabTestSegment(label)}"]`,
+    /** Rendered while Flags Type is Basic. By label: "Inherit" or "No Inherit". */
+    basicFlag: (label: string): string => `[data-test="radio-button-basic-flag-${kebabTestSegment(label)}"]`,
+    /** Rendered while Flags Type is Advanced. By label, for example "Directory Inherit". */
+    advancedFlag: (label: string): string => `[data-test="checkbox-advanced-flags-${kebabTestSegment(label)}"]`,
 
     /** "Save Access Control List". Runs `filesystem.setacl`, then returns to where the editor was opened. */
     save: '[data-test="button-save-acl"]',

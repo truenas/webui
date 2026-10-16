@@ -1,5 +1,5 @@
 /**
- * The Services page under System, and the SSH, FTP, SNMP, UPS and SMB forms it opens.
+ * The Services page under System, and the SSH, FTP, SNMP, UPS, SMB and WebShare forms it opens.
  *
  * Every id on a row is keyed on a row tag of `service-<name>`, and two names are
  * in play. The page builds the tag from the display name (`SMB`) for the `<tr>`,
@@ -13,7 +13,7 @@
 import { kebabTestSegment } from './test-id';
 
 /** Middleware's name for each service the specs drive. */
-export type ServiceKey = 'ssh' | 'ftp' | 'snmp' | 'ups' | 'cifs' | 'iscsitarget' | 'nvmet';
+export type ServiceKey = 'ssh' | 'ftp' | 'snmp' | 'ups' | 'cifs' | 'webshare' | 'iscsitarget' | 'nvmet';
 
 /** The page's name for each, as `serviceNames` in `src/app/enums/service-name.enum.ts` has it. */
 const displayNames: Record<ServiceKey, string> = {
@@ -22,6 +22,7 @@ const displayNames: Record<ServiceKey, string> = {
   snmp: 'SNMP',
   ups: 'UPS',
   cifs: 'SMB',
+  webshare: 'WebShare',
   iscsitarget: 'iSCSI',
   nvmet: 'NVMe-oF',
 };
@@ -68,10 +69,31 @@ export const servicesLocators = {
     edit: (service: ServiceKey): string => `[data-test="button-${middlewareRowTag(service)}-edit-service"]`,
   },
 
+  /**
+   * The side panel footer's Advanced/Basic toggle on both forms. Each passes
+   * `advancedModeFooterAction` no `testId`, so both get its default, the same
+   * id as on the SMB and NFS share forms. The SSH form only relabels it
+   * "Advanced Settings".
+   */
+  advancedToggle: '[data-test="button-toggle-advanced-options"]',
+
   sshForm: {
     port: '[data-test="input-tcpport"]',
     passwordAuth: '[data-test="checkbox-passwordauth"]',
     tcpForwarding: '[data-test="checkbox-tcpfwd"]',
+
+    /** The rest are advanced fields, rendered only once {@link servicesLocators.advancedToggle} is on. */
+    compression: '[data-test="checkbox-compression"]',
+    sftpLogLevel: '[data-test="select-sftp-log-level"]',
+    /** Keyed on the option's label from `helptextServiceSsh`, e.g. `Verbose`. */
+    sftpLogLevelOption: (label: string): string => `[data-test="option-sftp-log-level-${kebabTestSegment(label)}"]`,
+    sftpLogFacility: '[data-test="select-sftp-log-facility"]',
+    sftpLogFacilityOption: (label: string): string => (
+      `[data-test="option-sftp-log-facility-${kebabTestSegment(label)}"]`
+    ),
+    /** A multiple select. Its labels are `None` and `AES128-CBC`. */
+    weakCiphers: '[data-test="select-weak-ciphers"]',
+    weakCiphersOption: (label: string): string => `[data-test="option-weak-ciphers-${kebabTestSegment(label)}"]`,
   },
 
   ftpForm: {
@@ -81,6 +103,34 @@ export const servicesLocators = {
     loginAttempts: '[data-test="input-loginattempt"]',
     notransferTimeout: '[data-test="input-timeout-notransfer"]',
     timeout: '[data-test="input-timeout"]',
+
+    /** The rest are advanced fields, rendered only once {@link servicesLocators.advancedToggle} is on. */
+    alwaysChroot: '[data-test="checkbox-defaultroot"]',
+    localUserLogin: '[data-test="checkbox-onlylocal"]',
+    transferResumption: '[data-test="checkbox-resume"]',
+    fxp: '[data-test="checkbox-fxp"]',
+    passivePortsMin: '[data-test="input-passiveportsmin"]',
+    passivePortsMax: '[data-test="input-passiveportsmax"]',
+    /** The field around Maximum Passive Port: its label and, once refused, the reason. */
+    passivePortsMaxField: '[data-test="form-field-passiveportsmax"]',
+    /** Size inputs that take `1 MiB` and the like. The form holds bytes and saves KiB. */
+    localUserUploadBandwidth: '[data-test="input-localuserbw"]',
+    localUserDownloadBandwidth: '[data-test="input-localuserdlbw"]',
+
+    tls: '[data-test="checkbox-tls"]',
+    /** Rendered only while Enable TLS is ticked. Options are keyed on the certificate's name. */
+    certificate: '[data-test="select-ssltls-certificate"]',
+    certificateOption: (name: string): string => `[data-test="option-ssltls-certificate-${kebabTestSegment(name)}"]`,
+    tlsPolicy: '[data-test="select-tls-policy"]',
+    /**
+     * Keyed on the option's label from `helptextServiceFtp`, e.g. `Data`.
+     *
+     * Two policies share an id: `Data` and `!Data` both normalize to `data`, and
+     * `Ctrl + Data` and `Ctrl + !Data` to `ctrl-data`. A spec picking one of those
+     * takes the first match, which is the one without the `!`.
+     */
+    tlsPolicyOption: (label: string): string => `[data-test="option-tls-policy-${kebabTestSegment(label)}"]`,
+    tlsAllowClientRenegotiations: '[data-test="checkbox-tls-opt-allow-client-renegotiations"]',
   },
 
   /** `service-snmp.component.html`. */
@@ -172,6 +222,25 @@ export const servicesLocators = {
     shutdownMode: '[data-test="select-shutdown"]',
     shutdownOnBattery: '[data-test="option-shutdown-ups-goes-on-battery"]',
     shutdownTimer: '[data-test="input-shutdowntimer"]',
+  },
+
+  webshareForm: {
+    /** Enable TrueSearch. Locked off unless TrueSearch is licensed and TrueNAS Connect is configured. */
+    search: '[data-test="checkbox-search"]',
+    /** The field around {@link search}. Its hint names the condition that keeps the box locked. */
+    searchField: '[data-test="form-field-search"]',
+    /** The trigger shows the chosen option's label: `Disabled`, `Enabled` or `Required`. */
+    passkey: '[data-test="select-passkey"]',
+    /** By the label `webSharePasskeyLabels` gives it. */
+    passkeyOption: (label: string): string => `[data-test="option-passkey-${kebabTestSegment(label)}"]`,
+    mcpEnabled: '[data-test="checkbox-mcp-enabled"]',
+    /**
+     * Rendered only while MCP is on, and then only when Directory Services
+     * offers login groups to choose from as well as `truenas_webshare`.
+     */
+    mcpAllowedGroups: '[data-test="select-mcp-allowed-groups"]',
+    /** Rendered only while MCP is on. */
+    mcpAllowWrite: '[data-test="checkbox-mcp-allow-write"]',
   },
 
   /** `<tn-button [testId]="'save'">` on the side panel container. */

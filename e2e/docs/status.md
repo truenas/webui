@@ -298,7 +298,8 @@ spec picks a row by its position in `getacl`. The NFSv4 entry form's selects
 have no `testId` and fall back to their control names (`select-tag`,
 `select-basic-permission`); there is one entry form on the page, so the
 fallback is unique. These ids were worked out from the templates, not read off
-an appliance. Beyond that one entry, the ACL editor is not covered.
+an appliance. More entries are in `tests/dataset-acl-nfsv4-entries.e2e.ts`,
+under the dataset permissions below.
 
 NFS shares followed, in `tests/nfs-form.e2e.ts`, `tests/nfs-list.e2e.ts` and
 `tests/nfs-service.e2e.ts`, on the same plan as SMB with one difference that
@@ -718,8 +719,19 @@ The resulting entries are compared through `filesystem.getacl` against the
 template `filesystem.acltemplate.by_path` serves, so a change to a template does
 not break the spec. Only what tells one preset from another is asserted by hand.
 A third test covers Apply Owner and Apply Group in the editor's header: only the
-ticked half reaches `filesystem.stat`. Editing entries beyond the one
-`smb-share-acl.e2e.ts` adds, POSIX ACLs and custom presets are not covered.
+ticked half reaches `filesystem.stat`.
+
+NFSv4 entries themselves are in `tests/dataset-acl-nfsv4-entries.e2e.ts`: a
+group entry of type Deny, a user entry with advanced permissions and advanced
+flags, editing `group@` in place, and removing the `builtin_users` entry. Each
+starts from a dataset with the SMB preset and is read back through
+`filesystem.getacl`, matched by id. The edit story also checks that `owner@`
+came through unchanged, and the remove story that every other entry survived in
+order. The advanced story checks every permission bit, so a box
+ticked by mistake fails as well as one that did not land. The Who select's
+"Group" and "group@" options both used to emit `option-tag-group`; `group@` is
+now `option-tag-group-at`, and every other option kept its id. POSIX ACLs and
+custom presets are not covered.
 
 Applying an NFSv4 ACL recursively and Strip ACL are in
 `tests/dataset-acl-nfsv4-recursive.e2e.ts`, on an SMB-preset dataset with a
@@ -800,6 +812,25 @@ so the flow closes it with Escape and checks the side panel did not close too.
 The row tag is `privilege-<name>` and the edit leaves the name alone. Picking a
 group in the form, directory-service groups, the Enable DS Authentication prompt,
 built-in privileges and the search are not covered.
+
+Restricted administrators started in `tests/roles-read-only-admin.e2e.ts`. Every
+other spec runs as the full admin, so this is the first that signs in as someone
+holding less. `fixtures/role-admins.ts` makes a throwaway user in one of the two
+built-in groups, `truenas_readonly_administrators` or
+`truenas_sharing_administrators`, and it signs in through the form, because the
+token is minted for the suite's admin only. The spec covers a read-only admin
+reaching the dashboard and signing out, and finding Restart and Shut Down
+disabled in the power menu where the full admin finds them enabled. Neither is
+ever clicked, and `system.boot_id` is compared before and after. That menu was
+not locked before this spec: `tn-menu` draws its own button for each
+`tn-menu-item`, so the `*ixRequiresRoles` wrapper never reached it and a
+read-only admin got a clickable Restart. The power menu and the table actions
+cell's kebab menu now bind `disabled` to the role instead; the other
+`tn-menu-item` call sites using `*ixRequiresRoles` are not fixed yet. A locked
+control elsewhere sits inside `ix-missing-access-wrapper`, whose span now emits
+`data-test="role-missing"`, so `flows/roles.ts`'s `expectLockedByRole` can tell
+"locked by role" from "disabled because the form is invalid". Every other page,
+and the sharing admin, come in later specs.
 
 A pool's devices came next, in `tests/pool-devices.e2e.ts`: taking a disk offline
 and bringing it back online, and adding a spare, both from the pool's VDEVs page.
@@ -959,8 +990,12 @@ and off for FTP and read back through `service.query`, which must still say
 stopped. The search is checked to hide SSH and SMB for `ftp`. The iSCSI pencil
 opens the iSCSI global configuration, where a listen port is saved with the
 service stopped and written back afterwards; the NVMe-oF pencil is only checked
-to open its own. The other services' forms, advanced options and View
-Logs/Sessions are not covered.
+to open its own. Behind each form's Advanced toggle, FTP's access, passive-port,
+bandwidth and TLS options and SSH's compression, SFTP logging and weak ciphers
+are saved and read back, and FTP's refusal of a maximum passive port below the
+minimum is asserted on the field. The other services' forms, FTP anonymous login,
+SSH bind interfaces and auxiliary parameters, and View Logs/Sessions are not
+covered.
 
 The SNMP form, opened from its row on the same page, is in
 `tests/snmp-service.e2e.ts`: saving location, contact, community, auxiliary
@@ -980,6 +1015,16 @@ The service is never started, since there is no UPS to talk to. The baseline is 
 Slave configuration rather than the stock one: a fresh appliance is in Master mode
 with no driver or port, which `ups.update` refuses to write back. Extra users, the
 upsd options, host sync and the warning time are not covered.
+
+The WebShare service's form, opened from the same page, is in
+`tests/webshare-service.e2e.ts`: saving each Passkey mode, turning MCP on (which
+prefills `truenas_webshare` and hides the group picker on an appliance with no
+Directory Services groups) and off again without wiping its groups or write
+access, and TrueSearch staying locked off without TrueNAS Connect, read off the
+hint in `form-field-search`. Each save is asserted as the whole set through
+`webshare.config`. The settings are snapshotted and written back, and the service
+stays stopped. Not covered: enabling TrueSearch, choosing Directory Services
+groups for MCP, the bind addresses and login groups, and WebShare shares.
 
 Virtual Machines followed, in `tests/virtual-machines.e2e.ts`: creating a Linux VM
 with the wizard on a new zvol, and editing and deleting one from its row's detail
@@ -1238,7 +1283,8 @@ a number. See `05-ci.md`.
 ## Next steps
 
 1. **Widen coverage.** The rest of the dataset ACL editor, beyond built-in
-   NFSv4 presets, recursion and Strip ACL, is the uncovered story worth taking next.
+   NFSv4 presets, NFSv4 entries, recursion and Strip ACL, is the uncovered story
+   worth taking next.
    Manual snapshots are covered — take, recursive, delete, hold, clone, roll
    back and its safety check — but not batch delete, the list's own Add
    button, naming schemas, the extra columns or VMware sync. The confirmation-bypass class is now covered
