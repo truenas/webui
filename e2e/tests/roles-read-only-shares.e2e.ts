@@ -1,8 +1,10 @@
 /**
  * Story: a read-only administrator sees the shares on the Shares dashboard's
  * SMB, NFS and iSCSI cards, and finds every control that would change one
- * locked: Add or Wizard, the service switch, the row's Enabled switch, Delete
- * in the row menu, and Save on the edit form. Nothing is changed afterwards.
+ * locked. On the SMB and NFS cards that is Add, the service switch, the row's
+ * Enabled switch, Delete in the row menu, and Save on the edit form; on the
+ * iSCSI card, the Wizard, Delete in the row menu, and Add on the Targets page.
+ * Nothing is changed afterwards.
  *
  * One test with a step per card, so the account signs in once: every sign-in
  * spends from the unauthenticated rate limit (see `flows/roles.ts`).
