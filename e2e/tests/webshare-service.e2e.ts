@@ -10,8 +10,9 @@
  * `beforeEach` snapshots the settings, then moves them to a known start so each
  * edit is a change. The Passkey start is `Required`, not the form's own default
  * of `Disabled`, so seeing it in the select proves the form has loaded before a
- * test edits anything. Teardown writes the snapshot back. The service is stopped
- * throughout, so a save only rewrites configuration.
+ * test edits anything. Teardown writes the snapshot back, except TrueSearch,
+ * which is never written over the API; a UI save leaves it off wherever it is
+ * locked. The service is stopped throughout, so a save only rewrites configuration.
  *
  * The MCP test needs an appliance with no Directory Services login groups, as
  * CI's is. With one, the form offers a group picker and does not prefill.
