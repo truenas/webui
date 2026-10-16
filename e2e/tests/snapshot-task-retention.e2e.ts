@@ -57,10 +57,8 @@ const retentionCheckTimeoutMs = 30_000;
 test.use({ recordApiCalls: true });
 
 /** The task, monthly and two weeks, and the one snapshot it owns. */
-async function seedTaskWithSnapshot(api: E2eApiClient, dataset: string, enabled = true): Promise<void> {
-  await ensureSnapshotTaskPresent(api, {
-    dataset, namingSchema: ownedNamingSchema, schedule: monthlySchedule, enabled,
-  });
+async function seedTaskWithSnapshot(api: E2eApiClient, dataset: string): Promise<void> {
+  await ensureSnapshotTaskPresent(api, { dataset, namingSchema: ownedNamingSchema, schedule: monthlySchedule });
   await ensureSnapshotPresent(api, dataset, ownedSnapshotName);
 }
 
@@ -150,15 +148,20 @@ test('an edit that touches nothing about retention shows no retention warning', 
 
   const { form } = snapshotTaskLocators;
   await openEditSnapshotTaskForm(page, target, ownedNamingSchema);
-  // The form checks once on opening, with the task as loaded. Until that has
-  // answered, an absent warning could only mean it had not been asked yet.
-  await expect.poll(
-    () => apiCallsTo(page, retentionCheckMethod).map((call) => call.answer),
-    { timeout: retentionCheckTimeoutMs },
-  ).toContain('result');
+  const checkAnswers = (from: number): (string | undefined)[] => (
+    apiCallsTo(page, retentionCheckMethod).slice(from).map((call) => call.answer)
+  );
+  // The form checks once on opening, with the task as loaded.
+  await expect.poll(() => checkAnswers(0), { timeout: retentionCheckTimeoutMs }).toContain('result');
+  const before = apiCallsTo(page, retentionCheckMethod).length;
 
+  // Allow Empty is not a field the form re-checks on. The lifetime is, so it is
+  // typed again as it was: that sends a fresh check, with nothing changed that
+  // bears on retention, and the warning has to stay away once it has answered.
   await page.locator(form.allowEmpty).click();
   await expect(page.locator(form.allowEmpty)).not.toBeChecked();
+  await page.locator(form.lifetimeValue).fill('2');
+  await expect.poll(() => checkAnswers(before), { timeout: retentionCheckTimeoutMs }).toContain('result');
 
   await expect(page.locator(form.affectedSnapshots)).toHaveCount(0);
   await expect(page.locator(form.fixateRemovalDate)).toHaveCount(0);

@@ -489,8 +489,9 @@ must get none. With it unticked, the snapshot stays and has no removal date.
 the same seeded snapshot, shortening the lifetime from two weeks to one must
 show the retention warning with a count of 1. With "fixate removal date"
 ticked, the old date must become a `property` on the snapshot. Unticked, the
-task's new date applies. An edit to Allow Taking Empty Snapshots must show no
-warning once the form's own check has answered. The same spec switches a
+task's new date applies. An edit to Allow Taking Empty Snapshots, with the
+lifetime typed again unchanged, must show no warning once the check that sends
+has answered. The same spec switches a
 disabled task back on from the card and follows the full list's Snapshots
 button to `/datasets/snapshots`, where the seeded snapshot's row must show.
 `tests/snapshot-task-validation.e2e.ts` covers what the add form refuses: a
