@@ -25,6 +25,7 @@ const expectedRoute = {
   users: /\/credentials\/users/,
   groups: /\/credentials\/groups\/?$/,
   privileges: /\/credentials\/privileges\/?$/,
+  directoryServices: /\/credentials\/directory-services\/?$/,
   s3AccessKeys: /\/credentials\/s3-access-keys/,
   backupCredentials: /\/credentials\/backup-credentials\/?$/,
   certificates: /\/credentials\/certificates\/?$/,
@@ -121,6 +122,15 @@ export async function goToGroups(page: Page): Promise<void> {
 export async function goToPrivileges(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.credentials).click();
   await clickAndArrive(page, navLocators.privileges, expectedRoute.privileges);
+}
+
+/**
+ * Directory Services sits beside Privileges under the same Credentials slide-out. The page holds the
+ * Kerberos Realms and Keytab cards too, behind its Advanced Settings.
+ */
+export async function goToDirectoryServices(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.credentials).click();
+  await clickAndArrive(page, navLocators.directoryServices, expectedRoute.directoryServices);
 }
 
 /**
