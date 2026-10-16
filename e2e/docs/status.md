@@ -749,8 +749,21 @@ beside a second CSR that must come through untouched. The wizard is driven with
 its defaults (no profile, RSA 2048, SHA256, no extensions) and only the subject
 filled in. The row tag is `csr-<name>`. The card lists four CSRs before its
 pager, so each test fails at the start if its rows would not fit. Importing a
-CSR, profiles, extensions, Edit, Download, ACME certificates, the Certificates
-card itself and ACME DNS authenticators are not covered.
+CSR, profiles, extensions, the CSR card's Edit and Download, ACME certificates
+and ACME DNS authenticators are not covered.
+
+The Certificates card is in `tests/certificates-import.e2e.ts`: importing a
+certificate with its private key, editing one's name and "Add to trusted store",
+View/Download Certificate and View/Download Key from the edit panel's Actions
+menu, and deleting one from its row. Every certificate is one checked-in,
+test-only self-signed certificate and key (`fixtures/test-certificate.ts`, valid
+until 2076), because Node's crypto cannot sign an X.509 certificate; middleware
+holds certificates unique by name only, so the same PEM goes under several
+names. Each save is read back through `certificate.query`, including the PEM, and
+edit and delete each run beside a second certificate that must not change. The
+row tag is `cert-<name>`, and the card has the same four-row limit as the CSR
+card. Importing with a passphrase, the Download action and the trusted store's
+effect on the system are not covered.
 
 The Portals, Initiators and Authorized Access tabs of the full iSCSI page, and
 its Global Target Configuration, are in `tests/iscsi-config.e2e.ts`, reached

@@ -1,12 +1,16 @@
 /**
- * Certificate signing requests, driven through the UI from Credentials > Certificates.
+ * Certificates and certificate signing requests, driven through the UI from
+ * Credentials > Certificates.
  */
 import { expect, type Page } from '@playwright/test';
 import { goToCertificates } from './navigation';
-import { csrLocators } from '../locators/certificates';
+import { certificateLocators, csrLocators } from '../locators/certificates';
 import { confirmDialogLocators } from '../locators/dialogs';
 
-/** Creating a CSR generates a key pair and deleting one is a job; neither is instant. */
+/**
+ * Creating a CSR generates a key pair, and importing, updating and deleting a
+ * certificate are all jobs; none of them is instant.
+ */
 const saveTimeoutMs = 90_000;
 
 export interface CsrSubject {
@@ -89,4 +93,97 @@ export async function deleteCsr(page: Page, name: string): Promise<void> {
   await confirm.click();
 
   await expect(page.locator(list.row(name))).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+export interface ImportedCertificate {
+  name: string;
+  /** PEM, pasted as it stands. */
+  certificate: string;
+  privateKey: string;
+}
+
+/**
+ * Imports a certificate from the Certificates card, starting from the sidebar,
+ * and waits for the panel to close.
+ *
+ * "Add To Trusted Store" and the passphrase are left at their defaults: off, and
+ * none. The panel closing is the app's own signal that the create job succeeded
+ * — a failure raises an error dialog and leaves the form open.
+ */
+export async function importCertificate(page: Page, certificate: ImportedCertificate): Promise<void> {
+  const { card, importForm } = certificateLocators;
+  await goToCertificates(page);
+  await page.locator(card.import).click();
+
+  await page.locator(importForm.name).fill(certificate.name);
+  await page.locator(importForm.certificate).fill(certificate.certificate);
+  await page.locator(importForm.privateKey).fill(certificate.privateKey);
+
+  await page.locator(importForm.save).click();
+  await expect(page.locator(importForm.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Opens the Edit Certificate panel from a row's menu, starting from the sidebar.
+ *
+ * Waits on the Identifier holding this certificate's name, which is the panel's
+ * own sign that it has the record to edit.
+ */
+export async function openEditCertificateForm(page: Page, name: string): Promise<void> {
+  const { card, editForm } = certificateLocators;
+  await goToCertificates(page);
+  await page.locator(card.rowMenu(name)).click();
+  await page.locator(card.rowMenuEdit(name)).click();
+
+  await expect(page.locator(editForm.name)).toHaveValue(name);
+}
+
+/** Saves the open Edit Certificate panel and waits for it to close — see {@link importCertificate}. */
+export async function saveCertificateForm(page: Page): Promise<void> {
+  const { save } = certificateLocators.editForm;
+  await page.locator(save).click();
+  await expect(page.locator(save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Opens the certificate's or the key's PEM from the open Edit Certificate panel's
+ * Actions menu, and returns what the dialog shows, closing the dialog again.
+ *
+ * The dialog is read before it is closed: the panel stays open beneath it, so the
+ * other one can be opened next.
+ */
+export async function viewCertificatePem(page: Page, which: 'certificate' | 'key'): Promise<string> {
+  const { editForm, viewDialog } = certificateLocators;
+  await page.locator(editForm.actions).click();
+  await page.locator(which === 'certificate' ? editForm.viewCertificate : editForm.viewKey).click();
+
+  await expect(page.locator(viewDialog.title)).toBeVisible();
+  const pem = await page.locator(viewDialog.pem).inputValue();
+
+  await page.locator(viewDialog.close).click();
+  await expect(page.locator(viewDialog.title)).toBeHidden();
+
+  return pem;
+}
+
+/**
+ * Deletes a certificate from its row's menu, through webui's shared confirm,
+ * starting from the sidebar, and waits for its row to go.
+ *
+ * The card raises the confirm with `hideCheckbox: true`, the same as the CSR card
+ * — see {@link deleteCsr}. Force is left off. The delete is a job, and the card
+ * reloads only once it has finished, so the row going is the wait.
+ */
+export async function deleteCertificate(page: Page, name: string): Promise<void> {
+  const { card } = certificateLocators;
+  await goToCertificates(page);
+  await page.locator(card.rowMenu(name)).click();
+  await page.locator(card.rowMenuDelete(name)).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+
+  const confirm = page.locator(confirmDialogLocators.confirm);
+  await expect(confirm).toBeEnabled();
+  await confirm.click();
+
+  await expect(page.locator(card.row(name))).toBeHidden({ timeout: saveTimeoutMs });
 }
