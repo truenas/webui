@@ -820,6 +820,17 @@ control elsewhere sits inside `ix-missing-access-wrapper`, whose span now emits
 "locked by role" from "disabled because the form is invalid". Every other page,
 and the sharing admin, come in later specs.
 
+Storage for the read-only admin is in `tests/roles-read-only-storage.e2e.ts`. In
+one sign-in it opens a dataset of its own on the Datasets page, its snapshot list
+and the Storage dashboard. Add Dataset, Add Zvol, the Permissions card's Edit, Take
+Snapshot, the snapshot list's Add, an expanded snapshot's Hold, Clone, Rollback and
+Delete, and the pool's Scrub Now must all be locked, and the Dataset Details card
+must render no Edit or Delete. The dataset, the snapshot, its hold and the pool's
+last scan are read back unchanged. The snapshot row used to enable Hold's form
+control for everyone once the snapshot loaded, and enabling it rewrites the
+`disabled` the role wrapper sets. It now enables it only for `SNAPSHOT_WRITE`.
+Quotas, capacity settings and encryption are not covered.
+
 A pool's devices came next, in `tests/pool-devices.e2e.ts`: taking a disk offline
 and bringing it back online, and adding a spare, both from the pool's VDEVs page.
 That page is reached from View VDEVs on the pool's card on the Storage dashboard.

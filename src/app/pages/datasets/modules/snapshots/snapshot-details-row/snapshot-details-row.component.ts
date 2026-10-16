@@ -116,7 +116,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
         next: (snapshot) => {
           this.snapshotInfo = snapshot;
           this.holdControl.setValue(!isEmpty(snapshot.holds), { emitEvent: false });
-          this.holdControl.enable({ emitEvent: false });
+          this.enableHoldIfPermitted();
           this.isLoading = false;
           this.cdr.markForCheck();
         },
@@ -126,6 +126,21 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
           this.errorHandler.showErrorModal(error);
         },
       });
+  }
+
+  /**
+   * Only for a user who may hold or release. The role wrapper disables the box once, as it renders,
+   * and enabling the control after that rewrites the box's `disabled` and undoes the lock.
+   */
+  private enableHoldIfPermitted(): void {
+    this.authService.hasRole(this.requiredRoles).pipe(
+      take(1),
+      filter(Boolean),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.holdControl.enable({ emitEvent: false });
+      this.cdr.markForCheck();
+    });
   }
 
   /**
