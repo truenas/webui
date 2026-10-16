@@ -1,6 +1,6 @@
 /**
  * A dataset's owner, group and Unix mode, driven through the Unix Permissions Editor, and its
- * NFSv4 entries, driven through the ACL editor.
+ * NFSv4 entries, presets and owner, driven through the ACL editor.
  */
 import { expect, type Page } from '@playwright/test';
 import { goToDatasets } from './navigation';
@@ -25,6 +25,23 @@ const editor = permissionsLocators.editor;
  * be overwritten. Every mode a test starts from gives the owner Read, so that box is the signal.
  */
 export async function openPermissionsEditor(page: Page, dataset: string): Promise<void> {
+  await editFromPermissionsCard(page, dataset);
+  await expect(page.locator(editor.access('user', 'read'))).toBeChecked();
+}
+
+/**
+ * Selects `dataset` in the tree and opens the ACL editor from Edit on its Permissions card.
+ *
+ * The card sends a non-trivial ACL here directly. Use Preset is the signal that it is the ACL
+ * editor and not the Unix one, which shows the same path.
+ */
+export async function openAclEditor(page: Page, dataset: string): Promise<void> {
+  await editFromPermissionsCard(page, dataset);
+  await expect(page.locator(permissionsLocators.aclEditor.usePreset)).toBeVisible();
+}
+
+/** The part both editors share: select `dataset`, press Edit, and wait for the path. */
+async function editFromPermissionsCard(page: Page, dataset: string): Promise<void> {
   await goToDatasets(page);
 
   const node = page.locator(datasetLocators.treeNode(dataset));
@@ -34,7 +51,56 @@ export async function openPermissionsEditor(page: Page, dataset: string): Promis
 
   await page.locator(permissionsLocators.card.edit).click();
   await expect(page.locator(editor.datasetPath)).toHaveText(datasetMountPath(dataset));
-  await expect(page.locator(editor.access('user', 'read'))).toBeChecked();
+}
+
+/**
+ * Presses Set ACL in the Unix editor, and waits for the preset dialog.
+ *
+ * The ACL editor raises that dialog itself once it has read a trivial ACL, so it is
+ * on screen before anything in the editor can be used.
+ */
+export async function setAclFromUnixEditor(page: Page): Promise<void> {
+  await page.locator(editor.setAcl).click();
+  await expect(page.locator(permissionsLocators.presetDialog.title)).toBeVisible();
+}
+
+/**
+ * Chooses the preset `name` in the dialog already open, and continues.
+ *
+ * Works on both forms of the dialog. The one the editor raises itself starts on
+ * "Select a preset ACL", and Use Preset's has no radios at all, so in both the
+ * select is the only thing to fill. The preset replaces the form's entries and
+ * nothing is saved yet.
+ */
+export async function choosePreset(page: Page, name: string): Promise<void> {
+  const dialog = permissionsLocators.presetDialog;
+
+  await expect(page.locator(dialog.title)).toBeVisible();
+  await selectOption(page, dialog.preset, dialog.presetOption(name));
+  await page.locator(dialog.continue).click();
+  await expect(page.locator(dialog.title)).toBeHidden();
+}
+
+/**
+ * Picks a new owner in the ACL editor's header, and sets Apply Owner to `apply`.
+ *
+ * The same autocomplete as {@link chooseOwner}: the row is what commits the value.
+ */
+export async function setAclOwner(page: Page, username: string, apply: boolean): Promise<void> {
+  const aclEditor = permissionsLocators.aclEditor;
+
+  await page.locator(aclEditor.owner).fill(username);
+  await page.locator(aclEditor.ownerOption(username)).click();
+  await page.locator(aclEditor.applyOwner).setChecked(apply);
+}
+
+/** Picks a new owner group in the ACL editor's header. The same shape as {@link setAclOwner}. */
+export async function setAclGroup(page: Page, group: string, apply: boolean): Promise<void> {
+  const aclEditor = permissionsLocators.aclEditor;
+
+  await page.locator(aclEditor.ownerGroup).fill(group);
+  await page.locator(aclEditor.ownerGroupOption(group)).click();
+  await page.locator(aclEditor.applyGroup).setChecked(apply);
 }
 
 /**
