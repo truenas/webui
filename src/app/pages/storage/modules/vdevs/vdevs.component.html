@@ -28,7 +28,7 @@
     <ng-container detail-header>
       @if (selectedNode) {
         @let detailsTitle = detailsTitleText | translate: { name: getTitle(selectedNode | cast) | translate } | splitTag: 'name';
-        <span>{{ detailsTitle.before }}</span>
+        <span class="title-text">{{ detailsTitle.before }}</span>
         <ix-topology-item-icon
           class="title-icon"
           [topologyItem]="selectedNode | cast"
@@ -38,7 +38,7 @@
           {{ detailsTitle.inner }}
         </span>
         @if (detailsTitle.after) {
-          <span>{{ detailsTitle.after }}</span>
+          <span class="title-text">{{ detailsTitle.after }}</span>
         }
       }
     </ng-container>

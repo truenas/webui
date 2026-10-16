@@ -41,7 +41,9 @@ export const signinLocators = {
    * Inline, and *not* a form-field error: the component renders a plain block
    * holding whatever `SigninStore.getLoginErrorMessage` returned. A toast
    * carries the same words, but it clears itself after four seconds, so the
-   * inline copy is the one an assertion can rely on.
+   * inline copy is the one an assertion can rely on. The two-factor step
+   * renders its own failure block under the same id, so this matches whichever
+   * step failed.
    */
   error: '[data-test="text-login-error"]',
 } as const;

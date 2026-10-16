@@ -8,7 +8,7 @@
  * downstream suite broke. `e2e/CLAUDE.md` already binds the *test author* to `[data-test]`
  * selectors; nothing bound the PR that removed the attribute. This does.
  *
- * Five rules, all deliberately shallow — these read templates as text, not as an Angular AST:
+ * Six rules, all deliberately shallow — these read templates as text, not as an Angular AST:
  *
  * 1. **Table rows.** `ix-table-body` tagged every `<tr>` from the column model's `uniqueRowTag`;
  *    `tn-table` writes nothing on the row of its own, so a migrated list lost that id. Every list
@@ -42,16 +42,21 @@
  *    silently — the same failure the retired directive left behind, and the one a template check
  *    cannot see because the attribute is right there in the markup. So every template that writes
  *    it must be declared by a component that imports the directive.
+ * 6. **Value readouts.** A value rendered outside a table — a card's detail line, a dialog's
+ *    message, a status pill — that has no id of its own and no tagged ancestor holding just that
+ *    value. This was a `--report` count while areas were closed one ticket at a time (545 when it
+ *    was first measured); once every area reached zero it became a gate, with its own exemption
+ *    map, {@link allowedReadouts}, for the few readouts that are not automation targets.
  *
  * What none of them see is a *changed* id: a renamed `testId` still resolves to something. That
  * stays a reviewer's job, as does whether a value matches what the column resolved pre-migration.
  *
  * A false negative is the acceptable failure here and a false positive is not, so anything that
  * plausibly resolves an id counts, and the handful of elements that are genuinely not automation
- * targets are listed in {@link allowedClickables} with the reason.
+ * targets are listed in {@link allowedClickables} or {@link allowedReadouts} with the reason.
  *
- * `--report` prints per-column coverage and the count of unreadable value readouts instead of
- * gating, for tracking both numbers over time. Add a path — `--report src/app/pages/sharing` — to
+ * `--report` prints per-column coverage and the per-area count of unreadable value readouts instead
+ * of gating, for tracking both numbers over time. Add a path — `--report src/app/pages/sharing` — to
  * also list that area's readouts one per line, which is the working list for closing one.
  */
 
@@ -597,11 +602,11 @@ function report(title: string, offenders: Offender[], advice: string): void {
  * (`{{ 'Name' | translate }}`) is a label, not a value, and is not counted; anything reading data
  * is — with one indirection counted as the literal it stands for, below.
  *
- * Not a gate. A table column is one (rule 2) because the set is bounded and the id it owes is
- * knowable; a free-form readout is not — some are genuinely not automation targets (a gauge's
- * sublabel, prose inside a tooltip), and a rule that cannot tell those apart would either fail the
- * build for noise or need hundreds of exemptions. Measured here so the number is visible and can
- * be driven down per area, which is how the 117 untagged columns were closed.
+ * Rule 6. It started as a measurement, not a gate: unlike a table column the set is not bounded,
+ * and some members are genuinely not automation targets (a gauge's sublabel, prose inside a
+ * tooltip), so gating it at 545 would have meant failing the build for noise or listing hundreds of
+ * exemptions. The number was driven down per area instead, the way the 117 untagged columns were
+ * closed, and what is left at zero is short enough to name one by one in {@link allowedReadouts}.
  */
 const leafValue = /<([a-z][a-z0-9-]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"'])*)?)>([^<]*\{\{[^<]*)<\/\1>/gs;
 /**
@@ -633,12 +638,18 @@ const interpolations = /\{\{((?:[^}]|\}(?!\}))*)\}\}/g;
 const helptextConstant = /^helptext\b/;
 const translatePipe = /^translate$/;
 
+/**
+ * A string literal, escapes included. `[^']*` read `'…this system\'s license.'` as two literals
+ * with an expression between them, so the Spotlight notice in the SMB service form counted as a
+ * value although every character of it is fixed.
+ */
+const stringLiteral = /^'(?:[^'\\]|\\.)*'$|^"(?:[^"\\]|\\.)*"$/;
+
 function readsData(text: string): boolean {
   return [...text.matchAll(interpolations)]
     .map(([, body]) => body.split('|').map((part) => part.trim()))
     .some(([head, ...pipes]) => head.length > 0
-      && !/^'[^']*'$/.test(head)
-      && !/^"[^"]*"$/.test(head)
+      && !stringLiteral.test(head)
       && !(helptextConstant.test(head) && pipes.some((pipe) => translatePipe.test(pipe))));
 }
 
@@ -701,6 +712,37 @@ function taggedAncestorBlock(src: string, at: number): string | null {
 }
 
 /**
+ * Readouts that are deliberately unaddressable, keyed exactly like {@link allowedClickables} —
+ * `<repo-relative path>:<class>`, or `<path>:<tag>` where the element has no class — and held to
+ * the same standard: an entry that exempts nothing fails the run, so it cannot outlive the element
+ * it was written for.
+ *
+ * Two shapes belong here: a surface no suite runs against, and text that is a label rather than a
+ * value. A value a journey would assert on gets an id instead, however awkward its markup.
+ */
+const devOnlyPanel = 'The WebSocket debug panel is a development tool; no e2e journey opens it.';
+const debugPanel = 'src/app/modules/websocket-debug-panel/components';
+const allowedReadouts = new Map<string, string>([
+  [`${debugPanel}/alert-classes-tab/alert-classes-tab.component.html:last-checked`, devOnlyPanel],
+  [`${debugPanel}/alert-classes-tab/alert-classes-tab.component.html:error-message`, devOnlyPanel],
+  [`${debugPanel}/alert-classes-tab/alert-classes-tab.component.html:h3`, devOnlyPanel],
+  [`${debugPanel}/alert-classes-tab/alert-classes-tab.component.html:class-id`, devOnlyPanel],
+  [`${debugPanel}/alert-classes-tab/alert-classes-tab.component.html:class-title`, devOnlyPanel],
+  [`${debugPanel}/alert-classes-tab/alert-classes-tab.component.html:class-category`, devOnlyPanel],
+  [`${debugPanel}/enclosure-mock-tab/enclosure-mock-tab.component.html:preview-value`, devOnlyPanel],
+  [`${debugPanel}/message-list/message-list.component.html:method-name`, devOnlyPanel],
+  [`${debugPanel}/message-list/message-list.component.html:timestamp`, devOnlyPanel],
+  [`${debugPanel}/message-list/message-list.component.html:message-preview`, devOnlyPanel],
+  [`${debugPanel}/mock-config/job-event-builder/job-event-builder.component.html:tn-card__title`, devOnlyPanel],
+  [`${debugPanel}/mock-config/mock-config-list/mock-config-list.component.html:response-type`, devOnlyPanel],
+  [`${debugPanel}/mock-config/mock-config-list/mock-config-list.component.html:config-type`, devOnlyPanel],
+  ['src/app/pages/storage/modules/vdevs/vdevs.component.html:title-text', 'The translated words either side of the device name in the details header; the name itself is `text-vdev-details-title`.'],
+]);
+
+/** Entries of {@link allowedReadouts} that exempted a readout this run. */
+const usedReadoutExemptions = new Set<string>();
+
+/**
  * Readouts in this template that no suite can read, discounting the two ways one is already
  * addressable without an id of its own: a tagged ancestor holding just that value (above), and a
  * shared leaf presenter — one value, and an id at every call site, so the value inside needs none
@@ -711,15 +753,24 @@ function taggedAncestorBlock(src: string, at: number): string | null {
  * opening each one, and a bare per-area total says only how many are left, not where — every area
  * ticket would otherwise start by re-deriving this list by hand.
  */
-function untaggedReadouts(src: string, isSingleValueComponent: boolean): number[] {
+function untaggedReadouts(file: string, src: string, isSingleValueComponent: boolean): number[] {
   if (isSingleValueComponent) {
     return [];
   }
   const stripped = withoutComments(src);
   const lines: number[] = [];
   for (const match of stripped.matchAll(leafValue)) {
-    const [, , attributes = '', text] = match;
+    const [, tag, attributes = '', text] = match;
     if (anyTestId.test(attributes) || !readsData(text)) {
+      continue;
+    }
+    // Before every discount below, as in rule 3: the entry stays spent while the element it names
+    // is still there, rather than retiring the moment the element gains a tagged ancestor.
+    const exemption = [...classNames(attributes), tag]
+      .map((name) => `${file}:${name}`)
+      .find((key) => allowedReadouts.has(key));
+    if (exemption) {
+      usedReadoutExemptions.add(exemption);
       continue;
     }
     // A column header is the column's title — a label, like `{{ 'Name' | translate }}`, even when
@@ -792,6 +843,21 @@ function isUnder(file: string, listing: string): boolean {
 }
 
 /**
+ * Whether the nearest tagged ancestor of the tag at `at` holds that component and nothing else a
+ * suite could read — the id is then the component's, merely written one element further out.
+ *
+ * `services.component.html` wraps `<ix-service-status-cell>` in `<span [tnTestId]="[…,
+ * 'row-state']">`, and `e2e/locators/services.ts` reads the status off that span. Asking only for
+ * an id on the component's own tag counted the pill inside as unreadable.
+ */
+function isSoleChildOfTaggedWrapper(src: string, at: number): boolean {
+  const wrapper = taggedAncestorBlock(src, at);
+  return wrapper !== null
+    && [...wrapper.matchAll(componentTags)].length === 1
+    && valueCount(wrapper) === 0;
+}
+
+/**
  * Selectors that are written as a tag somewhere and carry an id at *every* such call site.
  *
  * Read off the templates rather than guessed: a component opened through a route, a dialog or
@@ -801,11 +867,13 @@ function isUnder(file: string, listing: string): boolean {
 function taggedCallSites(templates: { file: string; src: string }[]): Set<string> {
   const uses = new Map<string, { total: number; tagged: number }>();
   for (const { src } of templates) {
-    for (const match of withoutComments(src).matchAll(componentTags)) {
+    const stripped = withoutComments(src);
+    for (const match of stripped.matchAll(componentTags)) {
       const attributes = match[2] ?? '';
       const entry = uses.get(match[1]) ?? { total: 0, tagged: 0 };
       entry.total += 1;
-      if (anyTestId.test(attributes) || componentTestIdInput.test(attributes)) {
+      if (anyTestId.test(attributes) || componentTestIdInput.test(attributes)
+        || isSoleChildOfTaggedWrapper(stripped, match.index)) {
         entry.tagged += 1;
       }
       uses.set(match[1], entry);
@@ -816,13 +884,8 @@ function taggedCallSites(templates: { file: string; src: string }[]): Set<string
   );
 }
 
-/**
- * `--report`: untagged value readouts per area, the tracked-but-not-gated number.
- *
- * A path given alongside `--report` also lists each readout under it as `file:line  <markup>`,
- * which is the working list for closing one area.
- */
-function reportReadoutCoverage(templates: { file: string; src: string }[], listing?: string): void {
+/** Every readout no suite can read, app-wide — rule 6's offenders and `--report`'s count. */
+function unreadableReadouts(templates: { file: string; src: string }[]): Offender[] {
   const { templateBySelector, selectorByTemplate } = scanComponents();
   const tagged = taggedCallSites(templates);
   // A shared leaf presenter: one value, and every call site puts an id on the tag — which is the
@@ -843,24 +906,31 @@ function reportReadoutCoverage(templates: { file: string; src: string }[], listi
       .map(([selector]) => selector),
   );
 
-  const perArea = new Map<string, number>();
-  for (const { file, src } of templates) {
+  return templates.flatMap(({ file, src }) => {
     // By path, from the same scan that resolved the `templateUrl`. Keying this on the template's
     // *contents* made two byte-identical templates collide, so the discount was applied for the
     // wrong selector — and it hashed every template in `src` in full to do it.
     const selector = selectorByTemplate.get(file);
-    const lines = untaggedReadouts(src, !!selector && singleValue.has(selector));
-    if (!lines.length) {
-      continue;
-    }
+    const sourceLines = src.split('\n');
+    return untaggedReadouts(file, src, !!selector && singleValue.has(selector))
+      .map((line) => ({ file, line, what: sourceLines[line - 1].trim() }));
+  });
+}
+
+/**
+ * `--report`: untagged value readouts per area — rule 6's offenders, counted rather than failed.
+ *
+ * A path given alongside `--report` also lists each readout under it as `file:line  <markup>`,
+ * which is the working list for closing one area.
+ */
+function reportReadoutCoverage(templates: { file: string; src: string }[], listing?: string): void {
+  const perArea = new Map<string, number>();
+  for (const { file, line, what } of unreadableReadouts(templates)) {
     if (listing && isUnder(file, listing)) {
-      const sourceLines = src.split('\n');
-      for (const line of lines) {
-        console.info(`  ${file}:${line}  ${sourceLines[line - 1].trim()}`);
-      }
+      console.info(`  ${file}:${line}  ${what}`);
     }
     const area = file.split('/').slice(0, 4).join('/');
-    perArea.set(area, (perArea.get(area) ?? 0) + lines.length);
+    perArea.set(area, (perArea.get(area) ?? 0) + 1);
   }
 
   const total = [...perArea.values()].reduce((sum, count) => sum + count, 0);
@@ -930,9 +1000,15 @@ function main(): void {
 
   const inert = inertTestIds(templates);
 
+  const readouts = unreadableReadouts(templates);
+
   const staleExemptions = [...allowedClickables.keys()]
     .filter((key) => !usedExemptions.has(key))
     .map((key) => ({ file: key.split(':')[0], line: 1, what: `no clickable matches "${key}"` }));
+
+  const staleReadoutExemptions = [...allowedReadouts.keys()]
+    .filter((key) => !usedReadoutExemptions.has(key))
+    .map((key) => ({ file: key.split(':')[0], line: 1, what: `no readout matches "${key}"` }));
 
   report('tn-table lists that do not bind [rowTestId]:', untaggedRows, `
 Each of these renders table cells (\`tnCellDef\`) without naming the row itself, so an e2e test has
@@ -962,6 +1038,11 @@ Each of these names a clickable that no longer exists — the class was renamed,
 or it now carries an id of its own. Remove the entry from \`allowedClickables\` in this script, so
 the exemption cannot outlive what it was written for.`);
 
+  report('exemptions in allowedReadouts that match nothing:', staleReadoutExemptions, `
+Each of these names a readout that no longer exists, or that now carries an id of its own. Remove
+the entry from \`allowedReadouts\` in this script, so the exemption cannot outlive what it was
+written for.`);
+
   report('templates reviving the retired test-id directive:', revivedDirective, `
 That directive was deleted in NAS-143893, so the attribute now writes no \`data-test\` at all. Use
 the library's instead: \`tnTestIdType="<element type>"\` plus \`[tnTestId]="…"\` — and pre-normalize a
@@ -985,11 +1066,20 @@ reach it. Add one —
 click) — or, if it is genuinely not an automation target, list it in \`allowedClickables\` in this
 script with the reason. See "Finding a \`data-test\` value" in e2e/CLAUDE.md.`);
 
+  report('value readouts with no test id:', readouts, `
+Each of these renders a value — a status, a size, a name, a message — that no \`[data-test]\`
+selector can read: it has no id of its own, and no tagged ancestor holds just that value. Put
+\`tnTestIdType="text"\` + \`[tnTestId]\` on the element, named after the label beside it, or on a
+wrapper that holds nothing else. If it is genuinely not an automation target — a dev-only surface,
+a fragment of a translated label — list it in \`allowedReadouts\` in this script with the reason.
+See "Reading a value that is not in a table" in e2e/CLAUDE.md.`);
+
   if (!process.exitCode) {
     console.info(
       `✅ ${tables.length} tn-table templates tag their rows and every column; `
       + `${templates.length} templates carry no unaddressable action element, no untagged `
-      + 'interactive component, no inert tnTestId and no retired directive.',
+      + 'interactive component, no unreadable value readout, no inert tnTestId and no retired '
+      + 'directive.',
     );
   }
 }

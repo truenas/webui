@@ -5,7 +5,7 @@
            would not do: the message is there from the first render and never changes, and
            regions are only announced when their content mutates. An explicit role="status"
            would also cost the page its only heading. -->
-      <h1 #heading class="message" tabindex="-1">
+      <h1 #heading class="message" tabindex="-1" tnTestIdType="text" tnTestId="system-task-message">
         {{ message() }}
       </h1>
       <tn-icon name="tn-truenas-logo" class="logo" [fullSize]="true"></tn-icon>
