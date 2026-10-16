@@ -120,6 +120,16 @@ jobs:
               lsblk -o NAME,SERIAL,VENDOR,MODEL,TRAN
               for d in /dev/sd?; do echo "== $d"; sudo sg_persist -n -i -k "$d"; sudo sg_persist -n -i -r "$d"; done' || true
             echo "::endgroup::"
+            # The takeover's own account: boots, pools, and the failover
+            # event's log. Middleware's log filtered to the failover, and
+            # never a line about the license.
+            echo "::group::node $n failover events"
+            truenas-appliance ssh "$n" 'journalctl --list-boots --no-pager
+              sudo zpool status; sudo zpool import
+              sudo tail -n 200 /var/log/failover.log
+              sudo grep -ihE "failover|vrrp|fence|zpool|import|tank|traceback|error" /var/log/middlewared.log \
+                | grep -iv license | tail -n 200' || true
+            echo "::endgroup::"
           done
           echo "::group::LIO persistent reservations"
           for d in /sys/kernel/config/target/core/fileio_*/tnha*; do
