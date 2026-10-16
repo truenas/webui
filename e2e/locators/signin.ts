@@ -46,4 +46,10 @@ export const signinLocators = {
    * step failed.
    */
   error: '[data-test="text-login-error"]',
+  /**
+   * The one-time password field, which replaces username and password once
+   * middleware has asked for a code. Submitted with {@link submit}: "Proceed" on
+   * this step carries the same `log-in` id as "Log In" on the first.
+   */
+  otp: '[data-test="input-otp"]',
 } as const;

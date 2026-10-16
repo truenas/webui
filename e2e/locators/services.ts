@@ -1,5 +1,5 @@
 /**
- * The Services page under System, and the SSH, FTP, SNMP and SMB forms it opens.
+ * The Services page under System, and the SSH, FTP, SNMP, UPS and SMB forms it opens.
  *
  * Every id on a row is keyed on a row tag of `service-<name>`, and two names are
  * in play. The page builds the tag from the display name (`SMB`) for the `<tr>`,
@@ -13,13 +13,14 @@
 import { kebabTestSegment } from './test-id';
 
 /** Middleware's name for each service the specs drive. */
-export type ServiceKey = 'ssh' | 'ftp' | 'snmp' | 'cifs' | 'iscsitarget' | 'nvmet';
+export type ServiceKey = 'ssh' | 'ftp' | 'snmp' | 'ups' | 'cifs' | 'iscsitarget' | 'nvmet';
 
 /** The page's name for each, as `serviceNames` in `src/app/enums/service-name.enum.ts` has it. */
 const displayNames: Record<ServiceKey, string> = {
   ssh: 'SSH',
   ftp: 'FTP',
   snmp: 'SNMP',
+  ups: 'UPS',
   cifs: 'SMB',
   iscsitarget: 'iSCSI',
   nvmet: 'NVMe-oF',
@@ -140,6 +141,37 @@ export const servicesLocators = {
     multichannel: '[data-test="checkbox-multichannel"]',
     fileMask: '[data-test="input-filemask"]',
     dirMask: '[data-test="input-dirmask"]',
+  },
+
+  /** `service-ups.component.html`. */
+  upsForm: {
+    identifier: '[data-test="input-identifier"]',
+    /** The field around {@link identifier}, `testId="identifier"`, which holds its error text. */
+    identifierField: '[data-test="form-field-identifier"]',
+    mode: '[data-test="select-mode"]',
+    modeMaster: '[data-test="option-mode-master"]',
+    modeSlave: '[data-test="option-mode-slave"]',
+
+    /** Rendered only in Slave mode. */
+    remoteHost: '[data-test="input-remotehost"]',
+    remotePort: '[data-test="input-remoteport"]',
+
+    /**
+     * Rendered only in Master mode. A `tn-autocomplete` with `requireSelection`:
+     * typing narrows the list and only clicking a row commits a value. Its rows
+     * are keyed by label, which is the model and the driver name, e.g.
+     * `APC Smart-UPS (usbhid-ups, USB)`.
+     */
+    driver: '[data-test="autocomplete-driver"]',
+    driverOptions: '[data-test^="option-driver-"]',
+    /** A `tn-autocomplete` with `allowCustomValue`: typed text is committed on blur. */
+    port: '[data-test="autocomplete-port"]',
+
+    monitorUser: '[data-test="input-monuser"]',
+    monitorPassword: '[data-test="input-monpwd"]',
+    shutdownMode: '[data-test="select-shutdown"]',
+    shutdownOnBattery: '[data-test="option-shutdown-ups-goes-on-battery"]',
+    shutdownTimer: '[data-test="input-shutdowntimer"]',
   },
 
   /** `<tn-button [testId]="'save'">` on the side panel container. */
