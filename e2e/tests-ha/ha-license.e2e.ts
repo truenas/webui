@@ -25,6 +25,12 @@ test('an admin licenses the pair for HA, and both controllers take it', async ({
 
   expect(await readFailover(api), 'a fresh pair, unlicensed').toMatchObject({ licensed: false, node: 'A' });
 
+  // A pair of HA VMs is TrueNAS hardware to the UI, so the first sign-in meets
+  // the EULA before there is any license — and the upload brings it back.
+  if (await expectsEula(api)) {
+    await acceptEula(page);
+  }
+
   await uploadLicense(page, readHaLicense(ha.licenseFile));
 
   // The reload signs back in to a licensed system: the license lands before it.
