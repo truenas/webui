@@ -1024,6 +1024,21 @@ card's row tag is `cloud-cred-<name>`, so a rename changes every id on the row.
 Other providers, OAuth, Generate New for the private key, and deleting a
 credential a task still uses are not covered.
 
+Two-factor authentication is in `tests/unauthenticated/two-factor.e2e.ts`, as one
+story. The suite's admin turns global two-factor on from its card on Advanced
+Settings. A throwaway administrator signing in next is put through the setup
+dialog: the dialog generates a secret, the spec reads it off the screen and
+confirms the code it gives, and `user.query` then reports two-factor configured.
+After that, signing in asks for a code, refuses a wrong one and accepts the right
+one. Last, an admin clears it from the user's Access card. Codes come from
+`support/totp.ts` (RFC 6238 over Node's HMAC-SHA1), because no TOTP library is
+installed. Global two-factor is turned off in `beforeAll` and again in `afterAll`,
+whatever happened. If it were left on, every later sign-in would meet the setup
+dialog. For the same reason it is switched off over the API before the admin
+signs in to clear the user's secret, since the admin must never be given one.
+The Renew and Unset buttons on the `/two-factor-auth` page, Skip Setup, Cancel
+Setup, two-factor for SSH, and the QR code itself are not covered.
+
 The framework is done and the coverage of the 19 top-level feature areas is
 not. What the work bought is that the next twenty tests are cheap: the target
 seam, auth, fixtures, unconditional teardown, selector discipline and failure
