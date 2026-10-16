@@ -193,8 +193,11 @@ jobs:
       fail-fast: false
     # Named labels rather than a bare `self-hosted`, which matches whichever
     # registered runner happens to be free. More than one is registered, and
-    # they are not interchangeable — this job wants the ARM builder.
-    runs-on: [self-hosted, Linux, ARM64]
+    # they are not interchangeable.
+    # TEMP: the ARM builder ([self-hosted, Linux, ARM64]) is down, so this runs
+    # on the 4-core truenas-lab runner. Restore the ARM64 labels and
+    # --maxWorkers=50 once it is back.
+    runs-on: truenas-lab
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -203,7 +206,7 @@ jobs:
         with:
           cache-jest: 'true'
       - name: Run tests
-        run: yarn test:pr --maxWorkers=50
+        run: yarn test:pr --maxWorkers=4
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
