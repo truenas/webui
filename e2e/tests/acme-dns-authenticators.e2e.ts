@@ -3,8 +3,9 @@
  * Certificates, is stopped from giving it an API token and an API key at once,
  * edits one and deletes one from its row, and the appliance holds what they did.
  *
- * Each action is asserted twice: the card's row says the screen believed it,
- * `acme.dns.authenticator.query` says the appliance did it.
+ * Every action is read back through `acme.dns.authenticator.query`, which says
+ * the appliance did it. The add also reads the new row's cells, and the delete
+ * checks that the bystander's row is still on the card.
  *
  * The token is a dummy. Middleware checks a Cloudflare authenticator's
  * credentials only for which of token, key and email were given together, and
