@@ -1,16 +1,17 @@
-# SPIKE, not for merging: can a truenas-lab-xlarge runner host a working
-# TrueNAS HA pair inside itself? Boots the two appliance disks its scale set
-# attaches with .github/ha-spike/ha.sh, then makes them HA over the API
-# with ha_setup.py and, unless told not to, fails over once.
+# A TrueNAS HA pair inside one truenas-lab-xlarge runner. Boots the two
+# appliance disks its scale set attaches with .github/e2e-ha/ha.sh, then
+# makes them HA over the API with ha_setup.py and, unless told not to,
+# fails over once. The first step towards the HA suite: these pieces move
+# into the truenas-appliance-runner action's HA mode once the pair works.
 #
-# Runs on every push to the spike branch: a workflow that is not on the
-# default branch cannot be dispatched.
+# Runs on every push to its branch while that is being built: a workflow
+# that is not on the default branch cannot be dispatched.
 
-name: E2E HA spike
+name: E2E HA
 
 on:
   push:
-    branches: [ha-e2e-spike]
+    branches: [ha-e2e]
   workflow_dispatch:
     inputs:
       failover:
@@ -21,12 +22,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: e2e-ha-spike
+  group: e2e-ha-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   ha:
-    runs-on: [self-hosted, truenas-lab-xlarge]
+    runs-on: truenas-lab-xlarge
     timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
@@ -47,7 +48,7 @@ jobs:
           echo "HA_DIR=$RUNNER_TEMP/tn-ha" >> "$GITHUB_ENV"
           export HA_DIR="$RUNNER_TEMP/tn-ha"
           lsblk -p -o NAME,SIZE,SERIAL,FSTYPE,LABEL,MOUNTPOINT
-          out="$(bash .github/ha-spike/ha.sh start)"
+          out="$(bash .github/e2e-ha/ha.sh start)"
           echo "$out"
           grep '^HA_' <<< "$out" >> "$GITHUB_ENV"
 
@@ -68,14 +69,14 @@ jobs:
           export HA_PASSWORD
           args=("$pem")
           [ "$FAILOVER" = true ] && args+=(--failover)
-          python3 -u .github/ha-spike/ha_setup.py "${args[@]}"
+          python3 -u .github/e2e-ha/ha_setup.py "${args[@]}"
 
       - name: Consoles
         if: always()
         run: |
           for n in a b; do
             echo "::group::node $n console"
-            bash .github/ha-spike/ha.sh console "$n" 300 || true
+            bash .github/e2e-ha/ha.sh console "$n" 300 || true
             echo "::endgroup::"
           done
           echo "::group::dnsmasq"

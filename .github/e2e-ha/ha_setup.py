@@ -1,9 +1,9 @@
-"""SPIKE: make the pair ha.sh booted into a working HA system, over the API.
+"""Make the pair ha.sh booted into a working HA system, over the API.
 
 The sequence is middleware's own (tests/sharing_protocols/conftest.py
 setup_server_ha, utils/ha.py settle_ha). Every step is logged with how long
-it took and, on failure, what both nodes say about failover, because what
-this spike is for is learning which step breaks.
+it took and, on failure, what both nodes say about failover, so a broken
+run names the step that broke.
 
     python3 ha_setup.py <license file> [--failover]
 

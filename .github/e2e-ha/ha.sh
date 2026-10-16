@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# SPIKE: an HA pair of TrueNAS appliances, both inside this runner.
+# An HA pair of TrueNAS appliances, both inside this runner.
 #
-# Not the finished thing: it answers whether the in-runner model can host
-# HA at all, before any of it moves into the truenas-appliance-runner
-# action. Reuses that action's lib.sh and tnctl.py, from a checkout of
+# The first cut, kept beside the workflow while the pair is brought up; it
+# moves into the truenas-appliance-runner action as its HA mode once it
+# works. Reuses that action's lib.sh and tnctl.py, from a checkout of
 # iXsystems/ux-github-workflows at $APPLIANCE_LIB.
 #
 # What middleware needs of the hardware, and how this provides it:
