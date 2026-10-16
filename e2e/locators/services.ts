@@ -84,7 +84,13 @@ export const servicesLocators = {
     certificate: '[data-test="select-ssltls-certificate"]',
     certificateOption: (name: string): string => `[data-test="option-ssltls-certificate-${kebabTestSegment(name)}"]`,
     tlsPolicy: '[data-test="select-tls-policy"]',
-    /** Keyed on the option's label from `helptextServiceFtp`, e.g. `Data`. */
+    /**
+     * Keyed on the option's label from `helptextServiceFtp`, e.g. `Data`.
+     *
+     * Two policies share an id: `Data` and `!Data` both normalize to `data`, and
+     * `Ctrl + Data` and `Ctrl + !Data` to `ctrl-data`. A spec picking one of those
+     * takes the first match, which is the one without the `!`.
+     */
     tlsPolicyOption: (label: string): string => `[data-test="option-tls-policy-${kebabTestSegment(label)}"]`,
     tlsAllowClientRenegotiations: '[data-test="checkbox-tls-opt-allow-client-renegotiations"]',
   },

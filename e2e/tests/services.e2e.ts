@@ -168,7 +168,9 @@ test('an admin turns on FTP TLS with the appliance certificate', async ({ page, 
   // The certificate and the TLS options render only once Enable TLS is ticked.
   await page.locator(form.tls).click();
   await selectOption(page, form.certificate, form.certificateOption(certificateName));
-  await selectOption(page, form.tlsPolicy, form.tlsPolicyOption('Data'));
+  // `.first()`, because `!Data` renders the same id after it. See `tlsPolicyOption`.
+  await page.locator(form.tlsPolicy).click();
+  await page.locator(form.tlsPolicyOption('Data')).first().click();
   await page.locator(form.tlsAllowClientRenegotiations).click();
   await saveServiceForm(page);
 
