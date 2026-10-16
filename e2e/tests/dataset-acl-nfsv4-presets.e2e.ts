@@ -150,11 +150,13 @@ test('Use Preset replaces the entries of a non-trivial ACL with NFS4_OPEN', asyn
   const dataset = `${pool}/${smbLeaf}`;
   const path = datasetMountPath(dataset);
   const template = await readAclTemplate(api, path, 'NFS4_OPEN');
-  const templateNames = templateEntries(template).map((entry) => entry.who);
+  const before = nfs4Entries(await readAcl(api, path));
 
-  // Replacing and appending differ only by an entry the template does not have.
-  expect(nfs4Entries(await readAcl(api, path)).map((entry) => entry.who)).toContain('builtin_users');
-  expect(templateNames).not.toContain('builtin_users');
+  // `by_path` gives every template the builtin groups too, so no one name tells the two ACLs
+  // apart. The starting entries differ from the template's, and the exact match after Save
+  // rules out an append, which would keep them alongside.
+  expect(before.length).toBeGreaterThan(0);
+  expect(shapesOf(before)).not.toEqual(shapesOf(templateEntries(template)));
 
   await openAclEditor(page, dataset);
   await page.locator(permissionsLocators.aclEditor.usePreset).click();
@@ -166,7 +168,6 @@ test('Use Preset replaces the entries of a non-trivial ACL with NFS4_OPEN', asyn
   const entries = nfs4Entries(await readAcl(api, path));
   expect(shapesOf(entries)).toEqual(shapesOf(templateEntries(template)));
   expect(entries.find((entry) => entry.tag === 'everyone@')?.perms).toEqual({ BASIC: 'MODIFY' });
-  expect(entries.map((entry) => entry.who)).not.toContain('builtin_users');
 });
 
 test('Apply Owner sends the owner and a clear Apply Group leaves the group', async ({ page, api, pool }) => {
