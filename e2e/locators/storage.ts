@@ -43,6 +43,11 @@ export const poolWizardLocators = {
 
   /** Step 1 — `<tn-input formControlName="name">`, id via control-name fallback. */
   name: '[data-test="input-name"]',
+  /**
+   * The Name `<tn-form-field testId="name">` around {@link name}. The field's
+   * error has no id of its own, so its text is read off this.
+   */
+  nameField: '[data-test="form-field-name"]',
   next: '[data-test="button-next-general"]',
 
   /**
@@ -107,6 +112,16 @@ export const poolWizardLocators = {
     `[data-test="button-save-and-go-to-review-${reviewStepIds[type]}"]`
   ),
 
+  /** The Data step's top warning, shown under the layout while one applies. */
+  dataStepWarning: '[data-test="text-data-step-warning"]',
+
+  /**
+   * Any entry of the Review step's Warnings list, `['review-warning', $index]`.
+   * A prefix match: the index is the entry's place in a list sorted by
+   * severity, so it moves whenever another warning comes or goes.
+   */
+  reviewWarnings: '[data-test^="text-review-warning-"]',
+
   /** Review step — General Info's Pool Name. */
   reviewPoolName: '[data-test="text-review-pool-name"]',
   /**
@@ -116,6 +131,8 @@ export const poolWizardLocators = {
   reviewCategory: (type: VdevCategory) => `[data-test="text-review-${type}"]`,
   reviewEstUsableRawCapacity: '[data-test="text-review-est-usable-raw-capacity"]',
 
+  /** Rendered only while the topology has at least one vdev. */
+  inspectVdevs: '[data-test="button-inspect-vdevs"]',
   createPool: '[data-test="button-create-pool"]',
 } as const;
 

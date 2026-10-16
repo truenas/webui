@@ -1,5 +1,5 @@
 <ng-container [formGroup]="form">
-  <tn-form-field [label]="'Name' | translate" [required]="true">
+  <tn-form-field testId="name" [label]="'Name' | translate" [required]="true">
     <tn-input
       formControlName="name"
       [readonly]="isAddingVdevs()"

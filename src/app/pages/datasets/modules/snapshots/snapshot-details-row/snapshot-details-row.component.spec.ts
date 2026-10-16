@@ -6,6 +6,7 @@ import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, pipe } from 'rxjs';
+import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
@@ -27,6 +28,8 @@ describe('SnapshotDetailsRowComponent', () => {
   let api: TypedApiService;
   /** What `pool.dataset.query` answers when asked which datasets have this snapshot as their origin. */
   let clonesOfSnapshot: WebUiQueryEntity<'pool.dataset.query'>[] = [];
+  /** What `hasRole` answers for `SNAPSHOT_WRITE`. */
+  let hasSnapshotWrite = true;
 
   const createComponent = createRoutingFactory({
     component: SnapshotDetailsRowComponent,
@@ -63,6 +66,7 @@ describe('SnapshotDetailsRowComponent', () => {
       detectChanges: false,
     });
     spectator.inject(MockTypedApiService).mockQuery('pool.dataset.query', clonesOfSnapshot);
+    spectator.inject(MockAuthService).hasRole.mockReturnValue(of(hasSnapshotWrite));
     spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(TypedApiService);
@@ -124,6 +128,23 @@ describe('SnapshotDetailsRowComponent', () => {
 
     await holdCheckbox.toggle();
     expect(api.call).toHaveBeenCalledWith('pool.snapshot.hold', [fakeZfsSnapshot.name]);
+  });
+
+  describe('for a user without SNAPSHOT_WRITE', () => {
+    beforeAll(() => {
+      hasSnapshotWrite = false;
+    });
+
+    afterAll(() => {
+      hasSnapshotWrite = true;
+    });
+
+    it('keeps Hold disabled once the snapshot has loaded', () => {
+      // The control rather than the harness: the role wrapper also disables the box, and enabling
+      // the control after it had was what put a live Hold in front of a read-only admin.
+      expect(api.query).toHaveBeenCalledWith('pool.snapshot.query', expect.anything(), expect.anything());
+      expect(spectator.component.holdControl.disabled).toBe(true);
+    });
   });
 
   it('offers Delete for a snapshot nothing was cloned from', async () => {

@@ -164,5 +164,28 @@ export const permissionsLocators = {
      * Clicking it removes the entry.
      */
     entryError: (index: number): string => `[data-test="button-remove-ace-error-${index}"]`,
+
+    /** "Apply permissions recursively". Ticking it raises a Warning confirm; cancelling that clears it again. */
+    recursive: '[data-test="checkbox-recursive"]',
+    /** "Apply permissions to child datasets". Rendered only while {@link recursive} is ticked. */
+    traverse: '[data-test="checkbox-traverse"]',
+    /** "Strip ACL". Offered only while the ACL is not trivial. Opens {@link permissionsLocators.stripDialog}. */
+    stripAcl: '[data-test="button-strip-acl"]',
+  },
+
+  /**
+   * The Strip ACL dialog (`strip-acl-modal.component.html`).
+   *
+   * Its own Strip ACLs button emits `button-strip-acl` like the editor's, which
+   * stays on the page behind it, so it is reached through the dialog's action row.
+   */
+  stripDialog: {
+    title: '[data-test="dialog-title-strip-acl"]',
+    /**
+     * "Remove the ACL and permissions from child datasets". The same id as the editor's traverse box,
+     * which is never rendered with it: the editor's needs Apply recursively ticked.
+     */
+    traverse: '[data-test="checkbox-traverse"]',
+    submit: '[data-test="actions-strip-acl"] [data-test="button-strip-acl"]',
   },
 } as const;

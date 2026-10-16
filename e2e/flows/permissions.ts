@@ -49,6 +49,13 @@ export async function openAclEditor(page: Page, dataset: string): Promise<void> 
  * children is reached by selecting each dataset above it first, as a user opens the tree.
  */
 async function editFromPermissionsCard(page: Page, dataset: string): Promise<void> {
+  await selectDataset(page, dataset);
+  await page.locator(permissionsLocators.card.edit).click();
+  await expect(page.locator(editor.datasetPath)).toHaveText(datasetMountPath(dataset));
+}
+
+/** Opens Datasets from the sidebar and selects `dataset` in the tree, so the cards are its own. */
+export async function selectDataset(page: Page, dataset: string): Promise<void> {
   await goToDatasets(page);
 
   const segments = dataset.split('/');
@@ -62,9 +69,6 @@ async function editFromPermissionsCard(page: Page, dataset: string): Promise<voi
   await expect(node).toBeVisible();
   await node.click();
   await expect(page.locator(datasetDetailsLocators.path)).toHaveText(dataset);
-
-  await page.locator(permissionsLocators.card.edit).click();
-  await expect(page.locator(editor.datasetPath)).toHaveText(datasetMountPath(dataset));
 }
 
 /**
@@ -277,6 +281,41 @@ export async function saveAclToTraverseWarning(page: Page): Promise<void> {
 export async function saveAclAnyway(page: Page): Promise<void> {
   await confirmDestructiveAction(page);
   await expect(page.locator(permissionsLocators.aclEditor.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Ticks Apply permissions recursively in the ACL editor, confirms the Warning it
+ * raises, and sets Apply permissions to child datasets to `traverse`.
+ *
+ * The child datasets box is rendered only once recursion is on, so it is waited
+ * for after the confirm.
+ */
+export async function setRecursive(page: Page, { traverse }: { traverse: boolean }): Promise<void> {
+  const aclEditor = permissionsLocators.aclEditor;
+
+  await page.locator(aclEditor.recursive).check();
+  await confirmDestructiveAction(page);
+  await expect(page.locator(confirmDialogLocators.title)).toBeHidden();
+  await expect(page.locator(aclEditor.recursive)).toBeChecked();
+  await page.locator(aclEditor.traverse).setChecked(traverse);
+}
+
+/**
+ * Presses Strip ACL in the ACL editor and strips it, from child datasets too when
+ * `childDatasets` is set.
+ *
+ * The dialog runs `filesystem.setacl` with `stripacl` as a job and closes once it
+ * has succeeded, and the editor then navigates away.
+ */
+export async function stripAcl(page: Page, { childDatasets }: { childDatasets: boolean }): Promise<void> {
+  const dialog = permissionsLocators.stripDialog;
+
+  await page.locator(permissionsLocators.aclEditor.stripAcl).click();
+  await expect(page.locator(dialog.title)).toBeVisible();
+  await page.locator(dialog.traverse).setChecked(childDatasets);
+  await page.locator(dialog.submit).click();
+  await expect(page.locator(dialog.title)).toBeHidden({ timeout: saveTimeoutMs });
+  await expect(page.locator(permissionsLocators.aclEditor.save)).toBeHidden();
 }
 
 /**
