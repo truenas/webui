@@ -382,6 +382,25 @@ form, which opens on the signed-in admin, and ties the key the one-time dialog
 showed to the stored record by its `<id>-` prefix. Editing, resetting and an
 expiry date are not covered.
 
+The user details page followed, in `tests/user-details.e2e.ts` and
+`tests/unauthenticated/user-sign-in-controls.e2e.ts`. The first covers the Access
+card's links, each in the state that offers it: Add API Key for a user with no
+key (the form opens on that account, and `api_key.query` confirms the key is
+theirs), View API Keys arriving filtered to that user beside a second account's
+key, and Download Public Key — absent for a user with no `sshpubkey`, and for one
+with a key, a file holding exactly that key. The second signs in as the account
+afterwards, which is why it runs without the token: a locked user is refused at
+sign-in and an unlocked one is let back in, and a one-time password works once
+and is refused the second time. Both use a throwaway administrator, never the
+suite's own. A session opened by a one-time password may land on the "Password
+Change Required" dialog rather than the shell, depending on what middleware marks
+the account; the flow accepts either. Logging out from that dialog leaves the
+sign-in page on "Logging in..." until it is loaded again, so the flow waits for
+the dialog to close and the next sign-in loads the page afresh. The Edit button's
+id is still built from `full_name` alone, so it is a bare `button-edit-user` for
+a user without one; it was left as it is because changing a resolved id is a
+breaking change, and no test here selects it.
+
 Cron jobs came next, in `tests/cron-jobs.e2e.ts`: adding, editing, running and
 deleting a job from the card on System > Advanced Settings, each beside a second
 job that must come through untouched. It sits on the same card shape as
@@ -762,8 +781,8 @@ beside a second CSR that must come through untouched. The wizard is driven with
 its defaults (no profile, RSA 2048, SHA256, no extensions) and only the subject
 filled in. The row tag is `csr-<name>`. The card lists four CSRs before its
 pager, so each test fails at the start if its rows would not fit. Importing a
-CSR, profiles, extensions, the CSR card's Edit and Download, ACME certificates
-and ACME DNS authenticators are not covered.
+CSR, profiles, extensions, the CSR card's Edit and Download, and ACME
+certificates are not covered.
 
 The Certificates card is in `tests/certificates-import.e2e.ts`: importing a
 certificate with its private key, editing one's name and "Add to trusted store",
@@ -777,6 +796,17 @@ edit and delete each run beside a second certificate that must not change. The
 row tag is `cert-<name>`, and the card has the same four-row limit as the CSR
 card. Importing with a passphrase, the Download action and the trusted store's
 effect on the system are not covered.
+
+The ACME DNS-Authenticators card on the same page is in
+`tests/acme-dns-authenticators.e2e.ts`: a Cloudflare authenticator added with an
+API token, the form refusing a token together with a key (its banner shown and
+Save disabled until the key is cleared), an edit beside a bystander, and a
+delete from the row beside a bystander. Each is read back through
+`acme.dns.authenticator.query`. The token is a dummy: middleware checks only
+which Cloudflare credentials were given together and never calls Cloudflare on
+save. The row tag is still the misspelt `amce-dns-<name>`, kept because
+renaming a resolved id breaks anything outside that selects it. Other
+providers, the email-plus-key form and the card's pager are not covered.
 
 The Portals, Initiators and Authorized Access tabs of the full iSCSI page, and
 its Global Target Configuration, are in `tests/iscsi-config.e2e.ts`, reached
@@ -843,6 +873,16 @@ tag is `service-<name>`. FTP is the service started because nothing the suite or
 CI uses depends on it; it goes back to stopped, and both forms' fields to a fixed
 baseline, before and after each test. The Start Automatically switch, the search,
 the other services' forms, advanced options and View Logs/Sessions are not covered.
+
+The SNMP form, opened from its row on the same page, is in
+`tests/snmp-service.e2e.ts`: saving location, contact, community, auxiliary
+parameters and zilstat with v3 off, with every v3 field left blank;
+saving v3 credentials (username, SHA, AES), read back less the password and
+passphrase, which are secrets; and a v3 password under eight characters,
+refused under the field with Save held down. Each save is asserted through
+`snmp.config`, with SNMP stopped and its settings at a fixed baseline before and
+after each test. The Password field got `testId="v3-password"` so its error
+text can be read. Starting SNMP and querying it with a client are not covered.
 
 Virtual Machines followed, in `tests/virtual-machines.e2e.ts`: creating a Linux VM
 with the wizard on a new zvol, and editing and deleting one from its row's detail
@@ -1023,6 +1063,16 @@ credential that must come through untouched, and delete runs beside one too. The
 card's row tag is `cloud-cred-<name>`, so a rename changes every id on the row.
 Other providers, OAuth, Generate New for the private key, and deleting a
 credential a task still uses are not covered.
+
+Directory Services has `tests/kerberos.e2e.ts`. It covers the Kerberos Realms and
+Kerberos Keytab cards behind the page's Advanced Settings and its warning. A realm
+is added with a primary KDC, KDCs, admin servers and password servers. It is edited
+and deleted from its row beside a second realm that must stay the same. A keytab is
+uploaded through the file chooser and deleted. Each is checked through
+`kerberos.*.query`. Middleware runs `klist` over an uploaded keytab and refuses one
+with no entries, so `buildKeytab` in `fixtures/kerberos.ts` writes a one-entry MIT
+keytab in the test. Joining AD, LDAP or IPA needs a directory server, so those are
+not covered, and neither is the AD-only Sync button.
 
 Two-factor authentication is in `tests/unauthenticated/two-factor.e2e.ts`, as one
 story. The suite's admin turns global two-factor on from its card on Advanced

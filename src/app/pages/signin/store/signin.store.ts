@@ -167,6 +167,15 @@ export class SigninStore extends ComponentStore<SigninState> {
     // Wait for user to be loaded
     switchMap(() => this.authService.user$.pipe(filter(Boolean))),
     switchMap(() => from(this.router.navigateByUrl(this.getRedirectUrl()))),
+    tap((hasNavigated) => {
+      // A navigation that does not land leaves this page mounted, so nothing else will take the
+      // "Logging in..." card down. Logging out of the Password Change Required dialog is one:
+      // the guard holds the navigation while the dialog is open, and the logout supersedes it.
+      if (!hasNavigated) {
+        this.setLoadingState(false);
+        this.setLoggingInState(false);
+      }
+    }),
     catchError((error: unknown) => {
       this.setLoadingState(false);
       this.setLoggingInState(false);

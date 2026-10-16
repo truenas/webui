@@ -205,6 +205,34 @@ describe('SigninStore', () => {
       expect(await firstValueFrom(spectator.service.isLoggingIn$)).toBe(true);
     });
 
+    it('stays in the "logging in" state once the navigation to the dashboard lands', fakeAsync(() => {
+      jest.spyOn(spectator.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+      Object.defineProperty(spectator.inject(AuthService), 'user$', {
+        value: of(mockLoggedInUser),
+      });
+
+      spectator.service.handleSuccessfulLogin();
+      tick();
+
+      expect(spectator.service.state().isLoading).toBe(true);
+      expect(spectator.service.state().isLoggingIn).toBe(true);
+    }));
+
+    it('shows the form again when the navigation to the dashboard does not land', fakeAsync(() => {
+      // What a logout from the Password Change Required dialog does to the navigation it holds.
+      jest.spyOn(spectator.inject(Router), 'navigateByUrl').mockResolvedValue(false);
+      Object.defineProperty(spectator.inject(AuthService), 'user$', {
+        value: of(mockLoggedInUser),
+      });
+
+      spectator.service.handleSuccessfulLogin();
+      tick();
+
+      expect(spectator.service.state().isLoading).toBe(false);
+      expect(spectator.service.state().isLoggingIn).toBe(false);
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
+    }));
+
     it('redirects user to url stored in sessionStorage', () => {
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigateByUrl');

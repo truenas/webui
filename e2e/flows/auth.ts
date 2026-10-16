@@ -8,12 +8,24 @@
 import { expect, type APIRequestContext, type Page } from '@playwright/test';
 import { signinLocators } from '../locators/signin';
 import { topbarLocators } from '../locators/topbar';
+import { usersLocators } from '../locators/users';
 import {
   adminLayout, errorDialogBody, errorDialogClose, errorDialogHeading,
 } from '../support/constants';
 
 /** Generous: a cold sign-in on this app runs to roughly 15 seconds. */
 export const signInTimeoutMs = 60_000;
+
+/**
+ * What the app says for a wrong username, a wrong password and a disabled
+ * account alike.
+ *
+ * Middleware answers `AUTH_ERR` to all three, which the app maps to one message
+ * (`SigninStore.getLoginErrorMessage`). That is the intended behaviour, not a
+ * shortcoming: distinguishing them would tell an attacker which usernames are
+ * real. A locked account and a spent one-time password read the same way.
+ */
+export const wrongCredentialsMessage = 'Wrong username or password. Please try again.';
 
 /** Short: this only asks whether an origin answers at all. */
 const httpProbeTimeoutMs = 10_000;
@@ -145,6 +157,42 @@ export async function expectSignInRefused(page: Page, message: string | RegExp):
   await expect(page.locator(signinLocators.error)).toContainText(message, { timeout: signInTimeoutMs });
   await expect(page.locator(adminLayout)).toBeHidden();
   await expect(page.locator(signinLocators.username)).toBeVisible();
+}
+
+/**
+ * Waits for a session that a one-time password opened, and signs it out again.
+ *
+ * Such a session can land in either of two places, and which one is middleware's
+ * call rather than the app's: the admin shell, or — when middleware marks the
+ * account `PASSWORD_CHANGE_REQUIRED` — the full-screen "Password Change
+ * Required" dialog the admin layout's guard raises *instead* of the shell, until
+ * a new password is set. Either one means the password was accepted; the sign-in
+ * form refusing it is the only failure. The guard holds the navigation while its
+ * dialog is open, so the two are never on screen together.
+ *
+ * Signs out from whichever it was. After the dialog's Log Out the session is over
+ * but the page is not back on a usable form: the sign-in page stays on "Logging
+ * in..." until it is loaded again. The navigation to the dashboard is still held
+ * by the guard, so the sign-in page is never torn down and keeps the logging-in
+ * state its successful sign-in set. That is an app defect, and nothing here is
+ * about it — so this waits for the dialog to close, which it does only once the
+ * logout has finished, and the caller enters the app afresh (`attemptSignIn`
+ * loads the sign-in page) for whatever it does next.
+ */
+export async function expectOneTimePasswordSession(page: Page, username: string): Promise<void> {
+  const shell = page.locator(adminLayout);
+  const changeRequired = page.locator(usersLocators.passwordChangeRequiredDialog.title);
+
+  await expect(shell.or(changeRequired).first()).toBeVisible({ timeout: signInTimeoutMs });
+
+  if (await changeRequired.isVisible()) {
+    await page.locator(usersLocators.passwordChangeRequiredDialog.logOut).click();
+    await expect(changeRequired).toBeHidden({ timeout: signInTimeoutMs });
+    return;
+  }
+
+  await expectSignedInAs(page, username);
+  await signOut(page);
 }
 
 /** Signs out via the topbar user menu and waits for the sign-in form. */
