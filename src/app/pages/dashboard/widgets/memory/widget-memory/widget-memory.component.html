@@ -1,7 +1,7 @@
 <tn-card class="card" [padContent]="false">
   <div class="card-content">
     <div class="header">
-      <h3>{{ 'Memory' | translate }}</h3>
+      <h3 tnTestIdType="text" [tnTestId]="['memory', 'title']">{{ 'Memory' | translate }}</h3>
 
       <tn-icon-button
         name="chart-box"
@@ -20,7 +20,7 @@
     } @else {
       <div [class]="['container', size()]">
       <div class="stats">
-        <h2 class="total-memory">
+        <h2 class="total-memory" tnTestIdType="text" [tnTestId]="['memory', 'total']">
           @if (isLoading()) {
             <ngx-skeleton-loader
               class="skeleton"
