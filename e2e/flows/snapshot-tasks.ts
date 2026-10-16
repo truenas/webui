@@ -91,6 +91,23 @@ export async function saveSnapshotTaskForm(page: Page): Promise<void> {
 }
 
 /**
+ * Saves the form and waits for middleware's refusal to appear under `field`.
+ *
+ * `ix-form` pins a validation error from the call under the field it names. The
+ * message only appears once the call has come back, so the panel still being
+ * open after it is the refusal, not a save in flight.
+ */
+export async function saveSnapshotTaskFormExpectingRefusal(page: Page, field: string, message: string): Promise<void> {
+  const { form } = snapshotTaskLocators;
+  // Absent before the save, so a message afterwards is this refusal.
+  await expect(page.locator(field)).not.toContainText(message);
+
+  await page.locator(form.save).click();
+  await expect(page.locator(field)).toContainText(message, { timeout: saveTimeoutMs });
+  await expect(page.locator(form.save)).toBeVisible();
+}
+
+/**
  * Deletes the task on a dataset from its row menu, and waits for its row to go.
  *
  * The card asks `pool.snapshottask.delete_will_change_retention_for` first and
