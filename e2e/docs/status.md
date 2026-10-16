@@ -469,8 +469,14 @@ schema and schedule claim, and the "keep snapshots" box ticked or not. With it
 ticked, `pool.snapshot.query`'s `retention` must move from the task to a
 `property` on the snapshot with the same date, and a manual snapshot beside it
 must get none. With it unticked, the snapshot stays and has no removal date.
-Custom schedules and exclusions are not covered. The full list page is
-`tests/snapshot-task-list.e2e.ts`'s, below.
+`tests/snapshot-task-validation.e2e.ts` covers what the add form refuses: a
+naming schema with a slash (the form's own pattern, so Save goes disabled), and
+four refusals that come back from `pool.snapshottask.create` under the field
+they name — a naming schema without the date tokens, a lifetime of zero, an
+excluded dataset outside the selected one, and any exclusion on a task that is
+not recursive. Each also requires that no task exists afterwards. Custom
+schedules, successful exclusions and the edit form's refusals are not covered.
+The full list page is `tests/snapshot-task-list.e2e.ts`'s, below.
 
 The dataset form came next, in `tests/datasets-form.e2e.ts`: creating a dataset
 under a pool and editing one, both through Other Options, the form's advanced
