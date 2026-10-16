@@ -202,6 +202,13 @@ The dataset spec builds its own pool (`e2e_tier_tank`, one data and one special
 disk), because a dataset has no tier at all on a pool without a special vdev,
 and it removes that pool in `afterAll`.
 
+`tests/tiering-shares.e2e.ts` covers the same change from a share's row on the
+Shares dashboard: Change Storage Tier in an SMB or an NFS row's menu opens that
+dialog for the dataset under the share's path, and the row's Storage Tier cell
+follows. It also covers when the action is offered — not with tiering off,
+where the column goes too, and not on a share whose encrypted dataset is
+locked. It uses the same pool, built once per file.
+
 Writing it turned up a middleware defect: a rewrite job is keyed by dataset
 *name* and never forgotten. A dataset created under a name that was migrated
 before (deleted since, even on a pool destroyed and rebuilt since) comes back
@@ -1016,10 +1023,10 @@ a number. See `05-ci.md`.
    back and its safety check — but not batch delete, the list's own Add
    button, naming schemas, the extra columns or VMware sync. The confirmation-bypass class is now covered
    everywhere this suite can reach it — datasets, zvols and pool disconnect;
-   what is left needs an app, SED hardware or a VM. ZFS tiering's configuration
-   and a dataset's tier change are covered; the share-list tier action and the
-   tier gating are next — the SMB specs brought the share fixture and row
-   locators the first of those needs. SMB shares are covered from the Shares
+   what is left needs an app, SED hardware or a VM. ZFS tiering's configuration,
+   a dataset's tier change and the tier action on the Shares dashboard's SMB and
+   NFS rows are covered; the same action on the standalone share lists and on
+   S3 bucket rows is not. SMB shares are covered from the Shares
    dashboard — publish, the purpose presets, edit, enable, unshare, the service
    switch — and from the standalone list, and the status page's tabs can be
    reached; but not the share and filesystem ACL editors, what those tabs show,
