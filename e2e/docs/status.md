@@ -433,6 +433,19 @@ wait on, so it fails at the start if the new keypair would not fit on the card.
 Pasting a key in, editing, downloading and deleting a keypair an SSH connection
 still uses are not covered.
 
+The SSH Connections card beside it followed, in `tests/ssh-connections.e2e.ts`:
+adding a Manual connection to `127.0.0.1` as root with an existing keypair and
+the host key Discover Remote Host Key fills in, adding a Semi-automatic one to
+`http://127.0.0.1` with the suite's admin credentials, editing one beside a
+second that must not change, and deleting one with "Delete associated SSH
+Keypair" ticked and unticked. Each is read back through
+`keychaincredential.query`. Semi-automatic is the appliance pairing with itself:
+middleware enables and starts SSH and appends the generated public key to
+root's `sshpubkey`, so the file reads root's keys and the SSH service first and
+writes both back. Sudo for a non-root user, a one-time password, a URL with a
+self-signed certificate and connections the card hides behind View All are not
+covered.
+
 Periodic snapshot tasks came next, in `tests/periodic-snapshot-tasks.e2e.ts`:
 adding, editing and deleting a task from the card on Data Protection, each
 asserted on the card and through `pool.snapshottask.query`, which holds the
@@ -908,8 +921,8 @@ authorized the same way the cloud sync spec's is. That part now lives in
 asserted through `replication.query`, including its SSH transport and connection,
 the run through `core.get_jobs`, and the target's snapshots through
 `pool.snapshot.query`. Pull from a different system, SSH+NETCAT, sudo, making the
-connection in the wizard's own "Add New" form and the SSH Connections page are not
-covered.
+connection in the wizard's own "Add New" form are not covered. The SSH
+Connections card is `tests/ssh-connections.e2e.ts`'s.
 
 TrueCloud Backup followed, in `tests/cloud-backup-tasks.e2e.ts`, and only as far as
 an appliance with no Storj account goes: the card's empty state, the full list page
