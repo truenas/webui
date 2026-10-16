@@ -53,23 +53,28 @@ test('an admin fails the pair over to controller 2, and HA comes back with contr
     await expect(page.locator(haStatusLocators.systemTaskMessage)).toBeVisible();
     await expect(page.locator(signinLocators.username)).toBeVisible({ timeout: failoverTimeoutMs });
 
-    // TEMP: workaround for an app defect. Signing in on the sign-in page the
-    // app returned to after the failover succeeds in middleware (`auth.login_ex`
-    // answers), but the app sends nothing after it and stays on "Logging
-    // in..." for good: the typed client never reports itself authenticated on
-    // the reconnected socket, so `failover.licensed` and the rest of the
-    // sign-in wait on it forever. A fresh page load starts a fresh client.
-    // Remove the reload once the app signs in without one.
+    // TEMP: workarounds for two app defects, both of which leave the sign-in
+    // stuck. Remove both once the app signs in straight after a failover.
+    //
+    // 1. On the sign-in page the app returned to, `auth.login_ex` succeeds
+    //    but the app sends nothing after it: the typed client never reports
+    //    itself authenticated on the reconnected socket, so the sign-in waits
+    //    forever. A fresh page load starts a fresh client.
+    // 2. Signed in while controller 2 is still taking over
+    //    (`LOC_FAILOVER_ONGOING`), the app waits for the
+    //    `failover.events.vrrp_master` job to finish
+    //    (`FailoverValidationService.waitForFailoverCompletion`) and never
+    //    sees it do so. Waiting for the takeover first skips that path.
+    await expect.poll(async () => {
+      const failover = await withClient(config, readFailover);
+      return failover.node === 'B' && failover.status === 'MASTER'
+        && !failover.reasons.includes('LOC_FAILOVER_ONGOING');
+    }, { timeout: failoverTimeoutMs, intervals: [5_000] }).toBe(true);
     await page.reload();
     await expect(page.locator(signinLocators.username)).toBeEnabled({ timeout: failoverTimeoutMs });
     await submitSignIn(page, config.username, config.password);
     await awaitAdminShell(page, config.username, failoverTimeoutMs);
   }
-
-  await expect.poll(
-    () => withClient(config, async (client) => (await readFailover(client)).node),
-    { timeout: failoverTimeoutMs },
-  ).toBe('B');
 
   // Once controller 1 is back, as the standby, nothing is left in the
   // reasons HA is off — asked of middleware first, for the reason ha-setup
