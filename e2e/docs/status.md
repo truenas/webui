@@ -487,8 +487,8 @@ ticked, `pool.snapshot.query`'s `retention` must move from the task to a
 must get none. With it unticked, the snapshot stays and has no removal date.
 `tests/snapshot-task-retention.e2e.ts` covers the edit form's counterpart: with
 the same seeded snapshot, shortening the lifetime from two weeks to one must
-show the retention warning with a count of 1. With "fixate removal date"
-ticked, the old date must become a `property` on the snapshot. Unticked, the
+show the retention warning with a count of 1. With "Preserve Snapshot
+Retention" ticked, the old date must become a `property` on the snapshot. Unticked, the
 task's new date applies. An edit to Allow Taking Empty Snapshots, with the
 lifetime typed again unchanged, must show no warning once the check that sends
 has answered. The same spec switches a

@@ -93,7 +93,7 @@ test.afterEach(async ({ api, pool }) => {
   ]);
 });
 
-test('shortening the lifetime with Fixate Removal Date keeps the old removal date on the task snapshots', async ({
+test('shortening the lifetime with Preserve Snapshot Retention keeps the old removal date on its snapshot', async ({
   page, api, pool,
 }) => {
   const target = `${pool}/${targetLeaf}`;

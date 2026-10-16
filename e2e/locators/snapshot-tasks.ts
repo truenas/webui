@@ -151,7 +151,7 @@ export const snapshotTaskLocators = {
      * `pool.snapshottask.update_will_change_retention_for` names a snapshot.
      */
     affectedSnapshots: '[data-test="text-affected-snapshots"]',
-    /** "Fixate Removal Date", inside that warning: keep those snapshots' current removal date. */
+    /** "Preserve Snapshot Retention", inside that warning: keep those snapshots' current removal date. */
     fixateRemovalDate: '[data-test="checkbox-fixate-removal-date"]',
     /** `<tn-button [testId]="'save'">` on the side panel container. */
     save: '[data-test="button-save"]',
