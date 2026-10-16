@@ -28,6 +28,9 @@ export interface PoolDevice {
 
 const poolCreateTimeoutMs = 3 * 60_000;
 
+/** `pool.offline` and `pool.online` answer once ZFS has acted. */
+const deviceStateTimeoutMs = 60_000;
+
 /**
  * Builds a two-disk mirror by name, if it is not already there.
  *
@@ -98,6 +101,27 @@ export async function readMirror(
 /** The pool's spares, in topology order. */
 export async function listSpares(client: E2eApiClient, name: string): Promise<PoolDevice[]> {
   return (await readPoolTopology(client, name)).spare.map((item) => toDevice(item));
+}
+
+/**
+ * Takes one of the pool's disks offline, or brings it back, by its `guid`, as a
+ * precondition. The call answers once ZFS has acted; the pool's own status follows
+ * it, so a caller polls `readPoolStatus` for that.
+ */
+export async function setPoolDiskState(
+  client: E2eApiClient,
+  name: string,
+  guid: string,
+  state: 'OFFLINE' | 'ONLINE',
+): Promise<void> {
+  const { id } = await getPool(client, name);
+
+  if (state === 'OFFLINE') {
+    await firstValueFrom(client.api.call('pool.offline', [id, { label: guid }]).pipe(timeout(deviceStateTimeoutMs)));
+    return;
+  }
+
+  await firstValueFrom(client.api.call('pool.online', [id, { label: guid }]).pipe(timeout(deviceStateTimeoutMs)));
 }
 
 /** The pool's own status: `ONLINE`, or `DEGRADED` while a member is offline. */

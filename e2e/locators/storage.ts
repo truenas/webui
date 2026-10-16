@@ -371,6 +371,24 @@ export const poolScrubLocators = {
 } as const;
 
 /**
+ * What the Storage Health card says about a pool's state, keyed by pool like
+ * `poolScrubLocators`.
+ */
+export const poolHealthLocators = {
+  /** "Online, no errors.", "Degraded, no errors.": the pool's status and its error count. */
+  status: (pool: string) => `[data-test="text-${kebabTestSegment(pool)}-storage-health-status"]`,
+  /**
+   * The icon beside that line, `[pool().name, 'storage-health', iconType()]`. The
+   * icon type is part of the id, so each state is its own locator: `SAFE` for a
+   * healthy pool, `WARN` for a degraded one. Only the one in the card's body is
+   * tagged; the heading repeats it.
+   */
+  icon: (pool: string, type: 'safe' | 'warn') => (
+    `[data-test="icon-${kebabTestSegment(pool)}-storage-health-${type}"]`
+  ),
+} as const;
+
+/**
  * The delete-dataset dialog, which guards a destructive action with two gates:
  * the dataset's own name typed back, and a Confirm tick box.
  *
