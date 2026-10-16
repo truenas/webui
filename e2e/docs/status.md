@@ -382,6 +382,23 @@ form, which opens on the signed-in admin, and ties the key the one-time dialog
 showed to the stored record by its `<id>-` prefix. Editing, resetting and an
 expiry date are not covered.
 
+The user details page followed, in `tests/user-details.e2e.ts` and
+`tests/unauthenticated/user-sign-in-controls.e2e.ts`. The first covers the Access
+card's links, each in the state that offers it: Add API Key for a user with no
+key (the form opens on that account, and `api_key.query` confirms the key is
+theirs), View API Keys arriving filtered to that user beside a second account's
+key, and Download Public Key — absent for a user with no `sshpubkey`, and for one
+with a key, a file holding exactly that key. The second signs in as the account
+afterwards, which is why it runs without the token: a locked user is refused at
+sign-in and an unlocked one is let back in, and a one-time password works once
+and is refused the second time. Both use a throwaway administrator, never the
+suite's own. A session opened by a one-time password may land on the "Password
+Change Required" dialog rather than the shell, depending on what middleware marks
+the account; the flow accepts either. The Edit button's id was built from
+`full_name` alone and came out as a bare `button-edit-user` for a user without
+one; it now falls back to the username there, and is unchanged for every user
+that has a full name.
+
 Cron jobs came next, in `tests/cron-jobs.e2e.ts`: adding, editing, running and
 deleting a job from the card on System > Advanced Settings, each beside a second
 job that must come through untouched. It sits on the same card shape as

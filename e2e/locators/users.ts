@@ -48,6 +48,52 @@ export const usersLocators = {
    */
   viewApiKeys: (username: string): string => `[data-test="link-view-api-keys-${kebabTestSegment(username)}"]`,
 
+  /**
+   * "Add API Key" on the Access card — the link offered in place of
+   * {@link viewApiKeys} to a user who holds no key yet and has a role to hold one with.
+   */
+  addApiKey: (username: string): string => `[data-test="link-add-api-key-${kebabTestSegment(username)}"]`,
+
+  /** The Access card's SSH line: which SSH logins the user has, or "No SSH Access". */
+  sshAccess: (username: string): string => `[data-test="text-ssh-access-${kebabTestSegment(username)}"]`,
+
+  /** "Download Public Key" on the Access card, rendered only while the user has an `sshpubkey`. */
+  downloadPublicKey: (username: string): string => `[data-test="link-download-keys-${kebabTestSegment(username)}"]`,
+
+  /**
+   * Lock and Unlock in the Access card's footer. The card renders one or the
+   * other, from `locked`, so which one is on screen is itself the card's reading
+   * of the account.
+   */
+  lockUser: (username: string): string => `[data-test="button-lock-user-${kebabTestSegment(username)}"]`,
+  unlockUser: (username: string): string => `[data-test="button-unlock-user-${kebabTestSegment(username)}"]`,
+
+  /** In the Password card's footer. Offered for a non-builtin user other than the one signed in. */
+  generateOneTimePassword: (username: string): string =>
+    `[data-test="button-generate-one-time-password-${kebabTestSegment(username)}"]`,
+
+  /**
+   * `<tn-dialog-shell testId="one-time-password-created">`, raised once the
+   * password exists. The password is in a read-only multiline `tn-input`, which
+   * renders a `<textarea>` — so `testId="one-time-password"` emits
+   * `textarea-one-time-password`, the same shape as the API key dialog.
+   */
+  oneTimePasswordDialog: {
+    title: '[data-test="dialog-title-one-time-password-created"]',
+    password: '[data-test="textarea-one-time-password"]',
+    close: '[data-test="button-close"]',
+  },
+
+  /**
+   * `<tn-dialog-shell testId="password-change-required">`, which the admin
+   * layout's guard raises over a session whose account must set a new password
+   * before it may go further. Its Log Out is the only way past it without one.
+   */
+  passwordChangeRequiredDialog: {
+    title: '[data-test="dialog-title-password-change-required"]',
+    logOut: '[data-test="button-required-change-password-log-out"]',
+  },
+
   form: {
     /** `<tn-input [testId]="'username'">` in user-form.component.html */
     username: '[data-test="input-username"]',
