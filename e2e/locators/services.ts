@@ -1,5 +1,5 @@
 /**
- * The Services page under System, and the SSH, FTP, SNMP, UPS, SMB and NFS forms it opens.
+ * The Services page under System, and the SSH, FTP, SNMP, UPS, SMB, NFS and WebShare forms it opens.
  *
  * Every id on a row is keyed on a row tag of `service-<name>`, and two names are
  * in play. The page builds the tag from the display name (`SMB`) for the `<tr>`,
@@ -13,7 +13,7 @@
 import { kebabTestSegment } from './test-id';
 
 /** Middleware's name for each service the specs drive. */
-export type ServiceKey = 'ssh' | 'ftp' | 'snmp' | 'ups' | 'cifs' | 'nfs' | 'iscsitarget' | 'nvmet';
+export type ServiceKey = 'ssh' | 'ftp' | 'snmp' | 'ups' | 'cifs' | 'nfs' | 'webshare' | 'iscsitarget' | 'nvmet';
 
 /** The page's name for each, as `serviceNames` in `src/app/enums/service-name.enum.ts` has it. */
 const displayNames: Record<ServiceKey, string> = {
@@ -23,6 +23,7 @@ const displayNames: Record<ServiceKey, string> = {
   ups: 'UPS',
   cifs: 'SMB',
   nfs: 'NFS',
+  webshare: 'WebShare',
   iscsitarget: 'iSCSI',
   nvmet: 'NVMe-oF',
 };
@@ -239,6 +240,25 @@ export const servicesLocators = {
     shutdownMode: '[data-test="select-shutdown"]',
     shutdownOnBattery: '[data-test="option-shutdown-ups-goes-on-battery"]',
     shutdownTimer: '[data-test="input-shutdowntimer"]',
+  },
+
+  webshareForm: {
+    /** Enable TrueSearch. Locked off unless TrueSearch is licensed and TrueNAS Connect is configured. */
+    search: '[data-test="checkbox-search"]',
+    /** The field around {@link search}. Its hint names the condition that keeps the box locked. */
+    searchField: '[data-test="form-field-search"]',
+    /** The trigger shows the chosen option's label: `Disabled`, `Enabled` or `Required`. */
+    passkey: '[data-test="select-passkey"]',
+    /** By the label `webSharePasskeyLabels` gives it. */
+    passkeyOption: (label: string): string => `[data-test="option-passkey-${kebabTestSegment(label)}"]`,
+    mcpEnabled: '[data-test="checkbox-mcp-enabled"]',
+    /**
+     * Rendered only while MCP is on, and then only when Directory Services
+     * offers login groups to choose from as well as `truenas_webshare`.
+     */
+    mcpAllowedGroups: '[data-test="select-mcp-allowed-groups"]',
+    /** Rendered only while MCP is on. */
+    mcpAllowWrite: '[data-test="checkbox-mcp-allow-write"]',
   },
 
   /** `<tn-button [testId]="'save'">` on the side panel container. */

@@ -53,6 +53,21 @@ export async function openServiceForm(
 }
 
 /**
+ * {@link openServiceForm} for a form whose loaded value shows as text rather
+ * than as an input's value, such as the label a `tn-select` trigger displays.
+ */
+export async function openServiceFormShowing(
+  page: Page,
+  service: ServiceKey,
+  loadedField: string,
+  loadedText: string,
+): Promise<void> {
+  await goToServices(page);
+  await page.locator(servicesLocators.row.edit(service)).click();
+  await expect(page.locator(loadedField)).toHaveText(loadedText);
+}
+
+/**
  * Opens a service's form like {@link openServiceForm}, for a baseline in which
  * every field the form fills in is empty or matches its default, so no value
  * can say the load has landed.

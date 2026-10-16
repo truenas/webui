@@ -828,6 +828,17 @@ control elsewhere sits inside `ix-missing-access-wrapper`, whose span now emits
 "locked by role" from "disabled because the form is invalid". Every other page,
 and the sharing admin, come in later specs.
 
+Storage for the read-only admin is in `tests/roles-read-only-storage.e2e.ts`. In
+one sign-in it opens a dataset of its own on the Datasets page, its snapshot list
+and the Storage dashboard. Add Dataset, Add Zvol, the Permissions card's Edit, Take
+Snapshot, the snapshot list's Add, an expanded snapshot's Hold, Clone, Rollback and
+Delete, and the pool's Scrub Now must all be locked, and the Dataset Details card
+must render no Edit or Delete. The dataset, the snapshot, its hold and the pool's
+last scan are read back unchanged. The snapshot row used to enable Hold's form
+control for everyone once the snapshot loaded, and enabling it rewrites the
+`disabled` the role wrapper sets. It now enables it only for `SNAPSHOT_WRITE`.
+Quotas, capacity settings and encryption are not covered.
+
 A pool's devices came next, in `tests/pool-devices.e2e.ts`: taking a disk offline
 and bringing it back online, and adding a spare, both from the pool's VDEVs page.
 That page is reached from View VDEVs on the pool's card on the Storage dashboard.
@@ -855,8 +866,18 @@ test. `flows/storage.ts` now splits the wizard into `openPoolWizard`,
 `configureAutomatedVdevs`, `goToReview` and `submitPool`, keyed by vdev category
 so the other steps can reuse them, and `createRaidz2Pool` is built from them.
 `readPoolTopology` in `fixtures/pool.ts` is the shared topology readback. RAIDZ3,
-dRAID, the other kinds of vdev, manual selection, encryption and the wizard's
-validation are not covered.
+dRAID, the other kinds of vdev, manual selection and encryption are not covered.
+
+The wizard's refusals are in `tests/pool-wizard-validation.e2e.ts`. None of its
+tests creates a pool. The General step refuses the worker pool's name ("already
+in use") and the reserved word `mirror` ("Invalid pool name", from
+`pool.validate_name`), and Next stays disabled. Going to Review with no data vdev
+lists "At least 1 data VDEV is required.", disables Create Pool and hides Inspect
+VDEVs. A one-disk stripe shows the stripe warning on the Data step and on Review,
+and Create Pool stays enabled. The wizard's Name field now has an id,
+`form-field-name`, so the error under it can be read. Mixed disk sizes, the dRAID,
+special and dedup warnings, and the exported-pool and duplicate-serial disk
+warnings are not covered.
 
 What the dashboard says about a degraded pool is in `tests/pool-degraded.e2e.ts`.
 It builds its own two-disk mirror, `e2e_degraded_tank`, and takes one disk offline
@@ -1011,6 +1032,16 @@ The service is never started, since there is no UPS to talk to. The baseline is 
 Slave configuration rather than the stock one: a fresh appliance is in Master mode
 with no driver or port, which `ups.update` refuses to write back. Extra users, the
 upsd options, host sync and the warning time are not covered.
+
+The WebShare service's form, opened from the same page, is in
+`tests/webshare-service.e2e.ts`: saving each Passkey mode, turning MCP on (which
+prefills `truenas_webshare` and hides the group picker on an appliance with no
+Directory Services groups) and off again without wiping its groups or write
+access, and TrueSearch staying locked off without TrueNAS Connect, read off the
+hint in `form-field-search`. Each save is asserted as the whole set through
+`webshare.config`. The settings are snapshotted and written back, and the service
+stays stopped. Not covered: enabling TrueSearch, choosing Directory Services
+groups for MCP, the bind addresses and login groups, and WebShare shares.
 
 Virtual Machines followed, in `tests/virtual-machines.e2e.ts`: creating a Linux VM
 with the wizard on a new zvol, and editing and deleting one from its row's detail

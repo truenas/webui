@@ -101,14 +101,21 @@ export async function createRaidz2Pool(page: Page, pool: NewPool): Promise<void>
 }
 
 /**
+ * Opens the pool creation wizard from the Storage dashboard and stops on its
+ * General step, with nothing filled in.
+ */
+export async function startPoolWizard(page: Page): Promise<void> {
+  await goToStorage(page);
+  await page.locator(poolWizardLocators.createPoolEntry).click();
+  await expect(page.locator(poolWizardLocators.name)).toBeVisible();
+}
+
+/**
  * Opens the pool creation wizard from the Storage dashboard, names the pool and
  * moves on from General, stopping on the Data step.
  */
 export async function openPoolWizard(page: Page, name: string): Promise<void> {
-  await goToStorage(page);
-  await page.locator(poolWizardLocators.createPoolEntry).click();
-
-  await expect(page.locator(poolWizardLocators.name)).toBeVisible();
+  await startPoolWizard(page);
   await page.locator(poolWizardLocators.name).fill(name);
   await page.locator(poolWizardLocators.next).click();
 
