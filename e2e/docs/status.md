@@ -394,10 +394,12 @@ sign-in and an unlocked one is let back in, and a one-time password works once
 and is refused the second time. Both use a throwaway administrator, never the
 suite's own. A session opened by a one-time password may land on the "Password
 Change Required" dialog rather than the shell, depending on what middleware marks
-the account; the flow accepts either. The Edit button's id was built from
-`full_name` alone and came out as a bare `button-edit-user` for a user without
-one; it now falls back to the username there, and is unchanged for every user
-that has a full name.
+the account; the flow accepts either. Logging out from that dialog leaves the
+sign-in page on "Logging in..." until it is loaded again, so the flow waits for
+the dialog to close and the next sign-in loads the page afresh. The Edit button's
+id is still built from `full_name` alone, so it is a bare `button-edit-user` for
+a user without one; it was left as it is because changing a resolved id is a
+breaking change, and no test here selects it.
 
 Cron jobs came next, in `tests/cron-jobs.e2e.ts`: adding, editing, running and
 deleting a job from the card on System > Advanced Settings, each beside a second

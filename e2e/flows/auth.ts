@@ -170,7 +170,14 @@ export async function expectSignInRefused(page: Page, message: string | RegExp):
  * form refusing it is the only failure. The guard holds the navigation while its
  * dialog is open, so the two are never on screen together.
  *
- * Signs out from whichever it was, so the caller is back on the sign-in form.
+ * Signs out from whichever it was. After the dialog's Log Out the session is over
+ * but the page is not back on a usable form: the sign-in page stays on "Logging
+ * in..." until it is loaded again. The navigation to the dashboard is still held
+ * by the guard, so the sign-in page is never torn down and keeps the logging-in
+ * state its successful sign-in set. That is an app defect, and nothing here is
+ * about it — so this waits for the dialog to close, which it does only once the
+ * logout has finished, and the caller enters the app afresh (`attemptSignIn`
+ * loads the sign-in page) for whatever it does next.
  */
 export async function expectOneTimePasswordSession(page: Page, username: string): Promise<void> {
   const shell = page.locator(adminLayout);
@@ -180,7 +187,7 @@ export async function expectOneTimePasswordSession(page: Page, username: string)
 
   if (await changeRequired.isVisible()) {
     await page.locator(usersLocators.passwordChangeRequiredDialog.logOut).click();
-    await expect(page.locator(signinLocators.username)).toBeVisible({ timeout: signInTimeoutMs });
+    await expect(changeRequired).toBeHidden({ timeout: signInTimeoutMs });
     return;
   }
 

@@ -15,6 +15,7 @@
  */
 import { readFile } from 'node:fs/promises';
 import { ensureApiKeyAbsent, ensureApiKeyPresent, findApiKey } from '../fixtures/api-keys';
+import { datasetMountPath, ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
 import { ensureUserAbsent, ensureUserPresent, giveUserPublicKey } from '../fixtures/users';
 import { openUserApiKeys } from '../flows/api-keys';
 import { addApiKeyFromAccessCard, downloadUserPublicKey, openUserDetails } from '../flows/users';
@@ -44,14 +45,24 @@ const bystanderKey = 'e2e-details-other';
 
 const allKeys = [createdKey, ownerKey, bystanderKey];
 
-/** Keys before their owners, so no key is left behind on an account that is gone. */
-async function cleanUp(api: E2eApiClient): Promise<void> {
+/**
+ * The dataset the key owner's home is made in. Middleware stores an SSH key only
+ * for a user whose home is on a dataset (see `giveUserPublicKey`).
+ */
+const homeLeaf = 'e2e-details-home';
+
+/**
+ * Keys before their owners, so no key is left behind on an account that is gone,
+ * and the home dataset after the accounts, so none is left living in it.
+ */
+async function cleanUp(api: E2eApiClient, pool: string): Promise<void> {
   await runCleanupSteps([
     ...allKeys.map((name): [string, () => Promise<void>] => [
       `remove the API key "${name}"`, () => ensureApiKeyAbsent(api, name),
     ]),
     [`delete the user "${owner}"`, () => ensureUserAbsent(api, owner)],
     [`delete the user "${bystander}"`, () => ensureUserAbsent(api, bystander)],
+    [`remove the dataset "${pool}/${homeLeaf}"`, () => ensureDatasetAbsent(api, `${pool}/${homeLeaf}`)],
   ]);
 }
 
@@ -59,17 +70,18 @@ async function cleanUp(api: E2eApiClient): Promise<void> {
  * Removed before each test as well as after, so an interrupted run leaves the
  * next one able to start, and unconditionally so a failure still cleans up.
  */
-test.beforeEach(async ({ api }) => {
-  await cleanUp(api);
+test.beforeEach(async ({ api, pool }) => {
+  await cleanUp(api, pool);
   await ensureUserPresent(api, owner, { administrator: true });
   await ensureUserPresent(api, bystander, { administrator: true });
 });
 
-test.afterEach(async ({ api }) => {
-  if (leavingTestData(`API keys ${allKeys.join(', ')} and users "${owner}", "${bystander}"`)) {
+test.afterEach(async ({ api, pool }) => {
+  const keys = allKeys.join(', ');
+  if (leavingTestData(`API keys ${keys}, users "${owner}", "${bystander}" and dataset "${pool}/${homeLeaf}"`)) {
     return;
   }
-  await cleanUp(api);
+  await cleanUp(api, pool);
 });
 
 test('Add API Key on a user with none creates a key for that user', async ({ page, api }) => {
@@ -100,8 +112,9 @@ test('View API Keys opens the list filtered to that user', async ({ page, api })
   await expect(page.locator(apiKeyLocators.row(bystanderKey))).toBeHidden();
 });
 
-test('Download Public Key is offered only for a user with an SSH key', async ({ page, api }) => {
-  const publicKey = await giveUserPublicKey(api, owner);
+test('Download Public Key is offered only for a user with an SSH key', async ({ page, api, pool }) => {
+  await ensureDatasetPresent(api, `${pool}/${homeLeaf}`);
+  const publicKey = await giveUserPublicKey(api, owner, datasetMountPath(`${pool}/${homeLeaf}`));
 
   await test.step('a user without a key is not offered the link', async () => {
     // `openUserDetails` waits on this user's own SSH line, so the card on screen
