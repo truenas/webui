@@ -103,7 +103,14 @@ scsi_disks() { lsblk -dn -o HCTL,NAME,TYPE | awk '$3 == "disk" && $1 ~ /:/ {prin
 storage() {
     say "storage: $SHARED LIO LUNs of ${SHARED_GB}G, shown to each node through a loopback target of its own"
     local i n wwn before
+    # LIO writes <db_root>/pr/aptpl_<serial> after every reservation change,
+    # and answers the change with LOGICAL UNIT COMMUNICATION FAILURE when it
+    # cannot, though the change is already made: fenced's every REGISTER
+    # failed that way. db_root is /etc/target when that exists as the
+    # module loads, else /var/target; neither comes with this runner.
+    sudo -n mkdir -p /etc/target/pr /etc/target/alua /var/target/pr /var/target/alua
     sudo -n modprobe target_core_mod
+    say "  LIO's db_root: $(sudo -n cat /sys/kernel/config/target/dbroot 2>/dev/null || echo unknown)"
     sudo -n modprobe tcm_loop
     for i in $(seq 1 "$SHARED"); do
         truncate -s "${SHARED_GB}G" "$DIR/shared$i.img"
