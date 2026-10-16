@@ -21,7 +21,8 @@
  */
 import { findCertificate } from '../fixtures/certificates';
 import {
-  ftpBaseline, readFtpCertificateId, readFtpSettings, readSshSettings, setFtpSettings, setSshSettings, sshBaseline,
+  ftpAdvancedBaseline, ftpBaseline, readFtpAdvancedSettings, readFtpCertificateId, readFtpSettings,
+  readSshAdvancedSettings, readSshSettings, setFtpSettings, setSshSettings, sshAdvancedBaseline, sshBaseline,
 } from '../fixtures/service-config';
 import { ensureServiceStopped, queryService } from '../fixtures/services';
 import { goToServices } from '../flows/navigation';
@@ -90,9 +91,8 @@ test('an admin saves the SSH settings, and the appliance keeps them', async ({ p
 
   // Kerberos is left alone, because turning it on needs a realm this appliance
   // may not have. It is read back anyway: the form sends every field, so a save
-  // that flipped a box it was not asked to touch fails here. The advanced fields
-  // are the advanced test's to assert.
-  expect(await readSshSettings(api)).toMatchObject({
+  // that flipped a box it was not asked to touch fails here.
+  expect(await readSshSettings(api)).toEqual({
     tcpport: 2222,
     passwordauth: true,
     kerberosauth: false,
@@ -112,8 +112,7 @@ test('an admin saves the FTP settings, and the appliance keeps them', async ({ p
   await page.locator(form.timeout).fill('900');
   await saveServiceForm(page);
 
-  // The General Options only. The advanced fields are the advanced tests' to assert.
-  expect(await readFtpSettings(api)).toMatchObject({
+  expect(await readFtpSettings(api)).toEqual({
     port: 2121,
     clients: 10,
     ipconnections: 4,
@@ -142,10 +141,10 @@ test('an admin saves the FTP access, passive port and bandwidth options', async 
   await saveServiceForm(page);
 
   // The bandwidth inputs hold bytes and the form divides by 1024 on save, so
-  // `ftp.config` keeps KiB. Every other field is read back too, at the baseline,
+  // `ftp.config` keeps KiB. The TLS fields are read back too, at the baseline,
   // so a save that changed one it was not asked to fails here.
-  expect(await readFtpSettings(api)).toEqual({
-    ...ftpBaseline,
+  expect(await readFtpAdvancedSettings(api)).toEqual({
+    ...ftpAdvancedBaseline,
     defaultroot: false,
     onlylocal: true,
     resume: true,
@@ -173,8 +172,8 @@ test('an admin turns on FTP TLS with the appliance certificate', async ({ page, 
   await page.locator(form.tlsAllowClientRenegotiations).click();
   await saveServiceForm(page);
 
-  expect(await readFtpSettings(api)).toEqual({
-    ...ftpBaseline,
+  expect(await readFtpAdvancedSettings(api)).toEqual({
+    ...ftpAdvancedBaseline,
     tls: true,
     tls_policy: 'data',
     tls_opt_allow_client_renegotiations: true,
@@ -197,7 +196,7 @@ test('the FTP form refuses a maximum passive port below the minimum', async ({ p
   await expect(page.locator(form.passivePortsMaxField))
     .toContainText('should be greater than', { timeout: serviceSaveTimeoutMs });
   await expect(page.locator(servicesLocators.save)).toBeVisible();
-  expect(await readFtpSettings(api)).toEqual(ftpBaseline);
+  expect(await readFtpAdvancedSettings(api)).toEqual(ftpAdvancedBaseline);
 });
 
 test('an admin saves the SSH advanced settings, and the appliance keeps them', async ({ page, api }) => {
@@ -214,8 +213,8 @@ test('an admin saves the SSH advanced settings, and the appliance keeps them', a
   await toggleWeakCiphers(page, ['None']);
   await saveServiceForm(page);
 
-  expect(await readSshSettings(api)).toEqual({
-    ...sshBaseline,
+  expect(await readSshAdvancedSettings(api)).toEqual({
+    ...sshAdvancedBaseline,
     compression: true,
     sftp_log_level: 'VERBOSE',
     sftp_log_facility: 'AUTH',
