@@ -38,6 +38,16 @@ export function isEntitled(decisions: EntitlementDecisions, feature: string): bo
   return decisions[feature]?.entitled ?? false;
 }
 
+/**
+ * Whether the UI will render a control gated through `selectIsEntitled`, the default gate, which
+ * hides it only on an explicit denial: an absent key is "not gated" there, as it is to middleware's
+ * `check`. Use this, not `isEntitled`, to assert such a control's visibility, or the two disagree
+ * on a middleware whose POLICY lacks the key.
+ */
+export function isNotDenied(decisions: EntitlementDecisions, feature: string): boolean {
+  return decisions[feature]?.entitled !== false;
+}
+
 /** Policy identifiers this suite asks about. Mirrors `app/enums/entitlement-feature.enum.ts`. */
 export const entitlementFeature = {
   s3Audit: 'S3_AUDIT',
@@ -48,4 +58,9 @@ export const entitlementFeature = {
    * turns tiering on cannot run there at all.
    */
   zfsTier: 'ZFSTIER',
+  /**
+   * Not a lock either: the NVMe-oF Implementation radios hide only when the key is explicitly
+   * denied, so ask with `isNotDenied`.
+   */
+  nvmeOfSpdk: 'NVMEOF_SPDK',
 } as const;

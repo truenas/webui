@@ -9,6 +9,7 @@
  */
 import type { QueryEntity } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
+import { readPoolTopology, type TopologyVdev } from './pool';
 import { findPool, getSelectableDisks } from './storage';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { runJob } from '../support/jobs';
@@ -23,23 +24,6 @@ export interface PoolDevice {
   guid: string;
   /** `ONLINE`, `OFFLINE`, `DEGRADED`, … */
   status: string;
-}
-
-/** The fields of a `pool.query` topology entry that `toDevice` reads. */
-interface TopologyDevice {
-  disk?: string | null;
-  guid: string;
-  status: string;
-}
-
-interface TopologyVdev extends TopologyDevice {
-  children: TopologyDevice[];
-}
-
-/** The parts of a pool's `topology` read here. */
-interface Topology {
-  data?: TopologyVdev[];
-  spare?: TopologyDevice[];
 }
 
 const poolCreateTimeoutMs = 3 * 60_000;
@@ -97,18 +81,12 @@ async function getPool(client: E2eApiClient, name: string): Promise<PoolEntry> {
   return pool;
 }
 
-async function getTopology(client: E2eApiClient, name: string): Promise<Topology | null | undefined> {
-  // The API client types a pool's topology entries only as `unknown`, so the
-  // narrowing has to happen here.
-  return (await getPool(client, name)).topology as unknown as Topology | null | undefined;
-}
-
 /** The pool's first data vdev and the disks in it. */
 export async function readMirror(
   client: E2eApiClient,
   name: string,
 ): Promise<{ guid: string; disks: PoolDevice[] }> {
-  const [mirror] = (await getTopology(client, name))?.data ?? [];
+  const [mirror] = (await readPoolTopology(client, name)).data;
 
   if (!mirror) {
     throw new Error(`Pool "${name}" reports no data vdev.`);
@@ -119,7 +97,7 @@ export async function readMirror(
 
 /** The pool's spares, in topology order. */
 export async function listSpares(client: E2eApiClient, name: string): Promise<PoolDevice[]> {
-  return ((await getTopology(client, name))?.spare ?? []).map((item) => toDevice(item));
+  return (await readPoolTopology(client, name)).spare.map((item) => toDevice(item));
 }
 
 /** The pool's own status: `ONLINE`, or `DEGRADED` while a member is offline. */
@@ -127,6 +105,6 @@ export async function readPoolStatus(client: E2eApiClient, name: string): Promis
   return (await getPool(client, name)).status;
 }
 
-function toDevice(item: TopologyDevice): PoolDevice {
+function toDevice(item: TopologyVdev): PoolDevice {
   return { disk: item.disk ?? null, guid: item.guid, status: item.status };
 }
