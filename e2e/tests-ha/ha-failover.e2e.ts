@@ -46,9 +46,10 @@ test('an admin fails the pair over to controller 2, and HA comes back with contr
   ).toBe('B');
 
   // Once controller 1 is back, as the standby, nothing is left in the
-  // reasons HA is off, and the topbar says so.
-  await expect(page.locator(haStatusLocators.indicatorEnabled)).toBeVisible({ timeout: haBackTimeoutMs });
-  expect(await withClient(config, readFailover)).toEqual({
+  // reasons HA is off — asked of middleware first, for the reason ha-setup
+  // gives — and the topbar says so.
+  await expect.poll(() => withClient(config, readFailover), { timeout: haBackTimeoutMs, intervals: [5_000] }).toEqual({
     licensed: true, status: 'MASTER', node: 'B', reasons: [],
   });
+  await expect(page.locator(haStatusLocators.indicatorEnabled)).toBeVisible();
 });

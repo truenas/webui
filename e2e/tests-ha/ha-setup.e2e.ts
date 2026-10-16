@@ -104,12 +104,12 @@ test('an admin turns automatic failover on, and HA comes up', async ({ page, api
   await openFailoverForm(page, true);
   await saveAutomaticFailover(page, true);
 
-  // The topbar says so once nothing is left in the reasons HA is off: the
-  // standby back from its restart, licensed, in step, and fenced holding
-  // the pool's disks.
-  await expect(page.locator(haStatusLocators.indicatorEnabled)).toBeVisible({ timeout: haUpTimeoutMs });
-
-  expect(await readFailover(api)).toEqual({
+  // Up once nothing is left in the reasons HA is off: the standby back from
+  // the restart the sync gave it, licensed, in step, and fenced holding the
+  // pool's disks. Asked of middleware first, because on the way the reasons
+  // pass through states the topbar shows as reconnecting.
+  await expect.poll(async () => readFailover(api), { timeout: haUpTimeoutMs, intervals: [5_000] }).toEqual({
     licensed: true, status: 'MASTER', node: 'A', reasons: [],
   });
+  await expect(page.locator(haStatusLocators.indicatorEnabled)).toBeVisible();
 });

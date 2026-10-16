@@ -92,12 +92,12 @@ export const failoverLocators = {
 /** What reports HA's state, and the one control that moves it. */
 export const haStatusLocators = {
   /**
-   * The topbar's HA icon, shown once HA licensed. Its id says whether
-   * `failover.disabled.reasons` is empty — though it reads "enabled" too while
-   * the only reason is the peer not being ready, which the tooltip calls
-   * reconnecting.
+   * The topbar's HA icon, shown once HA licensed. Enabled when
+   * `failover.disabled.reasons` is empty; reconnecting while the first reason
+   * is the peer not being ready, as while it reboots; disabled otherwise.
    */
   indicatorEnabled: '[data-test="button-ha-indicator-enabled"]',
+  indicatorReconnecting: '[data-test="button-ha-indicator-reconnecting"]',
   indicatorDisabled: '[data-test="button-ha-indicator-disabled"]',
   /**
    * "Initiate Failover", on the Dashboard's "System Information – Standby"
