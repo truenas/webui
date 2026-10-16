@@ -422,7 +422,7 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
     this.setupExplorerRootNodes();
     // Derived rather than snapshotted: `entitled$` defers until the answer is real, so the
     // list cannot freeze with Veeam wrongly filtered out because entitlements had not loaded.
-    this.purposeOptions$ = this.entitlements.entitled$(EntitlementFeature.SmbVeeam).pipe(
+    this.purposeOptions$ = this.entitlements.entitled$(EntitlementFeature.SmbBlockCloning).pipe(
       map((hasVeeamRepository) => this.buildPurposeOptions(hasVeeamRepository)),
     );
 

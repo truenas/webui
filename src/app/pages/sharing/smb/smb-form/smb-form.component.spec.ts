@@ -22,6 +22,7 @@ import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.ser
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { mockTypedApi, mockTypedCall, mockTypedQuery, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -833,8 +834,8 @@ describe('SmbFormComponent', () => {
       ]);
     });
 
-    it('omits Veeam Repository Share when the system is not entitled to SMB_VEEAM', async () => {
-      jest.spyOn(spectator.inject(EntitlementsService), 'entitled$').mockReturnValue(of(false));
+    it('omits Veeam Repository Share when the system is not entitled to SMB_BLOCK_CLONING', async () => {
+      const entitled$ = jest.spyOn(spectator.inject(EntitlementsService), 'entitled$').mockReturnValue(of(false));
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await spectator.fixture.whenStable();
@@ -842,6 +843,7 @@ describe('SmbFormComponent', () => {
       const purposeSelect = await getTnSelect('purpose');
       await purposeSelect.open();
 
+      expect(entitled$).toHaveBeenCalledWith(EntitlementFeature.SmbBlockCloning);
       expect(await purposeSelect.getOptions()).not.toContain('Veeam Repository Share');
     });
 
