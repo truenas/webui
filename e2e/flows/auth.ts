@@ -50,9 +50,11 @@ export async function signIn(page: Page, username: string, password: string): Pr
 /**
  * Fills the sign-in form already on screen, and submits it.
  *
- * Split from {@link signIn} for the one journey that must not navigate: a
- * visitor the auth guard bounced here is already on the page, and the deep link
- * it stored is the thing under test. Waits for the field to be *enabled* — the
+ * Split from {@link signIn} for journeys that must not navigate: a visitor the
+ * auth guard bounced here is already on the page, and the deep link it stored is
+ * the thing under test; and a sign-in straight after {@link signOut}, whose form
+ * is already on screen, where loading the page again would spend its startup
+ * calls from the rate limit a second time. Waits for the field to be *enabled* — the
  * form is disabled until the websocket connects (`canLogin$` in signin.store).
  */
 export async function submitSignIn(page: Page, username: string, password: string): Promise<void> {
