@@ -665,8 +665,9 @@ The resulting entries are compared through `filesystem.getacl` against the
 template `filesystem.acltemplate.by_path` serves, so a change to a template does
 not break the spec. Only what tells one preset from another is asserted by hand.
 A third test covers Apply Owner and Apply Group in the editor's header: only the
-ticked half reaches `filesystem.stat`. Editing entries, applying an ACL
-recursively, Strip ACL, POSIX ACLs and custom presets are not covered.
+ticked half reaches `filesystem.stat`. Editing entries beyond the one
+`smb-share-acl.e2e.ts` adds, applying an ACL recursively, Strip ACL, POSIX ACLs
+and custom presets are not covered.
 
 Encrypted datasets came next, in `tests/datasets-encryption.e2e.ts`: creating a
 dataset encrypted with a passphrase from the form's Encryption Options, locking
