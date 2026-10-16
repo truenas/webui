@@ -69,8 +69,9 @@ export const usersLocators = {
   unlockUser: (username: string): string => `[data-test="button-unlock-user-${kebabTestSegment(username)}"]`,
 
   /** In the Password card's footer. Offered for a non-builtin user other than the one signed in. */
-  generateOneTimePassword: (username: string): string =>
-    `[data-test="button-generate-one-time-password-${kebabTestSegment(username)}"]`,
+  generateOneTimePassword: (username: string): string => (
+    `[data-test="button-generate-one-time-password-${kebabTestSegment(username)}"]`
+  ),
 
   /**
    * `<tn-dialog-shell testId="one-time-password-created">`, raised once the
