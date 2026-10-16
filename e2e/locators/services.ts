@@ -1,5 +1,5 @@
 /**
- * The Services page under System, and the SSH, FTP, SNMP, UPS and NFS forms it opens.
+ * The Services page under System, and the SSH, FTP, SNMP, UPS, SMB and NFS forms it opens.
  *
  * Every id on a row is keyed on a row tag of `service-<name>`, and two names are
  * in play. The page builds the tag from the display name (`SMB`) for the `<tr>`,
@@ -34,6 +34,9 @@ const displayRowTag = (service: ServiceKey): string => (
 
 /** `uniqueRowTag` in `service-actions-cell` and `service-status-cell`, from the middleware name. */
 const middlewareRowTag = (service: ServiceKey): string => `service-${kebabTestSegment(service)}`;
+
+/** A `tn-select` option id: the control name, then the option's label through the library normalizer. */
+const option = (control: string, label: string): string => `[data-test="option-${control}-${kebabTestSegment(label)}"]`;
 
 export const servicesLocators = {
   /** The page header's `ix-basic-search`. It filters the list on the display name. */
@@ -104,6 +107,41 @@ export const servicesLocators = {
     v3PrivProto: '[data-test="select-v3-privproto"]',
     v3PrivProtoAes: '[data-test="option-v3-privproto-aes"]',
     v3PrivPassphrase: '[data-test="input-v3-privpassphrase"]',
+  },
+
+  smbForm: {
+    netbiosName: '[data-test="input-netbiosname"]',
+    workgroup: '[data-test="input-workgroup"]',
+    description: '[data-test="input-description"]',
+    minimumProtocol: '[data-test="select-minimum-protocol"]',
+    /** By the label `smbMinProtocolLabels` gives it, e.g. `SMB3 – modern clients only`. */
+    minimumProtocolOption: (label: string): string => option('minimum-protocol', label),
+    ntlmv1Auth: '[data-test="checkbox-ntlmv1-auth"]',
+
+    /**
+     * The footer's Advanced Settings toggle. The SMB form passes
+     * `testId: 'toggle-advanced-settings'` to `advancedModeFooterAction`, where
+     * the other service forms keep the default `toggle-advanced-options`. Other
+     * Options, everything below, is not rendered until it is on.
+     */
+    advancedToggle: '[data-test="button-toggle-advanced-settings"]',
+    unixCharset: '[data-test="select-unixcharset"]',
+    /** By the name `smb.unixcharset_choices` offers, which is also its label. */
+    unixCharsetOption: (label: string): string => option('unixcharset', label),
+    encryption: '[data-test="select-encryption"]',
+    /** By the label `smbEncryptionLabels` gives it. */
+    encryptionOption: (label: string): string => option('encryption', label),
+    /**
+     * The field around {@link encryption}: its label, the selected option, and
+     * once middleware has refused the save, its reason. The selected label can
+     * itself mention SMB1, so read the reason by its wording, not by that word.
+     */
+    encryptionField: '[data-test="form-field-encryption"]',
+    debug: '[data-test="checkbox-debug"]',
+    syslog: '[data-test="checkbox-syslog"]',
+    multichannel: '[data-test="checkbox-multichannel"]',
+    fileMask: '[data-test="input-filemask"]',
+    dirMask: '[data-test="input-dirmask"]',
   },
 
   /** `service-nfs.component.html`. */

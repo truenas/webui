@@ -117,13 +117,22 @@ export const snapshotTaskLocators = {
     /** Options come from `pool.filesystem_choices`, labelled with the full dataset name. */
     dataset: '[data-test="select-dataset"]',
     datasetOption: (dataset: string): string => `[data-test="option-dataset-${kebabTestSegment(dataset)}"]`,
+    /**
+     * A `tn-chip-input`: the typable field is `chip-input-<testId>`, and Enter
+     * commits the text as a chip.
+     */
+    exclude: '[data-test="chip-input-exclude"]',
+    /** The field around {@link exclude}: its label and, once refused, the reason. */
+    excludeField: '[data-test="form-field-exclude"]',
     /** Unticked by default. */
     recursive: '[data-test="checkbox-recursive"]',
     lifetimeValue: '[data-test="input-lifetime-value"]',
+    lifetimeValueField: '[data-test="form-field-lifetime-value"]',
     lifetimeUnit: '[data-test="select-lifetime-unit"]',
     /** Labelled with the unit's wire value — `WEEK`, `DAY` — so the option is `option-lifetime-unit-day`. */
     lifetimeUnitOption: (unit: string): string => `[data-test="option-lifetime-unit-${kebabTestSegment(unit)}"]`,
     namingSchema: '[data-test="input-naming-schema"]',
+    namingSchemaField: '[data-test="form-field-naming-schema"]',
     /** `ix-scheduler` renders a `tn-select` with `[testId]="[controlName, 'presets']"`. */
     schedule: '[data-test="select-schedule-presets"]',
     scheduleOption: (label: string): string => (
