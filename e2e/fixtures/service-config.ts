@@ -188,8 +188,9 @@ export async function setUpsSettings(client: E2eApiClient, settings: UpsSettings
 }
 
 /**
- * The first `ups.driver_choices` key for a NUT driver, e.g. `usbhid-ups`.
- * A key is `<driver>$<model>`, and `ups.update` takes only a key it lists.
+ * The first `ups.driver_choices` key for a NUT driver, e.g. `usbhid-ups`, that
+ * passes the driver no options. A key is `<driver>[ <options>]$<model>`, and
+ * `ups.update` takes only a key it lists.
  */
 export async function findUpsDriverKey(client: E2eApiClient, driver: string): Promise<string> {
   const choices = await firstValueFrom(client.api.call('ups.driver_choices').pipe(timeout(readTimeoutMs)));

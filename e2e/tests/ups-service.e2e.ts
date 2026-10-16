@@ -84,7 +84,8 @@ test('an admin saves a Slave UPS configuration, and the appliance keeps it', asy
   await page.locator(form.shutdownTimer).fill('60');
   await saveServiceForm(page);
 
-  // The form leaves the driver out of a Slave save, so the stored one stays.
+  // The driver is the one set up above. A Slave save leaves it out, and this
+  // readback cannot tell that apart from a save that sent it again.
   expect(await readUpsSettings(api)).toEqual({
     identifier: 'e2eups',
     mode: 'SLAVE',
