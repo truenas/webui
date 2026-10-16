@@ -948,8 +948,12 @@ and off for FTP and read back through `service.query`, which must still say
 stopped. The search is checked to hide SSH and SMB for `ftp`. The iSCSI pencil
 opens the iSCSI global configuration, where a listen port is saved with the
 service stopped and written back afterwards; the NVMe-oF pencil is only checked
-to open its own. The other services' forms, advanced options and View
-Logs/Sessions are not covered.
+to open its own. Behind each form's Advanced toggle, FTP's access, passive-port,
+bandwidth and TLS options and SSH's compression, SFTP logging and weak ciphers
+are saved and read back, and FTP's refusal of a maximum passive port below the
+minimum is asserted on the field. The other services' forms, FTP anonymous login,
+SSH bind interfaces and auxiliary parameters, and View Logs/Sessions are not
+covered.
 
 The SNMP form, opened from its row on the same page, is in
 `tests/snmp-service.e2e.ts`: saving location, contact, community, auxiliary
