@@ -1,11 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { Provider } from '@angular/core';
+import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import {
   TnIconButtonHarness, TnMenuHarness, TnMenuTesting, tnIconMarker,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { Role } from 'app/enums/role.enum';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 
@@ -23,7 +26,7 @@ describe('TableActionsCellComponent', () => {
     providers: [mockAuth()],
   });
 
-  function setup(actions: IconActionConfig<Row>[]): void {
+  function setup(actions: IconActionConfig<Row>[], providers: Provider[] = []): void {
     spectator = createComponent({
       props: {
         actions,
@@ -31,6 +34,7 @@ describe('TableActionsCellComponent', () => {
         uniqueRowTag: 'card-smb-share-smb123',
         ariaLabel: 'smb123 SMB Share',
       } as unknown as Partial<TableActionsCellComponent<Row>>,
+      providers,
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
@@ -77,6 +81,32 @@ describe('TableActionsCellComponent', () => {
 
     await menu.clickItem({ label: 'Delete' });
     expect(onDelete).toHaveBeenCalledWith({ id: 3 });
+  });
+
+  it('disables a menu action the user lacks the role for, and leaves one with no roles enabled', async () => {
+    setup(
+      [editAction, { ...deleteAction, requiredRoles: [Role.SharingSmbWrite] }],
+      [mockProvider(AuthService, { hasRole: jest.fn(() => of(false)) })],
+    );
+
+    await (await getMenuTrigger())!.click();
+    const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+
+    expect(await menu.getItemLabels()).toEqual(['Edit', 'Delete']);
+    expect(await menu.isItemDisabled({ label: 'Edit' })).toBe(false);
+    expect(await menu.isItemDisabled({ label: 'Delete' })).toBe(true);
+
+    await menu.clickItem({ label: 'Delete' });
+    expect(onDelete).not.toHaveBeenCalled();
+  });
+
+  it('enables a menu action when the user holds its role', async () => {
+    setup([editAction, { ...deleteAction, requiredRoles: [Role.SharingSmbWrite] }]);
+
+    await (await getMenuTrigger())!.click();
+    const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+
+    expect(await menu.isItemDisabled({ label: 'Delete' })).toBe(false);
   });
 
   it('renders a single action inline (no menu) and invokes it on click', async () => {

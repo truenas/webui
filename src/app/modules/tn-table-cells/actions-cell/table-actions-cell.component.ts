@@ -9,8 +9,10 @@ import {
   TnMenuItemComponent,
   TnMenuTriggerDirective,
 } from '@truenas/ui-components';
-import { Subscription } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { Role } from 'app/enums/role.enum';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { stopRowActivationKeys } from 'app/modules/tn-table-cells/stop-row-activation-keys';
 
@@ -47,6 +49,11 @@ import { stopRowActivationKeys } from 'app/modules/tn-table-cells/stop-row-activ
 })
 export class TableActionsCellComponent<T = unknown> {
   private destroyRef = inject(DestroyRef);
+  private authService = inject(AuthService);
+
+  /** One `hasRole` stream per role set, so the template's `async` pipe gets the same one on every check. */
+  private roleChecks = new Map<string, Observable<boolean>>();
+  private readonly anyone = of(true);
 
   readonly actions = input.required<IconActionConfig<T>[]>();
   readonly row = input.required<T>();
@@ -109,6 +116,24 @@ export class TableActionsCellComponent<T = unknown> {
       return action.disabledTooltip(this.row());
     }
     return action.disabledTooltip;
+  }
+
+  /**
+   * Whether the user may run a menu action, as `*ixRequiresRoles` decides it: no roles
+   * means anyone, otherwise any one of them.
+   */
+  protected hasRoles(roles: Role[]): Observable<boolean> {
+    if (!roles.length) {
+      return this.anyone;
+    }
+
+    const key = roles.join(',');
+    let check$ = this.roleChecks.get(key);
+    if (!check$) {
+      check$ = this.authService.hasRole(roles);
+      this.roleChecks.set(key, check$);
+    }
+    return check$;
   }
 
   protected onActionClick(event: MouseEvent | null, action: IconActionConfig<T>): void {

@@ -157,6 +157,86 @@ export async function addAclUserEntry(page: Page, username: string, permission: 
 }
 
 /**
+ * Adds an entry for `group` in the ACL editor, with the given basic permission.
+ *
+ * The same as {@link addAclUserEntry}, with Who changed to Group first, which swaps the user
+ * field for the group one.
+ */
+export async function addAclGroupEntry(page: Page, group: string, permission: string): Promise<void> {
+  const aclEditor = permissionsLocators.aclEditor;
+
+  await page.locator(aclEditor.addItem).click();
+  await selectOption(page, aclEditor.tag, aclEditor.tagGroup);
+  await page.locator(aclEditor.group).fill(group);
+  await page.locator(aclEditor.groupOption(group)).click();
+  await selectOption(page, aclEditor.basicPermission, aclEditor.basicPermissionOption(permission));
+}
+
+/**
+ * Selects the entry at `index` in the list, and waits until the entry form shows `who` in Who.
+ *
+ * Selecting clears the form and refills it on the next tick (`onAceSelected` in
+ * `acl-editor-list.component.ts`), so a field changed straight after the click could land on the
+ * entry that was selected before. `who` is the entry's Who as the select shows it, e.g. `group@`.
+ */
+export async function selectAce(page: Page, index: number, who: string): Promise<void> {
+  const aclEditor = permissionsLocators.aclEditor;
+
+  await page.locator(aclEditor.ace(index)).click();
+  await expect(page.locator(aclEditor.tag)).toContainText(who);
+}
+
+/** Removes the entry at `index`. Nothing is saved until {@link saveAcl}. */
+export async function removeAce(page: Page, index: number): Promise<void> {
+  await page.locator(permissionsLocators.aclEditor.removeAce(index)).click();
+}
+
+/** Sets the selected entry's ACL Type. */
+export async function setAceType(page: Page, type: 'Allow' | 'Deny'): Promise<void> {
+  await page.locator(permissionsLocators.aclEditor.aceType(type)).click();
+}
+
+/** Sets the selected entry's permission to a basic one, switching Permissions Type to Basic first. */
+export async function setBasicPermission(page: Page, permission: string): Promise<void> {
+  const aclEditor = permissionsLocators.aclEditor;
+
+  await page.locator(aclEditor.permissionType('Basic')).click();
+  await selectOption(page, aclEditor.basicPermission, aclEditor.basicPermissionOption(permission));
+}
+
+/**
+ * Switches the selected entry to advanced permissions and ticks exactly `labels`.
+ *
+ * Switching from Basic starts every box clear, so only the boxes named are ticked.
+ */
+export async function setAdvancedPermissions(page: Page, labels: string[]): Promise<void> {
+  const aclEditor = permissionsLocators.aclEditor;
+
+  await page.locator(aclEditor.permissionType('Advanced')).click();
+  for (const label of labels) {
+    await page.locator(aclEditor.advancedPermission(label)).setChecked(true);
+  }
+}
+
+/** Sets the selected entry's flags to a basic one, switching Flags Type to Basic first. */
+export async function setBasicFlag(page: Page, flag: 'Inherit' | 'No Inherit'): Promise<void> {
+  const aclEditor = permissionsLocators.aclEditor;
+
+  await page.locator(aclEditor.flagsType('Basic')).click();
+  await page.locator(aclEditor.basicFlag(flag)).click();
+}
+
+/** Switches the selected entry to advanced flags and ticks exactly `labels`, as {@link setAdvancedPermissions}. */
+export async function setAdvancedFlags(page: Page, labels: string[]): Promise<void> {
+  const aclEditor = permissionsLocators.aclEditor;
+
+  await page.locator(aclEditor.flagsType('Advanced')).click();
+  for (const label of labels) {
+    await page.locator(aclEditor.advancedFlag(label)).setChecked(true);
+  }
+}
+
+/**
  * Saves the ACL and waits for the editor to close.
  *
  * Save stays disabled while any entry is invalid, and the user field is checked

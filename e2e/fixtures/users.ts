@@ -385,8 +385,12 @@ async function builtinAdministratorsId(client: E2eApiClient): Promise<number> {
  * password-disabled accounts because nothing signs in as them. These exist to
  * be signed in as, so they carry a password — and `smb: false` keeps them out
  * of the SMB user database, which nothing here needs them in.
+ *
+ * `groups` takes group row ids, not gids. Membership is where an account's roles
+ * come from, so this is also how `fixtures/role-admins.ts` makes a restricted
+ * administrator.
  */
-async function ensureSignInCapableUser(
+export async function ensureSignInCapableUser(
   client: E2eApiClient,
   username: string,
   { password, groups }: { password: string; groups: number[] },

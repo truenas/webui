@@ -1,5 +1,5 @@
 /**
- * SSH, FTP, SNMP, UPS and SMB service settings: preconditions, cleanup and readback, over the API.
+ * SSH, FTP, SNMP, UPS, SMB and WebShare service settings: preconditions, cleanup and readback, over the API.
  *
  * Each service's settings are a single config record, so — as in
  * `fixtures/syslog.ts` — there is nothing to create or delete. For SSH, FTP,
@@ -22,6 +22,9 @@
  * only rewrites its configuration. On an appliance where SSH is running, the
  * port change restarts it on the new port until teardown. The SNMP and SMB
  * specs stop their service first, so their saves never restart anything.
+ *
+ * WebShare has no baseline of its own: its spec snapshots the settings it
+ * edits and writes the snapshot back, for the reason on {@link WebshareSettings}.
  */
 import type { CallParams, CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -35,6 +38,8 @@ type SnmpUpdate = NonNullable<CallParams<E2eApiDirectory, 'snmp.update'>[0]>;
 type UpsConfig = CallResponse<E2eApiDirectory, 'ups.config'>;
 type SmbConfig = CallResponse<E2eApiDirectory, 'smb.config'>;
 type SmbUpdate = NonNullable<CallParams<E2eApiDirectory, 'smb.update'>[0]>;
+type WebshareConfig = CallResponse<E2eApiDirectory, 'webshare.config'>;
+type WebshareUpdate = NonNullable<CallParams<E2eApiDirectory, 'webshare.update'>[0]>;
 
 /** The part of `ssh.config` the basic SSH spec edits, and Kerberos, which it reads to check it was left alone. */
 export type SshBasicSettings = Pick<SshConfig, 'tcpport' | 'passwordauth' | 'kerberosauth' | 'tcpfwd'>;
@@ -464,4 +469,52 @@ export async function setSmbSettings(client: E2eApiClient, settings: SmbSettings
   };
 
   await firstValueFrom(client.api.call('smb.update', [update]).pipe(timeout(slowCallTimeoutMs)));
+}
+
+/**
+ * The part of `webshare.config` the WebShare spec edits, and TrueSearch, which
+ * it reads to check the form kept it off.
+ *
+ * Snapshotted rather than given a baseline: MCP's groups may name a Directory
+ * Services group on an appliance joined to one, and a fixed value would drop it.
+ */
+export type WebshareSettings = Pick<
+  WebshareConfig,
+  'search' | 'passkey' | 'mcp_enabled' | 'mcp_allowed_groups' | 'mcp_allow_write'
+>;
+
+/** The WebShare settings as the appliance holds them. */
+export async function readWebshareSettings(client: E2eApiClient): Promise<WebshareSettings> {
+  const config = await firstValueFrom(client.api.call('webshare.config').pipe(timeout(readTimeoutMs)));
+
+  return {
+    search: config.search,
+    passkey: config.passkey,
+    mcp_enabled: config.mcp_enabled,
+    mcp_allowed_groups: config.mcp_allowed_groups,
+    mcp_allow_write: config.mcp_allow_write,
+  };
+}
+
+/**
+ * Writes the passkey and MCP settings, for preconditions and teardown only,
+ * like {@link setSshSettings}.
+ *
+ * TrueSearch is never written, and neither are the bind addresses or login
+ * groups: TrueSearch needs an entitlement and TrueNAS Connect to turn on, and
+ * the other two decide who can reach WebShare at all.
+ */
+export async function setWebshareSettings(
+  client: E2eApiClient,
+  settings: Omit<WebshareSettings, 'search'>,
+): Promise<void> {
+  const update: WebshareUpdate = {
+    // Read from `webshare.config`, so always a mode middleware accepts.
+    passkey: settings.passkey as WebshareUpdate['passkey'],
+    mcp_enabled: settings.mcp_enabled,
+    mcp_allowed_groups: settings.mcp_allowed_groups,
+    mcp_allow_write: settings.mcp_allow_write,
+  };
+
+  await firstValueFrom(client.api.call('webshare.update', [update]).pipe(timeout(slowCallTimeoutMs)));
 }
