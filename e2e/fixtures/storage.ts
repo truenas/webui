@@ -470,6 +470,33 @@ export async function ensureSmbDatasetPresent(client: E2eApiClient, name: string
 }
 
 /**
+ * Creates a dataset with the given ACL type by full name if absent.
+ *
+ * With no share type its ACL is trivial, so the Permissions card's Edit opens
+ * the Unix editor and the ACL editor opens on its preset picker. The aclmode is
+ * the one middleware accepts for each type: it refuses POSIX with anything but
+ * `DISCARD`, and NFSv4 with `DISCARD`.
+ */
+export async function ensureAclDatasetPresent(
+  client: E2eApiClient,
+  name: string,
+  acltype: 'NFSV4' | 'POSIX',
+): Promise<void> {
+  if (await findDataset(client, name)) {
+    return;
+  }
+
+  const aclmode = acltype === 'NFSV4' ? 'PASSTHROUGH' : 'DISCARD';
+  await firstValueFrom(
+    client.api
+      .call('pool.dataset.create', [{
+        name, type: 'FILESYSTEM', acltype, aclmode,
+      }])
+      .pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
  * Creates a zvol by full name if absent.
  *
  * Sparse and small: nothing here writes to it, and a thick 64MiB volume would
