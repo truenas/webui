@@ -219,7 +219,12 @@ const haProjects = target.ha
         testDir: './e2e/tests-ha',
         testMatch: /ha-failover\.e2e\.ts/,
         dependencies: ['ha-setup'],
-        use: { ...devices['Desktop Chrome'], haThroughVip: true, baseURL: target.ha.vipUiBaseUrl },
+        // Traced every time, not only on a retry, which this chain never takes:
+        // what the app does while the pair changes hands is the subject, and a
+        // screenshot of a spinner does not say which call it is waiting on.
+        use: {
+          ...devices['Desktop Chrome'], haThroughVip: true, baseURL: target.ha.vipUiBaseUrl, trace: 'on' as const,
+        },
       },
     ]
   : [];
