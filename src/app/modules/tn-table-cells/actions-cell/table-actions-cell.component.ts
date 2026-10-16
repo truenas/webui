@@ -128,12 +128,12 @@ export class TableActionsCellComponent<T = unknown> {
     }
 
     const key = roles.join(',');
-    let check = this.roleChecks.get(key);
-    if (!check) {
-      check = this.authService.hasRole(roles);
-      this.roleChecks.set(key, check);
+    let check$ = this.roleChecks.get(key);
+    if (!check$) {
+      check$ = this.authService.hasRole(roles);
+      this.roleChecks.set(key, check$);
     }
-    return check;
+    return check$;
   }
 
   protected onActionClick(event: MouseEvent | null, action: IconActionConfig<T>): void {
