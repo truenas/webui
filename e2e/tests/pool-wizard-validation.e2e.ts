@@ -4,8 +4,8 @@
  *
  * These checks all run in the browser: the name validators in `general-wizard-step.component.ts`
  * and the rules in `pool-manager-validation.service.ts`. So middleware's own tests do not cover
- * them. No test here creates a pool. Each one stops before Create Pool, and checks through
- * `pool.query` that nothing was made.
+ * them. No test here creates a pool. Each one stops before Create Pool, and all but the
+ * reserved-name test check through `pool.query` that the pool they named was not made.
  *
  * The General step's Next is bound to `form.invalid`, and both name validators are async. While
  * they run the form is PENDING, which is not invalid, so Next reads enabled. That is why a test
