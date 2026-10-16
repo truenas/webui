@@ -820,6 +820,18 @@ control elsewhere sits inside `ix-missing-access-wrapper`, whose span now emits
 "locked by role" from "disabled because the form is invalid". Every other page,
 and the sharing admin, come in later specs.
 
+Users, Groups and Backup Credentials for the read-only admin are in
+`tests/roles-read-only-credentials.e2e.ts`, one test with a step per page. On
+Users, Add and Delete on another user are locked, and the edit form opens but
+its Save is locked with the full name changed; the panel is closed without
+saving. On the admin's own account Delete is not rendered at all, beside its
+Edit. On Groups, Add and an empty group's Delete are locked. On Backup
+Credentials, Add and Delete are locked on the cloud credentials, SSH connections
+and SSH keypairs cards, the keypair's Delete being a disabled menu item, and
+the SSH connection's edit form opens with Save locked. Each seeded record is
+read back through the API. Privileges, API keys, certificates, the group members
+page, Directory Services and middleware's redaction of secrets are not covered.
+
 A pool's devices came next, in `tests/pool-devices.e2e.ts`: taking a disk offline
 and bringing it back online, and adding a spare, both from the pool's VDEVs page.
 That page is reached from View VDEVs on the pool's card on the Storage dashboard.
