@@ -1,7 +1,7 @@
 import {
   AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, input, viewChild,
 } from '@angular/core';
-import { TnCardComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
@@ -17,6 +17,7 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   imports: [
     TnCardComponent,
     TnIconComponent,
+    TnTestIdDirective,
     CopyrightLineComponent,
   ],
 })
