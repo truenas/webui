@@ -4,9 +4,8 @@
  * not take a v3 password shorter than eight characters.
  *
  * The page has no readout of a service's settings, so each save is asserted
- * through `snmp.config` alone, as the whole record less its two secrets. The
- * form blanks every v3 field when v3 is off, so the general save also checks
- * that no credential went with it, and the v3 save that they all did.
+ * through `snmp.config` alone, as the whole record less its two secrets, so a
+ * save that changed a field it was not asked to touch fails too.
  *
  * SNMP goes back to stopped, and its settings to the baseline, before and after
  * every test. See `fixtures/service-config.ts`.
@@ -66,8 +65,7 @@ test('an admin saves the SNMP general settings, and the appliance keeps them', a
   await page.locator(form.zilstat).click();
   await saveServiceForm(page);
 
-  // v3 was never ticked, so every v3 field must still be blank: the form blanks
-  // them itself on a v2c save rather than sending whatever the controls held.
+  // v3 was never ticked, so every v3 field is still the baseline's blank.
   expect(await readSnmpSettings(api)).toEqual({
     ...baselineReadback,
     location: 'e2e rack 1',

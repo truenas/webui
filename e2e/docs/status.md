@@ -846,7 +846,7 @@ the other services' forms, advanced options and View Logs/Sessions are not cover
 
 The SNMP form, opened from its row on the same page, is in
 `tests/snmp-service.e2e.ts`: saving location, contact, community, auxiliary
-parameters and zilstat with v3 off, which must leave every v3 field blank;
+parameters and zilstat with v3 off, with every v3 field left blank;
 saving v3 credentials (username, SHA, AES), read back less the password and
 passphrase, which are secrets; and a v3 password under eight characters,
 refused under the field with Save held down. Each save is asserted through
