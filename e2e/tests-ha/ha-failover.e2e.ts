@@ -16,6 +16,7 @@ import { initiateFailover } from '../flows/ha';
 import { haStatusLocators } from '../locators/ha';
 import { withClient } from '../support/api/client';
 import { expect, test } from '../support/fixtures';
+import { recordWebSockets } from '../support/websocket-log';
 
 /** Controller 1 reboots out of the way; controller 2 imports the pool and takes the VIP. */
 const failoverTimeoutMs = 5 * 60_000;
@@ -32,15 +33,26 @@ test('an admin fails the pair over to controller 2, and HA comes back with contr
     licensed: true, status: 'MASTER', node: 'A', reasons: [],
   });
 
-  await initiateFailover(page);
+  // What the app asks of middleware from here on, attached to the result:
+  // the trace records no WebSocket frames, and a failover is all sockets.
+  const attachWebSockets = recordWebSockets(page, test.info());
+  try {
+    await failOverAndSignIn();
+  } finally {
+    await attachWebSockets();
+  }
 
-  // The app's own splash while the controller it talks to steps down, then
-  // the sign-in page once the VIP answers again, from controller 2 — which
-  // holds the sign-in until it has finished taking over: the pool imported,
-  // its services started.
-  await expect(page.locator(haStatusLocators.systemTaskMessage)).toBeVisible();
-  await submitSignIn(page, config.username, config.password);
-  await awaitAdminShell(page, config.username, failoverTimeoutMs);
+  async function failOverAndSignIn(): Promise<void> {
+    await initiateFailover(page);
+
+    // The app's own splash while the controller it talks to steps down, then
+    // the sign-in page once the VIP answers again, from controller 2 — which
+    // holds the sign-in until it has finished taking over: the pool imported,
+    // its services started.
+    await expect(page.locator(haStatusLocators.systemTaskMessage)).toBeVisible();
+    await submitSignIn(page, config.username, config.password);
+    await awaitAdminShell(page, config.username, failoverTimeoutMs);
+  }
 
   await expect.poll(
     () => withClient(config, async (client) => (await readFailover(client)).node),
