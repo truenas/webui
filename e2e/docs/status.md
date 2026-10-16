@@ -844,6 +844,16 @@ CI uses depends on it; it goes back to stopped, and both forms' fields to a fixe
 baseline, before and after each test. The Start Automatically switch, the search,
 the other services' forms, advanced options and View Logs/Sessions are not covered.
 
+The SNMP form, opened from its row on the same page, is in
+`tests/snmp-service.e2e.ts`: saving location, contact, community, auxiliary
+parameters and zilstat with v3 off, which must leave every v3 field blank;
+saving v3 credentials (username, SHA, AES), read back less the password and
+passphrase, which are secrets; and a v3 password under eight characters,
+refused under the field with Save held down. Each save is asserted through
+`snmp.config`, with SNMP stopped and its settings at a fixed baseline before and
+after each test. The Password field got `testId="v3-password"` so its error
+text can be read. Starting SNMP and querying it with a client are not covered.
+
 Virtual Machines followed, in `tests/virtual-machines.e2e.ts`: creating a Linux VM
 with the wizard on a new zvol, and editing and deleting one from its row's detail
 panel beside a bystander that must not change. Each is asserted through `vm.query`,
