@@ -227,8 +227,8 @@ export const poolDisconnectLocators = {
   deleteOption: '[data-test="option-delete-pool"]',
   /**
    * The "Export Pool" option card, the same kind of `<div>` as Delete. The
-   * dialog opens with it already chosen, so clicking it changes nothing; a
-   * journey clicks it anyway, as a user making the choice would.
+   * dialog opens with it already chosen. Clicking it still clears `destroy`
+   * and the confirm tick, so a journey clicks it before ticking anything.
    */
   exportOption: '[data-test="option-export-pool"]',
 
