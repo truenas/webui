@@ -940,6 +940,15 @@ refused under the field with Save held down. Each save is asserted through
 after each test. The Password field got `testId="v3-password"` so its error
 text can be read. Starting SNMP and querying it with a client are not covered.
 
+The UPS form followed, in `tests/ups-service.e2e.ts`: saving a Slave configuration
+from Master mode, saving a Master configuration with a driver and a serial port
+from Slave mode, and the form refusing an identifier with a space. Each save is
+asserted through `ups.config` as a whole record, including `complete_identifier`.
+The service is never started, since there is no UPS to talk to. The baseline is a
+Slave configuration rather than the stock one: a fresh appliance is in Master mode
+with no driver or port, which `ups.update` refuses to write back. Extra users, the
+upsd options, host sync and the warning time are not covered.
+
 Virtual Machines followed, in `tests/virtual-machines.e2e.ts`: creating a Linux VM
 with the wizard on a new zvol, and editing and deleting one from its row's detail
 panel beside a bystander that must not change. Each is asserted through `vm.query`,
