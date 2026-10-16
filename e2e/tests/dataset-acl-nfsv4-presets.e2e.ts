@@ -38,21 +38,22 @@ const smbLeaf = 'e2e_acl_nfs4_smb';
 const aclOwner = 'e2e_acl_owner';
 const aclGroup = 'e2e_acl_group';
 
-/** The fields that make two entries the same entry. */
+/** The fields that make two entries the same entry. Optional where the generated type has them so. */
 interface AceShape {
   tag: string;
   type: string;
-  perms: unknown;
-  flags: unknown;
+  perms?: unknown;
+  flags?: unknown;
   who?: string | null;
 }
 
 /**
  * An entry reduced to what it grants and to whom.
  *
- * `owner@`, `group@` and `everyone@` are kept by tag alone: their `who` is the
- * path's owner, which the template resolves the same way, but nothing else about
- * them is a name. A USER or GROUP entry is kept by the name it resolves to.
+ * `owner@`, `group@` and `everyone@` are kept by tag alone. Their `who` is at
+ * most the path's owner or group, which the two calls need not fill in alike,
+ * and it is not something a preset chooses. A USER or GROUP entry is kept by the
+ * name it resolves to.
  */
 function shapeOf(ace: AceShape): AceShape {
   const shape: AceShape = {
@@ -123,7 +124,7 @@ test('Set ACL on a trivial NFSv4 dataset applies the NFS4_HOME preset', async ({
   const path = datasetMountPath(dataset);
   const template = await readAclTemplate(api, path, 'NFS4_HOME');
 
-  expect((await readAcl(api, path)).trivial).toBe(true);
+  expect(await readAcl(api, path)).toMatchObject({ acltype: 'NFS4', trivial: true });
 
   await openPermissionsEditor(page, dataset);
   await setAclFromUnixEditor(page);
