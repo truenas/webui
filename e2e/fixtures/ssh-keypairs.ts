@@ -11,7 +11,10 @@ import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 /** A keychain credential as middleware reports it, with its id narrowed — see `GroupRecord`. */
-type KeychainCredentialEntry = Extract<CallResponse<E2eApiDirectory, 'keychaincredential.query'>, unknown[]>[number];
+export type KeychainCredentialEntry = Extract<
+  CallResponse<E2eApiDirectory, 'keychaincredential.query'>,
+  unknown[]
+>[number];
 
 export type SshKeypairRecord = KeychainCredentialEntry & { id: number };
 

@@ -11,14 +11,33 @@
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import { ensureLoopbackRootKeyAbsent, ensureLoopbackRootKeyPresent, type LoopbackRootKey } from './loopback-ssh';
+import type { KeychainCredentialEntry } from './ssh-keypairs';
 import type { E2eApiClient } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
-const loopbackHost = '127.0.0.1';
+export const loopbackHost = '127.0.0.1';
+
+export type SshConnectionRecord = KeychainCredentialEntry & { id: number };
+
+/** What an SSH connection stores, as middleware reports it. */
+export interface SshConnectionAttributes {
+  host: string;
+  port: number;
+  username: string;
+  /** The id of the keypair it signs in with. */
+  private_key: number;
+  remote_host_key: string;
+  connect_timeout: number;
+}
+
+/** The keypair {@link ensureLoopbackSshConnectionPresent} makes for a connection with this name. */
+export function loopbackKeypairName(name: string): string {
+  return `${name}-key`;
+}
 
 /** Which keypair a connection signs in with, and the marker on root's copy of it. */
 function rootKeyFor(name: string): LoopbackRootKey {
-  return { keypairName: `${name}-key`, marker: name };
+  return { keypairName: loopbackKeypairName(name), marker: name };
 }
 
 /**
@@ -27,13 +46,36 @@ function rootKeyFor(name: string): LoopbackRootKey {
  * Filtered on the type as well, so a keypair that happened to share the name is
  * never mistaken for it.
  */
-export async function findSshConnection(client: E2eApiClient, name: string): Promise<{ id: number } | undefined> {
+export async function findSshConnection(client: E2eApiClient, name: string): Promise<SshConnectionRecord | undefined> {
   const [connection] = await firstValueFrom(
     client.api.query('keychaincredential.query', [['name', '=', name], ['type', '=', 'SSH_CREDENTIALS']])
       .pipe(timeout(readTimeoutMs)),
   );
 
-  return connection as { id: number } | undefined;
+  return connection as SshConnectionRecord | undefined;
+}
+
+/** How many SSH connections the appliance holds, whoever made them. */
+export async function countSshConnections(client: E2eApiClient): Promise<number> {
+  const connections = await firstValueFrom(
+    client.api.query('keychaincredential.query', [['type', '=', 'SSH_CREDENTIALS']]).pipe(timeout(readTimeoutMs)),
+  );
+
+  return connections.length;
+}
+
+/**
+ * A connection's attributes; undefined for no connection.
+ *
+ * The cast is because `attributes` is typed across every credential type, and a
+ * keypair's are a different shape — see `keypairKeys` in `fixtures/ssh-keypairs.ts`.
+ * Through `unknown` because this names every field as present, which the union
+ * does not promise for any one member.
+ */
+export function sshConnectionAttributes(
+  connection: SshConnectionRecord | undefined,
+): SshConnectionAttributes | undefined {
+  return connection?.attributes as unknown as SshConnectionAttributes | undefined;
 }
 
 /**

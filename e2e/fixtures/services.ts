@@ -122,3 +122,33 @@ export async function ensureServiceRunning(
     },
   );
 }
+
+/**
+ * Puts a service back as a spec found it, running or not and starting at boot
+ * or not, for a journey that changes both through something other than the
+ * service itself — semi-automatic SSH setup enables and starts SSH.
+ *
+ * Stopped only if it was stopped, so a service that was already running when
+ * the spec began is never stopped by its teardown.
+ */
+export async function restoreService(
+  client: E2eApiClient,
+  service: string,
+  found: ServiceState,
+  whatItCosts: string,
+): Promise<void> {
+  if (found.state === 'RUNNING') {
+    await ensureServiceRunning(client, service, whatItCosts);
+  } else {
+    await ensureServiceStopped(client, service, whatItCosts);
+  }
+
+  const current = await queryService(client, service);
+  if (current && current.enable !== found.enable) {
+    await firstValueFrom(
+      client.api
+        .call('service.update', [current.id, { enable: found.enable }])
+        .pipe(timeout(slowCallTimeoutMs)),
+    );
+  }
+}

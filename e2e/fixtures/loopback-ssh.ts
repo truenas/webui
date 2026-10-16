@@ -40,7 +40,13 @@ function withoutMarkedKeys(sshpubkey: string | null | undefined, marker: string)
     .join('\n');
 }
 
-async function setRootAuthorizedKeys(client: E2eApiClient, sshpubkey: string): Promise<void> {
+/** Root's authorized keys as the appliance holds them, empty when it has none. */
+export async function readRootAuthorizedKeys(client: E2eApiClient): Promise<string> {
+  return (await findUser(client, 'root'))?.sshpubkey ?? '';
+}
+
+/** Replaces root's authorized keys outright — for writing back a value a spec read earlier. */
+export async function setRootAuthorizedKeys(client: E2eApiClient, sshpubkey: string): Promise<void> {
   const root = await findUser(client, 'root');
   if (!root) {
     throw new Error('user.query returned no root row, so the loopback key cannot be authorized.');
