@@ -9,8 +9,8 @@
  * because each step needs the state the last one left — and every sign-in spends
  * from the unauthenticated rate limit (20 per method per IP per 60s).
  *
- * Codes come from `support/totp.ts`, computed from the secret the setup dialog
- * shows, which is what an authenticator app does with it.
+ * Codes come from `support/totp.ts`, computed from the secret the
+ * `/two-factor-auth` page shows, which is what an authenticator app does with it.
  *
  * Global two-factor is the dangerous part. Left on, it puts every account with
  * no secret — the suite's own admin included — through the setup dialog at its
@@ -27,7 +27,7 @@ import {
   attemptSignIn, awaitAdminShell, expectSignedInAs, signIn, signOut,
 } from '../../flows/auth';
 import {
-  clearTwoFactorFromUserDetails, enableGlobalTwoFactor, setUpTwoFactorInDialog, submitOneTimePassword,
+  clearTwoFactorFromUserDetails, enableGlobalTwoFactor, setUpTwoFactorOnPage, submitOneTimePassword,
 } from '../../flows/two-factor';
 import { signinLocators } from '../../locators/signin';
 import { leavingTestData } from '../../support/cleanup';
@@ -99,11 +99,11 @@ test('two-factor is set up at sign-in, then asked for, and an admin can clear it
 
   await test.step('the user is made to set it up at sign-in, and does', async () => {
     await attemptSignIn(page, username, password);
-    secret = await setUpTwoFactorInDialog(page);
-
     await awaitAdminShell(page, username);
+    secret = await setUpTwoFactorOnPage(page);
+
     await expectSignedInAs(page, username);
-    // The dialog's Finish says the screen believed it; this says the appliance does.
+    // The page's Unset button says the screen believed it; this says the appliance does.
     expect((await findUser(api, username))?.twofactor_auth_configured).toBe(true);
     await signOut(page);
   });

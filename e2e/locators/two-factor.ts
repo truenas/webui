@@ -1,6 +1,6 @@
 /**
  * Two-factor authentication: the global card on System > Advanced Settings and
- * its form, the setup dialog, and the Access card's Clear button.
+ * its form, the setup card, and the Access card's Clear button.
  *
  * The sign-in page's one-time password field is in `locators/signin.ts`, with
  * the rest of that form.
@@ -27,13 +27,10 @@ export const twoFactorLocators = {
   },
 
   /**
-   * `<tn-dialog-shell testId="two-factor-setup">`, which the admin layout's guard
-   * raises in place of the shell for an account with no secret while global
-   * two-factor is on. It wraps the same `ix-two-factor` component the
-   * `/two-factor-auth` page shows.
+   * The `ix-two-factor` card on the `/two-factor-auth` page. The first-login
+   * dialog wraps the same component, so these ids are the same in both.
    */
-  setupDialog: {
-    title: '[data-test="dialog-title-two-factor-setup"]',
+  setup: {
     /**
      * "Configure 2FA Secret" — or "Renew 2FA Secret" once one exists; the two
      * labels share this id. Asks for no confirmation the first time.
@@ -45,8 +42,8 @@ export const twoFactorLocators = {
     code: '[data-test="input-verify-otp"]',
     /** "Confirm Code". The app checks the code itself; nothing is sent to middleware. */
     confirmCode: '[data-test="button-verify-otp"]',
-    /** Offered only once a code has been confirmed, and closes the dialog. */
-    finish: '[data-test="button-finish-first-stig-login"]',
+    /** Rendered only once the account holds a secret and no code is still awaited. */
+    unsetSecret: '[data-test="button-unset-2fa-secret"]',
   },
 
   /**

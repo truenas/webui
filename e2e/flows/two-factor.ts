@@ -20,11 +20,11 @@ const saveTimeoutMs = 60_000;
  * Waits for the card to read `Disabled` before opening the form, because the
  * form is filled from what the card last loaded and a box ticked before then
  * could be overwritten by it. The panel closing is the app's signal that the
- * save landed. On success the app also takes the admin to `/two-factor-auth`;
- * nothing here depends on that.
+ * save landed. On success the app also takes the admin to `/two-factor-auth`,
+ * which is where the next sign-in returns to — see {@link setUpTwoFactorOnPage}.
  *
  * `toleranceWindow` is the form's Window: how many 30-second steps either side
- * of now a code is still accepted for, by the setup dialog and the sign-in page
+ * of now a code is still accepted for, by the setup page and the sign-in page
  * alike.
  */
 export async function enableGlobalTwoFactor(page: Page, toleranceWindow: number): Promise<void> {
@@ -43,28 +43,33 @@ export async function enableGlobalTwoFactor(page: Page, toleranceWindow: number)
 }
 
 /**
- * Sets two-factor up in the dialog raised over a fresh sign-in, and returns the secret.
+ * Sets two-factor up on the `/two-factor-auth` page, and returns the secret.
  *
  * The way a person does it: generate a secret, read it off the screen, type in
  * the code an authenticator app shows for it. The app checks that code itself
- * and offers Finish only once it matches, so Finish appearing is the app saying
+ * and offers Unset only once it matches, so Unset appearing is the app saying
  * the secret on screen is the one the account now holds.
+ *
+ * Expects the page to be on screen already. The admin layout's guard shows it
+ * in place of its full-screen setup dialog whenever the sign-in lands on this
+ * route, and `redirectUrl` lands it here after a session that signed out from
+ * it — which saving the global form leads to.
  */
-export async function setUpTwoFactorInDialog(page: Page): Promise<string> {
-  const dialog = twoFactorLocators.setupDialog;
+export async function setUpTwoFactorOnPage(page: Page): Promise<string> {
+  const { setup } = twoFactorLocators;
 
-  await expect(page.locator(dialog.title)).toBeVisible({ timeout: saveTimeoutMs });
-  await page.locator(dialog.configureSecret).click();
+  await expect(page).toHaveURL(/\/two-factor-auth\/?$/, { timeout: saveTimeoutMs });
+  await page.locator(setup.configureSecret).click();
 
-  const secretText = page.locator(dialog.secret);
+  const secretText = page.locator(setup.secret);
   await expect(secretText).not.toBeEmpty({ timeout: saveTimeoutMs });
   const secret = (await secretText.innerText()).trim();
 
-  await page.locator(dialog.code).fill(totpCode(secret));
-  await page.locator(dialog.confirmCode).click();
+  await page.locator(setup.code).fill(totpCode(secret));
+  await page.locator(setup.confirmCode).click();
 
-  await page.locator(dialog.finish).click();
-  await expect(page.locator(dialog.title)).toBeHidden();
+  await expect(page.locator(setup.unsetSecret)).toBeVisible({ timeout: saveTimeoutMs });
+  await expect(page.locator(setup.code)).toBeHidden();
 
   return secret;
 }
