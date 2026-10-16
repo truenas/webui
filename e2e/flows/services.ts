@@ -50,6 +50,20 @@ export async function openServiceForm(
 }
 
 /**
+ * Opens a service's form like {@link openServiceForm}, for a baseline in which
+ * every field the form fills in is empty or matches its default, so no value
+ * can say the load has landed.
+ *
+ * Waits for Save instead: the form holds it disabled while the service's config
+ * loads, and enables it once every control has been patched.
+ */
+export async function openServiceFormOnceLoaded(page: Page, service: ServiceKey): Promise<void> {
+  await goToServices(page);
+  await page.locator(servicesLocators.row.edit(service)).click();
+  await expect(page.locator(servicesLocators.save)).toBeEnabled({ timeout: saveTimeoutMs });
+}
+
+/**
  * Saves the open form and waits for the panel to close.
  *
  * The panel closing is the app's own signal that the save succeeded. A refusal
