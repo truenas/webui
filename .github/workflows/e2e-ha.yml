@@ -55,7 +55,9 @@ jobs:
       - name: Make it HA
         env:
           LICENSE_URL: ${{ secrets.E2E_LICENSE_URL }}
-          FAILOVER: ${{ inputs.failover == false && 'false' || 'true' }}
+          # Off only when a dispatch says so: a push has no inputs, and an
+          # absent input compares equal to false.
+          FAILOVER: ${{ github.event_name == 'workflow_dispatch' && !inputs.failover && 'false' || 'true' }}
         run: |
           set -euo pipefail
           pem="$RUNNER_TEMP/ha-license.txt"
