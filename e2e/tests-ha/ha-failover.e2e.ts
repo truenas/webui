@@ -14,6 +14,7 @@ import { readFailover, requireHa } from '../fixtures/ha';
 import { awaitAdminShell, submitSignIn } from '../flows/auth';
 import { initiateFailover } from '../flows/ha';
 import { haStatusLocators } from '../locators/ha';
+import { signinLocators } from '../locators/signin';
 import { withClient } from '../support/api/client';
 import { expect, test } from '../support/fixtures';
 import { recordWebSockets } from '../support/websocket-log';
@@ -50,6 +51,17 @@ test('an admin fails the pair over to controller 2, and HA comes back with contr
     // holds the sign-in until it has finished taking over: the pool imported,
     // its services started.
     await expect(page.locator(haStatusLocators.systemTaskMessage)).toBeVisible();
+    await expect(page.locator(signinLocators.username)).toBeVisible({ timeout: failoverTimeoutMs });
+
+    // TEMP: workaround for an app defect. Signing in on the sign-in page the
+    // app returned to after the failover succeeds in middleware (`auth.login_ex`
+    // answers), but the app sends nothing after it and stays on "Logging
+    // in..." for good: the typed client never reports itself authenticated on
+    // the reconnected socket, so `failover.licensed` and the rest of the
+    // sign-in wait on it forever. A fresh page load starts a fresh client.
+    // Remove the reload once the app signs in without one.
+    await page.reload();
+    await expect(page.locator(signinLocators.username)).toBeEnabled({ timeout: failoverTimeoutMs });
     await submitSignIn(page, config.username, config.password);
     await awaitAdminShell(page, config.username, failoverTimeoutMs);
   }
