@@ -117,7 +117,7 @@ test('an admin saves the advanced options, and the appliance keeps them', async 
   await page.locator(form.advancedToggle).click();
   await expect(page.locator(form.unixCharset)).toBeVisible();
 
-  await selectOption(page, form.unixCharset, form.unixCharsetOption('ISO-8859-1'));
+  await selectOption(page, form.unixCharset, form.unixCharsetOption('ISO8859_1'));
   await selectOption(page, form.encryption, form.encryptionOption(encryptionLabel.desired));
   await page.locator(form.debug).click();
   await page.locator(form.syslog).click();
@@ -128,7 +128,7 @@ test('an admin saves the advanced options, and the appliance keeps them', async 
 
   expect(await readSmbSettings(api)).toEqual({
     ...startingSettings,
-    unixcharset: 'ISO-8859-1',
+    unixcharset: 'ISO8859_1',
     encryption: 'DESIRED',
     debug: true,
     syslog: true,
