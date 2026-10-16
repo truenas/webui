@@ -12,6 +12,13 @@
  * because each step needs the state the last one left — and every sign-in spends
  * from the unauthenticated rate limit (20 per method per IP per 60s).
  *
+ * The sign-in page spends from it too: each time it starts it asks
+ * `system.advanced.login_banner` and `user.has_local_administrator_set_up`, and
+ * signing out starts it. So after a sign-out the next sign-in fills the form
+ * already on screen rather than loading the page again, which would spend both a
+ * second time. Run straight after `signin.e2e.ts`, loading it every time put the
+ * last sign-in over the limit.
+ *
  * Codes come from `support/totp.ts`, computed from the secret the
  * `/two-factor-auth` page shows, which is what an authenticator app does with it.
  *
@@ -27,7 +34,7 @@ import {
 } from '../../fixtures/two-factor';
 import { ensureUserAbsent, findUser } from '../../fixtures/users';
 import {
-  attemptSignIn, awaitAdminShell, expectSignedInAs, signIn, signOut,
+  attemptSignIn, awaitAdminShell, expectSignedInAs, signIn, signOut, submitSignIn,
 } from '../../flows/auth';
 import {
   clearTwoFactorFromUserDetails, enableGlobalTwoFactor, setUpTwoFactorOnPage, submitOneTimePassword,
@@ -101,7 +108,7 @@ test('two-factor is set up on its page, then asked for, and an admin can clear i
   });
 
   await test.step('the user sets it up on the page they land on', async () => {
-    await attemptSignIn(page, username, password);
+    await submitSignIn(page, username, password);
     await awaitAdminShell(page, username);
     secret = await setUpTwoFactorOnPage(page);
 
@@ -114,7 +121,7 @@ test('two-factor is set up on its page, then asked for, and an admin can clear i
   // Before the right code, so a prompt that let anything through cannot pass as
   // one that checks.
   await test.step('signing in again asks for a code, and refuses a wrong one', async () => {
-    await attemptSignIn(page, username, password);
+    await submitSignIn(page, username, password);
     await submitOneTimePassword(page, wrongTotpCode(secret));
 
     await expect(page.locator(signinLocators.error)).toContainText(wrongCodeMessage);
@@ -122,6 +129,8 @@ test('two-factor is set up on its page, then asked for, and an admin can clear i
   });
 
   await test.step('the code the secret gives now lets them in', async () => {
+    // Loaded afresh, unlike the other sign-ins: the refusal left the form on its
+    // code step, and this is a new attempt from the username.
     await attemptSignIn(page, username, password);
     await submitOneTimePassword(page, totpCode(secret));
 
@@ -137,7 +146,8 @@ test('two-factor is set up on its page, then asked for, and an admin can clear i
     // the global setting, so nothing about the claim below changes.
     await disableGlobalTwoFactor(api, foundBaseline());
 
-    await signIn(page, config.username, config.password);
+    await submitSignIn(page, config.username, config.password);
+    await awaitAdminShell(page, config.username);
     await clearTwoFactorFromUserDetails(page, username);
 
     expect((await findUser(api, username))?.twofactor_auth_configured).toBe(false);
