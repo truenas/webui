@@ -251,6 +251,21 @@ service rather than the share: the Apple-extensions gate a Time Machine share
 is held behind (the write, `smb.update`, outlives the share, so the spec puts
 it back), a row's Enabled switch, and the card's own start/stop switch.
 
+The SMB service's own form, opened from its row on System > Services, is in
+`tests/smb-service-settings.e2e.ts`. It saves the NetBIOS section (name,
+workgroup, description, minimum protocol, NTLMv1) and the advanced Other Options
+(UNIX charset, transport encryption, debug, syslog, multichannel, file and
+directory masks), each asserted as the whole `smb.config` record so a field the
+form dropped fails too. It also covers middleware refusing SMB1 with required
+encryption, read off the encryption field's error. The service stays stopped,
+and the settings are snapshotted and written back, since the NetBIOS name and
+workgroup differ per appliance. On that page the row and its Status cell are
+tagged by the display name (`service-smb`) and its buttons by the middleware
+name (`service-cifs`). Not covered: Administrators Group, Guest Account, NetBIOS
+Alias, Bind IP Addresses, Local Master, Enable Search (needs the TrueSearch
+entitlement), Stateful Failover (HA only), and renaming while joined to a
+directory service.
+
 `tests/smb-list-page.e2e.ts` covers the standalone list at `/sharing/smb`, opened
 from the card title: it lists the share the card has no room for, its search
 narrows the list to one row, and its own Add (`add-smb-share`) creates a share.
@@ -469,8 +484,14 @@ schema and schedule claim, and the "keep snapshots" box ticked or not. With it
 ticked, `pool.snapshot.query`'s `retention` must move from the task to a
 `property` on the snapshot with the same date, and a manual snapshot beside it
 must get none. With it unticked, the snapshot stays and has no removal date.
-Custom schedules and exclusions are not covered. The full list page is
-`tests/snapshot-task-list.e2e.ts`'s, below.
+`tests/snapshot-task-validation.e2e.ts` covers what the add form refuses: a
+naming schema with a slash (the form's own pattern, so Save goes disabled), and
+four refusals that come back from `pool.snapshottask.create` under the field
+they name — a naming schema without the date tokens, a lifetime of zero, an
+excluded dataset outside the selected one, and any exclusion on a task that is
+not recursive. Each also requires that no task exists afterwards. Custom
+schedules, successful exclusions and the edit form's refusals are not covered.
+The full list page is `tests/snapshot-task-list.e2e.ts`'s, below.
 
 The dataset form came next, in `tests/datasets-form.e2e.ts`: creating a dataset
 under a pool and editing one, both through Other Options, the form's advanced
@@ -927,8 +948,12 @@ and off for FTP and read back through `service.query`, which must still say
 stopped. The search is checked to hide SSH and SMB for `ftp`. The iSCSI pencil
 opens the iSCSI global configuration, where a listen port is saved with the
 service stopped and written back afterwards; the NVMe-oF pencil is only checked
-to open its own. The other services' forms, advanced options and View
-Logs/Sessions are not covered.
+to open its own. Behind each form's Advanced toggle, FTP's access, passive-port,
+bandwidth and TLS options and SSH's compression, SFTP logging and weak ciphers
+are saved and read back, and FTP's refusal of a maximum passive port below the
+minimum is asserted on the field. The other services' forms, FTP anonymous login,
+SSH bind interfaces and auxiliary parameters, and View Logs/Sessions are not
+covered.
 
 The SNMP form, opened from its row on the same page, is in
 `tests/snmp-service.e2e.ts`: saving location, contact, community, auxiliary

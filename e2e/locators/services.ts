@@ -1,5 +1,5 @@
 /**
- * The Services page under System, and the SSH, FTP, SNMP, UPS and WebShare forms it opens.
+ * The Services page under System, and the SSH, FTP, SNMP, UPS, SMB and WebShare forms it opens.
  *
  * Every id on a row is keyed on a row tag of `service-<name>`, and two names are
  * in play. The page builds the tag from the display name (`SMB`) for the `<tr>`,
@@ -35,6 +35,9 @@ const displayRowTag = (service: ServiceKey): string => (
 /** `uniqueRowTag` in `service-actions-cell` and `service-status-cell`, from the middleware name. */
 const middlewareRowTag = (service: ServiceKey): string => `service-${kebabTestSegment(service)}`;
 
+/** A `tn-select` option id: the control name, then the option's label through the library normalizer. */
+const option = (control: string, label: string): string => `[data-test="option-${control}-${kebabTestSegment(label)}"]`;
+
 export const servicesLocators = {
   /** The page header's `ix-basic-search`. It filters the list on the display name. */
   search: '[data-test="input-search"]',
@@ -66,10 +69,31 @@ export const servicesLocators = {
     edit: (service: ServiceKey): string => `[data-test="button-${middlewareRowTag(service)}-edit-service"]`,
   },
 
+  /**
+   * The side panel footer's Advanced/Basic toggle on both forms. Each passes
+   * `advancedModeFooterAction` no `testId`, so both get its default, the same
+   * id as on the SMB and NFS share forms. The SSH form only relabels it
+   * "Advanced Settings".
+   */
+  advancedToggle: '[data-test="button-toggle-advanced-options"]',
+
   sshForm: {
     port: '[data-test="input-tcpport"]',
     passwordAuth: '[data-test="checkbox-passwordauth"]',
     tcpForwarding: '[data-test="checkbox-tcpfwd"]',
+
+    /** The rest are advanced fields, rendered only once {@link servicesLocators.advancedToggle} is on. */
+    compression: '[data-test="checkbox-compression"]',
+    sftpLogLevel: '[data-test="select-sftp-log-level"]',
+    /** Keyed on the option's label from `helptextServiceSsh`, e.g. `Verbose`. */
+    sftpLogLevelOption: (label: string): string => `[data-test="option-sftp-log-level-${kebabTestSegment(label)}"]`,
+    sftpLogFacility: '[data-test="select-sftp-log-facility"]',
+    sftpLogFacilityOption: (label: string): string => (
+      `[data-test="option-sftp-log-facility-${kebabTestSegment(label)}"]`
+    ),
+    /** A multiple select. Its labels are `None` and `AES128-CBC`. */
+    weakCiphers: '[data-test="select-weak-ciphers"]',
+    weakCiphersOption: (label: string): string => `[data-test="option-weak-ciphers-${kebabTestSegment(label)}"]`,
   },
 
   ftpForm: {
@@ -79,6 +103,34 @@ export const servicesLocators = {
     loginAttempts: '[data-test="input-loginattempt"]',
     notransferTimeout: '[data-test="input-timeout-notransfer"]',
     timeout: '[data-test="input-timeout"]',
+
+    /** The rest are advanced fields, rendered only once {@link servicesLocators.advancedToggle} is on. */
+    alwaysChroot: '[data-test="checkbox-defaultroot"]',
+    localUserLogin: '[data-test="checkbox-onlylocal"]',
+    transferResumption: '[data-test="checkbox-resume"]',
+    fxp: '[data-test="checkbox-fxp"]',
+    passivePortsMin: '[data-test="input-passiveportsmin"]',
+    passivePortsMax: '[data-test="input-passiveportsmax"]',
+    /** The field around Maximum Passive Port: its label and, once refused, the reason. */
+    passivePortsMaxField: '[data-test="form-field-passiveportsmax"]',
+    /** Size inputs that take `1 MiB` and the like. The form holds bytes and saves KiB. */
+    localUserUploadBandwidth: '[data-test="input-localuserbw"]',
+    localUserDownloadBandwidth: '[data-test="input-localuserdlbw"]',
+
+    tls: '[data-test="checkbox-tls"]',
+    /** Rendered only while Enable TLS is ticked. Options are keyed on the certificate's name. */
+    certificate: '[data-test="select-ssltls-certificate"]',
+    certificateOption: (name: string): string => `[data-test="option-ssltls-certificate-${kebabTestSegment(name)}"]`,
+    tlsPolicy: '[data-test="select-tls-policy"]',
+    /**
+     * Keyed on the option's label from `helptextServiceFtp`, e.g. `Data`.
+     *
+     * Two policies share an id: `Data` and `!Data` both normalize to `data`, and
+     * `Ctrl + Data` and `Ctrl + !Data` to `ctrl-data`. A spec picking one of those
+     * takes the first match, which is the one without the `!`.
+     */
+    tlsPolicyOption: (label: string): string => `[data-test="option-tls-policy-${kebabTestSegment(label)}"]`,
+    tlsAllowClientRenegotiations: '[data-test="checkbox-tls-opt-allow-client-renegotiations"]',
   },
 
   /** `service-snmp.component.html`. */
@@ -104,6 +156,41 @@ export const servicesLocators = {
     v3PrivProto: '[data-test="select-v3-privproto"]',
     v3PrivProtoAes: '[data-test="option-v3-privproto-aes"]',
     v3PrivPassphrase: '[data-test="input-v3-privpassphrase"]',
+  },
+
+  smbForm: {
+    netbiosName: '[data-test="input-netbiosname"]',
+    workgroup: '[data-test="input-workgroup"]',
+    description: '[data-test="input-description"]',
+    minimumProtocol: '[data-test="select-minimum-protocol"]',
+    /** By the label `smbMinProtocolLabels` gives it, e.g. `SMB3 – modern clients only`. */
+    minimumProtocolOption: (label: string): string => option('minimum-protocol', label),
+    ntlmv1Auth: '[data-test="checkbox-ntlmv1-auth"]',
+
+    /**
+     * The footer's Advanced Settings toggle. The SMB form passes
+     * `testId: 'toggle-advanced-settings'` to `advancedModeFooterAction`, where
+     * the other service forms keep the default `toggle-advanced-options`. Other
+     * Options, everything below, is not rendered until it is on.
+     */
+    advancedToggle: '[data-test="button-toggle-advanced-settings"]',
+    unixCharset: '[data-test="select-unixcharset"]',
+    /** By the name `smb.unixcharset_choices` offers, which is also its label. */
+    unixCharsetOption: (label: string): string => option('unixcharset', label),
+    encryption: '[data-test="select-encryption"]',
+    /** By the label `smbEncryptionLabels` gives it. */
+    encryptionOption: (label: string): string => option('encryption', label),
+    /**
+     * The field around {@link encryption}: its label, the selected option, and
+     * once middleware has refused the save, its reason. The selected label can
+     * itself mention SMB1, so read the reason by its wording, not by that word.
+     */
+    encryptionField: '[data-test="form-field-encryption"]',
+    debug: '[data-test="checkbox-debug"]',
+    syslog: '[data-test="checkbox-syslog"]',
+    multichannel: '[data-test="checkbox-multichannel"]',
+    fileMask: '[data-test="input-filemask"]',
+    dirMask: '[data-test="input-dirmask"]',
   },
 
   /** `service-ups.component.html`. */

@@ -20,7 +20,11 @@
           ></tn-select>
         </tn-form-field>
 
-        <tn-form-field [label]="labels.exclude | translate" [tooltip]="tooltips.exclude | translate">
+        <tn-form-field
+          testId="exclude"
+          [label]="labels.exclude | translate"
+          [tooltip]="tooltips.exclude | translate"
+        >
           <tn-chip-input
             name="exclude"
             testId="exclude"
@@ -42,7 +46,12 @@
     <div class="column">
       <tn-form-section [heading]="'Schedule' | translate">
         <div class="input-group">
-          <tn-form-field [label]="labels.lifetime | translate" [tooltip]="tooltips.lifetime | translate" [required]="true">
+          <tn-form-field
+            testId="lifetime-value"
+            [label]="labels.lifetime | translate"
+            [tooltip]="tooltips.lifetime | translate"
+            [required]="true"
+          >
             <tn-input
               name="lifetime_value"
               testId="lifetime-value"
@@ -62,7 +71,11 @@
           </tn-form-field>
         </div>
 
-        <tn-form-field [label]="labels.naming_schema | translate" [tooltip]="tooltips.naming_schema | translate">
+        <tn-form-field
+          testId="naming-schema"
+          [label]="labels.naming_schema | translate"
+          [tooltip]="tooltips.naming_schema | translate"
+        >
           <tn-input
             name="naming_schema"
             testId="naming-schema"
