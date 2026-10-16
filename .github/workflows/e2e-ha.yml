@@ -1,8 +1,10 @@
-# A TrueNAS HA pair inside one truenas-lab-xlarge runner. Boots the two
-# appliance disks its scale set attaches with .github/e2e-ha/ha.sh, then
-# makes them HA over the API with ha_setup.py and, unless told not to,
-# fails over once. The first step towards the HA suite: these pieces move
-# into the truenas-appliance-runner action's HA mode once the pair works.
+# A TrueNAS HA pair inside one truenas-lab-xlarge runner, its scale set
+# attaching the appliance disk twice. The truenas-appliance-runner action
+# boots the pair (ha: true) and hands it over unconfigured; ha_setup.py then
+# makes it HA over the API and, unless told not to, fails over once.
+#
+# ha_setup.py stands in for the HA suite's first journeys, which will drive
+# the same setup through the UI.
 #
 # Runs on every push to its branch while that is being built: a workflow
 # that is not on the default branch cannot be dispatched.
@@ -32,25 +34,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Fetch the appliance scripts
-        uses: actions/checkout@v4
+      - name: Boot the HA pair
+        uses: iXsystems/ux-github-workflows/.github/actions/truenas-appliance-runner@ha-mode
         with:
-          repository: iXsystems/ux-github-workflows
-          path: ux-github-workflows
-
-      - name: Boot the pair
-        id: boot
-        env:
-          APPLIANCE_LIB: ${{ github.workspace }}/ux-github-workflows/.github/actions/truenas-appliance-runner
-        run: |
-          set -euo pipefail
-          echo "APPLIANCE_LIB=$APPLIANCE_LIB" >> "$GITHUB_ENV"
-          echo "HA_DIR=$RUNNER_TEMP/tn-ha" >> "$GITHUB_ENV"
-          export HA_DIR="$RUNNER_TEMP/tn-ha"
-          lsblk -p -o NAME,SIZE,SERIAL,FSTYPE,LABEL,MOUNTPOINT
-          out="$(bash .github/e2e-ha/ha.sh start)"
-          echo "$out"
-          grep '^HA_' <<< "$out" >> "$GITHUB_ENV"
+          ha: true
+          memory-mb: 8192
+          data-disk-count: 4
 
       - name: Make it HA
         env:
@@ -66,9 +55,9 @@ jobs:
             | jq -r '.license // empty' > "$pem"
           grep -q -- '-----BEGIN TRUENAS LICENSE-----' "$pem" \
             || { echo "::error::MES did not return a license for CI-HAA"; exit 1; }
-          HA_PASSWORD="$(head -c 15 /dev/urandom | base64 | tr -d '/+=')"
-          echo "::add-mask::$HA_PASSWORD"
-          export HA_PASSWORD
+          # tnctl, beside the script the action put on PATH.
+          APPLIANCE_LIB="$(dirname "$(readlink -f "$(command -v truenas-appliance)")")"
+          export APPLIANCE_LIB
           args=("$pem")
           [ "$FAILOVER" = true ] && args+=(--failover)
           python3 -u .github/e2e-ha/ha_setup.py "${args[@]}"
@@ -78,21 +67,20 @@ jobs:
         run: |
           for n in a b; do
             echo "::group::node $n console"
-            bash .github/e2e-ha/ha.sh console "$n" 300 || true
+            truenas-appliance console "$n" 300 || true
             echo "::endgroup::"
           done
           echo "::group::dnsmasq"
-          cat "$HA_DIR/dnsmasq.log" 2>/dev/null || true
+          cat "$APPLIANCE_DIR/dnsmasq.log" 2>/dev/null || true
           echo "::endgroup::"
           # What LIO holds for the shared LUNs: registrations and the
           # reservation, as the target sees them, and what the kernel said.
           echo "::group::LIO persistent reservations"
           for d in /sys/kernel/config/target/core/fileio_*/tnha*; do
             echo "== $d"
-            for f in "$d"/pr/* "$d"/attrib/emulate_pr "$d"/attrib/pgr_support; do
-              [ -r "$f" ] || sudo -n test -r "$f" || continue
+            for f in "$d"/pr/*; do
               printf '%s: ' "${f##*/}"; sudo -n cat "$f" 2>/dev/null | tr '\n' ' '; echo
             done
           done
-          sudo -n dmesg | grep -iE 'target|iscsi|reserv|pr ' | tail -n 80 || true
+          sudo -n dmesg | grep -iE 'target|reserv|aptpl' | tail -n 80 || true
           echo "::endgroup::"

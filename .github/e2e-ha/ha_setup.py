@@ -1,4 +1,5 @@
-"""Make the pair ha.sh booted into a working HA system, over the API.
+"""Make the pair the truenas-appliance-runner action booted (ha: true)
+into a working HA system, over the API.
 
 The sequence is middleware's own (tests/sharing_protocols/conftest.py
 setup_server_ha, utils/ha.py settle_ha). Every step is logged with how long
@@ -7,8 +8,12 @@ run names the step that broke.
 
     python3 ha_setup.py <license file> [--failover]
 
-Reads HA_NODE_A, HA_NODE_B, HA_VIP, HA_NETMASK, HA_GATEWAY and HA_PASSWORD
-from the environment, and imports tnctl from $APPLIANCE_LIB.
+Reads the action's TN_HA_NODE_A, TN_HA_NODE_B, TN_HA_VIP, TN_HA_NETMASK,
+TN_HA_GATEWAY and TN_PASSWORD from the environment, imports tnctl from
+$APPLIANCE_LIB, and reaches the nodes' shells with `truenas-appliance ssh`.
+
+Stands in for the HA suite's own first journeys, which will drive the same
+steps through the UI.
 """
 import argparse
 import json
@@ -21,11 +26,10 @@ sys.path.insert(0, os.environ["APPLIANCE_LIB"])
 import tnctl  # noqa: E402
 
 USER = "truenas_admin"
-TEMPLATE_PASSWORD = "truenas-appliance-template"
-A, B, VIP = os.environ["HA_NODE_A"], os.environ["HA_NODE_B"], os.environ["HA_VIP"]
-NETMASK = int(os.environ["HA_NETMASK"])
-GATEWAY = os.environ["HA_GATEWAY"]
-PASSWORD = os.environ["HA_PASSWORD"]
+A, B, VIP = os.environ["TN_HA_NODE_A"], os.environ["TN_HA_NODE_B"], os.environ["TN_HA_VIP"]
+NETMASK = int(os.environ["TN_HA_NETMASK"])
+GATEWAY = os.environ["TN_HA_GATEWAY"]
+PASSWORD = os.environ["TN_PASSWORD"]
 T0 = time.monotonic()
 
 
@@ -80,10 +84,10 @@ def report():
         except Exception as e:  # noqa: BLE001
             log(f"  {name}'s peer failover.status: error: {str(e)[:200]}")
     disks = " ".join(f"/dev/sd{c}" for c in "abcdefgh")
-    for name, ip in (("A", A), ("B", B)):
-        log(f"  --- {name}: fenced's log, the disks, and their persistent reservations")
+    for name in ("a", "b"):
+        log(f"  --- {name.upper()}: fenced's log, the disks, and their persistent reservations")
         try:
-            print(ssh(ip, f"""
+            print(ssh(name, f"""
                 sudo tail -n 60 /var/log/fenced.log
                 lsblk -o NAME,SERIAL,VENDOR,MODEL,TRAN
                 for d in {disks}; do
@@ -96,46 +100,12 @@ def report():
             log(f"  no ssh into {name}: {e}")
 
 
-KEY = os.path.join(os.environ.get("HA_DIR", "/tmp"), "ssh_key")
-SSH = ["ssh", "-i", KEY, "-o", "BatchMode=yes", "-o", "ConnectTimeout=10", "-o", "StrictHostKeyChecking=no",
-       "-o", "UserKnownHostsFile=/dev/null", "-o", "LogLevel=ERROR"]
-
-
-def enable_ssh(ip):
-    """ssh in as the admin, with a key and sudo, to read and change what
-    the API does not reach. ssh is on for good after this."""
-    if not os.path.exists(KEY):
-        subprocess.run(["ssh-keygen", "-q", "-t", "ed25519", "-N", "", "-C", "e2e-ha", "-f", KEY], check=True)
-    with open(KEY + ".pub") as f:
-        pub = f.read().strip()
-    c = connect(ip)
-    try:
-        uid = c.call("user.query", [["username", "=", USER]], {"get": True})["id"]
-        c.call("user.update", uid, {"sshpubkey": pub, "sudo_commands_nopasswd": ["ALL"]})
-        c.call("service.update", "ssh", {"enable": True})
-        c.job("service.control", "START", "ssh", {"silent": False})
-    finally:
-        c.close()
-
-
-def ssh(ip, script, check=True):
-    r = subprocess.run([*SSH, f"{USER}@{ip}", "bash -s"], input=script, capture_output=True, text=True, timeout=300)
-    if check and r.returncode != 0:
-        raise RuntimeError(f"ssh {ip}: exit {r.returncode}: {r.stderr.strip()[:500]}")
+def ssh(node, script):
+    """A script on node a or b, as the admin with sudo: the action left a
+    key in place for this."""
+    r = subprocess.run(["truenas-appliance", "ssh", node, "bash -s"], input=script,
+                       capture_output=True, text=True, timeout=300)
     return r.stdout + r.stderr
-
-
-def identity(ip):
-    """The ids a clone shares with the disk it was cloned from: fenced keys
-    its reservations by /etc/machine-id's first 8 hex digits, ZFS stamps
-    pools with /etc/hostid."""
-    return ssh(ip, "echo machine-id $(cat /etc/machine-id) hostid $(hostid)").strip()
-
-
-def wait_login(ip, timeout=900):
-    def up():
-        return call(ip, "system.ready", timeout=20, login_timeout=10) is True
-    poll(f"{ip} system.ready", timeout, up)
 
 
 def remote(via, method, *params, timeout=120):
@@ -161,13 +131,6 @@ def main():
     p.add_argument("--failover", action="store_true")
     a = p.parse_args()
 
-    step("passwords: the template's, rotated to this job's on both nodes")
-    for ip in (A, B):
-        c = tnctl.login(f"ws://{ip}", USER, TEMPLATE_PASSWORD)
-        uid = c.call("user.query", [["username", "=", USER]])[0]["id"]
-        c.call("user.update", uid, {"password": PASSWORD})
-        c.close()
-
     step("identity: what middleware makes of each node's hardware")
     for name, ip in (("A", A), ("B", B)):
         hw, node = call(ip, "failover.hardware"), call(ip, "failover.node")
@@ -175,27 +138,6 @@ def main():
         log(f"  {name} at {ip}: hardware {hw}, node {node}, disks {disks}")
         assert hw == "IXKVM", f"node {name} is not IXKVM: {hw}"
         assert node == name, f"node at {ip} says it is {node}, not {name}"
-
-    step("machine identity: both nodes are clones of one disk; B gets ids of its own")
-    for ip in (A, B):
-        enable_ssh(ip)
-    ids = {n: identity(ip) for n, ip in (("A", A), ("B", B))}
-    log(f"  before: {ids}")
-    if ids["A"] == ids["B"]:
-        # Before the license: its fingerprint includes the machine-id.
-        ssh(B, """
-            set -e
-            new=$(head -c 16 /dev/urandom | od -An -tx1 | tr -d ' \\n')
-            echo "$new" | sudo tee /etc/machine-id >/dev/null
-            sudo rm -f /var/lib/dbus/machine-id
-            sudo zgenhostid -f
-        """)
-        ssh(B, "sudo systemctl reboot", check=False)
-        time.sleep(20)
-        wait_login(B)
-        ids["B"] = identity(B)
-        log(f"  after B's reboot: {ids}")
-    assert ids["A"] != ids["B"], f"the nodes still share their ids: {ids}"
 
     step("license: CI-HAA on node A, which pushes it to B")
     with open(a.license) as f:
