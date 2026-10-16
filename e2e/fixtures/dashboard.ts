@@ -134,18 +134,19 @@ export async function readFirstNicName(client: E2eApiClient): Promise<string> {
 }
 
 /**
- * A physical NIC with an IPv4 address of its own, so the IPv4 Address card has something to show.
+ * A NIC with an IPv4 address of its own, so the IPv4 Address card has something to show.
  *
- * Physical, because webui adds a link aggregation's member addresses to the aggregation's own, and
- * {@link DashboardNic} reads only the row's. A physical NIC that is not a member shows exactly that.
+ * Not a link aggregation, because webui adds the member ports' addresses to the aggregation's own
+ * and {@link DashboardNic} reads only the row's. Every other row the cards can show keeps exactly
+ * its own addresses.
  */
 export async function readNicWithIpv4(client: E2eApiClient): Promise<DashboardNic> {
   const nic = (await queryDashboardInterfaces(client))
-    .filter((entry) => entry.type === 'PHYSICAL')
+    .filter((entry) => entry.type !== 'LINK_AGGREGATION')
     .map(toDashboardNic)
     .find((entry) => entry.ipv4Addresses.length > 0);
   if (!nic) {
-    throw new Error('interface.query reports no physical NIC with an IPv4 address.');
+    throw new Error('interface.query reports no NIC outside a link aggregation with an IPv4 address.');
   }
 
   return nic;
