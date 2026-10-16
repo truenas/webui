@@ -10,7 +10,8 @@
  * The General step's Next is bound to `form.invalid`, and both name validators are async. While
  * they run the form is PENDING, which is not invalid, so Next reads enabled. That is why a test
  * that expects Next to be disabled first waits for the field's error text: only then has the
- * validator answered.
+ * validator answered. Going the other way, back to an accepted name, nothing on screen marks the
+ * answer, so that test waits for `pool.validate_name`'s reply on the page's socket.
  *
  * Not covered: mixed disk sizes and capacity warnings (the CI disks are all the same), dRAID
  * warnings, special and dedup redundancy warnings, and the exported-pool and duplicate-serial
@@ -21,8 +22,12 @@ import {
   configureAutomatedVdevs, goToReview, openPoolWizard, startPoolWizard,
 } from '../flows/storage';
 import { poolWizardLocators } from '../locators/storage';
+import { apiCallsTo } from '../support/api-calls';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
+
+// For the first test: the only sign that the name check has answered a valid name.
+test.use({ recordApiCalls: true });
 
 /** Names a passing run never creates. Removed before and after each test in case one was. */
 const uniquePool = 'e2e_wizard_unique';
@@ -35,6 +40,9 @@ const pools = [uniquePool, emptyPool, stripePool];
  * `pool.validate_name` calls through `truenas_pylibzfs.name_is_valid`.
  */
 const reservedName = 'mirror';
+
+/** Called by the Name field's async validator once the value has settled for 300 ms. */
+const validateNameMethod = 'pool.validate_name';
 
 const validationTimeoutMs = 15_000;
 
@@ -71,10 +79,18 @@ test('the wizard refuses a pool name that is already in use', async ({ page, api
   await expect(nameField).toContainText('already in use', { timeout: validationTimeoutMs });
   await expect(next).toBeDisabled();
 
+  // Back to a free name. Here the PENDING window would hide a refusal: the error clears and Next
+  // enables before either validator has answered. So wait for `pool.validate_name`, the slower of
+  // the two, to answer this value before reading the field.
+  const validationsBefore = apiCallsTo(page, validateNameMethod).length;
   await name.fill(uniquePool);
   await name.blur();
-  await expect(nameField).not.toContainText('already in use', { timeout: validationTimeoutMs });
-  await expect(next).toBeEnabled({ timeout: validationTimeoutMs });
+  await expect.poll(
+    () => apiCallsTo(page, validateNameMethod).slice(validationsBefore).map((call) => call.answer),
+    { timeout: validationTimeoutMs },
+  ).toContain('result');
+  await expect(nameField).not.toContainText('already in use');
+  await expect(next).toBeEnabled();
 
   // Nothing was made, and the pool whose name was taken is still there.
   expect(await findPool(api, uniquePool)).toBeUndefined();
@@ -91,8 +107,8 @@ test('the wizard refuses a pool name that ZFS rejects', async ({ page }) => {
   await name.blur();
   await expect(next).toBeEnabled();
 
-  // This one is a round trip: the validator calls `pool.validate_name`, which answers with a
-  // validation error, and the field shows that error's message.
+  // This one is a round trip: the validator calls `pool.validate_name`, and the field shows
+  // its refusal, whether that comes back as `false` or as a validation error.
   await name.fill(reservedName);
   await name.blur();
   await expect(nameField).toContainText('Invalid pool name', { timeout: validationTimeoutMs });
@@ -130,6 +146,8 @@ test('the wizard warns about a stripe data vdev, and still allows it', async ({ 
   await expect(
     page.locator(poolWizardLocators.reviewWarnings).filter({ hasText: stripeWarning }),
   ).toHaveCount(1);
+  // With a vdev, Inspect VDEVs is there. This is what shows its absence in the test above is real.
+  await expect(page.locator(poolWizardLocators.inspectVdevs)).toBeVisible();
   // A warning, not an error: Create Pool stays enabled. It is never clicked.
   await expect(page.locator(poolWizardLocators.createPool)).toBeEnabled();
 
