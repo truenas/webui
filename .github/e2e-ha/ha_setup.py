@@ -13,6 +13,7 @@ from the environment, and imports tnctl from $APPLIANCE_LIB.
 import argparse
 import json
 import os
+import subprocess
 import sys
 import time
 
@@ -36,8 +37,8 @@ def connect(ip, password=PASSWORD, timeout=600):
     return tnctl.retry(f"a login to {ip}", timeout, lambda: tnctl.login(f"ws://{ip}", USER, password), every=3)
 
 
-def call(ip, method, *params, timeout=120):
-    c = connect(ip, timeout=60)
+def call(ip, method, *params, timeout=120, login_timeout=60):
+    c = connect(ip, timeout=login_timeout)
     try:
         return c.call(method, *params, timeout=timeout)
     finally:
@@ -64,18 +65,77 @@ def poll(what, timeout, fn, every=5):
 
 
 def report():
-    """What both nodes say about failover, for a failed run's log."""
+    """What both nodes say about failover and fencing, for a failed run's
+    log. One quick login each: a standby refuses them, and retrying runs
+    into middleware's rate limit on unauthenticated calls."""
     for name, ip in (("A", A), ("B", B), ("VIP", VIP)):
         for method in ("failover.node", "failover.status", "failover.disabled.reasons", "failover.licensed"):
             try:
-                log(f"  {name} {method}: {json.dumps(call(ip, method, timeout=20))}")
+                log(f"  {name} {method}: {json.dumps(call(ip, method, timeout=20, login_timeout=5))}")
             except Exception as e:  # noqa: BLE001
-                log(f"  {name} {method}: error: {e}")
+                log(f"  {name} {method}: error: {str(e)[:200]}")
         # A standby answers only through its peer.
         try:
             log(f"  {name}'s peer failover.status: {json.dumps(remote(ip, 'failover.status', timeout=20))}")
         except Exception as e:  # noqa: BLE001
-            log(f"  {name}'s peer failover.status: error: {e}")
+            log(f"  {name}'s peer failover.status: error: {str(e)[:200]}")
+    disks = " ".join(f"/dev/sd{c}" for c in "abcdefgh")
+    for name, ip in (("A", A), ("B", B)):
+        log(f"  --- {name}: fenced's log, the disks, and their persistent reservations")
+        try:
+            print(ssh(ip, f"""
+                sudo tail -n 60 /var/log/fenced.log
+                lsblk -o NAME,SERIAL,VENDOR,MODEL,TRAN
+                for d in {disks}; do
+                    [ -b "$d" ] || continue
+                    echo "== $d"
+                    sudo sg_persist -n -i -k "$d"; sudo sg_persist -n -i -r "$d"; sudo sg_persist -n -c "$d"
+                done
+            """), flush=True)
+        except Exception as e:  # noqa: BLE001
+            log(f"  no ssh into {name}: {e}")
+
+
+KEY = os.path.join(os.environ.get("HA_DIR", "/tmp"), "ssh_key")
+SSH = ["ssh", "-i", KEY, "-o", "BatchMode=yes", "-o", "ConnectTimeout=10", "-o", "StrictHostKeyChecking=no",
+       "-o", "UserKnownHostsFile=/dev/null", "-o", "LogLevel=ERROR"]
+
+
+def enable_ssh(ip):
+    """ssh in as the admin, with a key and sudo, to read and change what
+    the API does not reach. ssh is on for good after this."""
+    if not os.path.exists(KEY):
+        subprocess.run(["ssh-keygen", "-q", "-t", "ed25519", "-N", "", "-C", "e2e-ha", "-f", KEY], check=True)
+    with open(KEY + ".pub") as f:
+        pub = f.read().strip()
+    c = connect(ip)
+    try:
+        uid = c.call("user.query", [["username", "=", USER]], {"get": True})["id"]
+        c.call("user.update", uid, {"sshpubkey": pub, "sudo_commands_nopasswd": ["ALL"]})
+        c.call("service.update", "ssh", {"enable": True})
+        c.job("service.control", "START", "ssh", {"silent": False})
+    finally:
+        c.close()
+
+
+def ssh(ip, script, check=True):
+    r = subprocess.run([*SSH, f"{USER}@{ip}", "bash -s"], input=script, capture_output=True, text=True, timeout=300)
+    if check and r.returncode != 0:
+        raise RuntimeError(f"ssh {ip}: exit {r.returncode}: {r.stderr.strip()[:500]}")
+    return r.stdout + r.stderr
+
+
+def identity(ip):
+    """The ids a clone shares with the disk it was cloned from: fenced keys
+    its reservations by /etc/machine-id's first 8 hex digits, ZFS stamps
+    pools with /etc/hostid."""
+    return ssh(ip, "echo machine-id $(cat /etc/machine-id) hostid $(hostid)").strip()
+
+
+def wait_login(ip, timeout=900):
+    def up():
+        return call(ip, "system.ready", timeout=20, login_timeout=10) is True
+    poll(f"{ip} system.ready", timeout, up)
 
 
 def remote(via, method, *params, timeout=120):
@@ -115,6 +175,27 @@ def main():
         log(f"  {name} at {ip}: hardware {hw}, node {node}, disks {disks}")
         assert hw == "IXKVM", f"node {name} is not IXKVM: {hw}"
         assert node == name, f"node at {ip} says it is {node}, not {name}"
+
+    step("machine identity: both nodes are clones of one disk; B gets ids of its own")
+    for ip in (A, B):
+        enable_ssh(ip)
+    ids = {n: identity(ip) for n, ip in (("A", A), ("B", B))}
+    log(f"  before: {ids}")
+    if ids["A"] == ids["B"]:
+        # Before the license: its fingerprint includes the machine-id.
+        ssh(B, """
+            set -e
+            new=$(head -c 16 /dev/urandom | od -An -tx1 | tr -d ' \\n')
+            echo "$new" | sudo tee /etc/machine-id >/dev/null
+            sudo rm -f /var/lib/dbus/machine-id
+            sudo zgenhostid -f
+        """)
+        ssh(B, "sudo systemctl reboot", check=False)
+        time.sleep(20)
+        wait_login(B)
+        ids["B"] = identity(B)
+        log(f"  after B's reboot: {ids}")
+    assert ids["A"] != ids["B"], f"the nodes still share their ids: {ids}"
 
     step("license: CI-HAA on node A, which pushes it to B")
     with open(a.license) as f:

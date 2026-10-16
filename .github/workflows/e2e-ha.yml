@@ -71,7 +71,7 @@ jobs:
           [ "$FAILOVER" = true ] && args+=(--failover)
           python3 -u .github/e2e-ha/ha_setup.py "${args[@]}"
 
-      - name: Consoles
+      - name: Consoles and shared storage
         if: always()
         run: |
           for n in a b; do
@@ -81,4 +81,16 @@ jobs:
           done
           echo "::group::dnsmasq"
           cat "$HA_DIR/dnsmasq.log" 2>/dev/null || true
+          echo "::endgroup::"
+          # What LIO holds for the shared LUNs: registrations and the
+          # reservation, as the target sees them, and what the kernel said.
+          echo "::group::LIO persistent reservations"
+          for d in /sys/kernel/config/target/core/fileio_*/tnha*; do
+            echo "== $d"
+            for f in "$d"/pr/* "$d"/attrib/emulate_pr "$d"/attrib/pgr_support; do
+              [ -r "$f" ] || sudo -n test -r "$f" || continue
+              printf '%s: ' "${f##*/}"; sudo -n cat "$f" 2>/dev/null | tr '\n' ' '; echo
+            done
+          done
+          sudo -n dmesg | grep -iE 'target|iscsi|reserv|pr ' | tail -n 80 || true
           echo "::endgroup::"
