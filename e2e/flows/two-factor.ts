@@ -21,7 +21,10 @@ const saveTimeoutMs = 60_000;
  * form is filled from what the card last loaded and a box ticked before then
  * could be overwritten by it. The panel closing is the app's signal that the
  * save landed. On success the app also takes the admin to `/two-factor-auth`,
- * which is where the next sign-in returns to — see {@link setUpTwoFactorOnPage}.
+ * and this waits until that page has rendered: the route signed out from is the
+ * one the next sign-in returns to, and {@link setUpTwoFactorOnPage} depends on it.
+ * Signing out while that navigation is still in flight would leave the previous
+ * route recorded instead.
  *
  * `toleranceWindow` is the form's Window: how many 30-second steps either side
  * of now a code is still accepted for, by the setup page and the sign-in page
@@ -40,6 +43,9 @@ export async function enableGlobalTwoFactor(page: Page, toleranceWindow: number)
   await page.locator(globalForm.window).fill(String(toleranceWindow));
   await page.locator(globalForm.save).click();
   await expect(page.locator(globalForm.save)).toBeHidden({ timeout: saveTimeoutMs });
+
+  await expect(page).toHaveURL(/\/two-factor-auth\/?$/, { timeout: saveTimeoutMs });
+  await expect(page.locator(twoFactorLocators.setup.configureSecret)).toBeVisible({ timeout: saveTimeoutMs });
 }
 
 /**
@@ -50,10 +56,10 @@ export async function enableGlobalTwoFactor(page: Page, toleranceWindow: number)
  * and offers Unset only once it matches, so Unset appearing is the app saying
  * the secret on screen is the one the account now holds.
  *
- * Expects the page to be on screen already. The admin layout's guard shows it
- * in place of its full-screen setup dialog whenever the sign-in lands on this
- * route, and `redirectUrl` lands it here after a session that signed out from
- * it — which saving the global form leads to.
+ * Expects the page to be on screen already. The sign-in returns to the route the
+ * last session signed out from (`redirectUrl`), which {@link enableGlobalTwoFactor}
+ * leaves here. On this route the admin layout's guard shows the page and does not
+ * raise its full-screen setup dialog, so nothing here covers that dialog.
  */
 export async function setUpTwoFactorOnPage(page: Page): Promise<string> {
   const { setup } = twoFactorLocators;

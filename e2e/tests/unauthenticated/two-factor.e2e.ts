@@ -1,8 +1,11 @@
 /**
  * Story: an admin turns two-factor authentication on for the appliance; an
- * account is then made to set it up at its next sign-in, and does; from then on
- * it is asked for a code, which lets it in when right and not when wrong; and an
- * admin can clear it again from that user's details.
+ * account signing in next sets it up on the Two-Factor Authentication page it
+ * lands on; from then on it is asked for a code, which lets it in when right and
+ * not when wrong; and an admin can clear it again from that user's details.
+ *
+ * It lands on that page because the sign-in returns to the route the admin
+ * signed out from. The full-screen setup dialog other routes raise is not covered.
  *
  * Under `tests/unauthenticated/` because every claim here is about signing in,
  * which the token bypass would skip (R4.2). One test, with the story as steps,
@@ -85,7 +88,7 @@ test.afterEach(async ({ api }) => {
   await ensureUserAbsent(api, twoFactorUser.username);
 });
 
-test('two-factor is set up at sign-in, then asked for, and an admin can clear it', async ({ page, api, config }) => {
+test('two-factor is set up on its page, then asked for, and an admin can clear it', async ({ page, api, config }) => {
   const { username, password } = twoFactorUser;
   let secret = '';
 
@@ -97,7 +100,7 @@ test('two-factor is set up at sign-in, then asked for, and an admin can clear it
     await signOut(page);
   });
 
-  await test.step('the user is made to set it up at sign-in, and does', async () => {
+  await test.step('the user sets it up on the page they land on', async () => {
     await attemptSignIn(page, username, password);
     await awaitAdminShell(page, username);
     secret = await setUpTwoFactorOnPage(page);

@@ -1026,12 +1026,13 @@ credential a task still uses are not covered.
 
 Two-factor authentication is in `tests/unauthenticated/two-factor.e2e.ts`, as one
 story. The suite's admin turns global two-factor on from its card on Advanced
-Settings. A throwaway administrator signing in next lands on the
-`/two-factor-auth` page, because the sign-in returns to the route the admin
-signed out from. That route is the one place the admin layout's guard shows the
-page and not its full-screen setup dialog. The page generates a secret, the spec
-reads it off the screen and confirms the code it gives, and `user.query` then
-reports two-factor configured.
+Settings. A throwaway administrator signing in next sets it up on the
+`/two-factor-auth` page. It lands there because the sign-in returns to the route
+the admin signed out from, and on that route the admin layout's guard shows the
+page without raising its full-screen setup dialog — so the guard's forcing is not
+what this covers. The page generates a secret, the spec reads it off the screen
+and confirms the code it gives, and `user.query` then reports two-factor
+configured.
 After that, signing in asks for a code, refuses a wrong one and accepts the right
 one. Last, an admin clears it from the user's Access card. Codes come from
 `support/totp.ts` (RFC 6238 over Node's HMAC-SHA1), because no TOTP library is

@@ -28,7 +28,7 @@ export const twoFactorLocators = {
 
   /**
    * The `ix-two-factor` card on the `/two-factor-auth` page. The first-login
-   * dialog wraps the same component, so these ids are the same in both.
+   * dialog wraps the same component, but its own title and Finish are not here.
    */
   setup: {
     /**
