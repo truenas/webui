@@ -741,6 +741,20 @@ card's menu trigger now passes `button-zfs-actions` in full, as the other caller
 of that input do. Replace, Extend, Detach, Remove and the other kinds of vdev are
 not covered.
 
+The pool wizard's layouts came next, in `tests/pool-wizard-layouts.e2e.ts`: a
+two-disk Mirror, a three-disk RAIDZ1 and two striped two-disk mirrors, each built
+from the Data step's Automated Disk Selection. Each test checks the layout in the
+Configuration Preview, on the Review step, on the pool's VDEVs card and through
+`pool.query`'s topology, which has to hold the vdevs the wizard showed, with no
+disk counted twice and no log, cache, spare, special or dedup vdev. Each test
+builds a pool of its own, and all three names are removed before and after every
+test. `flows/storage.ts` now splits the wizard into `openPoolWizard`,
+`configureAutomatedVdevs`, `goToReview` and `submitPool`, keyed by vdev category
+so the other steps can reuse them, and `createRaidz2Pool` is built from them.
+`readPoolTopology` in `fixtures/pool.ts` is the shared topology readback. RAIDZ3,
+dRAID, the other kinds of vdev, manual selection, encryption and the wizard's
+validation are not covered.
+
 Scrubbing a pool came next, in `tests/pool-scrub.e2e.ts`: one test starts a
 scrub from Scrub Now on the pool's Storage Health card and waits for it to
 finish. `pool.query` has to report a finished `SCRUB` with no errors. The card

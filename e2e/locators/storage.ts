@@ -11,7 +11,26 @@
  *    `kebabTestSegment` — which is NOT lodash. `RAIDZ2` normalizes to `raidz2`,
  *    not `raidz-2`. webui's own normalizer does use lodash and would differ.
  */
-import { kebabTestSegment } from './test-id';
+import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
+
+/**
+ * A kind of vdev, as the wizard keys its per-step controls: `select-width-log`,
+ * `text-review-spare`. The values of webui's `VDevType`.
+ */
+export type VdevCategory = 'data' | 'log' | 'spare' | 'cache' | 'special' | 'dedup';
+
+/**
+ * The wizard step's own name in its Save And Go To Review id. The same as the
+ * category except for special vdevs, whose step is "Metadata".
+ */
+const reviewStepIds: Record<VdevCategory, string> = {
+  data: 'data',
+  log: 'log',
+  spare: 'spare',
+  cache: 'cache',
+  special: 'metadata',
+  dedup: 'dedup',
+};
 
 export const poolWizardLocators = {
   /**
@@ -26,27 +45,32 @@ export const poolWizardLocators = {
   name: '[data-test="input-name"]',
   next: '[data-test="button-next-general"]',
 
-  /** Step 3 — data vdev layout. `[testId]="['layout']"` on a tn-select. */
+  /**
+   * A vdev step's layout. `[testId]="['layout']"` on a tn-select, with no
+   * category in it: `tn-stepper` renders only the active step, so there is
+   * only ever one.
+   */
   layout: '[data-test="select-layout"]',
   /**
-   * `raidz-2`, not `raidz2`.
+   * A layout option, by the label the select shows: `Mirror`, `RAIDZ1`.
    *
-   * This select passes `[optionTestIdKey]="optionTestIdByKebabLabel"`, which is
+   * `raidz-1`, not `raidz1`. This select passes
+   * `[optionTestIdKey]="optionTestIdByKebabLabel"`, which is
    * `(option) => kebabCase(option.label)` using **lodash**. lodash splits
-   * letters from digits, so the label `RAIDZ2` becomes `raidz-2` before the
+   * letters from digits, so the label `RAIDZ1` becomes `raidz-1` before the
    * library's own `kebabTestSegment` ever sees it — and that normalizer would
-   * have produced `raidz2`.
+   * have produced `raidz1`.
    *
    * Two normalizers are in play across this codebase and they disagree on
    * exactly this case. Derive option ids from the extractor a control actually
    * declares, not from the library default.
    */
-  layoutRaidz2: '[data-test="option-layout-raidz-2"]',
+  layoutOption: (label: string) => `[data-test="option-layout-${legacyKebabTestSegment(label)}"]`,
 
   /** `[testId]="['size-and-type', type()]"` where type is the vdev category. */
-  diskSize: '[data-test="select-size-and-type-data"]',
+  diskSize: (type: VdevCategory) => `[data-test="select-size-and-type-${type}"]`,
   /**
-   * Any option of the disk-size select.
+   * Any option of a category's disk-size select.
    *
    * A prefix match, because the option key encodes a size and media type that
    * vary per appliance — `option-size-and-type-data-20-gi-b-hdd` on one box,
@@ -59,18 +83,39 @@ export const poolWizardLocators = {
    * match *this* select's options and a CDK overlay from a previously closed
    * select cannot be picked up by mistake.
    */
-  diskSizeOptions: '[data-test^="option-size-and-type-data-"]',
+  diskSizeOptions: (type: VdevCategory) => `[data-test^="option-size-and-type-${type}-"]`,
 
-  width: '[data-test="select-width-data"]',
+  width: (type: VdevCategory) => `[data-test="select-width-${type}"]`,
   /** Number of disks in the vdev. Keys are the numbers themselves. */
-  widthOption: (disks: number) => `[data-test="option-width-data-${kebabTestSegment(disks)}"]`,
-
-  vdevCount: '[data-test="select-vdevs-number-data"]',
-  vdevCountOption: (count: number) => (
-    `[data-test="option-vdevs-number-data-${kebabTestSegment(count)}"]`
+  widthOption: (type: VdevCategory, disks: number) => (
+    `[data-test="option-width-${type}-${kebabTestSegment(disks)}"]`
   ),
 
-  saveAndReview: '[data-test="button-save-and-go-to-review-data"]',
+  vdevCount: (type: VdevCategory) => `[data-test="select-vdevs-number-${type}"]`,
+  vdevCountOption: (type: VdevCategory, count: number) => (
+    `[data-test="option-vdevs-number-${type}-${kebabTestSegment(count)}"]`
+  ),
+
+  /**
+   * One category in the Configuration Preview beside the wizard, e.g.
+   * `1 × MIRROR | 2 × 10 GiB (HDD)`. `[tnTestId]="['config-preview', category.key]"`.
+   * The preview is hidden on the Review step.
+   */
+  configPreview: (type: VdevCategory) => `[data-test="text-config-preview-${type}"]`,
+
+  saveAndReview: (type: VdevCategory) => (
+    `[data-test="button-save-and-go-to-review-${reviewStepIds[type]}"]`
+  ),
+
+  /** Review step — General Info's Pool Name. */
+  reviewPoolName: '[data-test="text-review-pool-name"]',
+  /**
+   * One row of the Review step's Topology Summary, in the same words as the
+   * preview. Rendered only for a category that has vdevs.
+   */
+  reviewCategory: (type: VdevCategory) => `[data-test="text-review-${type}"]`,
+  reviewEstUsableRawCapacity: '[data-test="text-review-est-usable-raw-capacity"]',
+
   createPool: '[data-test="button-create-pool"]',
 } as const;
 
@@ -275,6 +320,11 @@ export const poolImportLocators = {
 export const poolCardLocators = {
   /** The card's heading. `tnTestIdType="text"` with `[pool()?.name, 'pool-name']`. */
   name: (pool: string) => `[data-test="text-${kebabTestSegment(pool)}-pool-name"]`,
+  /**
+   * The VDEVs card's Data VDEVs line, e.g. `1 x MIRROR | 2 wide | 10 GiB`.
+   * `[poolState().name, 'data-vdevs']`.
+   */
+  dataVdevs: (pool: string) => `[data-test="text-${kebabTestSegment(pool)}-data-vdevs"]`,
 } as const;
 
 /**

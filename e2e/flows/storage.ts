@@ -6,7 +6,7 @@ import { goToDatasets, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
 import {
   datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolImportLocators,
-  poolScrubLocators, poolWizardLocators, zvolLocators,
+  poolScrubLocators, poolWizardLocators, type VdevCategory, zvolLocators,
 } from '../locators/storage';
 
 /**
@@ -65,6 +65,19 @@ export interface NewPool {
   width: number;
 }
 
+/** What the Automated Disk Selection half of a vdev step is set to. */
+export interface AutomatedVdevs {
+  /** The layout option's label, as the select shows it: `Mirror`, `RAIDZ1`. */
+  layout: string;
+  /** Disks per vdev. */
+  width: number;
+  /**
+   * How many vdevs. Left alone when absent: the log, spare and cache steps do
+   * not render the select at all.
+   */
+  vdevs?: number;
+}
+
 /**
  * Creates a pool with one RAIDZ2 data vdev, through the pool creation wizard.
  *
@@ -74,11 +87,22 @@ export interface NewPool {
  * width.
  */
 export async function createRaidz2Pool(page: Page, pool: NewPool): Promise<void> {
+  await openPoolWizard(page, pool.name);
+  await configureAutomatedVdevs(page, 'data', { layout: 'RAIDZ2', width: pool.width, vdevs: 1 });
+  await goToReview(page, 'data');
+  await submitPool(page);
+}
+
+/**
+ * Opens the pool creation wizard from the Storage dashboard, names the pool and
+ * moves on from General, stopping on the Data step.
+ */
+export async function openPoolWizard(page: Page, name: string): Promise<void> {
   await goToStorage(page);
   await page.locator(poolWizardLocators.createPoolEntry).click();
 
   await expect(page.locator(poolWizardLocators.name)).toBeVisible();
-  await page.locator(poolWizardLocators.name).fill(pool.name);
+  await page.locator(poolWizardLocators.name).fill(name);
   await page.locator(poolWizardLocators.next).click();
 
   // The step after General is not always Data. `pool-manager-wizard.component.html`
@@ -96,14 +120,44 @@ export async function createRaidz2Pool(page: Page, pool: NewPool): Promise<void>
     'The Data step did not follow General. An "Enclosure Options" step appears on appliances '
     + 'reporting multiple enclosures, and this flow does not know how to cross it.',
   ).toBeVisible();
+}
 
-  await selectOption(page, poolWizardLocators.layout, poolWizardLocators.layoutRaidz2);
-  await selectFirstOption(page, poolWizardLocators.diskSize, poolWizardLocators.diskSizeOptions);
+/**
+ * Fills in the open vdev step's Automated Disk Selection: layout, then the first
+ * disk size on offer, then width and vdev count.
+ *
+ * In that order because each choice regenerates the options of the next — the
+ * width options come from the selected disk size, see `selectFirstOption`.
+ */
+export async function configureAutomatedVdevs(
+  page: Page,
+  type: VdevCategory,
+  vdevs: AutomatedVdevs,
+): Promise<void> {
+  await selectOption(page, poolWizardLocators.layout, poolWizardLocators.layoutOption(vdevs.layout));
+  await selectFirstOption(page, poolWizardLocators.diskSize(type), poolWizardLocators.diskSizeOptions(type));
 
-  await selectOption(page, poolWizardLocators.width, poolWizardLocators.widthOption(pool.width));
-  await selectOption(page, poolWizardLocators.vdevCount, poolWizardLocators.vdevCountOption(1));
+  await selectOption(page, poolWizardLocators.width(type), poolWizardLocators.widthOption(type, vdevs.width));
+  if (vdevs.vdevs !== undefined) {
+    await selectOption(
+      page,
+      poolWizardLocators.vdevCount(type),
+      poolWizardLocators.vdevCountOption(type, vdevs.vdevs),
+    );
+  }
+}
 
-  await page.locator(poolWizardLocators.saveAndReview).click();
+/** Leaves the open vdev step by its Save And Go To Review, and waits for the Review step. */
+export async function goToReview(page: Page, type: VdevCategory): Promise<void> {
+  await page.locator(poolWizardLocators.saveAndReview(type)).click();
+  await expect(page.locator(poolWizardLocators.createPool)).toBeVisible();
+}
+
+/**
+ * Creates the pool from the Review step: Create Pool, the confirmation, and the
+ * create job, which the app finishes by returning to the Storage dashboard.
+ */
+export async function submitPool(page: Page): Promise<void> {
   await page.locator(poolWizardLocators.createPool).click();
 
   // Creating a pool wipes its member disks, so the wizard asks for confirmation.
