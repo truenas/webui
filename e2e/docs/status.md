@@ -730,8 +730,20 @@ came through unchanged, and the remove story that every other entry survived in
 order. The advanced story checks every permission bit, so a box
 ticked by mistake fails as well as one that did not land. The Who select's
 "Group" and "group@" options both used to emit `option-tag-group`; `group@` is
-now `option-tag-group-at`, and every other option kept its id. Applying an ACL
-recursively, Strip ACL, POSIX ACLs and custom presets are not covered.
+now `option-tag-group-at`, and every other option kept its id. POSIX ACLs and
+custom presets are not covered.
+
+Applying an NFSv4 ACL recursively and Strip ACL are in
+`tests/dataset-acl-nfsv4-recursive.e2e.ts`, on an SMB-preset dataset with a
+child dataset under it. Apply permissions recursively reaches a plain directory
+inside the dataset and leaves the child dataset trivial; with Apply permissions
+to child datasets it reaches the child too. Cancelling the Warning the box
+raises clears it again. Strip ACL leaves the dataset NFSv4 but trivial, after
+which the card shows Unix permissions and Edit opens the Unix editor; with its
+child datasets box ticked it strips the child too. Each path is read back
+through `filesystem.getacl`. The strip dialog's action row got
+`actions-strip-acl`, because its own button emits `button-strip-acl` like the
+editor's behind it.
 
 Encrypted datasets came next, in `tests/datasets-encryption.e2e.ts`: creating a
 dataset encrypted with a passphrase from the form's Encryption Options, locking
@@ -820,6 +832,17 @@ control elsewhere sits inside `ix-missing-access-wrapper`, whose span now emits
 "locked by role" from "disabled because the form is invalid". Every other page,
 and the sharing admin, come in later specs.
 
+Storage for the read-only admin is in `tests/roles-read-only-storage.e2e.ts`. In
+one sign-in it opens a dataset of its own on the Datasets page, its snapshot list
+and the Storage dashboard. Add Dataset, Add Zvol, the Permissions card's Edit, Take
+Snapshot, the snapshot list's Add, an expanded snapshot's Hold, Clone, Rollback and
+Delete, and the pool's Scrub Now must all be locked, and the Dataset Details card
+must render no Edit or Delete. The dataset, the snapshot, its hold and the pool's
+last scan are read back unchanged. The snapshot row used to enable Hold's form
+control for everyone once the snapshot loaded, and enabling it rewrites the
+`disabled` the role wrapper sets. It now enables it only for `SNAPSHOT_WRITE`.
+Quotas, capacity settings and encryption are not covered.
+
 The Shares dashboard for the read-only admin is in
 `tests/roles-read-only-shares.e2e.ts`, one test with a step per card. On the SMB
 and NFS cards it finds a seeded share listed with its description, and Add, the
@@ -858,8 +881,18 @@ test. `flows/storage.ts` now splits the wizard into `openPoolWizard`,
 `configureAutomatedVdevs`, `goToReview` and `submitPool`, keyed by vdev category
 so the other steps can reuse them, and `createRaidz2Pool` is built from them.
 `readPoolTopology` in `fixtures/pool.ts` is the shared topology readback. RAIDZ3,
-dRAID, the other kinds of vdev, manual selection, encryption and the wizard's
-validation are not covered.
+dRAID, the other kinds of vdev, manual selection and encryption are not covered.
+
+The wizard's refusals are in `tests/pool-wizard-validation.e2e.ts`. None of its
+tests creates a pool. The General step refuses the worker pool's name ("already
+in use") and the reserved word `mirror` ("Invalid pool name", from
+`pool.validate_name`), and Next stays disabled. Going to Review with no data vdev
+lists "At least 1 data VDEV is required.", disables Create Pool and hides Inspect
+VDEVs. A one-disk stripe shows the stripe warning on the Data step and on Review,
+and Create Pool stays enabled. The wizard's Name field now has an id,
+`form-field-name`, so the error under it can be read. Mixed disk sizes, the dRAID,
+special and dedup warnings, and the exported-pool and duplicate-serial disk
+warnings are not covered.
 
 What the dashboard says about a degraded pool is in `tests/pool-degraded.e2e.ts`.
 It builds its own two-disk mirror, `e2e_degraded_tank`, and takes one disk offline
@@ -1282,7 +1315,8 @@ a number. See `05-ci.md`.
 ## Next steps
 
 1. **Widen coverage.** The rest of the dataset ACL editor, beyond built-in
-   NFSv4 presets and NFSv4 entries, is the uncovered story worth taking next.
+   NFSv4 presets, NFSv4 entries, recursion and Strip ACL, is the uncovered story
+   worth taking next.
    Manual snapshots are covered — take, recursive, delete, hold, clone, roll
    back and its safety check — but not batch delete, the list's own Add
    button, naming schemas, the extra columns or VMware sync. The confirmation-bypass class is now covered

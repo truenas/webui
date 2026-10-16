@@ -77,6 +77,14 @@ export async function readAcl(client: E2eApiClient, path: string): Promise<AclRe
   );
 }
 
+/** The entries of an NFSv4 ACL. Throws on any other kind, which would mean the wrong dataset. */
+export function nfs4Entries(acl: AclRead): Nfs4Ace[] {
+  if (acl.acltype !== 'NFS4') {
+    throw new Error(`Expected an NFSv4 ACL, found ${acl.acltype}.`);
+  }
+  return acl.acl;
+}
+
 /**
  * The template called `name`, as the preset picker on `path` offers it.
  *

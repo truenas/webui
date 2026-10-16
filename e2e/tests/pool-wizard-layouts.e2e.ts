@@ -21,7 +21,8 @@
  * hand it to a later spec as that spec's pool.
  *
  * Not covered: RAIDZ2 (`fresh-install`'s), RAIDZ3, dRAID, the other kinds of vdev, Manual Disk
- * Selection, encryption, the wizard's validation, Inspect VDEVs, Reset Step and Start Over.
+ * Selection, encryption, Inspect VDEVs, Reset Step and Start Over. The wizard's validation is in
+ * `pool-wizard-validation.e2e.ts`.
  */
 import { readPoolTopology } from '../fixtures/pool';
 import { ensurePoolAbsent, findPool, requireUnusedDisks } from '../fixtures/storage';

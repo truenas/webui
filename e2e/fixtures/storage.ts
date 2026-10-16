@@ -205,6 +205,8 @@ export interface PoolScan {
   function: string | null;
   state: string | null;
   errors: number | null;
+  /** When the scan began. A new scan of the same kind is told apart from the last one by this. */
+  start_time: { $date: number } | null;
 }
 
 /** A pool's last or current scan, or `null` when it has none. Throws when the pool is absent. */
@@ -217,7 +219,7 @@ export async function findPoolScan(client: E2eApiClient, name: string): Promise<
     throw new Error(`Cannot read the scan of pool "${name}": there is no such pool.`);
   }
 
-  // Narrowed to the three fields read here, so a caller compares plain strings
+  // Narrowed to the fields read here, so a caller compares plain values
   // rather than depending on how the dump types the rest of the scan.
   return pool.scan as unknown as PoolScan | null;
 }
