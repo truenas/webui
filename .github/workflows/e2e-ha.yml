@@ -25,8 +25,10 @@ on:
         type: string
         default: ''
 
+# Reads code, and the WebUI workflow's runs and artifacts for its build of the UI.
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: e2e-ha-${{ github.ref }}
@@ -71,11 +73,83 @@ jobs:
           memory-mb: 8192
           data-disk-count: 4
 
-      - name: Build the UI
+      # The UI under test, found the way e2e.yml finds it: main.yml's Build
+      # job's `webui-dist` for this commit when there is one, else built here.
+      # Copied from e2e.yml, whose comments explain each choice.
+      - name: Find the WebUI build
+        id: shipped-build
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          # The PR's branch, or the pushed one: a run of the same commit from
+          # another PR (a fork's, or one to another base) built another tree.
+          BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
           set -euo pipefail
-          yarn build:prod
-          [ -f dist/index.html ] || { echo "::error::dist has no index.html"; exit 1; }
+          event=push
+          [ "$GITHUB_EVENT_NAME" = pull_request ] && event=pull_request
+          api="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions"
+          get() { curl -fsS -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "$1"; }
+          deadline=$((SECONDS + 600))
+          while :; do
+            # A failed query (a 5xx, the token's rate limit) falls back to
+            # building rather than failing the job.
+            if ! runs=$(get "$api/workflows/main.yml/runs?head_sha=$SHA&event=$event&branch=$BRANCH&per_page=10"); then
+              echo "::notice::Could not query the WebUI runs; building the UI here"
+              exit 0
+            fi
+            run=$(jq -c --arg repo "$GITHUB_REPOSITORY" '[.workflow_runs[] | select(.head_repository.full_name == $repo)][0] // empty' <<< "$runs")
+            if [ -z "$run" ]; then
+              echo "No WebUI $event run of $SHA; building the UI here"
+              exit 0
+            fi
+            id=$(jq -r .id <<< "$run")
+            # The list keeps an artifact past its retention, marked expired,
+            # and download-artifact cannot fetch that one.
+            if get "$api/runs/$id/artifacts?name=webui-dist" | jq -e '[.artifacts[] | select(.expired | not)] | length > 0' > /dev/null; then
+              echo "run-id=$id" >> "$GITHUB_OUTPUT"
+              echo "Using the UI WebUI run $id built, $(jq -r .html_url <<< "$run"), after waiting ${SECONDS}s"
+              exit 0
+            fi
+            if [ "$(jq -r .status <<< "$run")" = completed ]; then
+              echo "::notice::WebUI run $id finished with no webui-dist to download (failed, or expired); building the UI here"
+              exit 0
+            fi
+            if [ "$SECONDS" -ge "$deadline" ]; then
+              echo "::notice::WebUI run $id has not uploaded webui-dist after 10 minutes; building the UI here"
+              exit 0
+            fi
+            # Two calls a round, on the token's 1,000 requests an hour that
+            # every workflow in the repository shares.
+            sleep 20
+          done
+
+      - name: Download the WebUI build
+        if: steps.shipped-build.outputs.run-id != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: webui-dist
+          path: ${{ runner.temp }}/webui-dist
+          run-id: ${{ steps.shipped-build.outputs.run-id }}
+          github-token: ${{ github.token }}
+
+      # Same production build as main.yml's Build job — `--base-href /ui/`,
+      # so it is served where the appliance's nginx would serve it — for
+      # when there is no WebUI build to reuse. After the boot, so its memory
+      # and the 6GB guest's are in use at once; only on that fallback.
+      - name: Build the UI
+        env:
+          DOWNLOADED: ${{ steps.shipped-build.outputs.run-id != '' && format('{0}/webui-dist', runner.temp) || '' }}
+        run: |
+          set -euo pipefail
+          if [ -n "$DOWNLOADED" ]; then
+            dist="$DOWNLOADED"
+          else
+            yarn build:prod
+            dist="$GITHUB_WORKSPACE/dist"
+          fi
+          [ -f "$dist/index.html" ] || { echo "::error::$dist has no index.html"; exit 1; }
+          echo "UI_DIST=$dist" >> "$GITHUB_ENV"
 
       # The built UI, served twice by nginx on the runner's own network, the
       # same docker/nginx.conf e2e.yml uses: once against controller 1 for the
@@ -103,7 +177,7 @@ jobs:
               docker/nginx.conf > "$conf"
             grep -q "listen 127.0.0.1:$https ssl" "$conf" || { echo "::error::docker/nginx.conf no longer has the listen line this step rewrites"; exit 1; }
             $DOCKER run -d --rm --name "e2e-ha-ui-$name-${GITHUB_RUN_ID}" --network host \
-              -v "$GITHUB_WORKSPACE/dist:/var/www/webui:ro" \
+              -v "$UI_DIST:/var/www/webui:ro" \
               -v "$conf:/etc/nginx/tn-nginx.conf:ro" \
               -v "$RUNNER_TEMP/e2e-ui.crt:/etc/nginx/e2e-ui.crt:ro" \
               -v "$RUNNER_TEMP/e2e-ui.key:/etc/nginx/e2e-ui.key:ro" \
