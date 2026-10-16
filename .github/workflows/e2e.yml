@@ -165,11 +165,6 @@ jobs:
 
       # A non-HA Enterprise license, so the journeys behind an entitlement
       # (ZFS tiering, S3 audit and versioning) run here rather than skip.
-      # Fetched fresh every run from MES's renew endpoint, the way
-      # api-ci-testbed's fetch_license.sh does: renewing re-signs the CI
-      # license with a current `issued_at`, and middleware caps a test
-      # license's life from that stamp, so a committed copy would go stale.
-      #
       # Uploaded from here rather than from the suite so the PEM never
       # reaches a Playwright trace, which this public repository publishes.
       # It is never echoed either; `truenas-appliance call` sends its params
@@ -178,23 +173,17 @@ jobs:
       # The boot took the baseline before the license existed, so it is
       # taken again over the same name (savevm replaces a snapshot of that
       # name): a revert must not quietly drop the license.
-      #
-      # The endpoint is internal, and this repository is public, so its
-      # address is the `E2E_LICENSE_URL` secret rather than written here:
-      # Actions masks it in the log, curl's own errors included.
+      - id: license
+        uses: ./.github/actions/fetch-license
+        with:
+          url: ${{ secrets.E2E_LICENSE_URL }}
+          serial: CI-SINGLE
       - name: License the appliance
         env:
-          LICENSE_URL: ${{ secrets.E2E_LICENSE_URL }}
+          LICENSE_FILE: ${{ steps.license.outputs.file }}
         run: |
           set -euo pipefail
-          [ -n "$LICENSE_URL" ] || { echo "::error::The E2E_LICENSE_URL secret is not set"; exit 1; }
-          pem=$(curl -fsS --retry 3 --retry-connrefused --retry-delay 2 --max-time 30 \
-            -X POST "$LICENSE_URL" \
-            -H 'Content-Type: application/json' -d '{"serial":"CI-SINGLE"}' \
-            | jq -r '.license // empty')
-          grep -q -- '-----BEGIN TRUENAS LICENSE-----' <<< "$pem" \
-            || { echo "::error::MES did not return a license for CI-SINGLE"; exit 1; }
-          truenas-appliance call truenas.license.upload "$(jq -Rs . <<< "$pem")" > /dev/null
+          truenas-appliance call truenas.license.upload "$(jq -Rs . < "$LICENSE_FILE")" > /dev/null
           # The EULA dialog only shows on TrueNAS hardware, which this is
           # not, but the upload leaves it pending; accepting it costs nothing.
           truenas-appliance call truenas.accept_eula > /dev/null

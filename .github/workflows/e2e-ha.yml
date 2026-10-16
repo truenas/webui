@@ -70,23 +70,13 @@ jobs:
           upstream: ${{ env.TN_HA_VIP }}:80
           check-upstream: false
 
-      # The HA license, fetched fresh as e2e.yml's is, into a file only the
-      # suite's container sees: the suite pastes it into the UI. The
-      # endpoint's address is a secret for the reason e2e.yml gives.
-      - name: Fetch the HA license
-        env:
-          LICENSE_URL: ${{ secrets.E2E_LICENSE_URL }}
-        run: |
-          set -euo pipefail
-          [ -n "$LICENSE_URL" ] || { echo "::error::The E2E_LICENSE_URL secret is not set"; exit 1; }
-          dir="$RUNNER_TEMP/ha-license"
-          mkdir -p "$dir"
-          curl -fsS --retry 3 --retry-connrefused --retry-delay 2 --max-time 30 \
-            -X POST "$LICENSE_URL" -H 'Content-Type: application/json' -d '{"serial":"CI-HAA"}' \
-            | jq -r '.license // empty' > "$dir/license.txt"
-          grep -q -- '-----BEGIN TRUENAS LICENSE-----' "$dir/license.txt" \
-            || { echo "::error::MES did not return a license for CI-HAA"; exit 1; }
-          echo "LICENSE_DIR=$dir" >> "$GITHUB_ENV"
+      # The HA license, into a file only the suite's container sees: the
+      # suite pastes it into the UI.
+      - id: license
+        uses: ./.github/actions/fetch-license
+        with:
+          url: ${{ secrets.E2E_LICENSE_URL }}
+          serial: CI-HAA
 
       # The `ha-license` project records no trace, screenshot or video, since
       # it pastes the license (playwright.config.ts). Playwright still writes
@@ -111,7 +101,7 @@ jobs:
             TN_HA_NETMASK
             TN_HA_VIP_UI_BASE_URL
             TN_HA_LICENSE_FILE
-          volumes: ${{ env.LICENSE_DIR }}:/license:ro
+          volumes: ${{ steps.license.outputs.dir }}:/license:ro
           exclude: ha-license.e2e.ts-*/**
 
       # What both controllers and the shared disks say, when anything failed:
