@@ -4,9 +4,11 @@
  *
  * Every id on a row is built from its card's own `uniqueRowTag` —
  * `kerberos-realm-<realm>` and `kerberos-keytab-<name>` — run through
- * `convertStringToId` and then the library's normalizer. The two agree on
- * everything the names here hold, so {@link kebabTestSegment} is the one to use
- * throughout: realm `E2E-REALM.TEST` tags its row `kerberos-realm-e2e-realm-test`.
+ * `convertStringToId` and then the library's normalizer. `convertStringToId`
+ * lowercases **first**, so the tag is lowercased here before
+ * {@link kebabTestSegment} sees it: on the raw name that splits a digit from the
+ * capital after it, and realm `E2E-REALM.TEST` would come out `e2-e-realm-test`
+ * where the app renders `kerberos-realm-e2e-realm-test`.
  *
  * Both cards ask for `mode="inline"`, so Edit and Delete are icon buttons on the
  * row rather than items in a kebab menu, and their ids have no `more-action`.
@@ -14,11 +16,11 @@
 import { kebabTestSegment } from './test-id';
 
 function realmRowTag(realm: string): string {
-  return kebabTestSegment(`kerberos-realm-${realm}`);
+  return kebabTestSegment(`kerberos-realm-${realm}`.toLowerCase());
 }
 
 function keytabRowTag(name: string): string {
-  return kebabTestSegment(`kerberos-keytab-${name}`);
+  return kebabTestSegment(`kerberos-keytab-${name}`.toLowerCase());
 }
 
 export const directoryServicesLocators = {
