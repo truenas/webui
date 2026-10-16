@@ -70,14 +70,21 @@ export async function submitSignIn(page: Page, username: string, password: strin
  * The shell rather than a URL change: the redirect lands before the app is
  * usable. Raced against the error dialog, so a failed login reports the real
  * cause instead of spending the timeout and blaming a missing layout.
+ *
+ * `timeoutMs` is for a sign-in the app itself holds back: on an HA pair's
+ * newly active controller, it waits for the failover to finish first.
  */
-export async function awaitAdminShell(page: Page, username: string): Promise<void> {
+export async function awaitAdminShell(
+  page: Page,
+  username: string,
+  timeoutMs: number = signInTimeoutMs,
+): Promise<void> {
   const shell = page.locator(adminLayout);
   // The close button rather than the dialog, because it is what resolves first
   // and unambiguously; the dialog itself is read below for the message.
   const closeButton = page.locator(errorDialogClose);
 
-  await expect(shell.or(closeButton).first()).toBeVisible({ timeout: signInTimeoutMs });
+  await expect(shell.or(closeButton).first()).toBeVisible({ timeout: timeoutMs });
 
   // The development build's concurrency dialog does not reach here: the handler
   // in `support/fixtures.ts` dismisses it during the wait above, and stops at

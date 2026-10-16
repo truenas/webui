@@ -35,10 +35,12 @@ test('an admin fails the pair over to controller 2, and HA comes back with contr
   await initiateFailover(page);
 
   // The app's own splash while the controller it talks to steps down, then
-  // the sign-in page once the VIP answers again, from controller 2.
+  // the sign-in page once the VIP answers again, from controller 2 — which
+  // holds the sign-in until it has finished taking over: the pool imported,
+  // its services started.
   await expect(page.locator(haStatusLocators.systemTaskMessage)).toBeVisible();
   await submitSignIn(page, config.username, config.password);
-  await awaitAdminShell(page, config.username);
+  await awaitAdminShell(page, config.username, failoverTimeoutMs);
 
   await expect.poll(
     () => withClient(config, async (client) => (await readFailover(client)).node),

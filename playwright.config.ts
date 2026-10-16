@@ -187,12 +187,17 @@ const singleApplianceProjects = [
  * `ha-failover` reaches the pair through its VIP (`haThroughVip`), as a user
  * does once there is one: the controller it signs in to is the one the
  * failover takes the VIP away from.
+ *
+ * None of them is retried: each changes the pair for good, so a retry starts
+ * from where the failed attempt left it rather than from where the journey
+ * expects — a retried failover finds controller 2 already active.
  */
 const haProjects = target.ha
   ? [
       setupProject,
       {
         name: 'ha-license',
+        retries: 0,
         testDir: './e2e/tests-ha',
         testMatch: /ha-license\.e2e\.ts/,
         dependencies: ['setup'],
@@ -202,6 +207,7 @@ const haProjects = target.ha
       },
       {
         name: 'ha-setup',
+        retries: 0,
         testDir: './e2e/tests-ha',
         testMatch: /ha-setup\.e2e\.ts/,
         dependencies: ['ha-license'],
@@ -209,6 +215,7 @@ const haProjects = target.ha
       },
       {
         name: 'ha-failover',
+        retries: 0,
         testDir: './e2e/tests-ha',
         testMatch: /ha-failover\.e2e\.ts/,
         dependencies: ['ha-setup'],
