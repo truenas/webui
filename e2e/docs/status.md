@@ -908,10 +908,17 @@ confirmation, and saving the SSH and FTP forms the rows' pencils open. A start o
 stop is asserted on the row's Status cell and through `service.query`, which also
 has to show the start did not turn on Start Automatically. A save is asserted
 through `ssh.config` or `ftp.config`, since the page shows no settings. The row
-tag is `service-<name>`. FTP is the service started because nothing the suite or
+tag is `service-<name>`, from the display name on the `<tr>`, the Status cell and
+the switch, and from the middleware name on the buttons (`service-smb` against
+`service-cifs`). FTP is the service started because nothing the suite or
 CI uses depends on it; it goes back to stopped, and both forms' fields to a fixed
-baseline, before and after each test. The Start Automatically switch, the search,
-the other services' forms, advanced options and View Logs/Sessions are not covered.
+baseline, before and after each test. The Start Automatically switch is turned on
+and off for FTP and read back through `service.query`, which must still say
+stopped. The search is checked to hide SSH and SMB for `ftp`. The iSCSI pencil
+opens the iSCSI global configuration, where a listen port is saved with the
+service stopped and written back afterwards; the NVMe-oF pencil is only checked
+to open its own. The other services' forms, advanced options and View
+Logs/Sessions are not covered.
 
 The SNMP form, opened from its row on the same page, is in
 `tests/snmp-service.e2e.ts`: saving location, contact, community, auxiliary
