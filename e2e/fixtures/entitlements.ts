@@ -48,4 +48,6 @@ export const entitlementFeature = {
    * turns tiering on cannot run there at all.
    */
   zfsTier: 'ZFSTIER',
+  /** Not a lock either: the NVMe-oF Implementation radios are rendered only with the key. */
+  nvmeOfSpdk: 'NVMEOF_SPDK',
 } as const;

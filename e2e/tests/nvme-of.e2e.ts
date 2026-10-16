@@ -10,11 +10,13 @@
  * subsystem holding links of its own, which must come through untouched.
  *
  * The service is never started. Nothing here needs a target that serves, and the add
- * form's start prompt is only raised while the service is stopped. RDMA, ANA and the
- * SPDK implementation need RDMA hardware, HA or an entitlement the CI appliance does
- * not have, so the global configuration is checked to keep them out of reach rather
- * than driven.
+ * form's start prompt is only raised while the service is stopped. RDMA and ANA need
+ * RDMA hardware and HA, which the CI appliance does not have, so the global
+ * configuration is checked to keep them out of reach rather than driven. The SPDK
+ * implementation needs the `NVMEOF_SPDK` entitlement, which CI's license grants and a
+ * community appliance lacks, so whether it is offered follows that.
  */
+import { entitlementFeature, isEntitled } from '../fixtures/entitlements';
 import {
   addNvmeOfZvolNamespace, associateNvmeOfHost, associateNvmeOfPort, countNvmeOfSubsystems,
   ensureNvmeOfHostAbsent, ensureNvmeOfHostPresent, ensureNvmeOfPortAbsent, ensureNvmeOfPortPresent,
@@ -340,15 +342,22 @@ test('deleting a subsystem from the card removes it and its associations', async
   });
 });
 
-test('the global configuration saves the base NQN and keeps RDMA, ANA and SPDK out of reach', async ({ page, api }) => {
+test('the global configuration saves the base NQN and offers RDMA, ANA and SPDK only where usable', async ({
+  page, api, entitlements,
+}) => {
   const changedBaseNqn = originalBaseNqn === firstBaseNqn ? secondBaseNqn : firstBaseNqn;
 
   await openNvmeOfGlobalConfiguration(page);
 
-  // No RDMA-capable NIC, no HA licence and no SPDK entitlement on the CI appliance.
+  // No RDMA-capable NIC and no HA on the CI appliance.
   await expect(page.locator(nvmeOfLocators.globalConfig.rdma)).toBeDisabled();
   await expect(page.locator(nvmeOfLocators.globalConfig.ana)).toBeDisabled();
-  await expect(page.locator(nvmeOfLocators.globalConfig.spdk)).toBeHidden();
+  const spdk = page.locator(nvmeOfLocators.globalConfig.spdk);
+  if (isEntitled(entitlements, entitlementFeature.nvmeOfSpdk)) {
+    await expect(spdk).toBeVisible();
+  } else {
+    await expect(spdk).toBeHidden();
+  }
 
   await saveNvmeOfBaseNqn(page, changedBaseNqn);
 

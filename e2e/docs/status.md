@@ -197,7 +197,8 @@ ZFS tiering came next, in `tests/tiering-config.e2e.ts` and
 the Tiering panel on the storage dashboard, and moving a dataset to the
 performance tier from its details card, with and without migrating its data.
 Both skip on an appliance without the `ZFSTIER` key, because `zfs.tier.update`
-refuses there, so for now they run only where someone has uploaded a licence.
+refuses there. CI licenses its appliance before the suite starts (see
+`docs/05-ci.md`), so they run there; elsewhere they need a license uploaded.
 The dataset spec builds its own pool (`e2e_tier_tank`, one data and one special
 disk), because a dataset has no tier at all on a pool without a special vdev,
 and it removes that pool in `afterAll`.
