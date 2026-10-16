@@ -163,6 +163,11 @@ describe('EditNfsAceComponent', () => {
       expect(nfsAclTagOptionTestId({ label: 'owner@', value: NfsAclTag.Owner })).toBe('owner@');
       expect(nfsAclTagOptionTestId({ label: 'everyone@', value: NfsAclTag.Everyone })).toBe('everyone@');
     });
+
+    it('falls back to the value for a label that normalizes to nothing, as the library does', () => {
+      expect(nfsAclTagOptionTestId({ label: 'Группа', value: NfsAclTag.UserGroup })).toBe('GROUP');
+      expect(nfsAclTagOptionTestId({ label: 'Группа@', value: NfsAclTag.Group })).toBe('group-at');
+    });
   });
 
   describe('group ace', () => {

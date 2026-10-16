@@ -710,8 +710,9 @@ NFSv4 entries themselves are in `tests/dataset-acl-nfsv4-entries.e2e.ts`: a
 group entry of type Deny, a user entry with advanced permissions and advanced
 flags, editing `group@` in place, and removing the `builtin_users` entry. Each
 starts from a dataset with the SMB preset and is read back through
-`filesystem.getacl`, matched by id, with a check that the entries it did not
-touch came through. The advanced story checks every permission bit, so a box
+`filesystem.getacl`, matched by id. The edit story also checks that `owner@`
+came through unchanged, and the remove story that every other entry survived in
+order. The advanced story checks every permission bit, so a box
 ticked by mistake fails as well as one that did not land. The Who select's
 "Group" and "group@" options both used to emit `option-tag-group`; `group@` is
 now `option-tag-group-at`, and every other option kept its id. Applying an ACL
