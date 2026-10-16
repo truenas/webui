@@ -167,14 +167,15 @@ columns NAS-143892 closed were found.
   row. Six tickets in a row — NAS-141047, NAS-141484, NAS-142069, NAS-141791,
   NAS-141186, NAS-143804 — were this same defect, each found downstream.
 
-`yarn check-test-ids` (a lint job step) mechanises most of that. It asks six
+`yarn check-test-ids` (a lint job step) mechanises most of that. It asks seven
 things: a table that renders cells must bind `[rowTestId]`, every column of it
 must tag its cell, a plain element that is *acted on* must resolve a `data-test`
 somewhere in its subtree (not necessarily on the element itself), an interactive
 `tn-*` component must resolve one too, every template that writes `tnTestId`
-must be declared by a component that imports `TnTestIdDirective`, and no
-template may revive the test-id directive retired in NAS-143893 — which would
-now emit no attribute at all.
+must be declared by a component that imports `TnTestIdDirective`, a value
+rendered outside a table must be readable (see "Reading a value that is not in a
+table" below), and no template may revive the test-id directive retired in
+NAS-143893 — which would now emit no attribute at all.
 
 "Acted on" is wider than "has a `(click)`", because a handler is not the only way
 an element acts: a link navigates on its own (`href`/`routerLink`, no handler to
@@ -215,22 +216,29 @@ stays convention, and reviewing it is a reviewer's job.
 ### Reading a value that is not in a table
 
 A table cell is covered (rule 2, and every column of every list has an id). A value rendered
-anywhere else — a card's detail line, a widget's number, a dialog's message — is not, and
-`yarn check-test-ids --report` counts what is left: **545 readouts across the app** that no suite
-can read, listed per area. `src/app/pages/sharing` was the first area off that list (NAS-143970),
-`src/app/pages/data-protection` the second (NAS-143971), and the shared `src/app/modules` the
-third (NAS-143972) — all but `modules/websocket-debug-panel`, which is dev-only.
+anywhere else — a card's detail line, a widget's number, a dialog's message — needs one too,
+and `yarn check-test-ids` fails a PR that renders one no suite can read.
 
-It is a *measurement, not a gate*, because unlike a table column the set is not bounded and some
-members are genuinely not automation targets (a gauge's sublabel, prose inside a tooltip). Driving
-it down per area is the plan, the way the 117 untagged columns were closed.
+That started as a `--report` count — **545 readouts across the app** when it was first measured —
+because unlike a table column the set is not bounded and some members are genuinely not automation
+targets (a gauge's sublabel, prose inside a tooltip). It was driven to zero one area at a time,
+`src/app/pages/sharing` first (NAS-143970), then `src/app/pages/data-protection` (NAS-143971) and
+the shared `src/app/modules` (NAS-143972), and became a gate once nothing was left (NAS-143974).
+What is left over is named one by one in `allowedReadouts` in `scripts/check-test-ids.ts`, keyed
+`<path>:<class>` with the reason — the dev-only `modules/websocket-debug-panel`, and fragments of a
+translated label. An entry that matches nothing fails the build too, so a renamed class takes its
+exemption with it.
 
-Four things do NOT need an id of their own, and the report already discounts them:
+Five things do NOT need an id of their own, and the check already discounts them:
 
 - **A tagged ancestor holding just that value.** The suite selects the ancestor and reads its text.
   The ancestor has to be in the *same* template — an id rendered by the component around it is
   invisible to this, which is why `<div view>` inside an `ix-editable` still counts (and should:
   the editable's trigger id is derived from the value itself, so it cannot be used to find it).
+- **A component tagged one element further out.** A call site whose nearest tagged ancestor holds
+  that component and nothing else readable counts as tagged:
+  `<span [tnTestId]="[…, 'row-state']"><ix-service-status-cell></span>` is the services list's
+  Status cell, and the span's id is the one a suite reads it by.
 - **A shared leaf presenter: one value, and an id at every call site.** The table cells are the
   example — `<ix-task-state-cell>`, `<ix-subsystem-name-cell>` and three more, each tagged with a
   row-scoped id wherever it is used, so the value inside needs none and a static id there would
@@ -248,7 +256,8 @@ Four things do NOT need an id of their own, and the report already discounts the
   `{{ titles().name }}` out of a `translated()` signal the column picker shares.
 
 `yarn check-test-ids --report src/app/pages/<area>` lists that area's readouts one per line, with
-the markup, which is the working list for closing one.
+the markup, and the totals per area, without failing — for a branch that is mid-way through
+tagging them.
 
 In a shared component, a static id inside the template repeats on every instance in the page.
 Scope it by what tells the instances apart: a key the component already holds (`[alert().key,
