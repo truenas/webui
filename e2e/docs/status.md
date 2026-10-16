@@ -865,9 +865,20 @@ Its title, which every id on the report is keyed by, is read from
 `reporting.netdata_graphs`. On Audit, the newest middleware record from
 `audit.query` has to have its row, with the same user and event. That row's id
 ends in the record's UUID. The Dashboard spec relies on the admin's layout still
-holding that widget, and nothing in the suite changes the layout. Editing the
-dashboard, the other widgets, the other reporting tabs, zooming and stepping, the
-audit search, the details panel and the export are not covered.
+holding that widget. The other reporting tabs, zooming and stepping, the audit
+search, the details panel and the export are not covered.
+
+`tests/dashboard-widgets.e2e.ts` followed with two tests, and it is the one spec
+that changes the layout. It writes the admin's `dashState` over the API and
+writes the captured value back after every test, through `fixtures/dashboard.ts`.
+With `dashState` null, every card of the non-HA default layout has to render,
+and viewing the page must not save the layout. On an explicit layout naming a
+NIC, the CPU Model card has to match `system.info`, the Storage card's name and
+status have to match `pool.query`, and the Interface and IPv4 Address cards have
+to match `interface.query`'s link state and `INET` aliases. The Memory card's
+title and total got ids for this. Values that move (usage, temperatures, traffic,
+uptime), the memory total, HA-only cards, editing the layout and the cards'
+buttons and links are not covered.
 
 The topbar's two panels followed, one test each: `tests/alerts-panel.e2e.ts` and
 `tests/jobs-panel.e2e.ts`. Middleware has no public call that raises an alert, so
@@ -1143,6 +1154,9 @@ a number. See `05-ci.md`.
   behind — webui's own defaults, which is what that account was already being
   given at runtime, but now written down rather than inferred. Harmless in
   practice and irreversible, so it is recorded rather than worked around.
+  `fixtures/dashboard.ts` has the same limit for `dashState`: an account that
+  never saved a layout is restored to `null`, which webui renders as the default
+  layout exactly as it does a missing attribute, but the key stays behind.
 - **`isNewTimeMachineShare` in `smb-form.component.ts` is dead code**, and the
   restart prompt is broader than the comments around it imply. The prompt is
   gated on `isRestartRequired`, which is `this.isNew || this.form.dirty` — so it
