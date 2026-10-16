@@ -485,6 +485,14 @@ schema and schedule claim, and the "keep snapshots" box ticked or not. With it
 ticked, `pool.snapshot.query`'s `retention` must move from the task to a
 `property` on the snapshot with the same date, and a manual snapshot beside it
 must get none. With it unticked, the snapshot stays and has no removal date.
+`tests/snapshot-task-retention.e2e.ts` covers the edit form's counterpart: with
+the same seeded snapshot, shortening the lifetime from two weeks to one must
+show the retention warning with a count of 1. With "fixate removal date"
+ticked, the old date must become a `property` on the snapshot. Unticked, the
+task's new date applies. An edit to Allow Taking Empty Snapshots must show no
+warning once the form's own check has answered. The same spec switches a
+disabled task back on from the card and follows the full list's Snapshots
+button to `/datasets/snapshots`, where the seeded snapshot's row must show.
 `tests/snapshot-task-validation.e2e.ts` covers what the add form refuses: a
 naming schema with a slash (the form's own pattern, so Save goes disabled), and
 four refusals that come back from `pool.snapshottask.create` under the field

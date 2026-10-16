@@ -84,6 +84,8 @@ export const snapshotTaskLocators = {
   list: {
     /** The full list page's Add, in its page header. */
     add: '[data-test="button-add-task"]',
+    /** "Snapshots", also in the page header: a `routerLink` to `/datasets/snapshots`. */
+    snapshots: '[data-test="button-snapshots"]',
 
     row: (dataset: string, namingSchema: string): string => (
       `[data-test="row-${listRowTag(dataset, namingSchema)}"]`
@@ -140,8 +142,17 @@ export const snapshotTaskLocators = {
     ),
     /** Begin, like End, renders only while the schedule is Hourly. */
     begin: '[data-test="select-begin"]',
+    /** "Allow Taking Empty Snapshots". Ticked by default, and nothing about retention. */
+    allowEmpty: '[data-test="checkbox-allow-empty"]',
     /** Ticked by default. */
     enabled: '[data-test="checkbox-enabled"]',
+    /**
+     * The count in the edit form's retention warning, which renders only while
+     * `pool.snapshottask.update_will_change_retention_for` names a snapshot.
+     */
+    affectedSnapshots: '[data-test="text-affected-snapshots"]',
+    /** "Fixate Removal Date", inside that warning: keep those snapshots' current removal date. */
+    fixateRemovalDate: '[data-test="checkbox-fixate-removal-date"]',
     /** `<tn-button [testId]="'save'">` on the side panel container. */
     save: '[data-test="button-save"]',
   },

@@ -41,6 +41,8 @@ export const snapshotLocators = {
   list: {
     /** "Add" in the page header. Present once the list has rendered, whatever is in it. */
     add: '[data-test="button-add-snapshot"]',
+    /** `ix-basic-search` in the page header. Filters on the snapshot's full name. */
+    search: '[data-test="input-search"]',
 
     /** A snapshot's row. */
     row: (dataset: string, name: string): string => `[data-test="row-${rowTag(dataset, name)}"]`,
