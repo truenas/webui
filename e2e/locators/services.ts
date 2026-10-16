@@ -51,8 +51,11 @@ export const servicesLocators = {
     location: '[data-test="input-location"]',
     contact: '[data-test="input-contact"]',
     community: '[data-test="input-community"]',
-    /** Auxiliary Parameters, a multiline input. */
-    options: '[data-test="input-options"]',
+    /**
+     * Auxiliary Parameters. A multiline `tn-input` renders a `textarea`, so the
+     * id is `textarea-*`, not `input-*` — see `locators/api-keys.ts`.
+     */
+    options: '[data-test="textarea-options"]',
     zilstat: '[data-test="checkbox-zilstat"]',
 
     /** SNMP v3 Support. Every field below it is rendered only while it is ticked. */

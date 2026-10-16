@@ -57,7 +57,7 @@ test.afterEach(async ({ api }) => {
 test('an admin saves the SNMP general settings, and the appliance keeps them', async ({ page, api }) => {
   const form = servicesLocators.snmpForm;
 
-  await openServiceForm(page, 'snmp', form.community, snmpBaseline.community);
+  await openServiceForm(page, 'snmp', form.community, String(snmpBaseline.community));
   await page.locator(form.location).fill('e2e rack 1');
   await page.locator(form.contact).fill('e2e@example.com');
   await page.locator(form.community).fill('e2epublic');
@@ -79,7 +79,7 @@ test('an admin saves the SNMP general settings, and the appliance keeps them', a
 test('an admin saves SNMP v3 credentials, and the appliance keeps them', async ({ page, api }) => {
   const form = servicesLocators.snmpForm;
 
-  await openServiceForm(page, 'snmp', form.community, snmpBaseline.community);
+  await openServiceForm(page, 'snmp', form.community, String(snmpBaseline.community));
   // The v3 fields are not rendered until the box is ticked.
   await expect(page.locator(form.v3Username)).toBeHidden();
   await page.locator(form.v3).click();
@@ -106,7 +106,7 @@ test('an admin saves SNMP v3 credentials, and the appliance keeps them', async (
 test('the SNMP form refuses a v3 password shorter than eight characters', async ({ page, api }) => {
   const form = servicesLocators.snmpForm;
 
-  await openServiceForm(page, 'snmp', form.community, snmpBaseline.community);
+  await openServiceForm(page, 'snmp', form.community, String(snmpBaseline.community));
   await page.locator(form.v3).click();
   await page.locator(form.v3Username).fill('e2esnmp');
   await selectOption(page, form.v3AuthType, form.v3AuthTypeSha);
