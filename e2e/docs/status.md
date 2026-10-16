@@ -283,7 +283,8 @@ spec picks a row by its position in `getacl`. The NFSv4 entry form's selects
 have no `testId` and fall back to their control names (`select-tag`,
 `select-basic-permission`); there is one entry form on the page, so the
 fallback is unique. These ids were worked out from the templates, not read off
-an appliance. Beyond that one entry, the ACL editor is not covered.
+an appliance. More entries are in `tests/dataset-acl-nfsv4-entries.e2e.ts`,
+under the dataset permissions below.
 
 NFS shares followed, in `tests/nfs-form.e2e.ts`, `tests/nfs-list.e2e.ts` and
 `tests/nfs-service.e2e.ts`, on the same plan as SMB with one difference that
@@ -703,9 +704,18 @@ The resulting entries are compared through `filesystem.getacl` against the
 template `filesystem.acltemplate.by_path` serves, so a change to a template does
 not break the spec. Only what tells one preset from another is asserted by hand.
 A third test covers Apply Owner and Apply Group in the editor's header: only the
-ticked half reaches `filesystem.stat`. Editing entries beyond the one
-`smb-share-acl.e2e.ts` adds, applying an ACL recursively, Strip ACL, POSIX ACLs
-and custom presets are not covered.
+ticked half reaches `filesystem.stat`.
+
+NFSv4 entries themselves are in `tests/dataset-acl-nfsv4-entries.e2e.ts`: a
+group entry of type Deny, a user entry with advanced permissions and advanced
+flags, editing `group@` in place, and removing the `builtin_users` entry. Each
+starts from a dataset with the SMB preset and is read back through
+`filesystem.getacl`, matched by id, with a check that the entries it did not
+touch came through. The advanced story checks every permission bit, so a box
+ticked by mistake fails as well as one that did not land. The Who select's
+"Group" and "group@" options both used to emit `option-tag-group`; `group@` is
+now `option-tag-group-at`, and every other option kept its id. Applying an ACL
+recursively, Strip ACL, POSIX ACLs and custom presets are not covered.
 
 Encrypted datasets came next, in `tests/datasets-encryption.e2e.ts`: creating a
 dataset encrypted with a passphrase from the form's Encryption Options, locking
@@ -1212,7 +1222,7 @@ a number. See `05-ci.md`.
 ## Next steps
 
 1. **Widen coverage.** The rest of the dataset ACL editor, beyond built-in
-   NFSv4 presets, is the uncovered story worth taking next.
+   NFSv4 presets and NFSv4 entries, is the uncovered story worth taking next.
    Manual snapshots are covered — take, recursive, delete, hold, clone, roll
    back and its safety check — but not batch delete, the list's own Add
    button, naming schemas, the extra columns or VMware sync. The confirmation-bypass class is now covered

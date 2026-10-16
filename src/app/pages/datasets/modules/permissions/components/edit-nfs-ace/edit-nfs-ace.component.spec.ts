@@ -15,7 +15,7 @@ import {
 } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { UserService } from 'app/services/user.service';
-import { EditNfsAceComponent } from './edit-nfs-ace.component';
+import { EditNfsAceComponent, nfsAclTagOptionTestId } from './edit-nfs-ace.component';
 
 describe('EditNfsAceComponent', () => {
   let spectator: Spectator<EditNfsAceComponent>;
@@ -149,6 +149,19 @@ describe('EditNfsAceComponent', () => {
         expect.objectContaining({ who: 'AD\\administrator' }),
       );
       expect(spectator.inject(DatasetAclEditorStore).updateSelectedAceValidation).toHaveBeenLastCalledWith(true);
+    });
+  });
+
+  describe('Who option test ids', () => {
+    it('keeps the Group and group@ options apart', () => {
+      expect(nfsAclTagOptionTestId({ label: 'Group', value: NfsAclTag.UserGroup })).toBe('Group');
+      expect(nfsAclTagOptionTestId({ label: 'group@', value: NfsAclTag.Group })).toBe('group-at');
+    });
+
+    it('leaves every other option on its label', () => {
+      expect(nfsAclTagOptionTestId({ label: 'User', value: NfsAclTag.User })).toBe('User');
+      expect(nfsAclTagOptionTestId({ label: 'owner@', value: NfsAclTag.Owner })).toBe('owner@');
+      expect(nfsAclTagOptionTestId({ label: 'everyone@', value: NfsAclTag.Everyone })).toBe('everyone@');
     });
   });
 
