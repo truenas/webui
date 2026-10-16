@@ -9,7 +9,7 @@
  *
  * RSA 2048, SHA256, valid from 2026-01-01 to 2076-01-01. The key is unencrypted
  * PKCS#8, the form middleware re-exports an imported key in, so the key the
- * appliance hands back is the one imported here, byte for byte.
+ * appliance hands back is the one imported here apart from a trailing newline.
  */
 
 /** The certificate's subject common name, and its one SAN. */
