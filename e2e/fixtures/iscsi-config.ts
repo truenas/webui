@@ -173,18 +173,20 @@ export async function readIscsiGlobalSettings(client: E2eApiClient): Promise<Isc
 }
 
 /**
- * Writes back the two settings a test changes. Never the base name or the listen
- * port, which no test changes: the base name is part of every target's IQN, so a
- * restore that got it wrong would rename them all.
+ * Writes back the settings a test changes: the iSNS servers and pool threshold
+ * (`iscsi-config.e2e.ts`) and the listen port (`services.e2e.ts`). Never the base
+ * name, which no test changes: it is part of every target's IQN, so a restore that
+ * got it wrong would rename them all.
  */
 export async function restoreIscsiGlobalSettings(
   client: E2eApiClient,
-  settings: Pick<IscsiGlobalSettings, 'isns_servers' | 'pool_avail_threshold'>,
+  settings: Pick<IscsiGlobalSettings, 'isns_servers' | 'pool_avail_threshold' | 'listen_port'>,
 ): Promise<void> {
   await firstValueFrom(
     client.api.call('iscsi.global.update', [{
       isns_servers: settings.isns_servers,
       pool_avail_threshold: settings.pool_avail_threshold,
+      listen_port: settings.listen_port,
     }]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
