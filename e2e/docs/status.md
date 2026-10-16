@@ -197,7 +197,8 @@ ZFS tiering came next, in `tests/tiering-config.e2e.ts` and
 the Tiering panel on the storage dashboard, and moving a dataset to the
 performance tier from its details card, with and without migrating its data.
 Both skip on an appliance without the `ZFSTIER` key, because `zfs.tier.update`
-refuses there, so for now they run only where someone has uploaded a licence.
+refuses there. CI licenses its appliance before the suite starts (see
+`docs/05-ci.md`), so they run there; elsewhere they need a license uploaded.
 The dataset spec builds its own pool (`e2e_tier_tank`, one data and one special
 disk), because a dataset has no tier at all on a pool without a special vdev,
 and it removes that pool in `afterAll`.
@@ -646,6 +647,18 @@ flow asserts there is exactly one. Teardown destroys the pool if it was
 imported and wipes its disk if it was not. Locked SED disks and a pool with an
 encrypted root are not covered.
 
+Exporting a pool through the UI is in `tests/pool-export.e2e.ts`: the
+Disconnect dialog's Export Pool option, once keeping and once deleting the
+saved configuration (`cascade`), on the spec's own one-disk `e2e_export_tank`
+with an SMB share on a dataset in it. The dialog has to list the share among
+what depends on the pool. After either export, `pool.query` no longer lists the
+pool and `disk.details` reports its disk carrying it exported. Keeping the
+configuration leaves the share in `sharing.smb.query` with its path, and it is
+still there once the pool is imported back. Deleting it removes the share. The
+form starts with `cascade` ticked, so keeping the configuration is the choice a
+user has to make. The SMB service is never started, and attachments other than
+an SMB share are not covered.
+
 Zvols came next, in `tests/zvols.e2e.ts`: creating one from Add Zvol on the
 Datasets page, growing one and setting its Sync from Edit Zvol on the details card,
 and deleting one with the dialog fully confirmed. Each is asserted on screen and
@@ -673,8 +686,20 @@ asserted on the card the app returns to and through `filesystem.stat`, and each
 checks that the other two came through unchanged. The dataset is the spec's own,
 and every test starts it from one owner, group and mode with the ACL stripped,
 set over `filesystem.setperm`. The card names each entry after its owner or
-group, so its ids change with them. The ACL editor, presets, and applying
-permissions recursively are not covered.
+group, so its ids change with them. Applying permissions recursively is not
+covered.
+
+Built-in NFSv4 ACL presets are in `tests/dataset-acl-nfsv4-presets.e2e.ts`,
+applied from both places the ACL editor offers them: Set ACL on a trivial NFSv4
+dataset, where the editor raises the preset dialog itself, and Use Preset on a
+non-trivial one, where the preset must replace the entries and not add to them.
+The resulting entries are compared through `filesystem.getacl` against the
+template `filesystem.acltemplate.by_path` serves, so a change to a template does
+not break the spec. Only what tells one preset from another is asserted by hand.
+A third test covers Apply Owner and Apply Group in the editor's header: only the
+ticked half reaches `filesystem.stat`. Editing entries beyond the one
+`smb-share-acl.e2e.ts` adds, applying an ACL recursively, Strip ACL, POSIX ACLs
+and custom presets are not covered.
 
 Encrypted datasets came next, in `tests/datasets-encryption.e2e.ts`: creating a
 dataset encrypted with a passphrase from the form's Encryption Options, locking
@@ -759,6 +784,20 @@ now `button-<pool>-manage-vdevs`, like the pool's Disconnect and View Datasets. 
 card's menu trigger now passes `button-zfs-actions` in full, as the other callers
 of that input do. Replace, Extend, Detach, Remove and the other kinds of vdev are
 not covered.
+
+The pool wizard's layouts came next, in `tests/pool-wizard-layouts.e2e.ts`: a
+two-disk Mirror, a three-disk RAIDZ1 and two striped two-disk mirrors, each built
+from the Data step's Automated Disk Selection. Each test checks the layout in the
+Configuration Preview, on the Review step, on the pool's VDEVs card and through
+`pool.query`'s topology, which has to hold the vdevs the wizard showed, with no
+disk counted twice and no log, cache, spare, special or dedup vdev. Each test
+builds a pool of its own, and all three names are removed before and after every
+test. `flows/storage.ts` now splits the wizard into `openPoolWizard`,
+`configureAutomatedVdevs`, `goToReview` and `submitPool`, keyed by vdev category
+so the other steps can reuse them, and `createRaidz2Pool` is built from them.
+`readPoolTopology` in `fixtures/pool.ts` is the shared topology readback. RAIDZ3,
+dRAID, the other kinds of vdev, manual selection, encryption and the wizard's
+validation are not covered.
 
 Scrubbing a pool came next, in `tests/pool-scrub.e2e.ts`: one test starts a
 scrub from Scrub Now on the pool's Storage Health card and waits for it to
@@ -869,10 +908,17 @@ confirmation, and saving the SSH and FTP forms the rows' pencils open. A start o
 stop is asserted on the row's Status cell and through `service.query`, which also
 has to show the start did not turn on Start Automatically. A save is asserted
 through `ssh.config` or `ftp.config`, since the page shows no settings. The row
-tag is `service-<name>`. FTP is the service started because nothing the suite or
+tag is `service-<name>`, from the display name on the `<tr>`, the Status cell and
+the switch, and from the middleware name on the buttons (`service-smb` against
+`service-cifs`). FTP is the service started because nothing the suite or
 CI uses depends on it; it goes back to stopped, and both forms' fields to a fixed
-baseline, before and after each test. The Start Automatically switch, the search,
-the other services' forms, advanced options and View Logs/Sessions are not covered.
+baseline, before and after each test. The Start Automatically switch is turned on
+and off for FTP and read back through `service.query`, which must still say
+stopped. The search is checked to hide SSH and SMB for `ftp`. The iSCSI pencil
+opens the iSCSI global configuration, where a listen port is saved with the
+service stopped and written back afterwards; the NVMe-oF pencil is only checked
+to open its own. The other services' forms, advanced options and View
+Logs/Sessions are not covered.
 
 The SNMP form, opened from its row on the same page, is in
 `tests/snmp-service.e2e.ts`: saving location, contact, community, auxiliary
@@ -905,9 +951,20 @@ Its title, which every id on the report is keyed by, is read from
 `reporting.netdata_graphs`. On Audit, the newest middleware record from
 `audit.query` has to have its row, with the same user and event. That row's id
 ends in the record's UUID. The Dashboard spec relies on the admin's layout still
-holding that widget, and nothing in the suite changes the layout. Editing the
-dashboard, the other widgets, the other reporting tabs, zooming and stepping, the
-audit search, the details panel and the export are not covered.
+holding that widget. The other reporting tabs, zooming and stepping, the audit
+search, the details panel and the export are not covered.
+
+`tests/dashboard-widgets.e2e.ts` followed with two tests, and it is the one spec
+that changes the layout. It writes the admin's `dashState` over the API and
+writes the captured value back after every test, through `fixtures/dashboard.ts`.
+With `dashState` null, every card of the non-HA default layout has to render,
+and viewing the page must not save the layout. On an explicit layout naming a
+NIC, the CPU Model card has to match `system.info`, the Storage card's name and
+status have to match `pool.query`, and the Interface and IPv4 Address cards have
+to match `interface.query`'s link state and `INET` aliases. The Memory card's
+title and total got ids for this. Values that move (usage, temperatures, traffic,
+uptime), the memory total, HA-only cards, editing the layout and the cards'
+buttons and links are not covered.
 
 The topbar's two panels followed, one test each: `tests/alerts-panel.e2e.ts` and
 `tests/jobs-panel.e2e.ts`. Middleware has no public call that raises an alert, so
@@ -1129,7 +1186,8 @@ a number. See `05-ci.md`.
 
 ## Next steps
 
-1. **Widen coverage.** Dataset ACL is the uncovered story worth taking next.
+1. **Widen coverage.** The rest of the dataset ACL editor, beyond built-in
+   NFSv4 presets, is the uncovered story worth taking next.
    Manual snapshots are covered — take, recursive, delete, hold, clone, roll
    back and its safety check — but not batch delete, the list's own Add
    button, naming schemas, the extra columns or VMware sync. The confirmation-bypass class is now covered
@@ -1213,6 +1271,9 @@ a number. See `05-ci.md`.
   behind — webui's own defaults, which is what that account was already being
   given at runtime, but now written down rather than inferred. Harmless in
   practice and irreversible, so it is recorded rather than worked around.
+  `fixtures/dashboard.ts` has the same limit for `dashState`: an account that
+  never saved a layout is restored to `null`, which webui renders as the default
+  layout exactly as it does a missing attribute, but the key stays behind.
 - **`isNewTimeMachineShare` in `smb-form.component.ts` is dead code**, and the
   restart prompt is broader than the comments around it imply. The prompt is
   gated on `isRestartRequired`, which is `this.isNew || this.form.dirty` — so it

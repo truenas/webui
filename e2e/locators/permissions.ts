@@ -26,6 +26,9 @@ export const permissionsLocators = {
      * `ix-permissions-item` tags it `['permissions-item', <name>, 'permissions']`. The name is the
      * owning user, the owning group, or `Other`. So the id changes when the owner or group does, and
      * an owner and a group with the same name would share it.
+     *
+     * An NFSv4 ACL's entries use the same component, named `owner@ - <user>`, `group@ - <group>` or
+     * `everyone@`, and read `Allow | Full Control`.
      */
     entry: (name: string): string => `[data-test="text-permissions-item-${kebabTestSegment(name)}-permissions"]`,
   },
@@ -54,6 +57,27 @@ export const permissionsLocators = {
 
     /** `<tn-button testId="save">`. Saving runs `filesystem.setperm` and returns to the dataset. */
     save: '[data-test="button-save"]',
+
+    /** "Set ACL". Opens the ACL editor on this path. Offered unless ACLs are off for it. */
+    setAcl: '[data-test="button-set-acl"]',
+  },
+
+  /**
+   * The "Select a preset ACL" dialog (`select-preset-modal.component.html`).
+   *
+   * The ACL editor raises it itself on a trivial ACL, with both radios, and Use
+   * Preset raises it with the select alone. Its Cancel shares `button-cancel`
+   * with the editor's own behind it, so it is not here.
+   */
+  presetDialog: {
+    title: '[data-test="dialog-title-select-preset"]',
+    /** "Select a preset ACL". Rendered only on the dialog the editor raises itself. */
+    usePreset: '[data-test="radio-button-use-preset-true"]',
+    /** Rendered only while a preset is to be used. Its options come from `filesystem.acltemplate.by_path`. */
+    preset: '[data-test="select-preset-name"]',
+    presetOption: (name: string): string => `[data-test="option-preset-name-${kebabTestSegment(name)}"]`,
+    /** Puts the preset's entries into the form. Nothing is saved until the editor's Save. */
+    continue: '[data-test="button-continue"]',
   },
 
   /**
@@ -69,6 +93,20 @@ export const permissionsLocators = {
     path: datasetPath,
     /** "Add Item". Appends an entry for a user, with Modify and Inherit, and selects it. */
     addItem: '[data-test="button-add-acl-item"]',
+    /** "Use Preset". Opens {@link permissionsLocators.presetDialog} without its radios. */
+    usePreset: '[data-test="button-use-preset"]',
+
+    /**
+     * The header's Owner and Owner Group. The same comboboxes, on the same
+     * control names, as the Unix editor's, so the same ids.
+     */
+    owner: '[data-test="autocomplete-owner"]',
+    ownerOption: (username: string): string => `[data-test="option-owner-${kebabTestSegment(username)}"]`,
+    ownerGroup: '[data-test="autocomplete-owner-group"]',
+    ownerGroupOption: (group: string): string => `[data-test="option-owner-group-${kebabTestSegment(group)}"]`,
+    /** "Apply Owner" and "Apply Group". Not the Unix editor's `checkbox-apply-user`. */
+    applyOwner: '[data-test="checkbox-apply-owner"]',
+    applyGroup: '[data-test="checkbox-apply-group"]',
 
     /** `ix-user-combobox formControlName="user"` in the entry form. Rendered while Who is User. */
     user: '[data-test="autocomplete-user"]',
