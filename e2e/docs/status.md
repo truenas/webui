@@ -847,8 +847,18 @@ test. `flows/storage.ts` now splits the wizard into `openPoolWizard`,
 `configureAutomatedVdevs`, `goToReview` and `submitPool`, keyed by vdev category
 so the other steps can reuse them, and `createRaidz2Pool` is built from them.
 `readPoolTopology` in `fixtures/pool.ts` is the shared topology readback. RAIDZ3,
-dRAID, the other kinds of vdev, manual selection, encryption and the wizard's
-validation are not covered.
+dRAID, the other kinds of vdev, manual selection and encryption are not covered.
+
+The wizard's refusals are in `tests/pool-wizard-validation.e2e.ts`. None of its
+tests creates a pool. The General step refuses the worker pool's name ("already
+in use") and the reserved word `mirror` ("Invalid pool name", from
+`pool.validate_name`), and Next stays disabled. Going to Review with no data vdev
+lists "At least 1 data VDEV is required.", disables Create Pool and hides Inspect
+VDEVs. A one-disk stripe shows the stripe warning on the Data step and on Review,
+and Create Pool stays enabled. The wizard's Name field now has an id,
+`form-field-name`, so the error under it can be read. Mixed disk sizes, the dRAID,
+special and dedup warnings, and the exported-pool and duplicate-serial disk
+warnings are not covered.
 
 What the dashboard says about a degraded pool is in `tests/pool-degraded.e2e.ts`.
 It builds its own two-disk mirror, `e2e_degraded_tank`, and takes one disk offline
