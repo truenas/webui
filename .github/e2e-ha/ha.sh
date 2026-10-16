@@ -106,11 +106,15 @@ storage() {
     # LIO writes <db_root>/pr/aptpl_<serial> after every reservation change,
     # and answers the change with LOGICAL UNIT COMMUNICATION FAILURE when it
     # cannot, though the change is already made: fenced's every REGISTER
-    # failed that way. db_root is /etc/target when that exists as the
-    # module loads, else /var/target; neither comes with this runner.
-    sudo -n mkdir -p /etc/target/pr /etc/target/alua /var/target/pr /var/target/alua
+    # failed that way. Debian's targetcli points db_root at
+    # /etc/rtslib-fb-target the first time it runs, and nothing makes the
+    # pr/ in it: so make it under whatever db_root ends up being.
     sudo -n modprobe target_core_mod
-    say "  LIO's db_root: $(sudo -n cat /sys/kernel/config/target/dbroot 2>/dev/null || echo unknown)"
+    sudo -n targetcli ls / >/dev/null
+    local dbroot
+    dbroot="$(sudo -n cat /sys/kernel/config/target/dbroot)"
+    sudo -n mkdir -p "$dbroot/pr" "$dbroot/alua"
+    say "  LIO's db_root: $dbroot"
     sudo -n modprobe tcm_loop
     for i in $(seq 1 "$SHARED"); do
         truncate -s "${SHARED_GB}G" "$DIR/shared$i.img"
