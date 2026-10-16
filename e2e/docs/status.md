@@ -940,6 +940,15 @@ refused under the field with Save held down. Each save is asserted through
 after each test. The Password field got `testId="v3-password"` so its error
 text can be read. Starting SNMP and querying it with a client are not covered.
 
+The UPS form followed, in `tests/ups-service.e2e.ts`: saving a Slave configuration
+from Master mode, saving a Master configuration with a driver and a serial port
+from Slave mode, and the form refusing an identifier with a space. Each save is
+asserted through `ups.config` as a whole record, including `complete_identifier`.
+The service is never started, since there is no UPS to talk to. The baseline is a
+Slave configuration rather than the stock one: a fresh appliance is in Master mode
+with no driver or port, which `ups.update` refuses to write back. Extra users, the
+upsd options, host sync and the warning time are not covered.
+
 The WebShare service's form, opened from the same page, is in
 `tests/webshare-service.e2e.ts`: saving each Passkey mode, turning MCP on (which
 prefills `truenas_webshare` and hides the group picker on an appliance with no
@@ -1150,6 +1159,26 @@ uploaded through the file chooser and deleted. Each is checked through
 with no entries, so `buildKeytab` in `fixtures/kerberos.ts` writes a one-entry MIT
 keytab in the test. Joining AD, LDAP or IPA needs a directory server, so those are
 not covered, and neither is the AD-only Sync button.
+
+Two-factor authentication is in `tests/unauthenticated/two-factor.e2e.ts`, as one
+story. The suite's admin turns global two-factor on from its card on Advanced
+Settings. A throwaway administrator signing in next sets it up on the
+`/two-factor-auth` page. It lands there because the sign-in returns to the route
+the admin signed out from, and on that route the admin layout's guard shows the
+page without raising its full-screen setup dialog — so the guard's forcing is not
+what this covers. The page generates a secret, the spec reads it off the screen
+and confirms the code it gives, and `user.query` then reports two-factor
+configured.
+After that, signing in asks for a code, refuses a wrong one and accepts the right
+one. Last, an admin clears it from the user's Access card. Codes come from
+`support/totp.ts` (RFC 6238 over Node's HMAC-SHA1), because no TOTP library is
+installed. Global two-factor is turned off in `beforeAll` and again in `afterAll`,
+whatever happened. If it were left on, every later sign-in would meet the setup
+dialog. For the same reason it is switched off over the API before the admin
+signs in to clear the user's secret, since the admin must never be given one.
+The first-login setup dialog that other routes get, the page's Renew and Unset
+buttons, Skip Setup, Cancel Setup, two-factor for SSH, and the QR code itself are
+not covered.
 
 The framework is done and the coverage of the 19 top-level feature areas is
 not. What the work bought is that the next twenty tests are cheap: the target
