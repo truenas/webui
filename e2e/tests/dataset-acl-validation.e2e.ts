@@ -15,7 +15,9 @@
  *
  * Every result is read back through `filesystem.getacl`.
  */
-import { findUserAclEntries, readAcl, setOwnership } from '../fixtures/permissions';
+import {
+  findUserAclEntries, nfs4Entries, readAcl, setOwnership,
+} from '../fixtures/permissions';
 import {
   datasetMountPath, ensureDatasetAbsent, ensureDatasetPresent, ensureSmbDatasetPresent,
 } from '../fixtures/storage';
@@ -86,8 +88,8 @@ test.afterEach(async ({ api, pool }) => {
 test('an entry without a user blocks Save until it is removed', async ({ page, api, pool }) => {
   const dataset = `${pool}/${invalidLeaf}`;
   const path = datasetMountPath(dataset);
-  const before = await readAcl(api, path);
-  const added = before.acl.length;
+  const before = nfs4Entries(await readAcl(api, path));
+  const added = before.length;
   expect(added).toBeGreaterThan(0);
 
   await openAclEditor(page, dataset);
@@ -108,14 +110,14 @@ test('an entry without a user blocks Save until it is removed', async ({ page, a
   await page.locator(aclEditor.cancel).click();
   await expect(save).toBeHidden();
 
-  expect((await readAcl(api, path)).acl).toEqual(before.acl);
+  expect(nfs4Entries(await readAcl(api, path))).toEqual(before);
 });
 
 test('Cancel on the Traverse Access Warning saves nothing', async ({ page, api, pool }) => {
   const dataset = `${pool}/${noexecLeaf}/${innerLeaf}`;
   const path = datasetMountPath(dataset);
   const uid = await aclUserUid(api);
-  const before = await readAcl(api, path);
+  const before = nfs4Entries(await readAcl(api, path));
 
   await openAclEditor(page, dataset);
   await addAclUserEntry(page, aclUser, 'Read');
@@ -126,7 +128,7 @@ test('Cancel on the Traverse Access Warning saves nothing', async ({ page, api, 
   await expect(page.locator(aclEditor.save)).toBeVisible();
 
   expect(await findUserAclEntries(api, path, uid)).toEqual([]);
-  expect((await readAcl(api, path)).acl).toEqual(before.acl);
+  expect(nfs4Entries(await readAcl(api, path))).toEqual(before);
 });
 
 test('Save Anyway on the Traverse Access Warning saves the entry', async ({ page, api, pool }) => {
