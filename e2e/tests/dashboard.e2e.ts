@@ -6,9 +6,9 @@
  * `system.info` reports, a separate call carrying the same fields. Uptime is not checked: it
  * moves every second.
  *
- * The layout is the admin's own (`dashState` on the account), and nothing in the suite changes it.
- * On an appliance where someone has taken the widget off their dashboard this fails at its first
- * assertion, which names the readout it could not find.
+ * The layout is the admin's own (`dashState` on the account). `dashboard-widgets.e2e.ts` changes
+ * it, and writes it back after every test. On an appliance where someone has taken the widget off
+ * their dashboard this fails at its first assertion, which names the readout it could not find.
  *
  * Nothing is created, so there is no teardown.
  */
