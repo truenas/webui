@@ -1004,6 +1004,16 @@ Slave configuration rather than the stock one: a fresh appliance is in Master mo
 with no driver or port, which `ups.update` refuses to write back. Extra users, the
 upsd options, host sync and the warning time are not covered.
 
+The WebShare service's form, opened from the same page, is in
+`tests/webshare-service.e2e.ts`: saving each Passkey mode, turning MCP on (which
+prefills `truenas_webshare` and hides the group picker on an appliance with no
+Directory Services groups) and off again without wiping its groups or write
+access, and TrueSearch staying locked off without TrueNAS Connect, read off the
+hint in `form-field-search`. Each save is asserted as the whole set through
+`webshare.config`. The settings are snapshotted and written back, and the service
+stays stopped. Not covered: enabling TrueSearch, choosing Directory Services
+groups for MCP, the bind addresses and login groups, and WebShare shares.
+
 Virtual Machines followed, in `tests/virtual-machines.e2e.ts`: creating a Linux VM
 with the wizard on a new zvol, and editing and deleting one from its row's detail
 panel beside a bystander that must not change. Each is asserted through `vm.query`,
