@@ -120,5 +120,15 @@ export const permissionsLocators = {
 
     /** "Save Access Control List". Runs `filesystem.setacl`, then returns to where the editor was opened. */
     save: '[data-test="button-save-acl"]',
+    /** Leaves without saving. Shares its id with the preset dialog's Cancel, which is not open then. */
+    cancel: '[data-test="button-cancel"]',
+
+    /** An entry in the list, by its position: `[tnTestId]="['ace', i]"` in `acl-editor-list`. */
+    entry: (index: number): string => `[data-test="row-ace-${index}"]`,
+    /**
+     * The alert marker an invalid entry shows, rendered only while the entry is in `acesWithError`.
+     * Clicking it removes the entry.
+     */
+    entryError: (index: number): string => `[data-test="button-remove-ace-error-${index}"]`,
   },
 } as const;

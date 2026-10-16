@@ -722,6 +722,15 @@ ticked half reaches `filesystem.stat`. Editing entries beyond the one
 `smb-share-acl.e2e.ts` adds, applying an ACL recursively, Strip ACL, POSIX ACLs
 and custom presets are not covered.
 
+The editor's two guards on a save are in `tests/dataset-acl-validation.e2e.ts`.
+An entry added with no user disables Save until the alert marker on its row
+removes it, and Cancel then leaves `filesystem.getacl` as it was. The Traverse
+Access Warning is raised by saving an entry on a dataset whose parent only root
+can traverse (mode 700): Cancel saves nothing, and Save Anyway saves the entry
+without effective-ACL validation. The warning has no message id, so the tests
+tell it apart by those two outcomes. Refusals that need a directory service are
+not covered.
+
 Encrypted datasets came next, in `tests/datasets-encryption.e2e.ts`: creating a
 dataset encrypted with a passphrase from the form's Encryption Options, locking
 one from the Encryption card, and unlocking one from the card's Unlock page
