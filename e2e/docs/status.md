@@ -841,8 +841,12 @@ has to show the start did not turn on Start Automatically. A save is asserted
 through `ssh.config` or `ftp.config`, since the page shows no settings. The row
 tag is `service-<name>`. FTP is the service started because nothing the suite or
 CI uses depends on it; it goes back to stopped, and both forms' fields to a fixed
-baseline, before and after each test. The Start Automatically switch, the search,
-the other services' forms, advanced options and View Logs/Sessions are not covered.
+baseline, before and after each test. Behind each form's Advanced toggle, FTP's
+access, passive-port, bandwidth and TLS options and SSH's compression, SFTP
+logging and weak ciphers are saved and read back, and FTP's refusal of a maximum
+passive port below the minimum is asserted on the field. The Start Automatically
+switch, the search, the other services' forms, FTP anonymous login, SSH bind
+interfaces and auxiliary parameters, and View Logs/Sessions are not covered.
 
 Virtual Machines followed, in `tests/virtual-machines.e2e.ts`: creating a Linux VM
 with the wizard on a new zvol, and editing and deleting one from its row's detail
