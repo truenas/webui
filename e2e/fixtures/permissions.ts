@@ -7,9 +7,10 @@
  * There is no teardown of its own: the permissions live on the dataset's mountpoint, and the spec
  * deletes the dataset.
  */
+import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
 import type { Nfs4Ace } from './storage';
-import type { E2eApiClient } from '../support/api/client';
+import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
@@ -56,6 +57,48 @@ export async function findUserAclEntries(client: E2eApiClient, path: string, uid
   }
 
   return acl.acl.filter((entry) => entry.tag === 'USER' && entry.id === uid);
+}
+
+/** The whole of `filesystem.getacl`, a union across the ACL flavours. */
+export type AclRead = CallResponse<E2eApiDirectory, 'filesystem.getacl'>;
+
+/** One template of `filesystem.acltemplate.by_path`. */
+export type AclTemplate = CallResponse<E2eApiDirectory, 'filesystem.acltemplate.by_path'>[number];
+
+/**
+ * Everything `filesystem.getacl` says about `path`, with ids resolved to names.
+ *
+ * The same call the editor and the Permissions card make, so a test reads what
+ * they read.
+ */
+export async function readAcl(client: E2eApiClient, path: string): Promise<AclRead> {
+  return firstValueFrom(
+    client.api.call('filesystem.getacl', [path, true, true]).pipe(timeout(readTimeoutMs)),
+  );
+}
+
+/**
+ * The template called `name`, as the preset picker on `path` offers it.
+ *
+ * `filesystem.acltemplate.by_path` with the picker's own `resolve_names`, so the
+ * entries are the ones choosing it in the UI puts into the form. Throws when the
+ * path is not offered it, which would otherwise read as an empty ACL.
+ */
+export async function readAclTemplate(client: E2eApiClient, path: string, name: string): Promise<AclTemplate> {
+  // Every template, filtered here, exactly as the picker asks for them.
+  const templates = await firstValueFrom(
+    client.api.call('filesystem.acltemplate.by_path', [{
+      path,
+      'format-options': { resolve_names: true },
+    }]).pipe(timeout(readTimeoutMs)),
+  );
+  const template = templates.find((candidate) => candidate.name === name);
+
+  if (!template) {
+    throw new Error(`"${path}" is not offered the ACL preset "${name}".`);
+  }
+
+  return template;
 }
 
 /**

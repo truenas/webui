@@ -1,5 +1,5 @@
 /**
- * SSH, FTP and UPS service settings: preconditions, cleanup and readback, over the API.
+ * SSH, FTP, SNMP and UPS service settings: preconditions, cleanup and readback, over the API.
  *
  * Each service's settings are a single config record, so — as in
  * `fixtures/syslog.ts` — there is nothing to create or delete. Each test starts
@@ -7,23 +7,27 @@
  * snapshotting what it found and restoring that.
  *
  * Only the fields the specs change are written. The baseline is the stock
- * configuration: each protocol's standard port, the SSH options off, and FTP's
- * usual limits. UPS is the exception: its stock configuration cannot be written
- * back, see {@link upsBaseline}. Nothing depends on a baseline matching a fresh
- * install exactly. On an appliance someone has reconfigured, a run puts these
- * fields back to it.
+ * configuration: each protocol's standard port, the SSH options off, FTP's
+ * usual limits, and SNMP's `public` community with v3 off. UPS is the
+ * exception: its stock configuration cannot be written back, see
+ * {@link upsBaseline}. Nothing depends on a baseline matching a fresh install
+ * exactly. On an appliance someone has reconfigured, a run puts these fields
+ * back to it.
  *
- * No settings test starts its service. Saving a stopped service's
- * settings only rewrites its configuration. On an appliance where SSH is
- * running, the port change restarts it on the new port until teardown.
+ * No settings test starts its service. Saving a stopped service's settings
+ * only rewrites its configuration. On an appliance where SSH is running, the
+ * port change restarts it on the new port until teardown. The SNMP spec stops
+ * SNMP first, so its saves never restart anything.
  */
-import type { CallResponse } from '@truenas/api-client';
+import type { CallParams, CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 type SshConfig = CallResponse<E2eApiDirectory, 'ssh.config'>;
 type FtpConfig = CallResponse<E2eApiDirectory, 'ftp.config'>;
+type SnmpConfig = CallResponse<E2eApiDirectory, 'snmp.config'>;
+type SnmpUpdate = NonNullable<CallParams<E2eApiDirectory, 'snmp.update'>[0]>;
 type UpsConfig = CallResponse<E2eApiDirectory, 'ups.config'>;
 
 /** The part of `ssh.config` the SSH spec edits, and Kerberos, which it reads to check it was left alone. */
@@ -107,6 +111,79 @@ export async function setFtpSettings(client: E2eApiClient, settings: FtpSettings
       loginattempt: settings.loginattempt,
       timeout_notransfer: settings.timeout_notransfer,
       timeout: settings.timeout,
+    }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/** Every field of the SNMP form, as `snmp.update` takes it. */
+export type SnmpSettings = Pick<
+  SnmpUpdate,
+  'location' | 'contact' | 'community' | 'options' | 'zilstat' | 'v3' | 'v3_username' | 'v3_authtype'
+  | 'v3_password' | 'v3_privproto' | 'v3_privpassphrase'
+>;
+
+/**
+ * The part of `snmp.config` the SNMP spec asserts: every field but the v3
+ * password and privacy passphrase, which are secrets and may come back redacted.
+ */
+export type SnmpReadback = Pick<
+  SnmpConfig,
+  'location' | 'contact' | 'community' | 'options' | 'zilstat' | 'v3' | 'v3_username' | 'v3_authtype'
+  | 'v3_privproto'
+>;
+
+/**
+ * The SNMP baseline: no location, contact or auxiliary options, the stock
+ * community, zilstat off, and v3 off with every credential blank.
+ *
+ * Middleware refuses an empty community while v3 is off, so it stays `public`.
+ */
+export const snmpBaseline: SnmpSettings = {
+  location: '',
+  contact: '',
+  community: 'public',
+  options: '',
+  zilstat: false,
+  v3: false,
+  v3_username: '',
+  v3_authtype: '',
+  v3_password: '',
+  v3_privproto: null,
+  v3_privpassphrase: '',
+};
+
+/** The SNMP settings as the appliance holds them, less the two secrets. */
+export async function readSnmpSettings(client: E2eApiClient): Promise<SnmpReadback> {
+  const config = await firstValueFrom(client.api.call('snmp.config').pipe(timeout(readTimeoutMs)));
+
+  return {
+    location: config.location,
+    contact: config.contact,
+    community: config.community,
+    options: config.options,
+    zilstat: config.zilstat,
+    v3: config.v3,
+    v3_username: config.v3_username,
+    v3_authtype: config.v3_authtype,
+    v3_privproto: config.v3_privproto,
+  };
+}
+
+/** Writes every SNMP setting. Used for the baseline only, like {@link setSshSettings}. */
+export async function setSnmpSettings(client: E2eApiClient, settings: SnmpSettings): Promise<void> {
+  await firstValueFrom(
+    client.api.call('snmp.update', [{
+      location: settings.location,
+      contact: settings.contact,
+      community: settings.community,
+      options: settings.options,
+      zilstat: settings.zilstat,
+      v3: settings.v3,
+      v3_username: settings.v3_username,
+      v3_authtype: settings.v3_authtype,
+      v3_password: settings.v3_password,
+      v3_privproto: settings.v3_privproto,
+      v3_privpassphrase: settings.v3_privpassphrase,
     }]).pipe(timeout(slowCallTimeoutMs)),
   );
 }

@@ -9,6 +9,9 @@
  *
  * Exposed to specs as the worker-scoped `pool` fixture in `support/fixtures.ts`,
  * so a worker builds it once however many specs ask.
+ *
+ * Also reads a pool's topology back, for the specs that build or change pools of
+ * their own.
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import { ensurePoolAbsent, findPool, getSelectableDisks } from './storage';
@@ -24,6 +27,55 @@ import { readTimeoutMs } from '../support/timeouts';
 export const suiteOwnedPoolName = 'e2e_shared_tank';
 
 const poolCreateTimeoutMs = 3 * 60_000;
+
+/** One entry of a pool's topology, as `pool.query` reports it: a vdev, or a disk inside one. */
+export interface TopologyVdev {
+  /** `MIRROR`, `RAIDZ1`, … for a vdev. `DISK` for a disk, including a vdev of one disk. */
+  type: string;
+  name: string;
+  guid: string;
+  /** `ONLINE`, `OFFLINE`, `DEGRADED`, … */
+  status: string;
+  /** `sdb` on a disk. Null for a disk middleware cannot find. */
+  disk?: string | null;
+  /** A vdev's disks. Empty on a disk. */
+  children: TopologyVdev[];
+}
+
+/** A pool's topology, every category present: one middleware leaves out reads as empty. */
+export interface PoolTopology {
+  data: TopologyVdev[];
+  log: TopologyVdev[];
+  cache: TopologyVdev[];
+  spare: TopologyVdev[];
+  special: TopologyVdev[];
+  dedup: TopologyVdev[];
+}
+
+/** The topology of the pool named `name`. Throws when there is no such pool. */
+export async function readPoolTopology(client: E2eApiClient, name: string): Promise<PoolTopology> {
+  // `query`, not `queryOne`. See "Talking to middleware" in `CLAUDE.md`.
+  const [pool] = await firstValueFrom(
+    client.api.query('pool.query', [['name', '=', name]]).pipe(timeout(readTimeoutMs)),
+  );
+
+  if (!pool) {
+    throw new Error(`The appliance reports no pool named "${name}".`);
+  }
+
+  // The API client types a pool's topology entries only as `unknown`, so the
+  // narrowing has to happen here.
+  const topology = pool.topology as unknown as Partial<PoolTopology> | null | undefined;
+
+  return {
+    data: topology?.data ?? [],
+    log: topology?.log ?? [],
+    cache: topology?.cache ?? [],
+    spare: topology?.spare ?? [],
+    special: topology?.special ?? [],
+    dedup: topology?.dedup ?? [],
+  };
+}
 
 /**
  * The name of an online pool, or undefined when the appliance has none.

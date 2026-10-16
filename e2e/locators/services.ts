@@ -1,5 +1,5 @@
 /**
- * The Services page under System, and the SSH, FTP and UPS forms it opens.
+ * The Services page under System, and the SSH, FTP, SNMP and UPS forms it opens.
  *
  * Every id on a row is keyed on a row tag of `service-<name>`. The page builds it
  * from the display name (`SSH`) and the two cells from the middleware name
@@ -11,7 +11,7 @@
 import { kebabTestSegment } from './test-id';
 
 /** Middleware's name for each service the specs drive. */
-export type ServiceKey = 'ssh' | 'ftp' | 'ups';
+export type ServiceKey = 'ssh' | 'ftp' | 'snmp' | 'ups';
 
 const rowTag = (service: ServiceKey): string => `service-${kebabTestSegment(service)}`;
 
@@ -44,6 +44,31 @@ export const servicesLocators = {
     loginAttempts: '[data-test="input-loginattempt"]',
     notransferTimeout: '[data-test="input-timeout-notransfer"]',
     timeout: '[data-test="input-timeout"]',
+  },
+
+  /** `service-snmp.component.html`. */
+  snmpForm: {
+    location: '[data-test="input-location"]',
+    contact: '[data-test="input-contact"]',
+    community: '[data-test="input-community"]',
+    /**
+     * Auxiliary Parameters. A multiline `tn-input` renders a `textarea`, so the
+     * id is `textarea-*`, not `input-*` — see `locators/api-keys.ts`.
+     */
+    options: '[data-test="textarea-options"]',
+    zilstat: '[data-test="checkbox-zilstat"]',
+
+    /** SNMP v3 Support. Every field below it is rendered only while it is ticked. */
+    v3: '[data-test="checkbox-v3"]',
+    v3Username: '[data-test="input-v3-username"]',
+    v3AuthType: '[data-test="select-v3-authtype"]',
+    v3AuthTypeSha: '[data-test="option-v3-authtype-sha"]',
+    v3Password: '[data-test="input-v3-password"]',
+    /** The field around {@link v3Password}, `testId="v3-password"`, which holds its error text. */
+    v3PasswordField: '[data-test="form-field-v3-password"]',
+    v3PrivProto: '[data-test="select-v3-privproto"]',
+    v3PrivProtoAes: '[data-test="option-v3-privproto-aes"]',
+    v3PrivPassphrase: '[data-test="input-v3-privpassphrase"]',
   },
 
   /** `service-ups.component.html`. */
