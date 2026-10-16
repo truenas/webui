@@ -76,7 +76,7 @@ export const haInterfaceLocators = {
 /** The Failover card on System > Advanced Settings, shown once HA licensed, and its form. */
 export const failoverLocators = {
   card: {
-    /** `Enabled` or `Disabled`. */
+    /** Labelled Enabled: `Yes` or `No` (the `yesNo` pipe). */
     enabled: '[data-test="text-failover-enabled"]',
     configure: '[data-test="button-failover-configure"]',
   },

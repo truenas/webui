@@ -134,7 +134,7 @@ export async function saveAutomaticFailover(page: Page, enabled: boolean): Promi
   await page.locator(failoverLocators.form.enabled).setChecked(enabled);
   await page.locator(failoverLocators.form.save).click();
   await expect(page.locator(failoverLocators.form.save)).toBeHidden();
-  await expect(page.locator(failoverLocators.card.enabled)).toHaveText(enabled ? 'Enabled' : 'Disabled');
+  await expect(page.locator(failoverLocators.card.enabled)).toHaveText(enabled ? 'Yes' : 'No');
 }
 
 /**
