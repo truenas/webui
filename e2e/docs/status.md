@@ -250,6 +250,21 @@ service rather than the share: the Apple-extensions gate a Time Machine share
 is held behind (the write, `smb.update`, outlives the share, so the spec puts
 it back), a row's Enabled switch, and the card's own start/stop switch.
 
+The SMB service's own form, opened from its row on System > Services, is in
+`tests/smb-service-settings.e2e.ts`. It saves the NetBIOS section (name,
+workgroup, description, minimum protocol, NTLMv1) and the advanced Other Options
+(UNIX charset, transport encryption, debug, syslog, multichannel, file and
+directory masks), each asserted as the whole `smb.config` record so a field the
+form dropped fails too. It also covers middleware refusing SMB1 with required
+encryption, read off the encryption field's error. The service stays stopped,
+and the settings are snapshotted and written back, since the NetBIOS name and
+workgroup differ per appliance. On that page the row and its Status cell are
+tagged by the display name (`service-smb`) and its buttons by the middleware
+name (`service-cifs`). Not covered: Administrators Group, Guest Account, NetBIOS
+Alias, Bind IP Addresses, Local Master, Enable Search (needs the TrueSearch
+entitlement), Stateful Failover (HA only), and renaming while joined to a
+directory service.
+
 `tests/smb-list-page.e2e.ts` covers the standalone list at `/sharing/smb`, opened
 from the card title: it lists the share the card has no room for, its search
 narrows the list to one row, and its own Add (`add-smb-share`) creates a share.

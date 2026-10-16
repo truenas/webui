@@ -1,27 +1,31 @@
 /**
- * SSH and FTP service settings: preconditions, cleanup and readback, over the API.
+ * SSH, FTP and SMB service settings: preconditions, cleanup and readback, over the API.
  *
  * Each service's settings are a single config record, so — as in
- * `fixtures/syslog.ts` — there is nothing to create or delete. Each test starts
- * from a known baseline and teardown writes that baseline back, rather than
- * snapshotting what it found and restoring that.
+ * `fixtures/syslog.ts` — there is nothing to create or delete. For SSH and FTP
+ * each test starts from a known baseline and teardown writes that baseline
+ * back, rather than snapshotting what it found and restoring that. SMB is the
+ * exception, for the reason on {@link SmbSettings}.
  *
  * Only the fields the specs change are written. The baseline is the stock
  * configuration: each protocol's standard port, the SSH options off, and FTP's
  * usual limits. Nothing depends on it matching a fresh install exactly. On an
  * appliance someone has reconfigured, a run puts these fields back to it.
  *
- * Neither settings test starts its service. Saving a stopped service's
- * settings only rewrites its configuration. On an appliance where SSH is
- * running, the port change restarts it on the new port until teardown.
+ * No settings test starts its service. Saving a stopped service's settings
+ * only rewrites its configuration. On an appliance where SSH is running, the
+ * port change restarts it on the new port until teardown. The SMB spec stops
+ * SMB first, so its saves never restart anything.
  */
-import type { CallResponse } from '@truenas/api-client';
+import type { CallParams, CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 type SshConfig = CallResponse<E2eApiDirectory, 'ssh.config'>;
 type FtpConfig = CallResponse<E2eApiDirectory, 'ftp.config'>;
+type SmbConfig = CallResponse<E2eApiDirectory, 'smb.config'>;
+type SmbUpdate = NonNullable<CallParams<E2eApiDirectory, 'smb.update'>[0]>;
 
 /** The part of `ssh.config` the SSH spec edits, and Kerberos, which it reads to check it was left alone. */
 export type SshSettings = Pick<SshConfig, 'tcpport' | 'passwordauth' | 'kerberosauth' | 'tcpfwd'>;
@@ -106,4 +110,67 @@ export async function setFtpSettings(client: E2eApiClient, settings: FtpSettings
       timeout: settings.timeout,
     }]).pipe(timeout(slowCallTimeoutMs)),
   );
+}
+
+/**
+ * The part of `smb.config` the SMB settings spec edits, and Apple extensions,
+ * which it reads to check the form sent back what it loaded.
+ *
+ * Unlike SSH and FTP there is no fixed baseline: the NetBIOS name and workgroup
+ * differ per appliance, so the spec snapshots these in `beforeEach` and writes
+ * the snapshot back.
+ */
+export type SmbSettings = Pick<
+  SmbConfig,
+  'netbiosname' | 'workgroup' | 'description' | 'minimum_protocol' | 'ntlmv1_auth' | 'unixcharset' | 'encryption'
+  | 'debug' | 'syslog' | 'multichannel' | 'filemask' | 'dirmask' | 'aapl_extensions'
+>;
+
+/** The SMB settings as the appliance holds them. */
+export async function readSmbSettings(client: E2eApiClient): Promise<SmbSettings> {
+  const config = await firstValueFrom(client.api.call('smb.config').pipe(timeout(readTimeoutMs)));
+
+  return {
+    netbiosname: config.netbiosname,
+    workgroup: config.workgroup,
+    description: config.description,
+    minimum_protocol: config.minimum_protocol,
+    ntlmv1_auth: config.ntlmv1_auth,
+    unixcharset: config.unixcharset,
+    encryption: config.encryption,
+    debug: config.debug,
+    syslog: config.syslog,
+    multichannel: config.multichannel,
+    filemask: config.filemask,
+    dirmask: config.dirmask,
+    aapl_extensions: config.aapl_extensions,
+  };
+}
+
+/**
+ * Writes the SMB settings. For preconditions and teardown only, like
+ * {@link setSshSettings}; the change under test goes through the form.
+ *
+ * What {@link readSmbSettings} returned is always accepted back: middleware
+ * reports an unset mask or encryption as `DEFAULT` and takes `DEFAULT` on write.
+ */
+export async function setSmbSettings(client: E2eApiClient, settings: SmbSettings): Promise<void> {
+  const update: SmbUpdate = {
+    netbiosname: settings.netbiosname,
+    workgroup: settings.workgroup,
+    description: settings.description,
+    minimum_protocol: settings.minimum_protocol,
+    ntlmv1_auth: settings.ntlmv1_auth,
+    // Read from `smb.config`, so always a name middleware accepts.
+    unixcharset: settings.unixcharset as SmbUpdate['unixcharset'],
+    encryption: settings.encryption,
+    debug: settings.debug,
+    syslog: settings.syslog,
+    multichannel: settings.multichannel,
+    filemask: settings.filemask,
+    dirmask: settings.dirmask,
+    aapl_extensions: settings.aapl_extensions,
+  };
+
+  await firstValueFrom(client.api.call('smb.update', [update]).pipe(timeout(slowCallTimeoutMs)));
 }

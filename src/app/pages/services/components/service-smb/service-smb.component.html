@@ -6,6 +6,7 @@
 >
   <tn-form-section [heading]="'NetBIOS' | translate">
     <tn-form-field
+      testId="netbiosname"
       [label]="'NetBIOS Name' | translate"
       [tooltip]="tooltips.netbiosname | translate"
     >
@@ -59,6 +60,7 @@
       </tn-form-field>
 
       <tn-form-field
+        testId="encryption"
         [label]="'Transport Encryption Behavior' | translate"
         [required]="true"
       >
