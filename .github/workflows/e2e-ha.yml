@@ -1,13 +1,17 @@
-# A TrueNAS HA pair inside one truenas-lab-xlarge runner, its scale set
-# attaching the appliance disk twice. The truenas-appliance-runner action
-# boots the pair (ha: true) and hands it over unconfigured; ha_setup.py then
-# makes it HA over the API and, unless told not to, fails over once.
-#
-# ha_setup.py stands in for the HA suite's first journeys, which will drive
-# the same setup through the UI.
+# The HA suite (e2e/tests-ha) against a TrueNAS HA pair inside one
+# truenas-lab-xlarge runner, its scale set attaching the appliance disk
+# twice. The truenas-appliance-runner action boots the pair (ha: true) and
+# hands it over unconfigured; the suite licenses it, sets HA up and fails it
+# over, all through the UI built from this checkout.
 #
 # Runs on every push to its branch while that is being built: a workflow
 # that is not on the default branch cannot be dispatched.
+#
+# Same public-repository rules as e2e.yml: same-repo pushes and dispatches
+# only, the grep filter never interpolated into a shell line, and nothing in
+# the published artifacts outliving the job — the password is the job's,
+# the pair dies with the runner, and the one test that handles the license
+# records no trace, screenshot or video (playwright.config.ts, ha-license).
 
 name: E2E HA
 
@@ -16,9 +20,10 @@ on:
     branches: [ha-e2e]
   workflow_dispatch:
     inputs:
-      failover:
-        type: boolean
-        default: true
+      grep:
+        description: Optional Playwright --grep filter
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -28,11 +33,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ha:
+  e2e-ha:
     runs-on: truenas-lab-xlarge
-    timeout-minutes: 75
+    timeout-minutes: 90
+    env:
+      NGINX_IMAGE: nginx:1.27
     steps:
       - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/prepare
+
+      # As in e2e.yml: the browser runs in Playwright's own image, whose tag
+      # must match the installed @playwright/test, and a runner without a
+      # usable Docker fails here, before the pair boots.
+      - name: Resolve the Playwright image
+        run: |
+          set -euo pipefail
+          if docker info > /dev/null 2>&1; then
+            docker=docker
+          elif sudo -n docker info > /dev/null 2>&1; then
+            docker="sudo -n docker"
+          else
+            echo "::error::No usable Docker: neither 'docker' nor 'sudo -n docker' can reach the daemon"
+            exit 1
+          fi
+          echo "DOCKER=$docker" >> "$GITHUB_ENV"
+          version=$(node -p "require('@playwright/test/package.json').version")
+          image="mcr.microsoft.com/playwright:v${version}-noble"
+          $docker pull --quiet "$image"
+          $docker pull --quiet "$NGINX_IMAGE"
+          echo "PLAYWRIGHT_IMAGE=$image" >> "$GITHUB_ENV"
 
       - name: Boot the HA pair
         uses: iXsystems/ux-github-workflows/.github/actions/truenas-appliance-runner@ha-mode
@@ -41,40 +71,133 @@ jobs:
           memory-mb: 8192
           data-disk-count: 4
 
-      - name: Make it HA
-        env:
-          LICENSE_URL: ${{ secrets.E2E_LICENSE_URL }}
-          # Off only when a dispatch says so: a push has no inputs, and an
-          # absent input compares equal to false.
-          FAILOVER: ${{ github.event_name == 'workflow_dispatch' && !inputs.failover && 'false' || 'true' }}
+      - name: Build the UI
         run: |
           set -euo pipefail
-          pem="$RUNNER_TEMP/ha-license.txt"
+          yarn build:prod
+          [ -f dist/index.html ] || { echo "::error::dist has no index.html"; exit 1; }
+
+      # The built UI, served twice by nginx on the runner's own network, the
+      # same docker/nginx.conf e2e.yml uses: once against controller 1 for the
+      # setup journeys, and once against the VIP for those after it exists.
+      # Host networking rather than Docker's bridge, so nginx reaches the
+      # pair from the runner's own address on the pair's network: the pair
+      # loses the default route DHCP gave it once the suite makes its
+      # addresses static, and a bridge address would no longer be reachable
+      # from it. Over TLS for the reason e2e.yml gives.
+      - name: Serve the UI
+        run: |
+          set -euo pipefail
+          openssl req -x509 -newkey rsa:2048 -nodes -days 2 -subj /CN=localhost \
+            -keyout "$RUNNER_TEMP/e2e-ui.key" -out "$RUNNER_TEMP/e2e-ui.crt" > /dev/null 2>&1
+          serve() {
+            local name="$1" upstream="$2" http="$3" https="$4" conf="$RUNNER_TEMP/nginx-$1.conf"
+            sed \
+              -e "s|%%HOSTNAME%%|$upstream|g" \
+              -e "s|%%VERTAG%%|$(date +%s)|g" \
+              -e "s|^\([[:space:]]*error_log\) .*|\1 /dev/stderr;|" \
+              -e "s|^\([[:space:]]*access_log\) .*|\1 off;|" \
+              -e "s|^\([[:space:]]*\)listen[[:space:]]*0\.0\.0\.0:80;|\1listen 127.0.0.1:$http;\n\1listen 127.0.0.1:$https ssl; ssl_certificate /etc/nginx/e2e-ui.crt; ssl_certificate_key /etc/nginx/e2e-ui.key;|" \
+              -e "/listen[[:space:]]*\[::\]:80;/d" \
+              -e "/error_page[[:space:]]*500 502 503 504/d" \
+              docker/nginx.conf > "$conf"
+            grep -q "listen 127.0.0.1:$https ssl" "$conf" || { echo "::error::docker/nginx.conf no longer has the listen line this step rewrites"; exit 1; }
+            $DOCKER run -d --rm --name "e2e-ha-ui-$name-${GITHUB_RUN_ID}" --network host \
+              -v "$GITHUB_WORKSPACE/dist:/var/www/webui:ro" \
+              -v "$conf:/etc/nginx/tn-nginx.conf:ro" \
+              -v "$RUNNER_TEMP/e2e-ui.crt:/etc/nginx/e2e-ui.crt:ro" \
+              -v "$RUNNER_TEMP/e2e-ui.key:/etc/nginx/e2e-ui.key:ro" \
+              "$NGINX_IMAGE" nginx -c /etc/nginx/tn-nginx.conf > /dev/null
+            for _ in $(seq 1 30); do
+              [ "$(curl -sk -o /dev/null -w '%{http_code}' "https://localhost:$https/ui/" || true)" = 200 ] && return 0
+              sleep 2
+            done
+            echo "::error::The $name UI is not serving at https://localhost:$https/ui/"
+            $DOCKER logs "e2e-ha-ui-$name-${GITHUB_RUN_ID}" || true
+            exit 1
+          }
+          serve node-a "$TN_HA_NODE_A:80" 8080 8443
+          serve vip "$TN_HA_VIP:80" 9080 9443
+          {
+            echo "TN_UI_BASE_URL=https://localhost:8443/ui/"
+            echo "TN_UI_BASE_URL_HTTP=http://localhost:8080/ui/"
+            echo "TN_HA_VIP_UI_BASE_URL=https://localhost:9443/ui/"
+          } >> "$GITHUB_ENV"
+
+      # The HA license, fetched fresh as for e2e.yml's appliance, into a file
+      # only the suite's container sees: the suite pastes it into the UI.
+      - name: Fetch the HA license
+        env:
+          LICENSE_URL: ${{ secrets.E2E_LICENSE_URL }}
+        run: |
+          set -euo pipefail
+          [ -n "$LICENSE_URL" ] || { echo "::error::The E2E_LICENSE_URL secret is not set"; exit 1; }
+          dir="$RUNNER_TEMP/ha-license"
+          mkdir -p "$dir"
           curl -fsS --retry 3 --retry-connrefused --retry-delay 2 --max-time 30 \
             -X POST "$LICENSE_URL" -H 'Content-Type: application/json' -d '{"serial":"CI-HAA"}' \
-            | jq -r '.license // empty' > "$pem"
-          grep -q -- '-----BEGIN TRUENAS LICENSE-----' "$pem" \
+            | jq -r '.license // empty' > "$dir/license.txt"
+          grep -q -- '-----BEGIN TRUENAS LICENSE-----' "$dir/license.txt" \
             || { echo "::error::MES did not return a license for CI-HAA"; exit 1; }
-          # tnctl, beside the script the action put on PATH.
-          APPLIANCE_LIB="$(dirname "$(readlink -f "$(command -v truenas-appliance)")")"
-          export APPLIANCE_LIB
-          args=("$pem")
-          [ "$FAILOVER" = true ] && args+=(--failover)
-          python3 -u .github/e2e-ha/ha_setup.py "${args[@]}"
+          echo "LICENSE_DIR=$dir" >> "$GITHUB_ENV"
 
-      - name: Consoles and shared storage
-        if: always()
+      - name: Run the HA suite
+        id: suite
+        env:
+          CI: 'true'
+          TN_GREP: ${{ inputs.grep }}
+        run: |
+          set -euo pipefail
+          case "${TN_GREP:-}" in
+            *$'\n'*|*$'\r'*) echo "::error::The grep input must be a single line"; exit 1 ;;
+          esac
+          envFile="$RUNNER_TEMP/suite.env"
+          trap 'rm -f "$envFile"' EXIT
+          printf '%s\n' \
+            "CI=$CI" \
+            "TN_GREP=${TN_GREP:-}" \
+            "TN_PROFILE=$TN_PROFILE" \
+            "TN_HOST=$TN_HOST" \
+            "TN_USERNAME=$TN_USERNAME" \
+            "TN_PASSWORD=$TN_PASSWORD" \
+            "TN_UI_BASE_URL=$TN_UI_BASE_URL" \
+            "TN_UI_BASE_URL_HTTP=$TN_UI_BASE_URL_HTTP" \
+            "TN_HA=$TN_HA" \
+            "TN_HA_NODE_A=$TN_HA_NODE_A" \
+            "TN_HA_NODE_B=$TN_HA_NODE_B" \
+            "TN_HA_VIP=$TN_HA_VIP" \
+            "TN_HA_NETMASK=$TN_HA_NETMASK" \
+            "TN_HA_VIP_UI_BASE_URL=$TN_HA_VIP_UI_BASE_URL" \
+            "TN_HA_LICENSE_FILE=/license/license.txt" \
+            > "$envFile"
+          $DOCKER run --rm \
+            --network host \
+            --ipc host \
+            -u "$(id -u):$(id -g)" \
+            -e HOME=/tmp \
+            -v "$GITHUB_WORKSPACE:/work" \
+            -v "$LICENSE_DIR:/license:ro" \
+            -w /work \
+            --env-file "$envFile" \
+            "$PLAYWRIGHT_IMAGE" \
+            bash -c 'if [ -n "${TN_GREP:-}" ]; then ./node_modules/.bin/playwright test --grep "$TN_GREP"; else ./node_modules/.bin/playwright test; fi'
+
+      # What both controllers and the shared disks say, when anything failed:
+      # consoles, fenced's log and the disks' persistent reservations from
+      # each node, and what LIO holds for them.
+      - name: The pair's consoles, fencing and shared disks
+        if: failure()
         run: |
           for n in a b; do
             echo "::group::node $n console"
             truenas-appliance console "$n" 300 || true
             echo "::endgroup::"
+            echo "::group::node $n fenced and reservations"
+            truenas-appliance ssh "$n" 'sudo tail -n 60 /var/log/fenced.log
+              lsblk -o NAME,SERIAL,VENDOR,MODEL,TRAN
+              for d in /dev/sd?; do echo "== $d"; sudo sg_persist -n -i -k "$d"; sudo sg_persist -n -i -r "$d"; done' || true
+            echo "::endgroup::"
           done
-          echo "::group::dnsmasq"
-          cat "$APPLIANCE_DIR/dnsmasq.log" 2>/dev/null || true
-          echo "::endgroup::"
-          # What LIO holds for the shared LUNs: registrations and the
-          # reservation, as the target sees them, and what the kernel said.
           echo "::group::LIO persistent reservations"
           for d in /sys/kernel/config/target/core/fileio_*/tnha*; do
             echo "== $d"
@@ -84,3 +207,30 @@ jobs:
           done
           sudo -n dmesg | grep -iE 'target|reserv|aptpl' | tail -n 80 || true
           echo "::endgroup::"
+
+      - name: Upload JUnit results
+        if: always() && steps.suite.outcome != 'skipped'
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-ha-junit
+          path: test-results/junit.xml
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload failure traces
+        if: always() && steps.suite.outcome != 'skipped'
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-ha-failure-traces
+          path: |
+            test-results/**
+            !test-results/junit.xml
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Stop the UI
+        if: always() && env.DOCKER != ''
+        run: |
+          for name in node-a vip; do
+            $DOCKER rm -f "e2e-ha-ui-$name-${GITHUB_RUN_ID}" > /dev/null 2>&1 || true
+          done
