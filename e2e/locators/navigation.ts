@@ -25,6 +25,8 @@ export const navLocators = {
   users: '[data-test="link-users"]',
   groups: '[data-test="link-groups"]',
   privileges: '[data-test="link-privileges"]',
+  /** `Directory Services` under Credentials, raw item name again. */
+  directoryServices: '[data-test="link-directory-services"]',
   /** `S3 Access Keys` under Credentials; the submenu writes the raw item name. */
   s3AccessKeys: '[data-test="link-s3-access-keys"]',
   /** `Backup Credentials` under Credentials, raw item name again. */

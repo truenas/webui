@@ -13,22 +13,11 @@ import {
 } from '../../fixtures/users';
 import {
   attemptSignIn, awaitAdminShell, expectSignInRefused, insecureSigninUrl, servesUiOverHttp, signIn,
-  signInTimeoutMs, signOut, submitSignIn,
+  signInTimeoutMs, signOut, submitSignIn, wrongCredentialsMessage,
 } from '../../flows/auth';
 import { signinLocators } from '../../locators/signin';
 import { adminLayout } from '../../support/constants';
 import { expect, test } from '../../support/fixtures';
-
-/**
- * What the app says for a wrong username, a wrong password and a disabled
- * account alike.
- *
- * Middleware answers `AUTH_ERR` to all three, which the app maps to one message
- * (`SigninStore.getLoginErrorMessage`). That is the intended behaviour, not a
- * shortcoming: distinguishing them would tell an attacker which usernames are
- * real.
- */
-const refusalMessage = 'Wrong username or password. Please try again.';
 
 /** A username that cannot exist: `user.create` rejects these characters. */
 const unknownUsername = 'nobody-at-all$$';
@@ -36,12 +25,12 @@ const unknownUsername = 'nobody-at-all$$';
 test('the form refuses bad credentials without saying which half was wrong', async ({ page, config }) => {
   await test.step('a real account with the wrong password is refused', async () => {
     await attemptSignIn(page, config.username, 'not-the-password');
-    await expectSignInRefused(page, refusalMessage);
+    await expectSignInRefused(page, wrongCredentialsMessage);
   });
 
   await test.step('an account that does not exist is refused identically', async () => {
     await attemptSignIn(page, unknownUsername, 'not-the-password');
-    await expectSignInRefused(page, refusalMessage);
+    await expectSignInRefused(page, wrongCredentialsMessage);
   });
 
   // No "and the right password still works" step here, deliberately. It would

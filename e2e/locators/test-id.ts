@@ -43,7 +43,7 @@ import { kebabCase } from 'lodash-es';
  * `[optionTestIdKey]="optionTestIdByKebabLabel"` use **lodash** `kebabCase`
  * instead, which splits letters from digits: `RAIDZ2` becomes `raidz-2` there
  * and `raidz2` here. Derive option ids from the extractor the control actually
- * declares — see the `layoutRaidz2` note in `locators/storage.ts`, and
+ * declares — see the `layoutOption` note in `locators/storage.ts`, and
  * {@link legacyKebabTestSegment} below for interpolating a runtime value into
  * one of those ids.
  */
