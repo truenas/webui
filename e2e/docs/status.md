@@ -781,8 +781,8 @@ beside a second CSR that must come through untouched. The wizard is driven with
 its defaults (no profile, RSA 2048, SHA256, no extensions) and only the subject
 filled in. The row tag is `csr-<name>`. The card lists four CSRs before its
 pager, so each test fails at the start if its rows would not fit. Importing a
-CSR, profiles, extensions, the CSR card's Edit and Download, ACME certificates
-and ACME DNS authenticators are not covered.
+CSR, profiles, extensions, the CSR card's Edit and Download, and ACME
+certificates are not covered.
 
 The Certificates card is in `tests/certificates-import.e2e.ts`: importing a
 certificate with its private key, editing one's name and "Add to trusted store",
@@ -796,6 +796,17 @@ edit and delete each run beside a second certificate that must not change. The
 row tag is `cert-<name>`, and the card has the same four-row limit as the CSR
 card. Importing with a passphrase, the Download action and the trusted store's
 effect on the system are not covered.
+
+The ACME DNS-Authenticators card on the same page is in
+`tests/acme-dns-authenticators.e2e.ts`: a Cloudflare authenticator added with an
+API token, the form refusing a token together with a key (its banner shown and
+Save disabled until the key is cleared), an edit beside a bystander, and a
+delete from the row beside a bystander. Each is read back through
+`acme.dns.authenticator.query`. The token is a dummy: middleware checks only
+which Cloudflare credentials were given together and never calls Cloudflare on
+save. The row tag is still the misspelt `amce-dns-<name>`, kept because
+renaming a resolved id breaks anything outside that selects it. Other
+providers, the email-plus-key form and the card's pager are not covered.
 
 The Portals, Initiators and Authorized Access tabs of the full iSCSI page, and
 its Global Target Configuration, are in `tests/iscsi-config.e2e.ts`, reached
