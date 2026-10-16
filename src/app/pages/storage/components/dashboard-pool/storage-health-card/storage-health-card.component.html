@@ -26,7 +26,12 @@
 
   <div class="card-content">
     <div class="details-item">
-      <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
+      <ix-pool-card-icon
+        tnTestIdType="icon"
+        [type]="iconType()"
+        [tooltip]="iconTooltip()"
+        [tnTestId]="[pool().name, 'storage-health', iconType()]"
+      ></ix-pool-card-icon>
       <div class="label status" tnTestIdType="text" [tnTestId]="[pool().name, 'storage-health-status']">
         {{ getErrorText() }}
       </div>

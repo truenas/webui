@@ -799,6 +799,16 @@ so the other steps can reuse them, and `createRaidz2Pool` is built from them.
 dRAID, the other kinds of vdev, manual selection, encryption and the wizard's
 validation are not covered.
 
+What the dashboard says about a degraded pool is in `tests/pool-degraded.e2e.ts`.
+It builds its own two-disk mirror, `e2e_degraded_tank`, and takes one disk offline
+over the API, since `pool-devices.e2e.ts` already drives that from the UI. The
+Storage Health card must then read Degraded with the warning icon. On the VDEVs
+page, the mirror must read `DEGRADED` and the disk `OFFLINE`. Once the disk is back
+online, the card must read "Online, no errors." with the safe icon. The icon had no
+id. It is now `icon-<pool>-storage-health-<warn|safe|…>`, on the icon beside the
+status line only, because the card's heading repeats the same icon. The
+`VolumeStatus` alert is not covered: middleware raises it on its own schedule.
+
 Scrubbing a pool came next, in `tests/pool-scrub.e2e.ts`: one test starts a
 scrub from Scrub Now on the pool's Storage Health card and waits for it to
 finish. `pool.query` has to report a finished `SCRUB` with no errors. The card
