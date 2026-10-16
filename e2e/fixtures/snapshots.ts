@@ -165,6 +165,11 @@ export async function ensureSnapshotsAbsent(client: E2eApiClient, dataset: strin
  * The cheapest change to a dataset's *contents* the API offers, and contents
  * are what a rollback is about: properties and child datasets survive one, so
  * neither can show that it happened.
+ *
+ * Middleware chmods a new directory whose mode differs from the requested one,
+ * and a dataset with a RESTRICTED aclmode (the SMB preset's) refuses that with
+ * EPERM. By default the directory is then removed and the call fails; without
+ * `raise_chmod_error` it is kept, with the ACL it inherited.
  */
 export async function ensureDirectoryPresent(client: E2eApiClient, path: string): Promise<void> {
   if (await directoryExists(client, path)) {
@@ -172,7 +177,9 @@ export async function ensureDirectoryPresent(client: E2eApiClient, path: string)
   }
 
   await firstValueFrom(
-    client.api.call('filesystem.mkdir', [{ path }]).pipe(timeout(slowCallTimeoutMs)),
+    client.api
+      .call('filesystem.mkdir', [{ path, options: { raise_chmod_error: false } }])
+      .pipe(timeout(slowCallTimeoutMs)),
   );
 }
 
