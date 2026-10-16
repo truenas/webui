@@ -15,7 +15,7 @@
  * and the memory total, which comes from `reporting.realtime` rather than from `system.info`.
  */
 import {
-  captureDashState, readDashState, readFirstNic, readNicWithIpv4, readPoolHealth, restoreDashState, writeDashState,
+  captureDashState, readDashState, readFirstNicName, readNicWithIpv4, readShownPool, restoreDashState, writeDashState,
 } from '../fixtures/dashboard';
 import type { CapturedDashState, DashboardGroup } from '../fixtures/dashboard';
 import { readCpuModel } from '../fixtures/system-info';
@@ -50,7 +50,7 @@ test('an admin with no saved layout opens the Dashboard, and every default card 
   page, api,
 }) => {
   await writeDashState(api, null);
-  const nic = await readFirstNic(api);
+  const nicName = await readFirstNicName(api);
 
   await goToDashboard(page);
   await page.reload();
@@ -65,8 +65,8 @@ test('an admin with no saved layout opens the Dashboard, and every default card 
     ['Memory', dashboardLocators.memory.title],
     ['Storage', dashboardLocators.storage.reports],
     ['Backup Tasks', dashboardLocators.backupTasks.title],
-    ['IPv4 Address', dashboardLocators.ipv4Address.title(nic.name)],
-    ['Interface', dashboardLocators.interface.name(nic.name)],
+    ['IPv4 Address', dashboardLocators.ipv4Address.title(nicName)],
+    ['Interface', dashboardLocators.interface.name(nicName)],
     ['Help', dashboardLocators.help.documentation],
   ];
   for (const [card, locator] of defaultCards) {
@@ -96,7 +96,9 @@ test('an admin opens the Dashboard, and the CPU, storage and network cards show 
   await writeDashState(api, layout);
 
   const cpuModel = await readCpuModel(api);
-  const poolHealth = await readPoolHealth(api, pool);
+  // The fixture's pool, unless the appliance lists six others before it and the card has no tile
+  // for it.
+  const shownPool = await readShownPool(api, pool);
 
   await goToDashboard(page);
   await page.reload();
@@ -104,11 +106,11 @@ test('an admin opens the Dashboard, and the CPU, storage and network cards show 
   await expect(page.locator(dashboardLocators.cpuModel.value)).toHaveText(cpuModel, { timeout: widgetLoadTimeoutMs });
 
   // The widget writes the raw status, except for a pool that is ONLINE and not healthy.
-  const expectedPoolStatus = poolHealth.status === 'ONLINE' && !poolHealth.healthy ? 'Unhealthy' : poolHealth.status;
-  await expect(page.locator(dashboardLocators.storage.poolName(pool))).toHaveText(pool, {
+  const expectedPoolStatus = shownPool.status === 'ONLINE' && !shownPool.healthy ? 'Unhealthy' : shownPool.status;
+  await expect(page.locator(dashboardLocators.storage.poolName(shownPool.name))).toHaveText(shownPool.name, {
     timeout: widgetLoadTimeoutMs,
   });
-  await expect(page.locator(dashboardLocators.storage.poolStatus(pool))).toHaveText(expectedPoolStatus);
+  await expect(page.locator(dashboardLocators.storage.poolStatus(shownPool.name))).toHaveText(expectedPoolStatus);
 
   await expect(page.locator(dashboardLocators.interface.name(nic.name))).toHaveText(nic.name, {
     timeout: widgetLoadTimeoutMs,

@@ -70,7 +70,10 @@ export async function restoreDashState(client: E2eApiClient, captured: CapturedD
 /** The fields of an `interface.query` row the network widgets show. */
 interface InterfaceEntry {
   name: string;
+  /** `PHYSICAL`, `VLAN`, `LINK_AGGREGATION`, `BRIDGE` or `UNKNOWN`. */
   type: string;
+  /** The member ports of a `LINK_AGGREGATION`. */
+  lag_ports?: string[];
   state: {
     link_state: string;
     aliases: {
@@ -101,55 +104,79 @@ function toDashboardNic(entry: InterfaceEntry): DashboardNic {
   };
 }
 
-async function queryInterfaces(client: E2eApiClient): Promise<InterfaceEntry[]> {
-  const interfaces = await firstValueFrom(client.api.query('interface.query', []).pipe(timeout(readTimeoutMs)));
+/**
+ * The `interface.query` rows the network cards can show.
+ *
+ * webui's `processNetworkInterfaces` folds each VLAN into its parent and each link aggregation's
+ * member ports into the aggregation, and drops the folded rows from the list the cards pick from.
+ * A card asked for one of those rows answers "Network interface … not found."
+ */
+async function queryDashboardInterfaces(client: E2eApiClient): Promise<InterfaceEntry[]> {
+  const response = await firstValueFrom(client.api.query('interface.query', []).pipe(timeout(readTimeoutMs)));
+  const interfaces = response as unknown as InterfaceEntry[];
+  const laggMembers = new Set(interfaces.flatMap((entry) => entry.lag_ports ?? []));
 
-  return interfaces as unknown as InterfaceEntry[];
+  return interfaces.filter((entry) => entry.type !== 'VLAN' && !laggMembers.has(entry.name));
 }
 
 /**
- * The NIC the default layout's network cards show: the first `interface.query` row.
+ * The name of the NIC the default layout's network cards show.
  *
- * Both cards fall back to the first NIC when their settings name none. webui folds VLANs into
- * their parent before taking it, so a VLAN is skipped here too.
+ * Both cards fall back to the first NIC in webui's list when their settings name none.
  */
-export async function readFirstNic(client: E2eApiClient): Promise<DashboardNic> {
-  const nic = (await queryInterfaces(client)).find((entry) => entry.type !== 'VLAN');
+export async function readFirstNicName(client: E2eApiClient): Promise<string> {
+  const [nic] = await queryDashboardInterfaces(client);
   if (!nic) {
     throw new Error('interface.query reports no NIC for the Dashboard\'s network cards to show.');
   }
 
-  return toDashboardNic(nic);
+  return nic.name;
 }
 
-/** The first NIC with an IPv4 address, so the IPv4 Address card has something to show. */
+/**
+ * A physical NIC with an IPv4 address of its own, so the IPv4 Address card has something to show.
+ *
+ * Physical, because webui adds a link aggregation's member addresses to the aggregation's own, and
+ * {@link DashboardNic} reads only the row's. A physical NIC that is not a member shows exactly that.
+ */
 export async function readNicWithIpv4(client: E2eApiClient): Promise<DashboardNic> {
-  const nic = (await queryInterfaces(client))
+  const nic = (await queryDashboardInterfaces(client))
+    .filter((entry) => entry.type === 'PHYSICAL')
     .map(toDashboardNic)
     .find((entry) => entry.ipv4Addresses.length > 0);
   if (!nic) {
-    throw new Error('interface.query reports no NIC with an IPv4 address.');
+    throw new Error('interface.query reports no physical NIC with an IPv4 address.');
   }
 
   return nic;
 }
 
-/** The fields of a `pool.query` row the Storage card's status line is computed from. */
-export interface PoolHealth {
+/** The fields of a `pool.query` row the Storage card's tile shows its name and status from. */
+export interface DashboardPool {
+  name: string;
   /** `ONLINE` for a healthy imported pool. */
   status: string;
   healthy: boolean;
 }
 
-export async function readPoolHealth(client: E2eApiClient, pool: string): Promise<PoolHealth> {
-  const [entry] = await firstValueFrom(
-    client.api.query('pool.query', [['name', '=', pool]]).pipe(timeout(readTimeoutMs)),
-  );
+/** How many pools the Storage card gives a tile: `poolsInfo().slice(0, 6)`. */
+const storageCardPoolLimit = 6;
+
+/**
+ * A pool the Storage card shows: `preferred` when it has a tile, otherwise the first pool listed.
+ *
+ * The card shows the first six pools in unfiltered `pool.query` order, so on an appliance with
+ * more, the pool a spec's `pool` fixture provided may have no tile at all.
+ */
+export async function readShownPool(client: E2eApiClient, preferred: string): Promise<DashboardPool> {
+  const response = await firstValueFrom(client.api.query('pool.query', []).pipe(timeout(readTimeoutMs)));
+  const shown = (response as unknown as DashboardPool[]).slice(0, storageCardPoolLimit);
+  const entry = shown.find((pool) => pool.name === preferred) ?? shown[0];
   if (!entry) {
-    throw new Error(`pool.query reports no pool named "${pool}".`);
+    throw new Error('pool.query reports no pool for the Storage card to show.');
   }
 
-  const { status, healthy } = entry as unknown as PoolHealth;
+  const { name, status, healthy } = entry;
 
-  return { status, healthy };
+  return { name, status, healthy };
 }
