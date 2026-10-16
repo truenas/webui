@@ -654,8 +654,19 @@ asserted on the card the app returns to and through `filesystem.stat`, and each
 checks that the other two came through unchanged. The dataset is the spec's own,
 and every test starts it from one owner, group and mode with the ACL stripped,
 set over `filesystem.setperm`. The card names each entry after its owner or
-group, so its ids change with them. The ACL editor, presets, and applying
-permissions recursively are not covered.
+group, so its ids change with them. Applying permissions recursively is not
+covered.
+
+Built-in NFSv4 ACL presets are in `tests/dataset-acl-nfsv4-presets.e2e.ts`,
+applied from both places the ACL editor offers them: Set ACL on a trivial NFSv4
+dataset, where the editor raises the preset dialog itself, and Use Preset on a
+non-trivial one, where the preset must replace the entries and not add to them.
+The resulting entries are compared through `filesystem.getacl` against the
+template `filesystem.acltemplate.by_path` serves, so a change to a template does
+not break the spec. Only what tells one preset from another is asserted by hand.
+A third test covers Apply Owner and Apply Group in the editor's header: only the
+ticked half reaches `filesystem.stat`. Editing entries, applying an ACL
+recursively, Strip ACL, POSIX ACLs and custom presets are not covered.
 
 Encrypted datasets came next, in `tests/datasets-encryption.e2e.ts`: creating a
 dataset encrypted with a passphrase from the form's Encryption Options, locking
@@ -1059,7 +1070,8 @@ a number. See `05-ci.md`.
 
 ## Next steps
 
-1. **Widen coverage.** Dataset ACL is the uncovered story worth taking next.
+1. **Widen coverage.** The rest of the dataset ACL editor, beyond built-in
+   NFSv4 presets, is the uncovered story worth taking next.
    Manual snapshots are covered — take, recursive, delete, hold, clone, roll
    back and its safety check — but not batch delete, the list's own Add
    button, naming schemas, the extra columns or VMware sync. The confirmation-bypass class is now covered
