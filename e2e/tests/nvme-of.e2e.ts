@@ -16,7 +16,7 @@
  * implementation needs the `NVMEOF_SPDK` entitlement, which CI's license grants and a
  * community appliance lacks, so whether it is offered follows that.
  */
-import { entitlementFeature, isEntitled } from '../fixtures/entitlements';
+import { entitlementFeature, isNotDenied } from '../fixtures/entitlements';
 import {
   addNvmeOfZvolNamespace, associateNvmeOfHost, associateNvmeOfPort, countNvmeOfSubsystems,
   ensureNvmeOfHostAbsent, ensureNvmeOfHostPresent, ensureNvmeOfPortAbsent, ensureNvmeOfPortPresent,
@@ -353,7 +353,7 @@ test('the global configuration saves the base NQN and offers RDMA, ANA and SPDK 
   await expect(page.locator(nvmeOfLocators.globalConfig.rdma)).toBeDisabled();
   await expect(page.locator(nvmeOfLocators.globalConfig.ana)).toBeDisabled();
   const spdk = page.locator(nvmeOfLocators.globalConfig.spdk);
-  if (isEntitled(entitlements, entitlementFeature.nvmeOfSpdk)) {
+  if (isNotDenied(entitlements, entitlementFeature.nvmeOfSpdk)) {
     await expect(spdk).toBeVisible();
   } else {
     await expect(spdk).toBeHidden();
