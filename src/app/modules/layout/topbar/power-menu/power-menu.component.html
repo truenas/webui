@@ -10,23 +10,25 @@
   [tnMenuTriggerFor]="powerMenu"
   [ixUiSearch]="searchableElements.elements.powerMenu"
 ></tn-icon-button>
+<!-- Not `*ixRequiresRoles`: tn-menu draws its own button from each item's inputs, so the
+  missing-access wrapper never reaches it. The lock has to go through `disabled`. -->
 <tn-menu #powerMenu>
   <tn-menu-item
-    *ixRequiresRoles="requiredRoles"
     icon="refresh"
     iconLibrary="mdi"
     [testId]="'restart'"
     [label]="'Restart' | translate"
+    [disabled]="!hasRequiredRoles()"
     [ixUiSearch]="searchableElements.elements.restart"
     (itemClick)="onReboot()"
   ></tn-menu-item>
 
   <tn-menu-item
-    *ixRequiresRoles="requiredRoles"
     icon="power"
     iconLibrary="mdi"
     [testId]="'shut-down'"
     [label]="'Shut Down' | translate"
+    [disabled]="!hasRequiredRoles()"
     [ixUiSearch]="searchableElements.elements.shutDown"
     (itemClick)="onShutdown()"
   ></tn-menu-item>

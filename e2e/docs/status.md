@@ -790,6 +790,25 @@ The row tag is `privilege-<name>` and the edit leaves the name alone. Picking a
 group in the form, directory-service groups, the Enable DS Authentication prompt,
 built-in privileges and the search are not covered.
 
+Restricted administrators started in `tests/roles-read-only-admin.e2e.ts`. Every
+other spec runs as the full admin, so this is the first that signs in as someone
+holding less. `fixtures/role-admins.ts` makes a throwaway user in one of the two
+built-in groups, `truenas_readonly_administrators` or
+`truenas_sharing_administrators`, and it signs in through the form, because the
+token is minted for the suite's admin only. The spec covers a read-only admin
+reaching the dashboard and signing out, and finding Restart and Shut Down
+disabled in the power menu where the full admin finds them enabled. Neither is
+ever clicked, and `system.boot_id` is compared before and after. That menu was
+not locked before this spec: `tn-menu` draws its own button for each
+`tn-menu-item`, so the `*ixRequiresRoles` wrapper never reached it and a
+read-only admin got a clickable Restart. The power menu and the table actions
+cell's kebab menu now bind `disabled` to the role instead; the other
+`tn-menu-item` call sites using `*ixRequiresRoles` are not fixed yet. A locked
+control elsewhere sits inside `ix-missing-access-wrapper`, whose span now emits
+`data-test="role-missing"`, so `flows/roles.ts`'s `expectLockedByRole` can tell
+"locked by role" from "disabled because the form is invalid". Every other page,
+and the sharing admin, come in later specs.
+
 A pool's devices came next, in `tests/pool-devices.e2e.ts`: taking a disk offline
 and bringing it back online, and adding a spare, both from the pool's VDEVs page.
 That page is reached from View VDEVs on the pool's card on the Storage dashboard.
