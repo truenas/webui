@@ -225,9 +225,30 @@ export const poolDisconnectLocators = {
    * Picking it is what sets `destroy`, which in turn reveals the name field.
    */
   deleteOption: '[data-test="option-delete-pool"]',
+  /**
+   * The "Export Pool" option card, the same kind of `<div>` as Delete. The
+   * dialog opens with it already chosen, so clicking it changes nothing; a
+   * journey clicks it anyway, as a user making the choice would.
+   */
+  exportOption: '[data-test="option-export-pool"]',
 
+  /**
+   * `<tn-checkbox testId="cascade">` — "Delete saved configurations from
+   * TrueNAS?" under Export. The form starts it **ticked**, so keeping the
+   * configuration means unticking it.
+   */
+  cascade: '[data-test="checkbox-cascade"]',
   /** `<tn-checkbox testId="confirm">` — "Confirm Export Pool" / "Confirm Delete Pool". */
   confirm: '[data-test="checkbox-confirm"]',
+
+  /**
+   * One item in the list of what depends on the pool, from `pool.attachments`:
+   * `['attachment', service.type, item]`. `type` is the delegate's title
+   * (`SMB Share`) and an item is the share's name.
+   */
+  attachment: (type: string, item: string): string => (
+    `[data-test="text-attachment-${kebabTestSegment(type)}-${kebabTestSegment(item)}"]`
+  ),
   /**
    * `<tn-input testId="name-input">` — the name gate, rendered only while
    * "Delete Pool" is the chosen option. Note the doubled word: the control name

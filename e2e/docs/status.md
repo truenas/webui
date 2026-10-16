@@ -627,6 +627,18 @@ flow asserts there is exactly one. Teardown destroys the pool if it was
 imported and wipes its disk if it was not. Locked SED disks and a pool with an
 encrypted root are not covered.
 
+Exporting a pool through the UI is in `tests/pool-export.e2e.ts`: the
+Disconnect dialog's Export Pool option, once keeping and once deleting the
+saved configuration (`cascade`), on the spec's own one-disk `e2e_export_tank`
+with an SMB share on a dataset in it. The dialog has to list the share among
+what depends on the pool. After either export, `pool.query` no longer lists the
+pool and `disk.details` reports its disk carrying it exported. Keeping the
+configuration leaves the share in `sharing.smb.query` with its path, and it is
+still there once the pool is imported back. Deleting it removes the share. The
+form starts with `cascade` ticked, so keeping the configuration is the choice a
+user has to make. The SMB service is never started, and attachments other than
+an SMB share are not covered.
+
 Zvols came next, in `tests/zvols.e2e.ts`: creating one from Add Zvol on the
 Datasets page, growing one and setting its Sync from Edit Zvol on the details card,
 and deleting one with the dialog fully confirmed. Each is asserted on screen and
