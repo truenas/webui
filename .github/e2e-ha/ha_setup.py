@@ -71,12 +71,24 @@ def report():
                 log(f"  {name} {method}: {json.dumps(call(ip, method, timeout=20))}")
             except Exception as e:  # noqa: BLE001
                 log(f"  {name} {method}: error: {e}")
+        # A standby answers only through its peer.
+        try:
+            log(f"  {name}'s peer failover.status: {json.dumps(remote(ip, 'failover.status', timeout=20))}")
+        except Exception as e:  # noqa: BLE001
+            log(f"  {name}'s peer failover.status: error: {e}")
 
 
-def wait_ready(ip, timeout=900):
+def remote(via, method, *params, timeout=120):
+    """method on the other node, through `via`. A standby will not take a
+    login of its own: it answers REDIRECT to the VIP. Middleware's tests
+    reach it this way, over the heartbeat."""
+    return call(via, "failover.call_remote", method, list(params), timeout=timeout)
+
+
+def wait_peer_ready(via, timeout=900):
     def ready():
-        return call(ip, "system.ready", timeout=20) is True
-    poll(f"{ip} system.ready", timeout, ready)
+        return remote(via, "system.ready", timeout=30) is True
+    poll(f"the node behind {via}: system.ready", timeout, ready)
 
 
 def step(title):
@@ -143,7 +155,7 @@ def main():
     except Exception as e:  # noqa: BLE001 - middleware's own setup swallows this too
         log(f"  sync_to_peer: {e}")
     time.sleep(30)
-    wait_ready(B)
+    wait_peer_ready(A)
 
     step("pool: a stripe on one shared disk, then failover on")
     unused = call(A, "disk.get_unused")
@@ -160,7 +172,7 @@ def main():
 
     def settled():
         reasons = call(A, "failover.disabled.reasons")
-        status = (call(A, "failover.status"), call(B, "failover.status"))
+        status = (call(A, "failover.status"), remote(A, "failover.status"))
         return True if not reasons and status == ("MASTER", "BACKUP") else {"reasons": reasons, "status": status}
     poll("HA settled", 600, settled)
     log(f"  the VIP answers as node {call(VIP, 'failover.node')}")
@@ -173,11 +185,11 @@ def main():
             log(f"  become_passive: {e}")
         poll("VIP served by B as MASTER", 600,
              lambda: call(VIP, "failover.node") == "B" and call(VIP, "failover.status") == "MASTER")
-        wait_ready(A)
+        wait_peer_ready(B)
 
         def resettled():
             reasons = call(B, "failover.disabled.reasons")
-            status = (call(A, "failover.status"), call(B, "failover.status"))
+            status = (remote(B, "failover.status"), call(B, "failover.status"))
             return True if not reasons and status == ("BACKUP", "MASTER") else {"reasons": reasons, "status": status}
         poll("HA settled after failover", 900, resettled)
 
