@@ -23,10 +23,10 @@
  * failing anything else.
  */
 import { readRootAuthorizedKeys, setRootAuthorizedKeys } from '../fixtures/loopback-ssh';
+import { readSshSettings } from '../fixtures/service-config';
 import {
   ensureServiceRunning, queryService, restoreService, type ServiceState,
 } from '../fixtures/services';
-import { readSshSettings } from '../fixtures/service-config';
 import {
   countSshConnections,
   ensureLoopbackSshAccessAbsent,
