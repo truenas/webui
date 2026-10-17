@@ -77,6 +77,7 @@ export const directoryServicesLocators = {
      */
     serviceTypeField: '[data-test="form-field-service-type"]',
     enable: '[data-test="checkbox-enable"]',
+    enableAccountCache: '[data-test="checkbox-enable-account-cache"]',
     timeout: '[data-test="input-timeout"]',
     /** The `tn-form-field` around Timeout, which holds its validation error. */
     timeoutField: '[data-test="form-field-timeout"]',
@@ -132,6 +133,11 @@ export const directoryServicesLocators = {
     ldap: {
       /** `tn-chip-input testId="server_urls"`: the typable field; Enter commits the text as a chip. */
       serverUrls: '[data-test="chip-input-server-urls"]',
+      /**
+       * One committed URL. The library scopes each chip's id by its value under
+       * the field's `testId`, normalized like any segment.
+       */
+      serverUrlChip: (url: string): string => `[data-test="chip-server-urls-${kebabTestSegment(url)}"]`,
       /** IPA renders one under the same id. */
       baseDn: '[data-test="input-basedn"]',
       startTls: '[data-test="checkbox-starttls"]',
@@ -157,6 +163,8 @@ export const directoryServicesLocators = {
 
     /** `<tn-button [testId]="'save'">` on the side panel container. */
     save: '[data-test="button-save"]',
+    /** The form's own footer action beside Save. Raises webui's shared confirm, checkbox and all. */
+    clearConfig: '[data-test="button-clear-config"]',
     closePanel: '[data-test="button-close-side-panel"]',
   },
 

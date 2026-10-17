@@ -99,10 +99,6 @@ test('an entry without a user blocks Save until it is removed', async ({ page, a
 
   await page.locator(aclEditor.addItem).click();
   await expect(page.locator(aclEditor.entry(added))).toBeVisible();
-  // The entry form reports the new entry invalid while the list above it has
-  // already rendered, so neither the marker nor the disabled Save shows until
-  // the next event. Selecting the entry, as a user would to fill it in, is one.
-  await page.locator(aclEditor.entry(added)).click();
   await expect(page.locator(aclEditor.entryError(added))).toBeVisible();
   await expect(save).toBeDisabled();
 
