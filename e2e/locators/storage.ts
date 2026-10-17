@@ -121,6 +121,18 @@ export const poolWizardLocators = {
     `[data-test="option-children-${type}-${kebabTestSegment(disks)}"]`
   ),
 
+  /**
+   * "Manual Disk Selection" under Advanced Options, and "Edit Manual Disk Selection" once a
+   * manual layout has been saved: both are `[testId]="['manual', type()]"`, and only one is
+   * rendered at a time. Disabled until a layout is chosen. Opens {@link manualDiskSelectionLocators}.
+   */
+  manualSelection: (type: VdevCategory) => `[data-test="button-manual-${type}"]`,
+  /**
+   * What the step shows in place of Automated Disk Selection once a manual layout has been saved.
+   * `[type(), 'manual-disk-selection-message']`.
+   */
+  manualSelectionMessage: (type: VdevCategory) => `[data-test="text-${type}-manual-disk-selection-message"]`,
+
   /** Not rendered on the Log, Spare and Cache steps, which build exactly one vdev. */
   vdevCount: (type: VdevCategory) => `[data-test="select-vdevs-number-${type}"]`,
   vdevCountOption: (type: VdevCategory, count: number) => (
@@ -163,6 +175,54 @@ export const poolWizardLocators = {
   inspectVdevs: '[data-test="button-inspect-vdevs"]',
   /** "Create Pool", or "Update Pool" when the wizard was opened from Add VDEV. */
   createPool: '[data-test="button-create-pool"]',
+} as const;
+
+/**
+ * The pool wizard's Manual Disk Selection dialog: unused disks on the left, the step's vdevs on
+ * the right, and disks dragged between them (`ngx-drag-drop`).
+ *
+ * A vdev's ids carry its layout and its 1-based position in the list, `['vdev-error', layout(),
+ * position()]`. The layout is the `CreateVdevLayout` value, `MIRROR`, which the library writes as
+ * `mirror`. A disk's ids carry its name, `sdb`.
+ *
+ * Several of these are on plain `<div>`s or on `ix-disk-icon` with no `tnTestIdType`, so they are
+ * written with no type prefix.
+ */
+export const manualDiskSelectionLocators = {
+  /** `<tn-dialog-shell testId="manual-disk-selection">`. What to wait on. */
+  title: '[data-test="dialog-title-manual-disk-selection"]',
+
+  /** "Add", which appends an empty vdev. Hidden once a step limited to one vdev has it. */
+  add: '[data-test="button-add"]',
+  /** Disabled while any vdev has fewer disks than its layout needs. */
+  save: '[data-test="button-save-selection"]',
+  /** Closes the dialog and leaves the step as it was. */
+  cancel: '[data-test="button-cancel"]',
+
+  /** The unused-disk list, which is also where a disk is dropped to take it out of a vdev. */
+  unusedDisksDropzone: '[data-test="unused-disks-dropzone"]',
+  /** A disk's row in the unused list. `tn-nested-tree-node` writes its id with no prefix. */
+  unusedDisk: (disk: string) => `[data-test="unused-disk-${kebabTestSegment(disk)}"]`,
+  /** What is dragged out of that row. */
+  unusedDiskDrag: (disk: string) => `[data-test="drag-unused-disk-${kebabTestSegment(disk)}"]`,
+
+  /** A vdev's card, and where a disk is dropped to add it. */
+  vdevDropzone: (layout: string, position: number) => (
+    `[data-test="vdev-dropzone-${kebabTestSegment(layout)}-${position}"]`
+  ),
+  /** "At least 2 disk(s) are required for Mirror vdevs". Rendered only while the vdev is short. */
+  vdevError: (layout: string, position: number) => (
+    `[data-test="text-vdev-error-${kebabTestSegment(layout)}-${position}"]`
+  ),
+  /** "<size> Est. Usable Raw Capacity". Rendered only once the vdev has enough disks. */
+  vdevCapacityEstimate: (layout: string, position: number) => (
+    `[data-test="text-vdev-capacity-estimate-${kebabTestSegment(layout)}-${position}"]`
+  ),
+  /** A disk inside a vdev, and what is dragged to take it out. */
+  vdevDisk: (disk: string) => `[data-test="drag-vdev-disk-${kebabTestSegment(disk)}"]`,
+  deleteVdev: (layout: string, position: number) => (
+    `[data-test="button-delete-vdev-${kebabTestSegment(layout)}-${position}"]`
+  ),
 } as const;
 
 export const datasetLocators = {
