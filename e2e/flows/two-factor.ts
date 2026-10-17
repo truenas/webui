@@ -1,16 +1,19 @@
 /**
  * Two-factor authentication, driven through the UI: switching it on for the
- * appliance and changing its settings, skipping the setup dialog, setting it up
- * for an account on the setup card, answering the sign-in page's code prompt, and clearing it from
- * a user's details.
+ * appliance and changing its settings, skipping the setup dialog, setting it up,
+ * renewing and unsetting it for an account on the setup card, answering the
+ * sign-in page's code prompt, and clearing it from a user's details.
  */
 import { expect, type Page } from '@playwright/test';
 import { closeFirstTimeWarning } from './advanced-settings';
-import { goToAdvancedSettings, goToUsers } from './navigation';
+import { goToAdvancedSettings } from './navigation';
+import { openUserDetails } from './users';
+import { setGlobalTwoFactor } from '../fixtures/two-factor';
 import { confirmDialogLocators } from '../locators/dialogs';
 import { signinLocators } from '../locators/signin';
+import { topbarLocators } from '../locators/topbar';
 import { twoFactorLocators } from '../locators/two-factor';
-import { usersLocators } from '../locators/users';
+import type { E2eApiClient } from '../support/api/client';
 import { totpCode } from '../support/totp';
 
 const saveTimeoutMs = 60_000;
@@ -97,6 +100,29 @@ export async function skipTwoFactorSetupPrompt(page: Page): Promise<void> {
 }
 
 /**
+ * Turns global two-factor on over the API under a page that is already signed
+ * in, reloads so the app reads it afresh, and skips the setup dialog that
+ * raises. SSH starts off.
+ *
+ * For a spec that starts with it on. The token sign-in waits for the shell, so
+ * turning it on before sign-in would spend that wait behind the dialog. Skipping
+ * gives the suite's admin no secret.
+ */
+export async function startWithGlobalTwoFactorOn(
+  page: Page,
+  api: E2eApiClient,
+  toleranceWindow: number,
+): Promise<void> {
+  await setGlobalTwoFactor(api, {
+    enabled: true,
+    window: toleranceWindow,
+    services: { ssh: false },
+  });
+  await page.reload();
+  await skipTwoFactorSetupPrompt(page);
+}
+
+/**
  * Sets two-factor up on the `/two-factor-auth` page, and returns the secret.
  *
  * The way a person does it: generate a secret, read it off the screen, type in
@@ -142,6 +168,50 @@ export async function generateTwoFactorSecret(page: Page): Promise<string> {
 }
 
 /**
+ * Opens the `/two-factor-auth` page from the topbar user menu, which offers it
+ * only while two-factor is on globally, and waits for the page to have read the
+ * account: its secret buttons stay disabled until then.
+ */
+export async function openTwoFactorPage(page: Page): Promise<void> {
+  await page.locator(topbarLocators.userMenu).click();
+  await page.locator(topbarLocators.twoFactorAuth).click();
+
+  await expect(page).toHaveURL(/\/two-factor-auth\/?$/, { timeout: saveTimeoutMs });
+  await expect(page.locator(twoFactorLocators.setup.configureSecret)).toBeEnabled({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Presses Renew 2FA Secret on the `ix-two-factor` card, confirms it, and waits
+ * for the new secret to be awaiting a code.
+ *
+ * For an account that already holds a secret, where Renew asks first — see
+ * {@link generateTwoFactorSecret} for one that has none. Confirm Code is disabled
+ * while the renewal and the account re-read behind it are in flight, so its
+ * coming back enabled is the page saying the secret on screen is the new one.
+ */
+export async function renewTwoFactorSecret(page: Page): Promise<void> {
+  const { setup } = twoFactorLocators;
+
+  await page.locator(setup.configureSecret).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+  await page.locator(confirmDialogLocators.confirm).click();
+
+  await expect(page.locator(setup.code)).toBeVisible({ timeout: saveTimeoutMs });
+  await expect(page.locator(setup.confirmCode)).toBeEnabled({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Presses `button` on the `ix-two-factor` card — Unset 2FA Secret or Cancel
+ * Setup, which both raise a confirmation and then unset the account's secret —
+ * and confirms it. Asserts nothing about the outcome.
+ */
+export async function confirmUnsetFrom(page: Page, button: string): Promise<void> {
+  await page.locator(button).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+  await page.locator(confirmDialogLocators.confirm).click();
+}
+
+/**
  * Types `code` into the card's confirmation field and presses Confirm Code.
  * Asserts nothing about the outcome: the app checks the code itself, and what
  * a right or wrong one should show belongs in the test making the claim.
@@ -171,15 +241,21 @@ export async function submitOneTimePassword(page: Page, code: string): Promise<v
 /**
  * Clears a user's two-factor from their details, beside the Users list.
  *
- * Selecting the row is what puts that user's Access card on screen. The button
- * goes once the card has reloaded a user with no secret, which is the app's own
- * signal that the change landed.
+ * Selecting the row is what puts that user's Access card on screen.
  */
 export async function clearTwoFactorFromUserDetails(page: Page, username: string): Promise<void> {
-  const clear = page.locator(twoFactorLocators.clearTwoFactor(username));
+  await openUserDetails(page, username);
+  await clearTwoFactorOnAccessCard(page, username);
+}
 
-  await goToUsers(page);
-  await page.locator(usersLocators.row(username)).click();
+/**
+ * Clears two-factor from the Access card of the user whose details are open.
+ *
+ * The button goes once the card has reloaded a user with no secret, which is
+ * the app's own signal that the change landed.
+ */
+export async function clearTwoFactorOnAccessCard(page: Page, username: string): Promise<void> {
+  const clear = page.locator(twoFactorLocators.clearTwoFactor(username));
 
   await clear.click();
   await expect(page.locator(confirmDialogLocators.title)).toBeVisible();

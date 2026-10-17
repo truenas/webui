@@ -1,7 +1,7 @@
 /**
  * Two-factor authentication: the global card on System > Advanced Settings and
  * its form, the setup card, the first-login setup dialog, and the Access card's
- * Clear button.
+ * two-factor line, Set up 2FA link and Clear button.
  *
  * The sign-in page's one-time password field is in `locators/signin.ts`, with
  * the rest of that form.
@@ -65,6 +65,8 @@ export const twoFactorLocators = {
     codeField: '[data-test="form-field-verify-otp"]',
     /** "Confirm Code". The app checks the code itself; nothing is sent to middleware. */
     confirmCode: '[data-test="button-verify-otp"]',
+    /** "Cancel Setup", beside {@link confirmCode}. Confirmed, it unsets the secret awaiting a code. */
+    cancelSetup: '[data-test="button-cancel-2fa-setup"]',
     /** Rendered only once the account holds a secret and no code is still awaited. */
     unsetSecret: '[data-test="button-unset-2fa-secret"]',
   },
@@ -76,4 +78,18 @@ export const twoFactorLocators = {
   clearTwoFactor: (username: string): string => (
     `[data-test="button-clear-two-factor-${kebabTestSegment(username)}"]`
   ),
+
+  /**
+   * The Access card's two-factor line: "Has Two-Factor Authentication" or "No
+   * Two-Factor Authentication". Rendered only while global two-factor is on.
+   */
+  userStatus: (username: string): string => (
+    `[data-test="text-two-factor-status-${kebabTestSegment(username)}"]`
+  ),
+
+  /**
+   * "Set up 2FA" on the Access card, a link to `/two-factor-auth`. Offered only
+   * on your own account, while global two-factor is on and you have no secret.
+   */
+  setUpLink: (username: string): string => `[data-test="link-setup-2fa-${kebabTestSegment(username)}"]`,
 } as const;

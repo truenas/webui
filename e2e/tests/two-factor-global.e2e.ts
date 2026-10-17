@@ -22,15 +22,11 @@
  * unconditionally and deliberately not skipped under `TN_KEEP_TEST_DATA`: left
  * on, every later spec would open behind that dialog.
  */
-import type { Page } from '@playwright/test';
-import {
-  disableGlobalTwoFactor, readGlobalTwoFactor, setGlobalTwoFactor, type GlobalTwoFactorConfig,
-} from '../fixtures/two-factor';
+import { disableGlobalTwoFactor, readGlobalTwoFactor, type GlobalTwoFactorConfig } from '../fixtures/two-factor';
 import { goToAdvancedSettings } from '../flows/navigation';
-import { confirmGlobalTwoFactorChange, openGlobalTwoFactorForm, skipTwoFactorSetupPrompt } from '../flows/two-factor';
+import { confirmGlobalTwoFactorChange, openGlobalTwoFactorForm, startWithGlobalTwoFactorOn } from '../flows/two-factor';
 import { topbarLocators } from '../locators/topbar';
 import { twoFactorLocators } from '../locators/two-factor';
-import type { E2eApiClient } from '../support/api/client';
 import { expect, test } from '../support/fixtures';
 
 const saveTimeoutMs = 60_000;
@@ -63,28 +59,14 @@ test.afterEach(async ({ api }) => {
   }
 });
 
-/**
- * Turns global two-factor on over the API under a page that is already signed
- * in, reloads so the app reads it afresh, and skips the setup dialog that
- * raises. SSH starts off, so turning it on is a change.
- */
-async function startWithTwoFactorOn(page: Page, api: E2eApiClient): Promise<void> {
-  await setGlobalTwoFactor(api, {
-    enabled: true,
-    window: startingWindow,
-    services: { ssh: false },
-  });
-  await page.reload();
-  await skipTwoFactorSetupPrompt(page);
-}
-
 test('changing the settings while two-factor is on asks first, and the appliance keeps them', async ({
   page, api,
 }) => {
   const { globalCard, globalForm } = twoFactorLocators;
   const newWindow = 3;
 
-  await startWithTwoFactorOn(page, api);
+  // SSH starts off, so ticking it is a change.
+  await startWithGlobalTwoFactorOn(page, api, startingWindow);
   await openGlobalTwoFactorForm(page, 'Enabled');
   await expect(page.locator(globalForm.window)).toHaveValue(String(startingWindow));
 
@@ -115,7 +97,7 @@ test('an admin turns two-factor off, and the user menu stops offering it', async
   const { globalCard, globalForm } = twoFactorLocators;
   const twoFactorMenuItem = page.locator(topbarLocators.twoFactorAuth);
 
-  await startWithTwoFactorOn(page, api);
+  await startWithGlobalTwoFactorOn(page, api, startingWindow);
 
   // Offered while it is on, so its absence at the end is the save's doing.
   await page.locator(topbarLocators.userMenu).click();
