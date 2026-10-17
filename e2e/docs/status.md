@@ -851,6 +851,16 @@ control for everyone once the snapshot loaded, and enabling it rewrites the
 `disabled` the role wrapper sets. It now enables it only for `SNAPSHOT_WRITE`.
 Quotas, capacity settings and encryption are not covered.
 
+System pages for the read-only admin are in `tests/roles-read-only-system.e2e.ts`.
+In one sign-in it opens Services, where SSH's row shows the state `service.query`
+reports and its Start or Stop, Edit and Start Automatically are locked, and Boot,
+where the running boot environment's Clone and Keep (or Unkeep) and the header's
+Scrub Boot Pool and Stats/Settings are locked and Boot Pool Status opens on the
+boot pool's tree. SSH's state and auto-start and the set of boot environments are
+read back unchanged. Delete is not covered: the list never renders it on the
+running boot environment, for any account. Boot Pool Status's Replace and Attach
+are `tn-menu-item`s and are left out with the other unfixed menu items.
+
 A pool's devices came next, in `tests/pool-devices.e2e.ts`: taking a disk offline
 and bringing it back online, and adding a spare, both from the pool's VDEVs page.
 That page is reached from View VDEVs on the pool's card on the Storage dashboard.

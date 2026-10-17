@@ -36,6 +36,14 @@ const displayRowTag = (service: ServiceKey): string => (
 /** `uniqueRowTag` in `service-actions-cell` and `service-status-cell`, from the middleware name. */
 const middlewareRowTag = (service: ServiceKey): string => `service-${kebabTestSegment(service)}`;
 
+/**
+ * The Start Automatically switch: `[testId]="['Start Automatically', uniqueRowTag(row), 'row-toggle']"`,
+ * and `tn-slide-toggle` puts its `toggle-` type in front.
+ */
+const startAutomaticallyToggle = (service: ServiceKey): string => (
+  `[data-test="toggle-start-automatically-${displayRowTag(service)}-row-toggle"]`
+);
+
 /** A `tn-select` option id: the control name, then the option's label through the library normalizer. */
 const option = (control: string, label: string): string => `[data-test="option-${control}-${kebabTestSegment(label)}"]`;
 
@@ -52,12 +60,14 @@ export const servicesLocators = {
      * `Stopped`) beside the start or stop button.
      */
     status: (service: ServiceKey): string => `[data-test="text-status-${displayRowTag(service)}-row-state"]`,
+    /** The Start Automatically switch. Clicking it flips the setting. */
+    startAutomatically: startAutomaticallyToggle,
     /**
-     * The Start Automatically switch: `[testId]="['Start Automatically', uniqueRowTag(row), 'row-toggle']"`,
-     * and `tn-slide-toggle` puts its `toggle-` type in front.
+     * The checkbox inside {@link startAutomatically}. `tn-slide-toggle` puts its id on
+     * the `<label>`, which has no disabled state, so a lock is read off the input.
      */
-    startAutomatically: (service: ServiceKey): string => (
-      `[data-test="toggle-start-automatically-${displayRowTag(service)}-row-toggle"]`
+    startAutomaticallyInput: (service: ServiceKey): string => (
+      `${startAutomaticallyToggle(service)} input[type="checkbox"]`
     ),
     /** Shown only while the service is stopped. Starts it with no dialog. */
     start: (service: ServiceKey): string => `[data-test="button-${middlewareRowTag(service)}-start-service"]`,
