@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import { describeTarget, loadTargetConfig } from './e2e/support/config';
-import type { E2eTestOptions } from './e2e/support/fixtures';
+import type { E2eTestOptions, E2eWorkerFixtures } from './e2e/support/fixtures';
 
 /**
  * Load local configuration if present. Uses Node's built-in env-file support
@@ -126,7 +126,114 @@ const slowMoMs = (() => {
   return parsed;
 })();
 
-export default defineConfig<E2eTestOptions>({
+/** Token sign-in, checked once before either suite: see `e2e/support/auth/auth.setup.ts`. */
+const setupProject = {
+  name: 'setup',
+  testMatch: /.*\.setup\.ts/,
+  use: { ...devices['Desktop Chrome'] },
+};
+
+/**
+ * The single-appliance suite: everything under `e2e/tests`.
+ */
+const singleApplianceProjects = [
+  setupProject,
+  {
+    /**
+     * Everything that starts from an authenticated session.
+     *
+     * The sign-in happens per test, in the `page` fixture (`support/fixtures.ts`),
+     * not through a `storageState` captured by `setup`: the app rotates the
+     * persisted token into a five-minute single-use one on every login, so a
+     * snapshot of it only ever carries the first test. `setup` still runs
+     * first — it is the earliest, clearest report that token login is broken.
+     */
+    name: 'authenticated',
+    testDir: './e2e/tests',
+    testIgnore: '**/unauthenticated/**',
+    dependencies: ['setup'],
+    use: { ...devices['Desktop Chrome'] },
+  },
+  {
+    /**
+     * Tests that must start from a signed-out browser — anything covering
+     * sign-in, sign-out, or session identity.
+     *
+     * `authenticate: false` and no dependency on `setup`, deliberately: the
+     * token bypass would defeat the point (R4.2). It also means these tests do
+     * not wait on the setup project, so they still run when token auth is
+     * broken — which is exactly when you want them reporting.
+     */
+    name: 'unauthenticated',
+    testDir: './e2e/tests/unauthenticated',
+    use: { ...devices['Desktop Chrome'], authenticate: false },
+  },
+];
+
+/**
+ * The HA suite, under `e2e/tests-ha`, run only against an HA pair (`TN_HA=true`)
+ * and then instead of the single-appliance one: its journeys set the pair up
+ * from unlicensed, and nothing in `e2e/tests` expects a pair.
+ *
+ * A chain of projects, each depending on the one before, because each journey
+ * builds on what the last left: the license, then the VIP, the pool and
+ * failover, then a failover. A failed link skips the rest rather than letting
+ * them fail on what was never set up.
+ *
+ * `ha-license` records nothing — no trace, screenshot or video, on a retry
+ * either. It pastes the HA license into a textarea, which every one of those
+ * would capture, and this repository's CI publishes them. What Playwright
+ * writes regardless — a failure's `error-context.md` page snapshot, which
+ * holds the textarea's value — goes to its own `outputDir`, outside the
+ * `test-results/` CI publishes, so no file or directory name decides it.
+ *
+ * `ha-failover` reaches the pair through its VIP (`haThroughVip`), as a user
+ * does once there is one: the controller it signs in to is the one the
+ * failover takes the VIP away from.
+ *
+ * None of them is retried: each changes the pair for good, so a retry starts
+ * from where the failed attempt left it rather than from where the journey
+ * expects — a retried failover finds controller 2 already active.
+ */
+const haProjects = target.ha
+  ? [
+      setupProject,
+      {
+        name: 'ha-license',
+        retries: 0,
+        testDir: './e2e/tests-ha',
+        testMatch: /ha-license\.e2e\.ts/,
+        outputDir: 'test-results-unpublished/ha-license',
+        dependencies: ['setup'],
+        use: {
+          ...devices['Desktop Chrome'], trace: 'off' as const, screenshot: 'off' as const, video: 'off' as const,
+        },
+      },
+      {
+        name: 'ha-setup',
+        retries: 0,
+        testDir: './e2e/tests-ha',
+        testMatch: /ha-setup\.e2e\.ts/,
+        dependencies: ['ha-license'],
+        use: { ...devices['Desktop Chrome'] },
+      },
+      {
+        name: 'ha-failover',
+        retries: 0,
+        testDir: './e2e/tests-ha',
+        testMatch: /ha-failover\.e2e\.ts/,
+        dependencies: ['ha-setup'],
+        // Traced every time, not only on a retry, which this chain never takes:
+        // what the app does while the pair changes hands is the subject, and a
+        // screenshot of a spinner does not say which call it is waiting on.
+        use: {
+          ...devices['Desktop Chrome'], haThroughVip: true, baseURL: target.ha.vipUiBaseUrl, trace: 'on' as const,
+        },
+      },
+    ]
+  : [];
+
+export default defineConfig<E2eTestOptions, Pick<E2eWorkerFixtures, 'haThroughVip'>>({
   testDir: './e2e',
   outputDir: 'test-results',
 
@@ -253,41 +360,5 @@ export default defineConfig<E2eTestOptions>({
       : 'on-first-retry',
   },
 
-  projects: [
-    {
-      name: 'setup',
-      testMatch: /.*\.setup\.ts/,
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      /**
-       * Everything that starts from an authenticated session.
-       *
-       * The sign-in happens per test, in the `page` fixture (`support/fixtures.ts`),
-       * not through a `storageState` captured by `setup`: the app rotates the
-       * persisted token into a five-minute single-use one on every login, so a
-       * snapshot of it only ever carries the first test. `setup` still runs
-       * first — it is the earliest, clearest report that token login is broken.
-       */
-      name: 'authenticated',
-      testDir: './e2e/tests',
-      testIgnore: '**/unauthenticated/**',
-      dependencies: ['setup'],
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      /**
-       * Tests that must start from a signed-out browser — anything covering
-       * sign-in, sign-out, or session identity.
-       *
-       * `authenticate: false` and no dependency on `setup`, deliberately: the
-       * token bypass would defeat the point (R4.2). It also means these tests do
-       * not wait on the setup project, so they still run when token auth is
-       * broken — which is exactly when you want them reporting.
-       */
-      name: 'unauthenticated',
-      testDir: './e2e/tests/unauthenticated',
-      use: { ...devices['Desktop Chrome'], authenticate: false },
-    },
-  ],
+  projects: target.ha ? haProjects : singleApplianceProjects,
 });

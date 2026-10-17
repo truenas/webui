@@ -118,6 +118,7 @@ src/app/testing-configs/*
 
 # E2E suite (Playwright)
 /test-results/
+/test-results-unpublished/
 /playwright-report/
 /blob-report/
 /playwright/.cache/

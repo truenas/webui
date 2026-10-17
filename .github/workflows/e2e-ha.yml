@@ -1,0 +1,166 @@
+# The HA suite (e2e/tests-ha) against a TrueNAS HA pair inside one
+# truenas-lab-xlarge runner, its scale set attaching the appliance disk
+# twice. The truenas-appliance-runner action boots the pair (ha: true) and
+# hands it over unconfigured; the suite licenses it, sets HA up and fails it
+# over, all through the UI built from this checkout.
+#
+# Runs nightly, and on pull requests that touch what a failover goes
+# through: the failover pages and services, the HA status in the topbar, the
+# sign-in a failover ends in, and the suite or this workflow themselves. One
+# run takes both of a runner's VMs, so it is not on every pull request.
+#
+# What it shares with e2e.yml — the browser image, finding the UI, serving
+# it, running the suite — is the e2e-* and webui-dist actions under
+# .github/actions, and e2e.yml's header on public-repository safety applies
+# here as it stands. What is here is what only an HA pair needs.
+
+name: E2E HA
+
+on:
+  # Nightly, an hour after e2e.yml's, against whatever master is then.
+  schedule:
+    - cron: '0 4 * * *'
+  pull_request:
+    paths:
+      - 'src/app/pages/system/advanced/failover/**'
+      - 'src/app/pages/system-tasks/failover/**'
+      - 'src/app/modules/layout/topbar/ha-status-icon/**'
+      - 'src/app/store/ha-info/**'
+      - 'src/app/services/failover-validation.service.ts'
+      - 'src/app/pages/signin/**'
+      - 'src/app/modules/websocket/**'
+      - 'src/app/modules/auth/**'
+      - 'e2e/tests-ha/**'
+      - 'e2e/flows/ha.ts'
+      - 'e2e/fixtures/ha.ts'
+      - 'e2e/locators/ha.ts'
+      - 'e2e/support/**'
+      - 'playwright.config.ts'
+      - '.github/workflows/e2e-ha.yml'
+      - '.github/actions/**'
+  workflow_dispatch:
+    inputs:
+      grep:
+        description: Optional Playwright --grep filter
+        type: string
+        default: ''
+
+# Reads code, and the WebUI workflow's runs and artifacts for its build of the UI.
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: e2e-ha-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-ha:
+    # Same-repository runs only, as e2e.yml's `plan` job guards.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: truenas-lab-xlarge
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/prepare
+
+      - uses: ./.github/actions/e2e-browser
+
+      - name: Boot the HA pair
+        uses: iXsystems/ux-github-workflows/.github/actions/truenas-appliance-runner@master
+        with:
+          ha: true
+          memory-mb: 8192
+          data-disk-count: 4
+
+      - uses: ./.github/actions/webui-dist
+
+      # The UI twice: against controller 1 for the setup journeys, and
+      # against the VIP for those after it exists. The VIP answers only once
+      # the suite has configured it, so nothing is asked of it yet.
+      - id: ui-node-a
+        uses: ./.github/actions/e2e-serve-ui
+        with:
+          name: node-a
+          upstream: ${{ env.TN_HA_NODE_A }}:80
+      - id: ui-vip
+        uses: ./.github/actions/e2e-serve-ui
+        with:
+          name: vip
+          upstream: ${{ env.TN_HA_VIP }}:80
+          check-upstream: false
+
+      # The HA license, into a file only the suite's container sees: the
+      # suite pastes it into the UI.
+      - id: license
+        uses: ./.github/actions/fetch-license
+        with:
+          url: ${{ secrets.E2E_LICENSE_URL }}
+          serial: CI-HAA
+
+      # The `ha-license` project records no trace, screenshot or video, since
+      # it pastes the license (playwright.config.ts). Playwright still writes
+      # a page snapshot for a failed test, which would hold it if the test
+      # failed after pasting: that project's results stay out of the
+      # published traces.
+      - name: Run the HA suite
+        uses: ./.github/actions/e2e-run
+        env:
+          TN_UI_BASE_URL: ${{ steps.ui-node-a.outputs.url }}
+          TN_UI_BASE_URL_HTTP: ${{ steps.ui-node-a.outputs.http-url }}
+          TN_HA_VIP_UI_BASE_URL: ${{ steps.ui-vip.outputs.url }}
+          TN_HA_LICENSE_FILE: /license/license.txt
+        with:
+          grep: ${{ inputs.grep }}
+          artifact-suffix: -ha
+          env: |
+            TN_HA
+            TN_HA_NODE_A
+            TN_HA_NODE_B
+            TN_HA_VIP
+            TN_HA_NETMASK
+            TN_HA_VIP_UI_BASE_URL
+            TN_HA_LICENSE_FILE
+          volumes: ${{ steps.license.outputs.dir }}:/license:ro
+
+      # What both controllers and the shared disks say, when anything failed:
+      # consoles, fenced's log and the disks' persistent reservations from
+      # each node, and what LIO holds for them.
+      - name: The pair's consoles, fencing and shared disks
+        if: failure()
+        run: |
+          # shellcheck disable=SC2016 # expanded on the node, not here
+          for n in a b; do
+            echo "::group::node $n console"
+            truenas-appliance console "$n" 300 || true
+            echo "::endgroup::"
+            echo "::group::node $n fenced and reservations"
+            truenas-appliance ssh "$n" 'sudo tail -n 60 /var/log/fenced.log
+              lsblk -o NAME,SERIAL,VENDOR,MODEL,TRAN
+              for d in /dev/sd?; do echo "== $d"; sudo sg_persist -n -i -k "$d"; sudo sg_persist -n -i -r "$d"; done' || true
+            echo "::endgroup::"
+            # The takeover's own account: boots, pools, and the failover
+            # event's log. Middleware's log filtered to the failover, and
+            # never a line about the license.
+            echo "::group::node $n failover events"
+            truenas-appliance ssh "$n" 'journalctl --list-boots --no-pager
+              sudo zpool status; sudo zpool import
+              sudo tail -n 200 /var/log/failover.log
+              sudo grep -ihE "failover|vrrp|fence|zpool|import|tank|traceback|error" /var/log/middlewared.log \
+                | grep -iv license | tail -n 200' || true
+            echo "::endgroup::"
+          done
+          echo "::group::LIO persistent reservations"
+          for d in /sys/kernel/config/target/core/fileio_*/tnha*; do
+            echo "== $d"
+            for f in "$d"/pr/*; do
+              printf '%s: ' "${f##*/}"; sudo -n cat "$f" 2>/dev/null | tr '\n' ' '; echo
+            done
+          done
+          sudo -n dmesg | grep -iE 'target|reserv|aptpl' | tail -n 80 || true
+          echo "::endgroup::"
+
+      - name: Stop the UI
+        if: always() && env.DOCKER != ''
+        run: $DOCKER ps -aq --filter "name=e2e-ui-${GITHUB_RUN_ID}-" | xargs -r $DOCKER rm -f > /dev/null 2>&1 || true

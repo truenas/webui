@@ -1,0 +1,107 @@
+name: 'E2E: the UI under test'
+description: "Finds the WebUI workflow's build of this commit (webui-dist) and downloads it, or builds the UI here when there is none. Sets UI_DIST."
+
+# The UI under test is this checkout's, not the one baked into the
+# appliance's ISO. main.yml's Build job already builds it, as the Debian
+# package that ships, and uploads it as `webui-dist`; this finds that WebUI
+# run by commit and waits for the upload. Call it after the appliance has
+# started booting, so its build and the boot overlap.
+#
+# Only a run that built the tree the job checked out counts: for a pull
+# request, the WebUI run of the same head commit, which built the same merge
+# commit; otherwise the push run of this commit, so a dispatch on master or
+# the nightly finds master's. A dispatch on any other branch has none and
+# builds here. So does a WebUI run that finished without the artifact, or
+# one still going after ten minutes. Each falls back to building rather than
+# failing the job.
+#
+# The newest such run is taken. For a pull request that is the one that
+# built this checkout's merge commit, except in one rare case: a re-run of an
+# older attempt after master moved and a newer WebUI run of the same head
+# commit built a newer merge.
+#
+# The calling job needs `actions: read`, for the runs and their artifacts.
+
+outputs:
+  dist:
+    description: The built UI's directory, also set as UI_DIST in the job environment.
+    value: ${{ steps.build.outputs.dist }}
+
+runs:
+  using: composite
+  steps:
+    - id: find
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        # The PR's branch, or the pushed one: a run of the same commit from
+        # another PR (a fork's, or one to another base) built another tree.
+        BRANCH: ${{ github.head_ref || github.ref_name }}
+      run: |
+        set -euo pipefail
+        event=push
+        [ "$GITHUB_EVENT_NAME" = pull_request ] && event=pull_request
+        api="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions"
+        get() { curl -fsS -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "$1"; }
+        deadline=$((SECONDS + 600))
+        while :; do
+          # A failed query (a 5xx, the token's rate limit) falls back to
+          # building rather than failing the job.
+          if ! runs=$(get "$api/workflows/main.yml/runs?head_sha=$SHA&event=$event&branch=$BRANCH&per_page=10"); then
+            echo "::notice::Could not query the WebUI runs; building the UI here"
+            exit 0
+          fi
+          run=$(jq -c --arg repo "$GITHUB_REPOSITORY" '[.workflow_runs[] | select(.head_repository.full_name == $repo)][0] // empty' <<< "$runs")
+          if [ -z "$run" ]; then
+            echo "No WebUI $event run of $SHA; building the UI here"
+            exit 0
+          fi
+          id=$(jq -r .id <<< "$run")
+          # The list keeps an artifact past its retention, marked expired,
+          # and download-artifact cannot fetch that one.
+          if get "$api/runs/$id/artifacts?name=webui-dist" | jq -e '[.artifacts[] | select(.expired | not)] | length > 0' > /dev/null; then
+            echo "run-id=$id" >> "$GITHUB_OUTPUT"
+            echo "Using the UI WebUI run $id built, $(jq -r .html_url <<< "$run"), after waiting ${SECONDS}s"
+            exit 0
+          fi
+          if [ "$(jq -r .status <<< "$run")" = completed ]; then
+            echo "::notice::WebUI run $id finished with no webui-dist to download (failed, or expired); building the UI here"
+            exit 0
+          fi
+          if [ "$SECONDS" -ge "$deadline" ]; then
+            echo "::notice::WebUI run $id has not uploaded webui-dist after 10 minutes; building the UI here"
+            exit 0
+          fi
+          # Two calls a round, on the token's 1,000 requests an hour that
+          # every workflow in the repository shares.
+          sleep 20
+        done
+
+    - if: steps.find.outputs.run-id != ''
+      uses: actions/download-artifact@v4
+      with:
+        name: webui-dist
+        path: ${{ runner.temp }}/webui-dist
+        run-id: ${{ steps.find.outputs.run-id }}
+        github-token: ${{ github.token }}
+
+    # Same production build as main.yml's Build job — `--base-href /ui/`, so
+    # it is served where the appliance's nginx would serve it — for when there
+    # is no WebUI build to reuse. While the appliance runs, so its memory and
+    # the guest's are in use at once; only on that fallback.
+    - id: build
+      shell: bash
+      env:
+        DOWNLOADED: ${{ steps.find.outputs.run-id != '' && format('{0}/webui-dist', runner.temp) || '' }}
+      run: |
+        set -euo pipefail
+        if [ -n "$DOWNLOADED" ]; then
+          dist="$DOWNLOADED"
+        else
+          yarn build:prod
+          dist="$GITHUB_WORKSPACE/dist"
+        fi
+        [ -f "$dist/index.html" ] || { echo "::error::$dist has no index.html"; exit 1; }
+        echo "UI_DIST=$dist" >> "$GITHUB_ENV"
+        echo "dist=$dist" >> "$GITHUB_OUTPUT"

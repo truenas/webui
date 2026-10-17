@@ -81,6 +81,63 @@ export interface TargetConfig {
    * certificate problem in the other (R2.9).
    */
   readonly ignoreHttpsErrors: boolean;
+  /**
+   * The HA pair, when the run is against one (`TN_HA=true`): the HA suite's
+   * journeys run only then, and the single-appliance projects not at all.
+   */
+  readonly ha?: HaTarget;
+}
+
+/**
+ * An HA pair as the appliance action hands it over (`ha: true`): two
+ * unlicensed controllers and the addresses their HA setup needs. Middleware
+ * reaches node A as {@link TargetConfig.middlewareHost} until there is a VIP.
+ */
+export interface HaTarget {
+  /** Controller 1's address, which it keeps as a static alias. */
+  readonly nodeA: string;
+  /** Controller 2's address. */
+  readonly nodeB: string;
+  /** Free until the suite configures it as the pair's virtual IP. */
+  readonly vip: string;
+  /** Prefix length of the pair's network. */
+  readonly netmask: number;
+  /** The UI served against the VIP, for the journeys after it exists. Ends with `/`. */
+  readonly vipUiBaseUrl: string;
+  /**
+   * A file holding the HA license the suite uploads. A path, not the PEM: a
+   * value in the environment reaches every log line that prints it.
+   */
+  readonly licenseFile: string;
+}
+
+/**
+ * Reads the HA pair from the `TN_HA_*` variables the appliance action sets,
+ * plus the two this repository's workflow adds: where the UI is served
+ * against the VIP, and where the license was written.
+ */
+function readHaTarget(env: NodeJS.ProcessEnv, problems: string[]): HaTarget | undefined {
+  if (env.TN_HA !== 'true') {
+    return undefined;
+  }
+
+  const nodeA = requireValue('TN_HA_NODE_A', env.TN_HA_NODE_A, problems);
+  const nodeB = requireValue('TN_HA_NODE_B', env.TN_HA_NODE_B, problems);
+  const vip = requireValue('TN_HA_VIP', env.TN_HA_VIP, problems);
+  const netmask = Number(requireValue('TN_HA_NETMASK', env.TN_HA_NETMASK, problems));
+  const vipUiBaseUrl = requireValue('TN_HA_VIP_UI_BASE_URL', env.TN_HA_VIP_UI_BASE_URL, problems);
+  const licenseFile = requireValue('TN_HA_LICENSE_FILE', env.TN_HA_LICENSE_FILE, problems);
+
+  if (env.TN_HA_NETMASK && !(Number.isInteger(netmask) && netmask > 0 && netmask <= 32)) {
+    problems.push(`TN_HA_NETMASK must be a prefix length from 1 to 32 (got "${env.TN_HA_NETMASK}")`);
+  }
+  if (vipUiBaseUrl && !vipUiBaseUrl.endsWith('/')) {
+    problems.push(`TN_HA_VIP_UI_BASE_URL must end with "/" (got "${vipUiBaseUrl}")`);
+  }
+
+  return {
+    nodeA, nodeB, vip, netmask, vipUiBaseUrl, licenseFile,
+  };
 }
 
 /**
@@ -330,6 +387,7 @@ export function loadTargetConfig(env: NodeJS.ProcessEnv = process.env): TargetCo
 
   const username = requireValue('TN_USERNAME', env.TN_USERNAME, problems);
   const password = requireValue('TN_PASSWORD', env.TN_PASSWORD, problems);
+  const ha = readHaTarget(env, problems);
 
   const uiBaseUrlOverridden = !!env.TN_UI_BASE_URL;
   let uiBaseUrl = env.TN_UI_BASE_URL ?? '';
@@ -369,6 +427,24 @@ export function loadTargetConfig(env: NodeJS.ProcessEnv = process.env): TargetCo
     username,
     password,
     ignoreHttpsErrors: profile === 'shipped',
+    ha,
+  };
+}
+
+/**
+ * The same target, reached through the HA pair's VIP: the UI served against
+ * it, and middleware at it. For the journeys after the VIP exists, which
+ * must follow the active controller rather than a node that may be the
+ * standby by then.
+ */
+export function throughVip(config: TargetConfig): TargetConfig {
+  if (!config.ha) {
+    throw new Error('throughVip: the run is not against an HA pair (TN_HA is not "true")');
+  }
+  return {
+    ...config,
+    uiBaseUrl: config.ha.vipUiBaseUrl,
+    middlewareHost: config.ha.vip,
   };
 }
 

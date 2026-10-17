@@ -1,0 +1,132 @@
+name: 'E2E: serve the UI'
+description: 'Serves UI_DIST with nginx, the way the appliance does, proxying middleware to one upstream, over TLS and over cleartext.'
+
+# The web server for the UI under test is a stock nginx image driven by
+# `docker/nginx.conf`, this repository's copy of the appliance's nginx
+# routing: `/ui/` from disk, the API paths and the WebSocket proxied to the
+# upstream over plain HTTP. A stand-in rather than the real thing: the deb
+# ships only `dist/`, so an appliance serves the UI through middleware's own
+# config, not this file. Called more than once for an HA pair: once per
+# address the suite needs the UI against.
+#
+# The sed fills the file's two placeholders — `%%HOSTNAME%%` with the
+# upstream, `%%VERTAG%%` with a timestamp to bust the UI cache — redirects
+# the syslog targets, which a container has no socket for, and replaces the
+# listeners with this call's two ports.
+#
+# Served over TLS with a throwaway self-signed certificate, and it has to be:
+# a production build ignores the login token on a plain-HTTP origin
+# (`AuthService.setQueryToken`), so over http the suite's setup project would
+# wait on a sign-in page that never moves. The suite then runs as the
+# `shipped` profile with `TN_UI_BASE_URL` overriding the address, which is
+# what makes it tolerate a self-signed certificate — and is accurate: this is
+# the production build at /ui/ over https, served the way the appliance
+# serves it, just from a different box. The cleartext listener is what lets
+# the insecure-connection test run rather than skip: the warning is decided
+# from the scheme the page was loaded with, so it needs an origin that is
+# really http.
+#
+# On the runner's own network, on 127.0.0.1 only, at two ports free when it
+# starts: so nginx reaches the upstream from the runner's own address — an
+# HA pair's addresses are reachable from there, not from Docker's bridge,
+# once the suite takes their DHCP route away — and the suite's container,
+# also on the host network, reaches nginx. Named after the run and `name`,
+# so a later step can stop it without state:
+#
+#   $DOCKER ps -aq --filter "name=e2e-ui-$GITHUB_RUN_ID-" | xargs -r $DOCKER rm -f
+#
+# Needs DOCKER and NGINX_IMAGE (./.github/actions/e2e-browser) and UI_DIST
+# (./.github/actions/webui-dist).
+
+inputs:
+  name:
+    description: What this copy is for, in its container's name.
+    default: ui
+  upstream:
+    description: Where middleware answers over http, as host:port.
+    required: true
+  check-upstream:
+    description: >-
+      `true` waits for the upstream to answer through the proxy as well as
+      for the UI. `false` for an upstream that does not exist yet, as an HA
+      pair's VIP until the suite configures it.
+    default: 'true'
+
+outputs:
+  url:
+    description: The UI over https, ending in /ui/.
+    value: ${{ steps.serve.outputs.url }}
+  http-url:
+    description: The UI over cleartext http, ending in /ui/.
+    value: ${{ steps.serve.outputs.http-url }}
+
+runs:
+  using: composite
+  steps:
+    - id: serve
+      shell: bash
+      env:
+        NAME: ${{ inputs.name }}
+        UPSTREAM: ${{ inputs.upstream }}
+        CHECK_UPSTREAM: ${{ inputs.check-upstream }}
+      run: |
+        set -euo pipefail
+        container="e2e-ui-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-$NAME"
+        conf="$RUNNER_TEMP/nginx-$NAME.conf"
+        crt="$RUNNER_TEMP/e2e-ui.crt" key="$RUNNER_TEMP/e2e-ui.key"
+        [ -f "$crt" ] || openssl req -x509 -newkey rsa:2048 -nodes -days 2 -subj /CN=localhost \
+          -keyout "$key" -out "$crt" > /dev/null 2>&1
+        # Two ports nothing listens on. Asked of the kernel rather than chosen,
+        # so neither the appliance's own forwards nor a second copy collide.
+        read -r http https < <(python3 -c '
+        import socket
+        socks = [socket.socket() for _ in range(2)]
+        for s in socks:
+            s.bind(("127.0.0.1", 0))
+        print(*(s.getsockname()[1] for s in socks))')
+        sed \
+          -e "s|%%HOSTNAME%%|$UPSTREAM|g" \
+          -e "s|%%VERTAG%%|$(date +%s)|g" \
+          -e "s|^\([[:space:]]*error_log\) .*|\1 /dev/stderr;|" \
+          -e "s|^\([[:space:]]*access_log\) .*|\1 off;|" \
+          -e "s|^\([[:space:]]*\)listen[[:space:]]*0\.0\.0\.0:80;|\1listen 127.0.0.1:$http;\n\1listen 127.0.0.1:$https ssl; ssl_certificate /etc/nginx/e2e-ui.crt; ssl_certificate_key /etc/nginx/e2e-ui.key;|" \
+          -e "/listen[[:space:]]*\[::\]:80;/d" \
+          -e "/error_page[[:space:]]*500 502 503 504/d" \
+          docker/nginx.conf > "$conf"
+        grep -q "listen 127.0.0.1:$https ssl" "$conf" || { echo "::error::docker/nginx.conf no longer has the listen line this step rewrites"; exit 1; }
+        grep -q "listen 127.0.0.1:$http;" "$conf" || { echo "::error::the cleartext listener was not kept alongside the TLS one"; exit 1; }
+        $DOCKER run -d --rm --name "$container" --network host \
+          -v "$UI_DIST:/var/www/webui:ro" \
+          -v "$conf:/etc/nginx/tn-nginx.conf:ro" \
+          -v "$crt:/etc/nginx/e2e-ui.crt:ro" \
+          -v "$key:/etc/nginx/e2e-ui.key:ro" \
+          "$NGINX_IMAGE" nginx -c /etc/nginx/tn-nginx.conf > /dev/null
+        url="https://localhost:${https}/ui/"
+        httpUrl="http://localhost:${http}/ui/"
+        # Fail here, not steps later inside a test, if the UI or its proxy
+        # is not answering. The proxy check asks for the WebSocket endpoint
+        # over plain GET. A 5xx is nginx unable to reach the upstream — the
+        # sed above removes the inherited `error_page` handler, whose 50x
+        # page does not exist in this image and would otherwise turn that 502
+        # into a 404. A 404 is excluded too, since nginx can produce one on
+        # its own; anything else in 1xx–4xx had to come from the upstream.
+        ready= ui= uiHttp= proxy=
+        for _ in $(seq 1 30); do
+          ui=$(curl -sk -o /dev/null -w '%{http_code}' "$url" || true)
+          uiHttp=$(curl -s -o /dev/null -w '%{http_code}' "$httpUrl" || true)
+          proxy=$(curl -sk -o /dev/null -w '%{http_code}' "https://localhost:${https}/api/current" || true)
+          if [ "$ui" = 200 ] && [ "$uiHttp" = 200 ] \
+              && { [ "$CHECK_UPSTREAM" != true ] || { [[ "$proxy" =~ ^[1-4] ]] && [ "$proxy" != 404 ]; }; }; then
+            ready=1
+            break
+          fi
+          sleep 2
+        done
+        if [ -z "$ready" ]; then
+          echo "::error::The UI ($NAME) is not serving at ${url} (ui=${ui:-none}, uiHttp=${uiHttp:-none}, proxy=${proxy:-none})"
+          $DOCKER logs "$container" || true
+          exit 1
+        fi
+        echo "url=$url" >> "$GITHUB_OUTPUT"
+        echo "http-url=$httpUrl" >> "$GITHUB_OUTPUT"
+        echo "Serving the built UI ($NAME) at $url and $httpUrl, proxying to $UPSTREAM"

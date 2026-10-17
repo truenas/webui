@@ -1,0 +1,147 @@
+name: 'E2E: run the suite'
+description: "Runs the Playwright suite in Playwright's image against the TN_* target in the job environment, and uploads its JUnit results and failure traces."
+
+# Only the test run is containerised; the appliance stays on the runner,
+# under qemu.
+#
+#   --network host: the container reaches the appliance, and the UI that
+#     e2e-serve-ui serves on 127.0.0.1, exactly as the host does, no port
+#     mapping and no Docker DNS in the way.
+#   --ipc host: what Playwright's own docs ask for with Chromium, which
+#     otherwise runs out of shared memory and crashes mid-test.
+#   -u: run as the runner user so everything written under test-results is
+#     owned by it rather than by root. HOME is set because that uid has no
+#     home inside the image.
+#   The host's node_modules is reused: it is pure JavaScript apart from the
+#   browsers, and the image already has those at its default path.
+#
+# Variables go through --env-file, not `-e NAME=value`. $DOCKER may be
+# `sudo -n docker`: sudo scrubs the environment, so `-e NAME` pass-through is
+# empty, and a value on the command line lands in sudo's own log line and in
+# /proc/<pid>/cmdline for the life of the container. The file is read by the
+# docker client after sudo has exec'd it, lives on the runner's own disk, and
+# is removed after.
+#
+# The artifacts, and why publishing them is safe: see the upload steps.
+#
+# Needs DOCKER and PLAYWRIGHT_IMAGE (./.github/actions/e2e-browser), and the
+# suite's TN_* contract in the job environment.
+
+inputs:
+  shard:
+    description: Playwright's --shard, as i/n.
+    default: '1/1'
+  grep:
+    description: >-
+      Optional Playwright --grep filter. Passed to the container as data,
+      never interpolated into a shell line: it comes from a dispatch, and
+      this runs on a runner with hypervisor access.
+    default: ''
+  env:
+    description: >-
+      Further variables to pass to the suite, by name, one per line: their
+      values are read from the job environment.
+    default: ''
+  volumes:
+    description: Further `docker run -v` mounts, one per line.
+    default: ''
+  artifact-suffix:
+    description: Appended to the artifacts' names, to keep shards and jobs apart.
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - id: suite
+      shell: bash
+      env:
+        CI: 'true'
+        TN_GREP: ${{ inputs.grep }}
+        TN_SHARD: ${{ inputs.shard }}
+        EXTRA_ENV: ${{ inputs.env }}
+        EXTRA_VOLUMES: ${{ inputs.volumes }}
+      run: |
+        set -euo pipefail
+        # The env file is parsed line by line: a newline in the filter would
+        # end it early and let the rest set arbitrary variables in the
+        # container. Refuse rather than truncate, so a bad dispatch is loud.
+        case "${TN_GREP:-}" in
+          *$'\n'*|*$'\r'*) echo "::error::The grep input must be a single line"; exit 1 ;;
+        esac
+        envFile="$RUNNER_TEMP/suite.env"
+        trap 'rm -f "$envFile"' EXIT
+        names=(CI TN_GREP TN_SHARD TN_PROFILE TN_UI_BASE_URL TN_UI_BASE_URL_HTTP TN_HOST
+               TN_USERNAME TN_PASSWORD TN_DOMAIN TN_BASELINE)
+        while read -r name; do
+          [ -n "$name" ] && names+=("$name")
+        done <<< "$EXTRA_ENV"
+        : > "$envFile"
+        for name in "${names[@]}"; do
+          value="${!name:-}"
+          case "$value" in
+            *$'\n'*|*$'\r'*) echo "::error::$name holds a newline, which the env file cannot carry"; exit 1 ;;
+          esac
+          printf '%s=%s\n' "$name" "$value" >> "$envFile"
+        done
+        volumes=()
+        while read -r volume; do
+          [ -n "$volume" ] && volumes+=(-v "$volume")
+        done <<< "$EXTRA_VOLUMES"
+        $DOCKER run --rm \
+          --network host \
+          --ipc host \
+          -u "$(id -u):$(id -g)" \
+          -e HOME=/tmp \
+          -v "$GITHUB_WORKSPACE:/work" \
+          "${volumes[@]}" \
+          -w /work \
+          --env-file "$envFile" \
+          "$PLAYWRIGHT_IMAGE" \
+          bash -c 'if [ -n "${TN_GREP:-}" ]; then ./node_modules/.bin/playwright test --shard "$TN_SHARD" --grep "$TN_GREP"; else ./node_modules/.bin/playwright test --shard "$TN_SHARD"; fi'
+
+    # Whenever the suite ran, pass or fail, and then insists on the file:
+    # JUnit is the run history R7.4 and R8.4 are built on, so a run that
+    # produced none must not report green.
+    - if: always() && steps.suite.outcome != 'skipped'
+      uses: actions/upload-artifact@v4
+      with:
+        name: e2e-junit${{ inputs.artifact-suffix }}
+        path: test-results/junit.xml
+        if-no-files-found: error
+        retention-days: 14
+
+    # Traces, screenshots and video for the tests that failed (R7.1): what
+    # makes a failure triageable without a local reproduction (R6.2).
+    #
+    # Artifacts on a public repository are downloadable by anyone, and a
+    # trace records action parameters verbatim — including the appliance
+    # password `signIn` types and the login token in the setup project's
+    # URL. Publishing them is safe because both are worthless by the time
+    # anyone can download this: the password is generated per job, the token
+    # expires, and the appliance they belonged to is deleted with its runner
+    # when the job ends. Do not upload these from a pipeline that reuses an
+    # appliance or a credential. What would stay valuable after the job — a
+    # license — is kept out by the suite writing it outside test-results/
+    # (the `ha-license` project's `outputDir` in playwright.config.ts).
+    #
+    # Whenever the suite ran, not only when it failed: Playwright keeps a
+    # trace on the first retry, and a test that fails once and passes on the
+    # retry leaves the step green with exactly that trace on disk.
+    - if: always() && steps.suite.outcome != 'skipped'
+      id: traces
+      shell: bash
+      run: |
+        {
+          echo 'paths<<EOF'
+          echo 'test-results/**'
+          echo '!test-results/junit.xml'
+          echo 'EOF'
+        } >> "$GITHUB_OUTPUT"
+
+    - if: always() && steps.suite.outcome != 'skipped'
+      uses: actions/upload-artifact@v4
+      with:
+        name: e2e-failure-traces${{ inputs.artifact-suffix }}
+        path: ${{ steps.traces.outputs.paths }}
+        if-no-files-found: ignore
+        retention-days: 14

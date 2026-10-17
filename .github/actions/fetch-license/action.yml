@@ -1,0 +1,56 @@
+name: 'E2E: fetch a CI license'
+description: "Fetches a CI license from MES's renew endpoint into a file, the way api-ci-testbed's fetch_license.sh does."
+
+# Fetched fresh every run, never committed: renewing re-signs the CI license
+# with a current `issued_at`, and middleware caps a test license's life from
+# that stamp, so a stored copy would go stale.
+#
+# The endpoint is internal and this repository is public, so its address is
+# a secret, and masked by more than its whole value: Actions masks a secret
+# only where the whole of it appears, and curl's own errors name the host
+# alone ("Could not resolve host: …"). The host is masked before curl runs.
+#
+# The license is written to a file, never echoed: a license is worth
+# something after the job, unlike the job's password. The caller decides
+# what reads it.
+
+inputs:
+  url:
+    description: The renew endpoint's URL, from the E2E_LICENSE_URL secret.
+    required: true
+  serial:
+    description: The CI license to renew, CI-SINGLE or CI-HAA.
+    required: true
+
+outputs:
+  file:
+    description: The file the license was written to.
+    value: ${{ steps.fetch.outputs.file }}
+  dir:
+    description: The directory holding it, for a container mount.
+    value: ${{ steps.fetch.outputs.dir }}
+
+runs:
+  using: composite
+  steps:
+    - id: fetch
+      shell: bash
+      env:
+        LICENSE_URL: ${{ inputs.url }}
+        SERIAL: ${{ inputs.serial }}
+      run: |
+        set -euo pipefail
+        [ -n "$LICENSE_URL" ] || { echo "::error::The E2E_LICENSE_URL secret is not set"; exit 1; }
+        host="${LICENSE_URL#*://}"
+        host="${host%%/*}"
+        echo "::add-mask::$host"
+        echo "::add-mask::${host%%:*}"
+        dir="$RUNNER_TEMP/license-$SERIAL"
+        mkdir -p "$dir"
+        curl -fsS --retry 3 --retry-connrefused --retry-delay 2 --max-time 30 \
+          -X POST "$LICENSE_URL" -H 'Content-Type: application/json' -d "{\"serial\":\"$SERIAL\"}" \
+          | jq -r '.license // empty' > "$dir/license.txt"
+        grep -q -- '-----BEGIN TRUENAS LICENSE-----' "$dir/license.txt" \
+          || { echo "::error::MES did not return a license for $SERIAL"; exit 1; }
+        echo "file=$dir/license.txt" >> "$GITHUB_OUTPUT"
+        echo "dir=$dir" >> "$GITHUB_OUTPUT"
