@@ -1,7 +1,7 @@
 <tn-dialog-shell [testId]="error.testId || 'error'" [title]="error.title | translate">
   <div id="err-md-content" class="err-content" role="alertdialog">
     <div class="err-message-wrapper">
-      <span [innerHTML]="error.message"></span>
+      <span tnTestIdType="text" [tnTestId]="'error-message'" [innerHTML]="error.message"></span>
       @if (error.hint) {
         <div class="hint-text">
           <tn-icon name="information" library="mdi" class="hint-icon"></tn-icon>

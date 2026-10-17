@@ -20,6 +20,7 @@ const expectedRoute = {
   datasets: /\/datasets/,
   shares: /\/sharing/,
   dataProtection: /\/data-protection\/?$/,
+  containers: /\/containers/,
   virtualMachines: /\/vm\/?$/,
   reporting: /\/reportsdashboard\/cpu\/?$/,
   apps: /\/apps\/installed/,
@@ -86,6 +87,14 @@ export async function goToShares(page: Page): Promise<void> {
  */
 export async function goToDataProtection(page: Page): Promise<void> {
   await clickAndArrive(page, navLocators.dataProtection, expectedRoute.dataProtection);
+}
+
+/**
+ * Containers is a plain link too. Not anchored to the end, because a selected container's details
+ * live under it (`/containers/view/:id`).
+ */
+export async function goToContainers(page: Page): Promise<void> {
+  await clickAndArrive(page, navLocators.containers, expectedRoute.containers);
 }
 
 /**
