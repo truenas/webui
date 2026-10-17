@@ -78,8 +78,10 @@
 
   <div class="two-columns">
     <tn-form-section [heading]="helptext.nameservers | translate">
-      <tn-form-field [label]="nameserver1.label | translate">
-        <tn-input [name]="nameserver1.fcName" [formControlName]="nameserver1.fcName"></tn-input>
+      <!-- A static `formControlName` leaves the attribute in the DOM, which is how the form's error
+           handler finds this field to show a refusal under it rather than in a dialog. -->
+      <tn-form-field testId="nameserver1" [label]="nameserver1.label | translate">
+        <tn-input formControlName="nameserver1" [name]="nameserver1.fcName"></tn-input>
       </tn-form-field>
 
       <tn-form-field [label]="nameserver2.label | translate">
@@ -91,11 +93,13 @@
       </tn-form-field>
     </tn-form-section>
     <tn-form-section [heading]="helptext.gateway | translate">
+      <!-- Static `formControlName` for the same reason as Nameserver 1's. -->
       <tn-form-field
+        testId="ipv4gateway"
         [label]="ipv4gateway.label | translate"
         [tooltip]="ipv4gateway.tooltip | translate"
       >
-        <tn-input [name]="ipv4gateway.fcName" [formControlName]="ipv4gateway.fcName"></tn-input>
+        <tn-input formControlName="ipv4gateway" [name]="ipv4gateway.fcName"></tn-input>
       </tn-form-field>
 
       <tn-form-field
