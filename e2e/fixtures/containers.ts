@@ -18,7 +18,7 @@ import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 type LxcConfig = CallResponse<E2eApiDirectory, 'lxc.config'>;
 type LxcUpdate = NonNullable<CallParams<E2eApiDirectory, 'lxc.update'>[0]>;
-type ContainerEntry = CallResponse<E2eApiDirectory, 'container.query'>[number];
+type ContainerEntry = Extract<CallResponse<E2eApiDirectory, 'container.query'>, unknown[]>[number];
 
 /** Everything the Global Configuration form shows and saves. */
 export type ContainerSettings = Pick<LxcConfig, 'preferred_pool' | 'bridge' | 'v4_network' | 'v6_network'>;
