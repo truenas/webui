@@ -8,22 +8,27 @@
  * Every form control is bound by control name with no `testId`, so its id falls
  * back to that name: `input-nameserver1`, `checkbox-inherit-dhcp`. A `tn-chip-input`
  * puts its id on the typable field inside it, as `chip-input-<name>`.
+ *
+ * The card's readouts are scoped inside the card, because the top bar renders its
+ * own `text-hostname` and an unscoped locator matches both.
  */
+
+const card = '[data-test="card-network-configuration"]';
 
 export const networkConfigLocators = {
   card: {
     /** "Settings" in the card footer. Opens the form. */
     settings: '[data-test="button-network-settings"]',
     /** `hostname_local`, which is `hostname` on a single controller. */
-    hostname: '[data-test="text-hostname"]',
+    hostname: `${card} [data-test="text-hostname"]`,
     /** The domain, or "Inherit from DHCP" while none is set. */
-    domain: '[data-test="text-domain"]',
+    domain: `${card} [data-test="text-domain"]`,
     /** The additional search domains, joined with ", ", or "-". */
-    additionalDomains: '[data-test="text-additional-domains"]',
+    additionalDomains: `${card} [data-test="text-additional-domains"]`,
     /** The host entries, joined with ", ", or "-". */
-    hostnameDatabase: '[data-test="text-hostname-database"]',
+    hostnameDatabase: `${card} [data-test="text-hostname-database"]`,
     /** The announcements switched on, of "NETBIOS-NS", "mDNS" and "WS-DISCOVERY", joined with ", ". */
-    serviceAnnouncement: '[data-test="text-service-announcement"]',
+    serviceAnnouncement: `${card} [data-test="text-service-announcement"]`,
   },
 
   form: {
