@@ -8,7 +8,7 @@ import { networkConfigLocators } from '../locators/network';
 
 /**
  * How long a save may take, and a refusal to come back. A save rewrites the hosts
- * and resolver files and restarts the discovery services; a gateway check pings first.
+ * and resolver files and restarts the discovery services.
  */
 export const networkSaveTimeoutMs = 60_000;
 
