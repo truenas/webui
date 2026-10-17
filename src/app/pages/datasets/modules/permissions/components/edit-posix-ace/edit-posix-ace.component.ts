@@ -14,6 +14,9 @@ import { PosixAclItem } from 'app/interfaces/acl.interface';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
+import {
+  validityAfterPendingChecks,
+} from 'app/pages/datasets/modules/permissions/utils/validity-after-pending-checks.utils';
 
 @Component({
   selector: 'ix-edit-posix-ace',
@@ -83,6 +86,21 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     this.form.statusChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.onFormStatusUpdated());
+  }
+
+  /**
+   * Hands a user or group check still in flight to the store, run on a copy, so its verdict reaches this entry
+   * even if the entry is no longer selected by then. Only the selected entry's validity is reported from here,
+   * and leaving it cancels the live check.
+   */
+  private settlePendingChecks(): void {
+    const { user, group } = this.form.controls;
+    const pending = [user, group].filter((control) => control.pending);
+    if (pending.length === 0) {
+      return;
+    }
+
+    this.store.settleAceValidation({ ace: this.ace(), isValid$: validityAfterPendingChecks(pending) });
   }
 
   private onFormStatusUpdated(): void {
@@ -159,6 +177,7 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     userField.updateValueAndValidity({ onlySelf: true });
     groupField.updateValueAndValidity({ onlySelf: true });
     this.form.markAllAsTouched();
+    this.settlePendingChecks();
 
     this.onFormStatusUpdated();
   }

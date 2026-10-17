@@ -31,6 +31,9 @@ import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/u
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { newNfsAce } from 'app/pages/datasets/modules/permissions/utils/new-ace.utils';
 import {
+  validityAfterPendingChecks,
+} from 'app/pages/datasets/modules/permissions/utils/validity-after-pending-checks.utils';
+import {
   NfsFormFlagsType,
   nfsFormFlagsTypeLabels,
   NfsFormPermsType,
@@ -168,6 +171,21 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
       .subscribe(() => this.onFormStatusUpdated());
   }
 
+  /**
+   * Hands a user or group check still in flight to the store, run on a copy, so its verdict reaches this entry
+   * even if the entry is no longer selected by then. Only the selected entry's validity is reported from here,
+   * and leaving it cancels the live check.
+   */
+  private settlePendingChecks(): void {
+    const { user, group } = this.form.controls;
+    const pending = [user, group].filter((control) => control.pending);
+    if (pending.length === 0) {
+      return;
+    }
+
+    this.store.settleAceValidation({ ace: this.ace(), isValid$: validityAfterPendingChecks(pending) });
+  }
+
   private onFormStatusUpdated(): void {
     // Don't update validation status while async validators are pending
     // This prevents the "flash of invalid" during async validation
@@ -282,6 +300,7 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
     userField.updateValueAndValidity({ onlySelf: true });
     groupField.updateValueAndValidity({ onlySelf: true });
     this.form.markAllAsTouched();
+    this.settlePendingChecks();
 
     this.onFormStatusUpdated();
   }
