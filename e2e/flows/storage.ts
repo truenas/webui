@@ -88,6 +88,19 @@ export interface AutomatedVdevs {
   vdevs?: number;
 }
 
+/** What the Data step's Automated Disk Selection is set to for a dRAID layout. */
+export interface DraidVdevs {
+  /** The layout option's label, as the select shows it: `dRAID1`, `dRAID2`, `dRAID3`. */
+  layout: string;
+  /** Data disks per redundancy group. */
+  dataDevices: number;
+  /** Distributed hot spares per vdev. */
+  spares: number;
+  /** Disks per vdev: its groups' data and parity disks, plus its spares. */
+  children: number;
+  vdevs: number;
+}
+
 /**
  * Creates a pool with one RAIDZ2 data vdev, through the pool creation wizard.
  *
@@ -165,6 +178,40 @@ export async function configureAutomatedVdevs(
       poolWizardLocators.vdevCountOption(type, vdevs.vdevs),
     );
   }
+}
+
+/**
+ * Fills in the Data step's Automated Disk Selection for a dRAID layout: layout, the first disk
+ * size on offer, then Data Devices, Distributed Hot Spares, Children and the vdev count.
+ *
+ * In that order because each choice regenerates the options of the next
+ * (`draid-selection.component.ts`). Children in particular is reset to the widest it can be
+ * whenever Data Devices or the spares change, so it has to be chosen after both.
+ */
+export async function configureDraidVdevs(page: Page, draid: DraidVdevs): Promise<void> {
+  await selectOption(page, poolWizardLocators.layout, poolWizardLocators.layoutOption(draid.layout));
+  await selectFirstOption(page, poolWizardLocators.diskSize('data'), poolWizardLocators.diskSizeOptions('data'));
+
+  await selectOption(
+    page,
+    poolWizardLocators.draidDataDevices('data'),
+    poolWizardLocators.draidDataDevicesOption('data', draid.dataDevices),
+  );
+  await selectOption(
+    page,
+    poolWizardLocators.draidSpares('data'),
+    poolWizardLocators.draidSparesOption('data', draid.spares),
+  );
+  await selectOption(
+    page,
+    poolWizardLocators.draidChildren('data'),
+    poolWizardLocators.draidChildrenOption('data', draid.children),
+  );
+  await selectOption(
+    page,
+    poolWizardLocators.vdevCount('data'),
+    poolWizardLocators.vdevCountOption('data', draid.vdevs),
+  );
 }
 
 /** Leaves the open vdev step by its Save And Go To Review, and waits for the Review step. */
