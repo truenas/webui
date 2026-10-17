@@ -19,6 +19,7 @@ import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 type LxcConfig = CallResponse<E2eApiDirectory, 'lxc.config'>;
 type LxcUpdate = NonNullable<CallParams<E2eApiDirectory, 'lxc.update'>[0]>;
 type ContainerEntry = Extract<CallResponse<E2eApiDirectory, 'container.query'>, unknown[]>[number];
+type ContainerRecord = ContainerEntry & { id: number };
 
 /** Everything the Global Configuration form shows and saves. */
 export type ContainerSettings = Pick<LxcConfig, 'preferred_pool' | 'bridge' | 'v4_network' | 'v6_network'>;
@@ -72,11 +73,11 @@ export async function countContainers(client: E2eApiClient): Promise<number> {
 export const containerCreateTimeoutMs = 10 * 60_000;
 
 /** A container by name, or undefined when absent. */
-export async function findContainer(client: E2eApiClient, name: string): Promise<ContainerEntry | undefined> {
+export async function findContainer(client: E2eApiClient, name: string): Promise<ContainerRecord | undefined> {
   const [container] = await firstValueFrom(
     client.api.query('container.query', [['name', '=', name]]).pipe(timeout(readTimeoutMs)),
   );
-  return container;
+  return container as ContainerRecord | undefined;
 }
 
 /**
