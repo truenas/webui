@@ -47,6 +47,15 @@ export async function readFailover(client: E2eApiClient): Promise<FailoverState>
   };
 }
 
+/**
+ * The other controller's boot, as the connected one sees it: `null` while it
+ * cannot reach it. A new value means the other controller has rebooted.
+ */
+export async function readPeerBootId(client: E2eApiClient): Promise<string | null> {
+  const info = await firstValueFrom(client.api.call('failover.reboot.info').pipe(timeout(readTimeoutMs)));
+  return info.other_node?.boot_id ?? null;
+}
+
 /** Whether automatic failover is on: `failover.config`'s `disabled`, inverted. */
 export async function isFailoverEnabled(client: E2eApiClient): Promise<boolean> {
   const config = await firstValueFrom(client.api.call('failover.config').pipe(timeout(readTimeoutMs)));

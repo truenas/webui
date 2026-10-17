@@ -16,7 +16,8 @@
  * with it shows in controller 1's `failover.disabled.reasons`.
  */
 import {
-  dropsDhcpGateway, findInterfaceWith, isFailoverEnabled, poolNames, readFailover, readHaInterface, requireHa,
+  dropsDhcpGateway, findInterfaceWith, isFailoverEnabled, poolNames, readFailover, readHaInterface, readPeerBootId,
+  requireHa,
 } from '../fixtures/ha';
 import {
   openFailoverForm, openInterfaceForm, saveAutomaticFailover, saveInterface, setHaAddresses, syncToPeer,
@@ -41,6 +42,9 @@ const failoverGroup = 1;
  * sync, is back and has caught up: minutes on these VMs.
  */
 const haUpTimeoutMs = 10 * 60_000;
+
+/** What controller 1 reports while controller 2 is not back from a reboot, or not yet in step. */
+const peerNotBackReasons = ['NO_PONG', 'NO_SYSTEM_READY', 'NO_JOURNAL_SYNC', 'REM_NO_JOURNAL_SYNC'];
 
 test('an admin turns automatic failover off while the pair is set up', async ({ page, api, config }) => {
   requireHa(config);
@@ -78,6 +82,9 @@ test('an admin gives the data interface both controllers\' addresses and a virtu
 test('an admin syncs the configuration onto the standby, which restarts onto it', async ({ page, api, config }) => {
   requireHa(config);
 
+  const bootBeforeSync = await readPeerBootId(api);
+  expect(bootBeforeSync, 'controller 1 reaches controller 2').not.toBeNull();
+
   await openFailoverForm(page, true);
   await syncToPeer(page, true);
   // Closes the form with failover still off, as it was.
@@ -85,6 +92,18 @@ test('an admin syncs the configuration onto the standby, which restarts onto it'
 
   // With a VIP configured, the pair is no longer SINGLE: controller 1 holds the VIP.
   await expect.poll(async () => (await readFailover(api)).status).toBe('MASTER');
+
+  // Controller 2 rebooted onto the synced configuration and is back, before
+  // anything else changes: controller 1 sends each later change to it as it
+  // is made, and one made while it is down never reaches it. A pool and
+  // failover turned on while it rebooted left it with failover off and no
+  // pool, so it never took over.
+  await expect.poll(async () => {
+    const bootId = await readPeerBootId(api);
+    const { reasons } = await readFailover(api);
+    return bootId !== null && bootId !== bootBeforeSync
+      && !reasons.some((reason) => peerNotBackReasons.includes(reason));
+  }, { timeout: haUpTimeoutMs, intervals: [5_000] }).toBe(true);
 });
 
 test('an admin creates the pool the pair will fail over', async ({ page, api, config }) => {
