@@ -82,9 +82,14 @@ export async function deleteCardGroup(page: Page, index: number): Promise<void> 
  * Pointer steps rather than `locator.dragTo`, which goes straight from one point to the other: CDK
  * needs the pointer to pass its drag threshold first, and moves in between to sort the list. Both
  * handles have to be on screen, so a spec gives itself a viewport tall enough for both groups.
+ *
+ * Returns only once the drop has reached the layout. CDK animates the preview into place first
+ * (250 ms, `.cdk-drag-animating` in the dashboard's styles) and emits `dropped` after that, while
+ * the card already shows in its new place. A Save clicked in between saves the old order.
  */
 export async function dragCardGroup(page: Page, fromIndex: number, toIndex: number): Promise<void> {
-  const from = await centreOf(page.locator(dashboardLocators.edit.dragHandle(fromIndex)));
+  const handle = page.locator(dashboardLocators.edit.dragHandle(fromIndex));
+  const from = await centreOf(handle);
   const to = await centreOf(page.locator(dashboardLocators.edit.dragHandle(toIndex)));
 
   await page.mouse.move(from.x, from.y);
@@ -92,6 +97,10 @@ export async function dragCardGroup(page: Page, fromIndex: number, toIndex: numb
   await page.mouse.move(from.x, from.y - dragStartDistancePx, { steps: 2 });
   await page.mouse.move(to.x, to.y, { steps: dragSteps });
   await page.mouse.up();
+
+  // The drag preview and placeholder are copies of the group, handle id included, and CDK removes
+  // them in the same step that emits `dropped`.
+  await expect(handle).toHaveCount(1);
 }
 
 /** Moves a group one place down with its Move down button, which only phone width shows. */
