@@ -33,9 +33,23 @@ export async function createTrueNasAdminUser(page: Page, user: NewAdminUser): Pr
 
   await page.locator(form.role).click();
   await page.locator(form.roleFullAdmin).click();
+  await expectFullAdminChosen(page);
 
   await fillPassword(page, user.password);
   await saveUserForm(page);
+}
+
+/**
+ * Asserts the form holds UI access with the Full Admin role, before it is saved.
+ *
+ * Master run 39008229181 saved a user with neither, after both had been
+ * clicked: the failure surfaced afterwards, as a user with no roles. Checking
+ * here puts it at the step that went wrong, with the form still on screen.
+ */
+export async function expectFullAdminChosen(page: Page): Promise<void> {
+  const form = usersLocators.form;
+  await expect(page.locator(form.truenasAccess)).toBeChecked();
+  await expect(page.locator(form.role)).toContainText('Full Admin');
 }
 
 /**

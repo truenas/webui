@@ -11,7 +11,7 @@ import {
   ensureUserAbsent, ensureUserPresent, findUser,
 } from '../fixtures/users';
 import {
-  fillPassword, openAddUserForm, saveUserForm,
+  expectFullAdminChosen, fillPassword, openAddUserForm, saveUserForm,
 } from '../flows/users';
 import { usersLocators } from '../locators/users';
 import { expect, test } from '../support/fixtures';
@@ -78,6 +78,7 @@ test('the role control appears only once UI access is granted, and the role land
 
   await page.locator(usersLocators.form.role).click();
   await page.locator(usersLocators.form.roleFullAdmin).click();
+  await expectFullAdminChosen(page);
   await fillPassword(page, newAdmin.password);
   await saveUserForm(page);
 
