@@ -95,7 +95,7 @@ function seededTaskId(task: { id: number } | undefined, kind: string): number {
 }
 
 /** Opens a row menu, checks each item is there and disabled, and closes the menu again. */
-async function expectRowActionsLocked(page: Page, menu: string, items: string[]): Promise<void> {
+async function expectRowActionsLocked(page: Page, menu: string, items: [string, ...string[]]): Promise<void> {
   await page.locator(menu).click();
   for (const item of items) {
     await expect(page.locator(item)).toBeVisible();
