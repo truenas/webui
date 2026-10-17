@@ -41,6 +41,13 @@ export async function findCronjob(client: E2eApiClient, command: string): Promis
   return cronjob as CronjobRecord | undefined;
 }
 
+/** How many cron jobs the appliance holds. */
+export async function countCronjobs(client: E2eApiClient): Promise<number> {
+  const cronjobs = await firstValueFrom(client.api.query('cronjob.query', []).pipe(timeout(readTimeoutMs)));
+
+  return cronjobs.length;
+}
+
 /**
  * Removes every job running a command, if any.
  *
