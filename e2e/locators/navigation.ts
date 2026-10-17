@@ -16,6 +16,8 @@ export const navLocators = {
   shares: '[data-test="link-shares-menu"]',
   /** `Data Protection` — `getItemName` turns the space into an underscore, which normalizes to a hyphen. */
   dataProtection: '[data-test="link-data-protection-menu"]',
+  /** `Containers`, a plain link, and hidden without the Containers entitlement. */
+  containers: '[data-test="link-containers-menu"]',
   /** `Virtual Machines`, a plain link like Data Protection, and hidden without the VM entitlement. */
   virtualMachines: '[data-test="link-virtual-machines-menu"]',
   /** `Reporting`, a plain link to the CPU tab (`reportsdashboard/cpu`). */
