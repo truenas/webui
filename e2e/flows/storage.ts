@@ -5,8 +5,8 @@ import { expect, type Page } from '@playwright/test';
 import { goToDatasets, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
 import {
-  datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolImportLocators,
-  poolScrubLocators, poolWizardLocators, type VdevCategory, zvolLocators,
+  datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, manualDiskSelectionLocators,
+  poolDisconnectLocators, poolImportLocators, poolScrubLocators, poolWizardLocators, type VdevCategory, zvolLocators,
 } from '../locators/storage';
 
 /**
@@ -88,6 +88,19 @@ export interface AutomatedVdevs {
   vdevs?: number;
 }
 
+/** What the Data step's Automated Disk Selection is set to for a dRAID layout. */
+export interface DraidVdevs {
+  /** The layout option's label, as the select shows it: `dRAID1`, `dRAID2`, `dRAID3`. */
+  layout: string;
+  /** Data disks per redundancy group. */
+  dataDevices: number;
+  /** Distributed hot spares per vdev. */
+  spares: number;
+  /** Disks per vdev: its groups' data and parity disks, plus its spares. */
+  children: number;
+  vdevs: number;
+}
+
 /**
  * Creates a pool with one RAIDZ2 data vdev, through the pool creation wizard.
  *
@@ -164,6 +177,82 @@ export async function configureAutomatedVdevs(
       poolWizardLocators.vdevCount(type),
       poolWizardLocators.vdevCountOption(type, vdevs.vdevs),
     );
+  }
+}
+
+/**
+ * Fills in the Data step's Automated Disk Selection for a dRAID layout: layout, the first disk
+ * size on offer, then Data Devices, Distributed Hot Spares, Children and the vdev count.
+ *
+ * In that order because each choice regenerates the options of the next
+ * (`draid-selection.component.ts`). Children in particular is reset to the widest it can be
+ * whenever Data Devices or the spares change, so it has to be chosen after both.
+ */
+export async function configureDraidVdevs(page: Page, draid: DraidVdevs): Promise<void> {
+  await selectOption(page, poolWizardLocators.layout, poolWizardLocators.layoutOption(draid.layout));
+  await selectFirstOption(page, poolWizardLocators.diskSize('data'), poolWizardLocators.diskSizeOptions('data'));
+
+  await selectOption(
+    page,
+    poolWizardLocators.draidDataDevices('data'),
+    poolWizardLocators.draidDataDevicesOption('data', draid.dataDevices),
+  );
+  await selectOption(
+    page,
+    poolWizardLocators.draidSpares('data'),
+    poolWizardLocators.draidSparesOption('data', draid.spares),
+  );
+  await selectOption(
+    page,
+    poolWizardLocators.draidChildren('data'),
+    poolWizardLocators.draidChildrenOption('data', draid.children),
+  );
+  await selectOption(
+    page,
+    poolWizardLocators.vdevCount('data'),
+    poolWizardLocators.vdevCountOption('data', draid.vdevs),
+  );
+}
+
+/**
+ * Opens the Manual Disk Selection dialog from the open vdev step. The step's button stays disabled
+ * until a layout is chosen, so the caller picks one first.
+ */
+export async function openManualDiskSelection(page: Page, type: VdevCategory): Promise<void> {
+  const open = page.locator(poolWizardLocators.manualSelection(type));
+  await expect(open).toBeEnabled();
+  await open.click();
+  await expect(page.locator(manualDiskSelectionLocators.title)).toBeVisible();
+}
+
+/**
+ * Drags one element of the Manual Disk Selection dialog onto another: a disk into a vdev, or out
+ * of one back onto the unused list.
+ *
+ * `locator.dragTo()` drives HTML5 drag and drop in Chromium from real mouse events, so
+ * `ngx-drag-drop` receives the `dragstart`, `dragover` and `drop` it listens for, with a
+ * `dataTransfer` it fills in itself. A drop has no readback of its own, so the caller asserts
+ * where the disk landed.
+ */
+export async function dragDisk(page: Page, from: string, to: string): Promise<void> {
+  const source = page.locator(from);
+  await expect(source).toBeVisible();
+  await source.dragTo(page.locator(to));
+}
+
+/**
+ * Adds a vdev to the open Manual Disk Selection dialog, which holds no other, and drags the named
+ * disks into it, checking that each one landed. Whether that is enough disks for the layout is
+ * the caller's to assert.
+ */
+export async function addManualVdev(page: Page, layout: string, disks: string[]): Promise<void> {
+  const vdev = manualDiskSelectionLocators.vdevDropzone(layout, 1);
+
+  await page.locator(manualDiskSelectionLocators.add).click();
+  await expect(page.locator(vdev)).toBeVisible();
+  for (const disk of disks) {
+    await dragDisk(page, manualDiskSelectionLocators.unusedDiskDrag(disk), vdev);
+    await expect(page.locator(manualDiskSelectionLocators.vdevDisk(disk))).toBeVisible();
   }
 }
 
