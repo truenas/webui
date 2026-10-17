@@ -1352,6 +1352,17 @@ The first-login setup dialog that other routes get, the page's Renew and Unset
 buttons, Skip Setup, Cancel Setup, two-factor for SSH, and the QR code itself are
 not covered.
 
+Apps now has a spec, `apps-pool.e2e.ts`, which is the first to open the Apps
+page. An admin chooses a pool for Apps from Configuration > Choose Pool, and the
+page then reports the Apps service running while `docker.config` names the pool
+and its `ix-apps` dataset. An admin then takes the pool away with Unset Pool, and
+the service reports Not Configured again. The spec builds its own one-disk pool,
+`e2e_apps`, because Docker holds that pool's `ix-apps` dataset and a pool in that
+state cannot be exported. Teardown unsets Apps first and exports the pool second.
+The spec skips on an appliance where Apps already uses a pool it did not create.
+Moving Apps to another pool with "Migrate existing applications", the catalog,
+and installing an app are not covered.
+
 The framework is done and the coverage of the 19 top-level feature areas is
 not. What the work bought is that the next twenty tests are cheap: the target
 seam, auth, fixtures, unconditional teardown, selector discipline and failure
