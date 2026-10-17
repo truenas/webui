@@ -6,11 +6,13 @@
  */
 import { expect, type Page } from '@playwright/test';
 import { closeFirstTimeWarning } from './advanced-settings';
-import { goToAdvancedSettings, goToUsers } from './navigation';
+import { goToAdvancedSettings } from './navigation';
+import { openUserDetails } from './users';
+import { setGlobalTwoFactor } from '../fixtures/two-factor';
 import { confirmDialogLocators } from '../locators/dialogs';
 import { signinLocators } from '../locators/signin';
 import { twoFactorLocators } from '../locators/two-factor';
-import { usersLocators } from '../locators/users';
+import type { E2eApiClient } from '../support/api/client';
 import { totpCode } from '../support/totp';
 
 const saveTimeoutMs = 60_000;
@@ -97,6 +99,29 @@ export async function skipTwoFactorSetupPrompt(page: Page): Promise<void> {
 }
 
 /**
+ * Turns global two-factor on over the API under a page that is already signed
+ * in, reloads so the app reads it afresh, and skips the setup dialog that
+ * raises. SSH starts off.
+ *
+ * For a spec that starts with it on. The token sign-in waits for the shell, so
+ * turning it on before sign-in would spend that wait behind the dialog. Skipping
+ * gives the suite's admin no secret.
+ */
+export async function startWithGlobalTwoFactorOn(
+  page: Page,
+  api: E2eApiClient,
+  toleranceWindow: number,
+): Promise<void> {
+  await setGlobalTwoFactor(api, {
+    enabled: true,
+    window: toleranceWindow,
+    services: { ssh: false },
+  });
+  await page.reload();
+  await skipTwoFactorSetupPrompt(page);
+}
+
+/**
  * Sets two-factor up on the `/two-factor-auth` page, and returns the secret.
  *
  * The way a person does it: generate a secret, read it off the screen, type in
@@ -171,15 +196,21 @@ export async function submitOneTimePassword(page: Page, code: string): Promise<v
 /**
  * Clears a user's two-factor from their details, beside the Users list.
  *
- * Selecting the row is what puts that user's Access card on screen. The button
- * goes once the card has reloaded a user with no secret, which is the app's own
- * signal that the change landed.
+ * Selecting the row is what puts that user's Access card on screen.
  */
 export async function clearTwoFactorFromUserDetails(page: Page, username: string): Promise<void> {
-  const clear = page.locator(twoFactorLocators.clearTwoFactor(username));
+  await openUserDetails(page, username);
+  await clearTwoFactorOnAccessCard(page, username);
+}
 
-  await goToUsers(page);
-  await page.locator(usersLocators.row(username)).click();
+/**
+ * Clears two-factor from the Access card of the user whose details are open.
+ *
+ * The button goes once the card has reloaded a user with no secret, which is
+ * the app's own signal that the change landed.
+ */
+export async function clearTwoFactorOnAccessCard(page: Page, username: string): Promise<void> {
+  const clear = page.locator(twoFactorLocators.clearTwoFactor(username));
 
   await clear.click();
   await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
