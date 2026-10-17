@@ -10,7 +10,8 @@
  * would split `MyPool` into `my-pool` and the card writes `mypool`.
  *
  * The tag carries the dataset and nothing else, so two tasks on one dataset
- * share every id; the specs give each task a dataset of its own.
+ * share every id on the card. The specs give each task a dataset of its own,
+ * except where two on one dataset is the point, which works from the full list.
  *
  * The form's controls declare their `testId`s, and its schedule is the shared
  * `ix-scheduler` — the same control the cron form uses.
