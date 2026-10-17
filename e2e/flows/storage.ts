@@ -37,6 +37,9 @@ const poolImportTimeoutMs = 3 * 60_000;
  */
 const poolExportTimeoutMs = 3 * 60_000;
 
+/** `disk.details`, which the pool wizard loads its disks with, slows down on a busy appliance. */
+const diskLoadTimeoutMs = 60_000;
+
 /** Picks an option from a `tn-select` by opening it and clicking the option. */
 export async function selectOption(page: Page, select: string, option: string): Promise<void> {
   await page.locator(select).click();
@@ -228,6 +231,10 @@ export async function configureDraidVdevs(page: Page, draid: DraidVdevs): Promis
  * until a layout is chosen, so the caller picks one first.
  */
 export async function openManualDiskSelection(page: Page, type: VdevCategory): Promise<void> {
+  // The dialog takes the unused disks once, as it opens (`openManualSelectionDialog`), and the
+  // button is enabled before the wizard has loaded them: opened too soon, it says "No Unassigned
+  // Disks" for good. A user sees the disks listed first; so does this. Run 39034700392.
+  await expect(page.locator(poolWizardLocators.inventoryCount).first()).toBeVisible({ timeout: diskLoadTimeoutMs });
   const open = page.locator(poolWizardLocators.manualSelection(type));
   await expect(open).toBeEnabled();
   await open.click();
