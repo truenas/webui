@@ -75,6 +75,17 @@ export const dashboardLocators = {
     linkState: (nic: string): string => `[data-test="text-interface-${kebabTestSegment(nic)}-link-state"]`,
   },
 
+  /**
+   * The chart buttons in the card headers, each opening its Reporting tab. The Storage card's is
+   * `storage.reports`. The Interface card renders its header, and so this button, only at full size.
+   */
+  reportButtons: {
+    cpu: '[data-test="button-cpu-go-to-reports"]',
+    memory: '[data-test="button-memory-go-to-reports"]',
+    network: '[data-test="button-network-reports"]',
+    systemInfo: '[data-test="button-system-go-to-reports"]',
+  },
+
   help: {
     documentation: '[data-test="link-documentation"]',
   },
