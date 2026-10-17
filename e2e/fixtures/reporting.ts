@@ -8,6 +8,22 @@ import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient } from '../support/api/client';
 import { readTimeoutMs } from '../support/timeouts';
 
+/** The fields of a `reporting.netdata_graphs` row the page builds its report titles from. */
+interface NetdataGraph {
+  name: string;
+  title: string;
+  /** What the graph is drawn per (a NIC, a disk), or null for a graph drawn once. */
+  identifiers?: string[] | null;
+}
+
+async function findGraph(client: E2eApiClient, name: string): Promise<NetdataGraph | undefined> {
+  const response = await firstValueFrom(
+    client.api.query('reporting.netdata_graphs', [['name', '=', name]]).pipe(timeout(readTimeoutMs)),
+  );
+
+  return (response as unknown as NetdataGraph[]).find((graph) => graph.name === name);
+}
+
 /**
  * The title middleware gives the graph called `name`, or undefined when it does not offer one.
  *
@@ -15,11 +31,7 @@ import { readTimeoutMs } from '../support/timeouts';
  * on the report is keyed by.
  */
 export async function findGraphTitle(client: E2eApiClient, name: string): Promise<string | undefined> {
-  const graphs = await firstValueFrom(
-    client.api.query('reporting.netdata_graphs', [['name', '=', name]]).pipe(timeout(readTimeoutMs)),
-  );
-
-  return graphs.find((graph) => graph.name === name)?.title;
+  return (await findGraph(client, name))?.title;
 }
 
 /** webui's `stringToTitleCase`, replicated: every word capitalised and the rest lowercased. */
@@ -40,11 +52,8 @@ export async function findGraphTitleFor(
   name: string,
   identifier: string,
 ): Promise<string | undefined> {
-  const graphs = await firstValueFrom(
-    client.api.query('reporting.netdata_graphs', [['name', '=', name]]).pipe(timeout(readTimeoutMs)),
-  );
-  const graph = graphs.find((entry) => entry.name === name);
-  if (!graph || !Array.isArray(graph.identifiers) || !graph.identifiers.includes(identifier)) {
+  const graph = await findGraph(client, name);
+  if (!graph?.identifiers?.includes(identifier)) {
     return undefined;
   }
 
@@ -53,4 +62,24 @@ export async function findGraphTitleFor(
   }
 
   return `${graph.title} - ${toTitleCase(identifier)}`;
+}
+
+/**
+ * Of `candidates`, the one whose report the graph called `name` puts highest on its tab, or
+ * undefined when it draws a report for none of them.
+ *
+ * The tab lists one report per identifier, sorted by identifier (`flattenReports`), inside a virtual
+ * scroll that renders only the first few. So a report lower down may never reach the DOM, and a
+ * spec that needs one visible picks it with this.
+ */
+export async function findFirstGraphIdentifier(
+  client: E2eApiClient,
+  name: string,
+  candidates: string[],
+): Promise<string | undefined> {
+  const identifiers = (await findGraph(client, name))?.identifiers ?? [];
+
+  return identifiers
+    .filter((identifier) => candidates.includes(identifier))
+    .sort((a, b) => a.localeCompare(b))[0];
 }

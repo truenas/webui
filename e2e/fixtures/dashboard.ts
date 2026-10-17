@@ -133,6 +133,11 @@ export async function readFirstNicName(client: E2eApiClient): Promise<string> {
   return nic.name;
 }
 
+/** The names of every NIC the network cards can be set to show, in `interface.query` order. */
+export async function readDashboardNicNames(client: E2eApiClient): Promise<string[]> {
+  return (await queryDashboardInterfaces(client)).map((entry) => entry.name);
+}
+
 /**
  * A NIC with an IPv4 address of its own, so the IPv4 Address card has something to show.
  *

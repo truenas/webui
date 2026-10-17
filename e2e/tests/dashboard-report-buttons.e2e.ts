@@ -17,10 +17,10 @@
  */
 import type { Page } from '@playwright/test';
 import {
-  captureDashState, readFirstNicName, readShownPool, restoreDashState, writeDashState,
+  captureDashState, readDashboardNicNames, readFirstNicName, readShownPool, restoreDashState, writeDashState,
 } from '../fixtures/dashboard';
 import type { CapturedDashState, DashboardGroup } from '../fixtures/dashboard';
-import { findGraphTitle, findGraphTitleFor } from '../fixtures/reporting';
+import { findFirstGraphIdentifier, findGraphTitle, findGraphTitleFor } from '../fixtures/reporting';
 import { goToDashboard } from '../flows/navigation';
 import { dashboardLocators } from '../locators/dashboard';
 import { reportingLocators } from '../locators/reporting';
@@ -56,24 +56,21 @@ test.afterEach(async ({ api }) => {
 /**
  * Writes the five cards, each in a full-size group, and opens the Dashboard on them.
  *
- * Returns the NIC the Interface card shows: the first one webui lists, named in its settings so the
- * card and the report agree on it.
+ * The Interface card is set to show `nic`, or the first NIC webui lists when none is given.
  */
-async function openDashboardWithReportCards(page: Page, api: E2eApiClient): Promise<string> {
-  const nic = await readFirstNicName(api);
+async function openDashboardWithReportCards(page: Page, api: E2eApiClient, nic?: string): Promise<void> {
+  const cardNic = nic ?? await readFirstNicName(api);
   const layout: DashboardGroup[] = [
     { layout: 'full', slots: [{ type: 'system-info-active' }] },
     { layout: 'full', slots: [{ type: 'cpu' }] },
     { layout: 'full', slots: [{ type: 'memory' }] },
     { layout: 'full', slots: [{ type: 'storage' }] },
-    { layout: 'full', slots: [{ type: 'interface', settings: { interface: nic } }] },
+    { layout: 'full', slots: [{ type: 'interface', settings: { interface: cardNic } }] },
   ];
   await writeDashState(api, layout);
 
   await goToDashboard(page);
   await page.reload();
-
-  return nic;
 }
 
 async function clickReportButton(page: Page, button: string): Promise<void> {
@@ -126,8 +123,17 @@ test('the Storage card\'s report button opens the Disk tab', async ({ page, api,
 });
 
 test('the Interface card\'s report button opens the Network tab on the card\'s NIC', async ({ page, api }) => {
-  const nic = await openDashboardWithReportCards(page, api);
-  const title = requireGraphTitle(await findGraphTitleFor(api, 'interface', nic), `interface for ${nic}`);
+  // The tab renders only its first few reports, sorted by NIC, so the card is set to the NIC whose
+  // report comes first among those the card can show, rather than to the first NIC webui lists.
+  const nic = await findFirstGraphIdentifier(api, 'interface', await readDashboardNicNames(api));
+  if (!nic) {
+    throw new Error('reporting.netdata_graphs collects interface traffic for no NIC the Interface card can show.');
+  }
+  const title = await findGraphTitleFor(api, 'interface', nic);
+  if (!title) {
+    throw new Error(`reporting.netdata_graphs has no interface graph for ${nic}.`);
+  }
+  await openDashboardWithReportCards(page, api, nic);
 
   await clickReportButton(page, dashboardLocators.reportButtons.network);
 
