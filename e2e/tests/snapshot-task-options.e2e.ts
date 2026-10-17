@@ -57,7 +57,7 @@ const topLeaves = [parentLeaf, customLeaf, multiLeaf];
 /** The naming schemas of every task on a dataset, sorted so a failure prints them in a stable order. */
 async function namingSchemas(api: E2eApiClient, dataset: string): Promise<string[]> {
   const tasks = await findSnapshotTasks(api, dataset);
-  return tasks.map((task) => task.naming_schema).sort((a, b) => a.localeCompare(b));
+  return tasks.map((task) => task.naming_schema ?? '').sort((a, b) => a.localeCompare(b));
 }
 
 /**
