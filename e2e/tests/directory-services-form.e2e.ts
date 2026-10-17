@@ -14,8 +14,9 @@
  * visible after it, so the check cannot pass on fields that were always there.
  *
  * The page renders its disabled state until its config has loaded, as well as
- * after, so the first test waits for the page's own `directoryservices.config`
- * to be answered before reading the screen. Hence `recordApiCalls`.
+ * after, so the first test waits for the page's own `directoryservices.status`
+ * and `directoryservices.config` to be answered before reading the screen.
+ * Hence `recordApiCalls`.
  */
 import type { Page } from '@playwright/test';
 import { ensureDirectoryServicesCleared, readDirectoryServices } from '../fixtures/directory-services';
@@ -41,7 +42,10 @@ import { expect, test } from '../support/fixtures';
 
 test.use({ recordApiCalls: true });
 
-/** Long enough for the page's first read to come back over a fresh socket. */
+/** The two reads the page joins before it stores its config. */
+const pageLoadMethods = ['directoryservices.status', 'directoryservices.config'];
+
+/** Long enough for the page's first reads to come back over a fresh socket. */
 const pageLoadTimeoutMs = 30_000;
 
 /** Under `.test`, which RFC 2606 reserves, so nothing these name can exist. Never saved. */
@@ -90,10 +94,12 @@ test('with nothing configured, the page says directory services are disabled and
   api,
 }) => {
   await goToDirectoryServices(page);
-  await expect.poll(
-    () => apiCallsTo(page, 'directoryservices.config').map((call) => call.answer),
-    { timeout: pageLoadTimeoutMs },
-  ).toContain('result');
+  // The page stores its config only once both reads have answered, so both are waited on.
+  for (const method of pageLoadMethods) {
+    const answers = (): (string | undefined)[] => apiCallsTo(page, method).map((call) => call.answer);
+    await expect.poll(answers, { timeout: pageLoadTimeoutMs }).toContain('result');
+    expect(answers()).not.toContain('error');
+  }
 
   await expect(page.locator(directoryServicesLocators.disabled)).toContainText('Directory services are disabled.');
   await expect(page.locator(directoryServicesLocators.configure)).toBeVisible();
