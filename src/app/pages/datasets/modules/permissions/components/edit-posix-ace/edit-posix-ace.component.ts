@@ -11,9 +11,13 @@ import {
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { PosixAclItem } from 'app/interfaces/acl.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
+import {
+  validityAfterPendingChecks,
+} from 'app/pages/datasets/modules/permissions/utils/validity-after-pending-checks.utils';
 
 @Component({
   selector: 'ix-edit-posix-ace',
@@ -67,7 +71,8 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     return this.form.value.tag === PosixAclTag.Group;
   }
 
-  ngOnChanges(): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    this.settleLeftAce(changes.ace?.previousValue);
     this.updateFormValues();
   }
 
@@ -83,6 +88,22 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     this.form.statusChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.onFormStatusUpdated());
+  }
+
+  /**
+   * An entry left while its user or group is still being checked would otherwise keep the error it had before:
+   * patching the next entry in cancels the check, and validity is only ever reported for the selected entry.
+   * So the check is finished on a copy, and its verdict recorded against the entry it was about.
+   */
+  private settleLeftAce(leftAce: PosixAclItem | undefined): void {
+    if (!leftAce || !this.form.pending || !this.store.hasAce(leftAce)) {
+      return;
+    }
+
+    const { user, group } = this.form.controls;
+    validityAfterPendingChecks([user, group].filter((control) => control.pending))
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((isValid) => this.store.updateAceValidation({ ace: leftAce, isValid }));
   }
 
   private onFormStatusUpdated(): void {

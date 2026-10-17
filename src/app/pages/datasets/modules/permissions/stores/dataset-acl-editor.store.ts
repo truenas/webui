@@ -181,6 +181,33 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     };
   });
 
+  /**
+   * Records the validity of an entry that may no longer be selected, for a check that outlived its selection.
+   * The entry is found by identity: once it has been edited or removed, the verdict is about a version of it that
+   * no longer exists, and is dropped.
+   */
+  readonly updateAceValidation = this.updater((
+    state: DatasetAclEditorState,
+    { ace, isValid }: { ace: NfsAclItem | PosixAclItem; isValid: boolean },
+  ) => {
+    const index = (state.acl?.acl as (NfsAclItem | PosixAclItem)[] | undefined)?.indexOf(ace) ?? -1;
+    if (index === -1) {
+      return state;
+    }
+
+    return {
+      ...state,
+      acesWithError: isValid
+        ? without(state.acesWithError, index)
+        : union(state.acesWithError, [index]),
+    };
+  });
+
+  /** Whether this exact entry object is still in the ACL being edited. */
+  hasAce(ace: NfsAclItem | PosixAclItem): boolean {
+    return (this.get().acl?.acl as (NfsAclItem | PosixAclItem)[] | undefined)?.includes(ace) ?? false;
+  }
+
   readonly saveAcl = this.effect((saveParams$: Observable<AclSaveFormParams>) => {
     return saveParams$.pipe(
       // Warn user about risks when changing top level dataset
