@@ -42,6 +42,8 @@ export const twoFactorLocators = {
     /** `<tn-dialog-shell testId="two-factor-setup">`. */
     title: '[data-test="dialog-title-two-factor-setup"]',
     skip: '[data-test="button-skip-2fa-setup"]',
+    /** "Finish", rendered only once the account holds a secret and no code is still awaited. */
+    finish: '[data-test="button-finish-first-stig-login"]',
   },
 
   /**
@@ -59,6 +61,8 @@ export const twoFactorLocators = {
     secret: '[data-test="text-secret"]',
     /** The code field, rendered only while the new secret awaits confirmation. */
     code: '[data-test="input-verify-otp"]',
+    /** The field around {@link code}, `testId="verify-otp"`, which holds its error text. */
+    codeField: '[data-test="form-field-verify-otp"]',
     /** "Confirm Code". The app checks the code itself; nothing is sent to middleware. */
     confirmCode: '[data-test="button-verify-otp"]',
     /** Rendered only once the account holds a secret and no code is still awaited. */

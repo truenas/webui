@@ -93,6 +93,7 @@
     <form class="verification" novalidate [formGroup]="verificationForm" (ngSubmit)="onVerifyOtp()">
       <tn-form-field
         class="verification-field"
+        testId="verify-otp"
         [label]="helptext.verification.label | translate"
         [tooltip]="helptext.verification.tooltip | translate"
         [errorMessages]="otpErrorMessages()"

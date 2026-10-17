@@ -5,7 +5,8 @@
  * not when wrong; and an admin can clear it again from that user's details.
  *
  * It lands on that page because the sign-in returns to the route the admin
- * signed out from. The full-screen setup dialog other routes raise is not covered.
+ * signed out from. The full-screen setup dialog other routes raise is covered by
+ * `two-factor-setup.e2e.ts`, not here.
  *
  * Under `tests/unauthenticated/` because every claim here is about signing in,
  * which the token bypass would skip (R4.2). One test, with the story as steps,
@@ -16,8 +17,9 @@
  * `system.advanced.login_banner` and `user.has_local_administrator_set_up`, and
  * signing out starts it. So after a sign-out the next sign-in fills the form
  * already on screen rather than loading the page again, which would spend both a
- * second time. Run straight after `signin.e2e.ts`, loading it every time put the
- * last sign-in over the limit.
+ * second time. Run close behind `signin.e2e.ts`, loading it every time put the
+ * last sign-in over the limit. `two-factor-setup.e2e.ts` now sorts between the
+ * two, with one sign-in per test and slow two-factor saves around each.
  *
  * Codes come from `support/totp.ts`, computed from the secret the
  * `/two-factor-auth` page shows, which is what an authenticator app does with it.

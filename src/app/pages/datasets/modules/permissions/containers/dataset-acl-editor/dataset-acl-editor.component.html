@@ -64,7 +64,7 @@
           <ix-acl-editor-list
             [acl]="acl"
             [selectedAceIndex]="selectedAceIndex"
-            [acesWithError]="acesWithError"
+            [acesWithError]="acesWithError()"
             [owner]="ownerFormGroup.controls['owner'].value"
             [ownerGroup]="ownerFormGroup.controls['ownerGroup'].value"
           ></ix-acl-editor-list>
@@ -82,7 +82,7 @@
           <div class="controls-container">
             <div class="controls">
               <ix-acl-editor-save-controls
-                [canBeSaved]="acesWithError.length === 0 && !!acl?.acl.length && ownerFormGroup.valid"
+                [canBeSaved]="acesWithError().length === 0 && !!acl?.acl.length && ownerFormGroup.valid"
                 [ownerValues]="ownerFormGroup.getRawValue()"
               ></ix-acl-editor-save-controls>
               <div class="control-buttons">
