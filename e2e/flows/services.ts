@@ -68,6 +68,20 @@ export async function openServiceFormShowing(
 }
 
 /**
+ * Opens a service's form like {@link openServiceForm}, for a baseline in which
+ * every field the form fills in is empty or matches its default, so no value
+ * can say the load has landed.
+ *
+ * Waits for Save instead: the form holds it disabled while the service's config
+ * loads, and enables it once every control has been patched.
+ */
+export async function openServiceFormOnceLoaded(page: Page, service: ServiceKey): Promise<void> {
+  await goToServices(page);
+  await page.locator(servicesLocators.row.edit(service)).click();
+  await expect(page.locator(servicesLocators.save)).toBeEnabled({ timeout: serviceSaveTimeoutMs });
+}
+
+/**
  * Reveals the open form's advanced fields from the footer toggle, and waits for
  * `advancedField`, one of them, to render. A toggle that did nothing hides the
  * whole section, so this is where that fails rather than on the first click.

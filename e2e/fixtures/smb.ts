@@ -67,17 +67,18 @@ export async function ensureSmbShareAbsent(client: E2eApiClient, name: string): 
  *
  * For the bystander in a deletion test and anything else that needs a share to
  * merely exist. Never for the share under test — that one goes through the form.
+ * The description is left empty unless given.
  */
 export async function ensureSmbSharePresent(
   client: E2eApiClient,
-  { name, path }: { name: string; path: string },
+  { name, path, comment = '' }: { name: string; path: string; comment?: string },
 ): Promise<void> {
   if (await findSmbShare(client, name)) {
     return;
   }
 
   await firstValueFrom(
-    client.api.call('sharing.smb.create', [{ name, path }]).pipe(timeout(slowCallTimeoutMs)),
+    client.api.call('sharing.smb.create', [{ name, path, comment }]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
 

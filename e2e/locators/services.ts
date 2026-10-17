@@ -1,5 +1,5 @@
 /**
- * The Services page under System, and the SSH, FTP, SNMP, UPS, SMB and WebShare forms it opens.
+ * The Services page under System, and the SSH, FTP, SNMP, UPS, SMB, NFS and WebShare forms it opens.
  *
  * Every id on a row is keyed on a row tag of `service-<name>`, and two names are
  * in play. The page builds the tag from the display name (`SMB`) for the `<tr>`,
@@ -13,7 +13,7 @@
 import { kebabTestSegment } from './test-id';
 
 /** Middleware's name for each service the specs drive. */
-export type ServiceKey = 'ssh' | 'ftp' | 'snmp' | 'ups' | 'cifs' | 'webshare' | 'iscsitarget' | 'nvmet';
+export type ServiceKey = 'ssh' | 'ftp' | 'snmp' | 'ups' | 'cifs' | 'nfs' | 'webshare' | 'iscsitarget' | 'nvmet';
 
 /** The page's name for each, as `serviceNames` in `src/app/enums/service-name.enum.ts` has it. */
 const displayNames: Record<ServiceKey, string> = {
@@ -22,6 +22,7 @@ const displayNames: Record<ServiceKey, string> = {
   snmp: 'SNMP',
   ups: 'UPS',
   cifs: 'SMB',
+  nfs: 'NFS',
   webshare: 'WebShare',
   iscsitarget: 'iSCSI',
   nvmet: 'NVMe-oF',
@@ -191,6 +192,23 @@ export const servicesLocators = {
     multichannel: '[data-test="checkbox-multichannel"]',
     fileMask: '[data-test="input-filemask"]',
     dirMask: '[data-test="input-dirmask"]',
+  },
+
+  /** `service-nfs.component.html`. */
+  nfsForm: {
+    /** "Calculate number of threads dynamically". Ticked, it hides {@link servers}. */
+    serversAuto: '[data-test="checkbox-servers-auto"]',
+    /** "Specify number of threads manually", rendered only while {@link serversAuto} is unticked. */
+    servers: '[data-test="input-servers"]',
+    v4Domain: '[data-test="input-v4-domain"]',
+    v4Krb: '[data-test="checkbox-v4-krb"]',
+    mountdPort: '[data-test="input-mountd-port"]',
+    /** The field around {@link mountdPort}, `testId="mountd-port"`, which holds its error text. */
+    mountdPortField: '[data-test="form-field-mountd-port"]',
+    rpcstatdPort: '[data-test="input-rpcstatd-port"]',
+    rpclockdPort: '[data-test="input-rpclockd-port"]',
+    allowNonroot: '[data-test="checkbox-allow-nonroot"]',
+    userdManageGids: '[data-test="checkbox-userd-manage-gids"]',
   },
 
   /** `service-ups.component.html`. */

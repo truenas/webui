@@ -330,6 +330,14 @@ NFSv4 — so one test turns NFSv4 on from the card's Config Service and saves a
 Kerberos flavour, which middleware refuses without it, and one holds the
 select absent with NFSv4 off. The service form's Enabled Protocols select got
 an explicit `testId="protocols"` for this; the emitted id is unchanged.
+`tests/nfs-service-settings.e2e.ts` covers the rest of that form, opened from
+the NFS row on System > Services: a manual thread count, the three bind ports
+and the two server-side toggles; the NFSv4 domain and Kerberos, then handing
+the thread count back to middleware (`servers: null`, read back as
+`managed_nfsd`); and a mountd port out of range, refused under the field with
+Save held down. Each save is asserted through `nfs.config`. The mountd field
+got `testId="mountd-port"` so its error text can be read. Bind IP Addresses,
+RDMA and Add SPN are not covered.
 
 Two things here were read off a running appliance rather than the template.
 The path field hands its value to the form when it loses focus, so a path that
@@ -745,6 +753,15 @@ through `filesystem.getacl`. The strip dialog's action row got
 `actions-strip-acl`, because its own button emits `button-strip-acl` like the
 editor's behind it.
 
+The editor's two guards on a save are in `tests/dataset-acl-validation.e2e.ts`.
+An entry added with no user disables Save until the alert marker on its row
+removes it, and Cancel then leaves `filesystem.getacl` as it was. The Traverse
+Access Warning is raised by saving an entry on a dataset whose parent only root
+can traverse (mode 700): Cancel saves nothing, and Save Anyway saves the entry
+without effective-ACL validation. The warning has no message id, so the tests
+tell it apart by those two outcomes. Refusals that need a directory service are
+not covered.
+
 Encrypted datasets came next, in `tests/datasets-encryption.e2e.ts`: creating a
 dataset encrypted with a passphrase from the form's Encryption Options, locking
 one from the Encryption card, and unlocking one from the card's Unlock page
@@ -842,6 +859,17 @@ last scan are read back unchanged. The snapshot row used to enable Hold's form
 control for everyone once the snapshot loaded, and enabling it rewrites the
 `disabled` the role wrapper sets. It now enables it only for `SNAPSHOT_WRITE`.
 Quotas, capacity settings and encryption are not covered.
+
+The Shares dashboard for the read-only admin is in
+`tests/roles-read-only-shares.e2e.ts`, one test with a step per card. On the SMB
+and NFS cards it finds a seeded share listed with its description, and Add, the
+service switch, the row's Enabled switch and the row menu's Delete all locked.
+Edit has no role, so its form opens; with the description changed, Save is still
+locked, and the panel is closed without saving. On the iSCSI card the Wizard and
+Delete are locked, and so is Add on the Targets page its title opens. Each share's
+`comment` and `enabled`, the target's existence, and the three services' states
+are read back through the API. The Share ACL and filesystem ACL editors, the
+standalone list pages and the NVMe-oF, S3 and WebShare cards are not covered.
 
 Users, Groups and Backup Credentials for the read-only admin are in
 `tests/roles-read-only-credentials.e2e.ts`, one test with a step per page. On
@@ -1332,8 +1360,8 @@ a number. See `05-ci.md`.
    or anything a real SMB client would have to prove. NFS shares are
    covered the same way — publish, read-only, networks, hosts, edit, enable,
    unshare, the service switch and the start offer, maproot, mapall and the
-   Security select — but not the service's own settings beyond turning NFSv4
-   on, the sessions page with a client on it, or a real mount. S3 is covered as a feature — create, configure,
+   Security select, and the service's own settings except Bind IP Addresses,
+   RDMA and Add SPN — but not the sessions page with a client on it, or a real mount. S3 is covered as a feature — create, configure,
    edit, toggle, rotate, delete — except auditing, which is licence-gated and
    needs an Enterprise appliance. List-driven journeys (deleting a pool, dataset
    or share from a list) are no longer blocked: `tn-table` still writes nothing
