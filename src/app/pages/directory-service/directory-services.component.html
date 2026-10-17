@@ -1,11 +1,13 @@
 @if(isDirectoryServicesDisabled()) {
   <div class="everything-disabled">
     <tn-empty
+      tnTestIdType="text"
       icon="account-box"
       iconLibrary="mdi"
       iconSize="56px"
       [title]="'Directory services are disabled.' | translate"
       [description]="'Configure directory services to see details.' | translate"
+      [tnTestId]="'directory-services-disabled'"
     ></tn-empty>
     <div class="actions">
       <tn-button
