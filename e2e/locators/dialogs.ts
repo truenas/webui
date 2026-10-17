@@ -66,6 +66,9 @@ export const infoDialogLocators = {
 export const errorDialogLocators = {
   title: '[data-test="dialog-title-error"]',
 
+  /** The message: middleware's own text, wrapped in `<pre>` for a failed job. */
+  message: '[data-test="text-error-message"]',
+
   /** "View Details", which unfolds the details table. Rendered only when the error has details. */
   viewDetails: '[data-test="link-view-details"]',
 

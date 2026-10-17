@@ -762,7 +762,7 @@ order. The advanced story checks every permission bit, so a box
 ticked by mistake fails as well as one that did not land. The Who select's
 "Group" and "group@" options both used to emit `option-tag-group`; `group@` is
 now `option-tag-group-at`, and every other option kept its id. POSIX ACLs are
-not covered.
+in `tests/dataset-acl-posix.e2e.ts`, below.
 
 Applying an NFSv4 ACL recursively and Strip ACL are in
 `tests/dataset-acl-nfsv4-recursive.e2e.ts`, on an SMB-preset dataset with a
@@ -784,6 +784,20 @@ can traverse (mode 700): Cancel saves nothing, and Save Anyway saves the entry
 without effective-ACL validation. The warning has no message id, so the tests
 tell it apart by those two outcomes. Refusals that need a directory service are
 not covered.
+
+POSIX ACLs are in `tests/dataset-acl-posix.e2e.ts`, on a dataset made with
+`acltype: 'POSIX'`, whose trivial ACL sends Edit to the Unix editor and its Set
+ACL. The POSIX_RESTRICTED preset is compared against its template, as the NFSv4
+presets are. A named user entry is added twice, once in the access ACL and once
+in the default one, and the preset's owner, group and other entries must come
+through unchanged. "Create a custom ACL" keeps the three trivial entries, none of
+which can be removed, and saving them with Apply permissions recursively is
+refused by middleware because there is no default ACL. The refusal is read off
+the error dialog's message, which got `text-error-message` for it. Strip ACL on
+POSIX_OPEN, applied over the API, leaves the dataset POSIX and trivial. Each is
+read back through `filesystem.getacl`. Recursion that succeeds is the NFSv4
+spec's, and the remove control is checked on the custom ACL rather than on a
+preset, because the editor counts access and default entries together.
 
 Encrypted datasets came next, in `tests/datasets-encryption.e2e.ts`: creating a
 dataset encrypted with a passphrase from the form's Encryption Options, locking
@@ -914,6 +928,18 @@ and SSH keypairs cards, the keypair's Delete being a disabled menu item, and
 the SSH connection's edit form opens with Save locked. Each seeded record is
 read back through the API. Privileges, API keys, certificates, the group members
 page, Directory Services and middleware's redaction of secrets are not covered.
+
+Data Protection for the read-only admin is in
+`tests/roles-read-only-data-protection.e2e.ts`, one test with a step per card. A
+periodic snapshot, replication, rsync and cloud sync task is seeded, each on a
+schedule that does not fire during the test. On each card the task is listed, and
+Add, the row's Enabled switch, and Run, Dry Run, Restore and Delete in the row menu
+(whichever the card has) are all locked. The snapshot task's Edit opens its form,
+and with the naming schema changed, Save is still locked. Each task's `enabled`,
+the snapshot task's naming schema, the replication and cloud sync task counts, and
+the absence of any new run are read back through the API. The full list pages,
+the other three edit forms, and the TrueCloud Backup and VMware cards are not
+covered.
 
 A pool's devices came next, in `tests/pool-devices.e2e.ts`: taking a disk offline
 and bringing it back online, and adding a spare, both from the pool's VDEVs page.
