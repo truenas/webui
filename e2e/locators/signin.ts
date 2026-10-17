@@ -52,4 +52,10 @@ export const signinLocators = {
    * this step carries the same `log-in` id as "Log In" on the first.
    */
   otp: '[data-test="input-otp"]',
+  /**
+   * "Cancel" on the one-time password step, which goes back to the username and
+   * password. `<tn-button [testId]="'otp-log-in'">`: the id reads like a submit,
+   * and is the one the template has.
+   */
+  otpCancel: '[data-test="button-otp-log-in"]',
 } as const;
