@@ -70,6 +70,12 @@ export const directoryServicesLocators = {
   configForm: {
     serviceType: '[data-test="select-service-type"]',
     serviceTypeOption: (label: string): string => `[data-test="option-service-type-${kebabTestSegment(label)}"]`,
+    /**
+     * The `tn-form-field` around Configuration Type. `getFieldsMap()` sends every
+     * backend error on a child form's field here — the domain, the server URLs,
+     * the credentials — so this is where a refused save says why.
+     */
+    serviceTypeField: '[data-test="form-field-service-type"]',
     enable: '[data-test="checkbox-enable"]',
     timeout: '[data-test="input-timeout"]',
     /** The `tn-form-field` around Timeout, which holds its validation error. */
