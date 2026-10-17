@@ -1,6 +1,9 @@
 /**
- * A pool's VDEVs page, its ZFS Info card, and the wizard that adds devices to a
- * pool.
+ * A pool's VDEVs page and its ZFS Info card.
+ *
+ * "Add VDEV" opens the creation wizard with the pool's name fixed and every step
+ * after General optional, so its controls are `poolWizardLocators` in
+ * `locators/storage.ts`.
  *
  * The page is `/storage/<id>/vdevs`, reached from "View VDEVs" on the pool's
  * VDEVs card on the Storage dashboard. It is a tree: one group per kind of vdev
@@ -54,34 +57,4 @@ export const zfsInfoLocators = {
   /** Menu items, `button-<testId>`. Pinned by `zfs-info-card.component.spec.ts`. */
   offline: '[data-test="button-offline"]',
   online: '[data-test="button-online"]',
-} as const;
-
-/**
- * The pool wizard opened from "Add VDEV". It is the creation wizard with the
- * pool's name fixed, and every step after General is optional.
- *
- * Only the steps this suite crosses are here. Each step's controls are keyed by
- * its vdev type, so the Spare step's are the Data step's (`locators/storage.ts`)
- * with `spare` in place of `data`.
- */
-export const addVdevsLocators = {
-  nextGeneral: '[data-test="button-next-general"]',
-  nextData: '[data-test="button-next-data"]',
-  nextLog: '[data-test="button-next-log"]',
-
-  /**
-   * Spare has no layout control: a spare is always a single disk. It has no
-   * vdev count either, which is fixed at one.
-   */
-  spareDiskSize: '[data-test="select-size-and-type-spare"]',
-  /** A prefix match, for the reason given on `poolWizardLocators.diskSizeOptions`. */
-  spareDiskSizeOptions: '[data-test^="option-size-and-type-spare-"]',
-  spareWidth: '[data-test="select-width-spare"]',
-  spareWidthOption: (disks: number): string => `[data-test="option-width-spare-${kebabTestSegment(disks)}"]`,
-  spareSaveAndReview: '[data-test="button-save-and-go-to-review-spare"]',
-
-  /** The Review step's summary of the spares being added. */
-  reviewSpare: '[data-test="text-review-spare"]',
-  /** "Update Pool". The same button the creation wizard labels "Create Pool". */
-  updatePool: '[data-test="button-create-pool"]',
 } as const;
