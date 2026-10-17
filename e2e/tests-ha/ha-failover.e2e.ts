@@ -1,0 +1,86 @@
+/**
+ * Story: an admin fails the pair over from the Dashboard, and controller 2
+ * takes over: the app rides out the switch, signs in again through the VIP,
+ * and finds controller 2 active with controller 1 back as its standby.
+ *
+ * The last link of the HA suite's chain (`playwright.config.ts`), after
+ * `ha-setup` left HA up with controller 1 active. Its project reaches the
+ * pair through the VIP (`haThroughVip`), as a user does: the UI, sign-in and
+ * `api` all go to whichever controller holds it. `api` is connected to
+ * controller 1, though, and the failover takes the VIP — and that socket —
+ * away from it, so everything after the failover asks a fresh connection.
+ */
+import { readFailover, requireHa } from '../fixtures/ha';
+import { awaitAdminShell, submitSignIn } from '../flows/auth';
+import { initiateFailover } from '../flows/ha';
+import { haStatusLocators } from '../locators/ha';
+import { signinLocators } from '../locators/signin';
+import { withClient } from '../support/api/client';
+import { expect, test } from '../support/fixtures';
+import { recordWebSockets } from '../support/websocket-log';
+
+/** Controller 1 reboots out of the way; controller 2 imports the pool and takes the VIP. */
+const failoverTimeoutMs = 5 * 60_000;
+
+/** Controller 1 back from its reboot as the standby, and HA healthy again. */
+const haBackTimeoutMs = 10 * 60_000;
+
+test('an admin fails the pair over to controller 2, and HA comes back with controller 1 standing by', async ({
+  page, api, config,
+}) => {
+  requireHa(config);
+
+  expect(await readFailover(api), 'controller 1 active, HA healthy').toEqual({
+    licensed: true, status: 'MASTER', node: 'A', reasons: [],
+  });
+
+  // What the app asks of middleware from here on, attached to the result:
+  // the trace records no WebSocket frames, and a failover is all sockets.
+  const attachWebSockets = recordWebSockets(page, test.info());
+  try {
+    await failOverAndSignIn();
+  } finally {
+    await attachWebSockets();
+  }
+
+  async function failOverAndSignIn(): Promise<void> {
+    await initiateFailover(page);
+
+    // The app's own splash while the controller it talks to steps down, then
+    // the sign-in page once the VIP answers again, from controller 2 — which
+    // holds the sign-in until it has finished taking over: the pool imported,
+    // its services started.
+    await expect(page.locator(haStatusLocators.systemTaskMessage)).toBeVisible();
+    await expect(page.locator(signinLocators.username)).toBeVisible({ timeout: failoverTimeoutMs });
+
+    // TEMP: workarounds for two app defects, both of which leave the sign-in
+    // stuck. Remove both once the app signs in straight after a failover.
+    //
+    // 1. On the sign-in page the app returned to, `auth.login_ex` succeeds
+    //    but the app sends nothing after it: the typed client never reports
+    //    itself authenticated on the reconnected socket, so the sign-in waits
+    //    forever. A fresh page load starts a fresh client.
+    // 2. Signed in while controller 2 is still taking over
+    //    (`LOC_FAILOVER_ONGOING`), the app waits for the
+    //    `failover.events.vrrp_master` job to finish
+    //    (`FailoverValidationService.waitForFailoverCompletion`) and never
+    //    sees it do so. Waiting for the takeover first skips that path.
+    await expect.poll(async () => {
+      const failover = await withClient(config, readFailover);
+      return failover.node === 'B' && failover.status === 'MASTER'
+        && !failover.reasons.includes('LOC_FAILOVER_ONGOING');
+    }, { timeout: failoverTimeoutMs, intervals: [5_000] }).toBe(true);
+    await page.reload();
+    await expect(page.locator(signinLocators.username)).toBeEnabled({ timeout: failoverTimeoutMs });
+    await submitSignIn(page, config.username, config.password);
+    await awaitAdminShell(page, config.username, failoverTimeoutMs);
+  }
+
+  // Once controller 1 is back, as the standby, nothing is left in the
+  // reasons HA is off — asked of middleware first, for the reason ha-setup
+  // gives — and the topbar says so.
+  await expect.poll(() => withClient(config, readFailover), { timeout: haBackTimeoutMs, intervals: [5_000] }).toEqual({
+    licensed: true, status: 'MASTER', node: 'B', reasons: [],
+  });
+  await expect(page.locator(haStatusLocators.indicatorEnabled)).toBeVisible();
+});
