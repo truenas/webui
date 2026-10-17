@@ -915,6 +915,18 @@ the SSH connection's edit form opens with Save locked. Each seeded record is
 read back through the API. Privileges, API keys, certificates, the group members
 page, Directory Services and middleware's redaction of secrets are not covered.
 
+Data Protection for the read-only admin is in
+`tests/roles-read-only-data-protection.e2e.ts`, one test with a step per card. A
+periodic snapshot, replication, rsync and cloud sync task is seeded, each on a
+schedule that does not fire during the test. On each card the task is listed, and
+Add, the row's Enabled switch, and Run, Dry Run, Restore and Delete in the row menu
+(whichever the card has) are all locked. The snapshot task's Edit opens its form,
+and with the naming schema changed, Save is still locked. Each task's `enabled`,
+the snapshot task's naming schema, the replication and cloud sync task counts, and
+the absence of any new run are read back through the API. The full list pages,
+the other three edit forms, and the TrueCloud Backup and VMware cards are not
+covered.
+
 A pool's devices came next, in `tests/pool-devices.e2e.ts`: taking a disk offline
 and bringing it back online, and adding a spare, both from the pool's VDEVs page.
 That page is reached from View VDEVs on the pool's card on the Storage dashboard.
