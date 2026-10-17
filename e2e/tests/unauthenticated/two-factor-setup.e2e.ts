@@ -15,7 +15,10 @@
  *
  * The guard is a child-route guard that holds the navigation until the dialog
  * closes, so the shell is not on screen behind it. Each test waits for the
- * dialog, and for the shell only once it has closed.
+ * dialog first. Only the skip test then waits for the shell: Skip closes the
+ * dialog with `true`, which lets the held navigation land, while Finish closes
+ * it with no value, which the guard hands to the router as-is. So after Finish
+ * this asserts the dialog closing, and not where the user ends up.
  *
  * Global two-factor is on here as a precondition, not the thing under test, so
  * it is set over the API. Left on, it would put every later account with no
