@@ -48,7 +48,7 @@ export async function ensureDirectoryServicesCleared(client: E2eApiClient): Prom
     {
       timeoutMs: slowCallTimeoutMs,
       whatItCosts: `directory services are still configured as ${config.service_type}, `
-        + 'so the page shows its card instead of the disabled state',
+        + 'so the next run does not start from a new configuration',
     },
   );
 }
