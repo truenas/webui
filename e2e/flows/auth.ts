@@ -169,18 +169,6 @@ export async function expectSignInRefused(page: Page, message: string | RegExp):
 }
 
 /**
- * {@link expectSignInRefused} for the one-time password step: the message says
- * so, no session exists, and the form is still asking for a code rather than
- * having gone back to the username.
- */
-export async function expectOneTimePasswordRefused(page: Page, message: string | RegExp): Promise<void> {
-  await expect(page.locator(signinLocators.error)).toContainText(message, { timeout: signInTimeoutMs });
-  await expect(page.locator(adminLayout)).toBeHidden();
-  await expect(page.locator(signinLocators.otp)).toBeVisible();
-  await expect(page.locator(signinLocators.username)).toBeHidden();
-}
-
-/**
  * Waits for a session that a one-time password opened, and signs it out again.
  *
  * Such a session can land in either of two places, and which one is middleware's

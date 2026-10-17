@@ -99,11 +99,5 @@
         (onClick)="cancelOtpLogin()"
       ></tn-button>
     </div>
-
-    @if (isLastOtpAttemptFailed()) {
-      <div class="error" tnTestIdType="text" [tnTestId]="'login-error'">
-        <p>{{ lastLoginError() }}</p>
-      </div>
-    }
   }
 </form>

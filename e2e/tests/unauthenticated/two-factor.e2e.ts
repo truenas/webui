@@ -48,7 +48,7 @@ import { expect, test } from '../../support/fixtures';
 import { totpCode, wrongTotpCode } from '../../support/totp';
 
 /** What the sign-in page says for a code middleware refused (`SigninStore.getLoginErrorMessage`). */
-const wrongCodeMessage = 'Incorrect or expired OTP. Please try again.';
+const wrongCodeMessage = 'Incorrect or expired OTP. Enter your password again to get a new code prompt.';
 
 /**
  * One step either side of now. The test computes each code moments before it is
@@ -131,8 +131,8 @@ test('two-factor is set up on its page, then asked for, and an admin can clear i
   });
 
   await test.step('the code the secret gives now lets them in', async () => {
-    // Loaded afresh, unlike the other sign-ins: the refusal left the form on its
-    // code step, and this is a new attempt from the username.
+    // Loaded afresh, unlike the other sign-ins, so this is a new attempt from a
+    // clean page. Signing in from the form the refusal left is two-factor-signin's.
     await attemptSignIn(page, username, password);
     await submitOneTimePassword(page, totpCode(secret));
 
