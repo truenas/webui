@@ -9,7 +9,8 @@
  * task's details page can be reached without one. What is left is what an
  * appliance with no task shows, which is also every appliance this suite boots.
  *
- * Read-only against the appliance, so there is nothing to tear down.
+ * Read-only against the appliance beyond the shared pool, so there is nothing to
+ * tear down.
  */
 import { countCloudBackupTasks } from '../fixtures/cloud-backup';
 import { leaveFieldEmpty, openCloudBackupForm, openCloudBackupList } from '../flows/cloud-backup';
@@ -37,6 +38,16 @@ async function requireNoTasks(api: E2eApiClient): Promise<void> {
   expect(existing, `the empty state needs an appliance with no TrueCloud Backup task, and it has ${existing}`)
     .toBe(0);
 }
+
+/**
+ * Data Protection shows its cards only on an appliance with a pool; with none it
+ * shows a "create a pool" page instead. Asked of the `pool` fixture rather than
+ * left to whichever earlier spec built one: that pool goes with the worker, and
+ * a failure just before this spec replaces the worker. Run 39052613548.
+ */
+test.beforeEach(({ pool }) => {
+  expect(pool).toBeTruthy();
+});
 
 test('the TrueCloud Backup card shows its empty state when there is no task', async ({ page, api }) => {
   await requireNoTasks(api);
