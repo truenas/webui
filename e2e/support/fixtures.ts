@@ -23,7 +23,7 @@ import { connectAndLogin } from './api/client';
 import { recordApiCalls } from './api-calls';
 import { buildTokenLoginUrl, generateAuthToken } from './auth/token';
 import { keepTestData } from './cleanup';
-import { loadTargetConfig, type TargetConfig } from './config';
+import { loadTargetConfig, type TargetConfig, throughVip } from './config';
 import {
   adminLayout, concurrentCallsDialogTitleId, errorDialog, errorDialogClose,
 } from './constants';
@@ -171,6 +171,13 @@ export interface E2eTestOptions {
 }
 
 export interface E2eWorkerFixtures {
+  /**
+   * Whether this worker reaches the HA pair through its VIP rather than node A:
+   * the UI served against the VIP, `api` connected to it, and sign-in through
+   * it. Off by default; the HA journeys that run once the VIP exists turn it on
+   * in `playwright.config.ts`. See `throughVip`.
+   */
+  haThroughVip: boolean;
   /** Resolved target configuration for this run. */
   config: TargetConfig;
   /**
@@ -221,10 +228,12 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
   authenticate: [true, { option: true }],
   recordApiCalls: [false, { option: true }],
 
+  haThroughVip: [false, { option: true, scope: 'worker' }],
+
   config: [
-    // eslint-disable-next-line no-empty-pattern
-    async ({}, use) => {
-      await use(loadTargetConfig());
+    async ({ haThroughVip }, use) => {
+      const config = loadTargetConfig();
+      await use(haThroughVip ? throughVip(config) : config);
     },
     { scope: 'worker' },
   ],

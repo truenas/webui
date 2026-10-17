@@ -46,6 +46,14 @@ export class HaStatusIconComponent implements OnInit {
     return this.failoverDisabledReasons().length > 0 && !this.isReconnecting();
   });
 
+  /** One id per state the icon shows, so reconnecting is never read as enabled. */
+  protected readonly testId = computed(() => {
+    if (this.isReconnecting()) {
+      return 'ha-indicator-reconnecting';
+    }
+    return this.isDisabled() ? 'ha-indicator-disabled' : 'ha-indicator-enabled';
+  });
+
   protected readonly iconName = computed(() => {
     if (this.isReconnecting()) {
       return 'tn-ha-reconnecting';

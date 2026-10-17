@@ -5,7 +5,7 @@
     size="lg"
     [name]="iconName()"
     [dense]="true"
-    [testId]="isDisabled() ? 'ha-indicator-disabled' : 'ha-indicator-enabled'"
+    [testId]="testId()"
     [tooltip]="statusText()"
     [ariaLabel]="statusText()"
     (onClick)="showHaPopover()"

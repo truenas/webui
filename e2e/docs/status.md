@@ -493,6 +493,17 @@ schema and schedule claim, and the "keep snapshots" box ticked or not. With it
 ticked, `pool.snapshot.query`'s `retention` must move from the task to a
 `property` on the snapshot with the same date, and a manual snapshot beside it
 must get none. With it unticked, the snapshot stays and has no removal date.
+`tests/snapshot-task-retention.e2e.ts` covers the edit form's counterpart: with
+the same seeded snapshot, changing the naming schema so the task no longer owns
+it must show the retention warning with a count of 1. With "Preserve Snapshot
+Retention" ticked, the old date must become a `property` on the snapshot.
+Unticked, the snapshot is left with no removal date. The warning is about
+ownership, which is the naming schema and schedule alone, so shortening the
+lifetime never raises it. An edit to Allow Taking Empty Snapshots, with the
+lifetime typed again unchanged, must show no warning once the check that sends
+has answered. The same spec switches a
+disabled task back on from the card and follows the full list's Snapshots
+button to `/datasets/snapshots`, where the seeded snapshot's row must show.
 `tests/snapshot-task-validation.e2e.ts` covers what the add form refuses: a
 naming schema with a slash (the form's own pattern, so Save goes disabled), and
 four refusals that come back from `pool.snapshottask.create` under the field
@@ -879,6 +890,18 @@ from the card, and deletes an iSCSI target with its extent. SMB Add and the NFS
 row's Enabled switch are checked to be outside the role-missing wrapper, and
 each change is read back through the API, the NFS edit by the share's `id`. The
 iSCSI wizard, the ACL editors and the services themselves are not covered.
+
+Users, Groups and Backup Credentials for the read-only admin are in
+`tests/roles-read-only-credentials.e2e.ts`, one test with a step per page. On
+Users, Add and Delete on another user are locked, and the edit form opens but
+its Save is locked with the full name changed; the panel is closed without
+saving. On the admin's own account Delete is not rendered at all, beside its
+Edit. On Groups, Add and an empty group's Delete are locked. On Backup
+Credentials, Add and Delete are locked on the cloud credentials, SSH connections
+and SSH keypairs cards, the keypair's Delete being a disabled menu item, and
+the SSH connection's edit form opens with Save locked. Each seeded record is
+read back through the API. Privileges, API keys, certificates, the group members
+page, Directory Services and middleware's redaction of secrets are not covered.
 
 A pool's devices came next, in `tests/pool-devices.e2e.ts`: taking a disk offline
 and bringing it back online, and adding a spare, both from the pool's VDEVs page.
