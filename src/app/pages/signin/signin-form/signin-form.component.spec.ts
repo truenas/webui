@@ -290,7 +290,8 @@ describe('SigninFormComponent', () => {
         expect(login).toHaveBeenLastCalledWith('testuser', 'testpass');
 
         await submitOtp(LoginResult.Success);
-        expect(login).toHaveBeenLastCalledWith('testuser', 'testpass', '123456');
+        // The code step emptied the password field; a code alone continues the login.
+        expect(login).toHaveBeenLastCalledWith('testuser', '', '123456');
         expect(spectator.inject(SigninStore).handleSuccessfulLogin).toHaveBeenCalled();
       });
 
