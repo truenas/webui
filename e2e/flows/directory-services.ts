@@ -1,18 +1,65 @@
 /**
- * Kerberos realms and keytabs, driven through the UI from Credentials > Directory
- * Services, behind its Advanced Settings.
+ * Credentials > Directory Services, driven through the UI: the Directory Services
+ * Configuration form, and the Kerberos realms and keytabs behind the page's
+ * Advanced Settings.
  *
  * Joining AD, LDAP or IPA needs a directory server the CI appliance does not
- * have. The two Kerberos cards do not, which is why they are what is covered.
+ * have, so the configuration form is filled and checked but never saved. The two
+ * Kerberos cards need no server, which is why they are saved.
  */
 import { expect, type Page } from '@playwright/test';
 import { goToDirectoryServices } from './navigation';
+import { selectOption } from './storage';
 import type { KerberosRealmSettings } from '../fixtures/kerberos';
 import { confirmDialogLocators } from '../locators/dialogs';
 import { directoryServicesLocators } from '../locators/directory-services';
 
 /** Saving or deleting either one rewrites `krb5.conf` and restarts a service, not instant. */
 const saveTimeoutMs = 60_000;
+
+/**
+ * Opens the Directory Services Configuration form from the disabled state's
+ * button, starting from the sidebar, and waits for it to be ready to fill.
+ */
+export async function openDirectoryServicesForm(page: Page): Promise<void> {
+  await goToDirectoryServices(page);
+  await page.locator(directoryServicesLocators.configure).click();
+  await expect(page.locator(directoryServicesLocators.configForm.serviceType)).toBeVisible();
+}
+
+/** Picks a Configuration Type by its label. */
+export async function selectServiceType(page: Page, label: string): Promise<void> {
+  const form = directoryServicesLocators.configForm;
+  await selectOption(page, form.serviceType, form.serviceTypeOption(label));
+}
+
+/** Picks a Credential Type by its label. */
+export async function selectCredentialType(page: Page, label: string): Promise<void> {
+  const form = directoryServicesLocators.configForm;
+  await selectOption(page, form.credentialType, form.credentialTypeOption(label));
+}
+
+/** Picks an IDMAP Backend by its label. Rendered only once Use TrueNAS Server IDMAP Defaults is unticked. */
+export async function selectIdmapBackend(page: Page, label: string): Promise<void> {
+  const { idmap } = directoryServicesLocators.configForm;
+  await selectOption(page, idmap.backend, idmap.backendOption(label));
+}
+
+/**
+ * Closes the configuration form without saving, and waits for it to go.
+ *
+ * Only for a form that has been edited: the panel then asks whether to discard
+ * the changes, and that question is asserted rather than looked for.
+ */
+export async function discardDirectoryServicesForm(page: Page): Promise<void> {
+  const form = directoryServicesLocators.configForm;
+  await page.locator(form.closePanel).click();
+
+  const discard = page.locator(confirmDialogLocators.confirm);
+  await expect(discard).toBeVisible();
+  await discard.click();
+  await expect(page.locator(form.serviceType)).toBeHidden();
+}
 
 /**
  * Opens Advanced Settings, starting from the sidebar, and accepts the warning it

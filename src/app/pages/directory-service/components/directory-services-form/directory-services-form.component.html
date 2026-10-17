@@ -8,6 +8,7 @@
   <!-- Basic Configuration -->
   <tn-form-section [heading]="'Basic Configuration' | translate">
     <tn-form-field
+      testId="service-type"
       [label]="'Configuration Type' | translate"
       [tooltip]="helptext.serviceTypeTooltip | translate"
       [required]="true"
@@ -44,6 +45,7 @@
     </tn-form-field>
 
     <tn-form-field
+      testId="timeout"
       [label]="'Timeout (seconds)' | translate"
       [tooltip]="helptext.timeoutTooltip | translate"
       [required]="true"
