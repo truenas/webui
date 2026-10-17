@@ -4,9 +4,10 @@
  */
 import { expect, type Page } from '@playwright/test';
 import { goToStorage } from './navigation';
-import { confirmDestructiveAction, selectFirstOption, selectOption } from './storage';
+import { configureAutomatedVdevs, confirmDestructiveAction, goToReview } from './storage';
 import { confirmDialogLocators } from '../locators/dialogs';
-import { addVdevsLocators, vdevsPageLocators, zfsInfoLocators } from '../locators/pool-devices';
+import { vdevsPageLocators, zfsInfoLocators } from '../locators/pool-devices';
+import { poolWizardLocators } from '../locators/storage';
 
 /** The tree loads `pool.query` and `disk.query` before it renders a node. */
 const loadTimeoutMs = 30_000;
@@ -77,16 +78,16 @@ export async function addOneSpare(page: Page): Promise<void> {
   await page.locator(vdevsPageLocators.addVdev).click();
   await expect(page).toHaveURL(/\/storage\/\d+\/add-vdevs\/?$/);
 
-  await page.locator(addVdevsLocators.nextGeneral).click();
-  await page.locator(addVdevsLocators.nextData).click();
-  await page.locator(addVdevsLocators.nextLog).click();
+  await page.locator(poolWizardLocators.next).click();
+  await page.locator(poolWizardLocators.nextStep('data')).click();
+  await page.locator(poolWizardLocators.nextStep('log')).click();
 
-  await selectFirstOption(page, addVdevsLocators.spareDiskSize, addVdevsLocators.spareDiskSizeOptions);
-  await selectOption(page, addVdevsLocators.spareWidth, addVdevsLocators.spareWidthOption(1));
-  await page.locator(addVdevsLocators.spareSaveAndReview).click();
+  await configureAutomatedVdevs(page, 'spare', { width: 1 });
+  await goToReview(page, 'spare');
 
-  await expect(page.locator(addVdevsLocators.reviewSpare)).toBeVisible();
-  await page.locator(addVdevsLocators.updatePool).click();
+  await expect(page.locator(poolWizardLocators.reviewCategory('spare'))).toBeVisible();
+  // "Update Pool" here: the button the creation wizard labels "Create Pool".
+  await page.locator(poolWizardLocators.createPool).click();
 
   // Adding a disk erases it, so the wizard asks first.
   await confirmDestructiveAction(page);

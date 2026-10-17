@@ -1,13 +1,15 @@
 /**
  * A dataset's owner, group and Unix mode, driven through the Unix Permissions Editor, and its
- * NFSv4 entries, presets and owner, driven through the ACL editor.
+ * NFSv4 and POSIX entries, presets and owner, driven through the ACL editor.
  */
 import { expect, type Page } from '@playwright/test';
 import { goToDatasets } from './navigation';
 import { confirmDestructiveAction, selectOption } from './storage';
 import { datasetMountPath } from '../fixtures/storage';
-import { confirmDialogLocators } from '../locators/dialogs';
-import { permissionsLocators, type AccessRight, type AccessWho } from '../locators/permissions';
+import { confirmDialogLocators, errorDialogLocators } from '../locators/dialogs';
+import {
+  permissionsLocators, type AccessRight, type AccessWho, type PosixPermissionLabel,
+} from '../locators/permissions';
 import { datasetDetailsLocators, datasetLocators } from '../locators/storage';
 
 /** Saving runs `filesystem.setperm` as a job behind a progress dialog. */
@@ -100,6 +102,63 @@ export async function choosePreset(page: Page, name: string): Promise<void> {
 }
 
 /**
+ * Chooses "Create a custom ACL" in the preset dialog the editor raised itself, and continues.
+ *
+ * Nothing is put into the form, so the editor keeps the entries it read: on a trivial POSIX ACL,
+ * the three access entries the mode makes.
+ */
+export async function chooseCustomAcl(page: Page): Promise<void> {
+  const dialog = permissionsLocators.presetDialog;
+
+  await expect(page.locator(dialog.title)).toBeVisible();
+  await page.locator(dialog.customAcl).click();
+  await expect(page.locator(dialog.preset)).toHaveCount(0);
+  await page.locator(dialog.continue).click();
+  await expect(page.locator(dialog.title)).toBeHidden();
+}
+
+/**
+ * Presses Save As Preset in the ACL editor, and waits for the dialog to list the presets.
+ *
+ * The list is filled from `filesystem.acltemplate.by_path` after the dialog opens. Every path is
+ * offered the built-in `NFS4_OPEN`, so its row is the signal that the answer is in.
+ */
+export async function openSaveAsPresetDialog(page: Page): Promise<void> {
+  const dialog = permissionsLocators.saveAsPresetDialog;
+
+  await page.locator(permissionsLocators.aclEditor.saveAsPreset).click();
+  await expect(page.locator(dialog.title)).toBeVisible();
+  await expect(page.locator(dialog.presetName('NFS4_OPEN'))).toBeVisible();
+}
+
+/**
+ * Saves the editor's current entries as a preset called `name`, and waits for the dialog to close.
+ *
+ * The dialog closes only once `filesystem.acltemplate.create` has answered. The editor stays open
+ * with its entries unsaved.
+ */
+export async function saveAsPreset(page: Page, name: string): Promise<void> {
+  const dialog = permissionsLocators.saveAsPresetDialog;
+
+  await openSaveAsPresetDialog(page);
+  await page.locator(dialog.name).fill(name);
+  await page.locator(dialog.save).click();
+  await expect(page.locator(dialog.title)).toBeHidden();
+}
+
+/**
+ * Removes the preset `name` from the Save As Preset dialog already open, and waits for its row to go.
+ *
+ * The remove icon deletes the template at once, with no confirm, and the list is then read again.
+ */
+export async function removePreset(page: Page, name: string): Promise<void> {
+  const dialog = permissionsLocators.saveAsPresetDialog;
+
+  await page.locator(dialog.removePreset(name)).click();
+  await expect(page.locator(dialog.presetName(name))).toBeHidden();
+}
+
+/**
  * Picks a new owner in the ACL editor's header, and sets Apply Owner to `apply`.
  *
  * The same autocomplete as {@link chooseOwner}: the row is what commits the value.
@@ -174,6 +233,32 @@ export async function addAclGroupEntry(page: Page, group: string, permission: st
   await page.locator(aclEditor.group).fill(group);
   await page.locator(aclEditor.groupOption(group)).click();
   await selectOption(page, aclEditor.basicPermission, aclEditor.basicPermissionOption(permission));
+}
+
+/**
+ * Adds a POSIX entry for `username` with exactly the boxes `perms` ticked, in the default ACL
+ * when `isDefault` is set.
+ *
+ * "Add Item" on a POSIX ACL appends a Mask entry with nothing ticked and selects it
+ * (`newPosixAce`), so Who reading Mask is the sign the form is the new entry's. Who is then
+ * changed to User, which brings in the user field.
+ */
+export async function addPosixUserEntry(
+  page: Page,
+  username: string,
+  { perms, isDefault }: { perms: PosixPermissionLabel[]; isDefault: boolean },
+): Promise<void> {
+  const aclEditor = permissionsLocators.aclEditor;
+
+  await page.locator(aclEditor.addItem).click();
+  await expect(page.locator(aclEditor.tag)).toContainText('Mask');
+  await selectOption(page, aclEditor.tag, aclEditor.tagUser);
+  await page.locator(aclEditor.user).fill(username);
+  await page.locator(aclEditor.userOption(username)).click();
+  for (const label of perms) {
+    await page.locator(aclEditor.posixPermission(label)).setChecked(true);
+  }
+  await page.locator(aclEditor.posixDefault).setChecked(isDefault);
 }
 
 /**
@@ -281,6 +366,20 @@ export async function saveAclToTraverseWarning(page: Page): Promise<void> {
 export async function saveAclAnyway(page: Page): Promise<void> {
   await confirmDestructiveAction(page);
   await expect(page.locator(permissionsLocators.aclEditor.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Presses Save on an ACL that middleware refuses outright, and waits for the error dialog.
+ *
+ * Any refusal other than the traverse check goes to the shared error dialog, and the editor stays
+ * open behind it with nothing saved.
+ */
+export async function saveAclToError(page: Page): Promise<void> {
+  const save = page.locator(permissionsLocators.aclEditor.save);
+
+  await expect(save).toBeEnabled();
+  await save.click();
+  await expect(page.locator(errorDialogLocators.title)).toBeVisible({ timeout: saveTimeoutMs });
 }
 
 /**

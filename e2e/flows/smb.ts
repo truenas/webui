@@ -151,6 +151,27 @@ export async function saveShareForm(page: Page): Promise<void> {
 }
 
 /**
+ * Saves a new share on a path that carries an ACL, declines the "Configure ACL"
+ * prompt and then the offer to start SMB, and waits for the panel.
+ *
+ * {@link saveShareForm} for a dataset made with the SMB preset, whose NFSv4 ACL
+ * is what raises the first prompt. The form raises them in this order, and the
+ * service must be stopped for the second one, as there.
+ */
+export async function saveNewShareFormDecliningAcl(page: Page): Promise<void> {
+  const declineAcl = page.locator(smbLocators.declineAclPrompt);
+  const declineStart = page.locator(smbLocators.declineStartService);
+
+  await page.locator(smbLocators.form.save).click();
+  await expect(declineAcl).toBeVisible({ timeout: saveTimeoutMs });
+  await declineAcl.click();
+  await expect(declineStart).toBeVisible({ timeout: saveTimeoutMs });
+  await declineStart.click();
+
+  await expect(page.locator(smbLocators.form.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
  * Creates an SMB share pointing at a dataset's mountpoint, and starts the SMB
  * service when the app offers to. The counterpart of {@link saveShareForm},
  * which declines; this one is `fresh-install`'s, where a served share is the point.

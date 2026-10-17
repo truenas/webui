@@ -12,6 +12,9 @@ export type AccessWho = 'user' | 'group' | 'other';
 /** A column of the same table. The ids say `execute` where the form says `Exec`. */
 export type AccessRight = 'read' | 'write' | 'execute';
 
+/** A box of the POSIX entry form, by the label it shows. */
+export type PosixPermissionLabel = 'Read' | 'Write' | 'Execute';
+
 /** `text-dataset-path`, which the Unix editor and the ACL editor both show. */
 const datasetPath = '[data-test="text-dataset-path"]';
 
@@ -73,6 +76,8 @@ export const permissionsLocators = {
     title: '[data-test="dialog-title-select-preset"]',
     /** "Select a preset ACL". Rendered only on the dialog the editor raises itself. */
     usePreset: '[data-test="radio-button-use-preset-true"]',
+    /** "Create a custom ACL". Continue then keeps the entries the editor read, and nothing is chosen. */
+    customAcl: '[data-test="radio-button-use-preset-false"]',
     /** Rendered only while a preset is to be used. Its options come from `filesystem.acltemplate.by_path`. */
     preset: '[data-test="select-preset-name"]',
     presetOption: (name: string): string => `[data-test="option-preset-name-${kebabTestSegment(name)}"]`,
@@ -95,6 +100,8 @@ export const permissionsLocators = {
     addItem: '[data-test="button-add-acl-item"]',
     /** "Use Preset". Opens {@link permissionsLocators.presetDialog} without its radios. */
     usePreset: '[data-test="button-use-preset"]',
+    /** "Save As Preset". Opens {@link permissionsLocators.saveAsPresetDialog}. */
+    saveAsPreset: '[data-test="button-save-as-preset"]',
 
     /**
      * The header's Owner and Owner Group. The same comboboxes, on the same
@@ -113,12 +120,30 @@ export const permissionsLocators = {
      * selects it, and the entry form is then that entry's.
      */
     ace: (index: number): string => `[data-test="row-ace-${index}"]`,
-    /** The entry's remove control. Every NFSv4 entry has one. */
+    /**
+     * The entry's remove control. Every NFSv4 entry has one. A POSIX entry lacks it while it is
+     * the ACL's only USER_OBJ, GROUP_OBJ or OTHER entry, access and default counted together
+     * (`canBeRemoved` in `acl-editor-list.component.ts`).
+     */
     removeAce: (index: number): string => `[data-test="button-remove-ace-${index}"]`,
 
-    /** Who. Its options come from the label, except group@, which is `group-at` so it is not Group's. */
+    /**
+     * Who. Its options come from the label, except NFSv4's group@, which is `group-at` so it is
+     * not Group's. The POSIX entry form's labels are distinct: User Obj is `option-tag-user-obj`.
+     */
     tag: '[data-test="select-tag"]',
     tagGroup: '[data-test="option-tag-group"]',
+    tagUser: '[data-test="option-tag-user"]',
+
+    /**
+     * The POSIX entry form's (`edit-posix-ace.component.html`) permission boxes, by label: "Read",
+     * "Write" or "Execute".
+     */
+    posixPermission: (label: PosixPermissionLabel): string => (
+      `[data-test="checkbox-permissions-${kebabTestSegment(label)}"]`
+    ),
+    /** The POSIX entry form's "Default", which makes the entry part of the default ACL. */
+    posixDefault: '[data-test="checkbox-default"]',
 
     /** `ix-user-combobox formControlName="user"` in the entry form. Rendered while Who is User. */
     user: '[data-test="autocomplete-user"]',
@@ -171,6 +196,31 @@ export const permissionsLocators = {
     traverse: '[data-test="checkbox-traverse"]',
     /** "Strip ACL". Offered only while the ACL is not trivial. Opens {@link permissionsLocators.stripDialog}. */
     stripAcl: '[data-test="button-strip-acl"]',
+  },
+
+  /**
+   * The Save As Preset dialog (`save-as-preset-modal.component.html`).
+   *
+   * It lists the presets that exist, and saves the editor's current entries as a new one. Its Cancel
+   * and Save emit `button-cancel` and `button-save`, and the editor behind it has its own
+   * `button-cancel`, so both are reached through the dialog's action row.
+   */
+  saveAsPresetDialog: {
+    title: '[data-test="dialog-title-save-as-preset"]',
+    name: '[data-test="input-preset-name"]',
+    /** A preset's name in the Existing presets list. */
+    presetName: (name: string): string => `[data-test="text-preset-${kebabTestSegment(name)}-name"]`,
+    /**
+     * A preset's remove icon. Every one emits `button-remove-preset`, so it is reached through its row,
+     * `[tnTestId]="['preset', preset.name]"`. Only a custom preset has one. Clicking it deletes the
+     * preset at once, with no confirm.
+     */
+    removePreset: (name: string): string => (
+      `[data-test="row-preset-${kebabTestSegment(name)}"] [data-test="button-remove-preset"]`
+    ),
+    cancel: '[data-test="actions-save-as-preset"] [data-test="button-cancel"]',
+    /** Runs `filesystem.acltemplate.create` and closes the dialog. It does not save the ACL. */
+    save: '[data-test="actions-save-as-preset"] [data-test="button-save"]',
   },
 
   /**

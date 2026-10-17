@@ -20,10 +20,10 @@ import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 export type VdevCategory = 'data' | 'log' | 'spare' | 'cache' | 'special' | 'dedup';
 
 /**
- * The wizard step's own name in its Save And Go To Review id. The same as the
- * category except for special vdevs, whose step is "Metadata".
+ * The wizard step's own name in its Next and Save And Go To Review ids. The same
+ * as the category except for special vdevs, whose step is "Metadata".
  */
-const reviewStepIds: Record<VdevCategory, string> = {
+const stepIds: Record<VdevCategory, string> = {
   data: 'data',
   log: 'log',
   spare: 'spare',
@@ -49,11 +49,16 @@ export const poolWizardLocators = {
    */
   nameField: '[data-test="form-field-name"]',
   next: '[data-test="button-next-general"]',
+  /** A vdev step's Next, which moves on to the following step. */
+  nextStep: (type: VdevCategory) => `[data-test="button-next-${stepIds[type]}"]`,
 
   /**
    * A vdev step's layout. `[testId]="['layout']"` on a tn-select, with no
    * category in it: `tn-stepper` renders only the active step, so there is
    * only ever one.
+   *
+   * The Spare and Cache steps do not render it: a spare or a cache device is
+   * always a single disk.
    */
   layout: '[data-test="select-layout"]',
   /**
@@ -96,6 +101,7 @@ export const poolWizardLocators = {
     `[data-test="option-width-${type}-${kebabTestSegment(disks)}"]`
   ),
 
+  /** Not rendered on the Log, Spare and Cache steps, which build exactly one vdev. */
   vdevCount: (type: VdevCategory) => `[data-test="select-vdevs-number-${type}"]`,
   vdevCountOption: (type: VdevCategory, count: number) => (
     `[data-test="option-vdevs-number-${type}-${kebabTestSegment(count)}"]`
@@ -109,11 +115,13 @@ export const poolWizardLocators = {
   configPreview: (type: VdevCategory) => `[data-test="text-config-preview-${type}"]`,
 
   saveAndReview: (type: VdevCategory) => (
-    `[data-test="button-save-and-go-to-review-${reviewStepIds[type]}"]`
+    `[data-test="button-save-and-go-to-review-${stepIds[type]}"]`
   ),
 
   /** The Data step's top warning, shown under the layout while one applies. */
   dataStepWarning: '[data-test="text-data-step-warning"]',
+  /** The Log step's, in the same place. */
+  logStepWarning: '[data-test="text-log-step-warning"]',
 
   /**
    * Any entry of the Review step's Warnings list, `['review-warning', $index]`.
@@ -133,6 +141,7 @@ export const poolWizardLocators = {
 
   /** Rendered only while the topology has at least one vdev. */
   inspectVdevs: '[data-test="button-inspect-vdevs"]',
+  /** "Create Pool", or "Update Pool" when the wizard was opened from Add VDEV. */
   createPool: '[data-test="button-create-pool"]',
 } as const;
 
@@ -363,6 +372,14 @@ export const poolCardLocators = {
    * `[poolState().name, 'data-vdevs']`.
    */
   dataVdevs: (pool: string) => `[data-test="text-${kebabTestSegment(pool)}-data-vdevs"]`,
+  /**
+   * The VDEVs card's line for another kind of vdev, e.g. `1 x MIRROR | 2 wide | 10 GiB`
+   * for a log, `1 x 10 GiB` for a cache or a spare. `[poolState().name, row.key, 'vdevs']`,
+   * rendered only while the pool has that kind.
+   */
+  vdevs: (pool: string, type: Exclude<VdevCategory, 'data'>) => (
+    `[data-test="text-${kebabTestSegment(pool)}-${type}-vdevs"]`
+  ),
 } as const;
 
 /**
