@@ -141,7 +141,8 @@ test('cancelling the code step goes back to the password form, with no session',
   await expect(usernameField).toBeVisible();
   await expect(usernameField).toBeEnabled();
   await expect(page.locator(signinLocators.otp)).toBeHidden();
-  // Filled when the step began, so empty is Cancel clearing it (`clearForm`).
+  // The user comes back to an empty password. The app emptied it when it asked
+  // for a code, before Cancel, so this says nothing about Cancel itself.
   await expect(page.locator(signinLocators.password)).toHaveValue('');
   await expect(page.locator(adminLayout)).toBeHidden();
 });
