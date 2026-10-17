@@ -21,6 +21,13 @@ export const dashboardLocators = {
     hostname: '[data-test="text-system-info-active-hostname"]',
     /** The version string alone; the `rendered()` call beside it in the template emits nothing. */
     version: '[data-test="text-system-info-active-version"]',
+    /**
+     * The version's copy button. Every `ix-copy-button` emits this same static id, so it names one
+     * button only on a layout holding a single System Information card.
+     */
+    copyVersion: '[data-test="button-copy-to-clipboard"]',
+    /** Check for Updates, or Updates Available when the check found one. Both keep this id. */
+    update: '[data-test="button-widget-sysinfo-update"]',
   },
 
   cpuUsageBar: {
@@ -77,5 +84,12 @@ export const dashboardLocators = {
 
   help: {
     documentation: '[data-test="link-documentation"]',
+    forums: '[data-test="link-forums"]',
+    newsletter: '[data-test="link-newsletter"]',
+    /**
+     * The card's copyright line. Scoped inside the card, because the sidebar renders the same
+     * `ix-copyright-line`, and with it the same `link-copyright`.
+     */
+    copyright: '[data-test="card-help"] [data-test="link-copyright"]',
   },
 } as const;
