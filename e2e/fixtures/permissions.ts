@@ -1,5 +1,5 @@
 /**
- * A dataset's owner, group and Unix mode, and its NFSv4 ACL entries, over the API.
+ * A dataset's owner, group and Unix mode, and its NFSv4 and POSIX ACL entries, over the API.
  *
  * Provisioning only, plus the reads a test asserts against. Changing them is what
  * `tests/dataset-permissions.e2e.ts` and `tests/smb-share-acl.e2e.ts` drive through the UI, so
@@ -85,6 +85,17 @@ export function nfs4Entries(acl: AclRead): Nfs4Ace[] {
   return acl.acl;
 }
 
+/** An entry of a POSIX.1e ACL: `tag`, `id`, `default` and `perms` of READ, WRITE and EXECUTE. */
+export type PosixAce = Extract<AclRead, { acltype: 'POSIX1E' }>['acl'][number];
+
+/** The entries of a POSIX.1e ACL, access and default together. Throws on any other kind. */
+export function posixEntries(acl: AclRead): PosixAce[] {
+  if (acl.acltype !== 'POSIX1E') {
+    throw new Error(`Expected a POSIX.1e ACL, found ${acl.acltype}.`);
+  }
+  return acl.acl;
+}
+
 /**
  * The template called `name`, as the preset picker on `path` offers it.
  *
@@ -107,6 +118,33 @@ export async function readAclTemplate(client: E2eApiClient, path: string, name: 
   }
 
   return template;
+}
+
+/**
+ * Applies the POSIX template `name` to `path`, as a precondition, so its ACL is not trivial.
+ *
+ * The template's entries as `filesystem.acltemplate.by_path` serves them, ids and all, sent through
+ * `filesystem.setacl`. Choosing a preset in the editor is what a test of presets drives instead.
+ */
+export async function applyPosixAclTemplate(client: E2eApiClient, path: string, name: string): Promise<void> {
+  const template = await readAclTemplate(client, path, name);
+  if (template.acltype !== 'POSIX1E') {
+    throw new Error(`"${name}" is a ${template.acltype} template, where a POSIX one was expected.`);
+  }
+
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('filesystem.setacl', [{
+      path,
+      dacl: template.acl,
+      acltype: template.acltype,
+      options: { recursive: false },
+    }]),
+    {
+      timeoutMs: slowCallTimeoutMs,
+      whatItCosts: `${path} does not have the ${name} ACL the test starts from`,
+    },
+  );
 }
 
 /**
