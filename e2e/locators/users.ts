@@ -32,6 +32,16 @@ export const usersLocators = {
    */
   deleteUser: (username: string): string => `[data-test="button-delete-${kebabTestSegment(username)}"]`,
 
+  /**
+   * Edit, beside {@link deleteUser} in the details pane.
+   *
+   * `[testId]="['edit-user', user().full_name]"`, so it is keyed on the *full
+   * name*, not the username — `E2E e2e_roles_user` for an account made by
+   * `ensureUserPresent`. Rendered for every user, the signed-in one included,
+   * which makes it the anchor for Delete's absence on your own account.
+   */
+  editUser: (fullName: string): string => `[data-test="button-edit-user-${kebabTestSegment(fullName)}"]`,
+
   /** The confirmation raised by that button. `<tn-dialog-shell testId="delete-user">`. */
   deleteDialog: {
     title: '[data-test="dialog-title-delete-user"]',
@@ -98,6 +108,13 @@ export const usersLocators = {
   form: {
     /** `<tn-input [testId]="'username'">` in user-form.component.html */
     username: '[data-test="input-username"]',
+    /**
+     * Full Name is an inline editable in Additional Details: the view,
+     * `tnTestIdType="text"` with `'full-name'`, shows the value until clicked, and
+     * only then is the `tn-input` there to fill.
+     */
+    fullNameValue: '[data-test="text-full-name"]',
+    fullName: '[data-test="input-full-name"]',
     /** `<tn-checkbox formControlName="truenas_access" testId="truenas-access">` */
     truenasAccess: '[data-test="checkbox-truenas-access"]',
     /**
