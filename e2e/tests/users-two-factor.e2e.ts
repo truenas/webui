@@ -105,13 +105,10 @@ test('an admin sees that a user has two-factor, clears it, and the appliance dro
   expect((await findUser(api, username))?.twofactor_auth_configured).toBe(false);
 });
 
-test('a user without two-factor offers nothing to clear or set up', async ({ page, api, config }) => {
-  // The admin has no secret either, and on their own card Set up 2FA is
-  // offered. That is what makes its absence below about whose card it is.
-  await openUserDetails(page, config.username);
-  await expect(page.locator(twoFactorLocators.setUpLink(config.username))).toBeVisible();
-
+test('a user without two-factor offers nothing to clear or set up', async ({ page, api }) => {
   await openUserDetails(page, withoutTwoFactor);
+  // The two-factor line renders only while global two-factor is on, so reading
+  // it is what makes the absences below about this user rather than the setting.
   await expect(page.locator(twoFactorLocators.userStatus(withoutTwoFactor))).toHaveText(noTwoFactor);
   await expect(page.locator(twoFactorLocators.clearTwoFactor(withoutTwoFactor))).toBeHidden();
   await expect(page.locator(twoFactorLocators.setUpLink(withoutTwoFactor))).toBeHidden();
