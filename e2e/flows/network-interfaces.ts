@@ -12,7 +12,7 @@ import { goToNetwork } from './navigation';
 import { confirmDestructiveAction, selectOption } from './storage';
 import { confirmDialogLocators } from '../locators/dialogs';
 import {
-  interfaceFormLocators, interfacesCardLocators, pendingChangesLocators,
+  defaultGatewayDialogLocators, interfaceFormLocators, interfacesCardLocators, pendingChangesLocators,
 } from '../locators/network-interfaces';
 
 /** `interface.rollback` re-reads the configuration middleware holds before it answers. */
@@ -50,8 +50,14 @@ export async function addVlan(page: Page, vlan: VlanSettings): Promise<void> {
   await selectOption(page, form.vlanParent, form.vlanParentOption(vlan.parent));
   await page.locator(form.vlanTag).fill(String(vlan.tag));
 
-  // A new VLAN with no addresses takes no gateway or DNS away.
+  // Staging even an address-less VLAN is followed by "Set Gateway and DNS"
+  // while DHCP provides a gateway. Skip it: Register would write DHCP's
+  // gateway and DNS into the network configuration as static values.
   await saveInterface(page, false);
+  const gatewayDialog = defaultGatewayDialogLocators;
+  await expect(page.locator(gatewayDialog.title)).toBeVisible();
+  await page.locator(gatewayDialog.skip).click();
+  await expect(page.locator(gatewayDialog.title)).toBeHidden();
 }
 
 /** Opens an interface's action menu on the card. */

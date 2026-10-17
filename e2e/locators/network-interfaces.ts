@@ -63,3 +63,18 @@ export const pendingChangesLocators = {
   saveChanges: '[data-test="button-save-changes"]',
   revertChanges: '[data-test="button-revert-changes"]',
 } as const;
+
+/**
+ * "Set Gateway and DNS", `<tn-dialog-shell testId="default-gateway">`. The form
+ * opens it after a save whenever `interface.network_config_to_be_removed` names
+ * a gateway or DNS servers DHCP provides — on the CI appliance, after any save
+ * that stages a change, a new VLAN with no addresses included. Prefilled with
+ * them: Register saves them as static configuration, Skip saves nothing.
+ */
+export const defaultGatewayDialogLocators = {
+  title: '[data-test="dialog-title-default-gateway"]',
+  gateway: '[data-test="input-default-gateway"]',
+  register: '[data-test="button-register"]',
+  /** Labelled Skip, `testId="cancel"`. */
+  skip: '[data-test="button-cancel"]',
+} as const;

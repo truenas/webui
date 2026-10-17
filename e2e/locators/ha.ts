@@ -3,7 +3,7 @@
  * addresses, the Failover card and form, and the controls that report and
  * move HA once it is on.
  */
-import { interfacesCardLocators, pendingChangesLocators } from './network-interfaces';
+import { defaultGatewayDialogLocators, interfacesCardLocators, pendingChangesLocators } from './network-interfaces';
 
 /** The Support card on System > General Settings, and its License side panel. */
 export const licenseLocators = {
@@ -48,14 +48,8 @@ export const haInterfaceLocators = {
     save: '[data-test="button-save"]',
   },
 
-  /**
-   * "Set Gateway and DNS", which the form opens after saving when the change
-   * drops a gateway or DNS servers DHCP had provided. Prefilled with them.
-   */
-  gatewayDialog: {
-    gateway: '[data-test="input-default-gateway"]',
-    register: '[data-test="button-register"]',
-  },
+  /** "Set Gateway and DNS", which the form can open after saving: see `locators/network-interfaces.ts`. */
+  gatewayDialog: defaultGatewayDialogLocators,
 
   /** The pending-changes card on the Network page. */
   pending: pendingChangesLocators,
