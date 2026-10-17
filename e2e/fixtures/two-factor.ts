@@ -10,12 +10,13 @@
  *
  * A user's secret lives on the user, and goes when the user does.
  */
-import type { CallResponse } from '@truenas/api-client';
+import type { CallParams, CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 export type GlobalTwoFactorConfig = CallResponse<E2eApiDirectory, 'auth.twofactor.config'>;
+export type GlobalTwoFactorUpdate = NonNullable<CallParams<E2eApiDirectory, 'auth.twofactor.update'>[0]>;
 
 /**
  * The throwaway administrator who sets up two-factor. Never the suite's own
@@ -44,12 +45,21 @@ export async function disableGlobalTwoFactor(
   client: E2eApiClient,
   baseline: GlobalTwoFactorConfig,
 ): Promise<void> {
+  await setGlobalTwoFactor(client, {
+    enabled: false,
+    window: baseline.window,
+    services: baseline.services,
+  });
+}
+
+/**
+ * Writes global two-factor as given: a precondition for a spec that starts with
+ * it on. Slow, because middleware reloads the `ssh` and `user` services and
+ * regenerates PAM on every save.
+ */
+export async function setGlobalTwoFactor(client: E2eApiClient, update: GlobalTwoFactorUpdate): Promise<void> {
   await firstValueFrom(
-    client.api.call('auth.twofactor.update', [{
-      enabled: false,
-      window: baseline.window,
-      services: baseline.services,
-    }]).pipe(timeout(slowCallTimeoutMs)),
+    client.api.call('auth.twofactor.update', [update]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
 
