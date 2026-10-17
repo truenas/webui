@@ -2,7 +2,8 @@
  * Directory Services' own state, read and reset over the API.
  *
  * The CI appliance has no domain controller, LDAP or IPA server to join, so
- * every journey here stops short of saving a configuration. "Not configured" is
+ * nothing here saves an enabled configuration — only a disabled LDAP one, which
+ * middleware stores without binding. "Not configured" is
  * the baseline each spec starts from and leaves behind, and
  * {@link ensureDirectoryServicesCleared} is how a run that saved something gets
  * back to it — the same call the form's own Clear Config makes.
@@ -30,6 +31,50 @@ export async function readDirectoryServices(client: E2eApiClient): Promise<Direc
   ]);
 
   return { config, status };
+}
+
+/** What a disabled LDAP Plain configuration is saved with — through the form, or by {@link seedDisabledLdapConfig}. */
+export interface DisabledLdapConfig {
+  serverUrl: string;
+  baseDn: string;
+  bindDn: string;
+  bindPassword: string;
+  timeout: number;
+}
+
+/**
+ * Stores an LDAP Plain configuration with Enable Service off, as the form's Save
+ * would with Enable Service and Enable Account Cache unticked and RFC2307 picked.
+ *
+ * Middleware validates a credential only for an enabled service, so this binds
+ * to nothing and needs no LDAP server. Enabling it would bind, and be refused.
+ */
+export async function seedDisabledLdapConfig(client: E2eApiClient, ldap: DisabledLdapConfig): Promise<void> {
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('directoryservices.update', [{
+      service_type: 'LDAP',
+      enable: false,
+      enable_account_cache: false,
+      timeout: ldap.timeout,
+      credential: {
+        credential_type: 'LDAP_PLAIN',
+        binddn: ldap.bindDn,
+        bindpw: ldap.bindPassword,
+      },
+      configuration: {
+        server_urls: [ldap.serverUrl],
+        basedn: ldap.baseDn,
+        starttls: false,
+        validate_certificates: false,
+        schema: 'RFC2307',
+      },
+    }]),
+    {
+      timeoutMs: slowCallTimeoutMs,
+      whatItCosts: 'the disabled LDAP configuration was not stored, so the form has nothing to load',
+    },
+  );
 }
 
 /**
