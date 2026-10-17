@@ -3,12 +3,7 @@
  * addresses, the Failover card and form, and the controls that report and
  * move HA once it is on.
  */
-import { kebabTestSegment } from './test-id';
-
-/** An interface's row tag: `convertStringToId('interface-' + name)`, as the library normalizes it. */
-function interfaceTag(name: string): string {
-  return kebabTestSegment(`interface-${name}`);
-}
+import { interfacesCardLocators, pendingChangesLocators } from './network-interfaces';
 
 /** The Support card on System > General Settings, and its License side panel. */
 export const licenseLocators = {
@@ -24,14 +19,10 @@ export const licenseLocators = {
  * Test / Save Changes the page asks for before a network change is kept.
  */
 export const haInterfaceLocators = {
-  /**
-   * An interface's row, and the Edit behind its action menu. A physical NIC
-   * has Edit and Reset, so they collapse behind the trigger; each item's id is
-   * the trigger's with the icon appended.
-   */
-  row: (name: string): string => `[data-test="row-${interfaceTag(name)}"]`,
-  menu: (name: string): string => `[data-test="button-${interfaceTag(name)}-more-action"]`,
-  edit: (name: string): string => `[data-test="button-${interfaceTag(name)}-more-action-mdi-pencil-row-action"]`,
+  /** An interface's row, and the Edit behind its action menu: see `locators/network-interfaces.ts`. */
+  row: interfacesCardLocators.row,
+  menu: interfacesCardLocators.menu,
+  edit: interfacesCardLocators.edit,
 
   form: {
     /** The `ipv4_dhcp` radios, whose base is spelled `ipv-4-dhcp` to keep the legacy ids. */
@@ -67,10 +58,7 @@ export const haInterfaceLocators = {
   },
 
   /** The pending-changes card on the Network page. */
-  pending: {
-    testChanges: '[data-test="button-test-changes"]',
-    saveChanges: '[data-test="button-save-changes"]',
-  },
+  pending: pendingChangesLocators,
 } as const;
 
 /** The Failover card on System > Advanced Settings, shown once HA licensed, and its form. */
