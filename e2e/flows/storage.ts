@@ -5,8 +5,8 @@ import { expect, type Page } from '@playwright/test';
 import { goToDatasets, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
 import {
-  datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolImportLocators,
-  poolScrubLocators, poolWizardLocators, type VdevCategory, zvolLocators,
+  datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, manualDiskSelectionLocators,
+  poolDisconnectLocators, poolImportLocators, poolScrubLocators, poolWizardLocators, type VdevCategory, zvolLocators,
 } from '../locators/storage';
 
 /**
@@ -212,6 +212,32 @@ export async function configureDraidVdevs(page: Page, draid: DraidVdevs): Promis
     poolWizardLocators.vdevCount('data'),
     poolWizardLocators.vdevCountOption('data', draid.vdevs),
   );
+}
+
+/**
+ * Opens the Manual Disk Selection dialog from the open vdev step. The step's button stays disabled
+ * until a layout is chosen, so the caller picks one first.
+ */
+export async function openManualDiskSelection(page: Page, type: VdevCategory): Promise<void> {
+  const open = page.locator(poolWizardLocators.manualSelection(type));
+  await expect(open).toBeEnabled();
+  await open.click();
+  await expect(page.locator(manualDiskSelectionLocators.title)).toBeVisible();
+}
+
+/**
+ * Drags one element of the Manual Disk Selection dialog onto another: a disk into a vdev, or out
+ * of one back onto the unused list.
+ *
+ * `locator.dragTo()` drives HTML5 drag and drop in Chromium from real mouse events, so
+ * `ngx-drag-drop` receives the `dragstart`, `dragover` and `drop` it listens for, with a
+ * `dataTransfer` it fills in itself. A drop has no readback of its own, so the caller asserts
+ * where the disk landed.
+ */
+export async function dragDisk(page: Page, from: string, to: string): Promise<void> {
+  const source = page.locator(from);
+  await expect(source).toBeVisible();
+  await source.dragTo(page.locator(to));
 }
 
 /** Leaves the open vdev step by its Save And Go To Review, and waits for the Review step. */
