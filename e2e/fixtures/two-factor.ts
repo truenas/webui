@@ -64,6 +64,55 @@ export async function setGlobalTwoFactor(client: E2eApiClient, update: GlobalTwo
 }
 
 /**
+ * Arms a fresh two-factor secret on `username` and returns it, as base32 text.
+ *
+ * A precondition for a spec about signing in with a code, where setting the
+ * secret up through the UI is not the claim. Called as the suite's admin, which
+ * middleware lets renew another user's secret because it holds FULL_ADMIN.
+ *
+ * The result is read as `unknown` and narrowed: middleware merges
+ * `twofactor_config` into the user entry it returns, and the secret is only in
+ * there as the `secret` query parameter of its `otpauth://` provisioning URI.
+ */
+export async function armTwoFactorSecret(client: E2eApiClient, username: string): Promise<string> {
+  const result: unknown = await firstValueFrom(
+    client.api.call('user.renew_2fa_secret', [username, { interval: 30, otp_digits: 6 }])
+      .pipe(timeout(slowCallTimeoutMs)),
+  );
+
+  const config = result && typeof result === 'object' && 'twofactor_config' in result
+    ? result.twofactor_config
+    : undefined;
+  const uri = config && typeof config === 'object' && 'provisioning_uri' in config
+    ? config.provisioning_uri
+    : undefined;
+  const secret = typeof uri === 'string' ? new URL(uri).searchParams.get('secret') : null;
+
+  if (!secret) {
+    // Says what was missing and nothing more: the URI carries the secret itself.
+    throw new Error(`user.renew_2fa_secret returned no provisioning URI with a secret for "${username}".`);
+  }
+  return secret;
+}
+
+/**
+ * The usernames of every session middleware holds that was opened with a
+ * one-time password (`LOGIN_TWOFACTOR`).
+ *
+ * `credentials_data` is declared as one model per credential type, so the rows
+ * are narrowed to the one field this reads.
+ */
+export async function twoFactorSessionUsernames(client: E2eApiClient): Promise<string[]> {
+  const sessions = await firstValueFrom(
+    client.api.query('auth.sessions', [['credentials', '=', 'LOGIN_TWOFACTOR']]).pipe(timeout(readTimeoutMs)),
+  ) as unknown as { credentials_data: { username?: string } }[];
+
+  return sessions
+    .map((session) => session.credentials_data.username)
+    .filter((username): username is string => Boolean(username));
+}
+
+/**
  * Creates {@link twoFactorUser} if absent: a local administrator with a password.
  *
  * An administrator because signing in to the UI needs a role. A password because
