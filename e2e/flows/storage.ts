@@ -240,6 +240,22 @@ export async function dragDisk(page: Page, from: string, to: string): Promise<vo
   await source.dragTo(page.locator(to));
 }
 
+/**
+ * Adds a vdev to the open Manual Disk Selection dialog, which holds no other, and drags the named
+ * disks into it, checking that each one landed. Whether that is enough disks for the layout is
+ * the caller's to assert.
+ */
+export async function addManualVdev(page: Page, layout: string, disks: string[]): Promise<void> {
+  const vdev = manualDiskSelectionLocators.vdevDropzone(layout, 1);
+
+  await page.locator(manualDiskSelectionLocators.add).click();
+  await expect(page.locator(vdev)).toBeVisible();
+  for (const disk of disks) {
+    await dragDisk(page, manualDiskSelectionLocators.unusedDiskDrag(disk), vdev);
+    await expect(page.locator(manualDiskSelectionLocators.vdevDisk(disk))).toBeVisible();
+  }
+}
+
 /** Leaves the open vdev step by its Save And Go To Review, and waits for the Review step. */
 export async function goToReview(page: Page, type: VdevCategory): Promise<void> {
   await page.locator(poolWizardLocators.saveAndReview(type)).click();

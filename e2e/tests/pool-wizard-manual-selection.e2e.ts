@@ -23,7 +23,7 @@ import {
   ensurePoolAbsent, getSelectableDisks, requireUnusedDisks, type UnusedDisk,
 } from '../fixtures/storage';
 import {
-  dragDisk, goToReview, openManualDiskSelection, openPoolWizard, selectOption, submitPool,
+  addManualVdev, dragDisk, goToReview, openManualDiskSelection, openPoolWizard, selectOption, submitPool,
 } from '../flows/storage';
 import { manualDiskSelectionLocators, poolCardLocators, poolWizardLocators } from '../locators/storage';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
@@ -38,6 +38,13 @@ const pools = [manualPool, editPool];
 /** The `CreateVdevLayout` value the dialog keys its vdev ids by, and the type `pool.query` reports. */
 const mirror = 'MIRROR';
 const tooFewDisksError = 'At least 2 disk(s) are required';
+
+/**
+ * One more than the mirror uses. With exactly two alike disks the Width select offers only `2`,
+ * and `normal-selection.component.ts` picks a lone option by itself, so choosing Mirror would
+ * already build a vdev of both disks and the dialog would open holding it.
+ */
+const disksNeeded = 3;
 
 /**
  * Two unused disks of one type and size, taken from the end of the list rather than the start.
@@ -74,7 +81,7 @@ test.afterEach(async ({ api }) => {
 });
 
 test('an admin builds a mirror from two chosen disks, and the pool is made of exactly those', async ({ page, api }) => {
-  await requireUnusedDisks(api, 2);
+  await requireUnusedDisks(api, disksNeeded);
   const [first, second] = pickTwoAlikeDisks(await getSelectableDisks(api));
 
   await openPoolWizard(page, manualPool);
@@ -84,7 +91,10 @@ test('an admin builds a mirror from two chosen disks, and the pool is made of ex
   const vdevError = page.locator(dialog.vdevError(mirror, 1));
   const save = page.locator(dialog.save);
 
+  // The dialog opens with no vdev, so Add makes the first one.
+  await expect(page.locator(dialog.vdevDropzone(mirror, 1))).toHaveCount(0);
   await page.locator(dialog.add).click();
+  await expect(page.locator(dialog.vdevDropzone(mirror, 1))).toBeVisible();
   await expect(vdevError).toContainText(tooFewDisksError);
   await expect(save).toBeDisabled();
 
@@ -122,7 +132,7 @@ test('an admin builds a mirror from two chosen disks, and the pool is made of ex
 });
 
 test('removing a disk invalidates the vdev again, and Cancel keeps the automated selection', async ({ page, api }) => {
-  await requireUnusedDisks(api, 2);
+  await requireUnusedDisks(api, disksNeeded);
   const [first, second] = pickTwoAlikeDisks(await getSelectableDisks(api));
 
   await openPoolWizard(page, editPool);
@@ -132,11 +142,7 @@ test('removing a disk invalidates the vdev again, and Cancel keeps the automated
   const vdevError = page.locator(dialog.vdevError(mirror, 1));
   const save = page.locator(dialog.save);
 
-  await page.locator(dialog.add).click();
-  await dragDisk(page, dialog.unusedDiskDrag(first.name), dialog.vdevDropzone(mirror, 1));
-  await expect(page.locator(dialog.vdevDisk(first.name))).toBeVisible();
-  await dragDisk(page, dialog.unusedDiskDrag(second.name), dialog.vdevDropzone(mirror, 1));
-  await expect(page.locator(dialog.vdevDisk(second.name))).toBeVisible();
+  await addManualVdev(page, mirror, [first.name, second.name]);
   await expect(save).toBeEnabled();
 
   await dragDisk(page, dialog.vdevDisk(second.name), dialog.unusedDisksDropzone);
@@ -150,9 +156,13 @@ test('removing a disk invalidates the vdev again, and Cancel keeps the automated
   // The disk it still held goes back to the unused list with it.
   await expect(page.locator(dialog.unusedDisk(first.name))).toBeVisible();
 
+  // A valid mirror again, which Save would apply, so that Cancel has something to throw away.
+  await addManualVdev(page, mirror, [first.name, second.name]);
+  await expect(save).toBeEnabled();
+
   await page.locator(dialog.cancel).click();
   await expect(page.locator(dialog.title)).toBeHidden();
-  // Nothing was saved: the step still offers Automated Disk Selection, not a manual layout.
+  // Nothing was applied: the step still offers Automated Disk Selection, not a manual layout.
   await expect(page.locator(poolWizardLocators.width('data'))).toBeVisible();
   await expect(page.locator(poolWizardLocators.manualSelectionMessage('data'))).toHaveCount(0);
 });
