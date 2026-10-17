@@ -12,7 +12,7 @@
 </ix-page-header>
 
 @if (isEditing()) {
-  <div class="edit-mode-buttons">
+  <div class="edit-mode-buttons" tnTestId="dashboard-edit-actions">
     @if (customLayout()) {
       <tn-button
         [testId]="'reset'"
