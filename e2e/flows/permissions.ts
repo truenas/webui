@@ -41,7 +41,13 @@ export async function openAclEditor(page: Page, dataset: string): Promise<void> 
   await expect(page.locator(permissionsLocators.aclEditor.usePreset)).toBeVisible();
 }
 
-/** The part both editors share: select `dataset`, press Edit, and wait for the path. */
+/**
+ * The part both editors share: select `dataset`, press Edit, and wait for the path.
+ *
+ * The page opens with the pool expanded, and expands a node only once it is selected
+ * (`selectedBranch$` in `dataset-management`). So a dataset nested deeper than the pool's
+ * children is reached by selecting each dataset above it first, as a user opens the tree.
+ */
 async function editFromPermissionsCard(page: Page, dataset: string): Promise<void> {
   await selectDataset(page, dataset);
   await page.locator(permissionsLocators.card.edit).click();
@@ -51,6 +57,13 @@ async function editFromPermissionsCard(page: Page, dataset: string): Promise<voi
 /** Opens Datasets from the sidebar and selects `dataset` in the tree, so the cards are its own. */
 export async function selectDataset(page: Page, dataset: string): Promise<void> {
   await goToDatasets(page);
+
+  const segments = dataset.split('/');
+  for (let depth = 2; depth < segments.length; depth++) {
+    const ancestor = page.locator(datasetLocators.treeNode(segments.slice(0, depth).join('/')));
+    await expect(ancestor).toBeVisible();
+    await ancestor.click();
+  }
 
   const node = page.locator(datasetLocators.treeNode(dataset));
   await expect(node).toBeVisible();
@@ -241,6 +254,33 @@ export async function saveAcl(page: Page): Promise<void> {
   await expect(save).toBeEnabled();
   await save.click();
   await expect(save).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Presses Save on an ACL that middleware refuses for traverse access, and waits for the
+ * "Traverse Access Warning" the editor raises in answer.
+ *
+ * The first `filesystem.setacl` runs as a job, and the warning opens only once that job has
+ * failed. It is the shared confirm dialog with no id for its message, so the caller tells it
+ * apart from any other confirm by what Cancel and Save Anyway then do.
+ */
+export async function saveAclToTraverseWarning(page: Page): Promise<void> {
+  const save = page.locator(permissionsLocators.aclEditor.save);
+
+  await expect(save).toBeEnabled();
+  await save.click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Answers the Traverse Access Warning with Save Anyway, and waits for the editor to close.
+ *
+ * Save Anyway re-runs the job without effective-ACL validation, and the editor navigates away
+ * only once that has succeeded.
+ */
+export async function saveAclAnyway(page: Page): Promise<void> {
+  await confirmDestructiveAction(page);
+  await expect(page.locator(permissionsLocators.aclEditor.save)).toBeHidden({ timeout: saveTimeoutMs });
 }
 
 /**
