@@ -15,10 +15,8 @@
  *
  * The guard is a child-route guard that holds the navigation until the dialog
  * closes, so the shell is not on screen behind it. Each test waits for the
- * dialog first. Only the skip test then waits for the shell: Skip closes the
- * dialog with `true`, which lets the held navigation land, while Finish closes
- * it with no value, which the guard hands to the router as-is. So after Finish
- * this asserts the dialog closing, and not where the user ends up.
+ * dialog first, and then for the shell: closing the dialog, by Skip or by
+ * Finish, is what lets the held navigation land.
  *
  * Global two-factor is on here as a precondition, not the thing under test, so
  * it is set over the API. Left on, it would put every later account with no
@@ -121,6 +119,11 @@ test('a user sets up two-factor in the dialog at first sign-in, and a wrong code
     await expect(finish).toBeVisible({ timeout: dialogTimeoutMs });
     await finish.click();
     await expect(page.locator(setupDialog.title)).toBeHidden({ timeout: dialogTimeoutMs });
+  });
+
+  await test.step('the navigation the dialog held lands, signed in as the user', async () => {
+    await awaitAdminShell(page, username);
+    await expectSignedInAs(page, username);
   });
 
   // Middleware arms the secret when it is generated, so this says the account
