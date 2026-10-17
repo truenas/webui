@@ -1,5 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import {
+  ChangeDetectionStrategy, Component, inject, input, OnChanges,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
@@ -15,7 +18,7 @@ import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/util
 import { AclType } from 'app/enums/acl-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enum';
-import { NfsAcl } from 'app/interfaces/acl.interface';
+import { NfsAcl, NfsAclItem } from 'app/interfaces/acl.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
@@ -51,6 +54,24 @@ import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/st
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
 
+/**
+ * Stands in for the NFS entry form where its timing matters: like the real one, it reports the
+ * selected entry's validity to the store from ngOnChanges, part-way through the editor's render.
+ */
+@Component({
+  selector: 'ix-edit-nfs-ace',
+  template: '',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class ValidatingNfsAceStubComponent implements OnChanges {
+  readonly ace = input.required<NfsAclItem>();
+  private store = inject(DatasetAclEditorStore);
+
+  ngOnChanges(): void {
+    this.store.updateSelectedAceValidation(Boolean(this.ace().who));
+  }
+}
+
 describe('DatasetAclEditorComponent', () => {
   let spectator: SpectatorRouting<DatasetAclEditorComponent>;
   let api: MockTypedApiService;
@@ -85,6 +106,35 @@ describe('DatasetAclEditorComponent', () => {
     ],
   } as NfsAcl;
 
+  const providers = [
+    StorageService,
+    DatasetAclEditorStore,
+    mockProvider(DialogService),
+    mockTypedApi([
+      mockTypedCall('filesystem.getacl', acl as unknown as CallResponse<WebUiApiDirectory, 'filesystem.getacl'>),
+      mockTypedCall('filesystem.stat', {
+        user: 'john',
+        group: 'johns',
+      } as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
+      mockTypedJob('filesystem.setacl', { state: JobState.Success }),
+    ]),
+    mockProvider(UserService, {
+      userQueryDsCache: () => of(),
+      groupQueryDsCache: () => of(),
+      getUserByName: (username: string) => of({ username } as { username: string }),
+      getGroupByName: (groupName: string) => of({ group: groupName }),
+    }),
+    mockProvider(TnDialog, {
+      open: jest.fn(() => ({
+        closed: of({ wasStripped: true }),
+      })),
+    }),
+    mockAuth(),
+    mockProvider(UnsavedChangesService, {
+      showConfirmDialog: jest.fn(() => of(true)),
+    }),
+  ];
+
   const createComponent = createRoutingFactory({
     component: DatasetAclEditorComponent,
     imports: [
@@ -103,34 +153,7 @@ describe('DatasetAclEditorComponent', () => {
       AclEditorListComponent,
       PermissionsItemComponent,
     ],
-    providers: [
-      StorageService,
-      DatasetAclEditorStore,
-      mockProvider(DialogService),
-      mockTypedApi([
-        mockTypedCall('filesystem.getacl', acl as unknown as CallResponse<WebUiApiDirectory, 'filesystem.getacl'>),
-        mockTypedCall('filesystem.stat', {
-          user: 'john',
-          group: 'johns',
-        } as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
-        mockTypedJob('filesystem.setacl', { state: JobState.Success }),
-      ]),
-      mockProvider(UserService, {
-        userQueryDsCache: () => of(),
-        groupQueryDsCache: () => of(),
-        getUserByName: (username: string) => of({ username } as { username: string }),
-        getGroupByName: (groupName: string) => of({ group: groupName }),
-      }),
-      mockProvider(TnDialog, {
-        open: jest.fn(() => ({
-          closed: of({ wasStripped: true }),
-        })),
-      }),
-      mockAuth(),
-      mockProvider(UnsavedChangesService, {
-        showConfirmDialog: jest.fn(() => of(true)),
-      }),
-    ],
+    providers,
     queryParams: {
       path: '/mnt/pool/dataset',
     },
@@ -360,6 +383,57 @@ describe('DatasetAclEditorComponent', () => {
       await cancelButton.click();
 
       expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/sharing']);
+    });
+  });
+
+  describe('an entry form that validates while the editor renders', () => {
+    const createValidatingComponent = createRoutingFactory({
+      component: DatasetAclEditorComponent,
+      imports: [
+        CastPipe,
+        ReactiveFormsModule,
+      ],
+      declarations: [
+        MockComponent(IxUserComboboxComponent),
+        MockComponent(IxGroupComboboxComponent),
+        MockComponent(EditPosixAceComponent),
+        AclEditorListComponent,
+        PermissionsItemComponent,
+      ],
+      overrideComponents: [
+        [
+          DatasetAclEditorComponent,
+          {
+            remove: { imports: [EditNfsAceComponent] },
+            add: { imports: [ValidatingNfsAceStubComponent] },
+          },
+        ],
+      ],
+      providers,
+      queryParams: {
+        path: '/mnt/pool/dataset',
+      },
+    });
+
+    beforeEach(async () => {
+      spectator = createValidatingComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
+    });
+
+    it('marks a new entry invalid and disables Save as soon as Add Item is pressed', async () => {
+      const addAceButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Item' }));
+      expect(spectator.query('.save-button button')).not.toBeDisabled();
+
+      await addAceButton.click();
+
+      // Read from the DOM rather than through a harness: a harness runs change detection
+      // again before it reads, which is the extra event this used to wait for.
+      const rows = spectator.queryAll('ix-acl-editor-list .ace');
+      expect(rows).toHaveLength(4);
+      expect(rows[3]).toHaveDescendant('.warning');
+      expect(spectator.query('.save-button button')).toBeDisabled();
     });
   });
 });
