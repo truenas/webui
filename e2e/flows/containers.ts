@@ -47,6 +47,43 @@ export async function openCreateContainerForm(page: Page): Promise<void> {
   await expect(page.locator(containersLocators.create.name)).toBeVisible();
 }
 
+/** How long the image browser may take to list the registry. */
+const imageRegistryTimeoutMs = 60_000;
+
+/**
+ * Picks an image in the Create form's image browser: searches for `os` and
+ * takes the first version of the first match, which is the image
+ * `firstRegistryImage` names. Returns once the browser has closed and the
+ * form's Image field holds the choice.
+ *
+ * The browser reads the registry from `images.sys.truenas.net` as it opens, so
+ * the first Select can take a while to appear.
+ */
+export async function chooseFirstImage(page: Page, os: string): Promise<void> {
+  const browser = containersLocators.imageBrowser;
+
+  await page.locator(containersLocators.create.browseImages).click();
+  await page.locator(browser.search).fill(os);
+  await page.locator(browser.selectImageOfOs(os)).first().click({ timeout: imageRegistryTimeoutMs });
+  await expect(page.locator(browser.search)).toBeHidden();
+  await expect(page.locator(containersLocators.create.image)).not.toHaveValue('');
+}
+
+/**
+ * Opens a container's details from the list, starting from the sidebar. The
+ * Name cell is clicked rather than the row, whose first cell is a selection
+ * checkbox.
+ *
+ * The page opens on the first container's details before the click lands, so
+ * this waits for the one readout that names the container: its dataset,
+ * `<pool>/.truenas_containers/containers/<name>`.
+ */
+export async function openContainerDetails(page: Page, name: string): Promise<void> {
+  await goToContainers(page);
+  await page.locator(containersLocators.list.name(name)).click();
+  await expect(page.locator(containersLocators.details.dataset)).toContainText(`/containers/${name}`);
+}
+
 /** Dismisses the open side panel, for a form left unedited, which closes without asking. */
 export async function closeContainerPanel(page: Page): Promise<void> {
   await page.locator(containersLocators.closePanel).click();

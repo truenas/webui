@@ -6,7 +6,7 @@ import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnDialog,
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnDialog, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { containerCapabilitiesPolicyLabels, containerIdmapTypeLabels, containerTimeLabels } from 'app/enums/container.enum';
@@ -36,6 +36,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnButtonComponent,
     TnCardComponent,
     TnCardFooterActionsDirective,
+    TnTestIdDirective,
     TranslateModule,
     YesNoPipe,
     MapValuePipe,
