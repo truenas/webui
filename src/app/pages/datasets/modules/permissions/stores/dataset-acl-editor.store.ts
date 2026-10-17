@@ -7,7 +7,7 @@ import {
   EMPTY, forkJoin, Observable, of, Subject,
 } from 'rxjs';
 import {
-  catchError, filter, map, switchMap, tap, withLatestFrom,
+  catchError, filter, map, mergeMap, switchMap, tap, withLatestFrom,
 } from 'rxjs/operators';
 import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -203,10 +203,20 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     };
   });
 
-  /** Whether this exact entry object is still in the ACL being edited. */
-  hasAce(ace: NfsAclItem | PosixAclItem): boolean {
-    return (this.get().acl?.acl as (NfsAclItem | PosixAclItem)[] | undefined)?.includes(ace) ?? false;
-  }
+  /**
+   * Waits for an entry's verdict here rather than in the form that asked, and records it against that entry.
+   * The form cannot see it through: selecting another entry either patches that entry in, which cancels the check,
+   * or (from the list) tears the form down first. Either way the entry would keep the error it had before.
+   */
+  readonly settleAceValidation = this.effect((
+    checks$: Observable<{ ace: NfsAclItem | PosixAclItem; isValid$: Observable<boolean> }>,
+  ) => {
+    return checks$.pipe(
+      mergeMap(({ ace, isValid$ }) => isValid$.pipe(
+        tap((isValid) => this.updateAceValidation({ ace, isValid })),
+      )),
+    );
+  });
 
   readonly saveAcl = this.effect((saveParams$: Observable<AclSaveFormParams>) => {
     return saveParams$.pipe(

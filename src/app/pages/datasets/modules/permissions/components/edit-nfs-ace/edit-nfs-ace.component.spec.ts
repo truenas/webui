@@ -37,6 +37,7 @@ describe('EditNfsAceComponent', () => {
       mockProvider(DatasetAclEditorStore, {
         updateSelectedAce: jest.fn(),
         updateSelectedAceValidation: jest.fn(),
+        settleAceValidation: jest.fn(),
       }),
       mockProvider(UserService, {
         userQueryDsCache: () => of([
@@ -385,5 +386,19 @@ describe('EditNfsAceComponent leaving an entry while its user is still being che
 
     // The new entry is a User entry with no user yet, so only it is still marked.
     expect(store.state().acesWithError).toEqual([2]);
+  });
+
+  it('clears the error on the earlier entry once its check passes after picking another in the list', async () => {
+    // What `AclEditorListComponent.onAceSelected` does: no entry is selected for a moment, which removes this form,
+    // and the picked one is selected in a later task, into a new form.
+    store.selectAce(null);
+    spectator.fixture.destroy();
+    store.selectAce(1);
+    userExists$.next(true);
+    await new Promise((resolve) => {
+      setTimeout(resolve, defaultDebounceTimeMs + 100);
+    });
+
+    expect(store.state().acesWithError).toEqual([]);
   });
 });

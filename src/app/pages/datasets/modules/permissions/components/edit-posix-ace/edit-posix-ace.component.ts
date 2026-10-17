@@ -11,7 +11,6 @@ import {
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { PosixAclItem } from 'app/interfaces/acl.interface';
-import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
@@ -71,8 +70,7 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     return this.form.value.tag === PosixAclTag.Group;
   }
 
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    this.settleLeftAce(changes.ace?.previousValue);
+  ngOnChanges(): void {
     this.updateFormValues();
   }
 
@@ -91,19 +89,18 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
   }
 
   /**
-   * An entry left while its user or group is still being checked would otherwise keep the error it had before:
-   * patching the next entry in cancels the check, and validity is only ever reported for the selected entry.
-   * So the check is finished on a copy, and its verdict recorded against the entry it was about.
+   * Hands a user or group check still in flight to the store, run on a copy, so its verdict reaches this entry
+   * even if the entry is no longer selected by then. Only the selected entry's validity is reported from here,
+   * and leaving it cancels the live check.
    */
-  private settleLeftAce(leftAce: PosixAclItem | undefined): void {
-    if (!leftAce || !this.form.pending || !this.store.hasAce(leftAce)) {
+  private settlePendingChecks(): void {
+    const { user, group } = this.form.controls;
+    const pending = [user, group].filter((control) => control.pending);
+    if (pending.length === 0) {
       return;
     }
 
-    const { user, group } = this.form.controls;
-    validityAfterPendingChecks([user, group].filter((control) => control.pending))
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((isValid) => this.store.updateAceValidation({ ace: leftAce, isValid }));
+    this.store.settleAceValidation({ ace: this.ace(), isValid$: validityAfterPendingChecks(pending) });
   }
 
   private onFormStatusUpdated(): void {
@@ -180,6 +177,7 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     userField.updateValueAndValidity({ onlySelf: true });
     groupField.updateValueAndValidity({ onlySelf: true });
     this.form.markAllAsTouched();
+    this.settlePendingChecks();
 
     this.onFormStatusUpdated();
   }

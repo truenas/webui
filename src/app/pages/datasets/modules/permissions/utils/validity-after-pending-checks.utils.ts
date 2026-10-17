@@ -7,9 +7,10 @@ import {
 /**
  * Whether every given control passes validation once its pending checks answer, judged on detached copies.
  *
- * For an entry form about to be patched with another entry's values: the patch re-runs validation on the live
- * controls, which cancels a check still in flight, so the verdict on the entry being left is never reached.
- * Each copy holds the control's current value and validators, and nothing the form does afterwards cancels it.
+ * For an entry form that may move on before its check answers: patching another entry in re-runs validation on the
+ * live controls, and tearing the form down detaches the directory field's validator, and either cancels a check
+ * still in flight. Each copy holds the control's value and validators as they are now, and nothing the form does
+ * afterwards cancels it. Take the copies while the validators are still attached.
  */
 export function validityAfterPendingChecks(controls: AbstractControl[]): Observable<boolean> {
   const verdicts = controls.map((control) => {

@@ -37,6 +37,7 @@ describe('EditPosixAceComponent', () => {
       mockProvider(DatasetAclEditorStore, {
         updateSelectedAce: jest.fn(),
         updateSelectedAceValidation: jest.fn(),
+        settleAceValidation: jest.fn(),
       }),
       mockProvider(UserService, {
         userQueryDsCache: () => of([
@@ -326,9 +327,12 @@ describe('EditPosixAceComponent leaving an entry while its user is still being c
     expect(store.state().acesWithError).toEqual([]);
   });
 
-  it('clears the error on the earlier entry once its check passes after another entry is selected', async () => {
+  it('clears the error on the earlier entry once its check passes after picking another in the list', async () => {
+    // What `AclEditorListComponent.onAceSelected` does: no entry is selected for a moment, which removes this form,
+    // and the picked one is selected in a later task, into a new form.
+    store.selectAce(null);
+    spectator.fixture.destroy();
     store.selectAce(1);
-    renderSelectedAce();
     userExists$.next(true);
     await waitForExistenceCheck();
 
