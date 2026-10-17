@@ -14,7 +14,7 @@
  */
 import { ensureGroupAbsent, ensureGroupPresent } from '../fixtures/groups';
 import {
-  nfs4Entries, readAcl, readAclTemplate, readOwnership, type AclTemplate,
+  nfs4Entries, readAcl, readAclTemplate, readOwnership, shapesOf, templateEntries,
 } from '../fixtures/permissions';
 import {
   datasetMountPath, ensureAclDatasetPresent, ensureDatasetAbsent, ensureSmbDatasetPresent,
@@ -37,51 +37,6 @@ const smbLeaf = 'e2e_acl_nfs4_smb';
 /** Throwaway owner and group for Apply Owner / Apply Group. */
 const aclOwner = 'e2e_acl_owner';
 const aclGroup = 'e2e_acl_group';
-
-/** The fields that make two entries the same entry. Optional where the generated type has them so. */
-interface AceShape {
-  tag: string;
-  type: string;
-  perms?: unknown;
-  flags?: unknown;
-  who?: string | null;
-}
-
-/**
- * An entry reduced to what it grants and to whom.
- *
- * `owner@`, `group@` and `everyone@` are kept by tag alone. Their `who` is at
- * most the path's owner or group, which the two calls need not fill in alike,
- * and it is not something a preset chooses. A USER or GROUP entry is kept by the
- * name it resolves to.
- */
-function shapeOf(ace: AceShape): AceShape {
-  const shape: AceShape = {
-    tag: ace.tag,
-    type: ace.type,
-    perms: ace.perms,
-    flags: ace.flags,
-  };
-  if (ace.tag === 'USER' || ace.tag === 'GROUP') {
-    shape.who = ace.who;
-  }
-  return shape;
-}
-
-/** Entries as comparable shapes, in a stable order so a reordering is not a difference. */
-function shapesOf(entries: AceShape[]): AceShape[] {
-  return entries
-    .map(shapeOf)
-    .sort((left, right) => JSON.stringify(left).localeCompare(JSON.stringify(right)));
-}
-
-/** A template's entries. The response types them as a union across ACL kinds. */
-function templateEntries(template: AclTemplate): AceShape[] {
-  if (template.acltype !== 'NFS4') {
-    throw new Error(`Expected an NFSv4 template, found ${template.acltype} for "${template.name}".`);
-  }
-  return template.acl as unknown as AceShape[];
-}
 
 test.beforeEach(async ({ api, pool }) => {
   // Absent first, so every story starts from the ACL the dataset is created with.

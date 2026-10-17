@@ -100,6 +100,47 @@ export async function choosePreset(page: Page, name: string): Promise<void> {
 }
 
 /**
+ * Presses Save As Preset in the ACL editor, and waits for the dialog to list the presets.
+ *
+ * The list is filled from `filesystem.acltemplate.by_path` after the dialog opens. Every path is
+ * offered the built-in `NFS4_OPEN`, so its row is the signal that the answer is in.
+ */
+export async function openSaveAsPresetDialog(page: Page): Promise<void> {
+  const dialog = permissionsLocators.saveAsPresetDialog;
+
+  await page.locator(permissionsLocators.aclEditor.saveAsPreset).click();
+  await expect(page.locator(dialog.title)).toBeVisible();
+  await expect(page.locator(dialog.presetName('NFS4_OPEN'))).toBeVisible();
+}
+
+/**
+ * Saves the editor's current entries as a preset called `name`, and waits for the dialog to close.
+ *
+ * The dialog closes only once `filesystem.acltemplate.create` has answered. The editor stays open
+ * with its entries unsaved.
+ */
+export async function saveAsPreset(page: Page, name: string): Promise<void> {
+  const dialog = permissionsLocators.saveAsPresetDialog;
+
+  await openSaveAsPresetDialog(page);
+  await page.locator(dialog.name).fill(name);
+  await page.locator(dialog.save).click();
+  await expect(page.locator(dialog.title)).toBeHidden();
+}
+
+/**
+ * Removes the preset `name` from the Save As Preset dialog already open, and waits for its row to go.
+ *
+ * The remove icon deletes the template at once, with no confirm, and the list is then read again.
+ */
+export async function removePreset(page: Page, name: string): Promise<void> {
+  const dialog = permissionsLocators.saveAsPresetDialog;
+
+  await page.locator(dialog.removePreset(name)).click();
+  await expect(page.locator(dialog.presetName(name))).toBeHidden();
+}
+
+/**
  * Picks a new owner in the ACL editor's header, and sets Apply Owner to `apply`.
  *
  * The same autocomplete as {@link chooseOwner}: the row is what commits the value.

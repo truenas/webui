@@ -740,6 +740,18 @@ not break the spec. Only what tells one preset from another is asserted by hand.
 A third test covers Apply Owner and Apply Group in the editor's header: only the
 ticked half reaches `filesystem.stat`.
 
+Custom NFSv4 presets are in `tests/dataset-acl-custom-presets.e2e.ts`. Save As
+Preset stores the editor's unsaved entries as a template, read back through
+`filesystem.acltemplate.query`, and leaves the dataset's own ACL as it was. Use
+Preset applies a custom preset to another NFSv4 dataset, compared against the
+template the same way the built-in ones are. The remove icon in the Save As
+Preset dialog deletes it, while the built-in presets have no such icon. Templates
+are global to the appliance, so the spec deletes its own over the API before and
+after every test. Every remove icon emits `button-remove-preset`, so each preset
+row now carries `row-preset-<name>`. The dialog's action row got
+`actions-save-as-preset`, because its Cancel shares `button-cancel` with the
+editor's behind it. POSIX custom presets are not covered.
+
 NFSv4 entries themselves are in `tests/dataset-acl-nfsv4-entries.e2e.ts`: a
 group entry of type Deny, a user entry with advanced permissions and advanced
 flags, editing `group@` in place, and removing the `builtin_users` entry. Each
@@ -749,8 +761,8 @@ came through unchanged, and the remove story that every other entry survived in
 order. The advanced story checks every permission bit, so a box
 ticked by mistake fails as well as one that did not land. The Who select's
 "Group" and "group@" options both used to emit `option-tag-group`; `group@` is
-now `option-tag-group-at`, and every other option kept its id. POSIX ACLs and
-custom presets are not covered.
+now `option-tag-group-at`, and every other option kept its id. POSIX ACLs are
+not covered.
 
 Applying an NFSv4 ACL recursively and Strip ACL are in
 `tests/dataset-acl-nfsv4-recursive.e2e.ts`, on an SMB-preset dataset with a
@@ -1342,9 +1354,9 @@ a number. See `05-ci.md`.
 
 ## Next steps
 
-1. **Widen coverage.** The rest of the dataset ACL editor, beyond built-in
-   NFSv4 presets, NFSv4 entries, recursion and Strip ACL, is the uncovered story
-   worth taking next.
+1. **Widen coverage.** The rest of the dataset ACL editor, beyond built-in and
+   custom NFSv4 presets, NFSv4 entries, recursion and Strip ACL, is the
+   uncovered story worth taking next.
    Manual snapshots are covered — take, recursive, delete, hold, clone, roll
    back and its safety check — but not batch delete, the list's own Add
    button, naming schemas, the extra columns or VMware sync. The confirmation-bypass class is now covered
