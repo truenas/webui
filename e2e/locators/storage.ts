@@ -49,6 +49,13 @@ export const poolWizardLocators = {
    */
   nameField: '[data-test="form-field-name"]',
   next: '[data-test="button-next-general"]',
+  /**
+   * One of the General step's Encryption radios, by the label it shows: `None`,
+   * `Software Encryption (ZFS)`. `['radio-button', 'encryption-type', option.label]`
+   * on a `tn-radio`, which puts the id on the radio's `<label>`; Playwright reads
+   * the radio input it labels, so `toBeChecked()` works on it.
+   */
+  encryptionType: (label: string) => `[data-test="radio-button-encryption-type-${kebabTestSegment(label)}"]`,
   /** A vdev step's Next, which moves on to the following step. */
   nextStep: (type: VdevCategory) => `[data-test="button-next-${stepIds[type]}"]`,
 
@@ -168,6 +175,8 @@ export const poolWizardLocators = {
 
   /** Review step — General Info's Pool Name. */
   reviewPoolName: '[data-test="text-review-pool-name"]',
+  /** General Info's Encryption, e.g. `Software (ZFS)`. Not rendered while encryption is None. */
+  reviewEncryption: '[data-test="text-review-encryption"]',
   /**
    * One row of the Review step's Topology Summary, in the same words as the
    * preview. Rendered only for a category that has vdevs.
@@ -227,6 +236,20 @@ export const manualDiskSelectionLocators = {
   deleteVdev: (layout: string, position: number) => (
     `[data-test="button-delete-vdev-${kebabTestSegment(layout)}-${position}"]`
   ),
+} as const;
+
+/**
+ * The Download Encryption Key dialog the wizard raises once it has created a
+ * software-encrypted pool. It is opened with `disableClose: true`, and Done stays
+ * disabled until the key has been downloaded, so there is no way past it without
+ * the key file.
+ */
+export const downloadKeyDialogLocators = {
+  /** `<tn-dialog-shell testId="download-key">`. What to wait on. */
+  title: '[data-test="dialog-title-download-key"]',
+  /** "Download Encryption Key", which fetches `pool.dataset.export_keys` as a JSON file. */
+  download: '[data-test="button-download-key"]',
+  done: '[data-test="button-done"]',
 } as const;
 
 export const datasetLocators = {

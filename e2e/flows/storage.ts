@@ -1,12 +1,13 @@
 /**
  * Pools and datasets, driven through the UI.
  */
-import { expect, type Page } from '@playwright/test';
+import { expect, type Download, type Page } from '@playwright/test';
 import { goToDatasets, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
 import {
-  datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, manualDiskSelectionLocators,
-  poolDisconnectLocators, poolImportLocators, poolScrubLocators, poolWizardLocators, type VdevCategory, zvolLocators,
+  datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, downloadKeyDialogLocators,
+  manualDiskSelectionLocators, poolDisconnectLocators, poolImportLocators, poolScrubLocators, poolWizardLocators,
+  type VdevCategory, zvolLocators,
 } from '../locators/storage';
 
 /**
@@ -17,6 +18,9 @@ import {
 const poolCreateTimeoutMs = 5 * 60_000;
 
 const saveTimeoutMs = 90_000;
+
+/** A `core.download` job, then the fetch of the file it wrote. */
+const keyDownloadTimeoutMs = 60_000;
 
 /**
  * `pool.import_find` scans every disk before the Import Pool form renders, and
@@ -133,6 +137,11 @@ export async function startPoolWizard(page: Page): Promise<void> {
 export async function openPoolWizard(page: Page, name: string): Promise<void> {
   await startPoolWizard(page);
   await page.locator(poolWizardLocators.name).fill(name);
+  await leaveGeneralStep(page);
+}
+
+/** Moves on from the wizard's General step and waits for the Data step. */
+export async function leaveGeneralStep(page: Page): Promise<void> {
   await page.locator(poolWizardLocators.next).click();
 
   // The step after General is not always Data. `pool-manager-wizard.component.html`
@@ -275,6 +284,38 @@ export async function submitPool(page: Page): Promise<void> {
   // Landing back on the storage dashboard is the app's own signal that the
   // create job finished; the wizard stays put on failure.
   await expect(page).toHaveURL(/\/storage\/?$/, { timeout: poolCreateTimeoutMs });
+}
+
+/**
+ * Creates a software-encrypted pool from the Review step, and stops on the
+ * Download Encryption Key dialog.
+ *
+ * Not {@link submitPool}: for an encrypted pool the wizard opens that dialog when
+ * the create job finishes, and returns to the Storage dashboard only once it is
+ * closed. So the dialog appearing is the signal that the job ended, and it gets
+ * the same ceiling.
+ */
+export async function submitEncryptedPool(page: Page): Promise<void> {
+  await page.locator(poolWizardLocators.createPool).click();
+  await confirmDestructiveAction(page);
+
+  await expect(page.locator(downloadKeyDialogLocators.title)).toBeVisible({ timeout: poolCreateTimeoutMs });
+}
+
+/**
+ * Clicks Download Encryption Key on the open dialog and returns the download.
+ *
+ * The file is not built in the browser: the click starts a `core.download` job
+ * for `pool.dataset.export_keys` and then fetches its result, so the download
+ * gets longer than an action.
+ */
+export async function downloadPoolKey(page: Page): Promise<Download> {
+  const [download] = await Promise.all([
+    page.waitForEvent('download', { timeout: keyDownloadTimeoutMs }),
+    page.locator(downloadKeyDialogLocators.download).click(),
+  ]);
+
+  return download;
 }
 
 /**
