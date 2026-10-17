@@ -65,6 +65,8 @@ export const twoFactorLocators = {
     codeField: '[data-test="form-field-verify-otp"]',
     /** "Confirm Code". The app checks the code itself; nothing is sent to middleware. */
     confirmCode: '[data-test="button-verify-otp"]',
+    /** "Cancel Setup", beside {@link confirmCode}. Confirmed, it unsets the secret awaiting a code. */
+    cancelSetup: '[data-test="button-cancel-2fa-setup"]',
     /** Rendered only once the account holds a secret and no code is still awaited. */
     unsetSecret: '[data-test="button-unset-2fa-secret"]',
   },

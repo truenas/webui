@@ -1,14 +1,15 @@
 /**
  * Two-factor authentication, driven through the UI: switching it on for the
- * appliance and changing its settings, skipping the setup dialog, setting it up
- * for an account on the setup card, answering the sign-in page's code prompt, and clearing it from
- * a user's details.
+ * appliance and changing its settings, skipping the setup dialog, setting it up,
+ * renewing and unsetting it for an account on the setup card, answering the
+ * sign-in page's code prompt, and clearing it from a user's details.
  */
 import { expect, type Page } from '@playwright/test';
 import { closeFirstTimeWarning } from './advanced-settings';
 import { goToAdvancedSettings, goToUsers } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
 import { signinLocators } from '../locators/signin';
+import { topbarLocators } from '../locators/topbar';
 import { twoFactorLocators } from '../locators/two-factor';
 import { usersLocators } from '../locators/users';
 import { totpCode } from '../support/totp';
@@ -139,6 +140,50 @@ export async function generateTwoFactorSecret(page: Page): Promise<string> {
   const secretText = page.locator(setup.secret);
   await expect(secretText).not.toBeEmpty({ timeout: saveTimeoutMs });
   return (await secretText.innerText()).trim();
+}
+
+/**
+ * Opens the `/two-factor-auth` page from the topbar user menu, which offers it
+ * only while two-factor is on globally, and waits for the page to have read the
+ * account: its secret buttons stay disabled until then.
+ */
+export async function openTwoFactorPage(page: Page): Promise<void> {
+  await page.locator(topbarLocators.userMenu).click();
+  await page.locator(topbarLocators.twoFactorAuth).click();
+
+  await expect(page).toHaveURL(/\/two-factor-auth\/?$/, { timeout: saveTimeoutMs });
+  await expect(page.locator(twoFactorLocators.setup.configureSecret)).toBeEnabled({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Presses Renew 2FA Secret on the `ix-two-factor` card, confirms it, and waits
+ * for the new secret to be awaiting a code.
+ *
+ * For an account that already holds a secret, where Renew asks first — see
+ * {@link generateTwoFactorSecret} for one that has none. Confirm Code is disabled
+ * while the renewal and the account re-read behind it are in flight, so its
+ * coming back enabled is the page saying the secret on screen is the new one.
+ */
+export async function renewTwoFactorSecret(page: Page): Promise<void> {
+  const { setup } = twoFactorLocators;
+
+  await page.locator(setup.configureSecret).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+  await page.locator(confirmDialogLocators.confirm).click();
+
+  await expect(page.locator(setup.code)).toBeVisible({ timeout: saveTimeoutMs });
+  await expect(page.locator(setup.confirmCode)).toBeEnabled({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Presses `button` on the `ix-two-factor` card — Unset 2FA Secret or Cancel
+ * Setup, which both raise a confirmation and then unset the account's secret —
+ * and confirms it. Asserts nothing about the outcome.
+ */
+export async function confirmUnsetFrom(page: Page, button: string): Promise<void> {
+  await page.locator(button).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+  await page.locator(confirmDialogLocators.confirm).click();
 }
 
 /**
