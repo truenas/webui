@@ -235,8 +235,8 @@ throughput is `max(restore, test)`, so reaching test-speed requires:
 
 > **appliances per shard = 1 + ⌈restore ÷ test⌉**
 
-Figures below use the **measured** ~20s journey duration (`status.md`) rather
-than a guess. Global tests will be slower — by how much is **Q1** — and slower
+Figures below use the **measured** ~20s journey duration (from the early suite;
+no current document records it) rather than a guess. Global tests will be slower — by how much is **Q1** — and slower
 tests need *fewer* appliances, so these are pessimistic, which is the right
 direction for a budget ask.
 
