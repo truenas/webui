@@ -1,7 +1,7 @@
 /**
  * Two-factor authentication, driven through the UI: switching it on for the
  * appliance and changing its settings, skipping the setup dialog, setting it up
- * for an account, answering the sign-in page's code prompt, and clearing it from
+ * for an account on the setup card, answering the sign-in page's code prompt, and clearing it from
  * a user's details.
  */
 import { expect, type Page } from '@playwright/test';
@@ -113,19 +113,44 @@ export async function setUpTwoFactorOnPage(page: Page): Promise<string> {
   const { setup } = twoFactorLocators;
 
   await expect(page).toHaveURL(/\/two-factor-auth\/?$/, { timeout: saveTimeoutMs });
-  await page.locator(setup.configureSecret).click();
-
-  const secretText = page.locator(setup.secret);
-  await expect(secretText).not.toBeEmpty({ timeout: saveTimeoutMs });
-  const secret = (await secretText.innerText()).trim();
-
-  await page.locator(setup.code).fill(totpCode(secret));
-  await page.locator(setup.confirmCode).click();
+  const secret = await generateTwoFactorSecret(page);
+  await confirmTwoFactorCode(page, totpCode(secret));
 
   await expect(page.locator(setup.unsetSecret)).toBeVisible({ timeout: saveTimeoutMs });
   await expect(page.locator(setup.code)).toBeHidden();
 
   return secret;
+}
+
+/**
+ * Presses Configure 2FA Secret on the `ix-two-factor` card, and returns the
+ * secret it then shows beside the QR code.
+ *
+ * The card is the same on the `/two-factor-auth` page and in the first-login
+ * dialog, so this serves both. For an account with no secret: Configure asks
+ * nothing first, where Renew on an account that has one asks for a confirmation
+ * this does not answer.
+ */
+export async function generateTwoFactorSecret(page: Page): Promise<string> {
+  const { setup } = twoFactorLocators;
+
+  await page.locator(setup.configureSecret).click();
+
+  const secretText = page.locator(setup.secret);
+  await expect(secretText).not.toBeEmpty({ timeout: saveTimeoutMs });
+  return (await secretText.innerText()).trim();
+}
+
+/**
+ * Types `code` into the card's confirmation field and presses Confirm Code.
+ * Asserts nothing about the outcome: the app checks the code itself, and what
+ * a right or wrong one should show belongs in the test making the claim.
+ */
+export async function confirmTwoFactorCode(page: Page, code: string): Promise<void> {
+  const { setup } = twoFactorLocators;
+
+  await page.locator(setup.code).fill(code);
+  await page.locator(setup.confirmCode).click();
 }
 
 /**
