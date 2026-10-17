@@ -167,6 +167,10 @@ test('a named user entry is saved in both the access and the default ACL', async
   await expect(page.locator(aclEditor.ace(added - 1))).toBeVisible();
 
   await addPosixUserEntry(page, aclUser, { perms: ['Read', 'Execute'], isDefault: false });
+  // The user is checked against the directory after a debounce, and the entry keeps the error it
+  // had with no user until that check answers. Adding the next entry before then leaves the
+  // marker on this one, and Save disabled, for good.
+  await expect(page.locator(aclEditor.entryError(added))).toHaveCount(0);
   await addPosixUserEntry(page, aclUser, { perms: ['Read'], isDefault: true });
   await expect(page.locator(aclEditor.ace(added + 1))).toBeVisible();
   // A USER_OBJ, a GROUP_OBJ and an OTHER entry remain without either new row, so both can be removed.
