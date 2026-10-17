@@ -871,6 +871,15 @@ Delete are locked, and so is Add on the Targets page its title opens. Each share
 are read back through the API. The Share ACL and filesystem ACL editors, the
 standalone list pages and the NVMe-oF, S3 and WebShare cards are not covered.
 
+The other side, the sharing admin using those cards, is in
+`tests/roles-share-admin-shares.e2e.ts`. One test adds an SMB share through the
+form, declining the ACL and start-service prompts, and deletes a seeded one from
+its row menu. The other edits a seeded NFS share's description, switches it off
+from the card, and deletes an iSCSI target with its extent. SMB Add and the NFS
+row's Enabled switch are checked to be outside the role-missing wrapper, and
+each change is read back through the API, the NFS edit by the share's `id`. The
+iSCSI wizard, the ACL editors and the services themselves are not covered.
+
 A pool's devices came next, in `tests/pool-devices.e2e.ts`: taking a disk offline
 and bringing it back online, and adding a spare, both from the pool's VDEVs page.
 That page is reached from View VDEVs on the pool's card on the Storage dashboard.
