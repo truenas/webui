@@ -85,6 +85,9 @@ test('an admin edits the hostname, domains, hosts and announcements, and they ar
     mdns: !start.service_announcement.mdns,
     wsd: !start.service_announcement.wsd,
   };
+  // The chips are added after whatever the appliance already lists.
+  const expectedDomains = [...start.domains, ...searchDomains];
+  const expectedHosts = [...start.hosts, hostEntry];
 
   await openNetworkSettings(page, start.hostname);
   await page.locator(form.hostname).fill(hostname);
@@ -100,15 +103,15 @@ test('an admin edits the hostname, domains, hosts and announcements, and they ar
 
   await expect(page.locator(card.hostname)).toHaveText(hostname);
   await expect(page.locator(card.domain)).toHaveText(domain);
-  await expect(page.locator(card.additionalDomains)).toHaveText(searchDomains.join(', '));
-  await expect(page.locator(card.hostnameDatabase)).toHaveText(hostEntry);
+  await expect(page.locator(card.additionalDomains)).toHaveText(expectedDomains.join(', '));
+  await expect(page.locator(card.hostnameDatabase)).toHaveText(expectedHosts.join(', '));
   await expect(page.locator(card.serviceAnnouncement)).toHaveText(announcementText(announcements));
 
   expect(await readNetworkConfig(api)).toMatchObject({
     hostname,
     domain,
-    domains: searchDomains,
-    hosts: [hostEntry],
+    domains: expectedDomains,
+    hosts: expectedHosts,
     service_announcement: announcements,
   });
 });
