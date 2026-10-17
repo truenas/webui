@@ -122,6 +122,10 @@ export const poolWizardLocators = {
   dataStepWarning: '[data-test="text-data-step-warning"]',
   /** The Log step's, in the same place. */
   logStepWarning: '[data-test="text-log-step-warning"]',
+  /** The Special step's. `metadata`, its step's own name, not the `special` category. */
+  metadataStepWarning: '[data-test="text-metadata-step-warning"]',
+  /** The Dedup step's. */
+  dedupStepWarning: '[data-test="text-dedup-step-warning"]',
 
   /**
    * Any entry of the Review step's Warnings list, `['review-warning', $index]`.
