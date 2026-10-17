@@ -860,6 +860,17 @@ control for everyone once the snapshot loaded, and enabling it rewrites the
 `disabled` the role wrapper sets. It now enables it only for `SNAPSHOT_WRITE`.
 Quotas, capacity settings and encryption are not covered.
 
+The Shares dashboard for the read-only admin is in
+`tests/roles-read-only-shares.e2e.ts`, one test with a step per card. On the SMB
+and NFS cards it finds a seeded share listed with its description, and Add, the
+service switch, the row's Enabled switch and the row menu's Delete all locked.
+Edit has no role, so its form opens; with the description changed, Save is still
+locked, and the panel is closed without saving. On the iSCSI card the Wizard and
+Delete are locked, and so is Add on the Targets page its title opens. Each share's
+`comment` and `enabled`, the target's existence, and the three services' states
+are read back through the API. The Share ACL and filesystem ACL editors, the
+standalone list pages and the NVMe-oF, S3 and WebShare cards are not covered.
+
 A pool's devices came next, in `tests/pool-devices.e2e.ts`: taking a disk offline
 and bringing it back online, and adding a spare, both from the pool's VDEVs page.
 That page is reached from View VDEVs on the pool's card on the Storage dashboard.
