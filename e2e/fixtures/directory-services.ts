@@ -62,7 +62,10 @@ export async function seedDisabledLdapConfig(client: E2eApiClient, ldap: Disable
         binddn: ldap.bindDn,
         bindpw: ldap.bindPassword,
       },
+      // The generated input asks for the discriminant here as well as at the top
+      // level (gap 18 in docs/devs/typed-api-client.md), from middleware's own model.
       configuration: {
+        service_type: 'LDAP',
         server_urls: [ldap.serverUrl],
         basedn: ldap.baseDn,
         starttls: false,
