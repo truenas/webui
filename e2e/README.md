@@ -137,7 +137,7 @@ e2e/
   locators/    data-test values, one module per screen
   fixtures/    API-driving setup and teardown
   support/     config, auth, API client
-  docs/        status.md — where the suite is and what is next
+  docs/        status.md — what an appliance must provide, and the known gaps
 ```
 
 `playwright.config.ts` lives at the repository root, where the CLI looks for it.
