@@ -4,10 +4,11 @@
  * Provisioning only, plus the reads a test asserts against. Changing them is what
  * `tests/dataset-permissions.e2e.ts` and `tests/smb-share-acl.e2e.ts` drive through the UI, so
  * nothing here may stand in for it.
- * There is no teardown of its own: the permissions live on the dataset's mountpoint, and the spec
- * deletes the dataset.
+ * Permissions have no teardown of their own: they live on the dataset's mountpoint, and the spec
+ * deletes the dataset. Custom ACL templates are the exception. They are global to the appliance and
+ * outlive every dataset, so they are created and deleted here.
  */
-import type { CallResponse } from '@truenas/api-client';
+import type { CallParams, CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
 import type { Nfs4Ace } from './storage';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
@@ -107,6 +108,104 @@ export async function readAclTemplate(client: E2eApiClient, path: string, name: 
   }
 
   return template;
+}
+
+/** The fields that make two entries the same entry. Optional where the generated type has them so. */
+export interface AceShape {
+  tag: string;
+  type: string;
+  perms?: unknown;
+  flags?: unknown;
+  who?: string | null;
+}
+
+/**
+ * An entry reduced to what it grants and to whom.
+ *
+ * `owner@`, `group@` and `everyone@` are kept by tag alone. Their `who` is at
+ * most the path's owner or group, which the two calls need not fill in alike,
+ * and it is not something a preset chooses. A USER or GROUP entry is kept by the
+ * name it resolves to.
+ */
+function shapeOf(ace: AceShape): AceShape {
+  const shape: AceShape = {
+    tag: ace.tag,
+    type: ace.type,
+    perms: ace.perms,
+    flags: ace.flags,
+  };
+  if (ace.tag === 'USER' || ace.tag === 'GROUP') {
+    shape.who = ace.who;
+  }
+  return shape;
+}
+
+/** Entries as comparable shapes, in a stable order so a reordering is not a difference. */
+export function shapesOf(entries: AceShape[]): AceShape[] {
+  return entries
+    .map(shapeOf)
+    .sort((left, right) => JSON.stringify(left).localeCompare(JSON.stringify(right)));
+}
+
+/** A template's entries. The response types them as a union across ACL kinds. */
+export function templateEntries(template: AclTemplate): AceShape[] {
+  if (template.acltype !== 'NFS4') {
+    throw new Error(`Expected an NFSv4 template, found ${template.acltype} for "${template.name}".`);
+  }
+  return template.acl as unknown as AceShape[];
+}
+
+/**
+ * One row of `filesystem.acltemplate.query`, with the id `filesystem.acltemplate.delete` needs
+ * narrowed, as `GroupRecord` does in `fixtures/groups.ts`.
+ */
+export type AclTemplateRecord = Extract<
+  CallResponse<E2eApiDirectory, 'filesystem.acltemplate.query'>, unknown[]
+>[number] & { id: number };
+
+/** What `filesystem.acltemplate.create` takes. */
+export type AclTemplateCreate = NonNullable<CallParams<E2eApiDirectory, 'filesystem.acltemplate.create'>[0]>;
+
+/**
+ * The ACL template called `name`, built-in or custom, or undefined.
+ *
+ * `query`, not `queryOne`: absence is the normal answer, and `queryOne` errors on it.
+ */
+export async function findAclTemplate(client: E2eApiClient, name: string): Promise<AclTemplateRecord | undefined> {
+  const [template] = await firstValueFrom(
+    client.api.query('filesystem.acltemplate.query', [['name', '=', name]]).pipe(timeout(readTimeoutMs)),
+  );
+
+  return template as AclTemplateRecord | undefined;
+}
+
+/**
+ * Creates a custom ACL template if none is called `template.name`.
+ *
+ * Templates are global to the appliance and outlive any dataset, so whatever creates one deletes it
+ * again with {@link ensureAclTemplateAbsent}.
+ */
+export async function ensureAclTemplatePresent(client: E2eApiClient, template: AclTemplateCreate): Promise<void> {
+  if (await findAclTemplate(client, template.name)) {
+    return;
+  }
+
+  await firstValueFrom(
+    client.api.call('filesystem.acltemplate.create', [template]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/** Deletes the ACL template called `name`, if present. */
+export async function ensureAclTemplateAbsent(client: E2eApiClient, name: string): Promise<void> {
+  const existing = await findAclTemplate(client, name);
+
+  if (!existing) {
+    return;
+  }
+
+  await firstValueFrom(
+    client.api.call('filesystem.acltemplate.delete', [existing.id]).pipe(timeout(slowCallTimeoutMs)),
+  );
 }
 
 /**
