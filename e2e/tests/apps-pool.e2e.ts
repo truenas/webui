@@ -99,7 +99,7 @@ test('an admin unsets the Apps pool and the Apps service stops', async ({ page, 
   await setAppsPool(api, pool);
 
   await goToApps(page);
-  // The starting state the unset has to change, on screen as well as in middleware.
+  // The starting state the unset has to change.
   await expect(page.locator(appsLocators.dockerStatus)).toHaveText(
     'Apps Service Running',
     { timeout: statusTimeoutMs },
