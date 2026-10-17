@@ -4,12 +4,31 @@
  * Nothing here is persisted until {@link saveDashboard}: adding and deleting change only the layout
  * on screen, and {@link cancelConfigure} puts back the one the store holds.
  */
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 import { selectOption } from './storage';
 import { dashboardLocators } from '../locators/dashboard';
+import { confirmDialogLocators } from '../locators/dialogs';
 
 /** The save is one `auth.set_attribute` call and a re-read of `auth.me`. */
 const saveTimeoutMs = 30_000;
+
+/**
+ * How far the pointer moves before it heads for the target. CDK starts a drag only once the pointer
+ * has travelled past its threshold, 5 px, from where it went down.
+ */
+const dragStartDistancePx = 10;
+
+/** Pointer moves on the way to the target. CDK re-sorts the list on each move, not on the drop. */
+const dragSteps = 10;
+
+async function centreOf(locator: Locator): Promise<{ x: number; y: number }> {
+  const box = await locator.boundingBox();
+  if (!box) {
+    throw new Error(`${locator.toString()} has no bounding box, so it cannot be dragged to or from.`);
+  }
+
+  return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+}
 
 /** The card group the Card Editor is asked to build: one locator for each choice it makes. */
 export interface CardGroupChoice {
@@ -55,6 +74,46 @@ export async function addCardGroup(page: Page, choice: CardGroupChoice): Promise
 /** Deletes a group by its index. It goes after a 300 ms animation, with no confirm. */
 export async function deleteCardGroup(page: Page, index: number): Promise<void> {
   await page.locator(dashboardLocators.edit.deleteGroup(index)).click();
+}
+
+/**
+ * Drags the group at `fromIndex` by its handle onto the handle of the group at `toIndex`.
+ *
+ * Pointer steps rather than `locator.dragTo`, which goes straight from one point to the other: CDK
+ * needs the pointer to pass its drag threshold first, and moves in between to sort the list. Both
+ * handles have to be on screen, so a spec gives itself a viewport tall enough for both groups.
+ *
+ * Returns only once the drop has reached the layout. CDK animates the preview into place first
+ * (250 ms, `.cdk-drag-animating` in the dashboard's styles) and emits `dropped` after that, while
+ * the card already shows in its new place. A Save clicked in between saves the old order.
+ */
+export async function dragCardGroup(page: Page, fromIndex: number, toIndex: number): Promise<void> {
+  const handle = page.locator(dashboardLocators.edit.dragHandle(fromIndex));
+  const from = await centreOf(handle);
+  const to = await centreOf(page.locator(dashboardLocators.edit.dragHandle(toIndex)));
+
+  await page.mouse.move(from.x, from.y);
+  await page.mouse.down();
+  await page.mouse.move(from.x, from.y - dragStartDistancePx, { steps: 2 });
+  await page.mouse.move(to.x, to.y, { steps: dragSteps });
+  await page.mouse.up();
+
+  // The drag preview and placeholder are copies of the group, handle id included, and CDK removes
+  // them in the same step that emits `dropped`.
+  await expect(handle).toHaveCount(1);
+}
+
+/** Moves a group one place down with its Move down button, which only phone width shows. */
+export async function moveCardGroupDown(page: Page, index: number): Promise<void> {
+  await page.locator(dashboardLocators.edit.moveGroupDown(index)).click();
+}
+
+/** Restores the default cards on screen through Reset and its confirm. Nothing is saved yet. */
+export async function resetDashboard(page: Page): Promise<void> {
+  await page.locator(dashboardLocators.edit.reset).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+  await page.locator(confirmDialogLocators.confirm).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeHidden();
 }
 
 /**

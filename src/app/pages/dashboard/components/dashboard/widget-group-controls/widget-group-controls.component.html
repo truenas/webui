@@ -17,7 +17,12 @@
   ></tn-icon-button>
 </div>
 
-<div class="drag-handle" cdkDragHandle>
+<div
+  class="drag-handle"
+  cdkDragHandle
+  tnTestIdType="button"
+  [tnTestId]="['drag-handle', 'widget', index()]"
+>
   <tn-icon name="drag-horizontal" library="mdi"></tn-icon>
 </div>
 
