@@ -169,7 +169,7 @@ test('a named user entry is saved in both the access and the default ACL', async
   await addPosixUserEntry(page, aclUser, { perms: ['Read', 'Execute'], isDefault: false });
   await addPosixUserEntry(page, aclUser, { perms: ['Read'], isDefault: true });
   await expect(page.locator(aclEditor.ace(added + 1))).toBeVisible();
-  // A named entry is never the only one of its kind, so both new rows can be removed.
+  // A USER_OBJ, a GROUP_OBJ and an OTHER entry remain without either new row, so both can be removed.
   await expect(page.locator(aclEditor.removeAce(added))).toBeVisible();
   await expect(page.locator(aclEditor.removeAce(added + 1))).toBeVisible();
   await saveAcl(page);
