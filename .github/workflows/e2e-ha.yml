@@ -4,8 +4,10 @@
 # hands it over unconfigured; the suite licenses it, sets HA up and fails it
 # over, all through the UI built from this checkout.
 #
-# Runs on every push to its branch while that is being built: a workflow
-# that is not on the default branch cannot be dispatched.
+# Runs nightly, and on pull requests that touch what a failover goes
+# through: the failover pages and services, the HA status in the topbar, the
+# sign-in a failover ends in, and the suite or this workflow themselves. One
+# run takes both of a runner's VMs, so it is not on every pull request.
 #
 # What it shares with e2e.yml — the browser image, finding the UI, serving
 # it, running the suite — is the e2e-* and webui-dist actions under
@@ -15,8 +17,27 @@
 name: E2E HA
 
 on:
-  push:
-    branches: [ha-e2e]
+  # Nightly, an hour after e2e.yml's, against whatever master is then.
+  schedule:
+    - cron: '0 4 * * *'
+  pull_request:
+    paths:
+      - 'src/app/pages/system/advanced/failover/**'
+      - 'src/app/pages/system-tasks/failover/**'
+      - 'src/app/modules/layout/topbar/ha-status-icon/**'
+      - 'src/app/store/ha-info/**'
+      - 'src/app/services/failover-validation.service.ts'
+      - 'src/app/pages/signin/**'
+      - 'src/app/modules/websocket/**'
+      - 'src/app/modules/auth/**'
+      - 'e2e/tests-ha/**'
+      - 'e2e/flows/ha.ts'
+      - 'e2e/fixtures/ha.ts'
+      - 'e2e/locators/ha.ts'
+      - 'e2e/support/**'
+      - 'playwright.config.ts'
+      - '.github/workflows/e2e-ha.yml'
+      - '.github/actions/**'
   workflow_dispatch:
     inputs:
       grep:
@@ -47,7 +68,7 @@ jobs:
       - uses: ./.github/actions/e2e-browser
 
       - name: Boot the HA pair
-        uses: iXsystems/ux-github-workflows/.github/actions/truenas-appliance-runner@ha-mode
+        uses: iXsystems/ux-github-workflows/.github/actions/truenas-appliance-runner@master
         with:
           ha: true
           memory-mb: 8192
