@@ -17,8 +17,8 @@ export interface CustomSchedule {
 }
 
 /**
- * Picks "Create Custom schedule" on the schedule select `select`, fills the
- * dialog in, and presses Done.
+ * Picks "Create Custom schedule" on the `ix-scheduler` bound to `control` —
+ * `schedule` on most task forms — fills the dialog in, and presses Done.
  *
  * On a form whose schedule is still a preset, the dialog opens on Hourly, which
  * ticks every weekday and every month. Each weekday to untick is asserted
@@ -28,9 +28,9 @@ export interface CustomSchedule {
  * The weekdays left ticked are what the dialog writes as the crontab's
  * day-of-week, by name and in Mon…Sun order (`mon,tue,…`).
  */
-export async function chooseCustomSchedule(page: Page, select: string, schedule: CustomSchedule): Promise<void> {
+export async function chooseCustomSchedule(page: Page, control: string, schedule: CustomSchedule): Promise<void> {
   const dialog = schedulerLocators;
-  await selectOption(page, select, dialog.createCustom);
+  await selectOption(page, dialog.presets(control), dialog.createCustom(control));
   await expect(page.locator(dialog.minutes)).toBeVisible();
 
   await page.locator(dialog.minutes).fill(schedule.minutes);

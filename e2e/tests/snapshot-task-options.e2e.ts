@@ -131,7 +131,7 @@ test('a periodic snapshot task saves the custom schedule built in the scheduler 
   const { form, card } = snapshotTaskLocators;
   await openAddSnapshotTaskForm(page);
   await chooseSnapshotTaskDataset(page, dataset);
-  await chooseCustomSchedule(page, form.schedule, {
+  await chooseCustomSchedule(page, 'schedule', {
     minutes: '15',
     hours: '3',
     days: '*',

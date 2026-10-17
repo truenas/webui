@@ -26,21 +26,24 @@ import { kebabTestSegment } from './test-id';
 export const hourlyScheduleLabel = 'Hourly At the start of each hour';
 
 /**
- * The custom schedule dialog, `ix-scheduler-modal`, which every form built on
- * `ix-scheduler` opens from the select's "Create Custom schedule" option — cron
- * jobs, rsync, cloud sync, replication and periodic snapshot tasks alike.
+ * `ix-scheduler`'s select, and the custom schedule dialog, `ix-scheduler-modal`,
+ * that it opens from its "Create Custom schedule" option — cron jobs, rsync,
+ * cloud sync, replication and periodic snapshot tasks alike.
  *
- * Its inputs set no `testId` and fall back to their `formControlName`. Its
- * checkboxes are `[testId]="['scheduler', label]"`, keyed by the translated
+ * The select is `[testId]="[controlName, 'presets']"`, so its ids carry the
+ * form control the scheduler is bound to: `schedule` on most task forms, but
+ * `cloudsync_picker` on cloud sync and `schedule_picker` on replication.
+ *
+ * The dialog's inputs set no `testId` and fall back to their `formControlName`.
+ * Its checkboxes are `[testId]="['scheduler', label]"`, keyed by the translated
  * short label (`Sun`, `Jan`), and Done is `testId="done"`.
  */
 export const schedulerLocators = {
-  /**
-   * The action option on the schedule select. Every task form binds the
-   * scheduler as `formControlName="schedule"`, so the select is
-   * `select-schedule-presets` and this its option.
-   */
-  createCustom: '[data-test="option-schedule-presets-create-custom-schedule"]',
+  presets: (control: string): string => `[data-test="select-${kebabTestSegment(control)}-presets"]`,
+  /** The action option on {@link presets} that opens the dialog. */
+  createCustom: (control: string): string => (
+    `[data-test="option-${kebabTestSegment(control)}-presets-create-custom-schedule"]`
+  ),
   minutes: '[data-test="input-minutes"]',
   hours: '[data-test="input-hours"]',
   /** "Days of Month". */
