@@ -1,6 +1,7 @@
 /**
  * The Containers page: its header, the Global Configuration form its
- * Configuration menu opens, and the Create New Container form.
+ * Configuration menu opens, the Create New Container form and its image
+ * browser, the list, the details panel and the delete dialog.
  *
  * The header is `all-containers-header.component.html`, the settings form is
  * `global-config-form.component.html` and the create form is
@@ -9,7 +10,15 @@
  *
  * See `signin.ts` for a note on the type-prefixing that produces these values.
  */
-import { kebabTestSegment } from './test-id';
+import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
+
+/**
+ * What tells one row of the list from another: `container-<name>`.
+ *
+ * `toUniqueRowTag` runs the whole tag through lodash, so a name with a
+ * letter/digit boundary is split there (`e2e` becomes `e-2-e`).
+ */
+const rowTag = (name: string): string => legacyKebabTestSegment(`container-${name}`);
 
 export const containersLocators = {
   header: {
@@ -54,6 +63,69 @@ export const containersLocators = {
      * the form reads from `lxc.config` as it opens.
      */
     pool: '[data-test="select-pool"]',
+    /** The field around Name: its label and, once the value is refused, the reason. */
+    nameField: '[data-test="form-field-name"]',
+    description: '[data-test="input-description"]',
+    /** "Browse Catalog", which opens the image browser. The Image field beside it is read-only. */
+    browseImages: '[data-test="button-browse-images"]',
+    image: '[data-test="input-image"]',
+    /**
+     * The side panel footer's Advanced/Basic toggle. The CPU Set and Environment
+     * Variables sections render only in advanced mode.
+     */
+    advancedOptions: '[data-test="button-advanced-options"]',
+    cpuset: '[data-test="input-cpuset"]',
+    /** "Add" under Environment Variables: `tn-form-list` names it `['add-item', label]`. */
+    addEnvironmentVariable: '[data-test="button-add-item-environment-variables"]',
+    /**
+     * One environment variable's Name and Value, scoped by the row's index. The
+     * inputs fall back to `input-name` and `input-value`, and the container's own
+     * Name is `input-name` as well, so the row id is what tells them apart.
+     */
+    environmentVariable: (index: number): { name: string; value: string } => {
+      const row = `[data-test="row-environment-variable-${index}"]`;
+      return {
+        name: `${row} [data-test="input-name"]`,
+        value: `${row} [data-test="input-value"]`,
+      };
+    },
+  },
+
+  /**
+   * The image browser, `select-image-dialog.component.html`. Images are listed
+   * one row per version, and every version of an image shares its Select id,
+   * `['select-image', label]`. The label is the registry's product key, e.g.
+   * `debian:bookworm:amd64:default`, so a prefix picks an image by its OS
+   * without naming a release the registry will one day drop.
+   */
+  imageBrowser: {
+    /** "Search Images", matched against the label. */
+    search: '[data-test="input-search-query"]',
+    selectImageOfOs: (os: string): string => `[data-test^="button-select-image-${kebabTestSegment(os)}-"]`,
+  },
+
+  list: {
+    /** The `<tr>`, from `[rowTestId]`. Clicking it opens the container's details. */
+    row: (name: string): string => `[data-test="row-${rowTag(name)}"]`,
+    name: (name: string): string => `[data-test="text-name-${rowTag(name)}-row-text"]`,
+  },
+
+  /**
+   * The details panel's General Info card. Each readout holds its label as well
+   * as its value, e.g. "Description: E2E container".
+   */
+  details: {
+    description: '[data-test="text-description"]',
+    autostart: '[data-test="text-autostart"]',
+    dataset: '[data-test="text-dataset"]',
+    cpuset: '[data-test="text-cpu-set"]',
+    delete: '[data-test="button-delete-container"]',
+  },
+
+  /** `<tn-dialog-shell testId="delete-container">`. Delete enables once the confirmation is ticked. */
+  deleteDialog: {
+    confirm: '[data-test="checkbox-confirm"]',
+    delete: '[data-test="button-delete"]',
   },
 
   /** The side panel's Save, `[testId]="'save'"` in form-side-panel-container. */

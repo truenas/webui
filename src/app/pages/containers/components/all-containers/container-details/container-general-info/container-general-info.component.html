@@ -20,19 +20,19 @@
     }
   </ng-template>
   @if (container(); as container) {
-    <p>
+    <p tnTestIdType="text" [tnTestId]="'description'">
       <span class="label">{{ 'Description' | translate }}:</span>
       {{ container.description || ('N/A' | translate) }}
     </p>
-    <p>
+    <p tnTestIdType="text" [tnTestId]="'autostart'">
       <span class="label">{{ 'Autostart' | translate }}:</span>
       {{ container.autostart | yesNo }}
     </p>
-    <p>
+    <p tnTestIdType="text" [tnTestId]="'dataset'">
       <span class="label">{{ 'Dataset' | translate }}:</span>
       {{ container.dataset }}
     </p>
-    <p>
+    <p tnTestIdType="text" [tnTestId]="'cpu-set'">
       <span class="label">{{ 'CPU Set' | translate }}:</span>
       {{ container.cpuset || ('All Host CPUs' | translate) }}
     </p>

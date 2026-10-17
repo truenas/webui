@@ -24,6 +24,7 @@ import {
   TnFormSectionComponent,
   TnInputComponent,
   TnSelectComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   catchError, filter, forkJoin, map, Observable, of, shareReplay, switchMap, take, tap,
@@ -95,6 +96,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnFormSectionComponent,
     TnInputComponent,
     TnSelectComponent,
+    TnTestIdDirective,
     TranslateModule,
   ],
   providers: [ContainerConfigStore],
