@@ -101,6 +101,26 @@ export const poolWizardLocators = {
     `[data-test="option-width-${type}-${kebabTestSegment(disks)}"]`
   ),
 
+  /**
+   * dRAID's Data Devices, the data disks in each redundancy group. Rendered in place of
+   * {@link width} once a dRAID layout is chosen (`draid-selection.component.html`), as are the
+   * two below. Keys are the numbers themselves.
+   */
+  draidDataDevices: (type: VdevCategory) => `[data-test="select-data-devices-per-group-${type}"]`,
+  draidDataDevicesOption: (type: VdevCategory, disks: number) => (
+    `[data-test="option-data-devices-per-group-${type}-${kebabTestSegment(disks)}"]`
+  ),
+  /** dRAID's Distributed Hot Spares, per vdev. Offers `0`. */
+  draidSpares: (type: VdevCategory) => `[data-test="select-spares-${type}"]`,
+  draidSparesOption: (type: VdevCategory, spares: number) => (
+    `[data-test="option-spares-${type}-${kebabTestSegment(spares)}"]`
+  ),
+  /** dRAID's Children, the disks in each vdev: its groups' data and parity disks plus its spares. */
+  draidChildren: (type: VdevCategory) => `[data-test="select-children-${type}"]`,
+  draidChildrenOption: (type: VdevCategory, disks: number) => (
+    `[data-test="option-children-${type}-${kebabTestSegment(disks)}"]`
+  ),
+
   /** Not rendered on the Log, Spare and Cache steps, which build exactly one vdev. */
   vdevCount: (type: VdevCategory) => `[data-test="select-vdevs-number-${type}"]`,
   vdevCountOption: (type: VdevCategory, count: number) => (
