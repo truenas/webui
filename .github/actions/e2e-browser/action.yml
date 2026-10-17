@@ -1,0 +1,55 @@
+name: 'E2E: Docker and the browser image'
+description: 'Finds a usable Docker, pulls the Playwright image the suite runs in, and nginx when the UI is served.'
+
+# The browser runs in Playwright's own image rather than on the runner: it
+# ships Chromium and every library it needs, and its tag must match the
+# installed @playwright/test exactly or Playwright refuses to launch, so the
+# tag is read from node_modules rather than written down twice.
+#
+# Call it before the appliance boots, so a runner without a usable Docker
+# fails early. The caller must have run ./.github/actions/prepare.
+#
+# Sets DOCKER (the command: `docker`, or `sudo -n docker`), PLAYWRIGHT_IMAGE
+# and NGINX_IMAGE in the job environment, for the other e2e-* actions.
+
+inputs:
+  nginx:
+    description: "`true` pulls nginx too, for e2e-serve-ui."
+    default: 'true'
+  nginx-image:
+    description: >-
+      Serves the built UI. Debian-based on purpose: docker/nginx.conf runs as
+      `www-data`, which the alpine image does not have.
+    default: nginx:1.27
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        NGINX: ${{ inputs.nginx }}
+        NGINX_IMAGE: ${{ inputs.nginx-image }}
+      run: |
+        set -euo pipefail
+        # The runner user may or may not be allowed at the Docker socket
+        # directly. `sudo -n` fails rather than prompting, because a prompt
+        # here would hang the job for its full timeout.
+        if docker info > /dev/null 2>&1; then
+          docker=docker
+        elif sudo -n docker info > /dev/null 2>&1; then
+          docker="sudo -n docker"
+        else
+          echo "::error::No usable Docker: neither 'docker' nor 'sudo -n docker' can reach the daemon"
+          exit 1
+        fi
+        version=$(node -p "require('@playwright/test/package.json').version")
+        image="mcr.microsoft.com/playwright:v${version}-noble"
+        $docker pull --quiet "$image"
+        if [ "$NGINX" = true ]; then
+          $docker pull --quiet "$NGINX_IMAGE"
+        fi
+        {
+          echo "DOCKER=$docker"
+          echo "PLAYWRIGHT_IMAGE=$image"
+          echo "NGINX_IMAGE=$NGINX_IMAGE"
+        } >> "$GITHUB_ENV"

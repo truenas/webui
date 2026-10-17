@@ -6,8 +6,10 @@ import { expect, type Page } from '@playwright/test';
 import { confirmTaskDelete, expandTaskListRow, openFullListFromCard } from './data-protection';
 import { goToDataProtection } from './navigation';
 import { selectOption } from './storage';
+import { countSnapshotTasks } from '../fixtures/snapshot-tasks';
 import { confirmDialogLocators } from '../locators/dialogs';
 import { snapshotTaskLocators } from '../locators/snapshot-tasks';
+import type { E2eApiClient } from '../support/api/client';
 
 /** Creating, updating and deleting a task are middleware calls, not instant. */
 const saveTimeoutMs = 60_000;
@@ -20,6 +22,21 @@ const saveTimeoutMs = 60_000;
  * front that their rows will fit instead.
  */
 export const snapshotTaskCardPageSize = 4;
+
+/**
+ * Fails up front when the card cannot show every row a test needs.
+ *
+ * The card lists {@link snapshotTaskCardPageSize} tasks before its pager. A
+ * fresh appliance holds none; failing here says why rather than timing out on a
+ * hidden row.
+ */
+export async function requireRoomOnSnapshotTaskCard(api: E2eApiClient, adding: number): Promise<void> {
+  const existing = await countSnapshotTasks(api);
+  expect(
+    existing + adding <= snapshotTaskCardPageSize,
+    `the card lists ${snapshotTaskCardPageSize} tasks, this test adds ${adding}, the appliance has ${existing}`,
+  ).toBe(true);
+}
 
 /** Opens the add form from the card, starting from the sidebar. */
 export async function openAddSnapshotTaskForm(page: Page): Promise<void> {

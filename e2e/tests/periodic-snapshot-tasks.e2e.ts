@@ -39,19 +39,17 @@
  * name can satisfy without the task ever having run.
  */
 import {
-  countSnapshotTasks,
   ensureSnapshotTaskPresent,
   ensureSnapshotTasksAbsent,
+  expectOwnedSnapshotDate,
   findSnapshotTask,
   findSnapshotTasks,
+  monthlySchedule as monthly,
+  ownedNamingSchema as targetNamingSchema,
+  ownedSnapshotName,
   type SnapshotTaskSchedule,
 } from '../fixtures/snapshot-tasks';
-import {
-  ensureSnapshotPresent,
-  findSnapshotRetention,
-  listSnapshots,
-  type SnapshotRetention,
-} from '../fixtures/snapshots';
+import { ensureSnapshotPresent, findSnapshotRetention, listSnapshots } from '../fixtures/snapshots';
 import { ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
 import {
   chooseSnapshotTaskDataset,
@@ -60,8 +58,8 @@ import {
   deleteSnapshotTask,
   openAddSnapshotTaskForm,
   openEditSnapshotTaskForm,
+  requireRoomOnSnapshotTaskCard,
   saveSnapshotTaskForm,
-  snapshotTaskCardPageSize,
   toggleSnapshotTaskEnabled,
 } from '../flows/snapshot-tasks';
 import { openSnapshotList } from '../flows/snapshots';
@@ -77,7 +75,6 @@ const createdLeaf = 'e2e_snaptask_created';
 
 /** Snapshotted by a task provisioned over the API, so there is something to edit or delete. */
 const targetLeaf = 'e2e_snaptask_target';
-const targetNamingSchema = 'e2e-target-%Y-%m-%d_%H-%M';
 
 /** What the edit test changes the target's naming schema to. */
 const editedNamingSchema = 'e2e-edited-%Y%m%d-%H%M';
@@ -91,10 +88,6 @@ const allLeaves = [createdLeaf, targetLeaf, bystanderLeaf];
 /** The form's default, "Daily": midnight every day. */
 const daily: SnapshotTaskSchedule = {
   minute: '0', hour: '0', dom: '*', month: '*', dow: '*',
-};
-/** The first of every month, which no preset the edit picks can be confused with. */
-const monthly: SnapshotTaskSchedule = {
-  minute: '0', hour: '0', dom: '1', month: '*', dow: '*',
 };
 /** Hourly, and the whole-day window the form offers alongside it and leaves as it is. */
 const hourly = {
@@ -115,52 +108,13 @@ const targetSnapshotName = /^e2e-target-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}$/;
  */
 const oneTick = { timeout: 150_000, intervals: [5_000] };
 
-/**
- * A snapshot the target's task owns without having run: named by
- * {@link targetNamingSchema}, at midnight on the first of a month, which is when
- * {@link monthly} fires. It is dated years ahead so that the removal date a
- * delete writes is still in the future, and nothing prunes the snapshot while
- * a test reads it.
- */
-const ownedSnapshotName = 'e2e-target-2099-01-01_00-00';
-
-/** The seeded task keeps snapshots for two weeks, so this is the day {@link ownedSnapshotName} is due to go. */
-const ownedSnapshotDestroyAt = Date.UTC(2099, 0, 15);
-
-/** The name is in the appliance's local time, so the date can be up to a day either side in UTC. */
-const oneDayMs = 24 * 60 * 60 * 1000;
-
 /** On the target's dataset, but it matches no naming schema, so no task owns it. */
 const manualSnapshotName = 'e2e-manual';
-
-/** Fails unless a retention falls on the day {@link ownedSnapshotDestroyAt} names. */
-function expectOwnedSnapshotDate(retention: SnapshotRetention | undefined): void {
-  const destroyAt = retention?.destroyAt.getTime() ?? Number.NaN;
-  expect(
-    Math.abs(destroyAt - ownedSnapshotDestroyAt),
-    `due at ${retention?.destroyAt.toISOString() ?? 'no date'}`,
-  ).toBeLessThanOrEqual(oneDayMs);
-}
 
 /** The names of a dataset's snapshots, sorted so a failure prints them in a stable order. */
 async function snapshotNames(api: E2eApiClient, dataset: string): Promise<string[]> {
   const snapshots = await listSnapshots(api, dataset);
   return snapshots.map((snapshot) => snapshot.snapshot_name).sort((a, b) => a.localeCompare(b));
-}
-
-/**
- * Fails up front when the card cannot show every row a test needs.
- *
- * The card lists four tasks before its pager, and the pager leaves for the full
- * list rather than expanding — see `snapshotTaskCardPageSize`. A fresh appliance
- * holds none; failing here says why rather than timing out on a hidden row.
- */
-async function requireRoomOnCard(api: E2eApiClient, adding: number): Promise<void> {
-  const existing = await countSnapshotTasks(api);
-  expect(
-    existing + adding <= snapshotTaskCardPageSize,
-    `the card lists ${snapshotTaskCardPageSize} tasks, this test adds ${adding}, the appliance has ${existing}`,
-  ).toBe(true);
 }
 
 /** Both tasks over the API: acting on one from the card is the thing under test. */
@@ -209,7 +163,7 @@ test.afterEach(async ({ api, pool }) => {
 
 test('an admin adds a periodic snapshot task, and the appliance really has one', async ({ page, api, pool }) => {
   const dataset = `${pool}/${createdLeaf}`;
-  await requireRoomOnCard(api, 1);
+  await requireRoomOnSnapshotTaskCard(api, 1);
 
   const { form, card } = snapshotTaskLocators;
   await openAddSnapshotTaskForm(page);
@@ -242,7 +196,7 @@ test('editing a periodic snapshot task from the card changes the task that was p
 }) => {
   const target = `${pool}/${targetLeaf}`;
   const bystander = `${pool}/${bystanderLeaf}`;
-  await requireRoomOnCard(api, 2);
+  await requireRoomOnSnapshotTaskCard(api, 2);
   await seedTargetAndBystander(api, pool);
   const before = await findSnapshotTask(api, target);
 
@@ -289,7 +243,7 @@ test('deleting a periodic snapshot task from the card removes the task that was 
 }) => {
   const target = `${pool}/${targetLeaf}`;
   const bystander = `${pool}/${bystanderLeaf}`;
-  await requireRoomOnCard(api, 2);
+  await requireRoomOnSnapshotTaskCard(api, 2);
   await seedTargetAndBystander(api, pool);
 
   await deleteSnapshotTask(page, target);
@@ -308,7 +262,7 @@ test('deleting a periodic snapshot task while keeping its snapshots gives them t
 }) => {
   const target = `${pool}/${targetLeaf}`;
   const bystander = `${pool}/${bystanderLeaf}`;
-  await requireRoomOnCard(api, 2);
+  await requireRoomOnSnapshotTaskCard(api, 2);
   await seedTargetAndBystander(api, pool);
   await ensureSnapshotPresent(api, target, ownedSnapshotName);
   await ensureSnapshotPresent(api, target, manualSnapshotName);
@@ -336,7 +290,7 @@ test('deleting a periodic snapshot task without keeping its snapshots leaves the
 }) => {
   const target = `${pool}/${targetLeaf}`;
   const bystander = `${pool}/${bystanderLeaf}`;
-  await requireRoomOnCard(api, 2);
+  await requireRoomOnSnapshotTaskCard(api, 2);
   await seedTargetAndBystander(api, pool);
   await ensureSnapshotPresent(api, target, ownedSnapshotName);
 
@@ -378,7 +332,7 @@ test('switching a periodic snapshot task off on the card disables that task and 
 }) => {
   const target = `${pool}/${targetLeaf}`;
   const bystander = `${pool}/${bystanderLeaf}`;
-  await requireRoomOnCard(api, 2);
+  await requireRoomOnSnapshotTaskCard(api, 2);
   await seedTargetAndBystander(api, pool);
 
   // Enabled first, or reading it disabled afterwards would prove nothing.
