@@ -43,8 +43,9 @@ export interface DisabledLdapConfig {
 }
 
 /**
- * Stores an LDAP Plain configuration with Enable Service off, as the form's Save
- * would with Enable Service and Enable Account Cache unticked and RFC2307 picked.
+ * Stores an LDAP Plain configuration with Enable Service and Enable Account
+ * Cache off and the RFC2307 schema — the values the form is filled with in the
+ * spec that saves one, though not byte for byte the request its Save sends.
  *
  * Middleware validates a credential only for an enabled service, so this binds
  * to nothing and needs no LDAP server. Enabling it would bind, and be refused.
