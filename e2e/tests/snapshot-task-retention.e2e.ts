@@ -1,9 +1,15 @@
 /**
- * Stories: editing a periodic snapshot task in a way that would move the
- * removal date of snapshots it already took warns how many, and offers to keep
- * their current date. Kept, the old date is written onto each snapshot. Not
- * kept, the task's new lifetime decides. An edit that touches nothing about
- * retention warns of nothing.
+ * Stories: editing a periodic snapshot task so that it no longer owns
+ * snapshots it already took warns how many, and offers to keep their current
+ * removal date. Kept, the old date is written onto each snapshot. Not kept,
+ * nothing dates them any more. An edit that touches nothing about retention
+ * warns of nothing.
+ *
+ * The warning is about ownership, not lifetime: middleware's
+ * `update_will_change_retention_for` names the snapshots the task owns before
+ * the edit and not after, and ownership is the naming schema and the schedule
+ * alone. Shortening the lifetime changes no snapshot's owner, so it never
+ * warns; changing the naming schema disowns every snapshot the old one named.
  *
  * The task's snapshot is seeded over the API rather than taken by the task, the
  * way `periodic-snapshot-tasks.e2e.ts` seeds one for the delete dialog: a name
@@ -48,8 +54,8 @@ const targetLeaf = 'e2e_snapret_target';
 /** What the edit form asks middleware each time a field that bears on retention settles. */
 const retentionCheckMethod = 'pool.snapshottask.update_will_change_retention_for';
 
-/** Two weeks shortened to one: the day {@link ownedSnapshotName} is due to go once the edit lands. */
-const shortenedDestroyAt = Date.UTC(2099, 0, 8);
+/** A naming schema {@link ownedSnapshotName} does not parse with, so the edited task no longer owns it. */
+const movedNamingSchema = 'e2e-moved-%Y-%m-%d_%H-%M';
 
 /** How long the retention check may take to answer, after the form's 250 ms debounce. */
 const retentionCheckTimeoutMs = 30_000;
@@ -93,7 +99,7 @@ test.afterEach(async ({ api, pool }) => {
   ]);
 });
 
-test('shortening the lifetime with Preserve Snapshot Retention keeps the old removal date on its snapshot', async ({
+test('changing the naming schema with Preserve Snapshot Retention keeps the old removal date on its snapshot', async ({
   page, api, pool,
 }) => {
   const target = `${pool}/${targetLeaf}`;
@@ -103,12 +109,12 @@ test('shortening the lifetime with Preserve Snapshot Retention keeps the old rem
 
   const { form } = snapshotTaskLocators;
   await openEditSnapshotTaskForm(page, target, ownedNamingSchema);
-  await page.locator(form.lifetimeValue).fill('1');
+  await page.locator(form.namingSchema).fill(movedNamingSchema);
   await expect(page.locator(form.affectedSnapshots)).toHaveText('1', { timeout: retentionCheckTimeoutMs });
   await page.locator(form.fixateRemovalDate).click();
   await saveSnapshotTaskForm(page);
 
-  expect((await findSnapshotTask(api, target))?.lifetime_value).toBe(1);
+  expect((await findSnapshotTask(api, target))?.naming_schema).toBe(movedNamingSchema);
 
   // The same date as before the edit, now written onto the snapshot itself.
   const fixed = await findSnapshotRetention(api, target, ownedSnapshotName);
@@ -116,7 +122,7 @@ test('shortening the lifetime with Preserve Snapshot Retention keeps the old rem
   expectOwnedSnapshotDate(fixed);
 });
 
-test('shortening the lifetime without fixating moves the removal date of the task snapshots', async ({
+test('changing the naming schema without Preserve Snapshot Retention leaves its old snapshot undated', async ({
   page, api, pool,
 }) => {
   const target = `${pool}/${targetLeaf}`;
@@ -126,18 +132,16 @@ test('shortening the lifetime without fixating moves the removal date of the tas
 
   const { form } = snapshotTaskLocators;
   await openEditSnapshotTaskForm(page, target, ownedNamingSchema);
-  await page.locator(form.lifetimeValue).fill('1');
+  await page.locator(form.namingSchema).fill(movedNamingSchema);
   await expect(page.locator(form.affectedSnapshots)).toHaveText('1', { timeout: retentionCheckTimeoutMs });
   // Unticked by default, and left so.
   await expect(page.locator(form.fixateRemovalDate)).not.toBeChecked();
   await saveSnapshotTaskForm(page);
 
-  expect((await findSnapshotTask(api, target))?.lifetime_value).toBe(1);
+  expect((await findSnapshotTask(api, target))?.naming_schema).toBe(movedNamingSchema);
 
-  // Still the task's to decide, and the task now keeps it for one week.
-  const moved = await findSnapshotRetention(api, target, ownedSnapshotName);
-  expect(moved?.source).toBe('periodic_snapshot_task');
-  expectOwnedSnapshotDate(moved, shortenedDestroyAt);
+  // No task owns it now and no date was written onto it, so nothing is due to remove it.
+  expect(await findSnapshotRetention(api, target, ownedSnapshotName)).toBeUndefined();
 });
 
 test('an edit that touches nothing about retention shows no retention warning', async ({ page, api, pool }) => {
