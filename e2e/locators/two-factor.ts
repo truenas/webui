@@ -1,7 +1,7 @@
 /**
  * Two-factor authentication: the global card on System > Advanced Settings and
  * its form, the setup card, the first-login setup dialog, and the Access card's
- * Clear button.
+ * two-factor line, Set up 2FA link and Clear button.
  *
  * The sign-in page's one-time password field is in `locators/signin.ts`, with
  * the rest of that form.
@@ -78,4 +78,18 @@ export const twoFactorLocators = {
   clearTwoFactor: (username: string): string => (
     `[data-test="button-clear-two-factor-${kebabTestSegment(username)}"]`
   ),
+
+  /**
+   * The Access card's two-factor line: "Has Two-Factor Authentication" or "No
+   * Two-Factor Authentication". Rendered only while global two-factor is on.
+   */
+  userStatus: (username: string): string => (
+    `[data-test="text-two-factor-status-${kebabTestSegment(username)}"]`
+  ),
+
+  /**
+   * "Set up 2FA" on the Access card, a link to `/two-factor-auth`. Offered only
+   * on your own account, while global two-factor is on and you have no secret.
+   */
+  setUpLink: (username: string): string => `[data-test="link-setup-2fa-${kebabTestSegment(username)}"]`,
 } as const;
