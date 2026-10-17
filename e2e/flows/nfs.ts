@@ -113,14 +113,23 @@ export async function addNfsNetwork(
  * The field is an autocomplete over a middleware query, so the row is not in the
  * DOM until the typed text has been sent and answered. Clicking the row is what
  * commits the value — the text alone does not.
+ *
+ * The list can re-render under the click: the rows for an earlier query are on
+ * screen, and the answer to the typed text replaces them between Playwright
+ * finding the row and clicking where it was. Master run 39008229181 picked
+ * `root` and saved `truenas_container_unpriv_root`, its neighbour. So the pick
+ * counts only once the field shows the name, and is made again until it does.
  */
 export async function pickNfsMappingPrincipal(
   page: Page,
   { field, option, name }: { field: string; option: string; name: string },
 ): Promise<void> {
-  await page.locator(field).fill(name);
-  await expect(page.locator(option)).toBeVisible({ timeout: formSettleTimeoutMs });
-  await page.locator(option).click();
+  await expect(async () => {
+    await page.locator(field).fill(name);
+    await expect(page.locator(option)).toBeVisible();
+    await page.locator(option).click();
+    await expect(page.locator(field)).toHaveValue(name, { timeout: 2_000 });
+  }).toPass({ timeout: formSettleTimeoutMs });
 }
 
 /**
