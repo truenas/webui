@@ -25,6 +25,32 @@ import { kebabTestSegment } from './test-id';
  */
 export const hourlyScheduleLabel = 'Hourly At the start of each hour';
 
+/**
+ * The custom schedule dialog, `ix-scheduler-modal`, which every form built on
+ * `ix-scheduler` opens from the select's "Create Custom schedule" option — cron
+ * jobs, rsync, cloud sync, replication and periodic snapshot tasks alike.
+ *
+ * Its inputs set no `testId` and fall back to their `formControlName`. Its
+ * checkboxes are `[testId]="['scheduler', label]"`, keyed by the translated
+ * short label (`Sun`, `Jan`), and Done is `testId="done"`.
+ */
+export const schedulerLocators = {
+  /**
+   * The action option on the schedule select. Every task form binds the
+   * scheduler as `formControlName="schedule"`, so the select is
+   * `select-schedule-presets` and this its option.
+   */
+  createCustom: '[data-test="option-schedule-presets-create-custom-schedule"]',
+  minutes: '[data-test="input-minutes"]',
+  hours: '[data-test="input-hours"]',
+  /** "Days of Month". */
+  days: '[data-test="input-days"]',
+  /** A Days of Week checkbox, by its label: `Sun` … `Sat`. */
+  weekday: (label: string): string => `[data-test="checkbox-scheduler-${kebabTestSegment(label)}"]`,
+  /** Disabled while any field is invalid. Closes the dialog and hands the crontab to the select. */
+  done: '[data-test="button-done"]',
+} as const;
+
 function rowTag(command: string, user: string): string {
   return kebabTestSegment(`card-cron-${command}-${user}`);
 }
