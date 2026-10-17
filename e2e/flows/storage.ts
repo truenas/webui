@@ -74,8 +74,11 @@ export interface NewPool {
 
 /** What the Automated Disk Selection half of a vdev step is set to. */
 export interface AutomatedVdevs {
-  /** The layout option's label, as the select shows it: `Mirror`, `RAIDZ1`. */
-  layout: string;
+  /**
+   * The layout option's label, as the select shows it: `Mirror`, `RAIDZ1`.
+   * Left alone when absent: the spare and cache steps do not render the select.
+   */
+  layout?: string;
   /** Disks per vdev. */
   width: number;
   /**
@@ -138,7 +141,8 @@ export async function openPoolWizard(page: Page, name: string): Promise<void> {
 
 /**
  * Fills in the open vdev step's Automated Disk Selection: layout, then the first
- * disk size on offer, then width and vdev count.
+ * disk size on offer, then width and vdev count. Layout and vdev count only where
+ * `vdevs` gives them, since some steps do not render them.
  *
  * In that order because each choice regenerates the options of the next — the
  * width options come from the selected disk size, see `selectFirstOption`.
@@ -148,7 +152,9 @@ export async function configureAutomatedVdevs(
   type: VdevCategory,
   vdevs: AutomatedVdevs,
 ): Promise<void> {
-  await selectOption(page, poolWizardLocators.layout, poolWizardLocators.layoutOption(vdevs.layout));
+  if (vdevs.layout !== undefined) {
+    await selectOption(page, poolWizardLocators.layout, poolWizardLocators.layoutOption(vdevs.layout));
+  }
   await selectFirstOption(page, poolWizardLocators.diskSize(type), poolWizardLocators.diskSizeOptions(type));
 
   await selectOption(page, poolWizardLocators.width(type), poolWizardLocators.widthOption(type, vdevs.width));
