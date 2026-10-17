@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -77,7 +79,14 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
   isLoading: boolean;
   acl: Acl | null;
   selectedAceIndex: number;
-  acesWithError: number[];
+
+  /**
+   * A signal because the entry form, which comes after the list in this template, reports the selected
+   * entry's validity from its ngOnChanges while this template is still being checked — after the list's
+   * error markers and the Save binding have already been read. A signal written then has Angular check
+   * this view again in the same pass; a plain field plus markForCheck() waited for the next browser event.
+   */
+  readonly acesWithError = signal<number[]>([]);
 
   private initialAcl: (NfsAclItem | PosixAclItem)[] | null = null;
   private initialOwnerValues: { owner: string; ownerGroup: string } | null = null;
@@ -121,7 +130,7 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
         this.isLoading = state.isLoading;
         this.acl = state.acl;
         this.selectedAceIndex = state.selectedAceIndex;
-        this.acesWithError = state.acesWithError;
+        this.acesWithError.set(state.acesWithError);
 
         if (isFirstLoad) {
           this.onFirstLoad();
