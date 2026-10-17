@@ -602,7 +602,7 @@ describe('SigninStore', () => {
 
     it('returns correct error message for OTP failures', () => {
       const message = spectator.service.getLoginErrorMessage(LoginResult.NoOtp, true);
-      expect(message).toBe('Incorrect or expired OTP. Please try again.');
+      expect(message).toBe('Incorrect or expired OTP. Enter your password again to get a new code prompt.');
     });
 
     it('returns correct error message for Denied result', () => {

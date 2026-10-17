@@ -56,7 +56,6 @@ export class SigninFormComponent implements OnInit {
   protected showSecurityWarning = signal(false);
 
   protected isLastLoginAttemptFailed = signal(false);
-  protected isLastOtpAttemptFailed = signal(false);
   protected lastLoginError = signal<TranslatedString | null>(null);
 
   protected isPasswordVisible = signal(false);
@@ -120,7 +119,6 @@ export class SigninFormComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.isLastLoginAttemptFailed.set(false);
-        this.isLastOtpAttemptFailed.set(false);
       },
     });
   }
@@ -180,12 +178,17 @@ export class SigninFormComponent implements OnInit {
     this.handleError(errorMessage);
   }
 
+  /**
+   * Middleware ends the pending two-factor step on any code it checks, right or
+   * wrong, so a second code sent from the same step is refused with
+   * `OTP_TOKEN: no authentication in progress`. The only way on is the password
+   * again, so a failed code goes back to that step and says why.
+   */
   protected handleFailedOtpLogin(loginResult: LoginResult): void {
     const errorMessage = this.signinStore.getLoginErrorMessage(loginResult, true);
 
-    this.form.patchValue({ otp: '' });
-    this.form.controls.otp.updateValueAndValidity();
-    this.isLastOtpAttemptFailed.set(true);
+    // Before the flags below: clearing the fields emits valueChanges, which resets them.
+    this.cancelOtpLogin();
 
     this.handleError(errorMessage);
   }

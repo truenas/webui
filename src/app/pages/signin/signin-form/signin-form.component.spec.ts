@@ -38,7 +38,7 @@ describe('SigninFormComponent', () => {
             return 'User is lacking permissions to access WebUI.';
           }
           return isOtp
-            ? 'Incorrect or expired OTP. Please try again.'
+            ? 'Incorrect or expired OTP. Enter your password again to get a new code prompt.'
             : 'Wrong username or password. Please try again.';
         }),
       }),
@@ -235,37 +235,74 @@ describe('SigninFormComponent', () => {
       expect(await otpBanner.getText()).toContain('2FA has been configured for this account. Enter the OTP to continue.');
     });
 
-    it('handles failed OTP login', async () => {
-      const signinStore = spectator.inject(SigninStore);
+    describe('after a failed OTP', () => {
+      const wrongCodeMessage = 'Incorrect or expired OTP. Enter your password again to get a new code prompt.';
 
-      // First set up OTP field
-      jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of({
-        loginResult: LoginResult.NoOtp,
-        loginResponse: {
-          response_type: LoginExResponseType.OtpRequired,
-          username: 'testuser',
-        } as LoginExResponse,
-      }));
+      async function reachOtpStep(): Promise<void> {
+        jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of({
+          loginResult: LoginResult.NoOtp,
+          loginResponse: {
+            response_type: LoginExResponseType.OtpRequired,
+            username: 'testuser',
+          } as LoginExResponse,
+        }));
 
-      await fillField('username', 'testuser');
-      await fillField('password', 'testpass');
-      await (await loader.getHarness(TnButtonHarness.with({ label: 'Log In' }))).click();
+        await fillField('username', 'testuser');
+        await fillField('password', 'testpass');
+        await (await loader.getHarness(TnButtonHarness.with({ label: 'Log In' }))).click();
+        spectator.detectChanges();
+        await spectator.fixture.whenStable();
+      }
 
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
+      async function submitOtp(loginResult: LoginResult): Promise<void> {
+        jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of({
+          loginResult,
+          loginResponse: { response_type: LoginExResponseType.AuthErr } as LoginExResponse,
+        }));
 
-      // Now test OTP failure
-      jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of({
-        loginResult: LoginResult.NoAccess,
-        loginResponse: { response_type: LoginExResponseType.Success } as LoginExResponse,
-      }));
+        await fillField('otp', '123456');
+        await (await loader.getHarness(TnButtonHarness.with({ label: 'Proceed' }))).click();
+        spectator.detectChanges();
+        await spectator.fixture.whenStable();
+      }
 
-      await fillField('otp', '123456');
-      await (await loader.getHarness(TnButtonHarness.with({ label: 'Proceed' }))).click();
+      it('returns to the password step and says why, because middleware ended the code step', async () => {
+        await reachOtpStep();
+        // On the code step before the failure, so its absence below is the failure's doing.
+        expect(await loader.getHarnessOrNull(TnInputHarness.with({ name: 'username' }))).toBeNull();
 
-      expect(signinStore.getLoginErrorMessage).toHaveBeenCalledWith(LoginResult.NoAccess, true);
-      expect(spectator.component.form.value.otp).toBe('');
-      expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith('User is lacking permissions to access WebUI.');
+        await submitOtp(LoginResult.NoToken);
+
+        expect(spectator.inject(SigninStore).getLoginErrorMessage).toHaveBeenCalledWith(LoginResult.NoToken, true);
+        expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith(wrongCodeMessage);
+        expect(await loader.getHarnessOrNull(TnInputHarness.with({ name: 'otp' }))).toBeNull();
+        expect(await loader.getHarness(TnButtonHarness.with({ label: 'Log In' }))).toBeTruthy();
+        expect(spectator.query('.error p')).toHaveText(wrongCodeMessage);
+        expect(spectator.component.form.getRawValue()).toEqual({ username: 'testuser', password: '', otp: '' });
+      });
+
+      it('signs in with the password and then the next code', async () => {
+        await reachOtpStep();
+        await submitOtp(LoginResult.NoToken);
+
+        const login = jest.spyOn(spectator.inject(AuthService), 'login');
+        await reachOtpStep();
+        expect(login).toHaveBeenLastCalledWith('testuser', 'testpass');
+
+        await submitOtp(LoginResult.Success);
+        expect(login).toHaveBeenLastCalledWith('testuser', 'testpass', '123456');
+        expect(spectator.inject(SigninStore).handleSuccessfulLogin).toHaveBeenCalled();
+      });
+
+      it('returns to the password step for a refusal other than the code, too', async () => {
+        await reachOtpStep();
+
+        await submitOtp(LoginResult.NoAccess);
+
+        expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith('User is lacking permissions to access WebUI.');
+        expect(await loader.getHarnessOrNull(TnInputHarness.with({ name: 'otp' }))).toBeNull();
+        expect(spectator.component.form.value.otp).toBe('');
+      });
     });
   });
 });

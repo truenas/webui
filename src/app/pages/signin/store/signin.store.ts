@@ -93,7 +93,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     }
 
     return isOtpError
-      ? this.translate.instant('Incorrect or expired OTP. Please try again.')
+      ? this.translate.instant('Incorrect or expired OTP. Enter your password again to get a new code prompt.')
       : this.translate.instant('Wrong username or password. Please try again.');
   }
 

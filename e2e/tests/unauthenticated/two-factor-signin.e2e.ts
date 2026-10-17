@@ -1,18 +1,19 @@
 /**
  * Stories: a user with two-factor gets in with the right code, and middleware
- * records the session as opened on one; a wrong code is refused and leaves the
- * user on the code step with no session; and a user who cancels the code step
- * goes back to the password form with no session.
+ * records the session as opened on one; a wrong code is refused back to the
+ * password step with no session, and the password and the right code from there
+ * sign the user in; and a user who cancels the code step goes back to the
+ * password form with no session.
  *
  * `two-factor.e2e.ts` already signs in with a right code and is refused a wrong
- * one, but it loads the page afresh between the two. This adds what the code
- * step itself shows after a refusal, the session middleware opens, and the
- * step's Cancel, which nothing else drives.
+ * one, but it loads the page afresh between the two. This adds what the form
+ * shows after a refusal and the sign-in from there, the session middleware
+ * opens, and the step's Cancel, which nothing else drives.
  *
  * Under `tests/unauthenticated/` because every claim here is about signing in,
  * which the token bypass would skip (R4.2). Each password and each code is one
  * `auth.login_ex`, and every one spends from the unauthenticated rate limit (20
- * per method per IP per 60s): five across this file.
+ * per method per IP per 60s): seven across this file.
  *
  * The secret is armed over the API: setting it up through the UI is the claim of
  * `two-factor.e2e.ts` and `two-factor-setup.e2e.ts`, not this one. A fresh one per
@@ -34,7 +35,7 @@ import {
 } from '../../fixtures/two-factor';
 import { ensureUserAbsent } from '../../fixtures/users';
 import {
-  attemptSignIn, awaitAdminShell, expectOneTimePasswordRefused, expectSignedInAs, signInTimeoutMs,
+  attemptSignIn, awaitAdminShell, expectSignInRefused, expectSignedInAs, signInTimeoutMs, submitSignIn,
 } from '../../flows/auth';
 import { submitOneTimePassword } from '../../flows/two-factor';
 import { signinLocators } from '../../locators/signin';
@@ -44,7 +45,7 @@ import { expect, test } from '../../support/fixtures';
 import { applianceNow, totpCode, wrongTotpCode } from '../../support/totp';
 
 /** What the sign-in page says for a code middleware refused (`SigninStore.getLoginErrorMessage`). */
-const wrongCodeMessage = 'Incorrect or expired OTP. Please try again.';
+const wrongCodeMessage = 'Incorrect or expired OTP. Enter your password again to get a new code prompt.';
 
 /**
  * One step either side of now, so a code computed just before a 30-second
@@ -117,28 +118,37 @@ test('the password is followed by a code step, and the right code signs the user
 });
 
 /*
- * Stops at the refusal. The form stays on the code step, but a second code sent
- * from there is answered `[EINVAL] OTP_TOKEN: no authentication in progress`
- * whatever it is (E2E run 39039886861, both attempts), so the retry the step
- * offers cannot succeed. That is a defect of its own, proposed on #14502, and
- * its test belongs with its fix rather than here.
+ * Middleware ends the pending code step on any code it checks, so a second code
+ * from the same step used to be answered `[EINVAL] OTP_TOKEN: no authentication
+ * in progress` whatever it was (E2E run 39039886861). The form now goes back to
+ * the password instead, and the right code after it is what this proves works.
  */
-test('a wrong code is refused, and the user stays on the code step with the field cleared', async ({
+test('a wrong code is refused back to the password step, and the password then the right code sign in', async ({
   page, api,
 }) => {
   const { username, password } = twoFactorUser;
   const otpField = page.locator(signinLocators.otp);
 
-  await attemptSignIn(page, username, password);
-  await expect(otpField).toBeVisible({ timeout: signInTimeoutMs });
+  await test.step('a wrong code is refused, and the form asks for the password again', async () => {
+    await attemptSignIn(page, username, password);
+    await expect(otpField).toBeVisible({ timeout: signInTimeoutMs });
 
-  await submitOneTimePassword(page, wrongTotpCode(secret, await applianceNow(api)));
+    await submitOneTimePassword(page, wrongTotpCode(secret, await applianceNow(api)));
 
-  await expectOneTimePasswordRefused(page, wrongCodeMessage);
-  // It held the wrong code a moment ago, so empty is the refusal clearing it.
-  await expect(otpField).toHaveValue('');
-  // Read once the refusal is on screen, so the answer to the code is already in.
-  expect(await twoFactorSessionUsernames(api)).not.toContain(username);
+    await expectSignInRefused(page, wrongCodeMessage);
+    await expect(otpField).toBeHidden();
+    // Read once the refusal is on screen, so the answer to the code is already in.
+    expect(await twoFactorSessionUsernames(api)).not.toContain(username);
+  });
+
+  await test.step('the password and then the right code sign them in', async () => {
+    // From the form the refusal left, not a fresh page: that form is the claim.
+    await submitSignIn(page, username, password);
+    await submitOneTimePassword(page, totpCode(secret, await applianceNow(api)));
+
+    await awaitAdminShell(page, username);
+    await expectSignedInAs(page, username);
+  });
 });
 
 test('cancelling the code step goes back to the password form, with no session', async ({ page }) => {
