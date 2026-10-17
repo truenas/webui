@@ -22,11 +22,17 @@ export const dashboardLocators = {
     add: '[data-test="dashboard-edit-actions"] [data-test="button-add-group"]',
     save: '[data-test="dashboard-edit-actions"] [data-test="button-save"]',
     cancel: '[data-test="dashboard-edit-actions"] [data-test="button-cancel"]',
+    /** Restores the default cards. Rendered only while the layout on screen differs from the default. */
+    reset: '[data-test="dashboard-edit-actions"] [data-test="button-reset"]',
     /**
      * A group's Delete, by its index in the layout. Keyed by position, which `e2e/CLAUDE.md` rules
      * out for readouts, not for controls on a layout the test wrote itself.
      */
     deleteGroup: (index: number): string => `[data-test="button-delete-group-widget-${index}"]`,
+    /** A group's Move down, by index. Visible only at phone width; hidden, not absent, on a desktop. */
+    moveGroupDown: (index: number): string => `[data-test="button-move-down-widget-${index}"]`,
+    /** The handle a group is dragged by, by index. */
+    dragHandle: (index: number): string => `[data-test="button-drag-handle-widget-${index}"]`,
   },
 
   /** The Card Editor, opened by Add in the shared form side panel. */

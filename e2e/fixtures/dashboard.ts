@@ -40,6 +40,25 @@ export interface CapturedDashState {
   value: unknown;
 }
 
+/**
+ * The layout Reset restores on an appliance without an HA license: `getDefaultWidgets(false)` in
+ * `src/app/pages/dashboard/services/get-default-widgets.ts`, which is the HA default without its
+ * `system-info-passive` group. Keep the two in step.
+ */
+export const nonHaDefaultDashState: DashboardGroup[] = [
+  { layout: 'full', slots: [{ type: 'system-info-active' }] },
+  { layout: 'halves', slots: [{ type: 'cpu-usage-bar' }, { type: 'cpu-temperature-bar' }] },
+  {
+    layout: 'quarters-and-half',
+    slots: [{ type: 'cpu-usage-gauge' }, { type: 'cpu-model-widget' }, { type: 'cpu-usage-recent' }],
+  },
+  { layout: 'full', slots: [{ type: 'memory' }] },
+  { layout: 'full', slots: [{ type: 'storage' }] },
+  { layout: 'full', slots: [{ type: 'backup-tasks' }] },
+  { layout: 'halves', slots: [{ type: 'ipv4-address' }, { type: 'interface' }] },
+  { layout: 'full', slots: [{ type: 'help' }] },
+];
+
 /** The signed-in account's `dashState`, or undefined when it has none. */
 export async function readDashState(client: E2eApiClient): Promise<unknown> {
   const me = await firstValueFrom(client.api.call('auth.me').pipe(timeout(readTimeoutMs)));
