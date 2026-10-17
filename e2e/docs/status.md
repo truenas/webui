@@ -330,6 +330,14 @@ NFSv4 — so one test turns NFSv4 on from the card's Config Service and saves a
 Kerberos flavour, which middleware refuses without it, and one holds the
 select absent with NFSv4 off. The service form's Enabled Protocols select got
 an explicit `testId="protocols"` for this; the emitted id is unchanged.
+`tests/nfs-service-settings.e2e.ts` covers the rest of that form, opened from
+the NFS row on System > Services: a manual thread count, the three bind ports
+and the two server-side toggles; the NFSv4 domain and Kerberos, then handing
+the thread count back to middleware (`servers: null`, read back as
+`managed_nfsd`); and a mountd port out of range, refused under the field with
+Save held down. Each save is asserted through `nfs.config`. The mountd field
+got `testId="mountd-port"` so its error text can be read. Bind IP Addresses,
+RDMA and Add SPN are not covered.
 
 Two things here were read off a running appliance rather than the template.
 The path field hands its value to the form when it loses focus, so a path that
@@ -741,8 +749,20 @@ came through unchanged, and the remove story that every other entry survived in
 order. The advanced story checks every permission bit, so a box
 ticked by mistake fails as well as one that did not land. The Who select's
 "Group" and "group@" options both used to emit `option-tag-group`; `group@` is
-now `option-tag-group-at`, and every other option kept its id. Applying an ACL
-recursively, Strip ACL, POSIX ACLs and custom presets are not covered.
+now `option-tag-group-at`, and every other option kept its id. POSIX ACLs and
+custom presets are not covered.
+
+Applying an NFSv4 ACL recursively and Strip ACL are in
+`tests/dataset-acl-nfsv4-recursive.e2e.ts`, on an SMB-preset dataset with a
+child dataset under it. Apply permissions recursively reaches a plain directory
+inside the dataset and leaves the child dataset trivial; with Apply permissions
+to child datasets it reaches the child too. Cancelling the Warning the box
+raises clears it again. Strip ACL leaves the dataset NFSv4 but trivial, after
+which the card shows Unix permissions and Edit opens the Unix editor; with its
+child datasets box ticked it strips the child too. Each path is read back
+through `filesystem.getacl`. The strip dialog's action row got
+`actions-strip-acl`, because its own button emits `button-strip-acl` like the
+editor's behind it.
 
 Encrypted datasets came next, in `tests/datasets-encryption.e2e.ts`: creating a
 dataset encrypted with a passphrase from the form's Encryption Options, locking
@@ -1303,7 +1323,8 @@ a number. See `05-ci.md`.
 ## Next steps
 
 1. **Widen coverage.** The rest of the dataset ACL editor, beyond built-in
-   NFSv4 presets and NFSv4 entries, is the uncovered story worth taking next.
+   NFSv4 presets, NFSv4 entries, recursion and Strip ACL, is the uncovered story
+   worth taking next.
    Manual snapshots are covered — take, recursive, delete, hold, clone, roll
    back and its safety check — but not batch delete, the list's own Add
    button, naming schemas, the extra columns or VMware sync. The confirmation-bypass class is now covered
@@ -1318,8 +1339,8 @@ a number. See `05-ci.md`.
    or anything a real SMB client would have to prove. NFS shares are
    covered the same way — publish, read-only, networks, hosts, edit, enable,
    unshare, the service switch and the start offer, maproot, mapall and the
-   Security select — but not the service's own settings beyond turning NFSv4
-   on, the sessions page with a client on it, or a real mount. S3 is covered as a feature — create, configure,
+   Security select, and the service's own settings except Bind IP Addresses,
+   RDMA and Add SPN — but not the sessions page with a client on it, or a real mount. S3 is covered as a feature — create, configure,
    edit, toggle, rotate, delete — except auditing, which is licence-gated and
    needs an Enterprise appliance. List-driven journeys (deleting a pool, dataset
    or share from a list) are no longer blocked: `tn-table` still writes nothing

@@ -14,10 +14,10 @@
  */
 import { ensureGroupAbsent, ensureGroupPresent } from '../fixtures/groups';
 import {
-  readAcl, readAclTemplate, readOwnership, type AclRead, type AclTemplate,
+  nfs4Entries, readAcl, readAclTemplate, readOwnership, type AclTemplate,
 } from '../fixtures/permissions';
 import {
-  datasetMountPath, ensureAclDatasetPresent, ensureDatasetAbsent, ensureSmbDatasetPresent, type Nfs4Ace,
+  datasetMountPath, ensureAclDatasetPresent, ensureDatasetAbsent, ensureSmbDatasetPresent,
 } from '../fixtures/storage';
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';
 import {
@@ -73,14 +73,6 @@ function shapesOf(entries: AceShape[]): AceShape[] {
   return entries
     .map(shapeOf)
     .sort((left, right) => JSON.stringify(left).localeCompare(JSON.stringify(right)));
-}
-
-/** The entries of an NFSv4 ACL. Throws on any other kind, which would mean the wrong dataset. */
-function nfs4Entries(acl: AclRead): Nfs4Ace[] {
-  if (acl.acltype !== 'NFS4') {
-    throw new Error(`Expected an NFSv4 ACL, found ${acl.acltype}.`);
-  }
-  return acl.acl;
 }
 
 /** A template's entries. The response types them as a union across ACL kinds. */

@@ -103,6 +103,80 @@ export async function setNfsProtocols(client: E2eApiClient, protocols: NfsProtoc
   );
 }
 
+type NfsConfig = CallResponse<E2eApiDirectory, 'nfs.config'>;
+
+/**
+ * The part of `nfs.config` the service settings spec edits.
+ *
+ * The thread count and the three ports are spelled out rather than picked: `null`
+ * is what middleware stores for "calculate dynamically" and "no fixed port", and
+ * the baseline has to be able to write it back.
+ */
+export type NfsSettings = Pick<
+  NfsConfig,
+  'protocols' | 'v4_domain' | 'v4_krb' | 'allow_nonroot' | 'userd_manage_gids'
+> & {
+  servers: number | null;
+  mountd_port: number | null;
+  rpcstatd_port: number | null;
+  rpclockd_port: number | null;
+};
+
+/**
+ * The stock NFS configuration: threads calculated dynamically, NFSv3 and NFSv4,
+ * no domain, no Kerberos, no fixed ports, and both server-side toggles off.
+ */
+export const nfsBaseline: NfsSettings = {
+  servers: null,
+  protocols: ['NFSV3', 'NFSV4'],
+  v4_domain: '',
+  v4_krb: false,
+  mountd_port: null,
+  rpcstatd_port: null,
+  rpclockd_port: null,
+  allow_nonroot: false,
+  userd_manage_gids: false,
+};
+
+/**
+ * The settings as the appliance holds them, and `managed_nfsd`, which is how
+ * middleware reports that it calculates the thread count itself.
+ *
+ * The protocols are sorted, as the baseline spells them, so a comparison does
+ * not depend on the order middleware returns them in.
+ */
+export async function readNfsSettings(
+  client: E2eApiClient,
+): Promise<NfsSettings & Pick<NfsConfig, 'managed_nfsd'>> {
+  const config = await firstValueFrom(client.api.call('nfs.config').pipe(timeout(readTimeoutMs)));
+
+  return {
+    servers: config.servers,
+    managed_nfsd: config.managed_nfsd,
+    protocols: [...config.protocols].sort((a, b) => a.localeCompare(b)),
+    v4_domain: config.v4_domain,
+    v4_krb: config.v4_krb,
+    mountd_port: config.mountd_port,
+    rpcstatd_port: config.rpcstatd_port,
+    rpclockd_port: config.rpclockd_port,
+    allow_nonroot: config.allow_nonroot,
+    userd_manage_gids: config.userd_manage_gids,
+  };
+}
+
+/**
+ * Writes the settings in one call. For preconditions and teardown only; a change
+ * under test goes through the service form.
+ *
+ * One call, with the protocols in it: middleware refuses an NFSv4 domain while
+ * NFSv4 is off, so writing the domain before the protocols could be refused.
+ */
+export async function setNfsSettings(client: E2eApiClient, settings: NfsSettings): Promise<void> {
+  await firstValueFrom(
+    client.api.call('nfs.update', [settings]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
 /**
  * Returns the NFS service to stopped and not-auto-starting.
  *
