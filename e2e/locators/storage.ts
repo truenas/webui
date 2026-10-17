@@ -132,6 +132,11 @@ export const poolWizardLocators = {
    * `[type(), 'manual-disk-selection-message']`.
    */
   manualSelectionMessage: (type: VdevCategory) => `[data-test="text-${type}-manual-disk-selection-message"]`,
+  /**
+   * A disk count in the Unassigned Disks card, one per type and size (`inventory.component.html`).
+   * The card says "Loading disks..." until the wizard has its disks, so a count means it has them.
+   */
+  inventoryCount: '[data-test^="text-inventory-"][data-test$="-count"]',
 
   /** Not rendered on the Log, Spare and Cache steps, which build exactly one vdev. */
   vdevCount: (type: VdevCategory) => `[data-test="select-vdevs-number-${type}"]`,
