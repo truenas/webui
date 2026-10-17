@@ -123,7 +123,6 @@ jobs:
             TN_HA_VIP_UI_BASE_URL
             TN_HA_LICENSE_FILE
           volumes: ${{ steps.license.outputs.dir }}:/license:ro
-          exclude: ha-license.e2e.ts-*/**
 
       # What both controllers and the shared disks say, when anything failed:
       # consoles, fenced's log and the disks' persistent reservations from

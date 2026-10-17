@@ -48,12 +48,6 @@ inputs:
   artifact-suffix:
     description: Appended to the artifacts' names, to keep shards and jobs apart.
     default: ''
-  exclude:
-    description: >-
-      Paths under test-results/ to leave out of the published traces, one
-      per line: the results of a test that handles something the public
-      must not download.
-    default: ''
 
 runs:
   using: composite
@@ -127,7 +121,8 @@ runs:
     # expires, and the appliance they belonged to is deleted with its runner
     # when the job ends. Do not upload these from a pipeline that reuses an
     # appliance or a credential. What would stay valuable after the job — a
-    # license — is kept out by `exclude`.
+    # license — is kept out by the suite writing it outside test-results/
+    # (the `ha-license` project's `outputDir` in playwright.config.ts).
     #
     # Whenever the suite ran, not only when it failed: Playwright keeps a
     # trace on the first retry, and a test that fails once and passes on the
@@ -135,16 +130,11 @@ runs:
     - if: always() && steps.suite.outcome != 'skipped'
       id: traces
       shell: bash
-      env:
-        EXCLUDE: ${{ inputs.exclude }}
       run: |
         {
           echo 'paths<<EOF'
           echo 'test-results/**'
           echo '!test-results/junit.xml'
-          while read -r path; do
-            [ -n "$path" ] && echo "!test-results/$path"
-          done <<< "$EXCLUDE"
           echo 'EOF'
         } >> "$GITHUB_OUTPUT"
 

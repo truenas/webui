@@ -182,7 +182,10 @@ const singleApplianceProjects = [
  *
  * `ha-license` records nothing — no trace, screenshot or video, on a retry
  * either. It pastes the HA license into a textarea, which every one of those
- * would capture, and this repository's CI publishes them.
+ * would capture, and this repository's CI publishes them. What Playwright
+ * writes regardless — a failure's `error-context.md` page snapshot, which
+ * holds the textarea's value — goes to its own `outputDir`, outside the
+ * `test-results/` CI publishes, so no file or directory name decides it.
  *
  * `ha-failover` reaches the pair through its VIP (`haThroughVip`), as a user
  * does once there is one: the controller it signs in to is the one the
@@ -200,6 +203,7 @@ const haProjects = target.ha
         retries: 0,
         testDir: './e2e/tests-ha',
         testMatch: /ha-license\.e2e\.ts/,
+        outputDir: 'test-results-unpublished/ha-license',
         dependencies: ['setup'],
         use: {
           ...devices['Desktop Chrome'], trace: 'off' as const, screenshot: 'off' as const, video: 'off' as const,
