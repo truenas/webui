@@ -39,6 +39,13 @@ export async function findAlertService(client: E2eApiClient, name: string): Prom
   return service;
 }
 
+/** How many alert services the appliance holds. */
+export async function countAlertServices(client: E2eApiClient): Promise<number> {
+  const services = await firstValueFrom(client.api.query('alertservice.query', []).pipe(timeout(readTimeoutMs)));
+
+  return services.length;
+}
+
 /** Removes every alert service with this name, if any. */
 export async function ensureAlertServiceAbsent(client: E2eApiClient, name: string): Promise<void> {
   for (const service of await findAlertServices(client, name)) {

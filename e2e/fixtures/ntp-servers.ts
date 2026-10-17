@@ -45,6 +45,15 @@ export async function findNtpServer(client: E2eApiClient, address: string): Prom
   return server;
 }
 
+/** How many NTP servers the appliance holds, its own included. */
+export async function countNtpServers(client: E2eApiClient): Promise<number> {
+  const servers = await firstValueFrom(
+    client.api.query('system.ntpserver.query', []).pipe(timeout(readTimeoutMs)),
+  );
+
+  return servers.length;
+}
+
 /** Removes every server at an address, if any. */
 export async function ensureNtpServerAbsent(client: E2eApiClient, address: string): Promise<void> {
   for (const server of await findNtpServers(client, address)) {
