@@ -50,11 +50,25 @@ export async function addVlan(page: Page, vlan: VlanSettings): Promise<void> {
   await selectOption(page, form.vlanParent, form.vlanParentOption(vlan.parent));
   await page.locator(form.vlanTag).fill(String(vlan.tag));
 
-  // Staging even an address-less VLAN is followed by "Set Gateway and DNS"
-  // while DHCP provides a gateway. Skip it: Register would write DHCP's
-  // gateway and DNS into the network configuration as static values.
+  // "Set Gateway and DNS" may follow; the spec answers it with
+  // `answerGatewayDialog`, since only the API can say whether it will.
   await saveInterface(page, false);
+}
+
+/**
+ * Answers "Set Gateway and DNS" after an interface save. `expected` is
+ * `hasNetworkConfigToBeRemoved`, read after the save: the form opens the dialog
+ * only when that names something. When it does, Skip: Register would write
+ * DHCP's gateway and DNS into the network configuration as static values, and
+ * every later run would then see no dialog at all.
+ */
+export async function answerGatewayDialog(page: Page, expected: boolean): Promise<void> {
   const gatewayDialog = defaultGatewayDialogLocators;
+  if (!expected) {
+    await expect(page.locator(gatewayDialog.title)).toHaveCount(0);
+    return;
+  }
+
   await expect(page.locator(gatewayDialog.title)).toBeVisible();
   await page.locator(gatewayDialog.skip).click();
   await expect(page.locator(gatewayDialog.title)).toBeHidden();

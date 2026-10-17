@@ -102,6 +102,20 @@ export async function hasPendingInterfaceChanges(client: E2eApiClient): Promise<
 }
 
 /**
+ * Whether the interface form follows its save with "Set Gateway and DNS": it
+ * does when this names anything. Read it after the save, so the answer is the
+ * one the form got for the same staged state. An appliance with a static
+ * gateway and DNS, or one where an earlier run pressed Register, answers empty.
+ */
+export async function hasNetworkConfigToBeRemoved(client: E2eApiClient): Promise<boolean> {
+  const response = await firstValueFrom(
+    client.api.call('interface.network_config_to_be_removed').pipe(timeout(readTimeoutMs)),
+  );
+
+  return Object.keys(response as unknown as Record<string, unknown>).length > 0;
+}
+
+/**
  * Leaves no staged interface edit behind, for `beforeEach` and `afterEach`.
  *
  * Rollback first: whatever is staged is a spec's leftover, and throwing it away

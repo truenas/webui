@@ -13,12 +13,12 @@
  * rather than written down.
  */
 import {
-  ensureNoPendingInterfaceChanges, findInterface, findManagementInterface, hasPendingInterfaceChanges,
-  listInterfaces, readIpv4Addresses, stageVlan,
+  ensureNoPendingInterfaceChanges, findInterface, findManagementInterface, hasNetworkConfigToBeRemoved,
+  hasPendingInterfaceChanges, listInterfaces, readIpv4Addresses, stageVlan,
 } from '../fixtures/interfaces';
 import { goToNetwork } from '../flows/navigation';
 import {
-  addVlan, openAddInterfaceForm, openInterfaceActions, revertNetworkChanges,
+  addVlan, answerGatewayDialog, openAddInterfaceForm, openInterfaceActions, revertNetworkChanges,
 } from '../flows/network-interfaces';
 import { interfacesCardLocators, pendingChangesLocators } from '../locators/network-interfaces';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
@@ -84,6 +84,7 @@ test('adding a VLAN stages it, and the NIC keeps its address', async ({ page, ap
     parent: nic.name,
     tag: vlanTag,
   });
+  await answerGatewayDialog(page, await hasNetworkConfigToBeRemoved(api));
 
   await expect(page.locator(pending.testChanges)).toBeVisible();
   await expect(page.locator(pending.revertChanges)).toBeVisible();
