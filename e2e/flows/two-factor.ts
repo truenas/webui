@@ -1,7 +1,8 @@
 /**
  * Two-factor authentication, driven through the UI: switching it on for the
- * appliance, setting it up for an account, answering the sign-in page's code
- * prompt, and clearing it from a user's details.
+ * appliance and changing its settings, skipping the setup dialog, setting it up
+ * for an account, answering the sign-in page's code prompt, and clearing it from
+ * a user's details.
  */
 import { expect, type Page } from '@playwright/test';
 import { closeFirstTimeWarning } from './advanced-settings';
@@ -15,12 +16,28 @@ import { totpCode } from '../support/totp';
 const saveTimeoutMs = 60_000;
 
 /**
+ * Opens the Global Two Factor Authentication form from its card on System >
+ * Advanced Settings, once the card reads `expectedState`.
+ *
+ * Waits for the card first because the form is filled from what the card last
+ * loaded, and a box ticked before then could be overwritten by it. Closes the
+ * first-time warning, so call it only for the first form the page opens.
+ */
+export async function openGlobalTwoFactorForm(page: Page, expectedState: 'Enabled' | 'Disabled'): Promise<void> {
+  const { globalCard } = twoFactorLocators;
+
+  await goToAdvancedSettings(page);
+  await expect(page.locator(globalCard.state)).toHaveText(expectedState);
+
+  await page.locator(globalCard.configure).click();
+  await closeFirstTimeWarning(page);
+}
+
+/**
  * Turns global two-factor on from its card on System > Advanced Settings.
  *
- * Waits for the card to read `Disabled` before opening the form, because the
- * form is filled from what the card last loaded and a box ticked before then
- * could be overwritten by it. The panel closing is the app's signal that the
- * save landed. On success the app also takes the admin to `/two-factor-auth`,
+ * The panel closing is the app's signal that the save landed. On success the
+ * app also takes the admin to `/two-factor-auth`,
  * and this waits until that page has rendered: the route signed out from is the
  * one the next sign-in returns to, and {@link setUpTwoFactorOnPage} depends on it.
  * Signing out while that navigation is still in flight would leave the previous
@@ -31,13 +48,9 @@ const saveTimeoutMs = 60_000;
  * alike.
  */
 export async function enableGlobalTwoFactor(page: Page, toleranceWindow: number): Promise<void> {
-  const { globalCard, globalForm } = twoFactorLocators;
+  const { globalForm } = twoFactorLocators;
 
-  await goToAdvancedSettings(page);
-  await expect(page.locator(globalCard.state)).toHaveText('Disabled');
-
-  await page.locator(globalCard.configure).click();
-  await closeFirstTimeWarning(page);
+  await openGlobalTwoFactorForm(page, 'Disabled');
 
   await page.locator(globalForm.enabled).setChecked(true);
   await page.locator(globalForm.window).fill(String(toleranceWindow));
@@ -46,6 +59,41 @@ export async function enableGlobalTwoFactor(page: Page, toleranceWindow: number)
 
   await expect(page).toHaveURL(/\/two-factor-auth\/?$/, { timeout: saveTimeoutMs });
   await expect(page.locator(twoFactorLocators.setup.configureSecret)).toBeVisible({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Accepts the "Warning!" the form raises when a save keeps global two-factor on,
+ * which says user secrets may be reset. Raised without `hideCheckbox`, so its
+ * confirm button stays disabled until the box is ticked.
+ */
+export async function confirmGlobalTwoFactorChange(page: Page): Promise<void> {
+  const confirm = page.locator(confirmDialogLocators.confirm);
+
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+  await expect(confirm).toBeDisabled();
+  await page.locator(confirmDialogLocators.checkbox).click();
+  await expect(confirm).toBeEnabled();
+  await confirm.click();
+}
+
+/**
+ * Skips the full-screen setup dialog, and confirms the skip.
+ *
+ * The admin layout's guard raises it on the first route of a session while
+ * two-factor is on globally and the account has no secret, and holds that route
+ * until it closes. Waited for rather than probed: a probe made before it renders
+ * finds nothing and leaves it over the next click. Skipping writes nothing, so
+ * the account still has no secret afterwards.
+ */
+export async function skipTwoFactorSetupPrompt(page: Page): Promise<void> {
+  const { setupDialog } = twoFactorLocators;
+
+  await expect(page.locator(setupDialog.title)).toBeVisible({ timeout: saveTimeoutMs });
+  await page.locator(setupDialog.skip).click();
+
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+  await page.locator(confirmDialogLocators.confirm).click();
+  await expect(page.locator(setupDialog.title)).toBeHidden({ timeout: saveTimeoutMs });
 }
 
 /**

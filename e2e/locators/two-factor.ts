@@ -1,6 +1,7 @@
 /**
  * Two-factor authentication: the global card on System > Advanced Settings and
- * its form, the setup card, and the Access card's Clear button.
+ * its form, the setup card, the first-login setup dialog, and the Access card's
+ * Clear button.
  *
  * The sign-in page's one-time password field is in `locators/signin.ts`, with
  * the rest of that form.
@@ -11,6 +12,10 @@ export const twoFactorLocators = {
   globalCard: {
     /** Global two-factor: `Enabled` or `Disabled`. */
     state: '[data-test="text-global-2fa"]',
+    /** Tolerance Window: the number of 30-second steps, as a bare number. */
+    window: '[data-test="text-global-2fa-tolerance-window"]',
+    /** Two Factor Authentication for SSH: `Enabled` or `Disabled`. */
+    ssh: '[data-test="text-global-2fa-ssh"]',
     /** `<tn-button [testId]="['two-factor-auth', 'configure']">` in the card footer. */
     configure: '[data-test="button-two-factor-auth-configure"]',
   },
@@ -23,12 +28,26 @@ export const twoFactorLocators = {
     enabled: '[data-test="checkbox-enabled"]',
     /** How many 30-second steps either side of now a code is still accepted for. */
     window: '[data-test="input-window"]',
+    ssh: '[data-test="checkbox-ssh"]',
     save: '[data-test="button-save"]',
   },
 
   /**
+   * The full-screen "Setup Two-Factor Authentication" dialog the admin layout's
+   * guard raises on the first route of a session while global two-factor is on
+   * and the account has no secret. It cannot be closed by Escape; Skip Setup,
+   * confirmed, is the way past it that leaves the account without a secret.
+   */
+  setupDialog: {
+    /** `<tn-dialog-shell testId="two-factor-setup">`. */
+    title: '[data-test="dialog-title-two-factor-setup"]',
+    skip: '[data-test="button-skip-2fa-setup"]',
+  },
+
+  /**
    * The `ix-two-factor` card on the `/two-factor-auth` page. The first-login
-   * dialog wraps the same component, but its own title and Finish are not here.
+   * dialog wraps the same component; its own title and Skip Setup are under
+   * `setupDialog`.
    */
   setup: {
     /**
