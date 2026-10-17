@@ -73,11 +73,15 @@ export async function chooseFirstImage(page: Page, os: string): Promise<void> {
  * Opens a container's details from the list, starting from the sidebar. The
  * Name cell is clicked rather than the row, whose first cell is a selection
  * checkbox.
+ *
+ * The page opens on the first container's details before the click lands, so
+ * this waits for the one readout that names the container: its dataset,
+ * `<pool>/.truenas_containers/containers/<name>`.
  */
 export async function openContainerDetails(page: Page, name: string): Promise<void> {
   await goToContainers(page);
   await page.locator(containersLocators.list.name(name)).click();
-  await expect(page.locator(containersLocators.details.description)).toBeVisible();
+  await expect(page.locator(containersLocators.details.dataset)).toContainText(`/containers/${name}`);
 }
 
 /** Dismisses the open side panel, for a form left unedited, which closes without asking. */
