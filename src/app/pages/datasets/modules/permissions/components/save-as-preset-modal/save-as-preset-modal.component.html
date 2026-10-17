@@ -6,8 +6,17 @@
     <div class="exist-content">
       <h4 class="label">{{ 'Existing presets' | translate }}:</h4>
       <div class="presets">
+        <!--
+          Every custom preset's remove icon emits `button-remove-preset`. This id tells the rows apart
+          without renaming it.
+        -->
         @for (preset of presets; track preset.id) {
-          <div class="preset" [ngClass]="{ 'preset-disabled': !isCurrentAclType(preset.acltype) }">
+          <div
+            class="preset"
+            tnTestIdType="row"
+            [ngClass]="{ 'preset-disabled': !isCurrentAclType(preset.acltype) }"
+            [tnTestId]="['preset', preset.name]"
+          >
             <div class="preset-name" tnTestIdType="text" [tnTestId]="['preset', preset.name, 'name']">{{ preset.name }}</div>
             <div class="preset-type" tnTestIdType="text" [tnTestId]="['preset', preset.name, 'type']">{{ preset.acltype }}</div>
             @if (!preset.builtin) {
@@ -34,7 +43,12 @@
   </div>
 </form>
 
-<ix-form-actions tnDialogAction class="form-actions">
+<!--
+  The Cancel and Save below emit `button-cancel` and `button-save`, and the ACL editor still on the
+  page behind this dialog has its own `button-cancel`. This id scopes them to the dialog without
+  renaming any of them.
+-->
+<ix-form-actions tnDialogAction class="form-actions" tnTestIdType="actions" [tnTestId]="'save-as-preset'">
   <tn-button variant="outline" testId="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>
   <tn-button color="primary" testId="save" [label]="'Save' | translate" [disabled]="form.invalid || isFormLoading()" (onClick)="onSubmit()"></tn-button>
 </ix-form-actions>

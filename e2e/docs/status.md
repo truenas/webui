@@ -740,6 +740,18 @@ not break the spec. Only what tells one preset from another is asserted by hand.
 A third test covers Apply Owner and Apply Group in the editor's header: only the
 ticked half reaches `filesystem.stat`.
 
+Custom NFSv4 presets are in `tests/dataset-acl-custom-presets.e2e.ts`. Save As
+Preset stores the editor's unsaved entries as a template, read back through
+`filesystem.acltemplate.query`, and leaves the dataset's own ACL as it was. Use
+Preset applies a custom preset to another NFSv4 dataset, compared against the
+template the same way the built-in ones are. The remove icon in the Save As
+Preset dialog deletes it, while the built-in presets have no such icon. Templates
+are global to the appliance, so the spec deletes its own over the API before and
+after every test. Every remove icon emits `button-remove-preset`, so each preset
+row now carries `row-preset-<name>`. The dialog's action row got
+`actions-save-as-preset`, because its Cancel shares `button-cancel` with the
+editor's behind it. POSIX custom presets are not covered.
+
 NFSv4 entries themselves are in `tests/dataset-acl-nfsv4-entries.e2e.ts`: a
 group entry of type Deny, a user entry with advanced permissions and advanced
 flags, editing `group@` in place, and removing the `builtin_users` entry. Each
@@ -749,8 +761,8 @@ came through unchanged, and the remove story that every other entry survived in
 order. The advanced story checks every permission bit, so a box
 ticked by mistake fails as well as one that did not land. The Who select's
 "Group" and "group@" options both used to emit `option-tag-group`; `group@` is
-now `option-tag-group-at`, and every other option kept its id. Custom presets
-are not covered. POSIX ACLs are in `tests/dataset-acl-posix.e2e.ts`, below.
+now `option-tag-group-at`, and every other option kept its id. POSIX ACLs are
+in `tests/dataset-acl-posix.e2e.ts`, below.
 
 Applying an NFSv4 ACL recursively and Strip ACL are in
 `tests/dataset-acl-nfsv4-recursive.e2e.ts`, on an SMB-preset dataset with a
@@ -895,6 +907,27 @@ Delete are locked, and so is Add on the Targets page its title opens. Each share
 `comment` and `enabled`, the target's existence, and the three services' states
 are read back through the API. The Share ACL and filesystem ACL editors, the
 standalone list pages and the NVMe-oF, S3 and WebShare cards are not covered.
+
+The other side, the sharing admin using those cards, is in
+`tests/roles-share-admin-shares.e2e.ts`. One test adds an SMB share through the
+form, declining the ACL and start-service prompts, and deletes a seeded one from
+its row menu. The other edits a seeded NFS share's description, switches it off
+from the card, and deletes an iSCSI target with its extent. SMB Add and the NFS
+row's Enabled switch are checked to be outside the role-missing wrapper, and
+each change is read back through the API, the NFS edit by the share's `id`. The
+iSCSI wizard, the ACL editors and the services themselves are not covered.
+
+Users, Groups and Backup Credentials for the read-only admin are in
+`tests/roles-read-only-credentials.e2e.ts`, one test with a step per page. On
+Users, Add and Delete on another user are locked, and the edit form opens but
+its Save is locked with the full name changed; the panel is closed without
+saving. On the admin's own account Delete is not rendered at all, beside its
+Edit. On Groups, Add and an empty group's Delete are locked. On Backup
+Credentials, Add and Delete are locked on the cloud credentials, SSH connections
+and SSH keypairs cards, the keypair's Delete being a disabled menu item, and
+the SSH connection's edit form opens with Save locked. Each seeded record is
+read back through the API. Privileges, API keys, certificates, the group members
+page, Directory Services and middleware's redaction of secrets are not covered.
 
 A pool's devices came next, in `tests/pool-devices.e2e.ts`: taking a disk offline
 and bringing it back online, and adding a spare, both from the pool's VDEVs page.
@@ -1356,9 +1389,9 @@ a number. See `05-ci.md`.
 
 ## Next steps
 
-1. **Widen coverage.** The rest of the dataset ACL editor, beyond built-in
-   NFSv4 presets, NFSv4 entries, recursion and Strip ACL, is the uncovered story
-   worth taking next.
+1. **Widen coverage.** The rest of the dataset ACL editor, beyond built-in and
+   custom NFSv4 presets, NFSv4 entries, recursion and Strip ACL, is the
+   uncovered story worth taking next.
    Manual snapshots are covered — take, recursive, delete, hold, clone, roll
    back and its safety check — but not batch delete, the list's own Add
    button, naming schemas, the extra columns or VMware sync. The confirmation-bypass class is now covered

@@ -31,6 +31,18 @@ export async function expectLockedByRole(page: Page, selector: string): Promise<
 }
 
 /**
+ * Asserts a control is usable by an account that holds its role: enabled, and
+ * not inside the role-missing wrapper.
+ *
+ * The counterpart of {@link expectLockedByRole}. Enabled is asserted first, so
+ * the wrapper count cannot pass on a control that has not rendered yet.
+ */
+export async function expectUnlockedByRole(page: Page, selector: string): Promise<void> {
+  await expect(page.locator(selector)).toBeEnabled();
+  await expect(page.locator(roleLocators.missing).filter({ has: page.locator(selector) })).toHaveCount(0);
+}
+
+/**
  * Asserts a control is not rendered at all, beside an anchor that is.
  *
  * The anchor is what keeps this from passing on a page that has not loaded.

@@ -100,6 +100,8 @@ export const permissionsLocators = {
     addItem: '[data-test="button-add-acl-item"]',
     /** "Use Preset". Opens {@link permissionsLocators.presetDialog} without its radios. */
     usePreset: '[data-test="button-use-preset"]',
+    /** "Save As Preset". Opens {@link permissionsLocators.saveAsPresetDialog}. */
+    saveAsPreset: '[data-test="button-save-as-preset"]',
 
     /**
      * The header's Owner and Owner Group. The same comboboxes, on the same
@@ -194,6 +196,31 @@ export const permissionsLocators = {
     traverse: '[data-test="checkbox-traverse"]',
     /** "Strip ACL". Offered only while the ACL is not trivial. Opens {@link permissionsLocators.stripDialog}. */
     stripAcl: '[data-test="button-strip-acl"]',
+  },
+
+  /**
+   * The Save As Preset dialog (`save-as-preset-modal.component.html`).
+   *
+   * It lists the presets that exist, and saves the editor's current entries as a new one. Its Cancel
+   * and Save emit `button-cancel` and `button-save`, and the editor behind it has its own
+   * `button-cancel`, so both are reached through the dialog's action row.
+   */
+  saveAsPresetDialog: {
+    title: '[data-test="dialog-title-save-as-preset"]',
+    name: '[data-test="input-preset-name"]',
+    /** A preset's name in the Existing presets list. */
+    presetName: (name: string): string => `[data-test="text-preset-${kebabTestSegment(name)}-name"]`,
+    /**
+     * A preset's remove icon. Every one emits `button-remove-preset`, so it is reached through its row,
+     * `[tnTestId]="['preset', preset.name]"`. Only a custom preset has one. Clicking it deletes the
+     * preset at once, with no confirm.
+     */
+    removePreset: (name: string): string => (
+      `[data-test="row-preset-${kebabTestSegment(name)}"] [data-test="button-remove-preset"]`
+    ),
+    cancel: '[data-test="actions-save-as-preset"] [data-test="button-cancel"]',
+    /** Runs `filesystem.acltemplate.create` and closes the dialog. It does not save the ACL. */
+    save: '[data-test="actions-save-as-preset"] [data-test="button-save"]',
   },
 
   /**
