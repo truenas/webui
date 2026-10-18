@@ -81,10 +81,15 @@ export async function findContainer(client: E2eApiClient, name: string): Promise
 }
 
 /**
- * The image the image browser lists first for `os` once it is searched for:
- * the first registry product whose name contains it, at its first version. The
- * browser lists products and versions in the order `container.image.query_registry`
- * returns them, so this is the row a test picks by taking the first match.
+ * An image to create a container from: the first registry product whose name
+ * contains `os`, at its NEWEST build.
+ *
+ * Not its first. `container.image.query_registry` lists versions in the order of
+ * the registry index, which is oldest first, and the rootfs is downloaded from
+ * images.linuxcontainers.org, which keeps only a few daily builds and deletes the
+ * oldest. The index lags behind those deletions, so its first version is the one
+ * whose download 404s next — on 2026-10-18 it was, failing every containers test.
+ * Versions are `YYYYMMDD_HH:MM`, so the string order is the date order.
  *
  * Reading the registry reaches `images.sys.truenas.net`, hence the slow budget.
  */
@@ -96,7 +101,8 @@ export async function firstRegistryImage(
     client.api.call('container.image.query_registry').pipe(timeout(slowCallTimeoutMs)),
   );
   const image = images.find((candidate) => candidate.name.toLowerCase().includes(os.toLowerCase()));
-  const version = image?.versions[0]?.version;
+  const newestFirst = [...(image?.versions ?? [])].sort((a, b) => b.version.localeCompare(a.version));
+  const version = newestFirst[0]?.version;
   if (!image || !version) {
     throw new Error(`The image registry lists no ${os} image, so there is nothing to create a container from`);
   }

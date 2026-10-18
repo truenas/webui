@@ -109,13 +109,16 @@ export const containersLocators = {
    * The image browser, `select-image-dialog.component.html`. Images are listed
    * one row per version, and every version of an image shares its Select id,
    * `['select-image', label]`. The label is the registry's product key, e.g.
-   * `debian:bookworm:amd64:default`, so a prefix picks an image by its OS
-   * without naming a release the registry will one day drop.
+   * `debian:bookworm:amd64:default`, so a version is picked with the Release
+   * filter rather than by the Select id.
    */
   imageBrowser: {
     /** "Search Images", matched against the label. */
     search: '[data-test="input-search-query"]',
-    selectImageOfOs: (os: string): string => `[data-test^="button-select-image-${kebabTestSegment(os)}-"]`,
+    /** The Release filter. Its options are the registry's versions, e.g. `20261016_05:24`. */
+    release: '[data-test="select-release"]',
+    releaseOption: (version: string): string => `[data-test="option-release-${kebabTestSegment(version)}"]`,
+    selectImage: (label: string): string => `[data-test="button-select-image-${kebabTestSegment(label)}"]`,
   },
 
   list: {
