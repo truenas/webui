@@ -1,17 +1,20 @@
 /**
- * Dataset encryption, driven through the UI: the form's Encryption Options, and locking and
+ * Dataset encryption, driven through the UI: the form's Encryption Options, and editing, locking and
  * unlocking from the Encryption card.
  */
 import { expect, type Page } from '@playwright/test';
 import { goToDatasets } from './navigation';
 import { selectOption } from './storage';
 import {
-  encryptionCardLocators, encryptionFormLocators, jobDialogLocators, lockDialogLocators, unlockLocators,
-  unlockSummaryLocators,
+  encryptionCardLocators, encryptionFormLocators, encryptionOptionsLocators, jobDialogLocators, lockDialogLocators,
+  unlockLocators, unlockSummaryLocators,
 } from '../locators/encryption';
 import { datasetDetailsLocators, datasetLocators } from '../locators/storage';
 
-/** Locking and unlocking are jobs behind a progress dialog. Each also remounts or unmounts. */
+/**
+ * Locking, unlocking and changing a key are jobs behind a progress dialog. The first two also
+ * remount or unmount.
+ */
 const jobTimeoutMs = 90_000;
 
 /**
@@ -43,6 +46,27 @@ export async function encryptWithPassphrase(page: Page, passphrase: string): Pro
   await selectOption(page, encryptionFormLocators.type, encryptionFormLocators.typeOption('Passphrase'));
   await page.locator(encryptionFormLocators.passphrase).fill(passphrase);
   await page.locator(encryptionFormLocators.confirmPassphrase).fill(passphrase);
+}
+
+/** Opens Edit Encryption Options from the selected dataset's Encryption card. */
+export async function openEncryptionOptions(page: Page): Promise<void> {
+  await page.locator(encryptionCardLocators.edit).click();
+  await expect(page.locator(encryptionOptionsLocators.title)).toBeVisible();
+}
+
+/**
+ * Ticks Confirm on the open Edit Encryption Options dialog, saves, and waits for the dialog to close.
+ *
+ * A key change runs as a job behind a progress dialog of its own, and this dialog closes only once
+ * that has finished. Inheriting is a plain call. Either way the card reloads after the close.
+ */
+export async function saveEncryptionOptions(page: Page): Promise<void> {
+  await page.locator(encryptionOptionsLocators.confirm).setChecked(true);
+
+  const save = page.locator(encryptionOptionsLocators.save);
+  await expect(save).toBeEnabled();
+  await save.click();
+  await expect(page.locator(encryptionOptionsLocators.title)).toBeHidden({ timeout: jobTimeoutMs });
 }
 
 /**
