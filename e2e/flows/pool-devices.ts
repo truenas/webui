@@ -8,7 +8,12 @@ import { configureAutomatedVdevs, confirmDestructiveAction, goToReview } from '.
 import { confirmDialogLocators } from '../locators/dialogs';
 import { jobDialogLocators } from '../locators/encryption';
 import {
-  diskInfoLocators, extendDialogLocators, replaceDiskLocators, vdevsPageLocators, zfsInfoLocators,
+  diskInfoLocators,
+  extendDialogLocators,
+  raidzExtendDialogLocators,
+  replaceDiskLocators,
+  vdevsPageLocators,
+  zfsInfoLocators,
 } from '../locators/pool-devices';
 import { poolWizardLocators } from '../locators/storage';
 
@@ -23,6 +28,13 @@ const deviceStateTimeoutMs = 60_000;
 
 /** `pool.update` formats the disks it adds, as a job behind a progress dialog. */
 const poolUpdateTimeoutMs = 5 * 60_000;
+
+/**
+ * On a RAIDZ vdev, `pool.attach` answers only once ZFS reports the expansion
+ * `FINISHED`, and the dialog closes after it. On an empty pool the reflow has
+ * almost nothing to move, so this is a ceiling only.
+ */
+const raidzExtendTimeoutMs = 5 * 60_000;
 
 /**
  * `pool.remove` copies a data vdev's blocks onto the rest of the pool before it
@@ -79,12 +91,31 @@ export async function selectDisk(page: Page, disk: { guid: string; name: string 
 }
 
 /**
- * Selects a node that is in view without expanding anything first: a mirror, or a
- * cache, log or spare disk, which sit directly under their group.
+ * Selects a node that is in view without expanding anything first: a mirror or a
+ * RAIDZ vdev, or a cache, log or spare disk, which sit directly under their group.
  */
 export async function selectNode(page: Page, guid: string): Promise<void> {
   await page.locator(vdevsPageLocators.node(guid)).click();
   await expect(page).toHaveURL(new RegExp(`/vdevs/${guid}$`));
+}
+
+/**
+ * Extends the selected RAIDZ vdev by one unused disk, from Extend on its ZFS Info
+ * card, and waits for the dialog to close on the job's success.
+ *
+ * The autocomplete narrows to the device name typed, and clicking its row is what
+ * commits the value, not the text.
+ */
+export async function extendSelectedRaidz(page: Page, newDisk: string): Promise<void> {
+  await page.locator(zfsInfoLocators.extend).click();
+  await expect(page.locator(raidzExtendDialogLocators.title)).toBeVisible();
+
+  await page.locator(raidzExtendDialogLocators.newDisk).fill(newDisk);
+  await page.locator(raidzExtendDialogLocators.newDiskOption(newDisk)).click();
+  await page.locator(raidzExtendDialogLocators.submit).click();
+
+  // The dialog stays open on a failure, behind the error the job raised.
+  await expect(page.locator(raidzExtendDialogLocators.title)).toBeHidden({ timeout: raidzExtendTimeoutMs });
 }
 
 /**

@@ -1,6 +1,6 @@
 /**
- * A pool's VDEVs page, its ZFS Info and Disk Info cards, and the Replace Disk and
- * Extend dialogs.
+ * A pool's VDEVs page, its ZFS Info and Disk Info cards, and the Replace Disk,
+ * Extend and RAIDZ Extend dialogs.
  *
  * "Add VDEV" opens the creation wizard with the pool's name fixed and every step
  * after General optional, so its controls are `poolWizardLocators` in
@@ -64,8 +64,9 @@ export const zfsInfoLocators = {
 
   /**
    * Extend, the card's primary action, `testId: 'extend'` on a `TnCardAction`.
-   * Offered on a mirror and on a disk that is a data vdev of its own. It opens the
-   * Extend dialog, whose own submit emits the same id: see `extendDialogLocators`.
+   * On a mirror or on a disk that is a data vdev of its own it opens the Extend
+   * dialog, and on a RAIDZ vdev the RAIDZ Extend dialog. Each dialog's own submit
+   * emits the same id: see `extendDialogLocators` and `raidzExtendDialogLocators`.
    */
   extend: '[data-test="button-extend"]',
   /** The header menu's trigger, `[headerMenuTriggerTestId]="'button-zfs-actions'"`. */
@@ -97,6 +98,32 @@ export const extendDialogLocators = {
    * action row.
    */
   submit: '[data-test="actions-extend"] [data-test="button-extend"]',
+} as const;
+
+/**
+ * The RAIDZ Extend dialog (`raidz-extend-dialog.component.html`), raised from
+ * Extend on the ZFS Info card of a RAIDZ vdev.
+ */
+export const raidzExtendDialogLocators = {
+  /** `<tn-dialog-shell testId="raidz-extend">`. What to wait on. */
+  title: '[data-test="dialog-title-raidz-extend"]',
+
+  /**
+   * "New Disk", an `ix-unused-disk-select` with `testId="new-disk"`, which is a
+   * library `tn-autocomplete`: the input is `autocomplete-new-disk` and its rows
+   * are `option-new-disk-<label>`. A label is the device name and its size,
+   * `sdd (10 GiB)`, so a row is matched on the device name and the size is left
+   * to the prefix.
+   */
+  newDisk: '[data-test="autocomplete-new-disk"]',
+  newDiskOption: (devname: string): string => `[data-test^="option-new-disk-${kebabTestSegment(devname)}-"]`,
+
+  /**
+   * The dialog's own "Extend". It emits `button-extend` like the card's, which
+   * stays on the page behind the dialog, so it is reached through the dialog's
+   * action row.
+   */
+  submit: '[data-test="actions-raidz-extend"] [data-test="button-extend"]',
 } as const;
 
 /**

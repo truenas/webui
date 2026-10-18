@@ -74,6 +74,45 @@ export async function ensureMirrorPoolPresent(client: E2eApiClient, name: string
 }
 
 /**
+ * Builds a RAIDZ1 pool of three disks by name, and returns the device name of a
+ * fourth unused disk of the same type and size to extend it with.
+ *
+ * All four come from the first type-and-size set that has four, so the disk the
+ * test adds is one the Extend dialog offers: it lists only disks at least as large
+ * as the vdev's smallest. Nothing is checked for an existing pool: the caller
+ * destroys it first with `ensurePoolAbsent`, and again afterwards, unconditionally,
+ * for the reason given on `ensureMirrorPoolPresent`.
+ */
+export async function createRaidzPool(client: E2eApiClient, name: string): Promise<string> {
+  const disks = await getSelectableDisks(client);
+  const alike = disks
+    .map((disk) => disks.filter((other) => other.type === disk.type && other.size === disk.size))
+    .find((bucket) => bucket.length >= 4);
+  const [first, second, third, fourth] = alike ?? [];
+
+  if (!first || !second || !third || !fourth) {
+    throw new Error(
+      `Pool "${name}" needs four unused disks of one type and size, three for its RAIDZ1 vdev and one `
+      + 'to extend it with, and the appliance does not have them, so the journey has no pool to act on.',
+    );
+  }
+
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('pool.create', [{
+      name,
+      topology: { data: [{ type: 'RAIDZ1', disks: [first.devname, second.devname, third.devname] }] },
+    }]),
+    {
+      timeoutMs: poolCreateTimeoutMs,
+      whatItCosts: `Pool "${name}" was not created, so the journey has no pool to act on.`,
+    },
+  );
+
+  return fourth.devname;
+}
+
+/**
  * What `ensureDevicePoolPresent` builds: `mirrors` (at least one) two-disk mirrors for data, and
  * one disk each for whichever of a cache, a log and a spare is asked for.
  */
@@ -165,6 +204,20 @@ export async function readMirror(
   }
 
   return { guid: mirror.guid, disks: mirror.children.map((item) => toDevice(item)) };
+}
+
+/** The pool's first data vdev, as `pool.query` reports it: its type and its disks. */
+export async function readFirstDataVdev(
+  client: E2eApiClient,
+  name: string,
+): Promise<{ type: string; guid: string; disks: PoolDevice[] }> {
+  const [vdev] = (await readPoolTopology(client, name)).data;
+
+  if (!vdev) {
+    throw new Error(`Pool "${name}" reports no data vdev.`);
+  }
+
+  return { type: vdev.type, guid: vdev.guid, disks: vdev.children.map((item) => toDevice(item)) };
 }
 
 /**
