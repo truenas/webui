@@ -15,7 +15,8 @@ export interface VmSummary {
   description: string;
   /** In MiB. */
   memory: number;
-  vcpus: number;
+  /** Optional in the generated type; left undefined rather than defaulted, so a missing value fails a match. */
+  vcpus: number | undefined;
   shutdown_timeout: number;
   autostart: boolean;
   state: string;
