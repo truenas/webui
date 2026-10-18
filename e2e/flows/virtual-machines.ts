@@ -143,6 +143,24 @@ export async function deleteVmFromList(page: Page, name: string, id: number): Pr
 }
 
 /**
+ * Clones a VM from its row, under `cloneName` or, when that is omitted, under whatever name
+ * middleware picks, and waits for the dialog to go. A refused `vm.clone` leaves it open.
+ */
+export async function cloneVmFromList(page: Page, name: string, id: number, cloneName?: string): Promise<void> {
+  const { cloneDialog } = virtualMachinesLocators;
+
+  await expandVmRow(page, name, id);
+  await page.locator(virtualMachinesLocators.rowAction.clone(id)).click();
+  await expect(page.locator(cloneDialog.title)).toBeVisible();
+
+  if (cloneName) {
+    await page.locator(cloneDialog.name).fill(cloneName);
+  }
+  await page.locator(cloneDialog.clone).click();
+  await expect(page.locator(cloneDialog.title)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
  * Opens a VM's Devices page from its row, from the sidebar.
  *
  * Waits on Add, which the page header always renders, as the sign the page has loaded.

@@ -15,6 +15,8 @@ export interface VmSummary {
   description: string;
   /** In MiB. */
   memory: number;
+  /** Optional in the generated type; left undefined rather than defaulted, so a missing value fails a match. */
+  vcpus: number | undefined;
   shutdown_timeout: number;
   autostart: boolean;
   state: string;
@@ -43,6 +45,7 @@ export interface VmDeviceSummary {
 export const provisionedVm = {
   description: 'e2e provisioned',
   memory: 512,
+  vcpus: 1,
   shutdownTimeout: 90,
 } as const;
 
@@ -82,10 +85,20 @@ export async function findVm(client: E2eApiClient, name: string): Promise<VmSumm
     name: vm.name,
     description: vm.description ?? '',
     memory: vm.memory,
+    vcpus: vm.vcpus,
     shutdown_timeout: vm.shutdown_timeout ?? 0,
     autostart: vm.autostart ?? false,
     state: vm.status.state,
   };
+}
+
+/**
+ * The name of every VM on the appliance, in no particular order. A spec that lets middleware pick a
+ * name reads this before and after, and the name that was not there before is the new one.
+ */
+export async function listVmNames(client: E2eApiClient): Promise<string[]> {
+  const vms = await firstValueFrom(client.api.query('vm.query', []).pipe(timeout(readTimeoutMs)));
+  return vms.map((vm) => vm.name);
 }
 
 /** Every device attached to a VM. */
@@ -133,7 +146,7 @@ export async function ensureVmPresent(client: E2eApiClient, name: string): Promi
     client.api.call('vm.create', [{
       name,
       description: provisionedVm.description,
-      vcpus: 1,
+      vcpus: provisionedVm.vcpus,
       cores: 1,
       threads: 1,
       memory: provisionedVm.memory,
@@ -186,7 +199,11 @@ async function readVmDevice(client: E2eApiClient, vmId: number, deviceId: number
  * Attaches a NIC of the given adapter type to a VM, and returns it as middleware stored it.
  *
  * It attaches to whichever interface `vm.device.nic_attach_choices` lists first, since a run cannot
- * know the appliance's interface names. No MAC is given, so middleware generates one.
+ * know the appliance's interface names. Its MAC comes from `vm.random_mac`, as the device form's
+ * does, rather than being left for middleware to fill in.
+ *
+ * The choices are grouped by kind (`{ BRIDGE: [...], MACVLAN: [...] }`), so the interface names are
+ * the values, flattened in the order the device form's select lists them, and not the keys.
  */
 export async function addVmNic(
   client: E2eApiClient,
@@ -196,15 +213,21 @@ export async function addVmNic(
   const choices = await firstValueFrom(
     client.api.call('vm.device.nic_attach_choices').pipe(timeout(readTimeoutMs)),
   );
-  const [nicAttach] = Object.keys(choices);
+  const [nicAttach] = (Object.values(choices) as string[][]).flat();
   if (!nicAttach) {
     throw new Error('vm.device.nic_attach_choices lists no interface, so no NIC can be attached.');
   }
+  const mac = await firstValueFrom(client.api.call('vm.random_mac').pipe(timeout(readTimeoutMs)));
 
   const created = await firstValueFrom(
     client.api.call('vm.device.create', [{
       vm: vmId,
-      attributes: { dtype: 'NIC', type, nic_attach: nicAttach },
+      attributes: {
+        dtype: 'NIC',
+        type,
+        mac,
+        nic_attach: nicAttach,
+      },
     }]).pipe(timeout(slowCallTimeoutMs)),
   );
 
