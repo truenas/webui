@@ -44,7 +44,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Group ID' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Group ID', uniqueRowTag(row), 'row-text']"
         >{{ row.tag }}</span>
       </ng-template>
     </ng-container>
@@ -54,7 +54,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('User' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['User', uniqueRowTag(row), 'row-text']"
         >{{ row.user }}</span>
       </ng-template>
     </ng-container>
@@ -64,7 +64,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Peer User' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Peer User', uniqueRowTag(row), 'row-text']"
         >{{ row.peeruser }}</span>
       </ng-template>
     </ng-container>

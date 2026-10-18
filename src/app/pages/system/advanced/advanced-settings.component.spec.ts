@@ -43,6 +43,7 @@ import { TunableCardComponent } from 'app/pages/system/advanced/tunable/tunable-
 import { SaveDebugButtonComponent } from 'app/pages/system/general-settings/support/save-debug-button/save-debug-button.component';
 import { LicenseService } from 'app/services/license.service';
 import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
+import { systemConfigRefreshRequested } from 'app/store/system-config/system-config.actions';
 import { selectProductType } from 'app/store/system-info/system-info.selectors';
 import { InitShutdownCardComponent } from './init-shutdown/init-shutdown-card/init-shutdown-card.component';
 
@@ -115,7 +116,13 @@ describe('AdvancedSettingsComponent', () => {
     MockInstance(SystemSecurityCardComponent, 'configForm', signal(undefined));
     MockInstance(TunableCardComponent, 'configForm', signal(undefined));
 
+    // Dispatched from the constructor, before an instance could be spied on.
+    jest.spyOn(MockStore.prototype, 'dispatch');
     spectator = createComponent();
+  });
+
+  it('reloads the system config when the page opens, so changes made elsewhere show up', () => {
+    expect(spectator.inject(MockStore).dispatch).toHaveBeenCalledWith(systemConfigRefreshRequested());
   });
 
   it('shows the advanced settings cards without the SED card when SED is not entitled', () => {

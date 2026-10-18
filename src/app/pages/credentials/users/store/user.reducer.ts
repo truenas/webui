@@ -32,7 +32,8 @@ export const userReducer = createReducer(
   on(usersLoaded, (state, { users }) => adapter.setAll(users, { ...state, isLoading: false })),
   on(usersNotLoaded, (state, { error }) => ({ ...state, error, isLoading: false })),
 
-  on(userAdded, (state, { user }) => adapter.addOne(user, state)),
+  // Upserted: the form's own save and the change event for it can arrive in either order.
+  on(userAdded, (state, { user }) => adapter.upsertOne(user, state)),
   on(userChanged, (state, { user }) => adapter.updateOne({
     id: user.id,
     changes: user,

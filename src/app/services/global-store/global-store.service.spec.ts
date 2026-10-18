@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { mockProvider } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { TypedQueryFilter, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { globalStore } from 'app/services/global-store/global-store.service';
@@ -77,5 +77,17 @@ describe('GlobalStoreService', () => {
     const poolSubscription3 = pools$.subscribe();
     expect(api.query).toHaveBeenCalledTimes(2);
     poolSubscription3.unsubscribe();
+  });
+
+  it('sends the query again after a failed one, rather than replaying the failure', () => {
+    jest.mocked(api.query).mockReturnValueOnce(throwError(() => new Error('connection lost')));
+    const pools$ = TestBed.inject(poolStore).call;
+
+    pools$.subscribe({ error: jest.fn() });
+    const next = jest.fn();
+    pools$.subscribe(next);
+
+    expect(api.query).toHaveBeenCalledTimes(2);
+    expect(next).toHaveBeenCalledWith(poolResponse);
   });
 });

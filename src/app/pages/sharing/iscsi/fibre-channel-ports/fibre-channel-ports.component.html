@@ -30,7 +30,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Port' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Port', uniqueRowTag(row), 'row-text']"
         >{{ portLabel(row) }}</span>
       </ng-template>
     </ng-container>
@@ -40,7 +40,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Target' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Target', uniqueRowTag(row), 'row-text']"
         >{{ targetLabel(row) }}</span>
       </ng-template>
     </ng-container>
@@ -50,7 +50,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('WWPN' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['WWPN', uniqueRowTag(row), 'row-text']"
         >{{ wwpnLabel(row, 'wwpn') }}</span>
       </ng-template>
     </ng-container>
@@ -60,7 +60,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('WWPN (B)' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['WWPN (B)', uniqueRowTag(row), 'row-text']"
         >{{ wwpnLabel(row, 'wwpn_b') }}</span>
       </ng-template>
     </ng-container>
@@ -70,7 +70,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('State' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['State', uniqueRowTag(row), 'row-text']"
         >{{ stateLabel(row) }}</span>
       </ng-template>
     </ng-container>

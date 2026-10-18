@@ -31,15 +31,24 @@ export function globalStore<M extends WebUiQueryMethod>(
         switchMap((callResult) => {
           if (callResult === undefined) {
             if (!this.callInFlight$) {
-              this.callInFlight$ = this.api
+              const callInFlight$: Observable<WebUiQueryEntity<M>[]> = this.api
                 .query(method, filters)
                 .pipe(
-                  tap((result) => {
-                    this.callResult$.next(result);
-                    this.callInFlight$ = null;
+                  tap({
+                    next: (result) => {
+                      this.callResult$.next(result);
+                      this.callInFlight$ = null;
+                    },
+                    // Otherwise every later subscriber is handed the same failed request, until a reload.
+                    error: () => {
+                      if (this.callInFlight$ === callInFlight$) {
+                        this.callInFlight$ = null;
+                      }
+                    },
                   }),
                   shareReplay({ bufferSize: 1, refCount: false }),
                 );
+              this.callInFlight$ = callInFlight$;
             }
             return this.callInFlight$;
           }

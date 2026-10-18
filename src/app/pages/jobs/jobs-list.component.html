@@ -47,7 +47,7 @@
     <ng-template let-job tnCellDef>
       <span
         tnTestIdType="text"
-        [tnTestId]="[('Name' | translate), uniqueRowTag(job), 'row-text']"
+        [tnTestId]="['Name', uniqueRowTag(job), 'row-text']"
       ><ix-job-name [job]="job"></ix-job-name></span>
     </ng-template>
   </ng-container>
@@ -58,7 +58,7 @@
       <ix-task-state-cell
         [state]="job.state"
         [job]="job"
-        [testId]="[('State' | translate), uniqueRowTag(job), 'row-state']"
+        [testId]="['State', uniqueRowTag(job), 'row-state']"
         [ariaLabel]="ariaLabel(job)"
       ></ix-task-state-cell>
     </ng-template>
@@ -70,13 +70,13 @@
       @if (toDate(job.time_started); as date) {
         <ix-date
           tnTestIdType="date"
-          [tnTestId]="[('Started' | translate), uniqueRowTag(job), 'row-date']"
+          [tnTestId]="['Started', uniqueRowTag(job), 'row-date']"
           [date]="date"
         ></ix-date>
       } @else {
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Started' | translate), uniqueRowTag(job), 'row-date']"
+          [tnTestId]="['Started', uniqueRowTag(job), 'row-date']"
         >{{ 'N/A' | translate }}</span>
       }
     </ng-template>
@@ -88,13 +88,13 @@
       @if (toDate(job.time_finished); as date) {
         <ix-date
           tnTestIdType="date"
-          [tnTestId]="[('Finished' | translate), uniqueRowTag(job), 'row-date']"
+          [tnTestId]="['Finished', uniqueRowTag(job), 'row-date']"
           [date]="date"
         ></ix-date>
       } @else {
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Finished' | translate), uniqueRowTag(job), 'row-date']"
+          [tnTestId]="['Finished', uniqueRowTag(job), 'row-date']"
         >{{ 'N/A' | translate }}</span>
       }
     </ng-template>

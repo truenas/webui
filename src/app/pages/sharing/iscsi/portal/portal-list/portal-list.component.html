@@ -42,7 +42,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Portal Group ID' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Portal Group ID', uniqueRowTag(row), 'row-text']"
         >{{ row.id }}</span>
       </ng-template>
     </ng-container>
@@ -52,7 +52,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Listen' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Listen', uniqueRowTag(row), 'row-text']"
         >{{ formatListen(row) }}</span>
       </ng-template>
     </ng-container>
@@ -62,7 +62,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Description', uniqueRowTag(row), 'row-text']"
           [tnTooltip]="row.comment || ''"
         >{{ row.comment }}</span>
       </ng-template>

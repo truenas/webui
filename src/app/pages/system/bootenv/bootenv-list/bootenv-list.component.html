@@ -94,7 +94,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Date Created' | translate), uniqueRowTag(row), 'row-date']"
+          [tnTestId]="['Date Created', uniqueRowTag(row), 'row-date']"
         >{{ row.created.$date | formatDateTime }}</span>
       </ng-template>
     </ng-container>
@@ -104,7 +104,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Used Space' | translate), uniqueRowTag(row), 'row-size']"
+          [tnTestId]="['Used Space', uniqueRowTag(row), 'row-size']"
         >{{ row.used_bytes | ixFileSize }}</span>
       </ng-template>
     </ng-container>

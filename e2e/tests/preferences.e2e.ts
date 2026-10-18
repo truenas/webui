@@ -39,6 +39,15 @@ import { preferencesLocators } from '../locators/preferences';
 import { expect, test } from '../support/fixtures';
 
 /**
+ * A fresh page for each test, not the one kept across tests (`support/fixtures.ts`). These
+ * tests change preferences through the UI, which the app applies in place, and teardown restores
+ * them over the API, which an open app never hears of. On a kept page the next file would run with
+ * them still changed, as `network-interfaces` ran in German after `localization` in run
+ * 39124680074.
+ */
+test.use({ sharedSession: false });
+
+/**
  * A theme picked for being unmistakable rather than pretty.
  *
  * Light, where the appliance ships dark, so a test that silently failed to

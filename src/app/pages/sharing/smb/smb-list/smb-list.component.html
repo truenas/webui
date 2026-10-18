@@ -68,7 +68,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Name', uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.name || ''"
           >{{ row.name }}</span>
         </ng-template>
@@ -80,7 +80,7 @@
           @let path = getPathValue(row);
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Path', uniqueRowTag(row), 'row-text']"
             [tnTooltip]="path || ''"
           >{{ path }}</span>
         </ng-template>
@@ -91,7 +91,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Description', uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.comment || ''"
           >{{ row.comment }}</span>
         </ng-template>
@@ -118,7 +118,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Audit Logging' | translate), uniqueRowTag(row), 'row-yesno']"
+            [tnTestId]="['Audit Logging', uniqueRowTag(row), 'row-yesno']"
           >{{ !!row.audit?.enable | yesNo | translate }}</span>
         </ng-template>
       </ng-container>

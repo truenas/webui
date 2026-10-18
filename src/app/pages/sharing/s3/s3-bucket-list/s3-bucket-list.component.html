@@ -63,7 +63,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Name', uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.name || ''"
           >{{ row.name }}</span>
         </ng-template>
@@ -74,7 +74,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Dataset' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Dataset', uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.dataset || ''"
           >{{ row.dataset }}</span>
         </ng-template>
@@ -85,7 +85,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Owner' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Owner', uniqueRowTag(row), 'row-text']"
           >{{ row.owner }}</span>
         </ng-template>
       </ng-container>
@@ -95,7 +95,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Permissions Model' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Permissions Model', uniqueRowTag(row), 'row-text']"
           >{{ permissionsModelLabel(row) }}</span>
         </ng-template>
       </ng-container>
@@ -105,7 +105,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Object Ownership' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Object Ownership', uniqueRowTag(row), 'row-text']"
           >{{ objectOwnershipLabel(row) }}</span>
         </ng-template>
       </ng-container>
@@ -115,7 +115,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Versioning' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Versioning', uniqueRowTag(row), 'row-text']"
           >{{ versioningLabel(row) }}</span>
         </ng-template>
       </ng-container>
@@ -125,7 +125,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Object Lock' | translate), uniqueRowTag(row), 'row-yesno']"
+            [tnTestId]="['Object Lock', uniqueRowTag(row), 'row-yesno']"
           >{{ !!row.object_lock | yesNo | translate }}</span>
         </ng-template>
       </ng-container>

@@ -88,7 +88,7 @@
           <span class="webshare-name-container">
             <span
               tnTestIdType="text"
-              [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+              [tnTestId]="['Name', uniqueRowTag(row), 'row-text']"
             >{{ row.name }}</span>
             @if (row.isHomeBase) {
               <!-- role/aria-label expose the icon-only home-share state to AT; the tooltip is hover-only. -->
@@ -110,7 +110,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Path', uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.path || ''"
           >{{ row.path }}</span>
         </ng-template>

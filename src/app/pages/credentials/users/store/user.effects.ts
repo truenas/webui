@@ -3,11 +3,14 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import {
-  catchError, filter, map, switchMap,
+  catchError, map, switchMap,
 } from 'rxjs/operators';
 import { toUser } from 'app/interfaces/user.interface';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
+  userAdded,
+  userChanged,
   userPageEntered,
   userRemoved,
   usersLoaded,
@@ -39,14 +42,20 @@ export class UserEffects {
     }),
   ));
 
-  // userAdded() and userChanged() are dispatched from the User Form
-
-  subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
+  // The form dispatches userAdded() and userChanged() for its own saves. These follow every other
+  // change too — another tab, another admin, the CLI — so the list the form validates new names
+  // against does not miss a user made since the page loaded it.
+  subscribeToChanges$ = createEffect(() => this.actions$.pipe(
     ofType(usersLoaded),
     switchMap(() => {
       return this.api.subscribe('user.query').pipe(
-        filter((event) => event.msg === 'removed'),
-        map((event) => userRemoved({ id: event.id as number })),
+        map((event) => {
+          if (event.msg === 'removed') {
+            return userRemoved({ id: event.id as number });
+          }
+          const user = toUser({ ...event.fields, id: event.id } as WebUiQueryEntity<'user.query'>);
+          return event.msg === 'added' ? userAdded({ user }) : userChanged({ user });
+        }),
       );
     }),
   ));

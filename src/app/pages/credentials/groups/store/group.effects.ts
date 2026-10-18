@@ -4,12 +4,14 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import {
-  catchError, filter, map, switchMap,
+  catchError, filter, map, switchMap, withLatestFrom,
 } from 'rxjs/operators';
 import { toGroup } from 'app/interfaces/group.interface';
 import { TypedQueryFilter, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
+  groupAdded,
+  groupChanged,
   groupPageEntered,
   groupRemoved,
   groupsLoaded,
@@ -46,14 +48,26 @@ export class GroupEffects {
     }),
   ));
 
-  // groupAdded() and groupChanged() are dispatched from the Group Form
-
-  subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
+  // The form dispatches groupAdded() and groupChanged() for its own saves. These follow every other
+  // change too — another tab, another admin, the CLI — so the list does not miss a group made since
+  // the page loaded it.
+  subscribeToChanges$ = createEffect(() => this.actions$.pipe(
     ofType(groupsLoaded),
     switchMap(() => {
       return this.api.subscribe('group.query').pipe(
-        filter((event) => event.msg === 'removed'),
-        map((event) => groupRemoved({ id: event.id as number })),
+        withLatestFrom(this.store$.pipe(waitForPreferences)),
+        map(([event, preferences]) => {
+          if (event.msg === 'removed') {
+            return groupRemoved({ id: event.id as number });
+          }
+          const group = toGroup({ ...event.fields, id: event.id } as WebUiQueryEntity<'group.query'>);
+          if (event.msg === 'changed') {
+            return groupChanged({ group });
+          }
+          // Left out of the list the same way `loadGroups$` leaves them out of the query.
+          return preferences.hideBuiltinGroups && group.builtin ? null : groupAdded({ group });
+        }),
+        filter(Boolean),
       );
     }),
   ));

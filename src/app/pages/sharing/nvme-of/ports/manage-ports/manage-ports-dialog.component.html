@@ -16,7 +16,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Type' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Type', uniqueRowTag(row), 'row-text']"
         >{{ transportLabel(row) }}</span>
       </ng-template>
     </ng-container>
@@ -26,7 +26,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Address' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Address', uniqueRowTag(row), 'row-text']"
         >{{ row.addr_traddr }}</span>
       </ng-template>
     </ng-container>
@@ -36,7 +36,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Port' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Port', uniqueRowTag(row), 'row-text']"
         >{{ row.addr_trsvcid }}</span>
       </ng-template>
     </ng-container>
@@ -46,7 +46,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Used In Subsystems' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Used In Subsystems', uniqueRowTag(row), 'row-text']"
         >{{ row.usedInSubsystems }}</span>
       </ng-template>
     </ng-container>

@@ -34,6 +34,14 @@ import { localizationLocators } from '../locators/localization';
 import { leavingTestData } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+/**
+ * A fresh page for each test, not the one kept across tests (`support/fixtures.ts`). These
+ * tests change the language and the date format through the UI, which the app applies in place,
+ * and teardown restores them over the API, which an open app never hears of. On a kept page the
+ * next file would run in German: `network-interfaces` failed that way in run 39124680074.
+ */
+test.use({ sharedSession: false });
+
 /** The timezone the timezone test starts from, and the one it moves the appliance to. */
 const startingTimezone = 'America/Los_Angeles';
 const newTimezone = 'Asia/Tokyo';

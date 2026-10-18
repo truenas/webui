@@ -14,6 +14,7 @@ import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboa
 import { S3CardComponent } from 'app/pages/sharing/components/shares-dashboard/s3-card/s3-card.component';
 import { sharesDashboardElements } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.elements';
 import { WebShareCardComponent } from 'app/pages/sharing/components/shares-dashboard/webshare-card/webshare-card.component';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
 import { LicenseService } from 'app/services/license.service';
 import { IscsiCardComponent } from './iscsi-card/iscsi-card.component';
@@ -44,6 +45,7 @@ export class SharesDashboardComponent {
   private translate = inject(TranslateService);
   private router = inject(Router);
   private license = inject(LicenseService);
+  private tierService = inject(SharingTierService);
 
   protected readonly searchableElements = sharesDashboardElements;
 
@@ -60,4 +62,12 @@ export class SharesDashboardComponent {
   readonly pools = toSignal(this.poolStoreService.call.pipe(map((pools) => pools.length)), { initialValue: null });
 
   protected readonly shouldShowWebshare = toSignal(this.license.shouldShowWebshare$, { initialValue: false });
+
+  constructor() {
+    // Both are app-wide caches, and a pool or the tiering setting can change outside this tab (the
+    // CLI, another admin) without either hearing of it. Refetched on every visit; the cards below
+    // share the one request each.
+    this.poolStoreService.invalidate();
+    this.tierService.refresh();
+  }
 }
