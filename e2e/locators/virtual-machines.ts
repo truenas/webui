@@ -1,6 +1,6 @@
 /**
- * The Virtual Machines page, the Create Virtual Machine wizard, the Edit VM form, the delete and
- * clone dialogs, and a VM's Devices page with its device form and delete dialog.
+ * The Virtual Machines page, the Create Virtual Machine wizard, the Edit VM form, the delete, clone
+ * and stop dialogs, and a VM's Devices page with its device form and delete dialog.
  *
  * Derived from the templates rather than read off a running appliance; see `signin.ts` for the
  * type-prefixing that produces these values.
@@ -40,6 +40,14 @@ export const virtualMachinesLocators = {
      * clicked rather than the row itself because the row also holds the Running toggle.
      */
     name: (name: string): string => `[data-test="text-name-${kebabTestSegment(rowTag(name))}-row-text"]`,
+    /**
+     * The checkbox inside the Running switch, which is checked while the VM runs.
+     * `ix-table-toggle-cell` composes `['Running', row tag, 'row-toggle']`, and `tn-slide-toggle` puts
+     * its `toggle-` type in front. Never clicked here; the detail panel's buttons are what a test drives.
+     */
+    running: (name: string): string => (
+      `[data-test="toggle-running-${kebabTestSegment(rowTag(name))}-row-toggle"] input[type="checkbox"]`
+    ),
   },
 
   /**
@@ -54,6 +62,25 @@ export const virtualMachinesLocators = {
     clone: (id: number): string => `[data-test="button-clone-${id}"]`,
     /** Opens the VM's Devices page, `/vm/<id>/devices`. */
     devices: (id: number): string => `[data-test="button-devices-${id}"]`,
+
+    /** Shown only while the VM is stopped. */
+    start: (id: number): string => `[data-test="button-start-${id}"]`,
+    /** Shown only while the VM runs, like the three below. Opens the Stop dialog. */
+    stop: (id: number): string => `[data-test="button-stop-${id}"]`,
+    /** Runs the `vm.restart` job with no dialog. */
+    restart: (id: number): string => `[data-test="button-restart-${id}"]`,
+    /** A hard reset, which asks for confirmation first. */
+    reset: (id: number): string => `[data-test="button-reset-${id}"]`,
+    /** `['power_off', id]`; the library normalizer turns the underscore into a dash. No dialog. */
+    powerOff: (id: number): string => `[data-test="button-power-off-${id}"]`,
+  },
+
+  /** `<tn-dialog-shell testId="stop-vm">`, raised by the row's Stop. */
+  stopDialog: {
+    title: '[data-test="dialog-title-stop-vm"]',
+    /** "Force Stop After Timeout". Unticked by default. */
+    forceAfterTimeout: '[data-test="checkbox-force-after-timeout"]',
+    stop: '[data-test="button-stop-vm"]',
   },
 
   /** A VM's Devices page (`ix-device-list`). */

@@ -2,7 +2,7 @@
   <span class="blank-spacer"></span>
   <div class="label">{{ 'Deduplication Table' | translate }}:</div>
   <div class="value" tnTestIdType="text" [tnTestId]="[pool().name, 'deduplication-table']">{{ deduplicationStats() }}</div>
-  <div class="dedup-actions">
+  <div class="dedup-actions" tnTestIdType="actions" [tnTestId]="[pool().name, 'dedup']">
     @if (pool().dedup_table_size > 0) {
       <a
         *ixRequiresRoles="[Role.PoolWrite]"

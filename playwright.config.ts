@@ -290,6 +290,9 @@ export default defineConfig<E2eTestOptions, Pick<E2eWorkerFixtures, 'haThroughVi
     // — `N flaky` above all — is the only place a retried test shows, so it keeps
     // Playwright's wording exactly. See the file.
     ['./e2e/support/list-reporter.ts'],
+    // In CI, a warning annotation and a job summary row per flaky test, so a
+    // green run that needed retries says so on its page. See the file.
+    ['./e2e/support/flaky-reporter.ts'],
     ['html', { open: 'never' }],
     // Feeds the Jenkins JUnit plugin, which is what makes per-test flake history
     // — and therefore the R8.4 quarantine policy — measurable (R7.4).

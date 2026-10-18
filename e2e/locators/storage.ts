@@ -565,6 +565,36 @@ export const poolHealthLocators = {
 } as const;
 
 /**
+ * The Storage Health card's Deduplication Table line, and the Prune
+ * Deduplication Table dialog that its Prune opens.
+ */
+export const pruneDedupLocators = {
+  /** The table's size, `[pool().name, 'deduplication-table']`. */
+  tableSize: (pool: string) => `[data-test="text-${kebabTestSegment(pool)}-deduplication-table"]`,
+  /**
+   * "Prune", `tnTestId="prune-dedup"`. The id does not carry the pool, so it is
+   * reached through the line's action row, `[pool().name, 'dedup']`. Rendered
+   * only while the pool's dedup table has a size.
+   */
+  open: (pool: string) => `[data-test="actions-${kebabTestSegment(pool)}-dedup"] [data-test="link-prune-dedup"]`,
+
+  /** `<tn-dialog-shell testId="prune-dedup-table">`. What to wait on. */
+  title: '[data-test="dialog-title-prune-dedup-table"]',
+  /**
+   * "Prune By", one `tn-radio` per option with
+   * `[testId]="['radio-button', 'prune-by', option.label]"`. The base already
+   * starts with the type, so it is not prefixed again.
+   */
+  pruneBy: (label: 'Percentage' | 'Age') => `[data-test="radio-button-prune-by-${kebabTestSegment(label)}"]`,
+  /** "Percentage", a `tn-slider` whose thumb is a native range input, `'slider-thumb'`. */
+  percentage: '[data-test="input-slider-thumb"]',
+  /** "Age (in days)", `<tn-input testId="days">`. Rendered once Age is chosen. */
+  days: '[data-test="input-days"]',
+  /** The dialog's own "Prune", `testId="prune"`. */
+  submit: '[data-test="button-prune"]',
+} as const;
+
+/**
  * The delete-dataset dialog, which guards a destructive action with two gates:
  * the dataset's own name typed back, and a Confirm tick box.
  *
