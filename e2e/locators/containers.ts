@@ -56,6 +56,10 @@ export const containersLocators = {
     v6Address: '[data-test="input-v6-network"]',
   },
 
+  /**
+   * The container form. General Info's Edit opens the same form on an existing
+   * container, without Image and Pool and with the same ids for the rest.
+   */
   create: {
     /** "Name", the first field of the basic form. Rendered as soon as the panel is. */
     name: '[data-test="input-name"]',
@@ -67,6 +71,7 @@ export const containersLocators = {
     /** The field around Name: its label and, once the value is refused, the reason. */
     nameField: '[data-test="form-field-name"]',
     description: '[data-test="input-description"]',
+    autostart: '[data-test="checkbox-autostart"]',
     /** "Browse Catalog", which opens the image browser. The Image field beside it is read-only. */
     browseImages: '[data-test="button-browse-images"]',
     image: '[data-test="input-image"]',
@@ -76,8 +81,16 @@ export const containersLocators = {
      */
     advancedOptions: '[data-test="button-advanced-options"]',
     cpuset: '[data-test="input-cpuset"]',
+    /** "Shutdown Timeout (seconds)", advanced, and the field around it that shows its refusal. */
+    shutdownTimeout: '[data-test="input-shutdown-timeout"]',
+    shutdownTimeoutField: '[data-test="form-field-shutdown-timeout"]',
     /** "Add" under Environment Variables: `tn-form-list` names it `['add-item', label]`. */
     addEnvironmentVariable: '[data-test="button-add-item-environment-variables"]',
+    /**
+     * A variable row's remove control, `testId="remove-from-list"` on every
+     * `tn-form-list-item`, so it picks one row only while the form has one.
+     */
+    removeEnvironmentVariable: '[data-test="button-remove-from-list"]',
     /**
      * One environment variable's Name and Value, scoped by the row's index. The
      * inputs fall back to `input-name` and `input-value`, and the container's own
@@ -148,6 +161,8 @@ export const containersLocators = {
     autostart: '[data-test="text-autostart"]',
     dataset: '[data-test="text-dataset"]',
     cpuset: '[data-test="text-cpu-set"]',
+    /** Opens the container form (`create` above) on this container. Its Save calls `container.update`. */
+    edit: '[data-test="button-edit-container"]',
     delete: '[data-test="button-delete-container"]',
   },
 

@@ -105,11 +105,22 @@ export async function firstRegistryImage(
 
 /**
  * Creates a stopped container on `pool`, for a test that is not about creating
- * one. Autostart is off, so nothing starts it.
+ * one. Autostart is off, so nothing starts it. `initenv` is its environment
+ * variables, none when left out.
  */
 export async function seedContainer(
   client: E2eApiClient,
-  { name, pool, image }: { name: string; pool: string; image: { name: string; version: string } },
+  {
+    name,
+    pool,
+    image,
+    initenv,
+  }: {
+    name: string;
+    pool: string;
+    image: { name: string; version: string };
+    initenv?: Record<string, string>;
+  },
 ): Promise<void> {
   await runJob(
     client,
@@ -118,6 +129,7 @@ export async function seedContainer(
       pool,
       image,
       autostart: false,
+      ...(initenv ? { initenv } : {}),
     }]),
     {
       timeoutMs: containerCreateTimeoutMs,
