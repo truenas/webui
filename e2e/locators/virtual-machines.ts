@@ -1,6 +1,6 @@
 /**
- * The Virtual Machines page, the Create Virtual Machine wizard, the Edit VM form, and the delete
- * and stop dialogs.
+ * The Virtual Machines page, the Create Virtual Machine wizard, the Edit VM form, and the delete,
+ * clone and stop dialogs.
  *
  * Derived from the templates rather than read off a running appliance; see `signin.ts` for the
  * type-prefixing that produces these values.
@@ -53,6 +53,7 @@ export const virtualMachinesLocators = {
   rowAction: {
     edit: (id: number): string => `[data-test="button-edit-${id}"]`,
     delete: (id: number): string => `[data-test="button-delete-${id}"]`,
+    clone: (id: number): string => `[data-test="button-clone-${id}"]`,
 
     /** Shown only while the VM is stopped. */
     start: (id: number): string => `[data-test="button-start-${id}"]`,
@@ -131,5 +132,14 @@ export const virtualMachinesLocators = {
     /** The VM's name has to be typed here before Delete enables. */
     confirmName: '[data-test="input-confirm-name"]',
     delete: '[data-test="button-delete"]',
+  },
+
+  /** `<tn-dialog-shell testId="clone-vm">`, raised by Clone in a row's detail panel. */
+  cloneDialog: {
+    title: '[data-test="dialog-title-clone-vm"]',
+    /** "Enter a Name (optional)". Left empty, middleware names the clone itself. */
+    name: '[data-test="input-name"]',
+    /** The dialog's own Clone. The row's is keyed by VM id, so the two never share an id. */
+    clone: '[data-test="button-clone"]',
   },
 } as const;

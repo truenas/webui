@@ -73,6 +73,73 @@ export async function ensureMirrorPoolPresent(client: E2eApiClient, name: string
   );
 }
 
+/**
+ * What `ensureDevicePoolPresent` builds: `mirrors` (at least one) two-disk mirrors for data, and
+ * one disk each for whichever of a cache, a log and a spare is asked for.
+ */
+export interface DevicePoolShape {
+  mirrors: number;
+  cache?: boolean;
+  log?: boolean;
+  spare?: boolean;
+}
+
+/**
+ * Builds a pool of the given shape by name, if it is not already there, from
+ * disks all of one type and size.
+ *
+ * The caller checks the count first with `requireUnusedDisks`, and owns the
+ * removal through `ensurePoolAbsent`, unconditionally, for the reason given on
+ * `ensureMirrorPoolPresent`.
+ */
+export async function ensureDevicePoolPresent(
+  client: E2eApiClient,
+  name: string,
+  shape: DevicePoolShape,
+): Promise<void> {
+  if (await findPool(client, name)) {
+    return;
+  }
+
+  const needed = shape.mirrors * 2 + Number(Boolean(shape.cache)) + Number(Boolean(shape.log))
+    + Number(Boolean(shape.spare));
+  const disks = await getSelectableDisks(client);
+  const alike = disks
+    .map((disk) => disks.filter((other) => other.type === disk.type && other.size === disk.size))
+    .find((bucket) => bucket.length >= needed);
+
+  if (!alike) {
+    throw new Error(
+      `Pool "${name}" needs ${needed} unused disks of one type and size, and the appliance does not `
+      + 'have them, so the journey has no pool to act on.',
+    );
+  }
+
+  const names = alike.slice(0, needed).map((disk) => disk.devname);
+  const take = (count: number): string[] => names.splice(0, count);
+
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('pool.create', [{
+      name,
+      topology: {
+        // `pool.create` types `data` as a non-empty tuple, so the first mirror is spelled out.
+        data: [
+          { type: 'MIRROR' as const, disks: take(2) },
+          ...Array.from({ length: shape.mirrors - 1 }, () => ({ type: 'MIRROR' as const, disks: take(2) })),
+        ],
+        ...(shape.cache ? { cache: [{ type: 'STRIPE' as const, disks: take(1) }] } : {}),
+        ...(shape.log ? { log: [{ type: 'STRIPE' as const, disks: take(1) }] } : {}),
+        ...(shape.spare ? { spares: take(1) } : {}),
+      },
+    }]),
+    {
+      timeoutMs: poolCreateTimeoutMs,
+      whatItCosts: `Pool "${name}" was not created, so the journey has no pool to act on.`,
+    },
+  );
+}
+
 async function getPool(client: E2eApiClient, name: string): Promise<PoolEntry> {
   // `query`, not `queryOne`. See "Talking to middleware" in `CLAUDE.md`.
   const [pool] = await firstValueFrom(
@@ -98,6 +165,21 @@ export async function readMirror(
   }
 
   return { guid: mirror.guid, disks: mirror.children.map((item) => toDevice(item)) };
+}
+
+/**
+ * The pool's data vdevs: each one's type and the disks in it. A vdev of one disk
+ * is that disk, `DISK`, with no children, so it is listed as its own one disk.
+ */
+export async function readDataVdevs(
+  client: E2eApiClient,
+  name: string,
+): Promise<{ type: string; guid: string; disks: PoolDevice[] }[]> {
+  return (await readPoolTopology(client, name)).data.map((vdev) => ({
+    type: vdev.type,
+    guid: vdev.guid,
+    disks: vdev.type === 'DISK' ? [toDevice(vdev)] : vdev.children.map((item) => toDevice(item)),
+  }));
 }
 
 /** The pool's spares, in topology order. */
