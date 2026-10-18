@@ -38,6 +38,18 @@ async function requireNoTasks(api: E2eApiClient): Promise<void> {
     .toBe(0);
 }
 
+/**
+ * The `pool` fixture is asked for, though nothing here is stored under it: Data
+ * Protection renders "you need to create a storage pool" instead of its cards on
+ * an appliance with no pool. Asking is the whole precondition, and it is what
+ * puts the shared pool back when a failure earlier in the run restarted the
+ * worker and exported it. The name goes into the report so a failure says which
+ * pool the page was showing.
+ */
+test.beforeEach(({ pool }) => {
+  test.info().annotations.push({ type: 'pool', description: pool });
+});
+
 test('the TrueCloud Backup card shows its empty state when there is no task', async ({ page, api }) => {
   await requireNoTasks(api);
 

@@ -13,6 +13,11 @@
  *
  * Values that move on their own are not checked: CPU usage, temperatures, traffic rates, uptime,
  * and the memory total, which comes from `reporting.realtime` rather than from `system.info`.
+ *
+ * Only the second test needs a pool, and it asks for the `pool` fixture: it reads a pool's tile on
+ * the Storage card, and with no pool the card draws none. The first does not. Of the Storage and
+ * Backup Tasks cards it checks only the report button and the title, and both are in the cards'
+ * headers, which render whether or not the appliance has a pool.
  */
 import {
   captureDashState, readDashState, readFirstNicName, readNicWithIpv4, readShownPool, restoreDashState, writeDashState,

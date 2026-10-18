@@ -14,6 +14,10 @@
  * a report is keyed by one. The Disk tab draws its reports only once devices are picked, so its
  * check is the Devices picker, which no other tab renders. Whether the charts hold data is
  * `tests/reporting.e2e.ts`'s question, not this file's.
+ *
+ * Only the Storage card's test needs a pool, and it asks for the `pool` fixture so the card has a
+ * tile to wait for before the click. The other cards show nothing from storage, and the Disk tab's
+ * Devices picker lists disks, which are there with or without a pool.
  */
 import type { Page } from '@playwright/test';
 import {
