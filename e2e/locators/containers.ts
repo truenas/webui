@@ -1,7 +1,8 @@
 /**
  * The Containers page: its header, the Global Configuration form its
  * Configuration menu opens, the Create New Container form and its image
- * browser, the list, the details panel and the delete dialog.
+ * browser, the list, the Stop Options dialog, the details panel and the delete
+ * dialog.
  *
  * The header is `all-containers-header.component.html`, the settings form is
  * `global-config-form.component.html` and the create form is
@@ -108,6 +109,34 @@ export const containersLocators = {
     /** The `<tr>`, from `[rowTestId]`. Clicking it opens the container's details. */
     row: (name: string): string => `[data-test="row-${rowTag(name)}"]`,
     name: (name: string): string => `[data-test="text-name-${rowTag(name)}-row-text"]`,
+    /** The Status cell, an `ix-container-status-cell`: `Running`, `Stopped`, … */
+    status: (name: string): string => `[data-test="text-status-${rowTag(name)}-row-state"]`,
+    /**
+     * The row's Controls: `<tn-icon-button [testId]="[row.name, 'start']">` and the
+     * like. Unlike the row tag, the name goes through the library's normalizer
+     * alone, so `e2e` stays `e2e` here. Start renders while the container is
+     * stopped, Restart and Stop while it is not.
+     */
+    start: (name: string): string => `[data-test="button-${kebabTestSegment(name)}-start"]`,
+    restart: (name: string): string => `[data-test="button-${kebabTestSegment(name)}-restart"]`,
+    stop: (name: string): string => `[data-test="button-${kebabTestSegment(name)}-stop"]`,
+  },
+
+  /**
+   * The Stop Options dialog (`stop-options-dialog.component.html`), which the row's
+   * Stop and Restart both open, `<tn-dialog-shell testId="stop-options">`.
+   */
+  stopOptionsDialog: {
+    title: '[data-test="dialog-title-stop-options"]',
+    /**
+     * "Stop Method". Its options are keyed by label, and a label names the
+     * operation: `Force stop immediately` from Stop, `Force restart immediately`
+     * from Restart. It opens on the graceful-then-force option.
+     */
+    stopMethod: '[data-test="select-stop-method"]',
+    stopMethodOption: (label: string): string => `[data-test="option-stop-method-${kebabTestSegment(label)}"]`,
+    /** The dialog's primary button. Labelled Stop or Restart, after the operation. */
+    continue: '[data-test="button-continue"]',
   },
 
   /**

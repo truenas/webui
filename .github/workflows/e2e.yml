@@ -158,10 +158,16 @@ jobs:
       # TN_HOST, TN_HOST_HTTP, TN_USERNAME, TN_PASSWORD, TN_DOMAIN and
       # TN_BASELINE in the job environment, as the lab's claim did. Its ports
       # are on the runner's loopback and Docker's bridge, nowhere else.
+      #
+      # 8GB rather than the action's 6GB default: choosing an Apps pool makes
+      # middleware clone the whole apps catalog into the tmpfs at /run, which
+      # is sized from RAM. At 6GB that fills /run, and dockerd then cannot
+      # write its pid file (#14633). The HA nodes boot with the same 8GB.
       - name: Boot the appliance
         uses: iXsystems/ux-github-workflows/.github/actions/truenas-appliance-runner@master
         with:
           baseline: fresh-install
+          memory-mb: 8192
 
       # A non-HA Enterprise license, so the journeys behind an entitlement
       # (ZFS tiering, S3 audit and versioning) run here rather than skip.
@@ -242,7 +248,7 @@ jobs:
         if: failure() || cancelled()
         run: |
           echo "::group::The appliance's console"
-          truenas-appliance console 300 || true
+          timeout 20 truenas-appliance console 300 || true
           echo "::endgroup::"
 
           echo "::group::Docker, as middleware reports it"
@@ -277,11 +283,13 @@ jobs:
             | tail -n 300'
           echo "::endgroup::"
 
-          echo "::group::The apps datasets and the network"
+          echo "::group::The apps datasets, /run and the network"
           # shellcheck disable=SC2016 # expanded on the appliance, not here
           on_appliance 'for p in $(sudo -n zpool list -H -o name); do
               sudo -n zfs list -o name,mountpoint,mounted -r "$p/ix-apps"
             done
+            df -h /run
+            sudo -n du -xsh /run/* 2>/dev/null | sort -h | tail -n 5
             ip -br addr
             ip route
             sudo -n cat /etc/docker/daemon.json'
