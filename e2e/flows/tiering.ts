@@ -5,6 +5,7 @@
  */
 import { expect, type Page } from '@playwright/test';
 import { goToDatasets, goToStorage } from './navigation';
+import { confirmDialogLocators } from '../locators/dialogs';
 import { datasetLocators } from '../locators/storage';
 import {
   changeTierDialogLocators, datasetTierLocators, migrationStatusDialogLocators, tierConfigLocators,
@@ -124,4 +125,23 @@ export async function applyTierChange(page: Page): Promise<void> {
 export async function openMigrationStatus(page: Page): Promise<void> {
   await page.locator(datasetTierLocators.migrationStatus).click();
   await expect(page.locator(migrationStatusDialogLocators.title)).toBeVisible();
+}
+
+/**
+ * Cancels the migration in the open Data Migration dialog: Cancel, then Stop migration in the
+ * confirmation over it.
+ *
+ * The dialog closes itself once `zfs.tier.rewrite_job_cancel` has answered, and stays open with an
+ * error over it if the call failed, so its closing is the signal the cancel was accepted.
+ */
+export async function cancelMigration(page: Page): Promise<void> {
+  await page.locator(migrationStatusDialogLocators.cancel).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+
+  const confirm = page.locator(confirmDialogLocators.confirm);
+  await page.locator(confirmDialogLocators.checkbox).click();
+  await expect(confirm).toBeEnabled();
+
+  await confirm.click();
+  await expect(page.locator(migrationStatusDialogLocators.title)).toBeHidden({ timeout: saveTimeoutMs });
 }
