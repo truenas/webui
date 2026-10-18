@@ -62,11 +62,13 @@ export async function selectNode(page: Page, guid: string): Promise<void> {
 }
 
 /**
- * Removes the selected disk or vdev from the ZFS Info card, and waits for its
- * node to leave the tree and the job dialog to close.
+ * Removes the selected disk or vdev from the ZFS Info card, waits for the tree to
+ * be read back, and checks the node is not in it.
  *
- * The tree reloads only once the job has finished, so the node going is what
- * says `pool.remove` is done; the job dialog has closed by then.
+ * The tree reloads only once the job dialog has closed, so the node going is what
+ * says `pool.remove` is done. A reload empties the whole tree before it refills,
+ * though, so that alone would pass on the empty moment: the Data VDEVs group,
+ * which every pool has, coming back is what says the tree was read again.
  */
 export async function removeSelectedDevice(page: Page, guid: string): Promise<void> {
   await page.locator(zfsInfoLocators.remove).click();
@@ -75,6 +77,8 @@ export async function removeSelectedDevice(page: Page, guid: string): Promise<vo
 
   await expect(page.locator(vdevsPageLocators.node(guid))).toBeHidden({ timeout: removeTimeoutMs });
   await expect(page.locator(jobDialogLocators.title)).toBeHidden();
+  await expect(page.locator(vdevsPageLocators.group('data'))).toBeVisible({ timeout: loadTimeoutMs });
+  await expect(page.locator(vdevsPageLocators.node(guid))).toBeHidden();
 }
 
 /**
