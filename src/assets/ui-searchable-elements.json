@@ -6440,9 +6440,7 @@
     "synonyms": [
       "Reboot"
     ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
+    "requiredRoles": [],
     "visibleTokens": [],
     "routerLink": null,
     "anchor": "restart",
@@ -6459,9 +6457,7 @@
       "Power Off",
       "Turn Off"
     ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
+    "requiredRoles": [],
     "visibleTokens": [],
     "routerLink": null,
     "anchor": "shut-down",

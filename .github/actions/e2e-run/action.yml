@@ -99,6 +99,16 @@ runs:
           "$PLAYWRIGHT_IMAGE" \
           bash -c 'if [ -n "${TN_GREP:-}" ]; then ./node_modules/.bin/playwright test --shard "$TN_SHARD" --grep "$TN_GREP"; else ./node_modules/.bin/playwright test --shard "$TN_SHARD"; fi'
 
+    # The flaky tests' table for the job summary, which the suite's
+    # flaky-reporter.ts writes when any test needed its retry. Its warning
+    # annotations are already in the suite step's output.
+    - if: always() && steps.suite.outcome != 'skipped'
+      shell: bash
+      run: |
+        if [ -f test-results-unpublished/flaky-summary.md ]; then
+          cat test-results-unpublished/flaky-summary.md >> "$GITHUB_STEP_SUMMARY"
+        fi
+
     # Whenever the suite ran, pass or fail, and then insists on the file:
     # JUnit is the run history R7.4 and R8.4 are built on, so a run that
     # produced none must not report green.
