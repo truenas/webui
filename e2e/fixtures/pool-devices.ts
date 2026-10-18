@@ -72,7 +72,7 @@ export async function ensureMirrorPoolPresent(client: E2eApiClient, name: string
 }
 
 /**
- * What `ensureDevicePoolPresent` builds: `mirrors` two-disk mirrors for data, and
+ * What `ensureDevicePoolPresent` builds: `mirrors` (at least one) two-disk mirrors for data, and
  * one disk each for whichever of a cache, a log and a spare is asked for.
  */
 export interface DevicePoolShape {
@@ -121,7 +121,11 @@ export async function ensureDevicePoolPresent(
     () => client.api.callAndGetJobId('pool.create', [{
       name,
       topology: {
-        data: Array.from({ length: shape.mirrors }, () => ({ type: 'MIRROR' as const, disks: take(2) })),
+        // `pool.create` types `data` as a non-empty tuple, so the first mirror is spelled out.
+        data: [
+          { type: 'MIRROR' as const, disks: take(2) },
+          ...Array.from({ length: shape.mirrors - 1 }, () => ({ type: 'MIRROR' as const, disks: take(2) })),
+        ],
         ...(shape.cache ? { cache: [{ type: 'STRIPE' as const, disks: take(1) }] } : {}),
         ...(shape.log ? { log: [{ type: 'STRIPE' as const, disks: take(1) }] } : {}),
         ...(shape.spare ? { spares: take(1) } : {}),
