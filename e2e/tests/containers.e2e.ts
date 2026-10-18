@@ -24,7 +24,7 @@ import {
   seedContainer, setContainerConfig,
 } from '../fixtures/containers';
 import { ensureDatasetAbsent } from '../fixtures/storage';
-import { chooseFirstImage, openContainerDetails, openCreateContainerForm } from '../flows/containers';
+import { chooseImage, openContainerDetails, openCreateContainerForm } from '../flows/containers';
 import { containersLocators } from '../locators/containers';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
@@ -118,7 +118,7 @@ test('an admin creates a container from a Debian image with a CPU set and an env
   await openCreateContainerForm(page);
   await page.locator(form.name).fill(containerName);
   await page.locator(form.description).fill(description);
-  await chooseFirstImage(page, imageOs);
+  await chooseImage(page, await firstRegistryImage(api, imageOs));
 
   await page.locator(form.advancedOptions).click();
   await page.locator(form.cpuset).fill(cpuset);

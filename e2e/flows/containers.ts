@@ -53,20 +53,27 @@ export async function openCreateContainerForm(page: Page): Promise<void> {
 const imageRegistryTimeoutMs = 60_000;
 
 /**
- * Picks an image in the Create form's image browser: searches for `os` and
- * takes the first version of the first match, which is the image
- * `firstRegistryImage` names. Returns once the browser has closed and the
- * form's Image field holds the choice.
+ * Picks `image` in the Create form's image browser — searched for by name and
+ * narrowed to its version with the Release filter. Returns once the browser has
+ * closed and the form's Image field holds the choice.
+ *
+ * The browser lists versions oldest first, and the oldest is the build upstream
+ * deletes next, so the version is chosen rather than taking the first row: pass
+ * what `firstRegistryImage` returns.
  *
  * The browser reads the registry from `images.sys.truenas.net` as it opens, so
- * the first Select can take a while to appear.
+ * the first Select can take a while to appear. The Release filter has no options
+ * until then, so it is opened only after that.
  */
-export async function chooseFirstImage(page: Page, os: string): Promise<void> {
+export async function chooseImage(page: Page, image: { name: string; version: string }): Promise<void> {
   const browser = containersLocators.imageBrowser;
+  const select = page.locator(browser.selectImage(image.name));
 
   await page.locator(containersLocators.create.browseImages).click();
-  await page.locator(browser.search).fill(os);
-  await page.locator(browser.selectImageOfOs(os)).first().click({ timeout: imageRegistryTimeoutMs });
+  await page.locator(browser.search).fill(image.name);
+  await expect(select.first()).toBeVisible({ timeout: imageRegistryTimeoutMs });
+  await selectOption(page, browser.release, browser.releaseOption(image.version));
+  await select.first().click();
   await expect(page.locator(browser.search)).toBeHidden();
   await expect(page.locator(containersLocators.create.image)).not.toHaveValue('');
 }
