@@ -67,7 +67,7 @@ export default class FlakyReporter implements Reporter {
       const message = escapeData(`${title} — failed, then passed on retry: ${error}`);
       const properties = `file=${escapeProperty(file)},line=${test.location.line},title=Flaky test`;
       process.stdout.write(`::warning ${properties}::${message}\n`);
-      const cell = (value: string): string => value.replace(/\|/g, '\\|');
+      const cell = (value: string): string => value.replace(/\\/g, '\\\\').replace(/\|/g, '\\|');
       return `| \`${cell(file)}:${test.location.line}\` | ${cell(title)} | ${cell(error)} |`;
     });
 
