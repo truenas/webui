@@ -20,10 +20,23 @@ export interface VmSummary {
   state: string;
 }
 
-/** The part of a device's attributes the specs read. Every device has a `dtype`; a disk has a path. */
+/**
+ * The part of a device's attributes the specs read. Every device has a `dtype`; a disk has a path,
+ * and a NIC has an adapter type and a MAC.
+ */
 interface DeviceAttributes {
   dtype: string;
   path?: string | null;
+  type?: string | null;
+  mac?: string | null;
+}
+
+/** One device of a VM, as `vm.device.query` gives it. */
+export interface VmDeviceSummary {
+  id: number;
+  /** Middleware picks one when none is given. The Devices page keys each row on it. */
+  order: number;
+  attributes: DeviceAttributes;
 }
 
 /** What {@link ensureVmPresent} defines: the smallest machine the wizard would offer, never started. */
@@ -75,16 +88,26 @@ export async function findVm(client: E2eApiClient, name: string): Promise<VmSumm
   };
 }
 
+/** Every device attached to a VM. */
+export async function findVmDevices(client: E2eApiClient, vmId: number): Promise<VmDeviceSummary[]> {
+  const devices = await firstValueFrom(
+    client.api.query('vm.device.query', [['vm', '=', vmId]]).pipe(timeout(readTimeoutMs)),
+  );
+
+  return devices.map((device) => ({
+    id: device.id,
+    order: device.order ?? 0,
+    // The generated type is a union per device type; only the fields `DeviceAttributes` names are read.
+    attributes: device.attributes as unknown as DeviceAttributes,
+  }));
+}
+
 /** The device types attached to a VM, and the paths of its disks. */
 export async function readVmDevices(
   client: E2eApiClient,
   vmId: number,
 ): Promise<{ types: string[]; diskPaths: string[] }> {
-  const devices = await firstValueFrom(
-    client.api.query('vm.device.query', [['vm', '=', vmId]]).pipe(timeout(readTimeoutMs)),
-  );
-  // The generated type is a union per device type; only the two fields every disk shares are read.
-  const attributes = devices.map((device) => device.attributes as unknown as DeviceAttributes);
+  const attributes = (await findVmDevices(client, vmId)).map((device) => device.attributes);
 
   return {
     types: attributes.map((attribute) => attribute.dtype).sort((a, b) => a.localeCompare(b)),
@@ -147,4 +170,58 @@ export async function ensureVmAbsent(client: E2eApiClient, name: string): Promis
       throw error;
     }
   }
+}
+
+/** Reads back one device of a VM by id, failing when `vm.device.query` does not have it. */
+async function readVmDevice(client: E2eApiClient, vmId: number, deviceId: number): Promise<VmDeviceSummary> {
+  const device = (await findVmDevices(client, vmId)).find((candidate) => candidate.id === deviceId);
+  if (!device) {
+    throw new Error(`vm.device.create answered with device ${deviceId}, but VM ${vmId} does not list it.`);
+  }
+
+  return device;
+}
+
+/**
+ * Attaches a NIC of the given adapter type to a VM, and returns it as middleware stored it.
+ *
+ * It attaches to whichever interface `vm.device.nic_attach_choices` lists first, since a run cannot
+ * know the appliance's interface names. No MAC is given, so middleware generates one.
+ */
+export async function addVmNic(
+  client: E2eApiClient,
+  vmId: number,
+  type: 'E1000' | 'VIRTIO',
+): Promise<VmDeviceSummary> {
+  const choices = await firstValueFrom(
+    client.api.call('vm.device.nic_attach_choices').pipe(timeout(readTimeoutMs)),
+  );
+  const [nicAttach] = Object.keys(choices);
+  if (!nicAttach) {
+    throw new Error('vm.device.nic_attach_choices lists no interface, so no NIC can be attached.');
+  }
+
+  const created = await firstValueFrom(
+    client.api.call('vm.device.create', [{
+      vm: vmId,
+      attributes: { dtype: 'NIC', type, nic_attach: nicAttach },
+    }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+
+  return readVmDevice(client, vmId, created.id);
+}
+
+/**
+ * Attaches an existing zvol to a VM as an AHCI disk, by its full name (`pool/…/zvol`), and returns
+ * the device as middleware stored it.
+ */
+export async function addVmDisk(client: E2eApiClient, vmId: number, zvol: string): Promise<VmDeviceSummary> {
+  const created = await firstValueFrom(
+    client.api.call('vm.device.create', [{
+      vm: vmId,
+      attributes: { dtype: 'DISK', path: `/dev/zvol/${zvol}`, type: 'AHCI' },
+    }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+
+  return readVmDevice(client, vmId, created.id);
 }

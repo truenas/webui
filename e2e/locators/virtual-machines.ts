@@ -1,6 +1,6 @@
 /**
  * The Virtual Machines page, the Create Virtual Machine wizard, the Edit VM form and the delete
- * dialog.
+ * dialog, and a VM's Devices page with its device form and delete dialog.
  *
  * Derived from the templates rather than read off a running appliance; see `signin.ts` for the
  * type-prefixing that produces these values.
@@ -14,6 +14,12 @@ import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
  * split there (`e2e` becomes `e-2-e`). The row and its cells all start from this same tag.
  */
 const rowTag = (name: string): string => legacyKebabTestSegment(`virtual-machine-${name}`);
+
+/**
+ * What tells one row of a VM's Devices list from another: `vm-device-<dtype>-<order>`, through
+ * lodash like the VM rows, so a NIC at order 1002 is `vm-device-nic-1002`.
+ */
+const deviceRowTag = (dtype: string, order: number): string => legacyKebabTestSegment(`vm-device-${dtype}-${order}`);
 
 /**
  * Every step of the wizard ends in the same two buttons, `[testId]="'next'"` and
@@ -45,6 +51,51 @@ export const virtualMachinesLocators = {
   rowAction: {
     edit: (id: number): string => `[data-test="button-edit-${id}"]`,
     delete: (id: number): string => `[data-test="button-delete-${id}"]`,
+    /** Opens the VM's Devices page, `/vm/<id>/devices`. */
+    devices: (id: number): string => `[data-test="button-devices-${id}"]`,
+  },
+
+  /** A VM's Devices page (`ix-device-list`). */
+  devices: {
+    /** `<tn-button [testId]="'add-device'">` in the page header. Opens the device form. */
+    add: '[data-test="button-add-device"]',
+    /** Every row of the list, whatever its type and order. */
+    rows: '[data-test^="row-vm-device-"]',
+    /** The `<tr>`, from `[rowTestId]`. */
+    row: (dtype: string, order: number): string => `[data-test="row-${deviceRowTag(dtype, order)}"]`,
+    /** The row's actions menu trigger. Every row has one with this same id, so reach it through the row. */
+    actions: '[data-test="button-device-actions"]',
+    /** The menu items, `[testId]="[device.id, 'edit']"` and so on, keyed by the device's id. */
+    edit: (id: number): string => `[data-test="button-${id}-edit"]`,
+    delete: (id: number): string => `[data-test="button-${id}-delete"]`,
+  },
+
+  /** The Add Device and Edit Device form in the side panel (`ix-device-form`). */
+  deviceForm: {
+    /** Only on Add. An explicit `[testId]`, because it binds a standalone `[formControl]`. */
+    deviceType: '[data-test="select-device-type"]',
+    deviceTypeOption: (label: string): string => `[data-test="option-device-type-${kebabTestSegment(label)}"]`,
+    /** The NIC's Adapter Type, which falls back to its `formControlName`, `type`. */
+    nicType: '[data-test="select-type"]',
+    /** Options are labelled `Intel e82585 (e1000)` and `VirtIO`. */
+    nicTypeOption: (label: string): string => `[data-test="option-type-${kebabTestSegment(label)}"]`,
+    mac: '[data-test="input-mac"]',
+    generateMac: '[data-test="button-generate"]',
+    nicAttach: '[data-test="select-nic-attach"]',
+    /** The appliance's own interfaces, so a prefix that matches only this select's options. */
+    nicAttachOptions: '[data-test^="option-nic-attach-"]',
+    /** `<tn-button [testId]="'save'">` on the side panel container. */
+    save: '[data-test="button-save"]',
+  },
+
+  /** `<tn-dialog-shell testId="device-delete">`. */
+  deleteDeviceDialog: {
+    title: '[data-test="dialog-title-device-delete"]',
+    /** "Delete zvol device". Only a disk offers it. */
+    zvol: '[data-test="checkbox-zvol"]',
+    /** Appears once Delete zvol device is ticked. Wants the zvol's last path segment, not its full name. */
+    zvolConfirm: '[data-test="input-zvol-confirm"]',
+    delete: '[data-test="button-delete-device"]',
   },
 
   wizard: {
