@@ -9,7 +9,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent,
-  TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+  TnFormFieldComponent, TnInputComponent, TnSelectComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { map, of, startWith } from 'rxjs';
 import { minimumPbkdf2Iterations } from 'app/constants/dataset.constants';
@@ -71,6 +71,7 @@ interface EncryptionOptionsFormValue {
     TnInputComponent,
     FormActionsComponent,
     TnButtonComponent,
+    TnTestIdDirective,
     RequiresRolesDirective,
   ],
 })
