@@ -5,9 +5,10 @@
  * user, so these helpers key on the command — and a spec keeps its commands
  * distinct from anything an appliance might already carry.
  *
- * Every job made here runs a harmless command, an `echo` or a short `sleep`: an
+ * A job a spec keeps runs a harmless command, an `echo` or a short `sleep`: an
  * enabled job really runs on its schedule, and a run that dies before its
- * teardown leaves one behind.
+ * teardown leaves one behind. `runCommandOnAppliance` is the exception, since it
+ * removes its job as soon as the command has run, and schedules it once a year.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
