@@ -9,7 +9,9 @@ import { appCatalogLocators, customAppLocators, installedAppLocators } from '../
 
 /**
  * From Apps > Installed: Discover Apps, then Install via YAML under Custom App's menu. Names the app,
- * puts `compose` in the editor, saves, and returns once the app's page has been left for the list.
+ * puts `compose` in the editor, saves, and returns once the panel has closed on the installed list.
+ * The form navigates to `/apps/installed`, which then selects an app and moves on to its own route
+ * (`/apps/installed/<train>/<name>`), so either URL is the list.
  */
 export async function installCustomAppFromYaml(page: Page, name: string, compose: string): Promise<void> {
   await page.locator(appCatalogLocators.discoverApps).click();
@@ -21,7 +23,7 @@ export async function installCustomAppFromYaml(page: Page, name: string, compose
   await page.locator(customAppLocators.save).click();
 
   await expect(page.locator(customAppLocators.save)).toBeHidden({ timeout: appInstallTimeoutMs });
-  await expect(page).toHaveURL(/\/apps\/installed$/);
+  await expect(page).toHaveURL(/\/apps\/installed(\/|$)/);
 }
 
 /**
