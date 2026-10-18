@@ -4,8 +4,9 @@
  * Taking a disk offline needs a vdev that survives losing it, so the pool here is
  * a two-disk mirror rather than the one-disk stripe `ensurePoolPresent` builds.
  * Adding a spare needs a third unused disk, which the wizard offers from the same
- * inventory. Both tests change the pool's topology, so the pool is this spec's own
- * and never the worker-scoped one other specs share.
+ * inventory, and so does replacing a disk. Every test here changes the pool's
+ * topology, so the pool is its spec's own and never the worker-scoped one other
+ * specs share.
  */
 import type { QueryEntity } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';

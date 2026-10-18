@@ -1,5 +1,6 @@
 /**
- * A pool's VDEVs page, its ZFS Info card, and the Extend dialog.
+ * A pool's VDEVs page, its ZFS Info and Disk Info cards, and the Replace Disk and
+ * Extend dialogs.
  *
  * "Add VDEV" opens the creation wizard with the pool's name fixed and every step
  * after General optional, so its controls are `poolWizardLocators` in
@@ -88,4 +89,46 @@ export const extendDialogLocators = {
    * action row.
    */
   submit: '[data-test="actions-extend"] [data-test="button-extend"]',
+} as const;
+
+/**
+ * The Disk Info card for the selected disk, beside the ZFS Info card.
+ *
+ * Replace is the card's primary action, `testId: 'replace'` on a `TnCardAction`,
+ * which the card renders as a `tn-button`. Offered to `POOL_WRITE` whether or not
+ * the disk is online.
+ */
+export const diskInfoLocators = {
+  replace: '[data-test="button-replace"]',
+} as const;
+
+/** The Replace Disk dialog (`replace-disk-dialog.component.html`), raised from the Disk Info card. */
+export const replaceDiskLocators = {
+  /** `<tn-dialog-shell testId="replace-disk">`. What to wait on. */
+  title: '[data-test="dialog-title-replace-disk"]',
+
+  /**
+   * "Member Disk", an `ix-unused-disk-select` with `testId="replacement"`, which
+   * is a library `tn-autocomplete`: the input is `autocomplete-replacement` and its
+   * rows are `option-replacement-<label>`. A label is the device name and its size,
+   * `sdd (10 GiB)`, so a row is matched on the device name and the size is left to
+   * the prefix.
+   */
+  replacement: '[data-test="autocomplete-replacement"]',
+  replacementOption: (devname: string): string => (
+    `[data-test^="option-replacement-${kebabTestSegment(devname)}-"]`
+  ),
+
+  /** Both ticked when the dialog opens. */
+  preserveSettings: '[data-test="checkbox-preserve-settings"]',
+  preserveDescription: '[data-test="checkbox-preserve-description"]',
+  /** Unticked when the dialog opens. */
+  force: '[data-test="checkbox-force"]',
+
+  /**
+   * The dialog's own "Replace Disk". It emits `button-replace` like the card's,
+   * which stays on the page behind the dialog, so it is reached through the
+   * dialog's action row.
+   */
+  submit: '[data-test="actions-replace-disk"] [data-test="button-replace"]',
 } as const;

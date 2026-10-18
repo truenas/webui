@@ -6,7 +6,9 @@ import { expect, type Page } from '@playwright/test';
 import { goToStorage } from './navigation';
 import { configureAutomatedVdevs, confirmDestructiveAction, goToReview } from './storage';
 import { confirmDialogLocators } from '../locators/dialogs';
-import { extendDialogLocators, vdevsPageLocators, zfsInfoLocators } from '../locators/pool-devices';
+import {
+  diskInfoLocators, extendDialogLocators, replaceDiskLocators, vdevsPageLocators, zfsInfoLocators,
+} from '../locators/pool-devices';
 import { poolWizardLocators } from '../locators/storage';
 
 /** The tree loads `pool.query` and `disk.query` before it renders a node. */
@@ -20,6 +22,12 @@ const deviceStateTimeoutMs = 60_000;
 
 /** `pool.update` formats the disks it adds, as a job behind a progress dialog. */
 const poolUpdateTimeoutMs = 5 * 60_000;
+
+/**
+ * `pool.replace` formats the new disk and attaches it, as a job behind a progress
+ * dialog. The dialog closes when the job ends, before the resilver has.
+ */
+const poolReplaceTimeoutMs = 5 * 60_000;
 
 /**
  * `pool.attach` formats the new disk and attaches it, as a job behind a progress
@@ -82,6 +90,31 @@ export async function setSelectedDiskState(
   await expect(page.locator(vdevsPageLocators.nodeStatus(disk.guid))).toHaveText(state, {
     timeout: deviceStateTimeoutMs,
   });
+}
+
+/**
+ * Replaces the selected disk with an unused one, from Replace on its Disk Info
+ * card, and waits for the dialog to close on the job's success. The tick boxes
+ * are left as the dialog opens them, which is checked first: both Preserve boxes
+ * ticked and Force not.
+ *
+ * The autocomplete narrows to the device name typed, and clicking its row is what
+ * commits the value, not the text.
+ */
+export async function replaceSelectedDisk(page: Page, replacement: string): Promise<void> {
+  await page.locator(diskInfoLocators.replace).click();
+  await expect(page.locator(replaceDiskLocators.title)).toBeVisible();
+
+  await page.locator(replaceDiskLocators.replacement).fill(replacement);
+  await page.locator(replaceDiskLocators.replacementOption(replacement)).click();
+
+  await expect(page.locator(replaceDiskLocators.preserveSettings)).toBeChecked();
+  await expect(page.locator(replaceDiskLocators.preserveDescription)).toBeChecked();
+  await expect(page.locator(replaceDiskLocators.force)).not.toBeChecked();
+  await page.locator(replaceDiskLocators.submit).click();
+
+  // The dialog stays open on a failure, behind the error the job raised.
+  await expect(page.locator(replaceDiskLocators.title)).toBeHidden({ timeout: poolReplaceTimeoutMs });
 }
 
 /**
