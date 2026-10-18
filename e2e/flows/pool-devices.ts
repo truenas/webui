@@ -6,17 +6,26 @@ import { expect, type Page } from '@playwright/test';
 import { goToStorage } from './navigation';
 import { configureAutomatedVdevs, confirmDestructiveAction, goToReview } from './storage';
 import { confirmDialogLocators } from '../locators/dialogs';
-import { vdevsPageLocators, zfsInfoLocators } from '../locators/pool-devices';
+import { extendDialogLocators, vdevsPageLocators, zfsInfoLocators } from '../locators/pool-devices';
 import { poolWizardLocators } from '../locators/storage';
 
 /** The tree loads `pool.query` and `disk.query` before it renders a node. */
 const loadTimeoutMs = 30_000;
 
-/** `pool.offline` and `pool.online` answer once ZFS has acted, and the tree reloads after. */
+/**
+ * `pool.offline`, `pool.online` and `pool.detach` answer once ZFS has acted, and
+ * the tree reloads after.
+ */
 const deviceStateTimeoutMs = 60_000;
 
 /** `pool.update` formats the disks it adds, as a job behind a progress dialog. */
 const poolUpdateTimeoutMs = 5 * 60_000;
+
+/**
+ * `pool.attach` formats the new disk and attaches it, as a job behind a progress
+ * dialog. The dialog closes when the job ends, which may be before the resilver has.
+ */
+const poolAttachTimeoutMs = 5 * 60_000;
 
 /**
  * Opens the pool's VDEVs page from its card on the Storage dashboard, starting
@@ -40,6 +49,15 @@ export async function selectMirrorDisk(
   disk: { guid: string; name: string },
 ): Promise<void> {
   await page.locator(vdevsPageLocators.node(mirrorGuid)).click();
+  await selectDisk(page, disk);
+}
+
+/**
+ * Selects a disk the tree already shows: one in an expanded vdev, or one that is
+ * a data vdev of its own. The details title holding the disk's name says the card
+ * beside the tree is that disk's.
+ */
+export async function selectDisk(page: Page, disk: { guid: string; name: string }): Promise<void> {
   await page.locator(vdevsPageLocators.node(disk.guid)).click();
   await expect(page).toHaveURL(new RegExp(`/vdevs/${disk.guid}$`));
   await expect(page.locator(vdevsPageLocators.detailsTitle)).toHaveText(disk.name);
@@ -64,6 +82,40 @@ export async function setSelectedDiskState(
   await expect(page.locator(vdevsPageLocators.nodeStatus(disk.guid))).toHaveText(state, {
     timeout: deviceStateTimeoutMs,
   });
+}
+
+/**
+ * Extends the selected disk with an unused one, from Extend on its ZFS Info card,
+ * and waits for the dialog to close on the job's success.
+ *
+ * The autocomplete narrows to the device name typed, and clicking its row is what
+ * commits the value, not the text.
+ */
+export async function extendSelectedDisk(page: Page, newDisk: string): Promise<void> {
+  await page.locator(zfsInfoLocators.extend).click();
+  await expect(page.locator(extendDialogLocators.title)).toBeVisible();
+
+  await page.locator(extendDialogLocators.newDisk).fill(newDisk);
+  await page.locator(extendDialogLocators.newDiskOption(newDisk)).click();
+  await page.locator(extendDialogLocators.submit).click();
+
+  // The dialog stays open on a failure, behind the error the job raised.
+  await expect(page.locator(extendDialogLocators.title)).toBeHidden({ timeout: poolAttachTimeoutMs });
+}
+
+/**
+ * Detaches the selected disk from its mirror, from the ZFS Info card's menu, and
+ * waits for the tree to stop listing it.
+ *
+ * The confirm is the shared one, tick box and all.
+ */
+export async function detachSelectedDisk(page: Page, disk: { guid: string }): Promise<void> {
+  await page.locator(zfsInfoLocators.menu).click();
+  await page.locator(zfsInfoLocators.detach).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+  await confirmDestructiveAction(page);
+
+  await expect(page.locator(vdevsPageLocators.node(disk.guid))).toHaveCount(0, { timeout: deviceStateTimeoutMs });
 }
 
 /**
