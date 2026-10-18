@@ -1,18 +1,135 @@
 /**
- * Kerberos realms and keytabs, driven through the UI from Credentials > Directory
- * Services, behind its Advanced Settings.
+ * Credentials > Directory Services, driven through the UI: the Directory Services
+ * Configuration form, and the Kerberos realms and keytabs behind the page's
+ * Advanced Settings.
  *
  * Joining AD, LDAP or IPA needs a directory server the CI appliance does not
- * have. The two Kerberos cards do not, which is why they are what is covered.
+ * have, so the configuration form is only ever saved disabled, which binds to
+ * nothing. The two Kerberos cards need no server, which is why they are saved.
  */
 import { expect, type Page } from '@playwright/test';
 import { goToDirectoryServices } from './navigation';
+import { selectOption } from './storage';
 import type { KerberosRealmSettings } from '../fixtures/kerberos';
 import { confirmDialogLocators } from '../locators/dialogs';
 import { directoryServicesLocators } from '../locators/directory-services';
+import { apiCallsTo } from '../support/api-calls';
 
-/** Saving or deleting either one rewrites `krb5.conf` and restarts a service, not instant. */
+/**
+ * Saving or deleting a Kerberos realm or keytab rewrites `krb5.conf` and
+ * restarts a service; saving or clearing the configuration runs a job. None of
+ * them is instant.
+ */
 const saveTimeoutMs = 60_000;
+
+/** Long enough for the page's first reads to come back over a fresh socket. */
+const pageLoadTimeoutMs = 30_000;
+
+/**
+ * Opens the Directory Services Configuration form from the disabled state's
+ * button, starting from the sidebar, and waits for it to be ready to fill.
+ */
+export async function openDirectoryServicesForm(page: Page): Promise<void> {
+  await goToDirectoryServices(page);
+  await page.locator(directoryServicesLocators.configure).click();
+  await expect(page.locator(directoryServicesLocators.configForm.serviceType)).toBeVisible();
+}
+
+/**
+ * Opens the configuration form on what is already stored, starting from the
+ * sidebar.
+ *
+ * The page shows its disabled state — and so the Configure button — before its
+ * config has loaded, and the form takes whatever the page holds when the button
+ * is pressed. So the page's own `directoryservices.status` and
+ * `directoryservices.config` are waited on first, or the form could open empty on
+ * a stored configuration. Needs `test.use({ recordApiCalls: true })`.
+ */
+export async function openStoredDirectoryServicesForm(page: Page): Promise<void> {
+  await goToDirectoryServices(page);
+  for (const method of ['directoryservices.status', 'directoryservices.config']) {
+    const answers = (): (string | undefined)[] => apiCallsTo(page, method).map((call) => call.answer);
+    await expect.poll(answers, { timeout: pageLoadTimeoutMs }).toContain('result');
+  }
+
+  await page.locator(directoryServicesLocators.configure).click();
+  await expect(page.locator(directoryServicesLocators.configForm.serviceType)).toBeVisible();
+}
+
+/**
+ * Saves the configuration form and waits for the panel to close.
+ *
+ * The save runs as a job behind a progress dialog; the panel closing is the
+ * app's own signal that it succeeded — a refusal leaves it open.
+ */
+export async function saveDirectoryServicesForm(page: Page): Promise<void> {
+  const { save } = directoryServicesLocators.configForm;
+  await expect(page.locator(save)).toBeEnabled();
+  await page.locator(save).click();
+  await expect(page.locator(save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Presses the form's Clear Config, accepts the confirm, and waits for the panel
+ * to close once the clearing job has finished.
+ *
+ * The confirm is raised without `hideCheckbox`, so Clear stays disabled until
+ * the box is ticked — asserted on the way, as {@link confirmRowDelete} does.
+ */
+export async function clearDirectoryServicesConfig(page: Page): Promise<void> {
+  const form = directoryServicesLocators.configForm;
+  await page.locator(form.clearConfig).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+
+  const confirm = page.locator(confirmDialogLocators.confirm);
+  await expect(confirm).toBeDisabled();
+  await page.locator(confirmDialogLocators.checkbox).click();
+  await expect(confirm).toBeEnabled();
+
+  await confirm.click();
+  await expect(page.locator(form.serviceType)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/** Closes a configuration form nothing was changed in. Unedited, the panel closes without asking. */
+export async function closeDirectoryServicesForm(page: Page): Promise<void> {
+  const form = directoryServicesLocators.configForm;
+  await page.locator(form.closePanel).click();
+  await expect(page.locator(form.serviceType)).toBeHidden();
+}
+
+/** Picks a Configuration Type by its label. */
+export async function selectServiceType(page: Page, label: string): Promise<void> {
+  const form = directoryServicesLocators.configForm;
+  await selectOption(page, form.serviceType, form.serviceTypeOption(label));
+}
+
+/** Picks a Credential Type by its label. */
+export async function selectCredentialType(page: Page, label: string): Promise<void> {
+  const form = directoryServicesLocators.configForm;
+  await selectOption(page, form.credentialType, form.credentialTypeOption(label));
+}
+
+/** Picks an IDMAP Backend by its label. Rendered only once Use TrueNAS Server IDMAP Defaults is unticked. */
+export async function selectIdmapBackend(page: Page, label: string): Promise<void> {
+  const { idmap } = directoryServicesLocators.configForm;
+  await selectOption(page, idmap.backend, idmap.backendOption(label));
+}
+
+/**
+ * Closes the configuration form without saving, and waits for it to go.
+ *
+ * Only for a form that has been edited: the panel then asks whether to discard
+ * the changes, and that question is asserted rather than looked for.
+ */
+export async function discardDirectoryServicesForm(page: Page): Promise<void> {
+  const form = directoryServicesLocators.configForm;
+  await page.locator(form.closePanel).click();
+
+  const discard = page.locator(confirmDialogLocators.confirm);
+  await expect(discard).toBeVisible();
+  await discard.click();
+  await expect(page.locator(form.serviceType)).toBeHidden();
+}
 
 /**
  * Opens Advanced Settings, starting from the sidebar, and accepts the warning it

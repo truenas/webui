@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy, Component, computed, input, output,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconButtonComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 
 @Component({
   selector: 'ix-widget-group-controls',
@@ -13,6 +13,7 @@ import { TnIconButtonComponent, TnIconComponent } from '@truenas/ui-components';
   imports: [
     TnIconButtonComponent,
     TnIconComponent,
+    TnTestIdDirective,
     TranslateModule,
     CdkDragHandle,
   ],

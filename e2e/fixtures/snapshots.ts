@@ -140,6 +140,26 @@ export async function ensureSnapshotPresent(client: E2eApiClient, dataset: strin
 }
 
 /**
+ * Clones a snapshot to a new dataset, `datasetDst` by full name.
+ *
+ * For a clone a test acts *on*. Cloning through the UI is `snapshot-list.e2e.ts`'s.
+ * The caller makes sure `datasetDst` is absent first; the clone it leaves depends
+ * on the snapshot, so it has to go before the snapshot or its dataset can.
+ */
+export async function cloneSnapshot(
+  client: E2eApiClient,
+  dataset: string,
+  name: string,
+  datasetDst: string,
+): Promise<void> {
+  await firstValueFrom(
+    client.api
+      .call('pool.snapshot.clone', [{ snapshot: snapshotId(dataset, name), dataset_dst: datasetDst }])
+      .pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
  * Removes every snapshot of a dataset, releasing any hold first.
  *
  * Tolerates a dataset that is not there: a spec's `beforeEach` runs this before

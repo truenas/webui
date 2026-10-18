@@ -8,7 +8,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnEmptyComponent, TnTooltipDirective,
+  TnButtonComponent, TnEmptyComponent, TnTestIdDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -40,6 +40,7 @@ import { WidgetGroupControlsComponent } from './widget-group-controls/widget-gro
     PageHeaderComponent,
     TnButtonComponent,
     TnEmptyComponent,
+    TnTestIdDirective,
     TnTooltipDirective,
     UiSearchDirective,
     NgxSkeletonLoaderModule,

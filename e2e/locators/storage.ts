@@ -49,6 +49,13 @@ export const poolWizardLocators = {
    */
   nameField: '[data-test="form-field-name"]',
   next: '[data-test="button-next-general"]',
+  /**
+   * One of the General step's Encryption radios, by the label it shows: `None`,
+   * `Software Encryption (ZFS)`. `['radio-button', 'encryption-type', option.label]`
+   * on a `tn-radio`, which puts the id on the radio's `<label>`; Playwright reads
+   * the radio input it labels, so `toBeChecked()` works on it.
+   */
+  encryptionType: (label: string) => `[data-test="radio-button-encryption-type-${kebabTestSegment(label)}"]`,
   /** A vdev step's Next, which moves on to the following step. */
   nextStep: (type: VdevCategory) => `[data-test="button-next-${stepIds[type]}"]`,
 
@@ -121,6 +128,18 @@ export const poolWizardLocators = {
     `[data-test="option-children-${type}-${kebabTestSegment(disks)}"]`
   ),
 
+  /**
+   * "Manual Disk Selection" under Advanced Options, and "Edit Manual Disk Selection" once a
+   * manual layout has been saved: both are `[testId]="['manual', type()]"`, and only one is
+   * rendered at a time. Disabled until a layout is chosen. Opens {@link manualDiskSelectionLocators}.
+   */
+  manualSelection: (type: VdevCategory) => `[data-test="button-manual-${type}"]`,
+  /**
+   * What the step shows in place of Automated Disk Selection once a manual layout has been saved.
+   * `[type(), 'manual-disk-selection-message']`.
+   */
+  manualSelectionMessage: (type: VdevCategory) => `[data-test="text-${type}-manual-disk-selection-message"]`,
+
   /** Not rendered on the Log, Spare and Cache steps, which build exactly one vdev. */
   vdevCount: (type: VdevCategory) => `[data-test="select-vdevs-number-${type}"]`,
   vdevCountOption: (type: VdevCategory, count: number) => (
@@ -142,6 +161,10 @@ export const poolWizardLocators = {
   dataStepWarning: '[data-test="text-data-step-warning"]',
   /** The Log step's, in the same place. */
   logStepWarning: '[data-test="text-log-step-warning"]',
+  /** The Special step's. `metadata`, its step's own name, not the `special` category. */
+  metadataStepWarning: '[data-test="text-metadata-step-warning"]',
+  /** The Dedup step's. */
+  dedupStepWarning: '[data-test="text-dedup-step-warning"]',
 
   /**
    * Any entry of the Review step's Warnings list, `['review-warning', $index]`.
@@ -152,6 +175,8 @@ export const poolWizardLocators = {
 
   /** Review step — General Info's Pool Name. */
   reviewPoolName: '[data-test="text-review-pool-name"]',
+  /** General Info's Encryption, e.g. `Software (ZFS)`. Not rendered while encryption is None. */
+  reviewEncryption: '[data-test="text-review-encryption"]',
   /**
    * One row of the Review step's Topology Summary, in the same words as the
    * preview. Rendered only for a category that has vdevs.
@@ -163,6 +188,68 @@ export const poolWizardLocators = {
   inspectVdevs: '[data-test="button-inspect-vdevs"]',
   /** "Create Pool", or "Update Pool" when the wizard was opened from Add VDEV. */
   createPool: '[data-test="button-create-pool"]',
+} as const;
+
+/**
+ * The pool wizard's Manual Disk Selection dialog: unused disks on the left, the step's vdevs on
+ * the right, and disks dragged between them (`ngx-drag-drop`).
+ *
+ * A vdev's ids carry its layout and its 1-based position in the list, `['vdev-error', layout(),
+ * position()]`. The layout is the `CreateVdevLayout` value, `MIRROR`, which the library writes as
+ * `mirror`. A disk's ids carry its name, `sdb`.
+ *
+ * Several of these are on plain `<div>`s or on `ix-disk-icon` with no `tnTestIdType`, so they are
+ * written with no type prefix.
+ */
+export const manualDiskSelectionLocators = {
+  /** `<tn-dialog-shell testId="manual-disk-selection">`. What to wait on. */
+  title: '[data-test="dialog-title-manual-disk-selection"]',
+
+  /** "Add", which appends an empty vdev. Hidden once a step limited to one vdev has it. */
+  add: '[data-test="button-add"]',
+  /** Disabled while any vdev has fewer disks than its layout needs. */
+  save: '[data-test="button-save-selection"]',
+  /** Closes the dialog and leaves the step as it was. */
+  cancel: '[data-test="button-cancel"]',
+
+  /** The unused-disk list, which is also where a disk is dropped to take it out of a vdev. */
+  unusedDisksDropzone: '[data-test="unused-disks-dropzone"]',
+  /** A disk's row in the unused list. `tn-nested-tree-node` writes its id with no prefix. */
+  unusedDisk: (disk: string) => `[data-test="unused-disk-${kebabTestSegment(disk)}"]`,
+  /** What is dragged out of that row. */
+  unusedDiskDrag: (disk: string) => `[data-test="drag-unused-disk-${kebabTestSegment(disk)}"]`,
+
+  /** A vdev's card, and where a disk is dropped to add it. */
+  vdevDropzone: (layout: string, position: number) => (
+    `[data-test="vdev-dropzone-${kebabTestSegment(layout)}-${position}"]`
+  ),
+  /** "At least 2 disk(s) are required for Mirror vdevs". Rendered only while the vdev is short. */
+  vdevError: (layout: string, position: number) => (
+    `[data-test="text-vdev-error-${kebabTestSegment(layout)}-${position}"]`
+  ),
+  /** "<size> Est. Usable Raw Capacity". Rendered only once the vdev has enough disks. */
+  vdevCapacityEstimate: (layout: string, position: number) => (
+    `[data-test="text-vdev-capacity-estimate-${kebabTestSegment(layout)}-${position}"]`
+  ),
+  /** A disk inside a vdev, and what is dragged to take it out. */
+  vdevDisk: (disk: string) => `[data-test="drag-vdev-disk-${kebabTestSegment(disk)}"]`,
+  deleteVdev: (layout: string, position: number) => (
+    `[data-test="button-delete-vdev-${kebabTestSegment(layout)}-${position}"]`
+  ),
+} as const;
+
+/**
+ * The Download Encryption Key dialog the wizard raises once it has created a
+ * software-encrypted pool. It is opened with `disableClose: true`, and Done stays
+ * disabled until the key has been downloaded, so there is no way past it without
+ * the key file.
+ */
+export const downloadKeyDialogLocators = {
+  /** `<tn-dialog-shell testId="download-key">`. What to wait on. */
+  title: '[data-test="dialog-title-download-key"]',
+  /** "Download Encryption Key", which fetches `pool.dataset.export_keys` as a JSON file. */
+  download: '[data-test="button-download-key"]',
+  done: '[data-test="button-done"]',
 } as const;
 
 export const datasetLocators = {
@@ -424,6 +511,41 @@ export const poolScrubLocators = {
   lastScanErrors: (pool: string) => `[data-test="text-${kebabTestSegment(pool)}-last-scan-errors"]`,
 } as const;
 
+/** A pool's Storage Health card, `[pool().name, 'storage-health']` on the `tn-card`. */
+const storageHealthCard = (pool: string): string => `[data-test="card-${kebabTestSegment(pool)}-storage-health"]`;
+
+/**
+ * The Scheduled Scrub line on a pool's Storage Health card, and the form it opens
+ * in a side panel.
+ *
+ * The line's link is `link-configure-scrub` on every pool's card, whether it reads
+ * Configure or Schedule, so it is scoped inside the pool's card. The form's
+ * controls set no `testId` and fall back to their `formControlName`; its schedule
+ * is the shared `ix-scheduler`, which `schedulerLocators` in `locators/cron.ts`
+ * covers.
+ */
+export const scheduledScrubLocators = {
+  card: {
+    /** The schedule's description while the pool's task is enabled, "Not Set" otherwise. */
+    schedule: (pool: string) => `[data-test="text-${kebabTestSegment(pool)}-scheduled-scrub"]`,
+    /** "Configure" while the pool's task is enabled, "Schedule" otherwise. Both open the form. */
+    configure: (pool: string) => `${storageHealthCard(pool)} [data-test="link-configure-scrub"]`,
+  },
+
+  form: {
+    enabled: '[data-test="checkbox-enabled"]',
+    /** "Threshold Days". */
+    threshold: '[data-test="input-threshold"]',
+    /** `ix-scheduler` renders a `tn-select` with `[testId]="[controlName, 'presets']"`. */
+    schedule: '[data-test="select-schedule-presets"]',
+    scheduleOption: (label: string): string => (
+      `[data-test="option-schedule-presets-${kebabTestSegment(label)}"]`
+    ),
+    /** `<tn-button [testId]="'save'">` on the side panel container. */
+    save: '[data-test="button-save"]',
+  },
+} as const;
+
 /**
  * What the Storage Health card says about a pool's state, keyed by pool like
  * `poolScrubLocators`.
@@ -440,6 +562,36 @@ export const poolHealthLocators = {
   icon: (pool: string, type: 'safe' | 'warn') => (
     `[data-test="icon-${kebabTestSegment(pool)}-storage-health-${type}"]`
   ),
+} as const;
+
+/**
+ * The Storage Health card's Deduplication Table line, and the Prune
+ * Deduplication Table dialog that its Prune opens.
+ */
+export const pruneDedupLocators = {
+  /** The table's size, `[pool().name, 'deduplication-table']`. */
+  tableSize: (pool: string) => `[data-test="text-${kebabTestSegment(pool)}-deduplication-table"]`,
+  /**
+   * "Prune", `tnTestId="prune-dedup"`. The id does not carry the pool, so it is
+   * reached through the line's action row, `[pool().name, 'dedup']`. Rendered
+   * only while the pool's dedup table has a size.
+   */
+  open: (pool: string) => `[data-test="actions-${kebabTestSegment(pool)}-dedup"] [data-test="link-prune-dedup"]`,
+
+  /** `<tn-dialog-shell testId="prune-dedup-table">`. What to wait on. */
+  title: '[data-test="dialog-title-prune-dedup-table"]',
+  /**
+   * "Prune By", one `tn-radio` per option with
+   * `[testId]="['radio-button', 'prune-by', option.label]"`. The base already
+   * starts with the type, so it is not prefixed again.
+   */
+  pruneBy: (label: 'Percentage' | 'Age') => `[data-test="radio-button-prune-by-${kebabTestSegment(label)}"]`,
+  /** "Percentage", a `tn-slider` whose thumb is a native range input, `'slider-thumb'`. */
+  percentage: '[data-test="input-slider-thumb"]',
+  /** "Age (in days)", `<tn-input testId="days">`. Rendered once Age is chosen. */
+  days: '[data-test="input-days"]',
+  /** The dialog's own "Prune", `testId="prune"`. */
+  submit: '[data-test="button-prune"]',
 } as const;
 
 /**

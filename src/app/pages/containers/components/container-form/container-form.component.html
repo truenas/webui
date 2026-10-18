@@ -9,6 +9,7 @@
 >
   <tn-form-section [heading]="'Basic' | translate">
     <tn-form-field
+      testId="name"
       [label]="'Name' | translate"
       [required]="true"
       [tooltip]="nameTooltip()"
@@ -148,7 +149,9 @@
             [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Environment Variable' | translate }"
             (delete)="removeEnvironmentVariable(i)"
           >
-            <div class="environment-variable">
+            <!-- Scopes the row: its inputs fall back to `input-name` and `input-value`, and the
+                 container's own Name is `input-name` too. -->
+            <div class="environment-variable" tnTestIdType="row" [tnTestId]="['environment-variable', i]">
               <tn-form-field [label]="'Name' | translate" [required]="true">
                 <tn-input formControlName="name"></tn-input>
               </tn-form-field>

@@ -4,6 +4,7 @@
 import { expect, type Page } from '@playwright/test';
 import { goToVirtualMachines } from './navigation';
 import { selectFirstOption, selectOption } from './storage';
+import { confirmDialogLocators, infoDialogLocators } from '../locators/dialogs';
 import { virtualMachinesLocators } from '../locators/virtual-machines';
 
 /**
@@ -11,6 +12,18 @@ import { virtualMachinesLocators } from '../locators/virtual-machines';
  * after another. The edit form's Save is one call. Both get the same room.
  */
 const saveTimeoutMs = 90_000;
+
+/**
+ * A ceiling on the `vm.stop` job. A guest with no operating system ignores the shutdown request,
+ * so the job waits out the VM's whole shutdown timeout before it forces the machine off.
+ */
+const stopTimeoutMs = 120_000;
+
+/** One attempt at a row action's click. Short, so a row that closed under it is opened again soon. */
+const rowActionAttemptMs = 5_000;
+
+/** A ceiling on a row action becoming clickable: the VM reaching the state that shows it. */
+const rowActionTimeoutMs = 120_000;
 
 /** What the wizard is told to make. Everything else is left at its default. */
 export interface NewVm {
@@ -106,6 +119,58 @@ export async function expandVmRow(page: Page, name: string, id: number): Promise
 }
 
 /**
+ * Clicks one of a VM's row actions, opening the row first whenever it is closed.
+ *
+ * The list binds no `expansionKey`, so tn-table closes every open row each time `vm.query` reports
+ * a change, and a start or a stop reports more than one, not all at once. A row opened between two
+ * of them can close again before the click lands, so opening and clicking are retried as one step.
+ *
+ * The action only renders in the matching state (Stop while running, Start while stopped), so this
+ * also waits for the row to reach that state. A row left open in the old state is closed by the
+ * Name click and opened again on the next attempt.
+ */
+export async function clickVmRowAction(page: Page, name: string, action: string): Promise<void> {
+  const button = page.locator(action);
+
+  await expect(async () => {
+    if (!(await button.isVisible())) {
+      await page.locator(virtualMachinesLocators.row.name(name)).click();
+    }
+    await button.click({ timeout: rowActionAttemptMs });
+  }).toPass({ timeout: rowActionTimeoutMs });
+}
+
+/**
+ * Stops a running VM from its row, forcing it off once the shutdown timeout runs out.
+ *
+ * The Stop dialog runs the `vm.stop` job in a progress dialog, which closes itself, and then
+ * reports "Finished" in an info dialog, which is closed here.
+ */
+export async function stopVmFromRow(page: Page, name: string, id: number): Promise<void> {
+  const { stopDialog } = virtualMachinesLocators;
+
+  await clickVmRowAction(page, name, virtualMachinesLocators.rowAction.stop(id));
+  await expect(page.locator(stopDialog.title)).toBeVisible();
+  await page.locator(stopDialog.forceAfterTimeout).click();
+  await expect(page.locator(stopDialog.forceAfterTimeout)).toBeChecked();
+  await page.locator(stopDialog.stop).click();
+
+  const finished = page.locator(infoDialogLocators.title);
+  await expect(finished).toBeVisible({ timeout: stopTimeoutMs });
+  await page.locator(infoDialogLocators.close).click();
+  await expect(finished).toBeHidden();
+}
+
+/** Hard-resets a running VM from its row, through webui's shared confirm and its tick box. */
+export async function resetVmFromRow(page: Page, name: string, id: number): Promise<void> {
+  await clickVmRowAction(page, name, virtualMachinesLocators.rowAction.reset(id));
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+  await page.locator(confirmDialogLocators.checkbox).click();
+  await page.locator(confirmDialogLocators.confirm).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeHidden();
+}
+
+/**
  * Opens the Edit VM form for a VM.
  *
  * The form fills itself from the row it was opened on, so the name already being in its field is
@@ -139,4 +204,22 @@ export async function deleteVmFromList(page: Page, name: string, id: number): Pr
   await expect(page.locator(deleteDialog.delete)).toBeEnabled();
   await page.locator(deleteDialog.delete).click();
   await expect(page.locator(deleteDialog.title)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Clones a VM from its row, under `cloneName` or, when that is omitted, under whatever name
+ * middleware picks, and waits for the dialog to go. A refused `vm.clone` leaves it open.
+ */
+export async function cloneVmFromList(page: Page, name: string, id: number, cloneName?: string): Promise<void> {
+  const { cloneDialog } = virtualMachinesLocators;
+
+  await expandVmRow(page, name, id);
+  await page.locator(virtualMachinesLocators.rowAction.clone(id)).click();
+  await expect(page.locator(cloneDialog.title)).toBeVisible();
+
+  if (cloneName) {
+    await page.locator(cloneDialog.name).fill(cloneName);
+  }
+  await page.locator(cloneDialog.clone).click();
+  await expect(page.locator(cloneDialog.title)).toBeHidden({ timeout: saveTimeoutMs });
 }

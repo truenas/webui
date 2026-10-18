@@ -1,5 +1,6 @@
 /**
- * The Boot Environments list on System > Boot, its clone form and its delete dialog.
+ * The Boot Environments list on System > Boot, its header, its clone form and its
+ * delete dialog, and the Boot Pool Status page it links to.
  *
  * Every id on a row is built from the list's own `uniqueRowTag`, `bootenv-<name>`,
  * a plain template literal with no pre-normalizing — so the row, its cells and its
@@ -20,6 +21,14 @@ function rowTag(name: string): string {
 }
 
 export const bootEnvironmentLocators = {
+  /** The page header. Stats/Settings and Scrub Boot Pool need `BOOTENV_WRITE`; Boot Pool Status does not. */
+  header: {
+    stats: '[data-test="button-bootenv-stats"]',
+    scrub: '[data-test="button-bootenv-scrub"]',
+    /** A link to `/system/boot/status`. */
+    status: '[data-test="button-bootenv-status"]',
+  },
+
   list: {
     row: (name: string): string => `[data-test="row-${rowTag(name)}"]`,
 
@@ -38,6 +47,9 @@ export const bootEnvironmentLocators = {
     /** Hidden once the flag is set, when Unkeep (`mdi-bookmark`) takes its place. */
     keepAction: (name: string): string => `[data-test="button-${rowTag(name)}-mdi-bookmark-outline-row-action"]`,
 
+    /** Shown only once the flag is set, in Keep's place. */
+    unkeepAction: (name: string): string => `[data-test="button-${rowTag(name)}-mdi-bookmark-row-action"]`,
+
     /** Hidden on the running boot environment and the one set to boot next. */
     delete: (name: string): string => `[data-test="button-${rowTag(name)}-mdi-delete-row-action"]`,
   },
@@ -48,6 +60,15 @@ export const bootEnvironmentLocators = {
     source: '[data-test="input-source"]',
     /** `<tn-button [testId]="'save'">` on the side panel container. */
     save: '[data-test="button-save"]',
+  },
+
+  /** Boot Pool Status, the boot pool's device tree. */
+  status: {
+    /**
+     * A device's Name cell, `[ownName(), 'name']` in `bootenv-node-item`: the
+     * topology entry's `name`, a partition such as `sda3` or a vdev such as `mirror-0`.
+     */
+    deviceName: (name: string): string => `[data-test="text-${kebabTestSegment(name)}-name"]`,
   },
 
   /**

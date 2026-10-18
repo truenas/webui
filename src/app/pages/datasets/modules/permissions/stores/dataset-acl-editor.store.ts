@@ -7,7 +7,7 @@ import {
   EMPTY, forkJoin, Observable, of, Subject,
 } from 'rxjs';
 import {
-  catchError, filter, map, switchMap, tap, withLatestFrom,
+  catchError, filter, map, mergeMap, switchMap, tap, withLatestFrom,
 } from 'rxjs/operators';
 import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -179,6 +179,43 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         ? without(state.acesWithError, state.selectedAceIndex)
         : union(state.acesWithError, [state.selectedAceIndex]),
     };
+  });
+
+  /**
+   * Records the validity of an entry that may no longer be selected, for a check that outlived its selection.
+   * The entry is found by identity: once it has been edited or removed, the verdict is about a version of it that
+   * no longer exists, and is dropped.
+   */
+  readonly updateAceValidation = this.updater((
+    state: DatasetAclEditorState,
+    { ace, isValid }: { ace: NfsAclItem | PosixAclItem; isValid: boolean },
+  ) => {
+    const index = (state.acl?.acl as (NfsAclItem | PosixAclItem)[] | undefined)?.indexOf(ace) ?? -1;
+    if (index === -1) {
+      return state;
+    }
+
+    return {
+      ...state,
+      acesWithError: isValid
+        ? without(state.acesWithError, index)
+        : union(state.acesWithError, [index]),
+    };
+  });
+
+  /**
+   * Waits for an entry's verdict here rather than in the form that asked, and records it against that entry.
+   * The form cannot see it through: selecting another entry either patches that entry in, which cancels the check,
+   * or (from the list) tears the form down first. Either way the entry would keep the error it had before.
+   */
+  readonly settleAceValidation = this.effect((
+    checks$: Observable<{ ace: NfsAclItem | PosixAclItem; isValid$: Observable<boolean> }>,
+  ) => {
+    return checks$.pipe(
+      mergeMap(({ ace, isValid$ }) => isValid$.pipe(
+        tap((isValid) => this.updateAceValidation({ ace, isValid })),
+      )),
+    );
   });
 
   readonly saveAcl = this.effect((saveParams$: Observable<AclSaveFormParams>) => {

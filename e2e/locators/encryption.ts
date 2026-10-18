@@ -1,6 +1,7 @@
 /**
  * Dataset encryption: the Encryption Options of the dataset form, the Encryption card on the
- * details panel, the Lock dialog it opens, and the Unlock page with the summary dialogs after it.
+ * details panel, the Edit Encryption Options and Lock dialogs it opens, and the Unlock page with the
+ * summary dialogs after it.
  */
 import { kebabTestSegment } from './test-id';
 
@@ -30,6 +31,8 @@ export const encryptionCardLocators = {
   state: '[data-test="text-encryption-current-state"]',
   /** `Passphrase` or `Key`. */
   type: '[data-test="text-encryption-type"]',
+  /** "Inherits Encryption From", a link reading `/<encryption root>`. Rendered only off a root. */
+  encryptionRoot: '[data-test="link-go-to-encryption-root"]',
   /**
    * `<tn-button [testId]="'lock'">`. Offered on an unlocked encryption root, and disabled unless it
    * has a passphrase.
@@ -37,6 +40,32 @@ export const encryptionCardLocators = {
   lock: '[data-test="button-lock"]',
   /** `<tn-button [testId]="'unlock'">`, a link to the Unlock page. Offered on a locked encryption root. */
   unlock: '[data-test="button-unlock"]',
+  /**
+   * `<tn-button [testId]="'edit'">`, which opens Edit Encryption Options. Offered on any unlocked
+   * encrypted dataset. Its id is a generic `button-edit`, so it is reached through the card.
+   */
+  edit: '[data-test="card-encryption"] [data-test="button-edit"]',
+} as const;
+
+/**
+ * The Edit Encryption Options dialog, `<tn-dialog-shell testId="encryption-options">`. Its controls
+ * share their ids with the dataset form's Encryption Options, which is never on screen with it.
+ */
+export const encryptionOptionsLocators = {
+  title: '[data-test="dialog-title-encryption-options"]',
+  /** "Inherit encryption properties from parent". Offered only when the parent is encrypted. */
+  inherit: '[data-test="checkbox-inherit-encryption"]',
+  /** Disabled under a passphrase parent, or above a child that is a key-encrypted root. */
+  type: '[data-test="select-encryption-type"]',
+  typeOption: encryptionFormLocators.typeOption,
+  /** Rendered only while the type is Key. */
+  generateKey: '[data-test="checkbox-generate-key"]',
+  /** Rendered only while the type is Passphrase. */
+  passphrase: '[data-test="input-passphrase"]',
+  confirmPassphrase: '[data-test="input-confirm-passphrase"]',
+  /** Save stays disabled until this is ticked. */
+  confirm: '[data-test="checkbox-confirm"]',
+  save: '[data-test="actions-encryption-options"] [data-test="button-save"]',
 } as const;
 
 /** The Lock Dataset dialog, `<tn-dialog-shell testId="lock-dataset">`. */

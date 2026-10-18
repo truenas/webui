@@ -44,6 +44,39 @@ export async function findRunningBootEnvironment(client: E2eApiClient): Promise<
   return running as BootEnvironmentRecord;
 }
 
+/** Every boot environment's name, sorted, for a before-and-after comparison. */
+export async function listBootEnvironmentNames(client: E2eApiClient): Promise<string[]> {
+  const bootEnvironments = await firstValueFrom(
+    client.api.query('boot.environment.query', []).pipe(timeout(readTimeoutMs)),
+  );
+
+  return (bootEnvironments as BootEnvironmentRecord[])
+    .map((bootEnvironment) => bootEnvironment.id)
+    .sort((a, b) => a.localeCompare(b));
+}
+
+/** What `boot.get_state` holds that a spec reads. The API client types topology entries only as `unknown`. */
+interface BootPoolState {
+  topology: { data: { name: string }[] } | null;
+}
+
+/**
+ * The boot pool's first data device, by the name Boot Pool Status shows for it:
+ * a partition such as `sda3`, or a vdev such as `mirror-0` on a mirrored boot pool.
+ */
+export async function findBootDevice(client: E2eApiClient): Promise<string> {
+  const state = await firstValueFrom(
+    client.api.call('boot.get_state').pipe(timeout(readTimeoutMs)),
+  ) as unknown as BootPoolState;
+
+  const device = state.topology?.data[0];
+  if (!device) {
+    throw new Error('boot.get_state reports no device in the boot pool');
+  }
+
+  return device.name;
+}
+
 /**
  * Removes a boot environment, if there is one by that name.
  *

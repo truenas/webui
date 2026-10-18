@@ -158,10 +158,16 @@ jobs:
       # TN_HOST, TN_HOST_HTTP, TN_USERNAME, TN_PASSWORD, TN_DOMAIN and
       # TN_BASELINE in the job environment, as the lab's claim did. Its ports
       # are on the runner's loopback and Docker's bridge, nowhere else.
+      #
+      # 8GB rather than the action's 6GB default: choosing an Apps pool makes
+      # middleware clone the whole apps catalog into the tmpfs at /run, which
+      # is sized from RAM. At 6GB that fills /run, and dockerd then cannot
+      # write its pid file (#14633). The HA nodes boot with the same 8GB.
       - name: Boot the appliance
         uses: iXsystems/ux-github-workflows/.github/actions/truenas-appliance-runner@master
         with:
           baseline: fresh-install
+          memory-mb: 8192
 
       # A non-HA Enterprise license, so the journeys behind an entitlement
       # (ZFS tiering, S3 audit and versioning) run here rather than skip.
@@ -220,12 +226,74 @@ jobs:
           grep: ${{ inputs.grep }}
           artifact-suffix: -${{ matrix.shard }}
 
-      # The appliance's serial console, when anything failed: boot messages,
-      # middleware's crashes, panics. Middleware's own logs (R7.2) can come
-      # over ssh next (`ssh: true` on the action), now the job owns qemu.
-      - name: The appliance's console
-        if: failure()
-        run: truenas-appliance console 300 || true
+      # What the appliance says, when anything failed or the job ran out of
+      # time: its serial console, then from inside it Docker's and
+      # middleware's own accounts, the apps datasets and the network. A job
+      # cancelled at its ceiling is the one that needs these most, hence
+      # cancelled(); every command is bounded and allowed to fail, so the step
+      # ends inside the grace period a cancelled job gets. Into the job log
+      # rather than an artifact, because the log is what can be read through
+      # the API.
+      #
+      # This repository's logs are public: everything taken from middleware
+      # or from inside the appliance goes through `grep -iv license`, as
+      # e2e-ha.yml filters its middleware log, and the admin password is
+      # masked by the boot step.
+      #
+      # appliance.sh has no `ssh` (ha.sh does). Its `boot-report` turns ssh
+      # on for the admin, with a key and passwordless sudo, prints where the
+      # boot's time went, and leaves that key at $APPLIANCE_DIR/report_key,
+      # which is what the sections after it log in with.
+      - name: The appliance's console, Docker, middleware and network
+        if: failure() || cancelled()
+        run: |
+          echo "::group::The appliance's console"
+          timeout 20 truenas-appliance console 300 || true
+          echo "::endgroup::"
+
+          echo "::group::Docker, as middleware reports it"
+          timeout 20 truenas-appliance call docker.status 2>&1 | grep -iv license || true
+          timeout 20 truenas-appliance call docker.config 2>&1 | grep -iv license || true
+          echo "::endgroup::"
+
+          echo "::group::The boot, from inside (and ssh for what follows)"
+          timeout 90 truenas-appliance boot-report 2>&1 | grep -iv license || true
+          echo "::endgroup::"
+
+          key="$APPLIANCE_DIR/report_key"
+          port="$(sed -n 's/^APPLIANCE_SSH_PORT=//p' "$APPLIANCE_DIR/state.env" 2>/dev/null || true)"
+          on_appliance() {
+            if [ ! -f "$key" ]; then
+              echo "(no ssh into the appliance: the boot report did not set it up)"
+              return
+            fi
+            timeout 40 ssh -i "$key" -p "${port:-2222}" -o BatchMode=yes -o ConnectTimeout=5 \
+              -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR \
+              "$TN_USERNAME@127.0.0.1" "$1" 2>&1 | grep -iv license || true
+          }
+
+          echo "::group::Docker"
+          on_appliance 'sudo -n systemctl status docker --no-pager
+            sudo -n journalctl -u docker --no-pager -n 300
+            sudo -n journalctl -b --no-pager -p warning -n 200'
+          echo "::endgroup::"
+
+          echo "::group::Middleware's log, Docker and Apps"
+          on_appliance 'sudo -n grep -ihE "docker|apps|ix-apps|catalog|traceback|error" /var/log/middlewared.log \
+            | tail -n 300'
+          echo "::endgroup::"
+
+          echo "::group::The apps datasets, /run and the network"
+          # shellcheck disable=SC2016 # expanded on the appliance, not here
+          on_appliance 'for p in $(sudo -n zpool list -H -o name); do
+              sudo -n zfs list -o name,mountpoint,mounted -r "$p/ix-apps"
+            done
+            df -h /run
+            sudo -n du -xsh /run/* 2>/dev/null | sort -h | tail -n 5
+            ip -br addr
+            ip route
+            sudo -n cat /etc/docker/daemon.json'
+          echo "::endgroup::"
 
       # A leftover UI container would go on proxying to a destroyed appliance
       # and sit on the daemon forever. `--rm` covers a clean exit; this covers

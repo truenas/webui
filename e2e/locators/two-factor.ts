@@ -1,6 +1,7 @@
 /**
  * Two-factor authentication: the global card on System > Advanced Settings and
- * its form, the setup card, and the Access card's Clear button.
+ * its form, the setup card, the first-login setup dialog, and the Access card's
+ * two-factor line, Set up 2FA link and Clear button.
  *
  * The sign-in page's one-time password field is in `locators/signin.ts`, with
  * the rest of that form.
@@ -11,6 +12,10 @@ export const twoFactorLocators = {
   globalCard: {
     /** Global two-factor: `Enabled` or `Disabled`. */
     state: '[data-test="text-global-2fa"]',
+    /** Tolerance Window: the number of 30-second steps, as a bare number. */
+    window: '[data-test="text-global-2fa-tolerance-window"]',
+    /** Two Factor Authentication for SSH: `Enabled` or `Disabled`. */
+    ssh: '[data-test="text-global-2fa-ssh"]',
     /** `<tn-button [testId]="['two-factor-auth', 'configure']">` in the card footer. */
     configure: '[data-test="button-two-factor-auth-configure"]',
   },
@@ -23,12 +28,28 @@ export const twoFactorLocators = {
     enabled: '[data-test="checkbox-enabled"]',
     /** How many 30-second steps either side of now a code is still accepted for. */
     window: '[data-test="input-window"]',
+    ssh: '[data-test="checkbox-ssh"]',
     save: '[data-test="button-save"]',
   },
 
   /**
+   * The full-screen "Setup Two-Factor Authentication" dialog the admin layout's
+   * guard raises on the first route of a session while global two-factor is on
+   * and the account has no secret. It cannot be closed by Escape; Skip Setup,
+   * confirmed, is the way past it that leaves the account without a secret.
+   */
+  setupDialog: {
+    /** `<tn-dialog-shell testId="two-factor-setup">`. */
+    title: '[data-test="dialog-title-two-factor-setup"]',
+    skip: '[data-test="button-skip-2fa-setup"]',
+    /** "Finish", rendered only once the account holds a secret and no code is still awaited. */
+    finish: '[data-test="button-finish-first-stig-login"]',
+  },
+
+  /**
    * The `ix-two-factor` card on the `/two-factor-auth` page. The first-login
-   * dialog wraps the same component, but its own title and Finish are not here.
+   * dialog wraps the same component; its own title and Skip Setup are under
+   * `setupDialog`.
    */
   setup: {
     /**
@@ -40,8 +61,12 @@ export const twoFactorLocators = {
     secret: '[data-test="text-secret"]',
     /** The code field, rendered only while the new secret awaits confirmation. */
     code: '[data-test="input-verify-otp"]',
+    /** The field around {@link code}, `testId="verify-otp"`, which holds its error text. */
+    codeField: '[data-test="form-field-verify-otp"]',
     /** "Confirm Code". The app checks the code itself; nothing is sent to middleware. */
     confirmCode: '[data-test="button-verify-otp"]',
+    /** "Cancel Setup", beside {@link confirmCode}. Confirmed, it unsets the secret awaiting a code. */
+    cancelSetup: '[data-test="button-cancel-2fa-setup"]',
     /** Rendered only once the account holds a secret and no code is still awaited. */
     unsetSecret: '[data-test="button-unset-2fa-secret"]',
   },
@@ -53,4 +78,18 @@ export const twoFactorLocators = {
   clearTwoFactor: (username: string): string => (
     `[data-test="button-clear-two-factor-${kebabTestSegment(username)}"]`
   ),
+
+  /**
+   * The Access card's two-factor line: "Has Two-Factor Authentication" or "No
+   * Two-Factor Authentication". Rendered only while global two-factor is on.
+   */
+  userStatus: (username: string): string => (
+    `[data-test="text-two-factor-status-${kebabTestSegment(username)}"]`
+  ),
+
+  /**
+   * "Set up 2FA" on the Access card, a link to `/two-factor-auth`. Offered only
+   * on your own account, while global two-factor is on and you have no secret.
+   */
+  setUpLink: (username: string): string => `[data-test="link-setup-2fa-${kebabTestSegment(username)}"]`,
 } as const;

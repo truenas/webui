@@ -13,6 +13,48 @@ export const dashboardLocators = {
   /** In the page header; replaced by the editing controls while the layout is being edited. */
   configure: '[data-test="button-configure-dashboard"]',
 
+  /**
+   * Configure mode's page controls. Their own ids are the bare `button-save` and `button-cancel`,
+   * which the Card Editor's panel Save and the shared dialogs' Cancel also emit, so each is scoped
+   * inside the container that holds them.
+   */
+  edit: {
+    add: '[data-test="dashboard-edit-actions"] [data-test="button-add-group"]',
+    save: '[data-test="dashboard-edit-actions"] [data-test="button-save"]',
+    cancel: '[data-test="dashboard-edit-actions"] [data-test="button-cancel"]',
+    /** Restores the default cards. Rendered only while the layout on screen differs from the default. */
+    reset: '[data-test="dashboard-edit-actions"] [data-test="button-reset"]',
+    /**
+     * A group's Delete, by its index in the layout. Keyed by position, which `e2e/CLAUDE.md` rules
+     * out for readouts, not for controls on a layout the test wrote itself.
+     */
+    deleteGroup: (index: number): string => `[data-test="button-delete-group-widget-${index}"]`,
+    /** A group's Move down, by index. Visible only at phone width; hidden, not absent, on a desktop. */
+    moveGroupDown: (index: number): string => `[data-test="button-move-down-widget-${index}"]`,
+    /** The handle a group is dragged by, by index. */
+    dragHandle: (index: number): string => `[data-test="button-drag-handle-widget-${index}"]`,
+  },
+
+  /** The Card Editor, opened by Add in the shared form side panel. */
+  cardEditor: {
+    panel: '[data-test="side-panel-widget-group-editor"]',
+    /** A layout toggle, keyed by its label: `One large card` is the Full layout. */
+    fullLayout: '[data-test="button-toggle-one-large-card"]',
+    /** Slot 0 keeps the bare `button-slot`; later slots are `button-slot-<n>`. */
+    firstSlot: '[data-test="button-slot"]',
+    category: '[data-test="select-category"]',
+    /**
+     * The CPU category. A category option's label carries a count of the cards the layout can hold
+     * in it, `CPU (6 cards)`, and the option id comes from the label, so only its head is stable.
+     */
+    categoryCpu: '[data-test^="option-category-cpu-"]',
+    type: '[data-test="select-type"]',
+    /** The option labelled with the CPU widget's name, `CPU Overview`. */
+    typeCpuOverview: '[data-test="option-type-cpu-overview"]',
+    /** The panel's own Save, `[testId]="'save'"` in form-side-panel-container. */
+    save: '[data-test="side-panel-widget-group-editor"] [data-test="button-save"]',
+  },
+
   systemInfo: {
     /**
      * The appliance's hostname. On iX hardware it moves from the list to under the product image,
@@ -21,6 +63,18 @@ export const dashboardLocators = {
     hostname: '[data-test="text-system-info-active-hostname"]',
     /** The version string alone; the `rendered()` call beside it in the template emits nothing. */
     version: '[data-test="text-system-info-active-version"]',
+    /**
+     * The version's copy button. Every `ix-copy-button` emits this same static id, so it names one
+     * button only on a layout holding a single System Information card.
+     */
+    copyVersion: '[data-test="button-copy-to-clipboard"]',
+    /** Check for Updates, or Updates Available when the check found one. Both keep this id. */
+    update: '[data-test="button-widget-sysinfo-update"]',
+  },
+
+  /** The CPU card, `cpu` in the registry and CPU Overview in the Card Editor. */
+  cpu: {
+    title: '[data-test="text-cpu-title"]',
   },
 
   cpuUsageBar: {
@@ -75,7 +129,25 @@ export const dashboardLocators = {
     linkState: (nic: string): string => `[data-test="text-interface-${kebabTestSegment(nic)}-link-state"]`,
   },
 
+  /**
+   * The chart buttons in the card headers, each opening its Reporting tab. The Storage card's is
+   * `storage.reports`. The Interface card renders its header, and so this button, only at full size.
+   */
+  reportButtons: {
+    cpu: '[data-test="button-cpu-go-to-reports"]',
+    memory: '[data-test="button-memory-go-to-reports"]',
+    network: '[data-test="button-network-reports"]',
+    systemInfo: '[data-test="button-system-go-to-reports"]',
+  },
+
   help: {
     documentation: '[data-test="link-documentation"]',
+    forums: '[data-test="link-forums"]',
+    newsletter: '[data-test="link-newsletter"]',
+    /**
+     * The card's copyright line. Scoped inside the card, because the sidebar renders the same
+     * `ix-copyright-line`, and with it the same `link-copyright`.
+     */
+    copyright: '[data-test="card-help"] [data-test="link-copyright"]',
   },
 } as const;

@@ -9,6 +9,9 @@
  * from here is the code an authenticator app would show.
  */
 import { createHmac } from 'node:crypto';
+import { firstValueFrom, timeout } from 'rxjs';
+import type { E2eApiClient } from './api/client';
+import { readTimeoutMs } from './timeouts';
 
 const intervalSeconds = 30;
 const digits = 6;
@@ -41,16 +44,45 @@ export function totpCode(secret: string, atMs: number = Date.now()): string {
  * A code of the right shape that `secret` will not accept now.
  *
  * The code from an hour ago, far outside any tolerance window a person would
- * configure. Checked against the current one too, since two counters can still
- * share a code by chance — one in a million — and a "wrong" code that happened
- * to be right would make the refusal it is used for pass for nothing.
+ * configure. Checked against the codes one step either side of now as well as
+ * the current one — what a tolerance window of 1 accepts — since two counters
+ * can still share a code by chance, and a "wrong" code that happened to be
+ * right would make the refusal it is used for pass for nothing.
  */
 export function wrongTotpCode(secret: string, atMs: number = Date.now()): string {
-  const current = totpCode(secret, atMs);
+  const stepMs = intervalSeconds * 1000;
+  const accepted = new Set([-1, 0, 1].map((step) => totpCode(secret, atMs + step * stepMs)));
   const hourMs = 60 * 60 * 1000;
-  const anHourAgo = totpCode(secret, atMs - hourMs);
 
-  return anHourAgo === current ? totpCode(secret, atMs - 2 * hourMs) : anHourAgo;
+  for (let hoursAgo = 1; hoursAgo <= 3; hoursAgo += 1) {
+    const candidate = totpCode(secret, atMs - hoursAgo * hourMs);
+    if (!accepted.has(candidate)) {
+      return candidate;
+    }
+  }
+  throw new Error('Every candidate code matched one the secret accepts now, so there is no wrong code to offer.');
+}
+
+/**
+ * The appliance's clock, in milliseconds since the epoch, to compute a code on.
+ *
+ * Not the runner's: the appliance under test is a nested VM whose clock can
+ * drift from the container running the suite, and the setup card checks a code
+ * against the appliance's time too (`system.info`, in `TwoFactorComponent`).
+ * The wire shape is `{ $date: <ms> }`; a string is accepted as well, in case the
+ * generated client hands it over parsed differently.
+ */
+export async function applianceNow(client: E2eApiClient): Promise<number> {
+  const info = await firstValueFrom(client.api.call('system.info').pipe(timeout(readTimeoutMs)));
+  const datetime: unknown = info.datetime;
+
+  if (datetime && typeof datetime === 'object' && '$date' in datetime && typeof datetime.$date === 'number') {
+    return datetime.$date;
+  }
+  if (typeof datetime === 'string' && !Number.isNaN(Date.parse(datetime))) {
+    return Date.parse(datetime);
+  }
+  throw new Error('system.info returned no readable datetime, so there is no appliance clock to compute a code on.');
 }
 
 function decodeBase32(secret: string): Buffer {

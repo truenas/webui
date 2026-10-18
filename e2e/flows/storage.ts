@@ -1,12 +1,13 @@
 /**
  * Pools and datasets, driven through the UI.
  */
-import { expect, type Page } from '@playwright/test';
+import { expect, type Download, type Page } from '@playwright/test';
 import { goToDatasets, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
 import {
-  datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, poolDisconnectLocators, poolImportLocators,
-  poolScrubLocators, poolWizardLocators, type VdevCategory, zvolLocators,
+  datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, downloadKeyDialogLocators,
+  manualDiskSelectionLocators, poolDisconnectLocators, poolImportLocators, poolScrubLocators, poolWizardLocators,
+  pruneDedupLocators, scheduledScrubLocators, type VdevCategory, zvolLocators,
 } from '../locators/storage';
 
 /**
@@ -17,6 +18,9 @@ import {
 const poolCreateTimeoutMs = 5 * 60_000;
 
 const saveTimeoutMs = 90_000;
+
+/** A `core.download` job, then the fetch of the file it wrote. */
+const keyDownloadTimeoutMs = 60_000;
 
 /**
  * `pool.import_find` scans every disk before the Import Pool form renders, and
@@ -32,6 +36,9 @@ const poolImportTimeoutMs = 3 * 60_000;
  * case in `tests/pool-disconnect.e2e.ts`.
  */
 const poolExportTimeoutMs = 3 * 60_000;
+
+/** `pool.ddt_prune` is a job behind a progress dialog, and the Prune dialog closes after it. */
+const dedupPruneTimeoutMs = 2 * 60_000;
 
 /** Picks an option from a `tn-select` by opening it and clicking the option. */
 export async function selectOption(page: Page, select: string, option: string): Promise<void> {
@@ -133,6 +140,11 @@ export async function startPoolWizard(page: Page): Promise<void> {
 export async function openPoolWizard(page: Page, name: string): Promise<void> {
   await startPoolWizard(page);
   await page.locator(poolWizardLocators.name).fill(name);
+  await leaveGeneralStep(page);
+}
+
+/** Moves on from the wizard's General step and waits for the Data step. */
+export async function leaveGeneralStep(page: Page): Promise<void> {
   await page.locator(poolWizardLocators.next).click();
 
   // The step after General is not always Data. `pool-manager-wizard.component.html`
@@ -214,6 +226,48 @@ export async function configureDraidVdevs(page: Page, draid: DraidVdevs): Promis
   );
 }
 
+/**
+ * Opens the Manual Disk Selection dialog from the open vdev step. The step's button stays disabled
+ * until a layout is chosen, so the caller picks one first.
+ */
+export async function openManualDiskSelection(page: Page, type: VdevCategory): Promise<void> {
+  const open = page.locator(poolWizardLocators.manualSelection(type));
+  await expect(open).toBeEnabled();
+  await open.click();
+  await expect(page.locator(manualDiskSelectionLocators.title)).toBeVisible();
+}
+
+/**
+ * Drags one element of the Manual Disk Selection dialog onto another: a disk into a vdev, or out
+ * of one back onto the unused list.
+ *
+ * `locator.dragTo()` drives HTML5 drag and drop in Chromium from real mouse events, so
+ * `ngx-drag-drop` receives the `dragstart`, `dragover` and `drop` it listens for, with a
+ * `dataTransfer` it fills in itself. A drop has no readback of its own, so the caller asserts
+ * where the disk landed.
+ */
+export async function dragDisk(page: Page, from: string, to: string): Promise<void> {
+  const source = page.locator(from);
+  await expect(source).toBeVisible();
+  await source.dragTo(page.locator(to));
+}
+
+/**
+ * Adds a vdev to the open Manual Disk Selection dialog, which holds no other, and drags the named
+ * disks into it, checking that each one landed. Whether that is enough disks for the layout is
+ * the caller's to assert.
+ */
+export async function addManualVdev(page: Page, layout: string, disks: string[]): Promise<void> {
+  const vdev = manualDiskSelectionLocators.vdevDropzone(layout, 1);
+
+  await page.locator(manualDiskSelectionLocators.add).click();
+  await expect(page.locator(vdev)).toBeVisible();
+  for (const disk of disks) {
+    await dragDisk(page, manualDiskSelectionLocators.unusedDiskDrag(disk), vdev);
+    await expect(page.locator(manualDiskSelectionLocators.vdevDisk(disk))).toBeVisible();
+  }
+}
+
 /** Leaves the open vdev step by its Save And Go To Review, and waits for the Review step. */
 export async function goToReview(page: Page, type: VdevCategory): Promise<void> {
   await page.locator(poolWizardLocators.saveAndReview(type)).click();
@@ -233,6 +287,38 @@ export async function submitPool(page: Page): Promise<void> {
   // Landing back on the storage dashboard is the app's own signal that the
   // create job finished; the wizard stays put on failure.
   await expect(page).toHaveURL(/\/storage\/?$/, { timeout: poolCreateTimeoutMs });
+}
+
+/**
+ * Creates a software-encrypted pool from the Review step, and stops on the
+ * Download Encryption Key dialog.
+ *
+ * Not {@link submitPool}: for an encrypted pool the wizard opens that dialog when
+ * the create job finishes, and returns to the Storage dashboard only once it is
+ * closed. So the dialog appearing is the signal that the job ended, and it gets
+ * the same ceiling.
+ */
+export async function submitEncryptedPool(page: Page): Promise<void> {
+  await page.locator(poolWizardLocators.createPool).click();
+  await confirmDestructiveAction(page);
+
+  await expect(page.locator(downloadKeyDialogLocators.title)).toBeVisible({ timeout: poolCreateTimeoutMs });
+}
+
+/**
+ * Clicks Download Encryption Key on the open dialog and returns the download.
+ *
+ * The file is not built in the browser: the click starts a `core.download` job
+ * for `pool.dataset.export_keys` and then fetches its result, so the download
+ * gets longer than an action.
+ */
+export async function downloadPoolKey(page: Page): Promise<Download> {
+  const [download] = await Promise.all([
+    page.waitForEvent('download', { timeout: keyDownloadTimeoutMs }),
+    page.locator(downloadKeyDialogLocators.download).click(),
+  ]);
+
+  return download;
 }
 
 /**
@@ -502,6 +588,67 @@ export async function startScrub(page: Page, pool: string): Promise<void> {
   await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
   await page.locator(confirmDialogLocators.confirm).click();
   await expect(page.locator(confirmDialogLocators.title)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Prunes `pool`'s dedup table from Prune on its Storage Health card, by
+ * percentage or by age, and waits for the dialog to close on the job's success.
+ *
+ * Percentage is the choice the dialog opens on, so it is left as it is. Its
+ * slider is a native range input, which takes a value from `fill`.
+ */
+export async function pruneDedupTable(
+  page: Page,
+  pool: string,
+  by: { percentage: number } | { days: number },
+): Promise<void> {
+  await goToStorage(page);
+
+  const open = page.locator(pruneDedupLocators.open(pool));
+  await expect(open).toBeVisible({ timeout: saveTimeoutMs });
+  await open.click();
+  await expect(page.locator(pruneDedupLocators.title)).toBeVisible();
+
+  if ('percentage' in by) {
+    await page.locator(pruneDedupLocators.percentage).fill(String(by.percentage));
+  } else {
+    await page.locator(pruneDedupLocators.pruneBy('Age')).click();
+    await page.locator(pruneDedupLocators.days).fill(String(by.days));
+  }
+  await page.locator(pruneDedupLocators.submit).click();
+
+  // The dialog stays open on a failure, behind the error the job raised.
+  await expect(page.locator(pruneDedupLocators.title)).toBeHidden({ timeout: dedupPruneTimeoutMs });
+}
+
+/**
+ * Opens the scheduled scrub form from the Scheduled Scrub line on `pool`'s
+ * Storage Health card: Schedule or Configure, whichever the line offers.
+ * Returns once Threshold has rendered, so the panel is open.
+ */
+export async function openScrubScheduleForm(page: Page, pool: string): Promise<void> {
+  await goToStorage(page);
+
+  const configure = page.locator(scheduledScrubLocators.card.configure(pool));
+  await expect(configure).toBeVisible({ timeout: saveTimeoutMs });
+  await configure.click();
+  await expect(page.locator(scheduledScrubLocators.form.threshold)).toBeVisible();
+}
+
+/** Picks a schedule preset in the scheduled scrub form by its whole label — see `hourlyScheduleLabel`. */
+export async function chooseScrubSchedule(page: Page, label: string): Promise<void> {
+  const { form } = scheduledScrubLocators;
+  await selectOption(page, form.schedule, form.scheduleOption(label));
+}
+
+/**
+ * Saves the scheduled scrub form and waits for the panel to close, which it
+ * does only once `pool.scrub.create` or `pool.scrub.update` has succeeded.
+ */
+export async function saveScrubScheduleForm(page: Page): Promise<void> {
+  const save = page.locator(scheduledScrubLocators.form.save);
+  await save.click();
+  await expect(save).toBeHidden({ timeout: saveTimeoutMs });
 }
 
 /**

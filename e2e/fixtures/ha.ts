@@ -48,6 +48,14 @@ export async function readFailover(client: E2eApiClient): Promise<FailoverState>
 }
 
 /**
+ * `failover.licensed` alone, which is what webui's `selectIsHaLicensed` reflects. For a spec that
+ * only needs to know which kind of appliance it is on, without {@link readFailover}'s other calls.
+ */
+export async function isHaLicensed(client: E2eApiClient): Promise<boolean> {
+  return firstValueFrom(client.api.call('failover.licensed').pipe(timeout(readTimeoutMs)));
+}
+
+/**
  * The other controller's boot, as the connected one sees it: `null` while it
  * cannot reach it. A new value means the other controller has rebooted.
  */

@@ -10,12 +10,13 @@
  *
  * A user's secret lives on the user, and goes when the user does.
  */
-import type { CallResponse } from '@truenas/api-client';
+import type { CallParams, CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 export type GlobalTwoFactorConfig = CallResponse<E2eApiDirectory, 'auth.twofactor.config'>;
+export type GlobalTwoFactorUpdate = NonNullable<CallParams<E2eApiDirectory, 'auth.twofactor.update'>[0]>;
 
 /**
  * The throwaway administrator who sets up two-factor. Never the suite's own
@@ -44,13 +45,71 @@ export async function disableGlobalTwoFactor(
   client: E2eApiClient,
   baseline: GlobalTwoFactorConfig,
 ): Promise<void> {
+  await setGlobalTwoFactor(client, {
+    enabled: false,
+    window: baseline.window,
+    services: baseline.services,
+  });
+}
+
+/**
+ * Writes global two-factor as given: a precondition for a spec that starts with
+ * it on. Slow, because middleware reloads the `ssh` and `user` services and
+ * regenerates PAM on every save.
+ */
+export async function setGlobalTwoFactor(client: E2eApiClient, update: GlobalTwoFactorUpdate): Promise<void> {
   await firstValueFrom(
-    client.api.call('auth.twofactor.update', [{
-      enabled: false,
-      window: baseline.window,
-      services: baseline.services,
-    }]).pipe(timeout(slowCallTimeoutMs)),
+    client.api.call('auth.twofactor.update', [update]).pipe(timeout(slowCallTimeoutMs)),
   );
+}
+
+/**
+ * Arms a fresh two-factor secret on `username` and returns it, as base32 text.
+ *
+ * A precondition for a spec about signing in with a code, where setting the
+ * secret up through the UI is not the claim. Called as the suite's admin, which
+ * middleware lets renew another user's secret because it holds FULL_ADMIN.
+ *
+ * The result is read as `unknown` and narrowed: middleware merges
+ * `twofactor_config` into the user entry it returns, and the secret is only in
+ * there as the `secret` query parameter of its `otpauth://` provisioning URI.
+ */
+export async function armTwoFactorSecret(client: E2eApiClient, username: string): Promise<string> {
+  const result: unknown = await firstValueFrom(
+    client.api.call('user.renew_2fa_secret', [username, { interval: 30, otp_digits: 6 }])
+      .pipe(timeout(slowCallTimeoutMs)),
+  );
+
+  const config = result && typeof result === 'object' && 'twofactor_config' in result
+    ? result.twofactor_config
+    : undefined;
+  const uri = config && typeof config === 'object' && 'provisioning_uri' in config
+    ? config.provisioning_uri
+    : undefined;
+  const secret = typeof uri === 'string' ? new URL(uri).searchParams.get('secret') : null;
+
+  if (!secret) {
+    // Says what was missing and nothing more: the URI carries the secret itself.
+    throw new Error(`user.renew_2fa_secret returned no provisioning URI with a secret for "${username}".`);
+  }
+  return secret;
+}
+
+/**
+ * The usernames of every session middleware holds that was opened with a
+ * one-time password (`LOGIN_TWOFACTOR`).
+ *
+ * `credentials_data` is declared as one model per credential type, so the rows
+ * are narrowed to the one field this reads.
+ */
+export async function twoFactorSessionUsernames(client: E2eApiClient): Promise<string[]> {
+  const sessions = await firstValueFrom(
+    client.api.query('auth.sessions', [['credentials', '=', 'LOGIN_TWOFACTOR']]).pipe(timeout(readTimeoutMs)),
+  ) as unknown as { credentials_data: { username?: string } }[];
+
+  return sessions
+    .map((session) => session.credentials_data.username)
+    .filter((username): username is string => Boolean(username));
 }
 
 /**

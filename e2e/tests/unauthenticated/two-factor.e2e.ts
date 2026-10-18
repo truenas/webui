@@ -5,7 +5,8 @@
  * not when wrong; and an admin can clear it again from that user's details.
  *
  * It lands on that page because the sign-in returns to the route the admin
- * signed out from. The full-screen setup dialog other routes raise is not covered.
+ * signed out from. The full-screen setup dialog other routes raise is covered by
+ * `two-factor-setup.e2e.ts`, not here.
  *
  * Under `tests/unauthenticated/` because every claim here is about signing in,
  * which the token bypass would skip (R4.2). One test, with the story as steps,
@@ -16,8 +17,9 @@
  * `system.advanced.login_banner` and `user.has_local_administrator_set_up`, and
  * signing out starts it. So after a sign-out the next sign-in fills the form
  * already on screen rather than loading the page again, which would spend both a
- * second time. Run straight after `signin.e2e.ts`, loading it every time put the
- * last sign-in over the limit.
+ * second time. Run close behind `signin.e2e.ts`, loading it every time put the
+ * last sign-in over the limit. `two-factor-setup.e2e.ts` now sorts between the
+ * two, with one sign-in per test and slow two-factor saves around each.
  *
  * Codes come from `support/totp.ts`, computed from the secret the
  * `/two-factor-auth` page shows, which is what an authenticator app does with it.
@@ -46,7 +48,7 @@ import { expect, test } from '../../support/fixtures';
 import { totpCode, wrongTotpCode } from '../../support/totp';
 
 /** What the sign-in page says for a code middleware refused (`SigninStore.getLoginErrorMessage`). */
-const wrongCodeMessage = 'Incorrect or expired OTP. Please try again.';
+const wrongCodeMessage = 'Incorrect or expired OTP. Enter your password again to get a new code prompt.';
 
 /**
  * One step either side of now. The test computes each code moments before it is
@@ -129,8 +131,8 @@ test('two-factor is set up on its page, then asked for, and an admin can clear i
   });
 
   await test.step('the code the secret gives now lets them in', async () => {
-    // Loaded afresh, unlike the other sign-ins: the refusal left the form on its
-    // code step, and this is a new attempt from the username.
+    // Loaded afresh, unlike the other sign-ins, so this is a new attempt from a
+    // clean page. Signing in from the form the refusal left is two-factor-signin's.
     await attemptSignIn(page, username, password);
     await submitOneTimePassword(page, totpCode(secret));
 
