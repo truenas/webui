@@ -100,6 +100,21 @@ export async function readMirror(
   return { guid: mirror.guid, disks: mirror.children.map((item) => toDevice(item)) };
 }
 
+/**
+ * The pool's data vdevs: each one's type and the disks in it. A vdev of one disk
+ * is that disk, `DISK`, with no children, so it is listed as its own one disk.
+ */
+export async function readDataVdevs(
+  client: E2eApiClient,
+  name: string,
+): Promise<{ type: string; guid: string; disks: PoolDevice[] }[]> {
+  return (await readPoolTopology(client, name)).data.map((vdev) => ({
+    type: vdev.type,
+    guid: vdev.guid,
+    disks: vdev.type === 'DISK' ? [toDevice(vdev)] : vdev.children.map((item) => toDevice(item)),
+  }));
+}
+
 /** The pool's spares, in topology order. */
 export async function listSpares(client: E2eApiClient, name: string): Promise<PoolDevice[]> {
   return (await readPoolTopology(client, name)).spare.map((item) => toDevice(item));
