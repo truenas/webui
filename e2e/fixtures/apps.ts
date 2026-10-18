@@ -7,7 +7,8 @@
  * before its pool goes.
  */
 import { expect } from '@playwright/test';
-import { firstValueFrom, timeout } from 'rxjs';
+import { JobState, isJobFinished } from '@truenas/api-client';
+import { firstValueFrom, of, timeout } from 'rxjs';
 import type { E2eApiClient } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
@@ -184,11 +185,32 @@ export async function setPreferredTrains(client: E2eApiClient, trains: string[])
  */
 export const catalogSyncTimeoutMs = 5 * 60_000;
 
-/** Syncs the catalog, so an app the spec seeds over the API is in it. */
+/**
+ * The id of a `catalog.sync` job that has not finished, or undefined when none is in flight.
+ *
+ * `catalog.sync` holds one lock and queues nothing behind it (`lock_queue_size=0`), so a call made
+ * while a sync runs gets no job of its own: middleware refuses it or hands back the job already
+ * queued, and either way no `ADDED` event arrives for `callAndGetJobId` to take an id from. A pool
+ * change starts exactly such a sync in the background.
+ */
+async function findCatalogSyncInFlight(client: E2eApiClient): Promise<number | undefined> {
+  const jobs = await firstValueFrom(
+    client.api.query('core.get_jobs', [['method', '=', 'catalog.sync']]).pipe(timeout(readTimeoutMs)),
+  );
+
+  return jobs.find((job) => !isJobFinished({ state: job.state as JobState }))?.id;
+}
+
+/**
+ * Syncs the catalog, so an app the spec seeds over the API is in it. A sync already in flight is
+ * waited for rather than started again, since a second one cannot start while it runs.
+ */
 export async function syncCatalog(client: E2eApiClient): Promise<void> {
+  const inFlight = await findCatalogSyncInFlight(client);
+
   await runJob(
     client,
-    () => client.api.callAndGetJobId('catalog.sync'),
+    () => (inFlight === undefined ? client.api.callAndGetJobId('catalog.sync') : of(inFlight)),
     {
       timeoutMs: catalogSyncTimeoutMs,
       whatItCosts: 'The apps catalog was not synced, so there is no catalog app to install.',
