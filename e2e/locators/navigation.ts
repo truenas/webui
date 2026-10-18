@@ -22,6 +22,8 @@ export const navLocators = {
   virtualMachines: '[data-test="link-virtual-machines-menu"]',
   /** `Reporting`, a plain link to the CPU tab (`reportsdashboard/cpu`). */
   reporting: '[data-test="link-reporting-menu"]',
+  /** `Apps`, a plain link to the installed apps (`apps/installed`), and hidden without the Apps entitlement. */
+  apps: '[data-test="link-apps-menu"]',
   /** A slide-out, not a link — opens a submenu rather than navigating. */
   credentials: '[data-test="link-credentials-menu"]',
   users: '[data-test="link-users"]',

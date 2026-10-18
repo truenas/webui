@@ -23,6 +23,7 @@ const expectedRoute = {
   containers: /\/containers/,
   virtualMachines: /\/vm\/?$/,
   reporting: /\/reportsdashboard\/cpu\/?$/,
+  apps: /\/apps\/installed/,
   users: /\/credentials\/users/,
   groups: /\/credentials\/groups\/?$/,
   privileges: /\/credentials\/privileges\/?$/,
@@ -107,6 +108,14 @@ export async function goToVirtualMachines(page: Page): Promise<void> {
 /** Reporting is a plain link that opens on the CPU tab, which is the tab this lands on. */
 export async function goToReporting(page: Page): Promise<void> {
   await clickAndArrive(page, navLocators.reporting, expectedRoute.reporting);
+}
+
+/**
+ * Apps is a plain link that opens on the installed apps. Not anchored to the end, because an app's
+ * details live under it (`/apps/installed/<train>/<app>`).
+ */
+export async function goToApps(page: Page): Promise<void> {
+  await clickAndArrive(page, navLocators.apps, expectedRoute.apps);
 }
 
 /** Credentials is a slide-out, so reaching Users takes two clicks. */
