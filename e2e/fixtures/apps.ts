@@ -42,6 +42,24 @@ export async function readDocker(client: E2eApiClient): Promise<DockerState> {
   };
 }
 
+/**
+ * The id of `<pool>/ix-apps` if the dataset exists, otherwise undefined.
+ *
+ * `pool.dataset.query` leaves internal datasets, `ix-apps` among them, out of its answer unless
+ * `exclude_internal_datasets` is off, so a plain lookup by id (`findDataset`) never finds it.
+ */
+export async function findAppsDataset(client: E2eApiClient, pool: string): Promise<string | undefined> {
+  const [dataset] = await firstValueFrom(
+    client.api.query(
+      'pool.dataset.query',
+      [['id', '=', `${pool}/ix-apps`]],
+      { extra: { exclude_internal_datasets: false } },
+    ).pipe(timeout(readTimeoutMs)),
+  );
+
+  return dataset?.id;
+}
+
 /** Points Apps at `pool` and returns once Docker runs there. The seed for a journey that unsets it. */
 export async function setAppsPool(client: E2eApiClient, pool: string): Promise<void> {
   await runJob(

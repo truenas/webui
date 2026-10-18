@@ -20,9 +20,11 @@
  *
  * The "Pool has been unset." snackbar is not checked: the snackbar renders no `data-test`.
  */
-import { ensureAppsPoolUnset, readDocker, setAppsPool } from '../fixtures/apps';
+import {
+  ensureAppsPoolUnset, findAppsDataset, readDocker, setAppsPool,
+} from '../fixtures/apps';
 import { ensurePoolPresent } from '../fixtures/pool';
-import { ensurePoolAbsent, findDataset, requireUnusedDisks } from '../fixtures/storage';
+import { ensurePoolAbsent, requireUnusedDisks } from '../fixtures/storage';
 import { chooseAppsPool, openAppsConfigMenu, unsetAppsPool } from '../flows/apps';
 import { goToApps } from '../flows/navigation';
 import { appsLocators } from '../locators/apps';
@@ -92,7 +94,7 @@ test('an admin chooses a pool for Apps and the Apps service starts on it', async
     () => readDocker(api),
     { message: `docker should run on "${pool}"`, timeout: statusTimeoutMs },
   ).toEqual({ pool, dataset: `${pool}/ix-apps`, status: 'RUNNING' });
-  expect(await findDataset(api, `${pool}/ix-apps`)).toBeDefined();
+  expect(await findAppsDataset(api, pool)).toBe(`${pool}/ix-apps`);
 });
 
 test('an admin unsets the Apps pool and the Apps service stops', async ({ page, api }) => {
