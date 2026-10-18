@@ -33,7 +33,7 @@
           [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Address Pool' | translate }"
           (delete)="removeAddressPool(i)"
         >
-          <div class="address-pool">
+          <div class="address-pool" tnTestIdType="row" [tnTestId]="['address-pool', i]">
             <tn-form-field
               class="base"
               [label]="'Base' | translate"
@@ -77,7 +77,7 @@
           [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Registry Mirror' | translate }"
           (delete)="removeRegistryMirror(i)"
         >
-          <div class="registry-mirror">
+          <div class="registry-mirror" tnTestIdType="row" [tnTestId]="['registry-mirror', i]">
             <tn-form-field class="url" [label]="'Mirror URL' | translate" [required]="true">
               <tn-input formControlName="url"></tn-input>
             </tn-form-field>
