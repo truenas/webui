@@ -45,16 +45,48 @@ export const vdevsPageLocators = {
 } as const;
 
 /**
- * The ZFS Info card for the selected disk.
+ * The ZFS Info card for the selected disk or vdev.
  *
  * Offline and Online live in the card's header menu, and at most one of them is
  * offered: Offline while the disk is not offline, Online while it is not online.
  * Both raise webui's shared confirm (see `locators/dialogs.ts`) with its tick box.
  */
 export const zfsInfoLocators = {
+  /**
+   * Extend, the card's primary action, `testId: 'extend'` on a `TnCardAction`. On
+   * a RAIDZ vdev it opens the RAIDZ Extend dialog, whose own submit emits the same
+   * id: see `raidzExtendDialogLocators`.
+   */
+  extend: '[data-test="button-extend"]',
   /** The header menu's trigger, `[headerMenuTriggerTestId]="'button-zfs-actions'"`. */
   menu: '[data-test="button-zfs-actions"]',
   /** Menu items, `button-<testId>`. Pinned by `zfs-info-card.component.spec.ts`. */
   offline: '[data-test="button-offline"]',
   online: '[data-test="button-online"]',
+} as const;
+
+/**
+ * The RAIDZ Extend dialog (`raidz-extend-dialog.component.html`), raised from
+ * Extend on the ZFS Info card of a RAIDZ vdev.
+ */
+export const raidzExtendDialogLocators = {
+  /** `<tn-dialog-shell testId="raidz-extend">`. What to wait on. */
+  title: '[data-test="dialog-title-raidz-extend"]',
+
+  /**
+   * "New Disk", an `ix-unused-disk-select` with `testId="new-disk"`, which is a
+   * library `tn-autocomplete`: the input is `autocomplete-new-disk` and its rows
+   * are `option-new-disk-<label>`. A label is the device name and its size,
+   * `sdd (10 GiB)`, so a row is matched on the device name and the size is left
+   * to the prefix.
+   */
+  newDisk: '[data-test="autocomplete-new-disk"]',
+  newDiskOption: (devname: string): string => `[data-test^="option-new-disk-${kebabTestSegment(devname)}-"]`,
+
+  /**
+   * The dialog's own "Extend". It emits `button-extend` like the card's, which
+   * stays on the page behind the dialog, so it is reached through the dialog's
+   * action row.
+   */
+  submit: '[data-test="actions-raidz-extend"] [data-test="button-extend"]',
 } as const;
