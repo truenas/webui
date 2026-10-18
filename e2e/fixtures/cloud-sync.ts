@@ -20,7 +20,7 @@
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
-import { ensureCronjobAbsent, ensureCronjobPresent, findCronjob } from './cron';
+import { runCommandOnAppliance } from './cron';
 import { ensureLoopbackRootKeyAbsent, ensureLoopbackRootKeyPresent, type LoopbackRootKey } from './loopback-ssh';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { runJob } from '../support/jobs';
@@ -298,9 +298,9 @@ export async function findFileNames(client: E2eApiClient, directory: string): Pr
  * Writes a small file on the appliance, for a sync to have something to copy.
  *
  * The API has no public call that writes file contents — `filesystem.file_receive`
- * is private and `filesystem.put` is an HTTP upload — so a one-off cron job runs
- * the write and is removed again. `name` must be a plain file name and `directory`
- * a path without spaces: the command goes to a shell as written.
+ * is private and `filesystem.put` is an HTTP upload — so `runCommandOnAppliance`
+ * runs the write. `name` must be a plain file name and `directory` a path without
+ * spaces: the command goes to a shell as written.
  *
  * With `sizeBytes`, the file is that many zero bytes instead of one short line —
  * for a run that has to last long enough to be stopped.
@@ -315,26 +315,9 @@ export async function writeFileOnAppliance(
     ? `echo e2e-cloudsync > ${directory}/${name}`
     : `head -c ${sizeBytes} /dev/zero > ${directory}/${name}`;
 
-  await ensureCronjobPresent(client, {
+  await runCommandOnAppliance(client, {
     command,
     description: 'e2e cloud sync seed file',
-    schedule: {
-      minute: '0', hour: '0', dom: '1', month: '1', dow: '*',
-    },
+    whatItCosts: `${directory}/${name} was not written`,
   });
-
-  try {
-    const cronjob = await findCronjob(client, command);
-    if (!cronjob) {
-      throw new Error(`the cron job writing ${directory}/${name} was not created.`);
-    }
-
-    await runJob(
-      client,
-      () => client.api.callAndGetJobId('cronjob.run', [cronjob.id]),
-      { timeoutMs: slowCallTimeoutMs, whatItCosts: `${directory}/${name} was not written` },
-    );
-  } finally {
-    await ensureCronjobAbsent(client, command);
-  }
 }

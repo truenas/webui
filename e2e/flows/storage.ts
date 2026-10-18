@@ -7,7 +7,7 @@ import { confirmDialogLocators } from '../locators/dialogs';
 import {
   datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, downloadKeyDialogLocators,
   manualDiskSelectionLocators, poolDisconnectLocators, poolImportLocators, poolScrubLocators, poolWizardLocators,
-  type VdevCategory, zvolLocators,
+  pruneDedupLocators, type VdevCategory, zvolLocators,
 } from '../locators/storage';
 
 /**
@@ -36,6 +36,9 @@ const poolImportTimeoutMs = 3 * 60_000;
  * case in `tests/pool-disconnect.e2e.ts`.
  */
 const poolExportTimeoutMs = 3 * 60_000;
+
+/** `pool.ddt_prune` is a job behind a progress dialog, and the Prune dialog closes after it. */
+const dedupPruneTimeoutMs = 2 * 60_000;
 
 /** Picks an option from a `tn-select` by opening it and clicking the option. */
 export async function selectOption(page: Page, select: string, option: string): Promise<void> {
@@ -585,6 +588,37 @@ export async function startScrub(page: Page, pool: string): Promise<void> {
   await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
   await page.locator(confirmDialogLocators.confirm).click();
   await expect(page.locator(confirmDialogLocators.title)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Prunes `pool`'s dedup table from Prune on its Storage Health card, by
+ * percentage or by age, and waits for the dialog to close on the job's success.
+ *
+ * Percentage is the choice the dialog opens on, so it is left as it is. Its
+ * slider is a native range input, which takes a value from `fill`.
+ */
+export async function pruneDedupTable(
+  page: Page,
+  pool: string,
+  by: { percentage: number } | { days: number },
+): Promise<void> {
+  await goToStorage(page);
+
+  const open = page.locator(pruneDedupLocators.open(pool));
+  await expect(open).toBeVisible({ timeout: saveTimeoutMs });
+  await open.click();
+  await expect(page.locator(pruneDedupLocators.title)).toBeVisible();
+
+  if ('percentage' in by) {
+    await page.locator(pruneDedupLocators.percentage).fill(String(by.percentage));
+  } else {
+    await page.locator(pruneDedupLocators.pruneBy('Age')).click();
+    await page.locator(pruneDedupLocators.days).fill(String(by.days));
+  }
+  await page.locator(pruneDedupLocators.submit).click();
+
+  // The dialog stays open on a failure, behind the error the job raised.
+  await expect(page.locator(pruneDedupLocators.title)).toBeHidden({ timeout: dedupPruneTimeoutMs });
 }
 
 /**

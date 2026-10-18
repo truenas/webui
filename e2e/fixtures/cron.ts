@@ -12,6 +12,7 @@
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
+import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 /** A cron job as middleware reports it, with its id narrowed — see `GroupRecord`. */
@@ -85,6 +86,42 @@ export async function ensureCronjobPresent(
       command, description, schedule, user: 'root', enabled: true, stdout: true, stderr: false,
     }]).pipe(timeout(slowCallTimeoutMs)),
   );
+}
+
+/**
+ * Runs a shell command on the appliance as root, once, and waits for it to exit.
+ *
+ * The API has no public call that runs a command or writes file contents, so a
+ * cron job holding the command is made, run through `cronjob.run`, and removed
+ * again. Its schedule is once a year, in case the removal is never reached. The
+ * command goes to a shell as written, so the caller quotes what needs it.
+ */
+export async function runCommandOnAppliance(
+  client: E2eApiClient,
+  { command, description, whatItCosts }: { command: string; description: string; whatItCosts: string },
+): Promise<void> {
+  await ensureCronjobPresent(client, {
+    command,
+    description,
+    schedule: {
+      minute: '0', hour: '0', dom: '1', month: '1', dow: '*',
+    },
+  });
+
+  try {
+    const cronjob = await findCronjob(client, command);
+    if (!cronjob) {
+      throw new Error(`the cron job running "${command}" was not created, so ${whatItCosts}.`);
+    }
+
+    await runJob(
+      client,
+      () => client.api.callAndGetJobId('cronjob.run', [cronjob.id]),
+      { timeoutMs: slowCallTimeoutMs, whatItCosts },
+    );
+  } finally {
+    await ensureCronjobAbsent(client, command);
+  }
 }
 
 /**
