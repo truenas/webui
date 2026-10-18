@@ -239,6 +239,13 @@ export class VmListComponent implements OnInit {
   protected readonly trackByVmId = (_index: number, row: VirtualMachine): number => row.id;
 
   /**
+   * Keys the table's expansion, so an open details row survives each `vm.query` event handing the
+   * table a fresh row object. Without it the row collapses mid-action, and a Stop or Reset confirmed
+   * in a dialog it opened is dropped along with the details row that sends it.
+   */
+  protected readonly vmExpansionKey = (row: VirtualMachine): number => row.id;
+
+  /**
    * Row tag every `[tnTestId]` in the template is keyed on. Memoized because each of the 11
    * columns asks for it on every change-detection pass, and `subscribeToVmEvents` forces one
    * per websocket event.

@@ -3,6 +3,7 @@
  */
 import { expect, type Page } from '@playwright/test';
 import { goToContainers } from './navigation';
+import { selectOption } from './storage';
 import { containersLocators } from '../locators/containers';
 
 /**
@@ -101,6 +102,27 @@ export async function openEditContainerForm(page: Page, name: string): Promise<v
   await expect(page.locator(containersLocators.create.name)).toHaveValue(name);
   await page.locator(containersLocators.create.advancedOptions).click();
   await expect(page.locator(containersLocators.create.cpuset)).toBeVisible();
+}
+
+/**
+ * Answers the Stop Options dialog that a row's Stop or Restart opens: picks
+ * `method`, by its label, or keeps the option the dialog opens on when it is
+ * left out, then presses the dialog's primary button.
+ *
+ * The `container.stop` job runs behind webui's progress dialog after this, and a
+ * restart starts the container once it ends, so the caller waits on the
+ * container's state rather than on either dialog.
+ */
+export async function answerStopOptions(page: Page, method?: string): Promise<void> {
+  const dialog = containersLocators.stopOptionsDialog;
+
+  await expect(page.locator(dialog.title)).toBeVisible();
+  if (method !== undefined) {
+    await selectOption(page, dialog.stopMethod, dialog.stopMethodOption(method));
+    await expect(page.locator(dialog.stopMethod)).toContainText(method);
+  }
+  await page.locator(dialog.continue).click();
+  await expect(page.locator(dialog.title)).toBeHidden();
 }
 
 /** Dismisses the open side panel, for a form left unedited, which closes without asking. */

@@ -140,6 +140,16 @@ export async function seedContainer(
 }
 
 /**
+ * Starts a stopped container, for a test about what is done to a running one.
+ *
+ * A plain call, as the list's own Start makes it. The caller polls
+ * {@link findContainer} for `RUNNING` rather than trusting the answer.
+ */
+export async function startContainer(client: E2eApiClient, id: number): Promise<void> {
+  await firstValueFrom(client.api.call('container.start', [id]).pipe(timeout(slowCallTimeoutMs)));
+}
+
+/**
  * Deletes a container by name if present, stopping it first (`force`).
  *
  * Its dataset is a clone of the image's snapshot, so this has to run before
