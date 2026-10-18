@@ -19,7 +19,7 @@
  * Not covered: Set Quota on the same line.
  */
 import {
-  ensureDedupPoolPresent, findDedupPruneRuns, readDedupTableSize,
+  addDedupSeed, ensureDedupPoolPresent, findDedupPruneRuns, readDedupTableSize,
 } from '../fixtures/pool-devices';
 import { ensurePoolAbsent, requireUnusedDisks } from '../fixtures/storage';
 import { pruneDedupTable } from '../flows/storage';
@@ -30,8 +30,20 @@ import { expect, test } from '../support/fixtures';
 /** This spec's own pool. Not a name any other spec looks for. */
 const pool = 'e2e_dedup_prune_tank';
 
-/** The seed write lands in the table once its transaction group syncs. This is a ceiling. */
-const seedSyncTimeoutMs = 60_000;
+/**
+ * The seed write is synced before the first read, so the size is normally there
+ * at once. A ceiling, since each re-seed is a cron job made, run and removed.
+ */
+const seedSyncTimeoutMs = 120_000;
+
+/** The table's size, seeding it again if it still reads zero. See `addDedupSeed`. */
+async function readOrReseedTableSize(api: E2eApiClient): Promise<number> {
+  const size = await readDedupTableSize(api, pool);
+  if (size === 0) {
+    await addDedupSeed(api, pool);
+  }
+  return size;
+}
 
 test.beforeEach(async ({ api }) => {
   await ensurePoolAbsent(api, pool);
@@ -40,7 +52,7 @@ test.beforeEach(async ({ api }) => {
 
   await ensureDedupPoolPresent(api, pool);
   await expect
-    .poll(() => readDedupTableSize(api, pool), {
+    .poll(() => readOrReseedTableSize(api), {
       message: `Pool "${pool}" should have entries in its dedup table, or the card offers no Prune.`,
       timeout: seedSyncTimeoutMs,
     })

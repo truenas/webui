@@ -93,7 +93,8 @@ export async function ensureMirrorPoolPresent(client: E2eApiClient, name: string
  * dataset. Random, because neither a run of zeros nor a few bytes of text make
  * an entry: compression writes no block for zeros, and a short file is stored in
  * its block pointer. The table's size follows once the write is synced, so a
- * caller polls `readDedupTableSize` for it.
+ * caller polls `readDedupTableSize` for it, and calls `addDedupSeed` again while
+ * it still reads zero.
  */
 export async function ensureDedupPoolPresent(client: E2eApiClient, name: string): Promise<void> {
   if (await findPool(client, name)) {
@@ -129,8 +130,22 @@ export async function ensureDedupPoolPresent(client: E2eApiClient, name: string)
     },
   );
 
+  await addDedupSeed(client, name);
+}
+
+/**
+ * Appends random bytes to the pool's seed file and syncs the pool, so the
+ * write is in the dedup table when this returns.
+ *
+ * ZFS caches the table's size and clears that cache only while it syncs a txg
+ * that changed the table, so a size read during that sync can stay zero on an
+ * idle pool for as long as nothing else writes. It did once in CI, for a full
+ * minute. A further write followed by a sync clears it again, which is why a
+ * caller still reading zero calls this a second time rather than waiting.
+ */
+export async function addDedupSeed(client: E2eApiClient, name: string): Promise<void> {
   await runCommandOnAppliance(client, {
-    command: `head -c ${dedupSeedBytes} /dev/urandom > /mnt/${name}/e2e-dedup-seed`,
+    command: `head -c ${dedupSeedBytes} /dev/urandom >> /mnt/${name}/e2e-dedup-seed && /usr/sbin/zpool sync ${name}`,
     description: 'e2e dedup table seed file',
     whatItCosts: `pool "${name}" has nothing in its dedup table, so the card offers no Prune`,
   });
