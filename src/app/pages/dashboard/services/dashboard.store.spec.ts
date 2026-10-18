@@ -119,6 +119,16 @@ describe('DashboardStore', () => {
     expect(finalizeSpy).toHaveBeenCalledWith(false);
   });
 
+  it('keeps the saved layout, so cancelling the next edit does not bring back the one before', async () => {
+    spectator.service.entered();
+    await loadedState();
+    const saved = [{ layout: WidgetGroupLayout.Full, slots: [{ type: WidgetType.Cpu }] }];
+
+    await firstValueFrom(spectator.service.save(saved));
+
+    expect(await firstValueFrom(spectator.service.groups$)).toEqual(saved);
+  });
+
   it('should load demoWidgets if user does not have dashState', async () => {
     spectator.inject(MockTypedApiService).mockCall('auth.me', authMe({}));
 

@@ -100,6 +100,9 @@ export class DashboardStore extends ComponentStore<DashboardState> {
     this.toggleLoadingState(true);
 
     return this.api.call('auth.set_attribute', ['dashState', groups]).pipe(
+      // Kept here too: `entered()` reads the layout once, so nothing else would tell the store, and
+      // cancelling the next edit would bring back the layout from before this save.
+      tap(() => this.patchState({ groups })),
       switchMap(() => this.authService.refreshUser()),
       finalize(() => this.toggleLoadingState(false)),
     );
