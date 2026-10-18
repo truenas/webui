@@ -85,7 +85,7 @@ test.afterAll(async ({ api, pool }) => {
 
 /** The container's state as `container.query` reports it, or undefined if it is gone. */
 async function stateOf(api: E2eApiClient): Promise<string | undefined> {
-  return (await findContainer(api, containerName))?.status.state;
+  return (await findContainer(api, containerName))?.status?.state;
 }
 
 /** Seeds the container, stopped, and returns its id. */
@@ -138,7 +138,7 @@ test('an admin restarts a running container, forcing it off immediately', async 
   await seedRunning(api, pool);
   const before = await findContainer(api, containerName);
   // The pid is what tells a restart from a no-op, so the test cannot make its claim without one.
-  expect(before?.status.pid).toEqual(expect.any(Number));
+  expect(before?.status?.pid).toEqual(expect.any(Number));
 
   await goToContainers(page);
   await page.locator(list.restart(containerName)).click();
@@ -147,7 +147,7 @@ test('an admin restarts a running container, forcing it off immediately', async 
   await expect
     .poll(async () => {
       const after = await findContainer(api, containerName);
-      return after?.status.state === 'RUNNING' && after.status.pid !== before?.status.pid;
+      return after?.status?.state === 'RUNNING' && after.status.pid !== before?.status?.pid;
     }, { timeout: stateTimeoutMs })
     .toBe(true);
   await expect(page.locator(list.status(containerName))).toHaveText('Running');
