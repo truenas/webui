@@ -105,6 +105,27 @@ export async function openEditContainerForm(page: Page, name: string): Promise<v
 }
 
 /**
+ * Types a path into the filesystem device form's Source and leaves the field,
+ * which is when `ix-explorer` hands the typed value to the form and its
+ * validators run.
+ */
+export async function fillFilesystemDeviceSource(page: Page, path: string): Promise<void> {
+  const field = page.locator(containersLocators.filesystemDeviceForm.source);
+
+  await field.fill(path);
+  await field.blur();
+}
+
+/**
+ * Saves the open filesystem device form and waits for the panel to close, the
+ * app's own signal that `container.device.create` or `.update` was accepted.
+ */
+export async function saveFilesystemDevice(page: Page): Promise<void> {
+  await page.locator(containersLocators.save).click();
+  await expect(page.locator(containersLocators.save)).toBeHidden({ timeout: containerSettingsSaveTimeoutMs });
+}
+
+/**
  * Answers the Stop Options dialog that a row's Stop or Restart opens: picks
  * `method`, by its label, or keeps the option the dialog opens on when it is
  * left out, then presses the dialog's primary button.
