@@ -210,6 +210,46 @@ describe('VmListComponent', () => {
       expect(await table.isRowExpanded(0)).toBe(false);
       expect(await table.isRowExpanded(1)).toBe(true);
     });
+
+    // Every vm.query event hands the table a fresh row object, and a table with no expansionKey
+    // collapses whatever is open on any change to its data.
+    it('keeps the row expanded, and its details row alive, when a vm.query event updates the VM', async () => {
+      await table.clickRow(0);
+      const detailsRow = spectator.query(VirtualMachineDetailsRowComponent);
+
+      emitVmEvent({
+        msg: CollectionChangeType.Changed,
+        id: virtualMachines[0].id,
+        fields: { id: virtualMachines[0].id, description: 'updated by middleware' },
+      });
+
+      expect(await table.isRowExpanded(0)).toBe(true);
+      expect(spectator.query(VirtualMachineDetailsRowComponent)).toBe(detailsRow);
+    });
+
+    // The details row subscribes to the Stop dialog for as long as it lives, and `vm.stop` is only
+    // sent from inside that subscription — so a row torn down while the dialog is open drops it.
+    it('still sends a Stop confirmed after the VM was updated while the dialog was open', async () => {
+      const stopConfirmed$ = new Subject<boolean>();
+      jest.spyOn(spectator.inject(VmService), 'doStop').mockReturnValue(stopConfirmed$.asObservable());
+
+      await table.clickRow(0);
+      const stopButton = await loader.getHarness(TnButtonHarness.with({ label: /Stop/ }));
+      await stopButton.click();
+      expect(stopConfirmed$.observed).toBe(true);
+
+      // A start's later events: the VM is still running, with a new pid.
+      emitVmEvent({
+        msg: CollectionChangeType.Changed,
+        id: virtualMachines[0].id,
+        fields: {
+          id: virtualMachines[0].id,
+          status: { state: VmState.Running, pid: 12030, domain_state: 'RUNNING' },
+        },
+      });
+
+      expect(stopConfirmed$.observed).toBe(true);
+    });
   });
 
   describe('toggle columns', () => {
