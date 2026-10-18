@@ -152,15 +152,28 @@ export function unusedDatasetName(prefix: string): string {
 }
 
 /**
- * How much {@link seedMigrationData} writes: 2 GiB of random bytes, as 131,072 files of 16 KiB.
+ * How much {@link seedMigrationData} writes: 4 GiB of random bytes, as 262,144 files of 16 KiB.
  *
  * Sized for a migration that is still running when a test reaches its Cancel, a few seconds
  * after Apply. Random, because the pool compresses and zeros would leave almost nothing to
  * move. Many small files rather than one large one, because the rewrite pays per file as well
  * as per byte. The tier pool's disks are 10 GB each, so this fits on either side of the move.
+ *
+ * Measured in CI (run 39091322942): 2 GiB in 131,072 files migrated in 5 seconds, before the
+ * dialog could be opened. Size alone does not buy enough, so see {@link migrationSeedCompression}.
  */
-const migrationSeedBytes = 2 * 1024 ** 3;
+const migrationSeedBytes = 4 * 1024 ** 3;
 const migrationSeedFileBytes = 16 * 1024;
+
+/**
+ * The compression {@link seedMigrationData} leaves the dataset on, once the seed is written.
+ *
+ * A rewrite writes every block again with the dataset's current properties, so it compresses the
+ * whole seed again. gzip-9 is slow and, unlike zstd's higher levels and lz4, does not give up
+ * early on incompressible data, so it makes every block of the move cost CPU. It is set after
+ * the write, so the seed itself is not slowed.
+ */
+const migrationSeedCompression = 'GZIP-9';
 
 /** Writing the seed is bounded by the appliance's disk, not by middleware. */
 const migrationSeedTimeoutMs = 5 * 60_000;
@@ -182,7 +195,8 @@ export function migrationSeedCommand(dataset: string): string {
  *
  * An empty dataset migrates at once, so a test about a running migration needs something to move.
  * The API writes no file contents (see `writeFileOnAppliance` in `fixtures/cloud-sync.ts`), so a
- * one-off cron job runs the write and is removed again.
+ * one-off cron job runs the write and is removed again. Then the dataset is switched to
+ * {@link migrationSeedCompression}, which is what makes moving it slow.
  */
 export async function seedMigrationData(client: E2eApiClient, dataset: string): Promise<void> {
   const command = migrationSeedCommand(dataset);
@@ -211,6 +225,11 @@ export async function seedMigrationData(client: E2eApiClient, dataset: string): 
   } finally {
     await ensureCronjobAbsent(client, command);
   }
+
+  await firstValueFrom(
+    client.api.call('pool.dataset.update', [dataset, { compression: migrationSeedCompression }])
+      .pipe(timeout(slowCallTimeoutMs)),
+  );
 }
 
 /**
