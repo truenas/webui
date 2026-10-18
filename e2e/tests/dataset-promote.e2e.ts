@@ -6,7 +6,12 @@
  * be deleted afterwards, so teardown cannot assume an order — it removes
  * whichever dataset currently has an origin first, which is right on both sides
  * of the promote.
+ *
+ * Promote reloads the whole Datasets page, and the panel is gone while it
+ * does, so the card is read only after the page's own reload has answered.
+ * Hence `recordApiCalls`.
  */
+import type { Page } from '@playwright/test';
 import { cloneSnapshot, ensureSnapshotPresent, findSnapshot, snapshotId } from '../fixtures/snapshots';
 import { ensureDatasetAbsent, ensureDatasetPresent, findDataset } from '../fixtures/storage';
 import { selectDataset } from '../flows/encryption';
@@ -14,12 +19,24 @@ import { actionTimeoutMs } from '../flows/snapshots';
 import { datasetActionsLocators } from '../locators/dataset-actions';
 import { datasetDetailsLocators } from '../locators/storage';
 import type { E2eApiClient } from '../support/api/client';
+import { apiCallsTo } from '../support/api-calls';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
 const sourceName = 'e2e_promote_src';
 const cloneName = 'e2e_promote_clone';
 const snapshotName = 'base';
+
+const promoteMethod = 'pool.dataset.promote';
+/** What the Datasets page reloads its tree and the selected dataset's card from. */
+const detailsMethod = 'pool.dataset.details';
+
+test.use({ recordApiCalls: true });
+
+/** How middleware has answered the page's calls to `method`, from the `from`th on. */
+function answersTo(page: Page, method: string, from = 0): (string | undefined)[] {
+  return apiCallsTo(page, method).slice(from).map((call) => call.answer);
+}
 
 /**
  * A dataset's origin, the snapshot it was cloned from. Empty for a dataset that
@@ -77,7 +94,7 @@ test.afterEach(async ({ api, pool }) => {
   ]);
 });
 
-test('promoting a clone makes its origin the clone of it', async ({ page, api, pool }) => {
+test('promoting a clone swaps it with the dataset it came from',async ({ page, api, pool }) => {
   const source = `${pool}/${sourceName}`;
   const clone = `${pool}/${cloneName}`;
 
@@ -87,11 +104,14 @@ test('promoting a clone makes its origin the clone of it', async ({ page, api, p
 
   await selectDataset(page, clone);
   await page.locator(datasetActionsLocators.menu).click();
+  // The panel has loaded, so every details read from here on is the reload Promote triggers.
+  const detailsBefore = apiCallsTo(page, detailsMethod).length;
   await page.locator(datasetActionsLocators.promote).click();
 
   // Promote asks nothing and reports only in a toast, which carries no
-  // `data-test`, so the appliance is what says it landed.
-  await expect.poll(() => originOf(api, clone), { timeout: actionTimeoutMs }).toBe('');
+  // `data-test`, so the page's own call and the appliance are what say it landed.
+  await expect.poll(() => answersTo(page, promoteMethod), { timeout: actionTimeoutMs }).toContain('result');
+  expect(await originOf(api, clone)).toBe('');
   expect(await originOf(api, source)).toBe(snapshotId(clone, snapshotName));
 
   // The snapshot moved with the dependency: it now belongs to the clone.
@@ -99,7 +119,13 @@ test('promoting a clone makes its origin the clone of it', async ({ page, api, p
   expect(await findSnapshot(api, source, snapshotName)).toBeUndefined();
 
   // With no origin left the clone has nothing to promote, and Promote is the
-  // menu's only item, so the card drops the menu's trigger altogether.
+  // menu's only item, so the card drops the menu's trigger altogether. The
+  // reload removes the whole panel while it runs, which would hide the trigger
+  // too, so the card is read only once that reload has answered.
+  await expect.poll(
+    () => answersTo(page, detailsMethod, detailsBefore),
+    { timeout: actionTimeoutMs },
+  ).toContain('result');
   await expect(page.locator(datasetDetailsLocators.path)).toHaveText(clone);
   await expect(page.locator(datasetActionsLocators.menu)).toBeHidden({ timeout: actionTimeoutMs });
 
