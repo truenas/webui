@@ -25,9 +25,9 @@
  * removes it: left behind it would hold two disks `fresh-install` needs, and
  * `findOnlinePool` would hand it to the next spec as that spec's pool.
  */
+import { ensureCronjobAbsent } from '../fixtures/cron';
 import { entitlementFeature, isEntitled } from '../fixtures/entitlements';
 import { ensureDatasetAbsent, ensureDatasetPresent, ensurePoolAbsent, findDataset } from '../fixtures/storage';
-import { ensureCronjobAbsent } from '../fixtures/cron';
 import {
   ensureMigrationStopped, ensureTierPoolPresent, establishTierBaseline, migrationSeedCommand, seedMigrationData,
   tierPoolName, unusedDatasetName,
