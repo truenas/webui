@@ -11,8 +11,8 @@
  * Both tests change a pool's topology, so neither may use the worker-scoped
  * `pool` fixture other specs share. Each test builds the pool it starts from: one
  * disk for Extend, a two-disk mirror for Detach. The pool is destroyed before and
- * after each test, unconditionally: either way it ends up holding two disks, and
- * `fresh-install` needs nine alike.
+ * after each test, unconditionally: it holds two disks at some point either way,
+ * and `fresh-install` needs nine alike.
  *
  * Not covered: extending a RAIDZ vdev, which is a different dialog, and extending
  * a log, special or dedup vdev.
@@ -33,10 +33,10 @@ import { expect, test } from '../support/fixtures';
 const pool = 'e2e_extend_tank';
 
 /**
- * The job ends once the new disk is attached, and ZFS then resilvers onto it. On
- * an empty pool that is quick; this is a ceiling.
+ * The job ends once the new disk is attached, and `pool.query` may take a moment
+ * to report the mirror with both disks ONLINE. This is a ceiling.
  */
-const resilverTimeoutMs = 60_000;
+const attachTimeoutMs = 60_000;
 
 /** Middleware reads a detached disk back into the unused inventory. */
 const inventoryTimeoutMs = 30_000;
@@ -73,15 +73,14 @@ test('an admin extends a single-disk vdev into a mirror', async ({ page, api }) 
   await selectDisk(page, target);
   await extendSelectedDisk(page, newDisk.devname);
 
-  // One data vdev, now a mirror of the original disk and the new one, and the
-  // resilver has finished: both are ONLINE.
+  // One data vdev, now a mirror of the original disk and the new one, both ONLINE.
   await expect
     .poll(
       async () => (await readDataVdevs(api, pool)).map(({ type, disks }) => ({
         type,
         disks: disks.map(({ disk, status }) => ({ disk, status })).sort(byName),
       })),
-      { timeout: resilverTimeoutMs },
+      { timeout: attachTimeoutMs },
     )
     .toEqual([{
       type: 'MIRROR',
