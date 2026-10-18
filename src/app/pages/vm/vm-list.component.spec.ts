@@ -229,7 +229,7 @@ describe('VmListComponent', () => {
 
     // The details row subscribes to the Stop dialog for as long as it lives, and `vm.stop` is only
     // sent from inside that subscription — so a row torn down while the dialog is open drops it.
-    it('still sends a Stop confirmed after the VM was updated while the dialog was open', async () => {
+    it('keeps the Stop confirmation subscribed when the VM is updated while the dialog is open', async () => {
       const stopConfirmed$ = new Subject<boolean>();
       jest.spyOn(spectator.inject(VmService), 'doStop').mockReturnValue(stopConfirmed$.asObservable());
 
