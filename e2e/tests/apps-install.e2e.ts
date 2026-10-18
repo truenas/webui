@@ -51,7 +51,7 @@ import {
 import { goToApps } from '../flows/navigation';
 import { appCatalogLocators, appsLocators, installedAppLocators } from '../locators/apps';
 import { jobDialogLocators } from '../locators/encryption';
-import { leavingTestData, runCleanupSteps } from '../support/cleanup';
+import { leavingTestData, runCleanupSteps, type CleanupStep } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
 /** Built, given to Apps and destroyed here. Not a name any other spec looks for. */
@@ -69,9 +69,12 @@ const stateChangeTimeoutMs = 2 * 60_000;
  */
 let appsOnSomebodyElsesPool = false;
 
-/** What the appliance held before this file changed it, written back in `afterAll`. */
-let preferredTrainsBefore: string[] = [];
-let appsAgreementBefore = false;
+/**
+ * What the appliance held before this file changed it, written back in `afterAll`. Undefined until
+ * read, so a setup that failed first never writes back a value nobody read.
+ */
+let preferredTrainsBefore: string[] | undefined;
+let appsAgreementBefore: boolean | undefined;
 
 test.beforeAll(async ({ api }) => {
   const { pool: appsPool } = await readDocker(api);
@@ -79,6 +82,10 @@ test.beforeAll(async ({ api }) => {
   if (appsOnSomebodyElsesPool) {
     return;
   }
+
+  // Read before anything changes either.
+  preferredTrainsBefore = await readPreferredTrains(api);
+  appsAgreementBefore = await readAppsAgreement(api);
 
   // In this order: the app's datasets keep `e2e_apps/ix-apps` busy, and Docker keeps the pool busy.
   await ensureAppAbsent(api, release);
@@ -88,7 +95,6 @@ test.beforeAll(async ({ api }) => {
   await ensurePoolPresent(api, pool);
   await setAppsPool(api, pool);
 
-  preferredTrainsBefore = await readPreferredTrains(api);
   if (!preferredTrainsBefore.includes(communityTrain)) {
     await setPreferredTrains(api, [...preferredTrainsBefore, communityTrain]);
   }
@@ -96,7 +102,6 @@ test.beforeAll(async ({ api }) => {
   await syncCatalog(api);
 
   // Before any test signs in: the UI reads it from the user it signs in as.
-  appsAgreementBefore = await readAppsAgreement(api);
   await setAppsAgreement(api, false);
 });
 
@@ -123,13 +128,22 @@ test.afterAll(async ({ api }) => {
   }
 
   // In this order: the export fails while Docker holds `e2e_apps/ix-apps`.
-  await runCleanupSteps([
+  const steps: CleanupStep[] = [
     [`delete app "${release}"`, () => ensureAppAbsent(api, release)],
     ['unset the Apps pool', () => ensureAppsPoolUnset(api)],
     [`export pool "${pool}"`, () => ensurePoolAbsent(api, pool)],
-    ['restore the preferred trains', () => setPreferredTrains(api, preferredTrainsBefore)],
-    ['restore the apps agreement', () => setAppsAgreement(api, appsAgreementBefore)],
-  ]);
+  ];
+
+  const trains = preferredTrainsBefore;
+  if (trains !== undefined) {
+    steps.push(['restore the preferred trains', () => setPreferredTrains(api, trains)]);
+  }
+  const agreed = appsAgreementBefore;
+  if (agreed !== undefined) {
+    steps.push(['restore the apps agreement', () => setAppsAgreement(api, agreed)]);
+  }
+
+  await runCleanupSteps(steps);
 });
 
 test('an admin installs a catalog app from Discover and it runs', async ({ page, api }) => {

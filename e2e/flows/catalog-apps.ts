@@ -17,8 +17,12 @@ export async function refreshCatalog(page: Page): Promise<void> {
 
 /** Searches Discover for `app` and opens its card, landing on the app's page with Install on it. */
 export async function openCatalogApp(page: Page, train: string, app: string): Promise<void> {
+  const card = page.locator(appCatalogLocators.appCard(train, app));
+
   await page.locator(appCatalogLocators.search).fill(app);
-  await page.locator(appCatalogLocators.appCard(train, app)).click();
+  // Unfiltered, an app can sit in more than one section. The search applies after a debounce.
+  await expect(card).toHaveCount(1);
+  await card.click();
   await expect(page.locator(appCatalogLocators.install(app))).toBeVisible();
 }
 
@@ -51,8 +55,8 @@ export async function installWithDefaults(page: Page, app: string, release: stri
 
 /**
  * Selects the app's row, presses Delete on its Application Info card and confirms with the app's
- * name, removing its images too. The dialog closes before the `app.delete` job runs; the caller
- * waits on the row.
+ * name. Remove Images is ticked by default and is left that way, so the images go too. The dialog
+ * closes before the `app.delete` job runs; the caller waits on the row.
  */
 export async function deleteInstalledApp(page: Page, name: string): Promise<void> {
   const app = installedAppLocators(name);
@@ -62,6 +66,6 @@ export async function deleteInstalledApp(page: Page, name: string): Promise<void
 
   await expect(page.locator(appDeleteDialogLocators.title)).toBeVisible();
   await page.locator(appDeleteDialogLocators.confirmName).fill(name);
-  await page.locator(appDeleteDialogLocators.removeImages).click();
+  await expect(page.locator(appDeleteDialogLocators.removeImages)).toBeChecked();
   await page.locator(appDeleteDialogLocators.delete).click();
 }

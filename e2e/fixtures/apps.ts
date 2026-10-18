@@ -161,8 +161,7 @@ export const appsAgreementAttribute = 'appsAgreement';
 /** Whether the signed-in user has agreed to the third-party apps warning. */
 export async function readAppsAgreement(client: E2eApiClient): Promise<boolean> {
   const me = await firstValueFrom(client.api.call('auth.me').pipe(timeout(readTimeoutMs)));
-  const attributes = me.attributes as Record<string, unknown>;
-  return attributes[appsAgreementAttribute] === true;
+  return (me as { attributes?: Record<string, unknown> }).attributes?.[appsAgreementAttribute] === true;
 }
 
 /**
