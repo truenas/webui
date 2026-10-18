@@ -136,9 +136,12 @@ export async function ensureDedupPoolPresent(client: E2eApiClient, name: string)
   });
 }
 
-/** The pool's dedup table size in bytes, as the Storage Health card reads it. */
+/**
+ * The pool's dedup table size in bytes, as the Storage Health card reads it.
+ * Middleware reports no size as `null`, which reads here as an empty table.
+ */
 export async function readDedupTableSize(client: E2eApiClient, name: string): Promise<number> {
-  return (await getPool(client, name)).dedup_table_size;
+  return (await getPool(client, name)).dedup_table_size ?? 0;
 }
 
 /** A `pool.ddt_prune` job, and what it was asked to prune. */
