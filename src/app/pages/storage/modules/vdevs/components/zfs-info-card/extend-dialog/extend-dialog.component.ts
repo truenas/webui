@@ -6,7 +6,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
@@ -38,6 +38,7 @@ export interface ExtendDialogParams {
     SedDiskPasswordComponent,
     FormActionsComponent,
     TnButtonComponent,
+    TnTestIdDirective,
     TranslateModule,
   ],
 })
