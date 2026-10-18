@@ -150,6 +150,55 @@ export async function ensureContainerAbsent(client: E2eApiClient, name: string):
   );
 }
 
+/** A container's FILESYSTEM device: a host path bind-mounted at a path inside the container. */
+export interface FilesystemDevice {
+  id: number;
+  source: string;
+  target: string;
+}
+
+/**
+ * The fields of a `container.device.query` row read here. `attributes` is a union
+ * over every device type, and only a FILESYSTEM one has a source and a target.
+ */
+interface ContainerDeviceRow {
+  id: number;
+  attributes: { dtype: string; source?: string; target?: string };
+}
+
+function toFilesystemDevice(row: ContainerDeviceRow): FilesystemDevice {
+  return { id: row.id, source: row.attributes.source ?? '', target: row.attributes.target ?? '' };
+}
+
+/** The FILESYSTEM devices of a container, as middleware holds them. */
+export async function findFilesystemDevices(
+  client: E2eApiClient,
+  containerId: number,
+): Promise<FilesystemDevice[]> {
+  const rows = await firstValueFrom(
+    client.api.query('container.device.query', [['container', '=', containerId]]).pipe(timeout(readTimeoutMs)),
+  ) as unknown as ContainerDeviceRow[];
+  return rows.filter((row) => row.attributes.dtype === 'FILESYSTEM').map(toFilesystemDevice);
+}
+
+/**
+ * Mounts `source` at `target` in a stopped container, for a test that is not
+ * about adding one. Middleware refuses device changes on a running container.
+ */
+export async function seedFilesystemDevice(
+  client: E2eApiClient,
+  containerId: number,
+  { source, target }: { source: string; target: string },
+): Promise<FilesystemDevice> {
+  const created = await firstValueFrom(
+    client.api.call('container.device.create', [{
+      container: containerId,
+      attributes: { dtype: 'FILESYSTEM', source, target },
+    }]).pipe(timeout(slowCallTimeoutMs)),
+  ) as unknown as ContainerDeviceRow;
+  return toFilesystemDevice(created);
+}
+
 /**
  * Where middleware keeps a pool's containers and the images they are cloned
  * from (`CONTAINER_DS_NAME` in `plugins/container/utils.py`). It is created by

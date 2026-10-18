@@ -122,6 +122,44 @@ export const containersLocators = {
     delete: '[data-test="button-delete-container"]',
   },
 
+  /**
+   * The details panel's Filesystem Devices card,
+   * `container-filesystem-devices.component.html`. A device's menu ids are keyed
+   * by its description, `<source> → <target>` as `getDeviceDescription` words it,
+   * so they change when the device is edited. Its Edit and Delete raise the
+   * filesystem device form and webui's shared confirm (see `locators/dialogs.ts`).
+   */
+  filesystemDevices: {
+    /** "Add", the card's primary action, `testId: 'add-disk'` on a `TnCardAction`. */
+    add: '[data-test="button-add-disk"]',
+    /** "No filesystem devices added.", shown in place of the list while it is empty. */
+    empty: '[data-test="text-no-filesystem-devices"]',
+    /** A device's description line, `['filesystem-device', id]`. */
+    device: (id: number): string => `[data-test="text-filesystem-device-${id}"]`,
+    /** The `ix-device-actions-menu` trigger, `['actions-for', description]`. */
+    actionsFor: (description: string): string => (
+      `[data-test="button-actions-for-${kebabTestSegment(description)}"]`
+    ),
+    edit: (description: string): string => `[data-test="button-edit-${kebabTestSegment(description)}"]`,
+    delete: (description: string): string => `[data-test="button-delete-${kebabTestSegment(description)}"]`,
+  },
+
+  /**
+   * The filesystem device form, `container-filesystem-device-form.component.html`,
+   * in a side panel with the panel's own Save.
+   */
+  filesystemDeviceForm: {
+    /**
+     * "Host Directory Source". `ix-explorer` renders a `tn-file-picker`, whose inner
+     * `<input>` takes the control name. Typable, so the path goes in directly.
+     */
+    source: '[data-test="input-source"]',
+    /** The source's validation message, which `ix-explorer` renders as `text-<control>-errors`. */
+    sourceErrors: '[data-test="text-source-errors"]',
+    /** "Container Mount Path". */
+    target: '[data-test="input-target"]',
+  },
+
   /** `<tn-dialog-shell testId="delete-container">`. Delete enables once the confirmation is ticked. */
   deleteDialog: {
     confirm: '[data-test="checkbox-confirm"]',

@@ -84,6 +84,27 @@ export async function openContainerDetails(page: Page, name: string): Promise<vo
   await expect(page.locator(containersLocators.details.dataset)).toContainText(`/containers/${name}`);
 }
 
+/**
+ * Types a path into the filesystem device form's Source and leaves the field,
+ * which is when `ix-explorer` hands the typed value to the form and its
+ * validators run.
+ */
+export async function fillFilesystemDeviceSource(page: Page, path: string): Promise<void> {
+  const field = page.locator(containersLocators.filesystemDeviceForm.source);
+
+  await field.fill(path);
+  await field.blur();
+}
+
+/**
+ * Saves the open filesystem device form and waits for the panel to close, the
+ * app's own signal that `container.device.create` or `.update` was accepted.
+ */
+export async function saveFilesystemDevice(page: Page): Promise<void> {
+  await page.locator(containersLocators.save).click();
+  await expect(page.locator(containersLocators.save)).toBeHidden({ timeout: containerSettingsSaveTimeoutMs });
+}
+
 /** Dismisses the open side panel, for a form left unedited, which closes without asking. */
 export async function closeContainerPanel(page: Page): Promise<void> {
   await page.locator(containersLocators.closePanel).click();

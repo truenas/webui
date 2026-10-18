@@ -18,7 +18,9 @@
         ></ix-device-actions-menu>
       </div>
     } @empty {
-      <div class="no-devices">{{ 'No filesystem devices added.' | translate }}</div>
+      <div class="no-devices" tnTestIdType="text" tnTestId="no-filesystem-devices">
+        {{ 'No filesystem devices added.' | translate }}
+      </div>
     }
   }
 </tn-card>
