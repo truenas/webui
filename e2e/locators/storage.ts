@@ -511,6 +511,41 @@ export const poolScrubLocators = {
   lastScanErrors: (pool: string) => `[data-test="text-${kebabTestSegment(pool)}-last-scan-errors"]`,
 } as const;
 
+/** A pool's Storage Health card, `[pool().name, 'storage-health']` on the `tn-card`. */
+const storageHealthCard = (pool: string): string => `[data-test="card-${kebabTestSegment(pool)}-storage-health"]`;
+
+/**
+ * The Scheduled Scrub line on a pool's Storage Health card, and the form it opens
+ * in a side panel.
+ *
+ * The line's link is `link-configure-scrub` on every pool's card, whether it reads
+ * Configure or Schedule, so it is scoped inside the pool's card. The form's
+ * controls set no `testId` and fall back to their `formControlName`; its schedule
+ * is the shared `ix-scheduler`, which `schedulerLocators` in `locators/cron.ts`
+ * covers.
+ */
+export const scheduledScrubLocators = {
+  card: {
+    /** The schedule's description while the pool's task is enabled, "Not Set" otherwise. */
+    schedule: (pool: string) => `[data-test="text-${kebabTestSegment(pool)}-scheduled-scrub"]`,
+    /** "Configure" while the pool's task is enabled, "Schedule" otherwise. Both open the form. */
+    configure: (pool: string) => `${storageHealthCard(pool)} [data-test="link-configure-scrub"]`,
+  },
+
+  form: {
+    enabled: '[data-test="checkbox-enabled"]',
+    /** "Threshold Days". */
+    threshold: '[data-test="input-threshold"]',
+    /** `ix-scheduler` renders a `tn-select` with `[testId]="[controlName, 'presets']"`. */
+    schedule: '[data-test="select-schedule-presets"]',
+    scheduleOption: (label: string): string => (
+      `[data-test="option-schedule-presets-${kebabTestSegment(label)}"]`
+    ),
+    /** `<tn-button [testId]="'save'">` on the side panel container. */
+    save: '[data-test="button-save"]',
+  },
+} as const;
+
 /**
  * What the Storage Health card says about a pool's state, keyed by pool like
  * `poolScrubLocators`.
