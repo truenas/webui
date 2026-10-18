@@ -14,8 +14,8 @@ import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 /**
  * `docker.update` creates the `ix-apps` datasets and starts Docker before it finishes, and on a pool
- * change it also starts a catalog sync, which fails in the background on an appliance with no
- * internet. A ceiling, not a wait.
+ * change it also starts a catalog sync in the background, which it does not wait for. A ceiling,
+ * not a wait.
  */
 export const dockerUpdateTimeoutMs = 4 * 60_000;
 

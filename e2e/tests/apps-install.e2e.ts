@@ -123,17 +123,13 @@ test.afterEach(async ({ api }) => {
 });
 
 test.afterAll(async ({ api }) => {
-  if (appsOnSomebodyElsesPool || leavingTestData(`app "${release}", pool "${pool}" and the Apps pool`)) {
+  if (appsOnSomebodyElsesPool) {
     return;
   }
 
-  // In this order: the export fails while Docker holds `e2e_apps/ix-apps`.
-  const steps: CleanupStep[] = [
-    [`delete app "${release}"`, () => ensureAppAbsent(api, release)],
-    ['unset the Apps pool', () => ensureAppsPoolUnset(api)],
-    [`export pool "${pool}"`, () => ensurePoolAbsent(api, pool)],
-  ];
-
+  // Settings, not test data: written back even when the app and pool are kept, or the next run
+  // reads this run's values as the appliance's own.
+  const steps: CleanupStep[] = [];
   const trains = preferredTrainsBefore;
   if (trains !== undefined) {
     steps.push(['restore the preferred trains', () => setPreferredTrains(api, trains)]);
@@ -141,6 +137,15 @@ test.afterAll(async ({ api }) => {
   const agreed = appsAgreementBefore;
   if (agreed !== undefined) {
     steps.push(['restore the apps agreement', () => setAppsAgreement(api, agreed)]);
+  }
+
+  if (!leavingTestData(`app "${release}", pool "${pool}" and the Apps pool`)) {
+    // In this order: the export fails while Docker holds `e2e_apps/ix-apps`.
+    steps.push(
+      [`delete app "${release}"`, () => ensureAppAbsent(api, release)],
+      ['unset the Apps pool', () => ensureAppsPoolUnset(api)],
+      [`export pool "${pool}"`, () => ensurePoolAbsent(api, pool)],
+    );
   }
 
   await runCleanupSteps(steps);
