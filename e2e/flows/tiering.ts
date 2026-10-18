@@ -121,9 +121,16 @@ export async function applyTierChange(page: Page): Promise<void> {
   await expect(page.locator(changeTierDialogLocators.title)).toBeHidden({ timeout: saveTimeoutMs });
 }
 
-/** Opens the Data Migration dialog from the migration badge on the details card. */
+/**
+ * Opens the Data Migration dialog from the migration badge on the details card.
+ *
+ * With the keyboard, as the badge also allows (Enter), rather than a click. While a migration runs
+ * the badge is an icon that spins, so it is never "stable" and a click waits on that until it times
+ * out; pressing a key needs only focus. One way for every state keeps the callers from having to
+ * know which one the badge is in.
+ */
 export async function openMigrationStatus(page: Page): Promise<void> {
-  await page.locator(datasetTierLocators.migrationStatus).click();
+  await page.locator(datasetTierLocators.migrationStatus).press('Enter');
   await expect(page.locator(migrationStatusDialogLocators.title)).toBeVisible();
 }
 
