@@ -43,6 +43,9 @@ const monthly: CronSchedule = {
 /** The form's own default, and what a seeded task starts on. */
 const defaultThreshold = 35;
 
+/** A threshold the form never starts on, so reading it back can only come from the task. */
+const seededThreshold = 25;
+
 test.beforeEach(async ({ api }) => {
   await ensurePoolAbsent(api, pool);
   await requireUnusedDisks(api, 1);
@@ -81,13 +84,13 @@ test('an admin schedules a scrub on a pool that has none', async ({ page, api })
 });
 
 test('an admin changes the schedule and threshold of a scheduled scrub', async ({ page, api }) => {
-  await ensureScrubTaskEnabled(api, pool, { schedule: monthly, threshold: defaultThreshold });
+  await ensureScrubTaskEnabled(api, pool, { schedule: monthly, threshold: seededThreshold });
   const [before] = await findScrubTasks(api, pool);
 
   const { form } = scheduledScrubLocators;
   await openScrubScheduleForm(page, pool);
-  // The existing task patched in, which says the panel is editing it.
-  await expect(page.locator(form.threshold)).toHaveValue(String(defaultThreshold));
+  // The existing task patched in, which says the panel is editing it: a blank form reads 35.
+  await expect(page.locator(form.threshold)).toHaveValue(String(seededThreshold));
 
   await chooseCustomSchedule(page, 'schedule', {
     minutes: '15',
