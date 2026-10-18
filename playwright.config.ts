@@ -352,10 +352,12 @@ export default defineConfig<E2eTestOptions, Pick<E2eWorkerFixtures, 'haThroughVi
      * at all when there is no retry, so pairing it with local retries of 0 would
      * silently take the trace away from exactly the person who needs it — while
      * `README.md` and `CLAUDE.md` both still tell them to open one. Locally the
-     * trace is retained on failure instead; in CI the retry is the cheaper hook,
-     * since tracing every test on a nightly buys nothing for the ones that pass.
+     * trace is retained on failure instead. In CI it is the first attempt's,
+     * kept only when that attempt fails: the retry runs on a page signed in for
+     * it (`support/fixtures.ts`), so a trace of the retry never shows a failure
+     * that came from the page an earlier test left behind.
      */
-    trace: isCi ? 'on-first-retry' : 'retain-on-failure',
+    trace: isCi ? 'retain-on-first-failure' : 'retain-on-failure',
     screenshot: 'only-on-failure',
 
     /**

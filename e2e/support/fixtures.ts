@@ -192,6 +192,15 @@ async function resumeSession(page: Page): Promise<boolean> {
       return false;
     }
 
+    // A click on the route already open does not open it again, and the Dashboard would keep
+    // what the last test left on it: run 39131873795's `dashboard.e2e.ts` found the layout
+    // `dashboard-widgets` had written and since put back over the API. So it is left first.
+    if (/\/dashboard\/?$/.test(page.url())) {
+      await page.locator(navLocators.dataProtection).filter({ visible: true }).first()
+        .click({ timeout: resumeTimeoutMs });
+      await expect(page).not.toHaveURL(/\/dashboard\/?$/, { timeout: resumeTimeoutMs });
+    }
+
     await page.locator(navLocators.dashboard).filter({ visible: true }).first().click({ timeout: resumeTimeoutMs });
     await expect(page).toHaveURL(/\/dashboard\/?$/, { timeout: resumeTimeoutMs });
     return true;
