@@ -94,7 +94,7 @@ test.afterEach(async ({ api, pool }) => {
   ]);
 });
 
-test('promoting a clone swaps it with the dataset it came from',async ({ page, api, pool }) => {
+test('promoting a clone swaps it with the dataset it came from', async ({ page, api, pool }) => {
   const source = `${pool}/${sourceName}`;
   const clone = `${pool}/${cloneName}`;
 
@@ -121,7 +121,8 @@ test('promoting a clone swaps it with the dataset it came from',async ({ page, a
   // With no origin left the clone has nothing to promote, and Promote is the
   // menu's only item, so the card drops the menu's trigger altogether. The
   // reload removes the whole panel while it runs, which would hide the trigger
-  // too, so the card is read only once that reload has answered.
+  // too. So wait for it to answer; the panel only comes back with that answer,
+  // which is what the Path check below then reads.
   await expect.poll(
     () => answersTo(page, detailsMethod, detailsBefore),
     { timeout: actionTimeoutMs },
