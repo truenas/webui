@@ -42,6 +42,50 @@ export async function readDocker(client: E2eApiClient): Promise<DockerState> {
   };
 }
 
+/** The part of `docker.config` the Apps Settings form edits. */
+export interface DockerSettings {
+  address_pools: { base: string; size: number }[];
+  registry_mirrors: { url: string; insecure: boolean }[];
+  enable_image_updates: boolean;
+}
+
+/** The two pools middleware ships with, and no mirrors. A baseline every settings test starts from. */
+export const defaultDockerSettings: DockerSettings = {
+  address_pools: [
+    { base: '172.16.0.0/12', size: 24 },
+    { base: 'fdd0::/48', size: 64 },
+  ],
+  registry_mirrors: [],
+  enable_image_updates: true,
+};
+
+export async function readDockerSettings(client: E2eApiClient): Promise<DockerSettings> {
+  const config = await firstValueFrom(client.api.call('docker.config').pipe(timeout(readTimeoutMs)));
+
+  return {
+    address_pools: config.address_pools.map(({ base, size }) => ({ base, size })),
+    registry_mirrors: config.registry_mirrors.map(({ url, insecure }) => ({ url, insecure })),
+    enable_image_updates: config.enable_image_updates,
+  };
+}
+
+/**
+ * Writes the address pools, mirrors and image update checks with `docker.update`.
+ *
+ * With no Apps pool this only writes the datastore. With one, a change to the pools or mirrors
+ * restarts Docker and redeploys every app, so the settings spec runs only while Apps has no pool.
+ */
+export async function setDockerSettings(client: E2eApiClient, settings: DockerSettings): Promise<void> {
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('docker.update', [settings]),
+    {
+      timeoutMs: dockerUpdateTimeoutMs,
+      whatItCosts: 'The Apps settings were not written, so the next run starts from whatever this one left.',
+    },
+  );
+}
+
 /**
  * The id of `<pool>/ix-apps` if the dataset exists, otherwise undefined.
  *
