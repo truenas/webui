@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
+import { omit } from 'lodash-es';
 import { of } from 'rxjs';
 import {
   catchError, map, switchMap,
@@ -42,9 +43,10 @@ export class UserEffects {
     }),
   ));
 
-  // The form dispatches userAdded() and userChanged() for its own saves. These follow every other
-  // change too — another tab, another admin, the CLI — so the list the form validates new names
-  // against does not miss a user made since the page loaded it.
+  // Follows changes made anywhere — this tab, another admin, the CLI — so the list the form validates
+  // new names against does not miss a user made since the page loaded it. Middleware sends `added`
+  // and `changed` with what `user.create` and `user.update` returned, the entry plus the `password`
+  // given in the call, which is left out of the store.
   subscribeToChanges$ = createEffect(() => this.actions$.pipe(
     ofType(usersLoaded),
     switchMap(() => {
@@ -53,7 +55,8 @@ export class UserEffects {
           if (event.msg === 'removed') {
             return userRemoved({ id: event.id as number });
           }
-          const user = toUser({ ...event.fields, id: event.id } as WebUiQueryEntity<'user.query'>);
+          const fields = omit(event.fields, 'password');
+          const user = toUser({ ...fields, id: event.id } as WebUiQueryEntity<'user.query'>);
           return event.msg === 'added' ? userAdded({ user }) : userChanged({ user });
         }),
       );

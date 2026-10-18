@@ -31,14 +31,16 @@ describe('UserEffects', () => {
   });
 
   describe('subscribeToChanges$', () => {
-    it('applies users added, changed and removed outside this tab to the list', () => {
+    it('applies users added, changed and removed outside this tab to the list, without the password', () => {
       const dispatched: Action[] = [];
       spectator.service.subscribeToChanges$.subscribe((action) => dispatched.push(action));
       actions$.next(usersLoaded({ users: [] }));
 
       const api = spectator.inject(MockTypedApiService);
       const fields = { username: 'jane' } as WebUiQueryEntity<'user.query'>;
-      api.emitEvent('user.query', { msg: 'added', id: 7, fields });
+      api.emitEvent('user.query', {
+        msg: 'added', id: 7, fields: { ...fields, password: 'secret' } as WebUiQueryEntity<'user.query'>,
+      });
       api.emitEvent('user.query', { msg: 'changed', id: 7, fields });
       api.emitEvent('user.query', { msg: 'removed', id: 7 });
 

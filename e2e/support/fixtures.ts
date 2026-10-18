@@ -275,9 +275,9 @@ export interface E2eWorkerFixtures {
    * The worker's kept page, for the `page` override. Made on first use, so a
    * worker whose tests all need a fresh page never opens it, and closed with
    * the worker — which Playwright replaces after any failure, so a test that
-   * breaks the page cannot hand it on.
+   * breaks the page cannot hand it on. `replace` closes it and keeps a new one.
    */
-  sessionPage: { get: () => Promise<Page> };
+  sessionPage: { get: () => Promise<Page>; replace: () => Promise<Page> };
 }
 
 /**
@@ -405,10 +405,16 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
       return;
     }
 
-    const page = await sessionPage.get();
+    let page = await sessionPage.get();
     await dismissConcurrencyDialogs(page);
     const resumed = await resumeSession(page);
     if (!resumed) {
+      // In a new page rather than this one. The tab's `sessionStorage` holds the route the
+      // last test left (`redirectUrl`, `app.component.ts`), and a sign-in here goes back to it
+      // instead of the Dashboard: in run 39136654049 Groups loaded before `groups-members`
+      // made its group, and the test's own click on Groups, already open, loaded nothing.
+      page = await sessionPage.replace();
+      await dismissConcurrencyDialogs(page);
       await signInWithToken(page, api, config);
     }
     // Which it was, in the report and the JUnit file: how often a kept page has
@@ -422,15 +428,18 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
   sessionPage: [
     async ({ browser }, use) => {
       let page: Page | undefined;
+      // Made from inside a test, where Playwright's own context options — base
+      // URL, certificates, viewport, action timeout — are in force for
+      // `newContext`, as they are for the context it makes itself.
+      const open = async (): Promise<Page> => {
+        page = await (await browser.newContext()).newPage();
+        return page;
+      };
       await use({
-        get: async () => {
-          if (!page || page.isClosed()) {
-            // Made from inside a test, where Playwright's own context options —
-            // base URL, certificates, viewport, action timeout — are in force for
-            // `newContext`, as they are for the context it makes itself.
-            page = await (await browser.newContext()).newPage();
-          }
-          return page;
+        get: async () => (!page || page.isClosed() ? open() : page),
+        replace: async () => {
+          await page?.context().close();
+          return open();
         },
       });
       await page?.context().close();

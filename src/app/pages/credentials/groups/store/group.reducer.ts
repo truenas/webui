@@ -35,8 +35,7 @@ export const groupReducer = createReducer(
   on(groupsLoaded, (state, { groups }) => adapter.setAll(groups, { ...state, isLoading: false })),
   on(groupsNotLoaded, (state, { error }) => ({ ...state, error, isLoading: false })),
 
-  // Upserted: the form's own save and the change event for it can arrive in either order.
-  on(groupAdded, (state, { group }) => adapter.upsertOne(group, state)),
+  on(groupAdded, (state, { group }) => adapter.addOne(group, state)),
   on(groupChanged, (state, { group }) => adapter.updateOne({
     id: group.id,
     changes: group,
