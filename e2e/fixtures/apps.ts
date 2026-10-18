@@ -205,9 +205,9 @@ export async function readServiceEnvironment(
 
   const entries: [string, string][] = Array.isArray(environment)
     ? environment.map((entry) => {
-      const separator = entry.indexOf('=');
-      return separator === -1 ? [entry, ''] : [entry.slice(0, separator), entry.slice(separator + 1)];
-    })
+        const separator = entry.indexOf('=');
+        return separator === -1 ? [entry, ''] : [entry.slice(0, separator), entry.slice(separator + 1)];
+      })
     : Object.entries(environment).map(([key, value]) => [key, String(value)]);
 
   return Object.fromEntries(entries);
