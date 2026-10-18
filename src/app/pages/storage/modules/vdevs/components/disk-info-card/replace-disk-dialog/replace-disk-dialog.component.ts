@@ -5,7 +5,9 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent, TnTestIdDirective,
+} from '@truenas/ui-components';
 import { switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -39,6 +41,7 @@ export interface ReplaceDiskDialogData {
     FormActionsComponent,
     TnButtonComponent,
     RequiresRolesDirective,
+    TnTestIdDirective,
     TranslateModule,
   ],
 })

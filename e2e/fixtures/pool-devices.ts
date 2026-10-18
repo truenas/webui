@@ -4,13 +4,15 @@
  * Taking a disk offline needs a vdev that survives losing it, so the pool here is
  * a two-disk mirror rather than the one-disk stripe `ensurePoolPresent` builds.
  * Adding a spare needs a third unused disk, which the wizard offers from the same
- * inventory. Both tests change the pool's topology, so the pool is this spec's own
- * and never the worker-scoped one other specs share.
+ * inventory, and so does replacing a disk. Every test here changes the pool's
+ * topology, so the pool is its spec's own and never the worker-scoped one other
+ * specs share.
  */
 import type { QueryEntity } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
+import { listDisks } from './disks';
 import { readPoolTopology, type TopologyVdev } from './pool';
-import { findPool, getSelectableDisks } from './storage';
+import { findPool, getSelectableDisks, type UnusedDisk } from './storage';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs } from '../support/timeouts';
@@ -122,6 +124,28 @@ export async function setPoolDiskState(
   }
 
   await firstValueFrom(client.api.call('pool.online', [id, { label: guid }]).pipe(timeout(deviceStateTimeoutMs)));
+}
+
+/**
+ * An unused disk to replace one of the pool's disks with, by that disk's name.
+ *
+ * Of the same type and size, so the mirror stays one an admin could build, and the
+ * first by device name, so the choice is the same from run to run on one appliance.
+ */
+export async function pickReplacementDisk(client: E2eApiClient, member: string): Promise<UnusedDisk> {
+  const current = (await listDisks(client)).find((disk) => disk.name === member);
+  const [replacement] = (await getSelectableDisks(client))
+    .filter((disk) => disk.type === current?.type && disk.size === current?.size)
+    .sort((a, b) => a.devname.localeCompare(b.devname));
+
+  if (!current || !replacement) {
+    throw new Error(
+      `Disk "${member}" needs an unused disk of its own type and size to be replaced with, and the `
+      + 'appliance does not have one, so there is nothing to pick in the Replace dialog.',
+    );
+  }
+
+  return replacement;
 }
 
 /** The pool's own status: `ONLINE`, or `DEGRADED` while a member is offline. */

@@ -15,8 +15,8 @@
  * and destroyed after each one: it holds two disks, three with its spare, and
  * `fresh-install` needs nine alike.
  *
- * Not covered: Replace, Extend, Detach and Remove, and the other kinds of vdev the
- * wizard adds (log, cache, special, dedup, more data).
+ * Replace is `pool-replace-disk.e2e.ts`. Not covered: Extend, Detach and Remove, and
+ * the other kinds of vdev the wizard adds (log, cache, special, dedup, more data).
  */
 import { ensureMirrorPoolPresent, listSpares, readMirror, readPoolStatus } from '../fixtures/pool-devices';
 import { ensurePoolAbsent, getSelectableDisks } from '../fixtures/storage';
