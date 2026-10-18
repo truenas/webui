@@ -27,7 +27,7 @@ export const vdevsPageLocators = {
   addVdev: '[data-test="button-add-vdev"]',
 
   /** A group of the tree. Present only when the pool has that kind of vdev. */
-  group: (type: 'data' | 'spare'): string => `[data-test="vdev-group-${type}"]`,
+  group: (type: 'data' | 'cache' | 'log' | 'spare'): string => `[data-test="vdev-group-${type}"]`,
 
   /**
    * A vdev or a disk. Clicking it selects it, which opens its details beside the
@@ -45,13 +45,21 @@ export const vdevsPageLocators = {
 } as const;
 
 /**
- * The ZFS Info card for the selected disk.
+ * The ZFS Info card for the selected disk or vdev.
  *
  * Offline and Online live in the card's header menu, and at most one of them is
  * offered: Offline while the disk is not offline, Online while it is not online.
  * Both raise webui's shared confirm (see `locators/dialogs.ts`) with its tick box.
  */
 export const zfsInfoLocators = {
+  /**
+   * Remove, the card's secondary action, `testId: 'remove'` on a `TnCardAction`.
+   * Offered on a cache, log or spare disk, and on a mirror in a pool with no RAIDZ.
+   * It raises the shared confirm with its tick box, then runs `pool.remove` in the
+   * job dialog.
+   */
+  remove: '[data-test="button-remove"]',
+
   /** The header menu's trigger, `[headerMenuTriggerTestId]="'button-zfs-actions'"`. */
   menu: '[data-test="button-zfs-actions"]',
   /** Menu items, `button-<testId>`. Pinned by `zfs-info-card.component.spec.ts`. */

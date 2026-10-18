@@ -6,6 +6,7 @@ import { expect, type Page } from '@playwright/test';
 import { goToStorage } from './navigation';
 import { configureAutomatedVdevs, confirmDestructiveAction, goToReview } from './storage';
 import { confirmDialogLocators } from '../locators/dialogs';
+import { jobDialogLocators } from '../locators/encryption';
 import { vdevsPageLocators, zfsInfoLocators } from '../locators/pool-devices';
 import { poolWizardLocators } from '../locators/storage';
 
@@ -17,6 +18,12 @@ const deviceStateTimeoutMs = 60_000;
 
 /** `pool.update` formats the disks it adds, as a job behind a progress dialog. */
 const poolUpdateTimeoutMs = 5 * 60_000;
+
+/**
+ * `pool.remove` copies a data vdev's blocks onto the rest of the pool before it
+ * answers. On an empty pool that is quick, so this is a ceiling only.
+ */
+const removeTimeoutMs = 5 * 60_000;
 
 /**
  * Opens the pool's VDEVs page from its card on the Storage dashboard, starting
@@ -43,6 +50,31 @@ export async function selectMirrorDisk(
   await page.locator(vdevsPageLocators.node(disk.guid)).click();
   await expect(page).toHaveURL(new RegExp(`/vdevs/${disk.guid}$`));
   await expect(page.locator(vdevsPageLocators.detailsTitle)).toHaveText(disk.name);
+}
+
+/**
+ * Selects a node that is in view without expanding anything first: a mirror, or a
+ * cache, log or spare disk, which sit directly under their group.
+ */
+export async function selectNode(page: Page, guid: string): Promise<void> {
+  await page.locator(vdevsPageLocators.node(guid)).click();
+  await expect(page).toHaveURL(new RegExp(`/vdevs/${guid}$`));
+}
+
+/**
+ * Removes the selected disk or vdev from the ZFS Info card, and waits for its
+ * node to leave the tree and the job dialog to close.
+ *
+ * The tree reloads only once the job has finished, so the node going is what
+ * says `pool.remove` is done; the job dialog has closed by then.
+ */
+export async function removeSelectedDevice(page: Page, guid: string): Promise<void> {
+  await page.locator(zfsInfoLocators.remove).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+  await confirmDestructiveAction(page);
+
+  await expect(page.locator(vdevsPageLocators.node(guid))).toBeHidden({ timeout: removeTimeoutMs });
+  await expect(page.locator(jobDialogLocators.title)).toBeHidden();
 }
 
 /**
