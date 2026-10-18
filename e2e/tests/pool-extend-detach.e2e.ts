@@ -125,9 +125,11 @@ test('an admin detaches a disk from a mirror', async ({ page, api }) => {
     .toContain(target.name);
 
   // Opened again from the dashboard, so the tree is read back from the appliance.
+  // ZFS hands the top-level vdev's guid to the disk that takes its place, so the
+  // mirror's guid now names the disk that stayed: the node is still there, and
+  // reading the disk's name rather than MIRROR is what says the mirror is gone.
   const [stayed] = vdevs;
   await openVdevsPage(page, pool);
-  await expect(page.locator(vdevsPageLocators.node(mirror.guid))).toHaveCount(0);
   await expect(page.locator(vdevsPageLocators.node(target.guid))).toHaveCount(0);
   await expect(page.locator(vdevsPageLocators.nodeName(stayed?.guid ?? ''))).toHaveText(partner?.disk ?? '');
 });
