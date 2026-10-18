@@ -10,7 +10,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType,
   TnCheckboxComponent, TnCheckboxGroupComponent, TnFormFieldComponent, TnFormListComponent,
-  TnFormListItemComponent, TnFormSectionComponent, TnInputComponent,
+  TnFormListItemComponent, TnFormSectionComponent, TnInputComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   combineLatest,
@@ -71,6 +71,7 @@ type AppsSettingsFormValue = ReturnType<ReturnType<typeof createAppsSettingsForm
     TnFormListComponent,
     TnFormListItemComponent,
     TnInputComponent,
+    TnTestIdDirective,
     TranslateModule,
   ],
   providers: [
