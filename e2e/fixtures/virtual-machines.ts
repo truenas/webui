@@ -29,7 +29,7 @@ interface DeviceAttributes {
   path?: string | null;
 }
 
-/** What {@link ensureVmPresent} defines: the smallest machine the wizard would offer, never started. */
+/** What {@link ensureVmPresent} defines: the smallest machine the wizard would offer, not started. */
 export const provisionedVm = {
   description: 'e2e provisioned',
   memory: 512,
