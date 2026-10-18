@@ -1,7 +1,7 @@
 /**
  * Encrypted datasets, over the API.
  *
- * Provisioning only. Creating, locking and unlocking a dataset are what
+ * Provisioning and readback only. Creating, locking and unlocking a dataset are what
  * `tests/datasets-encryption.e2e.ts` drives through the UI, so these stand in for them only where a
  * test is about a different step. Removal is `ensureDatasetAbsent` in `fixtures/storage.ts`, which
  * deletes a locked dataset as readily as an unlocked one.
@@ -83,6 +83,24 @@ export async function lockDataset(client: E2eApiClient, name: string): Promise<v
       timeoutMs: slowCallTimeoutMs,
       whatItCosts: `${name} is not locked, so there is nothing for the test to unlock`,
       confirm: async () => (await findDataset(client, name))?.locked === true,
+    },
+  );
+}
+
+/**
+ * Unlocks an encryption root with `passphrase`, to prove that passphrase is the one it now takes.
+ *
+ * A wrong passphrase does not fail the job: middleware lists the dataset under `failed` and leaves it
+ * locked. So the caller reads `locked` back afterwards rather than trusting this to have unlocked it.
+ */
+export async function unlockDataset(client: E2eApiClient, name: string, passphrase: string): Promise<void> {
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('pool.dataset.unlock', [name, { datasets: [{ name, passphrase }] }]),
+    {
+      timeoutMs: slowCallTimeoutMs,
+      whatItCosts: `${name} was not unlocked, so whether it takes this passphrase is unknown`,
+      confirm: async () => (await findDataset(client, name))?.locked === false,
     },
   );
 }
