@@ -10,9 +10,12 @@
  * ## The image
  *
  * BusyBox 1.36 from Amazon ECR Public's mirror of the Docker official images, which keeps every pull
- * off Docker Hub's anonymous rate limit. The app runs it as one service with `sleep infinity`, no
- * ports and no volumes. The pull test pulls the same image, which the tests before it have removed:
- * deleting the app removes its images.
+ * off Docker Hub. The app runs it as one service with `sleep infinity`, no ports and no volumes.
+ *
+ * ECR Public rate-limits anonymous pulls too, and on CI it failed an install from YAML on both
+ * attempts. So the three app tests pull the image over the API first, retrying a throttled pull,
+ * and the install finds it locally. Only the pull test, which is about pulling, takes it from the
+ * registry through the UI.
  *
  * ## Setup
  *
@@ -35,7 +38,12 @@ import {
   seedCustomApp,
   setAppsPool,
 } from '../fixtures/apps';
-import { ensureImageAbsent, findImageId, imagePullTimeoutMs } from '../fixtures/container-images';
+import {
+  ensureImageAbsent,
+  ensureImagePresent,
+  findImageId,
+  imagePullTimeoutMs,
+} from '../fixtures/container-images';
 import { ensurePoolPresent } from '../fixtures/pool';
 import { ensurePoolAbsent, requireUnusedDisks } from '../fixtures/storage';
 import { deleteInstalledApp } from '../flows/catalog-apps';
@@ -133,6 +141,7 @@ test.afterAll(async ({ api }) => {
 });
 
 test('an admin installs a custom app from YAML and it runs', async ({ page, api }) => {
+  await ensureImagePresent(api, repoTag);
   const app = installedAppLocators(appName);
 
   await goToApps(page);
@@ -151,6 +160,7 @@ test('an admin installs a custom app from YAML and it runs', async ({ page, api 
 });
 
 test('an admin edits a custom app\'s YAML and the app takes the change', async ({ page, api }) => {
+  await ensureImagePresent(api, repoTag);
   await seedCustomApp(api, appName, compose);
   const app = installedAppLocators(appName);
 
@@ -173,6 +183,7 @@ test('an admin edits a custom app\'s YAML and the app takes the change', async (
 });
 
 test('an admin deletes a custom app and it is gone', async ({ page, api }) => {
+  await ensureImagePresent(api, repoTag);
   await seedCustomApp(api, appName, compose);
   const app = installedAppLocators(appName);
 
