@@ -27,7 +27,8 @@ export async function openContainerSettings(page: Page, loadedV4Address: string)
 }
 
 /**
- * Saves the open settings form and waits for the panel to close.
+ * Saves the open settings form, or a container's Edit form, and waits for the
+ * panel to close.
  *
  * The panel closing is the app's own signal that the save succeeded. A refusal
  * leaves it open with the error attached.
@@ -83,6 +84,24 @@ export async function openContainerDetails(page: Page, name: string): Promise<vo
   await goToContainers(page);
   await page.locator(containersLocators.list.name(name)).click();
   await expect(page.locator(containersLocators.details.dataset)).toContainText(`/containers/${name}`);
+}
+
+/**
+ * Opens Edit on a container's General Info card, starting from the sidebar, and
+ * switches the form to its advanced options, where CPU Set, Shutdown Timeout and
+ * the environment variables are.
+ *
+ * The form fills itself from `container.get_instance` after it opens, so this
+ * waits for Name to hold the container's name: an edit made before that could
+ * be overwritten by the load. Switched to advanced only after that wait, since
+ * each environment variable row has an `input-name` of its own too.
+ */
+export async function openEditContainerForm(page: Page, name: string): Promise<void> {
+  await openContainerDetails(page, name);
+  await page.locator(containersLocators.details.edit).click();
+  await expect(page.locator(containersLocators.create.name)).toHaveValue(name);
+  await page.locator(containersLocators.create.advancedOptions).click();
+  await expect(page.locator(containersLocators.create.cpuset)).toBeVisible();
 }
 
 /**
