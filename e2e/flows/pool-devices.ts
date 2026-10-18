@@ -6,6 +6,7 @@ import { expect, type Page } from '@playwright/test';
 import { goToStorage } from './navigation';
 import { configureAutomatedVdevs, confirmDestructiveAction, goToReview } from './storage';
 import { confirmDialogLocators } from '../locators/dialogs';
+import { jobDialogLocators } from '../locators/encryption';
 import {
   diskInfoLocators,
   extendDialogLocators,
@@ -34,6 +35,12 @@ const poolUpdateTimeoutMs = 5 * 60_000;
  * almost nothing to move, so this is a ceiling only.
  */
 const raidzExtendTimeoutMs = 5 * 60_000;
+
+/**
+ * `pool.remove` copies a data vdev's blocks onto the rest of the pool before it
+ * answers. On an empty pool that is quick, so this is a ceiling only.
+ */
+const removeTimeoutMs = 5 * 60_000;
 
 /**
  * `pool.replace` formats the new disk and attaches it, as a job behind a progress
@@ -109,6 +116,26 @@ export async function extendSelectedRaidz(page: Page, newDisk: string): Promise<
 
   // The dialog stays open on a failure, behind the error the job raised.
   await expect(page.locator(raidzExtendDialogLocators.title)).toBeHidden({ timeout: raidzExtendTimeoutMs });
+}
+
+/**
+ * Removes the selected disk or vdev from the ZFS Info card, waits for the tree to
+ * be read back, and checks the node is not in it.
+ *
+ * The tree reloads only once the job dialog has closed, so the node going is what
+ * says `pool.remove` is done. A reload empties the whole tree before it refills,
+ * though, so that alone would pass on the empty moment: the Data VDEVs group,
+ * which every pool has, coming back is what says the tree was read again.
+ */
+export async function removeSelectedDevice(page: Page, guid: string): Promise<void> {
+  await page.locator(zfsInfoLocators.remove).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+  await confirmDestructiveAction(page);
+
+  await expect(page.locator(vdevsPageLocators.node(guid))).toBeHidden({ timeout: removeTimeoutMs });
+  await expect(page.locator(jobDialogLocators.title)).toBeHidden();
+  await expect(page.locator(vdevsPageLocators.group('data'))).toBeVisible({ timeout: loadTimeoutMs });
+  await expect(page.locator(vdevsPageLocators.node(guid))).toBeHidden();
 }
 
 /**

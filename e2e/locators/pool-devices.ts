@@ -28,7 +28,7 @@ export const vdevsPageLocators = {
   addVdev: '[data-test="button-add-vdev"]',
 
   /** A group of the tree. Present only when the pool has that kind of vdev. */
-  group: (type: 'data' | 'spare'): string => `[data-test="vdev-group-${type}"]`,
+  group: (type: 'data' | 'cache' | 'log' | 'spare'): string => `[data-test="vdev-group-${type}"]`,
 
   /**
    * A vdev or a disk. Clicking it selects it, which opens its details beside the
@@ -54,6 +54,14 @@ export const vdevsPageLocators = {
  * shared confirm (see `locators/dialogs.ts`) with its tick box.
  */
 export const zfsInfoLocators = {
+  /**
+   * Remove, the card's secondary action, `testId: 'remove'` on a `TnCardAction`.
+   * Offered on a cache, log or spare disk, and on a mirror in a pool with no RAIDZ.
+   * It raises the shared confirm with its tick box, then runs `pool.remove` in the
+   * job dialog.
+   */
+  remove: '[data-test="button-remove"]',
+
   /**
    * Extend, the card's primary action, `testId: 'extend'` on a `TnCardAction`.
    * On a mirror or on a disk that is a data vdev of its own it opens the Extend
