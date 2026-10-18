@@ -139,3 +139,26 @@ export const appCatalogLocators = {
   /** The wizard's Install button. */
   save: '[data-test="button-save"]',
 } as const;
+
+/**
+ * A custom app's YAML: Discover's Install via YAML, and the `custom-app-form` side panel it and an
+ * installed custom app's Edit both open.
+ */
+export const customAppLocators = {
+  /** The "More Options" menu beside Custom App on Discover. Disabled until Apps has a pool. */
+  menu: '[data-test="button-custom-app-menu"]',
+  installViaYaml: '[data-test="button-custom-app-yaml"]',
+
+  /** The app's name. Read-only when editing. */
+  releaseName: '[data-test="input-release-name"]',
+  /**
+   * "Custom Config": the compose file. CodeMirror's editable element, tagged through
+   * `ix-code-editor`'s `testId`, which a test can `fill`.
+   */
+  config: '[data-test="code-editor-custom-config"]',
+  /** The side panel's Save, `[testId]="'save'"` in form-side-panel-container. */
+  save: '[data-test="button-save"]',
+
+  /** The installed app's Edit on its Application Info card. A custom app's opens this panel. */
+  edit: (name: string): string => `[data-test="button-${kebabTestSegment(name)}-edit"]`,
+} as const;

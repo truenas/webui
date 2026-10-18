@@ -18,10 +18,12 @@ describe('IxCodeEditor', () => {
     spectator = createHost(`<ix-code-editor
         [language]="language"
         [formControl]="formControl"
+        [testId]="testId"
       ></ix-code-editor>`, {
       hostProps: {
         formControl,
         language: CodeEditorLanguage.Json,
+        testId: undefined as string | undefined,
       },
     });
     spectator.setHostInput('language', CodeEditorLanguage.Json);
@@ -47,6 +49,19 @@ describe('IxCodeEditor', () => {
       spectator.detectChanges();
       const element = spectator.query('.cm-content')!;
       expect(element.getAttribute('contenteditable')).toBe('false');
+    });
+  });
+
+  describe('testId', () => {
+    it('puts no data-test on the editable element when unset', () => {
+      expect(spectator.query('.cm-content')).not.toHaveAttribute('data-test');
+    });
+
+    it('puts data-test on the editable element when set', () => {
+      spectator.setHostInput('testId', 'custom-config');
+      spectator.detectChanges();
+
+      expect(spectator.query('.cm-content')).toHaveAttribute('data-test', 'code-editor-custom-config');
     });
   });
 

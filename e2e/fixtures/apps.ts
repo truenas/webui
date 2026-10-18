@@ -307,3 +307,60 @@ export async function ensureAppAbsent(client: E2eApiClient, name: string): Promi
     },
   );
 }
+
+/**
+ * Installs a custom app from a compose file, as Install via YAML does, for a test that is not about
+ * installing one. The job finishes once the app is deployed.
+ */
+export async function seedCustomApp(client: E2eApiClient, name: string, compose: string): Promise<void> {
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('app.create', [{
+      app_name: name,
+      custom_app: true,
+      custom_compose_config_string: compose,
+    }]),
+    {
+      timeoutMs: appInstallTimeoutMs,
+      whatItCosts: `custom app ${name} was not installed, so there is nothing to edit or delete`,
+      confirm: async () => (await findApp(client, name)) !== undefined,
+    },
+  );
+}
+
+/** Whether middleware records the app as a custom one, or undefined when there is no such app. */
+export async function readIsCustomApp(client: E2eApiClient, name: string): Promise<boolean | undefined> {
+  const [app] = await firstValueFrom(
+    client.api.query('app.query', [['name', '=', name]]).pipe(timeout(readTimeoutMs)),
+  );
+  return app?.custom_app;
+}
+
+/** The part of a compose file `readServiceEnvironment` reads. */
+interface ComposeConfig {
+  services?: Record<string, { environment?: string[] | Record<string, unknown> }>;
+}
+
+/**
+ * One service's environment in the app's compose config, as `app.config` returns it. Compose takes
+ * either a map or a list of `KEY=value`, so both are read into a map.
+ */
+export async function readServiceEnvironment(
+  client: E2eApiClient,
+  name: string,
+  service: string,
+): Promise<Record<string, string>> {
+  const config = await firstValueFrom(
+    client.api.call('app.config', [name]).pipe(timeout(readTimeoutMs)),
+  ) as unknown as ComposeConfig;
+  const environment = config.services?.[service]?.environment ?? {};
+
+  const entries: [string, string][] = Array.isArray(environment)
+    ? environment.map((entry) => {
+        const separator = entry.indexOf('=');
+        return separator === -1 ? [entry, ''] : [entry.slice(0, separator), entry.slice(separator + 1)];
+      })
+    : Object.entries(environment).map(([key, value]) => [key, String(value)]);
+
+  return Object.fromEntries(entries);
+}
