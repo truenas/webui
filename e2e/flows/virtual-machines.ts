@@ -9,7 +9,8 @@ import { virtualMachinesLocators } from '../locators/virtual-machines';
 
 /**
  * The wizard's Save creates the VM and then each device, the disk's zvol among them, one call
- * after another. The edit form's Save is one call. Both get the same room.
+ * after another. The edit form's Save is one call, as are the device form's and the device delete
+ * dialog's. All of them get the same room.
  */
 const saveTimeoutMs = 90_000;
 
@@ -222,4 +223,101 @@ export async function cloneVmFromList(page: Page, name: string, id: number, clon
   }
   await page.locator(cloneDialog.clone).click();
   await expect(page.locator(cloneDialog.title)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Opens a VM's Devices page from its row, from the sidebar.
+ *
+ * Waits on Add, which the page header always renders, as the sign the page has loaded.
+ */
+export async function openVmDevices(page: Page, name: string, id: number): Promise<void> {
+  await expandVmRow(page, name, id);
+  await page.locator(virtualMachinesLocators.rowAction.devices(id)).click();
+  await expect(page.locator(virtualMachinesLocators.devices.add)).toBeVisible();
+}
+
+/** A row of the Devices list, by what it is keyed on, and the device it shows. */
+export interface DeviceRow {
+  /** The device's id, which keys the row's menu items. */
+  id: number;
+  dtype: string;
+  order: number;
+}
+
+/**
+ * Opens a device row's actions menu and clicks one of its items.
+ *
+ * The menu trigger has the same id on every row, so it is reached through the row. Each item is
+ * keyed by the device id, so the click cannot land on another device's item.
+ */
+async function clickDeviceAction(page: Page, device: DeviceRow, item: string): Promise<void> {
+  const { devices } = virtualMachinesLocators;
+  await page.locator(devices.row(device.dtype, device.order)).locator(devices.actions).click();
+  await page.locator(item).click();
+}
+
+/**
+ * Adds a NIC from the open Devices page and returns the MAC address it was saved with.
+ *
+ * Picking NIC as the type fills the MAC in by itself, so Generate is pressed after that, and the
+ * field must change for the press to count. The NIC attaches to whichever interface the appliance
+ * lists first, since a run cannot know their names.
+ */
+export async function addNicFromDevicesPage(page: Page, adapterLabel: string): Promise<string> {
+  const form = virtualMachinesLocators.deviceForm;
+  await page.locator(virtualMachinesLocators.devices.add).click();
+
+  await expect(page.locator(form.deviceType)).toBeVisible();
+  await selectOption(page, form.deviceType, form.deviceTypeOption('NIC'));
+
+  const mac = page.locator(form.mac);
+  await expect(mac).not.toHaveValue('');
+  const filledIn = await mac.inputValue();
+  await page.locator(form.generateMac).click();
+  await expect(mac).not.toHaveValue(filledIn);
+
+  await selectOption(page, form.nicType, form.nicTypeOption(adapterLabel));
+  await selectFirstOption(page, form.nicAttach, form.nicAttachOptions);
+  const generated = await mac.inputValue();
+
+  await page.locator(form.save).click();
+  await expect(page.locator(form.save)).toBeHidden({ timeout: saveTimeoutMs });
+  return generated;
+}
+
+/**
+ * Changes a NIC's adapter type through its row's Edit, and waits for the panel to close.
+ *
+ * The form fills itself from the device, so the NIC's own MAC being in the field is the sign it
+ * has loaded.
+ */
+export async function changeNicType(page: Page, nic: DeviceRow, mac: string, adapterLabel: string): Promise<void> {
+  const form = virtualMachinesLocators.deviceForm;
+  await clickDeviceAction(page, nic, virtualMachinesLocators.devices.edit(nic.id));
+  await expect(page.locator(form.mac)).toHaveValue(mac);
+
+  await selectOption(page, form.nicType, form.nicTypeOption(adapterLabel));
+  await page.locator(form.save).click();
+  await expect(page.locator(form.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Deletes a device through its row's Delete, and waits for the dialog to go.
+ *
+ * With `zvolName`, "Delete zvol device" is ticked and that name typed into the confirmation, so the
+ * disk's zvol goes too. Without it, nothing is ticked. Force is never ticked: the VM is stopped.
+ */
+export async function deleteDeviceFromList(page: Page, device: DeviceRow, zvolName?: string): Promise<void> {
+  const dialog = virtualMachinesLocators.deleteDeviceDialog;
+  await clickDeviceAction(page, device, virtualMachinesLocators.devices.delete(device.id));
+  await expect(page.locator(dialog.title)).toBeVisible();
+
+  if (zvolName) {
+    await page.locator(dialog.zvol).click();
+    await page.locator(dialog.zvolConfirm).fill(zvolName);
+  }
+
+  await expect(page.locator(dialog.delete)).toBeEnabled();
+  await page.locator(dialog.delete).click();
+  await expect(page.locator(dialog.title)).toBeHidden({ timeout: saveTimeoutMs });
 }
