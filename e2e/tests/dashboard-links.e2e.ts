@@ -91,7 +91,7 @@ test('copying the version puts exactly the version system.info reports on the cl
   const copyButton = page.locator(dashboardLocators.systemInfo.copyVersion);
   await expect(copyButton).toBeVisible({ timeout: widgetLoadTimeoutMs });
 
-  // Per browser context, and every test gets its own, so there is nothing to revoke.
+  // Per browser context, which can outlive this test; the `page` fixture revokes it afterwards.
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], {
     origin: new URL(page.url()).origin,
   });

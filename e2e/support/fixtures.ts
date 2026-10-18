@@ -14,10 +14,12 @@
  *
  * It also signs the browser in. Every test in a project that leaves
  * `authenticate` on (the default) starts with `page` already inside the admin
- * shell — see the `page` override below for why that is done per test rather
- * than once through `storageState`.
+ * shell, on the Dashboard — usually the page the previous test left signed in.
+ * See the `page` override below for why.
  */
-import { expect, type Page, test as base } from '@playwright/test';
+import {
+  expect, type Page, test as base, type ViewportSize,
+} from '@playwright/test';
 import type { E2eApiClient } from './api/client';
 import { connectAndLogin } from './api/client';
 import { recordApiCalls } from './api-calls';
@@ -29,6 +31,7 @@ import {
 } from './constants';
 import { type EntitlementDecisions, readEntitlements } from '../fixtures/entitlements';
 import { poolLifecycle } from '../fixtures/pool';
+import { navLocators } from '../locators/navigation';
 
 /**
  * The wall-clock budget for signing in, how long one attempt may wait for the
@@ -84,6 +87,10 @@ async function dismissConcurrencyDialogs(page: Page): Promise<void> {
   // Capped, because the dialog re-arms when dismissed. Past the cap it stays on
   // screen and `awaitAdminShell` reports it, which is the right outcome for a
   // page issuing calls faster than the connection retires them for that long.
+  //
+  // Removed first, so a page kept across tests (`sessionPage`) gets the cap per
+  // test rather than one cap for the whole worker.
+  await page.removeLocatorHandler(concurrencyDialog);
   await page.addLocatorHandler(concurrencyDialog, async () => {
     await concurrencyDialog.locator(errorDialogClose).click();
   }, { times: maxConcurrentCallsDismissals });
@@ -155,6 +162,49 @@ async function signInWithToken(page: Page, client: E2eApiClient, config: TargetC
   );
 }
 
+/** How long tidying a kept page may take before it is given up for a fresh sign-in. */
+const resumeTimeoutMs = 5_000;
+
+/**
+ * Takes a page kept from the last test back to the Dashboard, the way a user
+ * would: Escape out of whatever was left open, then the sidebar's Dashboard.
+ * True when that worked; false when the page needs a fresh sign-in instead.
+ *
+ * Anything short of a clean arrival is false, and none of it is an error: a
+ * page never signed in, a shell gone (signed out, the socket lost to a
+ * middleware restart), an error dialog, a side panel whose unsaved changes
+ * veto Escape and whose backdrop then takes the click, a guard that holds the
+ * route. Each costs one fresh sign-in, which is all every test cost before.
+ */
+async function resumeSession(page: Page): Promise<boolean> {
+  if (!page.url().startsWith('http')) {
+    return false;
+  }
+
+  try {
+    // A menu, a dialog, a side panel and the confirmation a dirty one raises
+    // are each one Escape; three covers a panel's guard and the panel.
+    for (let i = 0; i < 3; i += 1) {
+      await page.keyboard.press('Escape');
+    }
+
+    if (!await page.locator(adminLayout).isVisible() || await page.locator(errorDialog).isVisible()) {
+      return false;
+    }
+
+    await page.locator(navLocators.dashboard).filter({ visible: true }).first().click({ timeout: resumeTimeoutMs });
+    await expect(page).toHaveURL(/\/dashboard\/?$/, { timeout: resumeTimeoutMs });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** A test that sets its own viewport needs a context made with it. */
+function isProjectViewport(viewport: ViewportSize | null, projectViewport: ViewportSize | null | undefined): boolean {
+  return JSON.stringify(viewport) === JSON.stringify(projectViewport ?? null);
+}
+
 export interface E2eTestOptions {
   /**
    * Whether `page` is signed in before the test starts. On by default; the
@@ -162,6 +212,13 @@ export interface E2eTestOptions {
    * those tests cover sign-in itself and a bypass would defeat them (R4.2).
    */
   authenticate: boolean;
+  /**
+   * Whether an authenticated test may run in the page the last one left signed
+   * in, rather than a fresh one signed in for it. On by default; the HA
+   * projects turn it off. See the `page` override for when it is not used
+   * regardless.
+   */
+  sharedSession: boolean;
   /**
    * Whether `page` records the API calls it makes, for `apiCallsTo`. Off by
    * default; a spec that asserts a request was sent turns it on with
@@ -205,6 +262,13 @@ export interface E2eWorkerFixtures {
    * Ask with `isEntitled` and skip; see `fixtures/entitlements.ts`.
    */
   entitlements: EntitlementDecisions;
+  /**
+   * The worker's kept page, for the `page` override. Made on first use, so a
+   * worker whose tests all need a fresh page never opens it, and closed with
+   * the worker — which Playwright replaces after any failure, so a test that
+   * breaks the page cannot hand it on.
+   */
+  sessionPage: { get: () => Promise<Page> };
 }
 
 /**
@@ -226,6 +290,7 @@ export interface E2eWorkerFixtures {
  */
 export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
   authenticate: [true, { option: true }],
+  sharedSession: [true, { option: true }],
   recordApiCalls: [false, { option: true }],
 
   haThroughVip: [false, { option: true, scope: 'worker' }],
@@ -274,9 +339,23 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
   ],
 
   /**
-   * Signs the page in through the token URL before each authenticated test.
+   * An authenticated test's page: the one the last test left signed in, taken
+   * back to the Dashboard, or else one signed in through the token URL.
    *
-   * Per test, not once via `storageState`, because of what the app does with a
+   * Kept across tests because every page load spends unauthenticated calls —
+   * the token login and the sign-in page's own checks — and middleware allows
+   * each of those 20 per minute per IP. Signing in per test spent them at the
+   * suite's pace: a run of short specs passed 20 a minute, and whichever test
+   * came next met `[EBUSY] Rate Limit Exceeded` on the sign-in page (three of
+   * four full runs, 2026-10-17/18). A kept page loads once per worker, and
+   * again only for a test that reloads or one whose page the last left broken.
+   *
+   * What a kept page carries over is what a user's session would: the app's
+   * state from the previous journey. A test whose claim depends on a fresh
+   * load says so with `test.use({ sharedSession: false })`, or reloads.
+   *
+   * When it is signed in afresh, it is through the token URL, not once via
+   * `storageState`, because of what the app does with a
    * token once it has redeemed it. webui keeps its session token in
    * `localStorage` and replaces it after every login with a five-minute,
    * single-use reconnect token of its own (`auth.service.ts`). A `storageState`
@@ -292,20 +371,63 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
    * login also gets its own token.
    */
   page: async ({
-    page, authenticate, recordApiCalls: recording, api, config,
-  }, use) => {
-    // Registered before the sign-in, because the sign-in is where it first bites.
-    await dismissConcurrencyDialogs(page);
-    // Before the sign-in too: that is where the socket opens.
-    if (recording) {
-      recordApiCalls(page);
+    context, authenticate, sharedSession, recordApiCalls: recording, viewport, sessionPage, api, config,
+  }, use, testInfo) => {
+    // A fresh page, signed in for this test alone, wherever a kept one would not
+    // do: signed out on purpose; calls recorded, which needs the socket watched
+    // from when it opens; a viewport of its own; or a retry, which should start
+    // from nothing the failed attempt could have left.
+    const keepsPage = authenticate && sharedSession && !recording && testInfo.retry === 0
+      && isProjectViewport(viewport, testInfo.project.use.viewport);
+
+    if (!keepsPage) {
+      const page = await context.newPage();
+      // Registered before the sign-in, because the sign-in is where it first bites.
+      await dismissConcurrencyDialogs(page);
+      // Before the sign-in too: that is where the socket opens.
+      if (recording) {
+        recordApiCalls(page);
+      }
+
+      if (authenticate) {
+        await signInWithToken(page, api, config);
+      }
+      await use(page);
+      return;
     }
 
-    if (authenticate) {
+    const page = await sessionPage.get();
+    await dismissConcurrencyDialogs(page);
+    const resumed = await resumeSession(page);
+    if (!resumed) {
       await signInWithToken(page, api, config);
     }
+    // Which it was, in the report and the JUnit file: how often a kept page has
+    // to be signed in again is what says whether keeping it pays.
+    testInfo.annotations.push({ type: 'session', description: resumed ? 'kept' : 'signed in' });
     await use(page);
+    // Granted per test (the clipboard, in `dashboard-links`), so taken back per test.
+    await page.context().clearPermissions();
   },
+
+  sessionPage: [
+    async ({ browser }, use) => {
+      let page: Page | undefined;
+      await use({
+        get: async () => {
+          if (!page || page.isClosed()) {
+            // Made from inside a test, where Playwright's own context options —
+            // base URL, certificates, viewport, action timeout — are in force for
+            // `newContext`, as they are for the context it makes itself.
+            page = await (await browser.newContext()).newPage();
+          }
+          return page;
+        },
+      });
+      await page?.context().close();
+    },
+    { scope: 'worker' },
+  ],
 });
 
 export { expect } from '@playwright/test';

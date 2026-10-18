@@ -142,11 +142,12 @@ const singleApplianceProjects = [
     /**
      * Everything that starts from an authenticated session.
      *
-     * The sign-in happens per test, in the `page` fixture (`support/fixtures.ts`),
-     * not through a `storageState` captured by `setup`: the app rotates the
-     * persisted token into a five-minute single-use one on every login, so a
-     * snapshot of it only ever carries the first test. `setup` still runs
-     * first — it is the earliest, clearest report that token login is broken.
+     * The sign-in happens in the `page` fixture (`support/fixtures.ts`), once per
+     * worker and again only when a test leaves the page unusable — not through
+     * a `storageState` captured by `setup`: the app rotates the persisted token
+     * into a five-minute single-use one on every login, so a snapshot of it only
+     * ever carries the first test. `setup` still runs first — it is the
+     * earliest, clearest report that token login is broken.
      */
     name: 'authenticated',
     testDir: './e2e/tests',
@@ -194,6 +195,10 @@ const singleApplianceProjects = [
  * None of them is retried: each changes the pair for good, so a retry starts
  * from where the failed attempt left it rather than from where the journey
  * expects — a retried failover finds controller 2 already active.
+ *
+ * None keeps its page across tests (`sharedSession: false`) either: a failover
+ * takes the socket a kept page holds, and `ha-failover` records its sockets
+ * from when they open.
  */
 const haProjects = target.ha
   ? [
@@ -206,7 +211,11 @@ const haProjects = target.ha
         outputDir: 'test-results-unpublished/ha-license',
         dependencies: ['setup'],
         use: {
-          ...devices['Desktop Chrome'], trace: 'off' as const, screenshot: 'off' as const, video: 'off' as const,
+          ...devices['Desktop Chrome'],
+          sharedSession: false,
+          trace: 'off' as const,
+          screenshot: 'off' as const,
+          video: 'off' as const,
         },
       },
       {
@@ -215,7 +224,7 @@ const haProjects = target.ha
         testDir: './e2e/tests-ha',
         testMatch: /ha-setup\.e2e\.ts/,
         dependencies: ['ha-license'],
-        use: { ...devices['Desktop Chrome'] },
+        use: { ...devices['Desktop Chrome'], sharedSession: false },
       },
       {
         name: 'ha-failover',
@@ -227,7 +236,11 @@ const haProjects = target.ha
         // what the app does while the pair changes hands is the subject, and a
         // screenshot of a spinner does not say which call it is waiting on.
         use: {
-          ...devices['Desktop Chrome'], haThroughVip: true, baseURL: target.ha.vipUiBaseUrl, trace: 'on' as const,
+          ...devices['Desktop Chrome'],
+          sharedSession: false,
+          haThroughVip: true,
+          baseURL: target.ha.vipUiBaseUrl,
+          trace: 'on' as const,
         },
       },
     ]
