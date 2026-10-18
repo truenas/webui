@@ -1,4 +1,9 @@
-<tn-card class="card" [ixUiSearch]="searchableElements.elements.zfsHealth">
+<tn-card
+  class="card"
+  tnTestIdType="card"
+  [tnTestId]="[pool().name, 'storage-health']"
+  [ixUiSearch]="searchableElements.elements.zfsHealth"
+>
   <h3 tnCardHeader class="tn-card__title">
     {{ 'Storage Health' | translate }}
     <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>

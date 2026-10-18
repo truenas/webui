@@ -21,7 +21,7 @@
  * checks could pass when the button did nothing. Teardown destroys it.
  *
  * Not covered: Pause, Resume and Stop. A scrub of an empty pool is over before
- * the buttons could be clicked. Also not covered: the scheduled scrub form.
+ * the buttons could be clicked. The scheduled scrub form is `pool-scrub-schedule.e2e.ts`.
  */
 import { ensurePoolPresent } from '../fixtures/pool';
 import { ensurePoolAbsent, findPoolScan } from '../fixtures/storage';

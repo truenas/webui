@@ -7,7 +7,7 @@ import { confirmDialogLocators } from '../locators/dialogs';
 import {
   datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, downloadKeyDialogLocators,
   manualDiskSelectionLocators, poolDisconnectLocators, poolImportLocators, poolScrubLocators, poolWizardLocators,
-  type VdevCategory, zvolLocators,
+  scheduledScrubLocators, type VdevCategory, zvolLocators,
 } from '../locators/storage';
 
 /**
@@ -585,6 +585,36 @@ export async function startScrub(page: Page, pool: string): Promise<void> {
   await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
   await page.locator(confirmDialogLocators.confirm).click();
   await expect(page.locator(confirmDialogLocators.title)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Opens the scheduled scrub form from the Scheduled Scrub line on `pool`'s
+ * Storage Health card: Schedule or Configure, whichever the line offers.
+ * Returns once Threshold has rendered, so the panel is open.
+ */
+export async function openScrubScheduleForm(page: Page, pool: string): Promise<void> {
+  await goToStorage(page);
+
+  const configure = page.locator(scheduledScrubLocators.card.configure(pool));
+  await expect(configure).toBeVisible({ timeout: saveTimeoutMs });
+  await configure.click();
+  await expect(page.locator(scheduledScrubLocators.form.threshold)).toBeVisible();
+}
+
+/** Picks a schedule preset in the scheduled scrub form by its whole label — see `hourlyScheduleLabel`. */
+export async function chooseScrubSchedule(page: Page, label: string): Promise<void> {
+  const { form } = scheduledScrubLocators;
+  await selectOption(page, form.schedule, form.scheduleOption(label));
+}
+
+/**
+ * Saves the scheduled scrub form and waits for the panel to close, which it
+ * does only once `pool.scrub.create` or `pool.scrub.update` has succeeded.
+ */
+export async function saveScrubScheduleForm(page: Page): Promise<void> {
+  const save = page.locator(scheduledScrubLocators.form.save);
+  await save.click();
+  await expect(save).toBeHidden({ timeout: saveTimeoutMs });
 }
 
 /**
