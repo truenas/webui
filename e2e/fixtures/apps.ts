@@ -49,7 +49,7 @@ export interface DockerSettings {
   enable_image_updates: boolean;
 }
 
-/** The two pools middleware ships with, and no mirrors. A baseline every settings test starts from. */
+/** Two address pools and no mirrors: a known baseline every settings test starts from. */
 export const defaultDockerSettings: DockerSettings = {
   address_pools: [
     { base: '172.16.0.0/12', size: 24 },
