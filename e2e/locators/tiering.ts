@@ -85,4 +85,10 @@ export const migrationStatusDialogLocators = {
    * generic id any dialog behind this one could also be carrying.
    */
   close: '[data-test="button-close-data-migration-status"]',
+
+  /**
+   * The footer's Cancel, offered only while the job is Running or Queued. Its id is a generic
+   * `button-cancel`, so it is reached through the dialog's action row.
+   */
+  cancel: '[data-test="actions-data-migration-status"] [data-test="button-cancel"]',
 } as const;

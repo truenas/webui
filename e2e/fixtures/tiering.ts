@@ -11,10 +11,16 @@
  * - **The pool** tiered datasets live on needs a special vdev, which the shared
  *   `pool` fixture does not have and must not be given. {@link ensureTierPoolPresent}
  *   builds one of its own, and the caller removes it with `ensurePoolAbsent`.
+ *
+ * A dataset's data is what a migration moves, so {@link seedMigrationData} writes enough of it for
+ * one to still be running when a test reaches it.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
-import { findPool, getSelectableDisks } from './storage';
+import { ensureCronjobAbsent, ensureCronjobPresent, findCronjob } from './cron';
+import {
+  datasetMountPath, findDataset, findPool, getSelectableDisks,
+} from './storage';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
@@ -143,4 +149,103 @@ export async function ensureTierPoolPresent(client: E2eApiClient): Promise<void>
  */
 export function unusedDatasetName(prefix: string): string {
   return `${prefix}_${Date.now().toString(36)}`;
+}
+
+/**
+ * How much {@link seedMigrationData} writes: 4 GiB of random bytes, as 262,144 files of 16 KiB.
+ *
+ * Sized for a migration that is still running when a test reaches its Cancel, a few seconds
+ * after Apply. Random, because the pool compresses and zeros would leave almost nothing to
+ * move. Many small files rather than one large one, because the rewrite pays per file as well
+ * as per byte. The tier pool's disks are 10 GB each, so this fits on either side of the move.
+ *
+ * Measured in CI (run 39091322942): 2 GiB in 131,072 files migrated in 5 seconds, before the
+ * dialog could be opened. Size alone does not buy enough, so see {@link migrationSeedCompression}.
+ */
+const migrationSeedBytes = 4 * 1024 ** 3;
+const migrationSeedFileBytes = 16 * 1024;
+
+/**
+ * The compression {@link seedMigrationData} leaves the dataset on, once the seed is written.
+ *
+ * A rewrite writes every block again with the dataset's current properties, so it compresses the
+ * whole seed again. gzip-9 is slow and, unlike zstd's higher levels and lz4, does not give up
+ * early on incompressible data, so it makes every block of the move cost CPU. It is set after
+ * the write, so the seed itself is not slowed.
+ */
+const migrationSeedCompression = 'GZIP-9';
+
+/** Writing the seed is bounded by the appliance's disk, not by middleware. */
+const migrationSeedTimeoutMs = 5 * 60_000;
+
+/**
+ * The shell command {@link seedMigrationData} runs for `dataset`. Exported so a teardown can remove
+ * its cron job by command, which is how a cron job is found.
+ *
+ * One pipeline, so the seed is never on disk twice: `split` cuts the stream into files as it
+ * arrives.
+ */
+export function migrationSeedCommand(dataset: string): string {
+  return `head -c ${migrationSeedBytes} /dev/urandom`
+    + ` | split -b ${migrationSeedFileBytes} -a 5 - ${datasetMountPath(dataset)}/seed_`;
+}
+
+/**
+ * Fills `dataset` with enough data that migrating it takes a while, and waits for the write to finish.
+ *
+ * An empty dataset migrates at once, so a test about a running migration needs something to move.
+ * The API writes no file contents (see `writeFileOnAppliance` in `fixtures/cloud-sync.ts`), so a
+ * one-off cron job runs the write and is removed again. Then the dataset is switched to
+ * {@link migrationSeedCompression}, which is what makes moving it slow.
+ */
+export async function seedMigrationData(client: E2eApiClient, dataset: string): Promise<void> {
+  const command = migrationSeedCommand(dataset);
+  await ensureCronjobPresent(client, {
+    command,
+    description: 'e2e tier migration seed',
+    schedule: {
+      minute: '0', hour: '0', dom: '1', month: '1', dow: '*',
+    },
+  });
+
+  try {
+    const cronjob = await findCronjob(client, command);
+    if (!cronjob) {
+      throw new Error(`the cron job seeding ${dataset} was not created.`);
+    }
+
+    await runJob(
+      client,
+      () => client.api.callAndGetJobId('cronjob.run', [cronjob.id]),
+      {
+        timeoutMs: migrationSeedTimeoutMs,
+        whatItCosts: `${dataset} was not filled, so migrating it would finish before Cancel could be pressed`,
+      },
+    );
+  } finally {
+    await ensureCronjobAbsent(client, command);
+  }
+
+  await firstValueFrom(
+    client.api.call('pool.dataset.update', [dataset, { compression: migrationSeedCompression }])
+      .pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
+ * Cancels `dataset`'s migration if it is still running or queued.
+ *
+ * For teardown: a test that fails before its own Cancel leaves the tiering daemon rewriting a
+ * dataset that is about to be deleted.
+ */
+export async function ensureMigrationStopped(client: E2eApiClient, dataset: string): Promise<void> {
+  const job = (await findDataset(client, dataset))?.tier?.tier_job;
+  if (!job || (job.status !== 'RUNNING' && job.status !== 'QUEUED')) {
+    return;
+  }
+
+  await firstValueFrom(
+    client.api.call('zfs.tier.rewrite_job_cancel', [{ tier_job_id: job.tier_job_id }])
+      .pipe(timeout(slowCallTimeoutMs)),
+  );
 }
