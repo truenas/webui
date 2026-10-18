@@ -74,8 +74,16 @@ async function removeEverything(api: E2eApiClient): Promise<void> {
   await runCleanupSteps(steps);
 }
 
-/** Removed before each test as well as after, so an interrupted run leaves the next one able to start. */
-test.beforeEach(async ({ api }) => {
+/**
+ * Removed before each test as well as after, so an interrupted run leaves the next one able to start.
+ *
+ * The `pool` fixture is asked for, though nothing here is stored under it: the Shares dashboard
+ * renders an empty state instead of its cards on an appliance with no pool, and the iSCSI card is
+ * where the full page is opened from. Asking is the whole precondition; the name goes into the report
+ * so a failure says which pool the dashboard was showing.
+ */
+test.beforeEach(async ({ api, pool }) => {
+  test.info().annotations.push({ type: 'pool', description: pool });
   await removeEverything(api);
 });
 

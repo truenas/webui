@@ -27,7 +27,15 @@ import { expect, test } from '../support/fixtures';
 /** The four tabs, by the slug each one routes to. */
 const tabSlugs = ['sessions', 'locks', 'shares', 'notifications'];
 
-test.beforeEach(async ({ api }) => {
+/**
+ * The `pool` fixture is asked for, though nothing here is stored under it: the
+ * Shares dashboard renders an empty state instead of its cards on an appliance
+ * with no pool, and the SMB card is where the list is opened from. Asking is the
+ * whole precondition; the name goes into the report so a failure says which pool
+ * the dashboard was showing.
+ */
+test.beforeEach(async ({ api, pool }) => {
+  test.info().annotations.push({ type: 'pool', description: pool });
   await ensureSmbServiceRunning(api);
 });
 

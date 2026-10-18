@@ -10,6 +10,9 @@
  * `DashboardStore` reads the layout from the account the app loaded at sign-in, and the `page`
  * fixture signs in before a test writes anything. So each test reloads after opening the
  * Dashboard, which makes the app read `auth.me` again.
+ *
+ * Does not need a pool, so it does not ask for the `pool` fixture: the layouts it writes and the card
+ * it adds are System Information, Help, CPU Model and CPU Overview, none of which shows storage.
  */
 import { captureDashState, readDashState, restoreDashState, writeDashState } from '../fixtures/dashboard';
 import type { CapturedDashState, DashboardGroup } from '../fixtures/dashboard';

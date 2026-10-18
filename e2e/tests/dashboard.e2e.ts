@@ -11,6 +11,10 @@
  * their dashboard this fails at its first assertion, which names the readout it could not find.
  *
  * Nothing is created, so there is no teardown.
+ *
+ * Does not need a pool, so it does not ask for the `pool` fixture: nothing System Information
+ * shows comes from storage, and the Dashboard renders its cards whether or not the appliance has
+ * one.
  */
 import { readSystemIdentity } from '../fixtures/system-info';
 import { goToDashboard } from '../flows/navigation';

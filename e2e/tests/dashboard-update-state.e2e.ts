@@ -25,6 +25,9 @@
  *
  * If an update is running, the card shows Update in Progress instead of this button. That is not a
  * state the CI appliance is in.
+ *
+ * Does not need a pool, so it does not ask for the `pool` fixture: System Information and the Update
+ * page's update check show nothing from storage.
  */
 import { captureDashState, restoreDashState, writeDashState } from '../fixtures/dashboard';
 import type { CapturedDashState, DashboardGroup } from '../fixtures/dashboard';
