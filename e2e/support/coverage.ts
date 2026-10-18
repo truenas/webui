@@ -13,13 +13,18 @@
  *
  * One JSON file per test attempt lands in `test-results/e2e-coverage/`.
  * Playwright clears `test-results` at the start of a run, so the directory only
- * ever holds the run that just finished.
+ * ever holds the run that just finished. The directory is fixed rather than the
+ * project's `outputDir`, because `ha-license` writes its results elsewhere and
+ * its coverage would be left out of the report. The files hold method names and
+ * URL paths only, never params, so they are safe to publish from any project.
  */
 import { mkdir, writeFile } from 'fs/promises';
 import { join } from 'path';
 import type { Page, TestInfo } from '@playwright/test';
 
 export const coverageDirName = 'e2e-coverage';
+
+const resultsDir = join(import.meta.dirname, '..', '..', 'test-results');
 
 export interface TestCoverage {
   /** `file › describe › test`, for the report's "covered by" lists. */
@@ -106,7 +111,7 @@ export class CoverageRecorder {
       events: [...this.events].sort(byName),
       routes: [...this.routes].sort(byName),
     };
-    const dir = join(testInfo.project.outputDir, coverageDirName);
+    const dir = join(resultsDir, coverageDirName);
     await mkdir(dir, { recursive: true });
     await writeFile(join(dir, `${testInfo.testId}-${testInfo.retry}.json`), JSON.stringify(coverage, null, 2));
   }
