@@ -64,7 +64,8 @@ test('an admin sets quotas, reservations and a quota warning on a dataset', asyn
   await page.locator(form.quota).fill('3 GiB');
   await page.locator(form.refreservation).fill('1 GiB');
   await page.locator(form.reservation).fill('1 GiB');
-  // A fresh dataset inherits the threshold, and its input is disabled until the box is unticked.
+  // Ticked on a fresh dataset, which disables the input. Middleware reports a threshold the pool
+  // root holds as LOCAL, so under such a root the box starts unticked and this changes nothing.
   await page.locator(form.refquotaWarningInherit).setChecked(false);
   await page.locator(form.refquotaWarning).fill('70');
   await saveDatasetForm(page);
