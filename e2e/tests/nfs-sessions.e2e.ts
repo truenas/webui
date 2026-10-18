@@ -27,7 +27,15 @@ const nfs4ClientsMethod = 'nfs.get_nfs4_clients';
 
 test.use({ recordApiCalls: true });
 
-test.beforeEach(async ({ api }) => {
+/**
+ * The `pool` fixture is asked for, though nothing here is stored under it: the
+ * Shares dashboard renders an empty state instead of its cards on an appliance
+ * with no pool, and the NFS card is where the list is opened from. Asking is the
+ * whole precondition; the name goes into the report so a failure says which pool
+ * the dashboard was showing.
+ */
+test.beforeEach(async ({ api, pool }) => {
+  test.info().annotations.push({ type: 'pool', description: pool });
   await ensureNfsServiceRunning(api);
 });
 

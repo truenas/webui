@@ -15,8 +15,8 @@
  * it, in that order, whatever the test did.
  *
  * Not covered: moving Apps from one pool to another with "Migrate existing applications", and
- * anything about the catalog. A pool change starts a catalog sync, which needs the internet the CI
- * appliance does not have; it fails in the background and does not fail `docker.update`.
+ * anything about the catalog, which `apps-install.e2e.ts` covers. A pool change starts a catalog
+ * sync in the background, and that sync does not fail `docker.update`.
  *
  * The "Pool has been unset." snackbar is not checked: the snackbar renders no `data-test`.
  */

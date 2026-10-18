@@ -13,6 +13,9 @@
  *
  * The update check's own answer is not asserted: whether an update is offered depends on the update
  * server, not on the UI.
+ *
+ * Does not need a pool, so it does not ask for the `pool` fixture: neither card shows storage, and
+ * the Update page's Install button renders whether or not the appliance has a pool.
  */
 import { captureDashState, restoreDashState, writeDashState } from '../fixtures/dashboard';
 import type { CapturedDashState, DashboardGroup } from '../fixtures/dashboard';

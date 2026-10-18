@@ -7,15 +7,16 @@
  * before its pool goes.
  */
 import { expect } from '@playwright/test';
-import { firstValueFrom, timeout } from 'rxjs';
+import { JobState, isJobFinished } from '@truenas/api-client';
+import { firstValueFrom, of, timeout } from 'rxjs';
 import type { E2eApiClient } from '../support/api/client';
 import { runJob } from '../support/jobs';
-import { readTimeoutMs } from '../support/timeouts';
+import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 /**
  * `docker.update` creates the `ix-apps` datasets and starts Docker before it finishes, and on a pool
- * change it also starts a catalog sync, which fails in the background on an appliance with no
- * internet. A ceiling, not a wait.
+ * change it also starts a catalog sync in the background, which it does not wait for. A ceiling,
+ * not a wait.
  */
 export const dockerUpdateTimeoutMs = 4 * 60_000;
 
@@ -158,6 +159,89 @@ export async function ensureAppsPoolUnset(client: E2eApiClient): Promise<void> {
 }
 
 /**
+ * The catalog train holding the apps a spec installs. Discover lists only the trains in
+ * `catalog.config`'s `preferred_trains`, and an appliance may not prefer this one.
+ */
+export const communityTrain = 'community';
+
+export async function readPreferredTrains(client: E2eApiClient): Promise<string[]> {
+  const config = await firstValueFrom(client.api.call('catalog.config').pipe(timeout(readTimeoutMs)));
+  return config.preferred_trains;
+}
+
+/**
+ * Writes `preferred_trains`. Setup and teardown only. An Enterprise-licensed appliance refuses a
+ * list without `enterprise`, so callers add to what they read rather than writing a fresh list.
+ */
+export async function setPreferredTrains(client: E2eApiClient, trains: string[]): Promise<void> {
+  await firstValueFrom(
+    client.api.call('catalog.update', [{ preferred_trains: trains }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
+ * Pulls the catalog from github.com/truenas/apps. A ceiling, not a wait: the CI appliance has
+ * outbound access and a sync with nothing new is done in seconds.
+ */
+export const catalogSyncTimeoutMs = 5 * 60_000;
+
+/**
+ * The id of a `catalog.sync` job that has not finished, or undefined when none is in flight.
+ *
+ * `catalog.sync` holds one lock and queues nothing behind it (`lock_queue_size=0`), so a call made
+ * while a sync runs gets no job of its own: middleware refuses it or hands back the job already
+ * queued, and either way no `ADDED` event arrives for `callAndGetJobId` to take an id from. A pool
+ * change starts exactly such a sync in the background.
+ */
+async function findCatalogSyncInFlight(client: E2eApiClient): Promise<number | undefined> {
+  const jobs = await firstValueFrom(
+    client.api.query('core.get_jobs', [['method', '=', 'catalog.sync']]).pipe(timeout(readTimeoutMs)),
+  );
+
+  return jobs.find((job) => !isJobFinished({ state: job.state as JobState }))?.id;
+}
+
+/**
+ * Syncs the catalog, so an app the spec seeds over the API is in it. A sync already in flight is
+ * waited for rather than started again, since a second one cannot start while it runs.
+ */
+export async function syncCatalog(client: E2eApiClient): Promise<void> {
+  const inFlight = await findCatalogSyncInFlight(client);
+
+  await runJob(
+    client,
+    () => (inFlight === undefined ? client.api.callAndGetJobId('catalog.sync') : of(inFlight)),
+    {
+      timeoutMs: catalogSyncTimeoutMs,
+      whatItCosts: 'The apps catalog was not synced, so there is no catalog app to install.',
+    },
+  );
+}
+
+/**
+ * The per-user attribute the UI sets once its third-party apps warning has been agreed to. While it
+ * is unset, the first Install raises that warning in front of the install wizard.
+ */
+export const appsAgreementAttribute = 'appsAgreement';
+
+/** Whether the signed-in user has agreed to the third-party apps warning. */
+export async function readAppsAgreement(client: E2eApiClient): Promise<boolean> {
+  const me = await firstValueFrom(client.api.call('auth.me').pipe(timeout(readTimeoutMs)));
+  return (me as { attributes?: Record<string, unknown> }).attributes?.[appsAgreementAttribute] === true;
+}
+
+/**
+ * Sets the user's agreement to the third-party apps warning. Setup and teardown only.
+ *
+ * The UI reads it when a page signs in, so it has to be written before the test's sign-in.
+ */
+export async function setAppsAgreement(client: E2eApiClient, agreed: boolean): Promise<void> {
+  await firstValueFrom(
+    client.api.call('auth.set_attribute', [appsAgreementAttribute, agreed]).pipe(timeout(readTimeoutMs)),
+  );
+}
+
+/**
  * Installing an app pulls its images first. A ceiling, not a wait: a cached image deploys in
  * seconds.
  */
@@ -177,6 +261,30 @@ export async function findApp(
 /** The app's state as middleware reports it, or `ABSENT` when there is no such app. */
 export async function readAppState(client: E2eApiClient, name: string): Promise<string> {
   return (await findApp(client, name))?.state ?? 'ABSENT';
+}
+
+/**
+ * Installs `catalogApp` from `train` as `name` with the catalog's defaults, for a test that is not
+ * about installing one. The job finishes once the app is deployed.
+ */
+export async function seedCatalogApp(
+  client: E2eApiClient,
+  { name, catalogApp, train }: { name: string; catalogApp: string; train: string },
+): Promise<void> {
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('app.create', [{
+      app_name: name,
+      catalog_app: catalogApp,
+      train,
+      values: {},
+    }]),
+    {
+      timeoutMs: appInstallTimeoutMs,
+      whatItCosts: `app ${name} was not installed, so there is nothing to stop, start or delete`,
+      confirm: async () => (await findApp(client, name)) !== undefined,
+    },
+  );
 }
 
 /**

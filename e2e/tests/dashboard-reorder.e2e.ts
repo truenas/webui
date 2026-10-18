@@ -11,6 +11,10 @@
  * `DashboardStore` reads the layout from the account the app loaded at sign-in, and the `page`
  * fixture signs in before a test writes anything. So each test reloads after reaching the
  * Dashboard, which makes the app read `auth.me` again.
+ *
+ * Does not need a pool, so it does not ask for the `pool` fixture: the layouts it writes hold System
+ * Information, Help and CPU Model, none of which shows storage. Reset brings back the default
+ * layout, Storage and Backup Tasks included, but only CPU Usage and Help are checked on it.
  */
 import type { Page } from '@playwright/test';
 import {
