@@ -50,6 +50,13 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
   readonly ariaLabel = input<string>();
 
   /**
+   * Emitted as `data-test="code-editor-<testId>"` on CodeMirror's `.cm-content`, the editable
+   * element the template never sees, so the e2e suite can fill the editor itself rather than its
+   * wrapper. Pass a kebab-case literal.
+   */
+  readonly testId = input<string>();
+
+  /**
    * ARIA wiring from the enclosing `tn-form-field`. This control renders no label of its own, so
    * the field names what the user actually focuses — which is CodeMirror's `.cm-content`, a
    * `role="textbox"` the template never sees. {@link contentAria} pushes these onto it.
@@ -61,7 +68,11 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
     const ariaLabel = this.ariaLabel();
     const labelledby = this.fieldAria.labelledby();
     const describedby = this.fieldAria.describedby();
+    const testId = this.testId();
 
+    if (testId) {
+      attributes['data-test'] = `code-editor-${testId}`;
+    }
     if (ariaLabel) {
       attributes['aria-label'] = ariaLabel;
     }

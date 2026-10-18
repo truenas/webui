@@ -2,7 +2,7 @@
  * Apps > Installed (`/apps/installed`): the Apps service status, the Configuration menu and the
  * Choose Pool dialog it opens.
  */
-import { kebabTestSegment } from './test-id';
+import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 
 export const appsLocators = {
   /**
@@ -32,4 +32,90 @@ export const selectAppsPoolDialogLocators = {
   pool: '[data-test="select-pool"]',
   poolOption: (pool: string): string => `[data-test="option-pool-${kebabTestSegment(pool)}"]`,
   choose: '[data-test="button-choose"]',
+} as const;
+
+/**
+ * One installed app on Apps > Installed: its row in `installed-apps-list.component.html` and the
+ * Application Info card the details panel shows for the selected row.
+ *
+ * The row and its cells are tagged with `toUniqueRowTag('app-<name>')`, which kebabs through lodash,
+ * so `e2e-it-tools` is `app-e-2-e-it-tools` there. The Start and Stop buttons are `[name, 'start']`
+ * through the library's normalizer, which leaves the name as it is.
+ */
+export const installedAppLocators = (name: string): {
+  row: string;
+  name: string;
+  state: string;
+  start: string;
+  stop: string;
+  delete: string;
+} => {
+  const rowTag = `app-${legacyKebabTestSegment(name)}`;
+  const row = `[data-test="row-${rowTag}"]`;
+  const app = kebabTestSegment(name);
+
+  return {
+    row,
+    name: `[data-test="text-application-${rowTag}-row-text"]`,
+    state: `[data-test="text-status-${rowTag}-row-state"]`,
+    // The info card renders Start and Stop under the same ids for the narrow layout, hidden by CSS
+    // on a wide one, so the row's own are scoped to the row.
+    start: `${row} [data-test="button-${app}-start"]`,
+    stop: `${row} [data-test="button-${app}-stop"]`,
+    // The info card's Delete. The list has none of its own.
+    delete: `[data-test="button-${app}-delete"]`,
+  };
+};
+
+/** `AppDeleteDialog`, `<tn-dialog-shell testId="app-delete">`. */
+export const appDeleteDialogLocators = {
+  title: '[data-test="dialog-title-app-delete"]',
+  /** Delete stays disabled until this holds the app's name. */
+  confirmName: '[data-test="input-confirm-app-name"]',
+  removeImages: '[data-test="checkbox-remove-images"]',
+  delete: '[data-test="button-delete"]',
+} as const;
+
+/** Apps > Discover (`/apps/available`), an app's page there, and the install wizard it opens. */
+export const appCatalogLocators = {
+  /** "Discover Apps" in the Installed page's header. */
+  discoverApps: '[data-test="button-discover-apps"]',
+  search: '[data-test="input-search"]',
+  /** "Refresh Catalog", which runs `catalog.sync` behind a job progress dialog. */
+  refreshCatalog: '[data-test="link-refresh-apps"]',
+  /** An app's card, a link to its page. */
+  appCard: (train: string, app: string): string => {
+    const id = ['link-open', kebabTestSegment(train), kebabTestSegment(app)].join('-');
+    return `[data-test="${id}"]`;
+  },
+  /** Install on the app's page. Shown only while Apps has a pool. */
+  install: (app: string): string => `[data-test="button-${kebabTestSegment(app)}-install"]`,
+
+  /** The wizard's Application Name, prefilled with the catalog app's name. */
+  releaseName: '[data-test="input-release-name"]',
+  /** The wizard's Install button. */
+  save: '[data-test="button-save"]',
+} as const;
+
+/**
+ * A custom app's YAML: Discover's Install via YAML, and the `custom-app-form` side panel it and an
+ * installed custom app's Edit both open.
+ */
+export const customAppLocators = {
+  /** The "More Options" menu beside Custom App on Discover. Disabled until Apps has a pool. */
+  menu: '[data-test="button-custom-app-menu"]',
+  installViaYaml: '[data-test="button-custom-app-yaml"]',
+
+  /** The app's name. Read-only when editing. */
+  releaseName: '[data-test="input-release-name"]',
+  /**
+   * "Custom Config": the compose file. CodeMirror's editable element, tagged through
+   * `ix-code-editor`'s `testId`, which a test can `fill`.
+   */
+  config: '[data-test="code-editor-custom-config"]',
+  /** The side panel's Save, `[testId]="'save'"` in form-side-panel-container. */
+  save: '[data-test="button-save"]',
+
+  /** The installed app's Edit on its Application Info card. A custom app's opens this panel. */
+  edit: (name: string): string => `[data-test="button-${kebabTestSegment(name)}-edit"]`,
 } as const;
