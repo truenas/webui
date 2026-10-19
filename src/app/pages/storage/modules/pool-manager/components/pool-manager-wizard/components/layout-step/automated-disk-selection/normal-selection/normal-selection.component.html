@@ -36,7 +36,7 @@
       class="manual-disk-selection"
       [testId]="['manual', type()]"
       [label]="'Manual Disk Selection' | translate"
-      [disabled]="!layout()"
+      [disabled]="!layout() || !!(store.isLoading$ | async)"
       (onClick)="store.openManualSelectionDialog(type())"
     ></tn-button>
   </div>

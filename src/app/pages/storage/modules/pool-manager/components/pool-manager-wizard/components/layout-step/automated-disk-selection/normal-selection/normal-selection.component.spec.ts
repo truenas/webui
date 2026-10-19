@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
@@ -78,6 +78,7 @@ describe('NormalSelectionComponent', () => {
   ] as DetailsDisk[];
   const startOver$ = new Subject<void>();
   const resetStep$ = new Subject<VDevType>();
+  const isLoading$ = new BehaviorSubject(false);
 
   const createComponent = createComponentFactory({
     component: NormalSelectionComponent,
@@ -90,11 +91,13 @@ describe('NormalSelectionComponent', () => {
         openManualSelectionDialog: jest.fn(),
         startOver$,
         resetStep$,
+        isLoading$,
       }),
     ],
   });
 
   beforeEach(async () => {
+    isLoading$.next(false);
     spectator = createComponent({
       props: {
         layout: CreateVdevLayout.Stripe,
@@ -276,5 +279,18 @@ describe('NormalSelectionComponent', () => {
     await button.click();
 
     expect(spectator.inject(PoolManagerStore).openManualSelectionDialog).toHaveBeenCalled();
+  });
+
+  it('disables Manual Disk Selection until the store has loaded its disks', async () => {
+    isLoading$.next(true);
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Manual Disk Selection' }));
+
+    // The dialog copies the inventory once when it opens, so opening it mid-load
+    // would show "No Unassigned Disks" for the rest of its life.
+    expect(await button.isDisabled()).toBe(true);
+
+    isLoading$.next(false);
+
+    expect(await button.isDisabled()).toBe(false);
   });
 });
