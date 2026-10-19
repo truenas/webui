@@ -60,7 +60,7 @@ const refusedName = 'e2e-registry-refused';
 const registryNames = [registryName, renamedRegistryName, probeName, refusedName];
 
 /** No scheme, so `UrlValidationService.urlRegex` refuses it. */
-const notAUrl = 'registry.e2e.invalid';
+const schemelessUri = 'registry.e2e.invalid';
 const patternMessage = 'Invalid format or character';
 
 /** As in `apps-install.e2e.ts`: Apps on a pool this spec did not make is somebody's. */
@@ -215,7 +215,7 @@ test('the registry form refuses a URI that is not a URL, and nothing is stored',
   await expect(save).toBeEnabled();
   await expect(uriField).not.toContainText(patternMessage);
 
-  await page.locator(dockerRegistryFormLocators.uri).fill(notAUrl);
+  await page.locator(dockerRegistryFormLocators.uri).fill(schemelessUri);
   // Validated on blur, not as it is typed.
   await page.locator(dockerRegistryFormLocators.uri).blur();
 
