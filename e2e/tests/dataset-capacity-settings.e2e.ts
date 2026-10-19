@@ -34,7 +34,7 @@ const configured = {
 };
 
 /** `helptextDatasetForm.quotaTooSmall`. */
-const quotaTooSmallMessage = 'Quota size is too small, enter a value of 1 GiB or larger.';
+const quotaTooSmallMessage = 'Quota size is too small. Enter a value of 1 GiB or larger.';
 
 const card = datasetCapacityLocators.card;
 const form = datasetCapacityLocators.form;
