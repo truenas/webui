@@ -150,6 +150,15 @@ jobs:
               sudo grep -ihE "failover|vrrp|fence|zpool|import|tank|traceback|error" /var/log/middlewared.log \
                 | grep -iv license | tail -n 200' || true
             echo "::endgroup::"
+            # When each failover event job ran, by middleware's own record:
+            # what a session waiting on its job event should have seen. Its
+            # method, state, times and error only, never its arguments.
+            echo "::group::node $n failover jobs"
+            truenas-appliance ssh "$n" 'sudo midclt call core.get_jobs "[[\"method\", \"^\", \"failover.\"]]" \
+              | python3 -c "import json, sys
+          for j in json.load(sys.stdin):
+              print(j[\"id\"], j[\"method\"], j[\"state\"], j[\"time_started\"], j[\"time_finished\"], (j[\"error\"] or \"\")[:200])"' || true
+            echo "::endgroup::"
           done
           echo "::group::LIO persistent reservations"
           for d in /sys/kernel/config/target/core/fileio_*/tnha*; do
