@@ -65,7 +65,8 @@ const resilverBaseline: ResilverSettings = {
 
 /**
  * Seeded while the system dataset moves. Neither middleware's default nor the
- * form's, so reading it back can only mean nothing overwrote it.
+ * form's, so reading it back rules out a reset to either. That it was not sent
+ * at all is what the recorded calls show.
  */
 const resilverSeed: ResilverSettings = {
   enabled: true,
