@@ -7,9 +7,9 @@
  * before its pool goes.
  */
 import { expect } from '@playwright/test';
-import { JobState, isJobFinished } from '@truenas/api-client';
+import { JobState, isJobFinished, type QueryEntity } from '@truenas/api-client';
 import { firstValueFrom, of, timeout } from 'rxjs';
-import type { E2eApiClient } from '../support/api/client';
+import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
@@ -264,12 +264,25 @@ export async function readAppState(client: E2eApiClient, name: string): Promise<
 }
 
 /**
- * Installs `catalogApp` from `train` as `name` with the catalog's defaults, for a test that is not
- * about installing one. The job finishes once the app is deployed.
+ * Installs `catalogApp` from `train` as `name`, for a test that is not about installing one. Without
+ * `version` it installs the catalog's latest revision, and without `values` the catalog's defaults.
+ * The job finishes once the app is deployed.
  */
 export async function seedCatalogApp(
   client: E2eApiClient,
-  { name, catalogApp, train }: { name: string; catalogApp: string; train: string },
+  {
+    name,
+    catalogApp,
+    train,
+    version,
+    values = {},
+  }: {
+    name: string;
+    catalogApp: string;
+    train: string;
+    version?: string;
+    values?: Record<string, unknown>;
+  },
 ): Promise<void> {
   await runJob(
     client,
@@ -277,29 +290,88 @@ export async function seedCatalogApp(
       app_name: name,
       catalog_app: catalogApp,
       train,
-      values: {},
+      values,
+      ...(version === undefined ? {} : { version }),
     }]),
     {
       timeoutMs: appInstallTimeoutMs,
-      whatItCosts: `app ${name} was not installed, so there is nothing to stop, start or delete`,
+      whatItCosts: `app ${name} was not installed, so the test has no installed app to act on`,
       confirm: async () => (await findApp(client, name)) !== undefined,
     },
   );
 }
 
+/** One row of `app.query`, typed from the client's own directory. */
+type AppEntry = QueryEntity<E2eApiDirectory['call'], 'app.query'>;
+
+/** Which catalog revision an app runs, and what the catalog offers it. */
+export interface AppVersions {
+  /** The installed catalog revision, e.g. `1.0.5`. The Application Info card shows it as Revision. */
+  version: AppEntry['version'];
+  /** The catalog's newest revision of the app. */
+  latestVersion: AppEntry['latest_version'];
+  /** What enables Update on the card and fills the Updates column. */
+  upgradeAvailable: AppEntry['upgrade_available'];
+}
+
+/** The app's revisions as middleware reports them, or undefined when there is no such app. */
+export async function readAppVersions(client: E2eApiClient, name: string): Promise<AppVersions | undefined> {
+  const [app] = await firstValueFrom(
+    client.api.query('app.query', [['name', '=', name]]).pipe(timeout(readTimeoutMs)),
+  );
+  if (!app) {
+    return undefined;
+  }
+
+  return {
+    version: app.version,
+    latestVersion: app.latest_version,
+    upgradeAvailable: app.upgrade_available,
+  };
+}
+
+/** The revisions `app.rollback` can take the app back to, newest first. Empty when there are none. */
+export async function readRollbackVersions(client: E2eApiClient, name: string): Promise<string[]> {
+  return firstValueFrom(
+    client.api.call('app.rollback_versions', [name]).pipe(timeout(readTimeoutMs)),
+  );
+}
+
 /**
- * Deletes an app by name if present, with its images and ix-volumes.
+ * Upgrades an installed app to the catalog's latest revision, for a test that is not about
+ * upgrading. Middleware pulls the new images first, so this shares the install's ceiling.
+ */
+export async function seedAppUpgrade(client: E2eApiClient, name: string): Promise<void> {
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('app.upgrade', [name, { app_version: 'latest' }]),
+    {
+      timeoutMs: appInstallTimeoutMs,
+      whatItCosts: `app ${name} was not upgraded, so there is no earlier revision to roll back to`,
+      confirm: async () => (await readAppVersions(client, name))?.upgradeAvailable === false,
+    },
+  );
+}
+
+/**
+ * Deletes an app by name if present, with its ix-volumes, and with its images unless `keepImages`.
+ * Keeping them spares the next install a pull, for a spec that installs the same app again and
+ * deletes the images itself at the end.
  *
  * Has to run before the Apps pool is unset: the app's datasets are under `<pool>/ix-apps`.
  */
-export async function ensureAppAbsent(client: E2eApiClient, name: string): Promise<void> {
+export async function ensureAppAbsent(
+  client: E2eApiClient,
+  name: string,
+  { keepImages = false }: { keepImages?: boolean } = {},
+): Promise<void> {
   if (!(await findApp(client, name))) {
     return;
   }
 
   await runJob(
     client,
-    () => client.api.callAndGetJobId('app.delete', [name, { remove_images: true, remove_ix_volumes: true }]),
+    () => client.api.callAndGetJobId('app.delete', [name, { remove_images: !keepImages, remove_ix_volumes: true }]),
     {
       timeoutMs: appInstallTimeoutMs,
       whatItCosts: `app ${name} is still installed, so the next run's install is refused`,

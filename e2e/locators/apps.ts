@@ -89,6 +89,7 @@ export const installedAppLocators = (name: string): {
   row: string;
   name: string;
   state: string;
+  updates: string;
   start: string;
   stop: string;
   delete: string;
@@ -101,6 +102,11 @@ export const installedAppLocators = (name: string): {
     row,
     name: `[data-test="text-application-${rowTag}-row-text"]`,
     state: `[data-test="text-status-${rowTag}-row-state"]`,
+    /**
+     * The Updates cell, `ix-app-update-cell`: "Up to date", or "Revision available" / "Update
+     * available" while `upgrade_available`, depending on whether the upstream version changes too.
+     */
+    updates: `[data-test="text-updates-${rowTag}-row-text"]`,
     // The info card renders Start and Stop under the same ids for the narrow layout, hidden by CSS
     // on a wide one, so the row's own are scoped to the row.
     start: `${row} [data-test="button-${app}-start"]`,
@@ -109,6 +115,49 @@ export const installedAppLocators = (name: string): {
     delete: `[data-test="button-${app}-delete"]`,
   };
 };
+
+/**
+ * The Application Info card's readouts and the two actions that change an app's revision. Every id
+ * is `[app.name, …]` through the library's normalizer, so the name is left as it is.
+ */
+export const appInfoCardLocators = (name: string): {
+  revision: string;
+  menu: string;
+  update: string;
+  rollback: string;
+} => {
+  const app = kebabTestSegment(name);
+
+  return {
+    /** Revision: the catalog revision the app runs, `app.version`. */
+    revision: `[data-test="text-${app}-revision"]`,
+    /** The card's "More Options" menu, holding Update. */
+    menu: '[data-test="button-app-info-menu"]',
+    /** A `tn-menu-item`, disabled unless `upgrade_available`. */
+    update: `[data-test="button-${app}-update"]`,
+    /** Rendered only once `app.rollback_versions` has returned a revision. */
+    rollback: `[data-test="button-${app}-rollback"]`,
+  };
+};
+
+/** `AppUpdateDialog`, `<tn-dialog-shell testId="app-update">`. */
+export const appUpdateDialogLocators = {
+  title: '[data-test="dialog-title-app-update"]',
+  /** The installed `human_version`, e.g. `v1_1.0.5`. */
+  installedVersion: '[data-test="text-installed-version"]',
+  /** "Revision: <installed> → <target>". */
+  revisionChange: '[data-test="text-revision-change"]',
+  update: '[data-test="button-update"]',
+} as const;
+
+/** `AppRollbackModalComponent`, `<tn-dialog-shell testId="app-rollback">`. */
+export const appRollbackDialogLocators = {
+  title: '[data-test="dialog-title-app-rollback"]',
+  /** Filled from `app.rollback_versions`, with the first preselected. */
+  version: '[data-test="select-app-version"]',
+  rollbackSnapshot: '[data-test="checkbox-rollback-snapshot"]',
+  rollBack: '[data-test="button-roll-back"]',
+} as const;
 
 /** `AppDeleteDialog`, `<tn-dialog-shell testId="app-delete">`. */
 export const appDeleteDialogLocators = {
