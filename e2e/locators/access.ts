@@ -47,11 +47,15 @@ export const accessLocators = {
 
     row: (username: string, origin: string): string => `[data-test="row-${sessionRowTag(username, origin)}"]`,
 
-    username: (username: string, origin: string): string =>
-      `[data-test="text-username-${sessionRowTag(username, origin)}-row-text"]`,
+    username: (username: string, origin: string): string => {
+      const tag = sessionRowTag(username, origin);
+      return `[data-test="text-username-${tag}-row-text"]`;
+    },
 
     /** Disabled on the browser's own session, which middleware reports as `current`. */
-    terminate: (username: string, origin: string): string =>
-      `[data-test="button-${sessionRowTag(username, origin)}-mdi-exit-to-app-row-action"]`,
+    terminate: (username: string, origin: string): string => {
+      const tag = sessionRowTag(username, origin);
+      return `[data-test="button-${tag}-mdi-exit-to-app-row-action"]`;
+    },
   },
 } as const;
