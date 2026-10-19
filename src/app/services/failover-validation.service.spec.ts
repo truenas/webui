@@ -1,7 +1,9 @@
 import { fakeAsync, tick } from '@angular/core/testing';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of, throwError } from 'rxjs';
+import {
+  firstValueFrom, Observable, of, throwError,
+} from 'rxjs';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
@@ -17,6 +19,20 @@ import {
   FailoverValidationResult,
   FailoverValidationService,
 } from 'app/services/failover-validation.service';
+
+function vrrpMasterEvent(state: JobState): ApiEventTyped<'core.get_jobs'> {
+  return {
+    id: 1,
+    msg: CollectionChangeType.Changed,
+    collection: 'core.get_jobs',
+    fields: {
+      ...fakeSuccessfulJob(),
+      id: 1,
+      method: 'failover.events.vrrp_master',
+      state,
+    } as Job,
+  };
+}
 
 describe('FailoverValidationService', () => {
   let spectator: SpectatorService<FailoverValidationService>;
@@ -81,9 +97,10 @@ describe('FailoverValidationService', () => {
       });
     });
 
-    it('returns error when status is not MASTER', () => {
+    it('returns error when status is not MASTER and this node is not taking over', () => {
       api.mockCall('failover.licensed', true);
       api.mockCall('failover.status', FailoverStatus.Backup);
+      api.mockCall('failover.disabled.reasons', [FailoverDisabledReason.NoPong]);
 
       spectator.service.validateFailover().subscribe((result) => {
         expect(result).toEqual({
@@ -162,6 +179,57 @@ describe('FailoverValidationService', () => {
         expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
       });
     });
+
+    it('waits for the takeover when the node signed in to still reports BACKUP, then lets the sign-in through', async () => {
+      api.mockCall('failover.licensed', true);
+      api.mockCall('failover.status', FailoverStatus.Backup);
+      api.mockCall('failover.disabled.reasons', [FailoverDisabledReason.LocFailoverOngoing]);
+      jest.spyOn(api, 'subscribe').mockImplementation(() => {
+        // The status is refreshed once the takeover has imported the pools.
+        api.mockCall('failover.status', FailoverStatus.Master);
+        return of(vrrpMasterEvent(JobState.Success));
+      });
+
+      const result = await firstValueFrom(spectator.service.validateFailover());
+
+      expect(result).toEqual({ success: true, isHaLicensed: true });
+      expect(spectator.inject(LoaderService).open).toHaveBeenCalledWith(
+        'Waiting for failover operation to complete...',
+      );
+      expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
+    });
+
+    it('refuses the sign-in when the node is still not MASTER after its takeover', async () => {
+      api.mockCall('failover.licensed', true);
+      api.mockCall('failover.status', FailoverStatus.Electing);
+      api.mockCall('failover.disabled.reasons', [FailoverDisabledReason.LocFailoverOngoing]);
+      jest.spyOn(api, 'subscribe').mockReturnValue(of(vrrpMasterEvent(JobState.Success)));
+
+      const result = await firstValueFrom(spectator.service.validateFailover());
+
+      expect(result).toMatchObject({ success: false, errorType: FailoverErrorType.FailoverFailed });
+    });
+
+    it('lets the sign-in through once the node stops reporting a takeover, when the job event is missed', fakeAsync(() => {
+      api.mockCall('failover.licensed', true);
+      api.mockCall('failover.status', FailoverStatus.Master);
+      api.mockCall('failover.disabled.reasons', [FailoverDisabledReason.LocFailoverOngoing]);
+      jest.spyOn(api, 'subscribe').mockReturnValue(new Observable(() => {}));
+
+      let result: FailoverValidationResult | undefined;
+      spectator.service.validateFailover().subscribe((response) => {
+        result = response;
+      });
+
+      tick(5000);
+      expect(result).toBeUndefined();
+
+      api.mockCall('failover.disabled.reasons', []);
+      tick(5000);
+
+      expect(result).toEqual({ success: true, isHaLicensed: true });
+      expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
+    }));
 
     it('handles timeout during failover wait', fakeAsync(() => {
       api.mockCall('failover.licensed', true);
