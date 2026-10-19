@@ -7,12 +7,10 @@
  * goes through a client obtained here.
  */
 import {
-  createTrueNasClient, SUPPORTED_API_VERSIONS,
+  AuthError, AuthErrorCode, createTrueNasClient, SUPPORTED_API_VERSIONS,
   type ApiDirectoryV28_0_0, type AuthResponse, type TrueNasApiClient,
 } from '@truenas/api-client';
-import {
-  filter, firstValueFrom, take, timeout, TimeoutError,
-} from 'rxjs';
+import { filter, firstValueFrom, take, timeout } from 'rxjs';
 import type { TargetConfig } from '../config';
 
 /**
@@ -161,12 +159,12 @@ export async function connectAndLogin(config: TargetConfig): Promise<E2eApiClien
  * Makes one attempt to sign in with an API key over a fresh connection, and
  * says whether middleware accepted it. The connection is always closed.
  *
- * A refusal is an answer, not an error: the client throws on `AUTH_ERR` and
- * resolves on every other outcome, and both read as `false` unless the
- * outcome is `SUCCESS`. A socket that never opens, or a login that never
- * answers, still throws — a key cannot be judged over a connection that is
- * not there, and reading that as "refused" would pass a revocation check
- * for nothing.
+ * A refusal is an answer, not an error: the client throws `AuthError` with
+ * `API_KEY_AUTH_FAILED` on `AUTH_ERR` and resolves on every other outcome, and
+ * both read as `false` unless the outcome is `SUCCESS`. Anything else that
+ * fails — a socket that never opens, a login that never answers, a rate
+ * limit — still throws: a key cannot be judged without middleware judging it,
+ * and reading that as "refused" would pass a revocation check for nothing.
  *
  * The connection is `wss://`, like every other one here. Middleware revokes a
  * key sent over plain `ws://`, so never add a plaintext path.
@@ -193,10 +191,12 @@ export async function signsInWithApiKey(
     const auth = await firstValueFrom(
       client.authenticator.loginWithApiKey(credentials).pipe(timeout(loginTimeoutMs)),
     ).catch((error: unknown) => {
-      if (error instanceof TimeoutError) {
-        throw error;
+      // Only middleware's own refusal of the key. A rate limit, a dropped
+      // socket or anything else is not a verdict on the key, and rethrows.
+      if (error instanceof AuthError && error.code === AuthErrorCode.ApiKeyAuthFailed) {
+        return undefined;
       }
-      return undefined;
+      throw error;
     });
 
     return String(auth?.response_type) === 'SUCCESS';
