@@ -176,7 +176,8 @@ test.describe('the target form', () => {
     await expect(page.locator(targetForm.nameField)).toContainText('Target with this name already exists');
     await expect(page.locator(targetForm.save)).toBeDisabled();
 
-    // A submit attempt, so the read-back below would catch a form that saved anyway.
+    // A backstop, not the check: middleware would refuse this name on a save too, so both targets keep
+    // their names either way. The field's message and the disabled Save above are what this test proves.
     await page.locator(targetForm.name).press('Enter');
     expect(await findIscsiTarget(api, editedTarget)).toMatchObject({ alias: 'Before' });
     expect(await findIscsiTarget(api, bystanderTarget)).toMatchObject({ alias: 'Left alone' });
