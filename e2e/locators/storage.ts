@@ -616,6 +616,7 @@ export const autotrimLocators = {
   title: '[data-test="dialog-title-autotrim"]',
   /** The dialog's one control, `<tn-checkbox testId="autotrim">`. */
   checkbox: '[data-test="checkbox-autotrim"]',
+  /** Save, scoped by the `actions-autotrim` id on the template's `ix-form-actions`. */
   save: '[data-test="actions-autotrim"] [data-test="button-save"]',
 
   /**
@@ -641,6 +642,7 @@ export const dedupQuotaLocators = {
   quotaTypeOption: (label: 'Auto' | 'Custom' | 'None') => `[data-test="option-quota-type-${kebabTestSegment(label)}"]`,
   /** "Custom Quota", `<tn-input testId="quota-value">`, a size. Rendered only for Custom. */
   quotaValue: '[data-test="input-quota-value"]',
+  /** Save, scoped by the `actions-set-dedup-quota` id on the template's `ix-form-actions`. */
   save: '[data-test="actions-set-dedup-quota"] [data-test="button-save"]',
 } as const;
 
