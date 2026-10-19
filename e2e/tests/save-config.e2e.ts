@@ -62,8 +62,8 @@ function tarString(field: Buffer): string {
 
 /**
  * The names of the members of a ustar archive, in order. Python's `tarfile`
- * writes one 512-byte header per member, then its data padded to the block,
- * and two empty blocks at the end.
+ * writes a 512-byte header per member, often preceded by a PAX `x` header, then
+ * its data padded to the block, and two empty blocks at the end.
  */
 function tarMemberNames(archive: Buffer): string[] {
   const names: string[] = [];
