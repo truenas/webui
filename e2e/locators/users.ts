@@ -152,6 +152,12 @@ export const usersLocators = {
     homeCreate: '[data-test="checkbox-home-create"]',
     /** `ix-explorer formControlName="home"`: its `tn-file-picker`'s typable input takes the control name. */
     home: '[data-test="input-home"]',
+    /**
+     * Shown under the path once it is not `/var/empty`. While editing, the form
+     * ticks it from the mode it reads off the existing home, so a home seeded at
+     * anything but `700` leaves it unticked once that read has landed.
+     */
+    defaultPermissions: '[data-test="checkbox-default-permissions"]',
     /** The home path's validation message, which `ix-explorer` renders as `text-<control>-errors`. */
     homeErrors: '[data-test="text-home-errors"]',
     /** The Shell editable's readout. The row is rendered only while Shell Access is ticked. */

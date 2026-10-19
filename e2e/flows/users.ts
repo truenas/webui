@@ -124,6 +124,20 @@ export async function openEditUserForm(
 }
 
 /**
+ * Types a path into the user form's Home Directory field and leaves the field.
+ *
+ * Leaving it is part of the entry: the picker hands its value to the form when
+ * the input loses focus, so until then the path is on screen but the form still
+ * holds the old one. The Home Directory editable must already be open.
+ */
+export async function fillUserHome(page: Page, path: string): Promise<void> {
+  const field = page.locator(usersLocators.form.home);
+
+  await field.fill(path);
+  await field.blur();
+}
+
+/**
  * Locks or unlocks the user whose details are open, through the Access card.
  *
  * Both raise the shared confirmation without its tick box. The card swaps the

@@ -17,7 +17,9 @@ import { datasetMountPath, ensureDatasetAbsent, ensureDatasetPresent } from '../
 import {
   ensureSignInCapableUser, ensureUserAbsent, findUser, giveUserHome, setUserEmailAndShell,
 } from '../fixtures/users';
-import { fillPassword, openEditUserForm, saveUserForm } from '../flows/users';
+import {
+  fillPassword, fillUserHome, openEditUserForm, saveUserForm,
+} from '../flows/users';
 import { confirmDialogLocators } from '../locators/dialogs';
 import { usersLocators } from '../locators/users';
 import type { E2eApiClient } from '../support/api/client';
@@ -119,11 +121,10 @@ test('Editing profile and access fields leaves the home directory alone', async 
   await page.locator(form.shell).click();
   await page.locator(form.shellOption('bash')).click();
 
+  // An untouched home raises no warning: had one been raised, it would hold the
+  // panel open and this would not return.
   await saveUserForm(page);
 
-  // An untouched home raises no warning. Had one been raised, the panel would
-  // not have closed above.
-  await expect(page.locator(confirmDialogLocators.title)).toBeHidden();
   await expect(page.locator(usersLocators.profileFullName(username))).toHaveText(newFullName);
   await expect(page.locator(usersLocators.profileEmail(username))).toHaveText(newEmail);
   await expect(page.locator(usersLocators.shellAccess(username))).toContainText('/usr/bin/bash');
@@ -153,12 +154,16 @@ test('Creating a home under another dataset moves the user there without a warni
   await openEditUserForm(page, { username, fullName: seededFullName });
 
   await page.locator(form.homeValue).click();
+  // The form reads the existing home's mode when it opens, and an answer landing
+  // after Create is ticked would put that mode back over Create's 700. The seeded
+  // 750 unticks Default Permissions once it has landed, so wait for that first.
+  await expect(page.locator(form.defaultPermissions)).not.toBeChecked();
   await page.locator(form.homeCreate).click();
-  await page.locator(form.home).fill(parentB);
+  await fillUserHome(page, parentB);
 
+  // Create skips the warning, which would otherwise hold the panel open here.
   await saveUserForm(page);
 
-  await expect(page.locator(confirmDialogLocators.title)).toBeHidden();
   await expect(page.locator(usersLocators.profileHomeDirectory(username))).toHaveText(newHome);
 
   expect((await findUser(api, username))?.home).toBe(newHome);
@@ -178,7 +183,7 @@ test('Pointing the home at an existing path asks first; declining changes nothin
 
   await page.locator(form.homeValue).click();
   await expect(page.locator(form.homeCreate)).not.toBeChecked();
-  await page.locator(form.home).fill(existing);
+  await fillUserHome(page, existing);
 
   await test.step('declining the warning leaves the form open and the home as it was', async () => {
     await page.locator(form.save).click();
@@ -209,14 +214,14 @@ test('The edit form refuses SMB access without a new password, and a home at /mn
 
   await test.step('a home at /mnt is refused, and clearing it restores the default', async () => {
     await page.locator(form.homeValue).click();
-    await page.locator(form.home).fill('/mnt');
+    await fillUserHome(page, '/mnt');
 
     await expect(page.locator(form.homeErrors)).toContainText('Home directory cannot be set to /mnt');
     await expect(page.locator(form.save)).toBeDisabled();
 
     // An empty home goes back to `/var/empty`, which is the account's own: the
     // home is untouched again, so the save below raises no warning.
-    await page.locator(form.home).fill('');
+    await fillUserHome(page, '');
     await expect(page.locator(form.homeErrors)).toBeHidden();
   });
 
