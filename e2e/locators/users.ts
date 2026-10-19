@@ -64,6 +64,22 @@ export const usersLocators = {
    */
   addApiKey: (username: string): string => `[data-test="link-add-api-key-${kebabTestSegment(username)}"]`,
 
+  /**
+   * The Profile card's readouts, each `tnTestIdType="text"` scoped by username:
+   * `['profile-full-name', user().username]` and so on. Full Name and Email are
+   * rendered only while the user has one.
+   */
+  profileFullName: (username: string): string => (
+    `[data-test="text-profile-full-name-${kebabTestSegment(username)}"]`
+  ),
+  profileEmail: (username: string): string => `[data-test="text-profile-email-${kebabTestSegment(username)}"]`,
+  profileHomeDirectory: (username: string): string => (
+    `[data-test="text-profile-home-directory-${kebabTestSegment(username)}"]`
+  ),
+
+  /** The Access card's shell line: "Shell Access: <path>", or "No Shell Access". */
+  shellAccess: (username: string): string => `[data-test="text-shell-access-${kebabTestSegment(username)}"]`,
+
   /** The Access card's SSH line: which SSH logins the user has, or "No SSH Access". */
   sshAccess: (username: string): string => `[data-test="text-ssh-access-${kebabTestSegment(username)}"]`,
 
@@ -115,6 +131,42 @@ export const usersLocators = {
      */
     fullNameValue: '[data-test="text-full-name"]',
     fullName: '[data-test="input-full-name"]',
+    /**
+     * Email, the same inline-editable shape. The readout is an empty `<div>` while
+     * the user has no email, so a test clicking it seeds one first.
+     */
+    emailValue: '[data-test="text-email"]',
+    email: '[data-test="input-email"]',
+    /**
+     * The Groups editable's readout. It shows the primary group, and clicking it
+     * opens the primary group picker and {@link groups} together.
+     */
+    primaryGroupValue: '[data-test="text-primary-group"]',
+    /** Auxiliary Groups, `<tn-chip-input [testId]="'groups'">`, offering existing groups only. */
+    groups: '[data-test="chip-input-groups"]',
+    /** A suggestion under {@link groups}. Keyed by its label, which is the group name. */
+    groupsOption: (group: string): string => `[data-test="option-groups-${kebabTestSegment(group)}"]`,
+    /** The Home Directory editable's readout. */
+    homeValue: '[data-test="text-home-directory"]',
+    /** `<tn-checkbox formControlName="home_create" [testId]="'home-create'">`. */
+    homeCreate: '[data-test="checkbox-home-create"]',
+    /** `ix-explorer formControlName="home"`: its `tn-file-picker`'s typable input takes the control name. */
+    home: '[data-test="input-home"]',
+    /** The home path's validation message, which `ix-explorer` renders as `text-<control>-errors`. */
+    homeErrors: '[data-test="text-home-errors"]',
+    /** The Shell editable's readout. The row is rendered only while Shell Access is ticked. */
+    shellValue: '[data-test="text-shell"]',
+    /** `<tn-select [testId]="'shell'">`. */
+    shell: '[data-test="select-shell"]',
+    /** Keyed by label, which `user.shell_choices` gives as the binary's name: `bash`, `zsh`. */
+    shellOption: (label: string): string => `[data-test="option-shell-${kebabTestSegment(label)}"]`,
+    /** `<tn-checkbox formControlName="smb" testId="smb-access">` in Allow Access. */
+    smbAccess: '[data-test="checkbox-smb-access"]',
+    /**
+     * Raised under {@link smbAccess} when an edit turns SMB on without a new
+     * password. It is a form-group error, so it holds Save disabled as well.
+     */
+    smbAccessError: '[data-test="text-smb-access-error"]',
     /** `<tn-checkbox formControlName="truenas_access" testId="truenas-access">` */
     truenasAccess: '[data-test="checkbox-truenas-access"]',
     /**

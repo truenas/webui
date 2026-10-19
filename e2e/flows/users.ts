@@ -107,6 +107,23 @@ export async function openUserDetails(page: Page, username: string): Promise<voi
 }
 
 /**
+ * Opens the edit form for a user, from the Users list as a user would.
+ *
+ * Edit is keyed on the *full name* (see `usersLocators.editUser`), so the caller
+ * passes the one the account has now. Waits on the username field, which the
+ * form fills from the record it was opened with.
+ */
+export async function openEditUserForm(
+  page: Page,
+  { username, fullName }: { username: string; fullName: string },
+): Promise<void> {
+  await openUserDetails(page, username);
+
+  await page.locator(usersLocators.editUser(fullName)).click();
+  await expect(page.locator(usersLocators.form.username)).toHaveValue(username);
+}
+
+/**
  * Locks or unlocks the user whose details are open, through the Access card.
  *
  * Both raise the shared confirmation without its tick box. The card swaps the
