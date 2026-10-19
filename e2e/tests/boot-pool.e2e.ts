@@ -3,8 +3,8 @@
  * the dialog refuses an interval under a day; activates another boot environment
  * and then the original again; and attaches an unused disk to the boot pool as a
  * mirror. All from System > Boot and the Boot Pool Status page it links to.
- * Detaching it again through the UI is written but marked fixme, because Boot
- * Pool Status cannot do it yet — the reason is above that test.
+ * Detaching it again through the UI is written but expected to fail, because
+ * Boot Pool Status cannot do it yet (#14710) — the reason is above that test.
  *
  * Each is asserted twice: the screen, and middleware's own record —
  * `boot.get_state`, `boot.get_disks`, `boot.environment.query`,
@@ -257,11 +257,11 @@ test('an admin mirrors the boot pool onto an unused disk', async ({ page, api })
   }
 });
 
-// Fixme until Boot Pool Status can detach a disk from the mirror: it draws Detach
+// Not run until Boot Pool Status can detach a disk from the mirror: it draws Detach
 // only on a MIRROR row whose topology entry has a `path`, which a ZFS mirror vdev
 // does not have, and it sends `boot.detach` the row's name minus its first five
 // characters (`r-0` for `mirror-0`). Read from the source; the product fix is
-// proposed as its own ticket on #14670. Remove this marker with that fix.
+// #14710. Remove this marker with that fix.
 test.fixme('an admin detaches the disk the boot pool was mirrored onto', async ({ page, api }) => {
   const { startingDisks, disk } = await prepareMirror(api);
   const bootDevice = await findBootDevice(api);
