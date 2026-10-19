@@ -140,7 +140,8 @@ test('Editing profile and access fields leaves the home directory alone', async 
   });
   expect(user?.groups).toContain(group?.id);
 
-  // Mode and owner as seeded: no `home_mode` reached middleware to re-apply them.
+  // Mode and owner as seeded. A save that sent the home keys before the form had
+  // read the real mode would have reset it to the form's default of 700.
   expect(await readOwnership(api, home)).toMatchObject({ user: username, mode: seededHomeMode });
 });
 
