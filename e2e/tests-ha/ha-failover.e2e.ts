@@ -53,23 +53,17 @@ test('an admin fails the pair over to controller 2, and HA comes back with contr
     await expect(page.locator(haStatusLocators.systemTaskMessage)).toBeVisible();
     await expect(page.locator(signinLocators.username)).toBeVisible({ timeout: failoverTimeoutMs });
 
-    // TEMP: workarounds for two app defects, both of which leave the sign-in
-    // stuck. Remove both once the app signs in straight after a failover.
+    // TEMP: a workaround for an app defect that leaves the sign-in stuck.
+    // Remove it once the app signs in straight after a failover: on the
+    // sign-in page the app returned to, `auth.login_ex` succeeds but the app
+    // sends nothing after it — the typed client never reports itself
+    // authenticated on the reconnected socket, so the sign-in waits forever.
+    // A fresh page load starts a fresh client.
     //
-    // 1. On the sign-in page the app returned to, `auth.login_ex` succeeds
-    //    but the app sends nothing after it: the typed client never reports
-    //    itself authenticated on the reconnected socket, so the sign-in waits
-    //    forever. A fresh page load starts a fresh client.
-    // 2. Signed in while controller 2 is still taking over
-    //    (`LOC_FAILOVER_ONGOING`), the app waits for the
-    //    `failover.events.vrrp_master` job to finish
-    //    (`FailoverValidationService.waitForFailoverCompletion`) and never
-    //    sees it do so. Waiting for the takeover first skips that path.
-    await expect.poll(async () => {
-      const failover = await withClient(config, readFailover);
-      return failover.node === 'B' && failover.status === 'MASTER'
-        && !failover.reasons.includes('LOC_FAILOVER_ONGOING');
-    }, { timeout: failoverTimeoutMs, intervals: [5_000] }).toBe(true);
+    // The sign-in itself lands while controller 2 is still taking over, as a
+    // user's would: it reports BACKUP and `LOC_FAILOVER_ONGOING` for the first
+    // part of its `vrrp_master` job, and the app waits that out
+    // (`FailoverValidationService`).
     await page.reload();
     await expect(page.locator(signinLocators.username)).toBeEnabled({ timeout: failoverTimeoutMs });
     await submitSignIn(page, config.username, config.password);
