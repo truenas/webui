@@ -113,7 +113,7 @@ export const bootEnvironmentLocators = {
      */
     toggle: (guid: string): string => `[data-test="button-toggle-row-${kebabTestSegment(guid)}"]`,
 
-    /** A device's actions menu, rendered only on a disk and on a mirror that carries a `path`. */
+    /** A device's actions menu, rendered only on a disk or a mirror whose topology entry carries a `path`. */
     actions: (name: string): string => `[data-test="button-${kebabTestSegment(name)}-actions"]`,
     /** In a disk's menu, only while the boot pool is a single disk. */
     attach: '[data-test="button-attach"]',

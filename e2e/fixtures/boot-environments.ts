@@ -166,22 +166,24 @@ export async function ensureRunningBootEnvironmentActivated(client: E2eApiClient
 const bootDiskJobTimeoutMs = 5 * 60_000;
 
 /**
- * Takes every disk off the boot pool that was not on it at the start, and wipes it.
+ * Takes every disk off the boot pool that was not on it at the start, and wipes
+ * it — and wipes `attachedDisk` too, which a test that detached it through the UI
+ * has already taken off.
  *
  * `originalDisks` is what {@link listBootDisks} said before the test touched
  * anything. Only a disk outside that list is ever detached or wiped, so the disk
  * the appliance boots from cannot be either.
  *
  * Detached by the partition's name in the topology, which is what
- * `zfs.pool.detach` matches on. Wiped afterwards because the detach leaves the
- * boot partitions on the disk.
+ * `zfs.pool.detach` matches on. Wiped because a detach leaves the boot partitions
+ * on the disk.
  */
-export async function ensureBootPoolDisksOnly(client: E2eApiClient, originalDisks: string[]): Promise<void> {
+export async function ensureBootPoolDisksOnly(
+  client: E2eApiClient,
+  originalDisks: string[],
+  attachedDisk: string | undefined,
+): Promise<void> {
   const extras = (await listBootDisks(client)).filter((disk) => !originalDisks.includes(disk));
-  if (!extras.length) {
-    return;
-  }
-
   const partitions = (await findBootPoolTopology(client)).flatMap((device) => [device, ...device.children]);
 
   for (const disk of extras) {
@@ -196,6 +198,14 @@ export async function ensureBootPoolDisksOnly(client: E2eApiClient, originalDisk
     }
 
     await firstValueFrom(client.api.call('boot.detach', [partition.name]).pipe(timeout(slowCallTimeoutMs)));
+  }
+
+  const toWipe = new Set(extras);
+  if (attachedDisk && !originalDisks.includes(attachedDisk)) {
+    toWipe.add(attachedDisk);
+  }
+
+  for (const disk of toWipe) {
     await runJob(
       client,
       () => client.api.callAndGetJobId('disk.wipe', [disk, 'QUICK']),

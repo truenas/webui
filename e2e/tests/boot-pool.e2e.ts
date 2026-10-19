@@ -60,8 +60,14 @@ const {
 /** The clone the activate test sets to boot next and back. */
 const cloneName = 'e2e-bootenv-activate';
 
-/** What the dialog changes the interval to. Not middleware's default of 7. */
-const changedInterval = 14;
+/**
+ * What the dialog changes the interval to: 14 days, or 21 on an appliance
+ * already at 14, so the change is always a change. Neither is middleware's
+ * default of 7.
+ */
+function changedIntervalFrom(before: number): number {
+  return before === 14 ? 21 : 14;
+}
 
 /**
  * A scrub of a boot pool holding a few GB. A ceiling on it finishing, not a wait
@@ -78,12 +84,16 @@ let baselineInterval: number | undefined;
 /** The boot pool's disks when the attach test started. Unset outside it, so nothing is detached. */
 let originalBootDisks: string[] | undefined;
 
+/** The disk the attach test picked, wiped afterwards whether or not it is still attached. */
+let attachedDisk: string | undefined;
+
 test.beforeAll(async ({ api }) => {
   baselineInterval = await readBootScrubInterval(api);
 });
 
 test.beforeEach(async ({ api }) => {
   originalBootDisks = undefined;
+  attachedDisk = undefined;
   if (baselineInterval !== undefined) {
     await setBootScrubInterval(api, baselineInterval);
   }
@@ -97,6 +107,7 @@ test.afterEach(async ({ api }) => {
   }
 
   const disks = originalBootDisks;
+  const attached = attachedDisk;
   await runCleanupSteps([
     ['restore the scrub interval', async () => {
       if (baselineInterval !== undefined) {
@@ -107,7 +118,7 @@ test.afterEach(async ({ api }) => {
     [`remove the boot environment ${cloneName}`, () => ensureBootEnvironmentAbsent(api, cloneName)],
     ['detach and wipe any disk attached to the boot pool', async () => {
       if (disks) {
-        await ensureBootPoolDisksOnly(api, disks);
+        await ensureBootPoolDisksOnly(api, disks, attached);
       }
     }],
   ]);
@@ -120,10 +131,13 @@ test('an admin scrubs the boot pool, and the scrub runs to the end', async ({ pa
 
   await scrubBootPool(page);
 
+  // Polled to any end state and then judged, so a failed scrub reports itself
+  // in seconds rather than as a timeout.
   await expect.poll(
     () => findBootScrubJobStateAfter(api, lastJobId),
-    { message: 'a boot.scrub job newer than the last should succeed', timeout: bootScrubTimeoutMs },
-  ).toBe('SUCCESS');
+    { message: 'a boot.scrub job newer than the last should finish', timeout: bootScrubTimeoutMs },
+  ).toMatch(/^(SUCCESS|FAILED|ABORTED)$/);
+  expect(await findBootScrubJobStateAfter(api, lastJobId)).toBe('SUCCESS');
 
   const scan = await findBootPoolScan(api);
   expect(scan).toMatchObject({ function: 'SCRUB', state: 'FINISHED' });
@@ -141,7 +155,7 @@ test('an admin changes the scrub interval, and the dialog refuses one under a da
   // field shows the interval as the run found it. Reopening after the change
   // below is what shows the dialog reads the config rather than a default.
   const before = await readBootScrubInterval(api);
-  expect(before, 'the interval should not already be the value this test sets').not.toBe(changedInterval);
+  const changedInterval = changedIntervalFrom(before);
 
   await goToBootEnvironments(page);
   await openBootPoolStats(page);
@@ -206,6 +220,7 @@ test('an admin mirrors the boot pool onto an unused disk, and detaches it again'
   const bootDevice = await findBootDevice(api);
   await requireUnusedDisks(api, 1);
   const disk = await pickUnusedDisk(api);
+  attachedDisk = disk;
 
   await goToBootEnvironments(page);
   await openBootPoolStatus(page, bootDevice);
