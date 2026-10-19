@@ -31,7 +31,7 @@ export const helptextInterfacesForm = {
  interfaces into a group. Groups apply to single systems. A failover\
  occurs when every interface in the group fails. Groups with a single\
  interface trigger a failover when that interface fails. Configuring the\
- system to failover when any interface fails requires marking each\
+ system to fail over when any interface fails requires marking each\
  interface as critical and placing them in separate groups.'),
     aliasAddressTooltip: T('Alias for the identical interface\
  on the other TrueNAS controller. The alias can be an IPv4 or IPv6 address.'),

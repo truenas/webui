@@ -62,7 +62,7 @@ export class OauthButtonComponent implements OnDestroy {
         if (this.isLoggedIn()) {
           return this.translate.instant('Logged In To Jira');
         }
-        return this.translate.instant('Login To Jira To Submit');
+        return this.translate.instant('Log In To Jira To Submit');
 
       case OauthButtonType.Provider:
         if (this.isLoggedIn()) {

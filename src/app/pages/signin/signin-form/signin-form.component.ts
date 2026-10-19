@@ -166,7 +166,7 @@ export class SigninFormComponent implements OnInit {
       }).join(', ');
 
       this.lastLoginError.set(this.translate.instant(
-        'Logging in at the current URL is not possible.<br>To login, please navigate to: {links}',
+        'Logging in at the current URL is not possible.<br>To log in, please navigate to: {links}',
         { links },
       ));
       this.snackbar.error(this.translate.instant('Logging in at the current URL is not possible.'));

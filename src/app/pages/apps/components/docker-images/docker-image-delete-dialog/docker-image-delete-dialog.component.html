@@ -9,7 +9,7 @@
       }
       @if (successCount) {
         <strong tnTestIdType="text" [tnTestId]="'deleted-count'">
-          {{ '{n, plural, one {# docker image} other {# docker images}} has been deleted.' | translate: { n: successCount } }}
+          {{ '{n, plural, one {# docker image has} other {# docker images have}} been deleted.' | translate: { n: successCount } }}
         </strong>
       }
     </p>

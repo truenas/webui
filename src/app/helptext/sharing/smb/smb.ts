@@ -200,7 +200,7 @@ export const helptextSharingSmb = {
  Read access and Execute permission on the object (RX).<br><i>Change</i>: Read\
  access, Execute permission, Write access, and Delete object (RXWD).<br><i>Full</i>:\
  Read access, Execute permission, Write access, Delete object, change Permissions, and take Ownership (RXWDPO).<br><br>\
- For more details, see <a href="https://www.samba.org/samba/docs/current/man-html/smbcacls.1.html" target="_blank">smbacls(1)</a>.',
+ For more details, see <a href="https://www.samba.org/samba/docs/current/man-html/smbcacls.1.html" target="_blank">smbcacls(1)</a>.',
   ),
   aeTypeTooltip: T(
     'How permissions are applied to the share.\
@@ -248,7 +248,7 @@ export const helptextSharingSmb = {
   ),
   restartLearnMoreExamples: T('Examples of changes that benefit from a restart include:'),
   restartExampleTimeMachine: T('Time Machine settings - changes how the SMB server advertises itself to clients.'),
-  restartExampleHostsAllowDeny: T('Hosts Allow/Deny - more restrictive settings may not deny access to currently connected clients until they reconnect.'),
-  restartExamplePath: T('Path changes - clients will not see this change until they negotiate a new session.'),
+  restartExampleHostsAllowDeny: T('Hosts Allow/Deny: more restrictive settings may not deny access to currently connected clients until they reconnect.'),
+  restartExamplePath: T('Path changes: clients will not see this change until they negotiate a new session.'),
   restartLearnMoreOtherCases: T('Other configuration changes may also benefit from a restart.'),
 };

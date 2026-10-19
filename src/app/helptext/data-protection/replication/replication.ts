@@ -28,7 +28,7 @@ export const helptextReplication = {
  <i>&percnt;Y</i>, <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i> strings that\
  match the snapshots to include in the replication. Separate entries by\
  pressing <code>Enter</code>. The number of snapshots matching the\
- patterns are shown.'),
+ patterns is shown.'),
   netcatActiveSideTooltip: T('Establishing a connection requires\
  that one of the connection systems has open TCP ports. Choose which\
  system (<i>LOCAL</i> or <i>REMOTE</i>) will open ports. Consult your IT\
@@ -63,7 +63,7 @@ export const helptextReplication = {
  destination system or click in the field to manually type a location\
  path (Example: <code>pool1/dataset1</code>). Selecting a location\
  defines the full path to that location as the destination. Appending a\
- name to the path will create new zvol at that location.<br><br>\
+ name to the path will create a new zvol at that location.<br><br>\
  For example, selecting <i>pool1/dataset1</i> will store\
  snapshots in <i>dataset1</i>, but clicking the path and typing\
  <code>/zvol1</code> after <i>dataset1</i> will create <i>zvol1</i> for\
@@ -99,7 +99,7 @@ export const helptextReplication = {
  schedule removes the <b>Schedule</b> field.'),
 
   nameRegexTooltip: T('Using this option will replicate all snapshots\
- which names match specified regular expression. The\
+ whose names match the specified regular expression. The\
  performance on the systems with large number of snapshots\
  will be lower, as snapshots metadata needs to be read in order\
  to determine snapshots creation order.'),
@@ -140,20 +140,20 @@ export const helptextReplication = {
  choose <i>Custom</i> to use the advanced scheduler.'),
 
   restrictScheduleBeginTooltip: T('Daily time range for the specific\
- periodic snapshots to replicate, in 15 minute increments. Periodic snapshots\
+ periodic snapshots to replicate, in 15-minute increments. Periodic snapshots\
  created before the <i>Begin</i> time will not be included in the replication.'),
 
   restrictScheduleEndTooltip: T('Daily time range for the specific\
- periodic snapshots to replicate, in 15 minute increments. Snapshots created\
+ periodic snapshots to replicate, in 15-minute increments. Snapshots created\
  after the <i>End</i> time will not be included in the replication.'),
 
   onlyMatchingScheduleTooltip: T('Set to use the <i>Schedule</i> in place\
  of the <i>Replicate Specific Snapshots</i> time frame. The Schedule values are\
  read over the <i>Replicate Specific Snapshots</i> time frame.'),
 
-  readonlyTooltip: T('<b>SET</b> will changes all destination datasets to <code>readonly=on</code>\
+  readonlyTooltip: T('<b>SET</b> will change all destination datasets to <code>readonly=on</code>\
  after finishing the replication. <br><b>REQUIRE</b> stops replication unless all existing destination\
- datasets to have the property <code>readonly=on</code>. <br><b>IGNORE</b> disables checking the\
+ datasets have the property <code>readonly=on</code>. <br><b>IGNORE</b> disables checking the\
  <code>readonly</code> property during replication.'),
 
   encryptionTooltip: helptextReplicationWizard.encryptionTooltip,

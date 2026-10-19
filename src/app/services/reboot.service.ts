@@ -52,7 +52,7 @@ export class RebootService {
         this.isFailoverPromptOpen = true;
         return this.dialog.confirm({
           title: this.translate.instant('FIPS Settings'),
-          message: this.translate.instant('Failover is recommended for new FIPS setting to take effect. Would you like to failover now?'),
+          message: this.translate.instant('Failover is recommended for new FIPS setting to take effect. Would you like to fail over now?'),
           buttonText: this.translate.instant('Failover Now'),
         });
       }),

@@ -384,7 +384,7 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
         warnings.push({
           id: 'all-users-2fa',
           configureTitle: this.translate.instant('Configure'),
-          message: this.translate.instant('All users must have 2FA enabled and setup.'),
+          message: this.translate.instant('All users must have 2FA enabled and set up.'),
           navigateTo: ['/credentials/users'],
         });
       }
