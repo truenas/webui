@@ -8,7 +8,9 @@
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
+import { listDisks } from './disks';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
+import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 /** A boot environment as middleware reports it, with its id narrowed — see `GroupRecord`. */
@@ -55,9 +57,209 @@ export async function listBootEnvironmentNames(client: E2eApiClient): Promise<st
     .sort((a, b) => a.localeCompare(b));
 }
 
+/**
+ * One entry of the boot pool's topology: a partition such as `sda3`, or a vdev
+ * such as `mirror-0` with the partitions under it as `children`. `disk` names the
+ * whole disk a partition is on, and is null on a vdev.
+ */
+export interface BootPoolDevice {
+  name: string;
+  /** What Boot Pool Status keys a vdev's expand toggle by. */
+  guid: string;
+  type: string;
+  disk: string | null;
+  children: BootPoolDevice[];
+}
+
+/** The boot pool's last or current scan, as `boot.get_state` reports it. */
+export interface BootPoolScan {
+  function: string | null;
+  state: string | null;
+  errors: number | null;
+  start_time: { $date: number } | null;
+}
+
 /** What `boot.get_state` holds that a spec reads. The API client types topology entries only as `unknown`. */
 interface BootPoolState {
-  topology: { data: { name: string }[] } | null;
+  topology: { data: BootPoolDevice[] } | null;
+  scan: BootPoolScan | null;
+}
+
+async function readBootPoolState(client: E2eApiClient): Promise<BootPoolState> {
+  return await firstValueFrom(
+    client.api.call('boot.get_state').pipe(timeout(readTimeoutMs)),
+  ) as unknown as BootPoolState;
+}
+
+/** The boot pool's data vdevs: one partition on a single-disk boot pool, one `MIRROR` on a mirrored one. */
+export async function findBootPoolTopology(client: E2eApiClient): Promise<BootPoolDevice[]> {
+  return (await readBootPoolState(client)).topology?.data ?? [];
+}
+
+/** The boot pool's last or current scan, or null when it has none. */
+export async function findBootPoolScan(client: E2eApiClient): Promise<BootPoolScan | null> {
+  return (await readBootPoolState(client)).scan;
+}
+
+/** The whole disks the boot pool is on, sorted, e.g. `['sda']`. */
+export async function listBootDisks(client: E2eApiClient): Promise<string[]> {
+  const disks = await firstValueFrom(client.api.call('boot.get_disks').pipe(timeout(readTimeoutMs)));
+
+  return [...disks].sort((a, b) => a.localeCompare(b));
+}
+
+/**
+ * Whether `disk` is smaller, in bytes, than the largest of `bootDisks`.
+ *
+ * `boot.attach` partitions the new disk to hold a copy of the boot partition and
+ * refuses one without the room ("does not have enough space to hold the required
+ * new partitions"). A disk at least as large as the boot disk always has it.
+ */
+export async function isSmallerThanBootDisk(
+  client: E2eApiClient,
+  bootDisks: string[],
+  disk: string,
+): Promise<boolean> {
+  const disks = await listDisks(client);
+  const sizeOf = (name: string): number => {
+    const entry = disks.find((candidate) => candidate.name === name);
+    if (!entry) {
+      throw new Error(`disk.query reports no disk named "${name}".`);
+    }
+
+    return Number(entry.size);
+  };
+
+  return sizeOf(disk) < Math.max(...bootDisks.map(sizeOf));
+}
+
+/** The boot pool's scrub interval in days, `boot_scrub` in `system.advanced.config`. */
+export async function readBootScrubInterval(client: E2eApiClient): Promise<number> {
+  const config = await firstValueFrom(client.api.call('system.advanced.config').pipe(timeout(readTimeoutMs)));
+
+  return config.boot_scrub;
+}
+
+export async function setBootScrubInterval(client: E2eApiClient, days: number): Promise<void> {
+  await firstValueFrom(client.api.call('boot.set_scrub_interval', [days]).pipe(timeout(slowCallTimeoutMs)));
+}
+
+/** The id of the newest `boot.scrub` job middleware remembers, or 0 when there is none. */
+export async function findLatestBootScrubJobId(client: E2eApiClient): Promise<number> {
+  const jobs = await firstValueFrom(
+    client.api.query('core.get_jobs', [['method', '=', 'boot.scrub']]).pipe(timeout(readTimeoutMs)),
+  );
+
+  // `?? 0`: the generated query entity declares `id` optional, as `UserRecord` explains.
+  return Math.max(0, ...jobs.map((job) => job.id ?? 0));
+}
+
+/** The state of the oldest `boot.scrub` job newer than `afterId`, or undefined when there is none yet. */
+export async function findBootScrubJobStateAfter(client: E2eApiClient, afterId: number): Promise<string | undefined> {
+  const jobs = await firstValueFrom(
+    client.api
+      .query('core.get_jobs', [['method', '=', 'boot.scrub'], ['id', '>', afterId]])
+      .pipe(timeout(readTimeoutMs)),
+  );
+  const [first] = [...jobs].sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
+
+  return first?.state;
+}
+
+/**
+ * Makes the running boot environment the one set to boot next, if another one is.
+ *
+ * Runs before {@link ensureBootEnvironmentAbsent} on a clone a test activated: a
+ * boot environment set to boot next cannot be destroyed, and leaving one set
+ * changes what the appliance boots into on its next restart.
+ */
+export async function ensureRunningBootEnvironmentActivated(client: E2eApiClient): Promise<void> {
+  const bootEnvironments = await firstValueFrom(
+    client.api.query('boot.environment.query', []).pipe(timeout(readTimeoutMs)),
+  ) as BootEnvironmentRecord[];
+
+  if (!bootEnvironments.some((bootEnvironment) => bootEnvironment.activated && !bootEnvironment.active)) {
+    return;
+  }
+
+  const running = await findRunningBootEnvironment(client);
+  await firstValueFrom(
+    client.api.call('boot.environment.activate', [{ id: running.id }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/** A quick wipe of one 10GB disk takes seconds. Room for a slow appliance. */
+const bootDiskJobTimeoutMs = 5 * 60_000;
+
+/** `boot.attach` partitions the disk, resilvers onto it and installs a boot loader. A ceiling, not a wait. */
+const bootAttachJobTimeoutMs = 10 * 60_000;
+
+/**
+ * Mirrors a single-disk boot pool onto `disk`, for a test that acts on the
+ * mirror rather than on making it. The attach itself goes through the UI in the
+ * test that is about it.
+ */
+export async function attachBootDiskOverApi(client: E2eApiClient, disk: string): Promise<void> {
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('boot.attach', [disk, { expand: false }]),
+    {
+      timeoutMs: bootAttachJobTimeoutMs,
+      whatItCosts: `The boot pool may be left part-way through mirroring onto "${disk}".`,
+    },
+  );
+}
+
+/**
+ * Takes every disk off the boot pool that was not on it at the start, and wipes
+ * it — and wipes `attachedDisk` too, which a test that detached it through the UI
+ * has already taken off.
+ *
+ * `originalDisks` is what {@link listBootDisks} said before the test touched
+ * anything. Only a disk outside that list is ever detached or wiped, so the disk
+ * the appliance boots from cannot be either.
+ *
+ * Detached by the partition's name in the topology, which is what
+ * `zfs.pool.detach` matches on. Wiped because a detach leaves the boot partitions
+ * on the disk.
+ */
+export async function ensureBootPoolDisksOnly(
+  client: E2eApiClient,
+  originalDisks: string[],
+  attachedDisk: string | undefined,
+): Promise<void> {
+  const extras = (await listBootDisks(client)).filter((disk) => !originalDisks.includes(disk));
+  const partitions = (await findBootPoolTopology(client)).flatMap((device) => [device, ...device.children]);
+
+  for (const disk of extras) {
+    // By `disk` alone. Matching a partition by its name instead could land on
+    // the original disk's (`sdaa3` starts with `sda`), and this must never do that.
+    const partition = partitions.find((device) => device.disk === disk);
+    if (!partition) {
+      throw new Error(
+        `boot.get_disks lists "${disk}", but no device in boot.get_state names it as its disk, `
+        + 'so it is left attached rather than guessed at. Detach it by hand.',
+      );
+    }
+
+    await firstValueFrom(client.api.call('boot.detach', [partition.name]).pipe(timeout(slowCallTimeoutMs)));
+  }
+
+  const toWipe = new Set(extras);
+  if (attachedDisk && !originalDisks.includes(attachedDisk)) {
+    toWipe.add(attachedDisk);
+  }
+
+  for (const disk of toWipe) {
+    await runJob(
+      client,
+      () => client.api.callAndGetJobId('disk.wipe', [disk, 'QUICK']),
+      {
+        timeoutMs: bootDiskJobTimeoutMs,
+        whatItCosts: `Disk "${disk}" still carries boot partitions, so later runs may not offer it as unused.`,
+      },
+    );
+  }
 }
 
 /**
@@ -65,11 +267,7 @@ interface BootPoolState {
  * a partition such as `sda3`, or a vdev such as `mirror-0` on a mirrored boot pool.
  */
 export async function findBootDevice(client: E2eApiClient): Promise<string> {
-  const state = await firstValueFrom(
-    client.api.call('boot.get_state').pipe(timeout(readTimeoutMs)),
-  ) as unknown as BootPoolState;
-
-  const device = state.topology?.data[0];
+  const [device] = await findBootPoolTopology(client);
   if (!device) {
     throw new Error('boot.get_state reports no device in the boot pool');
   }
