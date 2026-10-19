@@ -86,8 +86,11 @@ export const bootEnvironmentLocators = {
     diskOption: (devname: string): string => `[data-test^="option-dev-${kebabTestSegment(devname)}-"]`,
     /** "Use all disk space". Unticked when the dialog opens. */
     expand: '[data-test="checkbox-expand"]',
-    /** Reached through the dialog's action row: `button-save` is a common id. */
-    save: '[data-test="actions-boot-pool-attach"] [data-test="button-save"]',
+    /**
+     * The bare id: the dialog's `ix-form-actions` carries no `tnTestId`, so there is no
+     * action row to scope it by, and Boot Pool Status behind it renders no other Save.
+     */
+    save: '[data-test="button-save"]',
   },
 
   cloneForm: {
