@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, of, catchError, filter, map, switchMap, take, timeout, finalize,
+  EMPTY, Observable, of, catchError, exhaustMap, filter, map, race, switchMap, take, timeout, timer, finalize,
 } from 'rxjs';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
@@ -31,6 +31,7 @@ export class FailoverValidationService {
   private loader = inject(LoaderService);
 
   private readonly FAILOVER_TIMEOUT_MS = 300000; // 5 minutes
+  private readonly FAILOVER_POLL_INTERVAL_MS = 5000;
   private activeLoader = false;
 
   /**
@@ -95,14 +96,7 @@ export class FailoverValidationService {
         }
 
         if (status !== FailoverStatus.Master) {
-          return of({
-            success: false,
-            isHaLicensed: true,
-            error: this.translate.instant(
-              'TrueNAS High Availability is in an inconsistent state. Please try again in a few minutes and contact the system administrator if the problem persists.',
-            ),
-            errorType: FailoverErrorType.FailoverFailed,
-          });
+          return this.checkTakeoverInProgress();
         }
 
         // Status is MASTER, check for ongoing failover
@@ -110,6 +104,49 @@ export class FailoverValidationService {
       }),
       catchError((error: unknown) => this.handleApiError(error, 'status', true)),
     );
+  }
+
+  /**
+   * A node that is taking over is not MASTER yet: middleware reports `BACKUP` (its status from before
+   * the failover, cached until the pools are imported) or `ELECTING`/`IMPORTING` for the first part
+   * of its `vrrp_master` job, though it already holds the VIP the browser reconnected to. Signing in
+   * then waits for the takeover instead of failing; any other node that is not MASTER is refused.
+   */
+  protected checkTakeoverInProgress(): Observable<FailoverValidationResult> {
+    return this.api.call('failover.disabled.reasons').pipe(
+      switchMap((reasons) => {
+        if (!reasons.includes(FailoverDisabledReason.LocFailoverOngoing)) {
+          return of(this.inconsistentStateResult());
+        }
+
+        return this.waitForFailoverCompletion().pipe(
+          switchMap((result) => (result.success ? this.confirmMaster() : of(result))),
+        );
+      }),
+      catchError((error: unknown) => this.handleApiError(error, 'reasons', true)),
+    );
+  }
+
+  private confirmMaster(): Observable<FailoverValidationResult> {
+    return this.api.call('failover.status').pipe(
+      map((status) => {
+        return status as FailoverStatus === FailoverStatus.Master
+          ? { success: true, isHaLicensed: true }
+          : this.inconsistentStateResult();
+      }),
+      catchError((error: unknown) => this.handleApiError(error, 'status', true)),
+    );
+  }
+
+  private inconsistentStateResult(): FailoverValidationResult {
+    return {
+      success: false,
+      isHaLicensed: true,
+      error: this.translate.instant(
+        'TrueNAS High Availability is in an inconsistent state. Please try again in a few minutes and contact the system administrator if the problem persists.',
+      ),
+      errorType: FailoverErrorType.FailoverFailed,
+    };
   }
 
   protected checkFailoverDisabledReasons(): Observable<FailoverValidationResult> {
@@ -140,7 +177,7 @@ export class FailoverValidationService {
       TaskState.Finished,
     ];
 
-    return this.api.subscribe('core.get_jobs').pipe(
+    const jobFinished$ = this.api.subscribe('core.get_jobs').pipe(
       // A removal carries no job to inspect. The UI's `Job` narrows the generated entry's loose fields.
       map((event) => (event.msg === 'removed' ? null : event.fields as unknown as Job)),
       filter((job): job is Job => {
@@ -148,29 +185,20 @@ export class FailoverValidationService {
           && terminalStates.includes(job.state);
       }),
       take(1), // Take first event with terminal state
+      map((job) => this.jobResult(job)),
+    );
+
+    // The job's last event can come before this subscription starts, and is then never seen: the
+    // takeover is also over once this node stops reporting it, which is checked as well.
+    const takeoverOver$ = timer(this.FAILOVER_POLL_INTERVAL_MS, this.FAILOVER_POLL_INTERVAL_MS).pipe(
+      exhaustMap(() => this.api.call('failover.disabled.reasons').pipe(catchError(() => EMPTY))),
+      filter((reasons) => !reasons.includes(FailoverDisabledReason.LocFailoverOngoing)),
+      take(1),
+      map((): FailoverValidationResult => ({ success: true, isHaLicensed: true })),
+    );
+
+    return race(jobFinished$, takeoverOver$).pipe(
       timeout(this.FAILOVER_TIMEOUT_MS),
-      switchMap((job) => {
-        if (job.state === JobState.Success) {
-          return of({ success: true, isHaLicensed: true });
-        }
-
-        // Handle all failure terminal states
-        let errorMessage: string;
-        if (job.state === JobState.Aborted) {
-          errorMessage = this.translate.instant('Failover operation was aborted.');
-        } else if (job.error) {
-          errorMessage = this.translate.instant('Failover operation failed: {error}', { error: job.error });
-        } else {
-          errorMessage = this.getErrorMessage(FailoverErrorType.FailoverFailed);
-        }
-
-        return of({
-          success: false,
-          isHaLicensed: true,
-          error: errorMessage,
-          errorType: FailoverErrorType.FailoverFailed,
-        });
-      }),
       catchError((error: unknown) => this.handleApiError(error, 'operation', true)),
       finalize(() => {
         // Always clean up loader, even if component is destroyed
@@ -180,6 +208,29 @@ export class FailoverValidationService {
         }
       }),
     );
+  }
+
+  private jobResult(job: Job): FailoverValidationResult {
+    if (job.state === JobState.Success) {
+      return { success: true, isHaLicensed: true };
+    }
+
+    // Handle all failure terminal states
+    let errorMessage: string;
+    if (job.state === JobState.Aborted) {
+      errorMessage = this.translate.instant('Failover operation was aborted.');
+    } else if (job.error) {
+      errorMessage = this.translate.instant('Failover operation failed: {error}', { error: job.error });
+    } else {
+      errorMessage = this.getErrorMessage(FailoverErrorType.FailoverFailed);
+    }
+
+    return {
+      success: false,
+      isHaLicensed: true,
+      error: errorMessage,
+      errorType: FailoverErrorType.FailoverFailed,
+    };
   }
 
   protected handleApiError(error: unknown, context: string, isHaLicensed = false):
