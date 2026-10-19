@@ -9,13 +9,14 @@
  *
  * ## The image
  *
- * BusyBox 1.36 from Amazon ECR Public's mirror of the Docker official images, which keeps every pull
- * off Docker Hub. The app runs it as one service with `sleep infinity`, no ports and no volumes.
+ * BusyBox 1.36 from the containerd project's copy on ghcr.io. The app runs it as one service with
+ * `sleep infinity`, no ports and no volumes.
  *
- * ECR Public rate-limits anonymous pulls too, and on CI it failed an install from YAML on both
- * attempts. So the three app tests pull the image over the API first, retrying a throttled pull,
- * and the install finds it locally. Only the pull test, which is about pulling, takes it from the
- * registry through the UI.
+ * Every registry rate-limits anonymous pulls: Docker Hub per IP, and Amazon ECR Public, which this
+ * spec used before, failed installs on CI with `toomanyrequests`. So the three app tests pull the
+ * image over the API first, retrying a throttled pull, and the service says `pull_policy: never`,
+ * so the install and the edit run the local image and never reach a registry. Only the pull test,
+ * which is about pulling, takes it from the registry through the UI.
  *
  * ## Setup
  *
@@ -61,7 +62,7 @@ const pool = 'e2e_apps';
 const appName = 'e2e-yaml-app';
 const service = 'e2e';
 
-const image = 'public.ecr.aws/docker/library/busybox';
+const image = 'ghcr.io/containerd/busybox';
 const tag = '1.36';
 const repoTag = `${image}:${tag}`;
 
@@ -69,6 +70,7 @@ const compose = [
   'services:',
   `  ${service}:`,
   `    image: ${repoTag}`,
+  '    pull_policy: never',
   '    command: sleep infinity',
   '',
 ].join('\n');
@@ -78,6 +80,7 @@ const editedCompose = [
   'services:',
   `  ${service}:`,
   `    image: ${repoTag}`,
+  '    pull_policy: never',
   '    command: sleep infinity',
   '    environment:',
   '      E2E: "1"',

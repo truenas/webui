@@ -40,10 +40,10 @@ artifact of an E2E run. The narrative is in git history up to its removal.
 - **Outbound HTTPS to github.com and ghcr.io** for `tests/apps-install.e2e.ts`,
   which syncs the apps catalog from github.com/truenas/apps and installs IT
   Tools, whose image is on ghcr.io. Without it those tests fail at the catalog
-  sync or the install job.
-- **Outbound HTTPS to public.ecr.aws** for `tests/apps-custom-yaml.e2e.ts`,
-  which installs a custom app running BusyBox from Amazon ECR Public and pulls
-  the same image. Without it those tests fail at the install or the pull job.
+  sync or the install job. `tests/apps-custom-yaml.e2e.ts` needs ghcr.io too:
+  it pulls BusyBox from there before installing a custom app that runs it, and
+  pulls it again from Manage Container Images. Without it those tests fail at
+  the pull.
 
 ## Known gaps
 
