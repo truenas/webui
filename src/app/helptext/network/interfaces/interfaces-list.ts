@@ -48,5 +48,5 @@ export const helptextInterfaces = {
   haEnabledText: T('Cannot edit while HA is enabled.'),
   goToHa: T('Go to HA settings'),
 
-  deleteDialogText: T('This change can interrupt connectivity and must be tested before making permanent. '),
+  deleteDialogText: T('This change can interrupt connectivity and must be tested before making it permanent. '),
 };

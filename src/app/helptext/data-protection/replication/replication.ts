@@ -82,7 +82,7 @@ export const helptextReplication = {
   propertiesTooltip: T('Include dataset properties with the replicated\
  snapshots.'),
 
-  propertiesOverrideTooltip: T('Replace existing dataset properties with these new defined properties in the replicated files.'),
+  propertiesOverrideTooltip: T('Replace existing dataset properties with these newly defined properties in the replicated files.'),
 
   propertiesExcludeTooltip: T('List any existing dataset properties to remove from the replicated files.'),
 
@@ -100,8 +100,8 @@ export const helptextReplication = {
 
   nameRegexTooltip: T('Using this option will replicate all snapshots\
  whose names match the specified regular expression. The\
- performance on the systems with large number of snapshots\
- will be lower, as snapshots metadata needs to be read in order\
+ performance on systems with a large number of snapshots\
+ will be lower, as snapshot metadata needs to be read in order\
  to determine snapshots creation order.'),
   alsoIncludeNamingSchemaTooltip: T('Pattern of naming custom\
  snapshots to include in the replication with the periodic snapshot\

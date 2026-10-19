@@ -135,7 +135,7 @@ export class UpdateComponent implements OnInit {
       return this.translate.instant('Network connection was closed or timed out. Try again later.');
     }
     if (errname === (ApiErrorName.NetworkUnreachable as string)) {
-      return this.translate.instant('Network resource is not reachable, verify your network settings and health.');
+      return this.translate.instant('Network resource is not reachable. Verify your network settings and health.');
     }
 
     // For other errors, show the reason

@@ -18,7 +18,7 @@ export const helptextApps = {
   },
 
   dockerRegistries: {
-    tooltip: T('Signing in to a registry, such as Docker Hub, is not required for Apps to function, but may help if you experience rate limiting issues.'),
+    tooltip: T('Signing in to a registry, such as Docker Hub, is not required for Apps to function, but may help if you experience rate-limiting issues.'),
   },
 
   installing: T('Installing'),
@@ -32,7 +32,7 @@ export const helptextApps = {
 
   dockerSettings: {
     addressPoolsBase: T('Base network the pool allocates subnets from. Host bits are ignored; the value is saved as its canonical network address (for example, 172.17.0.0/12 becomes 172.16.0.0/12).'),
-    addressPoolsSize: T('Network size of each docker network which will be cut off from base subnet.'),
+    addressPoolsSize: T('Network size of each docker network which will be cut off from the base subnet.'),
   },
 
   bulkActions: {
@@ -70,7 +70,7 @@ export const helptextApps = {
       tooltip: T('Application name must have the following:\
  1) Lowercase alphanumeric characters can be specified\
  2) Name must start with an alphabetic character and can end with alphanumeric character\
- 3) Hyphen \'-\' is allowed but not as the first or last character e.g abc123, abc, abcd-1232'),
+ 3) Hyphen \'-\' is allowed but not as the first or last character, e.g., abc123, abc, abcd-1232'),
     },
   },
 
@@ -78,13 +78,13 @@ export const helptextApps = {
     nameGroup: {
       version: T('Version'),
       nameValidationRules: T('Name must start and end with a lowercase alphanumeric character.\
- Hyphen is allowed in the middle e.g abc123, abc, abcd-1232'),
+ Hyphen is allowed in the middle, e.g., abc123, abc, abcd-1232'),
     },
   },
 
   settingsForm: {
     preferredTrains: {
-      tooltip: T('Please specify trains from which UI should retrieve available applications for the catalog.'),
+      tooltip: T('Please specify trains from which the UI should retrieve available applications for the catalog.'),
     },
     installNvidiaDriver: {
       tooltip: T('Enable or disable NVIDIA GPU support.'),

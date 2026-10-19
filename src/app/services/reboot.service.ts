@@ -32,7 +32,7 @@ export class RebootService {
   promptForRestart(): Observable<unknown> {
     return this.dialog.confirm({
       title: this.translate.instant('FIPS Settings'),
-      message: this.translate.instant('Restart is recommended for new FIPS setting to take effect. Would you like to restart now?'),
+      message: this.translate.instant('Restart is recommended for the new FIPS setting to take effect. Would you like to restart now?'),
       buttonText: this.translate.instant('Restart Now'),
     })
       .pipe(
@@ -72,7 +72,7 @@ export class RebootService {
         this.isRemotePromptOpen = true;
         return this.dialog.confirm({
           title: this.translate.instant('FIPS Settings'),
-          message: this.translate.instant('Restart of a remote system is required for new FIPS setting to take effect. Would you like to restart standby now?'),
+          message: this.translate.instant('Restart of a remote system is required for the new FIPS setting to take effect. Would you like to restart standby now?'),
           buttonText: this.translate.instant('Restart Standby'),
         });
       }),

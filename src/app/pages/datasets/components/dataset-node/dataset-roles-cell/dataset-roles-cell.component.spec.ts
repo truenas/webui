@@ -36,7 +36,7 @@ describe('DatasetRolesCellComponent', () => {
 
     expect(await ixIcon.getName()).toBe('apps');
     expect(spectator.query(TnTooltipDirective)!.message()).toBe(
-      'This dataset is used to store apps config and other container related data',
+      'This dataset is used to store apps config and other container-related data',
     );
   });
 

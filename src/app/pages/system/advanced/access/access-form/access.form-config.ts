@@ -43,7 +43,7 @@ export function getAccessFormConfig(
         name: 'login_banner',
         type: 'textarea',
         label: T('Login Banner'),
-        tooltip: T('When set, the following text will be shown prior to showing login page to the user'),
+        tooltip: T('When set, the following text will be shown prior to showing the login page to the user'),
       },
     ],
     loadData: () => forkJoin([

@@ -578,7 +578,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
       groupSummary: T('Scrub is paused on {count, plural, other {# pools}}'),
-      contextualHelp: T('Pool scrub is paused or not running. This may be due to pool being offline or scrub task being manually paused. Check pool status and scheduled scrub configuration.'),
+      contextualHelp: T('Pool scrub is paused or not running. This may be due to the pool being offline or the scrub task being manually paused. Check pool status and scheduled scrub configuration.'),
       actions: [
         {
           label: T('View Storage'),
@@ -594,7 +594,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
       groupSummary: T('Scrub is not running on {count, plural, other {# pools}}'),
-      contextualHelp: T('Pool scrub is not running. This may be due to pool being offline or scrub task configuration issues. Check pool status and scheduled scrub configuration.'),
+      contextualHelp: T('Pool scrub is not running. This may be due to the pool being offline or scrub task configuration issues. Check pool status and scheduled scrub configuration.'),
       actions: [
         {
           label: T('View Storage'),

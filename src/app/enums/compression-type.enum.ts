@@ -10,6 +10,6 @@ export enum CompressionType {
 export const compressionTypeNames = new Map<CompressionType, string>([
   [CompressionType.Disabled, T('Disabled')],
   [CompressionType.Lz4, T('lz4 (fastest)')],
-  [CompressionType.Pigz, T('pigz (all rounder)')],
+  [CompressionType.Pigz, T('pigz (all-rounder)')],
   [CompressionType.PlZip, T('plzip (best compression)')],
 ]);

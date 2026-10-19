@@ -165,7 +165,7 @@ describe('UnusedDiskSelectComponent', () => {
 
     it('shows extra "Allow non-unique serialed disks" if user has such disks', async () => {
       const allowCheckbox = await loader.getHarness(
-        TnCheckboxHarness.with({ label: 'Allow non-unique serialed disks (not recommended)' }),
+        TnCheckboxHarness.with({ label: 'Allow disks with non-unique serial numbers (not recommended)' }),
       );
       expect(allowCheckbox).toBeTruthy();
       expect(await allowCheckbox.isChecked()).toBe(false);
@@ -173,7 +173,7 @@ describe('UnusedDiskSelectComponent', () => {
 
     it('shows non-unique serialed disks when "Allow non-unique serialed disks" is checked', async () => {
       const allowCheckbox = await loader.getHarness(
-        TnCheckboxHarness.with({ label: 'Allow non-unique serialed disks (not recommended)' }),
+        TnCheckboxHarness.with({ label: 'Allow disks with non-unique serial numbers (not recommended)' }),
       );
       await allowCheckbox.check();
 

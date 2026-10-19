@@ -18,7 +18,7 @@ export const helptext2fa = {
   firstSetUp: T('Two-Factor authentication has been configured for your user,\
  but your current session was not initiated with two-factor auth.'),
   enabledGloballyButNotForUser: T('Two-Factor authentication is enabled on this system, but it\'s not yet configured for your user. Please configure it now.'),
-  globallyDisabled: T('Two-Factor authentication is not enabled on this system. You can configure your personal settings, but they will have no effect until two-factor authentication is enabled globally by system administrator.'),
+  globallyDisabled: T('Two-Factor authentication is not enabled on this system. You can configure your personal settings, but they will have no effect until two-factor authentication is enabled globally by a system administrator.'),
   qrCodeMessage: T('Scan this QR Code with your authenticator app of choice. The next time you try to log in, you will be asked to enter a One-Time Password (OTP) from your authenticator app. This step is extremely important. Without the OTP you will be locked out of this system.'),
 
   error: T('Error'),

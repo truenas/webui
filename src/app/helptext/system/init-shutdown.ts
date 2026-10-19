@@ -12,6 +12,6 @@ export const helptextInitShutdown = {
  <i>Pre Init</i> is early in the boot process, after mounting\
  filesystems and starting networking.<br> <i>Post Init</i> is at the\
  end of the boot process, before TrueNAS services start.<br>\
- <i>Shutdown</i> is during the system power off process.'),
-  timeoutTooltip: T('Automatically stop the script or command after the specified seconds.'),
+ <i>Shutdown</i> is during the system power-off process.'),
+  timeoutTooltip: T('Automatically stop the script or command after the specified number of seconds.'),
 };

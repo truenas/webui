@@ -13,7 +13,7 @@ export const userApiKeysElements = {
     },
     add: {
       hierarchy: [T('Add API Key')],
-      synonyms: [T('Add user linked API Key')],
+      synonyms: [T('Add user-linked API Key')],
     },
   },
 } satisfies UiSearchableElement;

@@ -7,7 +7,7 @@
       [name]="value >= index + 1 ? 'star' : 'star-outline'"
       [disabled]="isDisabled"
       [testId]="[controlDirective.name, index + 1]"
-      [ariaLabel]="'Click to give {index} star rating.' | translate: { index: index + 1 }"
+      [ariaLabel]="'Click to give a {index}-star rating.' | translate: { index: index + 1 }"
       (onClick)="onValueChanged(index + 1)"
     ></tn-icon-button>
   }

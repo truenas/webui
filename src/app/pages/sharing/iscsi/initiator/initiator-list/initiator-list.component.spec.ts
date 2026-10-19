@@ -66,7 +66,7 @@ describe('InitiatorListComponent', () => {
 
   it('shows accurate page title', () => {
     // White-box: no TnCardHarness in @truenas/ui-components yet.
-    expect(spectator.query(TnCardComponent)!.title()).toBe('Initiators Groups');
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Initiator Groups');
   });
 
   it('redirects to initiator form when "Add" button is pressed', async () => {

@@ -4,7 +4,7 @@ export const helptextAlertService = {
   typeTooltip: T('Choose an alert service to display options for that\
  service.'),
 
-  levelTooltip: T('Select the level of severity. Alert notifications send for all warnings matching\
+  levelTooltip: T('Select the level of severity. Alert notifications are sent for all warnings matching\
  and above the selected level. For example, a warning level set to Critical triggers notifications\
  for Critical, Alert, and Emergency level warnings.'),
 

@@ -40,6 +40,6 @@ export const helptextSharingNfs = {
   securityTooltip: T(
     'Specifies level of authentication and cryptographic protection.\
  SYS or none should be used if no KDC is available. If a KDC is available, e.g. Active Directory, KRB5 is recommended.\
- If desired KRB5I (integrity protection) and/or KRB5P (privacy protection) may be included with KRB5.',
+ If desired, KRB5I (integrity protection) and/or KRB5P (privacy protection) may be included with KRB5.',
   ),
 };

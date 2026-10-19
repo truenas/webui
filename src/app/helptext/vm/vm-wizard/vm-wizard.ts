@@ -16,7 +16,7 @@ export const helptextVmWizard = {
   enableSecureBoot: T('Enabling secure boot may be a requirement for some operating systems like Windows 11.'),
   enableTrustedPlatformModule: T('Enable Trusted Platform Module (TPM) for enhanced security features. TPM provides hardware-based cryptographic security functions and may be required by some operating systems like Windows 11.'),
   enable_vnc_tooltip: T('Enable a VNC display for client-only remote connections.\
- Requires VNC client software. Cannot be accessed through web browser.'),
+ Requires VNC client software. Cannot be accessed through a web browser.'),
   vnc_password_tooltip: T('VNC password (maximum 8 characters). Required for VNC connections.'),
   vnc_bind_tooltip: T('Select an IP address for VNC connections. Leave as 0.0.0.0 to bind to all interfaces.'),
   vnc_port_tooltip: T('Port for VNC connections. Leave empty to auto-assign an available port.'),
@@ -42,19 +42,19 @@ export const helptextVmWizard = {
   },
 
   nodeset: {
-    tooltip: T('Node set allows setting NUMA nodes for multi NUMA processors when CPU set was defined.\
+    tooltip: T('Node set allows setting NUMA nodes for multi-NUMA processors when CPU set was defined.\
  Better memory locality can be achieved by setting node set based on assigned CPU set.\
  E.g. if cpus 0,1 belong to NUMA node 0 then setting nodeset to 0 will improve memory locality'),
   },
 
   pin_vcpus: {
     tooltip: T('When number of vcpus is equal to number of cpus in CPU set vcpus can be automatically pinned into CPU set.\
- Pinning is done by mapping each vcpu into single cpu number in following the order in CPU set.\
+ Pinning is done by mapping each vCPU to a single CPU number following the order in the CPU set.\
  This will improve CPU cache locality and can reduce possible stutter in GPU passthrough VMs.'),
   },
 
   ensure_display_device: {
-    tooltip: T('When checked it will ensure that the guest always has access to a video device. For headless installations like ubuntu server this is required for the guest to operate properly. However for cases where consumer would like to use GPU passthrough and does not want a display device added should uncheck this.'),
+    tooltip: T('When checked it will ensure that the guest always has access to a video device. For headless installations like ubuntu server this is required for the guest to operate properly. However, users who would like to use GPU passthrough and do not want a display device added should uncheck this.'),
   },
 
   shutdown_timeout: {
@@ -69,7 +69,7 @@ export const helptextVmWizard = {
 
   hyperv_enlightenments_tooltip: T('KVM implements Hyper-V Enlightenments\
  for Windows guests. These features make Windows think they\'re\
- running on top of a Hyper-V compatible hypervisor and use Hyper-V specific features.\
+ running on top of a Hyper-V-compatible hypervisor and use Hyper-V-specific features.\
  In some cases enabling these Enlightenments might improve usability and performance on the guest.'),
 
   global_label: helptextGlobal.humanReadable.suggestionLabel,
@@ -77,7 +77,7 @@ export const helptextVmWizard = {
   global_tooltip: helptextGlobal.humanReadable.bytesTooltip,
   memory_size_err: T('Allocate at least 256 MiB.'),
   memory_warning: T('Caution: Allocating too much memory can slow the system or prevent VMs from running.'),
-  min_memory_tooltip: T('When not specified, guest system is given fixed amount of memory specified above.\n'
+  min_memory_tooltip: T('When not specified, the guest system is given a fixed amount of memory specified above.\n'
     + 'When minimum memory is specified, guest system is given memory within range between minimum and fixed as needed.'),
   min_memory_size_err: T('Allocate at least 20 MiB.'),
 

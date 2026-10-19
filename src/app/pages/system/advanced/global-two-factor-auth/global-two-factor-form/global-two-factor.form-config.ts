@@ -27,13 +27,13 @@ export function getGlobalTwoFactorFormConfig(
   const enableWarning = translate.instant('Once enabled, users will be prompted to set up two-factor authentication next time they login. They can choose to skip the setup if desired.');
 
   return {
-    title: T('Global Two Factor Authentication'),
+    title: T('Global Two-Factor Authentication'),
     requiredRoles: [Role.SystemSecurityWrite],
     fields: [
       {
         name: 'enabled',
         type: 'checkbox',
-        label: T('Enable Two Factor Authentication Globally'),
+        label: T('Enable Two-Factor Authentication Globally'),
         hint: twoFactorConfig.enabled ? undefined : enableWarning,
         // Stable id targeted by system-security-form's deep-link scroll/highlight.
         id: 'enable-2fa-global',
@@ -48,7 +48,7 @@ export function getGlobalTwoFactorFormConfig(
       {
         name: 'ssh',
         type: 'checkbox',
-        label: T('Enable Two Factor Authentication for SSH'),
+        label: T('Enable Two-Factor Authentication for SSH'),
         // Stable id targeted by system-security-form's deep-link scroll/highlight.
         id: 'enable-2fa-ssh',
       },

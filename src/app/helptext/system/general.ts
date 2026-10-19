@@ -103,7 +103,7 @@ export const helptextSystemGeneral = {
 
   usageCollection: {
     label: T('Usage collection & UI error reporting'),
-    tooltip: T('When enabled, anonymous usage statistics and WebUI errors are reported to TrueNAS engineering team.\
+    tooltip: T('When enabled, anonymous usage statistics and WebUI errors are reported to the TrueNAS engineering team.\
  No personally identifiable information is collected.\
 <br><br>\
 When disabled, anonymous usage statistics consisting only of the software version and total system capacity (e.g. TrueNAS 24.04.0, 55 TB) are still collected.\
@@ -153,8 +153,8 @@ When disabled, anonymous usage statistics consisting only of the software versio
   },
 
   redirectConfirmTitle: T('Enable HTTPS Redirect'),
-  redirectConfirmMessage: T('Enabling redirect will require all URLs served from current\
- host to be served via HTTPS regardless of port used. This may make some App portals\
+  redirectConfirmMessage: T('Enabling redirect will require all URLs served from the current\
+ host to be served via HTTPS regardless of the port used. This may make some App portals\
  inaccessible if they don\'t use HTTPS. Browsers will also redirect all subdomains of\
  this host to HTTPS, so HTTP-only services hosted on those subdomains will become\
  unreachable. Do you wish to continue?'),

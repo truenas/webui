@@ -164,7 +164,7 @@ describe('UsageCardComponent', () => {
       name: 'root/ix-apps',
     });
     expect(spectator.query('.apps.value')).toHaveText(
-      'This dataset is used to store apps config and other container related data',
+      'This dataset is used to store apps config and other container-related data',
     );
   });
 

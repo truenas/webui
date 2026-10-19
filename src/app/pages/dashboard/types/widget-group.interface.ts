@@ -72,6 +72,6 @@ export const widgetGroupIcons = [
   {
     value: WidgetGroupLayout.Quarters,
     icon: tnIconMarker('layout-quarters', 'custom'),
-    label: T('Four quarter cards in two by two grid'),
+    label: T('Four quarter cards in a two-by-two grid'),
   },
 ];

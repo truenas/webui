@@ -55,7 +55,7 @@ export class CriticalGpuPreventionService {
 
           // Show error with the critical reason
           const criticalReason = criticalGpus.get(criticalSelectedIds[0]);
-          const infoBlurb = this.translate.instant('In order to isolate GPU the device cannot share memory management with other devices.');
+          const infoBlurb = this.translate.instant('In order to isolate a GPU, the device cannot share memory management with other devices.');
           const message = criticalReason || this.translate.instant(defaultMessage);
           this.dialog.error({
             title: this.translate.instant(dialogTitle),

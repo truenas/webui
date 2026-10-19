@@ -79,7 +79,7 @@ describe('ZfsEncryptionCardComponent', () => {
 
     const details = getDetails();
     expect(details).toEqual({
-      'Encryption Root:': ' Yes  Help:  Encryption RootEncryption root means that dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.',
+      'Encryption Root:': ' Yes  Help:  Encryption RootEncryption root means that the dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.',
       'Current State:': 'Unlocked',
       'Type:': ' Key ',
     });
@@ -97,7 +97,7 @@ describe('ZfsEncryptionCardComponent', () => {
 
     const details = getDetails();
     expect(details).toEqual({
-      'Encryption Root:': ' Yes  Help:  Encryption RootEncryption root means that dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.',
+      'Encryption Root:': ' Yes  Help:  Encryption RootEncryption root means that the dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.',
       'Current State:': 'Unlocked',
       'Type:': ' Passphrase ',
     });
@@ -129,7 +129,7 @@ describe('ZfsEncryptionCardComponent', () => {
 
     const details = getDetails();
     expect(details).toEqual({
-      'Encryption Root:': ' Yes  Help:  Encryption RootEncryption root means that dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.',
+      'Encryption Root:': ' Yes  Help:  Encryption RootEncryption root means that the dataset has its own encryption settings. Only encryption roots can be directly locked, unlocked, or have their keys changed. Child datasets will inherit encryption settings from the parent encryption root.',
       'Current State:': 'Locked',
       'Type:': ' Passphrase ',
     });

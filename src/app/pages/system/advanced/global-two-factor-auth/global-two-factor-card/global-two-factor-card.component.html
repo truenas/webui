@@ -1,6 +1,6 @@
 <tn-card
   padding="small"
-  [title]="'Global Two Factor Authentication' | translate"
+  [title]="'Global Two-Factor Authentication' | translate"
   [ixUiSearch]="searchableElements.elements.globalTwoFA"
 >
   <div class="details" [ixUiSearch]="searchableElements.elements.globallyEnabled">
@@ -39,7 +39,7 @@
     </div>
 
     <div class="details-item" [ixUiSearch]="searchableElements.elements.enableForSsh">
-      <span class="label">{{ 'Two Factor Authentication for SSH' | translate }}:</span>
+      <span class="label">{{ 'Two-Factor Authentication for SSH' | translate }}:</span>
       <span
         *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig"
         class="value"

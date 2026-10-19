@@ -61,7 +61,7 @@ describe('PoolWarningsComponent', () => {
     // The group label lives on the wrapping tn-form-field; assert it so a bare "Allow" radio
     // can't satisfy this test if the group it belongs to changes.
     const group = await loader.getHarness(
-      TnFormFieldHarness.with({ label: 'Allow non-unique serialed disks (not recommended)' }),
+      TnFormFieldHarness.with({ label: 'Allow disks with non-unique serial numbers (not recommended)' }),
     );
     expect(group).toBeTruthy();
 

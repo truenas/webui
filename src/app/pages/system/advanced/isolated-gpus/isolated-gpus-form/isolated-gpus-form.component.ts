@@ -57,7 +57,7 @@ export class IsolatedGpusFormComponent extends IxFormHostForm implements OnInit 
       this.form.controls.isolated_gpu_pci_ids,
       this.destroyRef,
       this.translate.instant('Cannot Isolate GPU'),
-      this.translate.instant('System critical GPUs cannot be isolated'),
+      this.translate.instant('System-critical GPUs cannot be isolated'),
     );
 
     this.loadFormConfig(this.store$.pipe(waitForAdvancedConfig), (config) => {

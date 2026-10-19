@@ -39,11 +39,11 @@ export const helptextZvol = {
   deduplicationTooltip: T('Transparently reuse a single copy of duplicated\
  data to save space. Deduplication can improve storage capacity, but is RAM intensive.\
  Compressing data is generally recommended before using deduplication. Deduplicating data is\
- a one-way process. <b>Deduplicated data cannot be undeduplicated!</b>.'),
+ a one-way process. <b>Deduplicated data cannot be undeduplicated!</b>'),
 
   readonlyLabel: T('Read-only'),
   readonlyTooltip: T('Set to prevent the zvol from being modified.'),
-  readonlyVolsizeWarning: T('Size cannot be changed when readonly is toggled.'),
+  readonlyVolsizeWarning: T('Size cannot be changed when read-only is toggled.'),
 
   sparseLabel: T('Sparse'),
   sparseTooltip: T('Enable to use thin provisioning\
@@ -52,7 +52,7 @@ export const helptextZvol = {
 
   volblocksizeLabel: T('Block size'),
   volblocksizeTooltip: T('The zvol default block size is automatically chosen\
- based on the number of the disks in the pool for a\
+ based on the number of disks in the pool for a\
  general use case.'),
 
   blocksizeWarning: {
@@ -72,7 +72,7 @@ export const helptextZvol = {
     inheritTooltip: T('Use the encryption properties of the root dataset.'),
     encryptionLabel: T('Encryption'),
     encryptionTooltip: T('Secure data within this dataset. Data is unusable until\
- unlocked with an encryption key or passphrase. If parent dataset has encryption enabled,\
+ unlocked with an encryption key or passphrase. If the parent dataset has encryption enabled,\
  it is not possible to disable this option.'),
     encryptionTypeLabel: T('Encryption Type'),
     encryptionTypeTooltip: T('How the dataset is secured. Choose between securing with\

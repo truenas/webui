@@ -125,7 +125,7 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       buttonText: 'Continue',
       cancelText: 'Cancel',
       message:
-        'Switching to Advanced Options will lose data entered on second step. Do you want to continue?',
+        'Switching to Advanced Options will lose data entered on the second step. Do you want to continue?',
       title: 'Switch to Advanced Options',
       hideCheckbox: true,
     });

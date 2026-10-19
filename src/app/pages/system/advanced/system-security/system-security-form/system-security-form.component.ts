@@ -740,7 +740,7 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
           config,
         ),
         {
-          title: this.translate.instant('Global Two Factor Authentication'),
+          title: this.translate.instant('Global Two-Factor Authentication'),
           editData: {
             enabled: config.enabled,
             window: config.window,

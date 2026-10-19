@@ -15,7 +15,7 @@ export const helptextInterfacesForm = {
   dhcpTooltip: T('Set to enable DHCP. Leave unset to create a static\
  IPv4 or IPv6 configuration. Only one interface can\
  be configured for DHCP.'),
-  ipv6autoTooltip: T('Set to automatically configure the IPv6. Only one interface can be configured this way.'),
+  ipv6autoTooltip: T('Set to automatically configure IPv6. Only one interface can be configured this way.'),
   enableLearningTooltip: T('Toggle off to defer interface learning until runtime, preventing premature state transitions and potential issues during system startup.'),
   aliasAddressTooltip: T('Define an alias for the interface\
  on this TrueNAS controller. The alias can be an IPv4 or IPv6\
