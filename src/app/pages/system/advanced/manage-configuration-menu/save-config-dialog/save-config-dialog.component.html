@@ -13,7 +13,7 @@
   <div [innerHtml]="helptext.warning | translate"></div>
 
   </form>
-<ix-form-actions tnDialogAction>
+<ix-form-actions tnDialogAction tnTestIdType="actions" [tnTestId]="'save-config'">
   <tn-button
     variant="outline"
     testId="cancel"

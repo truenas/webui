@@ -4,7 +4,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent, TnTestIdDirective,
+} from '@truenas/ui-components';
 import { format } from 'date-fns';
 import { switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -37,6 +39,7 @@ export interface SaveConfigDialogMessages {
     TnCheckboxComponent, TnFormFieldComponent,
     FormActionsComponent,
     TnButtonComponent,
+    TnTestIdDirective,
     RequiresRolesDirective,
     TranslateModule,
   ],
