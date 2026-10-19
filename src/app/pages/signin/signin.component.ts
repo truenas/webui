@@ -50,7 +50,11 @@ export class SigninComponent implements OnInit {
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
 
-  protected hasAuthToken = this.authService.hasAuthToken;
+  /** Read live: the token can be cleared while this page is up, as a refused token login does. */
+  protected get hasAuthToken(): boolean {
+    return this.authService.hasAuthToken;
+  }
+
   protected isTokenWithinTimeline$ = this.tokenLastUsedService.isTokenWithinTimeline$;
 
   readonly wasAdminSet$ = this.signinStore.wasAdminSet$;
