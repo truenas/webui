@@ -11,9 +11,11 @@
  * how the UI reads them too. Middleware leaves them out of the declared entity, so
  * they are read through {@link SubsystemAssociations} rather than the generated type.
  */
+import { expect } from '@playwright/test';
 import type { CallParams, CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
 import { ensureServiceStopped } from './services';
+import { ensureZvolPresent } from './storage';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
@@ -75,6 +77,32 @@ export async function countNvmeOfSubsystems(client: E2eApiClient): Promise<numbe
   );
 
   return subsystems.length;
+}
+
+/** Re-reads a subsystem that the test made, failing if it has gone. */
+export async function requireNvmeOfSubsystem(client: E2eApiClient, name: string): Promise<NvmeOfSubsystemRecord> {
+  const subsystem = await findNvmeOfSubsystem(client, name);
+  if (!subsystem) {
+    throw new Error(`the subsystem ${name} is missing`);
+  }
+
+  return subsystem;
+}
+
+/** The dashboard card lists four subsystems, by name, before its pager. */
+const nvmeOfCardPageSize = 4;
+
+/**
+ * Fails up front when the dashboard card cannot show every row a test needs. A
+ * fresh appliance holds no subsystems; failing here says why rather than timing
+ * out on a row past the pager.
+ */
+export async function requireRoomOnNvmeOfCard(client: E2eApiClient, adding: number): Promise<void> {
+  const existing = await countNvmeOfSubsystems(client);
+  expect(
+    existing + adding <= nvmeOfCardPageSize,
+    `the card lists ${nvmeOfCardPageSize} subsystems, this test adds ${adding}, the appliance has ${existing}`,
+  ).toBe(true);
 }
 
 /** The host with this NQN, or undefined. */
@@ -271,6 +299,37 @@ export async function addNvmeOfZvolNamespace(
   await firstValueFrom(
     client.api.call('nvmet.namespace.create', [params]).pipe(timeout(slowCallTimeoutMs)),
   );
+}
+
+/**
+ * A subsystem with one namespace on its own zvol, linked to its own port and host,
+ * and restricted to that host — the shape every association card shows filled in.
+ */
+export async function provisionLinkedNvmeOfSubsystem(
+  client: E2eApiClient,
+  {
+    name,
+    zvol,
+    port,
+    hostnqn,
+  }: {
+    name: string;
+    zvol: string;
+    port: TcpPort;
+    hostnqn: string;
+  },
+): Promise<NvmeOfSubsystemRecord> {
+  await ensureZvolPresent(client, zvol);
+  const subsystem = await ensureNvmeOfSubsystemPresent(client, name);
+  const portRecord = await ensureNvmeOfPortPresent(client, port);
+  const host = await ensureNvmeOfHostPresent(client, hostnqn);
+
+  await addNvmeOfZvolNamespace(client, { subsystemId: subsystem.id, zvol });
+  await associateNvmeOfPort(client, { subsystemId: subsystem.id, portId: portRecord.id });
+  await setNvmeOfAllowAnyHost(client, { subsystemId: subsystem.id, allowAnyHost: false });
+  await associateNvmeOfHost(client, { subsystemId: subsystem.id, hostId: host.id });
+
+  return requireNvmeOfSubsystem(client, name);
 }
 
 /** The global base NQN, which middleware prefixes to every generated subsystem NQN. */
