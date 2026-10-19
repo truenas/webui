@@ -48,8 +48,8 @@ import {
   toggleResilverWeekdays,
 } from '../flows/advanced-storage';
 import { advancedStorageLocators } from '../locators/advanced-storage';
-import { apiCallsTo } from '../support/api-calls';
 import type { E2eApiClient } from '../support/api/client';
+import { apiCallsTo } from '../support/api-calls';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
