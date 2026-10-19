@@ -5,7 +5,8 @@
  * so its id is static. Each holds a single value, without its label.
  *
  * The form's controls carry no `testId`, so each id falls back to its
- * `formControlName`, kebab-cased.
+ * `formControlName`, kebab-cased. A `tn-form-field` has no such fallback:
+ * it emits `form-field-<id>` only from a `testId` of its own.
  */
 import { kebabTestSegment } from './test-id';
 
@@ -37,7 +38,10 @@ export const advancedStorageLocators = {
     weekday: '[data-test="select-weekday"]',
     /** By the day's English name: `Monday` … `Sunday`. */
     weekdayOption: (day: string): string => `[data-test="option-weekday-${kebabTestSegment(day)}"]`,
-    /** The field around {@link weekday}: its label and, once refused, the reason. */
+    /**
+     * `<tn-form-field testId="weekday">` around {@link weekday}: its label and,
+     * once refused, the reason.
+     */
     weekdayField: '[data-test="form-field-weekday"]',
     /** "From". Its options are labelled `HH:MM:00` and carry the value `HH:MM`. */
     begin: '[data-test="select-begin"]',
