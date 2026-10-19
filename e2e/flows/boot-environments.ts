@@ -5,7 +5,7 @@ import { expect, type Page } from '@playwright/test';
 import { goToBootEnvironments } from './navigation';
 import { confirmDestructiveAction } from './storage';
 import { bootEnvironmentLocators } from '../locators/boot-environments';
-import { confirmDialogLocators } from '../locators/dialogs';
+import { confirmDialogLocators, errorDialogLocators } from '../locators/dialogs';
 
 const {
   header,
@@ -115,9 +115,22 @@ export async function openBootPoolStatus(page: Page, device: string): Promise<vo
   await expect(page.locator(status.deviceName(device))).toBeVisible({ timeout: saveTimeoutMs });
 }
 
+/** Where the Attach dialog is after Save: still open, closed, or open behind middleware's refusal. */
+type AttachOutcome = 'open' | 'closed' | 'refused';
+
+async function readAttachOutcome(page: Page): Promise<AttachOutcome> {
+  if (await page.locator(errorDialogLocators.title).isVisible()) {
+    return 'refused';
+  }
+
+  const open = await page.locator(attachDialog.title).isVisible();
+  return open ? 'open' : 'closed';
+}
+
 /**
  * Attaches an unused disk to a single-disk boot pool, from the boot device's menu
- * on Boot Pool Status, and waits for the Attach dialog to close.
+ * on Boot Pool Status, and waits for the Attach dialog to close. Throws with
+ * middleware's message if the attach is refused.
  *
  * "Use all disk space" is left unticked, as the dialog opens it; that is checked.
  * The autocomplete narrows to the device name typed, and clicking its row is what
@@ -134,8 +147,14 @@ export async function attachBootDisk(page: Page, bootDevice: string, disk: strin
   await page.locator(attachDialog.save).click();
 
   // Closed only once the job's progress dialog has closed on success. On a failure
-  // it stays open, behind the error the job raised.
-  await expect(page.locator(attachDialog.title)).toBeHidden({ timeout: bootAttachTimeoutMs });
+  // it stays open, behind the error the job raised, so that error is watched for
+  // too. Waiting on the dialog alone sat out the session timeout instead, which
+  // signs the page out and hides the dialog as though the attach had worked.
+  await expect.poll(() => readAttachOutcome(page), { timeout: bootAttachTimeoutMs }).not.toBe('open');
+  if (await readAttachOutcome(page) === 'refused') {
+    const message = await page.locator(errorDialogLocators.message).innerText();
+    throw new Error(`boot.attach was refused: ${message}`);
+  }
 }
 
 /**

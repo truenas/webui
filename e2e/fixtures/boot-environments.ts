@@ -8,6 +8,7 @@
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
+import { listDisks } from './disks';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
@@ -105,6 +106,31 @@ export async function listBootDisks(client: E2eApiClient): Promise<string[]> {
   const disks = await firstValueFrom(client.api.call('boot.get_disks').pipe(timeout(readTimeoutMs)));
 
   return [...disks].sort((a, b) => a.localeCompare(b));
+}
+
+/**
+ * Whether `disk` is smaller, in bytes, than the largest of `bootDisks`.
+ *
+ * `boot.attach` partitions the new disk to hold a copy of the boot partition and
+ * refuses one without the room ("does not have enough space to hold the required
+ * new partitions"). A disk at least as large as the boot disk always has it.
+ */
+export async function isSmallerThanBootDisk(
+  client: E2eApiClient,
+  bootDisks: string[],
+  disk: string,
+): Promise<boolean> {
+  const disks = await listDisks(client);
+  const sizeOf = (name: string): number => {
+    const entry = disks.find((candidate) => candidate.name === name);
+    if (!entry) {
+      throw new Error(`disk.query reports no disk named "${name}".`);
+    }
+
+    return Number(entry.size);
+  };
+
+  return sizeOf(disk) < Math.max(...bootDisks.map(sizeOf));
 }
 
 /** The boot pool's scrub interval in days, `boot_scrub` in `system.advanced.config`. */

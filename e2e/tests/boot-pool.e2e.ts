@@ -4,7 +4,9 @@
  * and then the original again; and attaches an unused disk to the boot pool as a
  * mirror. All from System > Boot and the Boot Pool Status page it links to.
  * Detaching it again through the UI is written but not run, because Boot Pool
- * Status cannot do it yet (#14710) — the reason is above that test.
+ * Status cannot do it yet (#14710) — the reason is above that test. Both mirror
+ * tests skip where the spare disk is smaller than the boot disk, as on the CI
+ * appliance, because middleware refuses that attach.
  *
  * Each is asserted twice: the screen, and middleware's own record —
  * `boot.get_state`, `boot.get_disks`, `boot.environment.query`,
@@ -38,6 +40,7 @@ import {
   findBootScrubJobStateAfter,
   findLatestBootScrubJobId,
   findRunningBootEnvironment,
+  isSmallerThanBootDisk,
   listBootDisks,
   readBootScrubInterval,
   setBootScrubInterval,
@@ -225,6 +228,13 @@ async function prepareMirror(api: E2eApiClient): Promise<{ startingDisks: string
 
   await requireUnusedDisks(api, 1);
   const disk = await pickUnusedDisk(api);
+  // Skipped rather than failed: middleware refuses the attach, and the ticket rules
+  // out working round it. The CI appliance's spare disks are 10 GiB and its boot
+  // partition alone is about 15.5 GiB, so this skips there (#14670).
+  test.skip(
+    await isSmallerThanBootDisk(api, startingDisks, disk),
+    `${disk} is smaller than the boot disk, so boot.attach has no room on it for the boot partitions`,
+  );
   attachedDisk = disk;
 
   return { startingDisks, disk };
