@@ -8,7 +8,7 @@
  * name is enough to find, and remove, everything one share made. The zvol behind
  * the extent is storage and is left to `fixtures/storage.ts`.
  */
-import type { CallResponse } from '@truenas/api-client';
+import type { CallParams, CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
 import { ensureServiceStopped } from './services';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
@@ -23,6 +23,7 @@ type ExtentEntry = Extract<CallResponse<E2eApiDirectory, 'iscsi.extent.query'>, 
 type TargetExtentEntry = Extract<CallResponse<E2eApiDirectory, 'iscsi.targetextent.query'>, unknown[]>[number];
 type PortalEntry = Extract<CallResponse<E2eApiDirectory, 'iscsi.portal.query'>, unknown[]>[number];
 type InitiatorEntry = Extract<CallResponse<E2eApiDirectory, 'iscsi.initiator.query'>, unknown[]>[number];
+type TargetCreate = NonNullable<CallParams<E2eApiDirectory, 'iscsi.target.create'>[0]>;
 
 export type IscsiTargetRecord = TargetEntry & { id: number };
 export type IscsiExtentRecord = ExtentEntry & { id: number };
@@ -122,20 +123,28 @@ export async function ensureIscsiShareAbsent(client: E2eApiClient, name: string)
   }
 }
 
+/** What a target can be made with besides its name. Each is middleware's default when left out. */
+export type IscsiTargetSettings = Partial<Pick<TargetCreate, 'alias' | 'auth_networks' | 'groups'>>;
+
 /**
- * Creates a target with no portal group, if none has this name.
+ * Creates a target, if none has this name, with no portal group unless given one.
  *
- * For a bystander, which only has to exist and be listed. Never for the share
- * under test in a create — that one goes through the wizard.
+ * For a bystander, which only has to exist and be listed, or for a target an
+ * edit acts on. Never for the share under test in a create — that one goes
+ * through the wizard.
  */
-export async function ensureIscsiTargetPresent(client: E2eApiClient, name: string): Promise<IscsiTargetRecord> {
+export async function ensureIscsiTargetPresent(
+  client: E2eApiClient,
+  name: string,
+  settings: IscsiTargetSettings = {},
+): Promise<IscsiTargetRecord> {
   const existing = await findIscsiTarget(client, name);
   if (existing) {
     return existing;
   }
 
   const created = await firstValueFrom(
-    client.api.call('iscsi.target.create', [{ name, groups: [] }]).pipe(timeout(slowCallTimeoutMs)),
+    client.api.call('iscsi.target.create', [{ groups: [], ...settings, name }]).pipe(timeout(slowCallTimeoutMs)),
   );
 
   return created as IscsiTargetRecord;

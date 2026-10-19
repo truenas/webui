@@ -124,8 +124,24 @@ export const iscsiLocators = {
      */
     detailsFor: '[data-test="text-details-for"]',
 
+    /** The Alias cell of a target's row. */
+    alias: (name: string): string => `[data-test="text-alias-${targetRowTag(name)}-row-text"]`,
+
+    /** "Edit" in the detail header, for the selected target. Opens the target form in the side panel. */
+    edit: '[data-test="button-edit-target"]',
+
     /** An authorized network on the selected target's card, by its position. */
     authorizedNetwork: (index: number): string => `[data-test="text-authorized-network-${index}"]`,
+
+    /**
+     * A group's Authentication Method on the selected target's iSCSI Groups card,
+     * by the group's position. Shows middleware's value, `NONE`, `CHAP` or `CHAP_MUTUAL`.
+     */
+    authenticationMethod: (index: number): string => `[data-test="text-authentication-method-${index}"]`,
+    /** The same group's Authentication Group Number: the auth tag, or `-`. */
+    authenticationGroupNumber: (index: number): string => (
+      `[data-test="text-authentication-group-number-${index}"]`
+    ),
 
     /**
      * "Associate" on the selected target's Extents card. Keyed by the target's
@@ -147,6 +163,8 @@ export const iscsiLocators = {
   /** The Add/Edit target form, in the side panel. */
   targetForm: {
     name: '[data-test="input-name"]',
+    /** `<tn-form-field testId="name">` around {@link name}: its label and, once refused, the reason. */
+    nameField: '[data-test="form-field-name"]',
     alias: '[data-test="input-alias"]',
 
     /** "Add" under Authorized Networks — `tn-form-list` names it `['add-item', label]`. */
@@ -178,6 +196,12 @@ export const iscsiLocators = {
       const label = `${id} (ALL Initiators Allowed)`;
       return `[data-test="option-initiator-${kebabTestSegment(label)}"]`;
     },
+    /** The group's Authentication Method. Options are labelled `None`, `CHAP` and `Mutual CHAP`. */
+    authmethod: '[data-test="select-authmethod"]',
+    authmethodChapOption: '[data-test="option-authmethod-chap"]',
+    /** The group's Authentication Group Number. Options are the authorized access tags. */
+    auth: '[data-test="select-auth"]',
+    authOption: (tag: number): string => `[data-test="option-auth-${tag}"]`,
 
     save: '[data-test="button-save"]',
   },
