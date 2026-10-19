@@ -16,7 +16,7 @@
  * then destroys it before and after, unconditionally: the pool holds four disks,
  * and `fresh-install` needs nine alike.
  *
- * Not covered: Set Quota on the same line.
+ * Not covered here: Set Quota on the same line, which `pool-autotrim-dedup-quota.e2e.ts` covers.
  */
 import {
   addDedupSeed, ensureDedupPoolPresent, findDedupPruneRuns, readDedupTableSize,
