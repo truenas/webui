@@ -6,7 +6,7 @@ export const allowedAddressesCardElements = {
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
     allowedIpAddresses: {
-      hierarchy: [T('Allowed IP Addressed')],
+      hierarchy: [T('Allowed IP Addresses')],
       anchor: 'allowed-addresses-card',
     },
     configure: {

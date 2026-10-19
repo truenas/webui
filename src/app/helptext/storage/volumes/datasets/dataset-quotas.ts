@@ -28,7 +28,7 @@ export const helptextQuotas = {
     nameLabel: T('User'),
     removeInvalidQuotas: {
       message: T('This action will set all dataset quotas for the removed or invalid users to 0,\
- virtually removing any dataset quota entires for such users. Are you sure you want to proceed?'),
+ virtually removing any dataset quota entries for such users. Are you sure you want to proceed?'),
     },
     deleteDialog: {
       title: T('Delete User Quota'),

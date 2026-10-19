@@ -35,7 +35,7 @@
   <tn-menu-item
     testId="docker-registries"
     tnTooltipPosition="right"
-    [label]="'Sign-in to a Docker registry' | translate"
+    [label]="'Sign in to a Docker registry' | translate"
     [tnTooltip]="!(dockerStore.selectedPool$ | async)
       ? ('Choose pool first' | translate)
       : (helptext.dockerRegistries.tooltip | translate)"

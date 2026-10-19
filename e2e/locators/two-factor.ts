@@ -33,7 +33,7 @@ export const twoFactorLocators = {
   },
 
   /**
-   * The full-screen "Setup Two-Factor Authentication" dialog the admin layout's
+   * The full-screen "Set Up Two-Factor Authentication" dialog the admin layout's
    * guard raises on the first route of a session while global two-factor is on
    * and the account has no secret. It cannot be closed by Escape; Skip Setup,
    * confirmed, is the way past it that leaves the account without a secret.

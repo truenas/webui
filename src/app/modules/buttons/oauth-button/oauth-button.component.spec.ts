@@ -58,8 +58,8 @@ describe('OauthButtonComponent', () => {
     spectator.setInput('oauthType', OauthButtonType.Jira);
     spectator.setInput('oauthUrl', 'https://oauth/jira?origin=');
 
-    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Login To Jira To Submit' }));
-    expect(await button.getLabel()).toBe('Login To Jira To Submit');
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Jira To Submit' }));
+    expect(await button.getLabel()).toBe('Log In To Jira To Submit');
 
     await button.click();
     const window = spectator.inject<Window>(WINDOW);

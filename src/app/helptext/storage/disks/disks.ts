@@ -50,9 +50,9 @@ export const helptextDisks = {
   errorDialogTitle: T('Error updating disks'),
 
   wipeMethodTooltip: T('<i>Quick</i> erases only the partitioning information\
- on a disk without clearing other old data. <i>Full\
+ on a disk without clearing other old data. <i>Fill\
  with zeros</i> overwrites the entire disk with zeros.\
- <i>Full with random data</i> overwrites the entire\
+ <i>Fill with random data</i> overwrites the entire\
  disk with random binary data.'),
 
   diskWipeDialogForm: {

@@ -87,7 +87,7 @@ describe('DockerImageDeleteDialogComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
-    expect(spectator.fixture.nativeElement).toHaveText('2 docker images has been deleted.');
+    expect(spectator.fixture.nativeElement).toHaveText('2 docker images have been deleted.');
 
     const closeButton = await loader.getHarness(TnButtonHarness.with({ label: 'Close' }));
     await closeButton.click();

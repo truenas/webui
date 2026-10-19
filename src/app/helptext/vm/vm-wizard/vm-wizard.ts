@@ -37,7 +37,7 @@ export const helptextVmWizard = {
 
   cpuset: {
     tooltip: T('Specify the logical cores that VM is allowed to use.\
- Better cache locality can be achieved by setting CPU set base on CPU topology.\
+ Better cache locality can be achieved by setting CPU set based on CPU topology.\
  E.g. to assign cores: 0,1,2,5,9,10,11 you can write: 1-2,5,9-11'),
   },
 

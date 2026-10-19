@@ -155,8 +155,8 @@ export const helptextSystemCloudcredentials = {
     },
     teamDrive: {
       tooltip: T(
-        'Only needed when connecting to a Team Drive. The ID of the top\
- level folder of the Team Drive.',
+        'Only needed when connecting to a Team Drive. The ID of the top-level\
+ folder of the Team Drive.',
       ),
     },
   },
@@ -170,7 +170,7 @@ export const helptextSystemCloudcredentials = {
  <a href="https://developers.google.com/identity/protocols/oauth2" target="_blank">Google API Console</a>'),
   },
   http: {
-    explanation: T('Read only client that supports directory listings from popular web servers like Apache and Nginx.'),
+    explanation: T('Read-only client that supports directory listings from popular web servers like Apache and Nginx.'),
     url: {
       tooltip: T('HTTP host URL.'),
     },
@@ -205,7 +205,7 @@ export const helptextSystemCloudcredentials = {
       ),
     },
     key: {
-      tooltip: T('Base64 encoded key for the Azure account.'),
+      tooltip: T('Base64-encoded key for the Azure account.'),
     },
     endpoint: {
       tooltip: T('Example: blob.core.usgovcloudapi.net'),

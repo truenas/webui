@@ -26,6 +26,9 @@ export const appsLocators = {
 
   /** `<tn-menu-item testId="update-preferred-trains">`, labelled "Settings". Opens the Apps Settings panel. */
   settings: '[data-test="button-update-preferred-trains"]',
+
+  /** `<tn-menu-item testId="docker-registries">`, "Sign-in to a Docker registry". Disabled until Apps has a pool. */
+  dockerRegistries: '[data-test="button-docker-registries"]',
 } as const;
 
 /**
