@@ -107,7 +107,7 @@ Note: If the administrative account Shell is not set to TrueNAS Console, you ent
 
   storageSettings: {
     priorityResilverEnabled: T('Resilver tasks can run at any time, but by default they have low priority\
- - lower than regular ZFS I/O operations.\
+ — lower than regular ZFS I/O operations.\
  You can specify a time window during which resilvering is given higher priority\
  — useful for scheduling it during non-business hours.'),
     smbRebootWarning: T('Changing System Dataset Pool requires SMB service to be restarted. This will cause a temporary disruption of any active SMB connections.'),

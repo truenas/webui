@@ -161,7 +161,7 @@ export class ErrorParserService {
       return {
         title: this.translate.instant('Network Error'),
         message: this.translate.instant('Network resource is not reachable, verify your network settings and health.'),
-        hint: this.translate.instant('Double check that your nameservers and gateway are properly configured.'),
+        hint: this.translate.instant('Double-check that your nameservers and gateway are properly configured.'),
         actions: [
           {
             label: this.translate.instant('Network Settings'),

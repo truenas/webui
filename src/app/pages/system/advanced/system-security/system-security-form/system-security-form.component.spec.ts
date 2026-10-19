@@ -976,7 +976,7 @@ describe('SystemSecurityFormComponent', () => {
       // Verify the warning is shown in stig-hints
       const hintElement = validationSpectator.query('.stig-hints');
       expect(hintElement?.textContent).toContain('Optional requirements to enable STIG mode:');
-      expect(hintElement?.textContent).toContain('All users must have 2FA enabled and setup.');
+      expect(hintElement?.textContent).toContain('All users must have 2FA enabled and set up.');
 
       expect(validationSpectator.component.canSubmit()).toBe(false);
     });

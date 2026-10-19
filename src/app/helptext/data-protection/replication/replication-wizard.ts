@@ -40,7 +40,7 @@ export const helptextReplicationWizard = {
  destination system or click in the field to manually type a location\
  path (Example: <code>pool1/dataset1</code>). Selecting a location\
  defines the full path to that location as the destination. Appending a\
- name to the path will create new zvol at that location.<br><br>\
+ name to the path will create a new zvol at that location.<br><br>\
  For example, selecting <i>pool1/dataset1</i> will store\
  snapshots in <i>dataset1</i>, but clicking the path and typing\
  <code>/zvol1</code> after <i>dataset1</i> will create <i>zvol1</i> for\
@@ -94,9 +94,9 @@ export const helptextReplicationWizard = {
  <i>&percnt;Y</i>, <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i> strings that\
  match the snapshots to include in the replication. Separate entries by\
  pressing <code>Enter</code>. The number of snapshots matching the\
- patterns are shown.'),
+ patterns is shown.'),
   nameRegexTooltip: T('Using this option will replicate all snapshots\
- which names match specified regular expression. The\
+ whose names match the specified regular expression. The\
  performance on the systems with large number of snapshots\
  will be lower, as snapshots metadata needs to be read in order\
  to determine snapshots creation order.'),
@@ -133,7 +133,7 @@ export const helptextReplicationWizard = {
  <i>Same as Source</i>: use the configured <i>Snapshot Lifetime</i>\
  value from the source dataset periodic snapshot task.<br>\
  <i>Never Delete</i>: never delete snapshots from the destination system.<br>\
- <i>Custom</i>: set a how long a snapshot remains on the destination\
+ <i>Custom</i>: set how long a snapshot remains on the destination\
  system. Enter a number and choose a measure of time from the drop-down.'),
 
   clearSnapshotDialogTitle: T('Destination Snapshots Are Not Related to Replicated Snapshots'),

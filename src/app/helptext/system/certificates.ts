@@ -259,7 +259,7 @@ export const helptextSystemCertificates = {
     name: {
       tooltip: T(
         'Enter an alphanumeric name for the certificate.\
- Underscore (_), and dash (-) characters are allowed.',
+ Underscore (_) and dash (-) characters are allowed.',
       ),
     },
     renewDays: {
@@ -283,7 +283,7 @@ export const helptextSystemCertificates = {
       tooltip: T('Number of days to renew certificate before expiring.'),
     },
     dirUri: {
-      tooltip: T('URI of the ACME Server Directory. Choose a pre configured URI'),
+      tooltip: T('URI of the ACME Server Directory. Choose a preconfigured URI'),
       customCheckboxTooltip: T('Use Custom ACME Server Directory URI'),
       customInputTooltip: T('URI of the ACME Server Directory. Enter a custom URI.'),
     },

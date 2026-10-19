@@ -48,8 +48,8 @@ describe('InstallAppButtonComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('shows agreement warning then pool dialog when Setup Pool To Install clicked', async () => {
-      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Setup Pool To Install' }));
+    it('shows agreement warning then pool dialog when Set Up Pool To Install clicked', async () => {
+      const button = await loader.getHarness(TnButtonHarness.with({ label: 'Set Up Pool To Install' }));
       await button.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();

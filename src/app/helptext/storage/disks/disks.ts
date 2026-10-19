@@ -52,7 +52,7 @@ export const helptextDisks = {
   wipeMethodTooltip: T('<i>Quick</i> erases only the partitioning information\
  on a disk without clearing other old data. <i>Full\
  with zeros</i> overwrites the entire disk with zeros.\
- <i>Full with random data</i> overwrites the entire\
+ <i>Fill with random data</i> overwrites the entire\
  disk with random binary data.'),
 
   diskWipeDialogForm: {
