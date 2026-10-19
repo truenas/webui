@@ -165,6 +165,25 @@ export async function ensureRunningBootEnvironmentActivated(client: E2eApiClient
 /** A quick wipe of one 10GB disk takes seconds. Room for a slow appliance. */
 const bootDiskJobTimeoutMs = 5 * 60_000;
 
+/** `boot.attach` partitions the disk, resilvers onto it and installs a boot loader. A ceiling, not a wait. */
+const bootAttachJobTimeoutMs = 10 * 60_000;
+
+/**
+ * Mirrors a single-disk boot pool onto `disk`, for a test that acts on the
+ * mirror rather than on making it. The attach itself goes through the UI in the
+ * test that is about it.
+ */
+export async function attachBootDiskOverApi(client: E2eApiClient, disk: string): Promise<void> {
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('boot.attach', [disk, { expand: false }]),
+    {
+      timeoutMs: bootAttachJobTimeoutMs,
+      whatItCosts: `The boot pool may be left part-way through mirroring onto "${disk}".`,
+    },
+  );
+}
+
 /**
  * Takes every disk off the boot pool that was not on it at the start, and wipes
  * it — and wipes `attachedDisk` too, which a test that detached it through the UI
