@@ -3,8 +3,8 @@
  * the dialog refuses an interval under a day; activates another boot environment
  * and then the original again; and attaches an unused disk to the boot pool as a
  * mirror. All from System > Boot and the Boot Pool Status page it links to.
- * Detaching it again through the UI is written but expected to fail, because
- * Boot Pool Status cannot do it yet (#14710) — the reason is above that test.
+ * Detaching it again through the UI is written but not run, because Boot Pool
+ * Status cannot do it yet (#14710) — the reason is above that test.
  *
  * Each is asserted twice: the screen, and middleware's own record —
  * `boot.get_state`, `boot.get_disks`, `boot.environment.query`,
