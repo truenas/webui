@@ -3,7 +3,7 @@
  * and the app takes the change; the wizard refuses a port out of range; and an admin converts a
  * catalog app to a custom app from its Application Info card, and it keeps running.
  *
- * Each is checked on screen and through `app.query` and `app.config`. Every test seeds its own app
+ * Each is checked on screen and through `app.query`'s saved values. Every test seeds its own app
  * with `app.create`, under a name of its own.
  *
  * ## The app
@@ -29,12 +29,13 @@ import {
   communityTrain,
   ensureAppAbsent,
   ensureAppsPoolUnset,
+  readAppAdditionalEnvs,
   readAppPortNumber,
   readAppState,
+  readAppTimezone,
   readDocker,
   readIsCustomApp,
   readPreferredTrains,
-  readServiceEnvironment,
   seedCatalogApp,
   setAppsPool,
   setPreferredTrains,
@@ -57,8 +58,12 @@ import { expect, test } from '../support/fixtures';
 const pool = 'e2e_apps';
 
 const catalogApp = 'it-tools';
-/** The compose service IT Tools' environment is on. */
+/** The compose service IT Tools' environment is on, once converted to a custom app. */
 const service = 'it-tools';
+/** The section of IT Tools' values holding its Additional Environment Variables. */
+const valuesSection = 'it_tools';
+/** Not the catalog's default TZ, `Etc/UTC`, so keeping it is something an update can get wrong. */
+const seededTimezone = 'America/New_York';
 const editedRelease = 'e2e-it-tools-edit';
 const convertedRelease = 'e2e-it-tools-convert';
 const releases = [editedRelease, convertedRelease];
@@ -147,7 +152,12 @@ test.afterAll(async ({ api }) => {
 });
 
 test('an admin edits the port and environment of a catalog app, and it takes them', async ({ page, api }) => {
-  await seedCatalogApp(api, { name: editedRelease, catalogApp, train: communityTrain });
+  await seedCatalogApp(api, {
+    name: editedRelease,
+    catalogApp,
+    train: communityTrain,
+    values: { TZ: seededTimezone },
+  });
   const app = installedAppLocators(editedRelease);
 
   await goToApps(page);
@@ -164,12 +174,10 @@ test('an admin edits the port and environment of a catalog app, and it takes the
   await expect(page.locator(app.state)).toHaveText('Running', { timeout: appInstallTimeoutMs });
 
   expect(await readAppPortNumber(api, editedRelease)).toBe(editedPort);
-  // TZ is the form's default, left alone: an update that dropped the values the user did not touch
-  // would lose it.
-  expect(await readServiceEnvironment(api, editedRelease, service)).toMatchObject({
-    E2E_EDIT: '1',
-    TZ: 'Etc/UTC',
-  });
+  expect(await readAppAdditionalEnvs(api, editedRelease, valuesSection)).toEqual({ E2E_EDIT: '1' });
+  // Seeded, and left alone in the form: an update that dropped the values the user did not touch
+  // would put back the catalog's default.
+  expect(await readAppTimezone(api, editedRelease)).toBe(seededTimezone);
 });
 
 test('the edit form refuses a port out of range', async ({ page, api }) => {
