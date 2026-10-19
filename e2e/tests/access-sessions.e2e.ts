@@ -20,10 +20,12 @@
  * ## Terminate Other Sessions
  *
  * It ends every session but the caller's, whoever holds it, and that includes the worker client
- * every later test in the worker uses, and the session whose token the browser redeemed. So the
- * test checks that both are still usable afterwards, and does not try to repair either. It runs
- * last in the file. If the worker client does not come back by itself, the test fails, and
- * Playwright replaces the worker before the next spec.
+ * every later test in the worker uses, and the session whose token the browser redeemed. #14677
+ * asks for what that does to both to be measured before this test is kept, and nothing here could
+ * run it, so its first CI run is that measurement. It checks that both are still usable afterwards,
+ * and does not try to repair either. If either is not, the test fails, Playwright replaces the
+ * worker before the next spec, and the test is to be removed rather than worked around. It runs
+ * last in the file.
  *
  * ## Setup
  *
@@ -53,6 +55,12 @@ const sessionUser = {
  * the worker client logging in again. Not a wait.
  */
 const sessionSettleTimeoutMs = 30_000;
+
+/**
+ * A ceiling for the worker client to answer again after its session is ended. Three times one
+ * read's own timeout, so a read that hangs on the closed socket is followed by more attempts.
+ */
+const workerReloginTimeoutMs = 90_000;
 
 /** The second client. Closed before and after every test, so its relogin cannot open a session. */
 let sessionClient: E2eApiClient | undefined;
@@ -152,9 +160,8 @@ test('Terminate Other Sessions ends the other sessions and keeps the admin signe
 
   await terminateOtherSessions(page);
 
-  // The card reloads its list only once the call has returned, and through the browser's session,
-  // so the row going is also evidence that the browser is still signed in.
   await expect(page.locator(accessLocators.sessions.row(username, origin))).toHaveCount(0);
+  // Still on the card, so the browser was not sent to the sign-in page.
   await expect(page.locator(accessLocators.sessions.terminateOthers)).toBeVisible();
 
   // The worker client's session was one of the others. A call through it fails until it has
@@ -163,7 +170,7 @@ test('Terminate Other Sessions ends the other sessions and keeps the admin signe
     () => isSessionPresent(api, session.id),
     {
       message: 'the worker api client should answer again, and the seeded session should be gone',
-      timeout: sessionSettleTimeoutMs,
+      timeout: workerReloginTimeoutMs,
     },
   ).toBe(false);
 });
