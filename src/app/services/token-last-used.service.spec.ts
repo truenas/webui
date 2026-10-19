@@ -168,6 +168,31 @@ describe('TokenLastUsedService', () => {
       expect(updateTokenLastUsedSpy).toHaveBeenCalledTimes(2);
     });
 
+    it('stops stamping on traffic once the token is cleared, and starts again on the next sign-in', () => {
+      const user$ = new Subject<LoggedInUser>();
+      const responses$ = new Subject<IncomingMessage>();
+      (spectator.inject(WebSocketHandlerService) as { responses$: Observable<IncomingMessage> })
+        .responses$ = responses$;
+      const updateTokenLastUsedSpy = jest.spyOn(spectator.service, 'updateTokenLastUsed');
+      jest.useRealTimers();
+      jest.useFakeTimers();
+
+      spectator.service.setupTokenLastUsedValue(user$);
+      user$.next({} as LoggedInUser);
+      expect(updateTokenLastUsedSpy).toHaveBeenCalledTimes(1);
+
+      // The old token is refused and cleared; the socket keeps answering.
+      spectator.service.clearTokenLastUsed();
+      responses$.next({ jsonrpc: '2.0', id: '1', result: '' });
+      jest.advanceTimersByTime(5000);
+      expect(updateTokenLastUsedSpy).toHaveBeenCalledTimes(1);
+
+      user$.next({} as LoggedInUser);
+      responses$.next({ jsonrpc: '2.0', id: '2', result: '' });
+      jest.advanceTimersByTime(5000);
+      expect(updateTokenLastUsedSpy).toHaveBeenCalledTimes(3);
+    });
+
     it('should update tokenLastUsed in localStorage on user and WebSocket activity', () => {
       const user$ = spectator.inject(AuthService).user$ as Subject<LoggedInUser>;
       const updateTokenLastUsedSpy = jest.spyOn(spectator.service, 'updateTokenLastUsed');
