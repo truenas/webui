@@ -1,9 +1,13 @@
 /**
- * Stories: an admin sets HA up on a licensed pair, the way middleware's own
- * HA setup does it — failover off while the pair is reconfigured, the data
- * interface given both controllers' addresses and a virtual IP, the
- * configuration synced onto the standby, a pool, and failover back on — and
- * the pair ends up healthy: controller 1 active, controller 2 standing by.
+ * Stories: an admin sets HA up on a licensed pair — failover off while the
+ * pair is reconfigured, the data interface given both controllers' addresses
+ * and a virtual IP, a pool, the whole configuration synced onto the standby,
+ * and failover back on — and the pair ends up healthy: controller 1 active,
+ * controller 2 standing by.
+ *
+ * The sync comes after the pool, not before it as in middleware's own HA
+ * setup: the standby restarts onto a configuration that already has
+ * everything, rather than relying on each later change reaching it.
  *
  * Serial, and a link in the HA suite's chain (`playwright.config.ts`): each
  * test sets up what the next needs, so a failure stops the rest rather than
@@ -79,6 +83,17 @@ test('an admin gives the data interface both controllers\' addresses and a virtu
   });
 });
 
+test('an admin creates the pool the pair will fail over', async ({ page, api, config }) => {
+  requireHa(config);
+
+  await openPoolWizard(page, pool);
+  await configureAutomatedVdevs(page, 'data', { layout: 'Stripe', width: 1, vdevs: 1 });
+  await goToReview(page, 'data');
+  await submitPool(page);
+
+  expect(await poolNames(api)).toContain(pool);
+});
+
 test('an admin syncs the configuration onto the standby, which restarts onto it', async ({ page, api, config }) => {
   requireHa(config);
 
@@ -94,7 +109,7 @@ test('an admin syncs the configuration onto the standby, which restarts onto it'
   await expect.poll(async () => (await readFailover(api)).status).toBe('MASTER');
 
   // Controller 2 rebooted onto the synced configuration and is back, before
-  // anything else changes: controller 1 sends each later change to it as it
+  // failover is turned on: controller 1 sends each later change to it as it
   // is made, and one made while it is down never reaches it. A pool and
   // failover turned on while it rebooted left it with failover off and no
   // pool, so it never took over.
@@ -104,17 +119,6 @@ test('an admin syncs the configuration onto the standby, which restarts onto it'
     return bootId !== null && bootId !== bootBeforeSync
       && !reasons.some((reason) => peerNotBackReasons.includes(reason));
   }, { timeout: haUpTimeoutMs, intervals: [5_000] }).toBe(true);
-});
-
-test('an admin creates the pool the pair will fail over', async ({ page, api, config }) => {
-  requireHa(config);
-
-  await openPoolWizard(page, pool);
-  await configureAutomatedVdevs(page, 'data', { layout: 'Stripe', width: 1, vdevs: 1 });
-  await goToReview(page, 'data');
-  await submitPool(page);
-
-  expect(await poolNames(api)).toContain(pool);
 });
 
 test('an admin turns automatic failover on, and HA comes up', async ({ page, api, config }) => {
