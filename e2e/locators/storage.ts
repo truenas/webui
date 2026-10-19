@@ -153,6 +153,14 @@ export const poolWizardLocators = {
    */
   configPreview: (type: VdevCategory) => `[data-test="text-config-preview-${type}"]`,
 
+  /**
+   * Any size or count in the Unassigned Disks card beside the wizard,
+   * `['inventory-hdd', size, 'count']` and its siblings. A prefix match: the size is the
+   * appliance's. None is rendered until the wizard has loaded `disk.details`, and the card says
+   * "Loading disks..." until then (`inventory.component.html`).
+   */
+  inventory: '[data-test^="text-inventory-"]',
+
   saveAndReview: (type: VdevCategory) => (
     `[data-test="button-save-and-go-to-review-${stepIds[type]}"]`
   ),
