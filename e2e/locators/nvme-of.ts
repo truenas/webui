@@ -26,6 +26,20 @@ const portSegments = (port: { address: string; port: number }): string => (
   ['tcp', port.address, port.port].map((part) => legacyKebabTestSegment(part)).join('-')
 );
 
+/**
+ * A row of the Manage Ports dialog: `toUniqueRowTag('port-<trtype>-<addr>-<svcid>')`,
+ * lodash over the whole tag, so `0.0.0.0:4493` is `port-tcp-0-0-0-0-4493`.
+ */
+const managedPortRowTag = (port: { address: string; port: number }): string => (
+  legacyKebabTestSegment(`port-tcp-${port.address}-${port.port}`)
+);
+
+/**
+ * A row of the Manage Hosts dialog: `toUniqueRowTag('host-' + hostnqn)`. Lodash splits
+ * a letter/digit boundary, so `e2e` in an NQN comes out as `e-2-e`.
+ */
+const managedHostRowTag = (hostnqn: string): string => legacyKebabTestSegment(`host-${hostnqn}`);
+
 export const nvmeOfLocators = {
   card: {
     /** "Add" in the card's footer — `testId="nvme-of-share-add"`. Opens the Add Subsystem form. */
@@ -102,6 +116,74 @@ export const nvmeOfLocators = {
   /** "Create New" in that menu. Opens the host form, and adds the host it saves. */
   createNewHost: '[data-test="button-create-new-host"]',
 
+  /** "Manage Ports" in the Ports card's Add menu. Opens the Manage Ports dialog. */
+  managePorts: '[data-test="button-manage-ports"]',
+  /** "Manage Hosts" in the Associated Hosts card's Add menu. Opens the Manage Hosts dialog. */
+  manageHosts: '[data-test="button-manage-hosts"]',
+
+  /**
+   * The Manage Ports and Manage Hosts dialogs. Both are `<tn-dialog-shell testId="dialog">`,
+   * so they share the shell's ids; only one is ever open at a time.
+   */
+  manageDialog: {
+    title: '[data-test="dialog-title-dialog"]',
+    /** The shell's own ✕. */
+    close: '[data-test="button-close-dialog"]',
+  },
+
+  managePortsDialog: {
+    row: (port: { address: string; port: number }): string => `[data-test="row-${managedPortRowTag(port)}"]`,
+    usedInSubsystems: (port: { address: string; port: number }): string => (
+      `[data-test="text-used-in-subsystems-${managedPortRowTag(port)}-row-text"]`
+    ),
+    /** The row's pencil. Opens the port form in a side panel over the dialog. */
+    edit: (port: { address: string; port: number }): string => (
+      `[data-test="button-${managedPortRowTag(port)}-mdi-pencil-row-action"]`
+    ),
+    /** The row's bin. Opens the port-or-host delete dialog. */
+    delete: (port: { address: string; port: number }): string => (
+      `[data-test="button-${managedPortRowTag(port)}-mdi-delete-row-action"]`
+    ),
+  },
+
+  manageHostsDialog: {
+    row: (hostnqn: string): string => `[data-test="row-${managedHostRowTag(hostnqn)}"]`,
+    description: (hostnqn: string): string => (
+      `[data-test="text-description-${managedHostRowTag(hostnqn)}-row-text"]`
+    ),
+    hasAuthentication: (hostnqn: string): string => (
+      `[data-test="text-has-host-authentication-${managedHostRowTag(hostnqn)}-row-yesno"]`
+    ),
+    /** The row's pencil. Opens the host form in a side panel over the dialog. */
+    edit: (hostnqn: string): string => `[data-test="button-${managedHostRowTag(hostnqn)}-mdi-pencil-row-action"]`,
+    /** The row's bin. Opens the port-or-host delete dialog. */
+    delete: (hostnqn: string): string => (
+      `[data-test="button-${managedHostRowTag(hostnqn)}-mdi-delete-row-action"]`
+    ),
+  },
+
+  /** What both Manage dialogs raise before deleting a port or a host. */
+  portOrHostDeleteDialog: {
+    title: '[data-test="dialog-title-subsystem-port-ot-host-delete"]',
+    /** "{type} is currently in use by the following subsystems:". Rendered only when some do. */
+    inUseMessage: '[data-test="text-in-use-message"]',
+    /** One subsystem in that list, by name. */
+    subsystemInUse: (name: string): string => `[data-test="text-subsystem-in-use-${kebabTestSegment(name)}"]`,
+    /**
+     * Labelled "Delete Anyway" while the list is shown, and then deletes with `force`;
+     * "Delete" otherwise. The only `button-delete` on screen while this dialog is up.
+     */
+    delete: '[data-test="button-delete"]',
+    cancel: '[data-test="button-cancel"]',
+  },
+
+  /** The port form, as Edit in Manage Ports opens it. */
+  portForm: {
+    /** The service id. A number input, though the control holds what middleware stored. */
+    serviceId: '[data-test="input-addr-trsvcid"]',
+    save: '[data-test="button-save"]',
+  },
+
   /** "No" on the "Start NVMe-oF Service" dialog the add form raises while the service is stopped. */
   declineStartService: '[data-test="button-do-not-start"]',
 
@@ -133,12 +215,20 @@ export const nvmeOfLocators = {
 
   hostForm: {
     hostnqn: '[data-test="input-hostnqn"]',
+    /** `<tn-form-field testId="hostnqn">` around {@link hostnqn}, which holds its error text. */
+    hostnqnField: '[data-test="form-field-hostnqn"]',
+    description: '[data-test="input-description"]',
     requireAuthentication: '[data-test="checkbox-require-host-authentication"]',
     /** "Generate Key" under Key For Host To Present. Enabled once a Host NQN is typed. */
     generateHostKey: '[data-test="button-generate-key-host"]',
     /** That key. A multiline `tn-input`, so a `<textarea>` typed `textarea`. */
     hostKey: '[data-test="textarea-dhchap-key"]',
+    /** "Generate Key" under Key For TrueNAS To Present, generated from the global base NQN. */
+    generateTrueNasKey: '[data-test="button-generate-key-ctrl"]',
+    trueNasKey: '[data-test="textarea-dhchap-ctrl-key"]',
     save: '[data-test="button-save"]',
+    /** The side panel's dismiss control. It asks first only when the form has unsaved edits. */
+    closePanel: '[data-test="button-close-side-panel"]',
   },
 
   page: {

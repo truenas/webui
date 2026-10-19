@@ -8,12 +8,12 @@
   </p>
 
   @if (data.subsystemsInUse?.length) {
-    <p class="message">
+    <p class="message" tnTestIdType="text" tnTestId="in-use-message">
       {{ '{type} is currently in use by the following subsystems:' | translate: { type } }}
     </p>
     <ul>
       @for (subsystem of data.subsystemsInUse; track subsystem.name) {
-        <li>{{ subsystem.name }}</li>
+        <li tnTestIdType="text" [tnTestId]="['subsystem-in-use', subsystem.name]">{{ subsystem.name }}</li>
       }
     </ul>
   }
