@@ -1,6 +1,7 @@
 /**
- * The Boot Environments list on System > Boot, its header, its clone form and its
- * delete dialog, and the Boot Pool Status page it links to.
+ * The Boot Environments list on System > Boot, its header, its clone form, its
+ * delete dialog and its Stats/Settings dialog, and the Boot Pool Status page it
+ * links to with that page's Attach dialog.
  *
  * Every id on a row is built from the list's own `uniqueRowTag`, `bootenv-<name>`,
  * a plain template literal with no pre-normalizing — so the row, its cells and its
@@ -52,6 +53,41 @@ export const bootEnvironmentLocators = {
 
     /** Hidden on the running boot environment and the one set to boot next. */
     delete: (name: string): string => `[data-test="button-${rowTag(name)}-mdi-delete-row-action"]`,
+
+    /**
+     * The Active cell: `Now` for the running boot environment, `Restart` for the one
+     * set to boot next, `No` otherwise. Like Date Created, its id starts from the
+     * translated column title.
+     */
+    active: (name: string): string => `[data-test="text-active-${rowTag(name)}-row-text"]`,
+
+    /** Hidden on the boot environment already set to boot next, and on one middleware says cannot be. */
+    activate: (name: string): string => `[data-test="button-${rowTag(name)}-mdi-check-decagram-row-action"]`,
+  },
+
+  /** `BootenvStatsDialog`, raised by Stats/Settings. `<tn-dialog-shell testId="bootenv-stats">`. */
+  statsDialog: {
+    title: '[data-test="dialog-title-bootenv-stats"]',
+    /** "Scrub interval (in days)". Required, and at least 1. */
+    interval: '[data-test="input-interval"]',
+    /** Disabled while the interval is invalid. Closes the dialog once the interval is saved. */
+    updateInterval: '[data-test="button-update-interval"]',
+  },
+
+  /** `BootPoolAttachDialog`, raised by Attach on a boot disk. `<tn-dialog-shell testId="boot-pool-attach">`. */
+  attachDialog: {
+    title: '[data-test="dialog-title-boot-pool-attach"]',
+    /**
+     * "Member Disk", an `ix-unused-disk-select` with `testId="dev"`: the input is
+     * `autocomplete-dev` and its rows `option-dev-<label>`, a label being the device
+     * name and its size. Matched on the device name, as in `locators/pool-devices.ts`.
+     */
+    disk: '[data-test="autocomplete-dev"]',
+    diskOption: (devname: string): string => `[data-test^="option-dev-${kebabTestSegment(devname)}-"]`,
+    /** "Use all disk space". Unticked when the dialog opens. */
+    expand: '[data-test="checkbox-expand"]',
+    /** Reached through the dialog's action row: `button-save` is a common id. */
+    save: '[data-test="actions-boot-pool-attach"] [data-test="button-save"]',
   },
 
   cloneForm: {
@@ -69,6 +105,17 @@ export const bootEnvironmentLocators = {
      * topology entry's `name`, a partition such as `sda3` or a vdev such as `mirror-0`.
      */
     deviceName: (name: string): string => `[data-test="text-${kebabTestSegment(name)}-name"]`,
+
+    /** A device's actions menu, rendered only on a disk and on a mirror that carries a `path`. */
+    actions: (name: string): string => `[data-test="button-${kebabTestSegment(name)}-actions"]`,
+    /** In a disk's menu, only while the boot pool is a single disk. */
+    attach: '[data-test="button-attach"]',
+    /** In a mirror's menu. */
+    detach: '[data-test="button-detach"]',
+
+    /** The scan panel: `FINISHED` once a scrub is over, and when the last one started. */
+    scanStatus: '[data-test="text-scan-status"]',
+    scanDate: '[data-test="text-scan-date"]',
   },
 
   /**
