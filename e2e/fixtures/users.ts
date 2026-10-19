@@ -199,6 +199,55 @@ export async function ensureSignInAdministratorPresent(
 }
 
 /**
+ * Gives a user a home directory of its own under `homeParent`, and returns its path.
+ *
+ * `homeParent` is a mounted dataset path the caller owns: `home_create` makes
+ * `<homeParent>/<username>` and hands it to the user, as the user form's "Create
+ * Home Directory" does. An account made by {@link ensureUserPresent} or
+ * {@link ensureSignInCapableUser} has none until this runs. Removing the user and
+ * that dataset is all the cleanup there is.
+ */
+export async function giveUserHome(
+  client: E2eApiClient,
+  username: string,
+  homeParent: string,
+): Promise<string> {
+  const user = await findUser(client, username);
+  if (!user) {
+    throw new Error(`User "${username}" does not exist, so there is nobody to give a home to.`);
+  }
+
+  await firstValueFrom(
+    client.api
+      .call('user.update', [user.id, { home: homeParent, home_create: true }])
+      .pipe(timeout(slowCallTimeoutMs)),
+  );
+
+  return `${homeParent}/${username}`;
+}
+
+/**
+ * Sets a user's email and login shell over the API, as the state an edit starts from.
+ *
+ * Either may be left out. For a test of the user form, where the starting value
+ * has to be known — and, for the shell, differ from the one the test picks.
+ */
+export async function setUserEmailAndShell(
+  client: E2eApiClient,
+  username: string,
+  fields: { email?: string; shell?: string },
+): Promise<void> {
+  const user = await findUser(client, username);
+  if (!user) {
+    throw new Error(`User "${username}" does not exist, so there is nothing to update.`);
+  }
+
+  await firstValueFrom(
+    client.api.call('user.update', [user.id, fields]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
  * Gives a user a freshly generated SSH public key, and returns it.
  *
  * The Access card offers "Download Public Key" only while `sshpubkey` is set, so
@@ -208,26 +257,19 @@ export async function ensureSignInAdministratorPresent(
  * Middleware writes the key into the user's home and refuses it ("Home directory
  * is not writable") unless that home is on a dataset — and an account made by
  * {@link ensureUserPresent} has none. So the user is first given a home under
- * `homeParent`, a mounted dataset path the caller owns: `home_create` makes
- * `<homeParent>/<username>` and hands it to the user. That is its own update,
- * before the key's, because an update changing both writes the key into the
- * *old* home. Removing the user and that dataset is all the cleanup there is.
+ * `homeParent` by {@link giveUserHome}. That is its own update, before the key's,
+ * because an update changing both writes the key into the *old* home.
  */
 export async function giveUserPublicKey(
   client: E2eApiClient,
   username: string,
   homeParent: string,
 ): Promise<string> {
+  await giveUserHome(client, username, homeParent);
   const user = await findUser(client, username);
   if (!user) {
     throw new Error(`User "${username}" does not exist, so there is nobody to give a public key to.`);
   }
-
-  await firstValueFrom(
-    client.api
-      .call('user.update', [user.id, { home: homeParent, home_create: true }])
-      .pipe(timeout(slowCallTimeoutMs)),
-  );
 
   const generated = await firstValueFrom(
     client.api.call('keychaincredential.generate_ssh_key_pair').pipe(timeout(slowCallTimeoutMs)),

@@ -27,6 +27,12 @@ export const signInTimeoutMs = 60_000;
  */
 export const wrongCredentialsMessage = 'Wrong username or password. Please try again.';
 
+/**
+ * A ceiling on `user.set_password` answering. It runs a PAM check of the current
+ * password and a complexity check of the new one, so it is not instant.
+ */
+export const passwordChangeTimeoutMs = 30_000;
+
 /** Short: this only asks whether an origin answers at all. */
 const httpProbeTimeoutMs = 10_000;
 
@@ -204,6 +210,52 @@ export async function signOut(page: Page): Promise<void> {
   await page.locator(topbarLocators.logOut).click();
 
   await expect(page.locator(signinLocators.username)).toBeVisible({ timeout: signInTimeoutMs });
+}
+
+/** Opens Change Password from the topbar user menu and waits for its dialog. */
+export async function openChangePasswordDialog(page: Page): Promise<void> {
+  await page.locator(topbarLocators.userMenu).click();
+  await page.locator(topbarLocators.changePassword).click();
+
+  await expect(page.locator(topbarLocators.changePasswordDialog.title)).toBeVisible();
+}
+
+/**
+ * Fills the Change Password dialog already on screen, without saving it.
+ *
+ * `current` is left out for a Full Admin, whom the dialog does not ask.
+ * `confirmation` defaults to `next`; pass something else to make them differ.
+ */
+export async function fillChangePasswordForm(
+  page: Page,
+  { current, next, confirmation = next }: { current?: string; next: string; confirmation?: string },
+): Promise<void> {
+  const dialog = topbarLocators.changePasswordDialog;
+
+  if (current !== undefined) {
+    await page.locator(dialog.currentPassword).fill(current);
+  }
+  await page.locator(dialog.newPassword).fill(next);
+  await page.locator(dialog.confirmPassword).fill(confirmation);
+  // The mismatch error is shown once the field has been touched.
+  await page.locator(dialog.confirmPassword).blur();
+}
+
+/**
+ * Changes the signed-in user's own password through the topbar, and waits for
+ * the dialog to close.
+ *
+ * The dialog closing is the app's success signal: it closes only once
+ * `user.set_password` has answered, and stays open on a refusal.
+ */
+export async function changeOwnPassword(page: Page, passwords: { current?: string; next: string }): Promise<void> {
+  const dialog = topbarLocators.changePasswordDialog;
+
+  await openChangePasswordDialog(page);
+  await fillChangePasswordForm(page, passwords);
+  await page.locator(dialog.save).click();
+
+  await expect(page.locator(dialog.title)).toBeHidden({ timeout: passwordChangeTimeoutMs });
 }
 
 /**
