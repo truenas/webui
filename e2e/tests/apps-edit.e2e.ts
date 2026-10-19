@@ -3,14 +3,14 @@
  * and the app takes the change; the wizard refuses a port out of range; and an admin converts a
  * catalog app to a custom app from its Application Info card, and it keeps running.
  *
- * Each is checked on screen and through `app.query`'s saved values. Every test seeds its own app
- * with `app.create`, under a name of its own.
+ * Each is checked on screen and through `app.query`, the edits in the app's saved values. Every test
+ * seeds its own app with `app.create`, under a name of its own.
  *
  * ## The app
  *
  * IT Tools from the `community` train, as in `apps-install.e2e.ts`: one container, no storage, and a
- * form whose WebUI Port is an int with a `max`, and whose Additional Environment Variables land in the
- * `it-tools` service's environment. Converting is one-way, which is why the convert test has an app
+ * form whose WebUI Port is an int with a `max`, and whose Additional Environment Variables are saved
+ * under `it_tools.additional_envs`. Converting is one-way, which is why the convert test has an app
  * of its own.
  *
  * ## Setup
