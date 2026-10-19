@@ -17,7 +17,7 @@
     }
 
     @if (existingDockerRegistry || loggedInToDockerHub || !form.controls.registry.value) {
-      <tn-form-field [label]="'URI' | translate" [required]="true">
+      <tn-form-field testId="uri" [label]="'URI' | translate" [required]="true">
         <tn-input
           name="uri"
           testId="uri"
