@@ -88,6 +88,21 @@ async function readBrowserSessions(api: E2eApiClient, adminUsername: string): Pr
     .filter((session) => session.credentials === 'TOKEN' && !session.current);
 }
 
+/**
+ * Whether the worker client still finds the session with this `id`, or why it did not answer.
+ *
+ * Playwright awaits an `expect.poll` generator outside its own try/catch, so a rejected call would
+ * abort the poll rather than cost one attempt (`zvols.e2e.ts`). A string rather than `undefined`, so
+ * a poll that gives up shows the worker's last refusal in its diff.
+ */
+async function workerReadsSession(api: E2eApiClient, id: string): Promise<string> {
+  try {
+    return (await isSessionPresent(api, id)) ? 'present' : 'absent';
+  } catch (error) {
+    return `no answer: ${error instanceof Error ? error.message : String(error)}`;
+  }
+}
+
 async function cleanUp(api: E2eApiClient): Promise<void> {
   // First, so the client cannot log in again as a user being deleted. Closing cannot fail.
   closeSessionClient();
@@ -167,10 +182,13 @@ test('Terminate Other Sessions ends the other sessions and keeps the admin signe
   // The worker client's session was one of the others. A call through it fails until it has
   // logged in again by itself, and this is what every later test in the worker depends on.
   await expect.poll(
-    () => isSessionPresent(api, session.id),
+    () => workerReadsSession(api, session.id),
     {
       message: 'the worker api client should answer again, and the seeded session should be gone',
       timeout: workerReloginTimeoutMs,
     },
-  ).toBe(false);
+  ).toBe('absent');
+  // Again, once the worker has answered: a browser that noticed its token's parent session had
+  // ended would have left the card by now.
+  await expect(page.locator(accessLocators.sessions.terminateOthers)).toBeVisible();
 });
