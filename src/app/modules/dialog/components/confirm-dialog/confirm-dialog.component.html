@@ -1,7 +1,7 @@
 <tn-dialog-shell testId="confirm" [title]="options.title" [showCloseButton]="false">
   <div id="confirm-msg">
     <div class="message-content">
-      <span [innerHTML]="options.message"></span>
+      <span tnTestIdType="text" tnTestId="confirm-message" [innerHTML]="options.message"></span>
     </div>
 
     @if (options.secondaryCheckbox) {
