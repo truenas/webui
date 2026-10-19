@@ -106,6 +106,13 @@ export const bootEnvironmentLocators = {
      */
     deviceName: (name: string): string => `[data-test="text-${kebabTestSegment(name)}-name"]`,
 
+    /**
+     * A vdev's expand toggle, `[toggleTestId]="['toggle-row', guid]"` on its
+     * `tn-nested-tree-node`. Only the boot pool's own node is expanded when the
+     * page loads, so a mirror's disks are drawn only once this is clicked.
+     */
+    toggle: (guid: string): string => `[data-test="button-toggle-row-${kebabTestSegment(guid)}"]`,
+
     /** A device's actions menu, rendered only on a disk and on a mirror that carries a `path`. */
     actions: (name: string): string => `[data-test="button-${kebabTestSegment(name)}-actions"]`,
     /** In a disk's menu, only while the boot pool is a single disk. */

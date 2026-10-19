@@ -63,6 +63,8 @@ export async function listBootEnvironmentNames(client: E2eApiClient): Promise<st
  */
 export interface BootPoolDevice {
   name: string;
+  /** What Boot Pool Status keys a vdev's expand toggle by. */
+  guid: string;
   type: string;
   disk: string | null;
   children: BootPoolDevice[];

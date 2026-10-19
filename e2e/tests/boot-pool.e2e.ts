@@ -9,12 +9,16 @@
  * `boot.get_state`, `boot.get_disks`, `boot.environment.query`,
  * `system.advanced.config` and `core.get_jobs`.
  *
- * Teardown runs before each test as well as after, unconditionally:
- * - the scrub interval is written back as the run found it;
- * - the running boot environment is made the one set to boot next again, then
- *   the clone is removed — in that order, because a boot environment set to
- *   boot next cannot be destroyed;
- * - any disk the attach test added to the boot pool is detached and wiped.
+ * Before each test and after it, unconditionally, the scrub interval is written
+ * back as the run found it, and the running boot environment is made the one set
+ * to boot next again before the clone is removed — in that order, because a boot
+ * environment set to boot next cannot be destroyed.
+ *
+ * After the attach test, any disk it added to the boot pool is detached and
+ * wiped. Not before a test: that needs the boot pool's disks as the test found
+ * them, and on a boot pool that is already mirrored there is no telling which
+ * disk the appliance was installed on. So the attach test refuses to start on
+ * one, and a run killed mid-test leaves the mirror for a person to undo.
  *
  * The original boot disk is never acted on. Replace is out of scope for that
  * reason, and the attach teardown only touches a disk that was not in the boot
@@ -56,14 +60,7 @@ const {
 /** The clone the activate test sets to boot next and back. */
 const cloneName = 'e2e-bootenv-activate';
 
-/**
- * Seeded over the API, so the dialog has a known value to show. Not middleware's
- * default of 7, so a dialog that showed the default without reading the config
- * would fail.
- */
-const seededInterval = 9;
-
-/** What the dialog changes it to. */
+/** What the dialog changes the interval to. Not middleware's default of 7. */
 const changedInterval = 14;
 
 /**
@@ -139,15 +136,20 @@ test('an admin scrubs the boot pool, and the scrub runs to the end', async ({ pa
 });
 
 test('an admin changes the scrub interval, and the dialog refuses one under a day', async ({ page, api }) => {
-  await setBootScrubInterval(api, seededInterval);
+  // Not seeded over the API: the dialog fills the field from the app's store,
+  // which read the advanced config at sign-in, before the test body runs. So the
+  // field shows the interval as the run found it. Reopening after the change
+  // below is what shows the dialog reads the config rather than a default.
+  const before = await readBootScrubInterval(api);
+  expect(before, 'the interval should not already be the value this test sets').not.toBe(changedInterval);
 
   await goToBootEnvironments(page);
   await openBootPoolStats(page);
-  await expect(page.locator(statsDialog.interval)).toHaveValue(String(seededInterval));
+  await expect(page.locator(statsDialog.interval)).toHaveValue(String(before));
 
   await page.locator(statsDialog.interval).fill('0');
   await expect(page.locator(statsDialog.updateInterval)).toBeDisabled();
-  expect(await readBootScrubInterval(api)).toBe(seededInterval);
+  expect(await readBootScrubInterval(api)).toBe(before);
 
   await page.locator(statsDialog.interval).fill(String(changedInterval));
   await expect(page.locator(statsDialog.updateInterval)).toBeEnabled();
@@ -221,8 +223,11 @@ test('an admin mirrors the boot pool onto an unused disk, and detaches it again'
     expect(mirror.type).toBe('MIRROR');
     expect(mirror.children).toHaveLength(2);
 
-    // The page reloads the boot pool once the dialog closes.
-    for (const device of [mirror, ...mirror.children]) {
+    // The page reloads the boot pool once the dialog closes. The mirror is drawn
+    // collapsed, so its disks are reached through its toggle.
+    await expect(page.locator(status.deviceName(mirror.name))).toBeVisible();
+    await page.locator(status.toggle(mirror.guid)).click();
+    for (const device of mirror.children) {
       await expect(page.locator(status.deviceName(device.name))).toBeVisible();
     }
   });

@@ -3,6 +3,7 @@
  */
 import { expect, type Page } from '@playwright/test';
 import { goToBootEnvironments } from './navigation';
+import { confirmDestructiveAction } from './storage';
 import { bootEnvironmentLocators } from '../locators/boot-environments';
 import { confirmDialogLocators } from '../locators/dialogs';
 
@@ -46,19 +47,15 @@ export async function saveCloneForm(page: Page): Promise<void> {
 }
 
 /**
- * Ticks the shared confirm's box and presses its button, checking on the way
- * that the button waited for the box — the confirm is raised without
- * `hideCheckbox`. Waits for the confirm to close.
+ * Ticks the shared confirm's box and presses its button, through
+ * `confirmDestructiveAction`, checking first that the button waited for the box —
+ * the confirm is raised without `hideCheckbox`. Waits for the confirm to close.
  */
 async function confirmWithCheckbox(page: Page): Promise<void> {
   await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+  await expect(page.locator(confirmDialogLocators.confirm)).toBeDisabled();
 
-  const confirm = page.locator(confirmDialogLocators.confirm);
-  await expect(confirm).toBeDisabled();
-  await page.locator(confirmDialogLocators.checkbox).click();
-  await expect(confirm).toBeEnabled();
-
-  await confirm.click();
+  await confirmDestructiveAction(page);
   await expect(page.locator(confirmDialogLocators.title)).toBeHidden();
 }
 
@@ -122,7 +119,7 @@ export async function openBootPoolStatus(page: Page, device: string): Promise<vo
  * Attaches an unused disk to a single-disk boot pool, from the boot device's menu
  * on Boot Pool Status, and waits for the Attach dialog to close.
  *
- * "Use all disk space" is left as the dialog opens it, which is checked: unticked.
+ * "Use all disk space" is left unticked, as the dialog opens it; that is checked.
  * The autocomplete narrows to the device name typed, and clicking its row is what
  * commits the value.
  */
