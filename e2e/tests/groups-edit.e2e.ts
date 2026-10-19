@@ -222,8 +222,9 @@ test('the edit form refuses a name another group has and an invalid one, and kee
   await expect(save).toBeEnabled();
 
   // Each refusal starts from an enabled Save, so a disabled one can only be
-  // that name. The check is asynchronous, so the assertions retry. Enter tries
-  // to submit anyway, so the read-back at the end has something to catch.
+  // that name. The check is asynchronous, so the assertions retry. Enter is a
+  // submit attempt the form must refuse too; middleware would refuse both names
+  // as well, so the read-back at the end is a backstop, not the proof.
   await name.fill(bystanderName);
   await expect(save).toBeDisabled();
   await name.press('Enter');
