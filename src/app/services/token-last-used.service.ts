@@ -5,7 +5,6 @@ import {
   BehaviorSubject,
   filter, map, Observable, switchMap, tap,
 } from 'rxjs';
-import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
@@ -63,13 +62,20 @@ export class TokenLastUsedService {
   setupTokenLastUsedValue(user$: Observable<LoggedInUser | null>): void {
     user$.pipe(
       filter(Boolean),
-      tapOnce(() => this.updateTokenLastUsed()),
+      // On every signed-in user, not just the first: after `clearTokenLastUsed()` this is the
+      // only thing that starts a stamp again.
+      tap(() => this.updateTokenLastUsed()),
       // `auditTime`, not `debounceTime`. A socket that never falls quiet for five seconds — the
       // dashboard streams reporting data continuously — never lets a debounce emit at all, so the
       // stamp froze at sign-in on exactly the pages that are busiest, and the sign-in page then
       // read the session as expired however long the user had been working in it. Auditing stamps
       // at most once per interval whether the traffic is a trickle or a stream.
       switchMap(() => this.wsHandler.responses$.pipe(auditTime(this.stampIntervalMs))),
+      // Traffic keeps a stamp fresh but never starts one. The socket keeps answering after the
+      // token is cleared — a failover's sign-in page refusing the old token, for one — and a
+      // stamp then made the sign-in page read a session that no longer exists as being restored:
+      // it swapped its form for "Logging in..." and dropped the login the user had just sent.
+      filter(() => this.tokenLastUsed$.value !== null),
       tap(() => this.updateTokenLastUsed()),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();
