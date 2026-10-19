@@ -58,8 +58,8 @@ import {
   appInfoCardLocators, appRollbackDialogLocators, appUpdateDialogLocators, installedAppLocators,
 } from '../locators/apps';
 import { jobDialogLocators } from '../locators/encryption';
-import { apiCallsTo } from '../support/api-calls';
 import type { E2eApiClient } from '../support/api/client';
+import { apiCallsTo } from '../support/api-calls';
 import { leavingTestData, runCleanupSteps, type CleanupStep } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
