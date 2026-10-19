@@ -269,9 +269,13 @@ export async function readDedupTableSize(client: E2eApiClient, name: string): Pr
   return (await getPool(client, name)).dedup_table_size ?? 0;
 }
 
-/** The pool's Auto TRIM, as `pool.query` reports it: `on` or `off`. */
+/**
+ * The pool's Auto TRIM, as `pool.query` reports it: `on` or `off`. The client
+ * types the property's value as `unknown`, so anything else reads as empty.
+ */
 export async function readAutotrim(client: E2eApiClient, name: string): Promise<string> {
-  return (await getPool(client, name)).autotrim.value;
+  const { value } = (await getPool(client, name)).autotrim;
+  return typeof value === 'string' ? value : '';
 }
 
 /**
