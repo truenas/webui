@@ -182,6 +182,8 @@ test('the edit form refuses a port out of range', async ({ page, api }) => {
   await expect(page.locator(catalogAppEditLocators.update)).toBeEnabled();
 
   await page.locator(catalogAppEditLocators.portNumber).fill(String(maxPort + 1));
+  // Not shown for an untouched field.
+  await page.locator(catalogAppEditLocators.portNumber).blur();
 
   // The schema's `max`, applied by the form, not a refusal from middleware: nothing is sent.
   await expect(page.locator(catalogAppEditLocators.portNumberField)).toContainText(`Maximum value is ${maxPort}`);
