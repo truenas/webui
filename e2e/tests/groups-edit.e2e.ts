@@ -95,7 +95,8 @@ test('an admin renames a group, and it is the same group under the new name', as
   // The GID is fixed once a group exists, so the form shows it and will not take another.
   await expect(page.locator(form.gid)).toBeDisabled();
   await expect(page.locator(form.gid)).toHaveValue(String(seeded.gid));
-  // The name check excludes the group's own name, so an untouched edit form can be saved.
+  // An untouched edit form can be saved. The last test shows the name check
+  // itself excluding the group's own name; here it may still be pending.
   await expect(page.locator(form.save)).toBeEnabled();
 
   await page.locator(form.name).fill(renamedName);
@@ -189,7 +190,7 @@ test('an admin assigns one privilege and removes another from the group form, an
   await saveGroupForm(page);
 
   // The bystander's GID is what catches an update that replaced the list instead of adding to it.
-  const addedGids = (await findPrivilege(api, addedPrivilege))?.local_groups.map((local) => local.gid);
+  const addedGids = ((await findPrivilege(api, addedPrivilege))?.local_groups ?? []).map((local) => local.gid);
   expect(addedGids).toHaveLength(2);
   expect(addedGids).toEqual(expect.arrayContaining([group.gid, bystander.gid]));
   expect((await findPrivilege(api, removedPrivilege))?.local_groups).toEqual([]);
@@ -215,7 +216,9 @@ test('the edit form refuses a name another group has and an invalid one, and kee
 
   await openEditGroupForm(page, groupName);
 
-  // Enabled on the group's own name: the half that proves the check excludes it.
+  // Save is enabled while the check is pending too, so this first read proves
+  // little. The two returns to the group's own name below are what prove the
+  // check excludes it: by then the group list is cached and the check answers at once.
   await expect(save).toBeEnabled();
 
   // Each refusal starts from an enabled Save, so a disabled one can only be
