@@ -67,10 +67,10 @@ export class DiskWipeDialog {
       label: this.translate.instant('Quick'),
       value: DiskWipeMethod.Quick,
     }, {
-      label: this.translate.instant('Full with zeros'),
+      label: this.translate.instant('Fill with zeros'),
       value: DiskWipeMethod.Full,
     }, {
-      label: this.translate.instant('Full with random data'),
+      label: this.translate.instant('Fill with random data'),
       value: DiskWipeMethod.FullRandom,
     },
   ]);

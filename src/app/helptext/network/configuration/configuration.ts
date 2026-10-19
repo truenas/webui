@@ -57,7 +57,7 @@ export const helptextNetworkConfiguration = {
   netbiosTooltip: T('Legacy NetBIOS name server. Advertises the SMB\
  service <i>NetBIOS Name</i>. Can be required for legacy SMB1 clients\
  to discover the server. When advertised, the server appears in\
- <i>Network Neighborhood</i>).'),
+ <i>Network Neighborhood</i>.'),
 
   mdnsLabel: 'mDNS',
   mdnsTooltip: T('Multicast DNS. Uses the system <i>Hostname</i> to\
@@ -66,7 +66,7 @@ export const helptextNetworkConfiguration = {
 
   wsdLabel: 'WS-Discovery',
   wsdTooltip: T('Uses the SMB Service <i>NetBIOS Name</i> to advertise\
- the server to WS-Discovery clients. This causes the computer appear in\
+ the server to WS-Discovery clients. This causes the computer to appear in\
  the <i>Network Neighborhood</i> of modern Windows OSes.'),
 
   outboundNetworkActivity: {

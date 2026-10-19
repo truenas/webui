@@ -47,7 +47,7 @@ describe('DiskWipeDialogComponent', () => {
 
   it('wipes disk with selected method when dialog is submitted', async () => {
     const methodSelect = await loader.getHarness(TnSelectHarness);
-    await methodSelect.selectOption(/Full with zeros/);
+    await methodSelect.selectOption(/Fill with zeros/);
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Wipe' }));
     await saveButton.click();

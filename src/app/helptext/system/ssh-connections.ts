@@ -11,7 +11,7 @@ export const helptextSshConnections = {
 
   hostTooltip: T('Hostname or IP address of the remote system.'),
 
-  usernameTooltip: T('Username on the remote system which will be used to login <b>via SSH</b>.'),
+  usernameTooltip: T('Username on the remote system which will be used to log in <b>via SSH</b>.'),
 
   sudoTooltip: T('Checking this option will lead to <i>/usr/sbin/zfs</i> being allowed to be executed using sudo without password.\
  If not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.'),
@@ -34,7 +34,7 @@ export const helptextSshConnections = {
 
   passwordTooltip: T('User account password for logging in to the remote system.'),
 
-  adminUsernameTooltip: T('Username on the remote system to log in <b>via Web UI</b> to setup connection.'),
+  adminUsernameTooltip: T('Username on the remote system to log in <b>via Web UI</b> to set up a connection.'),
 
-  otpTooltip: T('One-Time Password if two factor authentication is enabled.'),
+  otpTooltip: T('One-Time Password if two-factor authentication is enabled.'),
 };

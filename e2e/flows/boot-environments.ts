@@ -3,13 +3,25 @@
  */
 import { expect, type Page } from '@playwright/test';
 import { goToBootEnvironments } from './navigation';
+import { confirmDestructiveAction } from './storage';
 import { bootEnvironmentLocators } from '../locators/boot-environments';
-import { confirmDialogLocators } from '../locators/dialogs';
+import { confirmDialogLocators, errorDialogLocators } from '../locators/dialogs';
 
-const { list, cloneForm, deleteDialog } = bootEnvironmentLocators;
+const {
+  header,
+  list,
+  cloneForm,
+  deleteDialog,
+  statsDialog,
+  status,
+  attachDialog,
+} = bootEnvironmentLocators;
 
 /** Cloning, setting keep and deleting all write to the boot pool before the page hears back. */
 const saveTimeoutMs = 60_000;
+
+/** `boot.attach` partitions the disk, resilvers onto it and installs a boot loader. A ceiling, not a wait. */
+const bootAttachTimeoutMs = 10 * 60_000;
 
 /**
  * Opens the clone form from a boot environment's row, starting from the sidebar.
@@ -35,6 +47,19 @@ export async function saveCloneForm(page: Page): Promise<void> {
 }
 
 /**
+ * Ticks the shared confirm's box and presses its button, through
+ * `confirmDestructiveAction`, checking first that the button waited for the box —
+ * the confirm is raised without `hideCheckbox`. Waits for the confirm to close.
+ */
+async function confirmWithCheckbox(page: Page): Promise<void> {
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+  await expect(page.locator(confirmDialogLocators.confirm)).toBeDisabled();
+
+  await confirmDestructiveAction(page);
+  await expect(page.locator(confirmDialogLocators.title)).toBeHidden();
+}
+
+/**
  * Sets a boot environment's keep flag from its row, through webui's shared
  * confirm, and waits for the row to say so.
  *
@@ -45,15 +70,91 @@ export async function saveCloneForm(page: Page): Promise<void> {
 export async function keepBootEnvironment(page: Page, name: string): Promise<void> {
   await goToBootEnvironments(page);
   await page.locator(list.keepAction(name)).click();
-  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
-
-  const confirm = page.locator(confirmDialogLocators.confirm);
-  await expect(confirm).toBeDisabled();
-  await page.locator(confirmDialogLocators.checkbox).click();
-  await expect(confirm).toBeEnabled();
-
-  await confirm.click();
+  await confirmWithCheckbox(page);
   await expect(page.locator(list.keep(name))).toHaveText('Yes', { timeout: saveTimeoutMs });
+}
+
+/**
+ * Starts a scrub of the boot pool from the page header, through the shared confirm.
+ *
+ * Returns once the confirm has closed. The scrub is a job that runs on after
+ * that; what it did is the caller's to read.
+ */
+export async function scrubBootPool(page: Page): Promise<void> {
+  await goToBootEnvironments(page);
+  await page.locator(header.scrub).click();
+  await confirmWithCheckbox(page);
+}
+
+/**
+ * Activates a boot environment from its row, through the shared confirm, on the
+ * Boot Environments page already on screen.
+ *
+ * Returns once the confirm has closed. The list reloads after the call returns,
+ * so the caller asserts the Active cells with a retrying assertion.
+ */
+export async function activateBootEnvironment(page: Page, name: string): Promise<void> {
+  await page.locator(list.activate(name)).click();
+  await confirmWithCheckbox(page);
+}
+
+/** Opens Stats/Settings from the page header and waits for the interval to be filled in. */
+export async function openBootPoolStats(page: Page): Promise<void> {
+  await page.locator(header.stats).click();
+  await expect(page.locator(statsDialog.title)).toBeVisible();
+  // Filled from the store's advanced config once the dialog has it; empty before.
+  await expect(page.locator(statsDialog.interval)).not.toHaveValue('');
+}
+
+/**
+ * Opens Boot Pool Status from the Boot Environments header, and waits for the
+ * named device to be drawn in the tree.
+ */
+export async function openBootPoolStatus(page: Page, device: string): Promise<void> {
+  await page.locator(header.status).click();
+  await expect(page.locator(status.deviceName(device))).toBeVisible({ timeout: saveTimeoutMs });
+}
+
+/** Where the Attach dialog is after Save: still open, closed, or open behind middleware's refusal. */
+type AttachOutcome = 'open' | 'closed' | 'refused';
+
+async function readAttachOutcome(page: Page): Promise<AttachOutcome> {
+  if (await page.locator(errorDialogLocators.title).isVisible()) {
+    return 'refused';
+  }
+
+  const open = await page.locator(attachDialog.title).isVisible();
+  return open ? 'open' : 'closed';
+}
+
+/**
+ * Attaches an unused disk to a single-disk boot pool, from the boot device's menu
+ * on Boot Pool Status, and waits for the Attach dialog to close. Throws with
+ * middleware's message if the attach is refused.
+ *
+ * "Use all disk space" is left unticked, as the dialog opens it; that is checked.
+ * The autocomplete narrows to the device name typed, and clicking its row is what
+ * commits the value.
+ */
+export async function attachBootDisk(page: Page, bootDevice: string, disk: string): Promise<void> {
+  await page.locator(status.actions(bootDevice)).click();
+  await page.locator(status.attach).click();
+  await expect(page.locator(attachDialog.title)).toBeVisible();
+
+  await page.locator(attachDialog.disk).fill(disk);
+  await page.locator(attachDialog.diskOption(disk)).click();
+  await expect(page.locator(attachDialog.expand)).not.toBeChecked();
+  await page.locator(attachDialog.save).click();
+
+  // Closed only once the job's progress dialog has closed on success. On a failure
+  // it stays open, behind the error the job raised, so that error is watched for
+  // too. Waiting on the dialog alone sat out the session timeout instead, which
+  // signs the page out and hides the dialog as though the attach had worked.
+  await expect.poll(() => readAttachOutcome(page), { timeout: bootAttachTimeoutMs }).not.toBe('open');
+  if (await readAttachOutcome(page) === 'refused') {
+    const message = await page.locator(errorDialogLocators.message).innerText();
+    throw new Error(`boot.attach was refused: ${message}`);
+  }
 }
 
 /**

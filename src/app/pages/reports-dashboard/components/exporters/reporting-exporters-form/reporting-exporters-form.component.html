@@ -6,8 +6,9 @@
 >
   <tn-form-section>
     <tn-form-field
+      testId="name"
       [label]="'Name' | translate"
-      [tooltip]="'Give your exporter configuration a name' | translate"
+      [tooltip]="helptext.name | translate"
       [required]="true"
     >
       <tn-input
@@ -19,6 +20,7 @@
     </tn-form-field>
     <tn-form-field
       [label]="'Type' | translate"
+      [tooltip]="helptext.type | translate"
       [required]="true"
     >
       <tn-select
@@ -27,7 +29,10 @@
         [options]="exporterTypeOptions()"
       ></tn-select>
     </tn-form-field>
-    <tn-form-field class="checkbox-field">
+    <tn-form-field
+      class="checkbox-field"
+      [tooltip]="helptext.enabled | translate"
+    >
       <tn-checkbox
         testId="enabled"
         formControlName="enabled"

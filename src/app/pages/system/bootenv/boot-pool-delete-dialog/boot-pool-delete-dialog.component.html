@@ -15,7 +15,7 @@
         }
         @if (successCount) {
           <strong tnTestId="delete-succeeded" tnTestIdType="text">
-            {{ '{n, plural, one {# boot environment} other {# boot environments}} has been deleted.' | translate: { n: successCount } }}
+            {{ '{n, plural, one {# boot environment has} other {# boot environments have}} been deleted.' | translate: { n: successCount } }}
           </strong>
         }
       </p>

@@ -18,11 +18,11 @@
  */
 import { entitlementFeature, isNotDenied } from '../fixtures/entitlements';
 import {
-  addNvmeOfZvolNamespace, associateNvmeOfHost, associateNvmeOfPort, countNvmeOfSubsystems,
   ensureNvmeOfHostAbsent, ensureNvmeOfHostPresent, ensureNvmeOfPortAbsent, ensureNvmeOfPortPresent,
   ensureNvmeOfServiceStopped, ensureNvmeOfSubsystemAbsent, ensureNvmeOfSubsystemPresent, findNvmeOfHost,
-  findNvmeOfNamespaces, findNvmeOfPort, findNvmeOfSubsystem, readNvmeOfBaseNqn, restoreNvmeOfBaseNqn,
-  setNvmeOfAllowAnyHost, type NvmeOfSubsystemRecord, type TcpPort, zvolDevicePath,
+  findNvmeOfNamespaces, findNvmeOfPort, findNvmeOfSubsystem, provisionLinkedNvmeOfSubsystem, readNvmeOfBaseNqn,
+  requireNvmeOfSubsystem, requireRoomOnNvmeOfCard, restoreNvmeOfBaseNqn, setNvmeOfAllowAnyHost, type TcpPort,
+  zvolDevicePath,
 } from '../fixtures/nvme-of';
 import { ensureDatasetAbsent, ensureZvolPresent, findDataset } from '../fixtures/storage';
 import {
@@ -71,9 +71,6 @@ const hosts = [targetHost, bystanderHost, authenticatedHost];
 const firstBaseNqn = 'nqn.2011-06.com.truenas:e2e-nvme-basenqn-a';
 const secondBaseNqn = 'nqn.2011-06.com.truenas:e2e-nvme-basenqn-b';
 
-/** The card lists four subsystems, by name, before its pager. */
-const cardPageSize = 4;
-
 /** Read once, before any test can change it, and written back after each. */
 let originalBaseNqn: string;
 
@@ -96,60 +93,6 @@ async function removeEverything(api: E2eApiClient, pool: string): Promise<void> 
     ['restore the NVMe-oF base NQN', () => restoreNvmeOfBaseNqn(api, originalBaseNqn)],
     ['stop the NVMe-oF service', () => ensureNvmeOfServiceStopped(api)],
   ]);
-}
-
-/**
- * Fails up front when the card cannot show every row a test needs. A fresh
- * appliance holds no subsystems; failing here says why rather than timing out on a
- * row past the pager.
- */
-async function requireRoomOnCard(api: E2eApiClient, adding: number): Promise<void> {
-  const existing = await countNvmeOfSubsystems(api);
-  expect(
-    existing + adding <= cardPageSize,
-    `the card lists ${cardPageSize} subsystems, this test adds ${adding}, the appliance has ${existing}`,
-  ).toBe(true);
-}
-
-/** Re-reads a subsystem that the test made, failing if it has gone. */
-async function requireSubsystem(api: E2eApiClient, name: string): Promise<NvmeOfSubsystemRecord> {
-  const subsystem = await findNvmeOfSubsystem(api, name);
-  if (!subsystem) {
-    throw new Error(`the subsystem ${name} is missing`);
-  }
-
-  return subsystem;
-}
-
-/**
- * A subsystem with one namespace on its own zvol, linked to its own port and host,
- * and restricted to that host — the shape every association card shows filled in.
- */
-async function provisionLinkedSubsystem(
-  api: E2eApiClient,
-  {
-    name,
-    zvol,
-    port,
-    hostnqn,
-  }: {
-    name: string;
-    zvol: string;
-    port: TcpPort;
-    hostnqn: string;
-  },
-): Promise<NvmeOfSubsystemRecord> {
-  await ensureZvolPresent(api, zvol);
-  const subsystem = await ensureNvmeOfSubsystemPresent(api, name);
-  const portRecord = await ensureNvmeOfPortPresent(api, port);
-  const host = await ensureNvmeOfHostPresent(api, hostnqn);
-
-  await addNvmeOfZvolNamespace(api, { subsystemId: subsystem.id, zvol });
-  await associateNvmeOfPort(api, { subsystemId: subsystem.id, portId: portRecord.id });
-  await setNvmeOfAllowAnyHost(api, { subsystemId: subsystem.id, allowAnyHost: false });
-  await associateNvmeOfHost(api, { subsystemId: subsystem.id, hostId: host.id });
-
-  return requireSubsystem(api, name);
 }
 
 test.beforeAll(async ({ api }) => {
@@ -177,7 +120,7 @@ test.afterEach(async ({ api, pool }) => {
 
 test('an admin adds a subsystem with a zvol namespace, a TCP port and one host', async ({ page, api, pool }) => {
   const zvol = `${pool}/e2e-nvme-ns-created`;
-  await requireRoomOnCard(api, 1);
+  await requireRoomOnNvmeOfCard(api, 1);
   await ensureZvolPresent(api, zvol);
   // Ports and hosts are picked from what exists; the form under test is the subsystem's.
   const port = await ensureNvmeOfPortPresent(api, targetPort);
@@ -198,7 +141,7 @@ test('an admin adds a subsystem with a zvol namespace, a TCP port and one host',
     return { ports: subsystem?.ports, hosts: subsystem?.hosts, namespaces: subsystem?.namespaces?.length };
   }).toEqual({ ports: [port.id], hosts: [host.id], namespaces: 1 });
 
-  const subsystem = await requireSubsystem(api, createdName);
+  const subsystem = await requireNvmeOfSubsystem(api, createdName);
   // Unticking "Allow any host" is what makes the host link mean anything.
   expect(subsystem.allow_any_host).toBe(false);
 
@@ -209,12 +152,12 @@ test('an admin adds a subsystem with a zvol namespace, a TCP port and one host',
 
 test('adding a namespace, port and host on the details page changes that one only', async ({ page, api, pool }) => {
   const addedZvol = `${pool}/e2e-nvme-ns-added`;
-  await requireRoomOnCard(api, 2);
+  await requireRoomOnNvmeOfCard(api, 2);
   await ensureZvolPresent(api, addedZvol);
   const target = await ensureNvmeOfSubsystemPresent(api, targetName);
   const port = await ensureNvmeOfPortPresent(api, targetPort);
   const host = await ensureNvmeOfHostPresent(api, targetHost);
-  const bystanderBefore = await provisionLinkedSubsystem(api, {
+  const bystanderBefore = await provisionLinkedNvmeOfSubsystem(api, {
     name: bystanderName,
     zvol: `${pool}/e2e-nvme-ns-bystander`,
     port: bystanderPort,
@@ -235,9 +178,9 @@ test('adding a namespace, port and host on the details page changes that one onl
     expect.objectContaining({ device_type: 'ZVOL', subsys: expect.objectContaining({ id: target.id }) }),
   ]);
   // Adding a host to a subsystem that allowed any host also restricts it to its hosts.
-  expect((await requireSubsystem(api, targetName)).allow_any_host).toBe(false);
+  expect((await requireNvmeOfSubsystem(api, targetName)).allow_any_host).toBe(false);
 
-  expect(await requireSubsystem(api, bystanderName)).toMatchObject({
+  expect(await requireNvmeOfSubsystem(api, bystanderName)).toMatchObject({
     ports: bystanderBefore.ports,
     hosts: bystanderBefore.hosts,
     namespaces: bystanderBefore.namespaces,
@@ -246,14 +189,14 @@ test('adding a namespace, port and host on the details page changes that one onl
 
 test('removing a namespace, port and host on the details page changes that one only', async ({ page, api, pool }) => {
   const zvol = `${pool}/e2e-nvme-ns-target`;
-  await requireRoomOnCard(api, 2);
-  await provisionLinkedSubsystem(api, {
+  await requireRoomOnNvmeOfCard(api, 2);
+  await provisionLinkedNvmeOfSubsystem(api, {
     name: targetName,
     zvol,
     port: targetPort,
     hostnqn: targetHost,
   });
-  const bystanderBefore = await provisionLinkedSubsystem(api, {
+  const bystanderBefore = await provisionLinkedNvmeOfSubsystem(api, {
     name: bystanderName,
     zvol: `${pool}/e2e-nvme-ns-bystander`,
     port: bystanderPort,
@@ -275,7 +218,7 @@ test('removing a namespace, port and host on the details page changes that one o
   expect(await findNvmeOfHost(api, targetHost)).toBeDefined();
   expect(await findDataset(api, zvol)).toBeDefined();
 
-  expect(await requireSubsystem(api, bystanderName)).toMatchObject({
+  expect(await requireNvmeOfSubsystem(api, bystanderName)).toMatchObject({
     ports: bystanderBefore.ports,
     hosts: bystanderBefore.hosts,
     namespaces: bystanderBefore.namespaces,
@@ -283,7 +226,7 @@ test('removing a namespace, port and host on the details page changes that one o
 });
 
 test('a host created with Require Host Authentication is saved with its key', async ({ page, api }) => {
-  await requireRoomOnCard(api, 1);
+  await requireRoomOnNvmeOfCard(api, 1);
   const target = await ensureNvmeOfSubsystemPresent(api, targetName);
   // Restricted, so the Add menu also offers "Allow all hosts" and is a menu whatever
   // other hosts the appliance has.
@@ -307,14 +250,14 @@ test('a host created with Require Host Authentication is saved with its key', as
 
 test('deleting a subsystem from the card removes it and its associations', async ({ page, api, pool }) => {
   const zvol = `${pool}/e2e-nvme-ns-target`;
-  await requireRoomOnCard(api, 2);
-  await provisionLinkedSubsystem(api, {
+  await requireRoomOnNvmeOfCard(api, 2);
+  await provisionLinkedNvmeOfSubsystem(api, {
     name: targetName,
     zvol,
     port: targetPort,
     hostnqn: targetHost,
   });
-  const bystanderBefore = await provisionLinkedSubsystem(api, {
+  const bystanderBefore = await provisionLinkedNvmeOfSubsystem(api, {
     name: bystanderName,
     zvol: `${pool}/e2e-nvme-ns-bystander`,
     port: bystanderPort,
@@ -334,7 +277,7 @@ test('deleting a subsystem from the card removes it and its associations', async
 
   // The whole point of the second subsystem: the card looks right either way.
   await expect(page.locator(nvmeOfLocators.card.row(bystanderName))).toBeVisible();
-  expect(await requireSubsystem(api, bystanderName)).toMatchObject({
+  expect(await requireNvmeOfSubsystem(api, bystanderName)).toMatchObject({
     id: bystanderBefore.id,
     ports: bystanderBefore.ports,
     hosts: bystanderBefore.hosts,

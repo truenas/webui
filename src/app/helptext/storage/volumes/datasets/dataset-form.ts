@@ -4,7 +4,7 @@ export const helptextDatasetForm = {
   addTitle: T('Add Dataset'),
   editTitle: T('Edit Dataset'),
   capacitySettingsTitle: T('Capacity Settings'),
-  nameTooltip: T('Enter a unique name for the dataset. The dataset name length is calculated by adding the length of this field\'s value and the length of the parent path field value. The length of \'Parent Path\' and \'Name\' added together cannot exceed 200 characters. Because of this length validation on this field accounts for the parent path as well. Furthermore, the maximum nested directory levels allowed is 50. You can\'t create a dataset that\'s at the 51st level in the directory hierarchy after you account for the nested levels in the parent path.'),
+  nameTooltip: T('Enter a unique name for the dataset. The dataset name length is calculated by adding the length of this field\'s value and the length of the parent path field value. The length of \'Parent Path\' and \'Name\' added together cannot exceed 200 characters. Because of this, length validation on this field accounts for the parent path as well. Furthermore, the maximum nested directory levels allowed is 50. You can\'t create a dataset that\'s at the 51st level in the directory hierarchy after you account for the nested levels in the parent path.'),
   syncTooltip: T('<i>Standard</i> uses the sync settings that have been\
  requested by the client software, <i>Always</i> waits for\
  data writes to complete, and <i>Disabled</i> never waits for\
@@ -116,7 +116,7 @@ export const helptextDatasetForm = {
     apps: T('Dataset for use by an application. If you plan to deploy container applications,\
  the system automatically creates the ix-apps dataset but this is not used for application data storage.'),
     smbDescription: T('By clicking the share creation checkbox below, a new share will be created on form submission with the default\
- share settings Additionally, local TrueNAS users will have access to the resulting share and some more configuration options will be available.'),
+ share settings. Additionally, local TrueNAS users will have access to the resulting share and some more configuration options will be available.'),
   },
 
   encryption: {
@@ -143,8 +143,8 @@ export const helptextDatasetForm = {
  dataset. Store the encryption key in a secure location.'),
   },
   pathWarningTitle: T('Action Not Possible'),
-  pathIsTooLongWarning: T('Dataset name is set by appending the parent path with the name entered by you. The max allowed length for the dataset name is 200. The parent path for this dataset already exceeds that limit. It is not possible to create anymore nested datasets under this path.'),
-  pathIsTooDeepWarning: T('Max dataset nesting in ZFS is limited to 50. We are already at that limit in the parent dataset path. It is not possible to create anymore nested datasets under this path.'),
+  pathIsTooLongWarning: T('Dataset name is set by appending the parent path with the name entered by you. The max allowed length for the dataset name is 200. The parent path for this dataset already exceeds that limit. It is not possible to create any more nested datasets under this path.'),
+  pathIsTooDeepWarning: T('Max dataset nesting in ZFS is limited to 50. We are already at that limit in the parent dataset path. It is not possible to create any more nested datasets under this path.'),
 
   afterSubmitDialog: {
     title: T('Set ACL for this dataset'),

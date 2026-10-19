@@ -3,12 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import {
-  TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+  TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { throwError } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SchemaType } from 'app/enums/schema.enum';
+import { helptextReportingExporters } from 'app/helptext/reporting/reporting-exporters';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
@@ -96,6 +97,25 @@ describe('ReportingExportersFormComponent', () => {
         },
       }]);
       expect(closeSpy).toHaveBeenCalledWith(true);
+    });
+  });
+
+  describe('Tooltips', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('explains the fixed fields', async () => {
+      const typeField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Type' }));
+      expect(await typeField.getTooltip()).toBe(helptextReportingExporters.type);
+    });
+
+    it('explains the fields built from the exporter schema', async () => {
+      await (await loader.getHarness(TnSelectHarness)).selectOption(ReportingExporterKey.Graphite);
+
+      const ipField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Destination IP' }));
+      expect(await ipField.getTooltip()).toBe(helptextReportingExporters.attributes['destination_ip']);
     });
   });
 

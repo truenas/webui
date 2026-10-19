@@ -55,7 +55,7 @@ export class InterfaceNameValidatorService {
     }
 
     return this.translate.instant(
-      '{interfaceName} must start with "{prefix}" followed by an unique number',
+      '{interfaceName} must start with "{prefix}" followed by a unique number',
       { prefix, interfaceName },
     );
   }

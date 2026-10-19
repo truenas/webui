@@ -317,7 +317,7 @@ describe('ErrorParserService', () => {
       expect(errorReport).toMatchObject({
         title: 'Network Error',
         message: 'Network resource is not reachable, verify your network settings and health.',
-        hint: 'Double check that your nameservers and gateway are properly configured.',
+        hint: 'Double-check that your nameservers and gateway are properly configured.',
         actions: [
           {
             label: 'Network Settings',

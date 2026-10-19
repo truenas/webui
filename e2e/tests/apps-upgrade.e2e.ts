@@ -55,7 +55,11 @@ import {
 } from '../flows/catalog-apps';
 import { goToApps } from '../flows/navigation';
 import {
-  appInfoCardLocators, appRollbackDialogLocators, appUpdateDialogLocators, installedAppLocators,
+  appInfoCardLocators,
+  appRevisionLocators,
+  appRollbackDialogLocators,
+  appUpdateDialogLocators,
+  installedAppLocators,
 } from '../locators/apps';
 import { jobDialogLocators } from '../locators/encryption';
 import type { E2eApiClient } from '../support/api/client';
@@ -171,7 +175,7 @@ test('an admin updates an app to the latest revision from its Application Info c
   expect(await readAppVersions(api, release)).toMatchObject({ version: oldRevision, upgradeAvailable: true });
 
   const app = installedAppLocators(release);
-  const card = appInfoCardLocators(release);
+  const card = appRevisionLocators(release);
 
   await goToApps(page);
   // The starting state the update has to change.
@@ -213,7 +217,7 @@ test('an admin rolls an updated app back to the revision it ran before', async (
   expect(await readRollbackVersions(api, release)).toContain(oldRevision);
 
   const app = installedAppLocators(release);
-  const card = appInfoCardLocators(release);
+  const card = appRevisionLocators(release);
 
   await goToApps(page);
   await expect(page.locator(app.updates)).toHaveText(upToDate);
@@ -252,7 +256,7 @@ test('the Application Info card offers neither Update nor Roll Back for an app w
   expect(await readRollbackVersions(api, release)).toEqual([]);
 
   const app = installedAppLocators(release);
-  const card = appInfoCardLocators(release);
+  const card = appRevisionLocators(release);
 
   await goToApps(page);
   await page.locator(app.name).click();
@@ -266,7 +270,7 @@ test('the Application Info card offers neither Update nor Roll Back for an app w
   ).toBe(true);
   await expect(page.locator(card.rollback)).toBeHidden();
 
-  await page.locator(card.menu).click();
+  await page.locator(appInfoCardLocators.menu).click();
   await expect(page.locator(card.update)).toBeVisible();
   await expect(page.locator(card.update)).toBeDisabled();
   await page.keyboard.press('Escape');

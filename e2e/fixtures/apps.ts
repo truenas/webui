@@ -408,14 +408,70 @@ export async function readIsCustomApp(client: E2eApiClient, name: string): Promi
   return app?.custom_app;
 }
 
+/**
+ * The part of a catalog app's saved values the readers below read. The app's own section, which
+ * holds `additional_envs`, is named after the app (`it_tools`), so it is looked up by name.
+ */
+interface AppValues {
+  TZ?: string;
+  network?: { web_port?: { port_number?: number } };
+  [section: string]: unknown;
+}
+
+/**
+ * A catalog app's saved values: what its install form holds, not the compose file rendered from
+ * them. Undefined when there is no such app. `app.query` returns the values only when asked for them.
+ */
+async function readAppValues(client: E2eApiClient, name: string): Promise<AppValues | undefined> {
+  const apps = await firstValueFrom(
+    client.api.query(
+      'app.query',
+      [['name', '=', name]],
+      { extra: { retrieve_config: true } },
+    ).pipe(timeout(readTimeoutMs)),
+  ) as unknown as { config?: AppValues }[];
+
+  return apps[0]?.config;
+}
+
+/**
+ * The WebUI port a catalog app's values hold, `network.web_port.port_number`, or undefined when the
+ * app or the value is absent.
+ */
+export async function readAppPortNumber(client: E2eApiClient, name: string): Promise<number | undefined> {
+  return (await readAppValues(client, name))?.network?.web_port?.port_number;
+}
+
+/** The timezone a catalog app's values hold, `TZ`, or undefined when the app or the value is absent. */
+export async function readAppTimezone(client: E2eApiClient, name: string): Promise<string | undefined> {
+  return (await readAppValues(client, name))?.TZ;
+}
+
+/**
+ * A catalog app's Additional Environment Variables, `<section>.additional_envs` in its values, as a
+ * map. Empty when the app or the list is absent. For a custom app, read its compose file with
+ * `readServiceEnvironment` instead.
+ */
+export async function readAppAdditionalEnvs(
+  client: E2eApiClient,
+  name: string,
+  section: string,
+): Promise<Record<string, string>> {
+  const values = await readAppValues(client, name);
+  const appSection = values?.[section] as { additional_envs?: { name: string; value: string }[] } | undefined;
+
+  return Object.fromEntries((appSection?.additional_envs ?? []).map((env) => [env.name, env.value]));
+}
+
 /** The part of a compose file `readServiceEnvironment` reads. */
 interface ComposeConfig {
   services?: Record<string, { environment?: string[] | Record<string, unknown> }>;
 }
 
 /**
- * One service's environment in the app's compose config, as `app.config` returns it. Compose takes
- * either a map or a list of `KEY=value`, so both are read into a map.
+ * One service's environment in a custom app's compose config, as `app.config` returns it. Compose
+ * takes either a map or a list of `KEY=value`, so both are read into a map. For a catalog app,
+ * `app.config` returns the saved values instead, which have no `services`: use `readAppAdditionalEnvs`.
  */
 export async function readServiceEnvironment(
   client: E2eApiClient,

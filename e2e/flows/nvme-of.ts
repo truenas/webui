@@ -10,6 +10,7 @@ import { expect, type Page } from '@playwright/test';
 import { goToShares } from './navigation';
 import { formSettleTimeoutMs } from './smb';
 import type { TcpPort } from '../fixtures/nvme-of';
+import { confirmDialogLocators } from '../locators/dialogs';
 import { nvmeOfLocators } from '../locators/nvme-of';
 
 /** The add form makes one call per namespace, port and host after the subsystem, then asks about the service. */
@@ -194,6 +195,134 @@ export async function createAuthenticatedHostOnDetails(page: Page, hostnqn: stri
   await page.locator(hostForm.save).click();
   await expect(page.locator(hostForm.save)).toBeHidden({ timeout: saveTimeoutMs });
   await expect(page.locator(nvmeOfLocators.details.host(hostnqn))).toBeVisible({ timeout: saveTimeoutMs });
+}
+
+/**
+ * On the details page: opens Manage Ports from the Ports card's Add menu.
+ *
+ * The Add button is a menu only while some port exists; a test opening this has
+ * always provisioned one.
+ */
+export async function openManagePorts(page: Page): Promise<void> {
+  await pickFromAddMenu(page, nvmeOfLocators.addPort, nvmeOfLocators.managePorts);
+
+  await expect(page.locator(nvmeOfLocators.manageDialog.title)).toBeVisible({ timeout: formSettleTimeoutMs });
+}
+
+/**
+ * On the details page: opens Manage Hosts from the Associated Hosts card's Add menu.
+ *
+ * The Add button is a menu only while some host exists or the subsystem is
+ * restricted to its hosts; a test opening this has always provisioned one.
+ */
+export async function openManageHosts(page: Page): Promise<void> {
+  await pickFromAddMenu(page, nvmeOfLocators.addHost, nvmeOfLocators.manageHosts);
+
+  await expect(page.locator(nvmeOfLocators.manageDialog.title)).toBeVisible({ timeout: formSettleTimeoutMs });
+}
+
+/** Closes whichever Manage dialog is open, back to the details page. */
+export async function closeManageDialog(page: Page): Promise<void> {
+  const { manageDialog } = nvmeOfLocators;
+  await page.locator(manageDialog.close).click();
+
+  await expect(page.locator(manageDialog.title)).toBeHidden({ timeout: formSettleTimeoutMs });
+}
+
+/**
+ * In Manage Ports: opens Edit on a TCP port, changes only its service id, and saves.
+ *
+ * Address is left as it loaded. Its select lists only the appliance's static IPs,
+ * but `tn-select` keeps a value that is not among its options, so a port on
+ * `0.0.0.0` is saved back on `0.0.0.0`.
+ */
+export async function changeManagedPortServiceId(page: Page, port: TcpPort, serviceId: number): Promise<void> {
+  const { managePortsDialog, portForm } = nvmeOfLocators;
+  await page.locator(managePortsDialog.edit(port)).click();
+
+  // The form patches the port in on init; typing before that would be overwritten.
+  const serviceIdInput = page.locator(portForm.serviceId);
+  await expect(serviceIdInput).toHaveValue(String(port.port), { timeout: formSettleTimeoutMs });
+  await serviceIdInput.fill(String(serviceId));
+
+  await page.locator(portForm.save).click();
+  await expect(page.locator(portForm.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/** In Manage Hosts: opens Edit on a host and waits for the form to hold it. */
+export async function openManagedHostEdit(page: Page, hostnqn: string): Promise<void> {
+  await page.locator(nvmeOfLocators.manageHostsDialog.edit(hostnqn)).click();
+
+  await expect(page.locator(nvmeOfLocators.hostForm.hostnqn)).toHaveValue(hostnqn, { timeout: formSettleTimeoutMs });
+}
+
+/**
+ * In the open host form: sets the description, turns on Require Host Authentication,
+ * generates both keys, and saves.
+ */
+export async function saveHostWithGeneratedKeys(page: Page, description: string): Promise<void> {
+  const { hostForm } = nvmeOfLocators;
+  await page.locator(hostForm.description).fill(description);
+  await page.locator(hostForm.requireAuthentication).check();
+
+  // Each key arrives from `nvmet.host.generate_key` after its click; saving before
+  // it lands would save without it.
+  await page.locator(hostForm.generateHostKey).click();
+  await expect(page.locator(hostForm.hostKey)).toHaveValue(/^DHHC-1:/, { timeout: formSettleTimeoutMs });
+  await page.locator(hostForm.generateTrueNasKey).click();
+  await expect(page.locator(hostForm.trueNasKey)).toHaveValue(/^DHHC-1:/, { timeout: formSettleTimeoutMs });
+
+  await page.locator(hostForm.save).click();
+  await expect(page.locator(hostForm.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * In the open host form: replaces the Host NQN, leaves the field so it is validated,
+ * and presses Enter in it — a submit attempt, so a check that nothing was saved
+ * afterwards means something.
+ */
+export async function tryHostNqn(page: Page, hostnqn: string): Promise<void> {
+  const field = page.locator(nvmeOfLocators.hostForm.hostnqn);
+  await field.fill(hostnqn);
+  await field.press('Enter');
+  await field.blur();
+}
+
+/** Closes the host form without saving. It has been edited, so the panel asks first. */
+export async function discardHostForm(page: Page): Promise<void> {
+  const { hostForm } = nvmeOfLocators;
+  await page.locator(hostForm.closePanel).click();
+
+  const discard = page.locator(confirmDialogLocators.confirm);
+  await expect(discard).toBeVisible({ timeout: formSettleTimeoutMs });
+  await discard.click();
+  await expect(page.locator(hostForm.hostnqn)).toBeHidden({ timeout: formSettleTimeoutMs });
+}
+
+/** In a Manage dialog: clicks a row's Delete and waits for the delete dialog. */
+export async function openPortOrHostDelete(page: Page, deleteButton: string): Promise<void> {
+  await page.locator(deleteButton).click();
+
+  await expect(page.locator(nvmeOfLocators.portOrHostDeleteDialog.title)).toBeVisible({
+    timeout: formSettleTimeoutMs,
+  });
+}
+
+/** In the open delete dialog: confirms, and waits for the row it was opened from to go. */
+export async function confirmPortOrHostDelete(page: Page, row: string): Promise<void> {
+  const { portOrHostDeleteDialog } = nvmeOfLocators;
+  await page.locator(portOrHostDeleteDialog.delete).click();
+
+  await expect(page.locator(portOrHostDeleteDialog.title)).toBeHidden({ timeout: formSettleTimeoutMs });
+  await expect(page.locator(row)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/** In the open delete dialog: cancels. */
+export async function cancelPortOrHostDelete(page: Page): Promise<void> {
+  const { portOrHostDeleteDialog } = nvmeOfLocators;
+  await page.locator(portOrHostDeleteDialog.cancel).click();
+
+  await expect(page.locator(portOrHostDeleteDialog.title)).toBeHidden({ timeout: formSettleTimeoutMs });
 }
 
 /** Opens the NVMe-oF Global Configuration from the full page the dashboard card's title leads to. */

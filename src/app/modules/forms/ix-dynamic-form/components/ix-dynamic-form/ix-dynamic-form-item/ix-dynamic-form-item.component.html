@@ -111,6 +111,7 @@
         @case (DynamicFormSchemaType.Input) {
           @let inputSchema = asInputSchema(schema);
           <tn-form-field
+            [testId]="inputSchema.controlName"
             [label]="inputSchema.title ? (inputSchema.title | translate) : ''"
             [tooltip]="inputSchema.tooltip ? (inputSchema.tooltip | translate) : ''"
             [required]="inputSchema.required || false"
