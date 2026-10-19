@@ -27,6 +27,12 @@ export const apiKeyLocators = {
   /** The Username cell, titled "Username". */
   username: (name: string): string => `[data-test="text-username-${rowTag(name)}-row-text"]`,
 
+  /** The Expires On cell: a relative date such as "in 3mo", or "Never". */
+  expiresOn: (name: string): string => `[data-test="text-expires-on-${rowTag(name)}-row-relative-date"]`,
+
+  /** Edit, inline on the row beside Delete. A revoked key has none. */
+  edit: (name: string): string => `[data-test="button-edit-${kebabTestSegment(name)}"]`,
+
   /** Delete, inline on the row. */
   delete: (name: string): string => `[data-test="button-delete-${kebabTestSegment(name)}"]`,
 
@@ -44,8 +50,15 @@ export const apiKeyLocators = {
     nonExpiring: '[data-test="checkbox-non-expiring"]',
     /** `<tn-date-input [testId]="'expires-at'">`, rendered only while Non-expiring is unchecked. */
     expiresAt: '[data-test="date-input-expires-at"]',
+    /** Its three typable segments, reached by class as in `locators/s3.ts`. */
+    expiresAtMonth: '[data-test="date-input-expires-at"] input.tn-date-segment-month',
+    expiresAtDay: '[data-test="date-input-expires-at"] input.tn-date-segment-day',
+    expiresAtYear: '[data-test="date-input-expires-at"] input.tn-date-segment-year',
+    /** Rendered only when editing, and only to the key's owner or a full admin. */
+    reset: '[data-test="checkbox-reset"]',
     /** `<tn-button [testId]="'save'">` on the side panel container. */
     save: '[data-test="button-save"]',
+    closePanel: '[data-test="button-close-side-panel"]',
   },
 
   /**

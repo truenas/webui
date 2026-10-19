@@ -10,7 +10,9 @@ import {
   createTrueNasClient, SUPPORTED_API_VERSIONS,
   type ApiDirectoryV28_0_0, type AuthResponse, type TrueNasApiClient,
 } from '@truenas/api-client';
-import { filter, firstValueFrom, take, timeout } from 'rxjs';
+import {
+  filter, firstValueFrom, take, timeout, TimeoutError,
+} from 'rxjs';
 import type { TargetConfig } from '../config';
 
 /**
@@ -153,6 +155,54 @@ export async function connectAndLogin(config: TargetConfig): Promise<E2eApiClien
   }
 
   return client;
+}
+
+/**
+ * Makes one attempt to sign in with an API key over a fresh connection, and
+ * says whether middleware accepted it. The connection is always closed.
+ *
+ * A refusal is an answer, not an error: the client throws on `AUTH_ERR` and
+ * resolves on every other outcome, and both read as `false` unless the
+ * outcome is `SUCCESS`. A socket that never opens, or a login that never
+ * answers, still throws — a key cannot be judged over a connection that is
+ * not there, and reading that as "refused" would pass a revocation check
+ * for nothing.
+ *
+ * The connection is `wss://`, like every other one here. Middleware revokes a
+ * key sent over plain `ws://`, so never add a plaintext path.
+ */
+export async function signsInWithApiKey(
+  config: TargetConfig,
+  credentials: { username: string; key: string },
+): Promise<boolean> {
+  const client = await createTrueNasClient<E2eApiDirectory>({
+    uuid: clientUuid,
+    hostnames: [config.middlewareHost],
+    enabled: true,
+  });
+
+  try {
+    await firstValueFrom(
+      client.connection.opened.pipe(
+        filter(Boolean),
+        take(1),
+        timeout(connectTimeoutMs),
+      ),
+    );
+
+    const auth = await firstValueFrom(
+      client.authenticator.loginWithApiKey(credentials).pipe(timeout(loginTimeoutMs)),
+    ).catch((error: unknown) => {
+      if (error instanceof TimeoutError) {
+        throw error;
+      }
+      return undefined;
+    });
+
+    return String(auth?.response_type) === 'SUCCESS';
+  } finally {
+    client.close();
+  }
 }
 
 /**
