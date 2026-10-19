@@ -7,7 +7,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
-  InputType,
+  TnTestIdDirective, InputType,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { NewDeduplicationQuotaSetting } from 'app/enums/deduplication-setting.enum';
@@ -45,6 +45,7 @@ export const quotaTypeLabels = new Map<QuotaType, string>([
     TnFormFieldComponent,
     TnInputComponent,
     TnSelectComponent,
+    TnTestIdDirective,
   ],
 })
 export class SetDedupQuotaComponent {
