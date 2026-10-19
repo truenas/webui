@@ -61,6 +61,8 @@ const registryNames = [registryName, renamedRegistryName, probeName, refusedName
 
 /** No scheme, so `UrlValidationService.urlRegex` refuses it. */
 const schemelessUri = 'registry.e2e.invalid';
+/** The same host with a scheme, which the pattern accepts. Only typed, never saved. */
+const wellFormedUri = `https://${schemelessUri}`;
 const patternMessage = 'Invalid format or character';
 
 /** As in `apps-install.e2e.ts`: Apps on a pool this spec did not make is somebody's. */
@@ -210,8 +212,10 @@ test('the registry form refuses a URI that is not a URL, and nothing is stored',
   await page.locator(dockerRegistryFormLocators.name).fill(refusedName);
   await page.locator(dockerRegistryFormLocators.username).fill(madeUpCredentials.username);
   await page.locator(dockerRegistryFormLocators.password).fill(madeUpCredentials.password);
-  // The URI is not required, so with it still empty the form is valid: what disables Save below is
-  // the URI, and the message is not there yet.
+  // The URI is required, so an empty one disables Save as well. Start from a URI the pattern accepts:
+  // then the only change below is the scheme, and that is what disables Save and shows the message.
+  await page.locator(dockerRegistryFormLocators.uri).fill(wellFormedUri);
+  await page.locator(dockerRegistryFormLocators.uri).blur();
   await expect(save).toBeEnabled();
   await expect(uriField).not.toContainText(patternMessage);
 
