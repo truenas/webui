@@ -181,7 +181,7 @@ describe('WidgetBackupComponent', () => {
 
     it('hides tiles when no data', async () => {
       expect(await widgetBackup.getTiles()).toBeNull();
-      expect(await widgetBackup.getEmptyCardMessage()).toBe('Backup to Cloud or another TrueNAS via links below');
+      expect(await widgetBackup.getEmptyCardMessage()).toBe('Back up to Cloud or another TrueNAS via links below');
     });
   });
 
