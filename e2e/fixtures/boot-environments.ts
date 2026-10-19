@@ -162,7 +162,7 @@ export async function ensureRunningBootEnvironmentActivated(client: E2eApiClient
   );
 }
 
-/** Attaching installs a boot loader on the new disk as well as resilvering it. */
+/** A quick wipe of one 10GB disk takes seconds. Room for a slow appliance. */
 const bootDiskJobTimeoutMs = 5 * 60_000;
 
 /**
@@ -185,12 +185,13 @@ export async function ensureBootPoolDisksOnly(client: E2eApiClient, originalDisk
   const partitions = (await findBootPoolTopology(client)).flatMap((device) => [device, ...device.children]);
 
   for (const disk of extras) {
-    // By `disk` where middleware reports it, else by the partition name starting with the disk's.
-    const partition = partitions.find((device) => device.disk === disk)
-      ?? partitions.find((device) => device.type === 'DISK' && device.name.startsWith(disk));
+    // By `disk` alone. Matching a partition by its name instead could land on
+    // the original disk's (`sdaa3` starts with `sda`), and this must never do that.
+    const partition = partitions.find((device) => device.disk === disk);
     if (!partition) {
       throw new Error(
-        `boot.get_disks lists "${disk}", but no device in boot.get_state is on it, so it cannot be detached.`,
+        `boot.get_disks lists "${disk}", but no device in boot.get_state names it as its disk, `
+        + 'so it is left attached rather than guessed at. Detach it by hand.',
       );
     }
 
