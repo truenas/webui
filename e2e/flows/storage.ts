@@ -9,6 +9,7 @@ import {
   manualDiskSelectionLocators, poolDisconnectLocators, poolImportLocators, poolScrubLocators, poolWizardLocators,
   pruneDedupLocators, scheduledScrubLocators, type VdevCategory, zvolLocators,
 } from '../locators/storage';
+import { slowCallTimeoutMs } from '../support/timeouts';
 
 /**
  * Pool creation is a long-running middleware job that formats every member
@@ -229,8 +230,18 @@ export async function configureDraidVdevs(page: Page, draid: DraidVdevs): Promis
 /**
  * Opens the Manual Disk Selection dialog from the open vdev step. The step's button stays disabled
  * until a layout is chosen, so the caller picks one first.
+ *
+ * The button does not wait for the wizard's disks, and the dialog does not either: it is handed
+ * the unused disks once, as it opens (`openManualSelectionDialog` in `pool-manager.store.ts`), and
+ * never re-reads them. Opened while `disk.details` is still in flight, it lists no disks for as
+ * long as it stays open. So this waits for the Unassigned Disks card to show the disks first.
  */
 export async function openManualDiskSelection(page: Page, type: VdevCategory): Promise<void> {
+  await expect(
+    page.locator(poolWizardLocators.inventory).first(),
+    'The wizard never listed its unused disks, so Manual Disk Selection would open with none.',
+  ).toBeVisible({ timeout: slowCallTimeoutMs });
+
   const open = page.locator(poolWizardLocators.manualSelection(type));
   await expect(open).toBeEnabled();
   await open.click();
