@@ -336,6 +336,27 @@ export async function readIsCustomApp(client: E2eApiClient, name: string): Promi
   return app?.custom_app;
 }
 
+/** The part of a catalog app's saved values `readAppPortNumber` reads. */
+interface AppValues {
+  network?: { web_port?: { port_number?: number } };
+}
+
+/**
+ * The WebUI port a catalog app's values hold, `network.web_port.port_number`, or undefined when the
+ * app or the value is absent. `app.query` returns the values only when asked for them.
+ */
+export async function readAppPortNumber(client: E2eApiClient, name: string): Promise<number | undefined> {
+  const apps = await firstValueFrom(
+    client.api.query(
+      'app.query',
+      [['name', '=', name]],
+      { extra: { retrieve_config: true } },
+    ).pipe(timeout(readTimeoutMs)),
+  ) as unknown as { config?: AppValues }[];
+
+  return apps[0]?.config?.network?.web_port?.port_number;
+}
+
 /** The part of a compose file `readServiceEnvironment` reads. */
 interface ComposeConfig {
   services?: Record<string, { environment?: string[] | Record<string, unknown> }>;
