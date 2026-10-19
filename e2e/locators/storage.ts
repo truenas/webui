@@ -603,6 +603,48 @@ export const pruneDedupLocators = {
 } as const;
 
 /**
+ * Auto TRIM: the item in a pool header's Advanced Actions menu, the dialog it
+ * opens, and the line it adds to the pool's Storage Health card.
+ */
+export const autotrimLocators = {
+  /** The pool header's Advanced Actions menu, `['advanced-actions', pool()?.name]` on a tn-icon-button. */
+  menu: (pool: string) => `[data-test="button-advanced-actions-${kebabTestSegment(pool)}"]`,
+  /** "Auto TRIM" in that menu, `['auto-trim', pool()?.name]` on a tn-menu-item. */
+  open: (pool: string) => `[data-test="button-auto-trim-${kebabTestSegment(pool)}"]`,
+
+  /** `<tn-dialog-shell testId="autotrim">`. What to wait on. */
+  title: '[data-test="dialog-title-autotrim"]',
+  /** The dialog's one control, `<tn-checkbox testId="autotrim">`. */
+  checkbox: '[data-test="checkbox-autotrim"]',
+  save: '[data-test="actions-autotrim"] [data-test="button-save"]',
+
+  /**
+   * "Auto TRIM: On" on the Storage Health card, `[pool().name, 'auto-trim']`.
+   * Rendered only while Auto TRIM is on, so off is its absence.
+   */
+  line: (pool: string) => `[data-test="text-${kebabTestSegment(pool)}-auto-trim"]`,
+} as const;
+
+/** The Set Quota dialog that the Deduplication Table line's Set Quota opens. */
+export const dedupQuotaLocators = {
+  /**
+   * "Set Quota", `tnTestId="set-dedup-quota"`. Like Prune, reached through the
+   * line's action row, since the id does not carry the pool. Always rendered on
+   * the line, which itself needs only the dedup vdev.
+   */
+  open: (pool: string) => `[data-test="actions-${kebabTestSegment(pool)}-dedup"] [data-test="link-set-dedup-quota"]`,
+
+  /** `<tn-dialog-shell testId="set-dedup-quota">`. What to wait on. */
+  title: '[data-test="dialog-title-set-dedup-quota"]',
+  /** "Quota", `<tn-select testId="quota-type">`: Auto, Custom or None. */
+  quotaType: '[data-test="select-quota-type"]',
+  quotaTypeOption: (label: 'Auto' | 'Custom' | 'None') => `[data-test="option-quota-type-${kebabTestSegment(label)}"]`,
+  /** "Custom Quota", `<tn-input testId="quota-value">`, a size. Rendered only for Custom. */
+  quotaValue: '[data-test="input-quota-value"]',
+  save: '[data-test="actions-set-dedup-quota"] [data-test="button-save"]',
+} as const;
+
+/**
  * The delete-dataset dialog, which guards a destructive action with two gates:
  * the dataset's own name typed back, and a Confirm tick box.
  *

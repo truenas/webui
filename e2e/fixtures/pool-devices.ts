@@ -9,7 +9,8 @@
  * specs share.
  *
  * Also the pool with a dedup vdev that the Storage Health card's dedup line
- * needs, and the `pool.ddt_prune` jobs its Prune starts.
+ * needs, and the `pool.ddt_prune` jobs its Prune starts. Also the pool's Auto
+ * TRIM and dedup table quota, which `pool.update` sets.
  */
 import type { QueryEntity } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -33,6 +34,9 @@ export interface PoolDevice {
 }
 
 const poolCreateTimeoutMs = 3 * 60_000;
+
+/** `pool.update` setting a property answers once ZFS has it. */
+const poolUpdateTimeoutMs = 60_000;
 
 /** `pool.offline` and `pool.online` answer once ZFS has acted. */
 const deviceStateTimeoutMs = 60_000;
@@ -263,6 +267,59 @@ export async function addDedupSeed(client: E2eApiClient, name: string): Promise<
  */
 export async function readDedupTableSize(client: E2eApiClient, name: string): Promise<number> {
   return (await getPool(client, name)).dedup_table_size ?? 0;
+}
+
+/** The pool's Auto TRIM, as `pool.query` reports it: `on` or `off`. */
+export async function readAutotrim(client: E2eApiClient, name: string): Promise<string> {
+  return (await getPool(client, name)).autotrim.value;
+}
+
+/**
+ * Sets the pool's Auto TRIM as a precondition, or back as a restore, through
+ * `pool.update`. Skipped when the pool already has that value, so a restore
+ * that changes nothing starts no job.
+ */
+export async function setAutotrim(client: E2eApiClient, name: string, value: 'on' | 'off'): Promise<void> {
+  const pool = await getPool(client, name);
+  if (pool.autotrim.value === value) {
+    return;
+  }
+
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('pool.update', [pool.id, { autotrim: value === 'on' ? 'ON' : 'OFF' }]),
+    {
+      timeoutMs: poolUpdateTimeoutMs,
+      whatItCosts: `Auto TRIM on pool "${name}" was not set to ${value}.`,
+    },
+  );
+}
+
+/**
+ * The pool's dedup table quota, as `pool.query` reports it: `auto`, `0` for none,
+ * or a size in bytes as a string.
+ */
+export async function readDedupTableQuota(client: E2eApiClient, name: string): Promise<string | null> {
+  return (await getPool(client, name)).dedup_table_quota ?? null;
+}
+
+/**
+ * Sets the pool's dedup table quota as a precondition, through `pool.update`:
+ * `'auto'`, or a custom size in bytes.
+ */
+export async function setDedupTableQuota(client: E2eApiClient, name: string, quota: 'auto' | number): Promise<void> {
+  const { id } = await getPool(client, name);
+
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('pool.update', [id, quota === 'auto'
+      ? { dedup_table_quota: 'AUTO' }
+      : { dedup_table_quota: 'CUSTOM', dedup_table_quota_value: quota }]),
+    {
+      timeoutMs: poolUpdateTimeoutMs,
+      whatItCosts: `The dedup table quota on pool "${name}" was not set to ${quota}.`,
+    },
+  );
 }
 
 /** A `pool.ddt_prune` job, and what it was asked to prune. */

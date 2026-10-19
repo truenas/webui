@@ -101,7 +101,7 @@
       <div class="details-item" [ixUiSearch]="searchableElements.elements.autoTrim">
         <span class="blank-spacer"></span>
         <div class="label">{{ 'Auto TRIM' | translate }}:</div>
-        <div class="value">{{ 'On' | translate }}</div>
+        <div class="value" tnTestIdType="text" [tnTestId]="[pool().name, 'auto-trim']">{{ 'On' | translate }}</div>
       </div>
     }
 
