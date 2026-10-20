@@ -1,9 +1,10 @@
 /**
  * Virtual machines: preconditions, cleanup and readback, over the API.
  *
- * A VM that is only defined costs the appliance nothing but its record and its disk. Only
- * `virtual-machines-power.e2e.ts` starts one, with {@link startVm}, and only one with no devices,
- * which sits at its firmware.
+ * A VM that is only defined costs the appliance nothing but its record and its disk. Two specs start
+ * one, with {@link startVm}, and neither gives it a disk, so it sits at its firmware:
+ * `virtual-machines-power.e2e.ts` with no devices, and `virtual-machines-display.e2e.ts` with
+ * nothing but a display.
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient } from '../support/api/client';
@@ -23,17 +24,27 @@ export interface VmSummary {
   state: string;
   /** The machine's process while it runs; a restart gives it a new one. Null while stopped. */
   pid: number | null;
+  /** Whether the row offers Display: middleware's word that the running machine serves one. */
+  display_available: boolean;
 }
 
 /**
  * The part of a device's attributes the specs read. Every device has a `dtype`; a disk has a path,
- * and a NIC has an adapter type and a MAC.
+ * a NIC has an adapter type and a MAC, and a display has a type, an address and its ports.
+ *
+ * A display's password is not here: middleware declares it a `Secret`, so `vm.device.query` gives
+ * it back redacted and there is nothing to compare it with.
  */
 interface DeviceAttributes {
   dtype: string;
   path?: string | null;
   type?: string | null;
   mac?: string | null;
+  bind?: string;
+  port?: number | null;
+  web?: boolean;
+  web_port?: number | null;
+  resolution?: string;
 }
 
 /** One device of a VM, as `vm.device.query` gives it. */
@@ -93,6 +104,7 @@ export async function findVm(client: E2eApiClient, name: string): Promise<VmSumm
     autostart: vm.autostart ?? false,
     state: vm.status.state,
     pid: vm.status.pid ?? null,
+    display_available: vm.display_available,
   };
 }
 
@@ -269,4 +281,86 @@ export async function addVmDisk(client: E2eApiClient, vmId: number, zvol: string
   );
 
   return readVmDevice(client, vmId, created.id);
+}
+
+/** What {@link addVmDisplay} attaches. Bound to every address, as the wizard's default is. */
+export interface DisplaySetup {
+  type: 'SPICE' | 'VNC';
+  password: string;
+  /** Only SPICE serves a web client. A VNC display is always saved without one. */
+  web: boolean;
+}
+
+/** A display port and a web port that no other service holds, as `vm.port_wizard` picks them. */
+export interface FreeDisplayPorts {
+  port: number;
+  web: number;
+}
+
+/**
+ * Two free ports for a display, from `vm.port_wizard`, as the wizard gets its own.
+ *
+ * A SPICE display needs both given: saved with neither, middleware compares the two empty ports,
+ * finds them equal and refuses the device ("Spice server port must not be same as web port").
+ */
+export async function findFreeDisplayPorts(client: E2eApiClient): Promise<FreeDisplayPorts> {
+  const { port, web } = await firstValueFrom(client.api.call('vm.port_wizard').pipe(timeout(readTimeoutMs)));
+  return { port, web };
+}
+
+/**
+ * Attaches a display to a VM and returns it as middleware stored it.
+ *
+ * Its ports come from {@link findFreeDisplayPorts}, so the device is saved with ports no other
+ * service holds.
+ */
+export async function addVmDisplay(
+  client: E2eApiClient,
+  vmId: number,
+  display: DisplaySetup,
+): Promise<VmDeviceSummary> {
+  const ports = await findFreeDisplayPorts(client);
+
+  const created = await firstValueFrom(
+    client.api.call('vm.device.create', [{
+      vm: vmId,
+      attributes: {
+        dtype: 'DISPLAY',
+        type: display.type,
+        bind: '0.0.0.0',
+        password: display.password,
+        port: ports.port,
+        web: display.web,
+        web_port: display.web ? ports.web : null,
+      },
+    }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+
+  return readVmDevice(client, vmId, created.id);
+}
+
+/** Every resolution a display can be given, as `vm.resolution_choices` lists them. */
+export async function listDisplayResolutions(client: E2eApiClient): Promise<string[]> {
+  const choices = await firstValueFrom(client.api.call('vm.resolution_choices').pipe(timeout(readTimeoutMs)));
+  return Object.keys(choices);
+}
+
+/**
+ * The address of a VM's web display, as middleware gives it for a page served from `host` over
+ * `protocol`. The same call the row's Display makes, so the two answers can be compared.
+ */
+export async function getDisplayWebUri(
+  client: E2eApiClient,
+  vmId: number,
+  host: string,
+  protocol: 'HTTP' | 'HTTPS',
+): Promise<string> {
+  const answer = await firstValueFrom(
+    client.api.call('vm.get_display_web_uri', [vmId, host, { protocol }]).pipe(timeout(readTimeoutMs)),
+  );
+  if (!answer.uri) {
+    throw new Error(`vm.get_display_web_uri gave VM ${vmId} no address: ${answer.error ?? 'no reason given'}.`);
+  }
+
+  return answer.uri;
 }

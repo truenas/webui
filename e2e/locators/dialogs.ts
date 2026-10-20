@@ -54,6 +54,7 @@ export const generalDialogLocators = {
  */
 export const infoDialogLocators = {
   title: '[data-test="text-info-title"]',
+  /** The same id whether the message is plain text or HTML, as the VM's VNC Display one is. */
   message: '[data-test="text-info-message"]',
   close: '[data-test="button-dialog-close"]',
 } as const;

@@ -5,7 +5,7 @@
   </h1>
   @if (data.isHtml) {
     <div class="info-panel ip-overflow-auto">
-      <span [innerHtml]="data.info | translate"></span>
+      <span tnTestId="info-message" tnTestIdType="text" [innerHtml]="data.info | translate"></span>
     </div>
   } @else {
     <div class="info-panel">

@@ -441,6 +441,20 @@ export async function findMixedAclChildren(client: E2eApiClient, pool: string): 
     .map((dataset) => dataset.id);
 }
 
+/** The full names of every zvol anywhere below `parent`, a dataset by full name. */
+export async function listZvolsUnder(client: E2eApiClient, parent: string): Promise<string[]> {
+  const [pool] = parent.split('/');
+  const zvols = await firstValueFrom(
+    client.api
+      .query('pool.dataset.query', [['pool', '=', pool], ['type', '=', 'VOLUME']])
+      .pipe(timeout(readTimeoutMs)),
+  );
+
+  return zvols
+    .map((zvol) => zvol.id ?? '')
+    .filter((id) => id.startsWith(`${parent}/`));
+}
+
 /** Creates a plain filesystem dataset by full name (`pool/name`) if absent. */
 export async function ensureDatasetPresent(client: E2eApiClient, name: string): Promise<void> {
   if (await findDataset(client, name)) {
