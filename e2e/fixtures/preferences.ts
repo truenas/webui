@@ -47,6 +47,7 @@ export const preferenceBaseline = {
   hideBuiltinGroups: true,
   language: 'en',
   dateFormat: 'yyyy-MM-DD',
+  terminalFontSize: 14,
 } as const;
 
 /**

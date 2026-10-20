@@ -1,6 +1,6 @@
 /**
  * The shared shell terminal, `ix-terminal` (`terminal.component.html`), as an app container's Shell
- * opens it. System > Shell and the container and VM consoles render the same component.
+ * and System > Shell open it. The container and VM consoles render the same component.
  *
  * xterm draws with its DOM renderer, so what the shell prints is real text inside the tagged div.
  * That div also holds xterm's measuring spans (runs of `W`), so read it with `toContainText`, never
