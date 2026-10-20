@@ -70,6 +70,29 @@ export async function ensureKeyEncryptedDatasetPresent(
 }
 
 /**
+ * The key `pool.dataset.export_key` hands out for `name`, which is what the Export Key dialog shows.
+ *
+ * The job's result is a `Secret`, which `core.get_jobs` masks unless asked for it raw. Never logged:
+ * a caller compares it and keeps it out of the report.
+ */
+export async function exportDatasetKey(client: E2eApiClient, name: string): Promise<string> {
+  const key = await runJob(
+    client,
+    () => client.api.callAndGetJobId('pool.dataset.export_key', [name]),
+    {
+      timeoutMs: slowCallTimeoutMs,
+      whatItCosts: `the key of ${name} could not be read, so what the dialog showed cannot be checked`,
+      rawResult: true,
+    },
+  );
+
+  if (typeof key !== 'string') {
+    throw new Error(`pool.dataset.export_key returned no key for ${name}`);
+  }
+  return key;
+}
+
+/**
  * Locks an encrypted dataset, as a precondition for unlocking it.
  *
  * `force_umount` because nothing should be holding it, and a precondition that fails over a
