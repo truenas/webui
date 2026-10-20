@@ -12,8 +12,14 @@
  * The Audit page under System is the log itself, a `tn-table` whose row tag is
  * `audit-<service>-<username>-<event>-<audit id>` through lodash. Every record's
  * id is a UUID, so the tag is unique and is split at each letter/digit boundary.
+ *
+ * Above the log sit the Service selector, the search box and Export
+ * (`audit-search.component.html`). The search box is the shared
+ * `ix-search-input`: a plain input in basic mode, a CodeMirror editor in
+ * advanced mode. Clicking a row opens Log Details beside the list, whose
+ * readouts are static ids because the page shows one record at a time.
  */
-import { legacyKebabTestSegment } from './test-id';
+import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 
 /** The fields of an audit record that its row tag is built from. */
 export interface AuditRowKey {
@@ -40,6 +46,45 @@ export const auditLocators = {
     user: (record: AuditRowKey): string => `[data-test="text-user-${rowTag(record)}-row-text"]`,
     /** The Event cell, which shows middleware's event name verbatim (`METHOD_CALL`). */
     event: (record: AuditRowKey): string => `[data-test="text-event-${rowTag(record)}-row-text"]`,
+    /** Every row's Service cell, which shows the service's label (`Middleware`), not its key. */
+    anyService: '[data-test^="text-service-audit-"]',
+    /** Every row's User cell. */
+    anyUser: '[data-test^="text-user-audit-"]',
+    /** Every row's Event cell. */
+    anyEvent: '[data-test^="text-event-audit-"]',
+  },
+
+  search: {
+    /** `<tn-select testId="audit-service">`. */
+    service: '[data-test="select-audit-service"]',
+    /** One of its options, by label: `SMB`, `Middleware`, `Sudo` or `System`. */
+    serviceOption: (label: string): string => `[data-test="option-audit-service-${kebabTestSegment(label)}"]`,
+    /** Basic mode's box, `<tn-input [testId]="'search'">`. */
+    basic: '[data-test="input-search"]',
+    /** The link beside the basic box that swaps in the advanced editor. */
+    switchToAdvanced: '[data-test="button-switch-to-advanced"]',
+    /** The advanced editor's container. CodeMirror mounts inside it, and a click there focuses the editor. */
+    advanced: '[data-test="input-advanced-search"]',
+    /** Under the advanced editor while the query does not parse: `Syntax error at <from>-<to>`. */
+    queryError: '[data-test="text-query-error"]',
+    /** `<tn-button testId="search">` beside the box. Runs whichever query is showing. */
+    run: '[data-test="button-search"]',
+  },
+
+  exporting: {
+    /** The arrow beside Export that opens the format menu. Rendered only while the log has rows. */
+    formatMenu: '[data-test="button-export-format-selector"]',
+    /** A format in that menu, `[testId]="['format', format]"` with `CSV`, `JSON` or `YAML`. */
+    format: (format: string): string => `[data-test="button-format-${kebabTestSegment(format)}"]`,
+    /** `ix-export-button`'s `<tn-button testId="export">`, labelled `Export As <format>`. */
+    exportButton: '[data-test="button-export"]',
+  },
+
+  details: {
+    service: '[data-test="text-service"]',
+    event: '[data-test="text-event"]',
+    user: '[data-test="text-user"]',
+    auditId: '[data-test="text-audit-id"]',
   },
 
   card: {
