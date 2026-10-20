@@ -73,6 +73,11 @@ export const virtualMachinesLocators = {
     reset: (id: number): string => `[data-test="button-reset-${id}"]`,
     /** `['power_off', id]`; the library normalizer turns the underscore into a dash. No dialog. */
     powerOff: (id: number): string => `[data-test="button-power-off-${id}"]`,
+    /**
+     * `['open_display', id]`. Shown only while the VM runs and `vm.query` says `display_available`.
+     * Opens the SPICE web client in a new tab, or a dialog saying how to connect.
+     */
+    display: (id: number): string => `[data-test="button-open-display-${id}"]`,
   },
 
   /** `<tn-dialog-shell testId="stop-vm">`, raised by the row's Stop. */
@@ -91,6 +96,8 @@ export const virtualMachinesLocators = {
     rows: '[data-test^="row-vm-device-"]',
     /** The `<tr>`, from `[rowTestId]`. */
     row: (dtype: string, order: number): string => `[data-test="row-${deviceRowTag(dtype, order)}"]`,
+    /** Every row of one device type, whatever its order. */
+    rowsOfType: (dtype: string): string => `[data-test^="row-${legacyKebabTestSegment('vm-device-' + dtype)}-"]`,
     /** The row's actions menu trigger. Every row has one with this same id, so reach it through the row. */
     actions: '[data-test="button-device-actions"]',
     /** The menu items, `[testId]="[device.id, 'edit']"` and so on, keyed by the device's id. */
@@ -112,8 +119,28 @@ export const virtualMachinesLocators = {
     nicAttach: '[data-test="select-nic-attach"]',
     /** The appliance's own interfaces, so a prefix that matches only this select's options. */
     nicAttachOptions: '[data-test^="option-nic-attach-"]',
+
+    /**
+     * A display's Display Type. Its control is named `type` like the NIC's Adapter Type, and only
+     * one of the two renders at a time. Only on Add, and it offers only the types the VM lacks.
+     */
+    displayType: '[data-test="select-type"]',
+    /** Options are labelled `SPICE` and `VNC`. */
+    displayTypeOption: (label: 'SPICE' | 'VNC'): string => `[data-test="option-type-${kebabTestSegment(label)}"]`,
+    /** Whichever of those two the open Display Type select offers. */
+    displayTypeOptions: '[data-test^="option-type-"]',
+    /** Options come from `vm.device.bind_choices`, labelled with the address itself. */
+    bind: '[data-test="select-bind"]',
+    bindOption: (address: string): string => `[data-test="option-bind-${kebabTestSegment(address)}"]`,
+    /** An explicit `[testId]`, which also names the visibility toggle beside it. */
+    password: '[data-test="input-password"]',
+    /** Options come from `vm.resolution_choices`, labelled like `1280x720`. */
+    resolution: '[data-test="select-resolution"]',
+    resolutionOption: (label: string): string => `[data-test="option-resolution-${kebabTestSegment(label)}"]`,
+
     /** `<tn-button [testId]="'save'">` on the side panel container. */
     save: '[data-test="button-save"]',
+    closePanel: '[data-test="button-close-side-panel"]',
   },
 
   /** `<tn-dialog-shell testId="device-delete">`. */
@@ -138,6 +165,11 @@ export const virtualMachinesLocators = {
     autostart: '[data-test="checkbox-autostart"]',
     /** "Enable Display (VNC)". Ticked by default, and asks for a password while it is. */
     enableVnc: '[data-test="checkbox-enable-vnc"]',
+    /**
+     * The display's password, at most 8 characters. An explicit `[testId]="'vnc_password'"`. Its
+     * Bind beside it defaults to `0.0.0.0`, which is what every journey here keeps.
+     */
+    vncPassword: '[data-test="input-vnc-password"]',
 
     /** Step 2, CPU And Memory. A size input, which reads `1 GiB`. */
     memory: '[data-test="input-memory"]',
@@ -147,6 +179,15 @@ export const virtualMachinesLocators = {
     /** Options come from `pool.filesystem_choices`, labelled with the full dataset name. */
     datastoreOption: (dataset: string): string => `[data-test="option-datastore-${kebabTestSegment(dataset)}"]`,
     volsize: '[data-test="input-volsize"]',
+    /** "Use existing disk image", from `[testId]="['newOrExisting', option.value]"`. */
+    existingDisk: '[data-test="radio-button-new-or-existing-existing"]',
+    /** "Select Existing Zvol". Shown in place of Zvol Location and Size once Existing is picked. */
+    hddPath: '[data-test="select-hdd-path"]',
+    /**
+     * Options come from `vm.device.disk_choices`, which keys each zvol by its `/dev/zvol/…` path
+     * and labels it with its full name (`pool/…/zvol`), so the id is built from the name.
+     */
+    hddPathOption: (zvol: string): string => `[data-test="option-hdd-path-${kebabTestSegment(zvol)}"]`,
 
     /** Step 4, Network Interface. */
     nicAttach: '[data-test="select-nic-attach"]',

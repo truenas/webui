@@ -26,16 +26,31 @@ const rowActionAttemptMs = 5_000;
 /** A ceiling on a row action becoming clickable: the VM reaching the state that shows it. */
 const rowActionTimeoutMs = 120_000;
 
-/** What the wizard is told to make. Everything else is left at its default. */
-export interface NewVm {
+/** What the wizard is told to make, whichever disk it gets. Everything else is left at its default. */
+interface WizardVm {
   name: string;
   description: string;
   /** As typed into the size input, e.g. `1 GiB`. */
   memory: string;
+  /**
+   * With a password, Enable Display (VNC) stays ticked, on its default Bind of `0.0.0.0`, and this
+   * is typed in. Without one, the display is turned off.
+   */
+  vncPassword?: string;
+}
+
+/** A VM on a new zvol, which the wizard creates. */
+export interface NewVm extends WizardVm {
   /** The dataset the new zvol goes under, by full name. */
   datastore: string;
   /** As typed into the size input, e.g. `1 GiB`. */
   volsize: string;
+}
+
+/** A VM on a zvol that already exists, which the wizard attaches and does not create. */
+export interface VmOnExistingZvol extends WizardVm {
+  /** The zvol's full name, `pool/…/zvol`. */
+  existingZvol: string;
 }
 
 /**
@@ -59,14 +74,14 @@ async function goToNextWizardStep(page: Page, current: string, next: string): Pr
 }
 
 /**
- * Creates a Linux VM with the wizard, from the sidebar, on a new disk.
+ * Creates a Linux VM with the wizard, from the sidebar, on a new zvol or an existing one.
  *
- * Start on Boot and the VNC display are both turned off. The first would start the machine the
- * next time the appliance boots, and the second opens a listening port that nothing here uses.
- * The NIC attaches to whichever interface the appliance lists first, since a run cannot know
- * their names.
+ * Start on Boot is turned off, since it would start the machine the next time the appliance boots.
+ * The VNC display is turned off too unless `vncPassword` is given, because it opens a listening
+ * port that only a journey about the display has a use for. The NIC attaches to whichever
+ * interface the appliance lists first, since a run cannot know their names.
  */
-export async function createVmWithWizard(page: Page, vm: NewVm): Promise<void> {
+export async function createVmWithWizard(page: Page, vm: NewVm | VmOnExistingZvol): Promise<void> {
   const { wizard } = virtualMachinesLocators;
   await goToVirtualMachines(page);
   await page.locator(virtualMachinesLocators.add).click();
@@ -78,7 +93,12 @@ export async function createVmWithWizard(page: Page, vm: NewVm): Promise<void> {
   await page.locator(wizard.name).fill(vm.name);
   await page.locator(wizard.description).fill(vm.description);
   await page.locator(wizard.autostart).click();
-  await page.locator(wizard.enableVnc).click();
+  if (vm.vncPassword === undefined) {
+    await page.locator(wizard.enableVnc).click();
+  } else {
+    await expect(page.locator(wizard.enableVnc)).toBeChecked();
+    await page.locator(wizard.vncPassword).fill(vm.vncPassword);
+  }
   await goToNextWizardStep(page, wizard.name, wizard.memory);
 
   // CPU And Memory. Leaving the size input is part of the entry, as on the zvol form.
@@ -86,11 +106,17 @@ export async function createVmWithWizard(page: Page, vm: NewVm): Promise<void> {
   await page.locator(wizard.memory).blur();
   await goToNextWizardStep(page, wizard.memory, wizard.datastore);
 
-  // Disks.
-  await selectOption(page, wizard.datastore, wizard.datastoreOption(vm.datastore));
-  await page.locator(wizard.volsize).fill(vm.volsize);
-  await page.locator(wizard.volsize).blur();
-  await goToNextWizardStep(page, wizard.volsize, wizard.nicAttach);
+  // Disks. Picking Existing swaps Zvol Location and Size for Select Existing Zvol.
+  if ('existingZvol' in vm) {
+    await page.locator(wizard.existingDisk).click();
+    await selectOption(page, wizard.hddPath, wizard.hddPathOption(vm.existingZvol));
+    await goToNextWizardStep(page, wizard.hddPath, wizard.nicAttach);
+  } else {
+    await selectOption(page, wizard.datastore, wizard.datastoreOption(vm.datastore));
+    await page.locator(wizard.volsize).fill(vm.volsize);
+    await page.locator(wizard.volsize).blur();
+    await goToNextWizardStep(page, wizard.volsize, wizard.nicAttach);
+  }
 
   // Network Interface.
   await selectFirstOption(page, wizard.nicAttach, wizard.nicAttachOptions);
@@ -160,6 +186,15 @@ export async function stopVmFromRow(page: Page, name: string, id: number): Promi
   await expect(finished).toBeVisible({ timeout: stopTimeoutMs });
   await page.locator(infoDialogLocators.close).click();
   await expect(finished).toBeHidden();
+}
+
+/**
+ * Clicks Display in a running VM's row. What follows is the caller's to wait for: a new tab for a
+ * SPICE web display, or a dialog saying how to connect for any other.
+ */
+export async function openVmDisplay(page: Page, name: string, id: number): Promise<void> {
+  await expandVmRow(page, name, id);
+  await clickVmRowAction(page, name, virtualMachinesLocators.rowAction.display(id));
 }
 
 /** Hard-resets a running VM from its row, through webui's shared confirm and its tick box. */
@@ -283,6 +318,73 @@ export async function addNicFromDevicesPage(page: Page, adapterLabel: string): P
   await page.locator(form.save).click();
   await expect(page.locator(form.save)).toBeHidden({ timeout: saveTimeoutMs });
   return generated;
+}
+
+/** What {@link addDisplayFromDevicesPage} fills in. Both port fields are left empty. */
+export interface NewDisplay {
+  type: 'SPICE' | 'VNC';
+  /** An address `vm.device.bind_choices` lists, such as `0.0.0.0`. */
+  bind: string;
+  password: string;
+  /** A resolution `vm.resolution_choices` lists, such as `1280x720`. */
+  resolution: string;
+}
+
+/** Opens Add on the open Devices page and picks Display as the device type. */
+async function startAddingDisplay(page: Page): Promise<void> {
+  const form = virtualMachinesLocators.deviceForm;
+  await page.locator(virtualMachinesLocators.devices.add).click();
+
+  await expect(page.locator(form.deviceType)).toBeVisible();
+  await selectOption(page, form.deviceType, form.deviceTypeOption('Display'));
+}
+
+/**
+ * Adds a display from the open Devices page and waits for the panel to close.
+ *
+ * Web Interface is left at its default, ticked, which only SPICE shows.
+ */
+export async function addDisplayFromDevicesPage(page: Page, display: NewDisplay): Promise<void> {
+  const form = virtualMachinesLocators.deviceForm;
+  await startAddingDisplay(page);
+
+  await selectOption(page, form.displayType, form.displayTypeOption(display.type));
+  await selectOption(page, form.bind, form.bindOption(display.bind));
+  await page.locator(form.password).fill(display.password);
+  await selectOption(page, form.resolution, form.resolutionOption(display.resolution));
+
+  await page.locator(form.save).click();
+  await expect(page.locator(form.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Opens Add on the open Devices page, picks Display, and returns the labels of the display types
+ * it offers. Then closes the panel without saving anything.
+ *
+ * The list is filled in from `vm.get_display_devices` after the form opens, so the first option
+ * appearing is the sign it has arrived. The options are read in one go once it has. Picking the
+ * first closes the list again; it is the type the form selected for itself when only one is left.
+ *
+ * Picking Display has edited the form, so the panel asks before it closes and the discard is
+ * confirmed.
+ */
+export async function listOfferedDisplayTypes(page: Page): Promise<string[]> {
+  const form = virtualMachinesLocators.deviceForm;
+  await startAddingDisplay(page);
+
+  await page.locator(form.displayType).click();
+  const options = page.locator(form.displayTypeOptions);
+  await expect(options.first()).toBeVisible();
+  const labels = (await options.allInnerTexts()).map((label) => label.trim());
+  await options.first().click();
+
+  await page.locator(form.closePanel).click();
+  const discard = page.locator(confirmDialogLocators.confirm);
+  await expect(discard).toBeVisible();
+  await discard.click();
+  await expect(page.locator(form.deviceType)).toBeHidden();
+
+  return labels;
 }
 
 /**

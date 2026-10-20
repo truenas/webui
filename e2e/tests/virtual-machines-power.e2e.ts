@@ -13,8 +13,8 @@
  * The list closes an open row whenever a VM's state changes, so every button here is clicked
  * through `clickVmRowAction`, which opens the row again when it has to.
  *
- * Not covered: Suspend and Resume, the memory overcommit prompt, the display, the serial shell and
- * the log download.
+ * Not covered: Suspend and Resume, the memory overcommit prompt, the serial shell and the log
+ * download. The display is `virtual-machines-display.e2e.ts`'s.
  */
 import {
   ensureVmAbsent, ensureVmPresent, findVm, requireVirtualization, startVm,
