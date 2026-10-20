@@ -93,6 +93,11 @@ export async function findNewestAuditRecord(
   return records.find((record) => record.username && record.event);
 }
 
+/** Whether `service` holds any audit record at all, with a user or without. */
+export async function hasAuditRecords(client: E2eApiClient, service: AuditServiceKey): Promise<boolean> {
+  return (await queryNewestAuditRecords(client, service, [], 1)).length > 0;
+}
+
 /**
  * The newest middleware audit record made by `username`, or undefined.
  *

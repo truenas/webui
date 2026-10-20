@@ -12,8 +12,9 @@
  * what each search has to filter out: every filter assertion first checks the unfiltered list shows
  * something the filter must remove, so it cannot pass on a list that was already narrow.
  *
- * The Service test cannot make a record of another service over the API, so it takes the newest
- * one the appliance already holds among System, Sudo and SMB.
+ * The Service test cannot make a record of another service over the API. It switches to whichever
+ * of System, Sudo and SMB already holds records, or to an empty System log when none does, and in
+ * both cases checks the newest middleware record leaves the list.
  *
  * ## Export
  *
@@ -30,7 +31,7 @@ import { readFile } from 'node:fs/promises';
 import { gunzipSync } from 'node:zlib';
 import type { Page } from '@playwright/test';
 import {
-  findNewestAuditRecord, findNewestUserAuditRecord, type AuditServiceKey,
+  findNewestAuditRecord, findNewestUserAuditRecord, hasAuditRecords, type AuditServiceKey,
 } from '../fixtures/audit';
 import { ensureSignInAdministratorPresent, ensureUserAbsent } from '../fixtures/users';
 import {
@@ -118,31 +119,36 @@ test.afterEach(async ({ api }) => {
 });
 
 test('switching the Service selector lists only that service\'s records', async ({ page, api }) => {
+  const middlewareRecord = await findNewestAuditRecord(api);
+  if (!middlewareRecord) {
+    throw new Error('audit.query has no recent middleware record with a user and an event to look for.');
+  }
+  // Switch to a service that holds a record if there is one. A fresh appliance may have audited no
+  // sudo, SMB or system activity yet, and nothing over the API can make it, so System with an empty
+  // log is the fallback: the middleware record leaving the list still proves the switch reloaded it.
   const candidates = await Promise.all(
     (['SYSTEM', 'SUDO', 'SMB'] as const).map(async (service) => ({
       service,
-      record: await findNewestAuditRecord(api, service),
+      hasRecords: await hasAuditRecords(api, service),
     })),
   );
-  const other = candidates.find(({ record }) => record);
-  if (!other?.record) {
-    throw new Error('audit.query has no System, Sudo or SMB record with a user and an event to switch to.');
-  }
-  const label = serviceLabels[other.service];
+  const withRecords = candidates.find(({ hasRecords }) => hasRecords);
+  const label = serviceLabels[withRecords?.service ?? 'SYSTEM'];
 
   await goToAudit(page);
+  await expect(page.locator(auditLocators.list.row(middlewareRecord))).toBeVisible({ timeout: listLoadTimeoutMs });
   await expect.poll(
     () => shownValues(page, auditLocators.list.anyService),
-    { message: 'the log should open on Middleware\'s records', timeout: listLoadTimeoutMs },
+    { message: 'the log should open on Middleware\'s records' },
   ).toEqual([serviceLabels.MIDDLEWARE]);
 
   await chooseAuditService(page, label);
 
-  await expect(page.locator(auditLocators.list.row(other.record))).toBeVisible({ timeout: listLoadTimeoutMs });
+  await expect(page.locator(auditLocators.list.row(middlewareRecord))).toHaveCount(0, { timeout: listLoadTimeoutMs });
   await expect.poll(
     () => shownValues(page, auditLocators.list.anyService),
-    { message: `every listed record should be ${label}'s` },
-  ).toEqual([label]);
+    { message: `every listed record should be ${label}'s`, timeout: listLoadTimeoutMs },
+  ).toEqual(withRecords ? [label] : []);
 });
 
 test('a basic search for a username lists only that user\'s records', async ({ page, api, config }) => {
