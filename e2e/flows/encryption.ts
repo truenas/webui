@@ -89,8 +89,9 @@ export async function openExportKeyDialog(page: Page): Promise<string> {
  * Presses Download Key on the open Export Key dialog, and returns the download once it has started.
  *
  * The file comes from a `core.download` job, the same as the pool wizard's key in `downloadPoolKey`,
- * so it gets the same ceiling. A sibling of that flow rather than a call to it, because that one
- * presses the wizard dialog's button.
+ * so it gets the same ceiling. A sibling of that flow rather than a call to it: both buttons emit
+ * `button-download-key` today, but that flow takes its locator from the pool wizard's dialog, which
+ * can change without this one.
  */
 export async function downloadDatasetKey(page: Page): Promise<Download> {
   const [download] = await Promise.all([
