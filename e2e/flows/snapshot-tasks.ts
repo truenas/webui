@@ -1,14 +1,16 @@
 /**
- * Periodic snapshot tasks, driven through the UI from the Data Protection page
- * and from their full list.
+ * Periodic snapshot tasks, driven through the UI from the Data Protection page,
+ * from their full list, and from a dataset's Data Protection card.
  */
 import { expect, type Page } from '@playwright/test';
 import { confirmTaskDelete, expandTaskListRow, openFullListFromCard } from './data-protection';
+import { selectDataset } from './encryption';
 import { goToDataProtection } from './navigation';
 import { selectOption } from './storage';
 import { countSnapshotTasks } from '../fixtures/snapshot-tasks';
 import { confirmDialogLocators } from '../locators/dialogs';
 import { snapshotTaskLocators } from '../locators/snapshot-tasks';
+import { snapshotLocators } from '../locators/snapshots';
 import type { E2eApiClient } from '../support/api/client';
 
 /** Creating, updating and deleting a task are middleware calls, not instant. */
@@ -169,14 +171,29 @@ export async function openSnapshotTaskList(page: Page): Promise<void> {
   });
 }
 
-/** Opens a row's detail panel on the full list, starting from the sidebar, and waits for `action` in it. */
+/**
+ * Opens the full list from a dataset's Data Protection card, by its "View
+ * Snapshot Tasks" link, starting from the sidebar.
+ *
+ * The link puts the dataset in the route, `/data-protection/snapshot/<dataset>`,
+ * and the list copies it into its search box rather than filtering by route. So
+ * this arrives at the same page {@link openSnapshotTaskList} does, searched.
+ */
+export async function openSnapshotTaskListForDataset(page: Page, dataset: string): Promise<void> {
+  await selectDataset(page, dataset);
+
+  await page.locator(snapshotLocators.card.viewSnapshotTasks).click();
+  await expect(page.locator(snapshotTaskLocators.list.add)).toBeVisible();
+}
+
+/** Opens a row's detail panel on the full list that is open, and waits for `action` in it. */
 async function expandListRow(page: Page, dataset: string, namingSchema: string, action: string): Promise<void> {
-  await openSnapshotTaskList(page);
   await expandTaskListRow(page, snapshotTaskLocators.list.dataset(dataset, namingSchema), action);
 }
 
 /**
- * Opens the edit form for a task from its row's detail panel on the full list.
+ * Opens the edit form for a task from its row's detail panel, on the full list
+ * that is open — however it was reached.
  *
  * The list opens the card's form, so this waits on the same thing: the task's
  * naming schema having been patched in.
@@ -193,7 +210,8 @@ export async function openEditSnapshotTaskFormFromList(
 }
 
 /**
- * Deletes a task from its row's detail panel on the full list, and waits for its row to go.
+ * Deletes a task from its row's detail panel, on the full list that is open,
+ * and waits for its row to go.
  *
  * For a task with no snapshots yet, so the confirm offers no second box. The
  * list asks middleware whether there are any before it opens the confirm, which
