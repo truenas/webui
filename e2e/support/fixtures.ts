@@ -293,13 +293,15 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
    * login also gets its own token.
    *
    * It also records what the test exercised for `yarn e2e:coverage`, counting
-   * from the test's first navigation so that the sign-in and the dashboard it
-   * lands on are not credited to every test. See `support/coverage.ts`.
+   * from the test's first navigation or user input so that the sign-in and the
+   * dashboard it lands on are not credited to every test. See
+   * `support/coverage.ts`.
    */
   page: async ({
     page, authenticate, recordApiCalls: recording, api, config,
   }, use, testInfo) => {
     const coverage = new CoverageRecorder(page, config.uiBaseUrl);
+    await coverage.attach();
 
     // Registered before the sign-in, because the sign-in is where it first bites.
     await dismissConcurrencyDialogs(page);
