@@ -8,6 +8,10 @@
  * `jobs-panel.e2e.ts` does: the page is the subject, not whatever starts a job.
  * What the page shows is checked against `core.get_jobs`.
  *
+ * Each test opens the jobs panel before it seeds anything. The page and the
+ * panel read one job store, which subscribes to job events only once it has
+ * loaded, and a job started in between would never reach either.
+ *
  * Read from middleware's `plugins/cron/execute.py`:
  * - a run whose command exits non-zero ends FAILED, with an `error` naming the
  *   exit status;
@@ -123,6 +127,7 @@ async function runToFailure(api: E2eApiClient): Promise<CronRun> {
 }
 
 test('an admin opens the Jobs page from the jobs panel and filters jobs by state', async ({ page, api }) => {
+  await openJobsPanel(page);
   const succeeded = await runToState(api, succeeding, 'SUCCESS');
   const failed = await runToState(api, failing, 'FAILED');
   const running = await runToState(api, sleeping, 'RUNNING');
@@ -160,6 +165,7 @@ test('an admin opens the Jobs page from the jobs panel and filters jobs by state
 });
 
 test('Download Logs on a failed job saves its log', async ({ page, api }) => {
+  await openJobsPanel(page);
   const failed = await runToFailure(api);
 
   await openJobsPage(page);
@@ -180,9 +186,9 @@ test('Download Logs on a failed job saves its log', async ({ page, api }) => {
 test('View Details on a failed job\'s error opens that job on the Jobs page, already expanded', async ({
   page, api,
 }) => {
+  await openJobsPanel(page);
   const failed = await runToFailure(api);
 
-  await openJobsPanel(page);
   await page.locator(jobsPanelLocators.finishedJob(failed.id)).click();
   await expect(page.locator(jobsPanelLocators.runningCount)).toBeHidden();
   await expect(page.locator(errorDialogLocators.title)).toBeVisible();
@@ -192,6 +198,7 @@ test('View Details on a failed job\'s error opens that job on the Jobs page, alr
 
   await expect(page).toHaveURL(new RegExp(`/jobs\\?jobId=${failed.id}$`));
   // Open on arrival: nothing on the page was clicked.
+  await expect(page.locator(jobsPageLocators.detail.id(failed.id))).toBeVisible();
   await expect(page.locator(jobsPageLocators.detail.id(failed.id))).toHaveText(String(failed.id));
   await expect(page.locator(jobsPageLocators.detail.logExcerpt(failed.id))).toContainText(failedOutput);
 });

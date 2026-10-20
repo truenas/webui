@@ -32,12 +32,15 @@ export async function openJobsPanel(page: Page): Promise<void> {
 }
 
 /**
- * Opens the Jobs page the way a user reaches it: the jobs panel, then its
- * "View All Jobs". The page has no sidebar entry. Waits for the page's filter,
- * and for the panel to have closed behind it.
+ * Opens the Jobs page the way a user reaches it, from the jobs panel's "View
+ * All Jobs". The page has no sidebar entry. Waits for the page's filter, and for
+ * the panel to have closed behind it.
+ *
+ * The caller opens the panel first with {@link openJobsPanel}, and does so
+ * before starting any job the page should list: the page reads the same job
+ * store, and a job started before the store subscribed is never in it.
  */
 export async function openJobsPage(page: Page): Promise<void> {
-  await openJobsPanel(page);
   await page.locator(jobsPanelLocators.viewAllJobs).click();
 
   await expect(page).toHaveURL(/\/jobs(\?|$)/);
