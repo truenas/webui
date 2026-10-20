@@ -34,6 +34,14 @@ export async function findGraphTitle(client: E2eApiClient, name: string): Promis
   return (await findGraph(client, name))?.title;
 }
 
+/**
+ * What middleware draws the graph called `name` per (a NIC, a disk), or an empty list when it does
+ * not offer that graph or draws it once.
+ */
+export async function findGraphIdentifiers(client: E2eApiClient, name: string): Promise<string[]> {
+  return (await findGraph(client, name))?.identifiers ?? [];
+}
+
 /** webui's `stringToTitleCase`, replicated: every word capitalised and the rest lowercased. */
 function toTitleCase(text: string): string {
   return text.replace(/\w\S*/g, (word) => word.charAt(0).toUpperCase() + word.substring(1).toLowerCase());
@@ -77,7 +85,7 @@ export async function findFirstGraphIdentifier(
   name: string,
   candidates: string[],
 ): Promise<string | undefined> {
-  const identifiers = (await findGraph(client, name))?.identifiers ?? [];
+  const identifiers = await findGraphIdentifiers(client, name);
 
   return identifiers
     .filter((identifier) => candidates.includes(identifier))
