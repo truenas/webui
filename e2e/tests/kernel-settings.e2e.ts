@@ -20,9 +20,9 @@ import { expect, test } from '../support/fixtures';
 /**
  * What the appliance held before the first test in this file changed it.
  *
- * Read once, as `startingProfile` is in `dashboard-update-state.e2e.ts`: a
- * second read after a failed restore would record this file's own value as the
- * appliance's.
+ * Read once per worker, as `startingProfile` is in `dashboard-update-state.e2e.ts`:
+ * a second read after a failed restore would record this file's own value as the
+ * appliance's. A new worker reads it again, so that holds only within one.
  */
 let startingDebugKernel: boolean | undefined;
 

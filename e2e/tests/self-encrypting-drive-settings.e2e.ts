@@ -31,9 +31,10 @@ const maskedSedPassword = '*'.repeat(sedPassword.length);
 const mismatchedPassword = 'e2e-sed-mismatch';
 
 /**
- * Whether a password was set before the first test in this file ran. Read once,
- * so a password this file failed to clear is never mistaken for the appliance's
- * own and cleared on its behalf — or, worse, taken as permission to write one.
+ * Whether a password was set before the first test in this file ran. Read once
+ * per worker. A worker started after a failed clear reads the leftover as the
+ * appliance's own, and every test here then skips rather than touch it — the
+ * safe direction, since the suite never writes over a password it did not set.
  */
 let startedWithPassword: boolean | undefined;
 
