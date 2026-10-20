@@ -286,13 +286,9 @@ export async function openManagedHostEdit(page: Page, hostnqn: string): Promise<
   await expect(page.locator(nvmeOfLocators.hostForm.hostnqn)).toHaveValue(hostnqn, { timeout: formSettleTimeoutMs });
 }
 
-/**
- * In the open host form: sets the description, turns on Require Host Authentication,
- * generates both keys, and saves.
- */
-export async function saveHostWithGeneratedKeys(page: Page, description: string): Promise<void> {
+/** In the open host form: turns on Require Host Authentication and generates both keys. */
+export async function generateHostKeys(page: Page): Promise<void> {
   const { hostForm } = nvmeOfLocators;
-  await page.locator(hostForm.description).fill(description);
   await page.locator(hostForm.requireAuthentication).check();
 
   // Each key arrives from `nvmet.host.generate_key` after its click; saving before
@@ -301,9 +297,43 @@ export async function saveHostWithGeneratedKeys(page: Page, description: string)
   await expect(page.locator(hostForm.hostKey)).toHaveValue(/^DHHC-1:/, { timeout: formSettleTimeoutMs });
   await page.locator(hostForm.generateTrueNasKey).click();
   await expect(page.locator(hostForm.trueNasKey)).toHaveValue(/^DHHC-1:/, { timeout: formSettleTimeoutMs });
+}
 
+/** Saves the open host form and waits for its panel to close. */
+export async function saveHostForm(page: Page): Promise<void> {
+  const { hostForm } = nvmeOfLocators;
   await page.locator(hostForm.save).click();
   await expect(page.locator(hostForm.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * In the open host form: sets the description, turns on Require Host Authentication,
+ * generates both keys, and saves.
+ */
+export async function saveHostWithGeneratedKeys(page: Page, description: string): Promise<void> {
+  await page.locator(nvmeOfLocators.hostForm.description).fill(description);
+  await generateHostKeys(page);
+  await saveHostForm(page);
+}
+
+/**
+ * In the open host form, with Diffie–Hellman ticked: picks a DH group.
+ *
+ * DH Group is an inline editable, so the select is not on screen until the readout is
+ * clicked. The editable closes itself on the next click outside it, which is Save.
+ */
+export async function pickHostDhGroup(page: Page, group: string): Promise<void> {
+  const { hostForm } = nvmeOfLocators;
+  await page.locator(hostForm.dhGroupValue).click();
+  await expect(page.locator(hostForm.dhGroup)).toBeVisible({ timeout: formSettleTimeoutMs });
+  await selectOption(page, hostForm.dhGroup, hostForm.dhGroupOption(group));
+}
+
+/** Closes the host form unchanged. Nothing was edited, so the panel asks nothing. */
+export async function closeHostForm(page: Page): Promise<void> {
+  const { hostForm } = nvmeOfLocators;
+  await page.locator(hostForm.closePanel).click();
+  await expect(page.locator(hostForm.hostnqn)).toBeHidden({ timeout: formSettleTimeoutMs });
 }
 
 /**

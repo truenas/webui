@@ -239,6 +239,9 @@ export const directoryServicesLocators = {
 
     name: (name: string): string => `[data-test="text-name-${keytabRowTag(name)}-row-text"]`,
 
+    /** The row's own Edit button, the same shape as {@link realms}' `edit`. Opens the keytab form on that row. */
+    edit: (name: string): string => `[data-test="button-${keytabRowTag(name)}-mdi-pencil-row-action"]`,
+
     /** The row's own Delete button — the row tag, the icon, library and all, then `row-action`. */
     delete: (name: string): string => `[data-test="button-${keytabRowTag(name)}-mdi-delete-row-action"]`,
   },

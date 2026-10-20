@@ -1,7 +1,7 @@
 /**
  * Stories: an admin opens Advanced Settings on Credentials > Directory Services,
- * past its warning, and adds, edits and deletes a Kerberos realm and adds and
- * deletes a keytab — and the appliance holds what they did.
+ * past its warning, and adds, edits and deletes a Kerberos realm and adds, edits
+ * and deletes a keytab — and the appliance holds what they did.
  *
  * Joining AD, LDAP or IPA needs a directory server the CI appliance does not
  * have; these two cards do not, which is why they are what is covered. The
@@ -28,8 +28,10 @@ import {
 import {
   addKerberosKeytab,
   addKerberosRealm,
+  chooseKerberosKeytabFile,
   deleteKerberosKeytab,
   deleteKerberosRealm,
+  openEditKerberosKeytabForm,
   openEditKerberosRealmForm,
   saveKerberosForm,
 } from '../flows/directory-services';
@@ -70,15 +72,23 @@ const allRealms = [created.realm, target.realm, bystander.realm];
 /** One name for both keytab tests: they never need two at once. */
 const keytabName = 'e2e-keytab';
 
-/** Seeded over the API for the delete, and uploaded through the form for the add. */
+/** Seeded over the API for the edit and the delete, and uploaded through the form for the add. */
 const keytabContents = buildKeytab('host/e2e.test', target.realm);
+
+/** What the edit renames {@link keytabName} to, and the different file it uploads with it. */
+const editedKeytabName = 'e2e-keytab-edited';
+const editedKeytabContents = buildKeytab('host/e2e-edited.test', target.realm);
+
+const allKeytabs = [keytabName, editedKeytabName];
 
 async function removeEverything(api: E2eApiClient): Promise<void> {
   await runCleanupSteps([
     ...allRealms.map((realm): [string, () => Promise<void>] => [
       `remove the Kerberos realm ${realm}`, () => ensureKerberosRealmAbsent(api, realm),
     ]),
-    [`remove the Kerberos keytab ${keytabName}`, () => ensureKerberosKeytabAbsent(api, keytabName)],
+    ...allKeytabs.map((name): [string, () => Promise<void>] => [
+      `remove the Kerberos keytab ${name}`, () => ensureKerberosKeytabAbsent(api, name),
+    ]),
   ]);
 }
 
@@ -97,7 +107,7 @@ test.beforeEach(async ({ api }) => {
 });
 
 test.afterEach(async ({ api }) => {
-  if (leavingTestData(`the Kerberos realms ${allRealms.join(', ')} and keytab ${keytabName}`)) {
+  if (leavingTestData(`the Kerberos realms ${allRealms.join(', ')} and keytabs ${allKeytabs.join(', ')}`)) {
     return;
   }
 
@@ -182,6 +192,32 @@ test('an admin uploads a Kerberos keytab, and the appliance really has it', asyn
     name: keytabName,
     file: keytabContents.toString('base64'),
   });
+});
+
+test('an admin edits a keytab, renaming it and uploading a new file', async ({ page, api }) => {
+  const { keytabs, keytabForm } = directoryServicesLocators;
+  await ensureKerberosKeytabPresent(api, keytabName, keytabContents);
+  const before = await findKerberosKeytab(api, keytabName);
+
+  await openEditKerberosKeytabForm(page, keytabName);
+
+  // The file is required and is never patched back in, so even a rename alone
+  // cannot be saved until one is chosen again.
+  await expect(page.locator(keytabForm.save)).toBeDisabled();
+
+  await page.locator(keytabForm.name).fill(editedKeytabName);
+  await chooseKerberosKeytabFile(page, editedKeytabName, editedKeytabContents);
+  await saveKerberosForm(page, keytabForm.save);
+
+  await expect(page.locator(keytabs.name(editedKeytabName))).toHaveText(editedKeytabName);
+  await expect(page.locator(keytabs.row(keytabName))).toBeHidden();
+
+  // The same record, by id, now holding the new bytes: an update, not a second keytab.
+  expect(await findKerberosKeytab(api, editedKeytabName)).toMatchObject({
+    id: before?.id,
+    file: editedKeytabContents.toString('base64'),
+  });
+  expect(await findKerberosKeytab(api, keytabName)).toBeUndefined();
 });
 
 test('deleting a Kerberos keytab from the card removes it', async ({ page, api }) => {

@@ -103,6 +103,16 @@ export const s3BucketLocators = {
     versioning: '[data-test="select-versioning"]',
     versioningOption: (label: string) => `[data-test="option-versioning-${kebabTestSegment(label)}"]`,
     /**
+     * `<tn-form-field testId="versioning">` around {@link versioning}, which holds its hint — on a
+     * bucket whose stored versioning is not Off, the one saying it cannot be turned off again.
+     */
+    versioningField: '[data-test="form-field-versioning"]',
+    /**
+     * "Force Disable Versioning" (`testId="force-disable-versioning"`), below the select. Rendered
+     * only once the stored versioning is not Off, and applies at once rather than on Save.
+     */
+    forceDisableVersioning: '[data-test="button-force-disable-versioning"]',
+    /**
      * `tn-chip-input testId="snapshot-versions"`: the typable field is
      * `chip-input-<testId>`; Enter commits the typed text as a chip
      * (`allowCustomValue`). Rendered only while versioning is not Off.

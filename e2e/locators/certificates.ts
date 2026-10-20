@@ -65,6 +65,14 @@ export const csrLocators = {
 
     /** Certificate Options: `<tn-select testId="key_type">`. RSA, 2048 and SHA256 by default. */
     keyType: '[data-test="select-key-type"]',
+    /** By label: "RSA" or "EC" (`certificateKeyTypeLabels`). */
+    keyTypeOption: (label: string): string => `[data-test="option-key-type-${kebabTestSegment(label)}"]`,
+    /** `<tn-select testId="key_length">`. Rendered only while Key Type is RSA. */
+    keyLength: '[data-test="select-key-length"]',
+    /** `<tn-select testId="ec_curve">`. Rendered in Key Length's place while Key Type is EC. */
+    ecCurve: '[data-test="select-ec-curve"]',
+    /** By label, which is the curve itself, as `certificate.ec_curve_choices` returns it. */
+    ecCurveOption: (curve: string): string => `[data-test="option-ec-curve-${kebabTestSegment(curve)}"]`,
 
     /** Certificate Subject. Country defaults to US. */
     state: '[data-test="input-state"]',
@@ -78,7 +86,12 @@ export const csrLocators = {
     /** Extra Constraints. Every extension is off by default. */
     basicConstraints: '[data-test="checkbox-basic-constraints-enabled"]',
 
-    /** Confirm Options. */
+    /**
+     * Confirm Options. Each summary value is tagged `['summary', <label>]` through lodash, so
+     * Key Type's is `text-summary-key-type` and EC Curve's `text-summary-ec-curve`.
+     */
+    summaryKeyType: '[data-test="text-summary-key-type"]',
+    summaryEcCurve: '[data-test="text-summary-ec-curve"]',
     save: '[data-test="button-save"]',
   },
 } as const;
