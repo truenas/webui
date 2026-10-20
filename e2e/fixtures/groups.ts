@@ -40,8 +40,16 @@ export async function findGroup(client: E2eApiClient, name: string): Promise<Gro
   return group as GroupRecord | undefined;
 }
 
+/** What a seeded group holds beyond its name. Each one defaults to what the add form would send untouched. */
+export interface GroupSeedOptions {
+  /** Wire values, so `['ALL']` is a group allowed every command — the form shows that as a checkbox. */
+  sudoCommands?: string[];
+  sudoCommandsNopasswd?: string[];
+  smb?: boolean;
+}
+
 /**
- * Creates a plain local group if absent.
+ * Creates a local group if absent.
  *
  * No members and no privileges — which is not incidental. The list disables
  * Delete for a group holding either (`isDeleteDisabled` in
@@ -49,14 +57,26 @@ export async function findGroup(client: E2eApiClient, name: string): Promise<Gro
  * commands are not part of it), so a group made here is one a deletion test can
  * actually drive through the UI. See {@link setGroupMembers} for the other
  * side of that.
+ *
+ * An existing group is left as it is, options and all, so callers clean up
+ * first — as every spec using this does.
  */
-export async function ensureGroupPresent(client: E2eApiClient, name: string): Promise<void> {
+export async function ensureGroupPresent(
+  client: E2eApiClient,
+  name: string,
+  options: GroupSeedOptions = {},
+): Promise<void> {
   if (await findGroup(client, name)) {
     return;
   }
 
   await firstValueFrom(
-    client.api.call('group.create', [{ name, smb: false }]).pipe(timeout(slowCallTimeoutMs)),
+    client.api.call('group.create', [{
+      name,
+      smb: options.smb ?? false,
+      sudo_commands: options.sudoCommands ?? [],
+      sudo_commands_nopasswd: options.sudoCommandsNopasswd ?? [],
+    }]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
 
@@ -97,5 +117,28 @@ export async function setGroupMembers(
 
   await firstValueFrom(
     client.api.call('group.update', [group.id, { users: userIds }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
+ * Sets how a group's GID is mapped into containers, over the API: `'DIRECT'` for
+ * the same GID, a number for that container GID, `null` for no mapping. What the
+ * Map User/Group IDs dialog's Set and Clear call, as setup or teardown.
+ *
+ * @throws if the group does not exist, rather than silently setting nothing.
+ */
+export async function setGroupIdmap(
+  client: E2eApiClient,
+  name: string,
+  value: GroupRecord['userns_idmap'],
+): Promise<void> {
+  const group = await findGroup(client, name);
+
+  if (!group) {
+    throw new Error(`Cannot set the container ID mapping of group "${name}": it does not exist.`);
+  }
+
+  await firstValueFrom(
+    client.api.call('group.update', [group.id, { userns_idmap: value }]).pipe(timeout(slowCallTimeoutMs)),
   );
 }

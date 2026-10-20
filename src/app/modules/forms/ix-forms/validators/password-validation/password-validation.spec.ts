@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import {
   AbstractControl,
-  FormBuilder, FormGroup,
+  FormBuilder, FormGroup, Validators,
 } from '@angular/forms';
 import { doesNotEqualFgValidator, matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 
@@ -60,6 +60,19 @@ describe('PasswordValidation', () => {
       form.updateValueAndValidity();
       expect(form.errors).toBeNull();
     });
+
+    it('keeps the control\'s own error once the confirmation matches', () => {
+      thisControl.setValidators(Validators.minLength(12));
+      thisControl.markAsTouched();
+
+      // The order a user types in: the field first, while the confirmation still differs.
+      thisControl.setValue('short');
+      otherControl.setValue('short');
+
+      expect(thisControl.hasError('matchOther')).toBe(false);
+      expect(thisControl.hasError('minlength')).toBe(true);
+      expect(form.valid).toBe(false);
+    });
   });
 
   describe('doesNotEqualValidator', () => {
@@ -117,6 +130,19 @@ describe('PasswordValidation', () => {
       thisControl.disable();
       form.updateValueAndValidity();
       expect(form.errors).toBeNull();
+    });
+
+    it('keeps the control\'s own error once the other value differs again', () => {
+      thisControl.setValidators(Validators.minLength(12));
+      thisControl.markAsTouched();
+
+      thisControl.setValue('same');
+      otherControl.setValue('same');
+      otherControl.setValue('different');
+
+      expect(thisControl.hasError('matchesOther')).toBe(false);
+      expect(thisControl.hasError('minlength')).toBe(true);
+      expect(form.valid).toBe(false);
     });
   });
 });

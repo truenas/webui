@@ -189,6 +189,48 @@ export async function addIscsiTarget(page: Page, target: IscsiTargetEntry): Prom
 }
 
 /**
+ * Opens the target form for a target from Edit in the Targets tab's detail
+ * header, and waits for it to load the target.
+ */
+export async function openIscsiTargetForEdit(page: Page, name: string): Promise<void> {
+  const { targets, targetForm } = iscsiLocators;
+  await goToIscsiTargets(page);
+  await selectIscsiTarget(page, name);
+
+  await page.locator(targets.edit).click();
+  // The form patches the target in once it has opened; typing before that is overwritten.
+  await expect(page.locator(targetForm.name)).toHaveValue(name, { timeout: formSettleTimeoutMs });
+}
+
+/** What an edit to a target with one authorized network and one group changes. */
+export interface IscsiTargetEdit {
+  name: string;
+  alias: string;
+  /** The network's new address. Its prefix length is left as it is. */
+  networkAddress: string;
+  /** The tag the group's CHAP authentication uses. */
+  chapAuthTag: number;
+}
+
+/**
+ * Edits a target from the Targets tab: a new alias, a new address on its one
+ * authorized network, and CHAP on its one group. Waits for the panel to close.
+ */
+export async function editIscsiTarget(page: Page, edit: IscsiTargetEdit): Promise<void> {
+  const { targetForm } = iscsiLocators;
+  await openIscsiTargetForEdit(page, edit.name);
+
+  await page.locator(targetForm.alias).fill(edit.alias);
+  await page.locator(targetForm.networkAddress(0)).fill(edit.networkAddress);
+  await selectOption(page, targetForm.authmethod, targetForm.authmethodChapOption);
+  await selectOption(page, targetForm.auth, targetForm.authOption(edit.chapAuthTag));
+
+  await expect(page.locator(targetForm.save)).toBeEnabled({ timeout: formSettleTimeoutMs });
+  await page.locator(targetForm.save).click();
+  await expect(page.locator(targetForm.save)).toBeHidden({ timeout: panelSaveTimeoutMs });
+}
+
+/**
  * Associates an extent with a target as the given LUN, from the target's
  * Extents card, and waits for the association to be listed there.
  */

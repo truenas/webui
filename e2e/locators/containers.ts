@@ -1,6 +1,6 @@
 /**
- * The Containers page: its header, the Global Configuration form its
- * Configuration menu opens, the Create New Container form and its image
+ * The Containers page: its header, the Global Configuration form and the Map
+ * User/Group IDs dialog its Configuration menu opens, the Create New Container form and its image
  * browser, the list, the Stop Options dialog, the details panel and the delete
  * dialog.
  *
@@ -21,12 +21,17 @@ import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
  */
 const rowTag = (name: string): string => legacyKebabTestSegment(`container-${name}`);
 
+/** A row of the Map User/Group IDs dialog: `mapping-<name>`, through lodash as {@link rowTag} is. */
+const idMappingRowTag = (name: string): string => legacyKebabTestSegment(`mapping-${name}`);
+
 export const containersLocators = {
   header: {
     /** "Configuration", a `tn-button` that opens a menu rather than a page. */
     configurationMenu: '[data-test="button-configuration-menu"]',
     /** "Settings" in that menu. A `tn-menu-item`, so its id is `button-<testId>`. */
     settings: '[data-test="button-global-configuration"]',
+    /** "Map User/Group IDs" in that menu, `testId="map-user-group-ids"`. Opens the dialog below. */
+    mapUserGroupIds: '[data-test="button-map-user-group-ids"]',
     /** "Create New Container". Rendered once the page has read `lxc.config`. */
     createContainer: '[data-test="button-create-new-container"]',
   },
@@ -54,6 +59,55 @@ export const containersLocators = {
 
     /** "IPv6 Network", the same control with `[testId]="'v6-network'"`. */
     v6Address: '[data-test="input-v6-network"]',
+  },
+
+  /**
+   * The Map User/Group IDs dialog, `map-user-group-ids-dialog.component.html`, and
+   * its Add New Mapping form, `new-mapping-form.component.html`.
+   *
+   * `<tn-dialog-shell testId="dialog">`, so its title and ✕ carry the shell's
+   * generic ids. The table and the form below it are rendered only once the
+   * mappings have loaded, and both are rendered again on every reload: switching
+   * Users/Groups, a Set, a Clear.
+   */
+  idMapping: {
+    title: '[data-test="dialog-title-dialog"]',
+    close: '[data-test="button-close-dialog"]',
+    /** The Users / Groups switch, `<tn-button-toggle [testId]="option.value">`. */
+    users: '[data-test="button-toggle-users"]',
+    groups: '[data-test="button-toggle-groups"]',
+
+    /**
+     * A mapping's row and cells. The tag is `toUniqueRowTag('mapping-' + name)`, so
+     * the whole of it goes through lodash and `e2e_idmap_user` is `e-2-e-idmap-user`.
+     * The Host column is titled Host UID in the Users view and Host GID in the
+     * Groups view, and its id follows the title.
+     */
+    row: (name: string): string => `[data-test="row-${idMappingRowTag(name)}"]`,
+    hostUid: (name: string): string => `[data-test="text-host-uid-${idMappingRowTag(name)}-row-text"]`,
+    hostGid: (name: string): string => `[data-test="text-host-gid-${idMappingRowTag(name)}-row-text"]`,
+    /** The container's UID or GID: `Same` for a `DIRECT` mapping, the number otherwise. */
+    containerId: (name: string): string => (
+      `[data-test="text-instance-uid-or-gid-${idMappingRowTag(name)}-row-text"]`
+    ),
+    /**
+     * "Clear mapping", `['clear-mapping', name]`. Unlike the row tag this goes
+     * through the library's normalizer alone, so `e2e_idmap_user` is `e2e-idmap-user`.
+     */
+    clear: (name: string): string => `[data-test="button-clear-mapping-${kebabTestSegment(name)}"]`,
+
+    /**
+     * The User or Group picker, an `ix-user-combobox` / `ix-group-combobox` bound to
+     * `hostUidOrGid` with no `testId`, so both fall back to the control name. Its
+     * rows are keyed by the name they show.
+     */
+    account: '[data-test="autocomplete-host-uid-or-gid"]',
+    accountOption: (name: string): string => `[data-test="option-host-uid-or-gid-${kebabTestSegment(name)}"]`,
+    /** "Map to the same UID (or GID) in the container", ticked whenever the form resets. */
+    mapDirectly: '[data-test="checkbox-map-directly"]',
+    /** "Container UID" or "Container GID", rendered only while Map Directly is unticked. */
+    containerIdInput: '[data-test="input-instance-uid-or-gid"]',
+    set: '[data-test="button-set-mapping"]',
   },
 
   /**

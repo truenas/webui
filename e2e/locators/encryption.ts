@@ -110,4 +110,9 @@ export const unlockSummaryLocators = {
  */
 export const jobDialogLocators = {
   title: '[data-test="dialog-title-job-progress"]',
+  /**
+   * Shown only while the job is `abortable` and running or waiting. It asks for no confirmation,
+   * and reads "Aborting..." and is disabled until the job ends and the dialog closes.
+   */
+  abort: '[data-test="button-abort"]',
 } as const;

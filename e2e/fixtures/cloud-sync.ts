@@ -277,6 +277,18 @@ export async function runCloudSyncTask(client: E2eApiClient, taskId: number): Pr
 }
 
 /**
+ * Starts a run of a task over the API and returns its job id, without waiting for it.
+ *
+ * For a spec about the run's job rather than the task: started with a bandwidth limit, the job
+ * stays running for long enough to act on. Whoever calls this ends the job in teardown.
+ */
+export async function startCloudSyncRun(client: E2eApiClient, taskId: number): Promise<number> {
+  return firstValueFrom(
+    client.api.callAndGetJobId('cloudsync.sync', [taskId]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
  * The names of the regular files directly inside a directory.
  *
  * What a sync is for, and appears nowhere on the screen.

@@ -248,6 +248,28 @@ export async function setUserEmailAndShell(
 }
 
 /**
+ * Sets how a user's UID is mapped into containers, over the API: `'DIRECT'` for
+ * the same UID, a number for that container UID, `null` for no mapping. What the
+ * Map User/Group IDs dialog's Set and Clear call, as setup or teardown.
+ *
+ * @throws if the user does not exist, rather than silently setting nothing.
+ */
+export async function setUserIdmap(
+  client: E2eApiClient,
+  username: string,
+  value: UserRecord['userns_idmap'],
+): Promise<void> {
+  const user = await findUser(client, username);
+  if (!user) {
+    throw new Error(`Cannot set the container ID mapping of user "${username}": it does not exist.`);
+  }
+
+  await firstValueFrom(
+    client.api.call('user.update', [user.id, { userns_idmap: value }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
  * Gives a user a freshly generated SSH public key, and returns it.
  *
  * The Access card offers "Download Public Key" only while `sshpubkey` is set, so
