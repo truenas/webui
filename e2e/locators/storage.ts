@@ -83,6 +83,13 @@ export const poolWizardLocators = {
    * declares, not from the library default.
    */
   layoutOption: (label: string) => `[data-test="option-layout-${legacyKebabTestSegment(label)}"]`,
+  /**
+   * The Data step's layout when the wizard was opened from Add VDEV: a read-only
+   * `<tn-input [testId]="['layout']">` rendered in place of {@link layout},
+   * holding the pool's existing data layout as its value, `MIRROR`
+   * (`automated-disk-selection.component.html`).
+   */
+  lockedLayout: '[data-test="input-layout"]',
 
   /** `[testId]="['size-and-type', type()]"` where type is the vdev category. */
   diskSize: (type: VdevCategory) => `[data-test="select-size-and-type-${type}"]`,
