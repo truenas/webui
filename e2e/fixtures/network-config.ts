@@ -56,6 +56,20 @@ export async function readNetworkConfig(client: E2eApiClient): Promise<NetworkSe
 }
 
 /**
+ * The label the Services select shows for an outbound activity, or undefined
+ * when the appliance has no activity by that value.
+ *
+ * `network.configuration.activity_choices` answers `[value, label]` pairs, and
+ * the select's option ids are built from the label.
+ */
+export async function findActivityLabel(client: E2eApiClient, activity: string): Promise<string | undefined> {
+  const choices = await firstValueFrom(
+    client.api.call('network.configuration.activity_choices').pipe(timeout(readTimeoutMs)),
+  );
+  return choices.find(([value]) => value === activity)?.[1];
+}
+
+/**
  * Writes `settings` back, and only if the appliance holds something else. Never
  * for the change under test, which goes through the form.
  */

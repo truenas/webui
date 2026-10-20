@@ -204,6 +204,14 @@ export const cloudSyncLocators = {
     /** Ticked by default. */
     enabled: '[data-test="checkbox-enabled"]',
     /**
+     * A push task's Folder on the remote, the same explorer as the wizard's
+     * {@link cloudSyncLocators.wizard.folderDestination}. Rooted at `/` on the
+     * remote, and browsed through `cloudsync.list_directory` over the task's credential.
+     */
+    folderDestination: '[data-test="input-folder-destination"]',
+    /** The base of that explorer's popup ids — see `locators/explorer.ts`. */
+    folderDestinationExplorer: 'folder-destination',
+    /**
      * Transfers: three bandwidth presets and Custom. Picking Custom opens the
      * dialog below, and the number saved there comes back as a fourth option.
      */

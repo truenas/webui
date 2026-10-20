@@ -39,6 +39,15 @@ function listRowTag(name: string): string {
 const thisSystemLabel = 'On this System';
 const differentSystemLabel = 'On a Different System';
 
+/**
+ * How a task picks its snapshots, by naming schema or by regular expression, in
+ * the form and in the wizard alike. The ids keep the legacy
+ * `radio-button-<group>-<label>` shape; the labels differ between the two.
+ */
+function schemaOrRegexRadio(label: string): string {
+  return `[data-test="radio-button-schema-or-regex-${kebabTestSegment(label)}"]`;
+}
+
 export const replicationTaskLocators = {
   card: {
     /** The card title, `tnTestIdType="link"` with `['replication-task', 'open-in-new']`. Opens the full list. */
@@ -150,14 +159,8 @@ export const replicationTaskLocators = {
     /** Shown for a HEX key. Ticked, the form makes the key itself; unticked, {@link encryptionKeyHex} takes it. */
     encryptionKeyGenerate: '[data-test="checkbox-encryption-key-generate"]',
     encryptionKeyHex: '[data-test="input-encryption-key-hex"]',
-    /**
-     * Source section. How the task picks its snapshots, by naming schema or by
-     * regular expression. Same legacy `radio-button-<group>-<label>` shape as the
-     * wizard's {@link replicationTaskLocators.wizard.runOnce}.
-     */
-    schemaOrRegex: (label: string): string => (
-      `[data-test="radio-button-schema-or-regex-${kebabTestSegment(label)}"]`
-    ),
+    /** Source section. Labelled `Matching naming schema` and `Matching regular expression`. */
+    schemaOrRegex: schemaOrRegexRadio,
     /**
      * Source section, on a push task picking by naming schema. A `tn-chip-input`:
      * the typable field is `chip-input-<testId>`, and Enter commits the text as a chip.
@@ -171,14 +174,37 @@ export const replicationTaskLocators = {
     /** Step one, What and Where. */
     sourceFrom: '[data-test="select-source-datasets-from"]',
     sourceFromThisSystem: `[data-test="option-source-datasets-from-${kebabTestSegment(thisSystemLabel)}"]`,
+    /**
+     * A pull. Picking it sets the target's location to this system and locks it,
+     * and shows {@link replicationTaskLocators.wizard.sshConnection} for the source. `ix-ssh-credentials-select`
+     * hard-codes its `testId`, and only one of the two is rendered at a time.
+     */
+    sourceFromDifferentSystem: `[data-test="option-source-datasets-from-${kebabTestSegment(differentSystemLabel)}"]`,
     /** Multiple: a typed value is split on commas. Shown once a source location is picked. */
     sourceDatasets: '[data-test="input-source-datasets"]',
+    /**
+     * The base of the source explorer's popup ids — see `locators/explorer.ts`.
+     * On a different system it lists `replication.list_datasets` over the
+     * connection, in dataset names: the pools at the root, then a level at a time.
+     */
+    sourceDatasetsExplorer: 'source-datasets',
+    /**
+     * Shown for a source on a different system: `Naming Schema` or `Snapshot Name
+     * Regular Expression`. Naming Schema is picked when it appears.
+     */
+    schemaOrRegex: schemaOrRegexRadio,
+    /**
+     * The regular expression. Required whenever it is shown, which a source on a
+     * different system leaves it until the radio is moved — see
+     * `chooseRemoteReplicationSource`.
+     */
+    nameRegex: '[data-test="input-name-regex"]',
     targetFrom: '[data-test="select-target-dataset-from"]',
     targetFromThisSystem: `[data-test="option-target-dataset-from-${kebabTestSegment(thisSystemLabel)}"]`,
     targetFromDifferentSystem: `[data-test="option-target-dataset-from-${kebabTestSegment(differentSystemLabel)}"]`,
     /**
-     * `ix-ssh-credentials-select`, shown once the target is on a different
-     * system. Its options are the connections' names.
+     * `ix-ssh-credentials-select`, shown once the source or the target is on a
+     * different system. Its options are the connections' names.
      */
     sshConnection: '[data-test="select-ssh-credentials"]',
     sshConnectionOption: (name: string): string => `[data-test="option-ssh-credentials-${kebabTestSegment(name)}"]`,

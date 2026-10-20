@@ -48,6 +48,11 @@ export async function addSyslogServer(page: Page, host: string, transport: Syslo
   }
 }
 
+/** Picks the first server's TLS certificate by name, once its transport is TLS. */
+export async function chooseSyslogCertificate(page: Page, name: string): Promise<void> {
+  await selectOption(page, syslogLocators.form.tlsCertificate, syslogLocators.form.tlsCertificateOption(name));
+}
+
 /**
  * Saves the form and waits for the panel to close.
  *

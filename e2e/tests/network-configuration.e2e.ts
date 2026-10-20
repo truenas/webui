@@ -1,8 +1,8 @@
 /**
  * Stories: an admin changes the appliance's hostname, domain, search domains, host
- * entries and service announcements from the Network Configuration card on
- * System > Network, and middleware refuses a nameserver or a default gateway that
- * would leave the appliance unable to resolve or route.
+ * entries, service announcements and outbound network activity from the Network
+ * Configuration card on System > Network, and middleware refuses a nameserver or
+ * a default gateway that would leave the appliance unable to resolve or route.
  *
  * Every save is asserted on the card and through `network.configuration.config`.
  * The refusals are checked where the form shows them, and by the config being
@@ -15,6 +15,10 @@
  * saves one on purpose. The refused values are refused before middleware writes
  * anything, and every address used is reserved for documentation (RFC 5737).
  *
+ * No test picks Deny All or Allow Specific either. Both would cut the appliance's
+ * outbound traffic, which the apps tests pull images over, until the restore.
+ * Allow All Except denies one service the suite never uses.
+ *
  * ## Setup and teardown
  *
  * `beforeAll` reads the config, and `afterEach` writes it back if anything
@@ -22,9 +26,16 @@
  * gateway as static values (see `fixtures/network-config.ts`), so the restore
  * runs after every successful save, not only after a failure.
  */
-import { type NetworkSettings, readNetworkConfig, restoreNetworkConfig } from '../fixtures/network-config';
 import {
-  addChips, discardNetworkSettings, networkSaveTimeoutMs, openNetworkSettings, saveNetworkSettings,
+  findActivityLabel, type NetworkSettings, readNetworkConfig, restoreNetworkConfig,
+} from '../fixtures/network-config';
+import {
+  addChips,
+  chooseOutboundServices,
+  discardNetworkSettings,
+  networkSaveTimeoutMs,
+  openNetworkSettings,
+  saveNetworkSettings,
 } from '../flows/network-config';
 import { errorDialogLocators } from '../locators/dialogs';
 import { networkConfigLocators } from '../locators/network';
@@ -39,6 +50,14 @@ const hostEntry = '192.0.2.10 e2e-doc-host';
 
 /** TEST-NET-1: on no network the appliance is attached to, so never reachable. */
 const unreachableGateway = '192.0.2.1';
+
+/**
+ * The outbound activity the Allow All Except test denies, by its value. ACME is
+ * certificate issuing, which nothing on the CI appliance does, so denying it
+ * for one test cuts nothing the suite needs — unlike the apps catalog or image
+ * pulls.
+ */
+const deniedActivity = 'acme';
 
 /** What the appliance held before this file ran, and therefore what `afterEach` writes back. */
 let found: NetworkSettings | undefined;
@@ -114,6 +133,36 @@ test('an admin edits the hostname, domains, hosts and announcements, and they ar
     hosts: expectedHosts,
     service_announcement: announcements,
   });
+});
+
+test('an admin allows all outbound activity except one service, and it is kept', async ({ page, api }) => {
+  const start = baseline();
+  const form = networkConfigLocators.form;
+  const serviceLabel = await findActivityLabel(api, deniedActivity);
+  if (serviceLabel === undefined) {
+    throw new Error(`network.configuration.activity_choices offers no "${deniedActivity}"`);
+  }
+  // Allow All, stored as an empty deny list. Anything else and the radio below starts elsewhere.
+  expect(start.activity).toEqual({ type: 'DENY', activities: [] });
+
+  await openNetworkSettings(page, start.hostname);
+  await expect(page.locator(form.outboundActivity('Allow All'))).toBeChecked();
+  await expect(page.locator(form.outboundServices)).toBeHidden();
+
+  await page.locator(form.outboundActivity('Allow All Except')).click();
+  await chooseOutboundServices(page, [serviceLabel]);
+  await saveNetworkSettings(page);
+
+  await expect(page.locator(networkConfigLocators.card.outboundNetwork)).toHaveText(
+    `Allow all except: ${deniedActivity}`,
+  );
+  // Still a deny list, now naming the service. An allow list here would have cut everything else.
+  expect((await readNetworkConfig(api)).activity).toEqual({ type: 'DENY', activities: [deniedActivity] });
+
+  // The form loads the stored list back into the radio and the select.
+  await openNetworkSettings(page, start.hostname);
+  await expect(page.locator(form.outboundActivity('Allow All Except'))).toBeChecked();
+  await expect(page.locator(form.outboundServices)).toContainText(serviceLabel);
 });
 
 test('a loopback nameserver is refused, and nothing is saved', async ({ page, api }) => {

@@ -79,6 +79,20 @@ async function fillWhatAndWhere(
   await selectOption(page, wizard.sourceFrom, wizard.sourceFromThisSystem);
   await chooseTarget();
   await fillExplorer(page, wizard.sourceDatasets, source);
+  await finishReplicationWhatAndWhere(page, { target, name });
+}
+
+/**
+ * Types the target, names the task, and moves on to When: the last part of What
+ * and Where, once the source is in the form. A pull's target is on this system,
+ * so after {@link chooseRemoteReplicationSource} and a source this is all that is left.
+ */
+export async function finishReplicationWhatAndWhere(
+  page: Page,
+  { target, name }: { target: string; name: string },
+): Promise<void> {
+  const { wizard } = replicationTaskLocators;
+
   await fillExplorer(page, wizard.targetDataset, target);
   await page.locator(wizard.name).fill(name);
 
@@ -118,6 +132,45 @@ export async function fillRemoteReplication(
     await selectOption(page, wizard.targetFrom, wizard.targetFromDifferentSystem);
     await selectOption(page, wizard.sshConnection, wizard.sshConnectionOption(connection));
   });
+}
+
+/**
+ * Starts What and Where for a pull: the source on a different system, reached
+ * through the SSH connection named `connection`. Leaves the source explorer
+ * empty, for the caller to browse or type into, and the target's location
+ * locked to this system.
+ *
+ * A source on a different system turns on both ways of naming its snapshots at
+ * once. The radio shows Naming Schema, whose field is filled with the wizard's
+ * default, but the regular expression field is shown as well, required and
+ * empty, so Next would stay disabled. Moving the radio to the regular
+ * expression and back is how an admin clears it, because each move turns the
+ * other field off. The task then pulls by the default naming schema.
+ */
+export async function chooseRemoteReplicationSource(page: Page, connection: string): Promise<void> {
+  const { wizard } = replicationTaskLocators;
+
+  await selectOption(page, wizard.sourceFrom, wizard.sourceFromDifferentSystem);
+  await selectOption(page, wizard.sshConnection, wizard.sshConnectionOption(connection));
+
+  await page.locator(wizard.schemaOrRegex('Snapshot Name Regular Expression')).click();
+  await page.locator(wizard.schemaOrRegex('Naming Schema')).click();
+  await expect(page.locator(wizard.schemaOrRegex('Naming Schema'))).toBeChecked();
+  await expect(page.locator(wizard.nameRegex)).toBeHidden();
+}
+
+/**
+ * Saves the wizard with When left at Run On a Schedule, its default, and waits
+ * for the panel to close.
+ *
+ * Nothing is started, so there is no dialog to answer. The panel closing is the
+ * app's signal that the task was created; a refusal leaves it open with the error.
+ */
+export async function saveReplicationOnSchedule(page: Page): Promise<void> {
+  const save = page.locator(replicationTaskLocators.wizard.save);
+
+  await save.click();
+  await expect(save).toBeHidden({ timeout: saveTimeoutMs });
 }
 
 /**
