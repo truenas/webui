@@ -171,7 +171,10 @@ runs:
     # when the job ends. Do not upload these from a pipeline that reuses an
     # appliance or a credential. What would stay valuable after the job — a
     # license — is kept out by the suite writing it outside test-results/
-    # (the `ha-license` project's `outputDir` in playwright.config.ts).
+    # (the `ha-license` project's `outputDir` in playwright.config.ts). So are
+    # the Active Directory test domain's credentials, which are shared and
+    # long-lived: the `unpublished` project, which e2e/tests/unpublished/
+    # runs in, traces nothing in CI and writes outside test-results/ too.
     #
     # Whenever the suite ran, not only when it failed: Playwright keeps a
     # trace on the first retry, and a test that fails once and passes on the

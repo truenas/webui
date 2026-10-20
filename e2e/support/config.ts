@@ -86,6 +86,35 @@ export interface TargetConfig {
    * journeys run only then, and the single-appliance projects not at all.
    */
   readonly ha?: HaTarget;
+  /**
+   * The Active Directory domain to join, when the run has one (`TN_AD_DOMAIN`):
+   * the journeys that join a domain skip without it.
+   */
+  readonly activeDirectory?: ActiveDirectoryTarget;
+}
+
+/**
+ * A real Active Directory domain the appliance can reach and join.
+ *
+ * In CI it is the internal test domain, shared with other automation and
+ * outliving the job, so unlike the appliance's own password these credentials
+ * are worth something after the run. The specs that type them run in a project
+ * that publishes nothing (`playwright.config.ts`), and none of these values may
+ * reach a test title, a step name or an assertion message.
+ */
+export interface ActiveDirectoryTarget {
+  /** The DNS domain, e.g. `ad.example.com`. */
+  readonly domain: string;
+  /**
+   * Domain controllers that also serve the domain's DNS, in order. The specs
+   * point the appliance's nameservers at them for the join.
+   */
+  readonly nameservers: readonly string[];
+  /** An account allowed to join computers to the domain, and remove them. */
+  readonly username: string;
+  readonly password: string;
+  /** The OU computer accounts are created in. Unset, the domain's default `Computers`. */
+  readonly computerOu?: string;
 }
 
 /**
@@ -137,6 +166,29 @@ function readHaTarget(env: NodeJS.ProcessEnv, problems: string[]): HaTarget | un
 
   return {
     nodeA, nodeB, vip, netmask, vipUiBaseUrl, licenseFile,
+  };
+}
+
+/**
+ * Reads the domain from the `TN_AD_*` variables. `TN_AD_DOMAIN` is the switch:
+ * unset, there is no domain and nothing else is asked for; set, the rest are
+ * required, so a half-configured run fails at load rather than at the join.
+ */
+function readActiveDirectoryTarget(env: NodeJS.ProcessEnv, problems: string[]): ActiveDirectoryTarget | undefined {
+  if (!env.TN_AD_DOMAIN) {
+    return undefined;
+  }
+
+  const dc1 = requireValue('TN_AD_DC1', env.TN_AD_DC1, problems);
+  const username = requireValue('TN_AD_USERNAME', env.TN_AD_USERNAME, problems);
+  const password = requireValue('TN_AD_PASSWORD', env.TN_AD_PASSWORD, problems);
+
+  return {
+    domain: env.TN_AD_DOMAIN,
+    nameservers: [dc1, env.TN_AD_DC2].filter((address): address is string => !!address),
+    username,
+    password,
+    computerOu: env.TN_AD_COMPUTER_OU || undefined,
   };
 }
 
@@ -388,6 +440,7 @@ export function loadTargetConfig(env: NodeJS.ProcessEnv = process.env): TargetCo
   const username = requireValue('TN_USERNAME', env.TN_USERNAME, problems);
   const password = requireValue('TN_PASSWORD', env.TN_PASSWORD, problems);
   const ha = readHaTarget(env, problems);
+  const activeDirectory = readActiveDirectoryTarget(env, problems);
 
   const uiBaseUrlOverridden = !!env.TN_UI_BASE_URL;
   let uiBaseUrl = env.TN_UI_BASE_URL ?? '';
@@ -428,6 +481,7 @@ export function loadTargetConfig(env: NodeJS.ProcessEnv = process.env): TargetCo
     password,
     ignoreHttpsErrors: profile === 'shipped',
     ha,
+    activeDirectory,
   };
 }
 

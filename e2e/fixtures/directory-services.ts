@@ -1,9 +1,10 @@
 /**
  * Directory Services' own state, read and reset over the API.
  *
- * The CI appliance has no domain controller, LDAP or IPA server to join, so
- * nothing here saves an enabled configuration — only a disabled LDAP one, which
- * middleware stores without binding. "Not configured" is
+ * The CI appliance has no LDAP or IPA server to join, so nothing here saves an
+ * enabled configuration — only a disabled LDAP one, which middleware stores
+ * without binding. Joining Active Directory, when a run has a domain, is in
+ * `active-directory.ts`. "Not configured" is
  * the baseline each spec starts from and leaves behind, and
  * {@link ensureDirectoryServicesCleared} is how a run that saved something gets
  * back to it — the same call the form's own Clear Config makes.

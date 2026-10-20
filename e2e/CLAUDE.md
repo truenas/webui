@@ -342,6 +342,15 @@ fixtures/    API-driving setup and teardown
 support/     config, auth, API client, the shared `test` object
 ```
 
+**A test that types a secret which outlives the job goes in
+`tests/unpublished/`** — today, the Active Directory test domain's credentials.
+CI publishes `test-results/` from this public repository, and a trace or a
+failure's `error-context.md` holds every value typed into the page, password
+fields included. That is fine for the appliance password, which is made per job;
+it is not for anything still valid afterwards. The `unpublished` project traces
+nothing in CI and writes outside `test-results/`. Never put such a secret in a
+test title, a step name or an assertion message: JUnit is published either way.
+
 Import `test` and `expect` from `support/fixtures`, not `@playwright/test`. It
 provides a connected `api` client and the resolved `config` as worker-scoped
 fixtures, so a spec never wires up a connection or remembers to close it.
