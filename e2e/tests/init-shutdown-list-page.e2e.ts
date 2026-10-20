@@ -51,6 +51,9 @@ test('the Init/Shutdown Scripts card title opens the full list, where Edit chang
     command: bystanderCommand, when: 'POSTINIT', comment: bystanderDescription,
   });
   const before = await findInitShutdownScript(api, targetCommand);
+  if (!before) {
+    throw new Error('the init/shutdown script seeded over the API is not there to edit');
+  }
 
   const { list, form } = initShutdownLocators;
   await openAdvancedSettingsList(page, {
@@ -80,7 +83,7 @@ test('the Init/Shutdown Scripts card title opens the full list, where Edit chang
   await expect(page.locator(list.description(targetCommand))).toHaveText(editedDescription);
 
   expect(await findInitShutdownScript(api, targetCommand)).toMatchObject({
-    id: before?.id,
+    id: before.id,
     when: 'SHUTDOWN',
     comment: editedDescription,
   });

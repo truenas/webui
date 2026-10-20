@@ -89,6 +89,12 @@ describe('InitShutdownCardComponent', () => {
     ]);
   });
 
+  it('links its title to the full Init/Shutdown Scripts list', () => {
+    const link = spectator.query<HTMLAnchorElement>('h3 a');
+    expect(link).toHaveText('Init/Shutdown Scripts');
+    expect(link).toHaveAttribute('href', '/system/initshutdown');
+  });
+
   it('opens the Add Init/Shutdown Script form in a side panel when Add is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();

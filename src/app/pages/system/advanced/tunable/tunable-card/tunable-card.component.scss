@@ -1,0 +1,9 @@
+@import 'mixins/tn-card';
+
+.card-title-link {
+  @include tn-card-projected-title-link;
+}
+
+.card-title {
+  @include tn-card-projected-title;
+}

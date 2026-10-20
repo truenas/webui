@@ -90,6 +90,12 @@ describe('TunableCardComponent', () => {
     expect(spectator.query('tbody tr[data-test]')).toHaveAttribute('data-test', 'row-tunable-zfs-arc-max');
   });
 
+  it('links its title to the full Tunable list', () => {
+    const link = spectator.query<HTMLAnchorElement>('h3 a');
+    expect(link).toHaveText('Tunable');
+    expect(link).toHaveAttribute('href', '/system/tunable');
+  });
+
   it('opens the Add Tunable form in a side panel when Add is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();

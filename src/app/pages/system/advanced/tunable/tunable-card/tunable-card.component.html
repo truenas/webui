@@ -2,16 +2,16 @@
   padding="small"
   [ixUiSearch]="searchableElements.elements.tunable"
 >
-  <h3 tnCardHeader class="tn-card__title">
+  <h3 tnCardHeader class="card-title">
     <a
-      class="tn-card__title-link"
+      class="card-title-link"
       tnTestIdType="link"
       [tnTestId]="['tunable', 'open-in-new']"
       [routerLink]="['/system', 'tunable']"
     >
       {{ 'Tunable' | translate }}
       <tn-icon
-        class="tn-card__title-link-icon"
+        class="title-icon"
         name="open-in-new"
         library="mdi"
         size="sm"

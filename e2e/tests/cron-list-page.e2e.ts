@@ -8,8 +8,7 @@
  * say nothing about any of it.
  *
  * The search filters the Users column alone, so the target runs as a user of
- * its own and the bystander as root. Typing a command or a description narrows
- * nothing, and that is pinned here as it is.
+ * its own and the bystander as root, and the query is that user's name.
  */
 import { ensureCronjobAbsent, ensureCronjobPresent, findCronjob, type CronSchedule } from '../fixtures/cron';
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';

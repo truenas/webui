@@ -10,6 +10,7 @@ import {
   TnButtonComponent,
   TnCardComponent,
   TnCardFooterActionsDirective,
+  TnCardHeaderDirective,
   TnCellDefDirective,
   TnDialog,
   TnEmptyComponent,
@@ -53,11 +54,13 @@ import { TaskService } from 'app/services/task.service';
 @Component({
   selector: 'ix-cron-card',
   templateUrl: './cron-card.component.html',
+  styleUrls: ['./cron-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TableTextCellComponent,
     TnCardComponent,
     TnCardFooterActionsDirective,
+    TnCardHeaderDirective,
     TnTestIdDirective,
     RouterLink,
     TnIconComponent,

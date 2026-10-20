@@ -10,6 +10,7 @@ import {
   TnButtonComponent,
   TnCardComponent,
   TnCardFooterActionsDirective,
+  TnCardHeaderDirective,
   TnCellDefDirective,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
@@ -44,11 +45,13 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 @Component({
   selector: 'ix-init-shutdown-card',
   templateUrl: './init-shutdown-card.component.html',
+  styleUrls: ['./init-shutdown-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TableTextCellComponent,
     TnCardComponent,
     TnCardFooterActionsDirective,
+    TnCardHeaderDirective,
     TnTestIdDirective,
     RouterLink,
     TnIconComponent,
