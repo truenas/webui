@@ -40,9 +40,20 @@ export async function readUpdateProfile(client: E2eApiClient): Promise<UpdatePro
   return config.profile;
 }
 
+export type UpdateProfileChoices = CallResponse<E2eApiDirectory, 'update.profile_choices'>;
+
+/**
+ * The profiles this appliance lists, keyed by id, each with its `name` and whether it is `available`.
+ * Which ones are listed and available depends on the entitlement, the installed version and the
+ * configured profile, so a spec derives what it expects from this rather than naming profiles.
+ */
+export async function readUpdateProfileChoices(client: E2eApiClient): Promise<UpdateProfileChoices> {
+  return firstValueFrom(client.api.call('update.profile_choices').pipe(timeout(readTimeoutMs)));
+}
+
 /** Whether `update.update` would accept this profile. Middleware refuses one that is not available. */
 export async function isUpdateProfileAvailable(client: E2eApiClient, profile: string): Promise<boolean> {
-  const choices = await firstValueFrom(client.api.call('update.profile_choices').pipe(timeout(readTimeoutMs)));
+  const choices = await readUpdateProfileChoices(client);
   return Object.entries(choices).some(([id, choice]) => id === profile && choice.available);
 }
 
