@@ -15,8 +15,8 @@
  * Both tests own their pool by name. Each name is removed before and after every test, whatever
  * happened, because a pool left behind holds its disks.
  *
- * Not covered: special and dedup vdevs, adding a log or cache to an existing pool from Add VDEV,
- * and removing a log, cache or spare.
+ * Not covered: special and dedup vdevs, and removing a log, cache or spare. Adding a log or a cache
+ * to an existing pool from Add VDEV is `pool-add-vdevs.e2e.ts`.
  */
 import { readPoolTopology, type TopologyVdev } from '../fixtures/pool';
 import { ensurePoolAbsent, findPool, requireUnusedDisks } from '../fixtures/storage';

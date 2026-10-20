@@ -219,25 +219,26 @@ export async function detachSelectedDisk(page: Page, disk: { guid: string }): Pr
 }
 
 /**
- * Adds one spare to the pool from "Add VDEV" on its VDEVs page, and waits for
- * the wizard to land back on the Storage dashboard.
+ * Opens the wizard from "Add VDEV" on the pool's VDEVs page and moves on from
+ * General, whose pool name is fixed, stopping on the Data step.
  *
- * The wizard opens on General, with the pool's name fixed, and crosses Data and
- * Log untouched: neither is required when adding to a pool. The disk size is the
- * first the Spare step offers, for the reason given on `selectFirstOption`.
+ * Not `leaveGeneralStep`: that waits for the Data step's layout select, and when
+ * adding to a pool the Data step renders a read-only field in its place. The
+ * width select is what both kinds of Data step render.
  */
-export async function addOneSpare(page: Page): Promise<void> {
+export async function openAddVdevsWizard(page: Page): Promise<void> {
   await page.locator(vdevsPageLocators.addVdev).click();
   await expect(page).toHaveURL(/\/storage\/\d+\/add-vdevs\/?$/);
 
   await page.locator(poolWizardLocators.next).click();
-  await page.locator(poolWizardLocators.nextStep('data')).click();
-  await page.locator(poolWizardLocators.nextStep('log')).click();
+  await expect(page.locator(poolWizardLocators.width('data'))).toBeVisible();
+}
 
-  await configureAutomatedVdevs(page, 'spare', { width: 1 });
-  await goToReview(page, 'spare');
-
-  await expect(page.locator(poolWizardLocators.reviewCategory('spare'))).toBeVisible();
+/**
+ * Submits the wizard from its Review step, and waits for it to land back on the
+ * Storage dashboard.
+ */
+export async function submitPoolUpdate(page: Page): Promise<void> {
   // "Update Pool" here: the button the creation wizard labels "Create Pool".
   await page.locator(poolWizardLocators.createPool).click();
 
@@ -247,4 +248,24 @@ export async function addOneSpare(page: Page): Promise<void> {
   // The wizard leaves for the dashboard once the job has finished, and stays put
   // on a failure.
   await expect(page).toHaveURL(/\/storage\/?$/, { timeout: poolUpdateTimeoutMs });
+}
+
+/**
+ * Adds one spare to the pool from "Add VDEV" on its VDEVs page, and waits for
+ * the wizard to land back on the Storage dashboard.
+ *
+ * The wizard crosses Data and Log untouched: neither is required when adding to
+ * a pool. The disk size is the first the Spare step offers, for the reason given
+ * on `selectFirstOption`.
+ */
+export async function addOneSpare(page: Page): Promise<void> {
+  await openAddVdevsWizard(page);
+  await page.locator(poolWizardLocators.nextStep('data')).click();
+  await page.locator(poolWizardLocators.nextStep('log')).click();
+
+  await configureAutomatedVdevs(page, 'spare', { width: 1 });
+  await goToReview(page, 'spare');
+
+  await expect(page.locator(poolWizardLocators.reviewCategory('spare'))).toBeVisible();
+  await submitPoolUpdate(page);
 }
