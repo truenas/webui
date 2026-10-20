@@ -140,8 +140,10 @@ export interface NewS3AccessKey {
  * back, so a segment that swallowed its digits would fail here rather than
  * leave the field required and the save refused for a reason unrelated to
  * the journey.
+ *
+ * Exported for the API key form, which has the same control.
  */
-async function fillDateInput(
+export async function fillDateInput(
   page: Page,
   segments: { month: string; day: string; year: string },
   date: Date,

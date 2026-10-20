@@ -64,3 +64,42 @@ export async function ensureApiKeyPresent(
     client.api.call('api_key.create', [{ name, username }]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
+
+/**
+ * Creates a non-expiring key for a user and returns the key itself, which
+ * middleware hands out on create and never again.
+ *
+ * For a test that has to sign in with the key afterwards. The caller removes
+ * any key of that name first; this does not, so a leftover makes middleware
+ * refuse the create rather than hand back a key for the wrong record.
+ * Never log what it returns.
+ */
+export async function createApiKeyWithSecret(
+  client: E2eApiClient,
+  { name, username }: { name: string; username: string },
+): Promise<string> {
+  const created = await firstValueFrom(
+    client.api.call('api_key.create', [{ name, username }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+
+  return created.key;
+}
+
+/**
+ * A key's expiry as milliseconds, or null for a key that never expires or is
+ * not there.
+ *
+ * The generated client types `expires_at` as a string; the wire shape is
+ * `{ $date: <ms> }`, which is what the UI reads. Both are accepted, as in
+ * `s3-access-key-options.e2e.ts`.
+ */
+export function apiKeyExpiryMs(key: ApiKeyRecord | undefined): number | null {
+  const value: unknown = key?.expires_at;
+  if (typeof value === 'string') {
+    return Date.parse(value);
+  }
+  if (value && typeof value === 'object' && '$date' in value && typeof value.$date === 'number') {
+    return value.$date;
+  }
+  return null;
+}
