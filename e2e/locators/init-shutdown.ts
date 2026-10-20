@@ -28,8 +28,23 @@ function rowTag(command: string, when: InitShutdownWhen): string {
   return kebabTestSegment(`card-init-shutdown-${command}-${when}`);
 }
 
+/**
+ * The full list's row tag, `init-shutdown-<command>-<type>`: the type where the
+ * card has When, so **a row on the list keeps its ids when When changes**. Only
+ * command scripts are made here, so the type is always `COMMAND`.
+ */
+function listRowTag(command: string): string {
+  return kebabTestSegment(`init-shutdown-${command}-COMMAND`);
+}
+
 export const initShutdownLocators = {
   card: {
+    /**
+     * The card's title, a link to the full list: an anchor projected into the card
+     * header with `tnTestIdType="link"` and `['init-shutdown', 'open-in-new']`.
+     */
+    title: '[data-test="link-init-shutdown-open-in-new"]',
+
     /** `<tn-button [testId]="['init-shutdown', 'add']">` in the card footer. */
     add: '[data-test="button-init-shutdown-add"]',
 
@@ -56,6 +71,36 @@ export const initShutdownLocators = {
     /** Delete, inside that menu. Same shape as {@link rowMenuEdit}. */
     rowMenuDelete: (command: string, when: InitShutdownWhen): string => (
       `[data-test="button-${rowTag(command, when)}-more-action-mdi-delete-row-action"]`
+    ),
+  },
+
+  /**
+   * The full list at `/system/initshutdown` (`init-shutdown-list.component.html`).
+   * No search. It shows Type and Command/Script, which the card does not, and
+   * its kebab opens the card's form with no first-time warning in front of it.
+   */
+  list: {
+    /** The page header's own Add, `[testId]="'add-init-shutdown-script'"`. */
+    add: '[data-test="button-add-init-shutdown-script"]',
+
+    row: (command: string): string => `[data-test="row-${listRowTag(command)}"]`,
+
+    /** The type's label, `Command` or `Script`. */
+    type: (command: string): string => `[data-test="text-type-${listRowTag(command)}-row-text"]`,
+
+    /** The command, for a command script. */
+    script: (command: string): string => `[data-test="text-command-script-${listRowTag(command)}-row-text"]`,
+
+    /** The When's label, e.g. `Shutdown`. */
+    when: (command: string): string => `[data-test="text-when-${listRowTag(command)}-row-text"]`,
+
+    description: (command: string): string => `[data-test="text-description-${listRowTag(command)}-row-text"]`,
+
+    rowMenu: (command: string): string => `[data-test="button-${listRowTag(command)}-more-action"]`,
+
+    /** Edit, inside that menu. */
+    rowMenuEdit: (command: string): string => (
+      `[data-test="button-${listRowTag(command)}-more-action-mdi-pencil-row-action"]`
     ),
   },
 

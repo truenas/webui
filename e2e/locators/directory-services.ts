@@ -175,8 +175,17 @@ export const directoryServicesLocators = {
    */
   showAdvancedSettings: '[data-test="button-show-advanced-settings"]',
 
+  /**
+   * The Kerberos Realms card, and the full page at `/directoryservice/kerberosrealms`
+   * it links to. Both are `kerberos-realms-list` — `inCard` true and false — so
+   * every id below is the same on both. The page adds a search over the realm
+   * and its three server lists.
+   */
   realms: {
-    /** `<tn-button [testId]="'add-kerberos-realms'">` in the card footer. */
+    /** The card's title, `['kerberos-realms', 'open-in-new']`: a link to the full page. */
+    title: '[data-test="link-kerberos-realms-open-in-new"]',
+
+    /** `<tn-button [testId]="'add-kerberos-realms'">` in the card footer, and in the page header. */
     add: '[data-test="button-add-kerberos-realms"]',
 
     row: (realm: string): string => `[data-test="row-${realmRowTag(realm)}"]`,
@@ -214,8 +223,16 @@ export const directoryServicesLocators = {
     save: '[data-test="button-save"]',
   },
 
+  /**
+   * The Kerberos Keytab card, and the full page at `/directoryservice/kerberoskeytabs`
+   * — one component, so the same ids, as with {@link realms}. The page's search
+   * covers the name alone.
+   */
   keytabs: {
-    /** `<tn-button [testId]="'add-kerberos-keytabs'">` in the card footer. */
+    /** The card's title, `['kerberos-keytab', 'open-in-new']`: a link to the full page. */
+    title: '[data-test="link-kerberos-keytab-open-in-new"]',
+
+    /** `<tn-button [testId]="'add-kerberos-keytabs'">` in the card footer, and in the page header. */
     add: '[data-test="button-add-kerberos-keytabs"]',
 
     row: (name: string): string => `[data-test="row-${keytabRowTag(name)}"]`,

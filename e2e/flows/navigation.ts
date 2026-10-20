@@ -11,7 +11,7 @@
  * for the token setup project, neither of which a user reaches by clicking.
  */
 import { expect, type Locator, type Page } from '@playwright/test';
-import { navLocators } from '../locators/navigation';
+import { globalSearchLocators, navLocators } from '../locators/navigation';
 
 /** Route each destination should land on, used to confirm arrival. */
 const expectedRoute = {
@@ -232,4 +232,24 @@ export async function goToServices(page: Page): Promise<void> {
 export async function goToAudit(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.system).click();
   await clickAndArrive(page, navLocators.audit, expectedRoute.audit);
+}
+
+/**
+ * Reaches a page through global search in the topbar: opens it, types `term`,
+ * and picks the `result` it lists.
+ *
+ * For the routes nothing in the app links to, which a user reaches only this
+ * way — `/system/alert-settings/services` is one. While search is open its box
+ * is in the DOM twice (see `globalSearchLocators`), so the count says the
+ * overlay is up and the visible copy is the one typed into.
+ */
+export async function goToViaGlobalSearch(page: Page, term: string, result: string, route: RegExp): Promise<void> {
+  const input = page.locator(globalSearchLocators.input);
+
+  await input.filter({ visible: true }).click();
+  await expect(input).toHaveCount(2);
+  await input.filter({ visible: true }).fill(term);
+
+  await page.locator(result).click();
+  await expect(page).toHaveURL(route);
 }

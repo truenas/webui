@@ -69,14 +69,21 @@ export async function ensureCronjobAbsent(client: E2eApiClient, command: string)
 }
 
 /**
- * Creates a job running a command as root, if no job runs that command already.
+ * Creates a job running a command, as root unless `user` says otherwise, if no
+ * job runs that command already. A job cannot outlive the user it runs as, so a
+ * spec removes the job before the user.
  *
  * For the job a run, an edit or a delete acts on, and for a bystander. Never
  * for the job under test in a create — that one goes through the form.
  */
 export async function ensureCronjobPresent(
   client: E2eApiClient,
-  { command, description, schedule }: { command: string; description: string; schedule: CronSchedule },
+  {
+    command,
+    description,
+    schedule,
+    user = 'root',
+  }: { command: string; description: string; schedule: CronSchedule; user?: string },
 ): Promise<void> {
   if (await findCronjob(client, command)) {
     return;
@@ -84,7 +91,7 @@ export async function ensureCronjobPresent(
 
   await firstValueFrom(
     client.api.call('cronjob.create', [{
-      command, description, schedule, user: 'root', enabled: true, stdout: true, stderr: false,
+      command, description, schedule, user, enabled: true, stdout: true, stderr: false,
     }]).pipe(timeout(slowCallTimeoutMs)),
   );
 }

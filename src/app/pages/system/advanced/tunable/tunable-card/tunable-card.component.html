@@ -1,9 +1,24 @@
 <tn-card
   padding="small"
   [ixUiSearch]="searchableElements.elements.tunable"
-  [title]="'Tunable' | translate"
-  [titleRouterLink]="['/system', 'tunable']"
 >
+  <h3 tnCardHeader class="tn-card__title">
+    <a
+      class="tn-card__title-link"
+      tnTestIdType="link"
+      [tnTestId]="['tunable', 'open-in-new']"
+      [routerLink]="['/system', 'tunable']"
+    >
+      {{ 'Tunable' | translate }}
+      <tn-icon
+        class="tn-card__title-link-icon"
+        name="open-in-new"
+        library="mdi"
+        size="sm"
+        [attr.aria-hidden]="true"
+      ></tn-icon>
+    </a>
+  </h3>
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
     <tn-empty [title]="emptyService.titleForType(dataProvider.emptyType$ | async)"></tn-empty>

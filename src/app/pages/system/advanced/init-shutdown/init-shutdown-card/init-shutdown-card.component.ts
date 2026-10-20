@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker,
@@ -12,8 +13,10 @@ import {
   TnCellDefDirective,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
+  TnIconComponent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { map } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -46,6 +49,9 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
     TableTextCellComponent,
     TnCardComponent,
     TnCardFooterActionsDirective,
+    TnTestIdDirective,
+    RouterLink,
+    TnIconComponent,
     RequiresRolesDirective,
     TnButtonComponent,
     UiSearchDirective,

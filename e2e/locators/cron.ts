@@ -15,7 +15,7 @@
  * and `stderr` included, though the screen labels them "Hide Standard Output"
  * and "Hide Standard Error".
  */
-import { kebabTestSegment } from './test-id';
+import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 
 /**
  * A schedule preset's option is keyed by its whole label, which is the preset's
@@ -58,8 +58,23 @@ function rowTag(command: string, user: string): string {
   return kebabTestSegment(`card-cron-${command}-${user}`);
 }
 
+/**
+ * The full list's row tag: `memoizedRowTag` over `cron-<command>-<description>`,
+ * which pre-normalizes through lodash, so `e2e` is `e-2-e` here. It carries the
+ * description rather than the user, so **editing the description renames the row**.
+ */
+function listRowTag(command: string, description: string): string {
+  return legacyKebabTestSegment(`cron-${command}-${description}`);
+}
+
 export const cronLocators = {
   card: {
+    /**
+     * The card's title, a link to the full list: an anchor projected into the card
+     * header with `tnTestIdType="link"` and `['cron', 'open-in-new']`.
+     */
+    title: '[data-test="link-cron-open-in-new"]',
+
     /** `<tn-button [testId]="['cron', 'add']">` in the card footer. */
     add: '[data-test="button-cron-add"]',
 
@@ -97,6 +112,33 @@ export const cronLocators = {
     rowMenuDelete: (command: string, user: string): string => (
       `[data-test="button-${rowTag(command, user)}-more-action-mdi-delete-row-action"]`
     ),
+  },
+
+  /**
+   * The full list at `/system/cron` (`cron-list.component.html`). Its search
+   * filters the Users column alone. A row has no action buttons of its own:
+   * clicking it opens a detail row whose Run Now, Edit and Delete are keyed by the
+   * job's id, and they open the card's form and dialog.
+   */
+  list: {
+    /** The page header's own Add, `[testId]="'add-cronjob'"`. Not the card's `cron-add`. */
+    add: '[data-test="button-add-cronjob"]',
+
+    row: (command: string, description: string): string => (
+      `[data-test="row-${listRowTag(command, description)}"]`
+    ),
+
+    /** The Command cell. Clicking it opens the row's detail row. */
+    command: (command: string, description: string): string => (
+      `[data-test="text-command-${listRowTag(command, description)}-row-text"]`
+    ),
+
+    description: (command: string, description: string): string => (
+      `[data-test="text-description-${listRowTag(command, description)}-row-text"]`
+    ),
+
+    /** Edit in the detail row, `[testId]="[cronjob.id, 'edit']"`. */
+    edit: (id: number): string => `[data-test="button-${id}-edit"]`,
   },
 
   form: {
