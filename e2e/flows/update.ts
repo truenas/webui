@@ -2,9 +2,9 @@
  * Driving System > Update.
  */
 import type { Page } from '@playwright/test';
-import { updateLocators } from '../locators/update';
 import { confirmTaskRun } from './data-protection';
 import { selectOption } from './storage';
+import { updateLocators } from '../locators/update';
 
 /** Picks a profile in the Update Profile card's select, by the `name` it is labelled with. */
 export async function chooseUpdateProfile(page: Page, name: string): Promise<void> {
