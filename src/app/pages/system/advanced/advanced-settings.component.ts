@@ -19,6 +19,7 @@ import {
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { LicenseService } from 'app/services/license.service';
 import { AppState } from 'app/store';
+import { preferencesRefreshRequested } from 'app/store/preferences/preferences.actions';
 import { systemConfigRefreshRequested } from 'app/store/system-config/system-config.actions';
 import { AccessCardComponent } from './access/access-card/access-card.component';
 import { AllowedAddressesCardComponent } from './allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
@@ -88,6 +89,8 @@ export class AdvancedSettingsComponent {
     // Most cards and forms here read the advanced config from the store, which is otherwise only
     // reloaded after a save made in this tab, so a change made elsewhere would never show up.
     this.store$.dispatch(systemConfigRefreshRequested());
+    // The Access card shows the session timeout, which is the account's own preference.
+    this.store$.dispatch(preferencesRefreshRequested());
     setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 5);
   }
 

@@ -6,6 +6,7 @@ import { EMPTY } from 'rxjs';
 import {
   catchError, filter, map, mergeMap, pairwise, startWith, switchMap, withLatestFrom,
 } from 'rxjs/operators';
+import { toLoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -14,7 +15,7 @@ import {
   autoRefreshReportsToggled,
   builtinGroupsToggled,
   guiFormSubmitted, lifetimeTokenUpdated, localizationFormSubmitted,
-  preferencesLoaded, preferredColumnsUpdated,
+  preferencesLoaded, preferencesRefreshRequested, preferredColumnsUpdated,
   themeNotFound,
   terminalFontSizeUpdated,
   updateRebootAfterManualUpdate,
@@ -60,6 +61,22 @@ export class PreferencesEffects {
         }),
       );
     }),
+  ));
+
+  // `auth.me` rather than `authService.refreshUser()`, which empties `user$` while it asks, and
+  // everything that reads the user would briefly see no one signed in. Only preferences that are
+  // there are taken: none at all is what a fresh account has, which the sign-in already handled.
+  refreshPreferences$ = createEffect(() => this.actions$.pipe(
+    ofType(preferencesRefreshRequested),
+    switchMap(() => this.api.call('auth.me').pipe(
+      map((user) => toLoggedInUser(user).attributes?.preferences),
+      filter(Boolean),
+      map((preferences) => preferencesLoaded({ preferences })),
+      catchError((error: unknown) => {
+        console.error(error);
+        return EMPTY;
+      }),
+    )),
   ));
 
   saveUpdatedPreferences$ = createEffect(() => this.actions$.pipe(
