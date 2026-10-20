@@ -193,6 +193,44 @@ export async function addIscsiMutualChapAccess(page: Page, entry: IscsiMutualCha
   });
 }
 
+/**
+ * Opens Edit on an authorized access entry from its row, and waits for the form
+ * to load it. Pass `''` as `peeruser` for an entry with no peer.
+ */
+export async function openIscsiAuthorizedAccessForEdit(page: Page, user: string, peeruser: string): Promise<void> {
+  const { authorizedAccess, authorizedAccessForm: form } = iscsiConfigLocators;
+  await goToIscsiTab(page, 'authorized-access');
+
+  await openRowMenuItem(page, authorizedAccess.row(user, peeruser), 'edit');
+  await expect(page.locator(form.user)).toHaveValue(user, { timeout: formSettleTimeoutMs });
+}
+
+/**
+ * In the open authorized access form: types a new secret into Secret and its
+ * confirmation, sets Discovery Authentication to CHAP, which hides the peer
+ * fields, and saves. Waits for the row, now keyed with no peer, to be listed.
+ */
+export async function changeIscsiAuthorizedAccessToChap(
+  page: Page,
+  { user, secret }: { user: string; secret: string },
+): Promise<void> {
+  const { authorizedAccess, authorizedAccessForm: form } = iscsiConfigLocators;
+
+  await page.locator(form.secret).fill(secret);
+  await page.locator(form.secretConfirm).fill(secret);
+  await selectOption(page, form.discoveryAuth, form.discoveryAuthChap);
+  await expect(page.locator(form.peeruser)).toBeHidden();
+  await saveSidePanel(page, form.save);
+
+  await expect(page.locator(authorizedAccess.row(user, '').row)).toBeVisible({ timeout: saveTimeoutMs });
+}
+
+/** Deletes an initiator group from its row on the Initiators tab. */
+export async function deleteIscsiInitiatorGroup(page: Page, id: number): Promise<void> {
+  await goToIscsiTab(page, 'initiators');
+  await deleteRow(page, iscsiConfigLocators.initiators.row(id));
+}
+
 /** Deletes an authorized access entry from its row. Pass `''` as `peeruser` for an entry with no peer. */
 export async function deleteIscsiAuthorizedAccess(page: Page, user: string, peeruser: string): Promise<void> {
   await goToIscsiTab(page, 'authorized-access');

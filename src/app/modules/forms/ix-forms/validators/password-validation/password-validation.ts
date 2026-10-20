@@ -31,7 +31,10 @@ export function matchOthersFgValidator(
       }
     }
     if (errFields.length) {
+      // Merged, not replaced: the control's own errors (e.g. `minlength`) are only recomputed when its
+      // value changes, so replacing them here lets a matching confirmation clear them for good.
       subjectControl.setErrors({
+        ...subjectControl.errors,
         matchOther: errMsg ? { message: errMsg } : true,
       });
       return {
@@ -77,7 +80,9 @@ export function doesNotEqualFgValidator(
       }
     }
     if (errFields.length) {
+      // Merged, not replaced, for the same reason as in `matchOthersFgValidator`.
       subjectControl.setErrors({
+        ...subjectControl.errors,
         matchesOther: errMsg ? { message: errMsg } : true,
       });
       return {

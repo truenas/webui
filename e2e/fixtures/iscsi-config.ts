@@ -125,12 +125,27 @@ export async function findIscsiAuthorizedAccess(
 }
 
 /**
- * Creates a CHAP entry for this user, if there is none, with no peer and no
- * discovery authentication. `secret` must be 12 to 16 characters.
+ * An authorized access entry to create. With no peer it is plain CHAP and has
+ * no discovery authentication. `secret` and `peersecret` must be 12 to 16
+ * characters and differ from each other.
  */
+export interface IscsiAuthorizedAccessEntry {
+  tag: number;
+  user: string;
+  secret: string;
+  /** Mutual CHAP: middleware allows one such entry on the whole appliance. */
+  peer?: { peeruser: string; peersecret: string };
+}
+
+/** Creates an authorized access entry for this user, if there is none. */
 export async function ensureIscsiAuthorizedAccessPresent(
   client: E2eApiClient,
-  { tag, user, secret }: { tag: number; user: string; secret: string },
+  {
+    tag,
+    user,
+    secret,
+    peer,
+  }: IscsiAuthorizedAccessEntry,
 ): Promise<IscsiAuthorizedAccessRecord> {
   const existing = await findIscsiAuthorizedAccess(client, user);
   if (existing) {
@@ -142,7 +157,8 @@ export async function ensureIscsiAuthorizedAccessPresent(
       tag,
       user,
       secret,
-      discovery_auth: 'NONE',
+      ...peer,
+      discovery_auth: peer ? 'CHAP_MUTUAL' : 'NONE',
     }]).pipe(timeout(slowCallTimeoutMs)),
   );
 
@@ -151,7 +167,7 @@ export async function ensureIscsiAuthorizedAccessPresent(
 
 /**
  * Removes the authorized access entry for this user, if present. Middleware
- * refuses only the last entry of a group a target uses, and no target here uses one.
+ * refuses only the last entry of a group a target uses, so remove such a target first.
  */
 export async function ensureIscsiAuthorizedAccessAbsent(client: E2eApiClient, user: string): Promise<void> {
   const entry = await findIscsiAuthorizedAccess(client, user);

@@ -124,9 +124,12 @@ export const iscsiConfigLocators = {
     /** "Group ID". */
     tag: '[data-test="input-tag"]',
     discoveryAuth: '[data-test="select-discovery-auth"]',
+    discoveryAuthChap: '[data-test="option-discovery-auth-chap"]',
     discoveryAuthMutualChap: '[data-test="option-discovery-auth-mutual-chap"]',
     user: '[data-test="input-user"]',
     secret: '[data-test="input-secret"]',
+    /** The `tn-form-field` around {@link secret}, which the renderer tags by field name: its label and its error. */
+    secretField: '[data-test="form-field-secret"]',
     secretConfirm: '[data-test="input-secret-confirm"]',
     /** The peer fields are shown only while Discovery Authentication is Mutual CHAP. */
     peeruser: '[data-test="input-peeruser"]',
