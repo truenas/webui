@@ -5,6 +5,8 @@
  * with a static base, so there is one per page. The form's controls carry no `testId`, so their
  * ids fall back to the bound control name.
  */
+import type { QuotaKind } from '../fixtures/quotas';
+
 export const datasetCapacityLocators = {
   card: {
     /**
@@ -22,6 +24,11 @@ export const datasetCapacityLocators = {
     reservedForDataset: '[data-test="text-space-management-reserved-for-dataset"]',
     /** "Reserved for Dataset & Children". Rendered only while `reservation` is set. */
     reservedForDatasetAndChildren: '[data-test="text-space-management-reserved-for-dataset-and-children"]',
+    /**
+     * "User Quotas" / "Group Quotas": `Quotas set for N users` (or groups), or `None`. Counts only
+     * principals with a quota set. Rendered only for an unlocked, writable filesystem.
+     */
+    quotas: (kind: QuotaKind): string => `[data-test="text-space-management-${kind}-quotas"]`,
   },
 
   form: {

@@ -29,6 +29,7 @@
   @if (quotaType() === DatasetQuotaType.User) {
     <tn-form-section [heading]="'Apply Quotas to Selected Users' | translate">
       <tn-form-field
+        testId="users"
         [label]="'Apply To Users' | translate"
         [tooltip]="tooltips.users | translate"
       >
@@ -42,6 +43,7 @@
   @if (quotaType() === DatasetQuotaType.Group) {
     <tn-form-section [heading]="'Apply Quotas to Selected Groups' | translate">
       <tn-form-field
+        testId="groups"
         [label]="'Apply To Groups' | translate"
         [tooltip]="tooltips.groups | translate"
         [required]="true"

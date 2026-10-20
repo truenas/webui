@@ -4,9 +4,12 @@ import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { of, pipe } from 'rxjs';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import {
+  mockTypedApi, mockTypedCall, mockTypedQuery, settleTypedApi,
+} from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -62,7 +65,9 @@ describe('DatasetQuotasListComponent', () => {
       BasicSearchComponent,
     ],
     providers: [
-      mockProvider(LoaderService),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => pipe()),
+      }),
       mockProvider(FormErrorHandlerService),
       mockProvider(TypedApiService),
       mockProvider(IxFormatterService, {
@@ -167,6 +172,29 @@ describe('DatasetQuotasListComponent', () => {
         inputs: { datasetId: 'Test', quotaType: DatasetQuotaType.User, quotaId: 2 },
       },
     );
+  });
+
+  it('removes invalid quotas, and hides Remove Invalid Quotas once none are left', async () => {
+    const removeButton = await loader.getHarness(TnButtonHarness.with({ label: 'Remove Invalid Quotas' }));
+
+    // After the removal middleware lists no invalid quota. The fake does not apply the filter,
+    // so it is given no rows at all for the reload.
+    spectator.inject(MockTypedApiService).mockQuery('pool.dataset.get_quota', []);
+    await removeButton.click();
+    // Removal, the reload and the invalid-quota check are three answers, one after another.
+    await settleTypedApi();
+    await settleTypedApi();
+    await settleTypedApi();
+    spectator.detectChanges();
+
+    expect(api.call).toHaveBeenCalledWith(
+      'pool.dataset.set_quota',
+      ['Test', expect.arrayContaining([
+        { id: '1000', quota_type: DatasetQuotaType.User, quota_value: 0 },
+        { id: '1000', quota_type: DatasetQuotaType.UserObj, quota_value: 0 },
+      ])],
+    );
+    expect(await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Remove Invalid Quotas' }))).toHaveLength(0);
   });
 
   it('opens side panel when "Add" button is pressed', async () => {
