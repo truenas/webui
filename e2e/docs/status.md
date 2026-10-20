@@ -43,7 +43,9 @@ artifact of an E2E run. The narrative is in git history up to its removal.
   sync or the install job. `tests/apps-custom-yaml.e2e.ts` needs ghcr.io too:
   it pulls BusyBox from there before installing a custom app that runs it, and
   pulls it again from Manage Container Images. Without it those tests fail at
-  the pull.
+  the pull. `tests/apps-settings.e2e.ts` needs github.com: its preferred-trains
+  tests sync the catalog so that the form has trains to offer. Without it they
+  fail at the sync, and the file's other tests still run.
 
 ## Known gaps
 

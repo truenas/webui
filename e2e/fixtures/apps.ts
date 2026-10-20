@@ -180,6 +180,28 @@ export async function setPreferredTrains(client: E2eApiClient, trains: string[])
 }
 
 /**
+ * The trains the Preferred Trains field offers. Middleware answers from the cache a catalog sync
+ * fills and never reads the catalog itself, so this is empty until a sync has filled it.
+ */
+export async function readCatalogTrains(client: E2eApiClient): Promise<string[]> {
+  return firstValueFrom(client.api.call('catalog.trains').pipe(timeout(readTimeoutMs)));
+}
+
+/** The train an Enterprise-entitled appliance must keep preferred. */
+export const enterpriseTrain = 'enterprise';
+
+/**
+ * Whether `catalog.update` refuses a list without `enterprise`. Middleware decides that from this
+ * one entitlement, not from the license type, so it is read the same way.
+ */
+export async function readEnterpriseTrainRequired(client: E2eApiClient): Promise<boolean> {
+  const entry = await firstValueFrom(
+    client.api.call('truenas.entitlements.check', ['CATALOG_ENTERPRISE_TRAIN']).pipe(timeout(readTimeoutMs)),
+  );
+  return entry.entitled;
+}
+
+/**
  * Pulls the catalog from github.com/truenas/apps. A ceiling, not a wait: the CI appliance has
  * outbound access and a sync with nothing new is done in seconds.
  */

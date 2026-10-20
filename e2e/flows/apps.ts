@@ -40,6 +40,31 @@ export async function openAppsSettings(page: Page, firstPoolAddress: string): Pr
   await expect(page.locator(appsSettingsLocators.addressPool(0).base)).toHaveValue(firstPoolAddress);
 }
 
+/**
+ * Waits until the Preferred Trains boxes read `ticked` and `unticked`. The boxes come from their
+ * own `catalog.trains` call and the ticks from `catalog.config`, both after the panel has opened,
+ * so neither is there when `openAppsSettings` returns.
+ */
+export async function expectPreferredTrains(page: Page, ticked: string[], unticked: string[]): Promise<void> {
+  for (const train of ticked) {
+    await expect(page.locator(appsSettingsLocators.preferredTrain(train))).toBeChecked();
+  }
+  for (const train of unticked) {
+    const box = page.locator(appsSettingsLocators.preferredTrain(train));
+    await expect(box).toBeVisible();
+    await expect(box).not.toBeChecked();
+  }
+}
+
+/** Closes the panel without saving. It has been edited, so the panel asks first. */
+export async function discardAppsSettings(page: Page): Promise<void> {
+  await page.locator(appsSettingsLocators.closePanel).click();
+
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+  await page.locator(confirmDialogLocators.confirm).click();
+  await expect(page.locator(appsSettingsLocators.save)).toBeHidden();
+}
+
 /** Sets one address pool's base address, its prefix and its subnet size. */
 export async function fillAddressPool(
   page: Page,

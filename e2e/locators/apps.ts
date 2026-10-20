@@ -40,6 +40,17 @@ export const appsLocators = {
  */
 export const appsSettingsLocators = {
   /**
+   * The Preferred Trains field, `<tn-form-field testId="preferred-trains">`. It holds the checkbox
+   * group and the line a refusal of `catalog.update` is pinned to, which renders no id of its own.
+   */
+  preferredTrains: '[data-test="form-field-preferred-trains"]',
+  /**
+   * One train's checkbox. `tn-checkbox-group` scopes each option by its label, which is the train's
+   * name, under the group's id, which falls back to `formControlName="preferred_trains"`.
+   */
+  preferredTrain: (train: string): string => `[data-test="checkbox-preferred-trains-${kebabTestSegment(train)}"]`,
+
+  /**
    * One address pool, by its position. The base is an `ix-ip-input-with-netmask` with no `testId`,
    * so its address is `input-base` and its prefix `select-netmasks`. The prefix's options render in
    * an overlay outside the row, and only the open select has any.
@@ -69,6 +80,7 @@ export const appsSettingsLocators = {
 
   /** The side panel's Save, `[testId]="'save'"` in form-side-panel-container. */
   save: '[data-test="button-save"]',
+  closePanel: '[data-test="button-close-side-panel"]',
 } as const;
 
 /** `SelectPoolDialog`, `<tn-dialog-shell testId="select-pool-dialog">`. */
