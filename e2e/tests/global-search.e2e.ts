@@ -10,7 +10,7 @@
  * `recentSearches`, so that is what each test resets.
  *
  * The keyboard shortcut is Ctrl+/ (⌘/ on macOS), the hint the topbar box
- * shows. A bare `/` does nothing.
+ * shows. Nothing in the app binds a bare `/`, and this does not test that.
  */
 import { readTimezone } from '../fixtures/localization';
 import { readSystemIdentity } from '../fixtures/system-info';
@@ -113,7 +113,7 @@ test('a chosen result is under Recent Searches the next time search opens, until
   await expect(page).toHaveURL(/\/system\/services\/?$/, { timeout: landingTimeoutMs });
   await expectGlobalSearchClosed(page);
 
-  // Opened with nothing typed, search lists only what was chosen before.
+  // Opened with nothing typed, search lists what was chosen before.
   await openGlobalSearch(page);
   await expect(page.locator(section.recentSearches)).toBeVisible();
   await expect(page.locator(result(servicesPage.hierarchy))).toBeVisible();
