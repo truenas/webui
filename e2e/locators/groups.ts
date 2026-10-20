@@ -7,8 +7,8 @@
  * field types. That is why the ids below read like API parameters
  * (`sudo_commands_all`) rather than like labels.
  *
- * Only what the specs select on. The screen carries more — the privileges
- * chips, the SMB checkbox, the picker's search fields — and those ids are
+ * Only what the specs select on. The screen carries more — the no-password
+ * command list, the picker's search fields — and those ids are
  * deliberately absent until a test needs one, because an entry here reads as a
  * verified fact about the screen and an unexercised one is only a guess at it.
  * `locators/users.ts` holds to the same line.
@@ -54,7 +54,25 @@ export const groupsLocators = {
    */
   rowAction: {
     members: (group: string): string => `[data-test="button-${kebabTestSegment(group)}-members"]`,
+    /** Rendered only for a local group that is neither built-in nor immutable. */
+    edit: (group: string): string => `[data-test="button-${kebabTestSegment(group)}-edit"]`,
     delete: (group: string): string => `[data-test="button-${kebabTestSegment(group)}-delete"]`,
+  },
+
+  /**
+   * A row's cells: `ix-table-text-cell` tags each one `[title, row tag, kind]`,
+   * and the row tag is the lodash-kebabbed one {@link row} uses.
+   */
+  cell: {
+    /** `Yes` while the group holds any sudo command, the wildcard included. */
+    sudo: (group: string): string => (
+      `[data-test="text-allows-sudo-commands-group-${legacyKebabTestSegment(group)}-row-yesno"]`
+    ),
+    smb: (group: string): string => (
+      `[data-test="text-samba-authentication-group-${legacyKebabTestSegment(group)}-row-yesno"]`
+    ),
+    /** The roles' labels, comma-separated, or `N/A` when there are none. */
+    roles: (group: string): string => `[data-test="text-roles-group-${legacyKebabTestSegment(group)}-row-text"]`,
   },
 
   /** The confirmation raised by Delete. `<tn-dialog-shell testId="delete-group">`. */
@@ -69,8 +87,24 @@ export const groupsLocators = {
     name: '[data-test="input-name"]',
     /** A `tn-chip-input`, whose id sits on the text field inside it. */
     sudoCommands: '[data-test="chip-input-sudo-commands"]',
+    /**
+     * One committed command. The library scopes a free-text chip's id by its
+     * value under the field's id, so `ALL` would be `chip-sudo-commands-all`.
+     */
+    sudoCommandChip: (command: string): string => `[data-test="chip-sudo-commands-${kebabTestSegment(command)}"]`,
     /** Disables {@link sudoCommands} rather than hiding it — `enabledWhen`, not `visibleWhen`. */
     sudoCommandsAll: '[data-test="checkbox-sudo-commands-all"]',
+    sudoCommandsNopasswdAll: '[data-test="checkbox-sudo-commands-nopasswd-all"]',
+    smb: '[data-test="checkbox-smb"]',
+    /** A `tn-chip-input` offering the `privilege.query` names, and nothing typed freely. */
+    privileges: '[data-test="chip-input-privileges"]',
+    /** A suggestion under {@link privileges}, keyed by its label, the privilege name. */
+    privilegesOption: (privilege: string): string => `[data-test="option-privileges-${kebabTestSegment(privilege)}"]`,
+    /**
+     * A selected privilege. Keyed by label once the options have loaded, and by
+     * the numeric id until then — so waiting for this is waiting for both.
+     */
+    privilegesChip: (privilege: string): string => `[data-test="chip-privileges-${kebabTestSegment(privilege)}"]`,
     /** `<tn-button [testId]="'save'">` on the side panel container. */
     save: '[data-test="button-save"]',
   },
