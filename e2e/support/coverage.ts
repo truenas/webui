@@ -101,6 +101,11 @@ export class CoverageRecorder {
   private recording = false;
   /** Frames sent after {@link start} and before counting began, held until an input says which count. */
   private pending: SentFrame[] = [];
+  /**
+   * The path an input began counting on, until the first navigation settles
+   * whether that input was the test's or only the start of leaving the page.
+   */
+  private inputPath: string | null = null;
 
   /**
    * Listens from the moment the page exists, but records nothing until the
@@ -123,6 +128,11 @@ export class CoverageRecorder {
     page.on('framenavigated', (frame) => {
       if (this.armed && frame === page.mainFrame()) {
         // What the dashboard sent before the navigation is not the test's.
+        if (this.inputPath !== null && new URL(frame.url()).pathname !== this.inputPath) {
+          this.methods.clear();
+          this.events.clear();
+        }
+        this.inputPath = null;
         this.recording = true;
         this.pending = [];
         this.recordRoute(frame.url());
@@ -161,8 +171,19 @@ export class CoverageRecorder {
    * A navigation alone missed every test that never makes one — those working
    * in the topbar on the dashboard, like the jobs, alerts and preferences
    * panels — so the first trusted input counts too. That is a point in the test
-   * as well, but the dashboard has not gone anywhere: a test that clicks the
-   * topbar while widgets are still loading is credited with their late calls.
+   * as well, but the dashboard has not gone anywhere.
+   *
+   * So counting from an input is provisional. Nearly every test's first input
+   * is the sidebar click that leaves the dashboard, and the slide-out entries
+   * take two clicks and a wait before the URL changes; the dashboard is still
+   * sending all that time. If the first navigation after the input leaves the
+   * path the input was made on, what was counted is dropped and the count
+   * restarts there, exactly as for a test whose first act is a navigation. A
+   * reload, or a query-string change, keeps it. The cost: a test that works in
+   * the topbar and then navigates away still loses what it did first, as
+   * before, and a topbar-only test that acts while widgets are still loading
+   * is credited with their late calls.
+   *
    * For the unauthenticated project the test's own `goto` is the first
    * navigation.
    */
@@ -177,6 +198,7 @@ export class CoverageRecorder {
     }
     if (!this.recording) {
       this.recording = true;
+      this.inputPath = new URL(this.page.url()).pathname;
       for (const frame of this.pending) {
         if (frame.at >= at) {
           this.recordFrame(frame.payload);

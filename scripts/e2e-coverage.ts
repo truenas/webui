@@ -439,7 +439,8 @@ function main(): void {
     notInInventory: { methods: methodsNotInSource, urls: unmatchedUrls },
   }, null, 2));
 
-  // After the report, so a stale entry does not also cost the run its coverage numbers.
+  // After the report and `summary.json` are written, so both still exist. CI's step runs under
+  // `set -e`, though, so there it stops before publishing them to the job summary.
   if (staleExclusions.length) {
     console.error(`unlinkedRoutes in scripts/e2e-coverage.ts names routes that do not exist: ${staleExclusions.join(', ')}`);
     process.exitCode = 1;
