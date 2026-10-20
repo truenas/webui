@@ -31,7 +31,7 @@ import {
 import {
   datasetMountPath, ensureDatasetAbsent, ensureDatasetPresent, ensureSmbDatasetPresent, ensureZvolPresent,
 } from '../fixtures/storage';
-import { deleteIscsiTargetWithExtents } from '../flows/iscsi';
+import { deleteIscsiTarget } from '../flows/iscsi';
 import { goToShares } from '../flows/navigation';
 import { openEditNfsShareForm, saveNfsShareForm, toggleNfsShareEnabled } from '../flows/nfs';
 import { expectUnlockedByRole, signInAsRoleAdmin } from '../flows/roles';
@@ -175,7 +175,7 @@ test.describe('as a sharing administrator', () => {
     await test.step('delete an iSCSI target and its extent', async () => {
       expect(await findIscsiExtent(api, iscsiTarget)).toBeDefined();
 
-      await deleteIscsiTargetWithExtents(page, iscsiTarget);
+      await deleteIscsiTarget(page, iscsiTarget, { deleteExtents: true });
 
       await expect.poll(() => findIscsiTarget(api, iscsiTarget)).toBeUndefined();
       expect(await findIscsiExtent(api, iscsiTarget)).toBeUndefined();

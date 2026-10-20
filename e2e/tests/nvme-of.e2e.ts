@@ -1,8 +1,13 @@
 /**
  * Stories: an admin creates an NVMe-oF subsystem with the Add Subsystem form on the
  * Shares dashboard, changes what is attached to one from its details page, adds a
- * host that has to authenticate, deletes one from its row on the dashboard card, and
- * sets the global base NQN — and the appliance holds what they did.
+ * host that has to authenticate, creates a port through Create New on the details
+ * page, deletes one from its row on the dashboard card, and sets the global base NQN
+ * — and the appliance holds what they did.
+ *
+ * The port form offers only the appliance's static addresses, so the Create New test
+ * runs only where `nvmet.port.transport_address_choices` returns one, and otherwise
+ * skips with what it returned. The CI appliance's NIC is on DHCP.
  *
  * A subsystem is only useful with what hangs off it, so every check reads the
  * associations back through the API: which namespaces, ports and hosts the subsystem
@@ -21,14 +26,15 @@ import {
   ensureNvmeOfHostAbsent, ensureNvmeOfHostPresent, ensureNvmeOfPortAbsent, ensureNvmeOfPortPresent,
   ensureNvmeOfServiceStopped, ensureNvmeOfSubsystemAbsent, ensureNvmeOfSubsystemPresent, findNvmeOfHost,
   findNvmeOfNamespaces, findNvmeOfPort, findNvmeOfSubsystem, provisionLinkedNvmeOfSubsystem, readNvmeOfBaseNqn,
-  requireNvmeOfSubsystem, requireRoomOnNvmeOfCard, restoreNvmeOfBaseNqn, setNvmeOfAllowAnyHost, type TcpPort,
-  zvolDevicePath,
+  readNvmeOfTcpAddressChoices, requireNvmeOfSubsystem, requireRoomOnNvmeOfCard, restoreNvmeOfBaseNqn,
+  setNvmeOfAllowAnyHost, type TcpPort, zvolDevicePath,
 } from '../fixtures/nvme-of';
 import { ensureDatasetAbsent, ensureZvolPresent, findDataset } from '../fixtures/storage';
 import {
   addHostOnDetails, addNamespaceOnDetails, addPortOnDetails, createAuthenticatedHostOnDetails,
-  createNvmeOfSubsystem, deleteNamespaceOnDetails, deleteNvmeOfSubsystemFromCard, openNvmeOfGlobalConfiguration,
-  openNvmeOfSubsystemDetails, removeHostOnDetails, removePortOnDetails, saveNvmeOfBaseNqn,
+  createNvmeOfSubsystem, deleteNamespaceOnDetails, deleteNvmeOfSubsystemFromCard, openNewPortFormOnDetails,
+  openNvmeOfGlobalConfiguration, openNvmeOfSubsystemDetails, removeHostOnDetails, removePortOnDetails,
+  saveNewTcpPortOnDetails, saveNvmeOfBaseNqn,
 } from '../flows/nvme-of';
 import { nvmeOfLocators } from '../locators/nvme-of';
 import type { E2eApiClient } from '../support/api/client';
@@ -57,6 +63,28 @@ const targetPort: TcpPort = { address: '0.0.0.0', port: 4491 };
 const bystanderPort: TcpPort = { address: '0.0.0.0', port: 4492 };
 const ports = [targetPort, bystanderPort];
 
+/**
+ * The service id of the port Create New makes. 4493 to 4496 belong to
+ * `nvme-of-ports-hosts.e2e.ts`.
+ */
+const createdPortServiceId = 4497;
+
+/** What the port form offers for TCP, read once, so a skip can say what it was. */
+let tcpAddressChoices: Record<string, string>;
+
+/**
+ * The address Create New picks: `0.0.0.0` if offered, else the first offered.
+ * Undefined when nothing is, and then no port is made and none is cleaned up.
+ */
+let createdPortAddress: string | undefined;
+
+/** Every port a test may have made, the created one included once its address is known. */
+function allPorts(): TcpPort[] {
+  return createdPortAddress === undefined
+    ? ports
+    : [...ports, { address: createdPortAddress, port: createdPortServiceId }];
+}
+
 const targetHost = 'nqn.2014-08.org.nvmexpress:e2e-nvme-target-host';
 const bystanderHost = 'nqn.2014-08.org.nvmexpress:e2e-nvme-bystander-host';
 /** Created through the host form, with authentication. */
@@ -84,7 +112,7 @@ async function removeEverything(api: E2eApiClient, pool: string): Promise<void> 
     ...hosts.map((hostnqn): [string, () => Promise<void>] => [
       `remove the NVMe-oF host ${hostnqn}`, () => ensureNvmeOfHostAbsent(api, hostnqn),
     ]),
-    ...ports.map((port): [string, () => Promise<void>] => [
+    ...allPorts().map((port): [string, () => Promise<void>] => [
       `remove the NVMe-oF port ${port.address}:${port.port}`, () => ensureNvmeOfPortAbsent(api, port),
     ]),
     ...zvolNames.map((name): [string, () => Promise<void>] => [
@@ -97,6 +125,9 @@ async function removeEverything(api: E2eApiClient, pool: string): Promise<void> 
 
 test.beforeAll(async ({ api }) => {
   originalBaseNqn = await readNvmeOfBaseNqn(api);
+  tcpAddressChoices = await readNvmeOfTcpAddressChoices(api);
+  const offered = Object.keys(tcpAddressChoices);
+  createdPortAddress = offered.includes('0.0.0.0') ? '0.0.0.0' : offered[0];
 });
 
 /**
@@ -246,6 +277,39 @@ test('a host created with Require Host Authentication is saved with its key', as
 
   // The form's save also links the new host to the subsystem it was opened from.
   await expect.poll(async () => (await findNvmeOfSubsystem(api, targetName))?.hosts).toEqual([host?.id]);
+});
+
+test('an admin creates a TCP port through Create New, and it is linked to the subsystem', async ({ page, api }) => {
+  // The Address select lists only static addresses, so where none is configured the form cannot be saved.
+  test.skip(
+    createdPortAddress === undefined,
+    `nvmet.port.transport_address_choices('TCP') offered no address: ${JSON.stringify(tcpAddressChoices)}`,
+  );
+  const created: TcpPort = { address: createdPortAddress ?? '', port: createdPortServiceId };
+  await requireRoomOnNvmeOfCard(api, 1);
+  await ensureNvmeOfSubsystemPresent(api, targetName);
+  // An existing port the subsystem does not use, so Add opens the menu rather than the form.
+  const existingPort = await ensureNvmeOfPortPresent(api, targetPort);
+
+  await openNvmeOfSubsystemDetails(page, targetName);
+  await openNewPortFormOnDetails(page);
+
+  const { portForm } = nvmeOfLocators;
+  await expect(page.locator(portForm.transportType)).toContainText('TCP');
+  // Address is required and starts empty.
+  await expect(page.locator(portForm.save)).toBeDisabled();
+
+  // Waits for the card to list the new port: the save links it to the subsystem the menu was opened from.
+  await saveNewTcpPortOnDetails(page, created);
+
+  // Only the new one: the existing port in the menu was not picked.
+  await expect(page.locator(nvmeOfLocators.details.removePort(targetPort))).toBeHidden();
+
+  const port = await findNvmeOfPort(api, created);
+  expect(port, `a TCP port on ${created.address}:${created.port}`).toMatchObject({ addr_trtype: 'TCP' });
+  // Polled: the link is a second call, made after the create answered.
+  await expect.poll(async () => (await findNvmeOfSubsystem(api, targetName))?.ports).toEqual([port?.id]);
+  expect(await findNvmeOfPort(api, targetPort)).toMatchObject({ id: existingPort.id });
 });
 
 test('deleting a subsystem from the card removes it and its associations', async ({ page, api, pool }) => {

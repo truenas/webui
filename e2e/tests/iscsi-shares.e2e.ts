@@ -15,6 +15,10 @@
  * extents", so the extent has to go with the target, while the zvol it sat on
  * stays: the dialog says volumes are not deleted, and a delete that reached
  * through to the data would be an expensive surprise.
+ *
+ * A second delete leaves "Delete associated extents" unticked. Then only the
+ * target and its association go: the extent stays, under the same id and still
+ * on its zvol, for the admin to attach to another target.
  */
 import {
   countIscsiTargets, ensureIscsiServiceStopped, ensureIscsiShareAbsent, ensureIscsiSharePresent,
@@ -23,7 +27,7 @@ import {
 import {
   datasetMountPath, ensureDatasetAbsent, ensureZvolPresent, findDataset,
 } from '../fixtures/storage';
-import { createIscsiShareWithWizard, deleteIscsiTargetWithExtents } from '../flows/iscsi';
+import { createIscsiShareWithWizard, deleteIscsiTarget } from '../flows/iscsi';
 import { iscsiLocators } from '../locators/iscsi';
 import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
@@ -43,10 +47,16 @@ const targetName = 'e2e-iscsi-target';
 /** A target with nothing attached, which must survive whatever is done to the other. */
 const bystanderName = 'e2e-iscsi-bystander';
 
+/**
+ * Provisioned like {@link targetName}, for the delete that keeps its extent. Its
+ * own name, so the orphaned extent is still found, and removed, by name.
+ */
+const keepExtentName = 'e2e-iscsi-keep-extent';
+
 /** The card lists four targets, by name, before its pager. */
 const cardPageSize = 4;
 
-const allNames = [createdName, targetName, bystanderName];
+const allNames = [createdName, targetName, bystanderName, keepExtentName];
 
 async function removeEverything(api: E2eApiClient, pool: string): Promise<void> {
   await runCleanupSteps(allNames.flatMap((name): [string, () => Promise<void>][] => [
@@ -133,7 +143,7 @@ test('deleting a target removes the one that was picked and its extent', async (
   await ensureIscsiSharePresent(api, { name: targetName, zvol });
   const bystanderBefore = await ensureIscsiTargetPresent(api, bystanderName);
 
-  await deleteIscsiTargetWithExtents(page, targetName);
+  await deleteIscsiTarget(page, targetName, { deleteExtents: true });
 
   // Polled rather than read once: the row can also be hidden while the card is
   // between loads, which proves nothing.
@@ -142,6 +152,37 @@ test('deleting a target removes the one that was picked and its extent', async (
   expect(await findDataset(api, zvol)).toBeDefined();
 
   // The whole point of the second target: the card looks right either way.
+  await expect(page.locator(iscsiLocators.card.row(bystanderName))).toBeVisible();
+  expect(await findIscsiTarget(api, bystanderName)).toMatchObject({ id: bystanderBefore.id });
+});
+
+test('deleting a target with its extents left unticked keeps the extent and the zvol', async ({
+  page, api, pool,
+}) => {
+  const zvol = `${pool}/${keepExtentName}`;
+  await requireRoomOnCard(api, 2);
+  await ensureZvolPresent(api, zvol);
+  await ensureIscsiSharePresent(api, { name: keepExtentName, zvol });
+  const bystanderBefore = await ensureIscsiTargetPresent(api, bystanderName);
+  const targetBefore = await findIscsiTarget(api, keepExtentName);
+  const extentBefore = await findIscsiExtent(api, keepExtentName);
+  expect(targetBefore, 'the target was provisioned').toBeDefined();
+  expect(extentBefore, 'the extent was provisioned').toBeDefined();
+  // Without this the "no association" read-back below would pass on a target that never had one.
+  expect(await findIscsiTargetExtents(api, targetBefore?.id ?? -1)).toHaveLength(1);
+
+  await deleteIscsiTarget(page, keepExtentName, { deleteExtents: false });
+
+  await expect.poll(() => findIscsiTarget(api, keepExtentName)).toBeUndefined();
+  // The same extent, not one made again under the same name, still on its zvol.
+  expect(await findIscsiExtent(api, keepExtentName)).toMatchObject({
+    id: extentBefore?.id,
+    type: 'DISK',
+    disk: `zvol/${zvol}`,
+  });
+  expect(await findIscsiTargetExtents(api, targetBefore?.id ?? -1)).toEqual([]);
+  expect(await findDataset(api, zvol)).toBeDefined();
+
   await expect(page.locator(iscsiLocators.card.row(bystanderName))).toBeVisible();
   expect(await findIscsiTarget(api, bystanderName)).toMatchObject({ id: bystanderBefore.id });
 });
