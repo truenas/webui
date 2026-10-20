@@ -38,6 +38,7 @@ const expectedRoute = {
   alertSettings: /\/system\/alert-settings\/?$/,
   boot: /\/system\/boot\/?$/,
   services: /\/system\/services\/?$/,
+  shell: /\/system\/shell\/?$/,
   audit: /\/system\/audit/,
 } as const;
 
@@ -223,6 +224,12 @@ export async function goToBootEnvironments(page: Page): Promise<void> {
 export async function goToServices(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.system).click();
   await clickAndArrive(page, navLocators.services, expectedRoute.services);
+}
+
+/** Shell is under the same System slide-out, for an account holding `web_shell`. */
+export async function goToShell(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.system).click();
+  await clickAndArrive(page, navLocators.shell, expectedRoute.shell);
 }
 
 /**

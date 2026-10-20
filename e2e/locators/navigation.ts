@@ -52,6 +52,11 @@ export const navLocators = {
   boot: '[data-test="link-boot"]',
   /** `Services` under System, raw item name again. */
   services: '[data-test="link-services"]',
+  /**
+   * `Shell` under System, raw item name again. Gated on the `web_shell` privilege: without it the
+   * entry still renders, inside the role-missing wrapper.
+   */
+  shell: '[data-test="link-shell"]',
   /** `Audit` under System, raw item name again. */
   audit: '[data-test="link-audit"]',
 } as const;
