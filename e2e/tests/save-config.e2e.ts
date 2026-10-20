@@ -23,6 +23,7 @@ import { readSystemIdentity } from '../fixtures/system-info';
 import { openSaveConfigDialog, saveConfig } from '../flows/manage-configuration';
 import { saveConfigDialogLocators } from '../locators/manage-configuration';
 import type { E2eApiClient } from '../support/api/client';
+import { tarMembers } from '../support/archive';
 import { expect, test } from '../support/fixtures';
 
 /** The UI waits for the job before it fetches the file, so the job is normally done already. */
@@ -31,8 +32,6 @@ const jobReadTimeoutMs = 30_000;
 /** `<yyyyMMddHHmmss>` and the extension, after `<hostname>-<version>-`. */
 const tarSuffix = /^\d{14}\.tar$/;
 const dbSuffix = /^\d{14}\.db$/;
-
-const tarBlockBytes = 512;
 
 /** The first 16 bytes of every SQLite 3 database. */
 const sqliteMagic = Buffer.from('SQLite format 3\0', 'latin1');
@@ -54,37 +53,6 @@ async function newConfigSaveRuns(
     .map(({ state, secretseed }) => ({ state, secretseed }));
 }
 
-/** A NUL-terminated field of a tar header. */
-function tarString(field: Buffer): string {
-  const end = field.indexOf(0);
-  return field.subarray(0, end === -1 ? field.length : end).toString('utf8');
-}
-
-/**
- * The names of the members of a ustar archive, in order. Python's `tarfile`
- * writes a 512-byte header per member, often preceded by a PAX `x` header, then
- * its data padded to the block, and two empty blocks at the end.
- */
-function tarMemberNames(archive: Buffer): string[] {
-  const names: string[] = [];
-  let offset = 0;
-  while (offset + tarBlockBytes <= archive.length) {
-    const header = archive.subarray(offset, offset + tarBlockBytes);
-    if (header.every((byte) => byte === 0)) {
-      break;
-    }
-
-    const size = parseInt(tarString(header.subarray(124, 136)).trim(), 8);
-    // `x` and `g` are PAX extended headers, which describe a member rather than being one.
-    const type = tarString(header.subarray(156, 157));
-    if (type !== 'x' && type !== 'g') {
-      names.push(tarString(header.subarray(0, 100)));
-    }
-    offset += tarBlockBytes + Math.ceil(size / tarBlockBytes) * tarBlockBytes;
-  }
-  return names;
-}
-
 test('an admin downloads the configuration with the secret seed, and gets a tar archive', async ({ page, api }) => {
   const prefix = await expectedFilePrefix(api);
   const since = await lastConfigSaveRunId(api);
@@ -100,7 +68,7 @@ test('an admin downloads the configuration with the secret seed, and gets a tar 
   const archive = await readFile(await download.path());
   expect(archive.length).toBeGreaterThan(0);
   expect(archive.subarray(257, 262).toString('latin1')).toBe('ustar');
-  expect(tarMemberNames(archive)).toEqual(expect.arrayContaining(['freenas-v1.db', 'pwenc_secret']));
+  expect(tarMembers(archive).map(({ name }) => name)).toEqual(expect.arrayContaining(['freenas-v1.db', 'pwenc_secret']));
 
   await expect
     .poll(() => newConfigSaveRuns(api, since), {

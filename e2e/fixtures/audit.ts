@@ -52,25 +52,60 @@ export async function readAuditSettings(client: E2eApiClient): Promise<AuditSett
   };
 }
 
+/** The services the Audit page's Service selector offers, by middleware's key. */
+export type AuditServiceKey = 'MIDDLEWARE' | 'SMB' | 'SUDO' | 'SYSTEM';
+
 /**
- * The newest middleware audit record that carries a user and an event.
- *
- * Newest first, as the Audit page sorts it, so whatever the page lists on load is this record and
- * the few that arrive after it. Without a user or an event the page shows `-` in that cell, so a
- * record missing either cannot be checked by its cells.
+ * The newest audit records of one service, newest first, as the Audit page sorts them.
  *
  * Cast because the client types `audit.query`'s response as every shape the call can return, a
  * count included. The webui narrows it to `AuditEntry` the same way.
  */
-export async function findNewestAuditRecord(client: E2eApiClient): Promise<AuditRowKey | undefined> {
-  const records = await firstValueFrom(
+async function queryNewestAuditRecords(
+  client: E2eApiClient,
+  service: AuditServiceKey,
+  filters: [string, string, string][],
+  limit: number,
+): Promise<AuditRowKey[]> {
+  return await firstValueFrom(
     client.api.call('audit.query', [{
-      services: ['MIDDLEWARE'],
-      'query-options': { order_by: ['-message_timestamp'], limit: 20 },
+      services: [service],
+      'query-filters': filters,
+      'query-options': { order_by: ['-message_timestamp'], limit },
     }]).pipe(timeout(readTimeoutMs)),
   ) as unknown as AuditRowKey[];
+}
+
+/**
+ * The newest audit record of `service` that carries a user and an event — middleware's, unless
+ * another is asked for.
+ *
+ * Newest first, as the Audit page sorts it, so whatever the page lists on load is this record and
+ * the few that arrive after it. Without a user or an event the page shows `-` in that cell, so a
+ * record missing either cannot be checked by its cells.
+ */
+export async function findNewestAuditRecord(
+  client: E2eApiClient,
+  service: AuditServiceKey = 'MIDDLEWARE',
+): Promise<AuditRowKey | undefined> {
+  const records = await queryNewestAuditRecords(client, service, [], 20);
 
   return records.find((record) => record.username && record.event);
+}
+
+/**
+ * The newest middleware audit record made by `username`, or undefined.
+ *
+ * For a throwaway account a spec has just signed in as: its sign-in is the only thing that account
+ * has done, so the record is known in advance rather than picked from whatever the appliance holds.
+ */
+export async function findNewestUserAuditRecord(
+  client: E2eApiClient,
+  username: string,
+): Promise<AuditRowKey | undefined> {
+  const [record] = await queryNewestAuditRecords(client, 'MIDDLEWARE', [['username', '=', username]], 1);
+
+  return record;
 }
 
 /**
