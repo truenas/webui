@@ -274,7 +274,11 @@ export const appDeleteDialogLocators = {
   delete: '[data-test="button-delete"]',
 } as const;
 
-/** Apps > Discover (`/apps/available`), an app's page there, and the install wizard it opens. */
+/**
+ * Apps > Discover (`/apps/available`), a category page there (`/apps/available/<category>`), an app's
+ * page, and the install wizard it opens. Discover and a category page share Search's `input-search`;
+ * only one of them is on screen at a time.
+ */
 export const appCatalogLocators = {
   /** "Discover Apps" in the Installed page's header. */
   discoverApps: '[data-test="button-discover-apps"]',
@@ -286,6 +290,24 @@ export const appCatalogLocators = {
     const id = ['link-open', kebabTestSegment(train), kebabTestSegment(app)].join('-');
     return `[data-test="${id}"]`;
   },
+  /** Every app card on the page, for counting them. */
+  anyAppCard: '[data-test^="link-open-"]',
+
+  /** A Discover section's heading, `['section-title', appSection.category]`. */
+  sectionTitle: (category: string): string => `[data-test="text-section-title-${kebabTestSegment(category)}"]`,
+  /**
+   * "View All <title>" under a Discover section, `[appSection.title, 'view-all']`. Rendered only for a
+   * section of more than 6 apps, and only while no sort or category filter is applied. For a plain
+   * category the title is the category itself.
+   */
+  viewAll: (title: string): string => `[data-test="button-${kebabTestSegment(title)}-view-all"]`,
+
+  /** A category page's title (`page-header.component.html`): the category, titlecased. */
+  pageTitle: '[data-test="text-page-title"]',
+  /** "Back to Discover Page" on a category page. Rendered only once the category has loaded. */
+  backToDiscover: '[data-test="button-back-to-discover-page"]',
+  /** A category page's empty state for a search term that matches no app. */
+  noSearchResults: '[data-test="text-no-search-results"]',
   /** Install on the app's page. Shown only while Apps has a pool. */
   install: (app: string): string => `[data-test="button-${kebabTestSegment(app)}-install"]`,
 

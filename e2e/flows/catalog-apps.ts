@@ -1,7 +1,7 @@
 /**
- * Catalog apps: finding one on Discover, installing it through the wizard, editing an installed one
- * in the same wizard, and updating, rolling back, deleting or converting one from its Application
- * Info card.
+ * Catalog apps: finding one on Discover, opening a category's page from Discover, installing an app
+ * through the wizard, editing an installed one in the same wizard, and updating, rolling back,
+ * deleting or converting one from its Application Info card.
  */
 import { expect, type Page } from '@playwright/test';
 import { confirmDestructiveAction } from './storage';
@@ -35,6 +35,16 @@ export async function openCatalogApp(page: Page, train: string, app: string): Pr
   await expect(card).toHaveCount(1);
   await card.click();
   await expect(page.locator(appCatalogLocators.install(app))).toBeVisible();
+}
+
+/**
+ * From Discover, presses View All under a category's section and waits for the category page to
+ * finish loading, which is when it renders Back to Discover Page.
+ */
+export async function openCategoryPage(page: Page, category: string): Promise<void> {
+  await expect(page.locator(appCatalogLocators.sectionTitle(category))).toBeVisible();
+  await page.locator(appCatalogLocators.viewAll(category)).click();
+  await expect(page.locator(appCatalogLocators.backToDiscover)).toBeVisible();
 }
 
 /**
