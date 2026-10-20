@@ -149,7 +149,7 @@ test('an admin adds a NIC with the default MAC, and the menu stops offering it',
 
   // Proven on an interface the menu still offers where there is one, so the
   // absence below is the filter's and not a menu that never opened.
-  const [other] = addableNics.filter((name) => name !== nic);
+  const other = addableNics.find((name) => name !== nic);
   if (other) {
     await page.locator(card.add).click();
     await expect(page.locator(card.addNic(other))).toBeVisible();
