@@ -5,6 +5,7 @@ import { expect, type Page } from '@playwright/test';
 import { goToContainers } from './navigation';
 import { selectOption } from './storage';
 import { containersLocators } from '../locators/containers';
+import { slowCallTimeoutMs } from '../support/timeouts';
 
 /**
  * How long a save may take. Changing a network reconfigures the containers'
@@ -24,6 +25,58 @@ export async function openContainerSettings(page: Page, loadedV4Address: string)
   await page.locator(containersLocators.header.configurationMenu).click();
   await page.locator(containersLocators.header.settings).click();
   await expect(page.locator(containersLocators.settings.v4Address)).toHaveValue(loadedV4Address);
+}
+
+/**
+ * Opens Configuration > Map User/Group IDs, starting from the sidebar, and waits
+ * for its Users view to load.
+ */
+export async function openIdMappingDialog(page: Page): Promise<void> {
+  await goToContainers(page);
+  await page.locator(containersLocators.header.configurationMenu).click();
+  await page.locator(containersLocators.header.mapUserGroupIds).click();
+  await expect(page.locator(containersLocators.idMapping.title)).toBeVisible();
+  await waitForIdMappings(page);
+}
+
+/**
+ * Waits for the Map User/Group IDs dialog to finish loading its mappings.
+ *
+ * While they load, a spinner stands in for both the table and the Add New
+ * Mapping form, so Set being back is the dialog's own signal that the table is
+ * current. A row's absence asserted before that holds of the spinner, not of the
+ * mappings.
+ */
+export async function waitForIdMappings(page: Page): Promise<void> {
+  await expect(page.locator(containersLocators.idMapping.set)).toBeVisible({ timeout: slowCallTimeoutMs });
+}
+
+/**
+ * Switches the dialog to its Users or Groups view and waits for it to load.
+ *
+ * The switch starts the reload as it is clicked, which takes Set away at once,
+ * so waiting for Set to come back is a wait for the new view.
+ */
+export async function showIdMappings(page: Page, view: 'users' | 'groups'): Promise<void> {
+  await page.locator(containersLocators.idMapping[view]).click();
+  await waitForIdMappings(page);
+}
+
+/**
+ * Picks an account in the Add New Mapping form's User or Group picker.
+ *
+ * An autocomplete over a middleware query, so the row is not there until the
+ * typed text has been answered; clicking it is what commits the value.
+ */
+export async function pickIdMappingAccount(page: Page, name: string): Promise<void> {
+  await page.locator(containersLocators.idMapping.account).fill(name);
+  await page.locator(containersLocators.idMapping.accountOption(name)).click();
+}
+
+/** Closes the Map User/Group IDs dialog with its ✕. */
+export async function closeIdMappingDialog(page: Page): Promise<void> {
+  await page.locator(containersLocators.idMapping.close).click();
+  await expect(page.locator(containersLocators.idMapping.title)).toBeHidden();
 }
 
 /**
