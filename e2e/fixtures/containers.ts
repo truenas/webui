@@ -19,7 +19,11 @@ import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 type LxcConfig = CallResponse<E2eApiDirectory, 'lxc.config'>;
 type LxcUpdate = NonNullable<CallParams<E2eApiDirectory, 'lxc.update'>[0]>;
 type ContainerEntry = Extract<CallResponse<E2eApiDirectory, 'container.query'>, unknown[]>[number];
-type ContainerRecord = ContainerEntry & { id: number };
+/**
+ * `default_network` is the bridge the container is always attached to, which the
+ * NIC Devices card shows as `<bridge> (Default)` and its Add menu leaves out.
+ */
+type ContainerRecord = ContainerEntry & { id: number; default_network?: string | null };
 
 /** Everything the Global Configuration form shows and saves. */
 export type ContainerSettings = Pick<LxcConfig, 'preferred_pool' | 'bridge' | 'v4_network' | 'v6_network'>;
@@ -185,13 +189,29 @@ export interface FilesystemDevice {
   target: string;
 }
 
+/** A container's NIC device: an adapter of `type` attached to the host interface `nic_attach`. */
+export interface NicDevice {
+  id: number;
+  nic_attach: string;
+  type: string;
+  mac: string | null;
+}
+
 /**
  * The fields of a `container.device.query` row read here. `attributes` is a union
- * over every device type, and only a FILESYSTEM one has a source and a target.
+ * over every device type: only a FILESYSTEM one has a source and a target, and
+ * only a NIC one has the rest.
  */
 interface ContainerDeviceRow {
   id: number;
-  attributes: { dtype: string; source?: string; target?: string };
+  attributes: {
+    dtype: string;
+    source?: string;
+    target?: string;
+    nic_attach?: string | null;
+    type?: string;
+    mac?: string | null;
+  };
 }
 
 function toFilesystemDevice(row: ContainerDeviceRow): FilesystemDevice {
@@ -225,6 +245,61 @@ export async function seedFilesystemDevice(
     }]).pipe(timeout(slowCallTimeoutMs)),
   ) as unknown as ContainerDeviceRow;
   return toFilesystemDevice(created);
+}
+
+function toNicDevice(row: ContainerDeviceRow): NicDevice {
+  return {
+    id: row.id,
+    nic_attach: row.attributes.nic_attach ?? '',
+    type: row.attributes.type ?? '',
+    mac: row.attributes.mac ?? null,
+  };
+}
+
+/** The NIC devices of a container, as middleware holds them. */
+export async function findNicDevices(client: E2eApiClient, containerId: number): Promise<NicDevice[]> {
+  const rows = await firstValueFrom(
+    client.api.query('container.device.query', [['container', '=', containerId]]).pipe(timeout(readTimeoutMs)),
+  ) as unknown as ContainerDeviceRow[];
+  return rows.filter((row) => row.attributes.dtype === 'NIC').map(toNicDevice);
+}
+
+/**
+ * Attaches a NIC to a stopped container, for a test that is not about adding
+ * one. Left without `mac`, middleware decides what the device holds, so read
+ * the answer rather than assuming it.
+ */
+export async function seedNicDevice(
+  client: E2eApiClient,
+  containerId: number,
+  attributes: { nic_attach: string; type: 'E1000' | 'VIRTIO'; mac?: string },
+): Promise<NicDevice> {
+  // The shape the card's Add sends, and cast as `add-nic-menu.component.ts` casts
+  // it: `mac` is left out when middleware is to choose.
+  const created = await firstValueFrom(
+    client.api.call('container.device.create', [{
+      container: containerId,
+      attributes: { dtype: 'NIC', ...attributes },
+    }] as unknown as CallParams<E2eApiDirectory, 'container.device.create'>).pipe(timeout(slowCallTimeoutMs)),
+  ) as unknown as ContainerDeviceRow;
+  return toNicDevice(created);
+}
+
+/**
+ * The interfaces the NIC Devices card's Add menu offers a container with no NIC
+ * devices, in its order: `container.device.nic_attach_choices` flattened across
+ * its groups (`{ BRIDGE: [...], MACVLAN: [...] }`), each name once, without the
+ * container's `defaultNetwork`. `add-nic-menu.component.ts` filters the same way.
+ *
+ * Interface names differ per appliance, which is why a test reads this rather
+ * than naming one.
+ */
+export async function findAddableNics(client: E2eApiClient, defaultNetwork: string | null): Promise<string[]> {
+  const choices = await firstValueFrom(
+    client.api.call('container.device.nic_attach_choices').pipe(timeout(readTimeoutMs)),
+  );
+  const names = (Object.values(choices) as (string[] | null)[]).flatMap((group) => group ?? []);
+  return [...new Set(names)].filter((name) => name !== defaultNetwork);
 }
 
 /**

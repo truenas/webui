@@ -261,6 +261,56 @@ export const containersLocators = {
     target: '[data-test="input-target"]',
   },
 
+  /**
+   * The details panel's NIC Devices card, `container-nic-devices.component.html`.
+   * A device's menu ids are keyed by its description, `<nic_attach> (<mac>)` as
+   * `getDeviceDescription` words it, or `<nic_attach> (Default Mac Address)` with
+   * no MAC, so they change when an edit changes the MAC. Its Edit opens the NIC
+   * dialog below; its Delete raises webui's shared confirm (see `locators/dialogs.ts`).
+   */
+  nicDevices: {
+    /** `<default_network> (Default)`, hidden once any NIC device is attached, since `default_network` is then null. */
+    defaultDevice: '[data-test="text-default-nic-device"]',
+    /** A device's description line, `['nic-device', id]`. */
+    device: (id: number): string => `[data-test="text-nic-device-${id}"]`,
+    /**
+     * "Add" in the card footer, `add-nic-menu.component.html`. Opens a menu of the
+     * interfaces left to attach; replaced by plain text when none are.
+     */
+    add: '[data-test="button-add-nic"]',
+    /** An interface in that menu, a `tn-menu-item` with `testId: ['add-nic', nic]`. */
+    addNic: (nic: string): string => `[data-test="button-add-nic-${kebabTestSegment(nic)}"]`,
+    /** The `ix-device-actions-menu` trigger, `['actions-for', description]`. */
+    actionsFor: (description: string): string => (
+      `[data-test="button-actions-for-${kebabTestSegment(description)}"]`
+    ),
+    edit: (description: string): string => `[data-test="button-edit-${kebabTestSegment(description)}"]`,
+    delete: (description: string): string => `[data-test="button-delete-${kebabTestSegment(description)}"]`,
+  },
+
+  /**
+   * The NIC dialog, `container-nic-form-dialog.component.html`,
+   * `<tn-dialog-shell testId="container-nic-form">`. Add and Edit open the same
+   * dialog, titled "Add NIC Device: <nic>" or "Edit NIC Device: <nic>".
+   */
+  nicForm: {
+    title: '[data-test="dialog-title-container-nic-form"]',
+    /** "NIC Type", `testId="type"`. Options are labelled `VirtIO` and `Intel e82585 (e1000)`. */
+    type: '[data-test="select-type"]',
+    typeOption: (label: string): string => `[data-test="option-type-${kebabTestSegment(label)}"]`,
+    /** "Use Default Mac Address", ticked as Add opens and absent in Edit. */
+    useDefault: '[data-test="checkbox-use-default"]',
+    /** "Mac Address", shown once Use Default is unticked and always in Edit. */
+    mac: '[data-test="input-mac"]',
+    /** The field around {@link mac}, `testId="mac"`, which holds its error text. */
+    macField: '[data-test="form-field-mac"]',
+    /** "Trust Guest RX Filters", shown for VirtIO only. */
+    trustGuestRxFilters: '[data-test="checkbox-trust-guest-rx-filters"]',
+    cancel: '[data-test="button-cancel"]',
+    /** The primary button, labelled Add or Update. `testId="close"`, not `save`. */
+    submit: '[data-test="button-close"]',
+  },
+
   /** `<tn-dialog-shell testId="delete-container">`. Delete enables once the confirmation is ticked. */
   deleteDialog: {
     confirm: '[data-test="checkbox-confirm"]',
