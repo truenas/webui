@@ -22,6 +22,7 @@
     }
     @if (isEditMode() || !useDefault()) {
       <tn-form-field
+        testId="mac"
         [label]="'Mac Address' | translate"
         [tooltip]="macTooltip()"
       >

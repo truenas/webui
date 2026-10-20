@@ -72,7 +72,12 @@
                 </tn-form-field>
               }
               @default {
-                <tn-form-field [label]="field.label" [tooltip]="field.tooltip" [hint]="field.hint">
+                <tn-form-field
+                  [testId]="field.name"
+                  [label]="field.label"
+                  [tooltip]="field.tooltip"
+                  [hint]="field.hint"
+                >
                   <tn-input
                     [formControlName]="field.name"
                     [attr.data-control-name]="field.name"

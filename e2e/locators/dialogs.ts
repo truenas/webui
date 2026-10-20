@@ -27,6 +27,9 @@ export const confirmDialogLocators = {
   /** `<tn-dialog-shell testId="confirm">`. What to wait on before acting on it. */
   title: '[data-test="dialog-title-confirm"]',
 
+  /** The caller's message, rendered as HTML, so its text is read without the markup. */
+  message: '[data-test="text-confirm-message"]',
+
   confirm: '[data-test="button-dialog-confirm"]',
   cancel: '[data-test="button-dialog-cancel"]',
 } as const;

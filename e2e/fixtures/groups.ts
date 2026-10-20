@@ -119,3 +119,26 @@ export async function setGroupMembers(
     client.api.call('group.update', [group.id, { users: userIds }]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
+
+/**
+ * Sets how a group's GID is mapped into containers, over the API: `'DIRECT'` for
+ * the same GID, a number for that container GID, `null` for no mapping. What the
+ * Map User/Group IDs dialog's Set and Clear call, as setup or teardown.
+ *
+ * @throws if the group does not exist, rather than silently setting nothing.
+ */
+export async function setGroupIdmap(
+  client: E2eApiClient,
+  name: string,
+  value: GroupRecord['userns_idmap'],
+): Promise<void> {
+  const group = await findGroup(client, name);
+
+  if (!group) {
+    throw new Error(`Cannot set the container ID mapping of group "${name}": it does not exist.`);
+  }
+
+  await firstValueFrom(
+    client.api.call('group.update', [group.id, { userns_idmap: value }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}

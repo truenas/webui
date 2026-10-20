@@ -2,7 +2,9 @@ import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCheckboxComponent, TnCheckboxLabelDirective, TnDialogShellComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnCheckboxLabelDirective, TnDialogShellComponent, TnTestIdDirective,
+} from '@truenas/ui-components';
 import {
   ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult,
 } from 'app/interfaces/dialog.interface';
@@ -16,6 +18,7 @@ type ConfirmDialogResult = boolean | DialogWithSecondaryCheckboxResult;
   styleUrls: ['./confirm-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnDialogShellComponent,
     TnButtonComponent,
     TnCheckboxComponent,
