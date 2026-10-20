@@ -1,6 +1,7 @@
 /**
  * Catalog apps: finding one on Discover, installing it through the wizard, editing an installed one
- * in the same wizard, and deleting or converting one from its Application Info card.
+ * in the same wizard, and updating, rolling back, deleting or converting one from its Application
+ * Info card.
  */
 import { expect, type Page } from '@playwright/test';
 import { confirmDestructiveAction } from './storage';
@@ -9,6 +10,9 @@ import {
   appCatalogLocators,
   appDeleteDialogLocators,
   appInfoCardLocators,
+  appRevisionLocators,
+  appRollbackDialogLocators,
+  appUpdateDialogLocators,
   catalogAppEditLocators,
   installedAppLocators,
 } from '../locators/apps';
@@ -75,6 +79,47 @@ export async function deleteInstalledApp(page: Page, name: string): Promise<void
   await page.locator(appDeleteDialogLocators.confirmName).fill(name);
   await expect(page.locator(appDeleteDialogLocators.removeImages)).toBeChecked();
   await page.locator(appDeleteDialogLocators.delete).click();
+}
+
+/**
+ * Selects the app's row and presses Update in its Application Info card's menu. Returns once the
+ * Update dialog, which waits on `app.upgrade_summary`, is open.
+ */
+export async function openAppUpdateDialog(page: Page, name: string): Promise<void> {
+  await page.locator(installedAppLocators(name).name).click();
+  await page.locator(appInfoCardLocators.menu).click();
+  await page.locator(appRevisionLocators(name).update).click();
+  await expect(page.locator(appUpdateDialogLocators.title)).toBeVisible();
+}
+
+/**
+ * Presses Update in the open Update dialog, leaving its version select at the latest revision. The
+ * dialog closes at once and the `app.upgrade` job runs behind a job dialog; the caller waits on the
+ * outcome.
+ */
+export async function confirmAppUpdate(page: Page): Promise<void> {
+  await page.locator(appUpdateDialogLocators.update).click();
+  await expect(page.locator(appUpdateDialogLocators.title)).toBeHidden();
+}
+
+/**
+ * Selects the app's row and presses Roll Back on its Application Info card. Roll Back appears only
+ * once the card's `app.rollback_versions` has answered, which Playwright's click waits for. Returns
+ * once the dialog is open.
+ */
+export async function openAppRollbackDialog(page: Page, name: string): Promise<void> {
+  await page.locator(installedAppLocators(name).name).click();
+  await page.locator(appRevisionLocators(name).rollback).click();
+  await expect(page.locator(appRollbackDialogLocators.title)).toBeVisible();
+}
+
+/**
+ * Presses Roll Back in the open dialog, as it stands. The dialog stays open until the `app.rollback`
+ * job dialog in front of it closes, so this returns once the rollback has finished.
+ */
+export async function confirmAppRollback(page: Page): Promise<void> {
+  await page.locator(appRollbackDialogLocators.rollBack).click();
+  await expect(page.locator(appRollbackDialogLocators.title)).toBeHidden({ timeout: appInstallTimeoutMs });
 }
 
 /** The wizard's route in edit mode. Leaving it is the wizard's own signal that the update succeeded. */

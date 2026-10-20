@@ -24,7 +24,7 @@
       }
       <div class="version-row">
         <span class="version-label">{{ 'Revision' | translate }}:</span>
-        <span class="version-value">
+        <span class="version-value" tnTestIdType="text" [tnTestId]="'revision-change'">
           {{ dialogConfig.appInfo.version }}
           <tn-icon name="arrow-right" library="mdi"></tn-icon>
           {{ selectedVersion?.latest_version }}
