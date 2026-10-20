@@ -101,7 +101,8 @@ test('Send Test Alert on a new SNMP Trap service reports success, and saves noth
   await sendTestAlert(page);
 
   // `true` raises only a snackbar with no id, so success is the absence of both
-  // dialogs. The test below shows the same wait does see the warn dialog.
+  // dialogs. The form raises either dialog before it re-enables the button, so
+  // by the time `sendTestAlert` returns one would already be open.
   await expect(page.locator(infoDialogLocators.title)).toHaveCount(0);
   await expect(page.locator(errorDialogLocators.title)).toHaveCount(0);
   await expect(page.locator(form.name)).toHaveValue(snmpName);
